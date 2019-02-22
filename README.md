@@ -1,10 +1,10 @@
 Foreldrepenger Vedtaksløsning (FPSAK)
 ===============
 
-Dette er repository for kildkode som dekker applikasjonen bak Foreldrepenger og Engangsstønad
+Dette er repository for kildkode som dekker IAY(inntekt, arbeid & ytelse), opptjening og beregning for Foreldrepenger & Svangerskapspenger
 
 ### Struktur
-Dette er saksbehandlingsløsning på foreldrepengeområdet (Folketrygdloven kapittel 14).
+Dette er dekker IAY(inntekt, arbeid & ytelse), opptjening og beregning for Foreldrepenger & Svangerskapspenger (Folketrygdloven kapittel 14).
 
 ### Utviklingshåndbok
 [Utviklingoppsett](https://confluence.adeo.no/display/LVF/60+Utviklingsoppsett)
