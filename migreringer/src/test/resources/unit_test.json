@@ -1,0 +1,13 @@
+{
+  "schemas": [
+    {
+      "datasource": "defaultDS",
+      "user": "fpabakus_unit",
+      "password": "fpabakus_unit",
+      "schema": "public",
+      "url": "jdbc:postgresql://localhost:5432/fpabakus_unit",
+      "default": true,
+      "migrationScriptsFilesystemRoot": "migreringer/src/main/resources/db/migration/"
+    }
+  ]
+}
