@@ -25,7 +25,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <felles.version>1.0.0_20190239143310_3c02037</felles.version>
+        <felles.version>1.0.0_20190257165509_e02f531</felles.version>
         <metrics.version>3.2.5</metrics.version>
 
         <abac-attribute-constants.version>2.0.0</abac-attribute-constants.version>
@@ -73,6 +73,16 @@
             </dependency>
             <dependency>
                 <groupId>no.nav.foreldrepenger.abakus</groupId>
+                <artifactId>kobling</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.abakus</groupId>
+                <artifactId>iay</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.abakus</groupId>
                 <artifactId>migreringer</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -108,6 +118,13 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.kontrakter</groupId>
+                <artifactId>foreldrepenger-kontrakter-root</artifactId>
+                <version>5.0_20190242140110_c052926</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
 
             <!-- Prosjektinterne -->
             <dependency>
@@ -119,6 +136,11 @@
                 <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
                 <artifactId>felles-integrasjon-bom</artifactId>
                 <version>${felles.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.tjenester</groupId>
+                <artifactId>aordningen-inntektsinformasjon-v1</artifactId>
+                <version>1.4</version>
             </dependency>
 
             <dependency>

@@ -12,7 +12,6 @@ import javax.persistence.TypedQuery;
 
 import org.hibernate.jpa.QueryHints;
 
-import no.nav.foreldrepenger.abakus.kodeverk.KonfigVerdiGruppe;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
 

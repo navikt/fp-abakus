@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
+import no.nav.foreldrepenger.abakus.konfig.KonfigVerdiType;
+
 public class KonfigVerdiTypeTest {
 
     @Test

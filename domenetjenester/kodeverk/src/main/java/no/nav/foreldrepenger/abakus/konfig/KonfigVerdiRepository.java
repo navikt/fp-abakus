@@ -4,8 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import no.nav.foreldrepenger.abakus.kodeverk.KonfigVerdiGruppe;
-
 /**
  * Henter konfigurerbare verdier som er håndtert i databasen.
  * <p>

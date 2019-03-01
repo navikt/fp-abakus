@@ -1,0 +1,24 @@
+package no.nav.foreldrepenger.abakus.domene.iay;
+
+import java.util.List;
+
+import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
+import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
+
+public interface InntektsmeldingAggregat {
+
+    /**
+     * Alle gjeldende inntektsmeldinger i behandlingen.
+     *
+     * @return Liste med {@link Inntektsmelding}
+     */
+    List<Inntektsmelding> getInntektsmeldinger();
+
+    /**
+     * Alle gjeldende inntektsmeldinger for en virksomhet i behandlingen.
+     *
+     * @return Liste med {@link Inntektsmelding}
+     */
+    List<Inntektsmelding> getInntektsmeldingerFor(Arbeidsgiver arbeidsgiver);
+
+}

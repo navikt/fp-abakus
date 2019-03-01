@@ -2,7 +2,7 @@ package no.nav.foreldrepenger.abakus.jetty;
 
 public class JettyWebKonfigurasjon implements AppKonfigurasjon {
     private static final String CONTEXT_PATH = "/fpabakus";
-    private static final String SWAGGER_HASH = "sha256-vqozJlvzx6Uic+A8h1SZiG7tT3e1S/sBPYV1EfRQLa4=";
+    private static final String SWAGGER_HASH = "sha256-7Q3rhRImlMK0C8BPLdKv3NSzW62PGILaVkGUTzMB7pI=";
 
     private Integer serverPort;
 

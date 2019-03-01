@@ -35,6 +35,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import no.nav.foreldrepenger.abakus.diff.DiffIgnore;
+import no.nav.foreldrepenger.abakus.diff.IndexKey;
 import no.nav.vedtak.util.StringUtils;
 
 /**
@@ -69,10 +70,10 @@ import no.nav.vedtak.util.StringUtils;
         )
     }
 )
-public abstract class Kodeliste extends KodeverkBaseEntitet implements Comparable<Kodeliste> {
+public abstract class Kodeliste extends KodeverkBaseEntitet implements Comparable<Kodeliste>, IndexKey {
     public static final Comparator<Kodeliste> NULLSAFE_KODELISTE_COMPARATOR = Comparator.nullsFirst(Kodeliste::compareTo);
     private static final Logger LOG = LoggerFactory.getLogger(Kodeliste.class);
-    
+
     /**
      * Default fil er samme som property key navn.
      */
@@ -177,6 +178,11 @@ public abstract class Kodeliste extends KodeverkBaseEntitet implements Comparabl
 
     public String getOffisiellKode() {
         return offisiellKode;
+    }
+
+    @Override
+    public String getIndexKey() {
+        return kodeverk + ":" + kode;
     }
 
     public boolean erLikOffisiellKode(String annenOffisiellKode) {

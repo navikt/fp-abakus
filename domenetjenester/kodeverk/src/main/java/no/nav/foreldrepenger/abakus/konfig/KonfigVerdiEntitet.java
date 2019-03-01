@@ -16,13 +16,12 @@ import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkBaseEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.KonfigVerdiGruppe;
+import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Table(name = "KONFIG_VERDI")
 @Entity(name = "KonfigVerdi")
-public class KonfigVerdiEntitet extends KodeverkBaseEntitet {
+public class KonfigVerdiEntitet extends BaseEntitet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_KONFIG_VERDI")
@@ -32,13 +31,13 @@ public class KonfigVerdiEntitet extends KodeverkBaseEntitet {
      * Foreløpig skrudd av mulghet for oppdatering.
      */
     @ManyToOne()
-    @JoinColumn(name = "konfig_kode", insertable = false, updatable = false)
+    @JoinColumn(name = "konfig_kode", nullable = false, insertable = false, updatable = false)
     private KonfigVerdiKode konfigVerdiKode;
 
     @ManyToOne(optional = false)
     @JoinColumnsOrFormulas({
-            @JoinColumnOrFormula(column = @JoinColumn(name = "konfig_gruppe", referencedColumnName = "kode", insertable = false, updatable = false)),
-            @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + KonfigVerdiGruppe.DISCRIMINATOR + "'"))})
+        @JoinColumnOrFormula(column = @JoinColumn(name = "konfig_gruppe", referencedColumnName = "kode", insertable = false, updatable = false)),
+        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + KonfigVerdiGruppe.DISCRIMINATOR + "'"))})
     private KonfigVerdiGruppe konfigVerdiGruppe = KonfigVerdiGruppe.INGEN_GRUPPE;
 
     /**
@@ -49,8 +48,8 @@ public class KonfigVerdiEntitet extends KodeverkBaseEntitet {
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "fomDato", column = @Column(name = "gyldig_fom")),
-            @AttributeOverride(name = "tomDato", column = @Column(name = "gyldig_tom"))
+        @AttributeOverride(name = "fomDato", column = @Column(name = "gyldig_fom")),
+        @AttributeOverride(name = "tomDato", column = @Column(name = "gyldig_tom"))
     })
     private DatoIntervallEntitet gyldigIntervall;
 

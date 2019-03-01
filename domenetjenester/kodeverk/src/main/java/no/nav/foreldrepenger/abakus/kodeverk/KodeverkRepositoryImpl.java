@@ -237,7 +237,7 @@ public class KodeverkRepositoryImpl implements KodeverkRepository {
         Query query = entityManager.createNativeQuery(
             "SELECT kodeverk1, kode1, kodeverk2, kode2, gyldig_fom, gyldig_tom " +
                 "FROM kodeliste_relasjon " +
-                "WHERE gyldig_fom <= SYSDATE AND gyldig_tom > SYSDATE " +
+                "WHERE gyldig_fom <= current_date AND gyldig_tom > current_date " +
                 "AND KODEVERK1 = ?");
 
         query.setParameter(1, kodeverk);

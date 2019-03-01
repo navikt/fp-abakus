@@ -1,0 +1,56 @@
+package no.nav.foreldrepenger.abakus.registerdata.tjeneste;
+
+import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
+import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
+
+import java.util.Optional;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.validation.Valid;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
+
+import com.codahale.metrics.annotation.Timed;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import no.nav.foreldrepenger.abakus.FagsakYtelseTypeRef;
+import no.nav.foreldrepenger.abakus.kobling.Kobling;
+import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
+import no.nav.foreldrepenger.abakus.registerdata.IAYRegisterInnhentingTjeneste;
+import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.InnhentRegisterdataDto;
+import no.nav.vedtak.felles.jpa.Transaction;
+import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
+
+@Api(tags = "registerdata")
+@Path("/registerdata")
+@ApplicationScoped
+@Transaction
+public class RegistedataRestTjeneste {
+
+    private InnhentRegisterdataTjeneste innhentTjeneste;
+
+    public RegistedataRestTjeneste() {
+    }
+
+    @Inject
+    public RegistedataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste) {
+        this.innhentTjeneste = innhentTjeneste;
+    }
+
+    @POST
+    @Timed
+    @Path("/innhent")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Trigger registerinnhenting for en gitt id")
+    @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
+    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    public void innhentRegisterdata(@ApiParam("innhent") @Valid InnhentRegisterdataDto dto) {
+        innhentTjeneste.innhent(dto);
+    }
+
+}

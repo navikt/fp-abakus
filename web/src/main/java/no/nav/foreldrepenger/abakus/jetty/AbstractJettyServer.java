@@ -82,10 +82,9 @@ abstract class AbstractJettyServer {
 
     protected void konfigurerSikkerhet() throws IOException {
         Security.setProperty(AuthConfigFactory.DEFAULT_FACTORY_SECURITY_PROPERTY, AuthConfigFactoryImpl.class.getCanonicalName());
-        System.setProperty(SubjectHandler.SUBJECTHANDLER_KEY, JettySubjectHandler.class.getName());
 
-        File jaspiConf = new File(System.getProperty("conf", "./conf") + "/jaspi-conf.xml");
-        if (!jaspiConf.exists()) {
+        File jaspiConf = new File(System.getProperty("conf", "./conf")+"/jaspi-conf.xml");
+        if(!jaspiConf.exists()) {
             throw new IllegalStateException("Missing required file: " + jaspiConf.getAbsolutePath());
         }
         System.setProperty("org.apache.geronimo.jaspic.configurationFile", jaspiConf.getAbsolutePath());

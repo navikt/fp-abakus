@@ -36,3 +36,6 @@ values (nextval('seq_kodeliste'), 'KONFIG_VERDI_TYPE', 'STRING', null, null, to_
 Insert into KODELISTE (ID, KODEVERK, KODE, OFFISIELL_KODE, BESKRIVELSE, GYLDIG_FOM, GYLDIG_TOM)
 values (nextval('seq_kodeliste'), 'KONFIG_VERDI_TYPE', 'URI', null, 'URI for å angi id til en ressurs',
         to_date('01.01.2000', 'DD.MM.RRRR'), to_date('31.12.9999', 'DD.MM.RRRR'));
+Insert into KODELISTE (ID, KODEVERK, KODE, OFFISIELL_KODE, BESKRIVELSE, GYLDIG_FOM, GYLDIG_TOM)
+values (nextval('seq_kodeliste'), 'KONFIG_VERDI_TYPE', 'DATE', null, 'Dato',
+        to_date('01.01.2000', 'DD.MM.RRRR'), to_date('31.12.9999', 'DD.MM.RRRR'));

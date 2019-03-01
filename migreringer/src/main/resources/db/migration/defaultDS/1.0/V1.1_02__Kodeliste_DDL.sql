@@ -118,3 +118,33 @@ ALTER TABLE KODELISTE_NAVN_I18N ALTER COLUMN ID SET NOT NULL;
 
 ALTER TABLE KODELISTE_NAVN_I18N ADD CONSTRAINT FK_KODELISTE_02 FOREIGN KEY (KL_KODE, KL_KODEVERK)
   REFERENCES KODELISTE (KODE, KODEVERK);
+
+-- Ny tabell for relasjon mellom kodeliste elementer
+CREATE TABLE KODELISTE_RELASJON (
+                                  id bigint not null,
+                                  kodeverk1 VARCHAR(100) NOT NULL,
+                                  kode1 VARCHAR(100) NOT NULL,
+                                  kodeverk2 VARCHAR(100) NOT NULL,
+                                  kode2 VARCHAR(100) NOT NULL,
+                                  gyldig_fom DATE DEFAULT current_date NOT NULL,
+                                  gyldig_tom DATE DEFAULT TO_DATE('31.12.9999','DD.MM.YYYY') NOT NULL,
+                                  opprettet_av    VARCHAR(20) DEFAULT 'VL' NOT NULL,
+                                  opprettet_tid   TIMESTAMP(3) DEFAULT localtimestamp NOT NULL,
+                                  endret_av       VARCHAR(20),
+                                  endret_tid      TIMESTAMP(3),
+                                  CONSTRAINT PK_KODELISTE_RELASJON PRIMARY KEY (id)
+);
+
+CREATE SEQUENCE seq_kodeliste_relasjon MINVALUE 1 START WITH 1000000 INCREMENT BY 50 NO CYCLE;
+ALTER TABLE kodeliste_relasjon ADD CONSTRAINT fk_kodeliste_relasjon_1 FOREIGN KEY (kodeverk1, kode1) REFERENCES KODELISTE(kodeverk, kode);
+ALTER TABLE kodeliste_relasjon ADD CONSTRAINT fk_kodeliste_relasjon_2 FOREIGN KEY (kodeverk2, kode2) REFERENCES KODELISTE(kodeverk, kode);
+CREATE INDEX IDX_KODELISTE_RELASJON_1 ON KODELISTE_RELASJON(kodeverk1, kode1);
+CREATE INDEX IDX_KODELISTE_RELASJON_2 ON KODELISTE_RELASJON(kodeverk2, kode2);
+
+COMMENT ON TABLE KODELISTE_RELASJON IS 'Relasjon mellom kodeliste elementer: kode1 og kode2';
+COMMENT ON COLUMN KODELISTE_RELASJON.kodeverk1 IS 'Kodeverk for kode 1';
+COMMENT ON COLUMN KODELISTE_RELASJON.kode1 IS 'Kode 1';
+COMMENT ON COLUMN KODELISTE_RELASJON.kodeverk2 IS 'Kodeverk for kode 2';
+COMMENT ON COLUMN KODELISTE_RELASJON.kode2 IS 'Kode 2';
+COMMENT ON COLUMN KODELISTE_RELASJON.gyldig_fom IS 'Gyldig fra og med dato';
+COMMENT ON COLUMN KODELISTE_RELASJON.gyldig_tom IS 'Gyldig til og med dato';

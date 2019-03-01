@@ -14,7 +14,7 @@
 
     <!-- Application log -->
     <appender name="APP_FILE_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${APP_LOG_HOME}/fpformidling.log</File>
+        <File>${APP_LOG_HOME}/applikasjon.log</File>
         <encoder>
             <charset>UTF-8</charset>
             <pattern>%d [%-5level] [%thread] %logger{5} - [%X{consumerId}, %X{callId}, %X{userId}, %X{prosess}] - %m%n
@@ -29,7 +29,7 @@
         <prudent>false</prudent>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- Daily rollover, (%d gir filnavn med default pattern yyyy-MM-dd) -->
-            <fileNamePattern>${APP_LOG_HOME}/fpformidling.log.%d{yyyy-MM-dd}</fileNamePattern>
+            <fileNamePattern>${APP_LOG_HOME}/applikasjon.log.%d{yyyy-MM-dd}</fileNamePattern>
             <!-- Keep 30 days of history: -->
             <maxHistory>30</maxHistory>
         </rollingPolicy>
@@ -37,7 +37,7 @@
 
     <!-- Sporbarhetslog -->
     <appender name="SPORING_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${APP_LOG_HOME}/fpformidling_sporing.log</File>
+        <File>${APP_LOG_HOME}/sporing.log</File>
         <encoder>
             <charset>UTF-8</charset>
             <pattern>%d{MMM dd yyyy HH:mm:ss.SSS} [%-5level] consumerId=%X{consumerId} callId=%X{callId}
@@ -50,7 +50,7 @@
         <prudent>false</prudent>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- Daily rollover, (%d gir filnavn med default pattern yyyy-MM-dd) -->
-            <fileNamePattern>${APP_LOG_HOME}/fpformidling_sporing.log.%d{yyyy-MM-dd}</fileNamePattern>
+            <fileNamePattern>${APP_LOG_HOME}/sporing.log.%d{yyyy-MM-dd}</fileNamePattern>
             <!-- Keep 30 days of history: -->
             <maxHistory>30</maxHistory>
         </rollingPolicy>
@@ -58,7 +58,7 @@
 
     <!-- Sikkerhetslogg -->
     <appender name="SIKKERHET_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${APP_LOG_HOME}/fpformidling_sikkerhet.log</File>
+        <File>${APP_LOG_HOME}/sikkerhet.log</File>
         <encoder>
             <charset>UTF-8</charset>
             <pattern>%d [%-5level] [%thread] %logger{5} - [%X{consumerId}, %X{callId}, %X{userId}] - %m%n</pattern>
@@ -69,7 +69,7 @@
         <prudent>false</prudent>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- Daily rollover, (%d gir filnavn med default pattern yyyy-MM-dd) -->
-            <fileNamePattern>${APP_LOG_HOME}/fpformidling_sikkerhet.log.%d{yyyy-MM-dd}</fileNamePattern>
+            <fileNamePattern>${APP_LOG_HOME}/sikkerhet.log.%d{yyyy-MM-dd}</fileNamePattern>
             <!-- Keep 30 days of history: -->
             <maxHistory>30</maxHistory>
         </rollingPolicy>

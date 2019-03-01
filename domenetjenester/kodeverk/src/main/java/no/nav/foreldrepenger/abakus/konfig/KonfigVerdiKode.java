@@ -10,8 +10,6 @@ import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkTabell;
-import no.nav.foreldrepenger.abakus.kodeverk.KonfigVerdiGruppe;
-import no.nav.foreldrepenger.abakus.kodeverk.KonfigVerdiType;
 
 /**
  * Unik kode som definerer gyldige konfigurerbare verdier.
@@ -22,14 +20,14 @@ public class KonfigVerdiKode extends KodeverkTabell {
 
     @ManyToOne
     @JoinColumnsOrFormulas({
-            @JoinColumnOrFormula(column = @JoinColumn(name = "konfig_gruppe", referencedColumnName = "kode", nullable = false, insertable = false, updatable = false)),
-            @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + KonfigVerdiGruppe.DISCRIMINATOR + "'"))})
+        @JoinColumnOrFormula(column = @JoinColumn(name = "konfig_gruppe", referencedColumnName = "kode", nullable = false, insertable = false, updatable = false)),
+        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + KonfigVerdiGruppe.DISCRIMINATOR + "'"))})
     private KonfigVerdiGruppe konfigVerdiGruppe = KonfigVerdiGruppe.INGEN_GRUPPE;
 
     @ManyToOne
     @JoinColumnsOrFormulas({
-            @JoinColumnOrFormula(column = @JoinColumn(name = "konfig_type", referencedColumnName = "kode", nullable = false, insertable = false, updatable = false)),
-            @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + KonfigVerdiType.DISCRIMINATOR + "'"))})
+        @JoinColumnOrFormula(column = @JoinColumn(name = "konfig_type", referencedColumnName = "kode", nullable = false, insertable = false, updatable = false)),
+        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + KonfigVerdiType.DISCRIMINATOR + "'"))})
     private KonfigVerdiType konfigVerdiType = KonfigVerdiType.STRING_TYPE;
 
     KonfigVerdiKode() {

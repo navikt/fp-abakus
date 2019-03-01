@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import no.nav.foreldrepenger.abakus.kodeverk.KonfigVerdiGruppe;
 import no.nav.vedtak.konfig.KonfigVerdi;
 import no.nav.vedtak.konfig.KonfigVerdi.Converter;
 import no.nav.vedtak.konfig.KonfigVerdiProvider;
