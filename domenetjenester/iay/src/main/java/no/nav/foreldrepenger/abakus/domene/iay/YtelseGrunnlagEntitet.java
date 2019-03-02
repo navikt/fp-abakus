@@ -32,7 +32,7 @@ import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.vedtak.felles.jpa.BaseEntitet;
 
 @Entity(name = "YtelseGrunnlagEntitet")
-@Table(name = "YTELSE_GRUNNLAG")
+@Table(name = "IAY_YTELSE_GRUNNLAG")
 public class YtelseGrunnlagEntitet extends BaseEntitet implements YtelseGrunnlag {
 
     @Id

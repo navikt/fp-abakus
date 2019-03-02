@@ -29,7 +29,7 @@ import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "Inntektspost")
-@Table(name = "INNTEKTSPOST")
+@Table(name = "IAY_INNTEKTSPOST")
 public class InntektspostEntitet extends BaseEntitet implements Inntektspost, IndexKey {
 
     @Id

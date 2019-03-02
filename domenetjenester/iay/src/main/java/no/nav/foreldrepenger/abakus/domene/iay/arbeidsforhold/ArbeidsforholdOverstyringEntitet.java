@@ -31,7 +31,7 @@ import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "ArbeidsforholdReferanse")
-@Table(name = "ARBEIDSFORHOLD")
+@Table(name = "IAY_ARBEIDSFORHOLD")
 public class ArbeidsforholdOverstyringEntitet extends BaseEntitet implements IndexKey {
 
     @Id

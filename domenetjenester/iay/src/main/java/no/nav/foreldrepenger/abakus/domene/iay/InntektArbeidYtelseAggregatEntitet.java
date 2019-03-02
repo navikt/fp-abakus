@@ -19,7 +19,7 @@ import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
 import no.nav.foreldrepenger.abakus.diff.ChangeTracked;
 
-@Table(name = "INNTEKT_ARBEID_YTELSER")
+@Table(name = "IAY_INNTEKT_ARBEID_YTELSER")
 @Entity(name = "InntektArbeidYtelser")
 public class InntektArbeidYtelseAggregatEntitet extends BaseEntitet implements InntektArbeidYtelseAggregat {
 

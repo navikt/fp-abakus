@@ -23,7 +23,7 @@ import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 
-@Table(name = "ANNEN_AKTIVITET")
+@Table(name = "IAY_ANNEN_AKTIVITET")
 @Entity(name = "AnnenAktivitet")
 public class AnnenAktivitetEntitet extends BaseEntitet implements AnnenAktivitet, IndexKey {
 

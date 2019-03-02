@@ -37,7 +37,7 @@ import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
 @Entity(name = "Inntektsmelding")
-@Table(name = "INNTEKTSMELDING")
+@Table(name = "IAY_INNTEKTSMELDING")
 public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmelding, IndexKey {
 
     @Id

@@ -40,8 +40,8 @@ public class IAYRegisterInnhentingESTjenesteImpl extends IAYRegisterInnhentingFe
     }
 
     @Override
-    public InntektArbeidYtelseAggregatBuilder innhentYtelserForInvolverteParter(Kobling behandling) {
-        return ytelseRegisterInnhenting.innhentYtelserForInvolverteParter(behandling, behandling.getOpplysningsperiode().tilIntervall(), false);
+    public boolean skalInnhenteYtelseGrunnlag(Kobling kobling) {
+        return false;
     }
 
 }

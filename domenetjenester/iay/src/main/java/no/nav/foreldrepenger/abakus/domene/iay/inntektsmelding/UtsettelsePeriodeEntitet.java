@@ -22,7 +22,7 @@ import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "UtsettelsePeriode")
-@Table(name = "UTSETTELSE_PERIODE")
+@Table(name = "IAY_UTSETTELSE_PERIODE")
 public class UtsettelsePeriodeEntitet extends BaseEntitet implements UtsettelsePeriode, IndexKey {
 
     @Id

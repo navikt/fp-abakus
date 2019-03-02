@@ -23,7 +23,7 @@ import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "Gradering")
-@Table(name = "GRADERING")
+@Table(name = "IAY_GRADERING")
 public class GraderingEntitet extends BaseEntitet implements Gradering, IndexKey {
 
     @Id

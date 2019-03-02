@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.threeten.extra.Interval;
 
-import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.domene.iay.AktørInntektEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektEntitet;
@@ -31,6 +30,8 @@ import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.SkatteOgAvgiftsregelType;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.OrganisasjonsNummerValidator;
+import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
+import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
@@ -40,7 +41,6 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.Virksom
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FrilansArbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
-import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
@@ -82,11 +82,7 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
     public InntektArbeidYtelseAggregatBuilder innhentOpptjeningForInnvolverteParter(Kobling behandling) {
         // For Søker
         InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(behandling.getId());
-        byggOpptjeningOpplysningene(behandling, behandling.getAktørId(), behandling.getOpplysningsperiode().tilIntervall(), inntektArbeidYtelseAggregatBuilder);
-
-        // For annen forelder
-        final Optional<AktørId> annenPartAktørId = behandling.getAnnenPartAktørId();
-        annenPartAktørId.ifPresent(a -> byggOpptjeningOpplysningene(behandling, a, behandling.getOpplysningsperiode().tilIntervall(), inntektArbeidYtelseAggregatBuilder));
+        innhentArbeidsforhold(behandling, inntektArbeidYtelseAggregatBuilder);
         return inntektArbeidYtelseAggregatBuilder;
     }
 
@@ -94,6 +90,10 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
     public InntektArbeidYtelseAggregatBuilder innhentInntekterFor(Kobling behandling, AktørId aktørId,
                                                                   InntektsKilde... kilder) {
         final InntektArbeidYtelseAggregatBuilder builder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(behandling.getId());
+        return innhentInntekterFor(behandling, aktørId, builder, kilder);
+    }
+
+    private InntektArbeidYtelseAggregatBuilder innhentInntekterFor(Kobling behandling, AktørId aktørId, InntektArbeidYtelseAggregatBuilder builder, InntektsKilde... kilder) {
         if (kilder.length == 0) {
             return builder;
         }
@@ -107,6 +107,38 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
             }
         }
         return builder;
+    }
+
+    private void innhentInntekter(Kobling kobling, InntektArbeidYtelseAggregatBuilder builder) {
+        innhentInntekterFor(kobling, kobling.getAktørId(), builder, InntektsKilde.INNTEKT_OPPTJENING);
+        final Optional<AktørId> annenPartAktørId = kobling.getAnnenPartAktørId();
+        annenPartAktørId.ifPresent(a -> innhentInntekterFor(kobling, a, builder, InntektsKilde.INNTEKT_OPPTJENING));
+    }
+
+    @Override
+    public InntektArbeidYtelseAggregatBuilder innhentRegisterdata(Kobling kobling) {
+        final InntektArbeidYtelseAggregatBuilder builder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(kobling.getId());
+        // Arbeidsforhold
+        innhentArbeidsforhold(kobling, builder);
+        // Inntekter
+        innhentInntekter(kobling, builder);
+        // Ytelser
+        innhentYtelser(kobling, builder);
+        return builder;
+    }
+
+    private void innhentYtelser(Kobling kobling, InntektArbeidYtelseAggregatBuilder builder) {
+        ytelseRegisterInnhenting.byggYtelser(kobling, kobling.getAktørId(), kobling.getOpplysningsperiode().tilIntervall(), builder, skalInnhenteYtelseGrunnlag(kobling));
+        final Optional<AktørId> annenPartAktørId = kobling.getAnnenPartAktørId();
+        annenPartAktørId.ifPresent(a -> ytelseRegisterInnhenting.byggYtelser(kobling, a, kobling.getOpplysningsperiode().tilIntervall(), builder, false));
+    }
+
+    private void innhentArbeidsforhold(Kobling kobling, InntektArbeidYtelseAggregatBuilder builder) {
+        byggOpptjeningOpplysningene(kobling, kobling.getAktørId(), kobling.getOpplysningsperiode().tilIntervall(), builder);
+
+        // For annen forelder
+        final Optional<AktørId> annenPartAktørId = kobling.getAnnenPartAktørId();
+        annenPartAktørId.ifPresent(a -> byggOpptjeningOpplysningene(kobling, a, kobling.getOpplysningsperiode().tilIntervall(), builder));
     }
 
     private void leggTilInntekter(AktørId aktørId, InntektArbeidYtelseAggregatBuilder builder, InntektsInformasjon inntektsInformasjon) {

@@ -22,7 +22,7 @@ import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
 
-@Table(name = "OPPGITT_FRILANS")
+@Table(name = "IAY_OPPGITT_FRILANS")
 @Entity(name = "Frilans")
 public class FrilansEntitet extends BaseEntitet implements Frilans {
 

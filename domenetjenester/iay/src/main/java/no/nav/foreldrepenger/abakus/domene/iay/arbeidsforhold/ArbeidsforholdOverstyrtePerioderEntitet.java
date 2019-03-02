@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
-@Table(name = "OVERSTYRTE_PERIODER")
+@Table(name = "IAY_OVERSTYRTE_PERIODER")
 @Entity(name = "ArbeidsforholdOverstyrtePerioder")
 public class ArbeidsforholdOverstyrtePerioderEntitet extends BaseEntitet implements ArbeidsforholdOverstyrtePerioder {
 

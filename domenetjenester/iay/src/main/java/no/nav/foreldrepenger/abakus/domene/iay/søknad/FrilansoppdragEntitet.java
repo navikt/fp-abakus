@@ -18,7 +18,7 @@ import no.nav.foreldrepenger.abakus.diff.IndexKey;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 
-@Table(name = "OPPGITT_FRILANSOPPDRAG")
+@Table(name = "IAY_OPPGITT_FRILANSOPPDRAG")
 @Entity(name = "Frilansoppdrag")
 public class FrilansoppdragEntitet extends BaseEntitet implements Frilansoppdrag, IndexKey {
 

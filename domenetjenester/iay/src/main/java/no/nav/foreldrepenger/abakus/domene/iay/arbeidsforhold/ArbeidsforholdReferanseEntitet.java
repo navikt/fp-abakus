@@ -21,7 +21,7 @@ import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.vedtak.felles.jpa.BaseEntitet;
 
 @Entity(name = "ArbeidsforholdReferanse")
-@Table(name = "ARBEIDSFORHOLD_REFER")
+@Table(name = "IAY_ARBEIDSFORHOLD_REFER")
 public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements IndexKey {
 
     @Id

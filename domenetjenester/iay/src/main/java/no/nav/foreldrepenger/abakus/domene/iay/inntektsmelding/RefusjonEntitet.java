@@ -20,7 +20,7 @@ import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.vedtak.felles.jpa.BaseEntitet;
 
 @Entity(name = "Refusjon")
-@Table(name = "REFUSJON")
+@Table(name = "IAY_REFUSJON")
 public class RefusjonEntitet extends BaseEntitet implements Refusjon {
 
     @Id

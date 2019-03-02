@@ -23,7 +23,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjenin
 import no.nav.foreldrepenger.abakus.diff.ChangeTracked;
 
 @Entity(name = "OppgittOpptjening")
-@Table(name = "OPPGITT_OPPTJENING")
+@Table(name = "IAY_OPPGITT_OPPTJENING")
 public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOpptjening {
 
     @Id

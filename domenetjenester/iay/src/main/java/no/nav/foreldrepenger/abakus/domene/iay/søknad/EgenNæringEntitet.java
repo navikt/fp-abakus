@@ -30,7 +30,7 @@ import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 
-@Table(name = "EGEN_NAERING")
+@Table(name = "IAY_EGEN_NAERING")
 @Entity(name = "EgenNæring")
 public class EgenNæringEntitet extends BaseEntitet implements EgenNæring, IndexKey {
 

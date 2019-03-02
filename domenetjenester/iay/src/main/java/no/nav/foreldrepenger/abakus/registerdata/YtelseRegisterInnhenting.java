@@ -51,7 +51,7 @@ public class YtelseRegisterInnhenting {
         return inntektArbeidYtelseAggregatBuilder;
     }
 
-    private void byggYtelser(Kobling behandling, AktørId aktørId, Interval opplysningsPeriode,
+    void byggYtelser(Kobling behandling, AktørId aktørId, Interval opplysningsPeriode,
                              InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder, boolean medGrunnlag) {
         List<InfotrygdSakOgGrunnlag> sammenstilt = innhentingSamletTjeneste.getSammenstiltSakOgGrunnlag(behandling, aktørId, opplysningsPeriode, medGrunnlag);
 

@@ -37,7 +37,7 @@ import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
 @Entity(name = "InntektArbeidGrunnlag")
-@Table(name = "GR_ARBEID_INNTEKT")
+@Table(name = "IAY_GR_ARBEID_INNTEKT")
 public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements InntektArbeidYtelseGrunnlag {
 
     @Id

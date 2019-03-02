@@ -13,6 +13,8 @@ public interface IAYRegisterInnhentingTjeneste {
 
     boolean skalInnhenteNæringsInntekterFor(Kobling behandling);
 
-    InntektArbeidYtelseAggregatBuilder innhentYtelserForInvolverteParter(Kobling behandling);
+    boolean skalInnhenteYtelseGrunnlag(Kobling kobling);
+
+    InntektArbeidYtelseAggregatBuilder innhentRegisterdata(Kobling kobling);
 
 }

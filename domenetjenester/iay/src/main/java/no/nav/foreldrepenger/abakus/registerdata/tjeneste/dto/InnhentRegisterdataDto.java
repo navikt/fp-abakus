@@ -4,6 +4,7 @@ import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 
 public class InnhentRegisterdataDto implements AbacDto {
+
     private String referanse;
     private Aktør aktørId;
     private Aktør annenPartAktørId;

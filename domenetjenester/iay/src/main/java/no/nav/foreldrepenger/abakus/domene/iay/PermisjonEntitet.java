@@ -27,7 +27,7 @@ import no.nav.foreldrepenger.abakus.diff.IndexKey;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "Permisjon")
-@Table(name = "PERMISJON")
+@Table(name = "IAY_PERMISJON")
 public class PermisjonEntitet extends BaseEntitet implements Permisjon, IndexKey {
 
     @Id

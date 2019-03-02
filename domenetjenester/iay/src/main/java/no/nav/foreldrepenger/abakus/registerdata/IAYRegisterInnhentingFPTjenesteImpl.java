@@ -39,8 +39,8 @@ public class IAYRegisterInnhentingFPTjenesteImpl extends IAYRegisterInnhentingFe
     }
 
     @Override
-    public InntektArbeidYtelseAggregatBuilder innhentYtelserForInvolverteParter(Kobling behandling) {
-        return ytelseRegisterInnhenting.innhentYtelserForInvolverteParter(behandling, behandling.getOpplysningsperiode().tilIntervall(), true);
+    public boolean skalInnhenteYtelseGrunnlag(Kobling kobling) {
+        return true;
     }
 
 }

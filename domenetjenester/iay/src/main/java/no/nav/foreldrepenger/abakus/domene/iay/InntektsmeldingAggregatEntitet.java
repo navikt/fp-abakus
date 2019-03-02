@@ -27,7 +27,7 @@ import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.vedtak.felles.jpa.BaseEntitet;
 
 @Entity(name = "Inntektsmeldinger")
-@Table(name = "INNTEKTSMELDINGER")
+@Table(name = "IAY_INNTEKTSMELDINGER")
 public class InntektsmeldingAggregatEntitet extends BaseEntitet implements InntektsmeldingAggregat {
 
     private static final Logger logger = LoggerFactory.getLogger(InntektsmeldingAggregatEntitet.class);

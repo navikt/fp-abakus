@@ -25,7 +25,7 @@ import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.vedtak.felles.jpa.BaseEntitet;
 
-@Table(name = "INFORMASJON")
+@Table(name = "IAY_INFORMASJON")
 @Entity(name = "ArbeidsforholdInformasjon")
 public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements ArbeidsforholdInformasjon {
 

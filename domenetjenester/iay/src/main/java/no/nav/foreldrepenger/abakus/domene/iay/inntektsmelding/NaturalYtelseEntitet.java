@@ -27,7 +27,7 @@ import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "NaturalYtelse")
-@Table(name = "NATURAL_YTELSE")
+@Table(name = "IAY_NATURAL_YTELSE")
 public class NaturalYtelseEntitet extends BaseEntitet implements NaturalYtelse, IndexKey {
 
     @Id

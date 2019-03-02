@@ -32,7 +32,7 @@ import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
-@Table(name = "AKTOER_YTELSE")
+@Table(name = "IAY_AKTOER_YTELSE")
 @Entity(name = "AktørYtelse")
 public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, IndexKey {
 

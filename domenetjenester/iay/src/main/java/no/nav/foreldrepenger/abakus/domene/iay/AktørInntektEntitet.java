@@ -32,7 +32,7 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.vedtak.felles.jpa.BaseEntitet;
 
-@Table(name = "AKTOER_INNTEKT")
+@Table(name = "IAY_AKTOER_INNTEKT")
 @Entity(name = "AktørInntekt")
 public class AktørInntektEntitet extends BaseEntitet implements AktørInntekt, IndexKey {
 
@@ -52,7 +52,7 @@ public class AktørInntektEntitet extends BaseEntitet implements AktørInntekt, 
     @ChangeTracked
     private Set<InntektEntitet> inntekt = new LinkedHashSet<>();
 
-    public AktørInntektEntitet() {
+    AktørInntektEntitet() {
         //hibernate
     }
 

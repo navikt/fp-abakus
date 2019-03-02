@@ -37,7 +37,7 @@ import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
  * OBS: Legger man til nye felter så skal dette oppdateres mange steder:
  * builder, equals, hashcode etc.
  */
-@Table(name = "OPPGITT_ARBEIDSFORHOLD")
+@Table(name = "IAY_OPPGITT_ARBEIDSFORHOLD")
 @Entity(name = "OppgittArbeidsforhold")
 public class OppgittArbeidsforholdEntitet extends BaseEntitet implements OppgittArbeidsforhold, IndexKey {
 

@@ -60,7 +60,7 @@ public class InnhentRegisterdataTjeneste {
         koblingTjeneste.lagre(kobling);
 
         // Trigg innhenting
-        InntektArbeidYtelseAggregatBuilder builder = registerInnhentingTjeneste.innhentOpptjeningForInnvolverteParter(kobling);
+        InntektArbeidYtelseAggregatBuilder builder = registerInnhentingTjeneste.innhentRegisterdata(kobling);
         iayTjeneste.lagre(kobling.getId(), builder);
     }
 }

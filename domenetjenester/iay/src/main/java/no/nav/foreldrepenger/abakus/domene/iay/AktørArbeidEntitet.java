@@ -34,7 +34,7 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.vedtak.felles.jpa.BaseEntitet;
 
-@Table(name = "AKTOER_ARBEID")
+@Table(name = "IAY_AKTOER_ARBEID")
 @Entity(name = "AktørArbeid")
 public class AktørArbeidEntitet extends BaseEntitet implements AktørArbeid, IndexKey {
 

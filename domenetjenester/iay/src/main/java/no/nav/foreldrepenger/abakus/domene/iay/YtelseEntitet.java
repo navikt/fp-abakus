@@ -40,7 +40,7 @@ import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "YtelseEntitet")
-@Table(name = "RELATERT_YTELSE")
+@Table(name = "IAY_RELATERT_YTELSE")
 public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
 
     @Id

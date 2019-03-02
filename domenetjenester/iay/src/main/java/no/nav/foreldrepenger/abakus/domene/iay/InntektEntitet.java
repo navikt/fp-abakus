@@ -33,7 +33,7 @@ import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.vedtak.felles.jpa.BaseEntitet;
 
 @Entity(name = "Inntekt")
-@Table(name = "INNTEKT")
+@Table(name = "IAY_INNTEKT")
 public class InntektEntitet extends BaseEntitet implements Inntekt, IndexKey {
 
     @Id

@@ -27,7 +27,7 @@ import no.nav.foreldrepenger.abakus.domene.virksomhet.VirksomhetEntitet;
 import no.nav.vedtak.felles.jpa.BaseEntitet;
 
 @Entity(name = "YtelseStørrelseEntitet")
-@Table(name = "YTELSE_STOERRELSE")
+@Table(name = "IAY_YTELSE_STOERRELSE")
 public class YtelseStørrelseEntitet extends BaseEntitet implements YtelseStørrelse, IndexKey {
 
     @Id
