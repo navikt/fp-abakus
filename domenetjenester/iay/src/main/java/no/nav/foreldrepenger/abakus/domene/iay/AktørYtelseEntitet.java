@@ -23,13 +23,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import no.nav.foreldrepenger.abakus.behandling.Fagsystem;
-import no.nav.foreldrepenger.abakus.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Table(name = "IAY_AKTOER_YTELSE")
@@ -92,7 +92,7 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
     }
 
     boolean hasValues() {
-        return aktørId != null || ytelser != null && !ytelser.isEmpty();
+        return ytelser != null && !ytelser.isEmpty();
     }
 
     YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, RelatertYtelseType type, Saksnummer saksnummer) {

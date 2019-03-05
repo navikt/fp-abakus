@@ -11,9 +11,9 @@ import javax.persistence.TypedQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.diff.DiffEntity;
-import no.nav.foreldrepenger.abakus.diff.DiffResult;
-import no.nav.foreldrepenger.abakus.diff.TraverseEntityGraph;
+import no.nav.foreldrepenger.abakus.felles.diff.DiffEntity;
+import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
+import no.nav.foreldrepenger.abakus.felles.diff.TraverseEntityGraph;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kodeverk.Kodeliste;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkTabell;

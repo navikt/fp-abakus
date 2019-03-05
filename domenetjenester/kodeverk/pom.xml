@@ -23,6 +23,10 @@
             <groupId>no.nav.foreldrepenger.felles</groupId>
             <artifactId>felles-util</artifactId>
         </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.abakus</groupId>
+            <artifactId>felles</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

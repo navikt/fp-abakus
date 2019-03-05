@@ -1,10 +1,9 @@
-package no.nav.foreldrepenger.abakus.kodeverk;
+package no.nav.foreldrepenger.abakus.felles.diff;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import no.nav.foreldrepenger.abakus.diff.IndexKey;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 /**
@@ -17,9 +16,7 @@ final class IndexKeyComposer {
         // hidden
     }
 
-    /**
-     * Hjelpe metode for å effektivt generere keys.
-     */
+    /** Hjelpe metode for å effektivt generere keys. */
     static String createKey(Object... keyParts) {
         StringBuilder sb = new StringBuilder(keyParts.length * 10);
         int max = keyParts.length;

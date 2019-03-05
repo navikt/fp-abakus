@@ -34,8 +34,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import no.nav.foreldrepenger.abakus.diff.DiffIgnore;
-import no.nav.foreldrepenger.abakus.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.vedtak.util.StringUtils;
 
 /**

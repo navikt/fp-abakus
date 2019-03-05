@@ -9,7 +9,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
-import no.nav.foreldrepenger.abakus.diff.DiffIgnore;
+import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.vedtak.sikkerhet.context.SubjectHandler;
 import no.nav.vedtak.util.FPDateUtil;
 

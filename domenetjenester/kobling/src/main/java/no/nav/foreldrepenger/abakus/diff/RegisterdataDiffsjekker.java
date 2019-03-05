@@ -5,6 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import no.nav.foreldrepenger.abakus.felles.diff.DiffEntity;
+import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
+import no.nav.foreldrepenger.abakus.felles.diff.Node;
+import no.nav.foreldrepenger.abakus.felles.diff.Pair;
+import no.nav.foreldrepenger.abakus.felles.diff.TraverseEntityGraph;
+
 public class RegisterdataDiffsjekker {
     private DiffEntity diffEntity;
     private TraverseEntityGraph traverseEntityGraph;

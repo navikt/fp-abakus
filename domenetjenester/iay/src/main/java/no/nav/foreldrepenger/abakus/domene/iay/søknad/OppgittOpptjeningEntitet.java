@@ -14,13 +14,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.AnnenAktivitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.EgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.Frilans;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
-import no.nav.foreldrepenger.abakus.diff.ChangeTracked;
+import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
+import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 
 @Entity(name = "OppgittOpptjening")
 @Table(name = "IAY_OPPGITT_OPPTJENING")

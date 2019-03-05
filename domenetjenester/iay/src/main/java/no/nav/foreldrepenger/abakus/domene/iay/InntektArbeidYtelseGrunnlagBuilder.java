@@ -7,9 +7,9 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInfo
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
+import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.vedtak.util.Tuple;
 
 public class InntektArbeidYtelseGrunnlagBuilder {
@@ -113,7 +113,7 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         return oppdatert;
     }
 
-    public InntektArbeidYtelseGrunnlagBuilder medData(InntektArbeidYtelseAggregatBuilder builder) {
+    InntektArbeidYtelseGrunnlagBuilder medData(InntektArbeidYtelseAggregatBuilder builder) {
         VersjonType versjon = builder.getVersjon();
 
         if (versjon == VersjonType.REGISTER) {

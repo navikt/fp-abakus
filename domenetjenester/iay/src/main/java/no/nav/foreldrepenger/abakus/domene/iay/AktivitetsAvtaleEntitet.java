@@ -17,11 +17,11 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
-import no.nav.foreldrepenger.abakus.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.AntallTimer;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 import no.nav.vedtak.konfig.Tid;
 

@@ -13,9 +13,9 @@ import javax.persistence.Embeddable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.diff.IndexKey;
-import no.nav.foreldrepenger.abakus.diff.TraverseValue;
+import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.TraverseValue;
 
 /**
  * Stillingsprosent slik det er oppgitt i arbeidsavtalen
@@ -47,6 +47,16 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
     // Beleilig å kunne opprette gjennom string
     public Stillingsprosent(String verdi) {
         this(new BigDecimal(verdi));
+    }
+
+    private static void validerRange(BigDecimal verdi) {
+        if (verdi == null) {
+            return;
+        } else if (verdi.compareTo(BigDecimal.valueOf(100)) > 0) {
+            log.info("[IAY] Prosent (yrkesaktivitet, permisjon) kan ikke være større enn 100. Verdi fra AA-reg: {}", verdi);
+        }
+        check(verdi.compareTo(BigDecimal.ZERO) >= 0, "Prosent må være >= 0"); //$NON-NLS-1$
+        check(verdi.compareTo(BigDecimal.valueOf(500)) <= 0, "Prosent må være <= 500"); //$NON-NLS-1$
     }
 
     @Override
@@ -84,16 +94,6 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
             "verdi=" + verdi +
             ", skalertVerdi=" + skalertVerdi() +
             '}';
-    }
-
-    private static void validerRange(BigDecimal verdi) {
-        if (verdi == null) {
-            return;
-        } else if (verdi.compareTo(BigDecimal.valueOf(100)) > 0) {
-            log.info("[IAY] Prosent (yrkesaktivitet, permisjon) kan ikke være større enn 100. Verdi fra AA-reg: {}", verdi);
-        }
-        check(verdi.compareTo(BigDecimal.ZERO) >= 0, "Prosent må være >= 0"); //$NON-NLS-1$
-        check(verdi.compareTo(BigDecimal.valueOf(500)) <= 0, "Prosent må være <= 500"); //$NON-NLS-1$
     }
 
     private BigDecimal fiksNegativTilAbsolutt(BigDecimal verdi) {

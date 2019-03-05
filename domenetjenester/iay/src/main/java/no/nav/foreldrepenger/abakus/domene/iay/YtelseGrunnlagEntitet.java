@@ -26,10 +26,10 @@ import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
-import no.nav.foreldrepenger.abakus.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.Arbeidskategori;
+import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
+import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-import no.nav.vedtak.felles.jpa.BaseEntitet;
 
 @Entity(name = "YtelseGrunnlagEntitet")
 @Table(name = "IAY_YTELSE_GRUNNLAG")

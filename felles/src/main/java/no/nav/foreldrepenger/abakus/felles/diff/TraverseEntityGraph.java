@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.diff;
+package no.nav.foreldrepenger.abakus.felles.diff;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;

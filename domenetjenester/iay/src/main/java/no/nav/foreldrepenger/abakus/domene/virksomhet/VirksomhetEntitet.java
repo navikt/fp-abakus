@@ -18,9 +18,9 @@ import javax.persistence.Version;
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinFormula;
 
-import no.nav.vedtak.felles.jpa.BaseEntitet;
-import no.nav.foreldrepenger.abakus.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.vedtak.util.FPDateUtil;
 
 @Entity(name = "Virksomhet")

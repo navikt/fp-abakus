@@ -6,7 +6,7 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import no.nav.foreldrepenger.abakus.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 
 /**
  * Arbeidsforhold id fra AA-registeret. (ikke intern id)

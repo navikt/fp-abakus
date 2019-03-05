@@ -29,14 +29,14 @@ import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
 import no.nav.foreldrepenger.abakus.behandling.Fagsystem;
-import no.nav.foreldrepenger.abakus.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.FagsystemUnderkategori;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTilstand;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "YtelseEntitet")

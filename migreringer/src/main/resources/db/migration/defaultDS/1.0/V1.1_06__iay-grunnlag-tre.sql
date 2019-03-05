@@ -1044,6 +1044,7 @@ create table GR_ARBEID_INNTEKT
 (
   ID                    bigint                              not null,
   BEHANDLING_ID         bigint                              not null,
+  referanse_id          varchar(50)                         not null,
   REGISTER_ID           bigint,
   SAKSBEHANDLET_ID      bigint,
   VERSJON               bigint       default 0              not null,
@@ -1068,12 +1069,15 @@ create table GR_ARBEID_INNTEKT
   constraint FK_GR_ARBEID_INNTEKT_5
     foreign key (SAKSBEHANDLET_ID) references IAY_INNTEKT_ARBEID_YTELSER,
   constraint FK_GR_ARBEID_INNTEKT_6
-    foreign key (INFORMASJON_ID) references IAY_INFORMASJON
+    foreign key (INFORMASJON_ID) references IAY_INFORMASJON,
+  constraint UIDX_GR_ARBEID_INNTEKT_3
+    unique (referanse_id)
 );
 
 comment on table gr_ARBEID_INNTEKT is 'Behandlingsgrunnlag for arbeid, inntekt og ytelser (aggregat)';
 comment on column gr_ARBEID_INNTEKT.ID is 'Primary Key';
 comment on column gr_ARBEID_INNTEKT.BEHANDLING_ID is 'FK: BEHANDLING Fremmednøkkel for kobling til behandling';
+comment on column gr_ARBEID_INNTEKT.referanse_id is 'Unik referanse til grunnlaget, returneres til systemet som etterspør informasjonen.';
 comment on column gr_ARBEID_INNTEKT.REGISTER_ID is 'Arbeid inntekt register før skjæringstidspunkt';
 comment on column gr_ARBEID_INNTEKT.SAKSBEHANDLET_ID is 'Arbeid inntekt saksbehandlet før skjæringstidspunkt';
 comment on column gr_ARBEID_INNTEKT.INNTEKTSMELDINGER_ID is 'FK: Fremmednøkkel for kobling til inntektsmeldinger';
@@ -1096,6 +1100,9 @@ create index IDX_GR_ARBEID_INNTEKT_5
 
 create index IDX_GR_ARBEID_INNTEKT_6
   on gr_ARBEID_INNTEKT (INFORMASJON_ID);
+
+create index IDX_GR_ARBEID_INNTEKT_7
+  on gr_ARBEID_INNTEKT (referanse_id);
 
 alter table GR_ARBEID_INNTEKT
   add constraint CHK_AKTIV2

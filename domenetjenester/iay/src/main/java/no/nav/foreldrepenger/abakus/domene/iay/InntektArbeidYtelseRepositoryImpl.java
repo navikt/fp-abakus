@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -17,12 +18,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.behandling.Fagsystem;
-import no.nav.foreldrepenger.abakus.diff.DiffEntity;
-import no.nav.foreldrepenger.abakus.diff.DiffResult;
 import no.nav.foreldrepenger.abakus.diff.RegisterdataDiffsjekker;
-import no.nav.foreldrepenger.abakus.diff.TraverseEntityGraph;
 import no.nav.foreldrepenger.abakus.diff.TraverseEntityGraphFactory;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
@@ -43,6 +40,10 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.EgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.Frilansoppdrag;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
+import no.nav.foreldrepenger.abakus.felles.diff.DiffEntity;
+import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
+import no.nav.foreldrepenger.abakus.felles.diff.TraverseEntityGraph;
+import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
@@ -342,6 +343,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
 
     private void lagreGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, Long behandlingId) {
         ((InntektArbeidYtelseGrunnlagEntitet) nyttGrunnlag).setBehandling(behandlingId);
+        ((InntektArbeidYtelseGrunnlagEntitet) nyttGrunnlag).setReferanse(UUID.randomUUID());
 
         nyttGrunnlag.getOppgittOpptjening().ifPresent(this::lagreOppgittOpptjening);
 

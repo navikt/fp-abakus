@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.diff;
+package no.nav.foreldrepenger.abakus.felles.diff;
 
 import java.util.Collections;
 import java.util.HashMap;

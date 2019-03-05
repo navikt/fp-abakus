@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import no.nav.foreldrepenger.abakus.diff.DiffIgnore;
+import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 
 @Entity
 @Table(name = "KODELISTE_NAVN_I18N")

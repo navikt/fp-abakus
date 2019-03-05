@@ -10,6 +10,7 @@
     <version>${revision}${sha1}${changelist}</version>
 
     <modules>
+        <module>felles</module>
         <module>migreringer</module>
         <module>web</module>
         <module>domenetjenester</module>
@@ -66,6 +67,11 @@
     over arv) da de overstyrer andre scope definisjoner. Sett det heller der det brukes. -->
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.abakus</groupId>
+                <artifactId>felles</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>no.nav.foreldrepenger.abakus</groupId>
                 <artifactId>kodeverk</artifactId>

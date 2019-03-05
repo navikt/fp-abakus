@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.diff;
+package no.nav.foreldrepenger.abakus.felles.diff;
 
 /**
  * Typisk utvikling exception når deler av grafen ikke kan initialiseres (eks. hibernate LazyInitializationException)

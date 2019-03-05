@@ -12,8 +12,8 @@ import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
 import no.nav.foreldrepenger.abakus.Landkoder;
-import no.nav.foreldrepenger.abakus.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.UtenlandskVirksomhet;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 
 /**
  * Hibernate entitet som modellerer en utenlandsk virksomhet.

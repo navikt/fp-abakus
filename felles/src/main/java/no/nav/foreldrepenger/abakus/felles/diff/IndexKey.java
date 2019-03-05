@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.diff;
+package no.nav.foreldrepenger.abakus.felles.diff;
 
 /**
  * Bruk for å hente et key for et innslag i en collection (hvis ikke vil key ved diff være basert på index, noe

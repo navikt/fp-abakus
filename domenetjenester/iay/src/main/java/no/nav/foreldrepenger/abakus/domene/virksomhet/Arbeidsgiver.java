@@ -11,12 +11,13 @@ import javax.persistence.Embedded;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import no.nav.foreldrepenger.abakus.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.TraverseValue;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.diff.ChangeTracked;
 
 @Embeddable
-public class Arbeidsgiver implements IndexKey, Serializable {
+public class Arbeidsgiver implements IndexKey, Serializable, TraverseValue {
     /**
      * Kun en av denne og {@link #arbeidsgiverAktørId} kan være satt. Sett denne hvis Arbeidsgiver er en Organisasjon.
      */
@@ -91,10 +92,12 @@ public class Arbeidsgiver implements IndexKey, Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || !(o instanceof Arbeidsgiver)) {
             return false;
+        }
         Arbeidsgiver that = (Arbeidsgiver) o;
         return Objects.equals(virksomhet, that.virksomhet) &&
             Objects.equals(arbeidsgiverAktørId, that.arbeidsgiverAktørId);

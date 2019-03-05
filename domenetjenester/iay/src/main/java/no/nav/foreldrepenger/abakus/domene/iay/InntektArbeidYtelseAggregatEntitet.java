@@ -15,9 +15,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
-import no.nav.foreldrepenger.abakus.diff.ChangeTracked;
+import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
+import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 
 @Table(name = "IAY_INNTEKT_ARBEID_YTELSER")
 @Entity(name = "InntektArbeidYtelser")

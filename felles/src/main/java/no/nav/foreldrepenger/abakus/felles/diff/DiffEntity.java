@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.diff;
+package no.nav.foreldrepenger.abakus.felles.diff;
 
 public class DiffEntity {
 

@@ -4,6 +4,7 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -12,17 +13,15 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.codahale.metrics.annotation.Timed;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import no.nav.foreldrepenger.abakus.FagsakYtelseTypeRef;
-import no.nav.foreldrepenger.abakus.kobling.Kobling;
-import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
-import no.nav.foreldrepenger.abakus.registerdata.IAYRegisterInnhentingTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.InnhentRegisterdataDto;
+import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.ReferanseDto;
 import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 
@@ -49,8 +48,12 @@ public class RegistedataRestTjeneste {
     @ApiOperation(value = "Trigger registerinnhenting for en gitt id")
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public void innhentRegisterdata(@ApiParam("innhent") @Valid InnhentRegisterdataDto dto) {
-        innhentTjeneste.innhent(dto);
+    public Response innhentRegisterdata(@ApiParam("innhent") @Valid InnhentRegisterdataDto dto) {
+        Optional<UUID> innhent = innhentTjeneste.innhent(dto);
+        if (innhent.isPresent()) {
+            return Response.ok(new ReferanseDto(innhent.get().toString())).build();
+        }
+        return Response.noContent().build();
     }
 
 }

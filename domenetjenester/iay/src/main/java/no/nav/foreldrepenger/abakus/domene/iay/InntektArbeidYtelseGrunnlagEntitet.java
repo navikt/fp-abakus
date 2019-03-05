@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
@@ -21,31 +22,38 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 
-import no.nav.foreldrepenger.abakus.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType;
+import org.hibernate.annotations.Type;
+
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingSomIkkeKommer;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
-import no.nav.vedtak.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
+import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
+import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
 @Entity(name = "InntektArbeidGrunnlag")
-@Table(name = "IAY_GR_ARBEID_INNTEKT")
+@Table(name = "GR_ARBEID_INNTEKT")
 public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements InntektArbeidYtelseGrunnlag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GR_ARBEID_INNTEKT")
     private Long id;
 
+    @DiffIgnore
     @Column(name = "behandling_id", nullable = false, updatable = false, unique = true)
     private Long behandlingId;
+
+    @DiffIgnore
+    @Column(name = "referanse_id", nullable = false, updatable = false, unique = true)
+    @Type(type = "uuid-char")
+    private UUID referanseId;
 
     @OneToOne
     @JoinColumn(name = "register_id", updatable = false, unique = true)
@@ -81,9 +89,11 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
     private long versjon;
 
     InntektArbeidYtelseGrunnlagEntitet() {
+        this.referanseId = UUID.randomUUID();
     }
 
     InntektArbeidYtelseGrunnlagEntitet(InntektArbeidYtelseGrunnlag grunnlag) {
+        super();
         // NB! skal aldri lage ny versjon av oppgitt opptjening!
         grunnlag.getOppgittOpptjening().ifPresent(kopiAvOppgittOpptjening -> this.setOppgittOpptjening((OppgittOpptjeningEntitet) kopiAvOppgittOpptjening));
         ((InntektArbeidYtelseGrunnlagEntitet) grunnlag).getRegisterVersjon().ifPresent(nyRegisterVerson -> this.setRegister((InntektArbeidYtelseAggregatEntitet) nyRegisterVerson));
@@ -96,6 +106,11 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
     @Override
     public Long getBehandlingId() {
         return behandlingId;
+    }
+
+    @Override
+    public UUID getReferanse() {
+        return referanseId;
     }
 
     @Override
@@ -297,5 +312,9 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
     @Override
     public int hashCode() {
         return Objects.hash(register, saksbehandlet);
+    }
+
+    void setReferanse(UUID referanseId) {
+        this.referanseId = referanseId;
     }
 }

@@ -36,6 +36,10 @@
         </dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.abakus</groupId>
+            <artifactId>felles</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.abakus</groupId>
             <artifactId>iay</artifactId>
         </dependency>
         <dependency>

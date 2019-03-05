@@ -118,10 +118,8 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
     @Override
     public InntektArbeidYtelseAggregatBuilder innhentRegisterdata(Kobling kobling) {
         final InntektArbeidYtelseAggregatBuilder builder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(kobling.getId());
-        // Arbeidsforhold
+        // Arbeidsforhold & inntekter
         innhentArbeidsforhold(kobling, builder);
-        // Inntekter
-        innhentInntekter(kobling, builder);
         // Ytelser
         innhentYtelser(kobling, builder);
         return builder;
