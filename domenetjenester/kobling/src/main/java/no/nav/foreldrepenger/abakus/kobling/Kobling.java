@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -50,6 +51,10 @@ public class Kobling implements IndexKey {
         @AttributeOverride(name = "tomDato", column = @Column(name = "opptjening_periode_tom"))
     })
     private DatoIntervallEntitet opptjeningsperiode;
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     public Kobling() {
     }

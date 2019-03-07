@@ -89,7 +89,6 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
     private long versjon;
 
     InntektArbeidYtelseGrunnlagEntitet() {
-        this.referanseId = UUID.randomUUID();
     }
 
     InntektArbeidYtelseGrunnlagEntitet(InntektArbeidYtelseGrunnlag grunnlag) {
@@ -111,6 +110,10 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
     @Override
     public UUID getReferanse() {
         return referanseId;
+    }
+
+    void setReferanse(UUID referanseId) {
+        this.referanseId = referanseId;
     }
 
     @Override
@@ -312,9 +315,5 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
     @Override
     public int hashCode() {
         return Objects.hash(register, saksbehandlet);
-    }
-
-    void setReferanse(UUID referanseId) {
-        this.referanseId = referanseId;
     }
 }
