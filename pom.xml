@@ -11,6 +11,7 @@
 
     <modules>
         <module>felles</module>
+        <module>prosesstask</module>
         <module>migreringer</module>
         <module>web</module>
         <module>domenetjenester</module>
@@ -26,7 +27,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <felles.version>1.0.0_20190257165509_e02f531</felles.version>
+        <felles.version>1.1.0_20190367122607_88856bc</felles.version>
         <metrics.version>3.2.5</metrics.version>
 
         <abac-attribute-constants.version>2.0.0</abac-attribute-constants.version>
@@ -54,7 +55,7 @@
         <swagger.version>1.5.17</swagger.version>
         <swagger.spec-parser.version>1.0.28</swagger.spec-parser.version>
         <swagger2markup.version>1.1.2</swagger2markup.version>
-        <cxf.version>3.2.6</cxf.version>
+        <cxf.version>3.3.1</cxf.version>
         <prometheus.version>0.0.23</prometheus.version>
     </properties>
 
@@ -89,6 +90,11 @@
             </dependency>
             <dependency>
                 <groupId>no.nav.foreldrepenger.abakus</groupId>
+                <artifactId>prosesstask</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.abakus</groupId>
                 <artifactId>migreringer</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -113,6 +119,13 @@
             <dependency>
                 <groupId>no.nav.foreldrepenger.felles</groupId>
                 <artifactId>felles</artifactId>
+                <version>${felles.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.felles</groupId>
+                <artifactId>felles-bom</artifactId>
                 <version>${felles.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
