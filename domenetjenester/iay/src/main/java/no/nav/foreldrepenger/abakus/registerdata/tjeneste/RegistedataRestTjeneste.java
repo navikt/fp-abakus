@@ -15,8 +15,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.codahale.metrics.annotation.Timed;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -42,7 +40,6 @@ public class RegistedataRestTjeneste {
     }
 
     @POST
-    @Timed
     @Path("/innhent")
     @Consumes(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Trigger registerinnhenting for en gitt id")

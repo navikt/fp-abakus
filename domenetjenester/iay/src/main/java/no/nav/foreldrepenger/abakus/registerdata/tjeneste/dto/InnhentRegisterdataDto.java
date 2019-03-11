@@ -1,24 +1,34 @@
 package no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 
 public class InnhentRegisterdataDto implements AbacDto {
 
-    private String referanse;
+    @Valid
+    @NotNull
+    private ReferanseDto referanse;
+    @Valid
     private Aktør aktørId;
+    @Valid
     private Aktør annenPartAktørId;
+    @NotNull
+    @Valid
     private PeriodeDto opplysningsperiode;
+    @Valid
     private PeriodeDto opptjeningsperiode;
 
     public InnhentRegisterdataDto() {
     }
 
     public String getReferanse() {
-        return referanse;
+        return referanse.getReferanse();
     }
 
-    public void setReferanse(String referanse) {
+    public void setReferanse(ReferanseDto referanse) {
         this.referanse = referanse;
     }
 
@@ -56,6 +66,10 @@ public class InnhentRegisterdataDto implements AbacDto {
 
     @Override
     public AbacDataAttributter abacAttributter() {
-        return AbacDataAttributter.opprett().leggTilAktørId(aktørId.getId());
+        AbacDataAttributter opprett = AbacDataAttributter.opprett();
+        if (annenPartAktørId != null) {
+            opprett.leggTil(annenPartAktørId.abacAttributter());
+        }
+        return opprett.leggTil(aktørId.abacAttributter());
     }
 }

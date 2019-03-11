@@ -1,9 +1,12 @@
-package no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto;
+package no.nav.foreldrepenger.abakus.iay.tjeneste.dto;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-public class ReferanseDto {
+import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
+import no.nav.vedtak.sikkerhet.abac.AbacDto;
+
+public class ReferanseDto implements AbacDto {
 
     @NotNull
     @Pattern(regexp = "[-|\\w|\\d]*")
@@ -22,5 +25,10 @@ public class ReferanseDto {
 
     public void setReferanse(String referanse) {
         this.referanse = referanse;
+    }
+
+    @Override
+    public AbacDataAttributter abacAttributter() {
+        return AbacDataAttributter.opprett();
     }
 }

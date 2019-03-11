@@ -2,9 +2,13 @@ package no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto;
 
 import java.time.LocalDate;
 
+import javax.validation.constraints.NotNull;
+
 public class PeriodeDto {
 
+    @NotNull
     private LocalDate fom;
+    @NotNull
     private LocalDate tom;
 
     public PeriodeDto() {
