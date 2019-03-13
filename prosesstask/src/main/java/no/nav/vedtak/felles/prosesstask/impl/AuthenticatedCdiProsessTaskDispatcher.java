@@ -24,11 +24,8 @@ public class AuthenticatedCdiProsessTaskDispatcher extends BasicCdiProsessTaskDi
     @Override
     public void dispatch(ProsessTaskData task) {
         try (ProsessTaskHandlerRef prosessTaskHandler = findHandler(task)) {
-            if (task.getFagsakId() != null) {
-                LOG_CONTEXT.add("fagsak", task.getFagsakId()); // NOSONAR //$NON-NLS-1$
-            }
-            if (task.getBehandlingId() != null) {
-                LOG_CONTEXT.add("behandling", task.getBehandlingId()); // NOSONAR //$NON-NLS-1$
+            if (task.getKoblingId() != null) {
+                LOG_CONTEXT.add("behandling", task.getKoblingId()); // NOSONAR //$NON-NLS-1$
             }
 
             prosessTaskHandler.doTask(task);
@@ -46,11 +43,7 @@ public class AuthenticatedCdiProsessTaskDispatcher extends BasicCdiProsessTaskDi
         if (aktørId != null) {
             sporingsdata.leggTilId(SporingsloggId.AKTOR_ID, aktørId);
         }
-        Long fagsakId = data.getFagsakId();
-        if (fagsakId != null) {
-            sporingsdata.leggTilId(SporingsloggId.FAGSAK_ID, fagsakId);
-        }
-        Long behandlingId = data.getBehandlingId();
+        Long behandlingId = data.getKoblingId();
         if (behandlingId != null) {
             sporingsdata.leggTilId(SporingsloggId.BEHANDLING_ID, behandlingId);
         }

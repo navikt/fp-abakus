@@ -103,7 +103,7 @@ public class ProsessTaskRepositoryImplIT {
         data.setSisteFeilKode("feilkode-123");
         data.setSisteFeil("siste-feil");
         data.setAntallFeiledeForsøk(2);
-        data.setBehandling(1L, 2L, "3");
+        data.setKobling(2L, "3");
         data.setGruppe("gruppe");
         data.setNesteKjøringEtter(nesteKjøringEtter);
         data.setPrioritet(2);

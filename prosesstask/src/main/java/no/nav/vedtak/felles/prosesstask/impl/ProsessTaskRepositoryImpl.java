@@ -330,7 +330,7 @@ public class ProsessTaskRepositoryImpl implements ProsessTaskRepository {
      * Aller helst skulle vært UUID type 3?
      */
     String getUniktProsessTaskGruppeNavn(EntityManager entityManager) throws SQLException {
-        Query query = entityManager.createNativeQuery("SELECT seq_prosess_task_gruppe.nextval FROM dual"); //$NON-NLS-1$
+        Query query = entityManager.createNativeQuery("SELECT nextval('seq_kodeliste')"); //$NON-NLS-1$
         return String.valueOf(query.getSingleResult());
     }
 

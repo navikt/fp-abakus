@@ -13,11 +13,14 @@ import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.IAYRegisterInnhentingTjeneste;
+import no.nav.foreldrepenger.abakus.registerdata.RegisterdataInnhentingTask;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.Aktør;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.InnhentRegisterdataDto;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.PeriodeDto;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
+import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
+import no.nav.vedtak.felles.prosesstask.api.ProsessTaskRepository;
 
 @ApplicationScoped
 public class InnhentRegisterdataTjeneste {
@@ -25,6 +28,7 @@ public class InnhentRegisterdataTjeneste {
     private IAYRegisterInnhentingTjeneste registerInnhentingTjeneste;
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private KoblingTjeneste koblingTjeneste;
+    private ProsessTaskRepository prosessTaskRepository;
 
     InnhentRegisterdataTjeneste() {
         // CDI
@@ -33,13 +37,26 @@ public class InnhentRegisterdataTjeneste {
     @Inject
     public InnhentRegisterdataTjeneste(@FagsakYtelseTypeRef("FP") IAYRegisterInnhentingTjeneste registerInnhentingTjeneste,
                                        InntektArbeidYtelseTjeneste iayTjeneste,
-                                       KoblingTjeneste koblingTjeneste) {
+                                       KoblingTjeneste koblingTjeneste,
+                                       ProsessTaskRepository prosessTaskRepository) {
         this.registerInnhentingTjeneste = registerInnhentingTjeneste;
         this.iayTjeneste = iayTjeneste;
         this.koblingTjeneste = koblingTjeneste;
+        this.prosessTaskRepository = prosessTaskRepository;
     }
 
     public Optional<UUID> innhent(InnhentRegisterdataDto dto) {
+        Kobling kobling = oppdaterKobling(dto);
+
+        // Trigg innhenting
+        InntektArbeidYtelseAggregatBuilder builder = registerInnhentingTjeneste.innhentRegisterdata(kobling);
+        iayTjeneste.lagre(kobling.getId(), builder);
+
+        Optional<InntektArbeidYtelseGrunnlag> grunnlag = iayTjeneste.hentInntektArbeidYtelseGrunnlagForBehandling(kobling.getId());
+        return grunnlag.map(InntektArbeidYtelseGrunnlag::getReferanse);
+    }
+
+    private Kobling oppdaterKobling(InnhentRegisterdataDto dto) {
         Optional<Kobling> koblingOpt = koblingTjeneste.hentFor(dto.getReferanse());
         Kobling kobling;
         if (!koblingOpt.isPresent()) {
@@ -64,12 +81,14 @@ public class InnhentRegisterdataTjeneste {
         }
         // Diff & log endringer
         koblingTjeneste.lagre(kobling);
+        return kobling;
+    }
 
-        // Trigg innhenting
-        InntektArbeidYtelseAggregatBuilder builder = registerInnhentingTjeneste.innhentRegisterdata(kobling);
-        iayTjeneste.lagre(kobling.getId(), builder);
+    public String triggAsyncInnhent(InnhentRegisterdataDto dto) {
+        Kobling kobling = oppdaterKobling(dto);
 
-        Optional<InntektArbeidYtelseGrunnlag> grunnlag = iayTjeneste.hentInntektArbeidYtelseGrunnlagForBehandling(kobling.getId());
-        return grunnlag.map(InntektArbeidYtelseGrunnlag::getReferanse);
+        ProsessTaskData prosessTask = new ProsessTaskData(RegisterdataInnhentingTask.TASKTYPE);
+        prosessTask.setKobling(kobling.getId(), kobling.getAktørId().getId());
+        return prosessTaskRepository.lagre(prosessTask);
     }
 }

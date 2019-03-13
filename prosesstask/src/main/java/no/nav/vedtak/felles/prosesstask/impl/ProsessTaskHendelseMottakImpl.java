@@ -50,7 +50,7 @@ public class ProsessTaskHendelseMottakImpl implements ProsessTaskHendelseMottak 
         }
         task.setStatus(ProsessTaskStatus.KLAR);
         task.setNesteKjøringEtter(LocalDateTime.now());
-        log.info("Behandler hendelse {} i task {}, behandling id {}", hendelse, taskId, task.getBehandlingId()); //$NON-NLS-1$
+        log.info("Behandler hendelse {} i task {}, behandling id {}", hendelse, taskId, task.getKoblingId()); //$NON-NLS-1$
         repository.lagre(task);
     }
 

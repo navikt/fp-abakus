@@ -8,7 +8,7 @@ import no.nav.vedtak.sikkerhet.abac.AbacDto;
 
 public class Aktør implements AbacDto {
     @NotNull
-    @Pattern(regexp = "[\\d]{11|13}")
+    @Pattern(regexp = "[\\d]{11}|[\\d]{13}")
     private String id;
 
     public Aktør() {

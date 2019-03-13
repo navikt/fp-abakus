@@ -62,13 +62,8 @@ public class ProsessTaskEvent implements ProsessTaskInfo {
     }
 
     @Override
-    public Long getBehandlingId() {
-        return data.getBehandlingId();
-    }
-
-    @Override
-    public Long getFagsakId() {
-        return data.getFagsakId();
+    public Long getKoblingId() {
+        return data.getKoblingId();
     }
 
     @Override

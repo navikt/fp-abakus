@@ -26,11 +26,8 @@ public class ProsessTaskData implements ProsessTaskInfo {
     /**
      * Standard properties - behandlingId.
      */
-    public static final String BEHANDLING_ID = "behandlingId"; // NOSONAR //$NON-NLS-1$
+    public static final String KOBLING_ID = "behandlingId"; // NOSONAR //$NON-NLS-1$
     /**
-     * Standard properties - fagsakId.
-     */
-    public static final String FAGSAK_ID = "fagsakId"; // NOSONAR //$NON-NLS-1$
     /**
      * Standard properties - hendelse som tasken venter på eller har behandlet.
      */
@@ -92,21 +89,12 @@ public class ProsessTaskData implements ProsessTaskInfo {
     }
 
     @Override
-    public Long getBehandlingId() {
-        return getPropertyValue(BEHANDLING_ID) != null ? Long.valueOf(getPropertyValue(BEHANDLING_ID)) : null;
+    public Long getKoblingId() {
+        return getPropertyValue(KOBLING_ID) != null ? Long.valueOf(getPropertyValue(KOBLING_ID)) : null;
     }
 
-    protected void setBehandlingId(Long id) {
-        setProperty(BEHANDLING_ID, id.toString());
-    }
-
-    @Override
-    public Long getFagsakId() {
-        return getPropertyValue(FAGSAK_ID) != null ? Long.valueOf(getPropertyValue(FAGSAK_ID)) : null;
-    }
-
-    public void setFagsakId(Long id) {
-        setProperty(FAGSAK_ID, id.toString());
+    protected void setKobling(Long id) {
+        setProperty(KOBLING_ID, id.toString());
     }
 
     @Override
@@ -309,21 +297,11 @@ public class ProsessTaskData implements ProsessTaskInfo {
         return this;
     }
 
-    public void setBehandling(Long fagsakId, Long behandlingId, String aktørId) {
-        Objects.requireNonNull(fagsakId, "fagsakId"); // NOSONAR //$NON-NLS-1$
-        Objects.requireNonNull(behandlingId, "behandlingId"); // NOSONAR //$NON-NLS-1$
+    public void setKobling(Long koblingId, String aktørId) {
+        Objects.requireNonNull(koblingId, "behandlingId"); // NOSONAR //$NON-NLS-1$
         Objects.requireNonNull(aktørId, "aktørId"); // NOSONAR //$NON-NLS-1$
 
-        setFagsakId(fagsakId);
-        setBehandlingId(behandlingId);
-        setAktørId(aktørId);
-    }
-
-    public void setFagsak(Long fagsakId, String aktørId) {
-        Objects.requireNonNull(fagsakId, "fagsakId"); // NOSONAR //$NON-NLS-1$
-        Objects.requireNonNull(aktørId, "aktørId"); // NOSONAR //$NON-NLS-1$
-
-        setFagsakId(fagsakId);
+        setKobling(koblingId);
         setAktørId(aktørId);
     }
 

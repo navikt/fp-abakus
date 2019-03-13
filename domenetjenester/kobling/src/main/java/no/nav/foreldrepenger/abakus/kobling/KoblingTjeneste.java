@@ -27,4 +27,8 @@ public class KoblingTjeneste {
     public void lagre(Kobling kobling) {
         repository.lagre(kobling);
     }
+
+    public Kobling hent(Long koblingId) {
+        return repository.hent(koblingId);
+    }
 }

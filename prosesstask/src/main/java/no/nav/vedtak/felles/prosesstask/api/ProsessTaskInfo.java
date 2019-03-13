@@ -35,9 +35,7 @@ public interface ProsessTaskInfo {
 
     String getAktørId();
 
-    Long getFagsakId();
-
-    Long getBehandlingId();
+    Long getKoblingId();
 
     String getPayloadAsString();
 

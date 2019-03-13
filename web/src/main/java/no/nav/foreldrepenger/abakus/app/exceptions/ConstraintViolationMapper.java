@@ -32,15 +32,19 @@ public class ConstraintViolationMapper implements ExceptionMapper<ConstraintViol
             String feltNavn = getFeltNavn(constraintViolation.getPropertyPath());
             feilene.add(new FeltFeilDto(feltNavn, constraintViolation.getMessage(), null));
         }
-        List<String> feltNavn = feilene.stream().map(felt -> felt.getNavn()).collect(Collectors.toList());
-
-        Feil feil = FeltValideringFeil.FACTORY.feltverdiKanIkkeValideres(feltNavn);
+        Feil feil;
+        if (feilene.isEmpty()) {
+            feil = FeltValideringFeil.FACTORY.feilUnderValideringAvContraints(exception);
+        } else {
+            List<String> feltNavn = feilene.stream().map(FeltFeilDto::getNavn).collect(Collectors.toList());
+            feil = FeltValideringFeil.FACTORY.feltverdiKanIkkeValideres(feltNavn);
+        }
         feil.log(log);
         return Response
-                .status(Response.Status.BAD_REQUEST)
-                .entity(new FeilDto(feil.getFeilmelding(), feilene))
-                .type(MediaType.APPLICATION_JSON)
-                .build();
+            .status(Response.Status.BAD_REQUEST)
+            .entity(new FeilDto(feil.getFeilmelding(), feilene))
+            .type(MediaType.APPLICATION_JSON)
+            .build();
     }
 
     private String getFeltNavn(Path propertyPath) {

@@ -66,4 +66,8 @@ public class KoblingRepository {
 
         return diffEntity.diff(eksisterendeKobling, nyKobling);
     }
+
+    public Kobling hent(Long koblingId) {
+        return entityManager.find(Kobling.class, koblingId);
+    }
 }

@@ -18,6 +18,10 @@
     <dependencies>
         <dependency>
             <groupId>no.nav.foreldrepenger.abakus</groupId>
+            <artifactId>prosesstask</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.abakus</groupId>
             <artifactId>kodeverk</artifactId>
         </dependency>
         <dependency>
