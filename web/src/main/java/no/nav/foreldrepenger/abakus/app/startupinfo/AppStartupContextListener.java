@@ -3,12 +3,14 @@ package no.nav.foreldrepenger.abakus.app.startupinfo;
 import javax.enterprise.inject.spi.CDI;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AppStartupServletContextListener implements ServletContextListener {
-    private static final Logger logger = LoggerFactory.getLogger(AppStartupServletContextListener.class);
+@WebListener
+public class AppStartupContextListener implements ServletContextListener {
+    private static final Logger logger = LoggerFactory.getLogger(AppStartupContextListener.class);
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {

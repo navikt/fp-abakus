@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.app.tjenester;
+package no.nav.foreldrepenger.abakus.app.selftest;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.TEXT_HTML;
@@ -13,7 +13,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import io.swagger.annotations.Api;
-import no.nav.foreldrepenger.abakus.app.selftest.SelftestService;
 
 @Api(tags = {"selftest"})
 @Path("/selftest")

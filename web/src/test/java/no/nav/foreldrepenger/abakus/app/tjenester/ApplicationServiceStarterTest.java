@@ -16,7 +16,7 @@ import org.junit.Test;
 import no.nav.vedtak.apptjeneste.AppServiceHandler;
 import no.nav.vedtak.felles.testutilities.cdi.UnitTestInstanceImpl;
 
-public class ApplicationServiceStarterImplTest {
+public class ApplicationServiceStarterTest {
 
     private ApplicationServiceStarter serviceStarter;
 
@@ -32,7 +32,7 @@ public class ApplicationServiceStarterImplTest {
         when(iteratorMock.next()).thenReturn(serviceMock);
         doReturn(iteratorMock).when(instanceSpied).iterator();
 
-        serviceStarter = new ApplicationServiceStarterImpl(instanceSpied);
+        serviceStarter = new ApplicationServiceStarter(instanceSpied);
     }
 
     @Test

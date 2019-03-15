@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 import org.junit.Before;
 import org.junit.Test;
 
+import no.nav.foreldrepenger.abakus.app.selftest.SelftestRestTjeneste;
 import no.nav.foreldrepenger.abakus.app.selftest.SelftestService;
 
 public class SelftestRestTjenesteTest {

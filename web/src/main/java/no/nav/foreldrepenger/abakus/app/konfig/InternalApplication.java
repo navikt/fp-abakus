@@ -1,15 +1,13 @@
 package no.nav.foreldrepenger.abakus.app.konfig;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 import io.swagger.jaxrs.config.BeanConfig;
-import no.nav.foreldrepenger.abakus.app.tjenester.NaisRestTjeneste;
-import no.nav.foreldrepenger.abakus.app.tjenester.SelftestRestTjeneste;
+import no.nav.foreldrepenger.abakus.app.selftest.NaisRestTjeneste;
+import no.nav.foreldrepenger.abakus.app.selftest.SelftestRestTjeneste;
 
 @ApplicationPath(InternalApplication.API_URL)
 public class InternalApplication extends Application {
@@ -43,12 +41,7 @@ public class InternalApplication extends Application {
 
     @Override
     public Set<Class<?>> getClasses() {
-        Set<Class<?>> classes = new HashSet<>();
-
-        classes.add(NaisRestTjeneste.class);
-        classes.add(SelftestRestTjeneste.class);
-
-        return Collections.unmodifiableSet(classes);
+        return Set.of(NaisRestTjeneste.class, SelftestRestTjeneste.class);
     }
 
 }

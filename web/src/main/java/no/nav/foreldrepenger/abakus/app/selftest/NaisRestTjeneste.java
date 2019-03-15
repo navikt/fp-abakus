@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.app.tjenester;
+package no.nav.foreldrepenger.abakus.app.selftest;
 
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import io.swagger.annotations.Api;
 import no.nav.foreldrepenger.abakus.app.konfig.InternalApplication;
-import no.nav.foreldrepenger.abakus.app.selftest.SelftestService;
+import no.nav.foreldrepenger.abakus.app.tjenester.ApplicationServiceStarter;
 
 @Api(tags = {"nais"})
 @Path("/")
