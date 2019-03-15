@@ -31,6 +31,11 @@
                 <artifactId>geronimo-osgi-locator</artifactId>
                 <version>${geronimo.osgi.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>5.2.4</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -87,13 +92,22 @@
 
         <!-- Database håndtering -->
         <dependency>
+            <groupId>no.nav</groupId>
+            <artifactId>vault-jdbc</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-            <version>${flyway.version}</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -177,23 +191,7 @@
         <!-- Metrics, logging, helse- og selftest -->
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-servlets</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-healthchecks</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-annotation</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.astefanutti.metrics.cdi</groupId>
-            <artifactId>metrics-cdi</artifactId>
         </dependency>
         <dependency>
             <groupId>io.prometheus</groupId>

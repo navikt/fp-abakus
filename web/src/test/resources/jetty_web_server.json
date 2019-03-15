@@ -3,10 +3,6 @@
     "datasource": "defaultDS",
     "user": "fpabakus",
     "password": "fpabakus",
-    "url": "jdbc:postgresql://localhost:5432/fpabakus",
-
-    "vaultEnable": false,
-    "vaultRoleprefix" : "eksempeldatabase-q1",
-    "vaultMountpath" : "database/integrationtest"
+    "url": "jdbc:postgresql://localhost:5432/fpabakus"
   }
 ]

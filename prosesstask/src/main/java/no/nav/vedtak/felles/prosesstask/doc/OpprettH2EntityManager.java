@@ -17,7 +17,9 @@ import org.flywaydb.core.api.FlywayException;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-/** Oppretter en H2 EntityManager og kjører migreringer mot den. Fordrer at H2 er tilgjengelig på classpath når doc genereres. Skal aldri kjøres mot noe reell db. */
+/**
+ * Oppretter en H2 EntityManager og kjører migreringer mot den. Fordrer at H2 er tilgjengelig på classpath når doc genereres. Skal aldri kjøres mot noe reell db.
+ */
 class OpprettH2EntityManager {
     private static final String INMEMORY_DB_JDBC_URL = "jdbc:h2:./test;MODE=Oracle";
     private static final String INMEMORY_DB_USER = "sa";
@@ -88,7 +90,7 @@ class OpprettH2EntityManager {
 
     private void clean(DataSource dataSource, String username) {
         try (Connection c = dataSource.getConnection();
-                Statement stmt = c.createStatement()) {
+             Statement stmt = c.createStatement()) {
             stmt.execute("drop owned by " + username.replaceAll("[^a-zA-Z0-9_-]", "_"));
         } catch (SQLException e) {
             throw new IllegalStateException("Kunne ikke kjøre clean på db", e);

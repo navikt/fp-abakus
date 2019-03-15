@@ -31,6 +31,7 @@ dep.txt
 /.mvn/
 /logback.xml
 .temp*.txt
+/logs/
 
 app.properties
 app-local.properties

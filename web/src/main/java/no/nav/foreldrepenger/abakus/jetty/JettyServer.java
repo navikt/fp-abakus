@@ -12,13 +12,14 @@ import org.eclipse.jetty.webapp.MetaData;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import no.nav.foreldrepenger.abakus.app.konfig.ApplicationConfig;
-import no.nav.foreldrepenger.abakus.jetty.db.DataSourceKonfig;
 import no.nav.foreldrepenger.abakus.jetty.db.DatabaseScript;
+import no.nav.foreldrepenger.abakus.jetty.db.DatasourceRole;
+import no.nav.foreldrepenger.abakus.jetty.db.DatasourceUtil;
+import no.nav.foreldrepenger.abakus.jetty.db.EnvironmentClass;
 import no.nav.vedtak.isso.IssoApplication;
+import no.nav.vedtak.konfig.PropertyUtil;
 
 public class JettyServer extends AbstractJettyServer {
-
-    DataSourceKonfig dataSourceKonfig;
 
     public JettyServer() {
         this(new JettyWebKonfigurasjon());
@@ -45,12 +46,7 @@ public class JettyServer extends AbstractJettyServer {
 
     @Override
     protected void konfigurerMiljø() throws Exception {
-        konfigurerDataSourceKonfig();
         hacks4Nais();
-    }
-
-    protected void konfigurerDataSourceKonfig() {
-        dataSourceKonfig = new DataSourceKonfig();
     }
 
     private void hacks4Nais() {
@@ -83,12 +79,26 @@ public class JettyServer extends AbstractJettyServer {
 
     @Override
     protected void konfigurerJndi() throws Exception {
-        new EnvEntry("jdbc/defaultDS", dataSourceKonfig.getDefaultDatasource());
+        new EnvEntry("jdbc/defaultDS", DatasourceUtil.createDatasource("defaultDS", DatasourceRole.USER, getEnvironmentClass()));
     }
 
     @Override
     protected void migrerDatabaser() throws IOException {
-        new DatabaseScript(dataSourceKonfig.getMigrationDatasource(), dataSourceKonfig.getMigrationScripts()).migrate();
+        EnvironmentClass environmentClass = getEnvironmentClass();
+        String initSql = String.format("SET ROLE \"%s\"", DatasourceUtil.getDbRole("defaultDS", DatasourceRole.ADMIN));
+        if (EnvironmentClass.LOCALHOST.equals(environmentClass)) {
+            initSql = null;
+        }
+        DatabaseScript.migrate(DatasourceUtil.createDatasource("defaultDS", DatasourceRole.ADMIN, environmentClass), initSql);
+    }
+
+    protected EnvironmentClass getEnvironmentClass() {
+        String cluster = PropertyUtil.getProperty("nais.cluster.name");
+        if (cluster != null) {
+            cluster = cluster.substring(0, cluster.indexOf("-"));
+            return EnvironmentClass.valueOf(cluster);
+        }
+        return EnvironmentClass.PROD;
     }
 
     @Override
@@ -115,7 +125,7 @@ public class JettyServer extends AbstractJettyServer {
     @Override
     protected ResourceCollection createResourceCollection() throws IOException {
         return new ResourceCollection(
-                Resource.newClassPathResource("/web")
+            Resource.newClassPathResource("/web")
         );
     }
 
