@@ -17,7 +17,6 @@ import no.nav.foreldrepenger.abakus.jetty.db.DatasourceRole;
 import no.nav.foreldrepenger.abakus.jetty.db.DatasourceUtil;
 import no.nav.foreldrepenger.abakus.jetty.db.EnvironmentClass;
 import no.nav.vedtak.isso.IssoApplication;
-import no.nav.vedtak.konfig.PropertyUtil;
 
 public class JettyServer extends AbstractJettyServer {
 
@@ -83,7 +82,7 @@ public class JettyServer extends AbstractJettyServer {
     }
 
     @Override
-    protected void migrerDatabaser() throws IOException {
+    protected void migrerDatabaser() {
         EnvironmentClass environmentClass = getEnvironmentClass();
         String initSql = String.format("SET ROLE \"%s\"", DatasourceUtil.getDbRole("defaultDS", DatasourceRole.ADMIN));
         if (EnvironmentClass.LOCALHOST.equals(environmentClass)) {
@@ -93,12 +92,7 @@ public class JettyServer extends AbstractJettyServer {
     }
 
     protected EnvironmentClass getEnvironmentClass() {
-        String cluster = PropertyUtil.getProperty("nais.cluster.name");
-        if (cluster != null) {
-            cluster = cluster.substring(0, cluster.indexOf("-"));
-            return EnvironmentClass.valueOf(cluster);
-        }
-        return EnvironmentClass.PROD;
+        return EnvironmentUtil.getEnvironmentClass();
     }
 
     @Override
