@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet;
@@ -15,6 +14,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInfo
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingSomIkkeKommer;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 
 public interface InntektArbeidYtelseTjeneste {
@@ -23,6 +23,12 @@ public interface InntektArbeidYtelseTjeneste {
      * @return henter aggregat, kaster feil hvis det ikke finnes.
      */
     InntektArbeidYtelseGrunnlag hentAggregat(Kobling behandling);
+
+    /**
+     * @param behandling
+     * @return henter aggregat, kaster feil hvis det ikke finnes.
+     */
+    InntektArbeidYtelseGrunnlag hentAggregat(String referanse);
 
     /**
      * @param behandling

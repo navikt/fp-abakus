@@ -90,7 +90,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     }
 
     @Override
-    public DiffResult diffResultat(InntektArbeidYtelseGrunnlagEntitet grunnlag1, InntektArbeidYtelseGrunnlagEntitet grunnlag2, boolean onlyCheckTrackedFields) {
+    public DiffResult diffResultat(InntektArbeidYtelseGrunnlag grunnlag1, InntektArbeidYtelseGrunnlag grunnlag2, boolean onlyCheckTrackedFields) {
         return new RegisterdataDiffsjekker(onlyCheckTrackedFields).getDiffEntity().diff(grunnlag1, grunnlag2);
     }
 
@@ -580,11 +580,27 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         return Optional.of(resultat);
     }
 
+    @Override
+    public InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForReferanse(String referanse) {
+        Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlag = getVersjonAvInntektArbeidYtelseForReferanseId(referanse);
+        return grunnlag.orElse(null);
+    }
+
     private Optional<InntektArbeidYtelseGrunnlagEntitet> getVersjonAvInntektArbeidYtelseForGrunnlagId(Long grunnlagId) {
         Objects.requireNonNull(grunnlagId, "aggregatId"); // NOSONAR $NON-NLS-1$
         final TypedQuery<InntektArbeidYtelseGrunnlagEntitet> query = entityManager.createQuery("FROM InntektArbeidGrunnlag gr " + // NOSONAR $NON-NLS-1$
             "WHERE gr.id = :aggregatId ", InntektArbeidYtelseGrunnlagEntitet.class);
         query.setParameter("aggregatId", grunnlagId);
+        Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlagOpt = query.getResultList().stream().findFirst();
+        grunnlagOpt.ifPresent(InntektArbeidYtelseGrunnlagEntitet::taHensynTilBetraktninger);
+        return grunnlagOpt;
+    }
+
+    private Optional<InntektArbeidYtelseGrunnlagEntitet> getVersjonAvInntektArbeidYtelseForReferanseId(String referanseId) {
+        Objects.requireNonNull(referanseId, "aggregatId"); // NOSONAR $NON-NLS-1$
+        final TypedQuery<InntektArbeidYtelseGrunnlagEntitet> query = entityManager.createQuery("FROM InntektArbeidGrunnlag gr " + // NOSONAR $NON-NLS-1$
+            "WHERE gr.referanseId = :aggregatId ", InntektArbeidYtelseGrunnlagEntitet.class);
+        query.setParameter("aggregatId", referanseId);
         Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlagOpt = query.getResultList().stream().findFirst();
         grunnlagOpt.ifPresent(InntektArbeidYtelseGrunnlagEntitet::taHensynTilBetraktninger);
         return grunnlagOpt;

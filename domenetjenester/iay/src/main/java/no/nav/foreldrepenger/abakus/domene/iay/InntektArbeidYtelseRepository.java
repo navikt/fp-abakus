@@ -13,7 +13,7 @@ import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 
 public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRepository {
 
-    DiffResult diffResultat(InntektArbeidYtelseGrunnlagEntitet før, InntektArbeidYtelseGrunnlagEntitet nå, boolean kunSporedeEndringer);
+    DiffResult diffResultat(InntektArbeidYtelseGrunnlag før, InntektArbeidYtelseGrunnlag nå, boolean kunSporedeEndringer);
 
     boolean erEndring(Kobling behandling, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder);
 
@@ -46,4 +46,6 @@ public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRe
     Optional<ArbeidsforholdInformasjon> hentArbeidsforholdInformasjonForGrunnlagId(Long inntektArbeidYtelseGrunnlagId);
 
     Optional<InntektArbeidYtelseGrunnlag> hentForrigeVersjonAvInntektsmeldingForBehandling(Long behandlingId);
+
+    InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForReferanse(String referanse);
 }

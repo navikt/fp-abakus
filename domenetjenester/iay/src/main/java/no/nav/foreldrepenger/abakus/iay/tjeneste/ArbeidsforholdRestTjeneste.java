@@ -3,7 +3,10 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
+import java.util.Collection;
+
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.POST;
@@ -12,6 +15,9 @@ import javax.ws.rs.core.Response;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
+import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.HentArbeidsforholdForReferanseDto;
 import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
@@ -22,16 +28,26 @@ import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 @Transaction
 public class ArbeidsforholdRestTjeneste {
 
+    private InntektArbeidYtelseTjeneste iayTjeneste;
+
     public ArbeidsforholdRestTjeneste() {
+    }
+
+    @Inject
+    public ArbeidsforholdRestTjeneste(InntektArbeidYtelseTjeneste iayTjeneste) {
+        this.iayTjeneste = iayTjeneste;
     }
 
     @POST
     @Path("/")
-    @ApiOperation(value = "Gir ut registerdata som kobler til en ")
+    @ApiOperation(value = "Gir ut informasjom om alle arbeidsforhold på referansen for kobling/grunnlag")
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response arbeidsforholdForReferanse(@NotNull @Valid HentArbeidsforholdForReferanseDto referanse) {
-        return Response.noContent().build();
+        InntektArbeidYtelseGrunnlag grunnlag = iayTjeneste.hentAggregat(referanse.getReferanseDto().getReferanse());
+        Collection<AktørArbeid> aktørArbeid = grunnlag.getAktørArbeidFørStp(null);
+        // TODO: Mappe om til egnede objekter
+        return Response.ok(aktørArbeid).build();
     }
 
 }
