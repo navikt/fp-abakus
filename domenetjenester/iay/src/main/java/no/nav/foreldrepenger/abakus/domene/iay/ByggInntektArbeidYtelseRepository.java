@@ -16,15 +16,11 @@ public interface ByggInntektArbeidYtelseRepository {
      */
     InntektArbeidYtelseAggregatBuilder opprettBuilderFor(Long behandlingId, VersjonType versjonType);
 
-    ArbeidsforholdInformasjonBuilder opprettInformasjonBuilderFor(Long behandlingId);
-
     void lagre(Long behandlingId, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder);
 
     void lagre(Long behandlingId, OppgittOpptjeningBuilder opptjeningBuilder);
 
     void lagre(Long behandlingId, AktørId søkerAktørId, ArbeidsforholdInformasjonBuilder informasjon);
-
-    void kopierGrunnlagFraEksisterendeBehandling(Long fraBehandlingId, Long tilBehandlingId);
 
     void lagre(Long behandlingId, Inntektsmelding inntektsmelding);
 

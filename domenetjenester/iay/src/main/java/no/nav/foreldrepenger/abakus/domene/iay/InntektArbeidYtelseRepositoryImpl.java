@@ -1,24 +1,15 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import static no.nav.foreldrepenger.abakus.diff.RegisterdataDiffsjekker.eksistenssjekkResultat;
-
-import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import no.nav.foreldrepenger.abakus.behandling.Fagsystem;
 import no.nav.foreldrepenger.abakus.diff.RegisterdataDiffsjekker;
 import no.nav.foreldrepenger.abakus.diff.TraverseEntityGraphFactory;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType;
@@ -33,7 +24,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingEn
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelse;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Refusjon;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriode;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.AnnenAktivitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.EgenNæring;
@@ -43,13 +33,10 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjenin
 import no.nav.foreldrepenger.abakus.felles.diff.DiffEntity;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseEntityGraph;
-import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @ApplicationScoped
 public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRepository {
@@ -72,21 +59,10 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         return grunnlag.orElseThrow(() -> InntektArbeidYtelseFeil.FACTORY.fantIkkeForventetGrunnlagPåBehandling(behandlingId).toException());
     }
 
-    private Optional<InntektArbeidYtelseGrunnlag> hentAggregatPåIdHvisEksisterer(Long aggregatId) {
-        Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlag = getVersjonAvInntektArbeidYtelseForGrunnlagId(aggregatId);
-        return grunnlag.isPresent() ? Optional.of(grunnlag.get()) : Optional.empty();
-    }
-
     @Override
     public Optional<InntektArbeidYtelseGrunnlag> hentInntektArbeidYtelseGrunnlagForBehandling(Long behandlingId) {
         Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlag = getAktivtInntektArbeidGrunnlag(behandlingId);
         return grunnlag.isPresent() ? Optional.of(grunnlag.get()) : Optional.empty();
-    }
-
-    @Override
-    public InntektArbeidYtelseGrunnlag hentFørsteVersjon(Long behandlingId) {
-        Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlag = getInitielVersjonInntektArbeidGrunnlagForBehandling(behandlingId);
-        return grunnlag.orElseThrow(() -> InntektArbeidYtelseFeil.FACTORY.fantIkkeForventetGrunnlagPåBehandling(behandlingId).toException());
     }
 
     @Override
@@ -97,11 +73,6 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     @Override
     public InntektArbeidYtelseAggregatBuilder opprettBuilderFor(Long behandlingId, VersjonType versjonType) {
         return opprettBuilderForBuilder(InntektArbeidYtelseGrunnlagBuilder.oppdatere(hentInntektArbeidYtelseGrunnlagForBehandling(behandlingId)), versjonType);
-    }
-
-    @Override
-    public ArbeidsforholdInformasjonBuilder opprettInformasjonBuilderFor(Long behandlingId) {
-        return ArbeidsforholdInformasjonBuilder.oppdatere(InntektArbeidYtelseGrunnlagBuilder.oppdatere(hentInntektArbeidYtelseGrunnlagForBehandling(behandlingId)).getInformasjon());
     }
 
     @Override
@@ -182,94 +153,6 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     }
 
     @Override
-    public boolean erEndring(Kobling behandling, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder) {
-        TraverseEntityGraph traverseEntityGraph = TraverseEntityGraphFactory.build(true);
-
-        Long behandlingId = behandling.getId();
-        final Optional<InntektArbeidYtelseGrunnlag> inntektArbeidYtelseGrunnlag = hentInntektArbeidYtelseGrunnlagForBehandling(behandlingId);
-
-        InntektArbeidYtelseGrunnlagBuilder inntektArbeidYtelseGrunnlagBuilder = getGrunnlagBuilder(behandlingId, inntektArbeidYtelseAggregatBuilder);
-        if (!inntektArbeidYtelseGrunnlag.isPresent() && inntektArbeidYtelseGrunnlagBuilder.erOppdatert()) {
-            return false;
-        }
-
-        if (inntektArbeidYtelseGrunnlag.isPresent()) {
-            final InntektArbeidYtelseGrunnlag gammelt = inntektArbeidYtelseGrunnlag.get();
-            final DiffResult diff = new DiffEntity(traverseEntityGraph)
-                .diff(gammelt, inntektArbeidYtelseGrunnlagBuilder.getKladd());
-            return !diff.isEmpty();
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean erEndringPåInntektsmelding(InntektArbeidYtelseGrunnlag før, InntektArbeidYtelseGrunnlag nå) {
-        Optional<InntektsmeldingAggregat> eksisterendeInntektsmelding = før.getInntektsmeldinger();
-        Optional<InntektsmeldingAggregat> nyInntektsmelding = nå.getInntektsmeldinger();
-
-        Optional<Boolean> eksistenssjekkResultat = eksistenssjekkResultat(eksisterendeInntektsmelding, nyInntektsmelding);
-        if (eksistenssjekkResultat.isPresent()) {
-            return eksistenssjekkResultat.get();
-        }
-
-        InntektsmeldingAggregat eksisterende = eksisterendeInntektsmelding.get(); // NOSONAR - presens sjekket ovenfor
-        InntektsmeldingAggregat ny = nyInntektsmelding.get(); // NOSONAR - presens sjekket ovenfor
-        DiffResult diff = new RegisterdataDiffsjekker().getDiffEntity().diff(eksisterende, ny);
-        return !diff.isEmpty();
-    }
-
-    @Override
-    public boolean erEndringPåAktørArbeid(InntektArbeidYtelseGrunnlag før, InntektArbeidYtelseGrunnlag nå, LocalDate skjæringstidspunkt) {
-        Collection<AktørArbeid> eksisterendeAktørArbeid = før.getAktørArbeidFørStp(skjæringstidspunkt);
-        Collection<AktørArbeid> nyAktørArbeid = nå.getAktørArbeidFørStp(skjæringstidspunkt);
-
-        DiffResult diff = new RegisterdataDiffsjekker().getDiffEntity().diff(eksisterendeAktørArbeid, nyAktørArbeid);
-        return !diff.isEmpty();
-    }
-
-    @Override
-    public boolean erEndringPåAktørInntekt(InntektArbeidYtelseGrunnlag før, InntektArbeidYtelseGrunnlag nå, LocalDate skjæringstidspunkt) {
-        Collection<AktørInntekt> eksisterendeAktørInntekt = før.getAktørInntektFørStp(skjæringstidspunkt);
-        Collection<AktørInntekt> nyAktørInntekt = nå.getAktørInntektFørStp(skjæringstidspunkt);
-
-        DiffResult diff = new RegisterdataDiffsjekker().getDiffEntity().diff(eksisterendeAktørInntekt, nyAktørInntekt);
-        return !diff.isEmpty();
-    }
-
-    @Override
-    public AktørYtelseEndring endringPåAktørYtelse(Saksnummer egetSaksnummer, InntektArbeidYtelseGrunnlag før, InntektArbeidYtelseGrunnlag nå, LocalDate skjæringstidspunkt) {
-        // TODO (mglittum): Skrive om slik at vi ikke differ mot egen fagsak
-        Predicate<Ytelse> predikatKildeFpsak = ytelse -> ytelse.getKilde().equals(Fagsystem.FPSAK) && !ytelse.getSaksnummer().equals(egetSaksnummer);
-        Predicate<Ytelse> predikatKildeEksterneRegistre = ytelse -> !ytelse.getKilde().equals(Fagsystem.FPSAK);
-
-        List<Ytelse> førYtelserFpsak = hentYtelser(før, skjæringstidspunkt, predikatKildeFpsak);
-        List<Ytelse> nåYtelserFpsak = hentYtelser(nå, skjæringstidspunkt, predikatKildeFpsak);
-        boolean ytelserFpsakEndret = !new RegisterdataDiffsjekker().getDiffEntity().diff(førYtelserFpsak, nåYtelserFpsak).isEmpty();
-
-        List<Ytelse> førYtelserEkstern = hentYtelser(før, skjæringstidspunkt, predikatKildeEksterneRegistre);
-        List<Ytelse> nåYtelserEkstern = hentYtelser(nå, skjæringstidspunkt, predikatKildeEksterneRegistre);
-        boolean ytelserEksterneRegistreEndret = !new RegisterdataDiffsjekker().getDiffEntity().diff(førYtelserEkstern, nåYtelserEkstern).isEmpty();
-
-        return new AktørYtelseEndring(ytelserFpsakEndret, ytelserEksterneRegistreEndret);
-    }
-
-    private List<Ytelse> hentYtelser(InntektArbeidYtelseGrunnlag ytelseGrunnlag, LocalDate skjæringstidspunkt, Predicate<Ytelse> predikatYtelseskilde) {
-        return ytelseGrunnlag.getAktørYtelseFørStp(skjæringstidspunkt).stream()
-            .flatMap(it -> it.getYtelser().stream())
-            .filter(predikatYtelseskilde)
-            .collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean erEndring(Kobling behandling, Kobling nyBehandling) {
-        InntektArbeidYtelseGrunnlag nyttAggregat = hentInntektArbeidYtelseForBehandling(behandling.getId());
-        InntektArbeidYtelseGrunnlag eksisterendeAggregat = hentInntektArbeidYtelseGrunnlagForBehandling(behandling.getId())
-            .orElse(null);
-        return erEndring(eksisterendeAggregat, nyttAggregat);
-    }
-
-    @Override
     public boolean erEndring(InntektArbeidYtelseGrunnlag aggregat, InntektArbeidYtelseGrunnlag nyttAggregat) {
 
         TraverseEntityGraph traverseEntityGraph = TraverseEntityGraphFactory.build(true);
@@ -281,34 +164,6 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         DiffResult diff = new DiffEntity(traverseEntityGraph)
             .diff(aggregat, nyttAggregat);
         return !diff.isEmpty();
-    }
-
-    @Override
-    public boolean harArbeidsforholdMedArbeidstyperSomAngitt(Long behandlingId, AktørId aktørId, Set<ArbeidType> angitteArbeidtyper, LocalDate skjæringstidspunkt) {
-        Optional<InntektArbeidYtelseGrunnlagEntitet> inntektArbeidYtelseGrunnlag = getAktivtInntektArbeidGrunnlag(behandlingId);
-        if (!inntektArbeidYtelseGrunnlag.isPresent()) {
-            return false;
-        }
-        DatoIntervallEntitet stp = DatoIntervallEntitet.fraOgMedTilOgMed(skjæringstidspunkt, skjæringstidspunkt);
-        Optional<AktørArbeid> aktørArbeid = inntektArbeidYtelseGrunnlag.get().getAktørArbeidFørStp(aktørId, skjæringstidspunkt);
-        return aktørArbeid.filter(aktørArbeid1 -> !harIngenArbeidsforholdMedLøpendeAktivitetsavtale(aktørArbeid1.getYrkesaktiviteter(), stp)).isPresent();
-    }
-
-    @Override
-    public void kopierGrunnlagFraEksisterendeBehandling(Long fraBehandlingId, Long tilBehandlingId) {
-        Optional<InntektArbeidYtelseGrunnlag> origAggregat = hentInntektArbeidYtelseGrunnlagForBehandling(fraBehandlingId);
-        origAggregat.ifPresent(orig -> {
-            InntektArbeidYtelseGrunnlagEntitet entitet = new InntektArbeidYtelseGrunnlagEntitet(orig);
-            lagreOgFlush(tilBehandlingId, entitet);
-        });
-    }
-
-    private boolean harIngenArbeidsforholdMedLøpendeAktivitetsavtale(Collection<Yrkesaktivitet> yrkesaktiviteter, DatoIntervallEntitet skjæringstidspunkt) {
-        return yrkesaktiviteter.stream()
-            .filter(Yrkesaktivitet::erArbeidsforhold)
-            .map(Yrkesaktivitet::getAnsettelsesPerioder)
-            .flatMap(Collection::stream)
-            .noneMatch(aa -> aa.getErLøpende() || aa.getPeriode().overlapper(skjæringstidspunkt));
     }
 
     private InntektArbeidYtelseGrunnlagBuilder opprettGrunnlagBuilderFor(Long behandlingId) {
@@ -507,36 +362,6 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         return grunnlag;
     }
 
-    private Optional<InntektArbeidYtelseGrunnlagEntitet> getInitielVersjonInntektArbeidGrunnlagForBehandling(Long behandlingId) {
-        final TypedQuery<InntektArbeidYtelseGrunnlagEntitet> query = entityManager.createQuery("FROM InntektArbeidGrunnlag gr " + // NOSONAR $NON-NLS-1$
-            "WHERE gr.behandlingId = :behandlingId " + //$NON-NLS-1$ //NOSONAR
-            "order by gr.opprettetTidspunkt, gr.id", InntektArbeidYtelseGrunnlagEntitet.class);
-        query.setParameter("behandlingId", behandlingId); // NOSONAR $NON-NLS-1$
-
-        final Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlag = query.getResultList().stream().findFirst();
-        grunnlag.ifPresent(InntektArbeidYtelseGrunnlagEntitet::taHensynTilBetraktninger);
-        return grunnlag;
-    }
-
-    @Override
-    public Optional<Long> hentIdPåAktivInntektArbeidYtelseForBehandling(Long behandlingId) {
-        return getAktivtInntektArbeidGrunnlag(behandlingId)
-            .map(InntektArbeidYtelseGrunnlagEntitet::getId);
-    }
-
-    @Override
-    public InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForGrunnlagId(Long grunnlagId) {
-        Optional<InntektArbeidYtelseGrunnlagEntitet> optGrunnlag = getVersjonAvInntektArbeidYtelseForGrunnlagId(grunnlagId);
-        return optGrunnlag.isPresent() ? optGrunnlag.get() : null;
-    }
-
-
-    @Override
-    public Optional<ArbeidsforholdInformasjon> hentArbeidsforholdInformasjonForGrunnlagId(Long inntektArbeidYtelseGrunnlagId) {
-        final Optional<InntektArbeidYtelseGrunnlag> grunnlag = hentAggregatPåIdHvisEksisterer(inntektArbeidYtelseGrunnlagId);
-        return hentArbeidsforholdInformasjon(grunnlag);
-    }
-
     private Optional<ArbeidsforholdInformasjon> hentArbeidsforholdInformasjon(Optional<InntektArbeidYtelseGrunnlag> grunnlag) {
         if (grunnlag.isPresent()) {
             final Optional<InntektArbeidYtelseGrunnlagEntitet> inntektArbeidYtelseGrunnlag = Optional.of((InntektArbeidYtelseGrunnlagEntitet) grunnlag.get());
@@ -553,47 +378,9 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     }
 
     @Override
-    public Optional<InntektArbeidYtelseGrunnlag> hentForrigeVersjonAvInntektsmeldingForBehandling(Long behandlingId) {
-        Objects.requireNonNull(behandlingId, "behandlingId"); // NOSONAR $NON-NLS-1$
-
-        Query query = entityManager.createQuery(
-            "SELECT gr FROM InntektArbeidGrunnlag gr " + // NOSONAR $NON-NLS-1$
-                "WHERE gr.behandlingId = :behandlingId " + //$NON-NLS-1$ //NOSONAR
-                "AND gr.aktiv = false " +
-                "AND gr.inntektsmeldinger.id = (SELECT DISTINCT MAX(gr2.inntektsmeldinger.id) " +
-                "FROM InntektArbeidGrunnlag gr2 " +
-                "WHERE gr2.behandlingId = :behandlingId " + //$NON-NLS-1$ //NOSONAR
-                "AND gr2.aktiv = false " +
-                "and gr2.inntektsmeldinger.id <> (SELECT DISTINCT MAX(gr3.inntektsmeldinger.id) " +
-                "                FROM InntektArbeidGrunnlag gr3 " +
-                "                WHERE gr3.behandlingId = :behandlingId)) " + //$NON-NLS-1$ //NOSONAR
-                "ORDER BY gr.opprettetTidspunkt DESC"
-            , InntektArbeidYtelseGrunnlag.class);
-
-        query.setParameter("behandlingId", behandlingId); // NOSONAR $NON-NLS-1$
-
-        if (query.getResultList().isEmpty()) {
-            return Optional.empty();
-        }
-        InntektArbeidYtelseGrunnlagEntitet resultat = (InntektArbeidYtelseGrunnlagEntitet) query.getResultList().get(0);
-        resultat.taHensynTilBetraktninger();
-        return Optional.of(resultat);
-    }
-
-    @Override
     public InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForReferanse(String referanse) {
         Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlag = getVersjonAvInntektArbeidYtelseForReferanseId(referanse);
         return grunnlag.orElse(null);
-    }
-
-    private Optional<InntektArbeidYtelseGrunnlagEntitet> getVersjonAvInntektArbeidYtelseForGrunnlagId(Long grunnlagId) {
-        Objects.requireNonNull(grunnlagId, "aggregatId"); // NOSONAR $NON-NLS-1$
-        final TypedQuery<InntektArbeidYtelseGrunnlagEntitet> query = entityManager.createQuery("FROM InntektArbeidGrunnlag gr " + // NOSONAR $NON-NLS-1$
-            "WHERE gr.id = :aggregatId ", InntektArbeidYtelseGrunnlagEntitet.class);
-        query.setParameter("aggregatId", grunnlagId);
-        Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlagOpt = query.getResultList().stream().findFirst();
-        grunnlagOpt.ifPresent(InntektArbeidYtelseGrunnlagEntitet::taHensynTilBetraktninger);
-        return grunnlagOpt;
     }
 
     private Optional<InntektArbeidYtelseGrunnlagEntitet> getVersjonAvInntektArbeidYtelseForReferanseId(String referanseId) {
