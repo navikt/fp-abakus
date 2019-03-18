@@ -27,7 +27,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <felles.version>1.1.0-SNAPSHOT</felles.version>
+        <felles.version>1.1.0_20190374082109_418f6d5</felles.version>
 
         <abac-attribute-constants.version>2.0.0</abac-attribute-constants.version>
 
