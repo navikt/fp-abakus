@@ -14,12 +14,6 @@ public class UtbetalingDto {
     public UtbetalingDto() {
     }
 
-    public UtbetalingDto(ArbeidsgiverDto utbetaler, KodeverkDto kilde, List<UtbetalingsPostDto> poster) {
-        this.utbetaler = utbetaler;
-        this.kilde = kilde;
-        this.poster = poster;
-    }
-
     public ArbeidsgiverDto getUtbetaler() {
         return utbetaler;
     }

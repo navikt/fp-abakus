@@ -11,14 +11,6 @@ public class YtelseDto {
     private PeriodeDto periode;
     private KodeverkDto status;
 
-    public YtelseDto(KodeverkDto fagsystem, KodeverkDto type, String saksnummer, PeriodeDto periode, KodeverkDto status) {
-        this.fagsystem = fagsystem;
-        this.type = type;
-        this.saksnummer = saksnummer;
-        this.periode = periode;
-        this.status = status;
-    }
-
     public YtelseDto() {
     }
 

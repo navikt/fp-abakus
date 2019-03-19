@@ -12,13 +12,6 @@ public class UtbetalingsPostDto {
     private PeriodeDto periode;
     private BigDecimal beløp;
 
-    public UtbetalingsPostDto(KodeverkDto type, KodeverkDto skattAvgiftType, PeriodeDto periode, BigDecimal beløp) {
-        this.type = type;
-        this.skattAvgiftType = skattAvgiftType;
-        this.periode = periode;
-        this.beløp = beløp;
-    }
-
     public UtbetalingsPostDto() {
     }
 

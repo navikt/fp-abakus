@@ -12,13 +12,6 @@ public class AktivitetsAvtaleDto {
     private BigDecimal antallTimer;
     private LocalDate sistLønnsendring;
 
-    public AktivitetsAvtaleDto(PeriodeDto periode, BigDecimal stillingsprosent, BigDecimal antallTimer, LocalDate sistLønnsendring) {
-        this.periode = periode;
-        this.stillingsprosent = stillingsprosent;
-        this.antallTimer = antallTimer;
-        this.sistLønnsendring = sistLønnsendring;
-    }
-
     public AktivitetsAvtaleDto() {
     }
 
