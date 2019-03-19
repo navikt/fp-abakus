@@ -252,6 +252,10 @@ public abstract class Kodeliste extends KodeverkBaseEntitet implements Comparabl
         }
     }
 
+    public KodeverkDto somDto() {
+        return new KodeverkDto(kodeverk, kode);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {

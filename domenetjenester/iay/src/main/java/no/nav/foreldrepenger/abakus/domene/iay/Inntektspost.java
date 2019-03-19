@@ -53,5 +53,4 @@ public interface Inntektspost {
 
     YtelseType getYtelseType();
 
-    YtelseType getYtelse();
 }

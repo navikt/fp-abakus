@@ -5,6 +5,7 @@ import static java.util.Collections.emptyList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -42,7 +43,7 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
     }
 
     @Override
-    public InntektArbeidYtelseGrunnlag hentAggregat(String referanse) {
+    public InntektArbeidYtelseGrunnlag hentAggregat(UUID referanse) {
         return repository.hentInntektArbeidYtelseForReferanse(referanse);
     }
 

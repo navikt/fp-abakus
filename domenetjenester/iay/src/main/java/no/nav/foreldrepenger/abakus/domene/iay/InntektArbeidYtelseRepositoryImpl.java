@@ -62,7 +62,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     @Override
     public Optional<InntektArbeidYtelseGrunnlag> hentInntektArbeidYtelseGrunnlagForBehandling(Long behandlingId) {
         Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlag = getAktivtInntektArbeidGrunnlag(behandlingId);
-        return grunnlag.isPresent() ? Optional.of(grunnlag.get()) : Optional.empty();
+        return grunnlag.map(InntektArbeidYtelseGrunnlag.class::cast);
     }
 
     @Override
@@ -378,12 +378,12 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     }
 
     @Override
-    public InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForReferanse(String referanse) {
+    public InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForReferanse(UUID referanse) {
         Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlag = getVersjonAvInntektArbeidYtelseForReferanseId(referanse);
         return grunnlag.orElse(null);
     }
 
-    private Optional<InntektArbeidYtelseGrunnlagEntitet> getVersjonAvInntektArbeidYtelseForReferanseId(String referanseId) {
+    private Optional<InntektArbeidYtelseGrunnlagEntitet> getVersjonAvInntektArbeidYtelseForReferanseId(UUID referanseId) {
         Objects.requireNonNull(referanseId, "aggregatId"); // NOSONAR $NON-NLS-1$
         final TypedQuery<InntektArbeidYtelseGrunnlagEntitet> query = entityManager.createQuery("FROM InntektArbeidGrunnlag gr " + // NOSONAR $NON-NLS-1$
             "WHERE gr.referanseId = :aggregatId ", InntektArbeidYtelseGrunnlagEntitet.class);

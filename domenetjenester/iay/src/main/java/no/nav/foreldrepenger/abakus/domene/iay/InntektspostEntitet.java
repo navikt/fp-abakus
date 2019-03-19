@@ -93,7 +93,7 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(getInntektspostType(), getYtelse(), periode);
+        return IndexKey.createKey(inntektspostType, ytelse, periode);
     }
 
     @Override
@@ -148,11 +148,6 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
 
     void setInntekt(InntektEntitet inntekt) {
         this.inntekt = inntekt;
-    }
-
-    @Override
-    public YtelseType getYtelse() {
-        return ytelse;
     }
 
     void setYtelse(YtelseType ytelse) {

@@ -1,5 +1,7 @@
 package no.nav.foreldrepenger.abakus.iay;
 
+import java.util.UUID;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -25,7 +27,7 @@ public class DiffInntektArbeidYtelseTjeneste {
      * @return henter aggregat, null hvis det ikke finnes.
      */
     public InntektArbeidYtelseGrunnlag hentAggregat(String referanse) {
-        return repository.hentInntektArbeidYtelseForReferanse(referanse);
+        return repository.hentInntektArbeidYtelseForReferanse(UUID.fromString(referanse));
     }
 
     public DiffResult diff(InntektArbeidYtelseGrunnlag gammelGrunnlag, InntektArbeidYtelseGrunnlag nyttGrunnlag) {

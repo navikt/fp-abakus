@@ -66,7 +66,7 @@ public class Arbeidsgiver implements IndexKey, Serializable, TraverseValue {
     }
 
     /**
-     * Returneer ident for arbeidsgiver. Kan være Org nummer eller Aktør id (dersom arbeidsgiver er en enkelt person -
+     * Returneer ident for arbeidsgiver. Kan være Org nummer eller AktørDto id (dersom arbeidsgiver er en enkelt person -
      * f.eks. for Frilans el.)
      */
     public String getIdentifikator() {

@@ -3,8 +3,8 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 import java.util.Objects;
 import java.util.Optional;
 
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 
 public class Opptjeningsnøkkel {
 
@@ -55,7 +55,7 @@ public class Opptjeningsnøkkel {
      * Gir en opptjeningsnøkkel basert på følgende rank
      * 1) ArbeidsforholdId er en unik id fra AAreg
      * 2) Org nummer er iden til en virksomhet som fungere som arbeidsgiver
-     * 3) Aktør id er iden til en person som fungere som arbeidsgiver
+     * 3) AktørDto id er iden til en person som fungere som arbeidsgiver
      */
     public String getVerdi() {
         if (harArbeidsforholdId())

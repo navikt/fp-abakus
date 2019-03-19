@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
@@ -17,5 +18,5 @@ public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRe
 
     Optional<ArbeidsforholdInformasjon> hentArbeidsforholdInformasjonForBehandling(Long behandlingId);
 
-    InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForReferanse(String referanse);
+    InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForReferanse(UUID referanse);
 }

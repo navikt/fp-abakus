@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.iay;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
@@ -23,7 +24,7 @@ public interface InntektArbeidYtelseTjeneste {
      * @param referanse
      * @return henter aggregat, kaster feil hvis det ikke finnes.
      */
-    InntektArbeidYtelseGrunnlag hentAggregat(String referanse);
+    InntektArbeidYtelseGrunnlag hentAggregat(UUID referanse);
 
     /**
      * @param koblingId

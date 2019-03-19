@@ -6,15 +6,15 @@ import javax.validation.constraints.Pattern;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 
-public class Aktør implements AbacDto {
+public class AktørDto implements AbacDto {
     @NotNull
-    @Pattern(regexp = "")
+    @Pattern(regexp = "[\\d]{11}|[\\d]{13}")
     private String id;
 
-    public Aktør() {
+    public AktørDto() {
     }
 
-    public Aktør(String id) {
+    public AktørDto(String id) {
         this.id = id;
     }
 

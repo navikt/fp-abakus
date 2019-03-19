@@ -12,9 +12,9 @@ public class HentArbeidsforholdForReferanseDto implements AbacDto {
     @Valid
     private ReferanseDto referanseDto;
     @Valid
-    private Aktør aktør;
+    private AktørDto aktør;
 
-    public HentArbeidsforholdForReferanseDto(ReferanseDto referanseDto, Aktør aktør) {
+    public HentArbeidsforholdForReferanseDto(ReferanseDto referanseDto, AktørDto aktør) {
         this.referanseDto = referanseDto;
         this.aktør = aktør;
     }
@@ -30,11 +30,11 @@ public class HentArbeidsforholdForReferanseDto implements AbacDto {
         this.referanseDto = referanseDto;
     }
 
-    public Aktør getAktør() {
+    public AktørDto getAktør() {
         return aktør;
     }
 
-    public void setAktør(Aktør aktør) {
+    public void setAktør(AktørDto aktør) {
         this.aktør = aktør;
     }
 
