@@ -178,11 +178,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>no.nav.tjenester</groupId>
-                <artifactId>aordningen-inntektsinformasjon-v1</artifactId>
-                <version>1.4</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.assertj</groupId>

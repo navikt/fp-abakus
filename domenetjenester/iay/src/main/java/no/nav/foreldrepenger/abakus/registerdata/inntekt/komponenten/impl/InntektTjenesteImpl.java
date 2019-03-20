@@ -27,6 +27,8 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FrilansArbe
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.request.HentInntektListeBolkRequest;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.Aktoer;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.AktoerType;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.ArbeidsInntektIdent;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.ArbeidsInntektInformasjon;
@@ -40,8 +42,6 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respon
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.inntekt.YtelseFraOffentlige;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.response.HentInntektListeBolkResponse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.tjenester.aordningen.inntektsinformasjon.Aktoer;
-import no.nav.tjenester.aordningen.inntektsinformasjon.request.HentInntektListeBolkRequest;
 import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
 import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
 import no.nav.vedtak.konfig.KonfigVerdi;
