@@ -2,16 +2,16 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.arbeid;
 
 import java.util.List;
 
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.ArbeidsforholdRefDto;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.ArbeidsgiverDto;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.PeriodeDto;
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkDto;
 
 public class YrkesaktivitetDto {
 
     private ArbeidsgiverDto arbeidsgiver;
     private ArbeidsforholdRefDto arbeidsforholdId;
-    private KodeverkDto type;
+    private ArbeidType type;
     private List<PeriodeDto> ansettelsesperiode;
     private List<AktivitetsAvtaleDto> aktivitetsAvtaler;
     private List<PermisjonDto> permisjoner;
@@ -35,11 +35,11 @@ public class YrkesaktivitetDto {
         this.arbeidsforholdId = arbeidsforholdId;
     }
 
-    public KodeverkDto getType() {
+    public ArbeidType getType() {
         return type;
     }
 
-    public void setType(KodeverkDto type) {
+    public void setType(ArbeidType type) {
         this.type = type;
     }
 

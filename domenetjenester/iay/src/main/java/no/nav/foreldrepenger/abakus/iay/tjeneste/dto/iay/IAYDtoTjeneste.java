@@ -17,6 +17,8 @@ import no.nav.foreldrepenger.abakus.domene.iay.Inntektspost;
 import no.nav.foreldrepenger.abakus.domene.iay.Permisjon;
 import no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet;
 import no.nav.foreldrepenger.abakus.domene.iay.Ytelse;
+import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlag;
+import no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelse;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.AktørDto;
@@ -28,10 +30,12 @@ import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.arbeid.YrkesaktivitetDt
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.inntekt.InntekterDto;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.inntekt.UtbetalingDto;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.inntekt.UtbetalingsPostDto;
+import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.ytelse.Fordeling;
+import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.ytelse.Grunnlag;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.ytelse.YtelseDto;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.ytelse.YtelserDto;
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkDto;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
 @ApplicationScoped
 public class IAYDtoTjeneste {
@@ -70,9 +74,33 @@ public class IAYDtoTjeneste {
         YtelseDto dto = new YtelseDto();
         dto.setPeriode(new PeriodeDto(ytelse.getPeriode().getFomDato(), ytelse.getPeriode().getTomDato()));
         dto.setSaksnummer(ytelse.getSaksnummer().getVerdi());
-        dto.setStatus(ytelse.getStatus().somDto());
-        dto.setType(ytelse.getRelatertYtelseType().somDto());
-        dto.setFagsystem(ytelse.getKilde().somDto());
+        dto.setStatus(ytelse.getStatus());
+        dto.setType(ytelse.getRelatertYtelseType());
+        dto.setFagsystem(ytelse.getKilde());
+        ytelse.getYtelseGrunnlag().ifPresent(gr -> dto.setGrunnlag(mapYtelseGrunnlag(gr)));
+        return dto;
+    }
+
+    private Grunnlag mapYtelseGrunnlag(YtelseGrunnlag gr) {
+        Grunnlag dto = new Grunnlag();
+        gr.getArbeidskategori().ifPresent(dto::setArbeidskategori);
+        gr.getOpprinneligIdentdato().ifPresent(dto::setOpprinneligIdentDato);
+        gr.getDekningsgradProsent().map(Stillingsprosent::getVerdi).ifPresent(dto::setDekningsgradProsent);
+        gr.getGraderingProsent().map(Stillingsprosent::getVerdi).ifPresent(dto::setGraderingProsent);
+        gr.getInntektsgrunnlagProsent().map(Stillingsprosent::getVerdi).ifPresent(dto::setInntektsgrunnlagProsent);
+        dto.setFordeling(mapFordeling(gr.getYtelseStørrelse()));
+        return dto;
+    }
+
+    private List<Fordeling> mapFordeling(List<YtelseStørrelse> ytelseStørrelse) {
+        return ytelseStørrelse.stream().map(this::tilFordeling).collect(Collectors.toList());
+    }
+
+    private Fordeling tilFordeling(YtelseStørrelse ytelseStørrelse) {
+        Fordeling dto = new Fordeling();
+        dto.setHyppighet(ytelseStørrelse.getHyppighet());
+        dto.setBeløp(ytelseStørrelse.getBeløp().getVerdi());
+        ytelseStørrelse.getVirksomhet().ifPresent(vi -> dto.setArbeidsgiver(mapArbeidsgiver(Arbeidsgiver.virksomhet(vi))));
         return dto;
     }
 
@@ -83,10 +111,10 @@ public class IAYDtoTjeneste {
     private InntekterDto mapTilInntekt(AktørInntekt ai) {
         InntekterDto dto = new InntekterDto();
         dto.setAktør(new AktørDto(ai.getAktørId().getId()));
-        List<UtbetalingDto> pensjonsgivende = tilUtbetalinger(ai.getInntektPensjonsgivende(), InntektsKilde.INNTEKT_OPPTJENING.somDto());
-        List<UtbetalingDto> sammenligning = tilUtbetalinger(ai.getInntektSammenligningsgrunnlag(), InntektsKilde.INNTEKT_SAMMENLIGNING.somDto());
-        List<UtbetalingDto> beregning = tilUtbetalinger(ai.getInntektBeregningsgrunnlag(), InntektsKilde.INNTEKT_BEREGNING.somDto());
-        List<UtbetalingDto> sigrun = tilUtbetalinger(ai.getBeregnetSkatt(), InntektsKilde.SIGRUN.somDto());
+        List<UtbetalingDto> pensjonsgivende = tilUtbetalinger(ai.getInntektPensjonsgivende(), InntektsKilde.INNTEKT_OPPTJENING);
+        List<UtbetalingDto> sammenligning = tilUtbetalinger(ai.getInntektSammenligningsgrunnlag(), InntektsKilde.INNTEKT_SAMMENLIGNING);
+        List<UtbetalingDto> beregning = tilUtbetalinger(ai.getInntektBeregningsgrunnlag(), InntektsKilde.INNTEKT_BEREGNING);
+        List<UtbetalingDto> sigrun = tilUtbetalinger(ai.getBeregnetSkatt(), InntektsKilde.SIGRUN);
         ArrayList<UtbetalingDto> utbetalinger = new ArrayList<>(pensjonsgivende);
         utbetalinger.addAll(sammenligning);
         utbetalinger.addAll(beregning);
@@ -95,16 +123,15 @@ public class IAYDtoTjeneste {
         return dto;
     }
 
-    private List<UtbetalingDto> tilUtbetalinger(List<Inntekt> inntekter, KodeverkDto kilde) {
+    private List<UtbetalingDto> tilUtbetalinger(List<Inntekt> inntekter, InntektsKilde kilde) {
         return inntekter.stream().map(in -> tilUtbetaling(in, kilde)).collect(Collectors.toList());
     }
 
-    private UtbetalingDto tilUtbetaling(Inntekt inntekt, KodeverkDto kilde) {
+    private UtbetalingDto tilUtbetaling(Inntekt inntekt, InntektsKilde kilde) {
         Arbeidsgiver arbeidsgiver = inntekt.getArbeidsgiver();
         UtbetalingDto dto = new UtbetalingDto();
         dto.setKilde(kilde);
-        if (arbeidsgiver != null)
-            dto.setUtbetaler(mapArbeidsgiver(arbeidsgiver));
+        dto.setUtbetaler(mapArbeidsgiver(arbeidsgiver));
         dto.setPoster(tilPoster(inntekt.getInntektspost()));
         return dto;
     }
@@ -122,8 +149,8 @@ public class IAYDtoTjeneste {
 
     private UtbetalingsPostDto tilPost(Inntektspost inntektspost) {
         UtbetalingsPostDto dto = new UtbetalingsPostDto();
-        dto.setType(inntektspost.getInntektspostType().somDto());
-        dto.setSkattAvgiftType(inntektspost.getSkatteOgAvgiftsregelType().somDto());
+        dto.setType(inntektspost.getInntektspostType());
+        dto.setSkattAvgiftType(inntektspost.getSkatteOgAvgiftsregelType());
         dto.setBeløp(inntektspost.getBeløp().getVerdi());
         dto.setPeriode(new PeriodeDto(inntektspost.getFraOgMed(), inntektspost.getTilOgMed()));
         return dto;
@@ -152,7 +179,7 @@ public class IAYDtoTjeneste {
         YrkesaktivitetDto dto = new YrkesaktivitetDto();
         dto.setAnsettelsesperiode(mapAnsettelsesPeriode(yrkesaktivitet.getAnsettelsesPerioder()));
         dto.setArbeidsgiver(mapArbeidsgiver(arbeidsgiver));
-        dto.setType(yrkesaktivitet.getArbeidType().somDto());
+        dto.setType(yrkesaktivitet.getArbeidType());
         dto.setArbeidsforholdId(arbeidsforholdId);
         dto.setPermisjoner(mapPermisjoner(yrkesaktivitet.getPermisjon()));
         dto.setAktivitetsAvtaler(mapAktivitetsAvtaler(yrkesaktivitet.getAktivitetsAvtaler()));
@@ -179,7 +206,7 @@ public class IAYDtoTjeneste {
     private PermisjonDto mapPermisjon(Permisjon permisjon) {
         PermisjonDto dto = new PermisjonDto();
         dto.setPeriode(new PeriodeDto(permisjon.getFraOgMed(), permisjon.getTilOgMed()));
-        dto.setType(permisjon.getPermisjonsbeskrivelseType().somDto());
+        dto.setType(permisjon.getPermisjonsbeskrivelseType());
         dto.setProsentsats(permisjon.getProsentsats().getVerdi());
         return dto;
     }

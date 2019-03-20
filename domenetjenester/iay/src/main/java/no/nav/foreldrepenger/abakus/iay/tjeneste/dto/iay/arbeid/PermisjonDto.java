@@ -2,13 +2,13 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.arbeid;
 
 import java.math.BigDecimal;
 
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.PermisjonsbeskrivelseType;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.PeriodeDto;
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkDto;
 
 public class PermisjonDto {
 
     private PeriodeDto periode;
-    private KodeverkDto type;
+    private PermisjonsbeskrivelseType type;
     private BigDecimal prosentsats;
 
     public PermisjonDto() {
@@ -22,11 +22,11 @@ public class PermisjonDto {
         this.periode = periode;
     }
 
-    public KodeverkDto getType() {
+    public PermisjonsbeskrivelseType getType() {
         return type;
     }
 
-    public void setType(KodeverkDto type) {
+    public void setType(PermisjonsbeskrivelseType type) {
         this.type = type;
     }
 

@@ -1,32 +1,54 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.ytelse;
 
+import java.util.List;
+
+import no.nav.foreldrepenger.abakus.behandling.Fagsystem;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTilstand;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseType;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.PeriodeDto;
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkDto;
 
 public class YtelseDto {
 
-    private KodeverkDto fagsystem;
-    private KodeverkDto type;
+    private Fagsystem fagsystem;
+    private RelatertYtelseType type;
     private String saksnummer;
     private PeriodeDto periode;
-    private KodeverkDto status;
+    private RelatertYtelseTilstand status;
+    private List<Anvisning> anvisninger;
+    private Grunnlag grunnlag;
 
     public YtelseDto() {
     }
 
-    public KodeverkDto getFagsystem() {
+    public List<Anvisning> getAnvisninger() {
+        return anvisninger;
+    }
+
+    public void setAnvisninger(List<Anvisning> anvisninger) {
+        this.anvisninger = anvisninger;
+    }
+
+    public Grunnlag getGrunnlag() {
+        return grunnlag;
+    }
+
+    public void setGrunnlag(Grunnlag grunnlag) {
+        this.grunnlag = grunnlag;
+    }
+
+    public Fagsystem getFagsystem() {
         return fagsystem;
     }
 
-    public void setFagsystem(KodeverkDto fagsystem) {
+    public void setFagsystem(Fagsystem fagsystem) {
         this.fagsystem = fagsystem;
     }
 
-    public KodeverkDto getType() {
+    public RelatertYtelseType getType() {
         return type;
     }
 
-    public void setType(KodeverkDto type) {
+    public void setType(RelatertYtelseType type) {
         this.type = type;
     }
 
@@ -46,11 +68,11 @@ public class YtelseDto {
         this.periode = periode;
     }
 
-    public KodeverkDto getStatus() {
+    public RelatertYtelseTilstand getStatus() {
         return status;
     }
 
-    public void setStatus(KodeverkDto status) {
+    public void setStatus(RelatertYtelseTilstand status) {
         this.status = status;
     }
 }
