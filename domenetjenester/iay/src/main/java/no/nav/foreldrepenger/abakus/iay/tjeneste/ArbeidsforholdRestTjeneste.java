@@ -3,8 +3,6 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
-import java.util.UUID;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -15,10 +13,12 @@ import javax.ws.rs.core.Response;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
-import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.HentArbeidsforholdForReferanseDto;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYDtoTjeneste;
+import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.ArbeidsforholdForAktørIPeriodeDto;
+import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.ArbeidsforholdForAktørPåDatoDto;
+import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.ArbeidstakersArbeidsforholdDto;
+import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.arbeidsforhold.ArbeidsforholdDtoTjeneste;
+import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.PeriodeDto;
+import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 
@@ -28,27 +28,39 @@ import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 @Transaction
 public class ArbeidsforholdRestTjeneste {
 
-    private InntektArbeidYtelseTjeneste iayTjeneste;
-    private IAYDtoTjeneste dtoTjeneste;
+    private ArbeidsforholdDtoTjeneste dtoTjeneste;
 
     public ArbeidsforholdRestTjeneste() {
     }
 
     @Inject
-    public ArbeidsforholdRestTjeneste(InntektArbeidYtelseTjeneste iayTjeneste, IAYDtoTjeneste dtoTjeneste) {
-        this.iayTjeneste = iayTjeneste;
+    public ArbeidsforholdRestTjeneste(ArbeidsforholdDtoTjeneste dtoTjeneste) {
         this.dtoTjeneste = dtoTjeneste;
     }
 
     @POST
-    @Path("/")
-    @ApiOperation(value = "Gir ut informasjom om alle arbeidsforhold på referansen for kobling/grunnlag")
+    @Path("/arbeidstaker")
+    @ApiOperation(value = "Gir ut alle arbeidsforhold i en gitt periode for en gitt aktør. NB! Kaller direkte til aa-registeret")
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response arbeidsforholdForReferanse(@NotNull @Valid HentArbeidsforholdForReferanseDto referanse) {
-        InntektArbeidYtelseGrunnlag grunnlag = iayTjeneste.hentAggregat(UUID.fromString(referanse.getReferanseDto().getReferanse()));
+    public Response arbeidsforholdForReferanse(@NotNull @Valid ArbeidsforholdForAktørIPeriodeDto request) {
+        AktørId aktørId = new AktørId(request.getAktør().getId());
+        PeriodeDto periode = request.getPeriode();
 
-        return Response.ok(dtoTjeneste.mapTil(grunnlag)).build();
+        ArbeidstakersArbeidsforholdDto arbeidstakersArbeidsforhold = dtoTjeneste.mapFor(aktørId, periode.getFom(), periode.getTom());
+        return Response.ok(arbeidstakersArbeidsforhold).build();
+    }
+
+    @POST
+    @Path("/arbeidstaker")
+    @ApiOperation(value = "Gir ut alle arbeidsforhold på en gitt dato for en gitt aktør. NB! Kaller direkte til aa-registeret")
+    @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
+    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    public Response arbeidsforholdForReferanse(@NotNull @Valid ArbeidsforholdForAktørPåDatoDto request) {
+        AktørId aktørId = new AktørId(request.getAktør().getId());
+
+        ArbeidstakersArbeidsforholdDto arbeidstakersArbeidsforhold = dtoTjeneste.mapFor(aktørId, request.getDato(), request.getDato().plusDays(1));
+        return Response.ok(arbeidstakersArbeidsforhold).build();
     }
 
 }

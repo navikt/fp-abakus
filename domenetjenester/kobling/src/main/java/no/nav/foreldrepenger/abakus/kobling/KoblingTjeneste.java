@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.kobling;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -20,7 +21,7 @@ public class KoblingTjeneste {
         this.repository = repository;
     }
 
-    public Optional<Kobling> hentFor(String referanse) {
+    public Optional<Kobling> hentFor(UUID referanse) {
         return repository.hentForReferanse(referanse);
     }
 

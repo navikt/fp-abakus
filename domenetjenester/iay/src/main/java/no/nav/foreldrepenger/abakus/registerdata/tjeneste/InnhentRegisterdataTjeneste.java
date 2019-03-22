@@ -57,12 +57,13 @@ public class InnhentRegisterdataTjeneste {
     }
 
     private Kobling oppdaterKobling(InnhentRegisterdataDto dto) {
-        Optional<Kobling> koblingOpt = koblingTjeneste.hentFor(dto.getReferanse());
+        UUID referanse = UUID.fromString(dto.getReferanse());
+        Optional<Kobling> koblingOpt = koblingTjeneste.hentFor(referanse);
         Kobling kobling;
-        if (!koblingOpt.isPresent()) {
+        if (koblingOpt.isEmpty()) {
             // Lagre kobling
             PeriodeDto opplysningsperiode = dto.getOpplysningsperiode();
-            kobling = new Kobling(dto.getReferanse(), new AktørId(dto.getAktørId().getId()), DatoIntervallEntitet.fraOgMedTilOgMed(opplysningsperiode.getFom(), opplysningsperiode.getTom()));
+            kobling = new Kobling(referanse, new AktørId(dto.getAktørId().getId()), DatoIntervallEntitet.fraOgMedTilOgMed(opplysningsperiode.getFom(), opplysningsperiode.getTom()));
         } else {
             kobling = koblingOpt.get();
         }

@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.kobling;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -14,6 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
+
+import org.hibernate.annotations.Type;
 
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -28,7 +31,8 @@ public class Kobling implements IndexKey {
     private Long id;
 
     @Column(name = "referanse_id", updatable = false, nullable = false, unique = true)
-    private String referanseId;
+    @Type(type = "uuid-char")
+    private UUID referanseId;
 
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "bruker_aktoer_id", nullable = false, updatable = false)))
@@ -59,7 +63,7 @@ public class Kobling implements IndexKey {
     public Kobling() {
     }
 
-    public Kobling(String referanseId, AktørId aktørId, DatoIntervallEntitet opplysningsperiode) {
+    public Kobling(UUID referanseId, AktørId aktørId, DatoIntervallEntitet opplysningsperiode) {
         Objects.requireNonNull(referanseId, "referanseId");
         Objects.requireNonNull(aktørId, "aktørId");
         Objects.requireNonNull(opplysningsperiode, "opplysningsperiode");
@@ -77,7 +81,7 @@ public class Kobling implements IndexKey {
         return id;
     }
 
-    public String getReferanse() {
+    public UUID getReferanse() {
         return referanseId;
     }
 

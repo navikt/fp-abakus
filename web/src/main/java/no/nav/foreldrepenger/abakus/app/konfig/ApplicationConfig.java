@@ -14,6 +14,7 @@ import no.nav.foreldrepenger.abakus.app.exceptions.JsonMappingExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.JsonParseExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.jackson.JacksonJsonConfig;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.ArbeidsforholdRestTjeneste;
+import no.nav.foreldrepenger.abakus.iay.tjeneste.GrunnlagRestTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegistedataRestTjeneste;
 
 @ApplicationPath(ApplicationConfig.API_URI)
@@ -51,6 +52,7 @@ public class ApplicationConfig extends Application {
         Set<Class<?>> classes = new HashSet<>();
 
         classes.add(RegistedataRestTjeneste.class);
+        classes.add(GrunnlagRestTjeneste.class);
         classes.add(ArbeidsforholdRestTjeneste.class);
 
         classes.add(io.swagger.jaxrs.listing.ApiListingResource.class);

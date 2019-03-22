@@ -66,8 +66,7 @@ public class ArbeidsforholdTjenesteImpl implements ArbeidsforholdTjeneste {
 
     @Override
     public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> finnArbeidsforholdForIdentIPerioden(PersonIdent fnr, Interval interval) {
-        final FinnArbeidsforholdPrArbeidstakerResponse finnArbeidsforholdPrArbeidstakerResponse =
-            finnArbeidsForhold(fnr, interval);
+        final FinnArbeidsforholdPrArbeidstakerResponse finnArbeidsforholdPrArbeidstakerResponse = finnArbeidsForhold(fnr, interval);
 
         // Tar bare de arbeidsforholdene som er løpende.
         return mapArbeidsforholdResponseToArbeidsforhold(finnArbeidsforholdPrArbeidstakerResponse, interval);
