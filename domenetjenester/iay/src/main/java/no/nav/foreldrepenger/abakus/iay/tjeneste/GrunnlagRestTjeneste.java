@@ -46,9 +46,10 @@ public class GrunnlagRestTjeneste {
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response arbeidsforholdForReferanse(@NotNull @Valid HentArbeidsforholdForReferanseDto referanse) {
-        InntektArbeidYtelseGrunnlag grunnlag = iayTjeneste.hentAggregat(UUID.fromString(referanse.getReferanseDto().getReferanse()));
+        UUID uuid = UUID.fromString(referanse.getReferanseDto().getReferanse());
+        InntektArbeidYtelseGrunnlag grunnlag = iayTjeneste.hentAggregat(uuid);
 
-        return Response.ok(dtoTjeneste.mapTil(grunnlag)).build();
+        return Response.ok(dtoTjeneste.mapTil(grunnlag, iayTjeneste.hentKoblingIdFor(uuid))).build();
     }
 
 }

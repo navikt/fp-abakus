@@ -44,6 +44,12 @@ public class KoblingRepository {
         return HibernateVerktøy.hentUniktResultat(query);
     }
 
+    public Long hentIdForReferanse(UUID referanse) {
+        TypedQuery<Long> query = entityManager.createQuery("SELECT k.id FROM Kobling k WHERE k.referanseId = :referanse", Long.class);
+        query.setParameter("referanse", referanse);
+        return HibernateVerktøy.hentEksaktResultat(query);
+    }
+
     public void lagre(Kobling nyKobling) {
         Optional<Kobling> eksisterendeKobling = hentForReferanse(nyKobling.getReferanse());
 

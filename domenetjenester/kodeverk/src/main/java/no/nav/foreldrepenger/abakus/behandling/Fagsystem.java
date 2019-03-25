@@ -27,6 +27,7 @@ public class Fagsystem extends Kodeliste {
     public static final Fagsystem GOSYS = new Fagsystem("GOSYS", "FS22");
     public static final Fagsystem ENHETSREGISTERET = new Fagsystem("ENHETSREGISTERET", "ER01");
     public static final Fagsystem AAREGISTERET = new Fagsystem("AAREGISTERET", "AR01");
+    public static final Fagsystem FPABAKUS = new Fagsystem("FPABAKUS", "FP99"); // TODO: Registrer kode?
 
 
     /**

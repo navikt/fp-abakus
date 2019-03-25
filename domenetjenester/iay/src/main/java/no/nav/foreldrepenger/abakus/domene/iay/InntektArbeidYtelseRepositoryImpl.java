@@ -182,7 +182,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
 
         if (tidligereAggregat.isPresent()) {
             InntektArbeidYtelseGrunnlagEntitet aggregat = tidligereAggregat.get();
-            if (diffResultat(aggregat, (InntektArbeidYtelseGrunnlagEntitet) nyttGrunnlag, false).isEmpty()) {
+            if (diffResultat(aggregat, nyttGrunnlag, false).isEmpty()) {
                 return;
             }
             aggregat.setAktivt(false);
@@ -383,12 +383,20 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         return grunnlag.orElse(null);
     }
 
+    @Override
+    public Long hentKoblingForReferanse(UUID referanse) {
+        final TypedQuery<Long> query = entityManager.createQuery("SELECT behandlingId FROM InntektArbeidGrunnlag gr " + // NOSONAR $NON-NLS-1$
+            "WHERE gr.referanseId = :aggregatId ", Long.class);
+        query.setParameter("aggregatId", referanse);
+        return query.getSingleResult();
+    }
+
     private Optional<InntektArbeidYtelseGrunnlagEntitet> getVersjonAvInntektArbeidYtelseForReferanseId(UUID referanseId) {
         Objects.requireNonNull(referanseId, "aggregatId"); // NOSONAR $NON-NLS-1$
         final TypedQuery<InntektArbeidYtelseGrunnlagEntitet> query = entityManager.createQuery("FROM InntektArbeidGrunnlag gr " + // NOSONAR $NON-NLS-1$
             "WHERE gr.referanseId = :aggregatId ", InntektArbeidYtelseGrunnlagEntitet.class);
         query.setParameter("aggregatId", referanseId);
-        Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlagOpt = query.getResultList().stream().findFirst();
+        Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlagOpt = query.getResultStream().findFirst();
         grunnlagOpt.ifPresent(InntektArbeidYtelseGrunnlagEntitet::taHensynTilBetraktninger);
         return grunnlagOpt;
     }

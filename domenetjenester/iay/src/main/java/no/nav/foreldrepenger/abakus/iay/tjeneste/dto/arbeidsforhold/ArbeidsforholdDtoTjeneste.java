@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import no.nav.foreldrepenger.abakus.behandling.Fagsystem;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.ArbeidstakersArbeidsforholdDto;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.ArbeidsforholdRefDto;
@@ -70,7 +71,9 @@ public class ArbeidsforholdDtoTjeneste {
         if (arbeidsforholdId == null) {
             return null;
         }
-        return new ArbeidsforholdRefDto(arbeidsforholdId.getReferanse());
+        ArbeidsforholdRefDto arbeidsforholdRefDto = new ArbeidsforholdRefDto();
+        arbeidsforholdRefDto.leggTilReferanse(Fagsystem.AAREGISTERET, arbeidsforholdId.getReferanse());
+        return arbeidsforholdRefDto;
     }
 
     private ArbeidsgiverDto mapArbeidsgiver(no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsgiver arbeidsgiver) {
@@ -80,5 +83,16 @@ public class ArbeidsforholdDtoTjeneste {
             return new ArbeidsgiverDto(arbeidsgiver.getIdentifikator(), ArbeidsgiverType.VIRKSOMHET);
         }
         throw new IllegalArgumentException("Utvikler feil: Arbeidsgiver av ukjent type.");
+    }
+
+    public ArbeidsforholdReferanseDto mapArbeidsforhold(ArbeidsgiverDto arbeidsgiver, String eksternReferanse, String internReferanse) {
+        ArbeidsforholdReferanseDto dto = new ArbeidsforholdReferanseDto();
+        dto.setArbeidsgiver(arbeidsgiver);
+        ArbeidsforholdRefDto refDto = new ArbeidsforholdRefDto();
+        refDto.leggTilReferanse(Fagsystem.AAREGISTERET, eksternReferanse);
+        refDto.leggTilReferanse(Fagsystem.FPABAKUS, internReferanse);
+        dto.setArbeidsforholdReferanse(refDto);
+
+        return dto;
     }
 }

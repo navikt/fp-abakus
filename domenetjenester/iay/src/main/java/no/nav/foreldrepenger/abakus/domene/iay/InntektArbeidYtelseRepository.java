@@ -19,4 +19,6 @@ public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRe
     Optional<ArbeidsforholdInformasjon> hentArbeidsforholdInformasjonForBehandling(Long behandlingId);
 
     InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForReferanse(UUID referanse);
+
+    Long hentKoblingForReferanse(UUID referanse);
 }

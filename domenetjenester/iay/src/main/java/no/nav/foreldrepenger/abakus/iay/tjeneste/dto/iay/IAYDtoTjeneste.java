@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
+import no.nav.foreldrepenger.abakus.behandling.Fagsystem;
 import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtale;
 import no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid;
 import no.nav.foreldrepenger.abakus.domene.iay.AktørInntekt;
@@ -21,6 +23,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelse;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.AktørDto;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.ReferanseDto;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.arbeid.AktivitetsAvtaleDto;
@@ -40,16 +43,23 @@ import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 @ApplicationScoped
 public class IAYDtoTjeneste {
 
+    private InntektArbeidYtelseTjeneste tjeneste;
+
     public IAYDtoTjeneste() {
     }
 
-    public GrunnlagDto mapTil(InntektArbeidYtelseGrunnlag grunnlag) {
+    @Inject
+    public IAYDtoTjeneste(InntektArbeidYtelseTjeneste tjeneste) {
+        this.tjeneste = tjeneste;
+    }
+
+    public GrunnlagDto mapTil(InntektArbeidYtelseGrunnlag grunnlag, long koblingId) {
         if (grunnlag == null) {
             return null;
         }
         GrunnlagDto dto = new GrunnlagDto();
         dto.setReferanse(new ReferanseDto(grunnlag.getReferanse().toString()));
-        dto.setArbeid(mapArbeid(grunnlag.getAktørArbeidFørStp(null)));
+        dto.setArbeid(mapArbeid(grunnlag.getAktørArbeidFørStp(null), koblingId));
         dto.setInntekt(mapInntekt(grunnlag.getAktørInntektFørStp(null)));
         dto.setYtelse(mapYtelser(grunnlag.getAktørYtelseFørStp(null)));
         return dto;
@@ -156,25 +166,24 @@ public class IAYDtoTjeneste {
         return dto;
     }
 
-    private List<ArbeidDto> mapArbeid(Collection<AktørArbeid> aktørArbeid) {
-        return aktørArbeid.stream().map(this::mapTilArbeid).collect(Collectors.toList());
+    private List<ArbeidDto> mapArbeid(Collection<AktørArbeid> aktørArbeid, long koblingId) {
+        return aktørArbeid.stream().map(aa -> mapTilArbeid(aa, koblingId)).collect(Collectors.toList());
     }
 
-    private ArbeidDto mapTilArbeid(AktørArbeid aa) {
+    private ArbeidDto mapTilArbeid(AktørArbeid aa, long koblingId) {
         ArbeidDto dto = new ArbeidDto();
         dto.setAktør(new AktørDto(aa.getAktørId().getId()));
-        dto.setYrkesaktiviteter(tilYrkesaktiviteter(aa.getYrkesaktiviteter()));
+        dto.setYrkesaktiviteter(tilYrkesaktiviteter(aa.getYrkesaktiviteter(), koblingId));
         return dto;
     }
 
-    private List<YrkesaktivitetDto> tilYrkesaktiviteter(Collection<Yrkesaktivitet> yrkesaktiviteter) {
-        return yrkesaktiviteter.stream().map(this::tilDto).collect(Collectors.toList());
+    private List<YrkesaktivitetDto> tilYrkesaktiviteter(Collection<Yrkesaktivitet> yrkesaktiviteter, long koblingId) {
+        return yrkesaktiviteter.stream().map(yrkesaktivitet -> tilDto(yrkesaktivitet, koblingId)).collect(Collectors.toList());
     }
 
-    private YrkesaktivitetDto tilDto(Yrkesaktivitet yrkesaktivitet) {
+    private YrkesaktivitetDto tilDto(Yrkesaktivitet yrkesaktivitet, long koblingId) {
         Arbeidsgiver arbeidsgiver = yrkesaktivitet.getArbeidsgiver();
-        ArbeidsforholdRefDto arbeidsforholdId = new ArbeidsforholdRefDto(yrkesaktivitet.getArbeidsforholdRef()
-            .map(ArbeidsforholdRef::getReferanse).orElse(null));
+        ArbeidsforholdRefDto arbeidsforholdId = mapArbeidsforholdsId(yrkesaktivitet, koblingId);
 
         YrkesaktivitetDto dto = new YrkesaktivitetDto();
         dto.setAnsettelsesperiode(mapAnsettelsesPeriode(yrkesaktivitet.getAnsettelsesPerioder()));
@@ -184,6 +193,17 @@ public class IAYDtoTjeneste {
         dto.setPermisjoner(mapPermisjoner(yrkesaktivitet.getPermisjon()));
         dto.setAktivitetsAvtaler(mapAktivitetsAvtaler(yrkesaktivitet.getAktivitetsAvtaler()));
         return dto;
+    }
+
+    private ArbeidsforholdRefDto mapArbeidsforholdsId(Yrkesaktivitet yrkesaktivitet, long koblingId) {
+        String internId = yrkesaktivitet.getArbeidsforholdRef().map(ArbeidsforholdRef::getReferanse).orElse(null);
+        ArbeidsforholdRefDto arbeidsforholdRefDto = new ArbeidsforholdRefDto();
+        arbeidsforholdRefDto.leggTilReferanse(Fagsystem.FPABAKUS, internId);
+        arbeidsforholdRefDto.leggTilReferanse(Fagsystem.AAREGISTERET, internId);
+        if (internId != null) {
+            arbeidsforholdRefDto.leggTilReferanse(Fagsystem.AAREGISTERET, tjeneste.finnReferanseFor(koblingId, yrkesaktivitet.getArbeidsgiver(), yrkesaktivitet.getArbeidsforholdRef().orElse(null), true).getReferanse());
+        }
+        return arbeidsforholdRefDto;
     }
 
     private List<AktivitetsAvtaleDto> mapAktivitetsAvtaler(Collection<AktivitetsAvtale> aktivitetsAvtaler) {

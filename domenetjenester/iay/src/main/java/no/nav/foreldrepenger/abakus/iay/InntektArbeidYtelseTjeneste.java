@@ -8,9 +8,11 @@ import java.util.UUID;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
+import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 
 public interface InntektArbeidYtelseTjeneste {
@@ -25,6 +27,12 @@ public interface InntektArbeidYtelseTjeneste {
      * @return henter aggregat, kaster feil hvis det ikke finnes.
      */
     InntektArbeidYtelseGrunnlag hentAggregat(UUID referanse);
+
+    /**
+     * @param referanse
+     * @return henter koblingen grunnlagsreferansen er koblet til.
+     */
+    Long hentKoblingIdFor(UUID referanse);
 
     /**
      * @param koblingId
@@ -44,7 +52,11 @@ public interface InntektArbeidYtelseTjeneste {
      */
     void lagre(Long koblingId, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder);
 
+    void lagre(Long koblingId, AktørId aktørId, ArbeidsforholdInformasjonBuilder builder);
+
     ArbeidsforholdRef finnReferanseFor(Long behandlingId, Arbeidsgiver arbeidsgiver, ArbeidsforholdRef arbeidsforholdRef, boolean beholdErstattetVerdi);
+
+    ArbeidsforholdInformasjon hentArbeidsforholdInformasjonForKobling(Long koblingId);
 
     List<Inntektsmelding> hentAlleInntektsmeldinger(Kobling behandling);
 

@@ -16,10 +16,13 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.VersjonType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
+import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 
 @ApplicationScoped
@@ -45,6 +48,11 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
     @Override
     public InntektArbeidYtelseGrunnlag hentAggregat(UUID referanse) {
         return repository.hentInntektArbeidYtelseForReferanse(referanse);
+    }
+
+    @Override
+    public Long hentKoblingIdFor(UUID referanse) {
+        return repository.hentKoblingForReferanse(referanse);
     }
 
     @Override
@@ -75,6 +83,11 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
     }
 
     @Override
+    public void lagre(Long koblingId, AktørId aktørId, ArbeidsforholdInformasjonBuilder builder) {
+        repository.lagre(koblingId, aktørId, builder);
+    }
+
+    @Override
     public ArbeidsforholdRef finnReferanseFor(Long behandlingId, Arbeidsgiver arbeidsgiver, ArbeidsforholdRef arbeidsforholdRef, boolean beholdErstattetVerdi) {
         final Optional<ArbeidsforholdInformasjon> arbeidsforholdInformasjon = repository.hentArbeidsforholdInformasjonForBehandling(behandlingId);
         if (arbeidsforholdInformasjon.isPresent()) {
@@ -85,5 +98,10 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
             return informasjon.finnForEkstern(arbeidsgiver, arbeidsforholdRef);
         }
         return arbeidsforholdRef;
+    }
+
+    @Override
+    public ArbeidsforholdInformasjon hentArbeidsforholdInformasjonForKobling(Long koblingId) {
+        return repository.hentArbeidsforholdInformasjonForBehandling(koblingId).orElseGet(ArbeidsforholdInformasjonEntitet::new);
     }
 }
