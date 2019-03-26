@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.iay;
 
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -9,7 +8,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilde
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -57,9 +55,5 @@ public interface InntektArbeidYtelseTjeneste {
     ArbeidsforholdRef finnReferanseFor(Long behandlingId, Arbeidsgiver arbeidsgiver, ArbeidsforholdRef arbeidsforholdRef, boolean beholdErstattetVerdi);
 
     ArbeidsforholdInformasjon hentArbeidsforholdInformasjonForKobling(Long koblingId);
-
-    List<Inntektsmelding> hentAlleInntektsmeldinger(Kobling behandling);
-
-    Optional<ArbeidsforholdInformasjon> hentArbeidsforholdInformasjonForBehandling(Long behandlingId);
 
 }

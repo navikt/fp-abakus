@@ -1,8 +1,5 @@
 package no.nav.foreldrepenger.abakus.iay.impl;
 
-import static java.util.Collections.emptyList;
-
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -13,12 +10,10 @@ import javax.inject.Inject;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.VersjonType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
@@ -58,18 +53,6 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
     @Override
     public Optional<InntektArbeidYtelseGrunnlag> hentInntektArbeidYtelseGrunnlagForBehandling(Long koblingId) {
         return repository.hentInntektArbeidYtelseGrunnlagForBehandling(koblingId);
-    }
-
-    @Override
-    public List<Inntektsmelding> hentAlleInntektsmeldinger(Kobling behandling) {
-        Optional<InntektArbeidYtelseGrunnlag> iayGrunnlag = repository.hentInntektArbeidYtelseGrunnlagForBehandling(behandling.getId());
-        return iayGrunnlag.map(inntektArbeidYtelseGrunnlag -> inntektArbeidYtelseGrunnlag.getInntektsmeldinger().map(InntektsmeldingAggregat::getInntektsmeldinger).orElse(emptyList()))
-            .orElse(emptyList());
-    }
-
-    @Override
-    public Optional<ArbeidsforholdInformasjon> hentArbeidsforholdInformasjonForBehandling(Long behandlingId) {
-        return repository.hentArbeidsforholdInformasjonForBehandling(behandlingId);
     }
 
     @Override
