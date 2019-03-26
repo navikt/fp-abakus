@@ -41,6 +41,7 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.Virksom
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FrilansArbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.SigrunTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
@@ -59,17 +60,19 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
     private KodeverkRepository kodeverkRepository;
     private ByggYrkesaktiviteterTjeneste byggYrkesaktiviteterTjeneste;
     private AktørConsumer aktørConsumer;
+    private SigrunTjeneste sigrunTjeneste;
 
     public IAYRegisterInnhentingFellesTjenesteImpl(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
                                                    KodeverkRepository kodeverkRepository,
                                                    VirksomhetTjeneste virksomhetTjeneste,
                                                    InnhentingSamletTjeneste innhentingSamletTjeneste,
-                                                   AktørConsumer aktørConsumer) {
+                                                   AktørConsumer aktørConsumer, SigrunTjeneste sigrunTjeneste) {
         this.inntektArbeidYtelseTjeneste = inntektArbeidYtelseTjeneste;
         this.kodeverkRepository = kodeverkRepository;
         this.virksomhetTjeneste = virksomhetTjeneste;
         this.innhentingSamletTjeneste = innhentingSamletTjeneste;
         this.aktørConsumer = aktørConsumer;
+        this.sigrunTjeneste = sigrunTjeneste;
         this.ytelseRegisterInnhenting = new YtelseRegisterInnhenting(virksomhetTjeneste, inntektArbeidYtelseTjeneste,
             innhentingSamletTjeneste);
         this.byggYrkesaktiviteterTjeneste = new ByggYrkesaktiviteterTjeneste(kodeverkRepository);
@@ -79,11 +82,34 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
     }
 
     @Override
-    public InntektArbeidYtelseAggregatBuilder innhentOpptjeningForInnvolverteParter(Kobling behandling) {
+    public InntektArbeidYtelseAggregatBuilder innhentOpptjeningForInnvolverteParter(Kobling kobling) {
         // For Søker
-        InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(behandling.getId());
-        innhentArbeidsforhold(behandling, inntektArbeidYtelseAggregatBuilder);
+        InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(kobling.getId());
+        innhentArbeidsforhold(kobling, inntektArbeidYtelseAggregatBuilder);
+        if (skalInnhenteNæringsInntekterFor(kobling)) {
+            innhentNæringsOpplysninger(kobling, inntektArbeidYtelseAggregatBuilder);
+        }
         return inntektArbeidYtelseAggregatBuilder;
+    }
+
+    private void innhentNæringsOpplysninger(Kobling kobling, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder) {
+        Map<DatoIntervallEntitet, Map<InntektspostType, BigDecimal>> map = sigrunTjeneste.beregnetSkatt(kobling.getAktørId());
+        InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder = inntektArbeidYtelseAggregatBuilder.getAktørInntektBuilder(kobling.getAktørId());
+
+        AktørInntektEntitet.InntektBuilder inntektBuilder = aktørInntektBuilder.getInntektBuilder(InntektsKilde.SIGRUN, null);
+
+        for (Map.Entry<DatoIntervallEntitet, Map<InntektspostType, BigDecimal>> entry : map.entrySet()) {
+            for (Map.Entry<InntektspostType, BigDecimal> type : entry.getValue().entrySet()) {
+                InntektEntitet.InntektspostBuilder inntektspostBuilder = inntektBuilder.getInntektspostBuilder();
+                inntektspostBuilder
+                    .medInntektspostType(type.getKey())
+                    .medBeløp(type.getValue())
+                    .medPeriode(entry.getKey().getFomDato(), entry.getKey().getTomDato());
+                inntektBuilder.leggTilInntektspost(inntektspostBuilder);
+            }
+        }
+        aktørInntektBuilder.leggTilInntekt(inntektBuilder);
+        inntektArbeidYtelseAggregatBuilder.leggTilAktørInntekt(aktørInntektBuilder);
     }
 
     @Override
