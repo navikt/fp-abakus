@@ -53,8 +53,8 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IAYRegisterInnhentingFellesTjenesteImpl.class);
 
-    protected VirksomhetTjeneste virksomhetTjeneste;
-    protected YtelseRegisterInnhenting ytelseRegisterInnhenting;
+    private VirksomhetTjeneste virksomhetTjeneste;
+    private YtelseRegisterInnhenting ytelseRegisterInnhenting;
     private InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste;
     private InnhentingSamletTjeneste innhentingSamletTjeneste;
     private KodeverkRepository kodeverkRepository;
@@ -62,11 +62,11 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
     private AktørConsumer aktørConsumer;
     private SigrunTjeneste sigrunTjeneste;
 
-    public IAYRegisterInnhentingFellesTjenesteImpl(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
-                                                   KodeverkRepository kodeverkRepository,
-                                                   VirksomhetTjeneste virksomhetTjeneste,
-                                                   InnhentingSamletTjeneste innhentingSamletTjeneste,
-                                                   AktørConsumer aktørConsumer, SigrunTjeneste sigrunTjeneste) {
+    IAYRegisterInnhentingFellesTjenesteImpl(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
+                                            KodeverkRepository kodeverkRepository,
+                                            VirksomhetTjeneste virksomhetTjeneste,
+                                            InnhentingSamletTjeneste innhentingSamletTjeneste,
+                                            AktørConsumer aktørConsumer, SigrunTjeneste sigrunTjeneste) {
         this.inntektArbeidYtelseTjeneste = inntektArbeidYtelseTjeneste;
         this.kodeverkRepository = kodeverkRepository;
         this.virksomhetTjeneste = virksomhetTjeneste;
@@ -79,17 +79,6 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
     }
 
     IAYRegisterInnhentingFellesTjenesteImpl() {
-    }
-
-    @Override
-    public InntektArbeidYtelseAggregatBuilder innhentOpptjeningForInnvolverteParter(Kobling kobling) {
-        // For Søker
-        InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(kobling.getId());
-        innhentArbeidsforhold(kobling, inntektArbeidYtelseAggregatBuilder);
-        if (skalInnhenteNæringsInntekterFor(kobling)) {
-            innhentNæringsOpplysninger(kobling, inntektArbeidYtelseAggregatBuilder);
-        }
-        return inntektArbeidYtelseAggregatBuilder;
     }
 
     private void innhentNæringsOpplysninger(Kobling kobling, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder) {
@@ -135,17 +124,14 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
         return builder;
     }
 
-    private void innhentInntekter(Kobling kobling, InntektArbeidYtelseAggregatBuilder builder) {
-        innhentInntekterFor(kobling, kobling.getAktørId(), builder, InntektsKilde.INNTEKT_OPPTJENING);
-        final Optional<AktørId> annenPartAktørId = kobling.getAnnenPartAktørId();
-        annenPartAktørId.ifPresent(a -> innhentInntekterFor(kobling, a, builder, InntektsKilde.INNTEKT_OPPTJENING));
-    }
-
     @Override
     public InntektArbeidYtelseAggregatBuilder innhentRegisterdata(Kobling kobling) {
         final InntektArbeidYtelseAggregatBuilder builder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(kobling.getId());
         // Arbeidsforhold & inntekter
         innhentArbeidsforhold(kobling, builder);
+        if (skalInnhenteNæringsInntekterFor(kobling)) {
+            innhentNæringsOpplysninger(kobling, builder);
+        }
         // Ytelser
         innhentYtelser(kobling, builder);
         return builder;

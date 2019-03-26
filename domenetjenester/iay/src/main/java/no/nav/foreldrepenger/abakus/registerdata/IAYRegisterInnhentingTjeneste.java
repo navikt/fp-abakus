@@ -7,8 +7,6 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 
 public interface IAYRegisterInnhentingTjeneste {
 
-    InntektArbeidYtelseAggregatBuilder innhentOpptjeningForInnvolverteParter(Kobling behandling);
-
     InntektArbeidYtelseAggregatBuilder innhentInntekterFor(Kobling behandling, AktørId aktørId, InntektsKilde... kilder);
 
     boolean skalInnhenteNæringsInntekterFor(Kobling behandling);

@@ -19,7 +19,6 @@ public class IAYRegisterInnhentingFPTjenesteImpl extends IAYRegisterInnhentingFe
         // CDI
     }
 
-
     @Inject
     public IAYRegisterInnhentingFPTjenesteImpl(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
                                                KodeverkRepository kodeverkRepository,
