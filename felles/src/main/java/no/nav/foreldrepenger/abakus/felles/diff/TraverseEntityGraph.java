@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -57,7 +58,7 @@ public class TraverseEntityGraph {
             Long.TYPE, Double.TYPE, Integer.TYPE, Short.TYPE, Byte.TYPE, Boolean.TYPE,
             BigInteger.class, BigDecimal.class,
             LocalDate.class, LocalDateTime.class, Interval.class, OffsetDateTime.class, ZonedDateTime.class,
-            Instant.class)));
+            Instant.class, UUID.class)));
 
     /**
      * Ikke final - men Interfacer/Abstract klasser som fanger store grupper av LEAF objekter (eks. Temporal --
