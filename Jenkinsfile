@@ -2,20 +2,11 @@
 
 import no.nav.jenkins.*
 
-void setBuildStatus(String message, String state, String commitSha) {
-    step([
-            $class            : "GitHubCommitStatusSetter",
-            reposSource       : [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/navikt/fp-abakus"],
-            commitShaSource   : [$class: "ManuallyEnteredShaSource", sha: commitSha],
-            contextSource     : [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
-            errorHandlers     : [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
-            statusResultSource: [$class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]]]
-    ]);
-}
-
 def maven = new maven()
+def github = new github()
 def version
 def GIT_COMMIT_HASH
+def GIT_COMMIT_HASH_FULL
 pipeline {
     agent any
 
@@ -29,6 +20,7 @@ pipeline {
 
                     checkout scm
                     GIT_COMMIT_HASH = sh(script: "git log -n 1 --pretty=format:'%h'", returnStdout: true)
+                    GIT_COMMIT_HASH_FULL = sh(script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
                     changelist = "_" + date.format("YYYYMMDDHHmmss") + "_" + GIT_COMMIT_HASH
                     mRevision = maven.revision()
                     version = mRevision + changelist
@@ -66,10 +58,10 @@ pipeline {
 
     post {
         success {
-            setBuildStatus("Build succeeded", "SUCCESS", GIT_COMMIT_HASH);
+            github.updateBuildStatus("fp-abakus", "success", GIT_COMMIT_HASH_FULL);
         }
         failure {
-            setBuildStatus("Build failed", "FAILURE", GIT_COMMIT_HASH);
+            github.updateBuildStatus("fp-abakus", "failure", GIT_COMMIT_HASH_FULL);
         }
     }
 
