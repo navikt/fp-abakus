@@ -3,7 +3,7 @@
 import no.nav.jenkins.*
 
 def maven = new maven()
-def fpgithub = new fpgithub()
+def github = new fpgithub()
 def version
 def GIT_COMMIT_HASH
 def GIT_COMMIT_HASH_FULL
@@ -58,10 +58,10 @@ pipeline {
 
     post {
         success {
-            fpgithub.updateBuildStatus("fp-abakus", "success", GIT_COMMIT_HASH_FULL);
+            github.updateBuildStatus("fp-abakus", "success", GIT_COMMIT_HASH_FULL);
         }
         failure {
-            fpgithub.updateBuildStatus("fp-abakus", "failure", GIT_COMMIT_HASH_FULL);
+            github.updateBuildStatus("fp-abakus", "failure", GIT_COMMIT_HASH_FULL);
         }
     }
 
