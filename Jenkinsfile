@@ -57,7 +57,6 @@ pipeline {
 
     post {
         success {
-            fpgithub = new fpgithub()
             fpgithub.updateBuildStatus("fp-abakus", "success", GIT_COMMIT_HASH_FULL);
         }
         failure {
