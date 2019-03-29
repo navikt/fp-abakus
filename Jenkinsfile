@@ -58,18 +58,18 @@ pipeline {
 
     post {
         success {
-            steps {
+
                 script {
                     fpgithub.updateBuildStatus("fp-abakus", "success", GIT_COMMIT_HASH_FULL)
                 }
-            }
+
         }
         failure {
-            steps {
+
                 script {
                     fpgithub.updateBuildStatus("fp-abakus", "failure", GIT_COMMIT_HASH_FULL)
                 }
-            }
+
         }
     }
 
