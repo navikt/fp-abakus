@@ -3,7 +3,7 @@
 import no.nav.jenkins.*
 
 def maven = new maven()
-def fpgithub = new no.nav.jenkins.fpgithub()
+def fpgithub = new fpgithub()
 def version
 def GIT_COMMIT_HASH
 def GIT_COMMIT_HASH_FULL
