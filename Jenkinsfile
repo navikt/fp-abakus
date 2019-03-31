@@ -2,26 +2,17 @@
 
 import no.nav.jenkins.*
 
-void setBuildStatus(String message, String state, String commitSha) {
-    step([
-            $class            : "GitHubCommitStatusSetter",
-            reposSource       : [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/navikt/fp-abakus"],
-            commitShaSource   : [$class: "ManuallyEnteredShaSource", sha: commitSha],
-            contextSource     : [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
-            errorHandlers     : [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
-            statusResultSource: [$class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]]]
-    ]);
-}
-
 def maven = new maven()
+def fpgithub = new fpgithub()
 def version
 def GIT_COMMIT_HASH
+def GIT_COMMIT_HASH_FULL
 pipeline {
     agent any
 
     stages {
 
-        stage('Checkout Tags') { // checkout only tags.
+        stage('Checkout scm') { // checkout only tags.
             steps {
                 script {
                     Date date = new Date()
@@ -29,10 +20,14 @@ pipeline {
 
                     checkout scm
                     GIT_COMMIT_HASH = sh(script: "git log -n 1 --pretty=format:'%h'", returnStdout: true)
+                    GIT_COMMIT_HASH_FULL = sh(script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
                     changelist = "_" + date.format("YYYYMMDDHHmmss") + "_" + GIT_COMMIT_HASH
                     mRevision = maven.revision()
                     version = mRevision + changelist
-                    echo "Tag to be deployed $version"
+
+                    currentBuild.displayName = version
+
+                    echo "Building $version"
                 }
             }
         }
@@ -61,15 +56,29 @@ pipeline {
             }
         }
 
+        stage('Tag master') {
+            when {
+                branch 'master'
+            }
+            steps {
+                sh "git tag $version -m $version"
+                sh "git push origin --tag"
+            }
+        }
+
 
     }
 
     post {
         success {
-            setBuildStatus("Build succeeded", "SUCCESS", GIT_COMMIT_HASH);
+            script {
+                fpgithub.updateBuildStatus("fp-abakus", "success", GIT_COMMIT_HASH_FULL)
+            }
         }
         failure {
-            setBuildStatus("Build failed", "FAILURE", GIT_COMMIT_HASH);
+            script {
+                fpgithub.updateBuildStatus("fp-abakus", "failure", GIT_COMMIT_HASH_FULL)
+            }
         }
     }
 
