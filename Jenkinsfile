@@ -12,7 +12,7 @@ pipeline {
 
     stages {
 
-        stage('Checkout Tags') { // checkout only tags.
+        stage('Checkout scm') { // checkout only tags.
             steps {
                 script {
                     Date date = new Date()
@@ -24,7 +24,10 @@ pipeline {
                     changelist = "_" + date.format("YYYYMMDDHHmmss") + "_" + GIT_COMMIT_HASH
                     mRevision = maven.revision()
                     version = mRevision + changelist
-                    echo "Tag to be deployed $version"
+
+                    currentBuild.displayName = version
+
+                    echo "Building $version"
                 }
             }
         }
@@ -53,23 +56,29 @@ pipeline {
             }
         }
 
+        stage('Tag master') {
+            when {
+                branch 'master'
+            }
+            steps {
+                sh "git tag $version -m $version"
+                sh "git push origin --tag"
+            }
+        }
+
 
     }
 
     post {
         success {
-
-                script {
-                    fpgithub.updateBuildStatus("fp-abakus", "success", GIT_COMMIT_HASH_FULL)
-                }
-
+            script {
+                fpgithub.updateBuildStatus("fp-abakus", "success", GIT_COMMIT_HASH_FULL)
+            }
         }
         failure {
-
-                script {
-                    fpgithub.updateBuildStatus("fp-abakus", "failure", GIT_COMMIT_HASH_FULL)
-                }
-
+            script {
+                fpgithub.updateBuildStatus("fp-abakus", "failure", GIT_COMMIT_HASH_FULL)
+            }
         }
     }
 
