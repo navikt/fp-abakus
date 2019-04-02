@@ -52,8 +52,8 @@ public class JettyDevServer extends JettyServer {
     }
 
     protected void konfigurerLogback() throws IOException {
-        new File("./logs").mkdirs();
-        System.setProperty("APP_LOG_HOME", "./logs");
+        new File("./target/logs").mkdirs();
+        System.setProperty("APP_LOG_HOME", "./target/logs");
         File logbackConfig = PropertiesUtils.lagLogbackConfig();
 
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
