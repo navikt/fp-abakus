@@ -18,7 +18,7 @@ public class DatabaseHealthCheck extends ExtHealthCheck {
     // må være rask, og bruke et stabilt tabell-navn
     private String endpoint = null; // ukjent frem til første gangs test
 
-    public DatabaseHealthCheck() {
+    DatabaseHealthCheck() {
         this.jndiName = JDBC_DEFAULT_DS;
     }
 
@@ -41,7 +41,7 @@ public class DatabaseHealthCheck extends ExtHealthCheck {
 
         InternalResult intTestRes = new InternalResult();
 
-        DataSource dataSource = null;
+        DataSource dataSource;
         try {
             dataSource = (DataSource) new InitialContext().lookup(jndiName);
         } catch (NamingException e) {
