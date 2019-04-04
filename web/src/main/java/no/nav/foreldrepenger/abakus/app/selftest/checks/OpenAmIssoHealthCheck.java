@@ -31,7 +31,6 @@ public class OpenAmIssoHealthCheck extends ExtHealthCheck {
 
     @Override
     protected String getEndpoint() {
-        // TODO (rune) dette er midlertidig. venter på at denne url'en kan fåes fra app-config
         return issoHostUrl + "/../isAlive.jsp";
     }
 

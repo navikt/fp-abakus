@@ -8,7 +8,7 @@ import no.nav.vedtak.felles.integrasjon.infotrygdberegningsgrunnlag.InfotrygdBer
 @ApplicationScoped
 public class InfotrygdBeregningsgrunnlagWebServiceHealthCheck extends WebServiceHealthCheck {
 
-    InfotrygdBeregningsgrunnlagSelftestConsumer infotrygdBeregningsgrunnlagSelftestConsumer;
+    private InfotrygdBeregningsgrunnlagSelftestConsumer infotrygdBeregningsgrunnlagSelftestConsumer;
 
     InfotrygdBeregningsgrunnlagWebServiceHealthCheck(){
         //For CDI proxy

@@ -8,7 +8,7 @@ import no.nav.vedtak.felles.integrasjon.infotrygdsak.InfotrygdSakSelftestConsume
 @ApplicationScoped
 public class InfotrygdSakWebServiceHealthCheck extends WebServiceHealthCheck {
 
-    InfotrygdSakSelftestConsumer infotrygdSakSelftestConsumer;
+    private InfotrygdSakSelftestConsumer infotrygdSakSelftestConsumer;
 
     InfotrygdSakWebServiceHealthCheck(){
         //For CDI proxy
