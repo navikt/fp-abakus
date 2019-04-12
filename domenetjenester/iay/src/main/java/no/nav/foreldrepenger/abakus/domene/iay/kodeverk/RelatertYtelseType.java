@@ -16,7 +16,6 @@ public class RelatertYtelseType extends Kodeliste {
     public static final RelatertYtelseType FORELDREPENGER = new RelatertYtelseType("FORELDREPENGER");
     public static final RelatertYtelseType ENGANGSSTØNAD = new RelatertYtelseType("ENGANGSSTØNAD");
     public static final RelatertYtelseType PÅRØRENDESYKDOM = new RelatertYtelseType("PÅRØRENDESYKDOM");
-
     public static final RelatertYtelseType ARBEIDSAVKLARINGSPENGER = new RelatertYtelseType("ARBEIDSAVKLARINGSPENGER");
     public static final RelatertYtelseType DAGPENGER = new RelatertYtelseType("DAGPENGER");
 

@@ -106,8 +106,8 @@ public class KodeverkTestHelper {
                 String offisiellKode = e.getValue().getOffisiellKode();
                 return offisiellListe.contains(offisiellKode);
             })
-                    .map(e -> (V) e.getValue())
-                    .collect(Collectors.toList());
+                .map(e -> (V) e.getValue())
+                .collect(Collectors.toList());
             return resultList;
         }
 
@@ -116,8 +116,8 @@ public class KodeverkTestHelper {
             Map<String, Kodeliste> kodelisterForKlasse = getKodelistePrKodePrKlasse(cls);
             @SuppressWarnings("unchecked")
             List<V> resultList = kodelisterForKlasse.entrySet().stream().filter(e -> koder.contains(e.getKey()))
-                    .map(e -> (V) e.getValue())
-                    .collect(Collectors.toList());
+                .map(e -> (V) e.getValue())
+                .collect(Collectors.toList());
             return resultList;
         }
 
@@ -126,8 +126,8 @@ public class KodeverkTestHelper {
             Map<String, Kodeliste> kodelisterForKlasse = getKodelistePrOffisiellKodePrKlasse(cls);
             @SuppressWarnings("unchecked")
             List<V> resultList = kodelisterForKlasse.entrySet().stream()
-                    .map(e -> (V) e.getValue())
-                    .collect(Collectors.toList());
+                .map(e -> (V) e.getValue())
+                .collect(Collectors.toList());
             return resultList;
         }
 

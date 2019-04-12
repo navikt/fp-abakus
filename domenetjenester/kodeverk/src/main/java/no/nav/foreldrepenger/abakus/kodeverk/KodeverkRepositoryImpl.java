@@ -128,7 +128,7 @@ public class KodeverkRepositoryImpl implements KodeverkRepository {
     public <V extends Kodeliste> List<V> finnListe(Class<V> cls, List<String> koder) {
         List<String> koderIkkeICache = new ArrayList<>();
         List<V> result = new ArrayList<>();
-        koder.stream().forEach(kode -> {
+        koder.forEach(kode -> {
             //For hver kode
             @SuppressWarnings("unchecked")
             V kodeliste = (V) kodelisteCache.get(kode);
