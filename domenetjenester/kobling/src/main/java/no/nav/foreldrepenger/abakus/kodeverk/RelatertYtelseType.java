@@ -1,9 +1,7 @@
-package no.nav.foreldrepenger.abakus.domene.iay.kodeverk;
+package no.nav.foreldrepenger.abakus.kodeverk;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-
-import no.nav.foreldrepenger.abakus.kodeverk.Kodeliste;
 
 @Entity(name = "RelatertYtelseType")
 @DiscriminatorValue(RelatertYtelseType.DISCRIMINATOR)

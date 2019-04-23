@@ -8,15 +8,14 @@ import java.util.Optional;
 
 import org.threeten.extra.Interval;
 
-import no.nav.foreldrepenger.abakus.behandling.Fagsystem;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.YtelseAnvistBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelseBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseType;
-import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
+import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagMeldekort;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
@@ -25,34 +24,26 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrun
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlagVedtak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdSakOgGrunnlag;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.Beløp;
+import no.nav.foreldrepenger.abakus.typer.Fagsystem;
+import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
+import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
+import no.nav.foreldrepenger.abakus.vedtak.domene.VedtattYtelse;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class YtelseRegisterInnhenting {
     private final VirksomhetTjeneste virksomhetTjeneste;
-    private final InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste;
     private final InnhentingSamletTjeneste innhentingSamletTjeneste;
+    private final VedtakYtelseRepository vedtakYtelseRepository;
 
-    YtelseRegisterInnhenting(VirksomhetTjeneste virksomhetTjeneste, InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
-                             InnhentingSamletTjeneste innhentingSamletTjeneste) {
+    YtelseRegisterInnhenting(VirksomhetTjeneste virksomhetTjeneste, InnhentingSamletTjeneste innhentingSamletTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
         this.virksomhetTjeneste = virksomhetTjeneste;
-        this.inntektArbeidYtelseTjeneste = inntektArbeidYtelseTjeneste;
         this.innhentingSamletTjeneste = innhentingSamletTjeneste;
-    }
-
-    InntektArbeidYtelseAggregatBuilder innhentYtelserForInvolverteParter(Kobling behandling, Interval opplysningsPeriode, boolean medGrunnlag) {
-        // For Søker
-        InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(behandling.getId());
-        byggYtelser(behandling, behandling.getAktørId(), opplysningsPeriode, inntektArbeidYtelseAggregatBuilder, medGrunnlag);
-
-        // For annen forelder
-        final Optional<AktørId> annenPartAktørId = behandling.getAnnenPartAktørId();
-        annenPartAktørId.ifPresent(aLong -> byggYtelser(behandling, aLong, opplysningsPeriode, inntektArbeidYtelseAggregatBuilder, false));
-
-        return inntektArbeidYtelseAggregatBuilder;
+        this.vedtakYtelseRepository = vedtakYtelseRepository;
     }
 
     void byggYtelser(Kobling behandling, AktørId aktørId, Interval opplysningsPeriode,
-                             InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder, boolean medGrunnlag) {
+                     InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder, boolean medGrunnlag) {
         List<InfotrygdSakOgGrunnlag> sammenstilt = innhentingSamletTjeneste.getSammenstiltSakOgGrunnlag(behandling, aktørId, opplysningsPeriode, medGrunnlag);
 
         InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder = inntektArbeidYtelseAggregatBuilder.getAktørYtelseBuilder(aktørId);
@@ -70,13 +61,34 @@ public class YtelseRegisterInnhenting {
             }
         }
 
-        innhentFraYtelsesRegister(aktørId, behandling, opplysningsPeriode, aktørYtelseBuilder);
+        innhentFraYtelsesRegister(aktørId, behandling, aktørYtelseBuilder);
 
         inntektArbeidYtelseAggregatBuilder.leggTilAktørYtelse(aktørYtelseBuilder);
     }
 
-    private void innhentFraYtelsesRegister(AktørId aktørId, Kobling behandling, Interval opplysningsPeriode, InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder builder) {
+    private void innhentFraYtelsesRegister(AktørId aktørId, Kobling kobling, InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder builder) {
+        DatoIntervallEntitet opplysningsperiode = kobling.getOpplysningsperiode();
+        List<VedtattYtelse> vedtatteYtelser = vedtakYtelseRepository.hentYtelserForIPeriode(aktørId, opplysningsperiode.getFomDato(), opplysningsperiode.getTomDato());
 
+        for (VedtattYtelse vedtattYtelse : vedtatteYtelser) {
+            YtelseBuilder ytelseBuilder = builder.getYtelselseBuilderForType(vedtattYtelse.getKilde(), vedtattYtelse.getYtelseType(), vedtattYtelse.getSaksnummer());
+            ytelseBuilder.tilbakestillAnvisninger();
+            ytelseBuilder.medPeriode(vedtattYtelse.getPeriode())
+                .medStatus(vedtattYtelse.getStatus());
+
+            mapAnvisninger(vedtattYtelse, ytelseBuilder);
+        }
+    }
+
+    private void mapAnvisninger(VedtattYtelse vedtattYtelse, YtelseBuilder ytelseBuilder) {
+        vedtattYtelse.getYtelseAnvist().forEach(anvisning -> {
+            YtelseAnvistBuilder anvistBuilder = ytelseBuilder.getAnvistBuilder();
+            DatoIntervallEntitet periode = DatoIntervallEntitet.fraOgMedTilOgMed(anvisning.getAnvistFom(), anvisning.getAnvistTom());
+            anvistBuilder.medAnvistPeriode(periode)
+                .medBeløp(anvisning.getBeløp().map(Beløp::getVerdi).orElse(null))
+                .medDagsats(anvisning.getDagsats().map(Beløp::getVerdi).orElse(null))
+                .medUtbetalingsgradProsent(anvisning.getUtbetalingsgradProsent().map(Stillingsprosent::getVerdi).orElse(null));
+        });
     }
 
     /**
@@ -96,7 +108,7 @@ public class YtelseRegisterInnhenting {
             .medSaksnummer(ytelse.getSaksnummer())
             .medStatus(ytelse.getSak().getRelatertYtelseTilstand())
             .medFagsystemUnderkategori(ytelse.getSak().getFagsystemUnderkategori());
-        ytelseBuilder.tilbakestillAnvisteYtelser();
+        ytelseBuilder.tilbakestillAnvisninger();
         ytelse.getGrunnlag().ifPresent(grunnlag -> {
             for (YtelseBeregningsgrunnlagVedtak vedtak : grunnlag.getVedtak()) {
                 final DatoIntervallEntitet intervall = vedtak.getTom() == null ? DatoIntervallEntitet.fraOgMed(vedtak.getFom()) :
@@ -128,7 +140,7 @@ public class YtelseRegisterInnhenting {
             .medPeriode(periode)
             .medStatus(ytelse.getYtelseTilstand())
             .medYtelseGrunnlag(ytelseBuilder.getGrunnlagBuilder().medOpprinneligIdentdato(ytelse.getKravMottattDato()).build());
-        ytelseBuilder.tilbakestillAnvisteYtelser();
+        ytelseBuilder.tilbakestillAnvisninger();
         for (MeldekortUtbetalingsgrunnlagMeldekort meldekort : ytelse.getMeldekortene()) {
             ytelseBuilder.medYtelseAnvist(ytelseBuilder.getAnvistBuilder()
                 .medAnvistPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(meldekort.getMeldekortFom(), meldekort.getMeldekortTom()))
@@ -198,7 +210,7 @@ public class YtelseRegisterInnhenting {
 
     private void mapFraUttakTilYtelseAnvist(Kobling behandling, YtelseBuilder ytelseBuilder) {
         Optional<UttakResultatEntitet> uttakResultat = behandlingRepositoryProvider.getUttakRepository().hentUttakResultatHvisEksisterer(behandling);
-        ytelseBuilder.tilbakestillAnvisteYtelser();
+        ytelseBuilder.tilbakestillAnvisninger();
         if (uttakResultat.isPresent()) {
             List<YtelseAnvistBuilder> ytelseAnvistBuilderList = uttakResultat.get().getGjeldendePerioder().getPerioder().stream()
                 .filter(p -> PeriodeResultatType.INNVILGET.equals(p.getPeriodeResultatType()))

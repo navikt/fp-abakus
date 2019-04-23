@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import no.nav.foreldrepenger.abakus.behandling.Fagsystem;
 import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtale;
 import no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid;
 import no.nav.foreldrepenger.abakus.domene.iay.AktørInntekt;
@@ -38,6 +37,7 @@ import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.ytelse.Grunnlag;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.ytelse.YtelseDto;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.ytelse.YtelserDto;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
 @ApplicationScoped

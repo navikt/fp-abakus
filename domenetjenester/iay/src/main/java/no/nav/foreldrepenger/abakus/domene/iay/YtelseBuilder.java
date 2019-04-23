@@ -2,11 +2,11 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.util.Optional;
 
-import no.nav.foreldrepenger.abakus.behandling.Fagsystem;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.FagsystemUnderkategori;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTilstand;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
+import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
+import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
@@ -93,7 +93,7 @@ public class YtelseBuilder {
         return YtelseAnvistBuilder.ny();
     }
 
-    public void tilbakestillAnvisteYtelser() {
+    public void tilbakestillAnvisninger() {
         ytelseEntitet.tilbakestillAnvisteYtelser();
     }
 

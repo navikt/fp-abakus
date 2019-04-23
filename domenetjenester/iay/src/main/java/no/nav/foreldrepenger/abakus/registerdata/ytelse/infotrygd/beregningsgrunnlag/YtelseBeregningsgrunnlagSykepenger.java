@@ -3,8 +3,8 @@ package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgru
 import java.math.BigDecimal;
 
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseType;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
+import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.Sykepenger;
 
 public class YtelseBeregningsgrunnlagSykepenger extends YtelseBeregningsgrunnlagPeriodeYtelse {

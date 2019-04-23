@@ -4,15 +4,15 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import no.nav.foreldrepenger.abakus.behandling.Fagsystem;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
+import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 /**

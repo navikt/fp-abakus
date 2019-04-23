@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.behandling;
+package no.nav.foreldrepenger.abakus.typer;
 
 import java.util.Comparator;
 

@@ -87,12 +87,8 @@
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektPeriodeType" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.PermisjonsbeskrivelseType" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.TemaUnderkategori" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseResultat" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseSakstype" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseStatus" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTema" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTilstand" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseType" />
 
 </entity-mappings>

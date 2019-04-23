@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
@@ -69,6 +70,10 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "beloep", nullable = false)))
     @ChangeTracked
     private Beløp beløp;
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     @Transient
     private LocalDate skjæringstidspunkt;

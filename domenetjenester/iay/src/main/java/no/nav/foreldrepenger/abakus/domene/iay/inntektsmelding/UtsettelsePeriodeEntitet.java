@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
@@ -44,6 +46,10 @@ public class UtsettelsePeriodeEntitet extends BaseEntitet implements UtsettelseP
     })
     @ChangeTracked
     private UtsettelseÅrsak årsak = UtsettelseÅrsak.UDEFINERT;
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     private UtsettelsePeriodeEntitet(LocalDate fom, LocalDate tom) {
         this.periode = DatoIntervallEntitet.fraOgMedTilOgMed(fom, tom);

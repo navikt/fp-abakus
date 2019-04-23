@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -38,6 +39,10 @@ public class RefusjonEntitet extends BaseEntitet implements Refusjon {
     @Column(name = "fom", nullable = false)
     @ChangeTracked
     private LocalDate fom;
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     public RefusjonEntitet() {
     }

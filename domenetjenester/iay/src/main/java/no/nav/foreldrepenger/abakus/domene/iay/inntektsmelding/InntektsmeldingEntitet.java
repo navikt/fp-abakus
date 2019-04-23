@@ -21,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
@@ -111,10 +112,12 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
         @JoinColumnOrFormula(column = @JoinColumn(name = "innsendingsaarsak", referencedColumnName = "kode", nullable = false)),
         @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + InntektsmeldingInnsendingsårsak.DISCRIMINATOR
             + "'"))})
-
-
     @ChangeTracked
     private InntektsmeldingInnsendingsårsak innsendingsårsak = InntektsmeldingInnsendingsårsak.UDEFINERT;
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     InntektsmeldingEntitet() {
     }

@@ -9,6 +9,7 @@ import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.SigrunTjeneste;
+import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
 
 @ApplicationScoped
@@ -24,12 +25,12 @@ public class IAYRegisterInnhentingFPTjenesteImpl extends IAYRegisterInnhentingFe
                                                KodeverkRepository kodeverkRepository,
                                                VirksomhetTjeneste virksomhetTjeneste,
                                                InnhentingSamletTjeneste innhentingSamletTjeneste,
-                                               AktørConsumer aktørConsumer, SigrunTjeneste sigrunTjeneste) {
+                                               AktørConsumer aktørConsumer, SigrunTjeneste sigrunTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
         super(inntektArbeidYtelseTjeneste,
             kodeverkRepository,
             virksomhetTjeneste,
             innhentingSamletTjeneste,
-            aktørConsumer, sigrunTjeneste);
+            aktørConsumer, sigrunTjeneste, vedtakYtelseRepository);
     }
 
     @Override

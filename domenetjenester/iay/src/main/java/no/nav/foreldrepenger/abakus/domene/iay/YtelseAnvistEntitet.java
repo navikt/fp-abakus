@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
@@ -53,6 +54,10 @@ public class YtelseAnvistEntitet extends BaseEntitet implements YtelseAnvist, In
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "utbetalingsgrad_prosent")))
     @ChangeTracked
     private Stillingsprosent utbetalingsgradProsent;
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     public YtelseAnvistEntitet() {
         // hibernate

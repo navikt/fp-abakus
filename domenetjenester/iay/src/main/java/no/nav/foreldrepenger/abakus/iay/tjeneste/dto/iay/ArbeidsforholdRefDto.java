@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import no.nav.foreldrepenger.abakus.behandling.Fagsystem;
+import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 
 public class ArbeidsforholdRefDto {
 

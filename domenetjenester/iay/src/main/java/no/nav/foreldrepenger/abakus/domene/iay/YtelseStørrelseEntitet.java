@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinFormula;
@@ -53,6 +54,10 @@ public class YtelseStørrelseEntitet extends BaseEntitet implements YtelseStørr
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "beloep", nullable = false)))
     @ChangeTracked
     private Beløp beløp;
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     public YtelseStørrelseEntitet() {
         // hibernate

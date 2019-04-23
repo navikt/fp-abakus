@@ -23,6 +23,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
@@ -78,6 +79,10 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
         @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + ArbeidType.DISCRIMINATOR + "'"))})
     @ChangeTracked
     private ArbeidType arbeidType;
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     public YrkesaktivitetEntitet() {
         // hibernate

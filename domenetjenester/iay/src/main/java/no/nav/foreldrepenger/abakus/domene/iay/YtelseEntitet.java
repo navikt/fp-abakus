@@ -23,19 +23,20 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
-import no.nav.foreldrepenger.abakus.behandling.Fagsystem;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.FagsystemUnderkategori;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTilstand;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
+import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
+import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
@@ -104,6 +105,10 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
     @ManyToOne(optional = false)
     @JoinColumn(name = "aktoer_ytelse_id", nullable = false, updatable = false)
     private AktørYtelseEntitet aktørYtelse;
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     @Transient
     private LocalDate skjæringstidspunkt;

@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
@@ -42,6 +43,10 @@ public class GraderingEntitet extends BaseEntitet implements Gradering, IndexKey
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "arbeidstid_prosent", updatable = false, nullable = false)))
     @ChangeTracked
     private Stillingsprosent arbeidstidProsent;
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     GraderingEntitet() {
     }

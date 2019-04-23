@@ -23,6 +23,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
@@ -56,6 +57,10 @@ public class AktørArbeidEntitet extends BaseEntitet implements AktørArbeid, In
 
     @Transient
     private ArbeidsforholdInformasjonEntitet arbeidsforholdInformasjon;
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     AktørArbeidEntitet() {
         // hibernate

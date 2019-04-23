@@ -1,9 +1,7 @@
-package no.nav.foreldrepenger.abakus;
+package no.nav.foreldrepenger.abakus.kodeverk;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-
-import no.nav.foreldrepenger.abakus.kodeverk.Kodeliste;
 
 @Entity(name = "Landkoder")
 @DiscriminatorValue(Landkoder.DISCRIMINATOR)

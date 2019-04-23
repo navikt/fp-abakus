@@ -2,10 +2,10 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.ytelse;
 
 import java.util.List;
 
-import no.nav.foreldrepenger.abakus.behandling.Fagsystem;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTilstand;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseType;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.PeriodeDto;
+import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
+import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
+import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 
 public class YtelseDto {
 

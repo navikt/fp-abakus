@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
@@ -53,6 +54,10 @@ public class NaturalYtelseEntitet extends BaseEntitet implements NaturalYtelse, 
         @JoinColumnOrFormula(column = @JoinColumn(name = "natural_ytelse_type", referencedColumnName = "kode")),
     })
     private NaturalYtelseType type = NaturalYtelseType.UDEFINERT;
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     NaturalYtelseEntitet() {
     }

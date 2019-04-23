@@ -23,6 +23,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
@@ -51,6 +52,10 @@ public class AktørInntektEntitet extends BaseEntitet implements AktørInntekt, 
     @OneToMany(mappedBy = "aktørInntekt")
     @ChangeTracked
     private Set<InntektEntitet> inntekt = new LinkedHashSet<>();
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     AktørInntektEntitet() {
         //hibernate

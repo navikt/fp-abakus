@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
@@ -56,6 +58,10 @@ public class InntektEntitet extends BaseEntitet implements Inntekt, IndexKey {
     @OneToMany(mappedBy = "inntekt")
     @ChangeTracked
     private Set<InntektspostEntitet> inntektspost = new LinkedHashSet<>();
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     InntektEntitet() {
         // hibernate

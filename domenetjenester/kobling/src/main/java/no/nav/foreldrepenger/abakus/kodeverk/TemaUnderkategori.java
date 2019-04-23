@@ -1,12 +1,10 @@
-package no.nav.foreldrepenger.abakus.domene.iay.kodeverk;
+package no.nav.foreldrepenger.abakus.kodeverk;
 
 import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-
-import no.nav.foreldrepenger.abakus.kodeverk.Kodeliste;
 
 @Entity(name = "TemaUnderkategori")
 @DiscriminatorValue(TemaUnderkategori.DISCRIMINATOR)

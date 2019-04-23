@@ -45,6 +45,7 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.SigrunTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 import no.nav.vedtak.util.FPDateUtil;
@@ -66,15 +67,14 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
                                             KodeverkRepository kodeverkRepository,
                                             VirksomhetTjeneste virksomhetTjeneste,
                                             InnhentingSamletTjeneste innhentingSamletTjeneste,
-                                            AktørConsumer aktørConsumer, SigrunTjeneste sigrunTjeneste) {
+                                            AktørConsumer aktørConsumer, SigrunTjeneste sigrunTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
         this.inntektArbeidYtelseTjeneste = inntektArbeidYtelseTjeneste;
         this.kodeverkRepository = kodeverkRepository;
         this.virksomhetTjeneste = virksomhetTjeneste;
         this.innhentingSamletTjeneste = innhentingSamletTjeneste;
         this.aktørConsumer = aktørConsumer;
         this.sigrunTjeneste = sigrunTjeneste;
-        this.ytelseRegisterInnhenting = new YtelseRegisterInnhenting(virksomhetTjeneste, inntektArbeidYtelseTjeneste,
-            innhentingSamletTjeneste);
+        this.ytelseRegisterInnhenting = new YtelseRegisterInnhenting(virksomhetTjeneste, innhentingSamletTjeneste, vedtakYtelseRepository);
         this.byggYrkesaktiviteterTjeneste = new ByggYrkesaktiviteterTjeneste(kodeverkRepository);
     }
 
