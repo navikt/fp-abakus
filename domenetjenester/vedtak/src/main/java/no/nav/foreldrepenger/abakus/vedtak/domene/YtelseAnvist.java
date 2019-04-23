@@ -9,9 +9,9 @@ import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
 public interface YtelseAnvist {
 
-    LocalDate getAnvistFOM();
+    LocalDate getAnvistFom();
 
-    LocalDate getAnvistTOM();
+    LocalDate getAnvistTom();
 
     Optional<Beløp> getBeløp();
 

@@ -22,7 +22,7 @@ public class NaisRestTjenesteTest {
 
     @Before
     public void setup() {
-        restTjeneste = new NaisRestTjeneste(serviceStarterMock, selftestServiceMock);
+        restTjeneste = new NaisRestTjeneste(serviceStarterMock);
     }
 
     @Test

@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.vedtak.domene;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -19,25 +20,27 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
-import no.nav.foreldrepenger.abakus.behandling.Fagsystem;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTilstand;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
+import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
+import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
+import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "VedtakYtelseEntitet")
 @Table(name = "VEDTAK_YTELSE")
-public class VedtakYtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
+public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, IndexKey {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_VEDTAK_YTELSE")
@@ -52,6 +55,10 @@ public class VedtakYtelseEntitet extends BaseEntitet implements Ytelse, IndexKey
         @JoinColumnOrFormula(column = @JoinColumn(name = "ytelse_type", referencedColumnName = "kode", nullable = false)),
         @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + RelatertYtelseType.DISCRIMINATOR + "'"))})
     private RelatertYtelseType ytelseType;
+
+    @DiffIgnore
+    @Column(name = "vedtatt_tidspunkt")
+    private LocalDateTime vedtattTidspunkt;
 
     @Embedded
     @ChangeTracked
@@ -91,11 +98,15 @@ public class VedtakYtelseEntitet extends BaseEntitet implements Ytelse, IndexKey
     @ChangeTracked
     private Set<YtelseAnvistEntitet> ytelseAnvist = new LinkedHashSet<>();
 
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
+
     public VedtakYtelseEntitet() {
         // hibernate
     }
 
-    public VedtakYtelseEntitet(Ytelse ytelse) {
+    public VedtakYtelseEntitet(VedtattYtelse ytelse) {
         this.ytelseType = ytelse.getYtelseType();
         this.status = ytelse.getStatus();
         this.periode = ytelse.getPeriode();
@@ -187,6 +198,14 @@ public class VedtakYtelseEntitet extends BaseEntitet implements Ytelse, IndexKey
         ytelseAnvistEntitet.setYtelse(this);
         this.ytelseAnvist.add(ytelseAnvistEntitet);
 
+    }
+
+    public LocalDateTime getVedtattTidspunkt() {
+        return vedtattTidspunkt;
+    }
+
+    void setVedtattTidspunkt(LocalDateTime vedtattTidspunkt) {
+        this.vedtattTidspunkt = vedtattTidspunkt;
     }
 
     void tilbakestillAnvisteYtelser() {

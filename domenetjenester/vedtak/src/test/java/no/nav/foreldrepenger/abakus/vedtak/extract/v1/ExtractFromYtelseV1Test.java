@@ -14,7 +14,7 @@ import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepositoryImpl;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
-import no.nav.foreldrepenger.abakus.vedtak.domene.Ytelse;
+import no.nav.foreldrepenger.abakus.vedtak.domene.VedtattYtelse;
 import no.nav.vedtak.ytelse.Aktør;
 import no.nav.vedtak.ytelse.Desimaltall;
 import no.nav.vedtak.ytelse.Periode;
@@ -58,7 +58,7 @@ public class ExtractFromYtelseV1Test {
         ytelseV1.setAnvist(List.of(anvisning));
 
         VedtakYtelseBuilder builder = extractor.extractFrom(ytelseV1);
-        Ytelse entitet = builder.build();
+        VedtattYtelse entitet = builder.build();
 
         assertThat(entitet).isNotNull();
         assertThat(entitet.getSaksnummer()).isNotNull();

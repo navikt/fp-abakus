@@ -9,6 +9,7 @@ create table VEDTAK_YTELSE
             primary key,
     AKTOER_ID            VARCHAR(50)                         NOT NULL,
     YTELSE_TYPE          VARCHAR(100)                        not null,
+    VEDTATT_TIDSPUNKT    TIMESTAMP(3)                        NOT NULL,
     FOM                  DATE                                not null,
     TOM                  DATE                                not null,
     STATUS               VARCHAR(100)                        not null,
@@ -37,6 +38,7 @@ comment on table VEDTAK_YTELSE is 'En tabell med informasjon om ytelser fra Aren
 comment on column VEDTAK_YTELSE.ID is 'Primærnøkkel';
 comment on column VEDTAK_YTELSE.AKTOER_ID is 'Stønadsmottakeren';
 comment on column VEDTAK_YTELSE.YTELSE_TYPE is 'Type ytelse for eksempel sykepenger, foreldrepenger.. (dagpenger?) etc';
+comment on column VEDTAK_YTELSE.VEDTATT_TIDSPUNKT is 'Tidspunktet hvor vedtaket ble fattet';
 comment on column VEDTAK_YTELSE.FOM is 'Startdato for ytelsten. Er tilsvarende Identdato fra Infotrygd.';
 comment on column VEDTAK_YTELSE.TOM is 'Sluttdato er en utledet dato enten fra opphørFOM eller fra identdaot pluss periode';
 comment on column VEDTAK_YTELSE.STATUS is 'Er om ytelsen er ÅPEN, LØPENDE eller AVSLUTTET';
@@ -70,16 +72,16 @@ create table VE_YTELSE_ANVIST
     YTELSE_ID               bigint                              not null
         constraint FK_VE_YTELSE_ANVIST_1
             references VEDTAK_YTELSE,
-    BELOEP                  NUMERIC(19,2),
+    BELOEP                  NUMERIC(19, 2),
     FOM                     DATE                                not null,
     TOM                     DATE                                not null,
-    UTBETALINGSGRAD_PROSENT NUMERIC(5,2),
+    UTBETALINGSGRAD_PROSENT NUMERIC(5, 2),
     VERSJON                 bigint       default 0              not null,
     OPPRETTET_AV            VARCHAR(20)  default 'VL'           not null,
     OPPRETTET_TID           TIMESTAMP(3) default localtimestamp not null,
     ENDRET_AV               VARCHAR(20),
     ENDRET_TID              TIMESTAMP(3),
-    DAGSATS                 NUMERIC(19,2)
+    DAGSATS                 NUMERIC(19, 2)
 );
 comment on table VE_YTELSE_ANVIST is 'En tabell med informasjon om ytelsesperioder';
 comment on column VE_YTELSE_ANVIST.ID is 'PK';

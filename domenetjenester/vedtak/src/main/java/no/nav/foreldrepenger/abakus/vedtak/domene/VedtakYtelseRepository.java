@@ -1,5 +1,8 @@
 package no.nav.foreldrepenger.abakus.vedtak.domene;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -8,9 +11,11 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import no.nav.foreldrepenger.abakus.behandling.Fagsystem;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseType;
+import org.hibernate.jpa.QueryHints;
+
+import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
@@ -39,8 +44,10 @@ public class VedtakYtelseRepository {
     }
 
     public void lagre(VedtakYtelseBuilder builder) {
-        Ytelse ytelse = builder.build();
-        entityManager.persist(ytelse);
+        if (builder.erOppdatering()) {
+            VedtattYtelse ytelse = builder.build();
+            entityManager.persist(ytelse);
+        }
     }
 
     private Optional<VedtakYtelseEntitet> hentYtelseFor(AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, RelatertYtelseType ytelseType) {
@@ -61,5 +68,17 @@ public class VedtakYtelseRepository {
         query.setParameter("ytelse", ytelseType);
 
         return HibernateVerktøy.hentUniktResultat(query);
+    }
+
+    public List<VedtattYtelse> hentYtelserForIPeriode(AktørId aktørId, LocalDate fom, LocalDate tom) {
+        TypedQuery<VedtakYtelseEntitet> query = entityManager.createQuery("FROM VedtakYtelseEntitet " +
+            "WHERE aktørId = :aktørId " +
+            "AND periode.fomDato <= :tom AND periode.tomDato >= :fom", VedtakYtelseEntitet.class);
+        query.setParameter("aktørId", aktørId);
+        query.setParameter("fom", fom);
+        query.setParameter("tom", tom);
+        query.setHint(QueryHints.HINT_READONLY, true);
+
+        return new ArrayList<>(query.getResultList());
     }
 }

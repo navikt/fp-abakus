@@ -1,29 +1,32 @@
 package no.nav.foreldrepenger.abakus.vedtak.domene;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
-import no.nav.foreldrepenger.abakus.behandling.Fagsystem;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTilstand;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
+import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
+import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class VedtakYtelseBuilder {
 
     private final VedtakYtelseEntitet ytelse;
+    private final LocalDateTime originalVedtattTidspunkt;
 
     private VedtakYtelseBuilder(VedtakYtelseEntitet ytelseEntitet) {
         this.ytelse = ytelseEntitet;
+        this.originalVedtattTidspunkt = ytelseEntitet.getVedtattTidspunkt() != null ? ytelseEntitet.getVedtattTidspunkt() : LocalDateTime.MIN;
     }
 
     private static VedtakYtelseBuilder ny() {
         return new VedtakYtelseBuilder(new VedtakYtelseEntitet());
     }
 
-    private static VedtakYtelseBuilder oppdatere(Ytelse oppdatere) {
+    private static VedtakYtelseBuilder oppdatere(VedtattYtelse oppdatere) {
         return new VedtakYtelseBuilder((VedtakYtelseEntitet) oppdatere);
     }
 
@@ -33,6 +36,11 @@ public class VedtakYtelseBuilder {
 
     public VedtakYtelseBuilder medYtelseType(RelatertYtelseType relatertYtelseType) {
         ytelse.setYtelseType(relatertYtelseType);
+        return this;
+    }
+
+    public VedtakYtelseBuilder medVedtattTidspunkt(LocalDateTime vedtattTidspunkt) {
+        ytelse.setVedtattTidspunkt(vedtattTidspunkt);
         return this;
     }
 
@@ -73,7 +81,7 @@ public class VedtakYtelseBuilder {
     }
 
     // public for å kunne testes
-    public Ytelse build() {
+    public VedtattYtelse build() {
         return ytelse;
     }
 
@@ -85,4 +93,12 @@ public class VedtakYtelseBuilder {
         ytelse.tilbakestillAnvisteYtelser();
     }
 
+    /**
+     * Vurderer om vedtatt tidspunktet er etter det eksisterende slik at det oppdateres ved nyere vedtakstidspunkt
+     *
+     * @return true / false avhengig av tidsstempel
+     */
+    boolean erOppdatering() {
+        return originalVedtattTidspunkt.isBefore(ytelse.getVedtattTidspunkt());
+    }
 }

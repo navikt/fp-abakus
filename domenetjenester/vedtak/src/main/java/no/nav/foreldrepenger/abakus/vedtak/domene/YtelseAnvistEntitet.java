@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
@@ -54,12 +55,16 @@ public class YtelseAnvistEntitet extends BaseEntitet implements YtelseAnvist, In
     @ChangeTracked
     private Stillingsprosent utbetalingsgradProsent;
 
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
+
     public YtelseAnvistEntitet() {
         // hibernate
     }
 
     public YtelseAnvistEntitet(YtelseAnvist ytelseAnvist) {
-        this.anvistPeriode = DatoIntervallEntitet.fraOgMedTilOgMed(ytelseAnvist.getAnvistFOM(), ytelseAnvist.getAnvistTOM());
+        this.anvistPeriode = DatoIntervallEntitet.fraOgMedTilOgMed(ytelseAnvist.getAnvistFom(), ytelseAnvist.getAnvistTom());
         this.beløp = ytelseAnvist.getBeløp().orElse(null);
         this.dagsats = ytelseAnvist.getDagsats().orElse(null);
         this.utbetalingsgradProsent = ytelseAnvist.getUtbetalingsgradProsent().orElse(null);
@@ -71,12 +76,12 @@ public class YtelseAnvistEntitet extends BaseEntitet implements YtelseAnvist, In
     }
 
     @Override
-    public LocalDate getAnvistFOM() {
+    public LocalDate getAnvistFom() {
         return anvistPeriode.getFomDato();
     }
 
     @Override
-    public LocalDate getAnvistTOM() {
+    public LocalDate getAnvistTom() {
         return anvistPeriode.getTomDato();
     }
 

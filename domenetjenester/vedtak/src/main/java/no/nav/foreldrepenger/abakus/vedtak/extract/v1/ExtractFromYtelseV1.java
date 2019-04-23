@@ -5,12 +5,12 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import no.nav.foreldrepenger.abakus.behandling.Fagsystem;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTilstand;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseType;
 import no.nav.foreldrepenger.abakus.kodeverk.Kodeliste;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
+import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
+import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
@@ -51,6 +51,7 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
 
         VedtakYtelseBuilder builder = repository.opprettBuilderFor(aktørId, saksnummer, fagsystem, ytelseType);
         builder.medAktør(aktørId)
+            .medVedtattTidspunkt(ytelse.getVedtattTidspunkt())
             .medSaksnummer(saksnummer)
             .medKilde(fagsystem)
             .medYtelseType(ytelseType)

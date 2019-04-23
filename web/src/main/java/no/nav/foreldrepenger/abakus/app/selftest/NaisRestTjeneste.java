@@ -29,26 +29,25 @@ public class NaisRestTjeneste {
     private static Logger logger = LoggerFactory.getLogger(InternalApplication.class);
 
     private ApplicationServiceStarter starterService;
-    private SelftestService selftestService;
 
     public NaisRestTjeneste() {
         // CDI
     }
 
     @Inject
-    public NaisRestTjeneste(ApplicationServiceStarter starterService, SelftestService selftestService) {
+    public NaisRestTjeneste(ApplicationServiceStarter starterService) {
         this.starterService = starterService;
-        this.selftestService = selftestService;
         logger.info("NaisResttjeneste init");
     }
 
     @GET
     @Path("isAlive")
     public Response isAlive() {
+        // TODO: Check state of kafkastream?
         return Response
-                .ok(RESPONSE_OK)
-                .header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL)
-                .build();
+            .ok(RESPONSE_OK)
+            .header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL)
+            .build();
     }
 
     @GET
