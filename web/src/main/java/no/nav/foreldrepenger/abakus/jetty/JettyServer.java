@@ -86,6 +86,8 @@ public class JettyServer extends AbstractJettyServer {
         EnvironmentClass environmentClass = getEnvironmentClass();
         String initSql = String.format("SET ROLE \"%s\"", DatasourceUtil.getDbRole("defaultDS", DatasourceRole.ADMIN));
         if (EnvironmentClass.LOCALHOST.equals(environmentClass)) {
+            //  TODO: Ønsker egentlig ikke dette, men har ikke satt opp skjema lokalt
+            // til å ha en admin bruker som gjør migrering og en annen som gjør CRUD operasjoner
             initSql = null;
         }
         DatabaseScript.migrate(DatasourceUtil.createDatasource("defaultDS", DatasourceRole.ADMIN, environmentClass), initSql);

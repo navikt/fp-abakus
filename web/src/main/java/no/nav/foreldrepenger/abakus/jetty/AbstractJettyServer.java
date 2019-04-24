@@ -65,13 +65,13 @@ abstract class AbstractJettyServer {
     }
 
     protected void bootStrap() throws Exception {
-        konfigurer();
+        konfigurerMiljø();
         migrerDatabaser();
+        konfigurer();
         start(appKonfigurasjon);
     }
 
     protected void konfigurer() throws Exception {
-        konfigurerMiljø();
         konfigurerSikkerhet();
         konfigurerJndi();
     }
@@ -91,7 +91,7 @@ abstract class AbstractJettyServer {
     }
 
     /**
-     * @see SecurityFilter#getSwaggerHash()
+     * @see AppKonfigurasjon#getSwaggerHash()
      */
     protected void konfigurerSwaggerHash() {
         System.setProperty(SecurityFilter.SWAGGER_HASH_KEY, appKonfigurasjon.getSwaggerHash());

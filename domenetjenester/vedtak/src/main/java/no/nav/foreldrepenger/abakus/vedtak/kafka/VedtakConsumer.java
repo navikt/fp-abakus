@@ -89,7 +89,9 @@ public class VedtakConsumer implements AppServiceHandler {
         // }
 
         // Setup schema-registry
-        props.put("schema.registry.url", streamProperties.getSchemaRegistryUrl());
+        if (streamProperties.getSchemaRegistryUrl() != null) {
+            props.put("schema.registry.url", streamProperties.getSchemaRegistryUrl());
+        }
 
         // Serde
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, streamProperties.getKeyClass());

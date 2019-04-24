@@ -14,7 +14,6 @@
     <packaging>jar</packaging>
     <name>Abakus :: Domenetjeneste :: Vedtak</name>
 
-
     <dependencies>
         <dependency>
             <groupId>no.nav.foreldrepenger.abakus</groupId>
@@ -37,8 +36,12 @@
             <artifactId>kafka-streams</artifactId>
         </dependency>
         <dependency>
-            <groupId>no.nav.foreldrepenger.kontrakter</groupId>
-            <artifactId>vedtatt-ytelse</artifactId>
+            <groupId>no.nav.foreldrepenger.kontrakter.topics</groupId>
+            <artifactId>hendelse-vedtatt-ytelse</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.kontrakter.topics</groupId>
+            <artifactId>fp-topics-manifest</artifactId>
         </dependency>
 
         <!-- TEST -->

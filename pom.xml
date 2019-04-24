@@ -53,6 +53,7 @@
         <swagger2markup.version>1.1.2</swagger2markup.version>
         <cxf.version>3.3.1</cxf.version>
         <prometheus.version>0.6.0</prometheus.version>
+        <kontrakter.version>5.0_20190424140314_b9872bc</kontrakter.version>
     </properties>
 
     <prerequisites>
@@ -146,14 +147,26 @@
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
                 <artifactId>foreldrepenger-kontrakter-root</artifactId>
-                <version>5.0_20190423123319_6394798</version>
+                <version>${kontrakter.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
             <dependency>
+                <groupId>no.nav.foreldrepenger.kontrakter.topics</groupId>
+                <artifactId>fp-topics</artifactId>
+                <version>${kontrakter.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.kontrakter.topics</groupId>
+                <artifactId>fp-topics-manifest</artifactId>
+                <version>${kontrakter.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>no.nav</groupId>
                 <artifactId>vault-jdbc</artifactId>
-                <version>1.2.1</version>
+                <version>1.3.1</version>
             </dependency>
             <dependency>
                 <groupId>net.sf.ehcache</groupId>
@@ -591,8 +604,7 @@
                 <sonar.coverage.exclusions>${sonar.exclusions}</sonar.coverage.exclusions>
                 <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
                 <sonar.jacoco.reportPaths>${maven.root}/target/jacoco.exec</sonar.jacoco.reportPaths>
-                <sonar.javascript.lcov.reportPath>${maven.root}/web/klient/coverage/lcov.info
-                </sonar.javascript.lcov.reportPath>
+                <sonar.javascript.lcov.reportPath>${maven.root}/web/klient/coverage/lcov.info</sonar.javascript.lcov.reportPath>
                 <sonar.javascript.file.suffixes>.js,.jsx</sonar.javascript.file.suffixes>
                 <sonar.leak.period>previous_analysis</sonar.leak.period>
             </properties>
