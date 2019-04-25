@@ -16,13 +16,16 @@ class VedtakStreamKafkaProperties {
     private final String username;
     private final String password;
     private final Topic topic;
+    private final String applicationName;
 
     @Inject
-    VedtakStreamKafkaProperties(@KonfigVerdi("kafka.boostrap.servers") String bootstrapServers,
+    VedtakStreamKafkaProperties(@KonfigVerdi("application.name") String applicationName,
+                                @KonfigVerdi("kafka.boostrap.servers") String bootstrapServers,
                                 @KonfigVerdi("kafka.schema.registry.url") String schemaRegistryUrl,
                                 @KonfigVerdi("kafka.consume.vedtak.clientId") String clientId,
                                 @KonfigVerdi("systembruker.username") String username,
                                 @KonfigVerdi("systembruker.password") String password) {
+        this.applicationName = applicationName;
 
         this.topic = TopicManifest.FATTET_VEDTAK;
         this.bootstrapServers = bootstrapServers;
@@ -66,5 +69,9 @@ class VedtakStreamKafkaProperties {
 
     boolean harSattBrukernavn() {
         return username != null && !username.isEmpty();
+    }
+
+    public String getApplicationName() {
+        return applicationName;
     }
 }

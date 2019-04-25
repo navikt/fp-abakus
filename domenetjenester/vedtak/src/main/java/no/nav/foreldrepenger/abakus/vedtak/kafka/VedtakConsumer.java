@@ -69,12 +69,13 @@ public class VedtakConsumer implements AppServiceHandler {
     private Properties setupProperties(VedtakStreamKafkaProperties streamProperties) {
         Properties props = new Properties();
 
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG, streamProperties.getApplicationName());
         props.put(StreamsConfig.CLIENT_ID_CONFIG, streamProperties.getClientId());
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, streamProperties.getBootstrapServers());
 
         // Sikkerhet
         if (streamProperties.harSattBrukernavn()) {
-            log.info("Using user name ${it} to authenticate against Kafka brokers ");
+            log.info("Using user name {} to authenticate against Kafka brokers ", streamProperties.getUsername());
             props.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
             props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
             String jaasTemplate = "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"%s\" password=\"%s\";";
