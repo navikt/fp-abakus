@@ -12,7 +12,6 @@ class VedtakStreamKafkaProperties {
 
     private final String bootstrapServers;
     private final String schemaRegistryUrl;
-    private final String clientId;
     private final String username;
     private final String password;
     private final Topic topic;
@@ -21,14 +20,12 @@ class VedtakStreamKafkaProperties {
     @Inject
     VedtakStreamKafkaProperties(@KonfigVerdi("kafka.boostrap.servers") String bootstrapServers,
                                 @KonfigVerdi("kafka.schema.registry.url") String schemaRegistryUrl,
-                                @KonfigVerdi("kafka.consume.vedtak.clientId") String clientId,
                                 @KonfigVerdi("systembruker.username") String username,
                                 @KonfigVerdi("systembruker.password") String password) {
         this.topic = TopicManifest.FATTET_VEDTAK;
         this.applicationId = ApplicationIdUtil.get();
         this.bootstrapServers = bootstrapServers;
         this.schemaRegistryUrl = schemaRegistryUrl;
-        this.clientId = clientId;
         this.username = username;
         this.password = password;
     }
@@ -42,7 +39,7 @@ class VedtakStreamKafkaProperties {
     }
 
     String getClientId() {
-        return clientId;
+        return topic.getConsumerClientId();
     }
 
     String getUsername() {
