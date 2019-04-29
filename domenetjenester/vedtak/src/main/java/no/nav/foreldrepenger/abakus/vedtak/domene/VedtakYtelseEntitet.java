@@ -27,6 +27,7 @@ import javax.persistence.Version;
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
+import org.hibernate.annotations.NaturalId;
 
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
@@ -63,6 +64,7 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
     @Column(name = "vedtatt_tidspunkt")
     private LocalDateTime vedtattTidspunkt;
 
+    @NaturalId
     @Column(name = "vedtak_referanse")
     private UUID vedtakReferanse;
 

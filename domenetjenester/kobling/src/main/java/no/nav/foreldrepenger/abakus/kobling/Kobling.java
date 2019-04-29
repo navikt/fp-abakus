@@ -16,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.NaturalId;
+
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
@@ -28,6 +30,7 @@ public class Kobling implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_KOBLING")
     private Long id;
 
+    @NaturalId
     @Column(name = "referanse_id", updatable = false, nullable = false, unique = true)
     private UUID referanseId;
 
