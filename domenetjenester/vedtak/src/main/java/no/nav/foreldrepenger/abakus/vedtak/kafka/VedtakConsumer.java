@@ -19,10 +19,12 @@ import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.abakus.vedtak.LagreVedtakTask;
 import no.nav.vedtak.apptjeneste.AppServiceHandler;
+import no.nav.vedtak.felles.AktiverContextOgTransaksjon;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskRepository;
 
 @ApplicationScoped
+@AktiverContextOgTransaksjon
 public class VedtakConsumer implements AppServiceHandler {
 
     private static final Logger log = LoggerFactory.getLogger(VedtakConsumer.class);
