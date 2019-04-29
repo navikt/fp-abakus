@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.vedtak.domene;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
@@ -27,7 +28,7 @@ public class VedtakYtelseBuilder {
     }
 
     private static VedtakYtelseBuilder oppdatere(VedtattYtelse oppdatere) {
-        return new VedtakYtelseBuilder((VedtakYtelseEntitet) oppdatere);
+        return new VedtakYtelseBuilder(new VedtakYtelseEntitet(oppdatere));
     }
 
     public static VedtakYtelseBuilder oppdatere(Optional<VedtakYtelseEntitet> oppdatere) {
@@ -41,6 +42,11 @@ public class VedtakYtelseBuilder {
 
     public VedtakYtelseBuilder medVedtattTidspunkt(LocalDateTime vedtattTidspunkt) {
         ytelse.setVedtattTidspunkt(vedtattTidspunkt);
+        return this;
+    }
+
+    public VedtakYtelseBuilder medVedtakReferanse(UUID uuid) {
+        ytelse.setVedtakReferanse(uuid);
         return this;
     }
 

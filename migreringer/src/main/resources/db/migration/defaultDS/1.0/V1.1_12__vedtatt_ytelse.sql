@@ -10,6 +10,7 @@ create table VEDTAK_YTELSE
     AKTOER_ID            VARCHAR(50)                         NOT NULL,
     YTELSE_TYPE          VARCHAR(100)                        not null,
     VEDTATT_TIDSPUNKT    TIMESTAMP(3)                        NOT NULL,
+    VEDTAK_REFERANSE     UUID                                NOT NULL,
     FOM                  DATE                                not null,
     TOM                  DATE                                not null,
     STATUS               VARCHAR(100)                        not null,
@@ -25,12 +26,15 @@ create table VEDTAK_YTELSE
     TEMAUNDERKATEGORI    VARCHAR(100),
     KL_TEMAUNDERKATEGORI VARCHAR(100) default 'TEMA_UNDERKATEGORI',
     SAKSNUMMER           VARCHAR(19),
+    AKTIV                VARCHAR(1)   default 'J'            not null,
     constraint FK_VEDTAK_YTELSE_1
         foreign key (YTELSE_TYPE, KL_YTELSE_TYPE) references KODELISTE (KODE, KODEVERK),
     constraint FK_VEDTAK_YTELSE_2
         foreign key (STATUS, KL_STATUS) references KODELISTE (KODE, KODEVERK),
     constraint FK_VEDTAK_YTELSE_3
         foreign key (KILDE, KL_KILDE) references KODELISTE (KODE, KODEVERK),
+    constraint CHK_VEDTAK_YTELSE_AKTIV
+        check (aktiv IN ('J', 'N')),
     constraint FK_VEDTAK_YTELSE_5
         foreign key (TEMAUNDERKATEGORI, KL_TEMAUNDERKATEGORI) references KODELISTE (KODE, KODEVERK)
 );
@@ -39,6 +43,7 @@ comment on column VEDTAK_YTELSE.ID is 'Primærnøkkel';
 comment on column VEDTAK_YTELSE.AKTOER_ID is 'Stønadsmottakeren';
 comment on column VEDTAK_YTELSE.YTELSE_TYPE is 'Type ytelse for eksempel sykepenger, foreldrepenger.. (dagpenger?) etc';
 comment on column VEDTAK_YTELSE.VEDTATT_TIDSPUNKT is 'Tidspunktet hvor vedtaket ble fattet';
+comment on column VEDTAK_YTELSE.VEDTAK_REFERANSE is 'Referanse til vedtaket. Kan benyttes til å etterspørre mer informasjon om vedtaket.';
 comment on column VEDTAK_YTELSE.FOM is 'Startdato for ytelsten. Er tilsvarende Identdato fra Infotrygd.';
 comment on column VEDTAK_YTELSE.TOM is 'Sluttdato er en utledet dato enten fra opphørFOM eller fra identdaot pluss periode';
 comment on column VEDTAK_YTELSE.STATUS is 'Er om ytelsen er ÅPEN, LØPENDE eller AVSLUTTET';
@@ -49,6 +54,7 @@ comment on column VEDTAK_YTELSE.KL_KILDE is 'Referanse til KODEVERK-kolonnen i K
 comment on column VEDTAK_YTELSE.TEMAUNDERKATEGORI is 'Fremmednøkkel til kodeverktabellen for beskrivelser av underkategori fra Infotrygd';
 comment on column VEDTAK_YTELSE.KL_TEMAUNDERKATEGORI is 'Referanse til KODEVERK-kolonnen i KODELISTE-tabellen';
 comment on column VEDTAK_YTELSE.SAKSNUMMER is 'Saksnummer i GSAK';
+comment on column VEDTAK_YTELSE.AKTIV is 'Er innslaget aktivt';
 create index IDX_VEDTAK_YTELSE_1
     on VEDTAK_YTELSE (AKTOER_ID);
 create index IDX_VEDTAK_YTELSE_6
@@ -59,6 +65,10 @@ create index IDX_VEDTAK_YTELSE_8
     on VEDTAK_YTELSE (KILDE);
 create index IDX_VEDTAK_YTELSE_9
     on VEDTAK_YTELSE (TEMAUNDERKATEGORI);
+create index IDX_VEDTAK_YTELSE_10
+    on VEDTAK_YTELSE (AKTIV);
+create index IDX_VEDTAK_YTELSE_11
+    on VEDTAK_YTELSE (VEDTATT_TIDSPUNKT);
 
 create sequence SEQ_VEDTAK_YTELSE_ANVIST
     increment by 50

@@ -53,7 +53,7 @@
         <swagger2markup.version>1.1.2</swagger2markup.version>
         <cxf.version>3.3.1</cxf.version>
         <prometheus.version>0.6.0</prometheus.version>
-        <kontrakter.version>5.0_20190426151314_e0c66e9</kontrakter.version>
+        <kontrakter.version>5.0_20190429084732_f481f4b</kontrakter.version>
     </properties>
 
     <prerequisites>

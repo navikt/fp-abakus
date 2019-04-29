@@ -6,11 +6,13 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,6 +38,7 @@ import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "VedtakYtelseEntitet")
@@ -59,6 +62,9 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
     @DiffIgnore
     @Column(name = "vedtatt_tidspunkt")
     private LocalDateTime vedtattTidspunkt;
+
+    @Column(name = "vedtak_referanse")
+    private UUID vedtakReferanse;
 
     @Embedded
     @ChangeTracked
@@ -98,6 +104,10 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
     @ChangeTracked
     private Set<YtelseAnvistEntitet> ytelseAnvist = new LinkedHashSet<>();
 
+    @Convert(converter = BooleanToStringConverter.class)
+    @Column(name = "aktiv", nullable = false)
+    private boolean aktiv = true;
+
     @Version
     @Column(name = "versjon", nullable = false)
     private long versjon;
@@ -108,6 +118,7 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
 
     public VedtakYtelseEntitet(VedtattYtelse ytelse) {
         this.ytelseType = ytelse.getYtelseType();
+        this.vedtakReferanse = ytelse.getVedtakReferanse();
         this.status = ytelse.getStatus();
         this.periode = ytelse.getPeriode();
         this.saksnummer = ytelse.getSaksnummer();
@@ -180,6 +191,15 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
     }
 
     @Override
+    public UUID getVedtakReferanse() {
+        return vedtakReferanse;
+    }
+
+    void setVedtakReferanse(UUID vedtakReferanse) {
+        this.vedtakReferanse = vedtakReferanse;
+    }
+
+    @Override
     public Fagsystem getKilde() {
         return kilde;
     }
@@ -200,6 +220,7 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
 
     }
 
+    @Override
     public LocalDateTime getVedtattTidspunkt() {
         return vedtattTidspunkt;
     }
@@ -210,6 +231,10 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
 
     void tilbakestillAnvisteYtelser() {
         ytelseAnvist.clear();
+    }
+
+    void setAktiv(boolean aktiv) {
+        this.aktiv = aktiv;
     }
 
     @Override
@@ -240,4 +265,5 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
             ", saksNummer='" + saksnummer + '\'' + //$NON-NLS-1$
             '}';
     }
+
 }

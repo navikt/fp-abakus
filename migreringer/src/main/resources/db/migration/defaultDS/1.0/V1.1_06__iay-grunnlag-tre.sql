@@ -1,7 +1,7 @@
 create table KOBLING
 (
   ID                     bigint                              not null,
-  referanse_id           varchar(150)                        not null,
+  referanse_id           uuid                        not null,
   bruker_aktoer_id       varchar(50)                         not null,
   annen_part_aktoer_id   varchar(50),
   opplysning_periode_fom DATE                                not null,
@@ -1044,7 +1044,7 @@ create table GR_ARBEID_INNTEKT
 (
   ID                    bigint                              not null,
   BEHANDLING_ID         bigint                              not null,
-  referanse_id          varchar(50)                         not null,
+  referanse_id          uuid                         not null,
   REGISTER_ID           bigint,
   SAKSBEHANDLET_ID      bigint,
   VERSJON               bigint       default 0              not null,

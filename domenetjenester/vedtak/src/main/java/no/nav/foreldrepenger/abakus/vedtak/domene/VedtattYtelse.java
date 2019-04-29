@@ -1,6 +1,8 @@
 package no.nav.foreldrepenger.abakus.vedtak.domene;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
@@ -24,7 +26,11 @@ public interface VedtattYtelse {
 
     Saksnummer getSaksnummer();
 
+    UUID getVedtakReferanse();
+
     Fagsystem getKilde();
 
     Collection<YtelseAnvist> getYtelseAnvist();
+
+    LocalDateTime getVedtattTidspunkt();
 }

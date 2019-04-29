@@ -16,8 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.Type;
-
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
@@ -31,7 +29,6 @@ public class Kobling implements IndexKey {
     private Long id;
 
     @Column(name = "referanse_id", updatable = false, nullable = false, unique = true)
-    @Type(type = "uuid-char")
     private UUID referanseId;
 
     @Embedded

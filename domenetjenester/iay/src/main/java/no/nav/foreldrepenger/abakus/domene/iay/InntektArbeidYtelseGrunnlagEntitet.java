@@ -24,8 +24,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.Type;
-
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingSomIkkeKommer;
@@ -52,7 +50,6 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
 
     @DiffIgnore
     @Column(name = "referanse_id", nullable = false, updatable = false, unique = true)
-    @Type(type = "uuid-char")
     private UUID referanseId;
 
     @OneToOne

@@ -44,10 +44,22 @@ public class VedtakYtelseRepository {
     }
 
     public void lagre(VedtakYtelseBuilder builder) {
+        VedtattYtelse ytelse = builder.build();
         if (builder.erOppdatering()) {
-            VedtattYtelse ytelse = builder.build();
-            entityManager.persist(ytelse);
+            // Deaktiver eksisterende innslag
+            Optional<VedtakYtelseEntitet> vedtakYtelseEntitet = hentYtelseFor(ytelse.getAktør(), ytelse.getSaksnummer(), ytelse.getKilde(), ytelse.getYtelseType());
+            if (vedtakYtelseEntitet.isPresent()) {
+                VedtakYtelseEntitet ytelseEntitet = vedtakYtelseEntitet.get();
+                ytelseEntitet.setAktiv(false);
+                entityManager.persist(ytelseEntitet);
+                entityManager.flush();
+            }
         }
+        entityManager.persist(ytelse);
+        for (YtelseAnvist ytelseAnvist : ytelse.getYtelseAnvist()) {
+            entityManager.persist(ytelseAnvist);
+        }
+        entityManager.flush();
     }
 
     private Optional<VedtakYtelseEntitet> hentYtelseFor(AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, RelatertYtelseType ytelseType) {
@@ -60,7 +72,8 @@ public class VedtakYtelseRepository {
             "WHERE aktørId = :aktørId " +
             "AND saksnummer = :saksnummer " +
             "AND kilde = :fagsystem " +
-            "AND ytelseType = :ytelse", VedtakYtelseEntitet.class);
+            "AND ytelseType = :ytelse " +
+            "AND aktiv = true", VedtakYtelseEntitet.class);
 
         query.setParameter("aktørId", aktørId);
         query.setParameter("saksnummer", saksnummer);
@@ -73,7 +86,8 @@ public class VedtakYtelseRepository {
     public List<VedtattYtelse> hentYtelserForIPeriode(AktørId aktørId, LocalDate fom, LocalDate tom) {
         TypedQuery<VedtakYtelseEntitet> query = entityManager.createQuery("FROM VedtakYtelseEntitet " +
             "WHERE aktørId = :aktørId " +
-            "AND periode.fomDato <= :tom AND periode.tomDato >= :fom", VedtakYtelseEntitet.class);
+            "AND periode.fomDato <= :tom AND periode.tomDato >= :fom " +
+            "AND aktiv = true", VedtakYtelseEntitet.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("fom", fom);
         query.setParameter("tom", tom);
