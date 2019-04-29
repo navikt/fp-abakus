@@ -15,6 +15,9 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskRepository;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskStatus;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTypeInfo;
+import no.nav.vedtak.felles.prosesstask.impl.ProsessTaskEntitet;
+import no.nav.vedtak.felles.prosesstask.impl.ProsessTaskType;
+import no.nav.vedtak.felles.prosesstask.impl.cron.CronExpression;
 import no.nav.vedtak.felles.prosesstask.rest.dto.FeiletProsessTaskDataDto;
 import no.nav.vedtak.felles.prosesstask.rest.dto.ProsessTaskDataDto;
 import no.nav.vedtak.felles.prosesstask.rest.dto.ProsessTaskDataKonverter;
@@ -31,6 +34,9 @@ import no.nav.vedtak.util.FPDateUtil;
 public class ProsessTaskApplikasjonTjenesteImpl implements ProsessTaskApplikasjonTjeneste {
 
     private ProsessTaskRepository prosessTaskRepository;
+
+    ProsessTaskApplikasjonTjenesteImpl() {
+    }
 
     @Inject
     public ProsessTaskApplikasjonTjenesteImpl(ProsessTaskRepository prosessTaskRepository) {
@@ -113,6 +119,31 @@ public class ProsessTaskApplikasjonTjenesteImpl implements ProsessTaskApplikasjo
             retryAllResultatDto.addProsessTaskId(ptd.getId());
         });
         return retryAllResultatDto;
+    }
+
+    @Override
+    public List<ProsessTaskDataDto> finnStatusPåBatchTasks() {
+        Map<ProsessTaskType, ProsessTaskEntitet> statusForBatchTasks = prosessTaskRepository.finnStatusForBatchTasks();
+        statusForBatchTasks.entrySet()
+            .stream()
+            .filter(entry -> entry.getValue() == null)
+            .forEach(this::opprettTaskForType);
+
+        statusForBatchTasks = prosessTaskRepository.finnStatusForBatchTasks();
+
+        return statusForBatchTasks.values()
+            .stream()
+            .map(ProsessTaskEntitet::tilProsessTask)
+            .map(ProsessTaskDataKonverter::tilProsessTaskDataDto)
+            .collect(Collectors.toList());
+    }
+
+    private void opprettTaskForType(Map.Entry<ProsessTaskType, ProsessTaskEntitet> entry) {
+        ProsessTaskType type = entry.getKey();
+        ProsessTaskData data = new ProsessTaskData(type.getKode());
+        LocalDateTime neste = new CronExpression(type.getCronExpression()).neste(LocalDateTime.now());
+        data.setNesteKjøringEtter(neste);
+        prosessTaskRepository.lagre(data);
     }
 
     private void oppdaterProsessTaskDataMedKjoerbarStatus(ProsessTaskData eksisterendeProsessTaskData) {

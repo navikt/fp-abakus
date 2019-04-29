@@ -809,4 +809,13 @@ public class CronExpressionTest {
         ZonedDateTime expected = ZonedDateTime.of(2016, 2, 29, 0, 0, 0, 0, zoneId);
         assertThat(CronExpression.createWithoutSeconds("* * 29 2 *").nextTimeAfter(after)).isEqualTo(expected);
     }
+
+    @Test
+    public void test_every_day_at_() {
+        ZonedDateTime after = ZonedDateTime.of(2012, 3, 1, 0, 0, 0, 0, zoneId);
+        ZonedDateTime expected = ZonedDateTime.of(2012, 3, 1, 7, 30, 0, 0, zoneId);
+        CronExpression cronExpression = CronExpression.create("* 30 7 * * *");
+
+        assertThat(cronExpression.nextTimeAfter(after)).isEqualTo(expected);
+    }
 }

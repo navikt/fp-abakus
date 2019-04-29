@@ -85,6 +85,27 @@ public class ProsessTaskRestTjeneste {
     }
 
     @POST
+    @Path("/launch-batch")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @ApiOperation(
+            value = "Planlegger neste kjøring for alle batch tasktyper som ikke har status fra før av",
+            notes = "Gir status på alle batch-tasks"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Prosesstaskens oppdatert informasjon",
+                    response = ProsessTaskRestartResultatDto.class
+            ),
+            @ApiResponse(code = 500, message = "Feilet pga ukjent feil eller tekniske/funksjonelle feil")
+    })
+    @BeskyttetRessurs(action = CREATE, ressurs = DRIFT)
+    public List<ProsessTaskDataDto> initBatch() {
+
+        return prosessTaskApplikasjonTjeneste.finnStatusPåBatchTasks();
+    }
+
+    @POST
     @Path("/retryall")
     @Consumes(MediaType.APPLICATION_JSON)
     @ApiOperation(

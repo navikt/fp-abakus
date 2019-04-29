@@ -26,4 +26,6 @@ public interface ProsessTaskApplikasjonTjeneste {
     ProsessTaskRestartResultatDto flaggProsessTaskForRestart(ProsessTaskRestartInputDto prosessTaskRestartInputDto);
 
     ProsessTaskRetryAllResultatDto flaggAlleFeileteProsessTasksForRestart();
+
+    List<ProsessTaskDataDto> finnStatusPåBatchTasks();
 }

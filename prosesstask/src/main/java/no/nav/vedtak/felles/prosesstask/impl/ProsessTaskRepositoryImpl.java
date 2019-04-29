@@ -48,11 +48,11 @@ public class ProsessTaskRepositoryImpl implements ProsessTaskRepository {
         // for CDI proxying
     }
 
-    public ProsessTaskRepositoryImpl(EntityManager entityManager,
-                                     ProsessTaskEventPubliserer eventPubliserer) {
+    ProsessTaskRepositoryImpl(EntityManager entityManager,
+                              ProsessTaskEventPubliserer eventPubliserer) {
         // for kompatibilitet og forenkling av tester
         this(entityManager, eventPubliserer,
-            eventPubliserer == null ? null : new HandleProsessTaskLifecycleObserver() /* init kun dersom eventer lyttes på. */ );
+            eventPubliserer == null ? null : new HandleProsessTaskLifecycleObserver() /* init kun dersom eventer lyttes på. */);
     }
 
     @Inject
@@ -113,14 +113,16 @@ public class ProsessTaskRepositoryImpl implements ProsessTaskRepository {
         return lagre(gruppe);
     }
 
-    /** Lagre og returner id. */
+    /**
+     * Lagre og returner id.
+     */
     protected Long doLagreTask(ProsessTaskData task) {
         ProsessTaskEntitet pte;
         if (task.getId() != null) {
             ProsessTaskStatus nyStatus = task.getStatus();
             pte = entityManager.find(ProsessTaskEntitet.class, task.getId());
             ProsessTaskStatus status = pte.getStatus();
-            
+
             pte.kopierFra(task);
             entityManager.persist(pte);
             entityManager.flush();
@@ -233,8 +235,8 @@ public class ProsessTaskRepositoryImpl implements ProsessTaskRepository {
     @Override
     public Map<ProsessTaskType, ProsessTaskEntitet> finnStatusForBatchTasks() {
         TypedQuery<ProsessTaskType> query = entityManager
-                .createQuery("SELECT ptt from ProsessTaskType ptt " +
-                        "where ptt.cronExpression is not null", ProsessTaskType.class); // NOSONAR $NON-NLS-1$
+            .createQuery("SELECT ptt from ProsessTaskType ptt " +
+                "where ptt.cronExpression is not null", ProsessTaskType.class); // NOSONAR $NON-NLS-1$
 
         List<ProsessTaskType> resultList = query.getResultList();
         Map<ProsessTaskType, ProsessTaskEntitet> result = new HashMap<>();
@@ -246,13 +248,13 @@ public class ProsessTaskRepositoryImpl implements ProsessTaskRepository {
 
     private ProsessTaskEntitet finnStatusForTaskType(ProsessTaskType taskType) {
         TypedQuery<ProsessTaskEntitet> query = entityManager
-                .createQuery("SELECT pt from ProsessTaskEntitet pt " +
-                        "where pt.taskType = :task ORDER BY pt.nesteKjøringEtter DESC", ProsessTaskEntitet.class)
-                .setParameter("task", taskType.getKode())
-                .setMaxResults(1); // NOSONAR $NON-NLS-1$
+            .createQuery("SELECT pt from ProsessTaskEntitet pt " +
+                "where pt.taskType = :task ORDER BY pt.nesteKjøringEtter DESC", ProsessTaskEntitet.class)
+            .setParameter("task", taskType.getKode())
+            .setMaxResults(1); // NOSONAR $NON-NLS-1$
         return query.getResultList().stream()
-                .findFirst()
-                .orElse(null);
+            .findFirst()
+            .orElse(null);
     }
 
     @Override
@@ -341,6 +343,19 @@ public class ProsessTaskRepositoryImpl implements ProsessTaskRepository {
 
     public EntityManager getEntityManager() {
         return entityManager;
+    }
+
+    @Override
+    public int rekjørAlleFeiledeTasks() {
+        Query query = entityManager.createNativeQuery("UPDATE PROSESS_TASK " +
+            "SET status = :status, " +
+            "feilede_forsoek = feilede_forsoek-1, " +
+            "neste_kjoering_etter = now() " +
+            "WHERE STATUS = :feilet");
+        int updatedRows = query.executeUpdate();
+        entityManager.flush();
+
+        return updatedRows;
     }
 
 }
