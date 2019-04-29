@@ -30,7 +30,7 @@ import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
-@Entity(name = "ArbeidsforholdReferanse")
+@Entity(name = "ArbeidsforholdOverstyring")
 @Table(name = "IAY_ARBEIDSFORHOLD")
 public class ArbeidsforholdOverstyringEntitet extends BaseEntitet implements IndexKey {
 
