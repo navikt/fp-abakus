@@ -352,6 +352,8 @@ public class ProsessTaskRepositoryImpl implements ProsessTaskRepository {
             "feilede_forsoek = feilede_forsoek-1, " +
             "neste_kjoering_etter = now() " +
             "WHERE STATUS = :feilet");
+        query.setParameter("status", ProsessTaskStatus.KLAR.getDbKode())
+            .setParameter("feilet", ProsessTaskStatus.FEILET.getDbKode());
         int updatedRows = query.executeUpdate();
         entityManager.flush();
 
