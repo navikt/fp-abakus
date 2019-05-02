@@ -3,7 +3,6 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 import java.util.Collection;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 
 public interface Inntekt {
 
@@ -17,7 +16,7 @@ public interface Inntekt {
     /**
      * Utbetaler
      *
-     * @return {@link Arbeidsgiver}
+     * @return {@link ArbeidsgiverEntitet}
      */
     Arbeidsgiver getArbeidsgiver();
 

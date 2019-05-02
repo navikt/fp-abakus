@@ -2,8 +2,8 @@ package no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold;
 
 import java.util.List;
 
+import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 
 public interface ArbeidsforholdInformasjon {
     ArbeidsforholdRef finnForEkstern(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef ref);

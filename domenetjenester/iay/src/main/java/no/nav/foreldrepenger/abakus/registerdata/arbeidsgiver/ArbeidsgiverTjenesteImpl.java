@@ -7,9 +7,11 @@ import java.util.concurrent.TimeUnit;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
+import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.person.TpsTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.person.domene.Personinfo;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.vedtak.util.LRUCache;
 
 @ApplicationScoped
@@ -17,6 +19,7 @@ public class ArbeidsgiverTjenesteImpl implements ArbeidsgiverTjeneste {
 
     private static final long CACHE_ELEMENT_LIVE_TIME_MS = TimeUnit.MILLISECONDS.convert(12, TimeUnit.HOURS);
     private TpsTjeneste tpsTjeneste;
+    private VirksomhetTjeneste virksomhetTjeneste;
     private LRUCache<String, ArbeidsgiverOpplysninger> cache = new LRUCache<>(1000, CACHE_ELEMENT_LIVE_TIME_MS);
 
     ArbeidsgiverTjenesteImpl() {
@@ -24,18 +27,22 @@ public class ArbeidsgiverTjenesteImpl implements ArbeidsgiverTjeneste {
     }
 
     @Inject
-    public ArbeidsgiverTjenesteImpl(TpsTjeneste tpsTjeneste) {
+    public ArbeidsgiverTjenesteImpl(TpsTjeneste tpsTjeneste, VirksomhetTjeneste virksomhetTjeneste) {
         this.tpsTjeneste = tpsTjeneste;
+        this.virksomhetTjeneste = virksomhetTjeneste;
     }
 
     @Override
-    public ArbeidsgiverOpplysninger hent(Arbeidsgiver arbeidsgiver) {
+    public ArbeidsgiverOpplysninger hent(ArbeidsgiverEntitet arbeidsgiver) {
         ArbeidsgiverOpplysninger arbeidsgiverOpplysninger = cache.get(arbeidsgiver.getIdentifikator());
         if (arbeidsgiverOpplysninger != null) {
             return arbeidsgiverOpplysninger;
         }
         if (arbeidsgiver.getErVirksomhet()) {
-            return new ArbeidsgiverOpplysninger(arbeidsgiver.getIdentifikator(), arbeidsgiver.getVirksomhet().getNavn());
+            Virksomhet virksomhet = virksomhetTjeneste.hentOgLagreOrganisasjon(arbeidsgiver.getIdentifikator());
+            ArbeidsgiverOpplysninger opplysninger = new ArbeidsgiverOpplysninger(arbeidsgiver.getIdentifikator(), virksomhet.getNavn());
+            cache.put(arbeidsgiver.getIdentifikator(), opplysninger);
+            return opplysninger;
         } else if (arbeidsgiver.erAktørId()) {
             Optional<Personinfo> personinfo = tpsTjeneste.hentBrukerForAktør(arbeidsgiver.getAktørId());
             if (personinfo.isPresent()) {

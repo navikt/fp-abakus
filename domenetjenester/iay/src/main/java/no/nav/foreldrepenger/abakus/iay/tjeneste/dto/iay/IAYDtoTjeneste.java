@@ -12,6 +12,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtale;
 import no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid;
 import no.nav.foreldrepenger.abakus.domene.iay.AktørInntekt;
 import no.nav.foreldrepenger.abakus.domene.iay.AktørYtelse;
+import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.Inntekt;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.Inntektspost;
@@ -21,7 +22,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.Ytelse;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelse;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.AktørDto;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.ReferanseDto;
@@ -110,7 +111,7 @@ public class IAYDtoTjeneste {
         Fordeling dto = new Fordeling();
         dto.setHyppighet(ytelseStørrelse.getHyppighet());
         dto.setBeløp(ytelseStørrelse.getBeløp().getVerdi());
-        ytelseStørrelse.getVirksomhet().ifPresent(vi -> dto.setArbeidsgiver(mapArbeidsgiver(Arbeidsgiver.virksomhet(vi))));
+        ytelseStørrelse.getVirksomhet().ifPresent(vi -> dto.setArbeidsgiver(mapArbeidsgiver(ArbeidsgiverEntitet.virksomhet(vi))));
         return dto;
     }
 

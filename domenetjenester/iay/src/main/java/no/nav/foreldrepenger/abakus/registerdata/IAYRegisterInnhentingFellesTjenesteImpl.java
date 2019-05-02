@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.threeten.extra.Interval;
 
 import no.nav.foreldrepenger.abakus.domene.iay.AktørInntektEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.NæringsinntektType;
@@ -28,8 +30,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.SkatteOgAvgiftsregelType;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.OrganisasjonsNummerValidator;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
@@ -44,6 +44,7 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinnt
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.SigrunTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.OrganisasjonsNummerValidator;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
@@ -206,7 +207,7 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
             boolean orgledd = virksomhetTjeneste.sjekkOmVirksomhetErOrgledd(arbeidsgiverIdentifikator);
             if (!orgledd) {
                 LocalDate hentedato = finnHentedatoForJuridisk(månedsinntekterGruppertPåArbeidsgiver.keySet());
-                arbeidsgiver = Arbeidsgiver.virksomhet(virksomhetTjeneste.hentOgLagreOrganisasjonMedHensynTilJuridisk(arbeidsgiverIdentifikator, hentedato));
+                arbeidsgiver = ArbeidsgiverEntitet.virksomhet(virksomhetTjeneste.hentOgLagreOrganisasjonMedHensynTilJuridisk(arbeidsgiverIdentifikator, hentedato));
                 aktørInntektBuilder.leggTilInntekt(byggInntekt(månedsinntekterGruppertPåArbeidsgiver, arbeidsgiver, aktørInntektBuilder, inntektOpptjening));
                 builder.leggTilAktørInntekt(aktørInntektBuilder);
             } else {
@@ -215,12 +216,12 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
         } else {
             if (PersonIdent.erGyldigFnr(arbeidsgiverIdentifikator)) {
                 Optional<String> arbeidsgiverOpt = aktørConsumer.hentAktørIdForPersonIdent(arbeidsgiverIdentifikator);
-                if (!arbeidsgiverOpt.isPresent()) {
+                if (arbeidsgiverOpt.isEmpty()) {
                     throw InnhentingFeil.FACTORY.finnerIkkeAktørIdForArbeidsgiverSomErPrivatperson().toException();
                 }
-                arbeidsgiver = Arbeidsgiver.person(new AktørId(arbeidsgiverOpt.get()));
+                arbeidsgiver = ArbeidsgiverEntitet.person(new AktørId(arbeidsgiverOpt.get()));
             } else {
-                arbeidsgiver = Arbeidsgiver.person(new AktørId(arbeidsgiverIdentifikator));
+                arbeidsgiver = ArbeidsgiverEntitet.person(new AktørId(arbeidsgiverIdentifikator));
             }
             aktørInntektBuilder.leggTilInntekt(byggInntekt(månedsinntekterGruppertPåArbeidsgiver, arbeidsgiver, aktørInntektBuilder, inntektOpptjening));
             builder.leggTilAktørInntekt(aktørInntektBuilder);
@@ -264,12 +265,12 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
 
     private Arbeidsgiver mapArbeidsgiver(ArbeidsforholdIdentifikator arbeidsforhold) {
         if (arbeidsforhold.getArbeidsgiver() instanceof Person) {
-            return Arbeidsgiver.person(new AktørId(((Person) arbeidsforhold.getArbeidsgiver()).getAktørId()));
+            return ArbeidsgiverEntitet.person(new AktørId(((Person) arbeidsforhold.getArbeidsgiver()).getAktørId()));
         } else if (arbeidsforhold.getArbeidsgiver() instanceof Organisasjon) {
             String orgnr = ((Organisasjon) arbeidsforhold.getArbeidsgiver()).getOrgNummer();
-            return Arbeidsgiver.virksomhet(virksomhetTjeneste.hentOgLagreOrganisasjon(orgnr));
+            return ArbeidsgiverEntitet.virksomhet(virksomhetTjeneste.hentOgLagreOrganisasjon(orgnr));
         }
-        throw new IllegalArgumentException("Utvikler feil: Arbeidsgiver av ukjent type.");
+        throw new IllegalArgumentException("Utvikler feil: ArbeidsgiverEntitet av ukjent type.");
     }
 
     private YrkesaktivitetEntitet.AktivitetsAvtaleBuilder opprettAktivitetsAvtaleFrilans(FrilansArbeidsforhold frilansArbeidsforhold,
@@ -307,7 +308,7 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
                 String skatteOgAvgiftsregler = antalInntekterForAvgiftsregel.keySet().stream().collect(Collectors.joining(", "));
                 // TODO Diamant velger her en random verdi.
                 valgtSkatteOgAvgiftsregel = Optional.of(antalInntekterForAvgiftsregel.keySet().iterator().next());
-                LOGGER.error("Arbeidsgiver orgnr {} har flere månedsinntekter for måned {} med forskjellige skatte -og avgiftsregler {}. Velger {}", arbeidsgiver.getIdentifikator(), måned, skatteOgAvgiftsregler, valgtSkatteOgAvgiftsregel);
+                LOGGER.error("ArbeidsgiverEntitet orgnr {} har flere månedsinntekter for måned {} med forskjellige skatte -og avgiftsregler {}. Velger {}", arbeidsgiver.getIdentifikator(), måned, skatteOgAvgiftsregler, valgtSkatteOgAvgiftsregel);
             } else if (antalInntekterForAvgiftsregel.keySet().size() == 1) {
                 valgtSkatteOgAvgiftsregel = Optional.of(antalInntekterForAvgiftsregel.keySet().iterator().next());
             }

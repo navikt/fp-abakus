@@ -7,6 +7,7 @@ import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 
 public class AktørDto implements AbacDto {
+
     @NotNull
     @Pattern(regexp = "[\\d]{11}|[\\d]{13}")
     private String id;

@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.domene.virksomhet;
+package no.nav.foreldrepenger.abakus.typer;
 
 public final class OrganisasjonsNummerValidator {
 

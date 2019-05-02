@@ -33,7 +33,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOver
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyrtePerioderEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.PermisjonsbeskrivelseType;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -64,7 +63,7 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
 
     @Embedded
     @ChangeTracked
-    private Arbeidsgiver arbeidsgiver;
+    private ArbeidsgiverEntitet arbeidsgiver;
 
     @Embedded
     private ArbeidsforholdRef arbeidsforholdRef;
@@ -147,10 +146,10 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
 
     @Override
     public Collection<AktivitetsAvtale> getAktivitetsAvtaler() {
-        return Collections.unmodifiableSet(aktivitetsAvtale.stream()
+        return aktivitetsAvtale.stream()
             .filter(av -> (!this.erArbeidsforhold() || !av.erAnsettelsesPeriode()))
             .filter(AktivitetsAvtaleEntitet::skalMedEtterSkjæringstidspunktVurdering)
-            .collect(Collectors.toSet()));
+            .collect(Collectors.toUnmodifiableSet());
     }
 
     Collection<AktivitetsAvtale> getAlleAktivitetsAvtaler() {
@@ -164,11 +163,11 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
     }
 
     @Override
-    public Arbeidsgiver getArbeidsgiver() {
+    public ArbeidsgiverEntitet getArbeidsgiver() {
         return arbeidsgiver;
     }
 
-    void setArbeidsgiver(Arbeidsgiver arbeidsgiver) {
+    void setArbeidsgiver(ArbeidsgiverEntitet arbeidsgiver) {
         this.arbeidsgiver = arbeidsgiver;
     }
 

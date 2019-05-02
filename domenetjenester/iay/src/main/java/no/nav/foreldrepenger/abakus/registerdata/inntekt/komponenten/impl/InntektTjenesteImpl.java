@@ -189,7 +189,7 @@ public class InntektTjenesteImpl implements InntektTjeneste {
             AktørId aktørId = new AktørId(aktørConsumer.hentAktørIdForPersonIdent(arbeidsgiver.getIdentifikator()).orElse(null));
             builder.medArbeidsgiverAktørId(aktørId);
         } else {
-            logger.info("Arbeidsgiver for frilanser har ukjent aktørtype: {}", arbeidsgiver.getAktoerType());
+            logger.info("ArbeidsgiverEntitet for frilanser har ukjent aktørtype: {}", arbeidsgiver.getAktoerType());
         }
     }
 

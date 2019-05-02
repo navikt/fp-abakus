@@ -26,6 +26,7 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdS
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
+import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtattYtelse;
@@ -181,7 +182,7 @@ public class YtelseRegisterInnhenting {
                 ysBuilder.medBeløp(arbeid.getInntektForPerioden())
                     .medHyppighet(arbeid.getInntektPeriodeType());
                 if (arbeid.harGyldigOrgnr()) {
-                    ysBuilder.medVirksomhet(virksomhetTjeneste.hentOgLagreOrganisasjon(arbeid.getOrgnr()));
+                    ysBuilder.medVirksomhet(new OrgNummer(arbeid.getOrgnr()));
                 }
                 ygBuilder.medYtelseStørrelse(ysBuilder.build());
             }

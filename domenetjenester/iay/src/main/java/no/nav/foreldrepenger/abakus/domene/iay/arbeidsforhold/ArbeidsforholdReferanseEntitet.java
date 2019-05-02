@@ -14,7 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseValue;
@@ -31,7 +32,7 @@ public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements Index
 
     @ChangeTracked
     @Embedded
-    private Arbeidsgiver arbeidsgiver;
+    private ArbeidsgiverEntitet arbeidsgiver;
 
     @Embedded
     @AttributeOverrides({
@@ -53,7 +54,7 @@ public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements Index
     }
 
     ArbeidsforholdReferanseEntitet(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef internReferanse, ArbeidsforholdRef eksternReferanse) {
-        this.arbeidsgiver = arbeidsgiver;
+        this.arbeidsgiver = (ArbeidsgiverEntitet) arbeidsgiver;
         this.internReferanse = internReferanse;
         this.eksternReferanse = eksternReferanse;
     }
@@ -75,7 +76,7 @@ public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements Index
         return eksternReferanse;
     }
 
-    Arbeidsgiver getArbeidsgiver() {
+    ArbeidsgiverEntitet getArbeidsgiver() {
         return arbeidsgiver;
     }
 

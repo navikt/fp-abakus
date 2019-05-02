@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 
 public interface Yrkesaktivitet {
 
@@ -57,11 +56,11 @@ public interface Yrkesaktivitet {
     Collection<AktivitetsAvtale> getAktivitetsAvtaler();
 
     /**
-     * Arbeidsgiver
+     * ArbeidsgiverEntitet
      * <p>
      * NB! Vil kun forekomme i aktiviteter som er hentet inn fra aa-reg
      *
-     * @return {@link Arbeidsgiver}
+     * @return {@link ArbeidsgiverEntitet}
      */
     Arbeidsgiver getArbeidsgiver();
 

@@ -6,7 +6,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetEntitet.AktivitetsA
 import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetEntitet.PermisjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class YrkesaktivitetBuilder {
@@ -49,7 +48,7 @@ public class YrkesaktivitetBuilder {
     }
 
     public YrkesaktivitetBuilder medArbeidsgiver(Arbeidsgiver arbeidsgiver) {
-        kladd.setArbeidsgiver(arbeidsgiver);
+        kladd.setArbeidsgiver((ArbeidsgiverEntitet) arbeidsgiver);
         return this;
     }
 

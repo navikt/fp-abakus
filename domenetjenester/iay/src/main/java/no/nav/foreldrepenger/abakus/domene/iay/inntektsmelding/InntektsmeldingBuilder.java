@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.vedtak.konfig.Tid;
@@ -22,7 +22,7 @@ public class InntektsmeldingBuilder {
         return new InntektsmeldingBuilder(new InntektsmeldingEntitet());
     }
 
-    public InntektsmeldingBuilder medArbeidsgiver(Arbeidsgiver arbeidsgiver) {
+    public InntektsmeldingBuilder medArbeidsgiver(ArbeidsgiverEntitet arbeidsgiver) {
         kladd.setArbeidsgiver(arbeidsgiver);
         return this;
     }

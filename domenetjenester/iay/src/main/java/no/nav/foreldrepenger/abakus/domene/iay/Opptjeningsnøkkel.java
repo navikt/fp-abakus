@@ -3,7 +3,6 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 import java.util.Objects;
 import java.util.Optional;
 
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 
 public class Opptjeningsnøkkel {

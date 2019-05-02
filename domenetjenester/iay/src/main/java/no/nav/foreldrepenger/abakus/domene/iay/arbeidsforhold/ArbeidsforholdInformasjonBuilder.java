@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.vedtak.util.Tuple;
 
 public class ArbeidsforholdInformasjonBuilder {
 
     private final ArbeidsforholdInformasjonEntitet kladd;
-    private final List<Tuple<Arbeidsgiver, Tuple<ArbeidsforholdRef, ArbeidsforholdRef>>> erstattArbeidsforhold = new ArrayList<>();
-    private final List<Tuple<Arbeidsgiver, Tuple<ArbeidsforholdRef, ArbeidsforholdRef>>> reverserteErstattninger = new ArrayList<>();
+    private final List<Tuple<ArbeidsgiverEntitet, Tuple<ArbeidsforholdRef, ArbeidsforholdRef>>> erstattArbeidsforhold = new ArrayList<>();
+    private final List<Tuple<ArbeidsgiverEntitet, Tuple<ArbeidsforholdRef, ArbeidsforholdRef>>> reverserteErstattninger = new ArrayList<>();
 
     private ArbeidsforholdInformasjonBuilder(ArbeidsforholdInformasjonEntitet kladd) {
         this.kladd = kladd;
@@ -24,7 +24,7 @@ public class ArbeidsforholdInformasjonBuilder {
         return new ArbeidsforholdInformasjonBuilder(new ArbeidsforholdInformasjonEntitet(oppdatere));
     }
 
-    public ArbeidsforholdOverstyringBuilder getOverstyringBuilderFor(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef ref) {
+    public ArbeidsforholdOverstyringBuilder getOverstyringBuilderFor(ArbeidsgiverEntitet arbeidsgiver, ArbeidsforholdRef ref) {
         return kladd.getOverstyringBuilderFor(arbeidsgiver, ref);
     }
 
@@ -46,22 +46,22 @@ public class ArbeidsforholdInformasjonBuilder {
     /**
      * Benyttes for å vite hvilke inntektsmeldinger som skal tas ut av grunnlaget ved erstatting av ny id.
      *
-     * @return Liste over Arbeidsgiver / ArbeidsforholdReferanser
+     * @return Liste over ArbeidsgiverEntitet / ArbeidsforholdReferanser
      */
-    public List<Tuple<Arbeidsgiver, Tuple<ArbeidsforholdRef, ArbeidsforholdRef>>> getErstattArbeidsforhold() {
+    public List<Tuple<ArbeidsgiverEntitet, Tuple<ArbeidsforholdRef, ArbeidsforholdRef>>> getErstattArbeidsforhold() {
         return Collections.unmodifiableList(erstattArbeidsforhold);
     }
 
     /**
      * Benyttes for å vite hvilke inntektsmeldinger som skal tas ut av grunnlaget ved erstatting av ny id.
      *
-     * @return Liste over Arbeidsgiver / ArbeidsforholdReferanser
+     * @return Liste over ArbeidsgiverEntitet / ArbeidsforholdReferanser
      */
-    public List<Tuple<Arbeidsgiver, Tuple<ArbeidsforholdRef, ArbeidsforholdRef>>> getReverserteErstattArbeidsforhold() {
+    public List<Tuple<ArbeidsgiverEntitet, Tuple<ArbeidsforholdRef, ArbeidsforholdRef>>> getReverserteErstattArbeidsforhold() {
         return Collections.unmodifiableList(reverserteErstattninger);
     }
 
-    public ArbeidsforholdInformasjonBuilder erstattArbedsforhold(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef gammelRef, ArbeidsforholdRef ref) {
+    public ArbeidsforholdInformasjonBuilder erstattArbedsforhold(ArbeidsgiverEntitet arbeidsgiver, ArbeidsforholdRef gammelRef, ArbeidsforholdRef ref) {
         // TODO: Sjekke om revertert allerede
         // Hvis eksisterer så reverter revertering og ikke legg inn erstattning og kall på erstatt
         erstattArbeidsforhold.add(new Tuple<>(arbeidsgiver, new Tuple<>(gammelRef, ref)));
@@ -80,7 +80,7 @@ public class ArbeidsforholdInformasjonBuilder {
         return kladd;
     }
 
-    public ArbeidsforholdInformasjonBuilder fjernOverstyringVedrørende(Arbeidsgiver arbeidsgiver,
+    public ArbeidsforholdInformasjonBuilder fjernOverstyringVedrørende(ArbeidsgiverEntitet arbeidsgiver,
                                                                        ArbeidsforholdRef arbeidsforholdRef) {
         kladd.fjernOverstyringVedrørende(arbeidsgiver, arbeidsforholdRef);
         return this;

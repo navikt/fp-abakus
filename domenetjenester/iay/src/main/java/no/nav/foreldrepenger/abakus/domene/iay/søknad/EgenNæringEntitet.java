@@ -26,6 +26,7 @@ import no.nav.foreldrepenger.abakus.domene.virksomhet.VirksomhetEntitet;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
@@ -46,10 +47,9 @@ public class EgenNæringEntitet extends BaseEntitet implements EgenNæring, Inde
     @ChangeTracked
     private DatoIntervallEntitet periode;
 
-    @ManyToOne
-    @JoinColumn(name = "virksomhet_id", updatable = false)
     @ChangeTracked
-    private VirksomhetEntitet virksomhet;
+    @Embedded
+    private OrgNummer orgNummer;
 
     @ManyToOne
     @JoinColumnOrFormula(column = @JoinColumn(name = "virksomhet_type", referencedColumnName = "kode", nullable = false))
@@ -95,7 +95,7 @@ public class EgenNæringEntitet extends BaseEntitet implements EgenNæring, Inde
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(periode, virksomhet, utenlandskVirksomhet);
+        return IndexKey.createKey(periode, orgNummer, utenlandskVirksomhet);
     }
 
     @Override
@@ -127,12 +127,12 @@ public class EgenNæringEntitet extends BaseEntitet implements EgenNæring, Inde
     }
 
     @Override
-    public Virksomhet getVirksomhet() {
-        return virksomhet;
+    public OrgNummer getOrgnummer() {
+        return orgNummer;
     }
 
-    void setVirksomhet(Virksomhet virksomhet) {
-        this.virksomhet = (VirksomhetEntitet) virksomhet;
+    void setVirksomhet(OrgNummer orgNummer) {
+        this.orgNummer = orgNummer;
     }
 
     @Override
@@ -235,7 +235,7 @@ public class EgenNæringEntitet extends BaseEntitet implements EgenNæring, Inde
         if (o == null || getClass() != o.getClass()) return false;
         EgenNæringEntitet that = (EgenNæringEntitet) o;
         return Objects.equals(periode, that.periode) &&
-            Objects.equals(virksomhet, that.virksomhet) &&
+            Objects.equals(orgNummer, that.orgNummer) &&
             Objects.equals(nyoppstartet, that.nyoppstartet) &&
             Objects.equals(virksomhetType, that.virksomhetType) &&
             Objects.equals(regnskapsførerNavn, that.regnskapsførerNavn) &&
@@ -248,7 +248,7 @@ public class EgenNæringEntitet extends BaseEntitet implements EgenNæring, Inde
 
     @Override
     public int hashCode() {
-        return Objects.hash(periode, virksomhet, virksomhetType, nyoppstartet, regnskapsførerNavn, regnskapsførerTlf, endringDato, begrunnelse,
+        return Objects.hash(periode, orgNummer, virksomhetType, nyoppstartet, regnskapsførerNavn, regnskapsførerTlf, endringDato, begrunnelse,
             bruttoInntekt, utenlandskVirksomhet);
     }
 
@@ -257,7 +257,7 @@ public class EgenNæringEntitet extends BaseEntitet implements EgenNæring, Inde
         return "EgenNæringEntitet{" +
             "id=" + id +
             ", periode=" + periode +
-            ", virksomhet=" + virksomhet +
+            ", virksomhet=" + orgNummer +
             ", nyoppstartet=" + nyoppstartet +
             ", virksomhetType=" + virksomhetType +
             ", regnskapsførerNavn='" + regnskapsførerNavn + '\'' +

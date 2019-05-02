@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektPeriodeType;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
+import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
 public class YtelseStørrelseBuilder {
     private final YtelseStørrelseEntitet ytelseStørrelseEntitet;
@@ -17,8 +18,8 @@ public class YtelseStørrelseBuilder {
         return new YtelseStørrelseBuilder(new YtelseStørrelseEntitet());
     }
 
-    public YtelseStørrelseBuilder medVirksomhet(Virksomhet virksomhet) {
-        this.ytelseStørrelseEntitet.setVirksomhet(virksomhet);
+    public YtelseStørrelseBuilder medVirksomhet(OrgNummer orgNummer) {
+        this.ytelseStørrelseEntitet.setVirksomhet(orgNummer);
         return this;
     }
 

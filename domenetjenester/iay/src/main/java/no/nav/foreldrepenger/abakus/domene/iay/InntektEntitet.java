@@ -28,7 +28,6 @@ import org.hibernate.annotations.JoinFormula;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.SkatteOgAvgiftsregelType;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -47,7 +46,7 @@ public class InntektEntitet extends BaseEntitet implements Inntekt, IndexKey {
     private AktørInntektEntitet aktørInntekt;
 
     @Embedded
-    private Arbeidsgiver arbeidsgiver;
+    private ArbeidsgiverEntitet arbeidsgiver;
 
     @ManyToOne
     @JoinColumnsOrFormulas({
@@ -72,7 +71,7 @@ public class InntektEntitet extends BaseEntitet implements Inntekt, IndexKey {
      */
     InntektEntitet(Inntekt inntektMal) {
         this.inntektsKilde = inntektMal.getInntektsKilde();
-        this.arbeidsgiver = inntektMal.getArbeidsgiver();
+        this.arbeidsgiver = (ArbeidsgiverEntitet) inntektMal.getArbeidsgiver();
         this.inntektspost = inntektMal.getInntektspost().stream().map(ip -> {
             InntektspostEntitet inntektspostEntitet = new InntektspostEntitet(ip);
             inntektspostEntitet.setInntekt(this);
@@ -112,11 +111,11 @@ public class InntektEntitet extends BaseEntitet implements Inntekt, IndexKey {
     }
 
     @Override
-    public Arbeidsgiver getArbeidsgiver() {
+    public ArbeidsgiverEntitet getArbeidsgiver() {
         return arbeidsgiver;
     }
 
-    void setArbeidsgiver(Arbeidsgiver arbeidsgiver) {
+    void setArbeidsgiver(ArbeidsgiverEntitet arbeidsgiver) {
         this.arbeidsgiver = arbeidsgiver;
     }
 

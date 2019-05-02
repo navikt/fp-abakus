@@ -29,7 +29,7 @@ import org.hibernate.annotations.JoinFormula;
 
 import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregatEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -63,7 +63,7 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
 
     @Embedded
     @ChangeTracked
-    private Arbeidsgiver arbeidsgiver;
+    private ArbeidsgiverEntitet arbeidsgiver;
 
     @Embedded
     @ChangeTracked
@@ -176,11 +176,11 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
     }
 
     @Override
-    public Arbeidsgiver getArbeidsgiver() {
+    public ArbeidsgiverEntitet getArbeidsgiver() {
         return arbeidsgiver;
     }
 
-    void setArbeidsgiver(Arbeidsgiver virksomhet) {
+    void setArbeidsgiver(ArbeidsgiverEntitet virksomhet) {
         this.arbeidsgiver = virksomhet;
     }
 

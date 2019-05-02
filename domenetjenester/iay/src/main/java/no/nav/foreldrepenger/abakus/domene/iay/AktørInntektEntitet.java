@@ -27,7 +27,6 @@ import javax.persistence.Version;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -99,29 +98,30 @@ public class AktørInntektEntitet extends BaseEntitet implements AktørInntekt, 
 
     @Override
     public List<Inntekt> getBeregnetSkatt() {
-        return Collections.unmodifiableList(inntekt.stream()
+        return inntekt.stream()
             .filter(it -> InntektsKilde.SIGRUN.equals(it.getInntektsKilde()))
-            .collect(Collectors.toList()));
+            .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
     public List<Inntekt> getInntektPensjonsgivende() {
-        return Collections.unmodifiableList(inntekt.stream()
+        return inntekt.stream()
             .filter(it -> InntektsKilde.INNTEKT_OPPTJENING.equals(it.getInntektsKilde()))
-            .collect(Collectors.toList()));
+            .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
     public List<Inntekt> getInntektBeregningsgrunnlag() {
-        return Collections.unmodifiableList(inntekt.stream()
+        return inntekt.stream()
             .filter(it -> InntektsKilde.INNTEKT_BEREGNING.equals(it.getInntektsKilde()))
-            .collect(Collectors.toList()));
+            .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
     public List<Inntekt> getInntektSammenligningsgrunnlag() {
         return inntekt.stream()
-            .filter(it -> InntektsKilde.INNTEKT_SAMMENLIGNING.equals(it.getInntektsKilde())).collect(Collectors.toUnmodifiableList());
+            .filter(it -> InntektsKilde.INNTEKT_SAMMENLIGNING.equals(it.getInntektsKilde()))
+            .collect(Collectors.toUnmodifiableList());
     }
 
     public boolean hasValues() {
@@ -230,7 +230,7 @@ public class AktørInntektEntitet extends BaseEntitet implements AktørInntekt, 
         }
 
         public InntektBuilder medArbeidsgiver(Arbeidsgiver arbeidsgiver) {
-            this.inntektEntitet.setArbeidsgiver(arbeidsgiver);
+            this.inntektEntitet.setArbeidsgiver((ArbeidsgiverEntitet) arbeidsgiver);
             return this;
         }
 

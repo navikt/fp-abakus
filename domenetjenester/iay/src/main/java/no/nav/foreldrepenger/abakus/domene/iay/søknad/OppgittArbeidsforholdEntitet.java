@@ -20,11 +20,10 @@ import org.hibernate.annotations.JoinFormula;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.UtenlandskVirksomhet;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.VirksomhetEntitet;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
@@ -49,10 +48,9 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
     @JoinColumn(name = "oppgitt_opptjening_id", nullable = false, updatable = false)
     private OppgittOpptjeningEntitet oppgittOpptjening;
 
-    @ManyToOne
-    @JoinColumn(name = "virksomhet_id", updatable = false)
     @ChangeTracked
-    private VirksomhetEntitet virksomhet;
+    @Embedded
+    private OrgNummer orgNummer;
 
     @Embedded
     @ChangeTracked
@@ -77,16 +75,16 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(periode, virksomhet, utenlandskVirksomhet, arbeidType);
+        return IndexKey.createKey(periode, orgNummer, utenlandskVirksomhet, arbeidType);
     }
 
     @Override
-    public Virksomhet getVirksomhet() {
-        return virksomhet;
+    public OrgNummer getOrgnummer() {
+        return orgNummer;
     }
 
-    void setVirksomhet(Virksomhet virksomhet) {
-        this.virksomhet = (VirksomhetEntitet) virksomhet;
+    void setVirksomhet(OrgNummer orgNummer) {
+        this.orgNummer = orgNummer;
     }
 
     @Override
@@ -138,7 +136,7 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
 
         OppgittArbeidsforholdEntitet that = (OppgittArbeidsforholdEntitet) o;
 
-        return Objects.equals(virksomhet, that.virksomhet) &&
+        return Objects.equals(orgNummer, that.orgNummer) &&
             Objects.equals(periode, that.periode) &&
             Objects.equals(arbeidType, that.arbeidType) &&
             Objects.equals(utenlandskVirksomhet, that.utenlandskVirksomhet);
@@ -146,14 +144,14 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
 
     @Override
     public int hashCode() {
-        return Objects.hash(virksomhet, periode, arbeidType, utenlandskVirksomhet);
+        return Objects.hash(orgNummer, periode, arbeidType, utenlandskVirksomhet);
     }
 
     @Override
     public String toString() {
         return "OppgittArbeidsforholdImpl{" +
             "id=" + id +
-            ", virksomhet=" + virksomhet +
+            ", orgNummer=" + orgNummer +
             ", periode=" + periode +
             ", erUtenlandskInntekt=" + erUtenlandskInntekt +
             ", arbeidType=" + arbeidType +
@@ -161,7 +159,7 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
             '}';
     }
 
-    public void setOppgittOpptjening(OppgittOpptjeningEntitet oppgittOpptjening) {
+    void setOppgittOpptjening(OppgittOpptjeningEntitet oppgittOpptjening) {
         this.oppgittOpptjening = oppgittOpptjening;
     }
 

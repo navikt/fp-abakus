@@ -82,7 +82,7 @@ public class ArbeidsforholdDtoTjeneste {
         } else if (arbeidsgiver instanceof Organisasjon) {
             return new ArbeidsgiverDto(arbeidsgiver.getIdentifikator(), ArbeidsgiverType.VIRKSOMHET);
         }
-        throw new IllegalArgumentException("Utvikler feil: Arbeidsgiver av ukjent type.");
+        throw new IllegalArgumentException("Utvikler feil: ArbeidsgiverEntitet av ukjent type.");
     }
 
     public ArbeidsforholdReferanseDto mapArbeidsforhold(ArbeidsgiverDto arbeidsgiver, String eksternReferanse, String internReferanse) {

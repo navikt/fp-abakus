@@ -5,17 +5,17 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak;
+import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 
 public interface Inntektsmelding {
     /**
      * Arbeidsgiveren som har sendt inn inntektsmeldingen
      *
-     * @return {@link Arbeidsgiver}
+     * @return {@link ArbeidsgiverEntitet}
      */
-    Arbeidsgiver getArbeidsgiver();
+    ArbeidsgiverEntitet getArbeidsgiver();
 
     String getKanalreferanse();
 

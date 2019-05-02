@@ -3,8 +3,9 @@ package no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 
 public class ArbeidsforholdOverstyringBuilder {
 
@@ -29,7 +30,7 @@ public class ArbeidsforholdOverstyringBuilder {
     }
 
     public ArbeidsforholdOverstyringBuilder medArbeidsgiver(Arbeidsgiver arbeidsgiver) {
-        kladd.setArbeidsgiver(arbeidsgiver);
+        kladd.setArbeidsgiver((ArbeidsgiverEntitet) arbeidsgiver);
         return this;
     }
 

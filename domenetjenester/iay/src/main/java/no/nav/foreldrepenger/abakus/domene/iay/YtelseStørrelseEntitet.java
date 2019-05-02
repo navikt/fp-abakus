@@ -20,12 +20,11 @@ import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinFormula;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektPeriodeType;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.VirksomhetEntitet;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
+import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
 @Entity(name = "YtelseStørrelseEntitet")
 @Table(name = "IAY_YTELSE_STOERRELSE")
@@ -45,10 +44,9 @@ public class YtelseStørrelseEntitet extends BaseEntitet implements YtelseStørr
     @ChangeTracked
     private InntektPeriodeType hyppighet = InntektPeriodeType.UDEFINERT;
 
-    @ManyToOne
-    @JoinColumn(name = "virksomhet_id", updatable = false)
     @ChangeTracked
-    private VirksomhetEntitet virksomhet;
+    @Embedded
+    private OrgNummer orgNummer;
 
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "beloep", nullable = false)))
@@ -64,8 +62,8 @@ public class YtelseStørrelseEntitet extends BaseEntitet implements YtelseStørr
     }
 
     public YtelseStørrelseEntitet(YtelseStørrelse ytelseStørrelse) {
-        ytelseStørrelse.getVirksomhet().ifPresent(tidligereVirksomhet ->
-            this.virksomhet = (VirksomhetEntitet) tidligereVirksomhet
+        ytelseStørrelse.getVirksomhet().ifPresent(orgNummer ->
+            this.orgNummer = orgNummer
         );
         this.beløp = ytelseStørrelse.getBeløp();
         this.hyppighet = ytelseStørrelse.getHyppighet();
@@ -73,16 +71,16 @@ public class YtelseStørrelseEntitet extends BaseEntitet implements YtelseStørr
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(virksomhet);
+        return IndexKey.createKey(orgNummer);
     }
 
     @Override
-    public Optional<Virksomhet> getVirksomhet() {
-        return Optional.ofNullable(virksomhet);
+    public Optional<OrgNummer> getVirksomhet() {
+        return Optional.ofNullable(orgNummer);
     }
 
-    public void setVirksomhet(Virksomhet virksomhet) {
-        this.virksomhet = (VirksomhetEntitet) virksomhet;
+    public void setVirksomhet(OrgNummer orgNummer) {
+        this.orgNummer = orgNummer;
     }
 
     @Override
@@ -112,7 +110,7 @@ public class YtelseStørrelseEntitet extends BaseEntitet implements YtelseStørr
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         YtelseStørrelseEntitet that = (YtelseStørrelseEntitet) o;
-        return Objects.equals(virksomhet, that.virksomhet) &&
+        return Objects.equals(orgNummer, that.orgNummer) &&
             Objects.equals(beløp, that.beløp) &&
             Objects.equals(hyppighet, that.hyppighet);
     }
@@ -120,19 +118,19 @@ public class YtelseStørrelseEntitet extends BaseEntitet implements YtelseStørr
     @Override
     public int hashCode() {
 
-        return Objects.hash(virksomhet, beløp, hyppighet);
+        return Objects.hash(orgNummer, beløp, hyppighet);
     }
 
     @Override
     public String toString() {
         return "YtelseStørrelseEntitet{" +
-            "virksomhet=" + virksomhet +
+            "virksomhet=" + orgNummer +
             ", beløp=" + beløp +
             ", hyppighet=" + hyppighet +
             '}';
     }
 
     boolean hasValues() {
-        return beløp != null || hyppighet != null || virksomhet != null;
+        return beløp != null || hyppighet != null || orgNummer != null;
     }
 }

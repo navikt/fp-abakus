@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
 public class ArbeidsgiverDto {
+
     private String identifikator;
     private ArbeidsgiverType type;
 

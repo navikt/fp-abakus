@@ -2,20 +2,20 @@ package no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding;
 
 import java.util.Objects;
 
+import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Arbeidsgiver;
 
 public class InntektsmeldingSomIkkeKommer {
 
-    private Arbeidsgiver arbeidsgiver;
+    private ArbeidsgiverEntitet arbeidsgiver;
     private ArbeidsforholdRef ref;
 
-    public InntektsmeldingSomIkkeKommer(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef ref) {
+    public InntektsmeldingSomIkkeKommer(ArbeidsgiverEntitet arbeidsgiver, ArbeidsforholdRef ref) {
         this.arbeidsgiver = arbeidsgiver;
         this.ref = ref;
     }
 
-    public Arbeidsgiver getArbeidsgiver() {
+    public ArbeidsgiverEntitet getArbeidsgiver() {
         return arbeidsgiver;
     }
 

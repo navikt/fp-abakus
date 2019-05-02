@@ -264,7 +264,7 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
         return getInntektsmeldingerSomIkkeKommer()
             .stream()
             .filter(i -> i.getArbeidsgiver().getErVirksomhet()
-                && i.getArbeidsgiver().getVirksomhet().equals(virksomhet)).collect(Collectors.toList());
+                && i.getArbeidsgiver().getIdentifikator().equals(virksomhet.getOrgnr())).collect(Collectors.toList());
     }
 
     void setBehandling(Long behandlingId) {
