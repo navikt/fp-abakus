@@ -315,6 +315,22 @@ public class ProsessTaskRepositoryImpl implements ProsessTaskRepository {
     }
 
     @Override
+    public List<TaskStatus> finnStatusForGruppe(String gruppe) {
+        final Query query = entityManager
+            .createNativeQuery("SELECT pt.status, count(*) FROM PROSESS_TASK pt WHERE pt.TASK_GRUPPE = :gruppe GROUP BY pt.status")
+            .setParameter("gruppe", gruppe);
+
+        List<TaskStatus> statuser = new ArrayList<>();
+
+        @SuppressWarnings("unchecked")
+        List<Object[]> result = query.getResultList();
+        for (Object[] objects : result) {
+            statuser.add(new TaskStatus(ProsessTaskStatus.valueOf((String) objects[0]), (BigDecimal) objects[1])); // NOSONAR
+        }
+        return statuser;
+    }
+
+    @Override
     public Optional<ProsessTaskTypeInfo> finnProsessTaskType(String kode) {
         ProsessTaskType prosessTaskType = entityManager.find(ProsessTaskType.class, kode);
         if (prosessTaskType != null) {

@@ -11,8 +11,8 @@ public interface InnhentingFeil extends DeklarerteFeil {
 
     InnhentingFeil FACTORY = FeilFactory.create(InnhentingFeil.class);
 
-    @TekniskFeil(feilkode = "FP-349977", feilmelding = "Ignorerer Arena-sak uten %s, saksnummer: %s", logLevel = LogLevel.WARN)
-    Feil ignorerArenaSak(String ignorert, Saksnummer saksnummer);
+    @TekniskFeil(feilkode = "FP-349977", feilmelding = "Ugyldig callback url ved callback etter registerinnhenting: %s", logLevel = LogLevel.WARN)
+    Feil ugyldigCallbackUrl(String url);
 
     @TekniskFeil(feilkode = "FP-112843", feilmelding = "Ignorerer Arena-sak uten %s, saksnummer: %s", logLevel = LogLevel.INFO)
     Feil ignorerArenaSakInfoLogg(String ignorert, Saksnummer saksnummer);

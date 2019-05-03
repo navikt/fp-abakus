@@ -36,7 +36,7 @@ public interface InntektArbeidYtelseTjeneste {
      * @param koblingId
      * @return henter optional aggregat
      */
-    Optional<InntektArbeidYtelseGrunnlag> hentInntektArbeidYtelseGrunnlagForBehandling(Long koblingId);
+    Optional<InntektArbeidYtelseGrunnlag> hentGrunnlagFor(Long koblingId);
 
     /**
      * @param koblingId

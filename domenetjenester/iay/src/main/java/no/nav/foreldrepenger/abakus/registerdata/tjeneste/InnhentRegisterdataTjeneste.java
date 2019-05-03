@@ -1,59 +1,92 @@
 package no.nav.foreldrepenger.abakus.registerdata.tjeneste;
 
+import static no.nav.foreldrepenger.abakus.registerdata.callback.CallbackTask.EKSISTERENDE_GRUNNLAG_REF;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import no.nav.foreldrepenger.abakus.FagsakYtelseTypeRef;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
+import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
+import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.IAYRegisterInnhentingTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.RegisterdataInnhentingTask;
+import no.nav.foreldrepenger.abakus.registerdata.callback.CallbackTask;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.Aktør;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.InnhentRegisterdataDto;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.PeriodeDto;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
+import no.nav.vedtak.felles.prosesstask.api.ProsessTaskGruppe;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskRepository;
+import no.nav.vedtak.felles.prosesstask.api.ProsessTaskStatus;
+import no.nav.vedtak.felles.prosesstask.api.TaskStatus;
 
 @ApplicationScoped
 public class InnhentRegisterdataTjeneste {
 
-    private IAYRegisterInnhentingTjeneste registerInnhentingTjeneste;
+    private Map<YtelseType, IAYRegisterInnhentingTjeneste> registerInnhentingTjeneste;
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private KoblingTjeneste koblingTjeneste;
     private ProsessTaskRepository prosessTaskRepository;
+    private KodeverkRepository kodeverkRepository;
 
     InnhentRegisterdataTjeneste() {
         // CDI
     }
 
     @Inject
-    public InnhentRegisterdataTjeneste(@FagsakYtelseTypeRef("FP") IAYRegisterInnhentingTjeneste registerInnhentingTjeneste,
+    public InnhentRegisterdataTjeneste(@Any Instance<IAYRegisterInnhentingTjeneste> innhentingTjeneste,
                                        InntektArbeidYtelseTjeneste iayTjeneste,
                                        KoblingTjeneste koblingTjeneste,
-                                       ProsessTaskRepository prosessTaskRepository) {
-        this.registerInnhentingTjeneste = registerInnhentingTjeneste;
+                                       ProsessTaskRepository prosessTaskRepository,
+                                       KodeverkRepository kodeverkRepository) {
+        this.registerInnhentingTjeneste = new HashMap<>();
+        innhentingTjeneste.forEach(innhenter -> populerMap(registerInnhentingTjeneste, innhenter));
         this.iayTjeneste = iayTjeneste;
         this.koblingTjeneste = koblingTjeneste;
         this.prosessTaskRepository = prosessTaskRepository;
+        this.kodeverkRepository = kodeverkRepository;
+    }
+
+    private void populerMap(Map<YtelseType, IAYRegisterInnhentingTjeneste> map, IAYRegisterInnhentingTjeneste innhenter) {
+        YtelseType type = YtelseType.UDEFINERT;
+        if (innhenter.getClass().isAnnotationPresent(YtelseTypeRef.class)) {
+            type = kodeverkRepository.finn(YtelseType.class, innhenter.getClass().getAnnotation(YtelseTypeRef.class).value());
+        }
+        map.put(type, innhenter);
     }
 
     public Optional<UUID> innhent(InnhentRegisterdataDto dto) {
         Kobling kobling = oppdaterKobling(dto);
 
         // Trigg innhenting
-        InntektArbeidYtelseAggregatBuilder builder = registerInnhentingTjeneste.innhentRegisterdata(kobling);
+        InntektArbeidYtelseAggregatBuilder builder = finnInnhenter(mapTilYtelseType(dto)).innhentRegisterdata(kobling);
         iayTjeneste.lagre(kobling.getId(), builder);
 
-        Optional<InntektArbeidYtelseGrunnlag> grunnlag = iayTjeneste.hentInntektArbeidYtelseGrunnlagForBehandling(kobling.getId());
+        Optional<InntektArbeidYtelseGrunnlag> grunnlag = iayTjeneste.hentGrunnlagFor(kobling.getId());
         return grunnlag.map(InntektArbeidYtelseGrunnlag::getReferanse);
+    }
+
+    private IAYRegisterInnhentingTjeneste finnInnhenter(YtelseType ytelseType) {
+        IAYRegisterInnhentingTjeneste innhenter = registerInnhentingTjeneste.get(ytelseType);
+        if (innhenter == null) {
+            throw new IllegalArgumentException("Finner ikke IAYRegisterInnhenter. Støtter ikke ytelsetype " + ytelseType);
+        }
+        return innhenter;
     }
 
     private Kobling oppdaterKobling(InnhentRegisterdataDto dto) {
@@ -63,7 +96,10 @@ public class InnhentRegisterdataTjeneste {
         if (koblingOpt.isEmpty()) {
             // Lagre kobling
             PeriodeDto opplysningsperiode = dto.getOpplysningsperiode();
-            kobling = new Kobling(referanse, new AktørId(dto.getAktørId().getId()), DatoIntervallEntitet.fraOgMedTilOgMed(opplysningsperiode.getFom(), opplysningsperiode.getTom()));
+            YtelseType ytelseType = mapTilYtelseType(dto);
+            DatoIntervallEntitet opplysningsperiode1 = DatoIntervallEntitet.fraOgMedTilOgMed(opplysningsperiode.getFom(), opplysningsperiode.getTom());
+            AktørId aktørId = new AktørId(dto.getAktørId().getId());
+            kobling = new Kobling(referanse, aktørId, opplysningsperiode1, ytelseType);
         } else {
             kobling = koblingOpt.get();
         }
@@ -85,11 +121,43 @@ public class InnhentRegisterdataTjeneste {
         return kobling;
     }
 
+    private YtelseType mapTilYtelseType(InnhentRegisterdataDto dto) {
+        return kodeverkRepository.finn(YtelseType.class, dto.getYtelseType().getKode());
+    }
+
     public String triggAsyncInnhent(InnhentRegisterdataDto dto) {
         Kobling kobling = oppdaterKobling(dto);
 
-        ProsessTaskData prosessTask = new ProsessTaskData(RegisterdataInnhentingTask.TASKTYPE);
-        prosessTask.setKobling(kobling.getId(), kobling.getAktørId().getId());
-        return prosessTaskRepository.lagre(prosessTask);
+        ProsessTaskGruppe taskGruppe = new ProsessTaskGruppe();
+        ProsessTaskData innhentingTask = new ProsessTaskData(RegisterdataInnhentingTask.TASKTYPE);
+        ProsessTaskData callbackTask = new ProsessTaskData(CallbackTask.TASKTYPE);
+        innhentingTask.setKobling(kobling.getId(), kobling.getAktørId().getId());
+        callbackTask.setKobling(kobling.getId(), kobling.getAktørId().getId());
+
+        Optional<UUID> eksisterendeGrunnlagRef = hentSisteReferanseFor(kobling.getReferanse());
+        eksisterendeGrunnlagRef.ifPresent(ref -> callbackTask.setProperty(EKSISTERENDE_GRUNNLAG_REF, ref.toString()));
+
+        if (dto.getCallbackUrl() != null) {
+            innhentingTask.setCallbackUrl(dto.getCallbackUrl());
+            callbackTask.setCallbackUrl(dto.getCallbackUrl());
+        }
+        taskGruppe.addNesteSekvensiell(innhentingTask);
+        taskGruppe.addNesteSekvensiell(callbackTask);
+
+        return prosessTaskRepository.lagre(innhentingTask);
+    }
+
+    public boolean innhentingFerdig(String taskReferanse) {
+        List<TaskStatus> taskStatuses = prosessTaskRepository.finnStatusForGruppe(taskReferanse);
+        return taskStatuses.stream().anyMatch(it -> !ProsessTaskStatus.KLAR.equals(it.getStatus()));
+    }
+
+    public Optional<UUID> hentSisteReferanseFor(UUID koblingRef) {
+        Optional<Kobling> kobling = koblingTjeneste.hentFor(koblingRef);
+        if (kobling.isEmpty()) {
+            return Optional.empty();
+        }
+        Optional<InntektArbeidYtelseGrunnlag> grunnlag = iayTjeneste.hentGrunnlagFor(kobling.get().getId());
+        return grunnlag.map(InntektArbeidYtelseGrunnlag::getReferanse);
     }
 }

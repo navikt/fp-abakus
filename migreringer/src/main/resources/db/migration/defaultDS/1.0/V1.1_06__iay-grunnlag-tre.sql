@@ -2,6 +2,8 @@ create table KOBLING
 (
     ID                     bigint                              not null,
     referanse_id           uuid                                not null,
+    YTELSE_TYPE              VARCHAR(100)                        not null,
+    KL_YTELSE_TYPE           VARCHAR(100) default 'YTELSE_TYPE',
     bruker_aktoer_id       varchar(50)                         not null,
     annen_part_aktoer_id   varchar(50),
     opplysning_periode_fom DATE                                not null,
@@ -16,7 +18,9 @@ create table KOBLING
     constraint PK_KOBLING
         primary key (ID),
     constraint UIDX_KOBLING_1
-        unique (referanse_id)
+        unique (referanse_id),
+    constraint FK_KOBLING_1
+        foreign key (YTELSE_TYPE, KL_YTELSE_TYPE) references KODELISTE (KODE, KODEVERK)
 );
 CREATE SEQUENCE SEQ_KOBLING MINVALUE 1 MAXVALUE 999999999999999999 INCREMENT BY 50 START WITH 1368400 NO CYCLE;
 create index IDX_KOBLING_1
@@ -25,6 +29,7 @@ create index IDX_KOBLING_1
 comment on table KOBLING is 'Holder referansen som kalles på fra av eksternt system';
 comment on column KOBLING.ID is 'Primærnøkkel';
 comment on column KOBLING.referanse_id is 'Referansenøkkel som eksponeres lokalt';
+comment on column KOBLING.YTELSE_TYPE is 'Hvilken ytelse komplekset henger under';
 comment on column KOBLING.bruker_aktoer_id is 'Aktøren koblingen gjelder for';
 comment on column KOBLING.annen_part_aktoer_id is 'Annen part det skal hentes informasjon for';
 comment on column KOBLING.opplysning_periode_fom is 'Start på perioden det skal hentes data for';

@@ -70,6 +70,10 @@
             <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
             <artifactId>organisasjon-klient</artifactId>
         </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.kontrakter</groupId>
+            <artifactId>registerdata-callback-v1</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>io.swagger</groupId>

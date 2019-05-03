@@ -51,7 +51,7 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
     }
 
     @Override
-    public Optional<InntektArbeidYtelseGrunnlag> hentInntektArbeidYtelseGrunnlagForBehandling(Long koblingId) {
+    public Optional<InntektArbeidYtelseGrunnlag> hentGrunnlagFor(Long koblingId) {
         return repository.hentInntektArbeidYtelseGrunnlagForBehandling(koblingId);
     }
 

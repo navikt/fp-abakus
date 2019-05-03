@@ -34,6 +34,8 @@ public interface ProsessTaskRepository {
 
     List<TaskStatus> finnStatusForTaskIGruppe(String task, String gruppe);
 
+    List<TaskStatus> finnStatusForGruppe(String gruppe);
+
     Optional<ProsessTaskTypeInfo> finnProsessTaskType(String kode);
 
     /**

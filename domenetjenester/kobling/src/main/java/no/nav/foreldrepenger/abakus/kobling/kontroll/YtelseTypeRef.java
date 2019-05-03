@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus;
+package no.nav.foreldrepenger.abakus.kobling.kontroll;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -12,9 +12,7 @@ import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Qualifier;
 
 /**
- * Marker type som implementerer interface {@link BehandlingSteg} for å skille ulike implementasjoner av samme steg for ulike ytelser (eks. Foreldrepenger vs. Engangsstønad).<br>
- * <p>
- * NB: Settes kun dersom det er flere implementasjoner med samme {@link BehandlingStegRef}.
+ * For å skille på implementasjoner av forskjellige
  */
 @Qualifier
 @Stereotype
@@ -22,21 +20,21 @@ import javax.inject.Qualifier;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.PARAMETER, ElementType.FIELD})
 @Documented
-public @interface FagsakYtelseTypeRef {
+public @interface YtelseTypeRef {
 
     /**
      * Kode-verdi som skiller ulike implementasjoner for ulike behandling typer.
      * <p>
      * Må matche ett innslag i <code>FAGSAK_YTELSE_TYPE</code> tabell for å kunne kjøres.
      *
-     * @see no.nav.foreldrepenger.behandlingslager.fagsak.FagsakYtelseType
+     * @see no.nav.foreldrepenger.abakus.kodeverk.YtelseType
      */
     String value() default "*";
 
     /**
      * AnnotationLiteral som kan brukes ved CDI søk.
      */
-    class FagsakYtelseTypeRefLiteral extends AnnotationLiteral<FagsakYtelseTypeRef> implements FagsakYtelseTypeRef {
+    class FagsakYtelseTypeRefLiteral extends AnnotationLiteral<YtelseTypeRef> implements YtelseTypeRef {
 
         private String navn;
 

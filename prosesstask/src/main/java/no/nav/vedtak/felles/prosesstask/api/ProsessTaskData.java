@@ -28,7 +28,7 @@ public class ProsessTaskData implements ProsessTaskInfo {
      */
     public static final String KOBLING_ID = "behandlingId"; // NOSONAR //$NON-NLS-1$
     /**
-    /**
+     * /**
      * Standard properties - hendelse som tasken venter på eller har behandlet.
      */
     public static final String HENDELSE_PROPERTY = "hendelse"; // NOSONAR //$NON-NLS-1$
@@ -36,6 +36,10 @@ public class ProsessTaskData implements ProsessTaskInfo {
      * Standard properties - hendelse som tasken venter på eller har behandlet.
      */
     public static final String OPPGAVE_ID = "oppgaveId";
+    /**
+     * Standard properties - CallbackUrl
+     */
+    public static final String CALLBACK_URL = "callbackUrl";
     public static final Pattern VALID_KEY_PATTERN = Pattern.compile("[a-zA-Z0-9_\\.]+$"); //$NON-NLS-1$
     static final String CALL_ID = MDCOperations.MDC_CALL_ID;
     private final Properties props = new Properties();
@@ -66,7 +70,7 @@ public class ProsessTaskData implements ProsessTaskInfo {
         }
         ProsessTaskData other = (ProsessTaskData) obj;
         return Objects.equals(taskType, other.taskType)
-                && Objects.equals(props, other.props);
+            && Objects.equals(props, other.props);
 
     }
 
@@ -320,16 +324,6 @@ public class ProsessTaskData implements ProsessTaskInfo {
         }
     }
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName()
-                + "<id=" + getId() //$NON-NLS-1$
-                + ", taskType=" + getTaskType() //$NON-NLS-1$
-                + ", props=" + getProperties() //$NON-NLS-1$
-                + ", status=" + getStatus() //$NON-NLS-1$
-                + ">"; //$NON-NLS-1$
-    }
-
     public void venterPåHendelse(ProsessTaskHendelse hendelse) {
         setHendelse(hendelse);
         setStatus(ProsessTaskStatus.VENTER_SVAR);
@@ -351,5 +345,24 @@ public class ProsessTaskData implements ProsessTaskInfo {
             props.store(sw, null);
             return sw.toString();
         }
+    }
+
+    public String getCallbackUrl() {
+        return getPropertyValue(CALLBACK_URL);
+    }
+
+    public void setCallbackUrl(String callbackUrl) {
+        Objects.requireNonNull(callbackUrl, "callbackUrl");
+        setProperty(CALLBACK_URL, callbackUrl);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName()
+            + "<id=" + getId() //$NON-NLS-1$
+            + ", taskType=" + getTaskType() //$NON-NLS-1$
+            + ", props=" + getProperties() //$NON-NLS-1$
+            + ", status=" + getStatus() //$NON-NLS-1$
+            + ">"; //$NON-NLS-1$
     }
 }

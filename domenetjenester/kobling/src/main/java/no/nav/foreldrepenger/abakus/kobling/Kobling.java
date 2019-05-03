@@ -13,18 +13,24 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.JoinColumnOrFormula;
+import org.hibernate.annotations.JoinFormula;
 import org.hibernate.annotations.NaturalId;
 
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "Kobling")
 @Table(name = "KOBLING")
-public class Kobling implements IndexKey {
+public class Kobling extends BaseEntitet implements IndexKey {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_KOBLING")
@@ -33,6 +39,11 @@ public class Kobling implements IndexKey {
     @NaturalId
     @Column(name = "referanse_id", updatable = false, nullable = false, unique = true)
     private UUID referanseId;
+
+    @ManyToOne(optional = false)
+    @JoinColumnOrFormula(column = @JoinColumn(name = "ytelse_type", referencedColumnName = "kode", nullable = false))
+    @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + YtelseType.DISCRIMINATOR + "'"))
+    private YtelseType ytelseType = YtelseType.UDEFINERT;
 
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "bruker_aktoer_id", nullable = false, updatable = false)))
@@ -63,7 +74,7 @@ public class Kobling implements IndexKey {
     public Kobling() {
     }
 
-    public Kobling(UUID referanseId, AktørId aktørId, DatoIntervallEntitet opplysningsperiode) {
+    public Kobling(UUID referanseId, AktørId aktørId, DatoIntervallEntitet opplysningsperiode, YtelseType ytelseType) {
         Objects.requireNonNull(referanseId, "referanseId");
         Objects.requireNonNull(aktørId, "aktørId");
         Objects.requireNonNull(opplysningsperiode, "opplysningsperiode");
@@ -115,6 +126,10 @@ public class Kobling implements IndexKey {
 
     public void setOpptjeningsperiode(DatoIntervallEntitet opptjeningsperiode) {
         this.opptjeningsperiode = opptjeningsperiode;
+    }
+
+    public YtelseType getYtelseType() {
+        return ytelseType;
     }
 
     @Override
