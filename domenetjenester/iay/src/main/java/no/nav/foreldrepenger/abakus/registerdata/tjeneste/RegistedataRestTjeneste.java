@@ -26,7 +26,7 @@ import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 
 @Api(tags = "registerdata")
-@Path("/registerdata")
+@Path("/registerdata/v1")
 @ApplicationScoped
 @Transaction
 public class RegistedataRestTjeneste {

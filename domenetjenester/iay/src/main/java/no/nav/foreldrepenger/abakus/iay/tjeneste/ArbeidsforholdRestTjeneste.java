@@ -38,7 +38,7 @@ import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 
 @Api(tags = "arbeidsforhold")
-@Path("/arbeidsforhold")
+@Path("/arbeidsforhold/v1")
 @ApplicationScoped
 @Transaction
 public class ArbeidsforholdRestTjeneste {
