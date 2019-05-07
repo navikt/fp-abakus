@@ -13,6 +13,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+       - run: mvn clean install -DskipTests
       - run:
           name: Build docker image
           command: docker build -t navikt/abakus:${CIRCLE_SHA1} .
@@ -24,9 +25,9 @@ jobs:
       - run: # Username and password is set through $DEPLOYMENT_USERNAME and $DEPLOYMENT_PASSWORD
           name: Create deployment request for development
           command: deployment-cli deploy create --environment=dev-fss --repository=navikt/abakus --team=foreldrepenger -r=naiserator.yaml --version=${CIRCLE_SHA1}
-      - run: # Username and password is set through $DEPLOYMENT_USERNAME and $DEPLOYMENT_PASSWORD
-          name: Create deployment request for prod
-          command: deployment-cli deploy create --environment=prod-fss --repository=navikt/abakus --team=foreldrepenger -r=naiserator.yaml --version=${CIRCLE_SHA1}
+      #- run: # Username and password is set through $DEPLOYMENT_USERNAME and $DEPLOYMENT_PASSWORD
+       #   name: Create deployment request for prod
+        #  command: deployment-cli deploy create --environment=prod-fss --repository=navikt/abakus --team=foreldrepenger -r=naiserator.yaml --version=${CIRCLE_SHA1}
 workflows:
   version: 2
   build_and_deploy:
