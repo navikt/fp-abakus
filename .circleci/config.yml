@@ -7,7 +7,7 @@ version: 2.1
   # slack: circleci/slack@0.1.0
   
 jobs:
-  buid:
+  build:
     docker:
       - image: circleci/openjdk:11
     steps:
