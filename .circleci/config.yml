@@ -18,16 +18,11 @@ jobs:
             - fpabakus-dependencies-{{ checksum "pom.xml" }}
             # fallback to using the latest cache if no exact match is found
             - fpabakus-dependencies-
-      - run: 
-          dependencies:
-            override:
-              - mvn -DskipTests clean install dependency:resolve-plugins dependency:go-offline      
-      
+      - run: mvn -DskipTests clean install dependency:go-offline
       - save_cache:
           paths:
             - ~/.m2
           key: fpabakus-dependencies-{{ checksum "pom.xml" }}     
-
       - run:
           name: Build docker image
           command: docker build -t navikt/abakus:${CIRCLE_SHA1} .
