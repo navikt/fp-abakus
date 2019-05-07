@@ -12,6 +12,7 @@ jobs:
       - image: "navikt/deployment-cli:v0.1.2"
     steps:
       - checkout
+      - setup_remote_docker
       - restore_cache:
           keys:
             - fpabakus-dependencies-{{ checksum "pom.xml" }}
@@ -26,10 +27,7 @@ jobs:
           paths:
             - ~/.m2
           key: fpabakus-dependencies-{{ checksum "pom.xml" }}     
-      - setup_remote_docker
-       - run: 
-          name: Maven build
-          command: mvn clean install -DskipTests
+
       - run:
           name: Build docker image
           command: docker build -t navikt/abakus:${CIRCLE_SHA1} .
