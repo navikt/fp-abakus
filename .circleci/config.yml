@@ -31,12 +31,12 @@ jobs:
           command: |
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
             docker push navikt/abakus:${CIRCLE_SHA1}
-  deploy:
-    docker:
-      - image: "navikt/deployment-cli:v0.1.2"    
-      - run: # Username and password is set through $DEPLOYMENT_USERNAME and $DEPLOYMENT_PASSWORD
-          name: Create deployment request for development
-          command: deployment-cli deploy create --environment=dev-fss --repository=navikt/abakus --team=foreldrepenger -r=naiserator.yaml --version=${CIRCLE_SHA1}
+  #deploy:
+   # docker:
+    #  - image: "navikt/deployment-cli:v0.1.2"    
+     # - run: # Username and password is set through $DEPLOYMENT_USERNAME and $DEPLOYMENT_PASSWORD
+      #    name: Create deployment request for development
+       #   command: deployment-cli deploy create --environment=dev-fss --repository=navikt/abakus --team=foreldrepenger -r=naiserator.yaml --version=${CIRCLE_SHA1}
       #- run: # Username and password is set through $DEPLOYMENT_USERNAME and $DEPLOYMENT_PASSWORD
        #   name: Create deployment request for prod
         #  command: deployment-cli deploy create --environment=prod-fss --repository=navikt/abakus --team=foreldrepenger -r=naiserator.yaml --version=${CIRCLE_SHA1}
@@ -44,7 +44,7 @@ workflows:
   version: 2
   build_and_deploy:
     jobs:
-      - deploy:
+      - build:
           filters:
             branches:
               only: master
