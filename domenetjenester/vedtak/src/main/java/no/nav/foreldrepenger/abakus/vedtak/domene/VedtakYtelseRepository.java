@@ -12,6 +12,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import org.hibernate.jpa.QueryHints;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -23,6 +25,7 @@ import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
 @ApplicationScoped
 public class VedtakYtelseRepository {
 
+    private static final Logger log = LoggerFactory.getLogger(VedtakYtelseRepository.class);
     private EntityManager entityManager;
 
     VedtakYtelseRepository() {
@@ -45,21 +48,23 @@ public class VedtakYtelseRepository {
 
     public void lagre(VedtakYtelseBuilder builder) {
         VedtattYtelse ytelse = builder.build();
-        if (builder.erOppdatering()) {
+        Optional<VedtakYtelseEntitet> vedtakYtelseEntitet = hentYtelseFor(ytelse.getAktør(), ytelse.getSaksnummer(), ytelse.getKilde(), ytelse.getYtelseType());
+        if (builder.erOppdatering() && vedtakYtelseEntitet.isPresent()) {
             // Deaktiver eksisterende innslag
-            Optional<VedtakYtelseEntitet> vedtakYtelseEntitet = hentYtelseFor(ytelse.getAktør(), ytelse.getSaksnummer(), ytelse.getKilde(), ytelse.getYtelseType());
-            if (vedtakYtelseEntitet.isPresent()) {
-                VedtakYtelseEntitet ytelseEntitet = vedtakYtelseEntitet.get();
-                ytelseEntitet.setAktiv(false);
-                entityManager.persist(ytelseEntitet);
-                entityManager.flush();
+            VedtakYtelseEntitet ytelseEntitet = vedtakYtelseEntitet.get();
+            ytelseEntitet.setAktiv(false);
+            entityManager.persist(ytelseEntitet);
+            entityManager.flush();
+        }
+        if (!vedtakYtelseEntitet.map(VedtakYtelseEntitet::getAktiv).orElse(false)) {
+            entityManager.persist(ytelse);
+            for (YtelseAnvist ytelseAnvist : ytelse.getYtelseAnvist()) {
+                entityManager.persist(ytelseAnvist);
             }
+            entityManager.flush();
+        } else {
+            log.info("Forkaster vedtak siden en sitter på nyere vedtak. {} er eldre enn {}", ytelse, vedtakYtelseEntitet.get());
         }
-        entityManager.persist(ytelse);
-        for (YtelseAnvist ytelseAnvist : ytelse.getYtelseAnvist()) {
-            entityManager.persist(ytelseAnvist);
-        }
-        entityManager.flush();
     }
 
     private Optional<VedtakYtelseEntitet> hentYtelseFor(AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, RelatertYtelseType ytelseType) {

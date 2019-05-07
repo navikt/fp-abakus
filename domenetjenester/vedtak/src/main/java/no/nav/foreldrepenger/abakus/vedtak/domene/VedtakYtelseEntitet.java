@@ -235,6 +235,10 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
         ytelseAnvist.clear();
     }
 
+    boolean getAktiv() {
+        return aktiv;
+    }
+
     void setAktiv(boolean aktiv) {
         this.aktiv = aktiv;
     }
@@ -247,25 +251,27 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
             return false;
         VedtakYtelseEntitet that = (VedtakYtelseEntitet) o;
         return Objects.equals(ytelseType, that.ytelseType) &&
-            Objects.equals(temaUnderkategori, that.temaUnderkategori) &&
+            Objects.equals(kilde, that.kilde) &&
+            Objects.equals(aktørId, that.aktørId) &&
             (Objects.equals(periode, that.periode) || Objects.equals(periode.getFomDato(), that.periode.getFomDato())) &&
             Objects.equals(saksnummer, that.saksnummer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ytelseType, periode, saksnummer);
+        return Objects.hash(ytelseType, kilde, aktørId, periode, saksnummer);
     }
 
     @Override
     public String toString() {
-        return "VedtakYtelseEntitet{" + //$NON-NLS-1$
-            "ytelseType=" + ytelseType + //$NON-NLS-1$
-            ", typeUnderkategori=" + temaUnderkategori + //$NON-NLS-1$
-            ", periode=" + periode + //$NON-NLS-1$
-            ", relatertYtelseStatus=" + status + //$NON-NLS-1$
-            ", saksNummer='" + saksnummer + '\'' + //$NON-NLS-1$
+        return "VedtakYtelseEntitet{" +
+            "aktørId=" + aktørId +
+            ", ytelseType=" + ytelseType +
+            ", vedtattTidspunkt=" + vedtattTidspunkt +
+            ", vedtakReferanse=" + vedtakReferanse +
+            ", periode=" + periode +
+            ", saksnummer=" + saksnummer +
+            ", kilde=" + kilde +
             '}';
     }
-
 }
