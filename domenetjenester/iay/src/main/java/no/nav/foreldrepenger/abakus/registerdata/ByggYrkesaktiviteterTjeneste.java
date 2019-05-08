@@ -17,7 +17,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.PermisjonsbeskrivelseType;
-import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsavtale;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
@@ -98,6 +97,7 @@ class ByggYrkesaktiviteterTjeneste {
         builder.tilbakestillPermisjon();
         arbeidsforhold1.getPermisjoner()
             .stream()
+            .filter(p -> p.getPermisjonFom() != null && p.getPermisjonFom().isBefore(arbeidsforhold1.getArbeidTom()))
             .map(p -> opprettPermisjoner(p, builder, arbeidsforhold1.getArbeidTom()))
             .forEach(builder::leggTilPermisjon);
     }
