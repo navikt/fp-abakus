@@ -18,7 +18,7 @@ class VedtakStreamKafkaProperties {
     private final String applicationId;
 
     @Inject
-    VedtakStreamKafkaProperties(@KonfigVerdi("kafka.boostrap.servers") String bootstrapServers,
+    VedtakStreamKafkaProperties(@KonfigVerdi("kafka.bootstrap.servers") String bootstrapServers,
                                 @KonfigVerdi("kafka.schema.registry.url") String schemaRegistryUrl,
                                 @KonfigVerdi("systembruker.username") String username,
                                 @KonfigVerdi("systembruker.password") String password) {
