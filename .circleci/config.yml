@@ -18,7 +18,7 @@ jobs:
             - fpabakus-dependencies-{{ checksum "pom.xml" }}
             # fallback to using the latest cache if no exact match is found
             - fpabakus-dependencies-
-      - run: mvn -s .circleci.settings.xml -DskipTests clean install dependency:go-offline
+      - run: mvn -s .circleci/.circleci.settings.xml -DskipTests clean install dependency:go-offline
       - save_cache:
           paths:
             - ~/.m2
