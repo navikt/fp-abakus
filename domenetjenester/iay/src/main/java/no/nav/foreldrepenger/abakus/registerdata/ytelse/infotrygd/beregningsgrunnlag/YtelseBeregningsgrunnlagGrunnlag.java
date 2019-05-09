@@ -7,21 +7,21 @@ import java.util.List;
 
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.Arbeidskategori;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.Grunnlag;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.Vedtak;
 import no.nav.vedtak.felles.integrasjon.felles.ws.DateUtil;
 
 public abstract class YtelseBeregningsgrunnlagGrunnlag {
 
-    private final RelatertYtelseType type;
+    private final YtelseType type;
     private final LocalDate identdato;
     private LocalDate fom;
     private LocalDate tom;
     private List<YtelseBeregningsgrunnlagVedtak> vedtak;
 
 
-    YtelseBeregningsgrunnlagGrunnlag(RelatertYtelseType type, Grunnlag grunnlag) {
+    YtelseBeregningsgrunnlagGrunnlag(YtelseType type, Grunnlag grunnlag) {
 
         this.type = type;
         identdato = DateUtil.convertToLocalDate(grunnlag.getIdentdato());
@@ -42,7 +42,7 @@ public abstract class YtelseBeregningsgrunnlagGrunnlag {
         vedtak = Collections.unmodifiableList(vedtaks);
     }
 
-    public RelatertYtelseType getType() {
+    public YtelseType getType() {
         return type;
     }
 

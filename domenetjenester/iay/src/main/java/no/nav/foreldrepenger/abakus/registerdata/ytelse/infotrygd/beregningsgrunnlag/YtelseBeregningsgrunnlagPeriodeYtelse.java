@@ -8,7 +8,7 @@ import java.util.Map;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.Arbeidskategori;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.Arbeidsforhold;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.PeriodeYtelse;
 
@@ -53,7 +53,7 @@ public abstract class YtelseBeregningsgrunnlagPeriodeYtelse extends YtelseBeregn
     private List<YtelseBeregningsgrunnlagArbeidsforhold> arbeidsforhold;
     private Arbeidskategori arbeidskategori;
 
-    YtelseBeregningsgrunnlagPeriodeYtelse(RelatertYtelseType type, PeriodeYtelse periodeYtelse, KodeverkRepository kodeverkRepository) {
+    YtelseBeregningsgrunnlagPeriodeYtelse(YtelseType type, PeriodeYtelse periodeYtelse, KodeverkRepository kodeverkRepository) {
         super(type, periodeYtelse);
         if (periodeYtelse.getArbeidskategori() == null) {
             this.arbeidskategori = Arbeidskategori.UGYLDIG;

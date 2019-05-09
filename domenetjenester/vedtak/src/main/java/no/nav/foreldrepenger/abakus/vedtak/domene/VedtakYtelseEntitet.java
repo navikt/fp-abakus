@@ -34,8 +34,8 @@ import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
@@ -57,8 +57,8 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
     @ManyToOne
     @JoinColumnsOrFormulas({
         @JoinColumnOrFormula(column = @JoinColumn(name = "ytelse_type", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + RelatertYtelseType.DISCRIMINATOR + "'"))})
-    private RelatertYtelseType ytelseType;
+        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + YtelseType.DISCRIMINATOR + "'"))})
+    private YtelseType ytelseType;
 
     @DiffIgnore
     @Column(name = "vedtatt_tidspunkt")
@@ -148,11 +148,11 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
     }
 
     @Override
-    public RelatertYtelseType getYtelseType() {
+    public YtelseType getYtelseType() {
         return ytelseType;
     }
 
-    void setYtelseType(RelatertYtelseType ytelseType) {
+    void setYtelseType(YtelseType ytelseType) {
         this.ytelseType = ytelseType;
     }
 

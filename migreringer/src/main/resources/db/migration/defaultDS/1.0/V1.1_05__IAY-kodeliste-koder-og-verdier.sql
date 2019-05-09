@@ -431,18 +431,33 @@ VALUES (nextval('seq_kodeliste'), 'SKATTE_OG_AVGIFTSREGEL', '-', 'Ikke definert'
 -- YTELSE_TYPE
 INSERT INTO KODEVERK (kode, kodeverk_eier, kodeverk_eier_navn, kodeverk_eier_ref, kodeverk_eier_ver, kodeverk_synk_nye,
                       kodeverk_synk_eksisterende, navn, beskrivelse, sammensatt)
-VALUES ('FAGSAK_YTELSE', 'VL', null,
+VALUES ('FAGSAK_YTELSE_TYPE', 'VL', null,
         null, null, 'N', 'N', 'Ytelser fra offentlige',
         'Ytelse fra offentlige', 'N');
 INSERT INTO KODELISTE (id, kodeverk, kode, offisiell_kode, navn, beskrivelse, gyldig_fom)
-VALUES (nextval('seq_kodeliste'), 'FAGSAK_YTELSE', '-', null, 'UNDEFINED', NULL,
+VALUES (nextval('seq_kodeliste'), 'FAGSAK_YTELSE_TYPE', '-', null, 'UNDEFINED', NULL,
         to_date('2017-12-07', 'YYYY-MM-DD'));
 INSERT INTO KODELISTE (id, kodeverk, kode, offisiell_kode, navn, beskrivelse, gyldig_fom)
-VALUES (nextval('seq_kodeliste'), 'FAGSAK_YTELSE', 'FP', null, 'Foreldrepenger', 'Foreldrepenger',
+VALUES (nextval('seq_kodeliste'), 'FAGSAK_YTELSE_TYPE', 'FP', null, 'Foreldrepenger', 'Foreldrepenger',
         to_date('2017-12-07', 'YYYY-MM-DD'));
 INSERT INTO KODELISTE (id, kodeverk, kode, offisiell_kode, navn, beskrivelse, gyldig_fom)
-VALUES (nextval('seq_kodeliste'), 'FAGSAK_YTELSE', 'ES', null, 'Engangsstønad', 'Engangsstønad',
+VALUES (nextval('seq_kodeliste'), 'FAGSAK_YTELSE_TYPE', 'ES', null, 'Engangsstønad', 'Engangsstønad',
         to_date('2017-12-07', 'YYYY-MM-DD'));
 INSERT INTO KODELISTE (id, kodeverk, kode, offisiell_kode, navn, beskrivelse, gyldig_fom)
-VALUES (nextval('seq_kodeliste'), 'FAGSAK_YTELSE', 'SVP', null, 'Svangerskapspenger', 'Svangerskapspenger',
+VALUES (nextval('seq_kodeliste'), 'FAGSAK_YTELSE_TYPE', 'SVP', null, 'Svangerskapspenger', 'Svangerskapspenger',
+        to_date('2017-12-07', 'YYYY-MM-DD'));
+INSERT INTO KODELISTE (id, kodeverk, kode, offisiell_kode, navn, beskrivelse, gyldig_fom)
+VALUES (nextval('seq_kodeliste'), 'FAGSAK_YTELSE_TYPE', 'SP', null, 'Sykepenger', 'Sykepenger',
+        to_date('2017-12-07', 'YYYY-MM-DD'));
+INSERT INTO KODELISTE (id, kodeverk, kode, offisiell_kode, navn, beskrivelse, gyldig_fom)
+VALUES (nextval('seq_kodeliste'), 'FAGSAK_YTELSE_TYPE', 'DAG', null, 'Dagpenger', 'Dagpenger',
+        to_date('2017-12-07', 'YYYY-MM-DD'));
+INSERT INTO KODELISTE (id, kodeverk, kode, offisiell_kode, navn, beskrivelse, gyldig_fom)
+VALUES (nextval('seq_kodeliste'), 'FAGSAK_YTELSE_TYPE', 'AAP', null, 'Arbeidsavklaringspenger', 'Arbeidsavklaringspenger',
+        to_date('2017-12-07', 'YYYY-MM-DD'));
+INSERT INTO KODELISTE (id, kodeverk, kode, offisiell_kode, navn, beskrivelse, gyldig_fom)
+VALUES (nextval('seq_kodeliste'), 'FAGSAK_YTELSE_TYPE', 'PS', null, 'Pårørendesykdom', 'Pårørendesykdom',
+        to_date('2017-12-07', 'YYYY-MM-DD'));
+INSERT INTO KODELISTE (id, kodeverk, kode, offisiell_kode, navn, beskrivelse, gyldig_fom)
+VALUES (nextval('seq_kodeliste'), 'FAGSAK_YTELSE_TYPE', 'EF', null, 'Enslig forsørger', 'Enslig forsørger',
         to_date('2017-12-07', 'YYYY-MM-DD'));

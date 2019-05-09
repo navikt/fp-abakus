@@ -25,8 +25,8 @@ import javax.persistence.Table;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
@@ -95,14 +95,14 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
         return ytelser != null && !ytelser.isEmpty();
     }
 
-    YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, RelatertYtelseType type, Saksnummer saksnummer) {
+    YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer saksnummer) {
         Optional<Ytelse> ytelse = getYtelser().stream()
             .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type) && (saksnummer.equals(ya.getSaksnummer())))
             .findFirst();
         return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medSaksnummer(saksnummer);
     }
 
-    YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, RelatertYtelseType type, Saksnummer saksnummer, DatoIntervallEntitet periode) {
+    YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer saksnummer, DatoIntervallEntitet periode) {
         Optional<Ytelse> ytelse = getYtelser().stream()
             .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type) && (saksnummer.equals(ya.getSaksnummer())
                 && periode.equals(ya.getPeriode())))
@@ -110,7 +110,7 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
         return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medSaksnummer(saksnummer);
     }
 
-    YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, RelatertYtelseType type, TemaUnderkategori typeKategori, DatoIntervallEntitet periode) {
+    YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, YtelseType type, TemaUnderkategori typeKategori, DatoIntervallEntitet periode) {
         Optional<Ytelse> ytelse = getYtelser().stream()
             .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type)
                 && ya.getBehandlingsTema().equals(typeKategori) && (periode.getFomDato().equals(ya.getPeriode().getFomDato())))

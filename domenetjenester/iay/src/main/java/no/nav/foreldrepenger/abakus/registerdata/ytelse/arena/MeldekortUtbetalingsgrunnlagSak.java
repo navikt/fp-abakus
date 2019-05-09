@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 
 public class MeldekortUtbetalingsgrunnlagSak {
 
-    List<MeldekortUtbetalingsgrunnlagMeldekort> meldekortene;
-    private RelatertYtelseType type;
+    private List<MeldekortUtbetalingsgrunnlagMeldekort> meldekortene;
+    private YtelseType type;
     private RelatertYtelseTilstand tilstand;
     private Fagsystem kilde;
     private Saksnummer saksnummer;
@@ -26,7 +26,7 @@ public class MeldekortUtbetalingsgrunnlagSak {
     private MeldekortUtbetalingsgrunnlagSak() { // NOSONAR
     }
 
-    public RelatertYtelseType getYtelseType() {
+    public YtelseType getYtelseType() {
         return type;
     }
 
@@ -82,7 +82,7 @@ public class MeldekortUtbetalingsgrunnlagSak {
             return new MeldekortSakBuilder(new MeldekortUtbetalingsgrunnlagSak());
         }
 
-        public MeldekortSakBuilder medType(RelatertYtelseType type) {
+        public MeldekortSakBuilder medType(YtelseType type) {
             this.sak.type = type;
             return this;
         }

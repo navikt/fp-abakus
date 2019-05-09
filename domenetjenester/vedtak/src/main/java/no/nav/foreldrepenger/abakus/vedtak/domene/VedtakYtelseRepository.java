@@ -15,7 +15,7 @@ import org.hibernate.jpa.QueryHints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
@@ -38,7 +38,7 @@ public class VedtakYtelseRepository {
         this.entityManager = entityManager;
     }
 
-    public VedtakYtelseBuilder opprettBuilderFor(AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, RelatertYtelseType ytelseType) {
+    public VedtakYtelseBuilder opprettBuilderFor(AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, YtelseType ytelseType) {
         return VedtakYtelseBuilder.oppdatere(hentYtelseFor(aktørId, saksnummer, fagsystem, ytelseType))
             .medAktør(aktørId)
             .medSaksnummer(saksnummer)
@@ -67,7 +67,7 @@ public class VedtakYtelseRepository {
         }
     }
 
-    private Optional<VedtakYtelseEntitet> hentYtelseFor(AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, RelatertYtelseType ytelseType) {
+    private Optional<VedtakYtelseEntitet> hentYtelseFor(AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, YtelseType ytelseType) {
         Objects.requireNonNull(aktørId, "aktørId");
         Objects.requireNonNull(saksnummer, "saksnummer");
         Objects.requireNonNull(fagsystem, "fagsystem");

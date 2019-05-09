@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
@@ -16,7 +16,7 @@ public interface VedtattYtelse {
 
     AktørId getAktør();
 
-    RelatertYtelseType getYtelseType();
+    YtelseType getYtelseType();
 
     TemaUnderkategori getBehandlingsTema();
 

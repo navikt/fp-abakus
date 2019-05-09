@@ -15,7 +15,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelseBuilder;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagMeldekort;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
@@ -49,7 +49,7 @@ public class YtelseRegisterInnhenting {
 
         InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder = inntektArbeidYtelseAggregatBuilder.getAktørYtelseBuilder(aktørId);
         for (InfotrygdSakOgGrunnlag ytelse : sammenstilt) {
-            RelatertYtelseType type = ytelse.getGrunnlag().map(YtelseBeregningsgrunnlagGrunnlag::getType).orElse(ytelse.getSak().getRelatertYtelseType());
+            YtelseType type = ytelse.getGrunnlag().map(YtelseBeregningsgrunnlagGrunnlag::getType).orElse(ytelse.getSak().getRelatertYtelseType());
             if (skalKopiereTilYtelse(behandling, aktørId, type)) {
                 oversettSakGrunnlagTilYtelse(aktørYtelseBuilder, ytelse);
             }
@@ -93,10 +93,10 @@ public class YtelseRegisterInnhenting {
     }
 
     /**
-     * Bestemmer hvilke {@link RelatertYtelseType} som skal kopieres inn for søker og annenpart.
+     * Bestemmer hvilke {@link YtelseType} som skal kopieres inn for søker og annenpart.
      */
-    private boolean skalKopiereTilYtelse(Kobling behandling, AktørId aktørId, RelatertYtelseType relatertYtelseType) {
-        List<RelatertYtelseType> ytelseTyperSomErRelevantForAnnenPart = Arrays.asList(RelatertYtelseType.FORELDREPENGER, RelatertYtelseType.ENGANGSSTØNAD);
+    private boolean skalKopiereTilYtelse(Kobling behandling, AktørId aktørId, YtelseType relatertYtelseType) {
+        List<YtelseType> ytelseTyperSomErRelevantForAnnenPart = Arrays.asList(YtelseType.FORELDREPENGER, YtelseType.ENGANGSSTØNAD);
         if (aktørId.equals(behandling.getAktørId())) {
             return true;
         }
@@ -187,135 +187,4 @@ public class YtelseRegisterInnhenting {
                 ygBuilder.medYtelseStørrelse(ysBuilder.build());
             }
     }
-
-    /*
-    // TODO : Må hentes fra FPSAK elns
-    private void oversettRelaterteYtelserFraVedtaksløsning(final AktørId aktørId, Kobling behandling,
-                                                           Interval opplysningsPeriode, InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder,
-                                                           boolean medDenneFagsaken) {
-        final List<Fagsak> fagsakListe = behandlingRepositoryProvider.getFagsakRepository().hentForBruker(aktørId);
-
-        for (Fagsak fagsak : fagsakListe) {
-            if (!medDenneFagsaken && fagsak.equals(behandling.getFagsak())) {
-                continue;
-            }
-            // TODO (DIAMANT): Avklar hvilke(n) behandling man skal ta med. For FP siste revurdering. OBS: Ikke avsluttet behandling - for 5031!
-            behandlingRepositoryProvider.getBehandlingRepository().finnSisteAvsluttedeIkkeHenlagteBehandling(fagsak.getId())
-                .map(Behandling::getBehandlingsresultat)
-                .map(Behandlingsresultat::getBehandlingVedtak)
-                .filter(behandlingVedtak -> behandlingVedtak.getVedtakResultatType().equals(VedtakResultatType.INNVILGET))
-                .map(behandlingVedtak -> mapFraFagsak(fagsak, aktørYtelseBuilder, behandlingVedtak.getBehandlingsresultat().getBehandling(), opplysningsPeriode))
-                .ifPresent(aktørYtelseBuilder::leggTilYtelse);
-        }
-    }
-
-    private void mapFraUttakTilYtelseAnvist(Kobling behandling, YtelseBuilder ytelseBuilder) {
-        Optional<UttakResultatEntitet> uttakResultat = behandlingRepositoryProvider.getUttakRepository().hentUttakResultatHvisEksisterer(behandling);
-        ytelseBuilder.tilbakestillAnvisninger();
-        if (uttakResultat.isPresent()) {
-            List<YtelseAnvistBuilder> ytelseAnvistBuilderList = uttakResultat.get().getGjeldendePerioder().getPerioder().stream()
-                .filter(p -> PeriodeResultatType.INNVILGET.equals(p.getPeriodeResultatType()))
-                .map(periode -> ytelseBuilder.getAnvistBuilder().medAnvistPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom())))
-                .collect(Collectors.toList());
-
-            for (YtelseAnvistBuilder ytelseAnvistBuilder : ytelseAnvistBuilderList) {
-                ytelseBuilder.medYtelseAnvist(ytelseAnvistBuilder.build());
-            }
-        }
-    }
-
-    private YtelseBuilder mapFraFagsak(Fagsak fagsak, InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder,
-                                       Kobling behandling, Interval periodeFraRelaterteYtelserSøkesIVL) {
-
-        YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.FPSAK, map(fagsak.getYtelseType()), fagsak.getSaksnummer())
-            .medStatus(map(fagsak.getStatus()));
-
-        Optional<UttakResultatEntitet> uttakResultat = behandlingRepositoryProvider.getUttakRepository().hentUttakResultatHvisEksisterer(behandling);
-        if (uttakResultat.isPresent() && hentPeriodeFraUttak(uttakResultat.get()).isPresent()) {
-            ytelseBuilder.medPeriode(hentPeriodeFraUttak(uttakResultat.get()).get());
-        } else {
-            ytelseBuilder.medPeriode(DatoIntervallEntitet.
-                fraOgMedTilOgMed(behandling.getBehandlingsresultat().getBehandlingVedtak().getVedtaksdato(), behandling.getBehandlingsresultat().getBehandlingVedtak().getVedtaksdato()));
-        }
-        //Sjekker om perioden for uttak faktisk er utenfor innhentingsintervalet
-        if (!periodeFraRelaterteYtelserSøkesIVL.overlaps(IntervallUtil.tilIntervall(ytelseBuilder.getPeriode().getTomDato()))) {
-            return null;
-        }
-        mapFraUttakTilYtelseAnvist(behandling, ytelseBuilder);
-        if (fagsak.getYtelseType().gjelderForeldrepenger()) {
-            mapFraBeregning(behandling, ytelseBuilder);
-        }
-        return ytelseBuilder;
-    }
-
-    private void mapFraBeregning(Kobling behandling, YtelseBuilder ytelseBuilder) {
-        BeregningsgrunnlagRepository beregningsgrunnlagRepository = behandlingRepositoryProvider.getBeregningsgrunnlagRepository();
-        Optional<Beregningsgrunnlag> beregningsgrunnlag = beregningsgrunnlagRepository.hentBeregningsgrunnlagForBehandling(behandling.getId());
-
-        if (beregningsgrunnlag.isPresent() && !beregningsgrunnlag.get().getBeregningsgrunnlagPerioder().isEmpty()) {
-            BeregningsgrunnlagPeriode siste = beregningsgrunnlag.get().getBeregningsgrunnlagPerioder().get(0);
-            for (BeregningsgrunnlagPeriode periode : beregningsgrunnlag.get().getBeregningsgrunnlagPerioder()) {
-                if (siste.getBeregningsgrunnlagPeriodeFom().isBefore(periode.getBeregningsgrunnlagPeriodeFom())) {
-                    siste = periode;
-                }
-            }
-            siste.getBeregningsgrunnlagPrStatusOgAndelList().forEach(andel -> {
-                YtelseGrunnlagBuilder grunnlagBuilder = ytelseBuilder.getGrunnlagBuilder();
-                ytelseBuilder.medYtelseGrunnlag(grunnlagBuilder.medDekningsgradProsent(getDekningsgrad(behandling))
-                    .medYtelseStørrelse(grunnlagBuilder.getStørrelseBuilder()
-                        .medBeløp(andel.getBruttoPrÅr())
-                        .medVirksomhet(andel.getBgAndelArbeidsforhold().flatMap(BGAndelArbeidsforhold::getVirksomhet).orElse(null))
-                        .medHyppighet(InntektPeriodeType.ÅRLIG)
-                        .build())
-                    .build());
-            });
-        }
-    }
-
-    private BigDecimal getDekningsgrad(Kobling behandling) {
-        Dekningsgrad dekningsgrad = behandlingRepositoryProvider.getFagsakRelasjonRepository().finnRelasjonFor(behandling.getFagsak()).getDekningsgrad();
-        return new BigDecimal(dekningsgrad.getVerdi());
-    }
-
-    RelatertYtelseType map(FagsakYtelseType type) {
-        if (FagsakYtelseType.ENGANGSTØNAD.equals(type)) {
-            return RelatertYtelseType.ENGANGSSTØNAD;
-        } else if (FagsakYtelseType.FORELDREPENGER.equals(type)) {
-            return RelatertYtelseType.FORELDREPENGER;
-        }
-        throw new IllegalStateException("Ukjent ytelsestype " + type);
-    }
-
-    RelatertYtelseTilstand map(FagsakStatus kode) {
-        RelatertYtelseTilstand typeKode;
-        switch (kode.getKode()) {
-            case "OPPR":
-                typeKode = RelatertYtelseTilstand.IKKE_STARTET;
-                break;
-            case "UBEH":
-                typeKode = RelatertYtelseTilstand.ÅPEN;
-                break;
-            case "LOP":
-                typeKode = RelatertYtelseTilstand.LØPENDE;
-                break;
-            case "AVSLU":
-                typeKode = RelatertYtelseTilstand.AVSLUTTET;
-                break;
-            default:
-                typeKode = RelatertYtelseTilstand.ÅPEN;
-        }
-        return typeKode;
-    }
-
-    private Optional<DatoIntervallEntitet> hentPeriodeFraUttak(UttakResultatEntitet uttakResultatPlan) {
-        Optional<UttakResultatPeriodeEntitet> sisteInnvilgetUttaksperiode = uttakResultatPlan.getGjeldendePerioder().getPerioder()
-            .stream()
-            .filter(p -> PeriodeResultatType.INNVILGET.equals(p.getPeriodeResultatType()))
-            .max(Comparator.comparing(UttakResultatPeriodeEntitet::getTom));
-        if (sisteInnvilgetUttaksperiode.isPresent()) {
-            final LocalDate tom = sisteInnvilgetUttaksperiode.get().getTom();
-            return Optional.of(DatoIntervallEntitet.fraOgMedTilOgMed(sisteInnvilgetUttaksperiode.get().getFom(), tom));
-        }
-        return Optional.empty();
-    }*/
 }

@@ -16,8 +16,8 @@ import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTema;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.integrasjon.felles.ws.DateUtil;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
@@ -36,7 +36,7 @@ public class InfotrygdSak {
     private LocalDate vedtatt;
     private LocalDate iverksatt;
     private LocalDate opphoerFomDato;
-    private RelatertYtelseType relatertYtelseType;
+    private YtelseType relatertYtelseType;
     private RelatertYtelseTilstand relatertYtelseTilstand;
     private DatoIntervallEntitet periode;
 
@@ -49,7 +49,7 @@ public class InfotrygdSak {
         opphoerFomDato = DateUtil.convertToLocalDate(vedtak.getOpphoerFom());
         fagsystemUnderkategori = FagsystemUnderkategori.INFOTRYGD_VEDTAK;
         konverterInfotrygdSak(vedtak, kodeverkRepository);
-        if (RelatertYtelseType.ENGANGSSTØNAD.equals(relatertYtelseType)) {
+        if (YtelseType.ENGANGSSTØNAD.equals(relatertYtelseType)) {
             periode = DatoIntervallEntitet.fraOgMedTilOgMed(periode.getFomDato(), periode.getFomDato());
         }
     }
@@ -174,7 +174,7 @@ public class InfotrygdSak {
         return periode;
     }
 
-    public RelatertYtelseType getRelatertYtelseType() {
+    public YtelseType getRelatertYtelseType() {
         return relatertYtelseType;
     }
 
@@ -195,35 +195,35 @@ public class InfotrygdSak {
 
     }
 
-    public RelatertYtelseType hentRelatertYtelseTypeForSammenstillingMedBeregningsgrunnlag() {
-        if (relatertYtelseType != null && (relatertYtelseType.equals(RelatertYtelseType.SVANGERSKAPSPENGER))) {
-            return RelatertYtelseType.FORELDREPENGER;
+    public YtelseType hentRelatertYtelseTypeForSammenstillingMedBeregningsgrunnlag() {
+        if (relatertYtelseType != null && (relatertYtelseType.equals(YtelseType.SVANGERSKAPSPENGER))) {
+            return YtelseType.FORELDREPENGER;
         }
         return relatertYtelseType;
     }
 
-    private RelatertYtelseType utledRelatertYtelseType(RelatertYtelseTema ytelseTema, String behandlingsTema) {
+    private YtelseType utledRelatertYtelseType(RelatertYtelseTema ytelseTema, String behandlingsTema) {
         if (ENSLIG_FORSORGER_TEMA.equals(ytelseTema)) {
-            return RelatertYtelseType.ENSLIG_FORSØRGER;
+            return YtelseType.ENSLIG_FORSØRGER;
         } else if (FORELDREPENGER_TEMA.equals(ytelseTema)) {
             if (TemaUnderkategori.erGjelderSvangerskapspenger(behandlingsTema)) {
-                return RelatertYtelseType.SVANGERSKAPSPENGER;
+                return YtelseType.SVANGERSKAPSPENGER;
             } else if (TemaUnderkategori.erGjelderForeldrepenger(behandlingsTema)) {
-                return RelatertYtelseType.FORELDREPENGER;
+                return YtelseType.FORELDREPENGER;
             } else if (TemaUnderkategori.erGjelderEngangsstonad(behandlingsTema)) {
-                return RelatertYtelseType.ENGANGSSTØNAD;
+                return YtelseType.ENGANGSSTØNAD;
             }
         } else if (SYKEPENGER_TEMA.equals(ytelseTema)) {
-            return RelatertYtelseType.SYKEPENGER;
+            return YtelseType.SYKEPENGER;
         } else if (PÅRØRENDE_SYKDOM_TEMA.equals(ytelseTema)) {
-            return RelatertYtelseType.PÅRØRENDESYKDOM;
+            return YtelseType.PÅRØRENDESYKDOM;
         }
-        return RelatertYtelseType.UDEFINERT;
+        return YtelseType.UDEFINERT;
     }
 
-    public boolean erAvRelatertYtelseType(RelatertYtelseType... ytelseTyper) {
+    public boolean erAvRelatertYtelseType(YtelseType... ytelseTyper) {
         if (relatertYtelseType == null) return false;
-        for (RelatertYtelseType relatertYtelse : ytelseTyper) {
+        for (YtelseType relatertYtelse : ytelseTyper) {
             if (relatertYtelse.equals(relatertYtelseType)) return true;
         }
         return false;

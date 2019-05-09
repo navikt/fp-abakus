@@ -12,8 +12,8 @@ public class RelatertYtelseTema extends Kodeliste {
     public static final String DISCRIMINATOR = "RELATERT_YTELSE_TEMA"; //$NON-NLS-1$
 
     // Brukt av MeldekortUgTjenesten. Disse er iht koder brukt i offisielt kodeverk
-    public static final RelatertYtelseTema AAP = new RelatertYtelseTema("AAP"); //$NON-NLS-1$
-    public static final RelatertYtelseTema DAG = new RelatertYtelseTema("DAG"); //$NON-NLS-1$
+    public static final RelatertYtelseTema AAP = new RelatertYtelseTema("ARBEIDSAVKLARINGSPENGER"); //$NON-NLS-1$
+    public static final RelatertYtelseTema DAG = new RelatertYtelseTema("DAGPENGER"); //$NON-NLS-1$
 
     public static final RelatertYtelseTema FORELDREPENGER_TEMA = new RelatertYtelseTema("FA"); //$NON-NLS-1$
     public static final RelatertYtelseTema ENSLIG_FORSORGER_TEMA = new RelatertYtelseTema("EF"); //$NON-NLS-1$

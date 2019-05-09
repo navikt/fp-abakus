@@ -6,8 +6,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
@@ -35,7 +35,7 @@ public class VedtakYtelseBuilder {
         return oppdatere.map(VedtakYtelseBuilder::oppdatere).orElseGet(VedtakYtelseBuilder::ny);
     }
 
-    public VedtakYtelseBuilder medYtelseType(RelatertYtelseType relatertYtelseType) {
+    public VedtakYtelseBuilder medYtelseType(YtelseType relatertYtelseType) {
         ytelse.setYtelseType(relatertYtelseType);
         return this;
     }

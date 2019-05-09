@@ -6,8 +6,8 @@ import java.util.Set;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
@@ -336,15 +336,15 @@ public class InntektArbeidYtelseAggregatBuilder {
             return this;
         }
 
-        public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, RelatertYtelseType type, Saksnummer sakId) {
+        public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer sakId) {
             return kladd.getYtelseBuilderForType(fagsystem, type, sakId);
         }
 
-        public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, RelatertYtelseType type, Saksnummer sakId, DatoIntervallEntitet periode) {
+        public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer sakId, DatoIntervallEntitet periode) {
             return kladd.getYtelseBuilderForType(fagsystem, type, sakId, periode);
         }
 
-        public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, RelatertYtelseType type, TemaUnderkategori typeKategori, DatoIntervallEntitet periode) {
+        public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, YtelseType type, TemaUnderkategori typeKategori, DatoIntervallEntitet periode) {
             return kladd.getYtelseBuilderForType(fagsystem, type, typeKategori, periode);
         }
 

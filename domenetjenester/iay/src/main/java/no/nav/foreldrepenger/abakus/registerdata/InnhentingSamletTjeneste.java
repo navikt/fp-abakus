@@ -22,7 +22,7 @@ import org.threeten.extra.Interval;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdTjeneste;
@@ -129,20 +129,20 @@ public class InnhentingSamletTjeneste {
     }
 
     private boolean skalLagresBetinget(InfotrygdSak infotrygdSak, boolean medGrunnlag) {
-        if (RelatertYtelseType.ENSLIG_FORSØRGER.equals(infotrygdSak.getRelatertYtelseType())) {
+        if (YtelseType.ENSLIG_FORSØRGER.equals(infotrygdSak.getRelatertYtelseType())) {
             return false;
         }
         if (infotrygdSak.erLøpendeVedtak() || infotrygdSak.erAvsluttetVedtak()) {
-            if (infotrygdSak.erAvRelatertYtelseType(RelatertYtelseType.ENGANGSSTØNAD, RelatertYtelseType.SYKEPENGER,
-                RelatertYtelseType.SVANGERSKAPSPENGER, RelatertYtelseType.FORELDREPENGER, RelatertYtelseType.PÅRØRENDESYKDOM)) {
+            if (infotrygdSak.erAvRelatertYtelseType(YtelseType.ENGANGSSTØNAD, YtelseType.SYKEPENGER,
+                YtelseType.SVANGERSKAPSPENGER, YtelseType.FORELDREPENGER, YtelseType.PÅRØRENDESYKDOM)) {
                 return true;
             }
         } else if (infotrygdSak.erVedtak()) {
-            if (infotrygdSak.erAvRelatertYtelseType(RelatertYtelseType.ENGANGSSTØNAD, RelatertYtelseType.FORELDREPENGER)) {
+            if (infotrygdSak.erAvRelatertYtelseType(YtelseType.ENGANGSSTØNAD, YtelseType.FORELDREPENGER)) {
                 return true;
             }
-            if (medGrunnlag && infotrygdSak.erAvRelatertYtelseType(RelatertYtelseType.SYKEPENGER,
-                RelatertYtelseType.PÅRØRENDESYKDOM, RelatertYtelseType.SVANGERSKAPSPENGER)) {
+            if (medGrunnlag && infotrygdSak.erAvRelatertYtelseType(YtelseType.SYKEPENGER,
+                YtelseType.PÅRØRENDESYKDOM, YtelseType.SVANGERSKAPSPENGER)) {
                 return true;
             }
         }
@@ -210,8 +210,8 @@ public class InnhentingSamletTjeneste {
     }
 
     private boolean skalTypeLagresUansett(InfotrygdSakOgGrunnlag infotrygdSakOgGrunnlag) {
-        RelatertYtelseType type = infotrygdSakOgGrunnlag.getSak().getRelatertYtelseType();
-        return RelatertYtelseType.ENGANGSSTØNAD.equals(type) || RelatertYtelseType.FORELDREPENGER.equals(type);
+        YtelseType type = infotrygdSakOgGrunnlag.getSak().getRelatertYtelseType();
+        return YtelseType.ENGANGSSTØNAD.equals(type) || YtelseType.FORELDREPENGER.equals(type);
     }
 
     public List<MeldekortUtbetalingsgrunnlagSak> hentYtelserTjenester(Kobling behandling, AktørId aktørId, Interval opplysningsPeriode) {

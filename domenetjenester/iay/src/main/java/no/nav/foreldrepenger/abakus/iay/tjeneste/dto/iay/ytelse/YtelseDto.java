@@ -4,13 +4,13 @@ import java.util.List;
 
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.PeriodeDto;
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 
 public class YtelseDto {
 
     private Fagsystem fagsystem;
-    private RelatertYtelseType type;
+    private YtelseType type;
     private String saksnummer;
     private PeriodeDto periode;
     private RelatertYtelseTilstand status;
@@ -44,11 +44,11 @@ public class YtelseDto {
         this.fagsystem = fagsystem;
     }
 
-    public RelatertYtelseType getType() {
+    public YtelseType getType() {
         return type;
     }
 
-    public void setType(RelatertYtelseType type) {
+    public void setType(YtelseType type) {
         this.type = type;
     }
 

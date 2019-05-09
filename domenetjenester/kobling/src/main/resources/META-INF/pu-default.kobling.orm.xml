@@ -13,7 +13,6 @@
     <entity class="no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori"/>
     <entity class="no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseStatus"/>
     <entity class="no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand"/>
-    <entity class="no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType"/>
     <entity class="no.nav.foreldrepenger.abakus.typer.Fagsystem"/>
     <entity class="no.nav.foreldrepenger.abakus.kodeverk.Landkoder"/>
 </entity-mappings>

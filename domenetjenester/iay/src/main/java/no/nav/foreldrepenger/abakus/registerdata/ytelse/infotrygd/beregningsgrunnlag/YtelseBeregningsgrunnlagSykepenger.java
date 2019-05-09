@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.Sykepenger;
 
 public class YtelseBeregningsgrunnlagSykepenger extends YtelseBeregningsgrunnlagPeriodeYtelse {
@@ -12,7 +12,7 @@ public class YtelseBeregningsgrunnlagSykepenger extends YtelseBeregningsgrunnlag
     private BigDecimal inntektsgrunnlagProsent;
 
     YtelseBeregningsgrunnlagSykepenger(Sykepenger sykepenger, KodeverkRepository kodeverkRepository) {
-        super(RelatertYtelseType.SYKEPENGER, sykepenger, kodeverkRepository);
+        super(YtelseType.SYKEPENGER, sykepenger, kodeverkRepository);
         if (sykepenger.getInntektsgrunnlagProsent() != null) {
             inntektsgrunnlagProsent = new BigDecimal(sykepenger.getInntektsgrunnlagProsent());
         }

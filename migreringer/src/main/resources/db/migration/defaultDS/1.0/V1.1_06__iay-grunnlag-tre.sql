@@ -3,7 +3,7 @@ create table KOBLING
     ID                     bigint                              not null,
     referanse_id           uuid                                not null,
     YTELSE_TYPE              VARCHAR(100)                        not null,
-    KL_YTELSE_TYPE           VARCHAR(100) default 'YTELSE_TYPE',
+    KL_YTELSE_TYPE           VARCHAR(100) default 'FAGSAK_YTELSE_TYPE',
     bruker_aktoer_id       varchar(50)                         not null,
     annen_part_aktoer_id   varchar(50),
     opplysning_periode_fom DATE                                not null,
@@ -716,12 +716,12 @@ create table IAY_RELATERT_YTELSE
     AKTOER_YTELSE_ID           bigint                              not null
         constraint FK_YTELSE_4
             references IAY_AKTOER_YTELSE,
-    YTELSE_TYPE                VARCHAR(100)                        not null,
+    YTELSE_TYPE              VARCHAR(100)                        not null,
+    KL_YTELSE_TYPE           VARCHAR(100) default 'FAGSAK_YTELSE_TYPE',
     FOM                        DATE                                not null,
     TOM                        DATE                                not null,
     STATUS                     VARCHAR(100)                        not null,
     KILDE                      VARCHAR(100)                        not null,
-    KL_YTELSE_TYPE             VARCHAR(100) default 'RELATERT_YTELSE_TYPE',
     KL_STATUS                  VARCHAR(100) default 'RELATERT_YTELSE_TILSTAND',
     KL_KILDE                   VARCHAR(100) default 'FAGSYSTEM',
     VERSJON                    bigint       default 0              not null,

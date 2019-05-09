@@ -12,7 +12,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTema;
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagMeldekort;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
@@ -60,13 +60,13 @@ public class MeldekortTjenesteImpl implements MeldekortTjeneste {
         return datoXML.toGregorianCalendar().toZonedDateTime().toLocalDate();
     }
 
-    private RelatertYtelseType oversettType(Sak sak) {
+    private YtelseType oversettType(Sak sak) {
         if (RelatertYtelseTema.AAP.getKode().equals(sak.getTema().getValue())) {
-            return RelatertYtelseType.ARBEIDSAVKLARINGSPENGER;
+            return YtelseType.ARBEIDSAVKLARINGSPENGER;
         } else if (RelatertYtelseTema.DAG.getKode().equals(sak.getTema().getValue())) {
-            return RelatertYtelseType.DAGPENGER;
+            return YtelseType.DAGPENGER;
         } else {
-            return RelatertYtelseType.UDEFINERT;
+            return YtelseType.UDEFINERT;
         }
     }
 

@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import no.nav.foreldrepenger.abakus.kodeverk.Kodeliste;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
@@ -27,7 +26,7 @@ import no.nav.vedtak.ytelse.v1.anvisning.Anvisning;
 public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
 
     private static final Map<String, Class<? extends Kodeliste>> kodeverkTilKodeliste = Map.of(Fagsystem.DISCRIMINATOR, Fagsystem.class,
-        RelatertYtelseType.DISCRIMINATOR, RelatertYtelseType.class,
+        no.nav.foreldrepenger.abakus.kodeverk.YtelseType.DISCRIMINATOR, no.nav.foreldrepenger.abakus.kodeverk.YtelseType.class,
         RelatertYtelseTilstand.DISCRIMINATOR, RelatertYtelseTilstand.class);
 
     private VedtakYtelseRepository repository;
@@ -45,7 +44,7 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
     @Override
     public VedtakYtelseBuilder extractFrom(YtelseV1 ytelse) {
         Fagsystem fagsystem = getFagsystem(ytelse.getFagsystem());
-        RelatertYtelseType ytelseType = getYtelseType(ytelse.getType());
+        no.nav.foreldrepenger.abakus.kodeverk.YtelseType ytelseType = getYtelseType(ytelse.getType());
         Saksnummer saksnummer = new Saksnummer(ytelse.getSaksnummer());
         AktørId aktørId = new AktørId(ytelse.getAktør().getVerdi());
 
@@ -81,8 +80,8 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
         return DatoIntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom());
     }
 
-    private RelatertYtelseType getYtelseType(YtelseType kodeverk) {
-        return (RelatertYtelseType) kodeverkRepository.finn(kodeverkTilKodeliste.get(kodeverk.getKodeverk()), kodeverk.getKode());
+    private no.nav.foreldrepenger.abakus.kodeverk.YtelseType getYtelseType(YtelseType kodeverk) {
+        return (no.nav.foreldrepenger.abakus.kodeverk.YtelseType) kodeverkRepository.finn(kodeverkTilKodeliste.get(kodeverk.getKodeverk()), kodeverk.getKode());
     }
 
     private Fagsystem getFagsystem(no.nav.vedtak.ytelse.v1.Fagsystem kodeverk) {

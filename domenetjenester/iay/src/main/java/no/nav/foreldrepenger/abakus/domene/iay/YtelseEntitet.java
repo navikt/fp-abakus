@@ -34,8 +34,8 @@ import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseType;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
@@ -54,8 +54,8 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
     @ManyToOne
     @JoinColumnsOrFormulas({
         @JoinColumnOrFormula(column = @JoinColumn(name = "ytelse_type", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + RelatertYtelseType.DISCRIMINATOR + "'"))})
-    private RelatertYtelseType relatertYtelseType;
+        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + YtelseType.DISCRIMINATOR + "'"))})
+    private YtelseType relatertYtelseType;
 
     @Embedded
     @ChangeTracked
@@ -149,11 +149,11 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
     }
 
     @Override
-    public RelatertYtelseType getRelatertYtelseType() {
+    public YtelseType getRelatertYtelseType() {
         return relatertYtelseType;
     }
 
-    void setRelatertYtelseType(RelatertYtelseType relatertYtelseType) {
+    void setRelatertYtelseType(YtelseType relatertYtelseType) {
         this.relatertYtelseType = relatertYtelseType;
     }
 
