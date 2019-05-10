@@ -8,6 +8,7 @@ import javax.ws.rs.core.Application;
 import io.swagger.jaxrs.config.BeanConfig;
 import no.nav.foreldrepenger.abakus.app.selftest.NaisRestTjeneste;
 import no.nav.foreldrepenger.abakus.app.selftest.SelftestRestTjeneste;
+import no.nav.foreldrepenger.abakus.app.tjenester.iay.IayRestTjeneste;
 
 @ApplicationPath(InternalApplication.API_URL)
 public class InternalApplication extends Application {
@@ -18,9 +19,9 @@ public class InternalApplication extends Application {
         BeanConfig beanConfig = new BeanConfig();
         beanConfig.setVersion("1.0");
         if (utviklingServer()) {
-            beanConfig.setSchemes(new String[]{"http"});
+            beanConfig.setSchemes(new String[] { "http" });
         } else {
-            beanConfig.setSchemes(new String[]{"https"});
+            beanConfig.setSchemes(new String[] { "https" });
         }
 
         beanConfig.setBasePath("/fpabakus/" + API_URL);
@@ -41,7 +42,10 @@ public class InternalApplication extends Application {
 
     @Override
     public Set<Class<?>> getClasses() {
-        return Set.of(NaisRestTjeneste.class, SelftestRestTjeneste.class);
+        return Set.of(
+            NaisRestTjeneste.class,
+            SelftestRestTjeneste.class,
+            IayRestTjeneste.class);
     }
 
 }
