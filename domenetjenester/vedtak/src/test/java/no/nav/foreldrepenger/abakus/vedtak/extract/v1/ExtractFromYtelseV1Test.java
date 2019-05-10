@@ -40,7 +40,7 @@ public class ExtractFromYtelseV1Test {
         String aktørId = "1234123412312";
         aktør.setVerdi(aktørId);
         ytelseV1.setAktør(aktør);
-        ytelseV1.setFagsystem(Fagsystem.ARENA);
+        ytelseV1.setFagsystem(Fagsystem.FPSAK);
         ytelseV1.setStatus(YtelseStatus.LØPENDE);
         ytelseV1.setType(YtelseType.FORELDREPENGER);
         Periode periode = new Periode();
