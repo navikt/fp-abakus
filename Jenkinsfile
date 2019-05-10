@@ -54,42 +54,41 @@ pipeline {
                     }
                 }
             }
+        }
 
-            stage('Tag master') {
-                when {
-                    branch 'master'
-                }
-                steps {
-                    sh "git tag $version -m $version"
-                    sh "git push origin --tag"
-                }
+        stage('Tag master') {
+            when {
+                branch 'master'
             }
-
-            stage('Deploy') {
-                when {
-                    branch 'master'
-                }
-                steps {
-                    def value = "s/RELEASE_VERSION/${version}/g"
-                    sh "sed \'$value\' .deploy/t4.yaml > nais.yaml"
-                    sh "k config use-context preprod-fss"
-                    sh "k apply -f nais.yaml"
-                }
+            steps {
+                sh "git tag $version -m $version"
+                sh "git push origin --tag"
             }
         }
 
-        post {
-            success {
-                script {
-                    fpgithub.updateBuildStatus("fp-abakus", "success", GIT_COMMIT_HASH_FULL)
-                }
+        stage('Deploy') {
+            when {
+                branch 'master'
             }
-            failure {
-                script {
-                    fpgithub.updateBuildStatus("fp-abakus", "failure", GIT_COMMIT_HASH_FULL)
-                }
+            steps {
+                def value = "s/RELEASE_VERSION/${version}/g"
+                sh "sed \'$value\' .deploy/t4.yaml > nais.yaml"
+                sh "k config use-context preprod-fss"
+                sh "k apply -f nais.yaml"
             }
         }
+    }
 
+    post {
+        success {
+            script {
+                fpgithub.updateBuildStatus("fp-abakus", "success", GIT_COMMIT_HASH_FULL)
+            }
+        }
+        failure {
+            script {
+                fpgithub.updateBuildStatus("fp-abakus", "failure", GIT_COMMIT_HASH_FULL)
+            }
+        }
     }
 }
