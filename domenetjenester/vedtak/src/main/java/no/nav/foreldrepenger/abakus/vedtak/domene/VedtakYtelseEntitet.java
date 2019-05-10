@@ -33,8 +33,8 @@ import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
@@ -75,9 +75,9 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
     @ManyToOne
     @JoinColumnsOrFormulas({
         @JoinColumnOrFormula(column = @JoinColumn(name = "status", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + RelatertYtelseTilstand.DISCRIMINATOR + "'"))})
+        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + YtelseStatus.DISCRIMINATOR + "'"))})
     @ChangeTracked
-    private RelatertYtelseTilstand status;
+    private YtelseStatus status;
 
     /**
      * Saksnummer (fra Arena, Infotrygd, ..).
@@ -166,11 +166,11 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
     }
 
     @Override
-    public RelatertYtelseTilstand getStatus() {
+    public YtelseStatus getStatus() {
         return status;
     }
 
-    void setStatus(RelatertYtelseTilstand status) {
+    void setStatus(YtelseStatus status) {
         this.status = status;
     }
 

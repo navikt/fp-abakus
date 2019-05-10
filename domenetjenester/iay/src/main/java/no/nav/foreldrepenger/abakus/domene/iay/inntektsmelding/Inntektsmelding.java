@@ -4,10 +4,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak;
 import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
+import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 
 public interface Inntektsmelding {
     /**
@@ -67,7 +68,7 @@ public interface Inntektsmelding {
      *
      * @return {@link Long}
      */
-    Long getMottattDokumentId();
+    JournalpostId getJournalpostId();
 
     /**
      * Er det nær relasjon mellom søker og arbeidsgiver

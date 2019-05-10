@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
@@ -13,7 +13,7 @@ public class MeldekortUtbetalingsgrunnlagSak {
 
     private List<MeldekortUtbetalingsgrunnlagMeldekort> meldekortene;
     private YtelseType type;
-    private RelatertYtelseTilstand tilstand;
+    private YtelseStatus tilstand;
     private Fagsystem kilde;
     private Saksnummer saksnummer;
     private String sakStatus;
@@ -30,7 +30,7 @@ public class MeldekortUtbetalingsgrunnlagSak {
         return type;
     }
 
-    public RelatertYtelseTilstand getYtelseTilstand() {
+    public YtelseStatus getYtelseTilstand() {
         return tilstand;
     }
 
@@ -87,7 +87,7 @@ public class MeldekortUtbetalingsgrunnlagSak {
             return this;
         }
 
-        public MeldekortSakBuilder medTilstand(RelatertYtelseTilstand tilstand) {
+        public MeldekortSakBuilder medTilstand(YtelseStatus tilstand) {
             this.sak.tilstand = tilstand;
             return this;
         }

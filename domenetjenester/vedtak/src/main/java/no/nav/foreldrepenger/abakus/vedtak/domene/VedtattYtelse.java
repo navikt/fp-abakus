@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.UUID;
 
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
@@ -20,7 +20,7 @@ public interface VedtattYtelse {
 
     TemaUnderkategori getBehandlingsTema();
 
-    RelatertYtelseTilstand getStatus();
+    YtelseStatus getStatus();
 
     DatoIntervallEntitet getPeriode();
 

@@ -21,7 +21,7 @@ import org.threeten.extra.Interval;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
@@ -201,12 +201,12 @@ public class InnhentingSamletTjeneste {
     }
 
     private boolean erAvsluttet(InfotrygdSakOgGrunnlag infotrygdSakOgGrunnlag) {
-        return RelatertYtelseTilstand.AVSLUTTET.equals(infotrygdSakOgGrunnlag.getSak().getRelatertYtelseTilstand());
+        return YtelseStatus.AVSLUTTET.equals(infotrygdSakOgGrunnlag.getSak().getYtelseStatus());
     }
 
     private boolean erEtterIverksatt(InfotrygdSakOgGrunnlag infotrygdSakOgGrunnlag) {
-        RelatertYtelseTilstand tilstand = infotrygdSakOgGrunnlag.getSak().getRelatertYtelseTilstand();
-        return RelatertYtelseTilstand.LØPENDE.equals(tilstand) || RelatertYtelseTilstand.AVSLUTTET.equals(tilstand);
+        YtelseStatus tilstand = infotrygdSakOgGrunnlag.getSak().getYtelseStatus();
+        return YtelseStatus.LØPENDE.equals(tilstand) || YtelseStatus.AVSLUTTET.equals(tilstand);
     }
 
     private boolean skalTypeLagresUansett(InfotrygdSakOgGrunnlag infotrygdSakOgGrunnlag) {
@@ -229,7 +229,7 @@ public class InnhentingSamletTjeneste {
                 } else {
                     InnhentingFeil.FACTORY.ignorerArenaSakInfoLogg("kravMottattDato", sak.getSaksnummer()).log(LOGGER);
                 }
-            } else if (RelatertYtelseTilstand.ÅPEN.equals(sak.getYtelseTilstand()) && sak.getMeldekortene().isEmpty()) {
+            } else if (YtelseStatus.UNDER_BEHANDLING.equals(sak.getYtelseTilstand()) && sak.getMeldekortene().isEmpty()) {
                 InnhentingFeil.FACTORY.ignorerArenaSakInfoLogg("meldekort", sak.getSaksnummer()).log(LOGGER);
             } else if (sak.getVedtaksPeriodeFom() == null && sak.getMeldekortene().isEmpty()) {
                 InnhentingFeil.FACTORY.ignorerArenaSakInfoLogg("vedtaksDato", sak.getSaksnummer()).log(LOGGER);

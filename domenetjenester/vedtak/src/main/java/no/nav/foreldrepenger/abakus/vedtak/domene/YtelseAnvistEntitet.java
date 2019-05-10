@@ -90,9 +90,17 @@ public class YtelseAnvistEntitet extends BaseEntitet implements YtelseAnvist, In
         return Optional.ofNullable(utbetalingsgradProsent);
     }
 
+    void setUtbetalingsgradProsent(Stillingsprosent utbetalingsgradProsent) {
+        this.utbetalingsgradProsent = utbetalingsgradProsent;
+    }
+
     @Override
     public Optional<Beløp> getBeløp() {
         return Optional.ofNullable(beløp);
+    }
+
+    void setBeløp(Beløp beløp) {
+        this.beløp = beløp;
     }
 
     @Override
@@ -100,11 +108,7 @@ public class YtelseAnvistEntitet extends BaseEntitet implements YtelseAnvist, In
         return Optional.ofNullable(dagsats);
     }
 
-    public void setBeløp(Beløp beløp) {
-        this.beløp = beløp;
-    }
-
-    public void setDagsats(Beløp dagsats) {
+    void setDagsats(Beløp dagsats) {
         this.dagsats = dagsats;
     }
 
@@ -112,11 +116,7 @@ public class YtelseAnvistEntitet extends BaseEntitet implements YtelseAnvist, In
         this.anvistPeriode = periode;
     }
 
-    public void setUtbetalingsgradProsent(Stillingsprosent utbetalingsgradProsent) {
-        this.utbetalingsgradProsent = utbetalingsgradProsent;
-    }
-
-    public void setYtelse(VedtakYtelseEntitet ytelse) {
+    void setYtelse(VedtakYtelseEntitet ytelse) {
         this.ytelse = ytelse;
     }
 
@@ -144,9 +144,5 @@ public class YtelseAnvistEntitet extends BaseEntitet implements YtelseAnvist, In
             ", dagsats=" + dagsats +
             ", utbetalingsgradProsent=" + utbetalingsgradProsent +
             '}';
-    }
-
-    boolean hasValues() {
-        return beløp != null || anvistPeriode != null || dagsats != null || utbetalingsgradProsent != null;
     }
 }

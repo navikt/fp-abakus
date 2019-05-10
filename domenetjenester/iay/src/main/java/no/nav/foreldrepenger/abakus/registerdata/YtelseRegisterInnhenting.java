@@ -107,8 +107,7 @@ public class YtelseRegisterInnhenting {
         YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.INFOTRYGD, ytelse.getSak().getRelatertYtelseType(), ytelse.getSak().getTemaUnderkategori(), ytelse.getPeriode())
             .medBehandlingsTema(ytelse.getSak().getTemaUnderkategori())
             .medSaksnummer(ytelse.getSaksnummer())
-            .medStatus(ytelse.getSak().getRelatertYtelseTilstand())
-            .medFagsystemUnderkategori(ytelse.getSak().getFagsystemUnderkategori());
+            .medStatus(ytelse.getSak().getYtelseStatus());
         ytelseBuilder.tilbakestillAnvisninger();
         ytelse.getGrunnlag().ifPresent(grunnlag -> {
             for (YtelseBeregningsgrunnlagVedtak vedtak : grunnlag.getVedtak()) {
@@ -134,14 +133,16 @@ public class YtelseRegisterInnhenting {
         return grunnlagBuilder.build();
     }
 
-    private void oversettMeldekortUtbetalingsgrunnlagTilYtelse(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder, MeldekortUtbetalingsgrunnlagSak ytelse) {
-        DatoIntervallEntitet periode = utledMeldekortVedtaksPeriode(ytelse);
-        YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(ytelse.getKilde(), ytelse.getYtelseType(), ytelse.getSaksnummer(), periode);
+    private void oversettMeldekortUtbetalingsgrunnlagTilYtelse(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder,
+                                                               MeldekortUtbetalingsgrunnlagSak ytelse) {
+        Optional<LocalDate> førsteMeldekortFom = finnFørsteMeldekortFom(ytelse);
+        DatoIntervallEntitet periode = utledMeldekortVedtaksPeriode(ytelse, førsteMeldekortFom);
+        YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(ytelse.getKilde(), ytelse.getYtelseType(), ytelse.getSaksnummer(), periode, førsteMeldekortFom);
         ytelseBuilder
             .medPeriode(periode)
             .medStatus(ytelse.getYtelseTilstand())
-            .medYtelseGrunnlag(ytelseBuilder.getGrunnlagBuilder().medOpprinneligIdentdato(ytelse.getKravMottattDato()).build());
-        ytelseBuilder.tilbakestillAnvisninger();
+            .medYtelseGrunnlag(ytelseBuilder.getGrunnlagBuilder().medOpprinneligIdentdato(ytelse.getKravMottattDato()).build())
+            .tilbakestillAnvisninger();
         for (MeldekortUtbetalingsgrunnlagMeldekort meldekort : ytelse.getMeldekortene()) {
             ytelseBuilder.medYtelseAnvist(ytelseBuilder.getAnvistBuilder()
                 .medAnvistPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(meldekort.getMeldekortFom(), meldekort.getMeldekortTom()))
@@ -153,8 +154,8 @@ public class YtelseRegisterInnhenting {
         aktørYtelseBuilder.leggTilYtelse(ytelseBuilder);
     }
 
-    private DatoIntervallEntitet utledMeldekortVedtaksPeriode(MeldekortUtbetalingsgrunnlagSak sak) {
-        LocalDate fomFraSakMK = utledFomFraSakEllerMeldekortene(sak);
+    private DatoIntervallEntitet utledMeldekortVedtaksPeriode(MeldekortUtbetalingsgrunnlagSak sak, Optional<LocalDate> førsteMeldekortFom) {
+        LocalDate fomFraSakMK = utledFomFraSakEllerMeldekortene(sak, førsteMeldekortFom);
         if (sak.getVedtaksPeriodeTom() == null) {
             return DatoIntervallEntitet.fraOgMed(fomFraSakMK);
         }
@@ -164,15 +165,17 @@ public class YtelseRegisterInnhenting {
         return DatoIntervallEntitet.fraOgMedTilOgMed(fomFraSakMK, sak.getVedtaksPeriodeTom());
     }
 
-    private LocalDate utledFomFraSakEllerMeldekortene(MeldekortUtbetalingsgrunnlagSak sak) {
+    private LocalDate utledFomFraSakEllerMeldekortene(MeldekortUtbetalingsgrunnlagSak sak, Optional<LocalDate> førsteMeldekortFom) {
         if (sak.getVedtaksPeriodeFom() != null) {
             return sak.getVedtaksPeriodeFom();
         }
+        return førsteMeldekortFom.orElseGet(() -> sak.getVedtattDato() != null ? sak.getVedtattDato() : sak.getKravMottattDato());
+    }
 
-        Optional<LocalDate> minFom = sak.getMeldekortene().stream()
+    private Optional<LocalDate> finnFørsteMeldekortFom(MeldekortUtbetalingsgrunnlagSak sak) {
+        return sak.getMeldekortene().stream()
             .map(MeldekortUtbetalingsgrunnlagMeldekort::getMeldekortFom)
             .min(LocalDate::compareTo);
-        return minFom.orElseGet(() -> sak.getVedtattDato() != null ? sak.getVedtattDato() : sak.getKravMottattDato());
     }
 
     private void leggTilArbeidsforhold(YtelseGrunnlagBuilder ygBuilder, List<YtelseBeregningsgrunnlagArbeidsforhold> arbeidsforhold) {

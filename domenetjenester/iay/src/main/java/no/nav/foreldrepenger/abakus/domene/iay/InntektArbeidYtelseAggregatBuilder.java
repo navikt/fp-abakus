@@ -1,12 +1,13 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.util.LinkedHashSet;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Set;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
@@ -124,11 +125,6 @@ public class InntektArbeidYtelseAggregatBuilder {
     public AktørYtelseBuilder getAktørYtelseBuilder(AktørId aktørId) {
         Optional<AktørYtelse> aktørYtelse = kladd.getAktørYtelse().stream().filter(ay -> aktørId.equals(ay.getAktørId())).findFirst();
         return AktørYtelseBuilder.oppdatere(aktørYtelse).medAktørId(aktørId);
-    }
-
-    public AktørYtelseBuilder getAktørYtelseBuilderForKilde(AktørId aktørId, Fagsystem kilde) { // NOSONAR
-        Optional<AktørYtelse> aktørYtelse = kladd.getAktørYtelse().stream().filter(ay -> aktørId.equals(ay.getAktørId())).findFirst();
-        return AktørYtelseBuilder.oppdatere(aktørYtelse).medAktørId(aktørId).medKilde(kilde);
     }
 
     public InntektArbeidYtelseAggregat build() {
@@ -300,14 +296,10 @@ public class InntektArbeidYtelseAggregatBuilder {
     public static class AktørYtelseBuilder {
         private final AktørYtelseEntitet kladd;
         private final boolean oppdatering;
-        private Set<YtelseEntitet> ytelser;
-        private Fagsystem kilde;
 
         private AktørYtelseBuilder(AktørYtelseEntitet aktørYtelseEntitet, boolean oppdatering) {
             this.kladd = aktørYtelseEntitet;
             this.oppdatering = oppdatering;
-            this.ytelser = new LinkedHashSet<>();
-            this.kilde = Fagsystem.UDEFINERT;
         }
 
         static AktørYtelseBuilder ny() {
@@ -331,26 +323,27 @@ public class InntektArbeidYtelseAggregatBuilder {
             return this;
         }
 
-        public AktørYtelseBuilder medKilde(Fagsystem fagsystem) {
-            this.kilde = fagsystem;
-            return this;
-        }
-
         public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer sakId) {
             return kladd.getYtelseBuilderForType(fagsystem, type, sakId);
         }
 
-        public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer sakId, DatoIntervallEntitet periode) {
-            return kladd.getYtelseBuilderForType(fagsystem, type, sakId, periode);
+        public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer sakId, DatoIntervallEntitet periode, Optional<LocalDate> tidligsteAnvistFom) {
+            return kladd.getYtelseBuilderForType(fagsystem, type, sakId, periode, tidligsteAnvistFom);
         }
 
         public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, YtelseType type, TemaUnderkategori typeKategori, DatoIntervallEntitet periode) {
             return kladd.getYtelseBuilderForType(fagsystem, type, typeKategori, periode);
         }
 
+        public void tilbakestillYtelserFraKildeBeholdAvsluttede(Fagsystem kilde) {
+            this.kladd.getYtelser().stream()
+                .filter(yt -> kilde.equals(yt.getKilde()))
+                .filter(yt -> !YtelseStatus.AVSLUTTET.equals(yt.getStatus()))
+                .forEach(this.kladd::fjernYtelse);
+        }
+
         public AktørYtelseBuilder leggTilYtelse(YtelseBuilder ytelse) {
             YtelseEntitet ytelseEntitet = (YtelseEntitet) ytelse.build();
-            ytelser.add(ytelseEntitet);
             if (!ytelse.getErOppdatering()) {
                 this.kladd.leggTilYtelse(ytelseEntitet);
             }
@@ -363,11 +356,6 @@ public class InntektArbeidYtelseAggregatBuilder {
 
         public AktørYtelse build() {
             if (this.kladd.hasValues()) {
-                this.kladd.getYtelser().forEach(ytelse -> {
-                    if ((Fagsystem.UDEFINERT.equals(this.kilde) || ytelse.getKilde().equals(this.kilde)) && !ytelser.contains(ytelse)) {
-                        this.kladd.fjernYtelse(ytelse);
-                    }
-                });
                 return kladd;
             }
             throw new IllegalStateException("Har ikke innhold");

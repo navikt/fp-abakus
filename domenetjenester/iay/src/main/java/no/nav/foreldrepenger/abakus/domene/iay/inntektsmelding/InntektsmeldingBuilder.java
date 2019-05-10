@@ -5,10 +5,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak;
 import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
+import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 import no.nav.vedtak.konfig.Tid;
 
 public class InntektsmeldingBuilder {
@@ -36,6 +37,11 @@ public class InntektsmeldingBuilder {
 
     public InntektsmeldingBuilder medBeløp(BigDecimal verdi) {
         kladd.setInntektBeløp(new Beløp(verdi));
+        return this;
+    }
+
+    public InntektsmeldingBuilder medJournalpostId(JournalpostId journalpostId) {
+        kladd.setJournalpostId(journalpostId);
         return this;
     }
 

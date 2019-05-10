@@ -2,8 +2,8 @@ create table KOBLING
 (
     ID                     bigint                              not null,
     referanse_id           uuid                                not null,
-    YTELSE_TYPE              VARCHAR(100)                        not null,
-    KL_YTELSE_TYPE           VARCHAR(100) default 'FAGSAK_YTELSE_TYPE',
+    YTELSE_TYPE            VARCHAR(100)                        not null,
+    KL_YTELSE_TYPE         VARCHAR(100) default 'FAGSAK_YTELSE_TYPE',
     bruker_aktoer_id       varchar(50)                         not null,
     annen_part_aktoer_id   varchar(50),
     opplysning_periode_fom DATE                                not null,
@@ -414,7 +414,7 @@ create table IAY_INNTEKTSMELDING
     INNTEKTSMELDINGER_ID  bigint                              not null
         constraint FK_INNTEKTSMELDING_1
             references IAY_INNTEKTSMELDINGER,
-    MOTTATT_DOKUMENT_ID   bigint                              not null,
+    journalpost_id        varchar(100)                        not null,
     VERSJON               bigint       default 0              not null,
     arbeidsgiver_orgnr    varchar(100),
     ARBEIDSFORHOLD_ID     VARCHAR(200),
@@ -439,7 +439,7 @@ create table IAY_INNTEKTSMELDING
 comment on table IAY_INNTEKTSMELDING is 'Inntektsmeldinger';
 comment on column IAY_INNTEKTSMELDING.ID is 'Primærnøkkel';
 comment on column IAY_INNTEKTSMELDING.INNTEKTSMELDINGER_ID is 'FK:';
-comment on column IAY_INNTEKTSMELDING.MOTTATT_DOKUMENT_ID is 'FK:';
+comment on column IAY_INNTEKTSMELDING.journalpost_id is 'Journalposten inntektsmeldingen er journalført på';
 comment on column IAY_INNTEKTSMELDING.arbeidsgiver_orgnr is 'Arbeidsgiver orgnr';
 comment on column IAY_INNTEKTSMELDING.ARBEIDSFORHOLD_ID is 'FK:';
 comment on column IAY_INNTEKTSMELDING.INNTEKT_BELOEP is 'Oppgitt årslønn fra arbeidsgiver';
@@ -457,7 +457,7 @@ create index IDX_INNTEKTSMELDING_2
 create index IDX_INNTEKTSMELDING_3
     on IAY_INNTEKTSMELDING (arbeidsgiver_orgnr, ARBEIDSFORHOLD_ID);
 create index IDX_INNTEKTSMELDING_6
-    on IAY_INNTEKTSMELDING (MOTTATT_DOKUMENT_ID);
+    on IAY_INNTEKTSMELDING (journalpost_id);
 create index IDX_INNTEKTSMELDING_7
     on IAY_INNTEKTSMELDING (INNSENDINGSAARSAK);
 create table IAY_NATURAL_YTELSE
@@ -716,8 +716,8 @@ create table IAY_RELATERT_YTELSE
     AKTOER_YTELSE_ID           bigint                              not null
         constraint FK_YTELSE_4
             references IAY_AKTOER_YTELSE,
-    YTELSE_TYPE              VARCHAR(100)                        not null,
-    KL_YTELSE_TYPE           VARCHAR(100) default 'FAGSAK_YTELSE_TYPE',
+    YTELSE_TYPE                VARCHAR(100)                        not null,
+    KL_YTELSE_TYPE             VARCHAR(100) default 'FAGSAK_YTELSE_TYPE',
     FOM                        DATE                                not null,
     TOM                        DATE                                not null,
     STATUS                     VARCHAR(100)                        not null,

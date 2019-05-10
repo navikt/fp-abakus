@@ -5,8 +5,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
@@ -50,8 +50,8 @@ public class VedtakYtelseBuilder {
         return this;
     }
 
-    public VedtakYtelseBuilder medStatus(RelatertYtelseTilstand relatertYtelseTilstand) {
-        ytelse.setStatus(relatertYtelseTilstand);
+    public VedtakYtelseBuilder medStatus(YtelseStatus ytelseStatus) {
+        ytelse.setStatus(ytelseStatus);
         return this;
     }
 

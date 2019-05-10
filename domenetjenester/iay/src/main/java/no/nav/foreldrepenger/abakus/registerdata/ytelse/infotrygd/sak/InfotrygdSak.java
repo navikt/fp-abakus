@@ -15,8 +15,8 @@ import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseSakstype;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTema;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseStatus;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.integrasjon.felles.ws.DateUtil;
@@ -37,7 +37,7 @@ public class InfotrygdSak {
     private LocalDate iverksatt;
     private LocalDate opphoerFomDato;
     private YtelseType relatertYtelseType;
-    private RelatertYtelseTilstand relatertYtelseTilstand;
+    private YtelseStatus ytelseStatus;
     private DatoIntervallEntitet periode;
 
     public InfotrygdSak(no.nav.tjeneste.virksomhet.infotrygdsak.v1.informasjon.InfotrygdSak sak, KodeverkRepository kodeverkRepository) {
@@ -84,7 +84,7 @@ public class InfotrygdSak {
             resultat = RelatertYtelseResultat.UDEFINERT;
         }
         relatertYtelseType = utledRelatertYtelseType(tema, getTemaUnderkategoriString());
-        relatertYtelseTilstand = getYteleseTilstand();
+        ytelseStatus = getYteleseTilstand();
     }
 
     private DatoIntervallEntitet utledPeriode(LocalDate iverksatt, LocalDate opphoerFomDato, LocalDate vedtatt, LocalDate registrert) {
@@ -162,8 +162,8 @@ public class InfotrygdSak {
         return type;
     }
 
-    public RelatertYtelseTilstand getRelatertYtelseTilstand() {
-        return relatertYtelseTilstand;
+    public YtelseStatus getYtelseStatus() {
+        return ytelseStatus;
     }
 
     public RelatertYtelseResultat getResultat() {
@@ -234,7 +234,7 @@ public class InfotrygdSak {
     }
 
     public boolean erAvsluttetVedtak() {
-        return FagsystemUnderkategori.INFOTRYGD_VEDTAK.equals(fagsystemUnderkategori) && RelatertYtelseTilstand.AVSLUTTET.equals(relatertYtelseTilstand);
+        return FagsystemUnderkategori.INFOTRYGD_VEDTAK.equals(fagsystemUnderkategori) && YtelseStatus.AVSLUTTET.equals(ytelseStatus);
     }
 
     public boolean erVedtak() {
@@ -254,15 +254,15 @@ public class InfotrygdSak {
     }
 
 
-    private RelatertYtelseTilstand getYteleseTilstand() {
+    private YtelseStatus getYteleseTilstand() {
         if (erLøpendeVedtak()) {
-            return RelatertYtelseTilstand.LØPENDE;
+            return YtelseStatus.LØPENDE;
         } else if (erÅpenSak()) {
-            return RelatertYtelseTilstand.ÅPEN;
+            return YtelseStatus.UNDER_BEHANDLING;
         } else if (erIkkeStartet()) {
-            return RelatertYtelseTilstand.IKKE_STARTET;
+            return YtelseStatus.OPPRETTET;
         }
-        return RelatertYtelseTilstand.AVSLUTTET;
+        return YtelseStatus.AVSLUTTET;
     }
 
 }

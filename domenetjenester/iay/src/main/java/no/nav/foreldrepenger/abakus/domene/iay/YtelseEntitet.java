@@ -29,12 +29,11 @@ import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.FagsystemUnderkategori;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
@@ -64,9 +63,9 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
     @ManyToOne
     @JoinColumnsOrFormulas({
         @JoinColumnOrFormula(column = @JoinColumn(name = "status", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + RelatertYtelseTilstand.DISCRIMINATOR + "'"))})
+        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + YtelseStatus.DISCRIMINATOR + "'"))})
     @ChangeTracked
-    private RelatertYtelseTilstand status;
+    private YtelseStatus status;
 
     /**
      * Saksnummer (fra Arena, Infotrygd, ..).
@@ -81,13 +80,6 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
         @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + Fagsystem.DISCRIMINATOR + "'"))})
     @ChangeTracked
     private Fagsystem kilde;
-
-    @ManyToOne
-    @JoinColumnsOrFormulas({
-        @JoinColumnOrFormula(column = @JoinColumn(name = "FAGSYSTEM_UNDERKATEGORI", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + FagsystemUnderkategori.DISCRIMINATOR + "'"))})
-    @ChangeTracked
-    private FagsystemUnderkategori fagsystemUnderkategori = FagsystemUnderkategori.UDEFINERT;
 
     @ManyToOne
     @JoinColumnsOrFormulas({
@@ -115,7 +107,7 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
     @Transient
     private boolean ventreSideAvSkjæringstidspunkt;
 
-    public YtelseEntitet() {
+    YtelseEntitet() {
         // hibernate
     }
 
@@ -126,17 +118,16 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
         this.saksnummer = ytelse.getSaksnummer();
         this.temaUnderkategori = ytelse.getBehandlingsTema();
         this.kilde = ytelse.getKilde();
-        this.fagsystemUnderkategori = ytelse.getFagsystemUnderkategori();
         ytelse.getYtelseGrunnlag().ifPresent(yg -> {
             YtelseGrunnlagEntitet ygn = new YtelseGrunnlagEntitet(yg);
             ygn.setYtelse(this);
             this.ytelseGrunnlag = ygn;
         });
-        this.ytelseAnvist = ytelse.getYtelseAnvist().stream().map(ya -> {
-            YtelseAnvistEntitet ytelseAnvistEntitet = new YtelseAnvistEntitet(ya);
-            ytelseAnvistEntitet.setYtelse(this);
-            return ytelseAnvistEntitet;
-        }).collect(Collectors.toCollection(LinkedHashSet::new));
+        this.ytelseAnvist = ytelse.getYtelseAnvist()
+            .stream()
+            .map(YtelseAnvistEntitet::new)
+            .peek(it -> it.setYtelse(this))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
@@ -167,11 +158,11 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
     }
 
     @Override
-    public RelatertYtelseTilstand getStatus() {
+    public YtelseStatus getStatus() {
         return status;
     }
 
-    void setStatus(RelatertYtelseTilstand status) {
+    void setStatus(YtelseStatus status) {
         this.status = status;
     }
 
@@ -200,15 +191,6 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
 
     void setKilde(Fagsystem kilde) {
         this.kilde = kilde;
-    }
-
-    @Override
-    public FagsystemUnderkategori getFagsystemUnderkategori() {
-        return fagsystemUnderkategori;
-    }
-
-    void setFagsystemUnderkategori(FagsystemUnderkategori fagsystemUnderkategori) {
-        this.fagsystemUnderkategori = fagsystemUnderkategori;
     }
 
     @Override

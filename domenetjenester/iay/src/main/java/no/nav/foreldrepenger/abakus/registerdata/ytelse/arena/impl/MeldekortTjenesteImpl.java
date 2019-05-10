@@ -11,7 +11,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTema;
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseStatus;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagMeldekort;
@@ -70,23 +70,23 @@ public class MeldekortTjenesteImpl implements MeldekortTjeneste {
         }
     }
 
-    private RelatertYtelseTilstand oversettTilstand(Sak sak, Vedtak vedtak) {
+    private YtelseStatus oversettTilstand(Sak sak, Vedtak vedtak) {
         if (RelatertYtelseStatus.AVSLU.getKode().equals(vedtak.getVedtaksstatus().getValue())) {
-            return RelatertYtelseTilstand.AVSLUTTET;
+            return YtelseStatus.AVSLUTTET;
         } else if (RelatertYtelseStatus.IVERK.getKode().equals(vedtak.getVedtaksstatus().getValue())) {
-            return RelatertYtelseTilstand.LØPENDE;
+            return YtelseStatus.LØPENDE;
         } else if (RelatertYtelseStatus.AVSLU.getKode().equals(sak.getSaksstatus().getValue()) || "INAKT".equals(sak.getSaksstatus().getValue())) {
-            return RelatertYtelseTilstand.AVSLUTTET;
+            return YtelseStatus.AVSLUTTET;
         } else {
-            return RelatertYtelseTilstand.ÅPEN;
+            return YtelseStatus.UNDER_BEHANDLING;
         }
     }
 
-    private RelatertYtelseTilstand oversettTilstandUtenVedtak(Sak sak) {
+    private YtelseStatus oversettTilstandUtenVedtak(Sak sak) {
         if (RelatertYtelseStatus.AVSLU.getKode().equals(sak.getSaksstatus().getValue())) {
-            return RelatertYtelseTilstand.AVSLUTTET;
+            return YtelseStatus.AVSLUTTET;
         } else {
-            return RelatertYtelseTilstand.ÅPEN;
+            return YtelseStatus.UNDER_BEHANDLING;
         }
     }
 

@@ -2,9 +2,8 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.util.Optional;
 
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.FagsystemUnderkategori;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
@@ -37,8 +36,8 @@ public class YtelseBuilder {
         return this;
     }
 
-    public YtelseBuilder medStatus(RelatertYtelseTilstand relatertYtelseTilstand) {
-        ytelseEntitet.setStatus(relatertYtelseTilstand);
+    public YtelseBuilder medStatus(YtelseStatus ytelseStatus) {
+        ytelseEntitet.setStatus(ytelseStatus);
         return this;
     }
 
@@ -54,11 +53,6 @@ public class YtelseBuilder {
 
     public YtelseBuilder medKilde(Fagsystem kilde) {
         ytelseEntitet.setKilde(kilde);
-        return this;
-    }
-
-    public YtelseBuilder medFagsystemUnderkategori(FagsystemUnderkategori underkategori) {
-        ytelseEntitet.setFagsystemUnderkategori(underkategori);
         return this;
     }
 
@@ -100,6 +94,5 @@ public class YtelseBuilder {
     public YtelseGrunnlagBuilder getGrunnlagBuilder() {
         return YtelseGrunnlagBuilder.ny();
     }
-
 
 }

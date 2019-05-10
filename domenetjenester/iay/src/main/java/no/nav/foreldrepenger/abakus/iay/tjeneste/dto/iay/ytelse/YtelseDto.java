@@ -3,7 +3,7 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.ytelse;
 import java.util.List;
 
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.PeriodeDto;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 
@@ -13,7 +13,7 @@ public class YtelseDto {
     private YtelseType type;
     private String saksnummer;
     private PeriodeDto periode;
-    private RelatertYtelseTilstand status;
+    private YtelseStatus status;
     private List<Anvisning> anvisninger;
     private Grunnlag grunnlag;
 
@@ -68,11 +68,11 @@ public class YtelseDto {
         this.periode = periode;
     }
 
-    public RelatertYtelseTilstand getStatus() {
+    public YtelseStatus getStatus() {
         return status;
     }
 
-    public void setStatus(RelatertYtelseTilstand status) {
+    public void setStatus(YtelseStatus status) {
         this.status = status;
     }
 }

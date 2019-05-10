@@ -3,9 +3,8 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 import java.util.Collection;
 import java.util.Optional;
 
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.FagsystemUnderkategori;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
@@ -17,15 +16,13 @@ public interface Ytelse {
 
     TemaUnderkategori getBehandlingsTema();
 
-    RelatertYtelseTilstand getStatus();
+    YtelseStatus getStatus();
 
     DatoIntervallEntitet getPeriode();
 
     Saksnummer getSaksnummer();
 
     Fagsystem getKilde();
-
-    FagsystemUnderkategori getFagsystemUnderkategori();
 
     Optional<YtelseGrunnlag> getYtelseGrunnlag();
 

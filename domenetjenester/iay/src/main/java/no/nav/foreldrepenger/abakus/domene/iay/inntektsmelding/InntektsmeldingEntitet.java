@@ -27,14 +27,15 @@ import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
+import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregatEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak;
-import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
+import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
 @Entity(name = "Inntektsmelding")
@@ -77,8 +78,8 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
     @Column(name = "naer_relasjon", updatable = false, nullable = false)
     private boolean nærRelasjon;
 
-    @Column(name = "mottatt_dokument_id", updatable = false, nullable = false)
-    private Long mottattDokumentId;
+    @Embedded
+    private JournalpostId journalpostId;
 
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "inntekt_beloep", nullable = false)))
@@ -127,7 +128,7 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
         this.arbeidsforholdRef = inntektsmelding.getArbeidsforholdRef();
         this.startDatoPermisjon = inntektsmelding.getStartDatoPermisjon();
         this.nærRelasjon = inntektsmelding.getErNærRelasjon();
-        this.mottattDokumentId = inntektsmelding.getMottattDokumentId();
+        this.journalpostId = inntektsmelding.getJournalpostId();
         this.inntektBeløp = inntektsmelding.getInntektBeløp();
         this.refusjonBeløpPerMnd = inntektsmelding.getRefusjonBeløpPerMnd();
         this.refusjonOpphører = inntektsmelding.getRefusjonOpphører();
@@ -160,15 +161,6 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
     @Override
     public String getIndexKey() {
         return IndexKey.createKey(arbeidsgiver, arbeidsforholdRef);
-    }
-
-    @Override
-    public Long getMottattDokumentId() {
-        return mottattDokumentId;
-    }
-
-    void setMottattDokumentId(Long mottattDokumentId) {
-        this.mottattDokumentId = mottattDokumentId;
     }
 
     public void setInntektsmeldinger(InntektsmeldingAggregatEntitet inntektsmeldinger) {
@@ -257,6 +249,15 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
     @Override
     public LocalDate getStartDatoPermisjon() {
         return startDatoPermisjon;
+    }
+
+    @Override
+    public JournalpostId getJournalpostId() {
+        return journalpostId;
+    }
+
+    void setJournalpostId(JournalpostId journalpostId) {
+        this.journalpostId = journalpostId;
     }
 
     void setStartDatoPermisjon(LocalDate startDatoPermisjon) {
@@ -349,7 +350,7 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
             ", arbeidsforholdId='" + arbeidsforholdRef + '\'' +
             ", startDatoPermisjon=" + startDatoPermisjon +
             ", nærRelasjon=" + nærRelasjon +
-            ", mottattDokumentId=" + mottattDokumentId +
+            ", journalpostId=" + journalpostId +
             ", inntektBeløp=" + inntektBeløp +
             ", refusjonBeløpPerMnd=" + refusjonBeløpPerMnd +
             ", refusjonOpphører=" + refusjonOpphører +

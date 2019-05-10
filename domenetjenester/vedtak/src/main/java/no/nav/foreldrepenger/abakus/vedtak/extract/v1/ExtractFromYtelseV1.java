@@ -7,7 +7,7 @@ import javax.inject.Inject;
 
 import no.nav.foreldrepenger.abakus.kodeverk.Kodeliste;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseTilstand;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
@@ -17,7 +17,6 @@ import no.nav.foreldrepenger.abakus.vedtak.domene.YtelseAnvistBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.extract.ExtractFromYtelse;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 import no.nav.vedtak.ytelse.Periode;
-import no.nav.vedtak.ytelse.v1.YtelseStatus;
 import no.nav.vedtak.ytelse.v1.YtelseType;
 import no.nav.vedtak.ytelse.v1.YtelseV1;
 import no.nav.vedtak.ytelse.v1.anvisning.Anvisning;
@@ -27,7 +26,7 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
 
     private static final Map<String, Class<? extends Kodeliste>> kodeverkTilKodeliste = Map.of(Fagsystem.DISCRIMINATOR, Fagsystem.class,
         no.nav.foreldrepenger.abakus.kodeverk.YtelseType.DISCRIMINATOR, no.nav.foreldrepenger.abakus.kodeverk.YtelseType.class,
-        RelatertYtelseTilstand.DISCRIMINATOR, RelatertYtelseTilstand.class);
+        YtelseStatus.DISCRIMINATOR, YtelseStatus.class);
 
     private VedtakYtelseRepository repository;
     private KodeverkRepository kodeverkRepository;
@@ -63,8 +62,8 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
         return builder;
     }
 
-    private RelatertYtelseTilstand getStatus(YtelseStatus kodeverk) {
-        return (RelatertYtelseTilstand) kodeverkRepository.finn(kodeverkTilKodeliste.get(kodeverk.getKodeverk()), kodeverk.getKode());
+    private YtelseStatus getStatus(no.nav.vedtak.ytelse.v1.YtelseStatus kodeverk) {
+        return (YtelseStatus) kodeverkRepository.finn(kodeverkTilKodeliste.get(kodeverk.getKodeverk()), kodeverk.getKode());
     }
 
     private void mapAnvisning(VedtakYtelseBuilder builder, Anvisning anv) {

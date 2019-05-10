@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -107,6 +108,29 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
             .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type) && (saksnummer.equals(ya.getSaksnummer())
                 && periode.equals(ya.getPeriode())))
             .findFirst();
+        return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medSaksnummer(saksnummer);
+    }
+
+    YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer saksnummer, DatoIntervallEntitet periode, Optional<LocalDate> tidligsteAnvistFom) {
+        // OBS kan være flere med samme Saksnummer+FOM: Konvensjon ifm satsjustering
+        List<Ytelse> aktuelleYtelser = getYtelser().stream()
+            .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type) && (saksnummer.equals(ya.getSaksnummer())
+                && periode.getFomDato().equals(ya.getPeriode().getFomDato())))
+            .collect(Collectors.toList());
+        Optional<Ytelse> ytelse = aktuelleYtelser.stream()
+            .filter(ya -> periode.equals(ya.getPeriode()))
+            .findFirst();
+        if (ytelse.isEmpty() && !aktuelleYtelser.isEmpty()) {
+            // Håndtere endret TOM-dato som regel ifm at ytelsen er opphørt. Hvis flere med samme FOM-dato sjekk anvist-fom
+            if (tidligsteAnvistFom.isPresent()) {
+                ytelse = aktuelleYtelser.stream()
+                    .filter(yt -> yt.getYtelseAnvist().stream().anyMatch(ya -> tidligsteAnvistFom.get().equals(ya.getAnvistFOM())))
+                    .findFirst();
+            }
+            if (ytelse.isEmpty()) {
+                ytelse = aktuelleYtelser.stream().filter(yt -> yt.getYtelseAnvist().isEmpty()).findFirst();
+            }
+        }
         return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medSaksnummer(saksnummer);
     }
 
