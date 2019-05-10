@@ -71,10 +71,12 @@ pipeline {
                 branch 'master'
             }
             steps {
-                def value = "s/RELEASE_VERSION/${version}/g"
-                sh "sed \'$value\' .deploy/t4.yaml > nais.yaml"
-                sh "k config use-context preprod-fss"
-                sh "k apply -f nais.yaml"
+                script {
+                    def value = "s/RELEASE_VERSION/${version}/g"
+                    sh "sed \'$value\' .deploy/t4.yaml > nais.yaml"
+                    sh "k config use-context preprod-fss"
+                    sh "k apply -f nais.yaml"
+                }
             }
         }
     }
