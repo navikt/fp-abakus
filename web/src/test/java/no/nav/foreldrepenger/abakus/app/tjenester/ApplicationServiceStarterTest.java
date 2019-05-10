@@ -13,6 +13,7 @@ import javax.enterprise.inject.Instance;
 import org.junit.Before;
 import org.junit.Test;
 
+import no.nav.foreldrepenger.abakus.app.konfig.ApplicationServiceStarter;
 import no.nav.vedtak.apptjeneste.AppServiceHandler;
 import no.nav.vedtak.felles.testutilities.cdi.UnitTestInstanceImpl;
 

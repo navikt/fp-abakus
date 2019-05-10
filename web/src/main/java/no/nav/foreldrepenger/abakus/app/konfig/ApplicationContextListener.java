@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.app.tjenester;
+package no.nav.foreldrepenger.abakus.app.konfig;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContextEvent;

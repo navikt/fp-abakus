@@ -13,8 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.swagger.annotations.Api;
+import no.nav.foreldrepenger.abakus.app.konfig.ApplicationServiceStarter;
 import no.nav.foreldrepenger.abakus.app.konfig.InternalApplication;
-import no.nav.foreldrepenger.abakus.app.tjenester.ApplicationServiceStarter;
 
 @Api(tags = {"nais"})
 @Path("/")

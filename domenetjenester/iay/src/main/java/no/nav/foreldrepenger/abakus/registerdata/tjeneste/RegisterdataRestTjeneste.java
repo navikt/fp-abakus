@@ -29,15 +29,15 @@ import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 @Path("/registerdata/v1")
 @ApplicationScoped
 @Transaction
-public class RegistedataRestTjeneste {
+public class RegisterdataRestTjeneste {
 
     private InnhentRegisterdataTjeneste innhentTjeneste;
 
-    public RegistedataRestTjeneste() {
+    public RegisterdataRestTjeneste() {
     }
 
     @Inject
-    public RegistedataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste) {
+    public RegisterdataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste) {
         this.innhentTjeneste = innhentTjeneste;
     }
 

@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.app.tjenester;
+package no.nav.foreldrepenger.abakus.app.konfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
