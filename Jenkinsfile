@@ -16,7 +16,7 @@ pipeline {
             steps {
                 script {
                     Date date = new Date()
-                    dockerRegistryIapp = "repo.adeo.no:5443"
+                    DOCKERREGISTRY = "repo.adeo.no:5443"
 
                     checkout scm
                     GIT_COMMIT_HASH = sh(script: "git log -n 1 --pretty=format:'%h'", returnStdout: true)
@@ -44,13 +44,12 @@ pipeline {
                         }
 
                         sh "mvn -U -B -s $MAVEN_SETTINGS -Dfile.encoding=UTF-8 -DinstallAtEnd=true -DdeployAtEnd=true -Dsha1= -Dchangelist= -Drevision=$version clean install"
-                        sh "docker build --pull -t $dockerRegistryIapp/$artifactId:$version ."
+                        sh "docker build --pull -t $DOCKERREGISTRY/fpabakus:$version ."
                         withCredentials([[$class          : 'UsernamePasswordMultiBinding',
                                           credentialsId   : 'nexusUser',
                                           usernameVariable: 'NEXUS_USERNAME',
                                           passwordVariable: 'NEXUS_PASSWORD']]) {
-                            sh "docker login -u ${env.NEXUS_USERNAME} -p ${env.NEXUS_PASSWORD} ${dockerRegistryIapp} && docker push ${dockerRegistryIapp}/${artifactId}:${version}"
-                        }
+                            sh "docker login -u ${env.NEXUS_USERNAME} -p ${env.NEXUS_PASSWORD} ${DOCKERREGISTRY} && docker push ${DOCKERREGISTRY}/fpabakus:${version}"
                     }
                 }
             }
@@ -65,10 +64,20 @@ pipeline {
                 sh "git push origin --tag"
             }
         }
-
-
+        
+        stage('Deploy') {
+            when {
+                branch 'master'
+            }
+            steps {            
+                def value = "s/RELEASE_VERSION/${version}/g"
+                sh "sed \'$value\' .deploy/t4.yaml > nais.yaml"
+                sh "k config use-context preprod-fss"
+                sh "k apply -f nais.yaml"
+            }    
+        }
     }
-
+      
     post {
         success {
             script {
