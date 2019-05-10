@@ -50,45 +50,46 @@ pipeline {
                                           usernameVariable: 'NEXUS_USERNAME',
                                           passwordVariable: 'NEXUS_PASSWORD']]) {
                             sh "docker login -u ${env.NEXUS_USERNAME} -p ${env.NEXUS_PASSWORD} ${DOCKERREGISTRY} && docker push ${DOCKERREGISTRY}/fpabakus:${version}"
+                        }
                     }
+                }
+            }
+
+            stage('Tag master') {
+                when {
+                    branch 'master'
+                }
+                steps {
+                    sh "git tag $version -m $version"
+                    sh "git push origin --tag"
+                }
+            }
+
+            stage('Deploy') {
+                when {
+                    branch 'master'
+                }
+                steps {
+                    def value = "s/RELEASE_VERSION/${version}/g"
+                    sh "sed \'$value\' .deploy/t4.yaml > nais.yaml"
+                    sh "k config use-context preprod-fss"
+                    sh "k apply -f nais.yaml"
                 }
             }
         }
 
-        stage('Tag master') {
-            when {
-                branch 'master'
+        post {
+            success {
+                script {
+                    fpgithub.updateBuildStatus("fp-abakus", "success", GIT_COMMIT_HASH_FULL)
+                }
             }
-            steps {
-                sh "git tag $version -m $version"
-                sh "git push origin --tag"
-            }
-        }
-        
-        stage('Deploy') {
-            when {
-                branch 'master'
-            }
-            steps {            
-                def value = "s/RELEASE_VERSION/${version}/g"
-                sh "sed \'$value\' .deploy/t4.yaml > nais.yaml"
-                sh "k config use-context preprod-fss"
-                sh "k apply -f nais.yaml"
-            }    
-        }
-    }
-      
-    post {
-        success {
-            script {
-                fpgithub.updateBuildStatus("fp-abakus", "success", GIT_COMMIT_HASH_FULL)
+            failure {
+                script {
+                    fpgithub.updateBuildStatus("fp-abakus", "failure", GIT_COMMIT_HASH_FULL)
+                }
             }
         }
-        failure {
-            script {
-                fpgithub.updateBuildStatus("fp-abakus", "failure", GIT_COMMIT_HASH_FULL)
-            }
-        }
-    }
 
+    }
 }
