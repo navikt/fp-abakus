@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -100,6 +101,11 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     public AntallTimer getAntallTimer() {
         return antallTimer;
     }
+    
+    @Override
+    public BigDecimal getAntallTimerVerdi() {
+        return antallTimer==null?null:antallTimer.getSkalertVerdi();
+    }
 
     void setAntallTimer(AntallTimer antallTimer) {
         this.antallTimer = antallTimer;
@@ -117,6 +123,11 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     @Override
     public Stillingsprosent getProsentsats() {
         return prosentsats;
+    }
+    
+    @Override
+    public BigDecimal getProsentsatsVerdi() {
+        return prosentsats==null?null:prosentsats.getVerdi();
     }
 
     void setProsentsats(Stillingsprosent prosentsats) {

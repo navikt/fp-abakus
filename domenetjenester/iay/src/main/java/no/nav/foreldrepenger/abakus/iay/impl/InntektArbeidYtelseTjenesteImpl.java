@@ -7,6 +7,8 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.jboss.weld.exceptions.UnsupportedOperationException;
+
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
@@ -81,6 +83,12 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
             return informasjon.finnForEkstern(arbeidsgiver, arbeidsforholdRef);
         }
         return arbeidsforholdRef;
+    }
+    
+    @Override
+    public ArbeidsforholdRef finnReferanseFor(UUID koblingReferanse, Arbeidsgiver arbeidsgiver, ArbeidsforholdRef arbeidsforholdRef,
+                                              boolean beholdErstattetVerdi) {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override

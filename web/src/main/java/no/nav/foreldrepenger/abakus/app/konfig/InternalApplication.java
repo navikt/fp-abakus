@@ -8,7 +8,6 @@ import javax.ws.rs.core.Application;
 import io.swagger.jaxrs.config.BeanConfig;
 import no.nav.foreldrepenger.abakus.app.selftest.NaisRestTjeneste;
 import no.nav.foreldrepenger.abakus.app.selftest.SelftestRestTjeneste;
-import no.nav.foreldrepenger.abakus.app.tjenester.iay.IayRestTjeneste;
 
 @ApplicationPath(InternalApplication.API_URL)
 public class InternalApplication extends Application {
@@ -44,8 +43,7 @@ public class InternalApplication extends Application {
     public Set<Class<?>> getClasses() {
         return Set.of(
             NaisRestTjeneste.class,
-            SelftestRestTjeneste.class,
-            IayRestTjeneste.class);
+            SelftestRestTjeneste.class);
     }
 
 }
