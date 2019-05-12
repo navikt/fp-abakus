@@ -58,7 +58,7 @@ public class GrunnlagRestTjeneste {
 
         IAYDtoMapper dtoMapper = new IAYDtoMapper(iayTjeneste, aktørId, grunnlagReferanse, koblingReferanse);
         
-        return Response.ok(dtoMapper.mapFra(grunnlag, spesifikasjon)).build();
+        return Response.ok(dtoMapper.mapTilDto(grunnlag, spesifikasjon)).build();
     }
 
     private UUID getKoblingReferanse(InntektArbeidYtelseGrunnlagRequest spesifikasjon) {

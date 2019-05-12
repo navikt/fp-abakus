@@ -39,7 +39,7 @@ public class IAYDtoMapper {
         this.koblingReferanse = koblingReferanse;
     }
 
-    public InntektArbeidYtelseGrunnlagDto mapFra(InntektArbeidYtelseGrunnlag grunnlag, InntektArbeidYtelseGrunnlagRequest spec) {
+    public InntektArbeidYtelseGrunnlagDto mapTilDto(InntektArbeidYtelseGrunnlag grunnlag, InntektArbeidYtelseGrunnlagRequest spec) {
         if (grunnlag == null) {
             return null;
         }
@@ -70,16 +70,36 @@ public class IAYDtoMapper {
         return dto;
     }
 
+    public InntektArbeidYtelseGrunnlag mapTilGrunnlag(InntektArbeidYtelseGrunnlagDto dto) {
+        // FIXME mapping til IAYG entiteter
+        var overstyrtAktørArbeid = new MapAktørArbeid(tjeneste, koblingReferanse).mapFraDto(dto.getOverstyrt().getArbeid());
+
+        // bør denne sendes på samme grensesnitt? gjør det forsåvidt enkelt
+        var inntektsmeldinger = new MapInntektsmeldinger(tjeneste, koblingReferanse).mapFraDto(dto.getInntektsmeldinger());
+
+        // bør denne sendes på samme grensesnitt? gjør det forsåvidet enkelt
+        var oppgittOpptjening = new MapOppgittOpptjening().mapFraDto(dto.getOppgittOpptjening());
+
+        // disse er kun for migrering?
+        var aktørArbeidRegisterMigrering = new MapAktørArbeid(tjeneste, koblingReferanse).mapFraDto(dto.getOverstyrt().getArbeid());
+        var aktørInntektRegisterMigrering = new MapAktørInntekt().mapFraDto(dto.getRegister().getInntekt());
+        var aktørYtelseRegisterMigrering = new MapAktørYtelse().mapFraDto(dto.getRegister().getYtelse());
+
+        // FIXME ferdigstill dette
+        throw new UnsupportedOperationException("Not Yet Implemented");
+    }
+
     private void mapOpptjening(Optional<OppgittOpptjening> oppgittOpptjening,
                                InntektArbeidYtelseGrunnlagDto dto) {
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        oppgittOpptjening.ifPresent(oo -> dto.medOppgittOpptjening(new MapOppgittOpptjening().mapTilDto(oo)));
 
     }
 
     private void mapInntektsmeldinger(Optional<InntektsmeldingAggregat> inntektsmeldinger,
                                       List<InntektsmeldingSomIkkeKommer> inntektsmeldingerSomIkkeKommer,
                                       InntektArbeidYtelseGrunnlagDto dto) {
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        dto.medInntektsmeldinger(
+            new MapInntektsmeldinger(tjeneste, koblingReferanse).mapTilDto(inntektsmeldinger.orElse(null), inntektsmeldingerSomIkkeKommer));
     }
 
     private void mapSaksbehandlerOverstyrteOpplysninger(InntektArbeidYtelseAggregat aggregat,
@@ -87,7 +107,7 @@ public class IAYDtoMapper {
         LocalDateTime tidspunkt = aggregat.getOpprettetTidspunkt();
         Collection<AktørArbeid> aktørArbeid = aggregat.getAktørArbeid();
         dto.medOverstyrt(new InntektArbeidYtelseAggregatOverstyrtDto(tidspunkt)
-            .medArbeid(new MapAktørArbeid(tjeneste, koblingReferanse).map(aktørArbeid)));
+            .medArbeid(new MapAktørArbeid(tjeneste, koblingReferanse).mapTilDto(aktørArbeid)));
     }
 
     private void mapRegisterOpplysninger(Optional<InntektArbeidYtelseAggregat> aggregatOpt,
@@ -99,9 +119,9 @@ public class IAYDtoMapper {
         var tidspunkt = aggregat.getOpprettetTidspunkt();
         dto.medRegister(
             new InntektArbeidYtelseAggregatRegisterDto(tidspunkt)
-                .medArbeid(new MapAktørArbeid(tjeneste, koblingReferanse).map(aggregat.getAktørArbeid()))
-                .medInntekt(new MapAktørInntekt().map(aggregat.getAktørInntekt()))
-                .medYtelse(new MapAktørYtelse().map(aggregat.getAktørYtelse())));
+                .medArbeid(new MapAktørArbeid(tjeneste, koblingReferanse).mapTilDto(aggregat.getAktørArbeid()))
+                .medInntekt(new MapAktørInntekt().mapTilDto(aggregat.getAktørInntekt()))
+                .medYtelse(new MapAktørYtelse().mapTilDto(aggregat.getAktørYtelse())));
     }
 
 }
