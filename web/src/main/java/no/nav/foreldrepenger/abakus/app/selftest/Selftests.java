@@ -39,7 +39,7 @@ public class Selftests {
     public Selftests(
             HealthCheckRegistry registry,
             @Any Instance<ExtHealthCheck> healthChecks,
-            @KonfigVerdi(value = "application.name") String applicationName) {
+            @KonfigVerdi(value = "nais.app.name") String applicationName) {
 
         this.registry = registry;
         this.healthChecks = healthChecks;

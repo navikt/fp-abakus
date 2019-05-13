@@ -17,7 +17,7 @@ public final class ApplicationIdUtil {
                 hostname = Inet4Address.getLocalHost().getHostName();
             }
         } catch (NullPointerException | SecurityException | UnknownHostException e) {
-            hostname = System.getProperty("application.name", "java-application") + "-" + UUID.randomUUID();
+            hostname = System.getProperty("nais.app.name", "java-application") + "-" + UUID.randomUUID();
         }
         return hostname;
     }
