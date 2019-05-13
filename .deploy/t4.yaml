@@ -38,7 +38,7 @@ spec:
   resources: # Optional. See: http://kubernetes.io/docs/user-guide/compute-resources/
     limits:
       cpu: "2000m" # app will have its cpu usage throttled if exceeding this limit
-      memory: "512Mi"  # app will be killed if exceeding these limits
+      memory: "1024Mi"  # app will be killed if exceeding these limits
     requests: # App is guaranteed the requested resources and  will be scheduled on nodes with at least this amount of resources available
       cpu: "50m"
       memory: "256Mi"
