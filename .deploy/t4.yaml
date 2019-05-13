@@ -82,4 +82,4 @@ spec:
     - name: DEFAULTDS_USERNAME
       value: fpabakus-t4
     - name: DEFAULTDS_URL
-      value: postgresql://b27dbvl007.preprod.local:5432/fpabakus-t4
+      value: jdbc:postgresql://b27dbvl007.preprod.local:5432/fpabakus-t4
