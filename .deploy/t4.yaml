@@ -100,3 +100,5 @@ spec:
       value: https://wasapp-t4.adeo.no/tpsws/ws/Person/v3
     - name: SIGRUNRESTBEREGNETSKATT_URL
       value: https://sigrun-t4.nais.preprod.local
+    - name: ORGANISASJON_V4_URL
+      value: https://modapp-t4.adeo.no/ereg/ws/OrganisasjonService/v4
