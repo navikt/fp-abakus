@@ -1,14 +1,13 @@
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
-  labels:
-    team: teamforeldrepenger
   name: fpabakus
   namespace: t4
+  labels:
+    team: teamforeldrepenger
 spec:
   image: repo.adeo.no:5443/fpabakus:RELEASE_VERSION # Required. Docker image.
   port: 8080 # Required. The port number which is exposed by the container and should receive HTTP traffic.
-  team: teamforeldrepenger # Required. Set to the team that owns this application.
   liveness: # HTTP endpoint that signals 200 OK when the application is running.
     path: /fpabakus/internal/isAlive
     initialDelay: 30

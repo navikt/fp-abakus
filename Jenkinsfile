@@ -44,7 +44,7 @@ pipeline {
                         }
 
                         sh "mvn -U -B -s $MAVEN_SETTINGS -Dfile.encoding=UTF-8 -DinstallAtEnd=true -DdeployAtEnd=true -Dsha1= -Dchangelist= -Drevision=$version clean install"
-                        sh "docker build --pull -t $DOCKERREGISTRY/fpabakus:$version ."
+                        sh "docker build --pull -t ${DOCKERREGISTRY}/fpabakus:$version ."
                         withCredentials([[$class          : 'UsernamePasswordMultiBinding',
                                           credentialsId   : 'nexusUser',
                                           usernameVariable: 'NEXUS_USERNAME',
