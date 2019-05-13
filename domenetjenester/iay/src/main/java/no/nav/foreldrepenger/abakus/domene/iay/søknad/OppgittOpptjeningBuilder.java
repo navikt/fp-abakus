@@ -12,7 +12,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsfo
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.UtenlandskVirksomhet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
@@ -144,11 +143,6 @@ public class OppgittOpptjeningBuilder {
 
         public static OppgittArbeidsforholdBuilder ny() {
             return new OppgittArbeidsforholdBuilder(new OppgittArbeidsforholdEntitet());
-        }
-
-        public OppgittArbeidsforholdBuilder medVirksomhet(OrgNummer virksomhet) {
-            this.entitet.setVirksomhet(virksomhet);
-            return this;
         }
 
         public OppgittArbeidsforholdBuilder medPeriode(DatoIntervallEntitet periode) {

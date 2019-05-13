@@ -23,7 +23,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.UtenlandskVirkso
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
-import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
@@ -48,10 +47,6 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
     @JoinColumn(name = "oppgitt_opptjening_id", nullable = false, updatable = false)
     private OppgittOpptjeningEntitet oppgittOpptjening;
 
-    @ChangeTracked
-    @Embedded
-    private OrgNummer orgNummer;
-
     @Embedded
     @ChangeTracked
     private DatoIntervallEntitet periode;
@@ -75,16 +70,7 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(periode, orgNummer, utenlandskVirksomhet, arbeidType);
-    }
-
-    @Override
-    public OrgNummer getOrgnummer() {
-        return orgNummer;
-    }
-
-    void setVirksomhet(OrgNummer orgNummer) {
-        this.orgNummer = orgNummer;
+        return IndexKey.createKey(periode, utenlandskVirksomhet, arbeidType);
     }
 
     @Override
@@ -136,22 +122,20 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
 
         OppgittArbeidsforholdEntitet that = (OppgittArbeidsforholdEntitet) o;
 
-        return Objects.equals(orgNummer, that.orgNummer) &&
-            Objects.equals(periode, that.periode) &&
+        return Objects.equals(periode, that.periode) &&
             Objects.equals(arbeidType, that.arbeidType) &&
             Objects.equals(utenlandskVirksomhet, that.utenlandskVirksomhet);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orgNummer, periode, arbeidType, utenlandskVirksomhet);
+        return Objects.hash(periode, arbeidType, utenlandskVirksomhet);
     }
 
     @Override
     public String toString() {
         return "OppgittArbeidsforholdImpl{" +
             "id=" + id +
-            ", orgNummer=" + orgNummer +
             ", periode=" + periode +
             ", erUtenlandskInntekt=" + erUtenlandskInntekt +
             ", arbeidType=" + arbeidType +

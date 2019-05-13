@@ -565,7 +565,6 @@ create table IAY_OPPGITT_ARBEIDSFORHOLD
     OPPGITT_OPPTJENING_ID      bigint                              not null
         constraint FK_ARBEIDSFORHOLD_1
             references IAY_OPPGITT_OPPTJENING,
-    org_nummer                 varchar(100),
     FOM                        DATE                                not null,
     TOM                        DATE                                not null,
     UTENLANDSK_INNTEKT         VARCHAR(1)                          not null,
@@ -586,7 +585,6 @@ create table IAY_OPPGITT_ARBEIDSFORHOLD
 comment on table IAY_OPPGITT_ARBEIDSFORHOLD is 'Oppgitt informasjon om arbeidsforhold';
 comment on column IAY_OPPGITT_ARBEIDSFORHOLD.ID is 'Primærnøkkel';
 comment on column IAY_OPPGITT_ARBEIDSFORHOLD.OPPGITT_OPPTJENING_ID is 'FK:';
-comment on column IAY_OPPGITT_ARBEIDSFORHOLD.org_nummer is 'FK:';
 comment on column IAY_OPPGITT_ARBEIDSFORHOLD.UTENLANDSK_INNTEKT is 'Inntekt fra utenlandsk arbeidsforhold';
 comment on column IAY_OPPGITT_ARBEIDSFORHOLD.ARBEID_TYPE is 'Fremmednøkkel til tabell over arbeidstyper';
 comment on column IAY_OPPGITT_ARBEIDSFORHOLD.KL_ARBEID_TYPE is 'Referanse til KODEVERK-kolonnen i KODELISTE-tabellen';
@@ -594,8 +592,6 @@ comment on column IAY_OPPGITT_ARBEIDSFORHOLD.UTENLANDSK_VIRKSOMHET_NAVN is 'Navn
 comment on column IAY_OPPGITT_ARBEIDSFORHOLD.KL_LANDKODER is 'Referanse til KODEVERK-kolonnen i KODELISTE-tabellen';
 create index IDX_OPPGITT_ARBEIDSFORHOLD_1
     on IAY_OPPGITT_ARBEIDSFORHOLD (OPPGITT_OPPTJENING_ID);
-create index IDX_OPPGITT_ARBEIDSFORHOLD_2
-    on IAY_OPPGITT_ARBEIDSFORHOLD (org_nummer);
 create index IDX_OPPGITT_ARBEIDSFORHOLD_3
     on IAY_OPPGITT_ARBEIDSFORHOLD (ARBEID_TYPE);
 create index IDX_OPPGITT_ARBEIDSFORHOLD_4
