@@ -16,12 +16,18 @@ class VedtakStreamKafkaProperties {
     private final String password;
     private final Topic topic;
     private final String applicationId;
+    private final String trustStorePath;
+    private final String trustStorePassword;
 
     @Inject
     VedtakStreamKafkaProperties(@KonfigVerdi("kafka.bootstrap.servers") String bootstrapServers,
                                 @KonfigVerdi("kafka.schema.registry.url") String schemaRegistryUrl,
                                 @KonfigVerdi("systembruker.username") String username,
-                                @KonfigVerdi("systembruker.password") String password) {
+                                @KonfigVerdi("systembruker.password") String password,
+                                @KonfigVerdi(value = "nav.truststore.path", required = false) String trustStorePath,
+                                @KonfigVerdi(value = "nav.truststore.password", required = false) String trustStorePassword) {
+        this.trustStorePath = trustStorePath;
+        this.trustStorePassword = trustStorePassword;
         this.topic = TopicManifest.FATTET_VEDTAK;
         this.applicationId = ApplicationIdUtil.get();
         this.bootstrapServers = bootstrapServers;
@@ -68,5 +74,18 @@ class VedtakStreamKafkaProperties {
 
     String getApplicationId() {
         return applicationId;
+    }
+
+    boolean harSattTrustStore() {
+        return trustStorePath != null && !trustStorePath.isEmpty()
+            && trustStorePassword != null && !trustStorePassword.isEmpty();
+    }
+
+    String getTrustStorePath() {
+        return trustStorePath;
+    }
+
+    String getTrustStorePassword() {
+        return trustStorePassword;
     }
 }

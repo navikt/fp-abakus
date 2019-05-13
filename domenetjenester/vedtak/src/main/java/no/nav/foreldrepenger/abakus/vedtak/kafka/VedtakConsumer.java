@@ -7,7 +7,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.kafka.clients.CommonClientConfigs;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.config.SaslConfigs;
+import org.apache.kafka.common.config.SslConfigs;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
@@ -85,11 +87,11 @@ public class VedtakConsumer implements AppServiceHandler {
         }
 
         // Setup truststore? Skal det settes opp?
-        // if(truststore != null) {
-        //     props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_SSL")
-        //     props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststore.absolutePath)
-        //     props.put(SslConfigs.S SL_TRUSTSTORE_PASSWORD_CONFIG, truststore.password)
-        // }
+        if (streamProperties.harSattTrustStore()) {
+            props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_SSL");
+            props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, streamProperties.getTrustStorePath());
+            props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, streamProperties.getTrustStorePassword());
+        }
 
         // Setup schema-registry
         if (streamProperties.getSchemaRegistryUrl() != null) {
@@ -100,6 +102,10 @@ public class VedtakConsumer implements AppServiceHandler {
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, streamProperties.getKeyClass());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, streamProperties.getValueClass());
         props.put(StreamsConfig.DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG, LogAndFailExceptionHandler.class);
+
+        // Polling
+        props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "200");
+        props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, "100000");
 
         return props;
     }
