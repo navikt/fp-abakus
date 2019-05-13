@@ -83,3 +83,44 @@ spec:
       value: fpabakus-t4
     - name: DEFAULTDS_URL
       value: jdbc:postgresql://b27dbvl007.preprod.local:5432/fpabakus-t4
+    # Eksterne systemer
+    - name: HENTINNTEKTLISTEBOLK_URL
+      value: https://app-t4.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk
+    - name: VIRKSOMHET_ARBEIDSFORHOLD_V3_SECURITYTOKEN
+      value: SAML
+    - name: ARBEIDSFORHOLD_V3_URL
+      value: https://modapp-t4.adeo.no/aareg-core/ArbeidsforholdService/v3
+    - name: VIRKSOMHET_ARBEIDSFORHOLD_V3_WSDLURL
+      value: http://maven.adeo.no/nexus/content/groups/public/no/nav/tjenester/fim/nav-arbeidsforhold-v3-tjenestespesifikasjon/3.0.0/nav-arbeidsforhold-v3-tjenestespesifikasjon-3.0.0.zip
+    - name: VIRKSOMHET_INFOTRYGDSAK_V1_SECURITYTOKEN
+      value: SAML
+    - name: INFOTRYGDSAK_V1_URL
+      value: https://modapp-t4.adeo.no/infotrygd-ws/InfotrygdSak/v1
+    - name: VIRKSOMHET_INFOTRYGDSAK_V1_WSDLURL
+      value: http://maven.adeo.no/nexus/content/groups/public/no/nav/tjenester/nav-infotrygdSak-v1-tjenestespesifikasjon/1.1.1/nav-infotrygdSak-v1-tjenestespesifikasjon-1.1.1.zip
+    - name: VIRKSOMHET_INFOTRYGDBEREGNINGSGRUNNLAG_V1_SECURITYTOKEN
+      value: SAML
+    - name: INFOTRYGDBEREGNINGSGRUNNLAG_V1_URL
+      value: https://modapp-t4.adeo.no/infotrygd-ws/InfotrygdBeregningsgrunnlag/v1
+    - name: VIRKSOMHET_INFOTRYGDBEREGNINGSGRUNNLAG_V1_WSDLURL
+      value: http://maven.adeo.no/nexus/content/groups/public/no/nav/tjenester/nav-infotrygdBeregningsgrunnlag-v1-tjenestespesifikasjon/1.0.2/nav-infotrygdBeregningsgrunnlag-v1-tjenestespesifikasjon-1.0.2.zip
+    - name: VIRKSOMHET_MELDEKORTUTBETALINGSGRUNNLAG_V1_SECURITYTOKEN
+      value: SAML
+    - name: MELDEKORTUTBETALINGSGRUNNLAG_V1_URL
+      value: https://arena-t4.adeo.no/ail_ws/MeldekortUtbetalingsgrunnlag_v1
+    - name: VIRKSOMHET_MELDEKORTUTBETALINGSGRUNNLAG_V1_WSDLURL
+      value: http://maven.adeo.no/nexus/content/repositories/public/no/nav/tjenester/nav-meldekortUtbetalingsgrunnlag-v1-tjenestespesifikasjon/1.0.1/nav-meldekortUtbetalingsgrunnlag-v1-tjenestespesifikasjon-1.0.1.zip
+    - name: AKTOER_V2_SECURITYTOKEN
+      value: SAML
+    - name: AKTOER_V2_URL
+      value: https://app-t4.adeo.no/aktoerregister/ws/Aktoer/v2
+    - name: AKTOER_V2_WSDLURL
+      value: http://maven.adeo.no/nexus/content/groups/public/no/nav/tjenester/fim/nav-fim-aktoer-v2-tjenestespesifikasjon/2.0.1/nav-fim-aktoer-v2-tjenestespesifikasjon-2.0.1.zip
+    - name: PERSON_V3_URL
+      value: https://wasapp-t4.adeo.no/tpsws/ws/Person/v3
+    - name: VIRKSOMHET_PERSON_V3_WSDLURL
+      value: http://maven.adeo.no/nexus/content/groups/public/no/nav/tjenester/nav-person-v3-tjenestespesifikasjon/3.6.1/nav-person-v3-tjenestespesifikasjon-3.6.1.zip
+    - name: VIRKSOMHET_PERSON_V3_SECURITYTOKEN
+      value: SAML
+    - name: SIGRUNRESTBEREGNETSKATT_URL
+      value: https://sigrun-t4.nais.preprod.local
