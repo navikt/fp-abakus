@@ -126,6 +126,14 @@ public class VedtakConsumer implements AppServiceHandler {
         log.info("Starter konsumering av topic={}, tilstand={}", topic, stream.state());
     }
 
+    public KafkaStreams.State getTilstand() {
+        return stream.state();
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
     @Override
     public void stop() {
         log.info("Starter shutdown av topic={}, tilstand={} med 10 sekunder timeout", topic, stream.state());
