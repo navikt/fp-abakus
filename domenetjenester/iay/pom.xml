@@ -1,116 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>no.nav.foreldrepenger.abakus</groupId>
-		<artifactId>domenetjenester</artifactId>
-		<version>${revision}${sha1}${changelist}</version>
-	</parent>
+    <parent>
+        <groupId>no.nav.foreldrepenger.abakus</groupId>
+        <artifactId>domenetjenester</artifactId>
+        <version>${revision}${sha1}${changelist}</version>
+    </parent>
 
-	<artifactId>iay</artifactId>
-	<packaging>jar</packaging>
-	<name>Abakus :: Domenetjeneste :: IAY</name>
+    <artifactId>iay</artifactId>
+    <packaging>jar</packaging>
+    <name>Abakus :: Domenetjeneste :: IAY</name>
 
 
-	<dependencies>
+    <dependencies>
+        <dependency>
+            <!-- for Bean validation -->
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
 
-		<dependency>
-			<!-- for Bean validation -->
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.abakus</groupId>
+            <artifactId>prosesstask</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.abakus</groupId>
+            <artifactId>kodeverk</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.abakus</groupId>
+            <artifactId>kobling</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>no.nav.foreldrepenger.abakus</groupId>
-			<artifactId>prosesstask</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.abakus</groupId>
-			<artifactId>kodeverk</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.abakus</groupId>
-			<artifactId>kobling</artifactId>
-		</dependency>
+        <!-- integrasjoner -->
+        <dependency>
+            <groupId>no.nav.foreldrepenger.abakus</groupId>
+            <artifactId>vedtak</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+            <artifactId>person-klient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+            <artifactId>aktoer-klient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+            <artifactId>arbeidsforhold-klient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+            <artifactId>infotrygdsak-klient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+            <artifactId>infotrygdberegningsgrunnlag-klient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+            <artifactId>meldekortutbetalingsgrunnlag-klient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+            <artifactId>sigrun-klient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.kontrakter</groupId>
+            <artifactId>fp-feed-vedtak-tjenestespesifikasjon</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+            <artifactId>organisasjon-klient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.kontrakter</groupId>
+            <artifactId>registerdata-callback-v1</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.kontrakter</groupId>
+            <artifactId>iaygrunnlag-v1</artifactId>
+        </dependency>
 
-		<!-- integrasjoner -->
-		<dependency>
-			<groupId>no.nav.foreldrepenger.abakus</groupId>
-			<artifactId>vedtak</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-			<artifactId>person-klient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-			<artifactId>aktoer-klient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-			<artifactId>arbeidsforhold-klient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-			<artifactId>infotrygdsak-klient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-			<artifactId>infotrygdberegningsgrunnlag-klient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-			<artifactId>meldekortutbetalingsgrunnlag-klient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-			<artifactId>sigrun-klient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.kontrakter</groupId>
-			<artifactId>fp-feed-vedtak-tjenestespesifikasjon</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-			<artifactId>organisasjon-klient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.kontrakter</groupId>
-			<artifactId>registerdata-callback-v1</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.kontrakter</groupId>
-			<artifactId>iaygrunnlag-v1</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>io.swagger</groupId>
-			<artifactId>swagger-annotations</artifactId>
-		</dependency>
-
-		<!-- TEST -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.abakus</groupId>
-			<artifactId>migreringer</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+        <!-- TEST -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.abakus</groupId>
+            <artifactId>migreringer</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>
