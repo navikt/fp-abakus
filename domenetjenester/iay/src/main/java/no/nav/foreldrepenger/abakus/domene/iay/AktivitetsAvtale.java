@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import no.nav.foreldrepenger.abakus.typer.AntallTimer;
@@ -73,4 +74,10 @@ public interface AktivitetsAvtale {
     Yrkesaktivitet getYrkesaktivitet();
 
     boolean erAnsettelsesPeriode();
+
+    /** Returner {@link #getAntallTimer()} (skalert) eller null.*/
+    BigDecimal getAntallTimerVerdi();
+
+    /** Returner {@link #getProsentsats()} (skalert) eller null.*/
+    BigDecimal getProsentsatsVerdi();
 }

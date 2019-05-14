@@ -9,7 +9,8 @@ import javax.persistence.Embeddable;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 
 /**
- * Arbeidsforhold id fra AA-registeret. (ikke intern id)
+ * Arbeidsforhold er intern abakus referanse for arbeidsforholdet.
+ * Slå opp aaregister referanse fra InntektArbeidYtelseTjenese#finnReferanse.
  */
 
 @Embeddable

@@ -27,33 +27,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <felles.version>1.1.0_20190426145715_7947467</felles.version>
-
-        <abac-attribute-constants.version>2.0.0</abac-attribute-constants.version>
-
-        <!-- Eksterne -->
-        <assertj.version>3.7.0</assertj.version>
-        <postgres.version>42.2.5</postgres.version>
-        <hamcrest.version>1.3</hamcrest.version>
-        <junit.version>4.12</junit.version>
-        <mockito.version>2.20.1</mockito.version>
-        <geronimo.jaspi.version>2.0.0</geronimo.jaspi.version>
-        <geronimo.osgi.version>1.1</geronimo.osgi.version>
-        <logstash.version>4.10</logstash.version>
-        <syslog4j.version>1.0.0</syslog4j.version>
-
-        <!-- Transitive avh. versjoner for å sikre unikhet (enforcer dependencyConvergence).  Skal ikke benyttes direkte av vår egen kode. -->
-        <apache.ws.xmlschema.version>2.2.2</apache.ws.xmlschema.version>
-        <joda-time.version>2.9.9</joda-time.version>
-        <owaspencoder.version>1.2.1</owaspencoder.version>
-        <sysdoc.version>1.0.8</sysdoc.version>
-        <javaslang.version>2.0.6</javaslang.version>
-        <swagger.version>1.5.17</swagger.version>
-        <swagger.spec-parser.version>1.0.28</swagger.spec-parser.version>
-        <swagger2markup.version>1.1.2</swagger2markup.version>
-        <cxf.version>3.3.1</cxf.version>
         <prometheus.version>0.6.0</prometheus.version>
-        <kontrakter.version>5.0_20190510115631_66c58be</kontrakter.version>
+
+        <felles.version>1.1.0_20190426145715_7947467</felles.version>
+        <kontrakter.version>5.0_20190513133315_b43503d</kontrakter.version>
     </properties>
 
     <prerequisites>
@@ -61,10 +38,17 @@
         <maven>3.5.3</maven>
     </prerequisites>
 
-    <!-- NB: Unngå å put scope (test, provided) i dependency management. Det har uheldige virkninger ved bruk av import og dependency (bruk composition
-    over arv) da de overstyrer andre scope definisjoner. Sett det heller der det brukes. -->
+    <!-- NB: Unngå å put scope (test, provided) i dependency management. Det har uheldige virkninger ved bruk av import og dependency (bruk composition over arv) da
+        de overstyrer andre scope definisjoner. Sett det heller der det brukes. -->
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.kontrakter</groupId>
+                <artifactId>foreldrepenger-kontrakter-root</artifactId>
+                <version>${kontrakter.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
             <dependency>
                 <groupId>no.nav.foreldrepenger.felles</groupId>
                 <artifactId>felles</artifactId>
@@ -83,13 +67,6 @@
                 <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
                 <artifactId>felles-integrasjon-pom</artifactId>
                 <version>${felles.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.kontrakter</groupId>
-                <artifactId>foreldrepenger-kontrakter-root</artifactId>
-                <version>${kontrakter.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -149,7 +126,7 @@
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>${postgres.version}</version>
+                <version>42.2.5</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.kafka</groupId>
@@ -186,62 +163,69 @@
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>${assertj.version}</version>
+                <version>3.8.0</version>
             </dependency>
 
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
+                <version>4.12</version>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>${mockito.version}</version>
+                <version>2.20.1</version>
             </dependency>
 
             <dependency>
                 <groupId>net.logstash.logback</groupId>
                 <artifactId>logstash-logback-encoder</artifactId>
-                <version>${logstash.version}</version>
+                <version>4.10</version>
             </dependency>
             <dependency>
                 <groupId>com.papertrailapp</groupId>
                 <artifactId>logback-syslog4j</artifactId>
-                <version>${syslog4j.version}</version>
+                <version>1.0.0</version>
+            </dependency>
+
+            <!-- Java11 -->
+            <dependency>
+                <groupId>com.sun.xml.ws</groupId>
+                <artifactId>jaxws-rt</artifactId>
+                <version>2.3.2</version>
             </dependency>
 
             <dependency>
                 <!-- Transitive avhengighet resolution for å sikre bestemt versjon -->
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>${joda-time.version}</version>
+                <version>2.9.9</version>
             </dependency>
             <dependency>
                 <!-- Transitive avhengighet resolution for å sikre bestemt versjon -->
                 <groupId>org.owasp.encoder</groupId>
                 <artifactId>encoder</artifactId>
-                <version>${owaspencoder.version}</version>
+                <version>1.2.1</version>
             </dependency>
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-compat-spec-parser</artifactId>
-                <version>${swagger.spec-parser.version}</version>
+                <version>1.0.28</version>
             </dependency>
             <dependency>
                 <groupId>io.javaslang</groupId>
                 <artifactId>javaslang</artifactId>
-                <version>${javaslang.version}</version>
+                <version>2.0.6</version>
             </dependency>
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-annotations</artifactId>
-                <version>${swagger.version}</version>
+                <version>1.5.17</version>
             </dependency>
             <dependency>
                 <groupId>io.github.swagger2markup</groupId>
                 <artifactId>markup-document-builder</artifactId>
-                <version>${swagger2markup.version}</version>
+                <version>1.1.2</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
@@ -274,6 +258,40 @@
                 <groupId>io.prometheus</groupId>
                 <artifactId>simpleclient_common</artifactId>
                 <version>${prometheus.version}</version>
+            </dependency>
+
+            <dependency>
+                <!-- for Bean validation -->
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>6.0.16.Final</version>
+            </dependency>
+            <dependency>
+                <!-- for Bean validation -->
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>6.0.16.Final</version>
+            </dependency>
+            <dependency>
+                <!-- for Bean validation -->
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>2.0.1.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>txw2</artifactId>
+                <version>2.4.0-b180830.0438</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.woodstox</groupId>
+                <artifactId>woodstox-core</artifactId>
+                <version>5.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.woodstox</groupId>
+                <artifactId>stax2-api</artifactId>
+                <version>4.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -388,7 +406,7 @@
                     <artifactId>flatten-maven-plugin</artifactId>
                     <version>1.0.0</version>
                 </plugin>
-                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
                     <artifactId>lifecycle-mapping</artifactId>
@@ -486,10 +504,8 @@
                                     </excludes>
                                 </bannedDependencies>
                                 <dependencyConvergence/>
-                                <!-- Ikke kommenter inn denne. Det brekker muligheten til å bygge bare deler av prosjektet
-                                https://issues.apache.org/jira/browse/MENFORCER-189 -> "ReactorModuleConvergence is not compatible with 'advanced' reactor options: -pl, -rf"
-                                                <reactorModuleConvergence />
-                                -->
+                                <!-- Ikke kommenter inn denne. Det brekker muligheten til å bygge bare deler av prosjektet https://issues.apache.org/jira/browse/MENFORCER-189 -> "ReactorModuleConvergence
+                                    is not compatible with 'advanced' reactor options: -pl, -rf" <reactorModuleConvergence /> -->
                             </rules>
                         </configuration>
                     </execution>
@@ -562,7 +578,8 @@
                 <sonar.coverage.exclusions>${sonar.exclusions}</sonar.coverage.exclusions>
                 <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
                 <sonar.jacoco.reportPaths>${maven.root}/target/jacoco.exec</sonar.jacoco.reportPaths>
-                <sonar.javascript.lcov.reportPath>${maven.root}/web/klient/coverage/lcov.info</sonar.javascript.lcov.reportPath>
+                <sonar.javascript.lcov.reportPath>${maven.root}/web/klient/coverage/lcov.info
+                </sonar.javascript.lcov.reportPath>
                 <sonar.javascript.file.suffixes>.js,.jsx</sonar.javascript.file.suffixes>
                 <sonar.leak.period>previous_analysis</sonar.leak.period>
             </properties>

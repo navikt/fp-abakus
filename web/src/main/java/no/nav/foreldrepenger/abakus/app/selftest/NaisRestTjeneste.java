@@ -13,8 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.swagger.annotations.Api;
+import no.nav.foreldrepenger.abakus.app.konfig.ApplicationServiceStarter;
 import no.nav.foreldrepenger.abakus.app.konfig.InternalApplication;
-import no.nav.foreldrepenger.abakus.app.tjenester.ApplicationServiceStarter;
 
 @Api(tags = {"nais"})
 @Path("/")
@@ -37,13 +37,13 @@ public class NaisRestTjeneste {
     @Inject
     public NaisRestTjeneste(ApplicationServiceStarter starterService) {
         this.starterService = starterService;
-        logger.info("NaisResttjeneste init");
     }
 
     @GET
     @Path("isAlive")
     public Response isAlive() {
         // TODO: Check state of kafkastream?
+        logger.debug("Application is alive.");
         return Response
             .ok(RESPONSE_OK)
             .header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL)

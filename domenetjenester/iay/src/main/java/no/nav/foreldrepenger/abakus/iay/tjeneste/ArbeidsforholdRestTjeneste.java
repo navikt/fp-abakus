@@ -3,7 +3,10 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
+import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -19,23 +22,20 @@ import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.ArbeidsforholdForAktørIPeriodeDto;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.ArbeidsforholdForAktørPåDatoDto;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.ArbeidstakersArbeidsforholdDto;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.ReferanseForArbeidsforhold;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.arbeidsforhold.ArbeidsforholdDtoTjeneste;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.arbeidsforhold.ArbeidsforholdReferanseDto;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.ArbeidsgiverDto;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.ArbeidsgiverType;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.PeriodeDto;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingLås;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.ArbeidsforholdReferanse;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.AktørDatoRequest;
 import no.nav.vedtak.felles.jpa.Transaction;
+import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
+import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 
 @Api(tags = "arbeidsforhold")
 @Path("/arbeidsforhold/v1")
@@ -62,26 +62,19 @@ public class ArbeidsforholdRestTjeneste {
 
     @POST
     @Path("/arbeidstaker")
-    @ApiOperation(value = "Gir ut alle arbeidsforhold i en gitt periode for en gitt aktør. NB! Kaller direkte til aa-registeret")
+    @ApiOperation(value = "Gir ut alle arbeidsforhold i en gitt periode/dato for en gitt aktør. NB! Kaller direkte til aa-registeret")
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response arbeidsforholdForReferanse(@NotNull @Valid ArbeidsforholdForAktørIPeriodeDto request) {
-        AktørId aktørId = new AktørId(request.getAktør().getId());
-        PeriodeDto periode = request.getPeriode();
+    public Response arbeidsforholdForReferanse(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
+        AktørId aktørId = new AktørId(request.getAktør().getIdent());
+        Periode periode = request.getPeriode();
 
-        ArbeidstakersArbeidsforholdDto arbeidstakersArbeidsforhold = dtoTjeneste.mapFor(aktørId, periode.getFom(), periode.getTom());
-        return Response.ok(arbeidstakersArbeidsforhold).build();
-    }
+        LocalDate fom = periode.getFom();
+        LocalDate tom = Objects.equals(fom, periode.getTom())
+            ? fom.plusDays(1) // enkel dato søk
+            : periode.getTom(); // periode søk
 
-    @POST
-    @Path("/arbeidstaker")
-    @ApiOperation(value = "Gir ut alle arbeidsforhold på en gitt dato for en gitt aktør. NB! Kaller direkte til aa-registeret")
-    @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response arbeidsforholdForReferanse(@NotNull @Valid ArbeidsforholdForAktørPåDatoDto request) {
-        AktørId aktørId = new AktørId(request.getAktør().getId());
-
-        ArbeidstakersArbeidsforholdDto arbeidstakersArbeidsforhold = dtoTjeneste.mapFor(aktørId, request.getDato(), request.getDato().plusDays(1));
+        var arbeidstakersArbeidsforhold = dtoTjeneste.mapFor(aktørId, fom, tom);
         return Response.ok(arbeidstakersArbeidsforhold).build();
     }
 
@@ -90,26 +83,44 @@ public class ArbeidsforholdRestTjeneste {
     @ApiOperation(value = "Finner eksisterende intern referanse for arbeidsforholdId eller lager en ny")
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response referanseForArbeidsforhold(@NotNull @Valid ReferanseForArbeidsforhold request) {
+    public Response referanseForArbeidsforhold(@NotNull @TilpassetAbacAttributt(supplierClass = ArbeidsforholdReferanseAbacDataSupplier.class) @Valid ArbeidsforholdReferanse request) {
         UUID referanse = UUID.fromString(request.getReferanse().getReferanse());
         KoblingLås koblingLås = koblingTjeneste.taSkrivesLås(referanse);
 
         Kobling kobling = koblingTjeneste.hentFor(referanse).orElseThrow(IllegalArgumentException::new);
         ArbeidsforholdInformasjon arbeidsforholdInformasjon = iayTjeneste.hentArbeidsforholdInformasjonForKobling(kobling.getId());
 
-        ArbeidsforholdRef arbeidsforholdRef = arbeidsforholdInformasjon.finnEllerOpprett(tilArbeidsgiver(request), ArbeidsforholdRef.ref(request.getArbeidsforholdId()));
+        ArbeidsforholdRef arbeidsforholdRef = arbeidsforholdInformasjon.finnEllerOpprett(tilArbeidsgiver(request),
+            ArbeidsforholdRef.ref(request.getArbeidsforholdId()));
 
-        ArbeidsforholdReferanseDto dto = dtoTjeneste.mapArbeidsforhold(request.getArbeidsgiver(), request.getArbeidsforholdId(), arbeidsforholdRef.getReferanse());
+        var dto = dtoTjeneste.mapArbeidsforhold(request.getArbeidsgiver(), request.getArbeidsforholdId(), arbeidsforholdRef.getReferanse());
         koblingTjeneste.oppdaterLåsVersjon(koblingLås);
 
         return Response.ok(dto).build();
     }
 
-    private Arbeidsgiver tilArbeidsgiver(@Valid @NotNull ReferanseForArbeidsforhold request) {
-        ArbeidsgiverDto arbeidsgiver = request.getArbeidsgiver();
-        if (ArbeidsgiverType.VIRKSOMHET.equals(arbeidsgiver.getType())) {
-            return ArbeidsgiverEntitet.virksomhet(virksomhetTjeneste.hentOgLagreOrganisasjon(arbeidsgiver.getIdentifikator()));
+    private Arbeidsgiver tilArbeidsgiver(@Valid @NotNull ArbeidsforholdReferanse request) {
+        var arbeidsgiver = request.getArbeidsgiver();
+        if (arbeidsgiver.getErOrganisasjon()) {
+            return ArbeidsgiverEntitet.virksomhet(virksomhetTjeneste.hentOgLagreOrganisasjon(arbeidsgiver.getIdent()));
         }
-        return ArbeidsgiverEntitet.person(new AktørId(arbeidsgiver.getIdentifikator()));
+        return ArbeidsgiverEntitet.person(new AktørId(arbeidsgiver.getIdent()));
+    }
+
+    private class AktørDatoRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
+
+        @Override
+        public AbacDataAttributter apply(Object obj) {
+            AktørDatoRequest req = (AktørDatoRequest) obj;
+            return AbacDataAttributter.opprett().leggTilAktørId(req.getAktør().getIdent());
+        }
+    }
+
+    private class ArbeidsforholdReferanseAbacDataSupplier implements Function<Object, AbacDataAttributter> {
+
+        @Override
+        public AbacDataAttributter apply(Object obj) {
+            return AbacDataAttributter.opprett();
+        }
     }
 }

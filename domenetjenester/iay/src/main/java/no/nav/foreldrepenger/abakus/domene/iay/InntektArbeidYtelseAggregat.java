@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 public interface InntektArbeidYtelseAggregat {
@@ -10,4 +11,5 @@ public interface InntektArbeidYtelseAggregat {
 
     Collection<AktørYtelse> getAktørYtelse();
 
+    LocalDateTime getOpprettetTidspunkt();
 }

@@ -52,8 +52,14 @@ public interface InntektArbeidYtelseTjeneste {
 
     void lagre(Long koblingId, AktørId aktørId, ArbeidsforholdInformasjonBuilder builder);
 
+    /**
+     * @deprecated bytt til UUID for kobling referanse
+     */
+    @Deprecated(forRemoval = true)
     ArbeidsforholdRef finnReferanseFor(Long behandlingId, Arbeidsgiver arbeidsgiver, ArbeidsforholdRef arbeidsforholdRef, boolean beholdErstattetVerdi);
+    ArbeidsforholdRef finnReferanseFor(UUID koblingReferanse, Arbeidsgiver arbeidsgiver, ArbeidsforholdRef arbeidsforholdRef, boolean beholdErstattetVerdi);
 
     ArbeidsforholdInformasjon hentArbeidsforholdInformasjonForKobling(Long koblingId);
+
 
 }

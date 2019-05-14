@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 import org.junit.Before;
 import org.junit.Test;
 
+import no.nav.foreldrepenger.abakus.app.konfig.ApplicationServiceStarter;
 import no.nav.foreldrepenger.abakus.app.selftest.NaisRestTjeneste;
 import no.nav.foreldrepenger.abakus.app.selftest.SelftestService;
 

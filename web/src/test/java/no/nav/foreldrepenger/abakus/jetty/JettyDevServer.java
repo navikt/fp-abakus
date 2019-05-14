@@ -97,7 +97,10 @@ public class JettyDevServer extends JettyServer {
         super.konfigurerSikkerhet();
 
         // Setter opp lokal truststore
-        System.setProperty("javax.net.ssl.trustStore", new File(System.getProperty("user.home") + "/abakus/truststore.jks").getAbsolutePath());
+        String truststorePath = new File(System.getProperty("user.home") + "/abakus/truststore.jks").getAbsolutePath();
+        System.setProperty("nav.truststore.path", "");
+        System.setProperty("nav.truststore.password", "");
+        System.setProperty("javax.net.ssl.trustStore", truststorePath);
         System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
         System.setProperty("no.nav.modig.security.appcert.keystore", new File(System.getProperty("user.home") + "/abakus/keystore.jks").getAbsolutePath());
         System.setProperty("no.nav.modig.security.appcert.password", "changeit");

@@ -24,10 +24,10 @@ import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.IAYRegisterInnhentingTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.RegisterdataInnhentingTask;
 import no.nav.foreldrepenger.abakus.registerdata.callback.CallbackTask;
-import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.Aktør;
-import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.InnhentRegisterdataDto;
-import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.PeriodeDto;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Aktør;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskGruppe;
@@ -70,7 +70,7 @@ public class InnhentRegisterdataTjeneste {
         map.put(type, innhenter);
     }
 
-    public Optional<UUID> innhent(InnhentRegisterdataDto dto) {
+    public Optional<UUID> innhent(InnhentRegisterdataRequest dto) {
         Kobling kobling = oppdaterKobling(dto);
 
         // Trigg innhenting
@@ -89,30 +89,30 @@ public class InnhentRegisterdataTjeneste {
         return innhenter;
     }
 
-    private Kobling oppdaterKobling(InnhentRegisterdataDto dto) {
+    private Kobling oppdaterKobling(InnhentRegisterdataRequest dto) {
         UUID referanse = UUID.fromString(dto.getReferanse());
         Optional<Kobling> koblingOpt = koblingTjeneste.hentFor(referanse);
         Kobling kobling;
         if (koblingOpt.isEmpty()) {
             // Lagre kobling
-            PeriodeDto opplysningsperiode = dto.getOpplysningsperiode();
+            Periode opplysningsperiode = dto.getOpplysningsperiode();
             YtelseType ytelseType = mapTilYtelseType(dto);
             DatoIntervallEntitet opplysningsperiode1 = DatoIntervallEntitet.fraOgMedTilOgMed(opplysningsperiode.getFom(), opplysningsperiode.getTom());
-            AktørId aktørId = new AktørId(dto.getAktørId().getId());
+            AktørId aktørId = new AktørId(dto.getAktør().getIdent());
             kobling = new Kobling(referanse, aktørId, opplysningsperiode1, ytelseType);
         } else {
             kobling = koblingOpt.get();
         }
         // Oppdater kobling
-        Aktør annenPartAktørId = dto.getAnnenPartAktørId();
-        if (annenPartAktørId != null) {
-            kobling.setAnnenPartAktørId(new AktørId(annenPartAktørId.getId()));
+        Aktør annenPartAktør = dto.getAnnenPartAktør();
+        if (annenPartAktør != null) {
+            kobling.setAnnenPartAktørId(new AktørId(annenPartAktør.getIdent()));
         }
-        PeriodeDto opplysningsperiode = dto.getOpplysningsperiode();
+        Periode opplysningsperiode = dto.getOpplysningsperiode();
         if (opplysningsperiode != null) {
             kobling.setOpplysningsperiode(DatoIntervallEntitet.fraOgMedTilOgMed(opplysningsperiode.getFom(), opplysningsperiode.getTom()));
         }
-        PeriodeDto opptjeningsperiode = dto.getOpptjeningsperiode();
+        Periode opptjeningsperiode = dto.getOpptjeningsperiode();
         if (opptjeningsperiode != null) {
             kobling.setOpptjeningsperiode(DatoIntervallEntitet.fraOgMedTilOgMed(opptjeningsperiode.getFom(), opptjeningsperiode.getTom()));
         }
@@ -121,11 +121,11 @@ public class InnhentRegisterdataTjeneste {
         return kobling;
     }
 
-    private YtelseType mapTilYtelseType(InnhentRegisterdataDto dto) {
+    private YtelseType mapTilYtelseType(InnhentRegisterdataRequest dto) {
         return kodeverkRepository.finn(YtelseType.class, dto.getYtelseType().getKode());
     }
 
-    public String triggAsyncInnhent(InnhentRegisterdataDto dto) {
+    public String triggAsyncInnhent(InnhentRegisterdataRequest dto) {
         Kobling kobling = oppdaterKobling(dto);
 
         ProsessTaskGruppe taskGruppe = new ProsessTaskGruppe();
@@ -160,4 +160,5 @@ public class InnhentRegisterdataTjeneste {
         Optional<InntektArbeidYtelseGrunnlag> grunnlag = iayTjeneste.hentGrunnlagFor(kobling.get().getId());
         return grunnlag.map(InntektArbeidYtelseGrunnlag::getReferanse);
     }
+
 }
