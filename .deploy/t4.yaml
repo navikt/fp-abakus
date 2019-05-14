@@ -58,7 +58,7 @@ spec:
       value: https://sts-t4.test.local/SecurityTokenServiceProvider/
       #Systembruker
     - name: SYSTEMBRUKER_USERNAME
-      value: srvfpabakus
+      value: srvfp-abakus
     #OpenID
     - name: OPENIDCONNECT_ISSOHOST
       value: https://isso-t.adeo.no/isso/oauth2
