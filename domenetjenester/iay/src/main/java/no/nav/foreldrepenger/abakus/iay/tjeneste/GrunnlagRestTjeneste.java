@@ -4,6 +4,7 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
 import java.util.UUID;
+import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -24,7 +25,9 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 import no.nav.vedtak.felles.jpa.Transaction;
+import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
+import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 
 @Api(tags = "arbeidsforhold")
 @Path("/iay/v1")
@@ -47,17 +50,17 @@ public class GrunnlagRestTjeneste {
     @ApiOperation(value = "Hent IAY Grunnlag for angitt søke spesifikasjon", response = InntektArbeidYtelseGrunnlagDto.class)
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response hentIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequest spesifikasjon) {
-        
+    public Response hentIayGrunnlag(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid InntektArbeidYtelseGrunnlagRequest spesifikasjon) {
+
         // TODO: sjekk at spesifikasjon#person matcher grunnlag og sjekk at PersonIdent kun er aktørIds
         AktørId aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
-        
+
         UUID grunnlagReferanse = spesifikasjon.getGrunnlagReferanse();
         UUID koblingReferanse = getKoblingReferanse(spesifikasjon);
         InntektArbeidYtelseGrunnlag grunnlag = getGrunnlag(spesifikasjon, grunnlagReferanse, koblingReferanse);
 
         IAYDtoMapper dtoMapper = new IAYDtoMapper(iayTjeneste, aktørId, grunnlagReferanse, koblingReferanse);
-        
+
         return Response.ok(dtoMapper.mapTilDto(grunnlag, spesifikasjon)).build();
     }
 
@@ -82,4 +85,12 @@ public class GrunnlagRestTjeneste {
         throw new UnsupportedOperationException("Støtter ikke koblingreferanser basert på UUID ennå");
     }
 
+    private class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
+
+        @Override
+        public AbacDataAttributter apply(Object obj) {
+            InntektArbeidYtelseGrunnlagRequest req = (InntektArbeidYtelseGrunnlagRequest) obj;
+            return AbacDataAttributter.opprett().leggTilAktørId(req.getPerson().getIdent());
+        }
+    }
 }
