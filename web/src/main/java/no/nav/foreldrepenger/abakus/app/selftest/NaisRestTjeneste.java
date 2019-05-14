@@ -37,13 +37,13 @@ public class NaisRestTjeneste {
     @Inject
     public NaisRestTjeneste(ApplicationServiceStarter starterService) {
         this.starterService = starterService;
-        logger.info("NaisResttjeneste init");
     }
 
     @GET
     @Path("isAlive")
     public Response isAlive() {
         // TODO: Check state of kafkastream?
+        logger.debug("Application is alive.");
         return Response
             .ok(RESPONSE_OK)
             .header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL)
