@@ -4,9 +4,12 @@ import no.nav.jenkins.*
 
 def maven = new maven()
 def fpgithub = new fpgithub()
+def latestTag
+def latestTagCommitHash
 def version
 def GIT_COMMIT_HASH
 def GIT_COMMIT_HASH_FULL
+boolean replay = false
 pipeline {
     agent any
 
@@ -22,19 +25,29 @@ pipeline {
                     GIT_COMMIT_HASH = sh(script: "git log -n 1 --pretty=format:'%h'", returnStdout: true)
                     GIT_COMMIT_HASH_FULL = sh(script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
                     changelist = "_" + date.format("YYYYMMddHHmmss") + "_" + GIT_COMMIT_HASH
+                    latestTag = sh(script: "git describe --tags", returnStdout: true)?.trim()
+                    latestTagCommitHash = sh(script: "git describe --tags | sed 's/.*\\_//'", returnStdout: true)?.trim()
                     mRevision = maven.revision()
                     version = mRevision + changelist
 
-                    currentBuild.displayName = version
+                    replay = GIT_COMMIT_HASH.equals(latestTagCommitHash)
 
-                    echo "Building $version"
+                    currentBuild.displayName = version
+                    if (replay) {
+                        version = latestTag
+                        echo "No change detected in sourcecode, skipping build and deploy existing tag={$latestTag}."
+                    }
                 }
             }
         }
 
         stage('Build') {
+            when {
+                expression { return !replay }
+            }
             steps {
                 script {
+                    echo "Building $version"
                     configFileProvider(
                             [configFile(fileId: 'navMavenSettings', variable: 'MAVEN_SETTINGS')]) {
                         artifactId = maven.artifactId()
@@ -59,6 +72,7 @@ pipeline {
         stage('Tag master') {
             when {
                 branch 'master'
+                expression { return !(latestTagCommitHash == GIT_COMMIT_HASH) }
             }
             steps {
                 sh "git tag $version -m $version"
