@@ -9,7 +9,7 @@ def latestTagCommitHash
 def version
 def GIT_COMMIT_HASH
 def GIT_COMMIT_HASH_FULL
-boolean replay = false
+boolean skipBuild = false
 pipeline {
     agent any
 
@@ -30,10 +30,10 @@ pipeline {
                     mRevision = maven.revision()
                     version = mRevision + changelist
 
-                    replay = GIT_COMMIT_HASH.equals(latestTagCommitHash)
+                    skipBuild = GIT_COMMIT_HASH.equals(latestTagCommitHash)
 
                     currentBuild.displayName = version
-                    if (replay) {
+                    if (skipBuild) {
                         version = latestTag
                         echo "No change detected in sourcecode, skipping build and deploy existing tag={$latestTag}."
                     }
@@ -43,7 +43,7 @@ pipeline {
 
         stage('Build') {
             when {
-                expression { return !replay }
+                expression { return !skipBuild }
             }
             steps {
                 script {
