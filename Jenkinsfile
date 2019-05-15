@@ -25,17 +25,18 @@ pipeline {
                     GIT_COMMIT_HASH = sh(script: "git log -n 1 --pretty=format:'%h'", returnStdout: true)
                     GIT_COMMIT_HASH_FULL = sh(script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
                     changelist = "_" + date.format("YYYYMMddHHmmss") + "_" + GIT_COMMIT_HASH
-                    latestTag = sh(script: "git describe --tags", returnStdout: true)?.trim()
-                    latestTagCommitHash = sh(script: "git describe --tags | sed 's/.*\\_//'", returnStdout: true)?.trim()
                     mRevision = maven.revision()
                     version = mRevision + changelist
 
-                    skipBuild = GIT_COMMIT_HASH.equals(latestTagCommitHash)
-
                     currentBuild.displayName = version
-                    if (skipBuild) {
-                        version = latestTag
-                        echo "No change detected in sourcecode, skipping build and deploy existing tag={$latestTag}."
+                    if (env.BRANCH_NAME == 'master') {
+                        latestTag = sh(script: "git describe --tags", returnStdout: true)?.trim()
+                        latestTagCommitHash = sh(script: "git describe --tags | sed 's/.*\\_//'", returnStdout: true)?.trim()
+                        skipBuild = GIT_COMMIT_HASH.equals(latestTagCommitHash)
+                        if (skipBuild) {
+                            version = latestTag
+                            echo "No change detected in sourcecode, skipping build and deploy existing tag={$latestTag}."
+                        }
                     }
                 }
             }
