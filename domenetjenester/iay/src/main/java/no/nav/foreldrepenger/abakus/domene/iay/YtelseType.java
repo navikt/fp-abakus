@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import no.nav.foreldrepenger.abakus.kodeverk.Kodeliste;
 
 @Entity(name = "YtelseTypeParent")
-public class YtelseType extends Kodeliste {
+public abstract class YtelseType extends Kodeliste {
 
     YtelseType(String kode, String discriminator) {
         super(kode, discriminator);
