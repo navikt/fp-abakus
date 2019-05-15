@@ -61,11 +61,11 @@ spec:
       value: srvfp-abakus
     #OpenID
     - name: OPENIDCONNECT_ISSOHOST
-      value: https://isso-t.adeo.no/isso/oauth2
+      value: https://isso-t.adeo.no:443/isso
     - name: OPENIDCONNECT_ISSOISSUER
       value: https://isso-t.adeo.no:443/isso/oauth2
     - name: OPENIDCONNECT_ISSOJWKS
-      value: https://isso-t.adeo.no/isso/oauth2/connect/jwk_uri
+      value: https://isso-t.adeo.no:443/isso/oauth2/connect/jwk_uri
     - name: OPENIDCONNECT_USERNAME
       value: fpabakus-t4
       #OIDC
