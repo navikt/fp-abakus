@@ -37,18 +37,20 @@ public class InntektRestHealthCheck extends ExtHealthCheck {
     @Override
     protected InternalResult performCheck() {
 
-        InternalResult intTestRes = new InternalResult();
 
+        InternalResult intTestRes = new InternalResult();
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpGet httpGet = new HttpGet(getEndpoint());
+            HttpGet httpGet = new HttpGet(getEndpoint() + "/../../../../");
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
                 int responseCode = httpResponse.getStatusLine().getStatusCode();
-                if (responseCode != HttpStatus.SC_METHOD_NOT_ALLOWED) { // Kaller med GET på et POST endepunkt. 405 validerer at forventet tjenste er der.
+                if (responseCode != HttpStatus.SC_OK) { // Kaller med GET på et POST endepunkt. 405 validerer at forventet tjenste er der.
                     intTestRes.setMessage("Fikk uventet HTTP respons-kode: " + responseCode);
+                    intTestRes.noteResponseTime();
                     return intTestRes;
                 }
             }
         } catch (IOException e) {
+            intTestRes.noteResponseTime();
             intTestRes.setException(e);
             return intTestRes;
         }
