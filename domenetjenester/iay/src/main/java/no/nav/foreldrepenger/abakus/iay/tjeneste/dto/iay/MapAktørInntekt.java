@@ -11,6 +11,10 @@ import no.nav.foreldrepenger.abakus.domene.iay.AktørInntekt;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.Inntekt;
 import no.nav.foreldrepenger.abakus.domene.iay.Inntektspost;
+import no.nav.foreldrepenger.abakus.domene.iay.NæringsinntektType;
+import no.nav.foreldrepenger.abakus.domene.iay.OffentligYtelseType;
+import no.nav.foreldrepenger.abakus.domene.iay.PensjonTrygdType;
+import no.nav.foreldrepenger.abakus.domene.iay.YtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Aktør;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
@@ -22,17 +26,27 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntekt.v1.UtbetalingsPostDt
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtbetaltYtelseFraOffentligeType;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtbetaltYtelseType;
 
 public class MapAktørInntekt {
-    private class MapFraDto{
+    public List<InntekterDto> mapTilDto(Collection<AktørInntekt> aktørInntekt) {
+        return new MapTilDto().map(aktørInntekt);
+    }
+
+    public List<AktørInntekt> mapFraDto(Collection<InntekterDto> aktørInntekt) {
+        return new MapFraDto().map(aktørInntekt);
+    }
+
+    private class MapFraDto {
 
         List<AktørInntekt> map(Collection<InntekterDto> aktørInntekt) {
             // FIXME Map AktørInntekt på vei inn
             throw new UnsupportedOperationException("Not Yet Implemented");
         }
-        
+
     }
+
     private class MapTilDto {
         List<InntekterDto> map(Collection<AktørInntekt> aktørInntekt) {
             return aktørInntekt.stream().map(this::mapTilInntekt).collect(Collectors.toList());
@@ -82,9 +96,9 @@ public class MapAktørInntekt {
         private UtbetalingsPostDto tilPost(Inntektspost inntektspost) {
             var periode = new Periode(inntektspost.getFraOgMed(), inntektspost.getTilOgMed());
             var inntektspostType = new InntektspostType(inntektspost.getInntektspostType().getKode());
-            var ytelseType = new YtelseType(inntektspost.getYtelseType().getKode());
+            var ytelseType = mapUtbetaltYtelseType(inntektspost.getYtelseType());
             var skattOgAvgiftType = new SkatteOgAvgiftsregelType(inntektspost.getSkatteOgAvgiftsregelType().getKode());
-            
+
             UtbetalingsPostDto dto = new UtbetalingsPostDto(ytelseType, periode, inntektspostType)
                 .medSkattAvgiftType(skattOgAvgiftType)
                 .medBeløp(inntektspost.getBeløp().getVerdi());
@@ -92,13 +106,20 @@ public class MapAktørInntekt {
             return dto;
         }
 
-    }
-
-    public List<InntekterDto> mapTilDto(Collection<AktørInntekt> aktørInntekt) {
-        return new MapTilDto().map(aktørInntekt);
-    }
-
-    public List<AktørInntekt> mapFraDto(Collection<InntekterDto> aktørInntekt) {
-        return new MapFraDto().map(aktørInntekt);
+        private UtbetaltYtelseType mapUtbetaltYtelseType(YtelseType ytelseType) {
+            if (ytelseType == null) {
+                return new UtbetaltYtelseFraOffentligeType("-");
+            }
+            if (ytelseType.getKodeverk().equals(OffentligYtelseType.DISCRIMINATOR)) {
+                return new UtbetaltYtelseFraOffentligeType(ytelseType.getKode());
+            }
+            if (ytelseType.getKodeverk().equals(NæringsinntektType.DISCRIMINATOR)) {
+                return new UtbetaltYtelseFraOffentligeType(ytelseType.getKode());
+            }
+            if (ytelseType.getKodeverk().equals(PensjonTrygdType.DISCRIMINATOR)) {
+                return new UtbetaltYtelseFraOffentligeType(ytelseType.getKode());
+            }
+            throw new IllegalArgumentException("Ukjent utbetalt ytelse. " + ytelseType.toString());
+        }
     }
 }
