@@ -4,8 +4,6 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingSomIkkeKommer;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
@@ -105,8 +103,8 @@ public interface InntektArbeidYtelseGrunnlag {
 
     List<InntektsmeldingSomIkkeKommer> getInntektsmeldingerSomIkkeKommerFor(Virksomhet virksomhet);
 
-    Long getBehandlingId();
+    Long getKoblingId();
 
-    UUID getReferanse();
+    GrunnlagReferanse getGrunnlagReferanse();
 
 }

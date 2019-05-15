@@ -2,8 +2,6 @@ package no.nav.foreldrepenger.abakus.kobling.repository;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -16,6 +14,7 @@ import no.nav.foreldrepenger.abakus.felles.diff.DiffEntity;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseEntityGraph;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
+import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kodeverk.Kodeliste;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkTabell;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
@@ -38,20 +37,20 @@ public class KoblingRepository {
         this.entityManager = entityManager;
     }
 
-    public Optional<Kobling> hentForReferanse(UUID referanse) {
-        TypedQuery<Kobling> query = entityManager.createQuery("FROM Kobling k WHERE referanseId = :referanse", Kobling.class);
+    public Optional<Kobling> hentForKoblingReferanse(KoblingReferanse referanse) {
+        TypedQuery<Kobling> query = entityManager.createQuery("FROM Kobling k WHERE koblingReferanse = :referanse", Kobling.class);
         query.setParameter("referanse", referanse);
         return HibernateVerktøy.hentUniktResultat(query);
     }
 
-    public Long hentIdForReferanse(UUID referanse) {
-        TypedQuery<Long> query = entityManager.createQuery("SELECT k.id FROM Kobling k WHERE k.referanseId = :referanse", Long.class);
+    public Long hentKoblingIdForKoblingReferanse(KoblingReferanse referanse) {
+        TypedQuery<Long> query = entityManager.createQuery("SELECT k.id FROM Kobling k WHERE k.koblingReferanse = :referanse", Long.class);
         query.setParameter("referanse", referanse);
         return HibernateVerktøy.hentEksaktResultat(query);
     }
 
     public void lagre(Kobling nyKobling) {
-        Optional<Kobling> eksisterendeKobling = hentForReferanse(nyKobling.getReferanse());
+        Optional<Kobling> eksisterendeKobling = hentForKoblingReferanse(nyKobling.getKoblingReferanse());
 
         DiffResult diff = getDiff(eksisterendeKobling.orElse(null), nyKobling);
 
@@ -74,7 +73,7 @@ public class KoblingRepository {
         return diffEntity.diff(eksisterendeKobling, nyKobling);
     }
 
-    public Kobling hent(Long koblingId) {
+    public Kobling hentForKoblingId(Long koblingId) {
         return entityManager.find(Kobling.class, koblingId);
     }
 }

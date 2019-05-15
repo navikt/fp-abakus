@@ -15,6 +15,7 @@ public final class TestSertifikater {
      * sett opp key store for testing
      */
     private static void setupTemporaryKeyStore(String keyStoreResourceName, String password) {
+        @SuppressWarnings("resource")
         InputStream keyStore = TestSertifikater.class.getClassLoader().getResourceAsStream(keyStoreResourceName);
         setupTemporaryKeyStore(keyStore, password);
     }
@@ -30,6 +31,7 @@ public final class TestSertifikater {
      * sett opp trust store for testing
      */
     private static void setupTemporaryTrustStore(String trustStoreResourceName, String password) {
+        @SuppressWarnings("resource")
         InputStream trustStore = TestSertifikater.class.getClassLoader().getResourceAsStream(trustStoreResourceName);
         setupTemporaryTrustStore(trustStore, password);
     }

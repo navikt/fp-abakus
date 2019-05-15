@@ -24,6 +24,7 @@ public class KodeverkValidatorTest {
 
     @BeforeClass
     public static void setUp() {
+        @SuppressWarnings("resource")
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
     }

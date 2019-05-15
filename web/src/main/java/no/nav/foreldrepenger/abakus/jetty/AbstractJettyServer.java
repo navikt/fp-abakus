@@ -56,14 +56,6 @@ abstract class AbstractJettyServer {
         this.appKonfigurasjon = appKonfigurasjon;
     }
 
-    private static void setFileProperty(String property, String filePath) {
-        File file = new File(filePath);
-        if (!file.exists()) { // NOSONAR
-            throw new IllegalArgumentException("Missing required file: " + file.getAbsolutePath());
-        }
-        System.setProperty(property, file.getAbsolutePath());
-    }
-
     protected void bootStrap() throws Exception {
         konfigurerMiljø();
         migrerDatabaser();

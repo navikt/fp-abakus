@@ -68,6 +68,6 @@ public class RegisterdataInnhentingTask extends KoblingTask {
         Kobling kobling = koblingTjeneste.hent(prosessTaskData.getKoblingId());
 
         InntektArbeidYtelseAggregatBuilder builder = finnInnhenter(kobling.getYtelseType()).innhentRegisterdata(kobling);
-        iayTjeneste.lagre(kobling.getId(), builder);
+        iayTjeneste.lagre(kobling.getKoblingReferanse(), builder);
     }
 }

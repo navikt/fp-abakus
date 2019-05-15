@@ -17,7 +17,7 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
 @Embeddable
-public class ArbeidsgiverEntitet implements Arbeidsgiver, IndexKey, Serializable, TraverseValue {
+public class ArbeidsgiverEntitet implements Arbeidsgiver, IndexKey, TraverseValue {
     /**
      * Kun en av denne og {@link #arbeidsgiverAktørId} kan være satt. Sett denne hvis Arbeidsgiver er en Organisasjon.
      */
