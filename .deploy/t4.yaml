@@ -61,7 +61,7 @@ spec:
       value: srvfp-abakus
     #OpenID
     - name: OPENIDCONNECT_ISSOHOST
-      value: https://isso-t.adeo.no:443/isso
+      value: https://isso-t.adeo.no:443/isso/oauth2
     - name: OPENIDCONNECT_ISSOISSUER
       value: https://isso-t.adeo.no:443/isso/oauth2
     - name: OPENIDCONNECT_ISSOJWKS
