@@ -38,7 +38,7 @@ public class ProsessTaskHendelseMottakImplTest {
     @Before
     public void setUp() throws Exception {
         prosessTaskHendelseMottak = new ProsessTaskHendelseMottakImpl(repo);
-        when(taskSomVenterØkonomiKvittering.getHendelse()).thenReturn(Optional.of(ProsessTaskHendelse.ØKONOMI_OPPDRAG_KVITTERING));
+        when(taskSomVenterØkonomiKvittering.getHendelse()).thenReturn(Optional.of(ProsessTaskHendelse.UKJENT_HENDELSE));
         when(taskSomIkkeVenter.getHendelse()).thenReturn(Optional.empty());
     }
 
@@ -48,7 +48,7 @@ public class ProsessTaskHendelseMottakImplTest {
         when(taskSomVenterØkonomiKvittering.getStatus()).thenReturn(ProsessTaskStatus.VENTER_SVAR);
         when(repo.finn(TASK_ID)).thenReturn(taskSomVenterØkonomiKvittering);
         // Act
-        prosessTaskHendelseMottak.mottaHendelse(TASK_ID, ProsessTaskHendelse.ØKONOMI_OPPDRAG_KVITTERING);
+        prosessTaskHendelseMottak.mottaHendelse(TASK_ID, ProsessTaskHendelse.UKJENT_HENDELSE);
         // Assert
         verify(taskSomVenterØkonomiKvittering).setStatus(ProsessTaskStatus.KLAR);
         verify(repo).lagre(taskSomVenterØkonomiKvittering);
@@ -59,7 +59,7 @@ public class ProsessTaskHendelseMottakImplTest {
         // Arrange
         when(repo.finn(UKJENT_TASK_ID)).thenReturn(null);
         // Act
-        prosessTaskHendelseMottak.mottaHendelse(UKJENT_TASK_ID, ProsessTaskHendelse.ØKONOMI_OPPDRAG_KVITTERING);
+        prosessTaskHendelseMottak.mottaHendelse(UKJENT_TASK_ID, ProsessTaskHendelse.UKJENT_HENDELSE);
         // Assert
     }
 
@@ -77,7 +77,7 @@ public class ProsessTaskHendelseMottakImplTest {
         // Arrange
         when(repo.finn(TASK_ID_SOM_IKKE_VENTER)).thenReturn(taskSomIkkeVenter);
         // Act
-        prosessTaskHendelseMottak.mottaHendelse(TASK_ID_SOM_IKKE_VENTER, ProsessTaskHendelse.ØKONOMI_OPPDRAG_KVITTERING);
+        prosessTaskHendelseMottak.mottaHendelse(TASK_ID_SOM_IKKE_VENTER, ProsessTaskHendelse.UKJENT_HENDELSE);
         // Assert
     }
 }

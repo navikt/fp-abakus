@@ -21,8 +21,6 @@ import org.hibernate.annotations.JoinFormula;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.EgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.UtenlandskVirksomhet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.VirksomhetEntitet;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;

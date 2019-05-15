@@ -4,19 +4,19 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-
 import javax.ws.rs.NotFoundException;
 
 import org.jboss.weld.exceptions.UnsupportedOperationException;
 
 import no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid;
+import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingSomIkkeKommer;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
+import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest;
@@ -29,10 +29,10 @@ public class IAYDtoMapper {
 
     private InntektArbeidYtelseTjeneste tjeneste;
     private AktørId aktørId;
-    private UUID grunnlagReferanse;
-    private UUID koblingReferanse;
+    private GrunnlagReferanse grunnlagReferanse;
+    private KoblingReferanse koblingReferanse;
 
-    public IAYDtoMapper(InntektArbeidYtelseTjeneste tjeneste, AktørId aktørId, UUID grunnlagReferanse, UUID koblingReferanse) {
+    public IAYDtoMapper(InntektArbeidYtelseTjeneste tjeneste, AktørId aktørId, GrunnlagReferanse grunnlagReferanse, KoblingReferanse koblingReferanse) {
         this.tjeneste = tjeneste;
         this.aktørId = aktørId;
         this.grunnlagReferanse = grunnlagReferanse;
@@ -44,7 +44,7 @@ public class IAYDtoMapper {
             return null;
         }
         var dataset = spec.getDataset();
-        var dto = new InntektArbeidYtelseGrunnlagDto(new AktørIdPersonident(aktørId.getId()), grunnlag.getReferanse());
+        var dto = new InntektArbeidYtelseGrunnlagDto(new AktørIdPersonident(aktørId.getId()), grunnlag.getGrunnlagReferanse().getReferanse());
 
         var aggregatOpt = grunnlag.getOpplysningerEtterSkjæringstidspunkt(null);
         if (aggregatOpt.isEmpty()) {

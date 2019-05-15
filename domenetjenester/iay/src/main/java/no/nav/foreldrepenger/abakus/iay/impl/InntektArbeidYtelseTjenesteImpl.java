@@ -2,14 +2,12 @@ package no.nav.foreldrepenger.abakus.iay.impl;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.jboss.weld.exceptions.UnsupportedOperationException;
-
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
@@ -19,6 +17,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInfo
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
+import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 
@@ -39,42 +38,43 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
 
     @Override
     public InntektArbeidYtelseGrunnlag hentAggregat(Kobling koblingen) {
-        return repository.hentInntektArbeidYtelseForBehandling(koblingen.getId());
+        return repository.hentInntektArbeidYtelseForBehandling(koblingen.getKoblingReferanse());
     }
 
     @Override
-    public InntektArbeidYtelseGrunnlag hentAggregat(UUID referanse) {
+    public InntektArbeidYtelseGrunnlag hentAggregat(GrunnlagReferanse referanse) {
         return repository.hentInntektArbeidYtelseForReferanse(referanse);
     }
 
     @Override
-    public Long hentKoblingIdFor(UUID referanse) {
-        return repository.hentKoblingForReferanse(referanse);
+    public Long hentKoblingIdFor(GrunnlagReferanse referanse) {
+        return repository.hentKoblingIdFor(referanse);
     }
 
     @Override
-    public Optional<InntektArbeidYtelseGrunnlag> hentGrunnlagFor(Long koblingId) {
-        return repository.hentInntektArbeidYtelseGrunnlagForBehandling(koblingId);
+    public Optional<InntektArbeidYtelseGrunnlag> hentGrunnlagFor(KoblingReferanse koblingReferanse) {
+        return repository.hentInntektArbeidYtelseGrunnlagForBehandling(koblingReferanse);
     }
 
     @Override
-    public InntektArbeidYtelseAggregatBuilder opprettBuilderForRegister(Long koblingId) {
-        return repository.opprettBuilderFor(koblingId, VersjonType.REGISTER);
+    public InntektArbeidYtelseAggregatBuilder opprettBuilderForRegister(KoblingReferanse koblingReferanse) {
+        return repository.opprettBuilderFor(koblingReferanse, VersjonType.REGISTER);
     }
 
     @Override
-    public void lagre(Long koblingId, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder) {
-        repository.lagre(koblingId, inntektArbeidYtelseAggregatBuilder);
+    public void lagre(KoblingReferanse koblingReferanse, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder) {
+        repository.lagre(koblingReferanse, inntektArbeidYtelseAggregatBuilder);
     }
 
     @Override
-    public void lagre(Long koblingId, AktørId aktørId, ArbeidsforholdInformasjonBuilder builder) {
-        repository.lagre(koblingId, aktørId, builder);
+    public void lagre(KoblingReferanse koblingReferanse, AktørId aktørId, ArbeidsforholdInformasjonBuilder builder) {
+        repository.lagre(koblingReferanse, aktørId, builder);
     }
-
+    
     @Override
-    public ArbeidsforholdRef finnReferanseFor(Long behandlingId, Arbeidsgiver arbeidsgiver, ArbeidsforholdRef arbeidsforholdRef, boolean beholdErstattetVerdi) {
-        final Optional<ArbeidsforholdInformasjon> arbeidsforholdInformasjon = repository.hentArbeidsforholdInformasjonForBehandling(behandlingId);
+    public ArbeidsforholdRef finnReferanseFor(KoblingReferanse koblingReferanse, Arbeidsgiver arbeidsgiver, ArbeidsforholdRef arbeidsforholdRef,
+                                              boolean beholdErstattetVerdi) {
+        final Optional<ArbeidsforholdInformasjon> arbeidsforholdInformasjon = repository.hentArbeidsforholdInformasjonForBehandling(koblingReferanse);
         if (arbeidsforholdInformasjon.isPresent()) {
             final ArbeidsforholdInformasjon informasjon = arbeidsforholdInformasjon.get();
             if (beholdErstattetVerdi) {
@@ -84,15 +84,14 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
         }
         return arbeidsforholdRef;
     }
-    
+
     @Override
-    public ArbeidsforholdRef finnReferanseFor(UUID koblingReferanse, Arbeidsgiver arbeidsgiver, ArbeidsforholdRef arbeidsforholdRef,
-                                              boolean beholdErstattetVerdi) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public ArbeidsforholdInformasjon hentArbeidsforholdInformasjonForKobling(KoblingReferanse koblingReferanse) {
+        return repository.hentArbeidsforholdInformasjonForBehandling(koblingReferanse).orElseGet(ArbeidsforholdInformasjonEntitet::new);
     }
 
     @Override
-    public ArbeidsforholdInformasjon hentArbeidsforholdInformasjonForKobling(Long koblingId) {
-        return repository.hentArbeidsforholdInformasjonForBehandling(koblingId).orElseGet(ArbeidsforholdInformasjonEntitet::new);
+    public KoblingReferanse hentKoblingReferanse(GrunnlagReferanse grunnlagReferanse) {
+        return repository.hentKoblingReferanseFor(grunnlagReferanse);
     }
 }

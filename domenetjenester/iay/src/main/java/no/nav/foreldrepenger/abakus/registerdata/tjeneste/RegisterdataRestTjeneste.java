@@ -4,7 +4,6 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -28,6 +27,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
+import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.TaskResponsDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.FnrPersonident;
@@ -64,9 +65,9 @@ public class RegisterdataRestTjeneste {
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentRegisterdata(@ApiParam("innhent") @Valid InnhentRegisterdataAbacDto dto) {
-        Optional<UUID> innhent = innhentTjeneste.innhent(dto);
+        Optional<GrunnlagReferanse> innhent = innhentTjeneste.innhent(dto);
         if (innhent.isPresent()) {
-            return Response.ok(new UuidDto(innhent.get().toString())).build();
+            return Response.ok(new UuidDto(innhent.get().getReferanse().toString())).build();
         }
         return Response.noContent().build();
     }
@@ -94,7 +95,7 @@ public class RegisterdataRestTjeneste {
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentAsyncStatus(@ApiParam("status") @Valid SjekkStatusAbacDto dto) {
         if (innhentTjeneste.innhentingFerdig(dto.getTaskReferanse())) {
-            Optional<UUID> grunnlagReferanse = innhentTjeneste.hentSisteReferanseFor(UUID.fromString(dto.getReferanse().getReferanse()));
+            Optional<GrunnlagReferanse> grunnlagReferanse = innhentTjeneste.hentSisteReferanseFor(new KoblingReferanse(dto.getReferanse().getReferanse()));
             if (grunnlagReferanse.isEmpty()) {
                 return Response.noContent().build();
             }

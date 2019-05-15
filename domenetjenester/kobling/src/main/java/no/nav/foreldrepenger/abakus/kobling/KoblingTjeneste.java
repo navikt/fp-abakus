@@ -1,8 +1,6 @@
 package no.nav.foreldrepenger.abakus.kobling;
 
 import java.util.Optional;
-import java.util.UUID;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -24,8 +22,8 @@ public class KoblingTjeneste {
         this.låsRepository = låsRepository;
     }
 
-    public Optional<Kobling> hentFor(UUID referanse) {
-        return repository.hentForReferanse(referanse);
+    public Optional<Kobling> hentFor(KoblingReferanse referanse) {
+        return repository.hentForKoblingReferanse(referanse);
     }
 
     public void lagre(Kobling kobling) {
@@ -33,11 +31,11 @@ public class KoblingTjeneste {
     }
 
     public Kobling hent(Long koblingId) {
-        return repository.hent(koblingId);
+        return repository.hentForKoblingId(koblingId);
     }
 
-    public KoblingLås taSkrivesLås(UUID referanse) {
-        return taSkrivesLås(repository.hentIdForReferanse(referanse));
+    public KoblingLås taSkrivesLås(KoblingReferanse referanse) {
+        return taSkrivesLås(repository.hentKoblingIdForKoblingReferanse(referanse));
     }
 
     public KoblingLås taSkrivesLås(Long koblingId) {

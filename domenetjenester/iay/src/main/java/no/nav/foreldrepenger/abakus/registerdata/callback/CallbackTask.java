@@ -75,7 +75,7 @@ public class CallbackTask implements ProsessTaskHandler {
     }
 
     private void setInformasjonOmAvsenderRef(Kobling kobling, CallbackDto callbackDto) {
-        UUID koblingReferanse = kobling.getReferanse();
+        UUID koblingReferanse = kobling.getKoblingReferanse().getReferanse();
         ReferanseDto avsenderRef = new ReferanseDto();
         avsenderRef.setReferanse(koblingReferanse.toString());
         callbackDto.setAvsenderRef(avsenderRef);
@@ -91,10 +91,10 @@ public class CallbackTask implements ProsessTaskHandler {
     }
 
     private void setInformasjonOmNyttGrunnlag(Kobling kobling, ProsessTaskData data, CallbackDto callbackDto) {
-        Optional<InntektArbeidYtelseGrunnlag> grunnlag = inntektArbeidYtelseTjeneste.hentGrunnlagFor(kobling.getId());
+        Optional<InntektArbeidYtelseGrunnlag> grunnlag = inntektArbeidYtelseTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse());
         grunnlag.ifPresent(gr -> {
             ReferanseDto grunnlagRef = new ReferanseDto();
-            grunnlagRef.setReferanse(gr.getReferanse().toString());
+            grunnlagRef.setReferanse(gr.getGrunnlagReferanse().toString());
             callbackDto.setOppdatertGrunnlagRef(grunnlagRef);
             callbackDto.setOpprettetTidspunkt(((BaseEntitet) gr).getOpprettetTidspunkt());
         });

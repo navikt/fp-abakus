@@ -6,17 +6,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
+import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
@@ -70,15 +71,15 @@ public class InnhentRegisterdataTjeneste {
         map.put(type, innhenter);
     }
 
-    public Optional<UUID> innhent(InnhentRegisterdataRequest dto) {
+    public Optional<GrunnlagReferanse> innhent(InnhentRegisterdataRequest dto) {
         Kobling kobling = oppdaterKobling(dto);
 
         // Trigg innhenting
         InntektArbeidYtelseAggregatBuilder builder = finnInnhenter(mapTilYtelseType(dto)).innhentRegisterdata(kobling);
-        iayTjeneste.lagre(kobling.getId(), builder);
+        iayTjeneste.lagre(kobling.getKoblingReferanse(), builder);
 
-        Optional<InntektArbeidYtelseGrunnlag> grunnlag = iayTjeneste.hentGrunnlagFor(kobling.getId());
-        return grunnlag.map(InntektArbeidYtelseGrunnlag::getReferanse);
+        Optional<InntektArbeidYtelseGrunnlag> grunnlag = iayTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse());
+        return grunnlag.map(InntektArbeidYtelseGrunnlag::getGrunnlagReferanse);
     }
 
     private IAYRegisterInnhentingTjeneste finnInnhenter(YtelseType ytelseType) {
@@ -90,7 +91,7 @@ public class InnhentRegisterdataTjeneste {
     }
 
     private Kobling oppdaterKobling(InnhentRegisterdataRequest dto) {
-        UUID referanse = UUID.fromString(dto.getReferanse());
+        KoblingReferanse referanse = new KoblingReferanse(dto.getReferanse());
         Optional<Kobling> koblingOpt = koblingTjeneste.hentFor(referanse);
         Kobling kobling;
         if (koblingOpt.isEmpty()) {
@@ -134,7 +135,7 @@ public class InnhentRegisterdataTjeneste {
         innhentingTask.setKobling(kobling.getId(), kobling.getAktørId().getId());
         callbackTask.setKobling(kobling.getId(), kobling.getAktørId().getId());
 
-        Optional<UUID> eksisterendeGrunnlagRef = hentSisteReferanseFor(kobling.getReferanse());
+        Optional<GrunnlagReferanse> eksisterendeGrunnlagRef = hentSisteReferanseFor(kobling.getKoblingReferanse());
         eksisterendeGrunnlagRef.ifPresent(ref -> callbackTask.setProperty(EKSISTERENDE_GRUNNLAG_REF, ref.toString()));
 
         if (dto.getCallbackUrl() != null) {
@@ -152,13 +153,13 @@ public class InnhentRegisterdataTjeneste {
         return taskStatuses.stream().anyMatch(it -> !ProsessTaskStatus.KLAR.equals(it.getStatus()));
     }
 
-    public Optional<UUID> hentSisteReferanseFor(UUID koblingRef) {
+    public Optional<GrunnlagReferanse> hentSisteReferanseFor(KoblingReferanse koblingRef) {
         Optional<Kobling> kobling = koblingTjeneste.hentFor(koblingRef);
         if (kobling.isEmpty()) {
             return Optional.empty();
         }
-        Optional<InntektArbeidYtelseGrunnlag> grunnlag = iayTjeneste.hentGrunnlagFor(kobling.get().getId());
-        return grunnlag.map(InntektArbeidYtelseGrunnlag::getReferanse);
+        Optional<InntektArbeidYtelseGrunnlag> grunnlag = iayTjeneste.hentGrunnlagFor(kobling.get().getKoblingReferanse());
+        return grunnlag.map(InntektArbeidYtelseGrunnlag::getGrunnlagReferanse);
     }
 
 }

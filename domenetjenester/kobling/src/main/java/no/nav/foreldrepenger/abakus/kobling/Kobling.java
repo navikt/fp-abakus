@@ -3,8 +3,6 @@ package no.nav.foreldrepenger.abakus.kobling;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
-
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
@@ -32,13 +30,15 @@ import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 @Table(name = "KOBLING")
 public class Kobling extends BaseEntitet implements IndexKey {
 
+    /** Abakus intern kobling_id. */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_KOBLING")
     private Long id;
 
+    /** Ekstern Referanse (eks. behandlingUuid). */ 
     @NaturalId
-    @Column(name = "referanse_id", updatable = false, nullable = false, unique = true)
-    private UUID referanseId;
+    @Embedded
+    private KoblingReferanse koblingReferanse;
 
     @ManyToOne(optional = false)
     @JoinColumnOrFormula(column = @JoinColumn(name = "ytelse_type", referencedColumnName = "kode", nullable = false))
@@ -74,26 +74,27 @@ public class Kobling extends BaseEntitet implements IndexKey {
     public Kobling() {
     }
 
-    public Kobling(UUID referanseId, AktørId aktørId, DatoIntervallEntitet opplysningsperiode, YtelseType ytelseType) {
-        Objects.requireNonNull(referanseId, "referanseId");
+    public Kobling(KoblingReferanse koblingReferanse, AktørId aktørId, DatoIntervallEntitet opplysningsperiode, YtelseType ytelseType) {
+        Objects.requireNonNull(koblingReferanse, "koblingReferanse");
         Objects.requireNonNull(aktørId, "aktørId");
         Objects.requireNonNull(opplysningsperiode, "opplysningsperiode");
-        this.referanseId = referanseId;
+        this.koblingReferanse = koblingReferanse;
         this.aktørId = aktørId;
         this.opplysningsperiode = opplysningsperiode;
+        this.ytelseType = ytelseType;
     }
 
     @Override
     public String getIndexKey() {
-        return String.valueOf(referanseId);
+        return String.valueOf(koblingReferanse);
     }
 
     public Long getId() {
         return id;
     }
 
-    public UUID getReferanse() {
-        return referanseId;
+    public KoblingReferanse getKoblingReferanse() {
+        return koblingReferanse;
     }
 
     public AktørId getAktørId() {
@@ -135,7 +136,7 @@ public class Kobling extends BaseEntitet implements IndexKey {
     @Override
     public String toString() {
         return "Kobling{" +
-            "referanseId=" + referanseId +
+            "KoblingReferanse=" + koblingReferanse +
             ", aktørId=" + aktørId +
             ", annenPartAktørId=" + annenPartAktørId +
             ", opplysningsperiode=" + opplysningsperiode +

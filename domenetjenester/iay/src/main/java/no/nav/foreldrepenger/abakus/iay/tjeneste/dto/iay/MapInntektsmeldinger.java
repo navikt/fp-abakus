@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.jboss.weld.exceptions.UnsupportedOperationException;
@@ -17,6 +16,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelse;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Refusjon;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriode;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
+import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
@@ -66,7 +66,7 @@ public class MapInntektsmeldinger {
             var innsendingstidspunkt = im.getInnsendingstidspunkt();
             var arbeidsforholdId = mapArbeidsforholdsId(im.getArbeidsgiver(), im.getArbeidsforholdRef());
             var innsendingsårsak = new InntektsmeldingInnsendingsårsakType(im.getInntektsmeldingInnsendingsårsak().getKode());
-            
+
             var inntektsmeldingDto = new InntektsmeldingDto(arbeidsgiver, journalpostId, innsendingstidspunkt)
                 .medArbeidsforholdRef(arbeidsforholdId)
                 .medInnsendingsårsak(innsendingsårsak)
@@ -79,11 +79,11 @@ public class MapInntektsmeldinger {
                 .medNærRelasjon(im.getErNærRelasjon());
 
             inntektsmeldingDto.medEndringerRefusjon(im.getEndringerRefusjon().stream().map(this::mapEndringRefusjon).collect(Collectors.toList()));
-            
+
             inntektsmeldingDto.medGraderinger(im.getGraderinger().stream().map(this::mapGradering).collect(Collectors.toList()));
-            
+
             inntektsmeldingDto.medNaturalytelser(im.getNaturalYtelser().stream().map(this::mapNaturalytelse).collect(Collectors.toList()));
-            
+
             inntektsmeldingDto.medUtsettelsePerioder(im.getUtsettelsePerioder().stream().map(this::mapUtsettelsePeriode).collect(Collectors.toList()));
 
             return inntektsmeldingDto;
@@ -145,9 +145,9 @@ public class MapInntektsmeldinger {
     }
 
     private InntektArbeidYtelseTjeneste tjeneste;
-    private UUID koblingReferanse;
+    private KoblingReferanse koblingReferanse;
 
-    public MapInntektsmeldinger(InntektArbeidYtelseTjeneste tjeneste, UUID koblingReferanse) {
+    public MapInntektsmeldinger(InntektArbeidYtelseTjeneste tjeneste, KoblingReferanse koblingReferanse) {
         this.tjeneste = tjeneste;
         this.koblingReferanse = koblingReferanse;
     }

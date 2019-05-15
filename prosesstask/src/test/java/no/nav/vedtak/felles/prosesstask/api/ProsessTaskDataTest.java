@@ -28,12 +28,12 @@ public class ProsessTaskDataTest {
     public void testVenterPåHendelse() {
         // Arrange
         // Act
-        original.venterPåHendelse(ProsessTaskHendelse.ØKONOMI_OPPDRAG_KVITTERING);
+        original.venterPåHendelse(ProsessTaskHendelse.UKJENT_HENDELSE);
         // Assert
         assertThat(original.getStatus()).isEqualTo(ProsessTaskStatus.VENTER_SVAR);
         Optional<ProsessTaskHendelse> venterPå = original.getHendelse();
         assertThat(venterPå.isPresent()).isEqualTo(true);
-        assertThat(venterPå.get()).isEqualTo(ProsessTaskHendelse.ØKONOMI_OPPDRAG_KVITTERING);
+        assertThat(venterPå.get()).isEqualTo(ProsessTaskHendelse.UKJENT_HENDELSE);
     }
 
     @Test

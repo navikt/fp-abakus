@@ -103,18 +103,18 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
     }
 
     @Override
-    public InntektArbeidYtelseAggregatBuilder innhentInntekterFor(Kobling behandling, AktørId aktørId,
+    public InntektArbeidYtelseAggregatBuilder innhentInntekterFor(Kobling kobling, AktørId aktørId,
                                                                   InntektsKilde... kilder) {
-        final InntektArbeidYtelseAggregatBuilder builder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(behandling.getId());
-        return innhentInntekterFor(behandling, aktørId, builder, kilder);
+        final InntektArbeidYtelseAggregatBuilder builder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(kobling.getKoblingReferanse());
+        return innhentInntekterFor(kobling, aktørId, builder, kilder);
     }
 
-    private InntektArbeidYtelseAggregatBuilder innhentInntekterFor(Kobling behandling, AktørId aktørId, InntektArbeidYtelseAggregatBuilder builder, InntektsKilde... kilder) {
+    private InntektArbeidYtelseAggregatBuilder innhentInntekterFor(Kobling kobling, AktørId aktørId, InntektArbeidYtelseAggregatBuilder builder, InntektsKilde... kilder) {
         if (kilder.length == 0) {
             return builder;
         }
         for (InntektsKilde kilde : kilder) {
-            final InntektsInformasjon inntektsInformasjon = innhentingSamletTjeneste.getInntektsInformasjon(aktørId, behandling, behandling.getOpplysningsperiode().tilIntervall(), kilde);
+            final InntektsInformasjon inntektsInformasjon = innhentingSamletTjeneste.getInntektsInformasjon(aktørId, kobling, kobling.getOpplysningsperiode().tilIntervall(), kilde);
             leggTilInntekter(aktørId, builder, inntektsInformasjon);
             if (kilde.equals(InntektsKilde.INNTEKT_OPPTJENING)) {
                 inntektsInformasjon.getFrilansArbeidsforhold()
@@ -127,7 +127,7 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
 
     @Override
     public InntektArbeidYtelseAggregatBuilder innhentRegisterdata(Kobling kobling) {
-        final InntektArbeidYtelseAggregatBuilder builder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(kobling.getId());
+        final InntektArbeidYtelseAggregatBuilder builder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(kobling.getKoblingReferanse());
         // Arbeidsforhold & inntekter
         innhentArbeidsforhold(kobling, builder);
         if (skalInnhenteNæringsInntekterFor(kobling)) {
@@ -234,12 +234,12 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
             .max(Comparator.naturalOrder()).orElse(FPDateUtil.iDag());
     }
 
-    private void byggOpptjeningOpplysningene(Kobling behandling, AktørId aktørId, Interval opplysningsPeriode,
+    private void byggOpptjeningOpplysningene(Kobling kobling, AktørId aktørId, Interval opplysningsPeriode,
                                              InntektArbeidYtelseAggregatBuilder builder) {
         Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = innhentingSamletTjeneste.getArbeidsforhold(aktørId, opplysningsPeriode);
-        arbeidsforhold.entrySet().forEach(forholdet -> oversettArbeidsforholdTilYrkesaktivitet(builder, forholdet, aktørId, behandling));
+        arbeidsforhold.entrySet().forEach(forholdet -> oversettArbeidsforholdTilYrkesaktivitet(builder, forholdet, aktørId, kobling));
 
-        final InntektsInformasjon inntektsInformasjon = innhentingSamletTjeneste.getInntektsInformasjon(aktørId, behandling, opplysningsPeriode, InntektsKilde.INNTEKT_OPPTJENING);
+        final InntektsInformasjon inntektsInformasjon = innhentingSamletTjeneste.getInntektsInformasjon(aktørId, kobling, opplysningsPeriode, InntektsKilde.INNTEKT_OPPTJENING);
         leggTilInntekter(aktørId, builder, inntektsInformasjon);
         inntektsInformasjon.getFrilansArbeidsforhold()
             .entrySet()
@@ -247,11 +247,11 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
     }
 
     private void oversettArbeidsforholdTilYrkesaktivitet(InntektArbeidYtelseAggregatBuilder builder,
-                                                         Map.Entry<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold, AktørId aktørId, Kobling behandling) {
+                                                         Map.Entry<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold, AktørId aktørId, Kobling kobling) {
         final ArbeidsforholdIdentifikator arbeidsgiverIdent = arbeidsforhold.getKey();
         final Arbeidsgiver arbeidsgiver = mapArbeidsgiver(arbeidsgiverIdent);
         final String arbeidsforholdId = arbeidsgiverIdent.harArbeidsforholdRef() ? arbeidsgiverIdent.getArbeidsforholdId().getReferanse() : null;
-        final ArbeidsforholdRef arbeidsforholdRef = inntektArbeidYtelseTjeneste.finnReferanseFor(behandling.getId(), arbeidsgiver, ArbeidsforholdRef.ref(arbeidsforholdId), true);
+        final ArbeidsforholdRef arbeidsforholdRef = inntektArbeidYtelseTjeneste.finnReferanseFor(kobling.getKoblingReferanse(), arbeidsgiver, ArbeidsforholdRef.ref(arbeidsforholdId), true);
         InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder aktørArbeidBuilder = builder.getAktørArbeidBuilder(aktørId);
 
         YrkesaktivitetBuilder yrkesaktivitetBuilder = byggYrkesaktiviteterTjeneste

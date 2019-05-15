@@ -14,6 +14,7 @@ import no.nav.foreldrepenger.abakus.app.konfig.ApplicationServiceStarter;
 import no.nav.foreldrepenger.abakus.app.selftest.NaisRestTjeneste;
 import no.nav.foreldrepenger.abakus.app.selftest.SelftestService;
 
+@SuppressWarnings("resource")
 public class NaisRestTjenesteTest {
 
     private NaisRestTjeneste restTjeneste;
