@@ -12,7 +12,7 @@ public class PensjonTrygdType extends YtelseType {
 
     public static final PensjonTrygdType BIL = new PensjonTrygdType("BIL"); //$NON-NLS-1$
 
-    private PensjonTrygdType(String kode) {
+    public PensjonTrygdType(String kode) {
         super(kode, DISCRIMINATOR);
     }
 

@@ -4,14 +4,15 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import javax.ws.rs.NotFoundException;
 
-import org.jboss.weld.exceptions.UnsupportedOperationException;
+import javax.ws.rs.NotFoundException;
 
 import no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingSomIkkeKommer;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
@@ -44,7 +45,10 @@ public class IAYDtoMapper {
             return null;
         }
         var dataset = spec.getDataset();
-        var dto = new InntektArbeidYtelseGrunnlagDto(new AktørIdPersonident(aktørId.getId()), grunnlag.getGrunnlagReferanse().getReferanse());
+        var grunnlagReferanse2 = grunnlag.getGrunnlagReferanse().getReferanse();
+        var koblingReferanse2 = tjeneste.hentKoblingReferanse(new GrunnlagReferanse(grunnlagReferanse2)).getReferanse();
+        
+        var dto = new InntektArbeidYtelseGrunnlagDto(new AktørIdPersonident(aktørId.getId()), grunnlagReferanse2, koblingReferanse2);
 
         var aggregatOpt = grunnlag.getOpplysningerEtterSkjæringstidspunkt(null);
         if (aggregatOpt.isEmpty()) {
@@ -71,22 +75,68 @@ public class IAYDtoMapper {
     }
 
     public InntektArbeidYtelseGrunnlag mapTilGrunnlag(InntektArbeidYtelseGrunnlagDto dto) {
-        // FIXME mapping til IAYG entiteter
-        var overstyrtAktørArbeid = new MapAktørArbeid(tjeneste, koblingReferanse).mapFraDto(dto.getOverstyrt().getArbeid());
+        var saksbehandlerOverstyringer = tjeneste.opprettBuilderForSaksbehandlerOverstyring(koblingReferanse);
+        var overstyrtAktørArbeid = new MapAktørArbeid(tjeneste, koblingReferanse).mapFraDto(aktørId, saksbehandlerOverstyringer, dto.getOverstyrt().getArbeid());
+        overstyrtAktørArbeid.forEach(saksbehandlerOverstyringer::leggTilAktørArbeid);
 
-        // bør denne sendes på samme grensesnitt? gjør det forsåvidt enkelt
         var inntektsmeldinger = new MapInntektsmeldinger(tjeneste, koblingReferanse).mapFraDto(dto.getInntektsmeldinger());
-
-        // bør denne sendes på samme grensesnitt? gjør det forsåvidet enkelt
         var oppgittOpptjening = new MapOppgittOpptjening().mapFraDto(dto.getOppgittOpptjening());
 
-        // disse er kun for migrering?
-        var aktørArbeidRegisterMigrering = new MapAktørArbeid(tjeneste, koblingReferanse).mapFraDto(dto.getOverstyrt().getArbeid());
-        var aktørInntektRegisterMigrering = new MapAktørInntekt().mapFraDto(dto.getRegister().getInntekt());
-        var aktørYtelseRegisterMigrering = new MapAktørYtelse().mapFraDto(dto.getRegister().getYtelse());
+        // Opprett nytt grunnlag (kliss nytt eller basert på annet)
+        var kladd = hentGrunnlag(dto);
+        var builder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(kladd);
+        builder.medOppgittOpptjening(oppgittOpptjening);
+        builder.setInntektsmeldinger(inntektsmeldinger);
+        builder.medData(saksbehandlerOverstyringer);
+        
+        return builder.build();
 
-        // FIXME ferdigstill dette
-        throw new UnsupportedOperationException("Not Yet Implemented");
+    }
+
+    private Optional<InntektArbeidYtelseGrunnlag> hentGrunnlag(InntektArbeidYtelseGrunnlagDto dto) {
+        if (dto.getGrunnlagReferanse() == null) {
+            if (dto.getKoblingReferanse() != null) {
+                return tjeneste.hentGrunnlagFor(new KoblingReferanse(dto.getKoblingReferanse()));
+            } else {
+                return Optional.empty();
+            }
+        }
+        return tjeneste.hentGrunnlagFor(new GrunnlagReferanse(dto.getGrunnlagReferanse()));
+    }
+
+    public InntektArbeidYtelseGrunnlag mapTilGrunnlagMigrering(InntektArbeidYtelseGrunnlagDto dto) {
+        var saksbehandlerOverstyringer = tjeneste.opprettBuilderForSaksbehandlerOverstyring(koblingReferanse);
+        var overstyrtAktørArbeid = new MapAktørArbeid(tjeneste, koblingReferanse).mapFraDto(aktørId, saksbehandlerOverstyringer, dto.getOverstyrt().getArbeid());
+        overstyrtAktørArbeid.forEach(saksbehandlerOverstyringer::leggTilAktørArbeid);
+
+        var inntektsmeldinger = new MapInntektsmeldinger(tjeneste, koblingReferanse).mapFraDto(dto.getInntektsmeldinger());
+        var oppgittOpptjening = new MapOppgittOpptjening().mapFraDto(dto.getOppgittOpptjening());
+        var registerData = mapRegisterDataTilMigrering(dto);
+
+        // Opprett nytt grunnlag (kliss nytt eller basert på annet)
+        var kladd = hentGrunnlag(dto);
+        var builder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(kladd);
+        builder.medOppgittOpptjening(oppgittOpptjening);
+        builder.setInntektsmeldinger(inntektsmeldinger);
+        builder.medData(saksbehandlerOverstyringer);
+        builder.medData(registerData);
+        
+        return builder.build();
+    }
+
+    // brukes kun til migrering av data (dytter inn IAYG)
+    private InntektArbeidYtelseAggregatBuilder mapRegisterDataTilMigrering(InntektArbeidYtelseGrunnlagDto dto) {
+        var registerData = tjeneste.opprettBuilderForRegister(koblingReferanse);
+
+        var aktørArbeid = new MapAktørArbeid(tjeneste, koblingReferanse).mapFraDto(aktørId, registerData, dto.getRegister().getArbeid());
+        var aktørInntekt = new MapAktørInntekt().mapFraDto(aktørId, registerData, dto.getRegister().getInntekt());
+        var aktørYtelse = new MapAktørYtelse().mapFraDto(aktørId, registerData, dto.getRegister().getYtelse());
+        
+        aktørArbeid.forEach(registerData::leggTilAktørArbeid);
+        aktørInntekt.forEach(registerData::leggTilAktørInntekt);
+        aktørYtelse.forEach(registerData::leggTilAktørYtelse);
+        
+        return registerData;
     }
 
     private void mapOpptjening(Optional<OppgittOpptjening> oppgittOpptjening,

@@ -18,7 +18,7 @@ public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRe
 
     Optional<ArbeidsforholdInformasjon> hentArbeidsforholdInformasjonForBehandling(KoblingReferanse koblingReferanse);
 
-    InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForReferanse(GrunnlagReferanse grunnlagReferanse);
+    Optional<InntektArbeidYtelseGrunnlag> hentInntektArbeidYtelseForReferanse(GrunnlagReferanse grunnlagReferanse);
 
     Long hentKoblingIdFor(GrunnlagReferanse grunnlagReferanse);
     

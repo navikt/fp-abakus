@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -13,6 +14,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
+import org.jboss.weld.exceptions.IllegalStateException;
 import org.jboss.weld.exceptions.UnsupportedOperationException;
 
 import io.swagger.annotations.Api;
@@ -21,7 +23,9 @@ import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYDtoMapper;
+import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
+import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
@@ -38,13 +42,17 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 public class GrunnlagRestTjeneste {
 
     private InntektArbeidYtelseTjeneste iayTjeneste;
+    private KoblingTjeneste koblingTjeneste;
 
-    public GrunnlagRestTjeneste() {
+    GrunnlagRestTjeneste() {
+        // for CDI
     }
 
     @Inject
-    public GrunnlagRestTjeneste(InntektArbeidYtelseTjeneste iayTjeneste) {
+    public GrunnlagRestTjeneste(InntektArbeidYtelseTjeneste iayTjeneste,
+                                KoblingTjeneste koblingTjeneste) {
         this.iayTjeneste = iayTjeneste;
+        this.koblingTjeneste = koblingTjeneste;
     }
 
     @POST
@@ -54,42 +62,60 @@ public class GrunnlagRestTjeneste {
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentIayGrunnlag(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid InntektArbeidYtelseGrunnlagRequest spesifikasjon) {
 
-        // TODO: sjekk at spesifikasjon#person matcher grunnlag og sjekk at PersonIdent kun er aktørIds
-        AktørId aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
+        var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
 
-        GrunnlagReferanse grunnlagReferanse = new GrunnlagReferanse(spesifikasjon.getGrunnlagReferanse());
-        KoblingReferanse koblingReferanse = getKoblingReferanse(spesifikasjon);
-        InntektArbeidYtelseGrunnlag grunnlag = getGrunnlag(spesifikasjon, grunnlagReferanse, koblingReferanse);
+        var grunnlagReferanse = new GrunnlagReferanse(spesifikasjon.getGrunnlagReferanse());
+        var koblingReferanse = getKoblingReferanse(aktørId, spesifikasjon);
+        var grunnlag = getGrunnlag(spesifikasjon, grunnlagReferanse, koblingReferanse);
 
-        IAYDtoMapper dtoMapper = new IAYDtoMapper(iayTjeneste, aktørId, grunnlagReferanse, koblingReferanse);
+        var dtoMapper = new IAYDtoMapper(iayTjeneste, aktørId, grunnlagReferanse, koblingReferanse);
 
         return Response.ok(dtoMapper.mapTilDto(grunnlag, spesifikasjon)).build();
     }
 
-    private KoblingReferanse getKoblingReferanse(InntektArbeidYtelseGrunnlagRequest spesifikasjon) {
+    private KoblingReferanse getKoblingReferanse(AktørId aktørId, InntektArbeidYtelseGrunnlagRequest spesifikasjon) {
+        KoblingReferanse koblingReferanse;
         if (spesifikasjon.getKoblingReferanse() != null) {
-            return new KoblingReferanse(spesifikasjon.getKoblingReferanse());
+            koblingReferanse = new KoblingReferanse(spesifikasjon.getKoblingReferanse());
         } else {
             var grunnlagReferanse = new GrunnlagReferanse(spesifikasjon.getGrunnlagReferanse());
-            return iayTjeneste.hentKoblingReferanse(grunnlagReferanse);
+            koblingReferanse = iayTjeneste.hentKoblingReferanse(grunnlagReferanse);
         }
+
+        Kobling kobling = koblingTjeneste.hentFor(koblingReferanse).orElseThrow(IllegalArgumentException::new);
+
+        if (!Objects.equals(kobling.getAktørId(), aktørId)) {
+            // post-condition sjekk at angitt person stemmer med koblingens aktør
+            throw new IllegalArgumentException("Kobling ikke knyttet til angitt aktør: " + aktørId);
+        }
+        return koblingReferanse;
     }
 
-    private InntektArbeidYtelseGrunnlag getGrunnlag(InntektArbeidYtelseGrunnlagRequest spesifikasjon, GrunnlagReferanse grunnlagReferanse, KoblingReferanse koblingReferanse) {
+    private InntektArbeidYtelseGrunnlag getGrunnlag(@SuppressWarnings("unused") InntektArbeidYtelseGrunnlagRequest spesifikasjon,
+                                                    GrunnlagReferanse grunnlagReferanse,
+                                                    KoblingReferanse koblingReferanse) {
         if (grunnlagReferanse != null) {
-            return iayTjeneste.hentAggregat(grunnlagReferanse);
+            var grunnlag = iayTjeneste.hentAggregat(grunnlagReferanse);
+            if (koblingReferanse != null) {
+                var grunnlagsKoblingReferanse = iayTjeneste.hentKoblingReferanse(grunnlagReferanse);
+                if (!Objects.equals(koblingReferanse, grunnlagsKoblingReferanse)) {
+                    // returner kun angitt koblingReferanse i feilmelding, ikke den som er på grunnlag (sikkerhet).
+                    throw new IllegalStateException("Angitt koblingreferanse matcher ikke grunnlag: " + koblingReferanse);
+                }
+            }
+            return grunnlag;
         } else if (koblingReferanse != null) {
+            return iayTjeneste.hentAggregat(koblingReferanse);
         }
 
-        // FIXME: Kobling UUID
-        throw new UnsupportedOperationException("Støtter ikke koblingreferanser basert på UUID ennå");
+        throw new UnsupportedOperationException("Må ha grunnlagReferanse eller koblingReferanse");
     }
 
     private class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         @Override
         public AbacDataAttributter apply(Object obj) {
-            InntektArbeidYtelseGrunnlagRequest req = (InntektArbeidYtelseGrunnlagRequest) obj;
+            var req = (InntektArbeidYtelseGrunnlagRequest) obj;
             return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, req.getPerson().getIdent());
         }
     }

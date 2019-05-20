@@ -19,7 +19,6 @@ import javax.ws.rs.core.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
-import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.arbeidsforhold.ArbeidsforholdDtoTjeneste;
@@ -102,9 +101,9 @@ public class ArbeidsforholdRestTjeneste {
     private Arbeidsgiver tilArbeidsgiver(@Valid @NotNull ArbeidsforholdReferanse request) {
         var arbeidsgiver = request.getArbeidsgiver();
         if (arbeidsgiver.getErOrganisasjon()) {
-            return ArbeidsgiverEntitet.virksomhet(virksomhetTjeneste.hentOgLagreOrganisasjon(arbeidsgiver.getIdent()));
+            return Arbeidsgiver.virksomhet(virksomhetTjeneste.hentOgLagreOrganisasjon(arbeidsgiver.getIdent()));
         }
-        return ArbeidsgiverEntitet.person(new AktørId(arbeidsgiver.getIdent()));
+        return Arbeidsgiver.person(new AktørId(arbeidsgiver.getIdent()));
     }
 
     private class AktørDatoRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {

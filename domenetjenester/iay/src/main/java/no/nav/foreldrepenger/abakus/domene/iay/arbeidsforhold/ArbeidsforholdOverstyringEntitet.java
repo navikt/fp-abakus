@@ -23,7 +23,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinFormula;
 
-import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -39,7 +39,7 @@ public class ArbeidsforholdOverstyringEntitet extends BaseEntitet implements Ind
     private Long id;
 
     @Embedded
-    private ArbeidsgiverEntitet arbeidsgiver;
+    private Arbeidsgiver arbeidsgiver;
 
     @Embedded
     private ArbeidsforholdRef arbeidsforholdRef;
@@ -83,11 +83,11 @@ public class ArbeidsforholdOverstyringEntitet extends BaseEntitet implements Ind
         this.informasjon = arbeidsforholdInformasjonEntitet;
     }
 
-    public ArbeidsgiverEntitet getArbeidsgiver() {
+    public Arbeidsgiver getArbeidsgiver() {
         return arbeidsgiver;
     }
 
-    void setArbeidsgiver(ArbeidsgiverEntitet arbeidsgiver) {
+    void setArbeidsgiver(Arbeidsgiver arbeidsgiver) {
         this.arbeidsgiver = arbeidsgiver;
     }
 

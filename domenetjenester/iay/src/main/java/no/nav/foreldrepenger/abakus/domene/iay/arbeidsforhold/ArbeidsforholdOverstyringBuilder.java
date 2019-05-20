@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
-import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 
 public class ArbeidsforholdOverstyringBuilder {
@@ -29,8 +28,8 @@ public class ArbeidsforholdOverstyringBuilder {
         return oppdatere.map(ArbeidsforholdOverstyringBuilder::oppdatere).orElseGet(ArbeidsforholdOverstyringBuilder::ny);
     }
 
-    public ArbeidsforholdOverstyringBuilder medArbeidsgiver(Arbeidsgiver arbeidsgiver) {
-        kladd.setArbeidsgiver((ArbeidsgiverEntitet) arbeidsgiver);
+    public ArbeidsforholdOverstyringBuilder medArbeidsgiver(Arbeidsgiver arbeidsgiverEntitet) {
+        kladd.setArbeidsgiver(arbeidsgiverEntitet);
         return this;
     }
 

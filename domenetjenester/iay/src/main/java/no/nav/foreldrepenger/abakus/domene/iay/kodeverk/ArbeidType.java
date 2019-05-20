@@ -43,7 +43,7 @@ public class ArbeidType extends ArbeidTypeKode {
     public static final Set<ArbeidType> AA_REGISTER_TYPER = Set.of(ArbeidType.ORDINÆRT_ARBEIDSFORHOLD,
         ArbeidType.MARITIMT_ARBEIDSFORHOLD, ArbeidType.FORENKLET_OPPGJØRSORDNING);
 
-    private ArbeidType(String kode) {
+    public ArbeidType(String kode) {
         super(kode, DISCRIMINATOR);
     }
 

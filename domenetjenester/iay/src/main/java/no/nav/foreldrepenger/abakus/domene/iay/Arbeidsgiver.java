@@ -1,35 +1,122 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.io.Serializable;
+import java.util.Objects;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
+
+import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
+import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.TraverseValue;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
-public interface Arbeidsgiver extends Serializable {
-
+@Embeddable
+public class Arbeidsgiver implements IndexKey, TraverseValue, Serializable {
     /**
-     * Virksomhets orgnr. Leser bør ta høyde for at dette kan være juridisk orgnr (istdf. virksomhets orgnr).
+     * Kun en av denne og {@link #arbeidsgiverAktørId} kan være satt. Sett denne hvis ArbeidsgiverEntitet er en Organisasjon.
      */
-    OrgNummer getOrgnr();
+    @ChangeTracked
+    @Embedded
+    @AttributeOverrides(@AttributeOverride(name = "orgNummer", column = @Column(name = "arbeidsgiver_orgnr", updatable = false)))
+    private OrgNummer arbeidsgiverOrgnr;
 
     /**
-     * Hvis arbeidsgiver er en privatperson, returner aktørId for person.
+     * Kun en av denne og {@link #virksomhet} kan være satt. Sett denne hvis ArbeidsgiverEntitet er en Enkelt person.
      */
-    AktørId getAktørId();
+    @ChangeTracked
+    @Embedded
+    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "arbeidsgiver_aktor_id", updatable = false)))
+    private AktørId arbeidsgiverAktørId;
+
+    private Arbeidsgiver(OrgNummer arbeidsgiverOrgnr, AktørId arbeidsgiverAktørId) {
+        this.arbeidsgiverOrgnr = arbeidsgiverOrgnr;
+        this.arbeidsgiverAktørId = arbeidsgiverAktørId;
+    }
+
+    private Arbeidsgiver() {
+    }
+
+    public static Arbeidsgiver virksomhet(Virksomhet virksomhet) {
+        return new Arbeidsgiver(new OrgNummer(virksomhet.getOrgnr()), null);
+    }
+
+    public static Arbeidsgiver virksomhet(OrgNummer orgnr) {
+        return new Arbeidsgiver(orgnr, null);
+    }
+
+    public static Arbeidsgiver person(AktørId arbeidsgiverAktørId) {
+        return new Arbeidsgiver(null, arbeidsgiverAktørId);
+    }
+
+    @Override
+    public String getIndexKey() {
+        return arbeidsgiverOrgnr == null
+            ? IndexKey.createKey("arbeidsgiverAktørId", arbeidsgiverAktørId)
+            : IndexKey.createKey("virksomhet", arbeidsgiverOrgnr);
+    }
+
+    public OrgNummer getOrgnr() {
+        return arbeidsgiverOrgnr;
+    }
+
+    public AktørId getAktørId() {
+        return arbeidsgiverAktørId;
+    }
 
     /**
-     * Returneer ident for arbeidsgiver. Kan være Org nummer eller Aktør id (dersom arbeidsgiver er en enkelt person -
+     * Returneer ident for ArbeidsgiverEntitet. Kan være Org nummer eller AktørDto id (dersom ArbeidsgiverEntitet er en enkelt person -
      * f.eks. for Frilans el.)
      */
-    String getIdentifikator();
+    public String getIdentifikator() {
+        if (arbeidsgiverAktørId != null) {
+            return arbeidsgiverAktørId.getId();
+        }
+        return arbeidsgiverOrgnr.getId();
+    }
 
     /**
-     * Return true hvis arbeidsgiver er en {@link Virksomhet}, false hvis en Person.
+     * Return true hvis ArbeidsgiverEntitet er en {@link Virksomhet}, false hvis en Person.
      */
-    boolean getErVirksomhet();
+    public boolean getErVirksomhet() {
+        return this.arbeidsgiverOrgnr != null;
+    }
 
     /**
-     * Return true hvis arbeidsgiver er en {@link AktørId}, ellers false.
+     * Return true hvis ArbeidsgiverEntitet er en {@link AktørId}, ellers false.
      */
-    boolean erAktørId();
+    public boolean erAktørId() {
+        return this.arbeidsgiverAktørId != null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !(o instanceof Arbeidsgiver)) {
+            return false;
+        }
+        Arbeidsgiver that = (Arbeidsgiver) o;
+        return Objects.equals(arbeidsgiverOrgnr, that.arbeidsgiverOrgnr) &&
+            Objects.equals(arbeidsgiverAktørId, that.arbeidsgiverAktørId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(arbeidsgiverOrgnr, arbeidsgiverAktørId);
+    }
+
+    @Override
+    public String toString() {
+        return "ArbeidsgiverEntitet{" +
+            "arbeidsgiverOrgnr=" + arbeidsgiverOrgnr +
+            ", arbeidsgiverAktørId='" + arbeidsgiverAktørId + '\'' +
+            '}';
+    }
 }

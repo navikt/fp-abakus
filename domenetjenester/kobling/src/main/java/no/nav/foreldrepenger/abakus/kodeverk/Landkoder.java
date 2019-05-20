@@ -25,7 +25,7 @@ public class Landkoder extends Kodeliste {
         // Hibernate trenger en
     }
 
-    private Landkoder(String kode) {
+    public Landkoder(String kode) {
         super(kode, DISCRIMINATOR);
     }
 

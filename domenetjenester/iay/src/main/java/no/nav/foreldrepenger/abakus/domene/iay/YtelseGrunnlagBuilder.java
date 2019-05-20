@@ -58,4 +58,8 @@ public class YtelseGrunnlagBuilder {
     public YtelseStørrelseBuilder getStørrelseBuilder() {
         return YtelseStørrelseBuilder.ny();
     }
+
+    public YtelseGrunnlagBuilder medArbeidskategori(String kode) {
+        return medArbeidskategori(new Arbeidskategori(kode));
+    }
 }

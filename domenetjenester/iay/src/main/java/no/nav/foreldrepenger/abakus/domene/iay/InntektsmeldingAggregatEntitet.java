@@ -48,7 +48,7 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-    InntektsmeldingAggregatEntitet() {
+    public InntektsmeldingAggregatEntitet() {
     }
 
     InntektsmeldingAggregatEntitet(InntektsmeldingAggregat inntektsmeldingAggregat) {
@@ -93,7 +93,7 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
      * Den persisterte inntektsmeldingen kan være av nyere dato, bestemmes av
      * innsendingstidspunkt på inntektsmeldingen.
      */
-    void leggTil(Inntektsmelding inntektsmelding) {
+    public void leggTil(Inntektsmelding inntektsmelding) {
 
         boolean fjernet = inntektsmeldinger.removeIf(it -> skalFjerneInntektsmelding(it, inntektsmelding));
 
@@ -106,6 +106,10 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
         inntektsmeldinger.stream().filter(it -> it.gjelderSammeArbeidsforhold(inntektsmelding) && !fjernet).findFirst().ifPresent(e -> {
             logger.info("Persistert inntektsmelding med journalpostid {} er nyere enn den mottatte med journalpostid {}. Ignoreres", e.getJournalpostId(), inntektsmelding.getJournalpostId());
         });
+    }
+
+    public void fjern(Inntektsmelding inntektsmelding) {
+        inntektsmeldinger.remove(inntektsmelding);
     }
 
     private boolean skalFjerneInntektsmelding(Inntektsmelding gammel, Inntektsmelding ny) {

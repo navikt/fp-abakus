@@ -143,7 +143,8 @@ public class InntektArbeidYtelseAggregatBuilder {
         final AktørArbeidBuilder builder = getAktørArbeidBuilder(søker);
         if (builder.getErOppdatering()) {
             if (eksistererIkkeFraFør(arbeidsgiver, gammelRef, builder)) {
-                final YrkesaktivitetBuilder yrkesaktivitetBuilder = builder.getYrkesaktivitetBuilderForNøkkelAvType(Opptjeningsnøkkel.forArbeidsforholdIdMedArbeidgiver(gammelRef, arbeidsgiver),
+                final YrkesaktivitetBuilder yrkesaktivitetBuilder = builder.getYrkesaktivitetBuilderForNøkkelAvType(
+                    Opptjeningsnøkkel.forArbeidsforholdIdMedArbeidgiver(gammelRef, arbeidsgiver),
                     ArbeidType.AA_REGISTER_TYPER);
                 if (yrkesaktivitetBuilder.getErOppdatering()) {
                     yrkesaktivitetBuilder.medArbeidsforholdId(nyRef);
@@ -251,7 +252,6 @@ public class InntektArbeidYtelseAggregatBuilder {
             return oppdatere.map(AktørInntektBuilder::oppdatere).orElseGet(AktørInntektBuilder::ny);
         }
 
-
         private void medAktørId(AktørId aktørId) {
             this.aktørInntektEntitet.setAktørId(aktørId);
         }
@@ -327,7 +327,8 @@ public class InntektArbeidYtelseAggregatBuilder {
             return kladd.getYtelseBuilderForType(fagsystem, type, sakId);
         }
 
-        public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer sakId, DatoIntervallEntitet periode, Optional<LocalDate> tidligsteAnvistFom) {
+        public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer sakId, DatoIntervallEntitet periode,
+                                                        Optional<LocalDate> tidligsteAnvistFom) {
             return kladd.getYtelseBuilderForType(fagsystem, type, sakId, periode, tidligsteAnvistFom);
         }
 
@@ -363,5 +364,3 @@ public class InntektArbeidYtelseAggregatBuilder {
     }
 
 }
-
-

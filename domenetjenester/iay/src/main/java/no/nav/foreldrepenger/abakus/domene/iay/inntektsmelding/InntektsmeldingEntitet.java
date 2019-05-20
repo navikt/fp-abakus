@@ -27,7 +27,7 @@ import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
-import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregatEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -64,7 +64,7 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
 
     @Embedded
     @ChangeTracked
-    private ArbeidsgiverEntitet arbeidsgiver;
+    private Arbeidsgiver arbeidsgiver;
 
     @Embedded
     @ChangeTracked
@@ -168,11 +168,11 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
     }
 
     @Override
-    public ArbeidsgiverEntitet getArbeidsgiver() {
+    public Arbeidsgiver getArbeidsgiver() {
         return arbeidsgiver;
     }
 
-    void setArbeidsgiver(ArbeidsgiverEntitet virksomhet) {
+    void setArbeidsgiver(Arbeidsgiver virksomhet) {
         this.arbeidsgiver = virksomhet;
     }
 

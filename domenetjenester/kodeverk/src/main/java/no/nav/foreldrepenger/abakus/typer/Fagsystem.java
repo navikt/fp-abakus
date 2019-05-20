@@ -40,7 +40,7 @@ public class Fagsystem extends Kodeliste {
         // Hibernate trenger den
     }
 
-    private Fagsystem(String kode) {
+    public Fagsystem(String kode) {
         super(kode, DISCRIMINATOR);
     }
 

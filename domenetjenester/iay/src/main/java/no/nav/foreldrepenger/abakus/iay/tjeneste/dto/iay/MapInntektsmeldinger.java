@@ -4,13 +4,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.jboss.weld.exceptions.UnsupportedOperationException;
-
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
-import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregatEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Gradering;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
+import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingSomIkkeKommer;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelse;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Refusjon;
@@ -56,18 +55,18 @@ public class MapInntektsmeldinger {
 
         private InntektsmeldingSomIkkeKommerDto mapInntektsmeldingSomIkkekommer(InntektsmeldingSomIkkeKommer ik) {
             var arbeidsforholdsId = mapArbeidsforholdsId(ik.getArbeidsgiver(), ik.getRef());
-            var arbeidsgiver = mapAktør(ik.getArbeidsgiver());
-            return new InntektsmeldingSomIkkeKommerDto(arbeidsgiver, arbeidsforholdsId);
+            var arbeidsgiverEntitet = mapAktør(ik.getArbeidsgiver());
+            return new InntektsmeldingSomIkkeKommerDto(arbeidsgiverEntitet, arbeidsforholdsId);
         }
 
         private InntektsmeldingDto mapInntektsmelding(Inntektsmelding im) {
-            var arbeidsgiver = mapAktør(im.getArbeidsgiver());
+            var ArbeidsgiverEntitet = mapAktør(im.getArbeidsgiver());
             var journalpostId = new JournalpostId(im.getJournalpostId().getVerdi());
             var innsendingstidspunkt = im.getInnsendingstidspunkt();
             var arbeidsforholdId = mapArbeidsforholdsId(im.getArbeidsgiver(), im.getArbeidsforholdRef());
             var innsendingsårsak = new InntektsmeldingInnsendingsårsakType(im.getInntektsmeldingInnsendingsårsak().getKode());
 
-            var inntektsmeldingDto = new InntektsmeldingDto(arbeidsgiver, journalpostId, innsendingstidspunkt)
+            var inntektsmeldingDto = new InntektsmeldingDto(ArbeidsgiverEntitet, journalpostId, innsendingstidspunkt)
                 .medArbeidsforholdRef(arbeidsforholdId)
                 .medInnsendingsårsak(innsendingsårsak)
                 .medInntektBeløp(im.getInntektBeløp().getVerdi())
@@ -111,13 +110,66 @@ public class MapInntektsmeldinger {
             var utsettelseÅrsak = new UtsettelseÅrsakType(utsettelsePeriode.getÅrsak().getKode());
             return new UtsettelsePeriodeDto(new Periode(periode.getFomDato(), periode.getTomDato()), utsettelseÅrsak);
         }
+
+        private Aktør mapAktør(Arbeidsgiver arbeidsgiverEntitet) {
+            return arbeidsgiverEntitet.erAktørId()
+                ? new AktørIdPersonident(arbeidsgiverEntitet.getAktørId().getId())
+                : new Organisasjon(arbeidsgiverEntitet.getOrgnr().getId());
+        }
+
+        private ArbeidsforholdRefDto mapArbeidsforholdsId(Arbeidsgiver arbeidsgiverEntitet, ArbeidsforholdRef arbeidsforhold) {
+            String internId = arbeidsforhold.getReferanse();
+            if (internId != null) {
+                String eksternReferanse = tjeneste
+                    .finnReferanseFor(koblingReferanse, arbeidsgiverEntitet, arbeidsforhold, true)
+                    .getReferanse();
+                return new ArbeidsforholdRefDto(internId, eksternReferanse);
+            }
+            return new ArbeidsforholdRefDto(internId, null);
+        }
     }
 
     private class MapFraDto {
 
-        public List<InntektsmeldingAggregat> map(InntektsmeldingerDto inntektsmeldinger) {
-            // FIXME Map Inntektsmeldinger
-            throw new UnsupportedOperationException("Not Yet Implemented");
+        public InntektsmeldingAggregatEntitet map(InntektsmeldingerDto inntektsmeldinger) {
+            var inntektsmeldingAggregat = new InntektsmeldingAggregatEntitet();
+            inntektsmeldinger.getInntektsmeldinger().stream().map(this::mapInntektsmelding).forEach(inntektsmeldingAggregat::leggTil);
+            return inntektsmeldingAggregat;
+        }
+
+        private Inntektsmelding mapInntektsmelding(InntektsmeldingDto dto) {
+            var arbeidsforholdId = dto.getArbeidsforholdRef() != null ? dto.getArbeidsforholdRef().getAbakusReferanse() : null;
+            var journalpostId = dto.getJournalpostId().getId();
+            var innsendingstidspunkt = dto.getInnsendingstidspunkt().toLocalDateTime();
+            var innsendingsårsak = dto.getInnsendingsårsak().getKode();
+
+            return InntektsmeldingBuilder.builder()
+                .medJournalpostId(journalpostId)
+                .medArbeidsgiver(mapArbeidsgiver(dto.getArbeidsgiver()))
+                .medInnsendingstidspunkt(innsendingstidspunkt)
+                .medBeløp(dto.getInntektBeløp())
+                .medArbeidsforholdId(arbeidsforholdId)
+                .medStartDatoPermisjon(dto.getStartDatoPermisjon())
+                .medRefusjon(dto.getRefusjonsBeløpPerMnd())
+                .medKanalreferanse(dto.getKanalreferanse())
+                .medInntektsmeldingaarsak(innsendingsårsak)
+                .medNærRelasjon(dto.isNærRelasjon())
+                .medKildesystem(dto.getKildesystem())
+                .build();
+        }
+
+        private Arbeidsgiver mapArbeidsgiver(Aktør arbeidsgiverDto) {
+            if (arbeidsgiverDto == null) {
+                return null;
+            }
+            String identifikator = arbeidsgiverDto.getIdent();
+            if (arbeidsgiverDto.getErOrganisasjon()) {
+                return Arbeidsgiver.virksomhet(new OrgNummer(identifikator));
+            }
+            if (arbeidsgiverDto.getErPerson()) {
+                return Arbeidsgiver.person(new AktørId(identifikator));
+            }
+            throw new IllegalArgumentException();
         }
     }
 
@@ -138,13 +190,14 @@ public class MapInntektsmeldinger {
 
         private Arbeidsgiver mapArbeidsgiver(Aktør arbeidsgiver) {
             if (arbeidsgiver.getErOrganisasjon()) {
-                return ArbeidsgiverEntitet.virksomhet(new OrgNummer(arbeidsgiver.getIdent()));
+                return Arbeidsgiver.virksomhet(new OrgNummer(arbeidsgiver.getIdent()));
             }
-            return ArbeidsgiverEntitet.person(new AktørId(arbeidsgiver.getIdent()));
+            return Arbeidsgiver.person(new AktørId(arbeidsgiver.getIdent()));
         }
     }
 
     private InntektArbeidYtelseTjeneste tjeneste;
+
     private KoblingReferanse koblingReferanse;
 
     public MapInntektsmeldinger(InntektArbeidYtelseTjeneste tjeneste, KoblingReferanse koblingReferanse) {
@@ -156,7 +209,7 @@ public class MapInntektsmeldinger {
         return new MapTilDto().map(ia, inntektsmeldingerSomIkkeKommer);
     }
 
-    public List<InntektsmeldingAggregat> mapFraDto(InntektsmeldingerDto inntektsmeldinger) {
+    public InntektsmeldingAggregatEntitet mapFraDto(InntektsmeldingerDto inntektsmeldinger) {
         return new MapFraDto().map(inntektsmeldinger);
     }
 
@@ -164,20 +217,4 @@ public class MapInntektsmeldinger {
         return new MapFraInntektsmeldingSomIkkeKommerDto().map(inntektsmeldinger);
     }
 
-    private Aktør mapAktør(Arbeidsgiver arbeidsgiver) {
-        return arbeidsgiver.erAktørId()
-            ? new AktørIdPersonident(arbeidsgiver.getAktørId().getId())
-            : new Organisasjon(arbeidsgiver.getOrgnr().getId());
-    }
-
-    private ArbeidsforholdRefDto mapArbeidsforholdsId(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef arbeidsforhold) {
-        String internId = arbeidsforhold.getReferanse();
-        if (internId != null) {
-            String eksternReferanse = tjeneste
-                .finnReferanseFor(koblingReferanse, arbeidsgiver, arbeidsforhold, true)
-                .getReferanse();
-            return new ArbeidsforholdRefDto(internId, eksternReferanse);
-        }
-        return new ArbeidsforholdRefDto(internId, null);
-    }
 }

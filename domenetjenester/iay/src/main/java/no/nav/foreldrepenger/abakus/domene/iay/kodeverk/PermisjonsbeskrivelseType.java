@@ -13,7 +13,7 @@ public class PermisjonsbeskrivelseType extends Kodeliste{
     public static final PermisjonsbeskrivelseType UDEFINERT = new PermisjonsbeskrivelseType("-"); //$NON-NLS-1$
     public static final PermisjonsbeskrivelseType UTDANNINGSPERMISJON = new PermisjonsbeskrivelseType("UTDANNINGSPERMISJON"); //$NON-NLS-1$
 
-    private PermisjonsbeskrivelseType(String kode) {
+    public PermisjonsbeskrivelseType(String kode) {
         super(kode, DISCRIMINATOR);
     }
 

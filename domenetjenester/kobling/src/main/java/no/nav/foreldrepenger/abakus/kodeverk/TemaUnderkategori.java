@@ -47,7 +47,7 @@ public class TemaUnderkategori extends Kodeliste {
         // Hibernate trenger den
     }
 
-    private TemaUnderkategori(String kode) {
+    public TemaUnderkategori(String kode) {
         super(kode, DISCRIMINATOR);
     }
 

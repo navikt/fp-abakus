@@ -14,7 +14,7 @@ public class SkatteOgAvgiftsregelType extends Kodeliste {
     public static final SkatteOgAvgiftsregelType NETTOLOENN_FOR_SJOEFOLK = new SkatteOgAvgiftsregelType("NETTOLØNN_FOR_SJØFOLK"); //$NON-NLS-1$
     public static final SkatteOgAvgiftsregelType SAERSKILT_FRADRAG_FOR_SJOEFOLK = new SkatteOgAvgiftsregelType("SÆRSKILT_FRADRAG_FOR_SJØFOLK"); //$NON-NLS-1$
 
-    private SkatteOgAvgiftsregelType(String kode) {
+    public SkatteOgAvgiftsregelType(String kode) {
         super(kode, DISCRIMINATOR);
     }
 

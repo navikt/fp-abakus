@@ -16,7 +16,6 @@ import org.threeten.extra.Interval;
 
 import no.nav.foreldrepenger.abakus.domene.iay.AktørInntektEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
-import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.NæringsinntektType;
@@ -207,7 +206,7 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
             boolean orgledd = virksomhetTjeneste.sjekkOmVirksomhetErOrgledd(arbeidsgiverIdentifikator);
             if (!orgledd) {
                 LocalDate hentedato = finnHentedatoForJuridisk(månedsinntekterGruppertPåArbeidsgiver.keySet());
-                arbeidsgiver = ArbeidsgiverEntitet.virksomhet(virksomhetTjeneste.hentOgLagreOrganisasjonMedHensynTilJuridisk(arbeidsgiverIdentifikator, hentedato));
+                arbeidsgiver = Arbeidsgiver.virksomhet(virksomhetTjeneste.hentOgLagreOrganisasjonMedHensynTilJuridisk(arbeidsgiverIdentifikator, hentedato));
                 aktørInntektBuilder.leggTilInntekt(byggInntekt(månedsinntekterGruppertPåArbeidsgiver, arbeidsgiver, aktørInntektBuilder, inntektOpptjening));
                 builder.leggTilAktørInntekt(aktørInntektBuilder);
             } else {
@@ -219,9 +218,9 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
                 if (arbeidsgiverOpt.isEmpty()) {
                     throw InnhentingFeil.FACTORY.finnerIkkeAktørIdForArbeidsgiverSomErPrivatperson().toException();
                 }
-                arbeidsgiver = ArbeidsgiverEntitet.person(new AktørId(arbeidsgiverOpt.get()));
+                arbeidsgiver = Arbeidsgiver.person(new AktørId(arbeidsgiverOpt.get()));
             } else {
-                arbeidsgiver = ArbeidsgiverEntitet.person(new AktørId(arbeidsgiverIdentifikator));
+                arbeidsgiver = Arbeidsgiver.person(new AktørId(arbeidsgiverIdentifikator));
             }
             aktørInntektBuilder.leggTilInntekt(byggInntekt(månedsinntekterGruppertPåArbeidsgiver, arbeidsgiver, aktørInntektBuilder, inntektOpptjening));
             builder.leggTilAktørInntekt(aktørInntektBuilder);
@@ -265,10 +264,10 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
 
     private Arbeidsgiver mapArbeidsgiver(ArbeidsforholdIdentifikator arbeidsforhold) {
         if (arbeidsforhold.getArbeidsgiver() instanceof Person) {
-            return ArbeidsgiverEntitet.person(new AktørId(((Person) arbeidsforhold.getArbeidsgiver()).getAktørId()));
+            return Arbeidsgiver.person(new AktørId(((Person) arbeidsforhold.getArbeidsgiver()).getAktørId()));
         } else if (arbeidsforhold.getArbeidsgiver() instanceof Organisasjon) {
             String orgnr = ((Organisasjon) arbeidsforhold.getArbeidsgiver()).getOrgNummer();
-            return ArbeidsgiverEntitet.virksomhet(virksomhetTjeneste.hentOgLagreOrganisasjon(orgnr));
+            return Arbeidsgiver.virksomhet(virksomhetTjeneste.hentOgLagreOrganisasjon(orgnr));
         }
         throw new IllegalArgumentException("Utvikler feil: ArbeidsgiverEntitet av ukjent type.");
     }

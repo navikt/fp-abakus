@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
@@ -23,7 +23,7 @@ public class InntektsmeldingBuilder {
         return new InntektsmeldingBuilder(new InntektsmeldingEntitet());
     }
 
-    public InntektsmeldingBuilder medArbeidsgiver(ArbeidsgiverEntitet arbeidsgiver) {
+    public InntektsmeldingBuilder medArbeidsgiver(Arbeidsgiver arbeidsgiver) {
         kladd.setArbeidsgiver(arbeidsgiver);
         return this;
     }
@@ -108,7 +108,16 @@ public class InntektsmeldingBuilder {
         return this;
     }
 
+    public InntektsmeldingBuilder medInntektsmeldingaarsak(String inntektsmeldingInnsendingsårsak) {
+        return medInntektsmeldingaarsak(new InntektsmeldingInnsendingsårsak(inntektsmeldingInnsendingsårsak));
+    }
+
     public Inntektsmelding build() {
         return kladd;
     }
+
+    public InntektsmeldingBuilder medJournalpostId(String journalpostId) {
+        return medJournalpostId(new JournalpostId(journalpostId));
+    }
+
 }

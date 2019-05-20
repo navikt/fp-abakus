@@ -383,9 +383,9 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     }
 
     @Override
-    public InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForReferanse(GrunnlagReferanse grunnlagReferanse) {
+    public Optional<InntektArbeidYtelseGrunnlag> hentInntektArbeidYtelseForReferanse(GrunnlagReferanse grunnlagReferanse) {
         Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlag = getVersjonAvInntektArbeidYtelseForReferanseId(grunnlagReferanse);
-        return grunnlag.orElse(null);
+        return grunnlag.map(InntektArbeidYtelseGrunnlag.class::cast);
     }
 
     @Override

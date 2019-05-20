@@ -3,19 +3,24 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.jboss.weld.exceptions.UnsupportedOperationException;
-
 import no.nav.foreldrepenger.abakus.domene.iay.AktørInntekt;
+import no.nav.foreldrepenger.abakus.domene.iay.AktørInntektEntitet.InntektBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.Inntekt;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektEntitet.InntektspostBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Inntektspost;
 import no.nav.foreldrepenger.abakus.domene.iay.NæringsinntektType;
 import no.nav.foreldrepenger.abakus.domene.iay.OffentligYtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.PensjonTrygdType;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
+import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Aktør;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Organisasjon;
@@ -25,24 +30,72 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntekt.v1.UtbetalingDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntekt.v1.UtbetalingsPostDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.InntektspostType;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.Kodeverk;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtbetaltNæringsYtelseType;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtbetaltPensjonTrygdType;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtbetaltYtelseFraOffentligeType;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtbetaltYtelseType;
 
 public class MapAktørInntekt {
-    public List<InntekterDto> mapTilDto(Collection<AktørInntekt> aktørInntekt) {
-        return new MapTilDto().map(aktørInntekt);
-    }
-
-    public List<AktørInntekt> mapFraDto(Collection<InntekterDto> aktørInntekt) {
-        return new MapFraDto().map(aktørInntekt);
-    }
-
     private class MapFraDto {
 
-        List<AktørInntekt> map(Collection<InntekterDto> aktørInntekt) {
-            // FIXME Map AktørInntekt på vei inn
-            throw new UnsupportedOperationException("Not Yet Implemented");
+        private final AktørId aktørId;
+        private final InntektArbeidYtelseAggregatBuilder aggregatBuilder;
+
+        public MapFraDto(AktørId aktørId, InntektArbeidYtelseAggregatBuilder aggregatBuilder) {
+            this.aktørId = aktørId;
+            this.aggregatBuilder = aggregatBuilder;
+        }
+
+        List<AktørInntektBuilder> map(Collection<InntekterDto> dtos) {
+            var builders = dtos.stream().map(idto -> {
+                var builder = aggregatBuilder.getAktørInntektBuilder(aktørId);
+                idto.getUtbetalinger().forEach(utbetalingDto -> builder.leggTilInntekt(mapUtbetaling(utbetalingDto)));
+                return builder;
+            }).collect(Collectors.toUnmodifiableList());
+
+            return builders;
+        }
+
+        private InntektBuilder mapUtbetaling(UtbetalingDto dto) {
+            InntektBuilder inntektBuilder = InntektBuilder.oppdatere(Optional.empty())
+                .medArbeidsgiver(mapArbeidsgiver(dto.getUtbetaler()))
+                .medInntektsKilde(new InntektsKilde(dto.getKilde().getKode()));
+            dto.getPoster()
+                .forEach(post -> inntektBuilder.leggTilInntektspost(mapInntektspost(post)));
+            return inntektBuilder;
+        }
+
+        private InntektspostBuilder mapInntektspost(UtbetalingsPostDto post) {
+            return InntektspostBuilder.ny()
+                    .medBeløp(post.getBeløp())
+                    .medInntektspostType(post.getInntektspostType().getKode())
+                    .medPeriode(post.getPeriode().getFom(), post.getPeriode().getTom())
+                    .medSkatteOgAvgiftsregelType(post.getSkattAvgiftType().getKode())
+                    .medYtelse(mapYtelseType(post.getYtelseType()));
+        }
+
+        private YtelseType mapYtelseType(UtbetaltYtelseType type) {
+            Kodeverk kodeverk = (Kodeverk) type;
+            String kode = kodeverk.getKode();
+            switch (kodeverk.getKodeverk()) {
+                case UtbetaltYtelseFraOffentligeType.KODEVERK:
+                    return new OffentligYtelseType(kode);
+                case UtbetaltNæringsYtelseType.KODEVERK:
+                    return new NæringsinntektType(kode);
+                case UtbetaltPensjonTrygdType.KODEVERK:
+                    return new PensjonTrygdType(kode);
+                default:
+                    throw new IllegalArgumentException("Ukjent UtbetaltYtelseType: " + type);
+            }
+        }
+
+        private Arbeidsgiver mapArbeidsgiver(Aktør arbeidsgiver) {
+            if (arbeidsgiver.getErOrganisasjon()) {
+                return Arbeidsgiver.virksomhet(new OrgNummer(arbeidsgiver.getIdent()));
+            }
+            return Arbeidsgiver.person(new AktørId(arbeidsgiver.getIdent()));
         }
 
     }
@@ -96,7 +149,7 @@ public class MapAktørInntekt {
         private UtbetalingsPostDto tilPost(Inntektspost inntektspost) {
             var periode = new Periode(inntektspost.getFraOgMed(), inntektspost.getTilOgMed());
             var inntektspostType = new InntektspostType(inntektspost.getInntektspostType().getKode());
-            var ytelseType = mapUtbetaltYtelseType(inntektspost.getYtelseType());
+            var ytelseType = mapYtelseType(inntektspost.getYtelseType());
             var skattOgAvgiftType = new SkatteOgAvgiftsregelType(inntektspost.getSkatteOgAvgiftsregelType().getKode());
 
             UtbetalingsPostDto dto = new UtbetalingsPostDto(ytelseType, periode, inntektspostType)
@@ -106,20 +159,27 @@ public class MapAktørInntekt {
             return dto;
         }
 
-        private UtbetaltYtelseType mapUtbetaltYtelseType(YtelseType ytelseType) {
-            if (ytelseType == null) {
-                return new UtbetaltYtelseFraOffentligeType("-");
+        private UtbetaltYtelseType mapYtelseType(YtelseType ytelseType) {
+            String kode = ytelseType.getKode();
+            switch (ytelseType.getKodeverk()) {
+                case UtbetaltYtelseFraOffentligeType.KODEVERK:
+                    return new UtbetaltYtelseFraOffentligeType(kode);
+                case UtbetaltNæringsYtelseType.KODEVERK:
+                    return new UtbetaltNæringsYtelseType(kode);
+                case UtbetaltPensjonTrygdType.KODEVERK:
+                    return new UtbetaltPensjonTrygdType(kode);
+                default:
+                    throw new IllegalArgumentException("Ukjent ytelsetype: " + ytelseType);
             }
-            if (ytelseType.getKodeverk().equals(OffentligYtelseType.DISCRIMINATOR)) {
-                return new UtbetaltYtelseFraOffentligeType(ytelseType.getKode());
-            }
-            if (ytelseType.getKodeverk().equals(NæringsinntektType.DISCRIMINATOR)) {
-                return new UtbetaltYtelseFraOffentligeType(ytelseType.getKode());
-            }
-            if (ytelseType.getKodeverk().equals(PensjonTrygdType.DISCRIMINATOR)) {
-                return new UtbetaltYtelseFraOffentligeType(ytelseType.getKode());
-            }
-            throw new IllegalArgumentException("Ukjent utbetalt ytelse. " + ytelseType.toString());
         }
+
+    }
+
+    public List<InntekterDto> mapTilDto(Collection<AktørInntekt> aktørInntekt) {
+        return new MapTilDto().map(aktørInntekt);
+    }
+
+    public List<AktørInntektBuilder> mapFraDto(AktørId aktørId, InntektArbeidYtelseAggregatBuilder aggregatBuilder, Collection<InntekterDto> aktørInntekt) {
+        return new MapFraDto(aktørId, aggregatBuilder).map(aktørInntekt);
     }
 }

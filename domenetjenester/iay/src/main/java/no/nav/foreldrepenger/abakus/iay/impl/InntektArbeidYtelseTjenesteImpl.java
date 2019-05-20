@@ -16,7 +16,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInfo
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
-import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
@@ -37,13 +36,13 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
     }
 
     @Override
-    public InntektArbeidYtelseGrunnlag hentAggregat(Kobling koblingen) {
-        return repository.hentInntektArbeidYtelseForBehandling(koblingen.getKoblingReferanse());
+    public InntektArbeidYtelseGrunnlag hentAggregat(KoblingReferanse koblingReferanse) {
+        return repository.hentInntektArbeidYtelseForBehandling(koblingReferanse);
     }
 
     @Override
     public InntektArbeidYtelseGrunnlag hentAggregat(GrunnlagReferanse referanse) {
-        return repository.hentInntektArbeidYtelseForReferanse(referanse);
+        return repository.hentInntektArbeidYtelseForReferanse(referanse).orElseThrow();
     }
 
     @Override
@@ -55,10 +54,20 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
     public Optional<InntektArbeidYtelseGrunnlag> hentGrunnlagFor(KoblingReferanse koblingReferanse) {
         return repository.hentInntektArbeidYtelseGrunnlagForBehandling(koblingReferanse);
     }
+    
+    @Override
+    public Optional<InntektArbeidYtelseGrunnlag> hentGrunnlagFor(GrunnlagReferanse grunnlagReferanse) {
+        return repository.hentInntektArbeidYtelseForReferanse(grunnlagReferanse);
+    }
 
     @Override
     public InntektArbeidYtelseAggregatBuilder opprettBuilderForRegister(KoblingReferanse koblingReferanse) {
         return repository.opprettBuilderFor(koblingReferanse, VersjonType.REGISTER);
+    }
+    
+    @Override
+    public InntektArbeidYtelseAggregatBuilder opprettBuilderForSaksbehandlerOverstyring(KoblingReferanse koblingReferanse) {
+        return repository.opprettBuilderFor(koblingReferanse, VersjonType.SAKSBEHANDLET);
     }
 
     @Override

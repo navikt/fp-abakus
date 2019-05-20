@@ -36,7 +36,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.PermisjonsbeskrivelseTyp
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
-import no.nav.foreldrepenger.abakus.typer.AntallTimer;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
@@ -63,7 +62,7 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
 
     @Embedded
     @ChangeTracked
-    private ArbeidsgiverEntitet arbeidsgiver;
+    private Arbeidsgiver arbeidsgiver;
 
     @Embedded
     private ArbeidsforholdRef arbeidsforholdRef;
@@ -163,11 +162,11 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
     }
 
     @Override
-    public ArbeidsgiverEntitet getArbeidsgiver() {
+    public Arbeidsgiver getArbeidsgiver() {
         return arbeidsgiver;
     }
 
-    void setArbeidsgiver(ArbeidsgiverEntitet arbeidsgiver) {
+    void setArbeidsgiver(Arbeidsgiver arbeidsgiver) {
         this.arbeidsgiver = arbeidsgiver;
     }
 
@@ -301,6 +300,10 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
             }
             throw new IllegalStateException();
         }
+
+        public PermisjonBuilder medPermisjonsbeskrivelseType(String kode) {
+            return medPermisjonsbeskrivelseType(new PermisjonsbeskrivelseType(kode));
+        }
     }
 
     public static class AktivitetsAvtaleBuilder {
@@ -318,20 +321,6 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
 
         static AktivitetsAvtaleBuilder oppdater(Optional<AktivitetsAvtale> aktivitetsAvtale) {
             return new AktivitetsAvtaleBuilder(aktivitetsAvtale.orElse(new AktivitetsAvtaleEntitet()), aktivitetsAvtale.isPresent());
-        }
-
-        public AktivitetsAvtaleBuilder medAntallTimer(BigDecimal antallTimer) {
-            if (antallTimer != null) {
-                this.aktivitetsAvtaleEntitet.setAntallTimer(new AntallTimer(antallTimer));
-            }
-            return this;
-        }
-
-        public AktivitetsAvtaleBuilder medAntallTimerFulltid(BigDecimal antallTimerFulltid) {
-            if (antallTimerFulltid != null) {
-                this.aktivitetsAvtaleEntitet.setAntallTimerFulltid(new AntallTimer(antallTimerFulltid));
-            }
-            return this;
         }
 
         public AktivitetsAvtaleBuilder medProsentsats(BigDecimal prosentsats) {

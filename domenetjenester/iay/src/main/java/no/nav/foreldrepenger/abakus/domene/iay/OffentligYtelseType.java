@@ -11,7 +11,7 @@ public class OffentligYtelseType extends YtelseType {
     public static final OffentligYtelseType UDEFINERT = new OffentligYtelseType("-"); //$NON-NLS-1$
     public static final OffentligYtelseType FORELDREPENGER = new OffentligYtelseType("FORELDREPENGER"); //$NON-NLS-1$
 
-    private OffentligYtelseType(String kode) {
+    public OffentligYtelseType(String kode) {
         super(kode, DISCRIMINATOR);
     }
 

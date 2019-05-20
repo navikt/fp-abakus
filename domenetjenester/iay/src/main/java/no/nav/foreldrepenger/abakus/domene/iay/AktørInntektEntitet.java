@@ -230,7 +230,7 @@ public class AktørInntektEntitet extends BaseEntitet implements AktørInntekt, 
         }
 
         public InntektBuilder medArbeidsgiver(Arbeidsgiver arbeidsgiver) {
-            this.inntektEntitet.setArbeidsgiver((ArbeidsgiverEntitet) arbeidsgiver);
+            this.inntektEntitet.setArbeidsgiver(arbeidsgiver);
             return this;
         }
 

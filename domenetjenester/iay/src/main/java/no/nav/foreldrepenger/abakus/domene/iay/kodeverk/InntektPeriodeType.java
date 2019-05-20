@@ -23,7 +23,7 @@ public class InntektPeriodeType extends Kodeliste {
         // Hibernate trenger den
     }
 
-    private InntektPeriodeType(String kode) {
+    public InntektPeriodeType(String kode) {
         super(kode, DISCRIMINATOR);
     }
 
