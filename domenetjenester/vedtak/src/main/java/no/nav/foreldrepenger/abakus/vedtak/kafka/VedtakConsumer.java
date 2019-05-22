@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.nav.vedtak.apptjeneste.AppServiceHandler;
-import no.nav.vedtak.felles.AktiverContextOgTransaksjon;
 
 @ApplicationScoped
 public class VedtakConsumer implements AppServiceHandler {
@@ -49,7 +48,7 @@ public class VedtakConsumer implements AppServiceHandler {
     }
 
     private void addShutdownHooks() {
-        stream.setStateListener((oldState, newState) -> {
+        stream.setStateListener((newState, oldState) -> {
             log.info("From state={} to state={}", oldState, newState);
 
             if (newState == KafkaStreams.State.ERROR) {
