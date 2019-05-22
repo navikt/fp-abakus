@@ -19,27 +19,21 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.vedtak.LagreVedtakTask;
 import no.nav.vedtak.apptjeneste.AppServiceHandler;
 import no.nav.vedtak.felles.AktiverContextOgTransaksjon;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskRepository;
 
 @ApplicationScoped
-@AktiverContextOgTransaksjon
 public class VedtakConsumer implements AppServiceHandler {
 
     private static final Logger log = LoggerFactory.getLogger(VedtakConsumer.class);
     private KafkaStreams stream;
     private String topic;
-    private ProsessTaskRepository taskRepository;
 
     VedtakConsumer() {
     }
 
     @Inject
-    public VedtakConsumer(ProsessTaskRepository taskRepository, VedtakStreamKafkaProperties streamKafkaProperties) {
-        this.taskRepository = taskRepository;
+    public VedtakConsumer(VedtaksHendelseHåndterer vedtaksHendelseHåndterer, VedtakStreamKafkaProperties streamKafkaProperties) {
         this.topic = streamKafkaProperties.getTopic();
 
         Properties props = setupProperties(streamKafkaProperties);
@@ -48,7 +42,7 @@ public class VedtakConsumer implements AppServiceHandler {
 
         Consumed<String, String> stringStringConsumed = Consumed.with(Topology.AutoOffsetReset.EARLIEST);
         builder.stream(this.topic, stringStringConsumed)
-            .foreach(this::handleMessage);
+            .foreach(vedtaksHendelseHåndterer::handleMessage);
 
         final Topology topology = builder.build();
         stream = new KafkaStreams(topology, props);
@@ -108,14 +102,6 @@ public class VedtakConsumer implements AppServiceHandler {
         props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, "100000");
 
         return props;
-    }
-
-    private void handleMessage(String key, String payload) {
-        ProsessTaskData data = new ProsessTaskData(LagreVedtakTask.TASKTYPE);
-        data.setProperty(LagreVedtakTask.KEY, key);
-        data.setPayload(payload);
-
-        taskRepository.lagre(data);
     }
 
     @Override

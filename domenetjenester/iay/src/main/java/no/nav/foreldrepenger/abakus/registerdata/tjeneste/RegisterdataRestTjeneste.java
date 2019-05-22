@@ -17,12 +17,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -41,6 +41,7 @@ import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
+import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 
 @Api(tags = "registerdata")
 @Path("/registerdata/v1")
@@ -103,8 +104,10 @@ public class RegisterdataRestTjeneste {
         }
         return Response.status(425).build();
     }
-    
-    /** Json bean med Abac. */
+
+    /**
+     * Json bean med Abac.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
     @JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE)
@@ -130,16 +133,18 @@ public class RegisterdataRestTjeneste {
         private void leggTil(AbacDataAttributter abac, PersonIdent person) {
             if (person != null) {
                 if (FnrPersonident.IDENT_TYPE.equals(person.getIdentType())) {
-                    abac.leggTilFødselsnummer(person.getIdent());
+                    abac.leggTil(StandardAbacAttributtType.FNR, person.getIdent());
                 } else if (AktørIdPersonident.IDENT_TYPE.equals(person.getIdentType())) {
-                    abac.leggTilAktørId(person.getIdent());
+                    abac.leggTil(StandardAbacAttributtType.AKTØR_ID, person.getIdent());
                 }
             }
         }
 
     }
 
-    /** Json bean med Abac. */
+    /**
+     * Json bean med Abac.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
     @JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE)

@@ -28,6 +28,7 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnl
 import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
+import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 
 @Api(tags = "arbeidsforhold")
@@ -89,7 +90,7 @@ public class GrunnlagRestTjeneste {
         @Override
         public AbacDataAttributter apply(Object obj) {
             InntektArbeidYtelseGrunnlagRequest req = (InntektArbeidYtelseGrunnlagRequest) obj;
-            return AbacDataAttributter.opprett().leggTilAktørId(req.getPerson().getIdent());
+            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, req.getPerson().getIdent());
         }
     }
 }

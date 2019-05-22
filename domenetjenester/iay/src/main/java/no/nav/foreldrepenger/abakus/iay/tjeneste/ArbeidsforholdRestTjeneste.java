@@ -35,6 +35,7 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.AktørDatoRequest;
 import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
+import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 
 @Api(tags = "arbeidsforhold")
@@ -111,7 +112,7 @@ public class ArbeidsforholdRestTjeneste {
         @Override
         public AbacDataAttributter apply(Object obj) {
             AktørDatoRequest req = (AktørDatoRequest) obj;
-            return AbacDataAttributter.opprett().leggTilAktørId(req.getAktør().getIdent());
+            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, req.getAktør().getIdent());
         }
     }
 
