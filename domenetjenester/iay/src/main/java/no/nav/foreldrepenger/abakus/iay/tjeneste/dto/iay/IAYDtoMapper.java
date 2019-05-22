@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.ws.rs.NotFoundException;
 
@@ -47,7 +48,7 @@ public class IAYDtoMapper {
         var dataset = spec.getDataset();
         var grunnlagReferanse2 = grunnlag.getGrunnlagReferanse().getReferanse();
         var koblingReferanse2 = tjeneste.hentKoblingReferanse(new GrunnlagReferanse(grunnlagReferanse2)).getReferanse();
-        
+
         var dto = new InntektArbeidYtelseGrunnlagDto(new AktørIdPersonident(aktørId.getId()), grunnlagReferanse2, koblingReferanse2);
 
         var aggregatOpt = grunnlag.getOpplysningerEtterSkjæringstidspunkt(null);
@@ -76,7 +77,8 @@ public class IAYDtoMapper {
 
     public InntektArbeidYtelseGrunnlag mapTilGrunnlag(InntektArbeidYtelseGrunnlagDto dto) {
         var saksbehandlerOverstyringer = tjeneste.opprettBuilderForSaksbehandlerOverstyring(koblingReferanse);
-        var overstyrtAktørArbeid = new MapAktørArbeid(tjeneste, koblingReferanse).mapFraDto(aktørId, saksbehandlerOverstyringer, dto.getOverstyrt().getArbeid());
+        var overstyrtAktørArbeid = new MapAktørArbeid(tjeneste, koblingReferanse).mapFraDto(aktørId, saksbehandlerOverstyringer,
+            dto.getOverstyrt().getArbeid());
         overstyrtAktørArbeid.forEach(saksbehandlerOverstyringer::leggTilAktørArbeid);
 
         var inntektsmeldinger = new MapInntektsmeldinger(tjeneste, koblingReferanse).mapFraDto(dto.getInntektsmeldinger());
@@ -88,7 +90,7 @@ public class IAYDtoMapper {
         builder.medOppgittOpptjening(oppgittOpptjening);
         builder.setInntektsmeldinger(inntektsmeldinger);
         builder.medData(saksbehandlerOverstyringer);
-        
+
         return builder.build();
 
     }
@@ -104,23 +106,27 @@ public class IAYDtoMapper {
         return tjeneste.hentGrunnlagFor(new GrunnlagReferanse(dto.getGrunnlagReferanse()));
     }
 
-    public InntektArbeidYtelseGrunnlag mapTilGrunnlagMigrering(InntektArbeidYtelseGrunnlagDto dto) {
+    public InntektArbeidYtelseGrunnlag mapTilGrunnlagForMigrering(InntektArbeidYtelseGrunnlagDto dto) {
         var saksbehandlerOverstyringer = tjeneste.opprettBuilderForSaksbehandlerOverstyring(koblingReferanse);
-        var overstyrtAktørArbeid = new MapAktørArbeid(tjeneste, koblingReferanse).mapFraDto(aktørId, saksbehandlerOverstyringer, dto.getOverstyrt().getArbeid());
+        var overstyrtAktørArbeid = new MapAktørArbeid(tjeneste, koblingReferanse).mapFraDto(aktørId, saksbehandlerOverstyringer,
+            dto.getOverstyrt().getArbeid());
         overstyrtAktørArbeid.forEach(saksbehandlerOverstyringer::leggTilAktørArbeid);
 
         var inntektsmeldinger = new MapInntektsmeldinger(tjeneste, koblingReferanse).mapFraDto(dto.getInntektsmeldinger());
         var oppgittOpptjening = new MapOppgittOpptjening().mapFraDto(dto.getOppgittOpptjening());
         var registerData = mapRegisterDataTilMigrering(dto);
 
-        // Opprett nytt grunnlag (kliss nytt eller basert på annet)
+        // Opprett nytt grunnlag (kliss nytt eller basert på tidligere)
         var kladd = hentGrunnlag(dto);
-        var builder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(kladd);
+        var builder = kladd.isEmpty()
+            ? InntektArbeidYtelseGrunnlagBuilder.ny(UUID.fromString(dto.getGrunnlagReferanse()))
+            : InntektArbeidYtelseGrunnlagBuilder.oppdatere(kladd.get());
+            
         builder.medOppgittOpptjening(oppgittOpptjening);
         builder.setInntektsmeldinger(inntektsmeldinger);
         builder.medData(saksbehandlerOverstyringer);
         builder.medData(registerData);
-        
+
         return builder.build();
     }
 
@@ -131,11 +137,11 @@ public class IAYDtoMapper {
         var aktørArbeid = new MapAktørArbeid(tjeneste, koblingReferanse).mapFraDto(aktørId, registerData, dto.getRegister().getArbeid());
         var aktørInntekt = new MapAktørInntekt().mapFraDto(aktørId, registerData, dto.getRegister().getInntekt());
         var aktørYtelse = new MapAktørYtelse().mapFraDto(aktørId, registerData, dto.getRegister().getYtelse());
-        
+
         aktørArbeid.forEach(registerData::leggTilAktørArbeid);
         aktørInntekt.forEach(registerData::leggTilAktørInntekt);
         aktørYtelse.forEach(registerData::leggTilAktørYtelse);
-        
+
         return registerData;
     }
 
@@ -156,7 +162,7 @@ public class IAYDtoMapper {
                                                         InntektArbeidYtelseGrunnlagDto dto) {
         LocalDateTime tidspunkt = aggregat.getOpprettetTidspunkt();
         Collection<AktørArbeid> aktørArbeid = aggregat.getAktørArbeid();
-        dto.medOverstyrt(new InntektArbeidYtelseAggregatOverstyrtDto(tidspunkt)
+        dto.medOverstyrt(new InntektArbeidYtelseAggregatOverstyrtDto(tidspunkt, aggregat.getEksternReferanse())
             .medArbeid(new MapAktørArbeid(tjeneste, koblingReferanse).mapTilDto(aktørArbeid)));
     }
 
@@ -168,7 +174,7 @@ public class IAYDtoMapper {
         InntektArbeidYtelseAggregat aggregat = aggregatOpt.get();
         var tidspunkt = aggregat.getOpprettetTidspunkt();
         dto.medRegister(
-            new InntektArbeidYtelseAggregatRegisterDto(tidspunkt)
+            new InntektArbeidYtelseAggregatRegisterDto(tidspunkt, aggregat.getEksternReferanse())
                 .medArbeid(new MapAktørArbeid(tjeneste, koblingReferanse).mapTilDto(aggregat.getAktørArbeid()))
                 .medInntekt(new MapAktørInntekt().mapTilDto(aggregat.getAktørInntekt()))
                 .medYtelse(new MapAktørYtelse().mapTilDto(aggregat.getAktørYtelse())));

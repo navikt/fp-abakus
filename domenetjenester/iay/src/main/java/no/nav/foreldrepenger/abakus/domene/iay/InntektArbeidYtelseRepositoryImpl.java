@@ -87,9 +87,9 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         if (oppgittOpptjening == null) {
             return;
         }
-        Optional<InntektArbeidYtelseGrunnlag> inntektArbeidAggregat = hentInntektArbeidYtelseGrunnlagForBehandling(koblingReferanse);
+        Optional<InntektArbeidYtelseGrunnlag> iayGrunnlag = hentInntektArbeidYtelseGrunnlagForBehandling(koblingReferanse);
 
-        InntektArbeidYtelseGrunnlagBuilder grunnlag = InntektArbeidYtelseGrunnlagBuilder.oppdatere(inntektArbeidAggregat);
+        InntektArbeidYtelseGrunnlagBuilder grunnlag = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayGrunnlag);
         grunnlag.medOppgittOpptjening(oppgittOpptjening);
 
         lagreOgFlush(koblingReferanse, grunnlag.build());

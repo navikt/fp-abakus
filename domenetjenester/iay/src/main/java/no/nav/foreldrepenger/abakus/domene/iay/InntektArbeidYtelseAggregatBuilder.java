@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
@@ -41,6 +42,11 @@ public class InntektArbeidYtelseAggregatBuilder {
 
     private static InntektArbeidYtelseAggregatBuilder oppdatere(InntektArbeidYtelseAggregat oppdatere, VersjonType versjon) {
         return new InntektArbeidYtelseAggregatBuilder(new InntektArbeidYtelseAggregatEntitet(oppdatere), true, versjon);
+    }
+    
+    /** Opprett versjon med samme referanse som angitt (brukes til migrering). */
+    public static InntektArbeidYtelseAggregatBuilder ny(UUID eksternReferanse, InntektArbeidYtelseAggregat migrerer, VersjonType versjon) {
+        return new InntektArbeidYtelseAggregatBuilder(new InntektArbeidYtelseAggregatEntitet(eksternReferanse, migrerer), false, versjon);
     }
 
     public static InntektArbeidYtelseAggregatBuilder oppdatere(Optional<InntektArbeidYtelseAggregat> oppdatere, VersjonType versjon) {
@@ -129,10 +135,6 @@ public class InntektArbeidYtelseAggregatBuilder {
 
     public InntektArbeidYtelseAggregat build() {
         return this.kladd;
-    }
-
-    public boolean isOppdaterer() {
-        return oppdaterer;
     }
 
     VersjonType getVersjon() {

@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.kobling;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
@@ -35,9 +36,12 @@ public class Kobling extends BaseEntitet implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_KOBLING")
     private Long id;
 
-    /** Ekstern Referanse (eks. behandlingUuid). */ 
+    /** Ekstern Referanse (eks. behandlingUuid). */
     @NaturalId
     @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "referanse", column = @Column(name = "kobling_referanse", updatable = false, unique = true))
+    })
     private KoblingReferanse koblingReferanse;
 
     @ManyToOne(optional = false)
@@ -55,15 +59,15 @@ public class Kobling extends BaseEntitet implements IndexKey {
 
     @Embedded
     @AttributeOverrides({
-        @AttributeOverride(name = "fomDato", column = @Column(name = "opplysning_periode_fom")),
-        @AttributeOverride(name = "tomDato", column = @Column(name = "opplysning_periode_tom"))
+            @AttributeOverride(name = "fomDato", column = @Column(name = "opplysning_periode_fom")),
+            @AttributeOverride(name = "tomDato", column = @Column(name = "opplysning_periode_tom"))
     })
     private DatoIntervallEntitet opplysningsperiode;
 
     @Embedded
     @AttributeOverrides({
-        @AttributeOverride(name = "fomDato", column = @Column(name = "opptjening_periode_fom")),
-        @AttributeOverride(name = "tomDato", column = @Column(name = "opptjening_periode_tom"))
+            @AttributeOverride(name = "fomDato", column = @Column(name = "opptjening_periode_fom")),
+            @AttributeOverride(name = "tomDato", column = @Column(name = "opptjening_periode_tom"))
     })
     private DatoIntervallEntitet opptjeningsperiode;
 

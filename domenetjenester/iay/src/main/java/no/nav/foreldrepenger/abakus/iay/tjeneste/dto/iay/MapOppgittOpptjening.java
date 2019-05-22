@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -127,7 +128,8 @@ public class MapOppgittOpptjening {
     private class MapFraDto {
 
         public OppgittOpptjeningBuilder map(OppgittOpptjeningDto oppgittOpptjening) {
-            var builder = OppgittOpptjeningBuilder.ny();
+            var oppgittOpptjeningEksternReferanse = UUID.fromString(oppgittOpptjening.getEksternReferanse().getReferanse());
+            var builder = OppgittOpptjeningBuilder.ny(oppgittOpptjeningEksternReferanse);
 
             var annenAktivitet = mapEach(oppgittOpptjening.getAnnenAktivitet(), this::mapAnnenAktivitet);
             annenAktivitet.forEach(builder::leggTilAnnenAktivitet);

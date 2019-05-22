@@ -9,8 +9,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Embedded;
@@ -52,6 +55,9 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
     @NaturalId
     @DiffIgnore
     @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "referanse", column = @Column(name = "grunnlag_referanse", updatable = false, unique = true))
+    })
     private GrunnlagReferanse grunnlagReferanse;
 
     @OneToOne
@@ -87,11 +93,13 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-    InntektArbeidYtelseGrunnlagEntitet() {
+    @SuppressWarnings("unused")
+    private InntektArbeidYtelseGrunnlagEntitet() {
     }
 
     InntektArbeidYtelseGrunnlagEntitet(InntektArbeidYtelseGrunnlag grunnlag) {
-        super();
+        this(UUID.randomUUID());
+        
         // NB! skal aldri lage ny versjon av oppgitt opptjening!
         grunnlag.getOppgittOpptjening().ifPresent(kopiAvOppgittOpptjening -> this.setOppgittOpptjening((OppgittOpptjeningEntitet) kopiAvOppgittOpptjening));
         ((InntektArbeidYtelseGrunnlagEntitet) grunnlag).getRegisterVersjon()
@@ -100,6 +108,12 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
             .ifPresent(nySaksbehandletFørVersjon -> this.setSaksbehandlet((InntektArbeidYtelseAggregatEntitet) nySaksbehandletFørVersjon));
         grunnlag.getInntektsmeldinger().ifPresent(this::setInntektsmeldinger);
         ((InntektArbeidYtelseGrunnlagEntitet) grunnlag).getInformasjon().ifPresent(info -> this.setInformasjon((ArbeidsforholdInformasjonEntitet) info));
+        
+        
+    }
+
+    InntektArbeidYtelseGrunnlagEntitet(UUID grunnlagReferanse) {
+        this.grunnlagReferanse = new GrunnlagReferanse(grunnlagReferanse);
     }
 
     @Override

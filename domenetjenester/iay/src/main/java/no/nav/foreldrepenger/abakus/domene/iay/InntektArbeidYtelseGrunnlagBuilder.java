@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
@@ -21,13 +22,17 @@ public class InntektArbeidYtelseGrunnlagBuilder {
     }
 
     public static InntektArbeidYtelseGrunnlagBuilder nytt() {
-        return new InntektArbeidYtelseGrunnlagBuilder(new InntektArbeidYtelseGrunnlagEntitet());
+        return ny(UUID.randomUUID());
+    }
+    
+    public static InntektArbeidYtelseGrunnlagBuilder ny(UUID grunnlagReferanse) {
+        return new InntektArbeidYtelseGrunnlagBuilder(new InntektArbeidYtelseGrunnlagEntitet(grunnlagReferanse));
     }
 
     public static InntektArbeidYtelseGrunnlagBuilder oppdatere(InntektArbeidYtelseGrunnlag kladd) {
         return new InntektArbeidYtelseGrunnlagBuilder(new InntektArbeidYtelseGrunnlagEntitet(kladd));
     }
-
+    
     public static InntektArbeidYtelseGrunnlagBuilder oppdatere(Optional<InntektArbeidYtelseGrunnlag> kladd) {
         return kladd.map(InntektArbeidYtelseGrunnlagBuilder::oppdatere).orElseGet(InntektArbeidYtelseGrunnlagBuilder::nytt);
     }

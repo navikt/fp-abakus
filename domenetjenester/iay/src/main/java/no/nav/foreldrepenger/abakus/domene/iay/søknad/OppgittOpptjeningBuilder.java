@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.domene.iay.søknad;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.AnnenAktivitet;
@@ -24,7 +25,11 @@ public class OppgittOpptjeningBuilder {
     }
 
     public static OppgittOpptjeningBuilder ny() {
-        return new OppgittOpptjeningBuilder(new OppgittOpptjeningEntitet());
+        return ny(UUID.randomUUID());
+    }
+    
+    public static OppgittOpptjeningBuilder ny(UUID eksternReferanse) {
+        return new OppgittOpptjeningBuilder(new OppgittOpptjeningEntitet(eksternReferanse));
     }
 
     public OppgittOpptjeningBuilder leggTilAnnenAktivitet(AnnenAktivitet annenAktivitet) {
