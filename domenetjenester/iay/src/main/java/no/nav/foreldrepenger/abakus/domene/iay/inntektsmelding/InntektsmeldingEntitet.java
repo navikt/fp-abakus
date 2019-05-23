@@ -104,15 +104,18 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
     @Column(name = "kildesystem")
     private String kildesystem;
 
+    @Column(name = "mottatt_dato", nullable = false, updatable = false)
+    private LocalDate mottattDato;
+
     @OneToMany(mappedBy = "inntektsmelding")
     @ChangeTracked
     private List<RefusjonEntitet> endringerRefusjon = new ArrayList<>();
 
     @ManyToOne(optional = false)
     @JoinColumnsOrFormulas({
-        @JoinColumnOrFormula(column = @JoinColumn(name = "innsendingsaarsak", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + InntektsmeldingInnsendingsårsak.DISCRIMINATOR
-            + "'"))})
+            @JoinColumnOrFormula(column = @JoinColumn(name = "innsendingsaarsak", referencedColumnName = "kode", nullable = false)),
+            @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + InntektsmeldingInnsendingsårsak.DISCRIMINATOR
+                + "'")) })
     @ChangeTracked
     private InntektsmeldingInnsendingsårsak innsendingsårsak = InntektsmeldingInnsendingsårsak.UDEFINERT;
 
@@ -136,6 +139,8 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
         this.innsendingstidspunkt = inntektsmelding.getInnsendingstidspunkt();
         this.kanalreferanse = inntektsmelding.getKanalreferanse();
         this.kildesystem = inntektsmelding.getKildesystem();
+        this.mottattDato = inntektsmelding.getMottattDato();
+        
         this.graderinger = inntektsmelding.getGraderinger().stream().map(g -> {
             final GraderingEntitet graderingEntitet = new GraderingEntitet(g);
             graderingEntitet.setInntektsmelding(this);
@@ -198,11 +203,20 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
     public String getKanalreferanse() {
         return kanalreferanse;
     }
+    
+    @Override
+    public LocalDate getMottattDato() {
+        return mottattDato;
+    }
 
     void setKanalreferanse(String kanalreferanse) {
         this.kanalreferanse = kanalreferanse;
     }
 
+    void setMottattDato(LocalDate mottattDato) {
+        this.mottattDato = mottattDato;
+    }
+    
     @Override
     public String getKildesystem() {
         return kildesystem;

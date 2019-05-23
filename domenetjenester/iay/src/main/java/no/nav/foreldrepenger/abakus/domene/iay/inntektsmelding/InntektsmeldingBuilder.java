@@ -77,6 +77,11 @@ public class InntektsmeldingBuilder {
         kladd.setKanalreferanse(kanalreferanse);
         return this;
     }
+    
+    public InntektsmeldingBuilder medMottattDato(LocalDate mottattDato) {
+        kladd.setMottattDato(mottattDato);
+        return this;
+    }
 
     public InntektsmeldingBuilder medKildesystem(String kildesystem) {
         kladd.setKildesystem(kildesystem);

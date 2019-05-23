@@ -39,7 +39,7 @@ public class MapOppgittOpptjening {
     private class MapTilDto {
 
         public OppgittOpptjeningDto map(OppgittOpptjening oppgittOpptjening) {
-            var dto = new OppgittOpptjeningDto();
+            var dto = new OppgittOpptjeningDto(oppgittOpptjening.getEksternReferanse(), oppgittOpptjening.getOpprettetTidspunkt());
 
             dto.medArbeidsforhold(oppgittOpptjening.getOppgittArbeidsforhold().stream().map(this::mapArbeidsforhold).collect(Collectors.toList()));
 

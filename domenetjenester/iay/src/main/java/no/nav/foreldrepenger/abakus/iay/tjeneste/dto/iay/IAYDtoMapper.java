@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +50,8 @@ public class IAYDtoMapper {
         var grunnlagReferanse2 = grunnlag.getGrunnlagReferanse().getReferanse();
         var koblingReferanse2 = tjeneste.hentKoblingReferanse(new GrunnlagReferanse(grunnlagReferanse2)).getReferanse();
 
-        var dto = new InntektArbeidYtelseGrunnlagDto(new AktørIdPersonident(aktørId.getId()), grunnlagReferanse2, koblingReferanse2);
+        var tidspunkt = grunnlag.getOpprettetTidspunkt().atZone(ZoneId.systemDefault()).toOffsetDateTime();
+        var dto = new InntektArbeidYtelseGrunnlagDto(new AktørIdPersonident(aktørId.getId()), tidspunkt, grunnlagReferanse2, koblingReferanse2);
 
         var aggregatOpt = grunnlag.getOpplysningerEtterSkjæringstidspunkt(null);
         if (aggregatOpt.isEmpty()) {

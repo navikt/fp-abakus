@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -106,5 +107,8 @@ public interface InntektArbeidYtelseGrunnlag {
     Long getKoblingId();
 
     GrunnlagReferanse getGrunnlagReferanse();
+    
+    /** Tidspunkt dette grunnlaget ble opprettet. (normalt lagret i databasen her). */
+    LocalDateTime getOpprettetTidspunkt();
 
 }

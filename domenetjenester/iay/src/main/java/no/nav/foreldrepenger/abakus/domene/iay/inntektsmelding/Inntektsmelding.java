@@ -104,7 +104,9 @@ public interface Inntektsmelding {
      * @return {@Link Refusjon}
      */
     List<Refusjon> getEndringerRefusjon();
-
+    
+    /** Tidspunkt dette grunnlaget ble opprettet. (normalt lagret i databasen her). */
+    LocalDateTime getOpprettetTidspunkt();
 
     InntektsmeldingInnsendingsårsak getInntektsmeldingInnsendingsårsak();
 
@@ -116,5 +118,8 @@ public interface Inntektsmelding {
         return getArbeidsgiver().equals(annen.getArbeidsgiver())
             && getArbeidsforholdRef().gjelderFor(annen.getArbeidsforholdRef());
     }
+
+    /** Dato inntektsmelding mottatt i NAV (tilsvarer dato lagret i Joark). */
+    LocalDate getMottattDato();
 
 }

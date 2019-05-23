@@ -65,8 +65,8 @@ public class MapInntektsmeldinger {
             var innsendingstidspunkt = im.getInnsendingstidspunkt();
             var arbeidsforholdId = mapArbeidsforholdsId(im.getArbeidsgiver(), im.getArbeidsforholdRef());
             var innsendingsårsak = new InntektsmeldingInnsendingsårsakType(im.getInntektsmeldingInnsendingsårsak().getKode());
-
-            var inntektsmeldingDto = new InntektsmeldingDto(ArbeidsgiverEntitet, journalpostId, innsendingstidspunkt)
+            
+            var inntektsmeldingDto = new InntektsmeldingDto(ArbeidsgiverEntitet, journalpostId, innsendingstidspunkt, im.getMottattDato())
                 .medArbeidsforholdRef(arbeidsforholdId)
                 .medInnsendingsårsak(innsendingsårsak)
                 .medInntektBeløp(im.getInntektBeløp().getVerdi())
@@ -155,6 +155,7 @@ public class MapInntektsmeldinger {
                 .medInntektsmeldingaarsak(innsendingsårsak)
                 .medNærRelasjon(dto.isNærRelasjon())
                 .medKildesystem(dto.getKildesystem())
+                .medMottattDato(dto.getMottattDato())
                 .build();
         }
 
