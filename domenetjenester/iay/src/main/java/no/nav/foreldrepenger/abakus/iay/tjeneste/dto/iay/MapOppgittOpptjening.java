@@ -168,7 +168,8 @@ public class MapOppgittOpptjening {
             var builder = EgenNæringBuilder.ny();
 
             var org = dto.getVirksomhet() == null ? null : new OrgNummer(dto.getVirksomhet().getIdent());
-
+            var periode = dto.getPeriode();
+            
             builder
                 .medBegrunnelse(dto.getBegrunnelse())
                 .medBruttoInntekt(dto.getBruttoInntekt())
@@ -181,7 +182,8 @@ public class MapOppgittOpptjening {
                 .medNyIArbeidslivet(dto.isNyIArbeidslivet())
                 .medNyoppstartet(dto.isNyoppstartet())
                 .medNærRelasjon(dto.isNærRelasjon())
-                .medVarigEndring(dto.isVarigEndring());
+                .medVarigEndring(dto.isVarigEndring())
+                .medPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom()));
 
             return builder;
         }
