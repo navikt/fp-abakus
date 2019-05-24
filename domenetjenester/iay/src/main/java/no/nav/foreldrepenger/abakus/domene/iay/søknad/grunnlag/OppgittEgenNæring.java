@@ -7,7 +7,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
-public interface EgenNæring {
+public interface OppgittEgenNæring {
 
     LocalDate getFraOgMed();
 
@@ -37,6 +37,6 @@ public interface EgenNæring {
 
     boolean getNærRelasjon();
 
-    UtenlandskVirksomhet getUtenlandskVirksomhet();
+    OppgittUtenlandskVirksomhet getUtenlandskVirksomhet();
 
 }

@@ -15,8 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.Frilans;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.Frilansoppdrag;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilansoppdrag;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
@@ -24,7 +24,7 @@ import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
 @Table(name = "IAY_OPPGITT_FRILANS")
 @Entity(name = "Frilans")
-public class FrilansEntitet extends BaseEntitet implements Frilans {
+public class OppgittFrilansEntitet extends BaseEntitet implements OppgittFrilans {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SO_OPPGITT_FRILANS")
@@ -48,17 +48,17 @@ public class FrilansEntitet extends BaseEntitet implements Frilans {
 
     @OneToMany(mappedBy = "frilans")
     @ChangeTracked
-    private List<FrilansoppdragEntitet> frilansoppdrag;
+    private List<OppgittFrilansoppdragEntitet> frilansoppdrag;
 
 
-    public FrilansEntitet() {
+    public OppgittFrilansEntitet() {
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        FrilansEntitet that = (FrilansEntitet) o;
+        OppgittFrilansEntitet that = (OppgittFrilansEntitet) o;
         return harInntektFraFosterhjem == that.harInntektFraFosterhjem &&
             erNyoppstartet == that.erNyoppstartet &&
             harNærRelasjon == that.harNærRelasjon &&
@@ -114,14 +114,14 @@ public class FrilansEntitet extends BaseEntitet implements Frilans {
     }
 
     @Override
-    public List<Frilansoppdrag> getFrilansoppdrag() {
+    public List<OppgittFrilansoppdrag> getFrilansoppdrag() {
         if (frilansoppdrag != null) {
             return Collections.unmodifiableList(frilansoppdrag);
         }
         return Collections.emptyList();
     }
 
-    public void setFrilansoppdrag(List<FrilansoppdragEntitet> frilansoppdrag) {
+    public void setFrilansoppdrag(List<OppgittFrilansoppdragEntitet> frilansoppdrag) {
         this.frilansoppdrag = frilansoppdrag;
     }
 }

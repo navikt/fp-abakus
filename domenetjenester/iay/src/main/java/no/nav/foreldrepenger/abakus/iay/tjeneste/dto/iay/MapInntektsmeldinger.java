@@ -60,13 +60,13 @@ public class MapInntektsmeldinger {
         }
 
         private InntektsmeldingDto mapInntektsmelding(Inntektsmelding im) {
-            var ArbeidsgiverEntitet = mapAktør(im.getArbeidsgiver());
+            var arbeidsgiver = mapAktør(im.getArbeidsgiver());
             var journalpostId = new JournalpostId(im.getJournalpostId().getVerdi());
             var innsendingstidspunkt = im.getInnsendingstidspunkt();
             var arbeidsforholdId = mapArbeidsforholdsId(im.getArbeidsgiver(), im.getArbeidsforholdRef());
             var innsendingsårsak = new InntektsmeldingInnsendingsårsakType(im.getInntektsmeldingInnsendingsårsak().getKode());
             
-            var inntektsmeldingDto = new InntektsmeldingDto(ArbeidsgiverEntitet, journalpostId, innsendingstidspunkt, im.getMottattDato())
+            var inntektsmeldingDto = new InntektsmeldingDto(arbeidsgiver, journalpostId, innsendingstidspunkt, im.getMottattDato())
                 .medArbeidsforholdRef(arbeidsforholdId)
                 .medInnsendingsårsak(innsendingsårsak)
                 .medInntektBeløp(im.getInntektBeløp().getVerdi())
@@ -117,11 +117,11 @@ public class MapInntektsmeldinger {
                 : new Organisasjon(arbeidsgiverEntitet.getOrgnr().getId());
         }
 
-        private ArbeidsforholdRefDto mapArbeidsforholdsId(Arbeidsgiver arbeidsgiverEntitet, ArbeidsforholdRef arbeidsforhold) {
+        private ArbeidsforholdRefDto mapArbeidsforholdsId(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef arbeidsforhold) {
             String internId = arbeidsforhold.getReferanse();
             if (internId != null) {
                 String eksternReferanse = tjeneste
-                    .finnReferanseFor(koblingReferanse, arbeidsgiverEntitet, arbeidsforhold, true)
+                    .finnReferanseFor(koblingReferanse, arbeidsgiver, arbeidsforhold, true)
                     .getReferanse();
                 return new ArbeidsforholdRefDto(internId, eksternReferanse);
             }

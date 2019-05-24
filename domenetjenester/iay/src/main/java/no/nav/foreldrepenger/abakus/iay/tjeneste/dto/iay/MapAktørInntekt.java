@@ -38,12 +38,12 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtbetaltYtelseFraOf
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtbetaltYtelseType;
 
 public class MapAktørInntekt {
-    private class MapFraDto {
+    static class MapFraDto {
 
         private final AktørId aktørId;
         private final InntektArbeidYtelseAggregatBuilder aggregatBuilder;
 
-        public MapFraDto(AktørId aktørId, InntektArbeidYtelseAggregatBuilder aggregatBuilder) {
+        MapFraDto(AktørId aktørId, InntektArbeidYtelseAggregatBuilder aggregatBuilder) {
             this.aktørId = aktørId;
             this.aggregatBuilder = aggregatBuilder;
         }
@@ -100,7 +100,7 @@ public class MapAktørInntekt {
 
     }
 
-    private class MapTilDto {
+    static class MapTilDto {
         List<InntekterDto> map(Collection<AktørInntekt> aktørInntekt) {
             return aktørInntekt.stream().map(this::mapTilInntekt).collect(Collectors.toList());
         }
@@ -173,13 +173,5 @@ public class MapAktørInntekt {
             }
         }
 
-    }
-
-    public List<InntekterDto> mapTilDto(Collection<AktørInntekt> aktørInntekt) {
-        return new MapTilDto().map(aktørInntekt);
-    }
-
-    public List<AktørInntektBuilder> mapFraDto(AktørId aktørId, InntektArbeidYtelseAggregatBuilder aggregatBuilder, Collection<InntekterDto> aktørInntekt) {
-        return new MapFraDto(aktørId, aggregatBuilder).map(aktørInntekt);
     }
 }

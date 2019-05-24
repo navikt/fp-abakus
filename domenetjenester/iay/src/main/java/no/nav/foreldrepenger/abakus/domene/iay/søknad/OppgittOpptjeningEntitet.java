@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay.søknad;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,9 +19,9 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.NaturalId;
 
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.AnnenAktivitet;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.EgenNæring;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.Frilans;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittAnnenAktivitet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -46,23 +47,28 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
 
     @OneToMany(mappedBy = "oppgittOpptjening")
     @ChangeTracked
-    private List<EgenNæringEntitet> egenNæring;
+    private List<OppgittEgenNæringEntitet> egenNæring;
 
     @OneToMany(mappedBy = "oppgittOpptjening")
     @ChangeTracked
-    private List<AnnenAktivitetEntitet> annenAktivitet;
+    private List<OppgittAnnenAktivitetEntitet> annenAktivitet;
 
     @ChangeTracked
     @OneToOne(mappedBy = "oppgittOpptjening")
-    private FrilansEntitet frilans;
+    private OppgittFrilansEntitet frilans;
 
     @SuppressWarnings("unused")
     private OppgittOpptjeningEntitet() {
         // hibernate
     }
 
-    public OppgittOpptjeningEntitet(UUID eksternReferanse) {
+    OppgittOpptjeningEntitet(UUID eksternReferanse) {
         this.eksternReferanse = eksternReferanse;
+    }
+
+    OppgittOpptjeningEntitet(UUID eksternReferanse, LocalDateTime opprettetTidspunktOriginalt) {
+        this(eksternReferanse);
+        super.setOpprettetTidspunkt(opprettetTidspunktOriginalt);
     }
 
     @Override
@@ -79,7 +85,7 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
     }
 
     @Override
-    public List<EgenNæring> getEgenNæring() {
+    public List<OppgittEgenNæring> getEgenNæring() {
         if (this.egenNæring == null) {
             return Collections.emptyList();
         }
@@ -87,7 +93,7 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
     }
 
     @Override
-    public List<AnnenAktivitet> getAnnenAktivitet() {
+    public List<OppgittAnnenAktivitet> getAnnenAktivitet() {
         if (this.annenAktivitet == null) {
             return Collections.emptyList();
         }
@@ -95,30 +101,30 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
     }
 
     @Override
-    public Optional<Frilans> getFrilans() {
+    public Optional<OppgittFrilans> getFrilans() {
         return Optional.ofNullable(frilans);
     }
-
-    void leggTilFrilans(Frilans frilans) {
-        FrilansEntitet frilansEntitet = (FrilansEntitet) frilans;
+    
+    void leggTilFrilans(OppgittFrilans frilans) {
+        OppgittFrilansEntitet frilansEntitet = (OppgittFrilansEntitet) frilans;
         frilansEntitet.setOppgittOpptjening(this);
         this.frilans = frilansEntitet;
     }
 
-    void leggTilAnnenAktivitet(AnnenAktivitet annenAktivitet) {
+    void leggTilAnnenAktivitet(OppgittAnnenAktivitet annenAktivitet) {
         if (this.annenAktivitet == null) {
             this.annenAktivitet = new ArrayList<>();
         }
-        AnnenAktivitetEntitet annenAktivitetEntitet = (AnnenAktivitetEntitet) annenAktivitet;
+        OppgittAnnenAktivitetEntitet annenAktivitetEntitet = (OppgittAnnenAktivitetEntitet) annenAktivitet;
         annenAktivitetEntitet.setOppgittOpptjening(this);
         this.annenAktivitet.add(annenAktivitetEntitet);
     }
 
-    void leggTilEgenNæring(EgenNæring egenNæring) {
+    void leggTilEgenNæring(OppgittEgenNæring egenNæring) {
         if (this.egenNæring == null) {
             this.egenNæring = new ArrayList<>();
         }
-        EgenNæringEntitet egenNæringEntitet = (EgenNæringEntitet) egenNæring;
+        OppgittEgenNæringEntitet egenNæringEntitet = (OppgittEgenNæringEntitet) egenNæring;
         egenNæringEntitet.setOppgittOpptjening(this);
         this.egenNæring.add(egenNæringEntitet);
     }

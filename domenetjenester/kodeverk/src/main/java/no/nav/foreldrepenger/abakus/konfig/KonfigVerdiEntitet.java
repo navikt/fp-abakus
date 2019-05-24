@@ -16,12 +16,11 @@ import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
-import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Table(name = "KONFIG_VERDI")
 @Entity(name = "KonfigVerdi")
-public class KonfigVerdiEntitet extends BaseEntitet {
+public class KonfigVerdiEntitet extends no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_KONFIG_VERDI")
@@ -36,8 +35,8 @@ public class KonfigVerdiEntitet extends BaseEntitet {
 
     @ManyToOne(optional = false)
     @JoinColumnsOrFormulas({
-        @JoinColumnOrFormula(column = @JoinColumn(name = "konfig_gruppe", referencedColumnName = "kode", insertable = false, updatable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + KonfigVerdiGruppe.DISCRIMINATOR + "'"))})
+            @JoinColumnOrFormula(column = @JoinColumn(name = "konfig_gruppe", referencedColumnName = "kode", insertable = false, updatable = false)),
+            @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + KonfigVerdiGruppe.DISCRIMINATOR + "'")) })
     private KonfigVerdiGruppe konfigVerdiGruppe = KonfigVerdiGruppe.INGEN_GRUPPE;
 
     /**
@@ -48,8 +47,8 @@ public class KonfigVerdiEntitet extends BaseEntitet {
 
     @Embedded
     @AttributeOverrides({
-        @AttributeOverride(name = "fomDato", column = @Column(name = "gyldig_fom")),
-        @AttributeOverride(name = "tomDato", column = @Column(name = "gyldig_tom"))
+            @AttributeOverride(name = "fomDato", column = @Column(name = "gyldig_fom")),
+            @AttributeOverride(name = "tomDato", column = @Column(name = "gyldig_tom"))
     })
     private DatoIntervallEntitet gyldigIntervall;
 

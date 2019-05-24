@@ -25,9 +25,9 @@ import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelse;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Refusjon;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriode;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.AnnenAktivitet;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.EgenNæring;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.Frilansoppdrag;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittAnnenAktivitet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilansoppdrag;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffEntity;
@@ -235,17 +235,17 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     private void lagreOppgittOpptjening(OppgittOpptjening entitet) {
         entityManager.persist(entitet);
 
-        for (AnnenAktivitet aktivitet : entitet.getAnnenAktivitet()) {
+        for (OppgittAnnenAktivitet aktivitet : entitet.getAnnenAktivitet()) {
             entityManager.persist(aktivitet);
         }
 
-        for (EgenNæring næring : entitet.getEgenNæring()) {
+        for (OppgittEgenNæring næring : entitet.getEgenNæring()) {
             entityManager.persist(næring);
         }
 
         entitet.getFrilans().ifPresent(frilans -> {
             entityManager.persist(frilans);
-            for (Frilansoppdrag frilansoppdrag : frilans.getFrilansoppdrag()) {
+            for (OppgittFrilansoppdrag frilansoppdrag : frilans.getFrilansoppdrag()) {
                 entityManager.persist(frilansoppdrag);
             }
         });

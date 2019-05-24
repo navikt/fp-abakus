@@ -6,17 +6,17 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.AnnenAktivitetEntitet;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.FrilansEntitet;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.FrilansoppdragEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittAnnenAktivitetEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittFrilansEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittFrilansoppdragEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder.EgenNæringBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder.OppgittArbeidsforholdBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.UtenlandskVirksomhetEntitet;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.AnnenAktivitet;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.EgenNæring;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.Frilans;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.Frilansoppdrag;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittUtenlandskVirksomhetEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittAnnenAktivitet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilansoppdrag;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
@@ -55,7 +55,7 @@ public class MapOppgittOpptjening {
             return dto;
         }
 
-        private OppgittFrilansDto mapFrilans(Frilans frilans) {
+        private OppgittFrilansDto mapFrilans(OppgittFrilans frilans) {
             var frilansoppdrag = frilans.getFrilansoppdrag().stream().map(this::mapFrilansoppdrag).collect(Collectors.toList());
             var frilansDto = new OppgittFrilansDto(frilansoppdrag)
                 .medErNyoppstartet(frilans.getErNyoppstartet())
@@ -79,7 +79,7 @@ public class MapOppgittOpptjening {
             return dto;
         }
 
-        private OppgittEgenNæringDto mapEgenNæring(EgenNæring egenNæring) {
+        private OppgittEgenNæringDto mapEgenNæring(OppgittEgenNæring egenNæring) {
             var periode = tilPeriode(egenNæring.getPeriode());
 
             var org = egenNæring.getOrgnummer() == null ? null : new Organisasjon(egenNæring.getOrgnummer().getId());
@@ -107,13 +107,13 @@ public class MapOppgittOpptjening {
             return dto;
         }
 
-        private OppgittFrilansoppdragDto mapFrilansoppdrag(Frilansoppdrag frilansoppdrag) {
+        private OppgittFrilansoppdragDto mapFrilansoppdrag(OppgittFrilansoppdrag frilansoppdrag) {
             var periode = tilPeriode(frilansoppdrag.getPeriode());
             var oppdragsgiver = frilansoppdrag.getOppdragsgiver();
             return new OppgittFrilansoppdragDto(periode, oppdragsgiver);
         }
 
-        private OppgittAnnenAktivitetDto mapAnnenAktivitet(AnnenAktivitet annenAktivitet) {
+        private OppgittAnnenAktivitetDto mapAnnenAktivitet(OppgittAnnenAktivitet annenAktivitet) {
             var periode = tilPeriode(annenAktivitet.getPeriode());
             var arbeidType = new ArbeidType(annenAktivitet.getArbeidType().getKode());
             return new OppgittAnnenAktivitetDto(periode, arbeidType);
@@ -142,6 +142,7 @@ public class MapOppgittOpptjening {
 
             var frilans = mapFrilans(oppgittOpptjening.getFrilans());
             builder.leggTilFrilansOpplysninger(frilans);
+            
 
             return builder;
         }
@@ -153,12 +154,12 @@ public class MapOppgittOpptjening {
             return data.stream().map(transform).collect(Collectors.toList());
         }
 
-        private Frilans mapFrilans(OppgittFrilansDto dto) {
-            var frilans = new FrilansEntitet();
+        private OppgittFrilans mapFrilans(OppgittFrilansDto dto) {
+            var frilans = new OppgittFrilansEntitet();
             frilans.setErNyoppstartet(dto.isErNyoppstartet());
             frilans.setHarInntektFraFosterhjem(dto.isHarInntektFraFosterhjem());
             frilans.setHarNærRelasjon(dto.isHarNærRelasjon());
-            var frilansoppdrag = mapEach(dto.getFrilansoppdrag(), f -> new FrilansoppdragEntitet(f.getOppdragsgiver(), tilDatoIntervall(f.getPeriode())));
+            var frilansoppdrag = mapEach(dto.getFrilansoppdrag(), f -> new OppgittFrilansoppdragEntitet(f.getOppdragsgiver(), tilDatoIntervall(f.getPeriode())));
             frilans.setFrilansoppdrag(frilansoppdrag);
             return frilans;
         }
@@ -195,15 +196,15 @@ public class MapOppgittOpptjening {
             return builder;
         }
 
-        private UtenlandskVirksomhetEntitet tilUtenlandskVirksomhet(OppgittUtenlandskVirksomhetDto utlandVirksomhet) {
+        private OppgittUtenlandskVirksomhetEntitet tilUtenlandskVirksomhet(OppgittUtenlandskVirksomhetDto utlandVirksomhet) {
             var landkode = new Landkoder(utlandVirksomhet.getLandkode().getKode());
-            return new UtenlandskVirksomhetEntitet(landkode, utlandVirksomhet.getVirksomhetNavn());
+            return new OppgittUtenlandskVirksomhetEntitet(landkode, utlandVirksomhet.getVirksomhetNavn());
         }
 
-        private AnnenAktivitetEntitet mapAnnenAktivitet(OppgittAnnenAktivitetDto dto) {
+        private OppgittAnnenAktivitetEntitet mapAnnenAktivitet(OppgittAnnenAktivitetDto dto) {
             var periode = tilDatoIntervall(dto.getPeriode());
             var arbeidType = tilArbeidtype(dto.getArbeidTypeDto());
-            return new AnnenAktivitetEntitet(periode, arbeidType);
+            return new OppgittAnnenAktivitetEntitet(periode, arbeidType);
         }
 
         private no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType tilArbeidtype(ArbeidType arbeidType) {

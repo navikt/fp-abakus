@@ -16,7 +16,7 @@ import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.AnnenAktivitet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittAnnenAktivitet;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -25,7 +25,7 @@ import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Table(name = "IAY_ANNEN_AKTIVITET")
 @Entity(name = "AnnenAktivitet")
-public class AnnenAktivitetEntitet extends BaseEntitet implements AnnenAktivitet, IndexKey {
+public class OppgittAnnenAktivitetEntitet extends BaseEntitet implements OppgittAnnenAktivitet, IndexKey {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_ANNEN_AKTIVITET")
@@ -46,12 +46,12 @@ public class AnnenAktivitetEntitet extends BaseEntitet implements AnnenAktivitet
     @ChangeTracked
     private ArbeidType arbeidType;
 
-    public AnnenAktivitetEntitet(DatoIntervallEntitet periode, ArbeidType arbeidType) {
+    public OppgittAnnenAktivitetEntitet(DatoIntervallEntitet periode, ArbeidType arbeidType) {
         this.periode = periode;
         this.arbeidType = arbeidType;
     }
 
-    public AnnenAktivitetEntitet() {
+    public OppgittAnnenAktivitetEntitet() {
         // hibernate
     }
 
@@ -78,7 +78,7 @@ public class AnnenAktivitetEntitet extends BaseEntitet implements AnnenAktivitet
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AnnenAktivitetEntitet that = (AnnenAktivitetEntitet) o;
+        OppgittAnnenAktivitetEntitet that = (OppgittAnnenAktivitetEntitet) o;
         return Objects.equals(periode, that.periode) &&
             Objects.equals(arbeidType, that.arbeidType);
     }

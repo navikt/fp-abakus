@@ -19,7 +19,7 @@ import org.hibernate.annotations.JoinFormula;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.UtenlandskVirksomhet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittUtenlandskVirksomhet;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -62,7 +62,7 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
     private ArbeidType arbeidType;
 
     @Embedded
-    private UtenlandskVirksomhetEntitet utenlandskVirksomhet = new UtenlandskVirksomhetEntitet();
+    private OppgittUtenlandskVirksomhetEntitet utenlandskVirksomhet = new OppgittUtenlandskVirksomhetEntitet();
 
     public OppgittArbeidsforholdEntitet() {
         // hibernate
@@ -107,12 +107,12 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
     }
 
     @Override
-    public UtenlandskVirksomhet getUtenlandskVirksomhet() {
+    public OppgittUtenlandskVirksomhet getUtenlandskVirksomhet() {
         return utenlandskVirksomhet;
     }
 
-    void setUtenlandskVirksomhet(UtenlandskVirksomhet utenlandskVirksomhet) {
-        this.utenlandskVirksomhet = (UtenlandskVirksomhetEntitet) utenlandskVirksomhet;
+    void setUtenlandskVirksomhet(OppgittUtenlandskVirksomhet utenlandskVirksomhet) {
+        this.utenlandskVirksomhet = (OppgittUtenlandskVirksomhetEntitet) utenlandskVirksomhet;
     }
 
     @Override

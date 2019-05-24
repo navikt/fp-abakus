@@ -37,7 +37,7 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.ytelse.v1.YtelserDto;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class MapAktørYtelse {
-    private class MapFraDto {
+    static class MapFraDto {
         private InntektArbeidYtelseAggregatBuilder aggregatBuilder;
         private AktørId aktørId;
 
@@ -122,7 +122,7 @@ public class MapAktørYtelse {
 
     }
 
-    private class MapTilDto {
+    static class MapTilDto {
 
         private List<FordelingDto> mapFordeling(List<YtelseStørrelse> ytelseStørrelse) {
             return ytelseStørrelse.stream().map(this::tilFordeling).collect(Collectors.toUnmodifiableList());
@@ -172,13 +172,5 @@ public class MapAktørYtelse {
             return aktørYtelser.stream().map(this::mapTilYtelser).collect(Collectors.toList());
         }
 
-    }
-
-    public List<AktørYtelseBuilder> mapFraDto(AktørId aktørId, InntektArbeidYtelseAggregatBuilder aggregatBuilder, Collection<YtelserDto> aktørYtelser) {
-        return new MapFraDto(aktørId, aggregatBuilder).map(aktørYtelser);
-    }
-
-    public List<YtelserDto> mapTilDto(Collection<AktørYtelse> aktørYtelser) {
-        return new MapTilDto().map(aktørYtelser);
     }
 }

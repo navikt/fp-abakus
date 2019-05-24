@@ -34,12 +34,12 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.Permisjonsbeskrivel
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class MapAktørArbeid {
-    private class MapFraDto {
+    static class MapFraDto {
 
         private AktørId aktørId;
         private InntektArbeidYtelseAggregatBuilder registerData;
 
-        MapFraDto(InntektArbeidYtelseAggregatBuilder registerData, AktørId aktørId) {
+        MapFraDto(AktørId aktørId, InntektArbeidYtelseAggregatBuilder registerData) {
             this.registerData = registerData;
             this.aktørId = aktørId;
         }
@@ -105,7 +105,16 @@ public class MapAktørArbeid {
         }
     }
 
-    private class MapTilDto {
+    static class MapTilDto {
+        
+        private InntektArbeidYtelseTjeneste tjeneste;
+        private KoblingReferanse koblingReferanse;
+
+        MapTilDto(InntektArbeidYtelseTjeneste tjeneste, KoblingReferanse koblingReferanse) {
+            this.tjeneste = tjeneste;
+            this.koblingReferanse = koblingReferanse;
+        }
+        
         List<ArbeidDto> map(Collection<AktørArbeid> aktørArbeid) {
 
             return aktørArbeid.stream()
@@ -170,19 +179,4 @@ public class MapAktørArbeid {
 
     }
 
-    private InntektArbeidYtelseTjeneste tjeneste;
-    private KoblingReferanse koblingReferanse;
-
-    public MapAktørArbeid(InntektArbeidYtelseTjeneste tjeneste, KoblingReferanse koblingReferanse) {
-        this.tjeneste = tjeneste;
-        this.koblingReferanse = koblingReferanse;
-    }
-
-    public List<ArbeidDto> mapTilDto(Collection<AktørArbeid> aktørArbeid) {
-        return new MapTilDto().map(aktørArbeid);
-    }
-
-    public List<AktørArbeidBuilder> mapFraDto(AktørId aktørId, InntektArbeidYtelseAggregatBuilder aggregatBuilder, Collection<ArbeidDto> aktørArbeid) {
-        return new MapFraDto(aggregatBuilder, aktørId).map(aktørArbeid);
-    }
 }

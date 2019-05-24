@@ -2,7 +2,7 @@ package no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag;
 
 import java.util.List;
 
-public interface Frilans {
+public interface OppgittFrilans {
 
     boolean getHarInntektFraFosterhjem();
 
@@ -10,6 +10,6 @@ public interface Frilans {
 
     boolean getHarNærRelasjon();
 
-    List<Frilansoppdrag> getFrilansoppdrag();
+    List<OppgittFrilansoppdrag> getFrilansoppdrag();
 
 }

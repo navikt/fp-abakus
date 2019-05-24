@@ -24,12 +24,11 @@ import org.hibernate.annotations.NaturalId;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.vedtak.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "Kobling")
 @Table(name = "KOBLING")
-public class Kobling extends BaseEntitet implements IndexKey {
+public class Kobling extends no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet implements IndexKey {
 
     /** Abakus intern kobling_id. */
     @Id

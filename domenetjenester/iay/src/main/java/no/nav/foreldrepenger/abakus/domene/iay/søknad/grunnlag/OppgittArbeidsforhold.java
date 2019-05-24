@@ -17,5 +17,5 @@ public interface OppgittArbeidsforhold {
 
     ArbeidType getArbeidType();
 
-    UtenlandskVirksomhet getUtenlandskVirksomhet();
+    OppgittUtenlandskVirksomhet getUtenlandskVirksomhet();
 }

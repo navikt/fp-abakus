@@ -18,8 +18,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinFormula;
 
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.EgenNæring;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.UtenlandskVirksomhet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittUtenlandskVirksomhet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
@@ -31,7 +31,7 @@ import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Table(name = "IAY_EGEN_NAERING")
 @Entity(name = "EgenNæring")
-public class EgenNæringEntitet extends BaseEntitet implements EgenNæring, IndexKey {
+public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEgenNæring, IndexKey {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_EGEN_NAERING")
@@ -86,9 +86,9 @@ public class EgenNæringEntitet extends BaseEntitet implements EgenNæring, Inde
     private boolean nyIArbeidslivet;
 
     @Embedded
-    private UtenlandskVirksomhetEntitet utenlandskVirksomhet = new UtenlandskVirksomhetEntitet();
+    private OppgittUtenlandskVirksomhetEntitet utenlandskVirksomhet = new OppgittUtenlandskVirksomhetEntitet();
 
-    EgenNæringEntitet() {
+    OppgittEgenNæringEntitet() {
     }
 
     @Override
@@ -215,12 +215,12 @@ public class EgenNæringEntitet extends BaseEntitet implements EgenNæring, Inde
     }
 
     @Override
-    public UtenlandskVirksomhet getUtenlandskVirksomhet() {
+    public OppgittUtenlandskVirksomhet getUtenlandskVirksomhet() {
         return utenlandskVirksomhet;
     }
 
-    void setUtenlandskVirksomhet(UtenlandskVirksomhet utenlandskVirksomhet) {
-        this.utenlandskVirksomhet = (UtenlandskVirksomhetEntitet) utenlandskVirksomhet;
+    void setUtenlandskVirksomhet(OppgittUtenlandskVirksomhet utenlandskVirksomhet) {
+        this.utenlandskVirksomhet = (OppgittUtenlandskVirksomhetEntitet) utenlandskVirksomhet;
     }
 
     public void setOppgittOpptjening(OppgittOpptjeningEntitet oppgittOpptjening) {
@@ -231,7 +231,7 @@ public class EgenNæringEntitet extends BaseEntitet implements EgenNæring, Inde
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        EgenNæringEntitet that = (EgenNæringEntitet) o;
+        OppgittEgenNæringEntitet that = (OppgittEgenNæringEntitet) o;
         return Objects.equals(periode, that.periode) &&
             Objects.equals(orgNummer, that.orgNummer) &&
             Objects.equals(nyoppstartet, that.nyoppstartet) &&
