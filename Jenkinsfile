@@ -110,6 +110,6 @@ pipeline {
                 fpgithub.updateBuildStatus("fp-abakus", "failure", GIT_COMMIT_HASH_FULL)
             }
         }
-    }*/
+    }
 }
 */
