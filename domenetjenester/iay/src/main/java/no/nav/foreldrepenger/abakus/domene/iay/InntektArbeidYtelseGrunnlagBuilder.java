@@ -50,17 +50,22 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         kladd.setInntektsmeldinger(inntektsmeldinger);
     }
 
-    ArbeidsforholdInformasjon getInformasjon() {
-        final Optional<ArbeidsforholdInformasjon> informasjon = kladd.getInformasjon();
-        return informasjon.map(it -> {
-            final ArbeidsforholdInformasjonEntitet informasjonEntitet = new ArbeidsforholdInformasjonEntitet(it);
-            kladd.setInformasjon(informasjonEntitet);
-            return informasjonEntitet;
-        }).orElseGet(() -> {
-            final ArbeidsforholdInformasjonEntitet informasjonEntitet = new ArbeidsforholdInformasjonEntitet();
-            kladd.setInformasjon(informasjonEntitet);
-            return informasjonEntitet;
-        });
+    public ArbeidsforholdInformasjon getInformasjon() {
+        var informasjon = kladd.getArbeidsforholdInformasjon();
+
+        var informasjonEntitet = informasjon
+            .map(it -> {
+                var entitet = (ArbeidsforholdInformasjonEntitet) it;
+                if (entitet.getId() == null) {
+                    // ulagret, med preparert, returner her istdf å lage nye hver gang.
+                    return entitet;
+                } else {
+                    return new ArbeidsforholdInformasjonEntitet(it);
+                }
+            })
+            .orElseGet(() -> new ArbeidsforholdInformasjonEntitet());
+        kladd.setInformasjon(informasjonEntitet);
+        return informasjonEntitet;
     }
 
     public InntektArbeidYtelseGrunnlagBuilder medInformasjon(ArbeidsforholdInformasjon informasjon) {
@@ -89,7 +94,7 @@ public class InntektArbeidYtelseGrunnlagBuilder {
 
     public InntektArbeidYtelseGrunnlag build() {
         final ArbeidsforholdInformasjonEntitet arbeidsforholdInfo = (ArbeidsforholdInformasjonEntitet) kladd
-            .getInformasjon().orElseGet(() -> {
+            .getArbeidsforholdInformasjon().orElseGet(() -> {
                 final ArbeidsforholdInformasjonEntitet informasjonEntitet = new ArbeidsforholdInformasjonEntitet();
                 kladd.setInformasjon(informasjonEntitet);
                 return informasjonEntitet;
@@ -104,9 +109,9 @@ public class InntektArbeidYtelseGrunnlagBuilder {
     private void mapArbeidsforholdRef(InntektArbeidYtelseAggregat it, ArbeidsforholdInformasjonEntitet arbeidsforholdInfo) {
         for (AktørArbeid aktørArbeid : it.getAktørArbeid()) {
             for (Yrkesaktivitet yrkesaktivitet : ((AktørArbeidEntitet) aktørArbeid).hentAlleYrkesaktiviter()) {
-                if (yrkesaktivitet.getArbeidsforholdRef().isPresent() && yrkesaktivitet.getArbeidsforholdRef().get().gjelderForSpesifiktArbeidsforhold()) {
+                if (yrkesaktivitet.getArbeidsforholdRef()!=null && yrkesaktivitet.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold()) {
                     final ArbeidsforholdRef internReferanse = arbeidsforholdInfo
-                        .finnEllerOpprett(yrkesaktivitet.getArbeidsgiver(), yrkesaktivitet.getArbeidsforholdRef().get());
+                        .finnEllerOpprett(yrkesaktivitet.getArbeidsgiver(), yrkesaktivitet.getArbeidsforholdRef());
                     ((YrkesaktivitetEntitet) yrkesaktivitet).setArbeidsforholdId(internReferanse);
                 }
             }
@@ -137,5 +142,9 @@ public class InntektArbeidYtelseGrunnlagBuilder {
                 medData(builder);
             }
         }
+    }
+
+    public Optional<ArbeidsforholdInformasjon> getArbeidsforholdInformasjon() {
+        return kladd.getArbeidsforholdInformasjon();
     }
 }

@@ -35,6 +35,7 @@ import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
@@ -66,6 +67,7 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
     @ChangeTracked
     private Arbeidsgiver arbeidsgiver;
 
+    /** TODO Bytt til InternArbeidsforholdRef. + migrer data*/
     @Embedded
     @ChangeTracked
     private ArbeidsforholdRef arbeidsforholdRef;
@@ -255,11 +257,16 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
      * TODO: (DOKUMENTERE DENNE)
      *
      * @param arbeidsforholdRef Intern arbeidsforhold id
+     * @deprecated bytt til {@link #setArbeidsforholdId(InternArbeidsforholdRef)}
      */
     public void setArbeidsforholdId(ArbeidsforholdRef arbeidsforholdRef) {
         this.arbeidsforholdRef = arbeidsforholdRef;
     }
 
+    public void setArbeidsforholdId(InternArbeidsforholdRef arbeidsforholdRef) {
+        this.arbeidsforholdRef = ArbeidsforholdRef.ref(arbeidsforholdRef.getReferanse());
+    }
+    
     @Override
     public LocalDate getStartDatoPermisjon() {
         return startDatoPermisjon;

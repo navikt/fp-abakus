@@ -37,6 +37,7 @@ import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
@@ -73,8 +74,8 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
 
     @ManyToOne
     @JoinColumnsOrFormulas({
-        @JoinColumnOrFormula(column = @JoinColumn(name = "arbeid_type", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + ArbeidType.DISCRIMINATOR + "'"))})
+            @JoinColumnOrFormula(column = @JoinColumn(name = "arbeid_type", referencedColumnName = "kode", nullable = false)),
+            @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + ArbeidType.DISCRIMINATOR + "'")) })
     @ChangeTracked
     private ArbeidType arbeidType;
 
@@ -90,7 +91,7 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
         final YrkesaktivitetEntitet yrkesaktivitetEntitet = (YrkesaktivitetEntitet) yrkesaktivitet; // NOSONAR
         this.arbeidType = yrkesaktivitetEntitet.getArbeidType();
         this.arbeidsgiver = yrkesaktivitetEntitet.getArbeidsgiver();
-        this.arbeidsforholdRef = yrkesaktivitetEntitet.getArbeidsforholdRef().orElse(null);
+        this.arbeidsforholdRef = yrkesaktivitetEntitet.getArbeidsforholdRef();
 
         this.aktivitetsAvtale = yrkesaktivitetEntitet.aktivitetsAvtale.stream().map(aa -> {
             AktivitetsAvtaleEntitet aktivitetsAvtaleEntitet = new AktivitetsAvtaleEntitet(aa);
@@ -124,12 +125,17 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
     }
 
     @Override
-    public Optional<ArbeidsforholdRef> getArbeidsforholdRef() {
-        return Optional.ofNullable(arbeidsforholdRef);
+    public ArbeidsforholdRef getArbeidsforholdRef() {
+        return arbeidsforholdRef == null ? ArbeidsforholdRef.ref(null) : arbeidsforholdRef;
     }
 
+    @Deprecated(forRemoval = true)
     void setArbeidsforholdId(ArbeidsforholdRef arbeidsforholdId) {
         this.arbeidsforholdRef = arbeidsforholdId;
+    }
+
+    void setArbeidsforholdId(InternArbeidsforholdRef arbeidsforholdId) {
+        this.arbeidsforholdRef = ArbeidsforholdRef.ref(arbeidsforholdId.getReferanse());
     }
 
     @Override
@@ -144,14 +150,15 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
     }
 
     @Override
-    public Collection<AktivitetsAvtale> getAktivitetsAvtaler() {
+    public Collection<AktivitetsAvtale> getAktivitetsAvtalerForArbeid() {
         return aktivitetsAvtale.stream()
             .filter(av -> (!this.erArbeidsforhold() || !av.erAnsettelsesPeriode()))
             .filter(AktivitetsAvtaleEntitet::skalMedEtterSkjæringstidspunktVurdering)
             .collect(Collectors.toUnmodifiableSet());
     }
 
-    Collection<AktivitetsAvtale> getAlleAktivitetsAvtaler() {
+    @Override
+    public Collection<AktivitetsAvtale> getAlleAktivitetsAvtaler() {
         return Collections.unmodifiableSet(aktivitetsAvtale);
     }
 

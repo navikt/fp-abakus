@@ -84,15 +84,17 @@ public class ArbeidsforholdRestTjeneste {
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response referanseForArbeidsforhold(@NotNull @TilpassetAbacAttributt(supplierClass = ArbeidsforholdReferanseAbacDataSupplier.class) @Valid ArbeidsforholdReferanse request) {
-        KoblingReferanse referanse = new KoblingReferanse(UUID.fromString(request.getReferanse().getReferanse()));
+        KoblingReferanse referanse = new KoblingReferanse(UUID.fromString(request.getKoblingReferanse().getReferanse()));
         KoblingLås koblingLås = koblingTjeneste.taSkrivesLås(referanse);
 
         ArbeidsforholdInformasjon arbeidsforholdInformasjon = iayTjeneste.hentArbeidsforholdInformasjonForKobling(referanse);
 
+        // FIXME (FC) : kommer abakus referanse virkelig her på request?
+        String abakusReferanse = request.getArbeidsforholdId().getAbakusReferanse();
         ArbeidsforholdRef arbeidsforholdRef = arbeidsforholdInformasjon.finnEllerOpprett(tilArbeidsgiver(request),
-            ArbeidsforholdRef.ref(request.getArbeidsforholdId()));
+            ArbeidsforholdRef.ref(abakusReferanse));
 
-        var dto = dtoTjeneste.mapArbeidsforhold(request.getArbeidsgiver(), request.getArbeidsforholdId(), arbeidsforholdRef.getReferanse());
+        var dto = dtoTjeneste.mapArbeidsforhold(request.getArbeidsgiver(), abakusReferanse, arbeidsforholdRef.getReferanse());
         koblingTjeneste.oppdaterLåsVersjon(koblingLås);
 
         return Response.ok(dto).build();

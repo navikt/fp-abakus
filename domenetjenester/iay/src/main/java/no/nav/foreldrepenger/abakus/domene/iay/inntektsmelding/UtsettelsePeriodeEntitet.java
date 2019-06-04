@@ -41,8 +41,8 @@ public class UtsettelsePeriodeEntitet extends BaseEntitet implements UtsettelseP
 
     @ManyToOne
     @JoinColumnsOrFormulas(value = {
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + UtsettelseÅrsak.DISCRIMINATOR + "'")),
-        @JoinColumnOrFormula(column = @JoinColumn(name = "utsettelse_aarsak_type", referencedColumnName = "kode")),
+            @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + UtsettelseÅrsak.DISCRIMINATOR + "'")),
+            @JoinColumnOrFormula(column = @JoinColumn(name = "utsettelse_aarsak_type", referencedColumnName = "kode")),
     })
     @ChangeTracked
     private UtsettelseÅrsak årsak = UtsettelseÅrsak.UDEFINERT;
@@ -87,7 +87,6 @@ public class UtsettelsePeriodeEntitet extends BaseEntitet implements UtsettelseP
         return periode;
     }
 
-
     @Override
     public UtsettelseÅrsak getÅrsak() {
         return årsak;
@@ -95,8 +94,10 @@ public class UtsettelsePeriodeEntitet extends BaseEntitet implements UtsettelseP
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         UtsettelsePeriodeEntitet that = (UtsettelsePeriodeEntitet) o;
         return Objects.equals(periode, that.periode) &&
             Objects.equals(årsak, that.årsak);

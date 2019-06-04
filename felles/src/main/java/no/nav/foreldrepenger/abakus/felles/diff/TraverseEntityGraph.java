@@ -6,6 +6,8 @@ import static java.util.Collections.unmodifiableSet;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
+import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -52,20 +54,20 @@ import javassist.Modifier;
 public class TraverseEntityGraph {
 
     /** Final klasser som ikke trenger videre forklaring. For raskest oppslag. */
-    private static final Set<Class<?>> LEAVES_FINAL = unmodifiableSet(new HashSet<>(
-        asList(String.class, Character.class, Character.TYPE,
-            Long.class, Double.class, Integer.class, Short.class, Byte.class, Boolean.class,
-            Long.TYPE, Double.TYPE, Integer.TYPE, Short.TYPE, Byte.TYPE, Boolean.TYPE,
-            BigInteger.class, BigDecimal.class,
-            LocalDate.class, LocalDateTime.class, Interval.class, OffsetDateTime.class, ZonedDateTime.class,
-            Instant.class, UUID.class)));
+    private static final Set<Class<?>> LEAVES_FINAL = Set.of(
+        String.class, Character.class, Character.TYPE, //
+        Long.class, Double.class, Integer.class, Short.class, Byte.class, Boolean.class, //
+        Long.TYPE, Double.TYPE, Integer.TYPE, Short.TYPE, Byte.TYPE, Boolean.TYPE, //
+        BigInteger.class, BigDecimal.class, //
+        LocalDate.class, LocalDateTime.class, Interval.class, OffsetDateTime.class, ZonedDateTime.class, Instant.class,
+        UUID.class, URI.class, URL.class //
+    );
 
     /**
      * Ikke final - men Interfacer/Abstract klasser som fanger store grupper av LEAF objekter (eks. Temporal --
      * LocalDate, Number -- Long, osv).
      */
-    private static final Set<Class<?>> LEAVES_EXTENDABLE = unmodifiableSet(new HashSet<>(
-        asList(Number.class, Enum.class, TemporalAccessor.class, TemporalAmount.class, TemporalField.class, TraverseValue.class)));
+    private static final Set<Class<?>> LEAVES_EXTENDABLE = Set.of(Number.class, Enum.class, TemporalAccessor.class, TemporalAmount.class, TemporalField.class, TraverseValue.class);
 
     /** Rot klasser som ikke skal inspiseres i et hierarki. */
     private static final Set<Class<?>> ROOTS_CLASSES = unmodifiableSet(new HashSet<>(

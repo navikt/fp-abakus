@@ -9,11 +9,14 @@ import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
+import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 import no.nav.vedtak.konfig.Tid;
 
 public class InntektsmeldingBuilder {
     private final InntektsmeldingEntitet kladd;
+    private EksternArbeidsforholdRef eksternArbeidsforholdId;
 
     InntektsmeldingBuilder(InntektsmeldingEntitet kladd) {
         this.kladd = kladd;
@@ -123,6 +126,19 @@ public class InntektsmeldingBuilder {
 
     public InntektsmeldingBuilder medJournalpostId(String journalpostId) {
         return medJournalpostId(new JournalpostId(journalpostId));
+    }
+
+    public InntektsmeldingBuilder medArbeidsforholdId(EksternArbeidsforholdRef eksternRef) {
+        this.eksternArbeidsforholdId = eksternRef;
+        return this;
+    }
+    
+    public InntektsmeldingBuilder medArbeidsforholdId(InternArbeidsforholdRef internRef) {
+        String arbeidsforholdId = internRef.getReferanse();
+        if (arbeidsforholdId != null) {
+            kladd.setArbeidsforholdId(ArbeidsforholdRef.ref(arbeidsforholdId));
+        }
+        return this;
     }
 
 }

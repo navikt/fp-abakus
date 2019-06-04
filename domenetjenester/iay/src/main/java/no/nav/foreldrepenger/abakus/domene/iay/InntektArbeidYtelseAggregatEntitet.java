@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -57,8 +58,13 @@ public class InntektArbeidYtelseAggregatEntitet extends BaseEntitet implements I
     InntektArbeidYtelseAggregatEntitet() {
         // hibernate
     }
+    
+    InntektArbeidYtelseAggregatEntitet(UUID angittEksternReferanse, LocalDateTime angittOpprettetTidspunkt) {
+        setOpprettetTidspunkt(angittOpprettetTidspunkt);
+        this.eksternReferanse = angittEksternReferanse;
+    }
 
-    InntektArbeidYtelseAggregatEntitet(UUID eksternReferanse, InntektArbeidYtelseAggregat kopierFra) {
+    InntektArbeidYtelseAggregatEntitet(UUID eksternReferanse, LocalDateTime opprettetTidspunkt, InntektArbeidYtelseAggregat kopierFra) {
         Objects.requireNonNull(eksternReferanse, "eksternReferanse");
         this.setAktørInntekt(kopierFra.getAktørInntekt().stream().map(ai -> {
             AktørInntektEntitet aktørInntektEntitet = new AktørInntektEntitet(ai);
@@ -78,11 +84,12 @@ public class InntektArbeidYtelseAggregatEntitet extends BaseEntitet implements I
             return aktørYtelseEntitet;
         }).collect(Collectors.toList()));
 
+        this.setOpprettetTidspunkt(opprettetTidspunkt);
         this.eksternReferanse = eksternReferanse;
     }
 
     InntektArbeidYtelseAggregatEntitet(InntektArbeidYtelseAggregat kopierFra) {
-        this(UUID.randomUUID(), kopierFra);
+        this(UUID.randomUUID(), kopierFra.getOpprettetTidspunkt(), kopierFra);
     }
 
     @Override

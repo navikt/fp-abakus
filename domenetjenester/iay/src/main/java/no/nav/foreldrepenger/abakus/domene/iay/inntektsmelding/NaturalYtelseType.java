@@ -31,7 +31,7 @@ public class NaturalYtelseType extends Kodeliste {
     public static final NaturalYtelseType INNBETALING_TIL_UTENLANDSK_PENSJONSORDNING = new NaturalYtelseType("UTENLANDSK_PENSJONSORDNING");
     public static final NaturalYtelseType UDEFINERT = new NaturalYtelseType("-");
 
-    NaturalYtelseType(String kode) {
+    public NaturalYtelseType(String kode) {
         super(kode, DISCRIMINATOR);
     }
 

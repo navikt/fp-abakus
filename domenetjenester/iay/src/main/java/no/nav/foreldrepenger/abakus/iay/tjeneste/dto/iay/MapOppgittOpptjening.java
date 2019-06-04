@@ -42,16 +42,11 @@ public class MapOppgittOpptjening {
             var dto = new OppgittOpptjeningDto(oppgittOpptjening.getEksternReferanse(), oppgittOpptjening.getOpprettetTidspunkt());
 
             dto.medArbeidsforhold(oppgittOpptjening.getOppgittArbeidsforhold().stream().map(this::mapArbeidsforhold).collect(Collectors.toList()));
-
             dto.medEgenNæring(oppgittOpptjening.getEgenNæring().stream().map(this::mapEgenNæring).collect(Collectors.toList()));
-
-            if (oppgittOpptjening.getFrilans().isPresent()) {
-                var frilans = oppgittOpptjening.getFrilans().get();
-                var frilansDto = mapFrilans(frilans);
-                dto.medFrilans(frilansDto);
-            }
-
             dto.medAnnenAktivitet(oppgittOpptjening.getAnnenAktivitet().stream().map(this::mapAnnenAktivitet).collect(Collectors.toList()));
+            
+            oppgittOpptjening.getFrilans().ifPresent(f -> dto.medFrilans(mapFrilans(f)));
+            
             return dto;
         }
 
@@ -65,25 +60,29 @@ public class MapOppgittOpptjening {
         }
 
         private OppgittArbeidsforholdDto mapArbeidsforhold(OppgittArbeidsforhold arbeidsforhold) {
-            var periode = tilPeriode(arbeidsforhold.getPeriode());
+            DatoIntervallEntitet periode1 = arbeidsforhold.getPeriode();
+            var periode = new Periode(periode1.getFomDato(), periode1.getTomDato());
             var arbeidType = new ArbeidType(arbeidsforhold.getArbeidType().getKode());
 
-            var dto = new OppgittArbeidsforholdDto(periode, arbeidType)
-                .medErUtenlandskInntekt(arbeidsforhold.erUtenlandskInntekt());
-
+            OppgittUtenlandskVirksomhetDto utenlandskVirksomhet = null;
             if (arbeidsforhold.getUtenlandskVirksomhet() != null) {
                 var utvirk = arbeidsforhold.getUtenlandskVirksomhet();
-                dto.medUtenlandskVirksomhet(new OppgittUtenlandskVirksomhetDto(utvirk.getLandkode().getKode(), utvirk.getUtenlandskVirksomhetNavn()));
+                utenlandskVirksomhet = new OppgittUtenlandskVirksomhetDto(utvirk.getLandkode().getKode(), utvirk.getUtenlandskVirksomhetNavn());
             }
+            var dto = new OppgittArbeidsforholdDto(periode, arbeidType)
+                .medErUtenlandskInntekt(arbeidsforhold.erUtenlandskInntekt())
+                .medUtenlandskVirksomhet(utenlandskVirksomhet);
 
             return dto;
         }
 
         private OppgittEgenNæringDto mapEgenNæring(OppgittEgenNæring egenNæring) {
-            var periode = tilPeriode(egenNæring.getPeriode());
+            DatoIntervallEntitet periode1 = egenNæring.getPeriode();
+            var periode = new Periode(periode1.getFomDato(), periode1.getTomDato());
 
             var org = egenNæring.getOrgnummer() == null ? null : new Organisasjon(egenNæring.getOrgnummer().getId());
             var virksomhetType = egenNæring.getVirksomhetType().getKode();
+            
             var dto = new OppgittEgenNæringDto(periode)
                 .medBegrunnelse(egenNæring.getBegrunnelse())
                 .medBruttoInntekt(egenNæring.getBruttoInntekt())
@@ -108,19 +107,15 @@ public class MapOppgittOpptjening {
         }
 
         private OppgittFrilansoppdragDto mapFrilansoppdrag(OppgittFrilansoppdrag frilansoppdrag) {
-            var periode = tilPeriode(frilansoppdrag.getPeriode());
+            var periode = new Periode(frilansoppdrag.getPeriode().getFomDato(), frilansoppdrag.getPeriode().getTomDato());
             var oppdragsgiver = frilansoppdrag.getOppdragsgiver();
             return new OppgittFrilansoppdragDto(periode, oppdragsgiver);
         }
 
         private OppgittAnnenAktivitetDto mapAnnenAktivitet(OppgittAnnenAktivitet annenAktivitet) {
-            var periode = tilPeriode(annenAktivitet.getPeriode());
+            var periode = new Periode(annenAktivitet.getPeriode().getFomDato(), annenAktivitet.getPeriode().getTomDato());
             var arbeidType = new ArbeidType(annenAktivitet.getArbeidType().getKode());
             return new OppgittAnnenAktivitetDto(periode, arbeidType);
-        }
-
-        private Periode tilPeriode(DatoIntervallEntitet periode) {
-            return new Periode(periode.getFomDato(), periode.getTomDato());
         }
 
     }
@@ -129,7 +124,7 @@ public class MapOppgittOpptjening {
 
         public OppgittOpptjeningBuilder map(OppgittOpptjeningDto oppgittOpptjening) {
             var oppgittOpptjeningEksternReferanse = UUID.fromString(oppgittOpptjening.getEksternReferanse().getReferanse());
-            var builder = OppgittOpptjeningBuilder.ny(oppgittOpptjeningEksternReferanse);
+            var builder = OppgittOpptjeningBuilder.ny(oppgittOpptjeningEksternReferanse, oppgittOpptjening.getOpprettetTidspunkt());
 
             var annenAktivitet = mapEach(oppgittOpptjening.getAnnenAktivitet(), this::mapAnnenAktivitet);
             annenAktivitet.forEach(builder::leggTilAnnenAktivitet);
@@ -159,7 +154,8 @@ public class MapOppgittOpptjening {
             frilans.setErNyoppstartet(dto.isErNyoppstartet());
             frilans.setHarInntektFraFosterhjem(dto.isHarInntektFraFosterhjem());
             frilans.setHarNærRelasjon(dto.isHarNærRelasjon());
-            var frilansoppdrag = mapEach(dto.getFrilansoppdrag(), f -> new OppgittFrilansoppdragEntitet(f.getOppdragsgiver(), tilDatoIntervall(f.getPeriode())));
+            var frilansoppdrag = mapEach(dto.getFrilansoppdrag(), 
+                f -> new OppgittFrilansoppdragEntitet(f.getOppdragsgiver(), DatoIntervallEntitet.fraOgMedTilOgMed(f.getPeriode().getFom(), f.getPeriode().getTom())));
             frilans.setFrilansoppdrag(frilansoppdrag);
             return frilans;
         }
@@ -189,10 +185,11 @@ public class MapOppgittOpptjening {
         }
 
         private OppgittArbeidsforholdBuilder mapOppgittArbeidsforhold(OppgittArbeidsforholdDto dto) {
+            Periode dto1 = dto.getPeriode();
             var builder = OppgittArbeidsforholdBuilder.ny()
                 .medArbeidType(tilArbeidtype(dto.getArbeidTypeDto()))
                 .medErUtenlandskInntekt(dto.isErUtenlandskInntekt())
-                .medPeriode(tilDatoIntervall(dto.getPeriode()))
+                .medPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(dto1.getFom(), dto1.getTom()))
                 .medUtenlandskVirksomhet(tilUtenlandskVirksomhet(dto.getUtenlandskVirksomhet()));
 
             return builder;
@@ -204,17 +201,14 @@ public class MapOppgittOpptjening {
         }
 
         private OppgittAnnenAktivitetEntitet mapAnnenAktivitet(OppgittAnnenAktivitetDto dto) {
-            var periode = tilDatoIntervall(dto.getPeriode());
+            Periode dto1 = dto.getPeriode();
+            var periode = DatoIntervallEntitet.fraOgMedTilOgMed(dto1.getFom(), dto1.getTom());
             var arbeidType = tilArbeidtype(dto.getArbeidTypeDto());
             return new OppgittAnnenAktivitetEntitet(periode, arbeidType);
         }
 
         private no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType tilArbeidtype(ArbeidType arbeidType) {
             return new no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType(arbeidType.getKode());
-        }
-
-        private DatoIntervallEntitet tilDatoIntervall(Periode dto) {
-            return DatoIntervallEntitet.fraOgMedTilOgMed(dto.getFom(), dto.getTom());
         }
 
     }

@@ -1,21 +1,16 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.ws.rs.NotFoundException;
-
-import no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapAktørArbeid.MapFraDto;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapAktørInntekt.MapTilDto;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -28,13 +23,13 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnl
 
 public class IAYDtoMapper {
 
-    private InntektArbeidYtelseTjeneste tjeneste;
+    private InntektArbeidYtelseTjeneste iayTjeneste;
     private AktørId aktørId;
     private GrunnlagReferanse grunnlagReferanse;
     private KoblingReferanse koblingReferanse;
 
     public IAYDtoMapper(InntektArbeidYtelseTjeneste tjeneste, AktørId aktørId, GrunnlagReferanse grunnlagReferanse, KoblingReferanse koblingReferanse) {
-        this.tjeneste = tjeneste;
+        this.iayTjeneste = tjeneste;
         this.aktørId = aktørId;
         this.grunnlagReferanse = grunnlagReferanse;
         this.koblingReferanse = koblingReferanse;
@@ -46,125 +41,155 @@ public class IAYDtoMapper {
         }
         var dataset = spec.getDataset();
 
-        var tidspunkt = grunnlag.getOpprettetTidspunkt().atZone(ZoneId.systemDefault()).toOffsetDateTime();
-        var dto = new InntektArbeidYtelseGrunnlagDto(new AktørIdPersonident(aktørId.getId()), tidspunkt, grunnlagReferanse.getReferanse(), koblingReferanse.getReferanse());
+        var grunnlagTidspunkt = grunnlag.getOpprettetTidspunkt().atZone(ZoneId.systemDefault()).toOffsetDateTime();
+        var dto = new InntektArbeidYtelseGrunnlagDto(new AktørIdPersonident(aktørId.getId()),
+            grunnlagTidspunkt, grunnlagReferanse.getReferanse(), koblingReferanse.getReferanse());
 
         var aggregatOpt = grunnlag.getOpplysningerEtterSkjæringstidspunkt(null);
         if (aggregatOpt.isEmpty()) {
-            throw new NotFoundException("Fant ikke grunnlag: " + grunnlagReferanse);
+            throw new IllegalStateException("Fant ikke grunnlag: " + grunnlagReferanse);
         }
 
         // Selektiv mapping avhengig av hva som er forspurt av data
+
+        var arbeidsforholdInfo = grunnlag.getArbeidsforholdInformasjon().orElseThrow();
+        
+        if (dataset.contains(Dataset.OVERSTYRT)) {
+            grunnlag.getArbeidsforholdInformasjon().ifPresent(ai -> {
+                var arbeidsforholdInformasjon = new MapArbeidsforholdInformasjon.MapTilDto().map(ai);
+                dto.medArbeidsforholdInformasjon(arbeidsforholdInformasjon);
+            });
+            grunnlag.getSaksbehandletVersjon().ifPresent(a -> mapSaksbehandlerOverstyrteOpplysninger(a, arbeidsforholdInfo, dto));
+        }
         
         if (dataset.contains(Dataset.REGISTER)) {
-            mapRegisterOpplysninger(aggregatOpt, dto);
+            mapRegisterOpplysninger(aggregatOpt.get(), arbeidsforholdInfo, dto);
         }
 
-        if (dataset.contains(Dataset.OVERSTYRT)) {
-            grunnlag.getSaksbehandletVersjon().ifPresent(a -> mapSaksbehandlerOverstyrteOpplysninger(a, dto));
-        }
 
         if (dataset.contains(Dataset.INNTEKTSMELDING)) {
-            dto.medInntektsmeldinger(
-                new MapInntektsmeldinger(tjeneste, koblingReferanse).mapTilDto(grunnlag.getInntektsmeldinger().orElse(null),
-                    grunnlag.getInntektsmeldingerSomIkkeKommer()));
+            var mapper = new MapInntektsmeldinger.MapTilDto(arbeidsforholdInfo);
+            var inntektsmeldinger = mapper.map(grunnlag.getInntektsmeldinger().orElse(null));
+            dto.medInntektsmeldinger(inntektsmeldinger);
         }
 
         if (dataset.contains(Dataset.OPPGITT_OPPTJENING)) {
-            grunnlag.getOppgittOpptjening().ifPresent(oo -> dto.medOppgittOpptjening(new MapOppgittOpptjening().mapTilDto(oo)));
+            grunnlag.getOppgittOpptjening().ifPresent(oo -> {
+                var mapper = new MapOppgittOpptjening().mapTilDto(oo);
+                dto.medOppgittOpptjening(mapper);
+            });
         }
 
         return dto;
     }
 
-    /** Mapper oppdaterte data til grunnlag.  Kan oppdatere tidligere grunnlag eller siste grunnlag på en kobling. */
+    /** Mapper oppdaterte data til grunnlag. Kan oppdatere tidligere grunnlag eller siste grunnlag på en kobling. */
     public InntektArbeidYtelseGrunnlag mapTilGrunnlag(InntektArbeidYtelseGrunnlagDto dto) {
-        // Opprett nytt grunnlag (kliss nytt eller basert på annet)
-        var kladd = hentGrunnlag(dto);
-        var builder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(kladd);
-        mapTilGrunnlagBuilder(dto, builder);
-
+        var builder = mapGrunnlag(dto);
         return builder.build();
-
     }
 
     /**
      * Til bruk for migrering (sender inn registerdata, istdf. å hente fra registerne.)
      */
     public InntektArbeidYtelseGrunnlag mapTilGrunnlagInklusivRegisterdata(InntektArbeidYtelseGrunnlagDto dto) {
+        var builder = mapGrunnlag(dto);
+
+        // ta med registerdata til grunnlaget
+        mapRegisterDataTilMigrering(dto, builder);
+
+        return builder.build();
+    }
+
+    private InntektArbeidYtelseGrunnlagBuilder mapGrunnlag(InntektArbeidYtelseGrunnlagDto dto) {
         var kladd = hentGrunnlag(dto);
         var builder = kladd.isEmpty()
             ? InntektArbeidYtelseGrunnlagBuilder.ny(UUID.fromString(dto.getGrunnlagReferanse()))
             : InntektArbeidYtelseGrunnlagBuilder.oppdatere(kladd.get());
 
+        var overstyringer = mapSaksbehandlerDataTilBuilder(dto, builder);
+        builder.medData(overstyringer);
+
         mapTilGrunnlagBuilder(dto, builder);
-
-        // ta med registerdata til grunnlaget
-        var registerData = mapRegisterDataTilMigrering(dto);
-        builder.medData(registerData);
-
-        return builder.build();
+        return builder;
     }
 
     private Optional<InntektArbeidYtelseGrunnlag> hentGrunnlag(InntektArbeidYtelseGrunnlagDto dto) {
         if (dto.getGrunnlagReferanse() == null) {
             if (dto.getKoblingReferanse() != null) {
-                return tjeneste.hentGrunnlagFor(new KoblingReferanse(dto.getKoblingReferanse()));
+                return iayTjeneste.hentGrunnlagFor(new KoblingReferanse(dto.getKoblingReferanse()));
             } else {
                 return Optional.empty();
             }
         }
-        return tjeneste.hentGrunnlagFor(new GrunnlagReferanse(dto.getGrunnlagReferanse()));
+        return iayTjeneste.hentGrunnlagFor(new GrunnlagReferanse(dto.getGrunnlagReferanse()));
     }
 
     // brukes kun til migrering av data (dytter inn IAYG)
-    private InntektArbeidYtelseAggregatBuilder mapRegisterDataTilMigrering(InntektArbeidYtelseGrunnlagDto dto) {
-        var registerDataBuilder = tjeneste.opprettBuilderForRegister(koblingReferanse);
+    private void mapRegisterDataTilMigrering(InntektArbeidYtelseGrunnlagDto dto, InntektArbeidYtelseGrunnlagBuilder builder) {
+        var register = dto.getRegister();
+        var tidspunkt = register.getOpprettetTidspunkt().toLocalDateTime();
 
-        var aktørArbeid = new MapAktørArbeid.MapFraDto(aktørId, registerDataBuilder).map(dto.getRegister().getArbeid());
-        var aktørInntekt = new MapAktørInntekt.MapFraDto(aktørId, registerDataBuilder).map(dto.getRegister().getInntekt());
-        var aktørYtelse = new MapAktørYtelse.MapFraDto(aktørId, registerDataBuilder).map(dto.getRegister().getYtelse());
+        var registerBuilder = iayTjeneste.opprettBuilderForRegister(koblingReferanse, register.getEksternReferanse(), tidspunkt);
 
-        aktørArbeid.forEach(registerDataBuilder::leggTilAktørArbeid);
-        aktørInntekt.forEach(registerDataBuilder::leggTilAktørInntekt);
-        aktørYtelse.forEach(registerDataBuilder::leggTilAktørYtelse);
+        var aktørArbeid = new MapAktørArbeid.MapFraDto(aktørId, registerBuilder).map(dto.getRegister().getArbeid());
+        var aktørInntekt = new MapAktørInntekt.MapFraDto(aktørId, registerBuilder).map(dto.getRegister().getInntekt());
+        var aktørYtelse = new MapAktørYtelse.MapFraDto(aktørId, registerBuilder).map(dto.getRegister().getYtelse());
 
-        return registerDataBuilder;
+        aktørArbeid.forEach(registerBuilder::leggTilAktørArbeid);
+        aktørInntekt.forEach(registerBuilder::leggTilAktørInntekt);
+        aktørYtelse.forEach(registerBuilder::leggTilAktørYtelse);
+
+        builder.medData(registerBuilder);
     }
 
-    private void mapRegisterOpplysninger(Optional<InntektArbeidYtelseAggregat> aggregatOpt,
+    private void mapRegisterOpplysninger(InntektArbeidYtelseAggregat aggregat,
+                                         ArbeidsforholdInformasjon arbeidsforholdInfo, 
                                          InntektArbeidYtelseGrunnlagDto dto) {
-        if (aggregatOpt.isEmpty()) {
-            return;
-        }
-        InntektArbeidYtelseAggregat aggregat = aggregatOpt.get();
         var tidspunkt = aggregat.getOpprettetTidspunkt();
+        var arbeid = new MapAktørArbeid.MapTilDto(arbeidsforholdInfo).map(aggregat.getAktørArbeid());
+        var inntekter = new MapTilDto().map(aggregat.getAktørInntekt());
+        var ytelser = new MapAktørYtelse.MapTilDto().map(aggregat.getAktørYtelse());
+
         dto.medRegister(
             new InntektArbeidYtelseAggregatRegisterDto(tidspunkt, aggregat.getEksternReferanse())
-                .medArbeid(new MapAktørArbeid.MapTilDto(tjeneste, koblingReferanse).map(aggregat.getAktørArbeid()))
-                .medInntekt(new MapTilDto().map(aggregat.getAktørInntekt()))
-                .medYtelse(new MapAktørYtelse.MapTilDto().map(aggregat.getAktørYtelse())));
+                .medArbeid(arbeid)
+                .medInntekt(inntekter)
+                .medYtelse(ytelser));
     }
 
     private void mapSaksbehandlerOverstyrteOpplysninger(InntektArbeidYtelseAggregat aggregat,
+                                                        ArbeidsforholdInformasjon arbeidsforholdInfo,
                                                         InntektArbeidYtelseGrunnlagDto dto) {
-        LocalDateTime tidspunkt = aggregat.getOpprettetTidspunkt();
-        Collection<AktørArbeid> aktørArbeid = aggregat.getAktørArbeid();
-        dto.medOverstyrt(new InntektArbeidYtelseAggregatOverstyrtDto(tidspunkt, aggregat.getEksternReferanse())
-            .medArbeid(new MapAktørArbeid.MapTilDto(tjeneste, koblingReferanse).map(aktørArbeid)));
+        var tidspunkt = aggregat.getOpprettetTidspunkt();
+        var aktørArbeid = aggregat.getAktørArbeid();
+        var arbeid = new MapAktørArbeid.MapTilDto(arbeidsforholdInfo).map(aktørArbeid);
+        var overstyrt = new InntektArbeidYtelseAggregatOverstyrtDto(tidspunkt, aggregat.getEksternReferanse());
+        overstyrt.medArbeid(arbeid);
+
+        dto.medOverstyrt(overstyrt);
+    }
+
+    private InntektArbeidYtelseAggregatBuilder mapSaksbehandlerDataTilBuilder(InntektArbeidYtelseGrunnlagDto dto, InntektArbeidYtelseGrunnlagBuilder builder) {
+        var overstyrt = dto.getOverstyrt();
+        var tidspunkt = overstyrt.getOpprettetTidspunkt().toLocalDateTime();
+        var saksbehandlerOverstyringer = iayTjeneste.opprettBuilderForSaksbehandlet(koblingReferanse, overstyrt.getEksternReferanse(), tidspunkt);
+        var overstyrtAktørArbeid = new MapAktørArbeid.MapFraDto(aktørId, saksbehandlerOverstyringer).map(overstyrt.getArbeid());
+        overstyrtAktørArbeid.forEach(saksbehandlerOverstyringer::leggTilAktørArbeid);
+        return saksbehandlerOverstyringer;
     }
 
     private void mapTilGrunnlagBuilder(InntektArbeidYtelseGrunnlagDto dto, InntektArbeidYtelseGrunnlagBuilder builder) {
-        var saksbehandlerOverstyringer = tjeneste.opprettBuilderForSaksbehandlerOverstyring(koblingReferanse);
-        var overstyrtAktørArbeid = new MapFraDto(aktørId, saksbehandlerOverstyringer).map(dto.getOverstyrt().getArbeid());
-        overstyrtAktørArbeid.forEach(saksbehandlerOverstyringer::leggTilAktørArbeid);
 
-        var inntektsmeldinger = new MapInntektsmeldinger(tjeneste, koblingReferanse).mapFraDto(dto.getInntektsmeldinger());
+        var arbeidsforholdInformasjonBuilder = new MapArbeidsforholdInformasjon.MapFraDto(builder).map(dto.getArbeidsforholdInformasjon());
+        var mapInntektsmeldinger = new MapInntektsmeldinger.MapFraDto();
+        var inntektsmeldinger = mapInntektsmeldinger.map(arbeidsforholdInformasjonBuilder, dto.getInntektsmeldinger());
         var oppgittOpptjening = new MapOppgittOpptjening().mapFraDto(dto.getOppgittOpptjening());
+        var arbeidsforholdInformasjon = arbeidsforholdInformasjonBuilder.build();
 
         builder.medOppgittOpptjening(oppgittOpptjening);
         builder.setInntektsmeldinger(inntektsmeldinger);
-        builder.medData(saksbehandlerOverstyringer);
+        builder.medInformasjon(arbeidsforholdInformasjon);
     }
 
 }

@@ -17,7 +17,7 @@ public class UtsettelseÅrsak extends Kodeliste {
     public static final UtsettelseÅrsak INSTITUSJON_BARN = new UtsettelseÅrsak("INSTITUSJONSOPPHOLD_BARNET");
     public static final UtsettelseÅrsak UDEFINERT = new UtsettelseÅrsak("-");
 
-    UtsettelseÅrsak(String kode) {
+    public UtsettelseÅrsak(String kode) {
         super(kode, DISCRIMINATOR);
     }
 

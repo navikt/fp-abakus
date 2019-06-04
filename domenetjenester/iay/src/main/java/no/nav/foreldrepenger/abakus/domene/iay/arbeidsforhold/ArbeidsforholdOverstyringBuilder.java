@@ -4,7 +4,9 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.domene.iay.BekreftetPermisjon;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
 public class ArbeidsforholdOverstyringBuilder {
 
@@ -38,6 +40,7 @@ public class ArbeidsforholdOverstyringBuilder {
         return this;
     }
 
+    /** Angi ny arbeidsforholdreferanse som skal erstatte opprinnelig. */
     public ArbeidsforholdOverstyringBuilder medNyArbeidsforholdRef(ArbeidsforholdRef ref) {
         kladd.setNyArbeidsforholdRef(ref);
         return this;
@@ -48,6 +51,21 @@ public class ArbeidsforholdOverstyringBuilder {
         return this;
     }
 
+    public ArbeidsforholdOverstyringBuilder medAngittArbeidsgiverNavn(String navn) {
+        kladd.setArbeidsgiverNavn(navn);
+        return this;
+    }
+    
+    public ArbeidsforholdOverstyringBuilder medAngittStillingsprosent(Stillingsprosent prosent) {
+        kladd.setStillingsprosent(prosent);
+        return this;
+    }
+    
+    public ArbeidsforholdOverstyringBuilder medBekreftetPermisjon(BekreftetPermisjon bekreftetPermisjon) {
+        kladd.setBekreftetPermisjon(bekreftetPermisjon);
+        return this;
+    }
+    
     public ArbeidsforholdOverstyringBuilder medBeskrivelse(String beskrivelse) {
         kladd.setBeskrivelse(beskrivelse);
         return this;

@@ -2,12 +2,14 @@ package no.nav.foreldrepenger.abakus.registerdata;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -104,7 +106,7 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
     @Override
     public InntektArbeidYtelseAggregatBuilder innhentInntekterFor(Kobling kobling, AktørId aktørId,
                                                                   InntektsKilde... kilder) {
-        final InntektArbeidYtelseAggregatBuilder builder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(kobling.getKoblingReferanse());
+        final InntektArbeidYtelseAggregatBuilder builder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(kobling.getKoblingReferanse(), UUID.randomUUID(), LocalDateTime.now());
         return innhentInntekterFor(kobling, aktørId, builder, kilder);
     }
 
@@ -126,7 +128,7 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
 
     @Override
     public InntektArbeidYtelseAggregatBuilder innhentRegisterdata(Kobling kobling) {
-        final InntektArbeidYtelseAggregatBuilder builder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(kobling.getKoblingReferanse());
+        final InntektArbeidYtelseAggregatBuilder builder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(kobling.getKoblingReferanse(), UUID.randomUUID(), LocalDateTime.now());
         // Arbeidsforhold & inntekter
         innhentArbeidsforhold(kobling, builder);
         if (skalInnhenteNæringsInntekterFor(kobling)) {

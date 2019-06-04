@@ -51,12 +51,7 @@ public class GraderingEntitet extends BaseEntitet implements Gradering, IndexKey
     GraderingEntitet() {
     }
 
-    public GraderingEntitet(DatoIntervallEntitet periode, BigDecimal arbeidstidProsent) {
-        this.arbeidstidProsent = new Stillingsprosent(arbeidstidProsent);
-        this.periode = periode;
-    }
-
-    public GraderingEntitet(DatoIntervallEntitet periode, Stillingsprosent arbeidstidProsent) {
+    private GraderingEntitet(DatoIntervallEntitet periode, Stillingsprosent arbeidstidProsent) {
         this.arbeidstidProsent = arbeidstidProsent;
         this.periode = periode;
     }

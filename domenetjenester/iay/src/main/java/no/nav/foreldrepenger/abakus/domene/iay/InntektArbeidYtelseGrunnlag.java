@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingSomIkkeKommer;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
@@ -110,5 +112,7 @@ public interface InntektArbeidYtelseGrunnlag {
     
     /** Tidspunkt dette grunnlaget ble opprettet. (normalt lagret i databasen her). */
     LocalDateTime getOpprettetTidspunkt();
+
+    Optional<ArbeidsforholdInformasjon> getArbeidsforholdInformasjon();
 
 }

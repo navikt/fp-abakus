@@ -8,15 +8,6 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 
 public interface ByggInntektArbeidYtelseRepository {
 
-    /**
-     * @param behandling      (Behandling)
-     * @param versjonType     (REGISTER, SAKSBEHANDLET)
-     * @return InntektArbeidYtelseAggregatBuilder
-     * <p>
-     * NB! bør benytte via InntektArbeidYtelseTjeneste og ikke direkte
-     */
-    InntektArbeidYtelseAggregatBuilder opprettBuilderFor(KoblingReferanse koblingReferanse, VersjonType versjonType);
-
     void lagre(KoblingReferanse koblingReferanse, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder);
 
     void lagre(KoblingReferanse koblingReferanse, OppgittOpptjeningBuilder opptjeningBuilder);

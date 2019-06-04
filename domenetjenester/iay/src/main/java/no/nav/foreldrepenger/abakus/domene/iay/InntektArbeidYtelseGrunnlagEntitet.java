@@ -107,7 +107,7 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
         grunnlag.getSaksbehandletVersjon()
             .ifPresent(nySaksbehandletFørVersjon -> this.setSaksbehandlet((InntektArbeidYtelseAggregatEntitet) nySaksbehandletFørVersjon));
         grunnlag.getInntektsmeldinger().ifPresent(this::setInntektsmeldinger);
-        ((InntektArbeidYtelseGrunnlagEntitet) grunnlag).getInformasjon().ifPresent(info -> this.setInformasjon((ArbeidsforholdInformasjonEntitet) info));
+        ((InntektArbeidYtelseGrunnlagEntitet) grunnlag).getArbeidsforholdInformasjon().ifPresent(info -> this.setInformasjon((ArbeidsforholdInformasjonEntitet) info));
         
         
     }
@@ -310,7 +310,8 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
         this.register = registerFør;
     }
 
-    public Optional<ArbeidsforholdInformasjon> getInformasjon() {
+    @Override
+    public Optional<ArbeidsforholdInformasjon> getArbeidsforholdInformasjon() {
         return Optional.ofNullable(informasjon);
     }
 

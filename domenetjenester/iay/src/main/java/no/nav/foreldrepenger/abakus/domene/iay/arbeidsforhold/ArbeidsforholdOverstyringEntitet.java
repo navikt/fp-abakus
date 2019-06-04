@@ -24,12 +24,17 @@ import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinFormula;
 
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.domene.iay.BekreftetPermisjon;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
+/**
+ * Overstyring av arbeidsforhold angitt av saksbehandler.
+ */
 @Entity(name = "ArbeidsforholdOverstyring")
 @Table(name = "IAY_ARBEIDSFORHOLD")
 public class ArbeidsforholdOverstyringEntitet extends BaseEntitet implements IndexKey {
@@ -57,12 +62,38 @@ public class ArbeidsforholdOverstyringEntitet extends BaseEntitet implements Ind
     @Column(name = "begrunnelse")
     private String begrunnelse;
 
+    /**
+     * Kjært navn for arbeidsgiver angitt av Saksbehandler (normalt kun ekstra arbeidsforhold lagt til). Ingen garanti for at dette matcher noe offisielt registrert navn.
+     * 
+     * Settes normalt kun for arbeidsforhold lagt til ekstra. Ellers hent fra
+     * {@link no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet#getAktivitetsAvtalerForArbeid()}.
+     */
+    @Column(name = "arbeidsgiver_navn")
+    private String arbeidsgiverNavn;
+
+    /**
+     * Stillingsprosent angitt av saksbehandler. 
+     * 
+     * Settes normalt kun for arbeidsforhold lagt til ekstra. Ellers hent fra
+     * {@link no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet#getAktivitetsAvtalerForArbeid()}.
+     */
+    @Embedded
+    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "stillingsprosent")))
+    private Stillingsprosent stillingsprosent;
+
     @ManyToOne
     @JoinColumn(name = "informasjon_id", updatable = false, unique = true, nullable = false)
     private ArbeidsforholdInformasjonEntitet informasjon;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "arbeidsforholdOverstyring", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "arbeidsforholdOverstyring", cascade = CascadeType.PERSIST)
     private List<ArbeidsforholdOverstyrtePerioderEntitet> arbeidsforholdOverstyrtePerioder = new ArrayList<>();
+
+    /**
+     * Settes kun dersom saksbehandler har tatt stilling til permisjon. (om det skal brukes eller ikke). Bruk ellers
+     * {@link no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet#getPermisjon()}.
+     */
+    @Embedded
+    private BekreftetPermisjon bekreftetPermisjon;
 
     ArbeidsforholdOverstyringEntitet() {
     }
@@ -133,11 +164,37 @@ public class ArbeidsforholdOverstyringEntitet extends BaseEntitet implements Ind
     void setNyArbeidsforholdRef(ArbeidsforholdRef nyArbeidsforholdRef) {
         this.nyArbeidsforholdRef = nyArbeidsforholdRef;
     }
+    
+    public String getArbeidsgiverNavn() {
+        return arbeidsgiverNavn;
+    }
+    
+    public Stillingsprosent getStillingsprosent() {
+        return stillingsprosent;
+    }
+    
+    public BekreftetPermisjon getBekreftetPermisjon() {
+        return bekreftetPermisjon;
+    }
+    
+    void setBekreftetPermisjon(BekreftetPermisjon bekreftetPermisjon) {
+        this.bekreftetPermisjon = bekreftetPermisjon;
+    }
+    
+    void setArbeidsgiverNavn(String arbeidsgiverNavn) {
+        this.arbeidsgiverNavn = arbeidsgiverNavn;
+    }
+    
+    void setStillingsprosent(Stillingsprosent stillingsprosent) {
+        this.stillingsprosent = stillingsprosent;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         ArbeidsforholdOverstyringEntitet that = (ArbeidsforholdOverstyringEntitet) o;
         return Objects.equals(arbeidsgiver, that.arbeidsgiver) &&
             Objects.equals(arbeidsforholdRef, that.arbeidsforholdRef);

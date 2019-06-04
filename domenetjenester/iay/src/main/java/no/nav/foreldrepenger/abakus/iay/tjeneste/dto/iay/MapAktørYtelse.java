@@ -70,37 +70,38 @@ public class MapAktørYtelse {
 
         private YtelseBuilder mapYtelse(YtelseDto ytelseDto) {
             var ytelseBuilder = YtelseBuilder.oppdatere(Optional.empty());
+            var behandlingsTema = mapBehandlingsTema(ytelseDto.getTemaUnderkategori());
             ytelseBuilder
-            .medYtelseGrunnlag(mapYtelseGrunnlag(ytelseDto.getGrunnlag(), ytelseBuilder.getGrunnlagBuilder()))
-            .medYtelseType(mapYtelseType(ytelseDto.getYtelseType()))
-            .medBehandlingsTema(mapBehandlingsTema(ytelseDto.getTemaUnderkategori()))
-            .medKilde(mapFagSystem(ytelseDto.getFagsystemDto()))
-            .medPeriode(mapPeriode(ytelseDto.getPeriode()))
-            .medSaksnummer(new Saksnummer(ytelseDto.getSaksnummer()))
-            .medStatus(mapYtelseStatus(ytelseDto.getStatus()));
+                .medYtelseGrunnlag(mapYtelseGrunnlag(ytelseDto.getGrunnlag(), ytelseBuilder.getGrunnlagBuilder()))
+                .medYtelseType(mapYtelseType(ytelseDto.getYtelseType()))
+                .medBehandlingsTema(behandlingsTema)
+                .medKilde(mapFagSystem(ytelseDto.getFagsystemDto()))
+                .medPeriode(mapPeriode(ytelseDto.getPeriode()))
+                .medSaksnummer(new Saksnummer(ytelseDto.getSaksnummer()))
+                .medStatus(mapYtelseStatus(ytelseDto.getStatus()));
             ytelseDto.getAnvisninger()
-            .forEach(anvisning -> ytelseBuilder.medYtelseAnvist(mapYtelseAnvist(anvisning, ytelseBuilder.getAnvistBuilder())));
+                .forEach(anvisning -> ytelseBuilder.medYtelseAnvist(mapYtelseAnvist(anvisning, ytelseBuilder.getAnvistBuilder())));
             return ytelseBuilder;
         }
 
         private YtelseAnvist mapYtelseAnvist(AnvisningDto anvisning, YtelseAnvistBuilder anvistBuilder) {
             return anvistBuilder
-                    .medAnvistPeriode(mapPeriode(anvisning.getPeriode()))
-                    .medBeløp(anvisning.getBeløp())
-                    .medDagsats(anvisning.getDagsats())
-                    .medUtbetalingsgradProsent(anvisning.getUtbetalingsgrad())
-                    .build();
+                .medAnvistPeriode(mapPeriode(anvisning.getPeriode()))
+                .medBeløp(anvisning.getBeløp())
+                .medDagsats(anvisning.getDagsats())
+                .medUtbetalingsgradProsent(anvisning.getUtbetalingsgrad())
+                .build();
         }
 
         private YtelseGrunnlag mapYtelseGrunnlag(YtelseGrunnlagDto grunnlag, YtelseGrunnlagBuilder grunnlagBuilder) {
             grunnlagBuilder
-            .medArbeidskategori(grunnlag.getArbeidskategoriDto().getKode())
-            .medDekningsgradProsent(grunnlag.getDekningsgradProsent())
-            .medGraderingProsent(grunnlag.getGraderingProsent())
-            .medInntektsgrunnlagProsent(grunnlag.getInntektsgrunnlagProsent())
-            .medOpprinneligIdentdato(grunnlag.getOpprinneligIdentDato());
+                .medArbeidskategori(grunnlag.getArbeidskategoriDto().getKode())
+                .medDekningsgradProsent(grunnlag.getDekningsgradProsent())
+                .medGraderingProsent(grunnlag.getGraderingProsent())
+                .medInntektsgrunnlagProsent(grunnlag.getInntektsgrunnlagProsent())
+                .medOpprinneligIdentdato(grunnlag.getOpprinneligIdentDato());
             grunnlag.getFordeling()
-            .forEach(fordeling -> grunnlagBuilder.medYtelseStørrelse(mapYtelseStørrelse(fordeling)));
+                .forEach(fordeling -> grunnlagBuilder.medYtelseStørrelse(mapYtelseStørrelse(fordeling)));
             return grunnlagBuilder.build();
         }
 

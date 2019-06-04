@@ -1,7 +1,9 @@
 package no.nav.foreldrepenger.abakus.iay.impl;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -19,6 +21,7 @@ import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 
 @ApplicationScoped
 public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjeneste {
@@ -61,13 +64,13 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
     }
 
     @Override
-    public InntektArbeidYtelseAggregatBuilder opprettBuilderForRegister(KoblingReferanse koblingReferanse) {
-        return repository.opprettBuilderFor(koblingReferanse, VersjonType.REGISTER);
+    public InntektArbeidYtelseAggregatBuilder opprettBuilderForRegister(KoblingReferanse koblingReferanse, UUID angittReferanse, LocalDateTime angittOpprettetTidspunkt) {
+        return repository.opprettBuilderFor(koblingReferanse, angittReferanse, angittOpprettetTidspunkt, VersjonType.REGISTER);
     }
     
     @Override
-    public InntektArbeidYtelseAggregatBuilder opprettBuilderForSaksbehandlerOverstyring(KoblingReferanse koblingReferanse) {
-        return repository.opprettBuilderFor(koblingReferanse, VersjonType.SAKSBEHANDLET);
+    public InntektArbeidYtelseAggregatBuilder opprettBuilderForSaksbehandlet(KoblingReferanse koblingReferanse, UUID angittReferanse, LocalDateTime angittOpprettetTidspunkt) {
+        return repository.opprettBuilderFor(koblingReferanse, angittReferanse, angittOpprettetTidspunkt, VersjonType.SAKSBEHANDLET);
     }
 
     @Override
@@ -89,7 +92,8 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
             if (beholdErstattetVerdi) {
                 return informasjon.finnForEksternBeholdHistoriskReferanse(arbeidsgiver, arbeidsforholdRef);
             }
-            return informasjon.finnForEkstern(arbeidsgiver, arbeidsforholdRef);
+            var eksternRef = EksternArbeidsforholdRef.ref(arbeidsforholdRef==null?null:arbeidsforholdRef.getReferanse());
+            return ArbeidsforholdRef.ref(informasjon.finnForEkstern(arbeidsgiver, eksternRef).orElseThrow().getReferanse());
         }
         return arbeidsforholdRef;
     }

@@ -99,7 +99,7 @@ public class AktørArbeidEntitet extends BaseEntitet implements AktørArbeid, In
         return Collections.unmodifiableSet(yrkesaktiviter.stream()
             .filter(this::erIkkeFrilansOppdrag)
             .filter(this::skalBrukes)
-            .filter(it -> (erArbeidsforholdOgStarterPåRettSideAvSkjæringstidspunkt(it) || !it.getAktivitetsAvtaler().isEmpty()))
+            .filter(it -> (erArbeidsforholdOgStarterPåRettSideAvSkjæringstidspunkt(it) || !it.getAktivitetsAvtalerForArbeid().isEmpty()))
             .collect(Collectors.toSet()));
     }
 
@@ -115,7 +115,7 @@ public class AktørArbeidEntitet extends BaseEntitet implements AktørArbeid, In
     public Collection<Yrkesaktivitet> getFrilansOppdrag() {
         return Collections.unmodifiableSet(yrkesaktiviter.stream()
             .filter(this::erFrilansOppdrag)
-            .filter(it -> !it.getAktivitetsAvtaler().isEmpty())
+            .filter(it -> !it.getAktivitetsAvtalerForArbeid().isEmpty())
             .collect(Collectors.toSet()));
     }
 
@@ -123,7 +123,7 @@ public class AktørArbeidEntitet extends BaseEntitet implements AktørArbeid, In
         return arbeidsforholdInformasjon == null || arbeidsforholdInformasjon.getOverstyringer()
             .stream()
             .noneMatch(ov -> ov.getArbeidsgiver().equals(entitet.getArbeidsgiver())
-                && ov.getArbeidsforholdRef().gjelderFor(entitet.getArbeidsforholdRef().orElse(ArbeidsforholdRef.ref(null)))
+                && ov.getArbeidsforholdRef().gjelderFor(entitet.getArbeidsforholdRef())
                 && Objects.equals(ArbeidsforholdHandlingType.IKKE_BRUK, ov.getHandling()));
     }
 
@@ -246,7 +246,7 @@ public class AktørArbeidEntitet extends BaseEntitet implements AktørArbeid, In
 
     private boolean matcherArbeidsgiverOgArbeidsforholdRef(YrkesaktivitetEntitet ya, ArbeidsforholdOverstyringEntitet os) {
         return Objects.equals(ya.getArbeidsgiver(), os.getArbeidsgiver())
-            && Objects.equals(ya.getArbeidsforholdRef().orElse(null), os.getArbeidsforholdRef());
+            && Objects.equals(ya.getArbeidsforholdRef(), os.getArbeidsforholdRef());
     }
 
 }

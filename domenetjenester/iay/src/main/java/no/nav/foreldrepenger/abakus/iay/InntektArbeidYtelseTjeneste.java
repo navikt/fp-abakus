@@ -1,7 +1,9 @@
 package no.nav.foreldrepenger.abakus.iay;
 
 
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
@@ -45,16 +47,18 @@ public interface InntektArbeidYtelseTjeneste {
     Optional<InntektArbeidYtelseGrunnlag> hentGrunnlagFor(GrunnlagReferanse grunnlagReferanse);
     
     /**
+     * Oopprett builder for register data. 
      * @param koblingReferanse
      * @return Register inntekt og arbeid før skjæringstidspunktet (Opprett for å endre eller legge til registeropplysning)
      */
-    InntektArbeidYtelseAggregatBuilder opprettBuilderForRegister(KoblingReferanse koblingReferanse);
+    InntektArbeidYtelseAggregatBuilder opprettBuilderForRegister(KoblingReferanse koblingReferanse, UUID angittReferanse, LocalDateTime angittOpprettetTidspunkt);
 
     /**
+     * Opprett builder for saksbehandlers overstyringer. 
      * @param koblingReferanse
      * @return Saksbehandlers overstyringer av IAY (primært {@link no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid}).
      */
-    InntektArbeidYtelseAggregatBuilder opprettBuilderForSaksbehandlerOverstyring(KoblingReferanse koblingReferanse);
+    InntektArbeidYtelseAggregatBuilder opprettBuilderForSaksbehandlet(KoblingReferanse koblingReferanse, UUID angittReferanse, LocalDateTime angittOpprettetTidspunkt);
     
     /**
      * @param koblingId

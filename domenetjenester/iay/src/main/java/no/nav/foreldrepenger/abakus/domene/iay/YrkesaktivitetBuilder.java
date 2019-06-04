@@ -117,7 +117,7 @@ public class YrkesaktivitetBuilder {
     }
 
     public boolean harIngenAvtaler() {
-        return kladd.getAktivitetsAvtaler().isEmpty();
+        return kladd.getAktivitetsAvtalerForArbeid().isEmpty();
     }
 
     public void fjernPeriode(DatoIntervallEntitet aktivitetsPeriode) {

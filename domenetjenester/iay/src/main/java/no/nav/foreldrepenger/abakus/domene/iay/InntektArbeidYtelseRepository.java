@@ -1,6 +1,8 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
@@ -23,4 +25,14 @@ public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRe
     Long hentKoblingIdFor(GrunnlagReferanse grunnlagReferanse);
     
     KoblingReferanse hentKoblingReferanseFor(GrunnlagReferanse grunnlagReferanse);
+    
+    /**
+     * @param koblingReferanse 
+     * @param versjonType     (REGISTER, SAKSBEHANDLET)
+     * @return InntektArbeidYtelseAggregatBuilder
+     * <p>
+     * NB! bør benytte via InntektArbeidYtelseTjeneste og ikke direkte
+     */
+    InntektArbeidYtelseAggregatBuilder opprettBuilderFor(KoblingReferanse koblingReferanse, UUID angittAggregatReferanse, LocalDateTime angittOpprettetTidspunkt, VersjonType versjonType);
+
 }

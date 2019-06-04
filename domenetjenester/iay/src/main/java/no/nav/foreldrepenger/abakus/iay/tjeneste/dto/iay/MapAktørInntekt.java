@@ -14,9 +14,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilde
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektEntitet.InntektspostBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Inntektspost;
-import no.nav.foreldrepenger.abakus.domene.iay.NæringsinntektType;
-import no.nav.foreldrepenger.abakus.domene.iay.OffentligYtelseType;
-import no.nav.foreldrepenger.abakus.domene.iay.PensjonTrygdType;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -30,11 +27,7 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntekt.v1.UtbetalingDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntekt.v1.UtbetalingsPostDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.InntektspostType;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.Kodeverk;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtbetaltNæringsYtelseType;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtbetaltPensjonTrygdType;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtbetaltYtelseFraOffentligeType;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtbetaltYtelseType;
 
 public class MapAktørInntekt {
@@ -77,18 +70,7 @@ public class MapAktørInntekt {
         }
 
         private YtelseType mapYtelseType(UtbetaltYtelseType type) {
-            Kodeverk kodeverk = (Kodeverk) type;
-            String kode = kodeverk.getKode();
-            switch (kodeverk.getKodeverk()) {
-                case UtbetaltYtelseFraOffentligeType.KODEVERK:
-                    return new OffentligYtelseType(kode);
-                case UtbetaltNæringsYtelseType.KODEVERK:
-                    return new NæringsinntektType(kode);
-                case UtbetaltPensjonTrygdType.KODEVERK:
-                    return new PensjonTrygdType(kode);
-                default:
-                    throw new IllegalArgumentException("Ukjent UtbetaltYtelseType: " + type);
-            }
+            return KodeverkMapper.mapUtbetaltYtelseTypeTilGrunnlag(type);
         }
 
         private Arbeidsgiver mapArbeidsgiver(Aktør arbeidsgiver) {
@@ -160,18 +142,7 @@ public class MapAktørInntekt {
         }
 
         private UtbetaltYtelseType mapYtelseType(YtelseType ytelseType) {
-            String kode = ytelseType.getKode();
-            switch (ytelseType.getKodeverk()) {
-                case UtbetaltYtelseFraOffentligeType.KODEVERK:
-                    return new UtbetaltYtelseFraOffentligeType(kode);
-                case UtbetaltNæringsYtelseType.KODEVERK:
-                    return new UtbetaltNæringsYtelseType(kode);
-                case UtbetaltPensjonTrygdType.KODEVERK:
-                    return new UtbetaltPensjonTrygdType(kode);
-                default:
-                    throw new IllegalArgumentException("Ukjent ytelsetype: " + ytelseType);
-            }
+            return KodeverkMapper.mapYtelseTypeTilDto(ytelseType);
         }
-
     }
 }
