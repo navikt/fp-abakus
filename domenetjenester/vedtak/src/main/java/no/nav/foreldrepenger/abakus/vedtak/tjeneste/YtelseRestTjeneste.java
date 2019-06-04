@@ -21,6 +21,7 @@ import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
 import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
+import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.ytelse.Ytelse;
 import no.nav.vedtak.ytelse.v1.YtelseV1;
@@ -62,7 +63,7 @@ public class YtelseRestTjeneste {
         @Override
         public AbacDataAttributter apply(Object obj) {
             YtelseV1 req = (YtelseV1) obj;
-            return AbacDataAttributter.opprett().leggTilAktørId(req.getAktør().getVerdi());
+            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, req.getAktør().getVerdi());
         }
     }
 }

@@ -23,8 +23,8 @@ import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.arbeidsforhold.ArbeidsforholdDtoTjeneste;
-import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingLås;
+import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -35,6 +35,7 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.AktørDatoRequest;
 import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
+import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 
 @Api(tags = "arbeidsforhold")
@@ -84,11 +85,10 @@ public class ArbeidsforholdRestTjeneste {
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response referanseForArbeidsforhold(@NotNull @TilpassetAbacAttributt(supplierClass = ArbeidsforholdReferanseAbacDataSupplier.class) @Valid ArbeidsforholdReferanse request) {
-        UUID referanse = UUID.fromString(request.getReferanse().getReferanse());
+        KoblingReferanse referanse = new KoblingReferanse(UUID.fromString(request.getReferanse().getReferanse()));
         KoblingLås koblingLås = koblingTjeneste.taSkrivesLås(referanse);
 
-        Kobling kobling = koblingTjeneste.hentFor(referanse).orElseThrow(IllegalArgumentException::new);
-        ArbeidsforholdInformasjon arbeidsforholdInformasjon = iayTjeneste.hentArbeidsforholdInformasjonForKobling(kobling.getId());
+        ArbeidsforholdInformasjon arbeidsforholdInformasjon = iayTjeneste.hentArbeidsforholdInformasjonForKobling(referanse);
 
         ArbeidsforholdRef arbeidsforholdRef = arbeidsforholdInformasjon.finnEllerOpprett(tilArbeidsgiver(request),
             ArbeidsforholdRef.ref(request.getArbeidsforholdId()));
@@ -112,7 +112,7 @@ public class ArbeidsforholdRestTjeneste {
         @Override
         public AbacDataAttributter apply(Object obj) {
             AktørDatoRequest req = (AktørDatoRequest) obj;
-            return AbacDataAttributter.opprett().leggTilAktørId(req.getAktør().getIdent());
+            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, req.getAktør().getIdent());
         }
     }
 

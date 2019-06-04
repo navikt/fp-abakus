@@ -4,7 +4,6 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -18,16 +17,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
+import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.TaskResponsDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.FnrPersonident;
@@ -40,6 +41,7 @@ import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
+import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 
 @Api(tags = "registerdata")
 @Path("/registerdata/v1")
@@ -64,9 +66,9 @@ public class RegisterdataRestTjeneste {
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentRegisterdata(@ApiParam("innhent") @Valid InnhentRegisterdataAbacDto dto) {
-        Optional<UUID> innhent = innhentTjeneste.innhent(dto);
+        Optional<GrunnlagReferanse> innhent = innhentTjeneste.innhent(dto);
         if (innhent.isPresent()) {
-            return Response.ok(new UuidDto(innhent.get().toString())).build();
+            return Response.ok(new UuidDto(innhent.get().getReferanse().toString())).build();
         }
         return Response.noContent().build();
     }
@@ -94,7 +96,7 @@ public class RegisterdataRestTjeneste {
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentAsyncStatus(@ApiParam("status") @Valid SjekkStatusAbacDto dto) {
         if (innhentTjeneste.innhentingFerdig(dto.getTaskReferanse())) {
-            Optional<UUID> grunnlagReferanse = innhentTjeneste.hentSisteReferanseFor(UUID.fromString(dto.getReferanse().getReferanse()));
+            Optional<GrunnlagReferanse> grunnlagReferanse = innhentTjeneste.hentSisteReferanseFor(new KoblingReferanse(dto.getReferanse().getReferanse()));
             if (grunnlagReferanse.isEmpty()) {
                 return Response.noContent().build();
             }
@@ -102,8 +104,10 @@ public class RegisterdataRestTjeneste {
         }
         return Response.status(425).build();
     }
-    
-    /** Json bean med Abac. */
+
+    /**
+     * Json bean med Abac.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
     @JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE)
@@ -129,16 +133,18 @@ public class RegisterdataRestTjeneste {
         private void leggTil(AbacDataAttributter abac, PersonIdent person) {
             if (person != null) {
                 if (FnrPersonident.IDENT_TYPE.equals(person.getIdentType())) {
-                    abac.leggTilFødselsnummer(person.getIdent());
+                    abac.leggTil(StandardAbacAttributtType.FNR, person.getIdent());
                 } else if (AktørIdPersonident.IDENT_TYPE.equals(person.getIdentType())) {
-                    abac.leggTilAktørId(person.getIdent());
+                    abac.leggTil(StandardAbacAttributtType.AKTØR_ID, person.getIdent());
                 }
             }
         }
 
     }
 
-    /** Json bean med Abac. */
+    /**
+     * Json bean med Abac.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
     @JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE)

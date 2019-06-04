@@ -19,6 +19,7 @@ import org.junit.Test;
 import no.nav.foreldrepenger.abakus.app.selftest.SelftestRestTjeneste;
 import no.nav.foreldrepenger.abakus.app.selftest.SelftestService;
 
+@SuppressWarnings("resource")
 public class SelftestRestTjenesteTest {
 
     private static final String RESPONSE_ENCODING = "UTF-8";

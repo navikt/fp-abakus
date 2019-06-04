@@ -25,6 +25,7 @@ public class ApplicationServiceStarterTest {
     private Instance<AppServiceHandler> testInstance = new UnitTestInstanceImpl<>(serviceMock);
     private Instance<AppServiceHandler> instanceSpied = spy(testInstance);
 
+    @SuppressWarnings("unchecked")
     private Iterator<AppServiceHandler> iteratorMock = mock(Iterator.class);
 
     @Before

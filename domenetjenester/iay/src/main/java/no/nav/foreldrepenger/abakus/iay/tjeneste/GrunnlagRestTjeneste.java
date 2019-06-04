@@ -3,7 +3,6 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
-import java.util.UUID;
 import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -18,15 +17,18 @@ import org.jboss.weld.exceptions.UnsupportedOperationException;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYDtoMapper;
+import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
+import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 
 @Api(tags = "arbeidsforhold")
@@ -55,8 +57,8 @@ public class GrunnlagRestTjeneste {
         // TODO: sjekk at spesifikasjon#person matcher grunnlag og sjekk at PersonIdent kun er aktørIds
         AktørId aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
 
-        UUID grunnlagReferanse = spesifikasjon.getGrunnlagReferanse();
-        UUID koblingReferanse = getKoblingReferanse(spesifikasjon);
+        GrunnlagReferanse grunnlagReferanse = new GrunnlagReferanse(spesifikasjon.getGrunnlagReferanse());
+        KoblingReferanse koblingReferanse = getKoblingReferanse(spesifikasjon);
         InntektArbeidYtelseGrunnlag grunnlag = getGrunnlag(spesifikasjon, grunnlagReferanse, koblingReferanse);
 
         IAYDtoMapper dtoMapper = new IAYDtoMapper(iayTjeneste, aktørId, grunnlagReferanse, koblingReferanse);
@@ -64,18 +66,16 @@ public class GrunnlagRestTjeneste {
         return Response.ok(dtoMapper.mapTilDto(grunnlag, spesifikasjon)).build();
     }
 
-    private UUID getKoblingReferanse(InntektArbeidYtelseGrunnlagRequest spesifikasjon) {
+    private KoblingReferanse getKoblingReferanse(InntektArbeidYtelseGrunnlagRequest spesifikasjon) {
         if (spesifikasjon.getKoblingReferanse() != null) {
-            return spesifikasjon.getKoblingReferanse();
+            return new KoblingReferanse(spesifikasjon.getKoblingReferanse());
         } else {
-            var grunnlagReferanse = spesifikasjon.getGrunnlagReferanse();
-            // FIXME: Kobling UUID
-            Long koblingId = iayTjeneste.hentKoblingIdFor(grunnlagReferanse);
-            throw new UnsupportedOperationException("Bytt til uuid for koblinger");
+            var grunnlagReferanse = new GrunnlagReferanse(spesifikasjon.getGrunnlagReferanse());
+            return iayTjeneste.hentKoblingReferanse(grunnlagReferanse);
         }
     }
 
-    private InntektArbeidYtelseGrunnlag getGrunnlag(InntektArbeidYtelseGrunnlagRequest spesifikasjon, UUID grunnlagReferanse, UUID koblingReferanse) {
+    private InntektArbeidYtelseGrunnlag getGrunnlag(InntektArbeidYtelseGrunnlagRequest spesifikasjon, GrunnlagReferanse grunnlagReferanse, KoblingReferanse koblingReferanse) {
         if (grunnlagReferanse != null) {
             return iayTjeneste.hentAggregat(grunnlagReferanse);
         } else if (koblingReferanse != null) {
@@ -90,7 +90,7 @@ public class GrunnlagRestTjeneste {
         @Override
         public AbacDataAttributter apply(Object obj) {
             InntektArbeidYtelseGrunnlagRequest req = (InntektArbeidYtelseGrunnlagRequest) obj;
-            return AbacDataAttributter.opprett().leggTilAktørId(req.getPerson().getIdent());
+            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, req.getPerson().getIdent());
         }
     }
 }

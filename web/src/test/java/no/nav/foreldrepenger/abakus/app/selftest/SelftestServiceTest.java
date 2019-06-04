@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import com.codahale.metrics.health.HealthCheck;
 
+@SuppressWarnings("resource")
 public class SelftestServiceTest {
 
     private static final String MSG_KRITISK_FEIL = "kritisk feil";

@@ -1,6 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-
 import static no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE;
 import static no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING;
 
@@ -10,11 +9,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -47,13 +46,13 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
     private Long id;
 
     @DiffIgnore
-    @Column(name = "behandling_id", nullable = false, updatable = false, unique = true)
-    private Long behandlingId;
+    @Column(name = "kobling_id", nullable = false, updatable = false, unique = true)
+    private Long koblingId;
 
     @NaturalId
     @DiffIgnore
-    @Column(name = "referanse_id", nullable = false, updatable = false, unique = true)
-    private UUID referanseId;
+    @Embedded
+    private GrunnlagReferanse grunnlagReferanse;
 
     @OneToOne
     @JoinColumn(name = "register_id", updatable = false, unique = true)
@@ -95,25 +94,29 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
         super();
         // NB! skal aldri lage ny versjon av oppgitt opptjening!
         grunnlag.getOppgittOpptjening().ifPresent(kopiAvOppgittOpptjening -> this.setOppgittOpptjening((OppgittOpptjeningEntitet) kopiAvOppgittOpptjening));
-        ((InntektArbeidYtelseGrunnlagEntitet) grunnlag).getRegisterVersjon().ifPresent(nyRegisterVerson -> this.setRegister((InntektArbeidYtelseAggregatEntitet) nyRegisterVerson));
-        grunnlag.getSaksbehandletVersjon().ifPresent(nySaksbehandletFørVersjon -> this.setSaksbehandlet((InntektArbeidYtelseAggregatEntitet) nySaksbehandletFørVersjon));
+        ((InntektArbeidYtelseGrunnlagEntitet) grunnlag).getRegisterVersjon()
+            .ifPresent(nyRegisterVerson -> this.setRegister((InntektArbeidYtelseAggregatEntitet) nyRegisterVerson));
+        grunnlag.getSaksbehandletVersjon()
+            .ifPresent(nySaksbehandletFørVersjon -> this.setSaksbehandlet((InntektArbeidYtelseAggregatEntitet) nySaksbehandletFørVersjon));
         grunnlag.getInntektsmeldinger().ifPresent(this::setInntektsmeldinger);
         ((InntektArbeidYtelseGrunnlagEntitet) grunnlag).getInformasjon().ifPresent(info -> this.setInformasjon((ArbeidsforholdInformasjonEntitet) info));
     }
 
-
     @Override
-    public Long getBehandlingId() {
-        return behandlingId;
+    public Long getKoblingId() {
+        return koblingId;
     }
 
     @Override
-    public UUID getReferanse() {
-        return referanseId;
+    public GrunnlagReferanse getGrunnlagReferanse() {
+        return grunnlagReferanse;
     }
 
-    void setReferanse(UUID referanseId) {
-        this.referanseId = referanseId;
+    void setGrunnlagReferanse(GrunnlagReferanse grunnlagReferanse) {
+        if (this.koblingId != null && !Objects.equals(this.grunnlagReferanse, grunnlagReferanse)) {
+            throw new IllegalStateException(String.format("Kan ikke overskrive grunnlagReferanse %s: %s", this.grunnlagReferanse, grunnlagReferanse));
+        }
+        this.grunnlagReferanse = grunnlagReferanse;
     }
 
     @Override
@@ -229,12 +232,12 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
     @Override
     public Collection<Yrkesaktivitet> hentAlleYrkesaktiviteterFørStpFor(AktørId aktørId, LocalDate skjæringstidspunkt, boolean overstyrt) {
         if (overstyrt && getSaksbehandletVersjon().isPresent()) {
-            InntektArbeidYtelseAggregat inntektArbeidYtelseAggregat = getSaksbehandletVersjon().get(); //$NON-NLS-1$ //NOSONAR
+            InntektArbeidYtelseAggregat inntektArbeidYtelseAggregat = getSaksbehandletVersjon().get(); // $NON-NLS-1$ //NOSONAR
             return inntektArbeidYtelseAggregat.getAktørArbeid().stream()
                 .filter(a -> a.getAktørId().equals(aktørId))
                 .findAny().map(AktørArbeid::getYrkesaktiviteter).orElse(Collections.emptyList());
         } else if (getOpplysningerFørSkjæringstidspunkt(skjæringstidspunkt).isPresent()) {
-            InntektArbeidYtelseAggregat inntektArbeidYtelseAggregat = getOpplysningerFørSkjæringstidspunkt(skjæringstidspunkt).get(); //$NON-NLS-1$ //NOSONAR
+            InntektArbeidYtelseAggregat inntektArbeidYtelseAggregat = getOpplysningerFørSkjæringstidspunkt(skjæringstidspunkt).get(); // $NON-NLS-1$ //NOSONAR
             return inntektArbeidYtelseAggregat.getAktørArbeid().stream()
                 .filter(a -> a.getAktørId().equals(aktørId))
                 .findAny().map(AktørArbeid::getYrkesaktiviteter).orElse(Collections.emptyList());
@@ -253,10 +256,11 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
 
     @Override
     public List<InntektsmeldingSomIkkeKommer> getInntektsmeldingerSomIkkeKommer() {
-        return informasjon == null ? Collections.emptyList() : informasjon.getOverstyringer()
-            .stream().filter(ov -> (ov.getHandling().equals(BRUK_UTEN_INNTEKTSMELDING) || ov.getHandling().equals(BRUK_MED_OVERSTYRT_PERIODE)))
-            .map(ov -> new InntektsmeldingSomIkkeKommer(ov.getArbeidsgiver(), ov.getArbeidsforholdRef()))
-            .collect(Collectors.toList());
+        return informasjon == null ? Collections.emptyList()
+            : informasjon.getOverstyringer()
+                .stream().filter(ov -> (ov.getHandling().equals(BRUK_UTEN_INNTEKTSMELDING) || ov.getHandling().equals(BRUK_MED_OVERSTYRT_PERIODE)))
+                .map(ov -> new InntektsmeldingSomIkkeKommer(ov.getArbeidsgiver(), ov.getArbeidsforholdRef()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -264,11 +268,15 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
         return getInntektsmeldingerSomIkkeKommer()
             .stream()
             .filter(i -> i.getArbeidsgiver().getErVirksomhet()
-                && i.getArbeidsgiver().getIdentifikator().equals(virksomhet.getOrgnr())).collect(Collectors.toList());
+                && i.getArbeidsgiver().getIdentifikator().equals(virksomhet.getOrgnr()))
+            .collect(Collectors.toList());
     }
 
-    void setBehandling(Long behandlingId) {
-        this.behandlingId = behandlingId;
+    void setKobling(Long koblingId) {
+        if (this.koblingId != null && !Objects.equals(this.koblingId, koblingId)) {
+            throw new IllegalStateException(String.format("Kan ikke overskrive koblingId %s: %s", this.koblingId, koblingId));
+        }
+        this.koblingId = koblingId;
     }
 
     void setAktivt(boolean aktiv) {
@@ -304,8 +312,10 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         InntektArbeidYtelseGrunnlagEntitet that = (InntektArbeidYtelseGrunnlagEntitet) o;
         return aktiv == that.aktiv &&
             Objects.equals(register, that.register) &&

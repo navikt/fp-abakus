@@ -9,6 +9,7 @@ import com.codahale.metrics.health.HealthCheck;
 
 import no.nav.foreldrepenger.abakus.app.selftest.checks.ExtHealthCheck;
 
+@SuppressWarnings("deprecation")
 class SelftestsHtmlFormatter {
 
     String format(SelftestResultat samletResultat) {

@@ -18,6 +18,7 @@ public class RedirectExceptionMapper implements ExceptionMapper<ApplicationExcep
 
     private GeneralRestExceptionMapper generalRestExceptionMapper = new GeneralRestExceptionMapper();
 
+    @SuppressWarnings("resource")
     @Override
     public Response toResponse(ApplicationException exception) {
         Response response = generalRestExceptionMapper.toResponse(exception);

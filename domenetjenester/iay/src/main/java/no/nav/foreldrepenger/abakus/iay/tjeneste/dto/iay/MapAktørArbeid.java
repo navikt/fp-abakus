@@ -3,7 +3,6 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.jboss.weld.exceptions.UnsupportedOperationException;
@@ -12,6 +11,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
+import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Aktør;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
@@ -101,9 +101,9 @@ public class MapAktørArbeid {
     }
 
     private InntektArbeidYtelseTjeneste tjeneste;
-    private UUID koblingReferanse;
+    private KoblingReferanse koblingReferanse;
 
-    public MapAktørArbeid(InntektArbeidYtelseTjeneste tjeneste, UUID koblingReferanse) {
+    public MapAktørArbeid(InntektArbeidYtelseTjeneste tjeneste, KoblingReferanse koblingReferanse) {
         this.tjeneste = tjeneste;
         this.koblingReferanse = koblingReferanse;
     }

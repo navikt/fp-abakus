@@ -19,6 +19,7 @@ import no.nav.vedtak.feil.deklarasjon.FunksjonellFeil;
 import no.nav.vedtak.feil.deklarasjon.ManglerTilgangFeil;
 import no.nav.vedtak.feil.deklarasjon.TekniskFeil;
 
+@SuppressWarnings("resource")
 public class GeneralRestExceptionMapperTest {
 
     private GeneralRestExceptionMapper generalRestExceptionMapper;

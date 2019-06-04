@@ -1,10 +1,10 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
+import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 
 public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRepository {
 
@@ -12,13 +12,15 @@ public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRe
 
     boolean erEndring(InntektArbeidYtelseGrunnlag før, InntektArbeidYtelseGrunnlag nå);
 
-    InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForBehandling(Long behandlingId);
+    InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForBehandling(KoblingReferanse koblingReferanse);
 
-    Optional<InntektArbeidYtelseGrunnlag> hentInntektArbeidYtelseGrunnlagForBehandling(Long behandlingId);
+    Optional<InntektArbeidYtelseGrunnlag> hentInntektArbeidYtelseGrunnlagForBehandling(KoblingReferanse koblingReferanse);
 
-    Optional<ArbeidsforholdInformasjon> hentArbeidsforholdInformasjonForBehandling(Long behandlingId);
+    Optional<ArbeidsforholdInformasjon> hentArbeidsforholdInformasjonForBehandling(KoblingReferanse koblingReferanse);
 
-    InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForReferanse(UUID referanse);
+    InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForReferanse(GrunnlagReferanse grunnlagReferanse);
 
-    Long hentKoblingForReferanse(UUID referanse);
+    Long hentKoblingIdFor(GrunnlagReferanse grunnlagReferanse);
+    
+    KoblingReferanse hentKoblingReferanseFor(GrunnlagReferanse grunnlagReferanse);
 }

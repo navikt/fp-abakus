@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.io.Serializable;
 
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 

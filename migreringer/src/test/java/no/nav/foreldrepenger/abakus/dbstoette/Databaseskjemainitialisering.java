@@ -6,9 +6,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import no.nav.vedtak.felles.lokal.dbstoette.DBConnectionProperties;
 import no.nav.vedtak.felles.lokal.dbstoette.DatabaseStøtte;
 
@@ -17,7 +14,6 @@ import no.nav.vedtak.felles.lokal.dbstoette.DatabaseStøtte;
  */
 public final class Databaseskjemainitialisering {
 
-    private static final Logger log = LoggerFactory.getLogger(Databaseskjemainitialisering.class);
     private static final Pattern placeholderPattern = Pattern.compile("\\$\\{(.*)\\}");
 
     private static final AtomicBoolean GUARD_SKJEMAER = new AtomicBoolean();

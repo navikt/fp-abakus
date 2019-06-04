@@ -8,6 +8,7 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskInfo;
 import no.nav.vedtak.log.sporingslogg.Sporingsdata;
 import no.nav.vedtak.log.sporingslogg.SporingsloggHelper;
 import no.nav.vedtak.log.sporingslogg.SporingsloggId;
+import no.nav.vedtak.log.sporingslogg.StandardSporingsloggId;
 import no.nav.vedtak.sikkerhet.loginmodule.ContainerLogin;
 import no.nav.vedtak.util.MdcExtendedLogContext;
 
@@ -41,11 +42,11 @@ public class AuthenticatedCdiProsessTaskDispatcher extends BasicCdiProsessTaskDi
 
         String aktørId = data.getAktørId();
         if (aktørId != null) {
-            sporingsdata.leggTilId(SporingsloggId.AKTOR_ID, aktørId);
+            sporingsdata.leggTilId(StandardSporingsloggId.AKTOR_ID, aktørId);
         }
         Long behandlingId = data.getKoblingId();
         if (behandlingId != null) {
-            sporingsdata.leggTilId(SporingsloggId.BEHANDLING_ID, behandlingId);
+            sporingsdata.leggTilId(StandardSporingsloggId.BEHANDLING_ID, behandlingId);
         }
 
         SporingsloggHelper.logSporingForTask(AuthenticatedCdiProsessTaskDispatcher.class, sporingsdata, data.getTaskType());
