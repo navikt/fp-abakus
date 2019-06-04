@@ -46,6 +46,18 @@
                 <artifactId>validation-api</artifactId>
                 <version>2.0.1.Final</version>
             </dependency>
+            
+            <!-- importeres av ulike tjenestespesifikasjoner som bruker WS* (PersonV3, AktoerV2, JournalV3, DokumentproduksjonV3) -->
+            <dependency>
+                <groupId>org.jvnet.jaxb2_commons</groupId>
+                <artifactId>jaxb2-basics</artifactId>
+                <version>1.11.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jvnet.jaxb2_commons</groupId>
+                <artifactId>jaxb2-basics-runtime</artifactId>
+                <version>1.11.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
