@@ -1,5 +1,8 @@
 @Library('vl-jenkins') _
 
+naisPipeline()
+
+/*
 import no.nav.jenkins.*
 
 def maven = new maven()
@@ -107,5 +110,6 @@ pipeline {
                 fpgithub.updateBuildStatus("fp-abakus", "failure", GIT_COMMIT_HASH_FULL)
             }
         }
-    }
+    }*/
 }
+*/
