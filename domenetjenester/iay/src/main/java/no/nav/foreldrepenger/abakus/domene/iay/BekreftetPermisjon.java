@@ -6,46 +6,51 @@ import java.util.Objects;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
-import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
+import org.hibernate.annotations.JoinColumnOrFormula;
+import org.hibernate.annotations.JoinFormula;
+
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.BekreftetPermisjonStatus;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Embeddable
 public class BekreftetPermisjon {
 
-    @Convert(converter = BooleanToStringConverter.class)
-    @Column(name = "PERMISJON_BRUK")
-    private boolean bruk;
+    @ManyToOne(optional = false)
+    @JoinColumnOrFormula(column = @JoinColumn(name = "BEKREFTET_PERMISJON_STATUS", referencedColumnName = "kode", nullable = false))
+    @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + BekreftetPermisjonStatus.DISCRIMINATOR + "'"))
+    private BekreftetPermisjonStatus status = BekreftetPermisjonStatus.UDEFINERT;
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "fomDato", column = @Column(name = "PERMISJON_FOM")),
-            @AttributeOverride(name = "tomDato", column = @Column(name = "PERMISJON_TOM"))
+        @AttributeOverride(name = "fomDato", column = @Column(name = "BEKREFTET_PERMISJON_FOM")),
+        @AttributeOverride(name = "tomDato", column = @Column(name = "BEKREFTET_PERMISJON_TOM"))
     })
     private DatoIntervallEntitet periode;
 
     BekreftetPermisjon() {
     }
 
-    public BekreftetPermisjon(LocalDate permisjonFom, LocalDate permisjonTom, boolean bruk){
+    public BekreftetPermisjon(LocalDate permisjonFom, LocalDate permisjonTom, BekreftetPermisjonStatus status){
         this.periode = DatoIntervallEntitet.fraOgMedTilOgMed(permisjonFom, permisjonTom);
-        this.bruk = bruk;
-    }
-        
-    public BekreftetPermisjon(BekreftetPermisjon bekreftetPermisjonEntitet) {
-        this.periode = bekreftetPermisjonEntitet.getBekreftetPermisjonPeriode();
-        this.bruk = bekreftetPermisjonEntitet.getBruk();
+        this.status = status;
     }
 
-    public DatoIntervallEntitet getBekreftetPermisjonPeriode() {
+    public BekreftetPermisjon(BekreftetPermisjon bekreftetPermisjon) {
+        this.periode = bekreftetPermisjon.getPeriode();
+        this.status = bekreftetPermisjon.getStatus();
+    }
+
+    public BekreftetPermisjonStatus getStatus() {
+        return status;
+    }
+
+    public DatoIntervallEntitet getPeriode() {
         return periode;
-    }
-
-    public boolean getBruk() {
-        return bruk;
     }
 
     @Override
@@ -55,19 +60,20 @@ public class BekreftetPermisjon {
         if (o == null || getClass() != o.getClass())
             return false;
         BekreftetPermisjon that = (BekreftetPermisjon) o;
-        return Objects.equals(periode, that.periode);
+        return Objects.equals(periode, that.periode)
+            && Objects.equals(status, that.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(periode);
+        return Objects.hash(periode, status);
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" +
+        return "BekreftetPermisjon<" +
             "periode=" + periode +
-            ", bruk=" + bruk +
+            ", status=" + status +
             '>';
     }
 

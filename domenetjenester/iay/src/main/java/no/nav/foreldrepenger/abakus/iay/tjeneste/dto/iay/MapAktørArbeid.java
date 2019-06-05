@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -47,8 +48,11 @@ public class MapAktørArbeid {
             this.aktørId = aktørId;
         }
 
-        List<AktørArbeidBuilder> map(Collection<ArbeidDto> aktørArbeid) {
-            return aktørArbeid.stream().map(this::mapAktørArbeid).collect(Collectors.toUnmodifiableList());
+        List<AktørArbeidBuilder> map(Collection<ArbeidDto> dtos) {
+            if(dtos==null || dtos.isEmpty()) {
+                return Collections.emptyList();
+            }
+            return dtos.stream().map(this::mapAktørArbeid).collect(Collectors.toUnmodifiableList());
         }
 
         private AktørArbeidBuilder mapAktørArbeid(ArbeidDto dto) {
@@ -121,6 +125,9 @@ public class MapAktørArbeid {
         }
 
         List<ArbeidDto> map(Collection<AktørArbeid> aktørArbeid) {
+            if(aktørArbeid==null || aktørArbeid.isEmpty()) {
+                return Collections.emptyList();
+            }
             return aktørArbeid.stream().map(this::map).collect(Collectors.toList());
         }
 

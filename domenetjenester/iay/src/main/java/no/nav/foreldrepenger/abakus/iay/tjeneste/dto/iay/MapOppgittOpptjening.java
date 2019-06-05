@@ -39,6 +39,8 @@ public class MapOppgittOpptjening {
     private class MapTilDto {
 
         public OppgittOpptjeningDto map(OppgittOpptjening oppgittOpptjening) {
+            if(oppgittOpptjening == null) return null;
+            
             var dto = new OppgittOpptjeningDto(oppgittOpptjening.getEksternReferanse(), oppgittOpptjening.getOpprettetTidspunkt());
 
             dto.medArbeidsforhold(oppgittOpptjening.getOppgittArbeidsforhold().stream().map(this::mapArbeidsforhold).collect(Collectors.toList()));
@@ -123,6 +125,8 @@ public class MapOppgittOpptjening {
     private class MapFraDto {
 
         public OppgittOpptjeningBuilder map(OppgittOpptjeningDto oppgittOpptjening) {
+            if(oppgittOpptjening == null) return null;
+            
             var oppgittOpptjeningEksternReferanse = UUID.fromString(oppgittOpptjening.getEksternReferanse().getReferanse());
             var builder = OppgittOpptjeningBuilder.ny(oppgittOpptjeningEksternReferanse, oppgittOpptjening.getOpprettetTidspunkt());
 

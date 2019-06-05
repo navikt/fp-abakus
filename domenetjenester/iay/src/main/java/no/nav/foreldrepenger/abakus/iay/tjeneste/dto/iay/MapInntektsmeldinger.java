@@ -44,20 +44,28 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtsettelseÅrsakTyp
 public class MapInntektsmeldinger {
 
     public static class MapTilDto {
-        
+
         private ArbeidsforholdInformasjon arbeidsforholdInformasjon;
 
         public MapTilDto(ArbeidsforholdInformasjon arbeidsforholdInformasjon) {
             this.arbeidsforholdInformasjon = arbeidsforholdInformasjon;
         }
 
-        public InntektsmeldingerDto map(InntektsmeldingAggregat iayAggregat) {
-            var dto = new InntektsmeldingerDto();
+        public InntektsmeldingerDto map(InntektsmeldingAggregat inntektsmeldingAggregat) {
+            if (arbeidsforholdInformasjon == null && inntektsmeldingAggregat == null) {
+                return null;
+            } else if (arbeidsforholdInformasjon != null && inntektsmeldingAggregat != null) {
+                var dto = new InntektsmeldingerDto();
 
-            var inntektsmeldinger = iayAggregat.getInntektsmeldinger().stream().map(this::mapInntektsmelding).collect(Collectors.toList());
-            dto.medInntektsmeldinger(inntektsmeldinger);
+                var inntektsmeldinger = inntektsmeldingAggregat.getInntektsmeldinger().stream().map(this::mapInntektsmelding).collect(Collectors.toList());
+                dto.medInntektsmeldinger(inntektsmeldinger);
 
-            return dto;
+                return dto;
+            } else {
+                throw new IllegalStateException(
+                    "Utvikler-feil: Både arbeidsforholdInformasjon og inntektsmeldingAggregat må samtidig eksistere, men har arbeidsforholdInformasjon:"
+                        + arbeidsforholdInformasjon + ", inntektsmeldingAggregat=" + inntektsmeldingAggregat);
+            }
         }
 
         private InntektsmeldingDto mapInntektsmelding(Inntektsmelding im) {
@@ -67,7 +75,7 @@ public class MapInntektsmeldinger {
             var arbeidsforholdId = mapArbeidsforholdsId(im.getArbeidsgiver(), im.getArbeidsforholdRef());
             var innsendingsårsak = new InntektsmeldingInnsendingsårsakType(im.getInntektsmeldingInnsendingsårsak().getKode());
             var mottattDato = im.getMottattDato();
-            
+
             var inntektsmeldingDto = new InntektsmeldingDto(arbeidsgiver, journalpostId, innsendingstidspunkt, mottattDato)
                 .medArbeidsforholdRef(arbeidsforholdId)
                 .medInnsendingsårsak(innsendingsårsak)
@@ -125,13 +133,15 @@ public class MapInntektsmeldinger {
                 var eksternRef = arbeidsforholdInformasjon.finnEkstern(arbeidsgiver, InternArbeidsforholdRef.ref(internRef));
                 return new ArbeidsforholdRefDto(internRef, eksternRef.getReferanse());
             }
-            throw new IllegalStateException("Mangler ekstern referanse for intern arbeidsforholdRef="+ internRef);
+            throw new IllegalStateException("Mangler ekstern referanse for intern arbeidsforholdRef=" + internRef);
         }
     }
 
     public static class MapFraDto {
-        
+
         public InntektsmeldingAggregatEntitet map(ArbeidsforholdInformasjonBuilder arbeidsforholdInformasjon, InntektsmeldingerDto dto) {
+            if (dto == null)
+                return null;
             var inntektsmeldingAggregat = new InntektsmeldingAggregatEntitet();
             dto.getInntektsmeldinger().stream().map(im -> mapInntektsmelding(arbeidsforholdInformasjon, im)).forEach(inntektsmeldingAggregat::leggTil);
             return inntektsmeldingAggregat;
@@ -139,11 +149,11 @@ public class MapInntektsmeldinger {
 
         private Inntektsmelding mapInntektsmelding(ArbeidsforholdInformasjonBuilder arbeidsforholdInformasjon, InntektsmeldingDto dto) {
             var arbeidsforholdRef = dto.getArbeidsforholdRef();
-            var internRef = InternArbeidsforholdRef.ref(arbeidsforholdRef==null?null:arbeidsforholdRef.getAbakusReferanse());
-            var eksternRef = EksternArbeidsforholdRef.ref(arbeidsforholdRef ==null?null:arbeidsforholdRef.getEksternReferanse());
+            var internRef = InternArbeidsforholdRef.ref(arbeidsforholdRef == null ? null : arbeidsforholdRef.getAbakusReferanse());
+            var eksternRef = EksternArbeidsforholdRef.ref(arbeidsforholdRef == null ? null : arbeidsforholdRef.getEksternReferanse());
             var arbeidsgiver = mapArbeidsgiver(dto.getArbeidsgiver());
             arbeidsforholdInformasjon.leggTilNyReferanse(new ArbeidsforholdReferanseEntitet(arbeidsgiver, internRef, eksternRef));
-            
+
             var journalpostId = dto.getJournalpostId().getId();
             var innsendingstidspunkt = dto.getInnsendingstidspunkt().toLocalDateTime();
             var innsendingsårsak = dto.getInnsendingsårsak().getKode();
@@ -208,6 +218,5 @@ public class MapInntektsmeldinger {
         }
 
     }
-
 
 }

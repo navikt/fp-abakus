@@ -4,6 +4,6 @@ import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public interface ArbeidsforholdOverstyrtePerioder {
 
-    DatoIntervallEntitet getOverstyrtePerioder();
+    DatoIntervallEntitet getOverstyrtePeriode();
 
 }

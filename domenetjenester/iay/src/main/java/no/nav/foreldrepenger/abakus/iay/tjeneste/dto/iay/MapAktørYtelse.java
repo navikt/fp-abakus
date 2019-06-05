@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -47,6 +48,9 @@ public class MapAktørYtelse {
         }
 
         public List<AktørYtelseBuilder> map(Collection<YtelserDto> dtos) {
+            if(dtos==null || dtos.isEmpty()) {
+                return Collections.emptyList();
+            }
             return dtos.stream().map(this::mapAktørYtelse).collect(Collectors.toUnmodifiableList());
         }
 
@@ -126,6 +130,9 @@ public class MapAktørYtelse {
     static class MapTilDto {
 
         private List<FordelingDto> mapFordeling(List<YtelseStørrelse> ytelseStørrelse) {
+            if(ytelseStørrelse==null || ytelseStørrelse.isEmpty()) {
+                return Collections.emptyList();
+            }
             return ytelseStørrelse.stream().map(this::tilFordeling).collect(Collectors.toUnmodifiableList());
         }
 

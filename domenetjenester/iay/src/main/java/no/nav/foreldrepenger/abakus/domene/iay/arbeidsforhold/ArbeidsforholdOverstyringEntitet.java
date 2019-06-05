@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -25,6 +26,7 @@ import org.hibernate.annotations.JoinFormula;
 
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.BekreftetPermisjon;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.BekreftetPermisjonStatus;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -173,8 +175,11 @@ public class ArbeidsforholdOverstyringEntitet extends BaseEntitet implements Ind
         return stillingsprosent;
     }
     
-    public BekreftetPermisjon getBekreftetPermisjon() {
-        return bekreftetPermisjon;
+    public Optional<BekreftetPermisjon> getBekreftetPermisjon() {
+        if (bekreftetPermisjon.getStatus().equals(BekreftetPermisjonStatus.UDEFINERT)){
+            return Optional.empty();
+        }
+        return Optional.of(bekreftetPermisjon);
     }
     
     void setBekreftetPermisjon(BekreftetPermisjon bekreftetPermisjon) {
