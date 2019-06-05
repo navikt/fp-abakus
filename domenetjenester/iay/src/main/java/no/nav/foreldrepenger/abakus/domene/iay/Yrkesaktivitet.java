@@ -37,7 +37,7 @@ public interface Yrkesaktivitet {
      *
      * @return referanse
      */
-    Optional<ArbeidsforholdRef> getArbeidsforholdRef();
+    ArbeidsforholdRef getArbeidsforholdRef();
 
     /**
      * Liste over fremtidige / historiske permisjoner hos arbeidsgiver.
@@ -49,12 +49,17 @@ public interface Yrkesaktivitet {
     Collection<Permisjon> getPermisjon();
 
     /**
-     * Liste over perioder med aktivitet
+     * Aktivitet som gjelder arbeid
      *
-     * @return liste med permisjoner
+     * @return liste med aktiviteter for arbeid
      */
-    Collection<AktivitetsAvtale> getAktivitetsAvtaler();
+    Collection<AktivitetsAvtale> getAktivitetsAvtalerForArbeid();
 
+    /**
+     * Alle aktivitetsavtaler
+     */
+    Collection<AktivitetsAvtale> getAlleAktivitetsAvtaler();
+    
     /**
      * ArbeidsgiverEntitet
      * <p>

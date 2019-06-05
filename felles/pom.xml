@@ -13,7 +13,6 @@
     <artifactId>felles</artifactId>
     <packaging>jar</packaging>
     <name>Abakus :: Felles</name>
-    <version>${revision}${sha1}${changelist}</version>
 
     <dependencies>
         <dependency>

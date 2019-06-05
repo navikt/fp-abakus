@@ -22,19 +22,19 @@ public class BaseEntitet implements Serializable {
     private static final String BRUKERNAVN_NÅR_SIKKERHETSKONTEKST_IKKE_FINNES = "VL";
 
     @DiffIgnore
-    @Column(name = "opprettet_av", nullable = false)
+    @Column(name = "opprettet_av", nullable = false, insertable = true, updatable = false)
     private String opprettetAv;
 
     @DiffIgnore
-    @Column(name = "opprettet_tid", nullable = false)
+    @Column(name = "opprettet_tid", nullable = false, insertable = true, updatable = false)
     private LocalDateTime opprettetTidspunkt; // NOSONAR
 
     @DiffIgnore
-    @Column(name = "endret_av")
+    @Column(name = "endret_av", insertable = false, updatable = true)
     private String endretAv;
 
     @DiffIgnore
-    @Column(name = "endret_tid")
+    @Column(name = "endret_tid", insertable = false, updatable = true)
     private LocalDateTime endretTidspunkt; // NOSONAR
 
     private static String finnBrukernavn() {
@@ -44,8 +44,8 @@ public class BaseEntitet implements Serializable {
 
     @PrePersist
     protected void onCreate() {
-        this.opprettetAv = finnBrukernavn();
-        this.opprettetTidspunkt = FPDateUtil.nå();
+        this.opprettetAv = opprettetAv != null ? opprettetAv : finnBrukernavn();
+        this.opprettetTidspunkt = opprettetTidspunkt != null ? opprettetTidspunkt : FPDateUtil.nå();
     }
 
     @PreUpdate
@@ -68,5 +68,13 @@ public class BaseEntitet implements Serializable {
 
     public LocalDateTime getEndretTidspunkt() {
         return endretTidspunkt;
+    }
+
+    /**
+     * Kan brukes til å eksplisitt sette opprettet tidspunkt, f.eks. ved migrering av data fra et annet system. Ivaretar da opprinnelig
+     * tidspunkt istdf å sette likt now().
+     */
+    protected void setOpprettetTidspunkt(LocalDateTime opprettetTidspunkt) {
+        this.opprettetTidspunkt = opprettetTidspunkt;
     }
 }

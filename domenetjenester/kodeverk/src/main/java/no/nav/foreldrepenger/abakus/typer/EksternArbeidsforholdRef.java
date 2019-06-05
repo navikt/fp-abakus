@@ -9,29 +9,35 @@ import javax.persistence.Embeddable;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 
 /**
- * Arbeidsforhold er intern abakus referanse for arbeidsforholdet.
- * Slå opp aaregister referanse fra InntektArbeidYtelseTjenese#finnReferanse.
- * @deprecated bytt til InternArbeidsforholdRef, EksternArbeidsforholdRef i koden
+ * Ekstern arbeidsforhold referanse.
+ * Mottatt fra inntektsmelding eller AARegisteret.
+ * 
+ * Hvis null gjelder det flere arbeidsforhold, ellers for et spesifikt forhold
  */
 
 @Embeddable
-@Deprecated(forRemoval = true)
-public class ArbeidsforholdRef implements IndexKey, Serializable {
+public class EksternArbeidsforholdRef implements IndexKey, Serializable {
 
+    /** Representerer alle arbeidsforhold for en arbeidsgiver. */
+    private static final EksternArbeidsforholdRef NULL_OBJECT = new EksternArbeidsforholdRef(null);
+    
     @Column(name = "arbeidsforhold_id")
     private String referanse;
 
-    ArbeidsforholdRef() {
+    EksternArbeidsforholdRef() {
     }
 
-    private ArbeidsforholdRef(String referanse) {
+    private EksternArbeidsforholdRef(String referanse) {
         this.referanse = referanse;
     }
 
-    public static ArbeidsforholdRef ref(String referanse) {
-        return new ArbeidsforholdRef(referanse);
+    public static EksternArbeidsforholdRef ref(String referanse) {
+        return new EksternArbeidsforholdRef(referanse);
     }
 
+    public static EksternArbeidsforholdRef nullRef() {
+        return NULL_OBJECT;
+    }
     public String getReferanse() {
         return referanse;
     }
@@ -45,10 +51,8 @@ public class ArbeidsforholdRef implements IndexKey, Serializable {
         return referanse != null && !referanse.isEmpty();
     }
 
-    public boolean gjelderFor(ArbeidsforholdRef ref) {
-        if (ref == null) {
-            return true;
-        }
+    public boolean gjelderFor(EksternArbeidsforholdRef ref) {
+        Objects.requireNonNull(ref, "Forventer EksternArbeidsforholdRef.ref(null)");
         if (!gjelderForSpesifiktArbeidsforhold() || !ref.gjelderForSpesifiktArbeidsforhold()) {
             return true;
         }
@@ -62,7 +66,7 @@ public class ArbeidsforholdRef implements IndexKey, Serializable {
             return true;
         }
         if (o == null || getClass() != o.getClass()) return false;
-        ArbeidsforholdRef that = (ArbeidsforholdRef) o;
+        EksternArbeidsforholdRef that = (EksternArbeidsforholdRef) o;
         return Objects.equals(referanse, that.referanse);
     }
 

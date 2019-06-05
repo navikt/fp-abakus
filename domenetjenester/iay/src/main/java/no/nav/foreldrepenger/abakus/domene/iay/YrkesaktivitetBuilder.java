@@ -48,7 +48,7 @@ public class YrkesaktivitetBuilder {
     }
 
     public YrkesaktivitetBuilder medArbeidsgiver(Arbeidsgiver arbeidsgiver) {
-        kladd.setArbeidsgiver((ArbeidsgiverEntitet) arbeidsgiver);
+        kladd.setArbeidsgiver(arbeidsgiver);
         return this;
     }
 
@@ -110,17 +110,22 @@ public class YrkesaktivitetBuilder {
         AktivitetsAvtaleBuilder oppdater = AktivitetsAvtaleBuilder.oppdater(kladd.getAlleAktivitetsAvtaler()
             .stream()
             .filter(aa -> aa.matcherPeriode(aktivitetsPeriode)
-                && (!kladd.erArbeidsforhold() || aa.erAnsettelsesPeriode() == erAnsettelsesperioden)).findFirst());
+                && (!kladd.erArbeidsforhold() || aa.erAnsettelsesPeriode() == erAnsettelsesperioden))
+            .findFirst());
         oppdater.medPeriode(aktivitetsPeriode);
         return oppdater;
     }
 
     public boolean harIngenAvtaler() {
-        return kladd.getAktivitetsAvtaler().isEmpty();
+        return kladd.getAktivitetsAvtalerForArbeid().isEmpty();
     }
 
     public void fjernPeriode(DatoIntervallEntitet aktivitetsPeriode) {
         kladd.fjernPeriode(aktivitetsPeriode);
+    }
+
+    public YrkesaktivitetBuilder medArbeidType(String kode) {
+        return medArbeidType(new ArbeidType(kode));
     }
 
 }

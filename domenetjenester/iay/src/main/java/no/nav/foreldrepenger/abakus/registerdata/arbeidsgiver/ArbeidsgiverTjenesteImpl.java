@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.person.TpsTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.person.domene.Personinfo;
@@ -33,7 +33,7 @@ public class ArbeidsgiverTjenesteImpl implements ArbeidsgiverTjeneste {
     }
 
     @Override
-    public ArbeidsgiverOpplysninger hent(ArbeidsgiverEntitet arbeidsgiver) {
+    public ArbeidsgiverOpplysninger hent(Arbeidsgiver arbeidsgiver) {
         ArbeidsgiverOpplysninger arbeidsgiverOpplysninger = cache.get(arbeidsgiver.getIdentifikator());
         if (arbeidsgiverOpplysninger != null) {
             return arbeidsgiverOpplysninger;

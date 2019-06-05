@@ -4,17 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.vedtak.util.Tuple;
 
 public class ArbeidsforholdInformasjonBuilder {
 
     private final ArbeidsforholdInformasjonEntitet kladd;
-    private final List<Tuple<ArbeidsgiverEntitet, Tuple<ArbeidsforholdRef, ArbeidsforholdRef>>> erstattArbeidsforhold = new ArrayList<>();
-    private final List<Tuple<ArbeidsgiverEntitet, Tuple<ArbeidsforholdRef, ArbeidsforholdRef>>> reverserteErstattninger = new ArrayList<>();
+    private final List<Tuple<Arbeidsgiver, Tuple<ArbeidsforholdRef, ArbeidsforholdRef>>> erstattArbeidsforhold = new ArrayList<>();
+    private final List<Tuple<Arbeidsgiver, Tuple<ArbeidsforholdRef, ArbeidsforholdRef>>> reverserteErstattninger = new ArrayList<>();
 
     private ArbeidsforholdInformasjonBuilder(ArbeidsforholdInformasjonEntitet kladd) {
         this.kladd = kladd;
@@ -24,14 +25,19 @@ public class ArbeidsforholdInformasjonBuilder {
         return new ArbeidsforholdInformasjonBuilder(new ArbeidsforholdInformasjonEntitet(oppdatere));
     }
 
-    public ArbeidsforholdOverstyringBuilder getOverstyringBuilderFor(ArbeidsgiverEntitet arbeidsgiver, ArbeidsforholdRef ref) {
+    public static ArbeidsforholdInformasjonBuilder builder(Optional<ArbeidsforholdInformasjon> arbeidsforholdInformasjon) {
+        return new ArbeidsforholdInformasjonBuilder(new ArbeidsforholdInformasjonEntitet(arbeidsforholdInformasjon.orElse(null)));
+    }
+
+    public ArbeidsforholdOverstyringBuilder getOverstyringBuilderFor(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef ref) {
         return kladd.getOverstyringBuilderFor(arbeidsgiver, ref);
     }
 
     public ArbeidsforholdInformasjonBuilder tilbakestillOverstyringer() {
-        final List<ArbeidsforholdReferanseEntitet> collect = kladd.getReferanser().stream().filter(it -> kladd.getOverstyringer().stream()
+        final List<ArbeidsforholdReferanseEntitet> collect = kladd.getArbeidsforholdReferanser().stream().filter(it -> kladd.getOverstyringer().stream()
             .anyMatch(ov -> ov.getHandling().equals(ArbeidsforholdHandlingType.SLÅTT_SAMMEN_MED_ANNET)
-                && ov.getNyArbeidsforholdRef().gjelderFor(it.getInternReferanse()))).collect(Collectors.toList());
+                && ov.getNyArbeidsforholdRef().gjelderFor(it.getInternReferanse())))
+            .collect(Collectors.toList());
         collect.forEach(it -> {
             final ArbeidsforholdRef arbeidsforholdRef = kladd.finnForEksternBeholdHistoriskReferanse(it.getArbeidsgiver(), it.getEksternReferanse());
             if (!Objects.equals(arbeidsforholdRef, it.getInternReferanse())) {
@@ -48,7 +54,7 @@ public class ArbeidsforholdInformasjonBuilder {
      *
      * @return Liste over ArbeidsgiverEntitet / ArbeidsforholdReferanser
      */
-    public List<Tuple<ArbeidsgiverEntitet, Tuple<ArbeidsforholdRef, ArbeidsforholdRef>>> getErstattArbeidsforhold() {
+    public List<Tuple<Arbeidsgiver, Tuple<ArbeidsforholdRef, ArbeidsforholdRef>>> getErstattArbeidsforhold() {
         return Collections.unmodifiableList(erstattArbeidsforhold);
     }
 
@@ -57,11 +63,11 @@ public class ArbeidsforholdInformasjonBuilder {
      *
      * @return Liste over ArbeidsgiverEntitet / ArbeidsforholdReferanser
      */
-    public List<Tuple<ArbeidsgiverEntitet, Tuple<ArbeidsforholdRef, ArbeidsforholdRef>>> getReverserteErstattArbeidsforhold() {
+    public List<Tuple<Arbeidsgiver, Tuple<ArbeidsforholdRef, ArbeidsforholdRef>>> getReverserteErstattArbeidsforhold() {
         return Collections.unmodifiableList(reverserteErstattninger);
     }
 
-    public ArbeidsforholdInformasjonBuilder erstattArbedsforhold(ArbeidsgiverEntitet arbeidsgiver, ArbeidsforholdRef gammelRef, ArbeidsforholdRef ref) {
+    public ArbeidsforholdInformasjonBuilder erstattArbeidsforhold(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef gammelRef, ArbeidsforholdRef ref) {
         // TODO: Sjekke om revertert allerede
         // Hvis eksisterer så reverter revertering og ikke legg inn erstattning og kall på erstatt
         erstattArbeidsforhold.add(new Tuple<>(arbeidsgiver, new Tuple<>(gammelRef, ref)));
@@ -80,7 +86,7 @@ public class ArbeidsforholdInformasjonBuilder {
         return kladd;
     }
 
-    public ArbeidsforholdInformasjonBuilder fjernOverstyringVedrørende(ArbeidsgiverEntitet arbeidsgiver,
+    public ArbeidsforholdInformasjonBuilder fjernOverstyringVedrørende(Arbeidsgiver arbeidsgiver,
                                                                        ArbeidsforholdRef arbeidsforholdRef) {
         kladd.fjernOverstyringVedrørende(arbeidsgiver, arbeidsforholdRef);
         return this;
@@ -88,5 +94,9 @@ public class ArbeidsforholdInformasjonBuilder {
 
     public void fjernAlleOverstyringer() {
         kladd.tilbakestillOverstyringer();
+    }
+
+    public void leggTilNyReferanse(ArbeidsforholdReferanseEntitet arbeidsforholdReferanse) {
+        kladd.leggTilNyReferanse(arbeidsforholdReferanse);
     }
 }

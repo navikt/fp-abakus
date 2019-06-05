@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
@@ -16,7 +16,7 @@ public interface Inntektsmelding {
      *
      * @return {@link ArbeidsgiverEntitet}
      */
-    ArbeidsgiverEntitet getArbeidsgiver();
+    Arbeidsgiver getArbeidsgiver();
 
     String getKanalreferanse();
 
@@ -104,7 +104,9 @@ public interface Inntektsmelding {
      * @return {@Link Refusjon}
      */
     List<Refusjon> getEndringerRefusjon();
-
+    
+    /** Tidspunkt dette grunnlaget ble opprettet. (normalt lagret i databasen her). */
+    LocalDateTime getOpprettetTidspunkt();
 
     InntektsmeldingInnsendingsårsak getInntektsmeldingInnsendingsårsak();
 
@@ -116,5 +118,8 @@ public interface Inntektsmelding {
         return getArbeidsgiver().equals(annen.getArbeidsgiver())
             && getArbeidsforholdRef().gjelderFor(annen.getArbeidsforholdRef());
     }
+
+    /** Dato inntektsmelding mottatt i NAV (tilsvarer dato lagret i Joark). */
+    LocalDate getMottattDato();
 
 }

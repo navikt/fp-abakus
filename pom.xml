@@ -29,13 +29,13 @@
 
         <prometheus.version>0.6.0</prometheus.version>
 
-        <felles.version>1.1.0_20190521175347_8e289bf</felles.version>
-        <kontrakter.version>5.0_20190520085814_869e855</kontrakter.version>
+        <felles.version>1.1.0_20190523152218_ef716ae</felles.version>
+        <kontrakter.version>5.0_20190604145427_6de8ccb</kontrakter.version>
     </properties>
 
     <prerequisites>
         <!-- deprecated i maven3, men trengs av versions plugin -->
-        <maven>3.5.3</maven>
+        <maven>3.6.1</maven>
     </prerequisites>
 
     <!-- NB: Unngå å put scope (test, provided) i dependency management. Det har uheldige virkninger ved bruk av import og dependency (bruk composition over arv) da
@@ -271,12 +271,6 @@
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
                 <version>6.0.16.Final</version>
-            </dependency>
-            <dependency>
-                <!-- for Bean validation -->
-                <groupId>javax.validation</groupId>
-                <artifactId>validation-api</artifactId>
-                <version>2.0.1.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish.jaxb</groupId>

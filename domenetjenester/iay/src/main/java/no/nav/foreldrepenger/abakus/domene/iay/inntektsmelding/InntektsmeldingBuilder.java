@@ -5,15 +5,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
+import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 import no.nav.vedtak.konfig.Tid;
 
 public class InntektsmeldingBuilder {
     private final InntektsmeldingEntitet kladd;
+    private EksternArbeidsforholdRef eksternArbeidsforholdId;
 
     InntektsmeldingBuilder(InntektsmeldingEntitet kladd) {
         this.kladd = kladd;
@@ -23,7 +26,7 @@ public class InntektsmeldingBuilder {
         return new InntektsmeldingBuilder(new InntektsmeldingEntitet());
     }
 
-    public InntektsmeldingBuilder medArbeidsgiver(ArbeidsgiverEntitet arbeidsgiver) {
+    public InntektsmeldingBuilder medArbeidsgiver(Arbeidsgiver arbeidsgiver) {
         kladd.setArbeidsgiver(arbeidsgiver);
         return this;
     }
@@ -77,6 +80,11 @@ public class InntektsmeldingBuilder {
         kladd.setKanalreferanse(kanalreferanse);
         return this;
     }
+    
+    public InntektsmeldingBuilder medMottattDato(LocalDate mottattDato) {
+        kladd.setMottattDato(mottattDato);
+        return this;
+    }
 
     public InntektsmeldingBuilder medKildesystem(String kildesystem) {
         kladd.setKildesystem(kildesystem);
@@ -108,7 +116,29 @@ public class InntektsmeldingBuilder {
         return this;
     }
 
+    public InntektsmeldingBuilder medInntektsmeldingaarsak(String inntektsmeldingInnsendingsårsak) {
+        return medInntektsmeldingaarsak(new InntektsmeldingInnsendingsårsak(inntektsmeldingInnsendingsårsak));
+    }
+
     public Inntektsmelding build() {
         return kladd;
     }
+
+    public InntektsmeldingBuilder medJournalpostId(String journalpostId) {
+        return medJournalpostId(new JournalpostId(journalpostId));
+    }
+
+    public InntektsmeldingBuilder medArbeidsforholdId(EksternArbeidsforholdRef eksternRef) {
+        this.eksternArbeidsforholdId = eksternRef;
+        return this;
+    }
+    
+    public InntektsmeldingBuilder medArbeidsforholdId(InternArbeidsforholdRef internRef) {
+        String arbeidsforholdId = internRef.getReferanse();
+        if (arbeidsforholdId != null) {
+            kladd.setArbeidsforholdId(ArbeidsforholdRef.ref(arbeidsforholdId));
+        }
+        return this;
+    }
+
 }

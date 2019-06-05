@@ -27,7 +27,7 @@ import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
-import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregatEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -35,6 +35,7 @@ import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
@@ -64,8 +65,9 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
 
     @Embedded
     @ChangeTracked
-    private ArbeidsgiverEntitet arbeidsgiver;
+    private Arbeidsgiver arbeidsgiver;
 
+    /** TODO Bytt til InternArbeidsforholdRef. + migrer data*/
     @Embedded
     @ChangeTracked
     private ArbeidsforholdRef arbeidsforholdRef;
@@ -104,15 +106,18 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
     @Column(name = "kildesystem")
     private String kildesystem;
 
+    @Column(name = "mottatt_dato", nullable = false, updatable = false)
+    private LocalDate mottattDato;
+
     @OneToMany(mappedBy = "inntektsmelding")
     @ChangeTracked
     private List<RefusjonEntitet> endringerRefusjon = new ArrayList<>();
 
     @ManyToOne(optional = false)
     @JoinColumnsOrFormulas({
-        @JoinColumnOrFormula(column = @JoinColumn(name = "innsendingsaarsak", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + InntektsmeldingInnsendingsårsak.DISCRIMINATOR
-            + "'"))})
+            @JoinColumnOrFormula(column = @JoinColumn(name = "innsendingsaarsak", referencedColumnName = "kode", nullable = false)),
+            @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + InntektsmeldingInnsendingsårsak.DISCRIMINATOR
+                + "'")) })
     @ChangeTracked
     private InntektsmeldingInnsendingsårsak innsendingsårsak = InntektsmeldingInnsendingsårsak.UDEFINERT;
 
@@ -136,6 +141,8 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
         this.innsendingstidspunkt = inntektsmelding.getInnsendingstidspunkt();
         this.kanalreferanse = inntektsmelding.getKanalreferanse();
         this.kildesystem = inntektsmelding.getKildesystem();
+        this.mottattDato = inntektsmelding.getMottattDato();
+        
         this.graderinger = inntektsmelding.getGraderinger().stream().map(g -> {
             final GraderingEntitet graderingEntitet = new GraderingEntitet(g);
             graderingEntitet.setInntektsmelding(this);
@@ -168,11 +175,11 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
     }
 
     @Override
-    public ArbeidsgiverEntitet getArbeidsgiver() {
+    public Arbeidsgiver getArbeidsgiver() {
         return arbeidsgiver;
     }
 
-    void setArbeidsgiver(ArbeidsgiverEntitet virksomhet) {
+    void setArbeidsgiver(Arbeidsgiver virksomhet) {
         this.arbeidsgiver = virksomhet;
     }
 
@@ -198,11 +205,20 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
     public String getKanalreferanse() {
         return kanalreferanse;
     }
+    
+    @Override
+    public LocalDate getMottattDato() {
+        return mottattDato;
+    }
 
     void setKanalreferanse(String kanalreferanse) {
         this.kanalreferanse = kanalreferanse;
     }
 
+    void setMottattDato(LocalDate mottattDato) {
+        this.mottattDato = mottattDato;
+    }
+    
     @Override
     public String getKildesystem() {
         return kildesystem;
@@ -241,11 +257,16 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
      * TODO: (DOKUMENTERE DENNE)
      *
      * @param arbeidsforholdRef Intern arbeidsforhold id
+     * @deprecated bytt til {@link #setArbeidsforholdId(InternArbeidsforholdRef)}
      */
     public void setArbeidsforholdId(ArbeidsforholdRef arbeidsforholdRef) {
         this.arbeidsforholdRef = arbeidsforholdRef;
     }
 
+    public void setArbeidsforholdId(InternArbeidsforholdRef arbeidsforholdRef) {
+        this.arbeidsforholdRef = ArbeidsforholdRef.ref(arbeidsforholdRef.getReferanse());
+    }
+    
     @Override
     public LocalDate getStartDatoPermisjon() {
         return startDatoPermisjon;

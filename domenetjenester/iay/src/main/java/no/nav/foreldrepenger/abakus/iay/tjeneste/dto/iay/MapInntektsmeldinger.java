@@ -1,24 +1,29 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.stream.Collectors;
 
-import org.jboss.weld.exceptions.UnsupportedOperationException;
-
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
-import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregatEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanseEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Gradering;
+import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.GraderingEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingSomIkkeKommer;
+import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelse;
+import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelseEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Refusjon;
+import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.RefusjonEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriode;
-import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
-import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
+import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriodeEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelseÅrsak;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Aktør;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
@@ -28,7 +33,6 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Organisasjon;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.GraderingDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.InntektsmeldingDto;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.InntektsmeldingSomIkkeKommerDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.NaturalytelseDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.RefusjonDto;
@@ -39,25 +43,21 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtsettelseÅrsakTyp
 
 public class MapInntektsmeldinger {
 
-    private class MapTilDto {
+    public static class MapTilDto {
+        
+        private ArbeidsforholdInformasjon arbeidsforholdInformasjon;
 
-        public InntektsmeldingerDto map(InntektsmeldingAggregat iayAggregat, List<InntektsmeldingSomIkkeKommer> inntektsmeldingerSomIkkeKommer) {
+        public MapTilDto(ArbeidsforholdInformasjon arbeidsforholdInformasjon) {
+            this.arbeidsforholdInformasjon = arbeidsforholdInformasjon;
+        }
+
+        public InntektsmeldingerDto map(InntektsmeldingAggregat iayAggregat) {
             var dto = new InntektsmeldingerDto();
 
             var inntektsmeldinger = iayAggregat.getInntektsmeldinger().stream().map(this::mapInntektsmelding).collect(Collectors.toList());
             dto.medInntektsmeldinger(inntektsmeldinger);
 
-            if (inntektsmeldingerSomIkkeKommer != null) {
-                var ikkeKommer = inntektsmeldingerSomIkkeKommer.stream().map(this::mapInntektsmeldingSomIkkekommer).collect(Collectors.toList());
-                dto.medInntektsmeldingerSomIkkeKommer(ikkeKommer);
-            }
             return dto;
-        }
-
-        private InntektsmeldingSomIkkeKommerDto mapInntektsmeldingSomIkkekommer(InntektsmeldingSomIkkeKommer ik) {
-            var arbeidsforholdsId = mapArbeidsforholdsId(ik.getArbeidsgiver(), ik.getRef());
-            var arbeidsgiver = mapAktør(ik.getArbeidsgiver());
-            return new InntektsmeldingSomIkkeKommerDto(arbeidsgiver, arbeidsforholdsId);
         }
 
         private InntektsmeldingDto mapInntektsmelding(Inntektsmelding im) {
@@ -66,8 +66,9 @@ public class MapInntektsmeldinger {
             var innsendingstidspunkt = im.getInnsendingstidspunkt();
             var arbeidsforholdId = mapArbeidsforholdsId(im.getArbeidsgiver(), im.getArbeidsforholdRef());
             var innsendingsårsak = new InntektsmeldingInnsendingsårsakType(im.getInntektsmeldingInnsendingsårsak().getKode());
-
-            var inntektsmeldingDto = new InntektsmeldingDto(arbeidsgiver, journalpostId, innsendingstidspunkt)
+            var mottattDato = im.getMottattDato();
+            
+            var inntektsmeldingDto = new InntektsmeldingDto(arbeidsgiver, journalpostId, innsendingstidspunkt, mottattDato)
                 .medArbeidsforholdRef(arbeidsforholdId)
                 .medInnsendingsårsak(innsendingsårsak)
                 .medInntektBeløp(im.getInntektBeløp().getVerdi())
@@ -111,73 +112,102 @@ public class MapInntektsmeldinger {
             var utsettelseÅrsak = new UtsettelseÅrsakType(utsettelsePeriode.getÅrsak().getKode());
             return new UtsettelsePeriodeDto(new Periode(periode.getFomDato(), periode.getTomDato()), utsettelseÅrsak);
         }
-    }
 
-    private class MapFraDto {
-
-        public List<InntektsmeldingAggregat> map(InntektsmeldingerDto inntektsmeldinger) {
-            // FIXME Map Inntektsmeldinger
-            throw new UnsupportedOperationException("Not Yet Implemented");
+        private Aktør mapAktør(Arbeidsgiver arbeidsgiverEntitet) {
+            return arbeidsgiverEntitet.erAktørId()
+                ? new AktørIdPersonident(arbeidsgiverEntitet.getAktørId().getId())
+                : new Organisasjon(arbeidsgiverEntitet.getOrgnr().getId());
         }
-    }
 
-    private class MapFraInntektsmeldingSomIkkeKommerDto {
-
-        public List<InntektsmeldingSomIkkeKommer> map(InntektsmeldingerDto inntektsmeldinger) {
-            if (inntektsmeldinger == null) {
-                return Collections.emptyList();
+        private ArbeidsforholdRefDto mapArbeidsforholdsId(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef arbeidsforhold) {
+            String internRef = arbeidsforhold.getReferanse();
+            if (internRef != null) {
+                var eksternRef = arbeidsforholdInformasjon.finnEkstern(arbeidsgiver, InternArbeidsforholdRef.ref(internRef));
+                return new ArbeidsforholdRefDto(internRef, eksternRef.getReferanse());
             }
-            return inntektsmeldinger.getInntektsmeldingerSomIkkeKommer().stream().map(this::mapInntektsmeldingSomIkkeKommer).collect(Collectors.toList());
+            throw new IllegalStateException("Mangler ekstern referanse for intern arbeidsforholdRef="+ internRef);
+        }
+    }
+
+    public static class MapFraDto {
+        
+        public InntektsmeldingAggregatEntitet map(ArbeidsforholdInformasjonBuilder arbeidsforholdInformasjon, InntektsmeldingerDto dto) {
+            var inntektsmeldingAggregat = new InntektsmeldingAggregatEntitet();
+            dto.getInntektsmeldinger().stream().map(im -> mapInntektsmelding(arbeidsforholdInformasjon, im)).forEach(inntektsmeldingAggregat::leggTil);
+            return inntektsmeldingAggregat;
         }
 
-        private InntektsmeldingSomIkkeKommer mapInntektsmeldingSomIkkeKommer(InntektsmeldingSomIkkeKommerDto ik) {
-            ArbeidsforholdRef ref = ArbeidsforholdRef.ref(ik.getArbeidsforholdId().getAbakusReferanse());
-            var arbeidsgiver = mapArbeidsgiver(ik.getArbeidsgiver());
-            return new InntektsmeldingSomIkkeKommer(arbeidsgiver, ref);
+        private Inntektsmelding mapInntektsmelding(ArbeidsforholdInformasjonBuilder arbeidsforholdInformasjon, InntektsmeldingDto dto) {
+            var arbeidsforholdRef = dto.getArbeidsforholdRef();
+            var internRef = InternArbeidsforholdRef.ref(arbeidsforholdRef==null?null:arbeidsforholdRef.getAbakusReferanse());
+            var eksternRef = EksternArbeidsforholdRef.ref(arbeidsforholdRef ==null?null:arbeidsforholdRef.getEksternReferanse());
+            var arbeidsgiver = mapArbeidsgiver(dto.getArbeidsgiver());
+            arbeidsforholdInformasjon.leggTilNyReferanse(new ArbeidsforholdReferanseEntitet(arbeidsgiver, internRef, eksternRef));
+            
+            var journalpostId = dto.getJournalpostId().getId();
+            var innsendingstidspunkt = dto.getInnsendingstidspunkt().toLocalDateTime();
+            var innsendingsårsak = dto.getInnsendingsårsak().getKode();
+
+            var builder = InntektsmeldingBuilder.builder()
+                .medJournalpostId(journalpostId)
+                .medArbeidsgiver(mapArbeidsgiver(dto.getArbeidsgiver()))
+                .medInnsendingstidspunkt(innsendingstidspunkt)
+                .medBeløp(dto.getInntektBeløp())
+                .medArbeidsforholdId(eksternRef)
+                .medArbeidsforholdId(internRef)
+                .medStartDatoPermisjon(dto.getStartDatoPermisjon())
+                .medRefusjon(dto.getRefusjonsBeløpPerMnd(), dto.getRefusjonOpphører())
+                .medKanalreferanse(dto.getKanalreferanse())
+                .medInntektsmeldingaarsak(innsendingsårsak)
+                .medNærRelasjon(dto.isNærRelasjon())
+                .medKildesystem(dto.getKildesystem())
+                .medMottattDato(dto.getMottattDato());
+
+            dto.getEndringerRefusjon().stream()
+                .map(eir -> new RefusjonEntitet(eir.getRefusjonsbeløpMnd(), eir.getFom()))
+                .forEach(builder::leggTil);
+
+            dto.getGraderinger().stream()
+                .map(gr -> {
+                    var periode = gr.getPeriode();
+                    return new GraderingEntitet(periode.getFom(), periode.getTom(), gr.getArbeidstidProsent());
+                })
+                .forEach(builder::leggTil);
+
+            dto.getNaturalytelser().stream()
+                .map(ny -> {
+                    var periode = ny.getPeriode();
+                    var naturalYtelseType = new NaturalYtelseType(ny.getType().getKode());
+                    return new NaturalYtelseEntitet(periode.getFom(), periode.getTom(), ny.getBeløpPerMnd(), naturalYtelseType);
+                })
+                .forEach(builder::leggTil);
+
+            dto.getUtsettelsePerioder().stream()
+                .map(up -> {
+                    var periode = up.getPeriode();
+                    var utsettelseÅrsak = new UtsettelseÅrsak(up.getUtsettelseÅrsakDto().getKode());
+                    return UtsettelsePeriodeEntitet.utsettelse(periode.getFom(), periode.getTom(), utsettelseÅrsak);
+                })
+                .forEach(builder::leggTil);
+
+            return builder.build();
         }
 
-        private Arbeidsgiver mapArbeidsgiver(Aktør arbeidsgiver) {
-            if (arbeidsgiver.getErOrganisasjon()) {
-                return ArbeidsgiverEntitet.virksomhet(new OrgNummer(arbeidsgiver.getIdent()));
+        private Arbeidsgiver mapArbeidsgiver(Aktør arbeidsgiverDto) {
+            if (arbeidsgiverDto == null) {
+                return null;
             }
-            return ArbeidsgiverEntitet.person(new AktørId(arbeidsgiver.getIdent()));
+            String identifikator = arbeidsgiverDto.getIdent();
+            if (arbeidsgiverDto.getErOrganisasjon()) {
+                return Arbeidsgiver.virksomhet(new OrgNummer(identifikator));
+            }
+            if (arbeidsgiverDto.getErPerson()) {
+                return Arbeidsgiver.person(new AktørId(identifikator));
+            }
+            throw new IllegalArgumentException();
         }
+
     }
 
-    private InntektArbeidYtelseTjeneste tjeneste;
-    private KoblingReferanse koblingReferanse;
 
-    public MapInntektsmeldinger(InntektArbeidYtelseTjeneste tjeneste, KoblingReferanse koblingReferanse) {
-        this.tjeneste = tjeneste;
-        this.koblingReferanse = koblingReferanse;
-    }
-
-    public InntektsmeldingerDto mapTilDto(InntektsmeldingAggregat ia, List<InntektsmeldingSomIkkeKommer> inntektsmeldingerSomIkkeKommer) {
-        return new MapTilDto().map(ia, inntektsmeldingerSomIkkeKommer);
-    }
-
-    public List<InntektsmeldingAggregat> mapFraDto(InntektsmeldingerDto inntektsmeldinger) {
-        return new MapFraDto().map(inntektsmeldinger);
-    }
-
-    public List<InntektsmeldingSomIkkeKommer> mapFraDtoInntektsmeldingSomIkkeKommer(InntektsmeldingerDto inntektsmeldinger) {
-        return new MapFraInntektsmeldingSomIkkeKommerDto().map(inntektsmeldinger);
-    }
-
-    private Aktør mapAktør(Arbeidsgiver arbeidsgiver) {
-        return arbeidsgiver.erAktørId()
-            ? new AktørIdPersonident(arbeidsgiver.getAktørId().getId())
-            : new Organisasjon(arbeidsgiver.getOrgnr().getId());
-    }
-
-    private ArbeidsforholdRefDto mapArbeidsforholdsId(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef arbeidsforhold) {
-        String internId = arbeidsforhold.getReferanse();
-        if (internId != null) {
-            String eksternReferanse = tjeneste
-                .finnReferanseFor(koblingReferanse, arbeidsgiver, arbeidsforhold, true)
-                .getReferanse();
-            return new ArbeidsforholdRefDto(internId, eksternReferanse);
-        }
-        return new ArbeidsforholdRefDto(internId, null);
-    }
 }

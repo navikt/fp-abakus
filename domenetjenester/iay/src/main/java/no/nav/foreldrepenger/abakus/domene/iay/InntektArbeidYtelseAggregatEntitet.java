@@ -1,11 +1,13 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
@@ -17,8 +19,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.NaturalId;
+
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
+import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 
 @Table(name = "IAY_INNTEKT_ARBEID_YTELSER")
@@ -28,6 +33,11 @@ public class InntektArbeidYtelseAggregatEntitet extends BaseEntitet implements I
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_INNTEKT_ARBEID_YTELSER")
     private Long id;
+
+    @NaturalId
+    @DiffIgnore
+    @Column(name = "ekstern_referanse", updatable = false, unique = true)
+    private UUID eksternReferanse;
 
     @ChangeTracked
     @OneToMany(mappedBy = "inntektArbeidYtelser")
@@ -46,28 +56,45 @@ public class InntektArbeidYtelseAggregatEntitet extends BaseEntitet implements I
     private long versjon;
 
     InntektArbeidYtelseAggregatEntitet() {
-        //hibernate
+        // hibernate
+    }
+    
+    InntektArbeidYtelseAggregatEntitet(UUID angittEksternReferanse, LocalDateTime angittOpprettetTidspunkt) {
+        setOpprettetTidspunkt(angittOpprettetTidspunkt);
+        this.eksternReferanse = angittEksternReferanse;
     }
 
-    InntektArbeidYtelseAggregatEntitet(InntektArbeidYtelseAggregat opptjening) {
-        this.setAktørInntekt(opptjening.getAktørInntekt().stream().map(ai -> {
+    InntektArbeidYtelseAggregatEntitet(UUID eksternReferanse, LocalDateTime opprettetTidspunkt, InntektArbeidYtelseAggregat kopierFra) {
+        Objects.requireNonNull(eksternReferanse, "eksternReferanse");
+        this.setAktørInntekt(kopierFra.getAktørInntekt().stream().map(ai -> {
             AktørInntektEntitet aktørInntektEntitet = new AktørInntektEntitet(ai);
             aktørInntektEntitet.setInntektArbeidYtelser(this);
             return aktørInntektEntitet;
         }).collect(Collectors.toList()));
 
-        this.setAktørArbeid(opptjening.getAktørArbeid().stream().map(aktørArbied -> {
+        this.setAktørArbeid(kopierFra.getAktørArbeid().stream().map(aktørArbied -> {
             AktørArbeidEntitet aktørArbeidEntitet = new AktørArbeidEntitet(aktørArbied);
             aktørArbeidEntitet.setInntektArbeidYtelser(this);
             return aktørArbeidEntitet;
         }).collect(Collectors.toList()));
 
-        this.setAktørYtelse(opptjening.getAktørYtelse().stream().map(ay -> {
+        this.setAktørYtelse(kopierFra.getAktørYtelse().stream().map(ay -> {
             AktørYtelseEntitet aktørYtelseEntitet = new AktørYtelseEntitet(ay);
             aktørYtelseEntitet.setInntektArbeidYtelser(this);
             return aktørYtelseEntitet;
         }).collect(Collectors.toList()));
 
+        this.setOpprettetTidspunkt(opprettetTidspunkt);
+        this.eksternReferanse = eksternReferanse;
+    }
+
+    InntektArbeidYtelseAggregatEntitet(InntektArbeidYtelseAggregat kopierFra) {
+        this(UUID.randomUUID(), kopierFra.getOpprettetTidspunkt(), kopierFra);
+    }
+
+    @Override
+    public UUID getEksternReferanse() {
+        return eksternReferanse;
     }
 
     @Override
@@ -154,7 +181,7 @@ public class InntektArbeidYtelseAggregatEntitet extends BaseEntitet implements I
         }
     }
 
-    void taHensynTilOverstyring(){
+    void taHensynTilOverstyring() {
         for (AktørArbeidEntitet aktør : aktørArbeid) {
             aktør.overstyrAnsettelsesPeriode();
         }

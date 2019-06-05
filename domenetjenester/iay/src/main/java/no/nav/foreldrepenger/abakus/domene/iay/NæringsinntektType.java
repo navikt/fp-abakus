@@ -10,7 +10,7 @@ public class NæringsinntektType extends YtelseType {
     public static final String DISCRIMINATOR = "NÆRINGSINNTEKT_TYPE"; //$NON-NLS-1$
     public static final NæringsinntektType UDEFINERT = new NæringsinntektType("-"); //$NON-NLS-1$
 
-    private NæringsinntektType(String kode) {
+    public NæringsinntektType(String kode) {
         super(kode, DISCRIMINATOR);
     }
 

@@ -74,6 +74,10 @@ public class NaturalYtelseEntitet extends BaseEntitet implements NaturalYtelse, 
         this.type = naturalYtelse.getType();
     }
 
+    public NaturalYtelseEntitet(DatoIntervallEntitet datoIntervall, BigDecimal beløpPerMnd, NaturalYtelseType naturalYtelseType) {
+        this(datoIntervall.getFomDato(), datoIntervall.getTomDato(), beløpPerMnd, naturalYtelseType);
+    }
+
     @Override
     public String getIndexKey() {
         return IndexKey.createKey(type, periode);

@@ -15,12 +15,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
-import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseValue;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
 @Entity(name = "ArbeidsforholdReferanse")
 @Table(name = "IAY_ARBEIDSFORHOLD_REFER")
@@ -32,17 +33,17 @@ public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements Index
 
     @ChangeTracked
     @Embedded
-    private ArbeidsgiverEntitet arbeidsgiver;
+    private Arbeidsgiver arbeidsgiverEntitet;
 
     @Embedded
     @AttributeOverrides({
-        @AttributeOverride(name = "referanse", column = @Column(name = "intern_referanse", nullable = false))
+            @AttributeOverride(name = "referanse", column = @Column(name = "intern_referanse", nullable = false))
     })
     private ArbeidsforholdRef internReferanse;
 
     @Embedded
     @AttributeOverrides({
-        @AttributeOverride(name = "referanse", column = @Column(name = "ekstern_referanse", nullable = false))
+            @AttributeOverride(name = "referanse", column = @Column(name = "ekstern_referanse", nullable = false))
     })
     private ArbeidsforholdRef eksternReferanse;
 
@@ -53,14 +54,25 @@ public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements Index
     ArbeidsforholdReferanseEntitet() {
     }
 
-    ArbeidsforholdReferanseEntitet(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef internReferanse, ArbeidsforholdRef eksternReferanse) {
-        this.arbeidsgiver = (ArbeidsgiverEntitet) arbeidsgiver;
+    /**
+     * @deprecated Bruk {@link #ArbeidsforholdReferanseEntitet(Arbeidsgiver, InternArbeidsforholdRef, EksternArbeidsforholdRef)}.
+     */
+    @Deprecated(forRemoval = true)
+    ArbeidsforholdReferanseEntitet(Arbeidsgiver arbeidsgiverEntitet, ArbeidsforholdRef internReferanse, ArbeidsforholdRef eksternReferanse) {
+        this.arbeidsgiverEntitet = arbeidsgiverEntitet;
         this.internReferanse = internReferanse;
         this.eksternReferanse = eksternReferanse;
     }
 
+    public ArbeidsforholdReferanseEntitet(Arbeidsgiver arbeidsgiverEntitet, InternArbeidsforholdRef internReferanse, EksternArbeidsforholdRef eksternReferanse) {
+        this.arbeidsgiverEntitet = arbeidsgiverEntitet;
+        this.internReferanse = internReferanse == null ? null : ArbeidsforholdRef.ref(internReferanse.getReferanse());
+        this.eksternReferanse = eksternReferanse == null ? null : ArbeidsforholdRef.ref(eksternReferanse.getReferanse());
+    }
+
     ArbeidsforholdReferanseEntitet(ArbeidsforholdReferanseEntitet arbeidsforholdInformasjonEntitet) {
-        this(arbeidsforholdInformasjonEntitet.arbeidsgiver, arbeidsforholdInformasjonEntitet.internReferanse, arbeidsforholdInformasjonEntitet.eksternReferanse);
+        this(arbeidsforholdInformasjonEntitet.arbeidsgiverEntitet, arbeidsforholdInformasjonEntitet.internReferanse,
+            arbeidsforholdInformasjonEntitet.eksternReferanse);
     }
 
     @Override
@@ -68,16 +80,16 @@ public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements Index
         return IndexKey.createKey(internReferanse, eksternReferanse);
     }
 
-    ArbeidsforholdRef getInternReferanse() {
+    public ArbeidsforholdRef getInternReferanse() {
         return internReferanse;
     }
 
-    ArbeidsforholdRef getEksternReferanse() {
+    public ArbeidsforholdRef getEksternReferanse() {
         return eksternReferanse;
     }
-
-    ArbeidsgiverEntitet getArbeidsgiver() {
-        return arbeidsgiver;
+    
+    public Arbeidsgiver getArbeidsgiver() {
+        return arbeidsgiverEntitet;
     }
 
     void setInformasjon(ArbeidsforholdInformasjonEntitet informasjon) {
@@ -91,20 +103,20 @@ public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements Index
         if (o == null || getClass() != o.getClass())
             return false;
         ArbeidsforholdReferanseEntitet that = (ArbeidsforholdReferanseEntitet) o;
-        return Objects.equals(arbeidsgiver, that.arbeidsgiver) &&
+        return Objects.equals(arbeidsgiverEntitet, that.arbeidsgiverEntitet) &&
             Objects.equals(internReferanse, that.internReferanse) &&
             Objects.equals(eksternReferanse, that.eksternReferanse);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(arbeidsgiver, internReferanse, eksternReferanse);
+        return Objects.hash(arbeidsgiverEntitet, internReferanse, eksternReferanse);
     }
 
     @Override
     public String toString() {
         return "ArbeidsforholdReferanseEntitet{" +
-            "arbeidsgiver=" + arbeidsgiver +
+            "ArbeidsgiverEntitet=" + arbeidsgiverEntitet +
             ", internReferanse=" + internReferanse +
             ", eksternReferanse=" + eksternReferanse +
             '}';

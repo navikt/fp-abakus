@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,10 +26,10 @@ import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelse;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Refusjon;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriode;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.AnnenAktivitet;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.EgenNæring;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.Frilansoppdrag;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittAnnenAktivitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilansoppdrag;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffEntity;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
@@ -72,8 +73,21 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     }
 
     @Override
-    public InntektArbeidYtelseAggregatBuilder opprettBuilderFor(KoblingReferanse koblingReferanse, VersjonType versjonType) {
-        return opprettBuilderForBuilder(InntektArbeidYtelseGrunnlagBuilder.oppdatere(hentInntektArbeidYtelseGrunnlagForBehandling(koblingReferanse)), versjonType);
+    public InntektArbeidYtelseAggregatBuilder opprettBuilderFor(KoblingReferanse koblingReferanse, UUID angittAggregatReferanse, LocalDateTime angittOpprettetTidspunkt, VersjonType versjonType) {
+        Optional<InntektArbeidYtelseGrunnlag> grunnlag = hentInntektArbeidYtelseGrunnlagForBehandling(koblingReferanse);
+        return opprettBuilderFor(versjonType, angittAggregatReferanse, angittOpprettetTidspunkt, grunnlag);
+    }
+    
+    private InntektArbeidYtelseAggregatBuilder opprettBuilderFor(VersjonType versjonType, UUID angittReferanse, LocalDateTime opprettetTidspunkt, Optional<InntektArbeidYtelseGrunnlag> grunnlag) {
+        InntektArbeidYtelseGrunnlagBuilder grunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(grunnlag);
+        Objects.requireNonNull(grunnlagBuilder, "grunnlagBuilder");
+        Optional<InntektArbeidYtelseGrunnlag> aggregat = Optional.ofNullable(grunnlagBuilder.getKladd()); // NOSONAR $NON-NLS-1$
+        Objects.requireNonNull(aggregat, "aggregat"); // NOSONAR $NON-NLS-1$
+        if (aggregat.isPresent()) {
+            final InntektArbeidYtelseGrunnlag aggregat1 = aggregat.get();
+            return InntektArbeidYtelseAggregatBuilder.builderFor(hentRiktigVersjon(versjonType, aggregat1), angittReferanse, opprettetTidspunkt, versjonType);
+        }
+        throw InntektArbeidYtelseFeil.FACTORY.aggregatKanIkkeVæreNull().toException();
     }
 
     @Override
@@ -87,9 +101,9 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         if (oppgittOpptjening == null) {
             return;
         }
-        Optional<InntektArbeidYtelseGrunnlag> inntektArbeidAggregat = hentInntektArbeidYtelseGrunnlagForBehandling(koblingReferanse);
+        Optional<InntektArbeidYtelseGrunnlag> iayGrunnlag = hentInntektArbeidYtelseGrunnlagForBehandling(koblingReferanse);
 
-        InntektArbeidYtelseGrunnlagBuilder grunnlag = InntektArbeidYtelseGrunnlagBuilder.oppdatere(inntektArbeidAggregat);
+        InntektArbeidYtelseGrunnlagBuilder grunnlag = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayGrunnlag);
         grunnlag.medOppgittOpptjening(oppgittOpptjening);
 
         lagreOgFlush(koblingReferanse, grunnlag.build());
@@ -217,14 +231,14 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
 
         nyttGrunnlag.getInntektsmeldinger().ifPresent(this::lagreInntektsMeldinger);
 
-        entitet.getInformasjon().ifPresent(this::lagreInformasjon);
+        entitet.getArbeidsforholdInformasjon().ifPresent(this::lagreInformasjon);
         entityManager.persist(nyttGrunnlag);
     }
 
     private void lagreInformasjon(ArbeidsforholdInformasjon arbeidsforholdInformasjon) {
         final ArbeidsforholdInformasjonEntitet arbeidsforholdInformasjonEntitet = (ArbeidsforholdInformasjonEntitet) arbeidsforholdInformasjon; // NOSONAR
         entityManager.persist(arbeidsforholdInformasjonEntitet);
-        for (ArbeidsforholdReferanseEntitet referanseEntitet : arbeidsforholdInformasjonEntitet.getReferanser()) {
+        for (ArbeidsforholdReferanseEntitet referanseEntitet : arbeidsforholdInformasjonEntitet.getArbeidsforholdReferanser()) {
             entityManager.persist(referanseEntitet);
         }
         for (ArbeidsforholdOverstyringEntitet overstyringEntitet : arbeidsforholdInformasjonEntitet.getOverstyringer()) {
@@ -235,17 +249,17 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     private void lagreOppgittOpptjening(OppgittOpptjening entitet) {
         entityManager.persist(entitet);
 
-        for (AnnenAktivitet aktivitet : entitet.getAnnenAktivitet()) {
+        for (OppgittAnnenAktivitet aktivitet : entitet.getAnnenAktivitet()) {
             entityManager.persist(aktivitet);
         }
 
-        for (EgenNæring næring : entitet.getEgenNæring()) {
+        for (OppgittEgenNæring næring : entitet.getEgenNæring()) {
             entityManager.persist(næring);
         }
 
         entitet.getFrilans().ifPresent(frilans -> {
             entityManager.persist(frilans);
-            for (Frilansoppdrag frilansoppdrag : frilans.getFrilansoppdrag()) {
+            for (OppgittFrilansoppdrag frilansoppdrag : frilans.getFrilansoppdrag()) {
                 entityManager.persist(frilansoppdrag);
             }
         });
@@ -371,7 +385,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     private Optional<ArbeidsforholdInformasjon> hentArbeidsforholdInformasjon(Optional<InntektArbeidYtelseGrunnlag> grunnlag) {
         if (grunnlag.isPresent()) {
             final Optional<InntektArbeidYtelseGrunnlagEntitet> inntektArbeidYtelseGrunnlag = Optional.of((InntektArbeidYtelseGrunnlagEntitet) grunnlag.get());
-            return inntektArbeidYtelseGrunnlag.flatMap(InntektArbeidYtelseGrunnlagEntitet::getInformasjon);
+            return inntektArbeidYtelseGrunnlag.flatMap(InntektArbeidYtelseGrunnlagEntitet::getArbeidsforholdInformasjon);
         }
         return Optional.empty();
     }
@@ -383,9 +397,9 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     }
 
     @Override
-    public InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForReferanse(GrunnlagReferanse grunnlagReferanse) {
+    public Optional<InntektArbeidYtelseGrunnlag> hentInntektArbeidYtelseForReferanse(GrunnlagReferanse grunnlagReferanse) {
         Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlag = getVersjonAvInntektArbeidYtelseForReferanseId(grunnlagReferanse);
-        return grunnlag.orElse(null);
+        return grunnlag.map(InntektArbeidYtelseGrunnlag.class::cast);
     }
 
     @Override

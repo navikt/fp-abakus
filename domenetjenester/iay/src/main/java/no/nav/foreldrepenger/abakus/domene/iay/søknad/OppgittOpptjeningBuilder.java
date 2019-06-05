@@ -2,15 +2,18 @@ package no.nav.foreldrepenger.abakus.domene.iay.søknad;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.AnnenAktivitet;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.EgenNæring;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.Frilans;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittAnnenAktivitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.UtenlandskVirksomhet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittUtenlandskVirksomhet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
@@ -24,15 +27,23 @@ public class OppgittOpptjeningBuilder {
     }
 
     public static OppgittOpptjeningBuilder ny() {
-        return new OppgittOpptjeningBuilder(new OppgittOpptjeningEntitet());
+        return ny(UUID.randomUUID(), LocalDateTime.now());
+    }
+    
+    public static OppgittOpptjeningBuilder ny(UUID eksternReferanse, LocalDateTime opprettetTidspunktOriginalt) {
+        return new OppgittOpptjeningBuilder(new OppgittOpptjeningEntitet(eksternReferanse, opprettetTidspunktOriginalt));
     }
 
-    public OppgittOpptjeningBuilder leggTilAnnenAktivitet(AnnenAktivitet annenAktivitet) {
+    public static OppgittOpptjeningBuilder ny(UUID eksternReferanse, OffsetDateTime opprettetTidspunktOriginalt) {
+        return new OppgittOpptjeningBuilder(new OppgittOpptjeningEntitet(eksternReferanse, opprettetTidspunktOriginalt.toLocalDateTime()));
+    }
+
+    public OppgittOpptjeningBuilder leggTilAnnenAktivitet(OppgittAnnenAktivitet annenAktivitet) {
         this.kladd.leggTilAnnenAktivitet(annenAktivitet);
         return this;
     }
 
-    public OppgittOpptjeningBuilder leggTilFrilansOpplysninger(Frilans frilans) {
+    public OppgittOpptjeningBuilder leggTilFrilansOpplysninger(OppgittFrilans frilans) {
         this.kladd.leggTilFrilans(frilans);
         return this;
     }
@@ -46,21 +57,20 @@ public class OppgittOpptjeningBuilder {
         this.kladd.leggTilOppgittArbeidsforhold(builder.build());
         return this;
     }
-
-
+    
     public OppgittOpptjening build() {
         return kladd;
     }
 
     public static class EgenNæringBuilder {
-        private final EgenNæringEntitet entitet;
+        private final OppgittEgenNæringEntitet entitet;
 
-        private EgenNæringBuilder(EgenNæringEntitet entitet) {
+        private EgenNæringBuilder(OppgittEgenNæringEntitet entitet) {
             this.entitet = entitet;
         }
 
         public static EgenNæringBuilder ny() {
-            return new EgenNæringBuilder(new EgenNæringEntitet());
+            return new EgenNæringBuilder(new OppgittEgenNæringEntitet());
         }
 
         public EgenNæringBuilder medPeriode(DatoIntervallEntitet periode) {
@@ -118,12 +128,12 @@ public class OppgittOpptjeningBuilder {
             return this;
         }
 
-        public EgenNæringBuilder medUtenlandskVirksomhet(UtenlandskVirksomhet utenlandskVirksomhet) {
+        public EgenNæringBuilder medUtenlandskVirksomhet(OppgittUtenlandskVirksomhet utenlandskVirksomhet) {
             this.entitet.setUtenlandskVirksomhet(utenlandskVirksomhet);
             return this;
         }
 
-        public EgenNæring build() {
+        public OppgittEgenNæring build() {
             return entitet;
         }
 
@@ -160,7 +170,7 @@ public class OppgittOpptjeningBuilder {
             return this;
         }
 
-        public OppgittArbeidsforholdBuilder medUtenlandskVirksomhet(UtenlandskVirksomhet utenlandskVirksomhet) {
+        public OppgittArbeidsforholdBuilder medUtenlandskVirksomhet(OppgittUtenlandskVirksomhet utenlandskVirksomhet) {
             this.entitet.setUtenlandskVirksomhet(utenlandskVirksomhet);
             return this;
         }

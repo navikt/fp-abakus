@@ -17,7 +17,7 @@ public class InntektsKilde extends Kodeliste {
     public static final InntektsKilde INNTEKT_SAMMENLIGNING = new InntektsKilde("INNTEKT_SAMMENLIGNING"); //$NON-NLS-1$
     public static final InntektsKilde SIGRUN = new InntektsKilde("SIGRUN"); //$NON-NLS-1$
 
-    private InntektsKilde(String kode) {
+    public InntektsKilde(String kode) {
         super(kode, DISCRIMINATOR);
     }
 

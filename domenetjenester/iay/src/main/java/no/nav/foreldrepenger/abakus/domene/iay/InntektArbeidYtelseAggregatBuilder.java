@@ -1,9 +1,14 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanseEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
@@ -11,7 +16,9 @@ import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
@@ -27,24 +34,22 @@ public class InntektArbeidYtelseAggregatBuilder {
 
     private final InntektArbeidYtelseAggregatEntitet kladd;
     private final VersjonType versjon;
-    private boolean oppdaterer;
+    private final List<ArbeidsforholdReferanseEntitet> nyeInternArbeidsforholdReferanser = new ArrayList<>();
 
-    private InntektArbeidYtelseAggregatBuilder(InntektArbeidYtelseAggregatEntitet kladd, boolean oppdaterer, VersjonType versjon) {
+    private InntektArbeidYtelseAggregatBuilder(InntektArbeidYtelseAggregatEntitet kladd, VersjonType versjon) {
         this.kladd = kladd;
-        this.oppdaterer = oppdaterer;
         this.versjon = versjon;
     }
 
-    private static InntektArbeidYtelseAggregatBuilder ny(VersjonType versjon) {
-        return new InntektArbeidYtelseAggregatBuilder(new InntektArbeidYtelseAggregatEntitet(), false, versjon);
-    }
-
-    private static InntektArbeidYtelseAggregatBuilder oppdatere(InntektArbeidYtelseAggregat oppdatere, VersjonType versjon) {
-        return new InntektArbeidYtelseAggregatBuilder(new InntektArbeidYtelseAggregatEntitet(oppdatere), true, versjon);
-    }
-
     public static InntektArbeidYtelseAggregatBuilder oppdatere(Optional<InntektArbeidYtelseAggregat> oppdatere, VersjonType versjon) {
-        return oppdatere.map(aggregat -> oppdatere(aggregat, versjon)).orElseGet(() -> ny(versjon));
+        return builderFor(oppdatere, UUID.randomUUID(), LocalDateTime.now(), versjon);
+    }
+
+    public static InntektArbeidYtelseAggregatBuilder builderFor(Optional<InntektArbeidYtelseAggregat> kopierDataFra,
+                                                                UUID angittReferanse, LocalDateTime angittTidspunkt, VersjonType versjon) {
+        return kopierDataFra
+            .map(kopier -> new InntektArbeidYtelseAggregatBuilder(new InntektArbeidYtelseAggregatEntitet(angittReferanse, angittTidspunkt, kopier), versjon))
+            .orElseGet(() -> new InntektArbeidYtelseAggregatBuilder(new InntektArbeidYtelseAggregatEntitet(angittReferanse, angittTidspunkt), versjon));
     }
 
     /**
@@ -92,6 +97,23 @@ public class InntektArbeidYtelseAggregatBuilder {
         return this;
     }
 
+    public void medNyInternArbeidsforholdRef(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef nyRef, EksternArbeidsforholdRef eksternReferanse) {
+        nyeInternArbeidsforholdReferanser.add(new ArbeidsforholdReferanseEntitet(arbeidsgiver, nyRef, eksternReferanse));
+    }
+
+    public InternArbeidsforholdRef medNyInternArbeidsforholdRef(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef eksternReferanse) {
+        if (eksternReferanse == null || eksternReferanse.getReferanse() == null) {
+            return InternArbeidsforholdRef.nullRef();
+        }
+        InternArbeidsforholdRef nyRef = InternArbeidsforholdRef.nyRef();
+        nyeInternArbeidsforholdReferanser.add(new ArbeidsforholdReferanseEntitet(arbeidsgiver, nyRef, eksternReferanse));
+        return nyRef;
+    }
+
+    public List<ArbeidsforholdReferanseEntitet> getNyeInternArbeidsforholdReferanser() {
+        return nyeInternArbeidsforholdReferanser;
+    }
+    
     /**
      * Oppretter builder for aktiviteter for en gitt aktør. Baserer seg på en kopi av forrige innslag for aktøren hvis det eksisterer.
      *
@@ -131,19 +153,22 @@ public class InntektArbeidYtelseAggregatBuilder {
         return this.kladd;
     }
 
-    public boolean isOppdaterer() {
-        return oppdaterer;
-    }
-
     VersjonType getVersjon() {
         return versjon;
     }
+    
+    void oppdaterArbeidsforholdReferanseEtterErstatting(AktørId søker, Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef gammelRef,
+                                                        InternArbeidsforholdRef nyRef) {
+        oppdaterArbeidsforholdReferanseEtterErstatting(søker, arbeidsgiver, ArbeidsforholdRef.ref(gammelRef.getReferanse()), ArbeidsforholdRef.ref(nyRef.getReferanse()));
+    }
 
+    @Deprecated(forRemoval=true)
     void oppdaterArbeidsforholdReferanseEtterErstatting(AktørId søker, Arbeidsgiver arbeidsgiver, ArbeidsforholdRef gammelRef, ArbeidsforholdRef nyRef) {
         final AktørArbeidBuilder builder = getAktørArbeidBuilder(søker);
         if (builder.getErOppdatering()) {
             if (eksistererIkkeFraFør(arbeidsgiver, gammelRef, builder)) {
-                final YrkesaktivitetBuilder yrkesaktivitetBuilder = builder.getYrkesaktivitetBuilderForNøkkelAvType(Opptjeningsnøkkel.forArbeidsforholdIdMedArbeidgiver(gammelRef, arbeidsgiver),
+                final YrkesaktivitetBuilder yrkesaktivitetBuilder = builder.getYrkesaktivitetBuilderForNøkkelAvType(
+                    Opptjeningsnøkkel.forArbeidsforholdIdMedArbeidgiver(gammelRef, arbeidsgiver),
                     ArbeidType.AA_REGISTER_TYPER);
                 if (yrkesaktivitetBuilder.getErOppdatering()) {
                     yrkesaktivitetBuilder.medArbeidsforholdId(nyRef);
@@ -251,7 +276,6 @@ public class InntektArbeidYtelseAggregatBuilder {
             return oppdatere.map(AktørInntektBuilder::oppdatere).orElseGet(AktørInntektBuilder::ny);
         }
 
-
         private void medAktørId(AktørId aktørId) {
             this.aktørInntektEntitet.setAktørId(aktørId);
         }
@@ -327,7 +351,8 @@ public class InntektArbeidYtelseAggregatBuilder {
             return kladd.getYtelseBuilderForType(fagsystem, type, sakId);
         }
 
-        public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer sakId, DatoIntervallEntitet periode, Optional<LocalDate> tidligsteAnvistFom) {
+        public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer sakId, DatoIntervallEntitet periode,
+                                                        Optional<LocalDate> tidligsteAnvistFom) {
             return kladd.getYtelseBuilderForType(fagsystem, type, sakId, periode, tidligsteAnvistFom);
         }
 
@@ -363,5 +388,3 @@ public class InntektArbeidYtelseAggregatBuilder {
     }
 
 }
-
-

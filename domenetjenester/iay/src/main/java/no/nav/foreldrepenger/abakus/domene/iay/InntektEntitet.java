@@ -46,7 +46,7 @@ public class InntektEntitet extends BaseEntitet implements Inntekt, IndexKey {
     private AktørInntektEntitet aktørInntekt;
 
     @Embedded
-    private ArbeidsgiverEntitet arbeidsgiver;
+    private Arbeidsgiver arbeidsgiver;
 
     @ManyToOne
     @JoinColumnsOrFormulas({
@@ -71,7 +71,7 @@ public class InntektEntitet extends BaseEntitet implements Inntekt, IndexKey {
      */
     InntektEntitet(Inntekt inntektMal) {
         this.inntektsKilde = inntektMal.getInntektsKilde();
-        this.arbeidsgiver = (ArbeidsgiverEntitet) inntektMal.getArbeidsgiver();
+        this.arbeidsgiver = inntektMal.getArbeidsgiver();
         this.inntektspost = inntektMal.getInntektspost().stream().map(ip -> {
             InntektspostEntitet inntektspostEntitet = new InntektspostEntitet(ip);
             inntektspostEntitet.setInntekt(this);
@@ -111,11 +111,11 @@ public class InntektEntitet extends BaseEntitet implements Inntekt, IndexKey {
     }
 
     @Override
-    public ArbeidsgiverEntitet getArbeidsgiver() {
+    public Arbeidsgiver getArbeidsgiver() {
         return arbeidsgiver;
     }
 
-    void setArbeidsgiver(ArbeidsgiverEntitet arbeidsgiver) {
+    void setArbeidsgiver(Arbeidsgiver arbeidsgiver) {
         this.arbeidsgiver = arbeidsgiver;
     }
 
@@ -199,6 +199,14 @@ public class InntektEntitet extends BaseEntitet implements Inntekt, IndexKey {
                 return inntektspostEntitet;
             }
             throw new IllegalStateException();
+        }
+
+        public InntektspostBuilder medInntektspostType(String kode) {
+            return medInntektspostType(new InntektspostType(kode));
+        }
+
+        public InntektspostBuilder medSkatteOgAvgiftsregelType(String kode) {
+            return medSkatteOgAvgiftsregelType(new SkatteOgAvgiftsregelType(kode));
         }
     }
 }

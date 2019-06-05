@@ -19,7 +19,6 @@ import javax.ws.rs.core.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
-import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsgiverEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.arbeidsforhold.ArbeidsforholdDtoTjeneste;
@@ -85,15 +84,17 @@ public class ArbeidsforholdRestTjeneste {
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response referanseForArbeidsforhold(@NotNull @TilpassetAbacAttributt(supplierClass = ArbeidsforholdReferanseAbacDataSupplier.class) @Valid ArbeidsforholdReferanse request) {
-        KoblingReferanse referanse = new KoblingReferanse(UUID.fromString(request.getReferanse().getReferanse()));
+        KoblingReferanse referanse = new KoblingReferanse(UUID.fromString(request.getKoblingReferanse().getReferanse()));
         KoblingLås koblingLås = koblingTjeneste.taSkrivesLås(referanse);
 
         ArbeidsforholdInformasjon arbeidsforholdInformasjon = iayTjeneste.hentArbeidsforholdInformasjonForKobling(referanse);
 
+        // FIXME (FC) : kommer abakus referanse virkelig her på request?
+        String abakusReferanse = request.getArbeidsforholdId().getAbakusReferanse();
         ArbeidsforholdRef arbeidsforholdRef = arbeidsforholdInformasjon.finnEllerOpprett(tilArbeidsgiver(request),
-            ArbeidsforholdRef.ref(request.getArbeidsforholdId()));
+            ArbeidsforholdRef.ref(abakusReferanse));
 
-        var dto = dtoTjeneste.mapArbeidsforhold(request.getArbeidsgiver(), request.getArbeidsforholdId(), arbeidsforholdRef.getReferanse());
+        var dto = dtoTjeneste.mapArbeidsforhold(request.getArbeidsgiver(), abakusReferanse, arbeidsforholdRef.getReferanse());
         koblingTjeneste.oppdaterLåsVersjon(koblingLås);
 
         return Response.ok(dto).build();
@@ -102,9 +103,9 @@ public class ArbeidsforholdRestTjeneste {
     private Arbeidsgiver tilArbeidsgiver(@Valid @NotNull ArbeidsforholdReferanse request) {
         var arbeidsgiver = request.getArbeidsgiver();
         if (arbeidsgiver.getErOrganisasjon()) {
-            return ArbeidsgiverEntitet.virksomhet(virksomhetTjeneste.hentOgLagreOrganisasjon(arbeidsgiver.getIdent()));
+            return Arbeidsgiver.virksomhet(virksomhetTjeneste.hentOgLagreOrganisasjon(arbeidsgiver.getIdent()));
         }
-        return ArbeidsgiverEntitet.person(new AktørId(arbeidsgiver.getIdent()));
+        return Arbeidsgiver.person(new AktørId(arbeidsgiver.getIdent()));
     }
 
     private class AktørDatoRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {

@@ -18,7 +18,7 @@ public class YtelseStatus extends Kodeliste {
         // Hibernate trenger den
     }
 
-    private YtelseStatus(String kode) {
+    public YtelseStatus(String kode) {
         super(kode, DISCRIMINATOR);
     }
 }

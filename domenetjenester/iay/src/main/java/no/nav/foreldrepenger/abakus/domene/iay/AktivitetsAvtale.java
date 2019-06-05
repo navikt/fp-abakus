@@ -3,25 +3,10 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import no.nav.foreldrepenger.abakus.typer.AntallTimer;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public interface AktivitetsAvtale {
-
-    /**
-     * For timelønnede så vil antallet timer i arbeidsavtalen være satt her
-     *
-     * @return antall timer
-     */
-    AntallTimer getAntallTimer();
-
-    /**
-     * Antall timer som tilsvarer fulltid (f.eks 40 timer)
-     *
-     * @return antall timer
-     */
-    AntallTimer getAntallTimerFulltid();
 
     /**
      * Avtalt prosentsats i avtalen
@@ -74,9 +59,6 @@ public interface AktivitetsAvtale {
     Yrkesaktivitet getYrkesaktivitet();
 
     boolean erAnsettelsesPeriode();
-
-    /** Returner {@link #getAntallTimer()} (skalert) eller null.*/
-    BigDecimal getAntallTimerVerdi();
 
     /** Returner {@link #getProsentsats()} (skalert) eller null.*/
     BigDecimal getProsentsatsVerdi();

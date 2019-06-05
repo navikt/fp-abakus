@@ -15,10 +15,10 @@
     <!-- Oppgitt opptjening fra søknad-->
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittArbeidsforholdEntitet"/>
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.EgenNæringEntitet"/>
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.AnnenAktivitetEntitet"/>
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.FrilansEntitet"/>
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.FrilansoppdragEntitet"/>
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittEgenNæringEntitet"/>
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittAnnenAktivitetEntitet"/>
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittFrilansEntitet"/>
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittFrilansoppdragEntitet"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType"/>
 
 </entity-mappings>

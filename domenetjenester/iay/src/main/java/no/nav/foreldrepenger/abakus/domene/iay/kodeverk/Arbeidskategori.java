@@ -34,7 +34,7 @@ public class Arbeidskategori extends Kodeliste {
         // Hibernate trenger en
     }
 
-    private Arbeidskategori(String kode) {
+    public Arbeidskategori(String kode) {
         super(kode, DISCRIMINATOR);
     }
 }

@@ -20,7 +20,7 @@ public class InntektsmeldingInnsendingsårsak extends Kodeliste {
         //for Hibernate
     }
 
-    private InntektsmeldingInnsendingsårsak(String kode) {
+    public InntektsmeldingInnsendingsårsak(String kode) {
         super(kode, DISCRIMINATOR);
     }
 

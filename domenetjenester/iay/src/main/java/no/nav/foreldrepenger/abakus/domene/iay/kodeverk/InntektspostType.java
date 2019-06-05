@@ -16,7 +16,7 @@ public class InntektspostType extends Kodeliste{
     public static final InntektspostType SELVSTENDIG_NÆRINGSDRIVENDE = new InntektspostType("SELVSTENDIG_NÆRINGSDRIVENDE");//$NON-NLS-1$
     public static final InntektspostType NÆRING_FISKE_FANGST_FAMBARNEHAGE = new InntektspostType("NÆRING_FISKE_FANGST_FAMBARNEHAGE");//$NON-NLS-1$
 
-    private InntektspostType(String kode) {
+    public InntektspostType(String kode) {
         super(kode, DISCRIMINATOR);
     }
 

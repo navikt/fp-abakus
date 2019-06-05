@@ -67,8 +67,6 @@ class ByggYrkesaktiviteterTjeneste {
         return builder
             .getAktivitetsAvtaleBuilder()
             .medProsentsats(arbeidsavtale.getStillingsprosent())
-            .medAntallTimer(arbeidsavtale.getAvtaltArbeidstimerPerUke())
-            .medAntallTimerFulltid(arbeidsavtale.getBeregnetAntallTimerPrUke())
             .medSisteLønnsendringsdato(arbeidsavtale.getSisteLønnsendringsdato())
             .medPeriode(DatoIntervallEntitet.fraOgMed(fom));
     }
@@ -144,8 +142,6 @@ class ByggYrkesaktiviteterTjeneste {
         YrkesaktivitetEntitet.AktivitetsAvtaleBuilder aktivitetsAvtaleBuilder = yrkesaktivitetBuilder.getAktivitetsAvtaleBuilder(periode, arbeidsavtale.getErAnsettelsesPerioden());
         aktivitetsAvtaleBuilder
             .medProsentsats(arbeidsavtale.getStillingsprosent())
-            .medAntallTimer(arbeidsavtale.getAvtaltArbeidstimerPerUke())
-            .medAntallTimerFulltid(arbeidsavtale.getBeregnetAntallTimerPrUke())
             .medSisteLønnsendringsdato(arbeidsavtale.getSisteLønnsendringsdato())
             .medPeriode(periode);
 

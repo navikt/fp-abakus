@@ -4,45 +4,63 @@ import java.util.Objects;
 import java.util.Optional;
 
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
 public class Opptjeningsnøkkel {
 
-    private ArbeidsforholdRef arbeidsforholdId;
+    private InternArbeidsforholdRef arbeidsforholdId;
     private String orgNummer;
     private String aktørId;
 
     public Opptjeningsnøkkel(Yrkesaktivitet yrkesaktivitet) {
-        this(yrkesaktivitet.getArbeidsforholdRef().orElse(null), yrkesaktivitet.getArbeidsgiver());
+        this(yrkesaktivitet.getArbeidsforholdRef(), yrkesaktivitet.getArbeidsgiver());
     }
 
     public Opptjeningsnøkkel(Arbeidsgiver arbeidsgiver) {
-        this(null, arbeidsgiver);
+        this((InternArbeidsforholdRef) null, arbeidsgiver);
     }
 
+    @Deprecated(forRemoval=true)
     public Opptjeningsnøkkel(ArbeidsforholdRef arbeidsforholdId, Arbeidsgiver arbeidsgiver) {
         this(arbeidsforholdId,
             arbeidsgiver.getErVirksomhet() ? arbeidsgiver.getIdentifikator() : null,
             arbeidsgiver.getErVirksomhet() ? null : arbeidsgiver.getIdentifikator());
     }
-
+    
+    @Deprecated(forRemoval=true)
     public Opptjeningsnøkkel(ArbeidsforholdRef arbeidsforholdId, String orgNummer, String aktørId) {
-        if (arbeidsforholdId == null && orgNummer == null && aktørId == null) {
-            throw new IllegalArgumentException("Minst en av arbeidsforholdId, orgnummer og aktørId må vere ulik null");
+        this(InternArbeidsforholdRef.ref(arbeidsforholdId==null?null:arbeidsforholdId.getReferanse()), orgNummer, aktørId);
+    }
+
+    public Opptjeningsnøkkel(InternArbeidsforholdRef arbeidsforholdId, Arbeidsgiver arbeidsgiver) {
+        this(arbeidsforholdId,
+            arbeidsgiver.getErVirksomhet() ? arbeidsgiver.getIdentifikator() : null,
+            arbeidsgiver.getErVirksomhet() ? null : arbeidsgiver.getIdentifikator());
+    }
+    
+    public Opptjeningsnøkkel(InternArbeidsforholdRef internArbeidsforholdRef, String orgNummer, String aktørId) {
+        if (internArbeidsforholdRef == null && orgNummer == null && aktørId == null) {
+            throw new IllegalArgumentException("Minst en av internArbeidsforholdRef, orgnummer og aktørId må vere ulik null");
         }
-        this.arbeidsforholdId = arbeidsforholdId;
+        this.arbeidsforholdId = internArbeidsforholdRef;
         this.orgNummer = orgNummer;
         this.aktørId = aktørId;
     }
 
     public static Opptjeningsnøkkel forOrgnummer(String orgNummer) {
-        return new Opptjeningsnøkkel(null, orgNummer, null);
+        return new Opptjeningsnøkkel((InternArbeidsforholdRef) null, orgNummer, null);
     }
 
     public static Opptjeningsnøkkel forArbeidsgiver(Arbeidsgiver arbeidsgiver) {
         return new Opptjeningsnøkkel(arbeidsgiver);
     }
 
+    @Deprecated(forRemoval=true)
     public static Opptjeningsnøkkel forArbeidsforholdIdMedArbeidgiver(ArbeidsforholdRef arbeidsforholdId, Arbeidsgiver arbeidsgiver) {
+        return new Opptjeningsnøkkel(arbeidsforholdId, arbeidsgiver);
+    }
+    
+    public static Opptjeningsnøkkel forArbeidsforholdIdMedArbeidgiver(InternArbeidsforholdRef arbeidsforholdId, Arbeidsgiver arbeidsgiver) {
         return new Opptjeningsnøkkel(arbeidsforholdId, arbeidsgiver);
     }
 
@@ -73,7 +91,7 @@ public class Opptjeningsnøkkel {
         return this.arbeidsforholdId != null && this.arbeidsforholdId.getReferanse() != null;
     }
 
-    public Optional<ArbeidsforholdRef> getArbeidsforholdRef() {
+    public Optional<InternArbeidsforholdRef> getArbeidsforholdRef() {
         return Optional.ofNullable(arbeidsforholdId);
     }
 
@@ -172,19 +190,19 @@ public class Opptjeningsnøkkel {
         ARBEIDSFORHOLD_ID {
             @Override
             Opptjeningsnøkkel nyNøkkel(String id) {
-                return new Opptjeningsnøkkel(ArbeidsforholdRef.ref(id), null, null);
+                return new Opptjeningsnøkkel(InternArbeidsforholdRef.ref(id), null, null);
             }
         },
         ORG_NUMMER {
             @Override
             Opptjeningsnøkkel nyNøkkel(String id) {
-                return new Opptjeningsnøkkel(null, id, null);
+                return new Opptjeningsnøkkel((InternArbeidsforholdRef) null, id, null);
             }
         },
         AKTØR_ID {
             @Override
             Opptjeningsnøkkel nyNøkkel(String id) {
-                return new Opptjeningsnøkkel(null, null, id);
+                return new Opptjeningsnøkkel((InternArbeidsforholdRef) null, null, id);
             }
         };
 
