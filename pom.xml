@@ -149,18 +149,6 @@
 
             <!-- Prosjektinterne -->
             <dependency>
-                <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-                <artifactId>felles-integrasjon-bom</artifactId>
-                <version>${felles.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-                        <artifactId>felles-integrasjon-jms</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>3.8.0</version>

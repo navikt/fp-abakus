@@ -87,12 +87,6 @@
             <artifactId>migreringer</artifactId>
         </dependency>
 
-        <!-- Foreldrepengeprosjektet -->
-        <dependency>
-            <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-            <artifactId>felles-integrasjon-bom</artifactId>
-        </dependency>
-
         <!-- REST + WebService -->
         <dependency>
             <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
