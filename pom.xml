@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>no.nav.foreldrepenger.abakus</groupId>
-    <artifactId>abakus</artifactId>
+    <artifactId>fpabakus</artifactId>
     <packaging>pom</packaging>
     <name>Abakus :: Root</name>
     <version>${revision}${sha1}${changelist}</version>
