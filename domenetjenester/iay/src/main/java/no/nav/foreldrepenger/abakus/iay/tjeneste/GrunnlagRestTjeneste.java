@@ -44,7 +44,7 @@ public class GrunnlagRestTjeneste {
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private KoblingTjeneste koblingTjeneste;
 
-    GrunnlagRestTjeneste() {
+    public GrunnlagRestTjeneste() {
         // for CDI
     }
 
