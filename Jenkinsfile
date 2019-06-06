@@ -144,7 +144,7 @@ import no.nav.jenkins.*
                       }
                       def exitCode=sh returnStatus: true, script: "k rollout status -n${naisNamespace} deployment/${ARTIFACTID}"
                       echo "exit code is $exitCode"
-
+                      /*
                       if(exitCode == 0) {
                           def veraPayload = "{\"environment\": \"${MILJO}\",\"application\": \"${ARTIFACTID}\",\"version\": \"${version}\",\"deployedBy\": \"Jenkins\"}"
                           def response = httpRequest([
@@ -155,7 +155,8 @@ import no.nav.jenkins.*
                                   requestBody           : veraPayload,
                                   ignoreSslErrors       : true
                           ])
-                      }                      
+                      }
+                      */
                   }
               }
           }
