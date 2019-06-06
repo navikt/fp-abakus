@@ -24,8 +24,8 @@ class VedtakStreamKafkaProperties {
                                 @KonfigVerdi("kafka.schema.registry.url") String schemaRegistryUrl,
                                 @KonfigVerdi("systembruker.username") String username,
                                 @KonfigVerdi("systembruker.password") String password,
-                                @KonfigVerdi(value = "nav.truststore.path", required = false) String trustStorePath,
-                                @KonfigVerdi(value = "nav.truststore.password", required = false) String trustStorePassword) {
+                                @KonfigVerdi(value = "javax.net.ssl.trustStore", required = false) String trustStorePath,
+                                @KonfigVerdi(value = "javax.net.ssl.trustStorePassword", required = false) String trustStorePassword) {
         this.trustStorePath = trustStorePath;
         this.trustStorePassword = trustStorePassword;
         this.topic = TopicManifest.FATTET_VEDTAK;
