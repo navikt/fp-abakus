@@ -1,15 +1,20 @@
 package no.nav.foreldrepenger.abakus.jetty;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.sql.DataSource;
 
 import org.eclipse.jetty.plus.jndi.EnvEntry;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.eclipse.jetty.webapp.MetaData;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.abakus.app.konfig.ApplicationConfig;
 import no.nav.foreldrepenger.abakus.jetty.db.DatabaseScript;
@@ -19,6 +24,8 @@ import no.nav.foreldrepenger.abakus.jetty.db.EnvironmentClass;
 import no.nav.vedtak.isso.IssoApplication;
 
 public class JettyServer extends AbstractJettyServer {
+
+    private static final Logger log = LoggerFactory.getLogger(JettyServer.class);
 
     public JettyServer() {
         this(new JettyWebKonfigurasjon());
@@ -90,7 +97,13 @@ public class JettyServer extends AbstractJettyServer {
             // til å ha en admin bruker som gjør migrering og en annen som gjør CRUD operasjoner
             initSql = null;
         }
-        DatabaseScript.migrate(DatasourceUtil.createDatasource("defaultDS", DatasourceRole.ADMIN, environmentClass), initSql);
+        DataSource migreringDs = DatasourceUtil.createDatasource("defaultDS", DatasourceRole.ADMIN, environmentClass);
+        try {
+            DatabaseScript.migrate(migreringDs, initSql);
+            migreringDs.getConnection().close();
+        } catch (SQLException e) {
+            log.warn("Klarte ikke stenge connection etter migrering", e);
+        }
     }
 
     protected EnvironmentClass getEnvironmentClass() {
