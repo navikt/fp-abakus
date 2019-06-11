@@ -4,6 +4,7 @@ import static no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.Arbeidsforh
 import static no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -98,8 +99,8 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
     }
 
     InntektArbeidYtelseGrunnlagEntitet(InntektArbeidYtelseGrunnlag grunnlag) {
-        this(UUID.randomUUID());
-        
+        this(UUID.randomUUID(), grunnlag.getOpprettetTidspunkt());
+
         // NB! skal aldri lage ny versjon av oppgitt opptjening!
         grunnlag.getOppgittOpptjening().ifPresent(kopiAvOppgittOpptjening -> this.setOppgittOpptjening((OppgittOpptjeningEntitet) kopiAvOppgittOpptjening));
         ((InntektArbeidYtelseGrunnlagEntitet) grunnlag).getRegisterVersjon()
@@ -107,13 +108,18 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
         grunnlag.getSaksbehandletVersjon()
             .ifPresent(nySaksbehandletFørVersjon -> this.setSaksbehandlet((InntektArbeidYtelseAggregatEntitet) nySaksbehandletFørVersjon));
         grunnlag.getInntektsmeldinger().ifPresent(this::setInntektsmeldinger);
-        ((InntektArbeidYtelseGrunnlagEntitet) grunnlag).getArbeidsforholdInformasjon().ifPresent(info -> this.setInformasjon((ArbeidsforholdInformasjonEntitet) info));
-        
-        
+        ((InntektArbeidYtelseGrunnlagEntitet) grunnlag).getArbeidsforholdInformasjon()
+            .ifPresent(info -> this.setInformasjon((ArbeidsforholdInformasjonEntitet) info));
+
     }
 
-    InntektArbeidYtelseGrunnlagEntitet(UUID grunnlagReferanse) {
-        this.grunnlagReferanse = new GrunnlagReferanse(grunnlagReferanse);
+    InntektArbeidYtelseGrunnlagEntitet(GrunnlagReferanse grunnlagReferanse, LocalDateTime opprettetTidspunkt) {
+        this.grunnlagReferanse = Objects.requireNonNull(grunnlagReferanse, "grunnlagReferanse");
+        setOpprettetTidspunkt(opprettetTidspunkt);
+    }
+
+    InntektArbeidYtelseGrunnlagEntitet(UUID grunnlagReferanse, LocalDateTime opprettetTidspunkt) {
+        this(new GrunnlagReferanse(Objects.requireNonNull(grunnlagReferanse, "grunnlagReferanse")), opprettetTidspunkt);
     }
 
     @Override

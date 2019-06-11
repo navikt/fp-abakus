@@ -61,6 +61,7 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
     @ChangeTracked
     private String navnArbeidsgiverUtland;
 
+    /** Kan være privat eller virksomhet som arbeidsgiver. Dersom {@link #arbeidType} = 'NÆRING', er denne null. */
     @Embedded
     @ChangeTracked
     private Arbeidsgiver arbeidsgiver;

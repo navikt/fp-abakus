@@ -53,6 +53,8 @@ public class MapOppgittOpptjening {
         }
 
         private OppgittFrilansDto mapFrilans(OppgittFrilans frilans) {
+            if(frilans == null) return null;
+            
             var frilansoppdrag = frilans.getFrilansoppdrag().stream().map(this::mapFrilansoppdrag).collect(Collectors.toList());
             var frilansDto = new OppgittFrilansDto(frilansoppdrag)
                 .medErNyoppstartet(frilans.getErNyoppstartet())
@@ -62,6 +64,8 @@ public class MapOppgittOpptjening {
         }
 
         private OppgittArbeidsforholdDto mapArbeidsforhold(OppgittArbeidsforhold arbeidsforhold) {
+            if(arbeidsforhold == null) return null;
+            
             DatoIntervallEntitet periode1 = arbeidsforhold.getPeriode();
             var periode = new Periode(periode1.getFomDato(), periode1.getTomDato());
             var arbeidType = new ArbeidType(arbeidsforhold.getArbeidType().getKode());
@@ -79,6 +83,8 @@ public class MapOppgittOpptjening {
         }
 
         private OppgittEgenNæringDto mapEgenNæring(OppgittEgenNæring egenNæring) {
+            if (egenNæring == null) return null;
+            
             DatoIntervallEntitet periode1 = egenNæring.getPeriode();
             var periode = new Periode(periode1.getFomDato(), periode1.getTomDato());
 
@@ -109,12 +115,16 @@ public class MapOppgittOpptjening {
         }
 
         private OppgittFrilansoppdragDto mapFrilansoppdrag(OppgittFrilansoppdrag frilansoppdrag) {
+            if(frilansoppdrag == null) return null;
+            
             var periode = new Periode(frilansoppdrag.getPeriode().getFomDato(), frilansoppdrag.getPeriode().getTomDato());
             var oppdragsgiver = frilansoppdrag.getOppdragsgiver();
             return new OppgittFrilansoppdragDto(periode, oppdragsgiver);
         }
 
         private OppgittAnnenAktivitetDto mapAnnenAktivitet(OppgittAnnenAktivitet annenAktivitet) {
+            if(annenAktivitet == null) return null;
+            
             var periode = new Periode(annenAktivitet.getPeriode().getFomDato(), annenAktivitet.getPeriode().getTomDato());
             var arbeidType = new ArbeidType(annenAktivitet.getArbeidType().getKode());
             return new OppgittAnnenAktivitetDto(periode, arbeidType);
@@ -124,22 +134,22 @@ public class MapOppgittOpptjening {
 
     private class MapFraDto {
 
-        public OppgittOpptjeningBuilder map(OppgittOpptjeningDto oppgittOpptjening) {
-            if(oppgittOpptjening == null) return null;
+        public OppgittOpptjeningBuilder map(OppgittOpptjeningDto dto) {
+            if(dto == null) return null;
             
-            var oppgittOpptjeningEksternReferanse = UUID.fromString(oppgittOpptjening.getEksternReferanse().getReferanse());
-            var builder = OppgittOpptjeningBuilder.ny(oppgittOpptjeningEksternReferanse, oppgittOpptjening.getOpprettetTidspunkt());
+            var oppgittOpptjeningEksternReferanse = UUID.fromString(dto.getEksternReferanse().getReferanse());
+            var builder = OppgittOpptjeningBuilder.ny(oppgittOpptjeningEksternReferanse, dto.getOpprettetTidspunkt());
 
-            var annenAktivitet = mapEach(oppgittOpptjening.getAnnenAktivitet(), this::mapAnnenAktivitet);
+            var annenAktivitet = mapEach(dto.getAnnenAktivitet(), this::mapAnnenAktivitet);
             annenAktivitet.forEach(builder::leggTilAnnenAktivitet);
 
-            var arbeidsforhold = mapEach(oppgittOpptjening.getArbeidsforhold(), this::mapOppgittArbeidsforhold);
+            var arbeidsforhold = mapEach(dto.getArbeidsforhold(), this::mapOppgittArbeidsforhold);
             arbeidsforhold.forEach(builder::leggTilOppgittArbeidsforhold);
 
-            var egenNæring = mapEach(oppgittOpptjening.getEgenNæring(), this::mapEgenNæring);
+            var egenNæring = mapEach(dto.getEgenNæring(), this::mapEgenNæring);
             builder.leggTilEgneNæringer(egenNæring);
 
-            var frilans = mapFrilans(oppgittOpptjening.getFrilans());
+            var frilans = mapFrilans(dto.getFrilans());
             builder.leggTilFrilansOpplysninger(frilans);
             
 
@@ -154,10 +164,14 @@ public class MapOppgittOpptjening {
         }
 
         private OppgittFrilans mapFrilans(OppgittFrilansDto dto) {
+            if(dto == null) return null;
+            
             var frilans = new OppgittFrilansEntitet();
+            
             frilans.setErNyoppstartet(dto.isErNyoppstartet());
-            frilans.setHarInntektFraFosterhjem(dto.isHarInntektFraFosterhjem());
             frilans.setHarNærRelasjon(dto.isHarNærRelasjon());
+            frilans.setHarInntektFraFosterhjem(dto.isHarInntektFraFosterhjem());
+            
             var frilansoppdrag = mapEach(dto.getFrilansoppdrag(), 
                 f -> new OppgittFrilansoppdragEntitet(f.getOppdragsgiver(), DatoIntervallEntitet.fraOgMedTilOgMed(f.getPeriode().getFom(), f.getPeriode().getTom())));
             frilans.setFrilansoppdrag(frilansoppdrag);
@@ -165,6 +179,8 @@ public class MapOppgittOpptjening {
         }
 
         private EgenNæringBuilder mapEgenNæring(OppgittEgenNæringDto dto) {
+            if(dto == null) return null;
+            
             var builder = EgenNæringBuilder.ny();
 
             var org = dto.getVirksomhet() == null ? null : new OrgNummer(dto.getVirksomhet().getIdent());
@@ -189,6 +205,8 @@ public class MapOppgittOpptjening {
         }
 
         private OppgittArbeidsforholdBuilder mapOppgittArbeidsforhold(OppgittArbeidsforholdDto dto) {
+            if(dto == null) return null;
+            
             Periode dto1 = dto.getPeriode();
             var builder = OppgittArbeidsforholdBuilder.ny()
                 .medArbeidType(tilArbeidtype(dto.getArbeidTypeDto()))
@@ -199,12 +217,16 @@ public class MapOppgittOpptjening {
             return builder;
         }
 
-        private OppgittUtenlandskVirksomhetEntitet tilUtenlandskVirksomhet(OppgittUtenlandskVirksomhetDto utlandVirksomhet) {
-            var landkode = new Landkoder(utlandVirksomhet.getLandkode().getKode());
-            return new OppgittUtenlandskVirksomhetEntitet(landkode, utlandVirksomhet.getVirksomhetNavn());
+        private OppgittUtenlandskVirksomhetEntitet tilUtenlandskVirksomhet(OppgittUtenlandskVirksomhetDto dto) {
+            if(dto == null) return null;
+            
+            var landkode = new Landkoder(dto.getLandkode().getKode());
+            return new OppgittUtenlandskVirksomhetEntitet(landkode, dto.getVirksomhetNavn());
         }
 
         private OppgittAnnenAktivitetEntitet mapAnnenAktivitet(OppgittAnnenAktivitetDto dto) {
+            if(dto == null) return null;
+            
             Periode dto1 = dto.getPeriode();
             var periode = DatoIntervallEntitet.fraOgMedTilOgMed(dto1.getFom(), dto1.getTom());
             var arbeidType = tilArbeidtype(dto.getArbeidTypeDto());

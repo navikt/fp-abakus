@@ -106,36 +106,46 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
     }
     
     void leggTilFrilans(OppgittFrilans frilans) {
-        OppgittFrilansEntitet frilansEntitet = (OppgittFrilansEntitet) frilans;
-        frilansEntitet.setOppgittOpptjening(this);
-        this.frilans = frilansEntitet;
+        if (frilans != null) {
+            OppgittFrilansEntitet frilansEntitet = (OppgittFrilansEntitet) frilans;
+            frilansEntitet.setOppgittOpptjening(this);
+            this.frilans = frilansEntitet;
+        } else {
+            this.frilans = null;
+        }
     }
 
     void leggTilAnnenAktivitet(OppgittAnnenAktivitet annenAktivitet) {
         if (this.annenAktivitet == null) {
             this.annenAktivitet = new ArrayList<>();
         }
-        OppgittAnnenAktivitetEntitet annenAktivitetEntitet = (OppgittAnnenAktivitetEntitet) annenAktivitet;
-        annenAktivitetEntitet.setOppgittOpptjening(this);
-        this.annenAktivitet.add(annenAktivitetEntitet);
+        if (annenAktivitet != null) {
+            OppgittAnnenAktivitetEntitet annenAktivitetEntitet = (OppgittAnnenAktivitetEntitet) annenAktivitet;
+            annenAktivitetEntitet.setOppgittOpptjening(this);
+            this.annenAktivitet.add(annenAktivitetEntitet);
+        }
     }
 
     void leggTilEgenNæring(OppgittEgenNæring egenNæring) {
         if (this.egenNæring == null) {
             this.egenNæring = new ArrayList<>();
         }
-        OppgittEgenNæringEntitet egenNæringEntitet = (OppgittEgenNæringEntitet) egenNæring;
-        egenNæringEntitet.setOppgittOpptjening(this);
-        this.egenNæring.add(egenNæringEntitet);
+        if (egenNæring != null) {
+            OppgittEgenNæringEntitet egenNæringEntitet = (OppgittEgenNæringEntitet) egenNæring;
+            egenNæringEntitet.setOppgittOpptjening(this);
+            this.egenNæring.add(egenNæringEntitet);
+        }
     }
 
     void leggTilOppgittArbeidsforhold(OppgittArbeidsforhold oppgittArbeidsforhold) {
         if (this.oppgittArbeidsforhold == null) {
             this.oppgittArbeidsforhold = new ArrayList<>();
         }
-        OppgittArbeidsforholdEntitet oppgittArbeidsforholdEntitet = (OppgittArbeidsforholdEntitet) oppgittArbeidsforhold;
-        oppgittArbeidsforholdEntitet.setOppgittOpptjening(this);
-        this.oppgittArbeidsforhold.add(oppgittArbeidsforholdEntitet);
+        if (oppgittArbeidsforhold != null) {
+            OppgittArbeidsforholdEntitet oppgittArbeidsforholdEntitet = (OppgittArbeidsforholdEntitet) oppgittArbeidsforhold;
+            oppgittArbeidsforholdEntitet.setOppgittOpptjening(this);
+            this.oppgittArbeidsforhold.add(oppgittArbeidsforholdEntitet);
+        }
     }
 
     @Override

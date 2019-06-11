@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,11 +22,12 @@ public class InntektArbeidYtelseGrunnlagBuilder {
     }
 
     public static InntektArbeidYtelseGrunnlagBuilder nytt() {
-        return ny(UUID.randomUUID());
+        return ny(UUID.randomUUID(), LocalDateTime.now());
     }
-
-    public static InntektArbeidYtelseGrunnlagBuilder ny(UUID grunnlagReferanse) {
-        return new InntektArbeidYtelseGrunnlagBuilder(new InntektArbeidYtelseGrunnlagEntitet(grunnlagReferanse));
+    
+    /** Brukes ved migrering. */
+    public static InntektArbeidYtelseGrunnlagBuilder ny(UUID grunnlagReferanse, LocalDateTime opprettetTidspunkt) {
+        return new InntektArbeidYtelseGrunnlagBuilder(new InntektArbeidYtelseGrunnlagEntitet(grunnlagReferanse, opprettetTidspunkt));
     }
 
     public static InntektArbeidYtelseGrunnlagBuilder oppdatere(InntektArbeidYtelseGrunnlag kladd) {

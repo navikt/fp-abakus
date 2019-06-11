@@ -49,7 +49,7 @@ public class MapAktørArbeid {
         }
 
         List<AktørArbeidBuilder> map(Collection<ArbeidDto> dtos) {
-            if(dtos==null || dtos.isEmpty()) {
+            if (dtos == null || dtos.isEmpty()) {
                 return Collections.emptyList();
             }
             return dtos.stream().map(this::mapAktørArbeid).collect(Collectors.toUnmodifiableList());
@@ -62,8 +62,9 @@ public class MapAktørArbeid {
         }
 
         private YrkesaktivitetBuilder mapYrkesaktivitet(YrkesaktivitetDto dto) {
-            var arbeidsgiver = mapArbeidsgiver(dto.getArbeidsgiver());
-            var internArbeidsforholdRef = mapArbeidsforholdRef(arbeidsgiver, dto.getArbeidsforholdId());
+            var arbeidsgiver = dto.getArbeidsgiver().map(this::mapArbeidsgiver).orElse(null);
+            var internArbeidsforholdRef = arbeidsgiver == null ? null : mapArbeidsforholdRef(arbeidsgiver, dto.getArbeidsforholdId());
+            
             YrkesaktivitetBuilder yrkesaktivitetBuilder = YrkesaktivitetBuilder.oppdatere(Optional.empty())
                 .medArbeidsforholdId(internArbeidsforholdRef)
                 .medArbeidsgiver(arbeidsgiver)
@@ -125,7 +126,7 @@ public class MapAktørArbeid {
         }
 
         List<ArbeidDto> map(Collection<AktørArbeid> aktørArbeid) {
-            if(aktørArbeid==null || aktørArbeid.isEmpty()) {
+            if (aktørArbeid == null || aktørArbeid.isEmpty()) {
                 return Collections.emptyList();
             }
             return aktørArbeid.stream().map(this::map).collect(Collectors.toList());
@@ -167,7 +168,8 @@ public class MapAktørArbeid {
             var arbeidsforholdId = mapArbeidsforholdsId(a.getArbeidsgiver(), a);
 
             var arbeidType = new ArbeidType(a.getArbeidType().getKode());
-            var dto = new YrkesaktivitetDto(mapAktør(a.getArbeidsgiver()), arbeidType)
+            var dto = new YrkesaktivitetDto(arbeidType)
+                .medArbeidsgiver(mapAktør(a.getArbeidsgiver()))
                 .medAktivitetsAvtaler(aktivitetsAvtaler)
                 .medPermisjoner(permisjoner)
                 .medArbeidsforholdId(arbeidsforholdId)
@@ -185,6 +187,9 @@ public class MapAktørArbeid {
         }
 
         private Aktør mapAktør(Arbeidsgiver arbeidsgiver) {
+            if (arbeidsgiver == null) {
+                return null; // arbeidType='NÆRING' har null arbeidsgiver
+            }
             return arbeidsgiver.erAktørId()
                 ? new AktørIdPersonident(arbeidsgiver.getAktørId().getId())
                 : new Organisasjon(arbeidsgiver.getOrgnr().getId());

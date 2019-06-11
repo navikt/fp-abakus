@@ -83,7 +83,7 @@ public class MapInntektsmeldinger {
                 .medKanalreferanse(im.getKanalreferanse())
                 .medKildesystem(im.getKildesystem())
                 .medRefusjonOpphører(im.getRefusjonOpphører())
-                .medRefusjonsBeløpPerMnd(im.getRefusjonBeløpPerMnd().getVerdi())
+                .medRefusjonsBeløpPerMnd(im.getRefusjonBeløpPerMnd()==null?null: im.getRefusjonBeløpPerMnd().getVerdi())
                 .medStartDatoPermisjon(im.getStartDatoPermisjon())
                 .medNærRelasjon(im.getErNærRelasjon());
 
@@ -169,7 +169,7 @@ public class MapInntektsmeldinger {
                 .medRefusjon(dto.getRefusjonsBeløpPerMnd(), dto.getRefusjonOpphører())
                 .medKanalreferanse(dto.getKanalreferanse())
                 .medInntektsmeldingaarsak(innsendingsårsak)
-                .medNærRelasjon(dto.isNærRelasjon())
+                .medNærRelasjon(dto.isNærRelasjon() == null ? false: dto.isNærRelasjon())
                 .medKildesystem(dto.getKildesystem())
                 .medMottattDato(dto.getMottattDato());
 

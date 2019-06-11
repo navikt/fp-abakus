@@ -39,30 +39,27 @@ public class IAYTilDtoMapper {
             grunnlagTidspunkt, grunnlagReferanse.getReferanse(), koblingReferanse.getReferanse());
 
         var aggregatOpt = grunnlag.getOpplysningerEtterSkjæringstidspunkt(null);
-        if (aggregatOpt.isEmpty()) {
-            throw new IllegalStateException("Fant ikke grunnlag: " + grunnlagReferanse);
-        }
 
         // Selektiv mapping avhengig av hva som er forspurt av data
 
-        var arbeidsforholdInfo = grunnlag.getArbeidsforholdInformasjon().orElseThrow();
-        
         if (dataset.contains(Dataset.REGISTER)) {
-            mapRegisterOpplysninger(aggregatOpt.get(), arbeidsforholdInfo, dto);
+            aggregatOpt.ifPresent(a -> mapRegisterOpplysninger(a, getArbeidsforholdInformasjon(grunnlag), dto));
         }
-        
+
         if (dataset.contains(Dataset.OVERSTYRT)) {
             grunnlag.getArbeidsforholdInformasjon().ifPresent(ai -> {
                 var arbeidsforholdInformasjon = new MapArbeidsforholdInformasjon.MapTilDto().map(ai);
                 dto.medArbeidsforholdInformasjon(arbeidsforholdInformasjon);
             });
-            grunnlag.getSaksbehandletVersjon().ifPresent(a -> mapSaksbehandlerOverstyrteOpplysninger(a, arbeidsforholdInfo, dto));
+            grunnlag.getSaksbehandletVersjon().ifPresent(a -> mapSaksbehandlerOverstyrteOpplysninger(a, getArbeidsforholdInformasjon(grunnlag), dto));
         }
-        
+
         if (dataset.contains(Dataset.INNTEKTSMELDING)) {
-            var mapper = new MapInntektsmeldinger.MapTilDto(arbeidsforholdInfo);
-            var inntektsmeldinger = mapper.map(grunnlag.getInntektsmeldinger().orElse(null));
-            dto.medInntektsmeldinger(inntektsmeldinger);
+            grunnlag.getInntektsmeldinger().ifPresent(ims -> {
+                var mapper = new MapInntektsmeldinger.MapTilDto(getArbeidsforholdInformasjon(grunnlag));
+                var inntektsmeldinger = mapper.map(ims);
+                dto.medInntektsmeldinger(inntektsmeldinger);
+            });
         }
 
         if (dataset.contains(Dataset.OPPGITT_OPPTJENING)) {
@@ -75,9 +72,13 @@ public class IAYTilDtoMapper {
         return dto;
     }
 
+    private ArbeidsforholdInformasjon getArbeidsforholdInformasjon(InntektArbeidYtelseGrunnlag grunnlag) {
+        return grunnlag.getArbeidsforholdInformasjon()
+            .orElseThrow(() -> new IllegalStateException("Mangler ArbeidsforholdInformasjon i grunnlag (påkrevd her): " + grunnlag.getGrunnlagReferanse()));
+    }
 
     private void mapRegisterOpplysninger(InntektArbeidYtelseAggregat aggregat,
-                                         ArbeidsforholdInformasjon arbeidsforholdInfo, 
+                                         ArbeidsforholdInformasjon arbeidsforholdInfo,
                                          InntektArbeidYtelseGrunnlagDto dto) {
         var tidspunkt = aggregat.getOpprettetTidspunkt();
         var arbeid = new MapAktørArbeid.MapTilDto(arbeidsforholdInfo).map(aggregat.getAktørArbeid());
