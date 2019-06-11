@@ -1,5 +1,7 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
@@ -8,8 +10,9 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilde
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyringBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyringEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyrtePerioderEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanseEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.BekreftetPermisjonStatus;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
@@ -20,9 +23,11 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Aktør;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.ArbeidsforholdRefDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Organisasjon;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdOverstyringDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdReferanseDto;
+import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 class MapArbeidsforholdInformasjon {
     static class MapFraDto {
@@ -62,7 +67,7 @@ class MapArbeidsforholdInformasjon {
                 .medAngittStillingsprosent(new Stillingsprosent(ov.getStillingsprosent()));
 
             ov.getBekreftetPermisjon().ifPresent(bp -> {
-                var bekreftetPermisjon = new BekreftetPermisjon(bp.getPeriode().getFom(), bp.getPeriode().getTom(), bp.skalBrukeOverstyrtPermisjon());
+                var bekreftetPermisjon = new BekreftetPermisjon(bp.getPeriode().getFom(), bp.getPeriode().getTom(), map(bp.getBekreftetPermisjonStatus()));
                 overstyringBuilder.medBekreftetPermisjon(bekreftetPermisjon);
             });
 
@@ -70,6 +75,10 @@ class MapArbeidsforholdInformasjon {
             ov.getArbeidsforholdOverstyrtePerioder().stream().forEach(p -> overstyringBuilder.leggTilOverstyrtPeriode(p.getFom(), p.getTom()));
 
             return overstyringBuilder;
+        }
+
+        private BekreftetPermisjonStatus map(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.BekreftetPermisjonStatus status) {
+            return new BekreftetPermisjonStatus(status.getKode());
         }
 
         private ArbeidsforholdRef mapArbeidsforholdRef(ArbeidsforholdRefDto arbeidsforholdId) {
@@ -91,10 +100,22 @@ class MapArbeidsforholdInformasjon {
     static class MapTilDto {
 
         ArbeidsforholdInformasjon map(no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon entitet) {
+            if(entitet==null) return null;
+            
             var arbeidsforholdInformasjon = new ArbeidsforholdInformasjon();
             var overstyringer = entitet.getOverstyringer().stream()
                 .map(ao -> {
-                    return new ArbeidsforholdOverstyringDto(mapAktør(ao.getArbeidsgiver()), mapArbeidsforholdsId(entitet, ao));
+                    var dto = new ArbeidsforholdOverstyringDto(mapAktør(ao.getArbeidsgiver()),
+                        mapArbeidsforholdsId(entitet, ao.getArbeidsgiver(), ao.getArbeidsforholdRef()))
+                            .medBegrunnelse(ao.getBegrunnelse())
+                            .medBekreftetPermisjon(mapBekreftetPermisjon(ao.getBekreftetPermisjon()))
+                            .medHandling(map(ao.getHandling()))
+                            .medNavn(ao.getArbeidsgiverNavn())
+                            .medStillingsprosent(ao.getStillingsprosent() == null ? null : ao.getStillingsprosent().getVerdi())
+                            .medNyArbeidsforholdRef(
+                                ao.getNyArbeidsforholdRef() == null ? null : mapArbeidsforholdsId(entitet, ao.getArbeidsgiver(), ao.getNyArbeidsforholdRef()))
+                            .medArbeidsforholdOverstyrtePerioder(map(ao.getArbeidsforholdOverstyrtePerioder()));
+                    return dto;
                 })
                 .collect(Collectors.toList());
 
@@ -107,6 +128,35 @@ class MapArbeidsforholdInformasjon {
                 .medReferanser(referanser);
         }
 
+        private List<Periode> map(List<ArbeidsforholdOverstyrtePerioderEntitet> perioder) {
+            return perioder == null ? null
+                : perioder.stream()
+                    .map(ArbeidsforholdOverstyrtePerioderEntitet::getOverstyrtePeriode)
+                    .map(this::mapPeriode)
+                    .collect(Collectors.toList());
+        }
+
+        private no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType map(ArbeidsforholdHandlingType handling) {
+            if (handling == null) {
+                return null;
+            }
+            return new no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType(handling.getKode());
+        }
+
+        private no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeidsforhold.v1.BekreftetPermisjon mapBekreftetPermisjon(Optional<BekreftetPermisjon> entitet) {
+            if(entitet.isEmpty()) {
+                return null;
+            }
+            var bekreftetPermisjon = entitet.get();
+            var periode = mapPeriode(bekreftetPermisjon.getPeriode());
+            return new no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeidsforhold.v1.BekreftetPermisjon(periode,
+                new no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.BekreftetPermisjonStatus(bekreftetPermisjon.getStatus().getKode()));
+        }
+
+        private Periode mapPeriode(DatoIntervallEntitet periode) {
+            return new Periode(periode.getFomDato(), periode.getTomDato());
+        }
+
         private ArbeidsforholdReferanseDto mapArbeidsforholdReferanse(ArbeidsforholdReferanseEntitet ref) {
             var arbeidsgiver = mapAktør(ref.getArbeidsgiver());
             var internReferanse = ref.getInternReferanse().getReferanse();
@@ -114,19 +164,21 @@ class MapArbeidsforholdInformasjon {
             return new ArbeidsforholdReferanseDto(arbeidsgiver, new ArbeidsforholdRefDto(internReferanse, eksternReferanse));
         }
 
-        private ArbeidsforholdRefDto mapArbeidsforholdsId(no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon arbeidsforholdInformasjon, ArbeidsforholdOverstyringEntitet aoe) {
+        private ArbeidsforholdRefDto mapArbeidsforholdsId(no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon arbeidsforholdInformasjon,
+                                                          Arbeidsgiver arbeidsgiver, ArbeidsforholdRef ref) {
+            if(ref==null) {
+                return null;
+            }
             /*
              * TODO: Fjern denne kommentaren når migrering fra fpsak er overstått.
              * Merk motsatt mapping av fpsak under migrering. FPSAK holder kun AAREGISTER referanse (og således vil sende samme referanse for
              * intern/ekstern (abakus/aaregister)
              * I Abakus er disse skilt. ArbeidsforholdRef holder intern abakus referanse (ikke AAREGISTER referanse som i FPSAK)
              */
-            var ref = aoe.getArbeidsforholdRef();
-            var arbeidsgiver = aoe.getArbeidsgiver();
             String internId = ref.getReferanse();
 
             if (internId != null) {
-                EksternArbeidsforholdRef eksternReferanse =arbeidsforholdInformasjon.finnEkstern(arbeidsgiver, InternArbeidsforholdRef.ref(internId));
+                EksternArbeidsforholdRef eksternReferanse = arbeidsforholdInformasjon.finnEkstern(arbeidsgiver, InternArbeidsforholdRef.ref(internId));
                 return new ArbeidsforholdRefDto(internId, eksternReferanse.getReferanse());
             }
             return new ArbeidsforholdRefDto(internId, null);

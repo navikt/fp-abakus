@@ -25,10 +25,6 @@ public class ArbeidsforholdInformasjonBuilder {
         return new ArbeidsforholdInformasjonBuilder(new ArbeidsforholdInformasjonEntitet(oppdatere));
     }
 
-    public static ArbeidsforholdInformasjonBuilder builder(Optional<ArbeidsforholdInformasjon> arbeidsforholdInformasjon) {
-        return new ArbeidsforholdInformasjonBuilder(new ArbeidsforholdInformasjonEntitet(arbeidsforholdInformasjon.orElse(null)));
-    }
-
     public ArbeidsforholdOverstyringBuilder getOverstyringBuilderFor(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef ref) {
         return kladd.getOverstyringBuilderFor(arbeidsgiver, ref);
     }
@@ -99,4 +95,10 @@ public class ArbeidsforholdInformasjonBuilder {
     public void leggTilNyReferanse(ArbeidsforholdReferanseEntitet arbeidsforholdReferanse) {
         kladd.leggTilNyReferanse(arbeidsforholdReferanse);
     }
+    
+    public static ArbeidsforholdInformasjonBuilder builder(Optional<ArbeidsforholdInformasjon> arbeidsforholdInformasjon) {
+        var arbeidInfo = arbeidsforholdInformasjon.map(ai -> new ArbeidsforholdInformasjonEntitet(ai)).orElseGet(() -> new ArbeidsforholdInformasjonEntitet());
+        return new ArbeidsforholdInformasjonBuilder(arbeidInfo);
+    }
+
 }

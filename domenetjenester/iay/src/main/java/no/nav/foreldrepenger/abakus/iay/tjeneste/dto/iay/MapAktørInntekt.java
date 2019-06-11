@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,6 +43,9 @@ public class MapAktørInntekt {
         }
 
         List<AktørInntektBuilder> map(Collection<InntekterDto> dtos) {
+            if(dtos==null || dtos.isEmpty()) {
+                return Collections.emptyList();
+            }
             var builders = dtos.stream().map(idto -> {
                 var builder = aggregatBuilder.getAktørInntektBuilder(aktørId);
                 idto.getUtbetalinger().forEach(utbetalingDto -> builder.leggTilInntekt(mapUtbetaling(utbetalingDto)));
@@ -74,6 +78,7 @@ public class MapAktørInntekt {
         }
 
         private Arbeidsgiver mapArbeidsgiver(Aktør arbeidsgiver) {
+            if(arbeidsgiver== null) return null;
             if (arbeidsgiver.getErOrganisasjon()) {
                 return Arbeidsgiver.virksomhet(new OrgNummer(arbeidsgiver.getIdent()));
             }
@@ -84,6 +89,9 @@ public class MapAktørInntekt {
 
     static class MapTilDto {
         List<InntekterDto> map(Collection<AktørInntekt> aktørInntekt) {
+            if(aktørInntekt==null || aktørInntekt.isEmpty()) {
+                return Collections.emptyList();
+            }
             return aktørInntekt.stream().map(this::mapTilInntekt).collect(Collectors.toList());
         }
 

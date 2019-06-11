@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiOperation;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYDtoMapper;
+import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYTilDtoMapper;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
@@ -68,7 +68,7 @@ public class GrunnlagRestTjeneste {
         var koblingReferanse = getKoblingReferanse(aktørId, spesifikasjon);
         var grunnlag = getGrunnlag(spesifikasjon, grunnlagReferanse, koblingReferanse);
 
-        var dtoMapper = new IAYDtoMapper(iayTjeneste, aktørId, grunnlagReferanse, koblingReferanse);
+        var dtoMapper = new IAYTilDtoMapper(aktørId, grunnlagReferanse, koblingReferanse);
 
         return Response.ok(dtoMapper.mapTilDto(grunnlag, spesifikasjon)).build();
     }

@@ -61,6 +61,7 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
     @ChangeTracked
     private String navnArbeidsgiverUtland;
 
+    /** Kan være privat eller virksomhet som arbeidsgiver. Dersom {@link #arbeidType} = 'NÆRING', er denne null. */
     @Embedded
     @ChangeTracked
     private Arbeidsgiver arbeidsgiver;
@@ -265,13 +266,13 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
         overstyrtPeriode.ifPresent(arbeidsforholdOverstyrtePerioderEntitet -> aktivitetsAvtale.stream()
             .filter(AktivitetsAvtaleEntitet::erAnsettelsesPeriode)
             .filter(AktivitetsAvtale::getErLøpende)
-            .forEach(avtale -> avtale.setOverstyrtPeriode(arbeidsforholdOverstyrtePerioderEntitet.getOverstyrtePerioder())));
+            .forEach(avtale -> avtale.setOverstyrtPeriode(arbeidsforholdOverstyrtePerioderEntitet.getOverstyrtePeriode())));
     }
 
     private Optional<ArbeidsforholdOverstyrtePerioderEntitet> finnOverstyrtPeriode(ArbeidsforholdOverstyringEntitet overstyring) {
         return overstyring.getArbeidsforholdOverstyrtePerioder().stream()
-            .filter(p -> p.getOverstyrtePerioder().getTomDato() != null)
-            .filter(p -> !p.getOverstyrtePerioder().getTomDato().isEqual(TIDENES_ENDE))
+            .filter(p -> p.getOverstyrtePeriode().getTomDato() != null)
+            .filter(p -> !p.getOverstyrtePeriode().getTomDato().isEqual(TIDENES_ENDE))
             .findFirst(); // TODO : Kanskje ikke findFirst her? Kan i teorien være flere ved feil data
     }
 

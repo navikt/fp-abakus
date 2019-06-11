@@ -174,13 +174,12 @@ public class AktørInntektEntitet extends BaseEntitet implements AktørInntekt, 
             return false;
         }
         AktørInntektEntitet other = (AktørInntektEntitet) obj;
-        return Objects.equals(this.getAktørId(), other.getAktørId()) &&
-            Objects.equals(this.getInntekt(), other.getInntekt());
+        return Objects.equals(this.getAktørId(), other.getAktørId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(aktørId, inntekt);
+        return Objects.hash(aktørId);
     }
 
     @Override

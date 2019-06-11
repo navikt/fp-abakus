@@ -203,13 +203,12 @@ public class AktørArbeidEntitet extends BaseEntitet implements AktørArbeid, In
             return false;
         }
         AktørArbeidEntitet other = (AktørArbeidEntitet) obj;
-        return Objects.equals(this.getAktørId(), other.getAktørId()) &&
-            Objects.equals(this.hentAlleYrkesaktiviter(), other.hentAlleYrkesaktiviter());
+        return Objects.equals(this.getAktørId(), other.getAktørId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(aktørId, yrkesaktiviter);
+        return Objects.hash(aktørId);
     }
 
     @Override

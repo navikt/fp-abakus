@@ -52,10 +52,6 @@ public class ArbeidsforholdOverstyrtePerioderEntitet extends BaseEntitet impleme
         this.periode = periode;
     }
 
-    public ArbeidsforholdOverstyringEntitet getArbeidsforholdOverstyring() {
-        return arbeidsforholdOverstyring;
-    }
-
     void setArbeidsforholdOverstyring(ArbeidsforholdOverstyringEntitet arbeidsforholdOverstyring) {
         this.arbeidsforholdOverstyring = arbeidsforholdOverstyring;
     }
@@ -82,7 +78,7 @@ public class ArbeidsforholdOverstyrtePerioderEntitet extends BaseEntitet impleme
     }
 
     @Override
-    public DatoIntervallEntitet getOverstyrtePerioder() {
+    public DatoIntervallEntitet getOverstyrtePeriode() {
         return periode;
     }
 }

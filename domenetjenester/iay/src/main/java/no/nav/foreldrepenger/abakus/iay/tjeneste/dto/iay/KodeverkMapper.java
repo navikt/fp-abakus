@@ -37,7 +37,7 @@ final class KodeverkMapper {
     }
 
     static UtbetaltYtelseType mapYtelseTypeTilDto(no.nav.foreldrepenger.abakus.domene.iay.YtelseType ytelseType) {
-        if (ytelseType == null) {
+        if (ytelseType == null || ytelseType.getKode().equals("-")) {
             return null;
         }
         switch (ytelseType.getKodeverk()) {
@@ -56,6 +56,8 @@ final class KodeverkMapper {
 
     public static no.nav.foreldrepenger.abakus.domene.iay.YtelseType mapUtbetaltYtelseTypeTilGrunnlag(UtbetaltYtelseType type) {
         Kodeverk kodeverk = (Kodeverk) type;
+        if(kodeverk==null || kodeverk.getKode().equals("-")) return null;
+        
         String kode = kodeverk.getKode();
         switch (kodeverk.getKodeverk()) {
             case UtbetaltYtelseFraOffentligeType.KODEVERK:
