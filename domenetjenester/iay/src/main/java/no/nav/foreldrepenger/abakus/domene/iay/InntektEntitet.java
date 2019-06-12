@@ -54,6 +54,7 @@ public class InntektEntitet extends BaseEntitet implements Inntekt, IndexKey {
         @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + InntektsKilde.DISCRIMINATOR + "'"))})
     private InntektsKilde inntektsKilde;
 
+    /* TODO: splitt inntektspostentitet klasse ? inntektspostentitet varierer med kilde. */
     @OneToMany(mappedBy = "inntekt")
     @ChangeTracked
     private Set<InntektspostEntitet> inntektspost = new LinkedHashSet<>();

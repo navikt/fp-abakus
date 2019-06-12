@@ -15,7 +15,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilde
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektEntitet.InntektspostBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Inntektspost;
-import no.nav.foreldrepenger.abakus.domene.iay.YtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
@@ -26,10 +25,6 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntekt.v1.InntekterDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntekt.v1.UtbetalingDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntekt.v1.UtbetalingsPostDto;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.InntektskildeType;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.InntektspostType;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtbetaltYtelseType;
 
 public class MapAktørInntekt {
     static class MapFraDto {
@@ -43,7 +38,7 @@ public class MapAktørInntekt {
         }
 
         List<AktørInntektBuilder> map(Collection<InntekterDto> dtos) {
-            if(dtos==null || dtos.isEmpty()) {
+            if (dtos == null || dtos.isEmpty()) {
                 return Collections.emptyList();
             }
             var builders = dtos.stream().map(idto -> {
@@ -58,7 +53,7 @@ public class MapAktørInntekt {
         private InntektBuilder mapUtbetaling(UtbetalingDto dto) {
             InntektBuilder inntektBuilder = InntektBuilder.oppdatere(Optional.empty())
                 .medArbeidsgiver(mapArbeidsgiver(dto.getUtbetaler()))
-                .medInntektsKilde(new InntektsKilde(dto.getKilde().getKode()));
+                .medInntektsKilde(KodeverkMapper.mapInntektsKildeFraDto(dto.getKilde()));
             dto.getPoster()
                 .forEach(post -> inntektBuilder.leggTilInntektspost(mapInntektspost(post)));
             return inntektBuilder;
@@ -66,19 +61,16 @@ public class MapAktørInntekt {
 
         private InntektspostBuilder mapInntektspost(UtbetalingsPostDto post) {
             return InntektspostBuilder.ny()
-                    .medBeløp(post.getBeløp())
-                    .medInntektspostType(post.getInntektspostType().getKode())
-                    .medPeriode(post.getPeriode().getFom(), post.getPeriode().getTom())
-                    .medSkatteOgAvgiftsregelType(post.getSkattAvgiftType().getKode())
-                    .medYtelse(mapYtelseType(post.getYtelseType()));
-        }
-
-        private YtelseType mapYtelseType(UtbetaltYtelseType type) {
-            return KodeverkMapper.mapUtbetaltYtelseTypeTilGrunnlag(type);
+                .medBeløp(post.getBeløp())
+                .medInntektspostType(KodeverkMapper.mapInntektspostTypeFraDto(post.getInntektspostType()))
+                .medPeriode(post.getPeriode().getFom(), post.getPeriode().getTom())
+                .medSkatteOgAvgiftsregelType(KodeverkMapper.mapSkatteOgAvgiftsregelFraDto(post.getSkattAvgiftType()))
+                .medYtelse(KodeverkMapper.mapUtbetaltYtelseTypeTilGrunnlag(post.getYtelseType()));
         }
 
         private Arbeidsgiver mapArbeidsgiver(Aktør arbeidsgiver) {
-            if(arbeidsgiver== null) return null;
+            if (arbeidsgiver == null)
+                return null;
             if (arbeidsgiver.getErOrganisasjon()) {
                 return Arbeidsgiver.virksomhet(new OrgNummer(arbeidsgiver.getIdent()));
             }
@@ -89,7 +81,7 @@ public class MapAktørInntekt {
 
     static class MapTilDto {
         List<InntekterDto> map(Collection<AktørInntekt> aktørInntekt) {
-            if(aktørInntekt==null || aktørInntekt.isEmpty()) {
+            if (aktørInntekt == null || aktørInntekt.isEmpty()) {
                 return Collections.emptyList();
             }
             return aktørInntekt.stream().map(this::mapTilInntekt).collect(Collectors.toList());
@@ -115,8 +107,8 @@ public class MapAktørInntekt {
 
         private UtbetalingDto tilUtbetaling(Inntekt inntekt, InntektsKilde kilde) {
             Arbeidsgiver arbeidsgiver = inntekt.getArbeidsgiver();
-            UtbetalingDto dto = new UtbetalingDto(mapArbeidsgiver(arbeidsgiver));
-            dto.medKilde(new InntektskildeType(kilde.getKode()));
+            UtbetalingDto dto = new UtbetalingDto(KodeverkMapper.mapInntektsKildeTilDto(kilde));
+            dto.medArbeidsgiver(mapArbeidsgiver(arbeidsgiver));
             dto.setPoster(tilPoster(inntekt.getInntektspost()));
             return dto;
         }
@@ -138,19 +130,17 @@ public class MapAktørInntekt {
 
         private UtbetalingsPostDto tilPost(Inntektspost inntektspost) {
             var periode = new Periode(inntektspost.getFraOgMed(), inntektspost.getTilOgMed());
-            var inntektspostType = new InntektspostType(inntektspost.getInntektspostType().getKode());
-            var ytelseType = mapYtelseType(inntektspost.getYtelseType());
-            var skattOgAvgiftType = new SkatteOgAvgiftsregelType(inntektspost.getSkatteOgAvgiftsregelType().getKode());
+            var inntektspostType = KodeverkMapper.mapInntektspostTypeTilDto(inntektspost.getInntektspostType());
+            var ytelseType = KodeverkMapper.mapYtelseTypeTilDto(inntektspost.getYtelseType());
+            var skattOgAvgiftType = KodeverkMapper.mapSkatteOgAvgiftsregelTilDto(inntektspost.getSkatteOgAvgiftsregelType());
 
-            UtbetalingsPostDto dto = new UtbetalingsPostDto(ytelseType, periode, inntektspostType)
+            UtbetalingsPostDto dto = new UtbetalingsPostDto(periode, inntektspostType)
+                .medUtbetaltYtelseType(ytelseType)
                 .medSkattAvgiftType(skattOgAvgiftType)
                 .medBeløp(inntektspost.getBeløp().getVerdi());
 
             return dto;
         }
 
-        private UtbetaltYtelseType mapYtelseType(YtelseType ytelseType) {
-            return KodeverkMapper.mapYtelseTypeTilDto(ytelseType);
-        }
     }
 }

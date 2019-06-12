@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.jboss.weld.exceptions.IllegalStateException;
+
 import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtale;
 import no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
@@ -31,9 +33,6 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeid.v1.AktivitetsAvtaleDt
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeid.v1.ArbeidDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeid.v1.PermisjonDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeid.v1.YrkesaktivitetDto;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.ArbeidType;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.Fagsystem;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class MapAktørArbeid {
@@ -64,12 +63,12 @@ public class MapAktørArbeid {
         private YrkesaktivitetBuilder mapYrkesaktivitet(YrkesaktivitetDto dto) {
             var arbeidsgiver = dto.getArbeidsgiver().map(this::mapArbeidsgiver).orElse(null);
             var internArbeidsforholdRef = arbeidsgiver == null ? null : mapArbeidsforholdRef(arbeidsgiver, dto.getArbeidsforholdId());
-            
+
             YrkesaktivitetBuilder yrkesaktivitetBuilder = YrkesaktivitetBuilder.oppdatere(Optional.empty())
                 .medArbeidsforholdId(internArbeidsforholdRef)
                 .medArbeidsgiver(arbeidsgiver)
                 .medArbeidsgiverNavn(dto.getNavnArbeidsgiverUtland())
-                .medArbeidType((dto.getType().getKode()));
+                .medArbeidType(KodeverkMapper.mapArbeidType(dto.getType()));
 
             dto.getAktivitetsAvtaler()
                 .forEach(aktivitetsAvtaleDto -> yrkesaktivitetBuilder.leggTilAktivitetsAvtale(mapAktivitetsAvtale(aktivitetsAvtaleDto)));
@@ -83,7 +82,7 @@ public class MapAktørArbeid {
         private Permisjon mapPermisjon(PermisjonDto dto, PermisjonBuilder permisjonBuilder) {
             return permisjonBuilder
                 .medPeriode(dto.getPeriode().getFom(), dto.getPeriode().getTom())
-                .medPermisjonsbeskrivelseType(dto.getType().getKode())
+                .medPermisjonsbeskrivelseType(KodeverkMapper.mapPermisjonbeskrivelseTypeFraDto(dto.getType()))
                 .medProsentsats(dto.getProsentsats())
                 .build();
         }
@@ -154,9 +153,9 @@ public class MapAktørArbeid {
         }
 
         private PermisjonDto map(Permisjon p) {
-            var permisjon = new PermisjonDto(new Periode(p.getFraOgMed(), p.getTilOgMed()),
-                new PermisjonsbeskrivelseType(p.getPermisjonsbeskrivelseType().getKode()))
-                    .medProsentsats(p.getProsentsats().getVerdi());
+            var permisjonsbeskrivelseType = KodeverkMapper.mapPermisjonbeskrivelseTypeTilDto(p.getPermisjonsbeskrivelseType());
+            var permisjon = new PermisjonDto(new Periode(p.getFraOgMed(), p.getTilOgMed()), permisjonsbeskrivelseType)
+                .medProsentsats(p.getProsentsats().getVerdi());
             return permisjon;
         }
 
@@ -167,7 +166,7 @@ public class MapAktørArbeid {
 
             var arbeidsforholdId = mapArbeidsforholdsId(a.getArbeidsgiver(), a);
 
-            var arbeidType = new ArbeidType(a.getArbeidType().getKode());
+            var arbeidType = KodeverkMapper.mapArbeidTypeTilDto(a.getArbeidType());
             var dto = new YrkesaktivitetDto(arbeidType)
                 .medArbeidsgiver(mapAktør(a.getArbeidsgiver()))
                 .medAktivitetsAvtaler(aktivitetsAvtaler)
@@ -180,10 +179,19 @@ public class MapAktørArbeid {
 
         private ArbeidsforholdRefDto mapArbeidsforholdsId(Arbeidsgiver arbeidsgiver, Yrkesaktivitet yrkesaktivitet) {
             var internRef = yrkesaktivitet.getArbeidsforholdRef();
+            if(internRef == null || internRef.getReferanse() == null) {
+                return null;
+            }
             var eksternRef = arbeidsforholdInformasjon == null
                 ? null
                 : arbeidsforholdInformasjon.finnEkstern(arbeidsgiver, InternArbeidsforholdRef.ref(internRef.getReferanse()));
-            return new ArbeidsforholdRefDto(internRef.getReferanse(), eksternRef.getReferanse(), Fagsystem.AAREGISTERET);
+            
+            if(eksternRef==null) {
+                throw new IllegalStateException("Savner eksternRef for internRef: "+ internRef);
+            }
+            
+            return new ArbeidsforholdRefDto(internRef.getReferanse(), eksternRef.getReferanse(),
+                no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.Fagsystem.AAREGISTERET);
         }
 
         private Aktør mapAktør(Arbeidsgiver arbeidsgiver) {
