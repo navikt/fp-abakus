@@ -14,12 +14,10 @@ import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelse;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelseEntitet;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Refusjon;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.RefusjonEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriode;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriodeEntitet;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelseÅrsak;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
@@ -37,9 +35,6 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.Inntektsm
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.NaturalytelseDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.RefusjonDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.UtsettelsePeriodeDto;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.NaturalytelseType;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtsettelseÅrsakType;
 
 public class MapInntektsmeldinger {
 
@@ -57,7 +52,8 @@ public class MapInntektsmeldinger {
             } else if (arbeidsforholdInformasjon != null && inntektsmeldingAggregat != null) {
                 var dto = new InntektsmeldingerDto();
 
-                var inntektsmeldinger = inntektsmeldingAggregat.getInntektsmeldinger().stream().map(this::mapInntektsmelding).collect(Collectors.toList());
+                var inntektsmeldinger = inntektsmeldingAggregat.getAlleInntektsmeldinger().stream()
+                        .map(im -> this.mapInntektsmelding(im)).collect(Collectors.toList());
                 dto.medInntektsmeldinger(inntektsmeldinger);
 
                 return dto;
@@ -73,7 +69,7 @@ public class MapInntektsmeldinger {
             var journalpostId = new JournalpostId(im.getJournalpostId().getVerdi());
             var innsendingstidspunkt = im.getInnsendingstidspunkt();
             var arbeidsforholdId = mapArbeidsforholdsId(im.getArbeidsgiver(), im.getArbeidsforholdRef());
-            var innsendingsårsak = new InntektsmeldingInnsendingsårsakType(im.getInntektsmeldingInnsendingsårsak().getKode());
+            var innsendingsårsak = KodeverkMapper.mapInntektsmeldingInnsendingsårsak(im.getInntektsmeldingInnsendingsårsak());
             var mottattDato = im.getMottattDato();
 
             var inntektsmeldingDto = new InntektsmeldingDto(arbeidsgiver, journalpostId, innsendingstidspunkt, mottattDato)
@@ -110,14 +106,14 @@ public class MapInntektsmeldinger {
 
         private NaturalytelseDto mapNaturalytelse(NaturalYtelse naturalYtelse) {
             var periode = naturalYtelse.getPeriode();
-            var type = new NaturalytelseType(naturalYtelse.getType().getKode());
+            var type = KodeverkMapper.mapNaturalYtelseTilDto(naturalYtelse.getType());
             var beløpPerMnd = naturalYtelse.getBeloepPerMnd().getVerdi();
             return new NaturalytelseDto(new Periode(periode.getFomDato(), periode.getTomDato()), type, beløpPerMnd);
         }
 
         private UtsettelsePeriodeDto mapUtsettelsePeriode(UtsettelsePeriode utsettelsePeriode) {
             var periode = utsettelsePeriode.getPeriode();
-            var utsettelseÅrsak = new UtsettelseÅrsakType(utsettelsePeriode.getÅrsak().getKode());
+            var utsettelseÅrsak = KodeverkMapper.mapUtsettelseÅrsakTilDto(utsettelsePeriode.getÅrsak());
             return new UtsettelsePeriodeDto(new Periode(periode.getFomDato(), periode.getTomDato()), utsettelseÅrsak);
         }
 
@@ -128,10 +124,14 @@ public class MapInntektsmeldinger {
         }
 
         private ArbeidsforholdRefDto mapArbeidsforholdsId(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef arbeidsforhold) {
+            if(arbeidsforhold==null) {
+                return null;
+            }
             String internRef = arbeidsforhold.getReferanse();
             if (internRef != null) {
                 var eksternRef = arbeidsforholdInformasjon.finnEkstern(arbeidsgiver, InternArbeidsforholdRef.ref(internRef));
-                return new ArbeidsforholdRefDto(internRef, eksternRef.getReferanse());
+                return new ArbeidsforholdRefDto(internRef, eksternRef.getReferanse(),
+                    no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.Fagsystem.AAREGISTERET);
             }
             throw new IllegalStateException("Mangler ekstern referanse for intern arbeidsforholdRef=" + internRef);
         }
@@ -156,7 +156,7 @@ public class MapInntektsmeldinger {
 
             var journalpostId = dto.getJournalpostId().getId();
             var innsendingstidspunkt = dto.getInnsendingstidspunkt().toLocalDateTime();
-            var innsendingsårsak = dto.getInnsendingsårsak().getKode();
+            var innsendingsårsak = KodeverkMapper.mapInntektsmeldingInnsendingsårsakFraDto(dto.getInnsendingsårsak());
 
             var builder = InntektsmeldingBuilder.builder()
                 .medJournalpostId(journalpostId)
@@ -187,7 +187,7 @@ public class MapInntektsmeldinger {
             dto.getNaturalytelser().stream()
                 .map(ny -> {
                     var periode = ny.getPeriode();
-                    var naturalYtelseType = new NaturalYtelseType(ny.getType().getKode());
+                    var naturalYtelseType = KodeverkMapper.mapNaturalYtelseFraDto(ny.getType());
                     return new NaturalYtelseEntitet(periode.getFom(), periode.getTom(), ny.getBeløpPerMnd(), naturalYtelseType);
                 })
                 .forEach(builder::leggTil);
@@ -195,7 +195,7 @@ public class MapInntektsmeldinger {
             dto.getUtsettelsePerioder().stream()
                 .map(up -> {
                     var periode = up.getPeriode();
-                    var utsettelseÅrsak = new UtsettelseÅrsak(up.getUtsettelseÅrsakDto().getKode());
+                    var utsettelseÅrsak = KodeverkMapper.mapUtsettelseÅrsakFraDto(up.getUtsettelseÅrsakDto());
                     return UtsettelsePeriodeEntitet.utsettelse(periode.getFom(), periode.getTom(), utsettelseÅrsak);
                 })
                 .forEach(builder::leggTil);

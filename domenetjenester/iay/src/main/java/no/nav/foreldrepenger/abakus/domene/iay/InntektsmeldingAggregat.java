@@ -19,5 +19,8 @@ public interface InntektsmeldingAggregat {
      * @return Liste med {@link Inntektsmelding}
      */
     List<Inntektsmelding> getInntektsmeldingerFor(Arbeidsgiver arbeidsgiver);
+    
+    /** Get alle inntetksmeldinger (både de som skal brukes og ikke brukes). */
+    List<Inntektsmelding> getAlleInntektsmeldinger();
 
 }

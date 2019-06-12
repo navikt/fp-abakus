@@ -65,6 +65,7 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
         return Collections.unmodifiableList(inntektsmeldinger.stream().filter(this::skalBrukes).collect(Collectors.toList()));
     }
 
+    @Override
     public List<Inntektsmelding> getAlleInntektsmeldinger() {
         return Collections.unmodifiableList(inntektsmeldinger);
     }

@@ -37,6 +37,7 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_INNTEKTSPOST")
     private Long id;
 
+    /* TODO: splitt denne entiteten ? Kan ikke ha både inntektspostType og ytelseType satt samtidig (ene må være 'UDEFINERT'). Felter varier noe avh av hva som er satt*/
     @ManyToOne
     @JoinColumnsOrFormulas({
         @JoinColumnOrFormula(column = @JoinColumn(name = "inntektspost_type", referencedColumnName = "kode", nullable = false)),
