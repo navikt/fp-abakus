@@ -77,7 +77,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         Optional<InntektArbeidYtelseGrunnlag> grunnlag = hentInntektArbeidYtelseGrunnlagForBehandling(koblingReferanse);
         return opprettBuilderFor(versjonType, angittAggregatReferanse, angittOpprettetTidspunkt, grunnlag);
     }
-    
+
     private InntektArbeidYtelseAggregatBuilder opprettBuilderFor(VersjonType versjonType, UUID angittReferanse, LocalDateTime opprettetTidspunkt, Optional<InntektArbeidYtelseGrunnlag> grunnlag) {
         InntektArbeidYtelseGrunnlagBuilder grunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(grunnlag);
         Objects.requireNonNull(grunnlagBuilder, "grunnlagBuilder");
@@ -209,6 +209,13 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
             lagreGrunnlag(nyttGrunnlag, koblingReferanse);
         }
         entityManager.flush();
+    }
+
+    @Override
+    public void lagreMigrertGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, KoblingReferanse koblingReferanse, boolean aktiv) {
+        InntektArbeidYtelseGrunnlagEntitet entitet = (InntektArbeidYtelseGrunnlagEntitet) nyttGrunnlag;
+        entitet.setAktivt(aktiv);
+        lagreGrunnlag(entitet, koblingReferanse);
     }
 
     private void lagreGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, KoblingReferanse koblingReferanse) {
@@ -411,7 +418,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
 
     private Optional<InntektArbeidYtelseGrunnlagEntitet> getVersjonAvInntektArbeidYtelseForReferanseId(GrunnlagReferanse grunnlagReferanse) {
         Objects.requireNonNull(grunnlagReferanse, "aggregatId"); // NOSONAR $NON-NLS-1$
-        final TypedQuery<InntektArbeidYtelseGrunnlagEntitet> query = entityManager.createQuery("FROM InntektArbeidGrunnlag gr " + 
+        final TypedQuery<InntektArbeidYtelseGrunnlagEntitet> query = entityManager.createQuery("FROM InntektArbeidGrunnlag gr " +
             "WHERE gr.grunnlagReferanse = :ref ", InntektArbeidYtelseGrunnlagEntitet.class);
         query.setParameter("ref", grunnlagReferanse);
         Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlagOpt = query.getResultStream().findFirst();
@@ -425,8 +432,8 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         query.setParameter("ref", grunnlagReferanse);
         return query.getSingleResult();
     }
-    
-    
+
+
     private Long hentKoblingIdFor(KoblingReferanse koblingReferanse) {
         final TypedQuery<Long> query = entityManager.createQuery("SELECT k.id FROM Kobling k k.koblingReferanse=:ref", Long.class);
         query.setParameter("ref", koblingReferanse);

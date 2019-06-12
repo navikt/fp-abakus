@@ -26,6 +26,7 @@ import no.nav.foreldrepenger.abakus.registerdata.IAYRegisterInnhentingTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.RegisterdataInnhentingTask;
 import no.nav.foreldrepenger.abakus.registerdata.callback.CallbackTask;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Aktør;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InnhentRegisterdataRequest;
@@ -100,7 +101,7 @@ public class InnhentRegisterdataTjeneste {
             YtelseType ytelseType = mapTilYtelseType(dto);
             DatoIntervallEntitet opplysningsperiode1 = DatoIntervallEntitet.fraOgMedTilOgMed(opplysningsperiode.getFom(), opplysningsperiode.getTom());
             AktørId aktørId = new AktørId(dto.getAktør().getIdent());
-            kobling = new Kobling(referanse, aktørId, opplysningsperiode1, ytelseType);
+            kobling = new Kobling(new Saksnummer(dto.getSaksnummer()), referanse, aktørId, opplysningsperiode1, ytelseType);
         } else {
             kobling = koblingOpt.get();
         }

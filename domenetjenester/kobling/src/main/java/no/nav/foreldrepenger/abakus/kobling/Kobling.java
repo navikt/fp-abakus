@@ -24,22 +24,34 @@ import org.hibernate.annotations.NaturalId;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "Kobling")
 @Table(name = "KOBLING")
 public class Kobling extends no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet implements IndexKey {
 
-    /** Abakus intern kobling_id. */
+    /**
+     * Abakus intern kobling_id.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_KOBLING")
     private Long id;
 
-    /** Ekstern Referanse (eks. behandlingUuid). */
+    /**
+     * Saksnummer (fra Arena, Infotrygd, ..).
+     */
+    @Embedded
+    @AttributeOverrides(@AttributeOverride(name = "saksnummer", column = @Column(name = "saksnummer")))
+    private Saksnummer saksnummer;
+
+    /**
+     * Ekstern Referanse (eks. behandlingUuid).
+     */
     @NaturalId
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "referanse", column = @Column(name = "kobling_referanse", updatable = false, unique = true))
+        @AttributeOverride(name = "referanse", column = @Column(name = "kobling_referanse", updatable = false, unique = true))
     })
     private KoblingReferanse koblingReferanse;
 
@@ -58,15 +70,15 @@ public class Kobling extends no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "fomDato", column = @Column(name = "opplysning_periode_fom")),
-            @AttributeOverride(name = "tomDato", column = @Column(name = "opplysning_periode_tom"))
+        @AttributeOverride(name = "fomDato", column = @Column(name = "opplysning_periode_fom")),
+        @AttributeOverride(name = "tomDato", column = @Column(name = "opplysning_periode_tom"))
     })
     private DatoIntervallEntitet opplysningsperiode;
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "fomDato", column = @Column(name = "opptjening_periode_fom")),
-            @AttributeOverride(name = "tomDato", column = @Column(name = "opptjening_periode_tom"))
+        @AttributeOverride(name = "fomDato", column = @Column(name = "opptjening_periode_fom")),
+        @AttributeOverride(name = "tomDato", column = @Column(name = "opptjening_periode_tom"))
     })
     private DatoIntervallEntitet opptjeningsperiode;
 
@@ -77,7 +89,8 @@ public class Kobling extends no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet
     public Kobling() {
     }
 
-    public Kobling(KoblingReferanse koblingReferanse, AktørId aktørId, DatoIntervallEntitet opplysningsperiode, YtelseType ytelseType) {
+    public Kobling(Saksnummer saksnummer, KoblingReferanse koblingReferanse, AktørId aktørId, DatoIntervallEntitet opplysningsperiode, YtelseType ytelseType) {
+        Objects.requireNonNull(saksnummer, "saksnummer");
         Objects.requireNonNull(koblingReferanse, "koblingReferanse");
         Objects.requireNonNull(aktørId, "aktørId");
         Objects.requireNonNull(opplysningsperiode, "opplysningsperiode");

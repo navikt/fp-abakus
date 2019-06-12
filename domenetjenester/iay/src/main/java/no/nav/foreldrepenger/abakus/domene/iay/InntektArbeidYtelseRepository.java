@@ -18,6 +18,15 @@ public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRe
 
     Optional<InntektArbeidYtelseGrunnlag> hentInntektArbeidYtelseGrunnlagForBehandling(KoblingReferanse koblingReferanse);
 
+    /**
+     * @deprecated OBS! Kun for migrering av vedtak fra FPSAK til abakus
+     * @param nyttGrunnlag
+     * @param koblingReferanse
+     * @param aktiv
+     */
+    @Deprecated(forRemoval = true)
+    void lagreMigrertGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, KoblingReferanse koblingReferanse, boolean aktiv);
+
     Optional<ArbeidsforholdInformasjon> hentArbeidsforholdInformasjonForBehandling(KoblingReferanse koblingReferanse);
 
     Optional<InntektArbeidYtelseGrunnlag> hentInntektArbeidYtelseForReferanse(GrunnlagReferanse grunnlagReferanse);
