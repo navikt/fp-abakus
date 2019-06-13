@@ -69,8 +69,7 @@ public class MapAktørInntekt {
         }
 
         private Arbeidsgiver mapArbeidsgiver(Aktør arbeidsgiver) {
-            if (arbeidsgiver == null)
-                return null;
+            if (arbeidsgiver == null) return null;
             if (arbeidsgiver.getErOrganisasjon()) {
                 return Arbeidsgiver.virksomhet(new OrgNummer(arbeidsgiver.getIdent()));
             }

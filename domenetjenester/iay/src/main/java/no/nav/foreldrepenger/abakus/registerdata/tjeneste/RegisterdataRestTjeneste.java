@@ -113,11 +113,12 @@ public class RegisterdataRestTjeneste {
     @JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE)
     public static class InnhentRegisterdataAbacDto extends InnhentRegisterdataRequest implements AbacDto {
 
-        public InnhentRegisterdataAbacDto(@Valid @NotNull UuidDto referanse,
+        public InnhentRegisterdataAbacDto(@Valid @NotNull String saksnummer,
+                                          @Valid @NotNull UuidDto referanse,
                                           @Valid @NotNull no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.YtelseType ytelseType,
                                           @NotNull @Valid Periode opplysningsperiode,
                                           @NotNull @Valid PersonIdent aktør) {
-            super(referanse, ytelseType, opplysningsperiode, aktør);
+            super(saksnummer, referanse, ytelseType, opplysningsperiode, aktør);
         }
 
         @Override
