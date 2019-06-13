@@ -19,10 +19,10 @@ public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRe
     Optional<InntektArbeidYtelseGrunnlag> hentInntektArbeidYtelseGrunnlagForBehandling(KoblingReferanse koblingReferanse);
 
     /**
-     * @deprecated OBS! Kun for migrering av vedtak fra FPSAK til abakus
      * @param nyttGrunnlag
      * @param koblingReferanse
      * @param aktiv
+     * @deprecated OBS! Kun for migrering av vedtak fra FPSAK til abakus
      */
     @Deprecated(forRemoval = true)
     void lagreMigrertGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, KoblingReferanse koblingReferanse, boolean aktiv);
@@ -32,12 +32,12 @@ public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRe
     Optional<InntektArbeidYtelseGrunnlag> hentInntektArbeidYtelseForReferanse(GrunnlagReferanse grunnlagReferanse);
 
     Long hentKoblingIdFor(GrunnlagReferanse grunnlagReferanse);
-    
+
     KoblingReferanse hentKoblingReferanseFor(GrunnlagReferanse grunnlagReferanse);
-    
+
     /**
-     * @param koblingReferanse 
-     * @param versjonType     (REGISTER, SAKSBEHANDLET)
+     * @param koblingReferanse
+     * @param versjonType      (REGISTER, SAKSBEHANDLET)
      * @return InntektArbeidYtelseAggregatBuilder
      * <p>
      * NB! bør benytte via InntektArbeidYtelseTjeneste og ikke direkte

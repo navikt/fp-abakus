@@ -223,7 +223,7 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
         this.utenlandskVirksomhet = (OppgittUtenlandskVirksomhetEntitet) utenlandskVirksomhet;
     }
 
-    public void setOppgittOpptjening(OppgittOpptjeningEntitet oppgittOpptjening) {
+    void setOppgittOpptjening(OppgittOpptjeningEntitet oppgittOpptjening) {
         this.oppgittOpptjening = oppgittOpptjening;
     }
 
