@@ -17,7 +17,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelse;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelseBuilder;
-import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
@@ -25,9 +24,6 @@ import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Organisasjon;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.Arbeidskategori;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.Fagsystem;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.InntektPeriodeType;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.ytelse.v1.AnvisningDto;
@@ -60,29 +56,21 @@ public class MapAktørYtelse {
             return builder;
         }
 
-        private TemaUnderkategori mapBehandlingsTema(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.TemaUnderkategori temaUnderkategori) {
-            return new TemaUnderkategori(temaUnderkategori.getKode());
-        }
-
-        private no.nav.foreldrepenger.abakus.typer.Fagsystem mapFagSystem(Fagsystem fagsystemDto) {
-            return new no.nav.foreldrepenger.abakus.typer.Fagsystem(fagsystemDto.getKode());
-        }
-
         private DatoIntervallEntitet mapPeriode(Periode periode) {
             return DatoIntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom());
         }
 
         private YtelseBuilder mapYtelse(YtelseDto ytelseDto) {
             var ytelseBuilder = YtelseBuilder.oppdatere(Optional.empty());
-            var behandlingsTema = mapBehandlingsTema(ytelseDto.getTemaUnderkategori());
+            var behandlingsTema = KodeverkMapper.getTemaUnderkategori(ytelseDto.getTemaUnderkategori());
             ytelseBuilder
                 .medYtelseGrunnlag(mapYtelseGrunnlag(ytelseDto.getGrunnlag(), ytelseBuilder.getGrunnlagBuilder()))
-                .medYtelseType(mapYtelseType(ytelseDto.getYtelseType()))
+                .medYtelseType(KodeverkMapper.mapYtelseTypeFraDto(ytelseDto.getYtelseType()))
                 .medBehandlingsTema(behandlingsTema)
-                .medKilde(mapFagSystem(ytelseDto.getFagsystemDto()))
+                .medKilde(KodeverkMapper.mapFagsystemFraDto(ytelseDto.getFagsystemDto()))
                 .medPeriode(mapPeriode(ytelseDto.getPeriode()))
                 .medSaksnummer(ytelseDto.getSaksnummer() == null ? null : new Saksnummer(ytelseDto.getSaksnummer()))
-                .medStatus(mapYtelseStatus(ytelseDto.getStatus()));
+                .medStatus(KodeverkMapper.mapYtelseStatusFraDto(ytelseDto.getStatus()));
             ytelseDto.getAnvisninger()
                 .forEach(anvisning -> ytelseBuilder.medYtelseAnvist(mapYtelseAnvist(anvisning, ytelseBuilder.getAnvistBuilder())));
             return ytelseBuilder;
@@ -101,7 +89,7 @@ public class MapAktørYtelse {
         private YtelseGrunnlag mapYtelseGrunnlag(YtelseGrunnlagDto grunnlag, YtelseGrunnlagBuilder grunnlagBuilder) {
             if(grunnlag == null) return null;
             grunnlagBuilder
-                .medArbeidskategori(grunnlag.getArbeidskategoriDto().getKode())
+                .medArbeidskategori(KodeverkMapper.mapArbeidskategoriFraDto(grunnlag.getArbeidskategoriDto()))
                 .medDekningsgradProsent(grunnlag.getDekningsgradProsent())
                 .medGraderingProsent(grunnlag.getGraderingProsent())
                 .medInntektsgrunnlagProsent(grunnlag.getInntektsgrunnlagProsent())
@@ -111,21 +99,13 @@ public class MapAktørYtelse {
             return grunnlagBuilder.build();
         }
 
-        private no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus mapYtelseStatus(YtelseStatus ytelseStatus) {
-            return new no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus(ytelseStatus.getKode());
-        }
-
         private YtelseStørrelse mapYtelseStørrelse(FordelingDto fordeling) {
             if(fordeling == null) return null;
             return YtelseStørrelseBuilder.ny()
                 .medBeløp(fordeling.getBeløp())
-                .medHyppighet(fordeling.getHyppighet().getKode())
+                .medHyppighet(KodeverkMapper.mapInntektPeriodeTypeFraDto(fordeling.getHyppighet()))
                 .medVirksomhet(new OrgNummer(fordeling.getArbeidsgiver().getIdent()))
                 .build();
-        }
-
-        private no.nav.foreldrepenger.abakus.kodeverk.YtelseType mapYtelseType(YtelseType type) {
-            return new no.nav.foreldrepenger.abakus.kodeverk.YtelseType(type.getKode());
         }
 
     }
@@ -152,7 +132,7 @@ public class MapAktørYtelse {
         private YtelseGrunnlagDto mapYtelseGrunnlag(YtelseGrunnlag gr) {
             
             YtelseGrunnlagDto dto = new YtelseGrunnlagDto();
-            gr.getArbeidskategori().ifPresent(ak -> dto.setArbeidskategoriDto(new Arbeidskategori(ak.getKode())));
+            gr.getArbeidskategori().ifPresent(ak -> dto.setArbeidskategoriDto(KodeverkMapper.mapArbeidskategoriTilDto(ak)));
             gr.getOpprinneligIdentdato().ifPresent(dto::setOpprinneligIdentDato);
             gr.getDekningsgradProsent().map(Stillingsprosent::getVerdi).ifPresent(dto::setDekningsgradProsent);
             gr.getGraderingProsent().map(Stillingsprosent::getVerdi).ifPresent(dto::setGraderingProsent);
@@ -163,18 +143,18 @@ public class MapAktørYtelse {
 
         private FordelingDto tilFordeling(YtelseStørrelse ytelseStørrelse) {
             var organisasjon = ytelseStørrelse.getVirksomhet().map(o -> new Organisasjon(o.getId())).orElse(null);
-            var inntektPeriodeType = new InntektPeriodeType(ytelseStørrelse.getHyppighet().getKode());
+            var inntektPeriodeType = KodeverkMapper.mapInntektPeriodeTypeTilDto(ytelseStørrelse.getHyppighet());
             var beløp = ytelseStørrelse.getBeløp().getVerdi();
             return new FordelingDto(organisasjon, inntektPeriodeType, beløp);
         }
 
         private YtelseDto tilYtelse(Ytelse ytelse) {
             
-            var fagsystem = new Fagsystem(ytelse.getKilde().getKode());
+            var fagsystem = KodeverkMapper.mapFagsystemTilDto(ytelse.getKilde());
             var periode = new Periode(ytelse.getPeriode().getFomDato(), ytelse.getPeriode().getTomDato());
             var ytelseType = new YtelseType(ytelse.getRelatertYtelseType().getKode());
             var ytelseStatus = new YtelseStatus(ytelse.getStatus().getKode());
-            var temaUnderkategori = mapBehandlingsTema(ytelse);
+            var temaUnderkategori = KodeverkMapper.getBehandlingsTemaUnderkategori(ytelse.getBehandlingsTema());
             var dto = new YtelseDto(fagsystem, ytelseType, periode, ytelseStatus)
                 .medSaksnummer(ytelse.getSaksnummer() == null ? null : ytelse.getSaksnummer().getVerdi());
 
@@ -186,10 +166,6 @@ public class MapAktørYtelse {
             dto.setAnvisninger(anvisninger);
 
             return dto;
-        }
-
-        private no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.TemaUnderkategori mapBehandlingsTema(Ytelse ytelse) {
-            return new no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.TemaUnderkategori(ytelse.getBehandlingsTema().getKode());
         }
 
         private AnvisningDto map(YtelseAnvist ya) {

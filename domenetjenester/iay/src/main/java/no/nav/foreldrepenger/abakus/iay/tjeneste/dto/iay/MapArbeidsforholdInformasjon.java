@@ -7,12 +7,10 @@ import java.util.stream.Collectors;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.BekreftetPermisjon;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyringBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyrtePerioderEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanseEntitet;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.BekreftetPermisjonStatus;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
@@ -62,12 +60,12 @@ class MapArbeidsforholdInformasjon {
 
             overstyringBuilder.medBeskrivelse(ov.getBegrunnelse())
                 .medNyArbeidsforholdRef(nyArbeidsgiverRef)
-                .medHandling(new ArbeidsforholdHandlingType(ov.getHandling().getKode()))
+                .medHandling(KodeverkMapper.mapArbeidsforholdHandlingTypeFraDto(ov.getHandling()))
                 .medAngittArbeidsgiverNavn(ov.getAngittArbeidsgiverNavn())
                 .medAngittStillingsprosent(new Stillingsprosent(ov.getStillingsprosent()));
 
             ov.getBekreftetPermisjon().ifPresent(bp -> {
-                var bekreftetPermisjon = new BekreftetPermisjon(bp.getPeriode().getFom(), bp.getPeriode().getTom(), map(bp.getBekreftetPermisjonStatus()));
+                var bekreftetPermisjon = new BekreftetPermisjon(bp.getPeriode().getFom(), bp.getPeriode().getTom(), KodeverkMapper.getBekreftetPermisjonStatus(bp.getBekreftetPermisjonStatus()));
                 overstyringBuilder.medBekreftetPermisjon(bekreftetPermisjon);
             });
 
@@ -75,10 +73,6 @@ class MapArbeidsforholdInformasjon {
             ov.getArbeidsforholdOverstyrtePerioder().stream().forEach(p -> overstyringBuilder.leggTilOverstyrtPeriode(p.getFom(), p.getTom()));
 
             return overstyringBuilder;
-        }
-
-        private BekreftetPermisjonStatus map(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.BekreftetPermisjonStatus status) {
-            return new BekreftetPermisjonStatus(status.getKode());
         }
 
         private ArbeidsforholdRef mapArbeidsforholdRef(ArbeidsforholdRefDto arbeidsforholdId) {
@@ -109,7 +103,7 @@ class MapArbeidsforholdInformasjon {
                         mapArbeidsforholdsId(entitet, ao.getArbeidsgiver(), ao.getArbeidsforholdRef()))
                             .medBegrunnelse(ao.getBegrunnelse())
                             .medBekreftetPermisjon(mapBekreftetPermisjon(ao.getBekreftetPermisjon()))
-                            .medHandling(map(ao.getHandling()))
+                            .medHandling(KodeverkMapper.mapArbeidsforholdHandlingTypeTilDto(ao.getHandling()))
                             .medNavn(ao.getArbeidsgiverNavn())
                             .medStillingsprosent(ao.getStillingsprosent() == null ? null : ao.getStillingsprosent().getVerdi())
                             .medNyArbeidsforholdRef(
@@ -136,21 +130,14 @@ class MapArbeidsforholdInformasjon {
                     .collect(Collectors.toList());
         }
 
-        private no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType map(ArbeidsforholdHandlingType handling) {
-            if (handling == null) {
-                return null;
-            }
-            return new no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType(handling.getKode());
-        }
-
         private no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeidsforhold.v1.BekreftetPermisjon mapBekreftetPermisjon(Optional<BekreftetPermisjon> entitet) {
             if(entitet.isEmpty()) {
                 return null;
             }
             var bekreftetPermisjon = entitet.get();
             var periode = mapPeriode(bekreftetPermisjon.getPeriode());
-            return new no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeidsforhold.v1.BekreftetPermisjon(periode,
-                new no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.BekreftetPermisjonStatus(bekreftetPermisjon.getStatus().getKode()));
+            var bekreftetPermisjonStatus = KodeverkMapper.mapBekreftetPermisjonStatus(bekreftetPermisjon.getStatus());
+            return new no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeidsforhold.v1.BekreftetPermisjon(periode, bekreftetPermisjonStatus);
         }
 
         private Periode mapPeriode(DatoIntervallEntitet periode) {

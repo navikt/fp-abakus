@@ -14,17 +14,15 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder.
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder.OppgittArbeidsforholdBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittUtenlandskVirksomhetEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittAnnenAktivitet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilansoppdrag;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
 import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Organisasjon;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.oppgittopptjening.v1.OppgittAnnenAktivitetDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.oppgittopptjening.v1.OppgittArbeidsforholdDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.oppgittopptjening.v1.OppgittEgenNæringDto;
@@ -68,7 +66,7 @@ public class MapOppgittOpptjening {
             
             DatoIntervallEntitet periode1 = arbeidsforhold.getPeriode();
             var periode = new Periode(periode1.getFomDato(), periode1.getTomDato());
-            var arbeidType = new ArbeidType(arbeidsforhold.getArbeidType().getKode());
+            var arbeidType = KodeverkMapper.mapArbeidTypeTilDto(arbeidsforhold.getArbeidType());
 
             OppgittUtenlandskVirksomhetDto utenlandskVirksomhet = null;
             if (arbeidsforhold.getUtenlandskVirksomhet() != null) {
@@ -126,7 +124,7 @@ public class MapOppgittOpptjening {
             if(annenAktivitet == null) return null;
             
             var periode = new Periode(annenAktivitet.getPeriode().getFomDato(), annenAktivitet.getPeriode().getTomDato());
-            var arbeidType = new ArbeidType(annenAktivitet.getArbeidType().getKode());
+            var arbeidType = KodeverkMapper.mapArbeidTypeTilDto(annenAktivitet.getArbeidType());
             return new OppgittAnnenAktivitetDto(periode, arbeidType);
         }
 
@@ -192,7 +190,7 @@ public class MapOppgittOpptjening {
                 .medEndringDato(dto.getEndringDato())
                 .medUtenlandskVirksomhet(tilUtenlandskVirksomhet(dto.getOppgittUtenlandskVirksomhet()))
                 .medVirksomhet(org)
-                .medVirksomhetType(new VirksomhetType(dto.getVirksomhetTypeDto().getKode()))
+                .medVirksomhetType(KodeverkMapper.mapVirksomhetTypeFraDto(dto.getVirksomhetTypeDto()))
                 .medRegnskapsførerNavn(dto.getRegnskapsførerNavn())
                 .medRegnskapsførerTlf(dto.getRegnskapsførerTlf())
                 .medNyIArbeidslivet(dto.isNyIArbeidslivet())
@@ -209,7 +207,7 @@ public class MapOppgittOpptjening {
             
             Periode dto1 = dto.getPeriode();
             var builder = OppgittArbeidsforholdBuilder.ny()
-                .medArbeidType(tilArbeidtype(dto.getArbeidTypeDto()))
+                .medArbeidType(KodeverkMapper.mapArbeidType(dto.getArbeidTypeDto()))
                 .medErUtenlandskInntekt(dto.isErUtenlandskInntekt())
                 .medPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(dto1.getFom(), dto1.getTom()))
                 .medUtenlandskVirksomhet(tilUtenlandskVirksomhet(dto.getUtenlandskVirksomhet()));
@@ -229,12 +227,8 @@ public class MapOppgittOpptjening {
             
             Periode dto1 = dto.getPeriode();
             var periode = DatoIntervallEntitet.fraOgMedTilOgMed(dto1.getFom(), dto1.getTom());
-            var arbeidType = tilArbeidtype(dto.getArbeidTypeDto());
+            var arbeidType = KodeverkMapper.mapArbeidType(dto.getArbeidTypeDto());
             return new OppgittAnnenAktivitetEntitet(periode, arbeidType);
-        }
-
-        private no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType tilArbeidtype(ArbeidType arbeidType) {
-            return new no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType(arbeidType.getKode());
         }
 
     }
