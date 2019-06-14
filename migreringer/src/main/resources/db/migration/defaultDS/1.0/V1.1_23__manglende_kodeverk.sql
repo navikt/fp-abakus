@@ -28,22 +28,22 @@ INSERT INTO KODELISTE (id, kode, beskrivelse, gyldig_fom, kodeverk)
 VALUES (nextval('seq_kodeliste'), 'BRUK_MED_OVERSTYRT_PERIODE', 'Bruk arbeidsforholdet med overstyrt periode', to_date('2000-01-01', 'YYYY-MM-DD'), 'ARBEIDSFORHOLD_HANDLING_TYPE');
 
 INSERT INTO KODELISTE_NAVN_I18N (id, kl_kodeverk, kl_kode, sprak, navn)
-VALUES (nextval('SEQ_KODELISTE_NAVN_I18N'), 'ARBEIDSFORHOLD_HANDLING_TYPE',    'BRUK_MED_OVERSTYRT_PERIODE',   'NB',   'Bruk arbeidsforholdet med overstyrt periode');
+VALUES (nextval('SEQ_KODELISTE_NAVN'), 'ARBEIDSFORHOLD_HANDLING_TYPE',    'BRUK_MED_OVERSTYRT_PERIODE',   'NB',   'Bruk arbeidsforholdet med overstyrt periode');
 
 INSERT INTO KODELISTE (id, kode, beskrivelse, gyldig_fom, kodeverk)
 VALUES (nextval('seq_kodeliste'), 'LAGT_TIL_AV_SAKSBEHANDLER', 'Arbeidsforhold lagt til av saksbehandler', to_date('2000-01-01', 'YYYY-MM-DD'), 'ARBEIDSFORHOLD_HANDLING_TYPE');
 
 INSERT INTO KODELISTE_NAVN_I18N (ID, KL_KODEVERK, KL_KODE, SPRAK, NAVN)
-VALUES (nextval('SEQ_KODELISTE_NAVN_I18N'), 'ARBEIDSFORHOLD_HANDLING_TYPE', 'LAGT_TIL_AV_SAKSBEHANDLER', 'NB', 'Arbeidsforhold lagt til av saksbehandler');
+VALUES (nextval('SEQ_KODELISTE_NAVN'), 'ARBEIDSFORHOLD_HANDLING_TYPE', 'LAGT_TIL_AV_SAKSBEHANDLER', 'NB', 'Arbeidsforhold lagt til av saksbehandler');
 
 INSERT INTO KODELISTE (id, kode, beskrivelse, gyldig_fom, kodeverk)
 VALUES (nextval('seq_kodeliste'), 'KUNSTIG', 'Kunstig arbeidsforhold lagt til av saksbehandler', to_date('2000-01-01', 'YYYY-MM-DD'), 'ORGANISASJONSTYPE');
 
 INSERT INTO KODELISTE_NAVN_I18N (ID, KL_KODEVERK, KL_KODE, SPRAK, NAVN)
-VALUES (nextval('SEQ_KODELISTE_NAVN_I18N'), 'ORGANISASJONSTYPE', 'KUNSTIG', 'NB', 'Kunstig arbeidsforhold lagt til av saksbehandler');
+VALUES (nextval('SEQ_KODELISTE_NAVN'), 'ORGANISASJONSTYPE', 'KUNSTIG', 'NB', 'Kunstig arbeidsforhold lagt til av saksbehandler');
 
 INSERT INTO KODELISTE (id, kode, beskrivelse, gyldig_fom, kodeverk)
 VALUES (nextval('seq_kodeliste'), 'INNTEKT_IKKE_MED_I_BG', 'Inntekten til arbeidsforholdet skal ikke være med i beregningsgrunnlaget', to_date('2000-01-01', 'YYYY-MM-DD'), 'ARBEIDSFORHOLD_HANDLING_TYPE');
 
 INSERT INTO KODELISTE_NAVN_I18N (ID, KL_KODEVERK, KL_KODE, SPRAK, NAVN)
-VALUES (nextval('SEQ_KODELISTE_NAVN_I18N'), 'ARBEIDSFORHOLD_HANDLING_TYPE', 'INNTEKT_IKKE_MED_I_BG', 'NB', 'Inntekten til arbeidsforholdet skal ikke være med i beregningsgrunnlaget');
+VALUES (nextval('SEQ_KODELISTE_NAVN'), 'ARBEIDSFORHOLD_HANDLING_TYPE', 'INNTEKT_IKKE_MED_I_BG', 'NB', 'Inntekten til arbeidsforholdet skal ikke være med i beregningsgrunnlaget');
