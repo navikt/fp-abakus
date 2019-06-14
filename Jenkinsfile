@@ -23,6 +23,9 @@ import no.nav.jenkins.*
                 label 'MASTER'
             }
         }
+        parameters {
+          string(defaultValue: 't4', description: '', name: 'miljo')
+        }
         options {
           timestamps()
         }
