@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 
 public class Arbeidsforhold {
     private Arbeidsgiver arbeidsgiver;
@@ -13,10 +13,10 @@ public class Arbeidsforhold {
     private LocalDate arbeidTom;
     private List<Arbeidsavtale> arbeidsavtaler;
     private List<Permisjon> permisjoner;
-    private ArbeidsforholdRef arbeidsforholdId;
+    private EksternArbeidsforholdRef arbeidsforholdId;
 
     private Arbeidsforhold(Arbeidsgiver arbeidsgiver, String type, LocalDate arbeidFom, LocalDate arbeidTom,
-                           List<Arbeidsavtale> arbeidsavtaler, List<Permisjon> permisjoner, ArbeidsforholdRef arbeidsforholdId) {
+                           List<Arbeidsavtale> arbeidsavtaler, List<Permisjon> permisjoner, EksternArbeidsforholdRef arbeidsforholdId) {
         this.arbeidsgiver = arbeidsgiver;
         this.type = type;
         this.arbeidFom = arbeidFom;
@@ -50,7 +50,7 @@ public class Arbeidsforhold {
         return permisjoner;
     }
 
-    public ArbeidsforholdRef getArbeidsforholdId() {
+    public EksternArbeidsforholdRef getArbeidsforholdId() {
         return arbeidsforholdId;
     }
 
@@ -65,7 +65,7 @@ public class Arbeidsforhold {
         private LocalDate arbeidTom;
         private List<Arbeidsavtale> arbeidsavtaler = new ArrayList<>();
         private List<Permisjon> permisjoner = new ArrayList<>();
-        private ArbeidsforholdRef arbeidsforholdId;
+        private EksternArbeidsforholdRef arbeidsforholdId;
 
 
         public Builder medArbeidsgiver(Arbeidsgiver arbeidsgiver) {
@@ -79,7 +79,7 @@ public class Arbeidsforhold {
         }
 
         public Builder medArbeidsforholdId(String arbeidsforholdId) {
-            this.arbeidsforholdId = ArbeidsforholdRef.ref(arbeidsforholdId);
+            this.arbeidsforholdId = EksternArbeidsforholdRef.ref(arbeidsforholdId);
             return this;
         }
 

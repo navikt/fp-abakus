@@ -6,7 +6,6 @@ import java.util.Properties;
 
 import io.swagger.annotations.ApiModel;
 import no.nav.vedtak.log.sporingslogg.Sporingsdata;
-import no.nav.vedtak.log.sporingslogg.SporingsloggId;
 import no.nav.vedtak.log.sporingslogg.StandardSporingsloggId;
 
 @ApiModel

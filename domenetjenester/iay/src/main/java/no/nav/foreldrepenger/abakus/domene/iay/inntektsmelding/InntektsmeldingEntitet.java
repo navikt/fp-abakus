@@ -33,7 +33,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendin
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.JournalpostId;
@@ -67,10 +66,9 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
     @ChangeTracked
     private Arbeidsgiver arbeidsgiver;
 
-    /** TODO Bytt til InternArbeidsforholdRef. + migrer data*/
     @Embedded
     @ChangeTracked
-    private ArbeidsforholdRef arbeidsforholdRef;
+    private InternArbeidsforholdRef arbeidsforholdRef;
 
     @Column(name = "start_dato_permisjon", updatable = false, nullable = false)
     @ChangeTracked
@@ -244,8 +242,8 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
     }
 
     @Override
-    public ArbeidsforholdRef getArbeidsforholdRef() {
-        return arbeidsforholdRef != null ? arbeidsforholdRef : ArbeidsforholdRef.ref(null);
+    public InternArbeidsforholdRef getArbeidsforholdRef() {
+        return arbeidsforholdRef != null ? arbeidsforholdRef : InternArbeidsforholdRef.nullRef();
     }
 
     @Override
@@ -254,17 +252,12 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
     }
 
     /**
-     * TODO: (DOKUMENTERE DENNE)
+     * Setter intern arbeidsdforhold Id for inntektsmelding
      *
      * @param arbeidsforholdRef Intern arbeidsforhold id
-     * @deprecated bytt til {@link #setArbeidsforholdId(InternArbeidsforholdRef)}
      */
-    public void setArbeidsforholdId(ArbeidsforholdRef arbeidsforholdRef) {
-        this.arbeidsforholdRef = arbeidsforholdRef;
-    }
-
-    public void setArbeidsforholdId(InternArbeidsforholdRef arbeidsforholdRef) {
-        this.arbeidsforholdRef = ArbeidsforholdRef.ref(arbeidsforholdRef.getReferanse());
+    void setArbeidsforholdId(InternArbeidsforholdRef arbeidsforholdRef) {
+        this.arbeidsforholdRef = arbeidsforholdRef != null ? arbeidsforholdRef : InternArbeidsforholdRef.nullRef();
     }
     
     @Override

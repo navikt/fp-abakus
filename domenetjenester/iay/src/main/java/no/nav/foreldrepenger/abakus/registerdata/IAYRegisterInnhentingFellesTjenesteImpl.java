@@ -19,6 +19,7 @@ import org.threeten.extra.Interval;
 import no.nav.foreldrepenger.abakus.domene.iay.AktørInntektEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.NæringsinntektType;
 import no.nav.foreldrepenger.abakus.domene.iay.OffentligYtelseType;
@@ -27,12 +28,14 @@ import no.nav.foreldrepenger.abakus.domene.iay.PensjonTrygdType;
 import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseType;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.SkatteOgAvgiftsregelType;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
+import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
@@ -44,7 +47,8 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInf
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.SigrunTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrganisasjonsNummerValidator;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
@@ -85,7 +89,8 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
 
     private void innhentNæringsOpplysninger(Kobling kobling, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder) {
         Map<DatoIntervallEntitet, Map<InntektspostType, BigDecimal>> map = sigrunTjeneste.beregnetSkatt(kobling.getAktørId());
-        InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder = inntektArbeidYtelseAggregatBuilder.getAktørInntektBuilder(kobling.getAktørId());
+        InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder = inntektArbeidYtelseAggregatBuilder
+            .getAktørInntektBuilder(kobling.getAktørId());
 
         AktørInntektEntitet.InntektBuilder inntektBuilder = aktørInntektBuilder.getInntektBuilder(InntektsKilde.SIGRUN, null);
 
@@ -106,21 +111,24 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
     @Override
     public InntektArbeidYtelseAggregatBuilder innhentInntekterFor(Kobling kobling, AktørId aktørId,
                                                                   InntektsKilde... kilder) {
-        final InntektArbeidYtelseAggregatBuilder builder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(kobling.getKoblingReferanse(), UUID.randomUUID(), LocalDateTime.now());
+        final InntektArbeidYtelseAggregatBuilder builder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(kobling.getKoblingReferanse(),
+            UUID.randomUUID(), LocalDateTime.now());
         return innhentInntekterFor(kobling, aktørId, builder, kilder);
     }
 
-    private InntektArbeidYtelseAggregatBuilder innhentInntekterFor(Kobling kobling, AktørId aktørId, InntektArbeidYtelseAggregatBuilder builder, InntektsKilde... kilder) {
+    private InntektArbeidYtelseAggregatBuilder innhentInntekterFor(Kobling kobling, AktørId aktørId, InntektArbeidYtelseAggregatBuilder builder,
+                                                                   InntektsKilde... kilder) {
         if (kilder.length == 0) {
             return builder;
         }
         for (InntektsKilde kilde : kilder) {
-            final InntektsInformasjon inntektsInformasjon = innhentingSamletTjeneste.getInntektsInformasjon(aktørId, kobling, kobling.getOpplysningsperiode().tilIntervall(), kilde);
+            final InntektsInformasjon inntektsInformasjon = innhentingSamletTjeneste.getInntektsInformasjon(aktørId, kobling,
+                kobling.getOpplysningsperiode().tilIntervall(), kilde);
             leggTilInntekter(aktørId, builder, inntektsInformasjon);
             if (kilde.equals(InntektsKilde.INNTEKT_OPPTJENING)) {
                 inntektsInformasjon.getFrilansArbeidsforhold()
                     .entrySet()
-                    .forEach(frilansArbeidsforhold -> oversettFrilanseArbeidsforhold(builder, frilansArbeidsforhold, aktørId));
+                    .forEach(frilansArbeidsforhold -> oversettFrilanseArbeidsforhold(kobling, builder, frilansArbeidsforhold, aktørId));
             }
         }
         return builder;
@@ -128,7 +136,8 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
 
     @Override
     public InntektArbeidYtelseAggregatBuilder innhentRegisterdata(Kobling kobling) {
-        final InntektArbeidYtelseAggregatBuilder builder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(kobling.getKoblingReferanse(), UUID.randomUUID(), LocalDateTime.now());
+        final InntektArbeidYtelseAggregatBuilder builder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(kobling.getKoblingReferanse(),
+            UUID.randomUUID(), LocalDateTime.now());
         // Arbeidsforhold & inntekter
         innhentArbeidsforhold(kobling, builder);
         if (skalInnhenteNæringsInntekterFor(kobling)) {
@@ -140,7 +149,8 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
     }
 
     private void innhentYtelser(Kobling kobling, InntektArbeidYtelseAggregatBuilder builder) {
-        ytelseRegisterInnhenting.byggYtelser(kobling, kobling.getAktørId(), kobling.getOpplysningsperiode().tilIntervall(), builder, skalInnhenteYtelseGrunnlag(kobling));
+        ytelseRegisterInnhenting.byggYtelser(kobling, kobling.getAktørId(), kobling.getOpplysningsperiode().tilIntervall(), builder,
+            skalInnhenteYtelseGrunnlag(kobling));
         final Optional<AktørId> annenPartAktørId = kobling.getAnnenPartAktørId();
         annenPartAktørId.ifPresent(a -> ytelseRegisterInnhenting.byggYtelser(kobling, a, kobling.getOpplysningsperiode().tilIntervall(), builder, false));
     }
@@ -159,7 +169,8 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
         aktørInntektBuilder.fjernInntekterFraKilde(kilde);
 
         inntektsInformasjon.getMånedsinntekterGruppertPåArbeidsgiver()
-            .forEach((identifikator, inntektOgRegelListe) -> leggTilInntekterPåArbeidsforhold(builder, aktørInntektBuilder, inntektOgRegelListe, identifikator, kilde));
+            .forEach((identifikator, inntektOgRegelListe) -> leggTilInntekterPåArbeidsforhold(builder, aktørInntektBuilder, inntektOgRegelListe, identifikator,
+                kilde));
 
         final List<Månedsinntekt> ytelsesTrygdEllerPensjonInntekt = inntektsInformasjon.getYtelsesTrygdEllerPensjonInntektSummert();
         if (!ytelsesTrygdEllerPensjonInntekt.isEmpty()) {
@@ -167,7 +178,8 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
         }
     }
 
-    private void leggTilYtelseInntekter(List<Månedsinntekt> ytelsesTrygdEllerPensjonInntekt, InntektArbeidYtelseAggregatBuilder builder, AktørId aktørId, InntektsKilde inntektOpptjening) {
+    private void leggTilYtelseInntekter(List<Månedsinntekt> ytelsesTrygdEllerPensjonInntekt, InntektArbeidYtelseAggregatBuilder builder, AktørId aktørId,
+                                        InntektsKilde inntektOpptjening) {
         final InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder = builder.getAktørInntektBuilder(aktørId);
         final AktørInntektEntitet.InntektBuilder inntektBuilderForYtelser = aktørInntektBuilder.getInntektBuilderForYtelser(inntektOpptjening);
         ytelsesTrygdEllerPensjonInntekt.forEach(mi -> lagInntektsposterYtelse(mi, inntektBuilderForYtelser));
@@ -176,15 +188,29 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
         builder.leggTilAktørInntekt(aktørInntektBuilder);
     }
 
-    private void oversettFrilanseArbeidsforhold(InntektArbeidYtelseAggregatBuilder builder,
+    private void oversettFrilanseArbeidsforhold(Kobling kobling,
+                                                InntektArbeidYtelseAggregatBuilder builder,
                                                 Map.Entry<ArbeidsforholdIdentifikator, List<FrilansArbeidsforhold>> frilansArbeidsforhold, AktørId aktørId) {
+
+        var koblingReferanse = kobling.getKoblingReferanse();
+
         final InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder aktørArbeidBuilder = builder.getAktørArbeidBuilder(aktørId);
         final ArbeidsforholdIdentifikator arbeidsforholdIdentifikator = frilansArbeidsforhold.getKey();
         final Arbeidsgiver arbeidsgiver = mapArbeidsgiver(arbeidsforholdIdentifikator);
-        final Opptjeningsnøkkel nøkkel = mapOpptjeningsnøkkel(arbeidsgiver, arbeidsforholdIdentifikator.getArbeidsforholdId());
+
+        var arbeidsforholdRef = finnReferanseFor(koblingReferanse, arbeidsgiver, arbeidsforholdIdentifikator.getArbeidsforholdId());
+
+        final String arbeidsforholdId = arbeidsforholdIdentifikator.harArbeidsforholdRef() ? arbeidsforholdIdentifikator.getArbeidsforholdId().getReferanse()
+            : null;
+        var eksternReferanse = EksternArbeidsforholdRef.ref(arbeidsforholdId);
+        var internReferanse = arbeidsforholdRef.orElseGet(() -> {
+            return builder.medNyInternArbeidsforholdRef(arbeidsgiver, eksternReferanse);
+        });
+
+        final Opptjeningsnøkkel nøkkel = new Opptjeningsnøkkel(internReferanse, arbeidsgiver);
         final ArbeidType arbeidType = kodeverkRepository.finn(ArbeidType.class, arbeidsforholdIdentifikator.getType());
         YrkesaktivitetBuilder yrkesaktivitetBuilder = aktørArbeidBuilder.getYrkesaktivitetBuilderForNøkkelAvType(nøkkel, arbeidType);
-        yrkesaktivitetBuilder.medArbeidsforholdId(arbeidsforholdIdentifikator.getArbeidsforholdId())
+        yrkesaktivitetBuilder.medArbeidsforholdId(internReferanse)
             .medArbeidsgiver(arbeidsgiver)
             .medArbeidType(arbeidType);
         for (FrilansArbeidsforhold avtale : frilansArbeidsforhold.getValue()) {
@@ -195,11 +221,8 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
         builder.leggTilAktørArbeid(aktørArbeidBuilder);
     }
 
-    private Opptjeningsnøkkel mapOpptjeningsnøkkel(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef arbeidsforholdRef) {
-        return new Opptjeningsnøkkel(arbeidsforholdRef, arbeidsgiver);
-    }
-
-    private void leggTilInntekterPåArbeidsforhold(InntektArbeidYtelseAggregatBuilder builder, InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder,
+    private void leggTilInntekterPåArbeidsforhold(InntektArbeidYtelseAggregatBuilder builder,
+                                                  InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder,
                                                   Map<YearMonth, List<InntektsInformasjon.MånedsbeløpOgSkatteOgAvgiftsregel>> månedsinntekterGruppertPåArbeidsgiver,
                                                   String arbeidsgiverIdentifikator, InntektsKilde inntektOpptjening) {
 
@@ -238,25 +261,44 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
     private void byggOpptjeningOpplysningene(Kobling kobling, AktørId aktørId, Interval opplysningsPeriode,
                                              InntektArbeidYtelseAggregatBuilder builder) {
         Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = innhentingSamletTjeneste.getArbeidsforhold(aktørId, opplysningsPeriode);
-        arbeidsforhold.entrySet().forEach(forholdet -> oversettArbeidsforholdTilYrkesaktivitet(builder, forholdet, aktørId, kobling));
+        arbeidsforhold.entrySet().forEach(forholdet -> oversettArbeidsforholdTilYrkesaktivitet(kobling, builder, forholdet, aktørId));
 
-        final InntektsInformasjon inntektsInformasjon = innhentingSamletTjeneste.getInntektsInformasjon(aktørId, kobling, opplysningsPeriode, InntektsKilde.INNTEKT_OPPTJENING);
+        final InntektsInformasjon inntektsInformasjon = innhentingSamletTjeneste.getInntektsInformasjon(aktørId, kobling, opplysningsPeriode,
+            InntektsKilde.INNTEKT_OPPTJENING);
         leggTilInntekter(aktørId, builder, inntektsInformasjon);
         inntektsInformasjon.getFrilansArbeidsforhold()
             .entrySet()
-            .forEach(frilansArbeidsforhold -> oversettFrilanseArbeidsforhold(builder, frilansArbeidsforhold, aktørId));
+            .forEach(frilansArbeidsforhold -> oversettFrilanseArbeidsforhold(kobling, builder, frilansArbeidsforhold, aktørId));
     }
 
-    private void oversettArbeidsforholdTilYrkesaktivitet(InntektArbeidYtelseAggregatBuilder builder,
-                                                         Map.Entry<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold, AktørId aktørId, Kobling kobling) {
+    private Optional<InternArbeidsforholdRef> finnReferanseFor(KoblingReferanse koblingReferanse, Arbeidsgiver arbeidsgiver,
+                                                               EksternArbeidsforholdRef arbeidsforholdRef) {
+        Optional<ArbeidsforholdInformasjon> arbeidsforholdInformasjon = inntektArbeidYtelseTjeneste.hentGrunnlagFor(koblingReferanse)
+            .flatMap(InntektArbeidYtelseGrunnlag::getArbeidsforholdInformasjon);
+        if (arbeidsforholdInformasjon.isPresent()) {
+            final ArbeidsforholdInformasjon informasjon = arbeidsforholdInformasjon.get();
+            return informasjon.finnForEksternBeholdHistoriskReferanse(arbeidsgiver, arbeidsforholdRef);
+        }
+        return Optional.empty();
+    }
+
+    private void oversettArbeidsforholdTilYrkesaktivitet(Kobling kobling, 
+                                                         InntektArbeidYtelseAggregatBuilder builder,
+                                                         Map.Entry<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold, AktørId aktørId) {
+        var koblingReferanse = kobling.getKoblingReferanse();
         final ArbeidsforholdIdentifikator arbeidsgiverIdent = arbeidsforhold.getKey();
         final Arbeidsgiver arbeidsgiver = mapArbeidsgiver(arbeidsgiverIdent);
         final String arbeidsforholdId = arbeidsgiverIdent.harArbeidsforholdRef() ? arbeidsgiverIdent.getArbeidsforholdId().getReferanse() : null;
-        final ArbeidsforholdRef arbeidsforholdRef = inntektArbeidYtelseTjeneste.finnReferanseFor(kobling.getKoblingReferanse(), arbeidsgiver, ArbeidsforholdRef.ref(arbeidsforholdId), true);
+        var eksternReferanse = EksternArbeidsforholdRef.ref(arbeidsforholdId);
+        var arbeidsforholdRef = finnReferanseFor(koblingReferanse, arbeidsgiver, eksternReferanse);
+        var internReferanse = arbeidsforholdRef.orElseGet(() -> {
+            return builder.medNyInternArbeidsforholdRef(arbeidsgiver, eksternReferanse);
+        });
+        
         InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder aktørArbeidBuilder = builder.getAktørArbeidBuilder(aktørId);
 
         YrkesaktivitetBuilder yrkesaktivitetBuilder = byggYrkesaktiviteterTjeneste
-            .byggYrkesaktivitetForSøker(arbeidsforhold, arbeidsgiver, mapOpptjeningsnøkkel(arbeidsgiver, arbeidsforholdRef), aktørArbeidBuilder);
+                .byggYrkesaktivitetForSøker(arbeidsforhold, arbeidsgiver, internReferanse, aktørArbeidBuilder);
 
         InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder aktørArbeid = aktørArbeidBuilder
             .leggTilYrkesaktivitet(yrkesaktivitetBuilder);
@@ -285,8 +327,8 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
         return yrkesaktivitetBuilder.getAktivitetsAvtaleBuilder(periode, true);
     }
 
-
-    private AktørInntektEntitet.InntektBuilder byggInntekt(Map<YearMonth, List<InntektsInformasjon.MånedsbeløpOgSkatteOgAvgiftsregel>> inntekter, Arbeidsgiver arbeidsgiver,
+    private AktørInntektEntitet.InntektBuilder byggInntekt(Map<YearMonth, List<InntektsInformasjon.MånedsbeløpOgSkatteOgAvgiftsregel>> inntekter,
+                                                           Arbeidsgiver arbeidsgiver,
                                                            InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder,
                                                            InntektsKilde inntektOpptjening) {
 
@@ -304,12 +346,14 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
                         Set::size)));
 
             Optional<String> valgtSkatteOgAvgiftsregel = Optional.empty();
-            BigDecimal beløpSum = månedsinnteker.stream().map(InntektsInformasjon.MånedsbeløpOgSkatteOgAvgiftsregel::getBeløp).reduce(BigDecimal.ZERO, BigDecimal::add);
+            BigDecimal beløpSum = månedsinnteker.stream().map(InntektsInformasjon.MånedsbeløpOgSkatteOgAvgiftsregel::getBeløp).reduce(BigDecimal.ZERO,
+                BigDecimal::add);
             if (antalInntekterForAvgiftsregel.keySet().size() > 1) {
                 String skatteOgAvgiftsregler = antalInntekterForAvgiftsregel.keySet().stream().collect(Collectors.joining(", "));
                 // TODO Diamant velger her en random verdi.
                 valgtSkatteOgAvgiftsregel = Optional.of(antalInntekterForAvgiftsregel.keySet().iterator().next());
-                LOGGER.error("ArbeidsgiverEntitet orgnr {} har flere månedsinntekter for måned {} med forskjellige skatte -og avgiftsregler {}. Velger {}", arbeidsgiver.getIdentifikator(), måned, skatteOgAvgiftsregler, valgtSkatteOgAvgiftsregel);
+                LOGGER.error("ArbeidsgiverEntitet orgnr {} har flere månedsinntekter for måned {} med forskjellige skatte -og avgiftsregler {}. Velger {}",
+                    arbeidsgiver.getIdentifikator(), måned, skatteOgAvgiftsregler, valgtSkatteOgAvgiftsregel);
             } else if (antalInntekterForAvgiftsregel.keySet().size() == 1) {
                 valgtSkatteOgAvgiftsregel = Optional.of(antalInntekterForAvgiftsregel.keySet().iterator().next());
             }
@@ -329,7 +373,8 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
             .medYtelse(mapTilKodeliste(månedsinntekt)));
     }
 
-    private void lagInntektsposter(YearMonth måned, BigDecimal sumInntektsbeløp, Optional<String> valgtSkatteOgAvgiftsregel, AktørInntektEntitet.InntektBuilder inntektBuilder) {
+    private void lagInntektsposter(YearMonth måned, BigDecimal sumInntektsbeløp, Optional<String> valgtSkatteOgAvgiftsregel,
+                                   AktørInntektEntitet.InntektBuilder inntektBuilder) {
 
         InntektEntitet.InntektspostBuilder inntektspostBuilder = inntektBuilder.getInntektspostBuilder();
         inntektspostBuilder
@@ -338,7 +383,8 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
             .medInntektspostType(InntektspostType.LØNN);
 
         if (valgtSkatteOgAvgiftsregel.isPresent()) {
-            SkatteOgAvgiftsregelType skatteOgAvgiftsregelType = kodeverkRepository.finnForKodeverkEiersKode(SkatteOgAvgiftsregelType.class, valgtSkatteOgAvgiftsregel.get());
+            SkatteOgAvgiftsregelType skatteOgAvgiftsregelType = kodeverkRepository.finnForKodeverkEiersKode(SkatteOgAvgiftsregelType.class,
+                valgtSkatteOgAvgiftsregel.get());
             inntektspostBuilder.medSkatteOgAvgiftsregelType(skatteOgAvgiftsregelType);
         }
 

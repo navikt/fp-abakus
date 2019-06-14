@@ -15,7 +15,6 @@ import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
@@ -159,11 +158,6 @@ public class InntektArbeidYtelseAggregatBuilder {
     
     void oppdaterArbeidsforholdReferanseEtterErstatting(AktørId søker, Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef gammelRef,
                                                         InternArbeidsforholdRef nyRef) {
-        oppdaterArbeidsforholdReferanseEtterErstatting(søker, arbeidsgiver, ArbeidsforholdRef.ref(gammelRef.getReferanse()), ArbeidsforholdRef.ref(nyRef.getReferanse()));
-    }
-
-    @Deprecated(forRemoval=true)
-    void oppdaterArbeidsforholdReferanseEtterErstatting(AktørId søker, Arbeidsgiver arbeidsgiver, ArbeidsforholdRef gammelRef, ArbeidsforholdRef nyRef) {
         final AktørArbeidBuilder builder = getAktørArbeidBuilder(søker);
         if (builder.getErOppdatering()) {
             if (eksistererIkkeFraFør(arbeidsgiver, gammelRef, builder)) {
@@ -179,7 +173,7 @@ public class InntektArbeidYtelseAggregatBuilder {
         }
     }
 
-    private boolean eksistererIkkeFraFør(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef gammelRef, AktørArbeidBuilder builder) {
+    private boolean eksistererIkkeFraFør(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef gammelRef, AktørArbeidBuilder builder) {
         return !builder.getYrkesaktivitetBuilderForNøkkelAvType(Opptjeningsnøkkel.forArbeidsforholdIdMedArbeidgiver(gammelRef, arbeidsgiver),
             ArbeidType.AA_REGISTER_TYPER).getErOppdatering();
     }

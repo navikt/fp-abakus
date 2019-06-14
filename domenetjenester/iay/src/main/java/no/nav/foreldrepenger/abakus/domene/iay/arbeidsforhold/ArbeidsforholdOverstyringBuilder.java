@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.BekreftetPermisjon;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
 public class ArbeidsforholdOverstyringBuilder {
@@ -35,13 +35,13 @@ public class ArbeidsforholdOverstyringBuilder {
         return this;
     }
 
-    public ArbeidsforholdOverstyringBuilder medArbeidsforholdRef(ArbeidsforholdRef ref) {
+    public ArbeidsforholdOverstyringBuilder medArbeidsforholdRef(InternArbeidsforholdRef ref) {
         kladd.setArbeidsforholdRef(ref);
         return this;
     }
 
     /** Angi ny arbeidsforholdreferanse som skal erstatte opprinnelig. */
-    public ArbeidsforholdOverstyringBuilder medNyArbeidsforholdRef(ArbeidsforholdRef ref) {
+    public ArbeidsforholdOverstyringBuilder medNyArbeidsforholdRef(InternArbeidsforholdRef ref) {
         kladd.setNyArbeidsforholdRef(ref);
         return this;
     }
