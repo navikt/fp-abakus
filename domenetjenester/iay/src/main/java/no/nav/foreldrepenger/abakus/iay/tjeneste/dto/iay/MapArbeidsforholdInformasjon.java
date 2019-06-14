@@ -12,7 +12,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOver
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyrtePerioderEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanseEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
@@ -75,12 +74,12 @@ class MapArbeidsforholdInformasjon {
             return overstyringBuilder;
         }
 
-        private ArbeidsforholdRef mapArbeidsforholdRef(ArbeidsforholdRefDto arbeidsforholdId) {
+        private InternArbeidsforholdRef mapArbeidsforholdRef(ArbeidsforholdRefDto arbeidsforholdId) {
             if (arbeidsforholdId == null) {
-                return ArbeidsforholdRef.ref(null);
+                return InternArbeidsforholdRef.nullRef();
             }
             // FIXME : Abakus må lagre intern<->ekstern referanse
-            return ArbeidsforholdRef.ref(arbeidsforholdId.getAbakusReferanse());
+            return InternArbeidsforholdRef.ref(arbeidsforholdId.getAbakusReferanse());
         }
 
         private Arbeidsgiver mapArbeidsgiver(Aktør arbeidsgiver) {
@@ -152,7 +151,7 @@ class MapArbeidsforholdInformasjon {
         }
 
         private ArbeidsforholdRefDto mapArbeidsforholdsId(no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon arbeidsforholdInformasjon,
-                                                          Arbeidsgiver arbeidsgiver, ArbeidsforholdRef ref) {
+                                                          Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef ref) {
             if(ref==null) {
                 return null;
             }
@@ -165,7 +164,7 @@ class MapArbeidsforholdInformasjon {
             String internId = ref.getReferanse();
 
             if (internId != null) {
-                EksternArbeidsforholdRef eksternReferanse = arbeidsforholdInformasjon.finnEkstern(arbeidsgiver, InternArbeidsforholdRef.ref(internId));
+                EksternArbeidsforholdRef eksternReferanse = arbeidsforholdInformasjon.finnEkstern(arbeidsgiver, ref);
                 return new ArbeidsforholdRefDto(internId, eksternReferanse.getReferanse());
             }
             return new ArbeidsforholdRefDto(internId, null);

@@ -7,7 +7,6 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskInfo;
 import no.nav.vedtak.log.sporingslogg.Sporingsdata;
 import no.nav.vedtak.log.sporingslogg.SporingsloggHelper;
-import no.nav.vedtak.log.sporingslogg.SporingsloggId;
 import no.nav.vedtak.log.sporingslogg.StandardSporingsloggId;
 import no.nav.vedtak.sikkerhet.loginmodule.ContainerLogin;
 import no.nav.vedtak.util.MdcExtendedLogContext;

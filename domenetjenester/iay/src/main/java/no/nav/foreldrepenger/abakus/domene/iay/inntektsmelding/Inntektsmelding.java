@@ -6,8 +6,8 @@ import java.util.List;
 
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 
 public interface Inntektsmelding {
@@ -46,7 +46,7 @@ public interface Inntektsmelding {
      *
      * @return {@link ArbeidsforholdRef}
      */
-    ArbeidsforholdRef getArbeidsforholdRef();
+    InternArbeidsforholdRef getArbeidsforholdRef();
 
     /**
      * Gjelder for et spesifikt arbeidsforhold

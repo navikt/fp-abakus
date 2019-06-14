@@ -4,20 +4,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsforholdReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
 public interface ArbeidsforholdInformasjon {
 
-    @Deprecated(forRemoval=true)
-    ArbeidsforholdRef finnEllerOpprett(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef ref);
-
-
-    @Deprecated(forRemoval=true)
-    ArbeidsforholdRef finnForEksternBeholdHistoriskReferanse(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef arbeidsforholdRef);
-    
     List<ArbeidsforholdOverstyringEntitet> getOverstyringer();
     
     Optional<InternArbeidsforholdRef> finnForEkstern(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef ref);
@@ -28,6 +21,11 @@ public interface ArbeidsforholdInformasjon {
     Optional<InternArbeidsforholdRef> finnForEksternBeholdHistoriskReferanse(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef arbeidsforholdRef);
 
     EksternArbeidsforholdRef finnEkstern(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef internReferanse);
+    
+    /** @deprecated Bruk {@link ArbeidsforholdInformasjonBuilder} i stedet. */
+    @Deprecated(forRemoval = true)
+    ArbeidsforholdReferanse opprettNyReferanse(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef internReferanse,
+                                                      EksternArbeidsforholdRef eksternReferanse);
     
     Collection<ArbeidsforholdReferanseEntitet> getArbeidsforholdReferanser();
 

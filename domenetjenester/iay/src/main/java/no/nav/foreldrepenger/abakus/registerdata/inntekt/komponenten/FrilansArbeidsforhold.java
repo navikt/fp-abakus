@@ -9,11 +9,11 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Organisasjon;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Person;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 
 public class FrilansArbeidsforhold {
 
-    private ArbeidsforholdRef arbeidsforholdId;
+    private EksternArbeidsforholdRef arbeidsforholdId;
     private LocalDate fom;
     private LocalDate tom;
     private AktørId arbeidsgiverAktørId;
@@ -56,11 +56,11 @@ public class FrilansArbeidsforhold {
         this.avtaltArbeidstimerPerUke = avtaltArbeidstimerPerUke;
     }
 
-    public ArbeidsforholdRef getArbeidsforholdRef() {
+    public EksternArbeidsforholdRef getArbeidsforholdRef() {
         return arbeidsforholdId;
     }
 
-    void setArbeidsforholdRef(ArbeidsforholdRef arbeidsforholdId) {
+    void setArbeidsforholdRef(EksternArbeidsforholdRef arbeidsforholdId) {
         this.arbeidsforholdId = arbeidsforholdId;
     }
 
@@ -146,7 +146,7 @@ public class FrilansArbeidsforhold {
         }
 
         public Builder medArbeidsforholdId(String id) {
-            kladd.setArbeidsforholdRef(ArbeidsforholdRef.ref(id));
+            kladd.setArbeidsforholdRef(EksternArbeidsforholdRef.ref(id));
             return this;
         }
 

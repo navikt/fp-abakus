@@ -8,7 +8,6 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
@@ -20,8 +19,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInfo
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 
 @ApplicationScoped
 public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjeneste {
@@ -57,19 +54,21 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
     public Optional<InntektArbeidYtelseGrunnlag> hentGrunnlagFor(KoblingReferanse koblingReferanse) {
         return repository.hentInntektArbeidYtelseGrunnlagForBehandling(koblingReferanse);
     }
-    
+
     @Override
     public Optional<InntektArbeidYtelseGrunnlag> hentGrunnlagFor(GrunnlagReferanse grunnlagReferanse) {
         return repository.hentInntektArbeidYtelseForReferanse(grunnlagReferanse);
     }
 
     @Override
-    public InntektArbeidYtelseAggregatBuilder opprettBuilderForRegister(KoblingReferanse koblingReferanse, UUID angittReferanse, LocalDateTime angittOpprettetTidspunkt) {
+    public InntektArbeidYtelseAggregatBuilder opprettBuilderForRegister(KoblingReferanse koblingReferanse, UUID angittReferanse,
+                                                                        LocalDateTime angittOpprettetTidspunkt) {
         return repository.opprettBuilderFor(koblingReferanse, angittReferanse, angittOpprettetTidspunkt, VersjonType.REGISTER);
     }
-    
+
     @Override
-    public InntektArbeidYtelseAggregatBuilder opprettBuilderForSaksbehandlet(KoblingReferanse koblingReferanse, UUID angittReferanse, LocalDateTime angittOpprettetTidspunkt) {
+    public InntektArbeidYtelseAggregatBuilder opprettBuilderForSaksbehandlet(KoblingReferanse koblingReferanse, UUID angittReferanse,
+                                                                             LocalDateTime angittOpprettetTidspunkt) {
         return repository.opprettBuilderFor(koblingReferanse, angittReferanse, angittOpprettetTidspunkt, VersjonType.SAKSBEHANDLET);
     }
 
@@ -81,21 +80,6 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
     @Override
     public void lagre(KoblingReferanse koblingReferanse, AktørId aktørId, ArbeidsforholdInformasjonBuilder builder) {
         repository.lagre(koblingReferanse, aktørId, builder);
-    }
-    
-    @Override
-    public ArbeidsforholdRef finnReferanseFor(KoblingReferanse koblingReferanse, Arbeidsgiver arbeidsgiver, ArbeidsforholdRef arbeidsforholdRef,
-                                              boolean beholdErstattetVerdi) {
-        final Optional<ArbeidsforholdInformasjon> arbeidsforholdInformasjon = repository.hentArbeidsforholdInformasjonForBehandling(koblingReferanse);
-        if (arbeidsforholdInformasjon.isPresent()) {
-            final ArbeidsforholdInformasjon informasjon = arbeidsforholdInformasjon.get();
-            if (beholdErstattetVerdi) {
-                return informasjon.finnForEksternBeholdHistoriskReferanse(arbeidsgiver, arbeidsforholdRef);
-            }
-            var eksternRef = EksternArbeidsforholdRef.ref(arbeidsforholdRef==null?null:arbeidsforholdRef.getReferanse());
-            return ArbeidsforholdRef.ref(informasjon.finnForEkstern(arbeidsgiver, eksternRef).orElseThrow().getReferanse());
-        }
-        return arbeidsforholdRef;
     }
 
     @Override

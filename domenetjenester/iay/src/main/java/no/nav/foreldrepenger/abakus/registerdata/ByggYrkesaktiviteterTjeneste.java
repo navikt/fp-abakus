@@ -21,6 +21,7 @@ import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsavtale;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 class ByggYrkesaktiviteterTjeneste {
@@ -32,11 +33,15 @@ class ByggYrkesaktiviteterTjeneste {
     }
 
     YrkesaktivitetBuilder byggYrkesaktivitetForSøker(Map.Entry<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold,
-                                                     Arbeidsgiver arbeidsgiver, Opptjeningsnøkkel nøkkel, InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder aktørArbeidBuilder) {
+                                                     Arbeidsgiver arbeidsgiver, 
+                                                     InternArbeidsforholdRef internReferanse, 
+                                                     InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder aktørArbeidBuilder) {
+        
+        var opptjeningsNøkkel = new Opptjeningsnøkkel(internReferanse, arbeidsgiver);
         final ArbeidsforholdIdentifikator arbeidsgiverIdent = arbeidsforhold.getKey();
         final ArbeidType arbeidsforholdType = kodeverkRepository.finnForKodeverkEiersKode(ArbeidType.class, arbeidsgiverIdent.getType());
-        YrkesaktivitetBuilder builder = aktørArbeidBuilder.getYrkesaktivitetBuilderForNøkkelAvType(nøkkel, arbeidsforholdType);
-        opprettMinimalYrkesaktivitet(arbeidsforhold.getKey(), arbeidsgiver, builder);
+        YrkesaktivitetBuilder builder = aktørArbeidBuilder.getYrkesaktivitetBuilderForNøkkelAvType(opptjeningsNøkkel, arbeidsforholdType);
+        opprettMinimalYrkesaktivitet(arbeidsforhold.getKey(), arbeidsgiver, internReferanse, builder);
         builder.tilbakestillAvtaler();
 
         if (arbeidsgiver.getErVirksomhet()) {
@@ -123,10 +128,12 @@ class ByggYrkesaktiviteterTjeneste {
     }
 
     private void opprettMinimalYrkesaktivitet(ArbeidsforholdIdentifikator arbeidsforhold,
-                                              Arbeidsgiver arbeidsgiver, YrkesaktivitetBuilder yrkesaktivitetBuilder) {
+                                              Arbeidsgiver arbeidsgiver,
+                                              InternArbeidsforholdRef internReferanse,
+                                              YrkesaktivitetBuilder yrkesaktivitetBuilder) {
         yrkesaktivitetBuilder
             .medArbeidType(kodeverkRepository.finnForKodeverkEiersKode(ArbeidType.class, arbeidsforhold.getType()))
-            .medArbeidsforholdId(arbeidsforhold.getArbeidsforholdId())
+            .medArbeidsforholdId(internReferanse)
             .medArbeidsgiver(arbeidsgiver);
     }
 

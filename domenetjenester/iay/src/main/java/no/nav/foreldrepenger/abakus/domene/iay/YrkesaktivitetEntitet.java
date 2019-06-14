@@ -36,7 +36,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.PermisjonsbeskrivelseTyp
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
@@ -67,7 +66,7 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
     private Arbeidsgiver arbeidsgiver;
 
     @Embedded
-    private ArbeidsforholdRef arbeidsforholdRef;
+    private InternArbeidsforholdRef arbeidsforholdRef;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "aktoer_arbeid_id", nullable = false, updatable = false)
@@ -126,17 +125,12 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
     }
 
     @Override
-    public ArbeidsforholdRef getArbeidsforholdRef() {
-        return arbeidsforholdRef == null ? ArbeidsforholdRef.ref(null) : arbeidsforholdRef;
-    }
-
-    @Deprecated(forRemoval = true)
-    void setArbeidsforholdId(ArbeidsforholdRef arbeidsforholdId) {
-        this.arbeidsforholdRef = arbeidsforholdId;
+    public InternArbeidsforholdRef getArbeidsforholdRef() {
+        return arbeidsforholdRef;
     }
 
     void setArbeidsforholdId(InternArbeidsforholdRef arbeidsforholdId) {
-        this.arbeidsforholdRef = ArbeidsforholdRef.ref(arbeidsforholdId.getReferanse());
+        this.arbeidsforholdRef = arbeidsforholdId;
     }
 
     @Override

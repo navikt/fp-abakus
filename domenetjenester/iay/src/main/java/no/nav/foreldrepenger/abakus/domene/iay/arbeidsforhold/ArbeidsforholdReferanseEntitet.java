@@ -14,18 +14,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsforholdReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseValue;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
 @Entity(name = "ArbeidsforholdReferanse")
 @Table(name = "IAY_ARBEIDSFORHOLD_REFER")
-public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements IndexKey, TraverseValue {
+public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements IndexKey, TraverseValue, ArbeidsforholdReferanse {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_IAY_ARBEIDSFORHOLD_REFER")
@@ -39,13 +39,13 @@ public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements Index
     @AttributeOverrides({
             @AttributeOverride(name = "referanse", column = @Column(name = "intern_referanse", nullable = false))
     })
-    private ArbeidsforholdRef internReferanse;
+    private InternArbeidsforholdRef internReferanse;
 
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "referanse", column = @Column(name = "ekstern_referanse", nullable = false))
     })
-    private ArbeidsforholdRef eksternReferanse;
+    private EksternArbeidsforholdRef eksternReferanse;
 
     @ManyToOne
     @JoinColumn(name = "informasjon_id", updatable = false, unique = true, nullable = false)
@@ -54,20 +54,10 @@ public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements Index
     ArbeidsforholdReferanseEntitet() {
     }
 
-    /**
-     * @deprecated Bruk {@link #ArbeidsforholdReferanseEntitet(Arbeidsgiver, InternArbeidsforholdRef, EksternArbeidsforholdRef)}.
-     */
-    @Deprecated(forRemoval = true)
-    ArbeidsforholdReferanseEntitet(Arbeidsgiver arbeidsgiverEntitet, ArbeidsforholdRef internReferanse, ArbeidsforholdRef eksternReferanse) {
+    public ArbeidsforholdReferanseEntitet(Arbeidsgiver arbeidsgiverEntitet, InternArbeidsforholdRef internReferanse, EksternArbeidsforholdRef eksternReferanse) {
         this.arbeidsgiverEntitet = arbeidsgiverEntitet;
         this.internReferanse = internReferanse;
         this.eksternReferanse = eksternReferanse;
-    }
-
-    public ArbeidsforholdReferanseEntitet(Arbeidsgiver arbeidsgiverEntitet, InternArbeidsforholdRef internReferanse, EksternArbeidsforholdRef eksternReferanse) {
-        this.arbeidsgiverEntitet = arbeidsgiverEntitet;
-        this.internReferanse = internReferanse == null ? null : ArbeidsforholdRef.ref(internReferanse.getReferanse());
-        this.eksternReferanse = eksternReferanse == null ? null : ArbeidsforholdRef.ref(eksternReferanse.getReferanse());
     }
 
     ArbeidsforholdReferanseEntitet(ArbeidsforholdReferanseEntitet arbeidsforholdInformasjonEntitet) {
@@ -80,14 +70,17 @@ public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements Index
         return IndexKey.createKey(internReferanse, eksternReferanse);
     }
 
-    public ArbeidsforholdRef getInternReferanse() {
+    @Override
+    public InternArbeidsforholdRef getInternReferanse() {
         return internReferanse;
     }
 
-    public ArbeidsforholdRef getEksternReferanse() {
+    @Override
+    public EksternArbeidsforholdRef getEksternReferanse() {
         return eksternReferanse;
     }
     
+    @Override
     public Arbeidsgiver getArbeidsgiver() {
         return arbeidsgiverEntitet;
     }

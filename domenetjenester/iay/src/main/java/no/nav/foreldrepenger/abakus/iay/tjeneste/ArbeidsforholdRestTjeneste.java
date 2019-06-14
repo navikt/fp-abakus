@@ -27,7 +27,7 @@ import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.ArbeidsforholdReferanse;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.AktørDatoRequest;
@@ -89,10 +89,9 @@ public class ArbeidsforholdRestTjeneste {
 
         ArbeidsforholdInformasjon arbeidsforholdInformasjon = iayTjeneste.hentArbeidsforholdInformasjonForKobling(referanse);
 
-        // FIXME (FC) : kommer abakus referanse virkelig her på request?
         String abakusReferanse = request.getArbeidsforholdId().getAbakusReferanse();
-        ArbeidsforholdRef arbeidsforholdRef = arbeidsforholdInformasjon.finnEllerOpprett(tilArbeidsgiver(request),
-            ArbeidsforholdRef.ref(abakusReferanse));
+        InternArbeidsforholdRef arbeidsforholdRef = arbeidsforholdInformasjon.finnEllerOpprett(tilArbeidsgiver(request),
+            InternArbeidsforholdRef.ref(abakusReferanse));
 
         var dto = dtoTjeneste.mapArbeidsforhold(request.getArbeidsgiver(), abakusReferanse, arbeidsforholdRef.getReferanse());
         koblingTjeneste.oppdaterLåsVersjon(koblingLås);

@@ -15,7 +15,7 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Organisasjon;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Person;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.person.TpsTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.foreldrepenger.abakus.util.IntervallUtil;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Aktør;
@@ -62,7 +62,7 @@ public class ArbeidsforholdDtoTjeneste {
         return arbeidsforhold.stream().map(it -> new Periode(it.getArbeidFom(), it.getArbeidTom())).collect(Collectors.toList());
     }
 
-    private ArbeidsforholdRefDto mapArbeidsforholdId(ArbeidsforholdRef arbeidsforholdId) {
+    private ArbeidsforholdRefDto mapArbeidsforholdId(EksternArbeidsforholdRef arbeidsforholdId) {
         if (arbeidsforholdId == null) {
             return null;
         }

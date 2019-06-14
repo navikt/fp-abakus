@@ -19,7 +19,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.RefusjonEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriode;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriodeEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
@@ -53,7 +52,7 @@ public class MapInntektsmeldinger {
                 var dto = new InntektsmeldingerDto();
 
                 var inntektsmeldinger = inntektsmeldingAggregat.getAlleInntektsmeldinger().stream()
-                        .map(im -> this.mapInntektsmelding(im)).collect(Collectors.toList());
+                    .map(im -> this.mapInntektsmelding(im)).collect(Collectors.toList());
                 dto.medInntektsmeldinger(inntektsmeldinger);
 
                 return dto;
@@ -68,7 +67,8 @@ public class MapInntektsmeldinger {
             var arbeidsgiver = mapAktør(im.getArbeidsgiver());
             var journalpostId = new JournalpostId(im.getJournalpostId().getVerdi());
             var innsendingstidspunkt = im.getInnsendingstidspunkt();
-            var arbeidsforholdId = mapArbeidsforholdsId(im.getArbeidsgiver(), im.getArbeidsforholdRef());
+            var eksternRef = arbeidsforholdInformasjon.finnEkstern(im.getArbeidsgiver(), im.getArbeidsforholdRef());
+            var arbeidsforholdId = mapArbeidsforholdsId(im.getArbeidsgiver(), im.getArbeidsforholdRef(), eksternRef);
             var innsendingsårsak = KodeverkMapper.mapInntektsmeldingInnsendingsårsak(im.getInntektsmeldingInnsendingsårsak());
             var mottattDato = im.getMottattDato();
 
@@ -79,7 +79,7 @@ public class MapInntektsmeldinger {
                 .medKanalreferanse(im.getKanalreferanse())
                 .medKildesystem(im.getKildesystem())
                 .medRefusjonOpphører(im.getRefusjonOpphører())
-                .medRefusjonsBeløpPerMnd(im.getRefusjonBeløpPerMnd()==null?null: im.getRefusjonBeløpPerMnd().getVerdi())
+                .medRefusjonsBeløpPerMnd(im.getRefusjonBeløpPerMnd() == null ? null : im.getRefusjonBeløpPerMnd().getVerdi())
                 .medStartDatoPermisjon(im.getStartDatoPermisjon())
                 .medNærRelasjon(im.getErNærRelasjon());
 
@@ -123,17 +123,17 @@ public class MapInntektsmeldinger {
                 : new Organisasjon(arbeidsgiverEntitet.getOrgnr().getId());
         }
 
-        private ArbeidsforholdRefDto mapArbeidsforholdsId(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef arbeidsforhold) {
-            if(arbeidsforhold==null) {
+        private ArbeidsforholdRefDto mapArbeidsforholdsId(@SuppressWarnings("unused") Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef internRef, EksternArbeidsforholdRef eksternRef) {
+            if ((internRef == null || internRef.getReferanse() == null) && (eksternRef == null || eksternRef.getReferanse() == null)) {
                 return null;
-            }
-            String internRef = arbeidsforhold.getReferanse();
-            if (internRef != null) {
-                var eksternRef = arbeidsforholdInformasjon.finnEkstern(arbeidsgiver, InternArbeidsforholdRef.ref(internRef));
-                return new ArbeidsforholdRefDto(internRef, eksternRef.getReferanse(),
+            } else if (internRef != null && eksternRef != null && internRef.getReferanse() != null && eksternRef.getReferanse() != null) {
+                return new ArbeidsforholdRefDto(internRef.getReferanse(), eksternRef.getReferanse(),
                     no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.Fagsystem.AAREGISTERET);
+            } else {
+                throw new IllegalStateException(
+                    "Både internArbeidsforholdRef og eksternArbeidsforholdRef må være satt (eller begge ikke satt), har nå internRef=" + internRef
+                        + ", eksternRef=" + eksternRef);
             }
-            throw new IllegalStateException("Mangler ekstern referanse for intern arbeidsforholdRef=" + internRef);
         }
     }
 
@@ -169,7 +169,7 @@ public class MapInntektsmeldinger {
                 .medRefusjon(dto.getRefusjonsBeløpPerMnd(), dto.getRefusjonOpphører())
                 .medKanalreferanse(dto.getKanalreferanse())
                 .medInntektsmeldingaarsak(innsendingsårsak)
-                .medNærRelasjon(dto.isNærRelasjon() == null ? false: dto.isNærRelasjon())
+                .medNærRelasjon(dto.isNærRelasjon() == null ? false : dto.isNærRelasjon())
                 .medKildesystem(dto.getKildesystem())
                 .medMottattDato(dto.getMottattDato());
 

@@ -2,10 +2,9 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
 public interface Yrkesaktivitet {
 
@@ -37,7 +36,7 @@ public interface Yrkesaktivitet {
      *
      * @return referanse
      */
-    ArbeidsforholdRef getArbeidsforholdRef();
+    InternArbeidsforholdRef getArbeidsforholdRef();
 
     /**
      * Liste over fremtidige / historiske permisjoner hos arbeidsgiver.

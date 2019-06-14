@@ -21,7 +21,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetEntitet.AktivitetsA
 import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetEntitet.PermisjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Aktør;
@@ -99,13 +98,12 @@ public class MapAktørArbeid {
             return DatoIntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom());
         }
 
-        private ArbeidsforholdRef mapArbeidsforholdRef(@SuppressWarnings("unused") Arbeidsgiver arbeidsgiver, ArbeidsforholdRefDto arbeidsforholdId) {
+        private InternArbeidsforholdRef mapArbeidsforholdRef(@SuppressWarnings("unused") Arbeidsgiver arbeidsgiver, ArbeidsforholdRefDto arbeidsforholdId) {
             if (arbeidsforholdId == null) {
-                return ArbeidsforholdRef.ref(null);
+                return InternArbeidsforholdRef.nullRef();
             }
-            // FIXME : Abakus skal lage ny intern referanse
-            // det som kommer i arbeidsforholdId er aaregistererferans
-            return ArbeidsforholdRef.ref(arbeidsforholdId.getEksternReferanse());
+            // intern referanse == abakus referanse.
+            return InternArbeidsforholdRef.ref(arbeidsforholdId.getAbakusReferanse());
         }
 
         private Arbeidsgiver mapArbeidsgiver(Aktør arbeidsgiver) {

@@ -5,7 +5,7 @@ import java.util.Optional;
 import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetEntitet.AktivitetsAvtaleBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetEntitet.PermisjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class YrkesaktivitetBuilder {
@@ -42,7 +42,7 @@ public class YrkesaktivitetBuilder {
         return this;
     }
 
-    public YrkesaktivitetBuilder medArbeidsforholdId(ArbeidsforholdRef arbeidsforholdId) {
+    public YrkesaktivitetBuilder medArbeidsforholdId(InternArbeidsforholdRef arbeidsforholdId) {
         kladd.setArbeidsforholdId(arbeidsforholdId);
         return this;
     }

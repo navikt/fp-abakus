@@ -1,8 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import static no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE;
-import static no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -39,6 +36,7 @@ import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
 @Entity(name = "InntektArbeidGrunnlag")
@@ -84,7 +82,7 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
     @ChangeTracked
     @OneToOne
     @JoinColumn(name = "informasjon_id", updatable = false, unique = true)
-    private ArbeidsforholdInformasjonEntitet informasjon;
+    private ArbeidsforholdInformasjonEntitet arbeidsforholdInformasjon;
 
     @Convert(converter = BooleanToStringConverter.class)
     @Column(name = "aktiv", nullable = false)
@@ -156,7 +154,7 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
     public Optional<InntektArbeidYtelseAggregat> getOpplysningerFørSkjæringstidspunkt(LocalDate skjæringstidspunkt) {
         if (register != null) {
             final InntektArbeidYtelseAggregatEntitet aggregat = new InntektArbeidYtelseAggregatEntitet(register);
-            aggregat.taHensynTilBetraktninger(informasjon);
+            aggregat.taHensynTilBetraktninger(arbeidsforholdInformasjon);
             aggregat.setSkjæringstidspunkt(skjæringstidspunkt, true);
             aggregat.taHensynTilOverstyring();
             return Optional.of(aggregat);
@@ -168,7 +166,7 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
     public Optional<InntektArbeidYtelseAggregat> getOpplysningerEtterSkjæringstidspunkt(LocalDate skjæringstidspunkt) {
         if (register != null) {
             final InntektArbeidYtelseAggregatEntitet aggregat = new InntektArbeidYtelseAggregatEntitet(register);
-            aggregat.taHensynTilBetraktninger(informasjon);
+            aggregat.taHensynTilBetraktninger(arbeidsforholdInformasjon);
             aggregat.setSkjæringstidspunkt(skjæringstidspunkt, false);
             aggregat.taHensynTilOverstyring();
             return Optional.of(aggregat);
@@ -276,11 +274,18 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
 
     @Override
     public List<InntektsmeldingSomIkkeKommer> getInntektsmeldingerSomIkkeKommer() {
-        return informasjon == null ? Collections.emptyList()
-            : informasjon.getOverstyringer()
-                .stream().filter(ov -> (ov.getHandling().equals(BRUK_UTEN_INNTEKTSMELDING) || ov.getHandling().equals(BRUK_MED_OVERSTYRT_PERIODE)))
-                .map(ov -> new InntektsmeldingSomIkkeKommer(ov.getArbeidsgiver(), ov.getArbeidsforholdRef()))
-                .collect(Collectors.toList());
+        if (arbeidsforholdInformasjon == null) {
+            return Collections.emptyList();
+        } else {
+            var overstyringer = arbeidsforholdInformasjon.getOverstyringer();
+            return overstyringer.stream()
+                    .filter(ov -> ov.kreverIkkeInntektsmelding())
+                    .map(ov -> {
+                        // TODO (FC): fiks/fjern eksternRef herfra
+                        EksternArbeidsforholdRef eksternRef = null; //arbeidsforholdInformasjon.finnEkstern(ov.getArbeidsgiver(), ov.getArbeidsforholdRef());
+                        return new InntektsmeldingSomIkkeKommer(ov.getArbeidsgiver(), ov.getArbeidsforholdRef(), eksternRef);})
+                    .collect(Collectors.toList());
+        }
     }
 
     @Override
@@ -318,17 +323,17 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
 
     @Override
     public Optional<ArbeidsforholdInformasjon> getArbeidsforholdInformasjon() {
-        return Optional.ofNullable(informasjon);
+        return Optional.ofNullable(arbeidsforholdInformasjon);
     }
 
     void setInformasjon(ArbeidsforholdInformasjonEntitet informasjon) {
-        this.informasjon = informasjon;
+        this.arbeidsforholdInformasjon = informasjon;
     }
 
     void taHensynTilBetraktninger() {
-        Optional.ofNullable(register).ifPresent(it -> it.taHensynTilBetraktninger(this.informasjon));
-        Optional.ofNullable(saksbehandlet).ifPresent(it -> it.taHensynTilBetraktninger(this.informasjon));
-        Optional.ofNullable(inntektsmeldinger).ifPresent(it -> it.taHensynTilBetraktninger(this.informasjon));
+        Optional.ofNullable(register).ifPresent(it -> it.taHensynTilBetraktninger(this.arbeidsforholdInformasjon));
+        Optional.ofNullable(saksbehandlet).ifPresent(it -> it.taHensynTilBetraktninger(this.arbeidsforholdInformasjon));
+        Optional.ofNullable(inntektsmeldinger).ifPresent(it -> it.taHensynTilBetraktninger(this.arbeidsforholdInformasjon));
     }
 
     @Override

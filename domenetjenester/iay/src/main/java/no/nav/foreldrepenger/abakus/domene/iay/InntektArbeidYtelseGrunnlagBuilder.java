@@ -10,7 +10,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInfo
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.vedtak.util.Tuple;
 
 public class InntektArbeidYtelseGrunnlagBuilder {
@@ -97,29 +97,12 @@ public class InntektArbeidYtelseGrunnlagBuilder {
     }
 
     public InntektArbeidYtelseGrunnlag build() {
-        final ArbeidsforholdInformasjonEntitet arbeidsforholdInfo = (ArbeidsforholdInformasjonEntitet) kladd
-            .getArbeidsforholdInformasjon().orElseGet(() -> {
-                final ArbeidsforholdInformasjonEntitet informasjonEntitet = new ArbeidsforholdInformasjonEntitet();
-                kladd.setInformasjon(informasjonEntitet);
-                return informasjonEntitet;
-            });
-
-        kladd.getRegisterVersjon().ifPresent(it -> mapArbeidsforholdRef(it, arbeidsforholdInfo));
-        kladd.getSaksbehandletVersjon().ifPresent(it -> mapArbeidsforholdRef(it, arbeidsforholdInfo));
-
-        return kladd;
-    }
-
-    private void mapArbeidsforholdRef(InntektArbeidYtelseAggregat it, ArbeidsforholdInformasjonEntitet arbeidsforholdInfo) {
-        for (AktørArbeid aktørArbeid : it.getAktørArbeid()) {
-            for (Yrkesaktivitet yrkesaktivitet : ((AktørArbeidEntitet) aktørArbeid).hentAlleYrkesaktiviter()) {
-                if (yrkesaktivitet.getArbeidsforholdRef() != null && yrkesaktivitet.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold()) {
-                    final ArbeidsforholdRef internReferanse = arbeidsforholdInfo
-                        .finnEllerOpprett(yrkesaktivitet.getArbeidsgiver(), yrkesaktivitet.getArbeidsforholdRef());
-                    ((YrkesaktivitetEntitet) yrkesaktivitet).setArbeidsforholdId(internReferanse);
-                }
-            }
+        var k = kladd;
+        if (kladd.getArbeidsforholdInformasjon().isPresent()) {
+            k.taHensynTilBetraktninger();
         }
+        kladd = null; // må ikke finne på å gjenbruke buildere her, tar heller straffen i en NPE ved første feilkall
+        return k;
     }
 
     public InntektArbeidYtelseGrunnlagBuilder medData(InntektArbeidYtelseAggregatBuilder builder) {
@@ -133,9 +116,9 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         return this;
     }
 
-    void ryddOppErstattedeArbeidsforhold(AktørId søker, List<Tuple<Arbeidsgiver, Tuple<ArbeidsforholdRef, ArbeidsforholdRef>>> erstattArbeidsforhold) {
+    void ryddOppErstattedeArbeidsforhold(AktørId søker, List<Tuple<Arbeidsgiver, Tuple<InternArbeidsforholdRef, InternArbeidsforholdRef>>> erstattArbeidsforhold) {
         final Optional<InntektArbeidYtelseAggregat> registerFørVersjon = kladd.getRegisterVersjon();
-        for (Tuple<Arbeidsgiver, Tuple<ArbeidsforholdRef, ArbeidsforholdRef>> tuple : erstattArbeidsforhold) {
+        for (Tuple<Arbeidsgiver, Tuple<InternArbeidsforholdRef, InternArbeidsforholdRef>> tuple : erstattArbeidsforhold) {
             if (registerFørVersjon.isPresent()) {
                 final InntektArbeidYtelseAggregatBuilder builder = InntektArbeidYtelseAggregatBuilder.oppdatere(registerFørVersjon, VersjonType.REGISTER);
                 builder.oppdaterArbeidsforholdReferanseEtterErstatting(søker, tuple.getElement1(), tuple.getElement2().getElement1(),
