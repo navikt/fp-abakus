@@ -66,6 +66,7 @@ public class VedtakConsumer implements AppServiceHandler {
     private Properties setupProperties(VedtakStreamKafkaProperties streamProperties) {
         Properties props = new Properties();
 
+        log.info("Consuming topic='{}' with applicationId='{}'", streamProperties.getTopic(), streamProperties.getApplicationId());
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, streamProperties.getApplicationId());
         props.put(StreamsConfig.CLIENT_ID_CONFIG, streamProperties.getClientId());
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, streamProperties.getBootstrapServers());
