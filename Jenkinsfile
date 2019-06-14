@@ -137,15 +137,17 @@ import no.nav.jenkins.*
                   script {
                       def value = "s/RELEASE_VERSION/${version}/g"
                       sh "sed \'$value\' .deploy/${MILJO}.yaml > nais.yaml"
-                      sh "k config use-context preprod-fss"
-                      sh "k apply -f nais.yaml"
-
+                      
                       def naisNamespace
                       if (MILJO == "p") {
                           naisNamespace = "default"
+                          sh "k config use-context prod-fss"
                       } else {
                           naisNamespace = MILJO
+                          sh "k config use-context preprod-fss"
                       }
+                      sh "k apply -f nais.yaml"
+                      
                       def exitCode=sh returnStatus: true, script: "k rollout status -n${naisNamespace} deployment/${ARTIFACTID}"
                       echo "exit code is $exitCode"
                       /*
