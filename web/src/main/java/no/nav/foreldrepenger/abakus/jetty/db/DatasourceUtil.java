@@ -42,8 +42,10 @@ public class DatasourceUtil {
         config.setJdbcUrl(PropertyUtil.getProperty(dataSourceName + ".url"));
 
         config.setConnectionTimeout(1000);
-        config.setMinimumIdle(1);
+        config.setMinimumIdle(0);
         config.setMaximumPoolSize(maxPoolSize);
+        config.setIdleTimeout(10001);
+        config.setMaxLifetime(30001);
         config.setConnectionTestQuery("select 1");
         config.setDriverClassName("org.postgresql.Driver");
 
