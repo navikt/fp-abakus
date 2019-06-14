@@ -38,6 +38,7 @@ import no.nav.jenkins.*
             stage('Checkout scm') {
                 steps {
                     script {
+                        MILJO = params.miljo
                         Date date = new Date()
 
                         checkout scm
