@@ -2,14 +2,14 @@ package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold;
 
 import java.util.Objects;
 
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 
 public class ArbeidsforholdIdentifikator {
     private Arbeidsgiver arbeidsgiver;
-    private ArbeidsforholdRef arbeidsforholdId;
+    private EksternArbeidsforholdRef arbeidsforholdId;
     private String type;
 
-    public ArbeidsforholdIdentifikator(Arbeidsgiver arbeidsgiver, ArbeidsforholdRef arbeidsforholdId, String type) {
+    public ArbeidsforholdIdentifikator(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef arbeidsforholdId, String type) {
         this.arbeidsgiver = arbeidsgiver;
         this.arbeidsforholdId = arbeidsforholdId;
         this.type = type;
@@ -19,7 +19,7 @@ public class ArbeidsforholdIdentifikator {
         return arbeidsgiver;
     }
 
-    public ArbeidsforholdRef getArbeidsforholdId() {
+    public EksternArbeidsforholdRef getArbeidsforholdId() {
         return arbeidsforholdId;
     }
 

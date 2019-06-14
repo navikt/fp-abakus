@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -30,7 +31,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.BekreftetPermisjonStatus
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
@@ -49,11 +50,11 @@ public class ArbeidsforholdOverstyringEntitet extends BaseEntitet implements Ind
     private Arbeidsgiver arbeidsgiver;
 
     @Embedded
-    private ArbeidsforholdRef arbeidsforholdRef;
+    private InternArbeidsforholdRef arbeidsforholdRef;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "referanse", column = @Column(name = "ny_arbeidsforhold_id", updatable = false)))
-    private ArbeidsforholdRef nyArbeidsforholdRef;
+    @AttributeOverrides(@AttributeOverride(name = "referanse", column = @Column(name = "arbeidsforhold_intern_id_ny", updatable = false)))
+    private InternArbeidsforholdRef nyArbeidsforholdRef;
 
     @ChangeTracked
     @ManyToOne(optional = false)
@@ -124,11 +125,11 @@ public class ArbeidsforholdOverstyringEntitet extends BaseEntitet implements Ind
         this.arbeidsgiver = arbeidsgiver;
     }
 
-    public ArbeidsforholdRef getArbeidsforholdRef() {
-        return arbeidsforholdRef != null ? arbeidsforholdRef : ArbeidsforholdRef.ref(null);
+    public InternArbeidsforholdRef getArbeidsforholdRef() {
+        return arbeidsforholdRef != null ? arbeidsforholdRef : InternArbeidsforholdRef.nullRef();
     }
 
-    void setArbeidsforholdRef(ArbeidsforholdRef arbeidsforholdRef) {
+    void setArbeidsforholdRef(InternArbeidsforholdRef arbeidsforholdRef) {
         this.arbeidsforholdRef = arbeidsforholdRef;
     }
 
@@ -159,11 +160,11 @@ public class ArbeidsforholdOverstyringEntitet extends BaseEntitet implements Ind
         return arbeidsforholdOverstyrtePerioder;
     }
 
-    public ArbeidsforholdRef getNyArbeidsforholdRef() {
+    public InternArbeidsforholdRef getNyArbeidsforholdRef() {
         return nyArbeidsforholdRef;
     }
 
-    void setNyArbeidsforholdRef(ArbeidsforholdRef nyArbeidsforholdRef) {
+    void setNyArbeidsforholdRef(InternArbeidsforholdRef nyArbeidsforholdRef) {
         this.nyArbeidsforholdRef = nyArbeidsforholdRef;
     }
     
@@ -184,6 +185,20 @@ public class ArbeidsforholdOverstyringEntitet extends BaseEntitet implements Ind
     
     void setBekreftetPermisjon(BekreftetPermisjon bekreftetPermisjon) {
         this.bekreftetPermisjon = bekreftetPermisjon;
+    }
+    
+    public boolean erOverstyrt(){
+        return !Objects.equals(ArbeidsforholdHandlingType.BRUK, handling)
+            || ( Objects.equals(ArbeidsforholdHandlingType.BRUK, handling) &&
+            !Objects.equals(bekreftetPermisjon.getStatus(), BekreftetPermisjonStatus.UDEFINERT) );
+    }
+
+    @SuppressWarnings("deprecation")
+    public boolean kreverIkkeInntektsmelding() {
+        return Set.of(ArbeidsforholdHandlingType.LAGT_TIL_AV_SAKSBEHANDLER, 
+            ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING,
+            ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE, 
+            ArbeidsforholdHandlingType.INNTEKT_IKKE_MED_I_BG).contains(handling);
     }
     
     void setArbeidsgiverNavn(String arbeidsgiverNavn) {

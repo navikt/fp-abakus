@@ -3,7 +3,6 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 import java.util.Objects;
 import java.util.Optional;
 
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
 public class Opptjeningsnøkkel {
@@ -18,18 +17,6 @@ public class Opptjeningsnøkkel {
 
     public Opptjeningsnøkkel(Arbeidsgiver arbeidsgiver) {
         this((InternArbeidsforholdRef) null, arbeidsgiver);
-    }
-
-    @Deprecated(forRemoval=true)
-    public Opptjeningsnøkkel(ArbeidsforholdRef arbeidsforholdId, Arbeidsgiver arbeidsgiver) {
-        this(arbeidsforholdId,
-            arbeidsgiver.getErVirksomhet() ? arbeidsgiver.getIdentifikator() : null,
-            arbeidsgiver.getErVirksomhet() ? null : arbeidsgiver.getIdentifikator());
-    }
-    
-    @Deprecated(forRemoval=true)
-    public Opptjeningsnøkkel(ArbeidsforholdRef arbeidsforholdId, String orgNummer, String aktørId) {
-        this(InternArbeidsforholdRef.ref(arbeidsforholdId==null?null:arbeidsforholdId.getReferanse()), orgNummer, aktørId);
     }
 
     public Opptjeningsnøkkel(InternArbeidsforholdRef arbeidsforholdId, Arbeidsgiver arbeidsgiver) {
@@ -55,11 +42,6 @@ public class Opptjeningsnøkkel {
         return new Opptjeningsnøkkel(arbeidsgiver);
     }
 
-    @Deprecated(forRemoval=true)
-    public static Opptjeningsnøkkel forArbeidsforholdIdMedArbeidgiver(ArbeidsforholdRef arbeidsforholdId, Arbeidsgiver arbeidsgiver) {
-        return new Opptjeningsnøkkel(arbeidsforholdId, arbeidsgiver);
-    }
-    
     public static Opptjeningsnøkkel forArbeidsforholdIdMedArbeidgiver(InternArbeidsforholdRef arbeidsforholdId, Arbeidsgiver arbeidsgiver) {
         return new Opptjeningsnøkkel(arbeidsforholdId, arbeidsgiver);
     }

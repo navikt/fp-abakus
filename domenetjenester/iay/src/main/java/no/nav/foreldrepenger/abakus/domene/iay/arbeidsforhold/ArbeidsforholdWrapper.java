@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.vedtak.util.FPDateUtil;
 
 public class ArbeidsforholdWrapper {
@@ -207,7 +207,7 @@ public class ArbeidsforholdWrapper {
         if (o == null || getClass() != o.getClass()) return false;
         ArbeidsforholdWrapper that = (ArbeidsforholdWrapper) o;
         return Objects.equals(arbeidsgiverIdentifikator, that.arbeidsgiverIdentifikator) &&
-            ArbeidsforholdRef.ref(arbeidsforholdId).gjelderFor(ArbeidsforholdRef.ref(that.arbeidsforholdId));
+                InternArbeidsforholdRef.ref(arbeidsforholdId).gjelderFor(InternArbeidsforholdRef.ref(that.arbeidsforholdId));
     }
 
     @Override

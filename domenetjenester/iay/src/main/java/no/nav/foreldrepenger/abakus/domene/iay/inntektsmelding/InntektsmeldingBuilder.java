@@ -4,10 +4,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak;
-import no.nav.foreldrepenger.abakus.typer.ArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
@@ -31,13 +31,34 @@ public class InntektsmeldingBuilder {
         return this;
     }
 
-    public InntektsmeldingBuilder medArbeidsforholdId(String arbeidsforholdId) {
-        if (arbeidsforholdId != null) {
-            kladd.setArbeidsforholdId(ArbeidsforholdRef.ref(arbeidsforholdId));
-        }
+    public Arbeidsgiver getArbeidsgiver() {
+        return kladd.getArbeidsgiver();
+    }
+    
+    public Optional<EksternArbeidsforholdRef> getEksternArbeidsforholdRef() {
+        return Optional.ofNullable(eksternArbeidsforholdId);
+    }
+
+    public Optional<InternArbeidsforholdRef> getInternArbeidsforholdRef() {
+        return Optional.ofNullable(kladd.getArbeidsforholdRef());
+    }
+
+    public InntektsmeldingBuilder medArbeidsforholdId(EksternArbeidsforholdRef arbeidsforholdId) {
+        this.eksternArbeidsforholdId = arbeidsforholdId;
         return this;
     }
 
+    public InntektsmeldingBuilder medArbeidsforholdId(InternArbeidsforholdRef arbeidsforholdId) {
+        if (arbeidsforholdId != null) {
+            // magic - hvis har ekstern referanse må også intern referanse være spesifikk
+            if (arbeidsforholdId.getReferanse() == null && eksternArbeidsforholdId != null && eksternArbeidsforholdId.gjelderForSpesifiktArbeidsforhold()) {
+                throw new IllegalArgumentException(
+                    "Begge referanser gjelde spesifikke arbeidsforhold. " + " Ekstern: " + eksternArbeidsforholdId + ", Intern: " + arbeidsforholdId);
+            }
+            kladd.setArbeidsforholdId(arbeidsforholdId);
+        }
+        return this;
+    }
     public InntektsmeldingBuilder medBeløp(BigDecimal verdi) {
         kladd.setInntektBeløp(new Beløp(verdi));
         return this;
@@ -126,19 +147,6 @@ public class InntektsmeldingBuilder {
 
     public InntektsmeldingBuilder medJournalpostId(String journalpostId) {
         return medJournalpostId(new JournalpostId(journalpostId));
-    }
-
-    public InntektsmeldingBuilder medArbeidsforholdId(EksternArbeidsforholdRef eksternRef) {
-        this.eksternArbeidsforholdId = eksternRef;
-        return this;
-    }
-    
-    public InntektsmeldingBuilder medArbeidsforholdId(InternArbeidsforholdRef internRef) {
-        String arbeidsforholdId = internRef.getReferanse();
-        if (arbeidsforholdId != null) {
-            kladd.setArbeidsforholdId(ArbeidsforholdRef.ref(arbeidsforholdId));
-        }
-        return this;
     }
 
 }
