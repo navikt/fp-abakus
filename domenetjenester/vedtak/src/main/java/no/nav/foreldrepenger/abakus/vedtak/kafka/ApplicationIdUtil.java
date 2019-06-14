@@ -6,6 +6,6 @@ public final class ApplicationIdUtil {
     }
 
     public static String get() {
-        return System.getProperty("nais.app.name", "fpabakus-");
+        return System.getProperty("nais.app.name", "fpabakus") + "-" + System.getProperty("nais.namespace", "default");
     }
 }
