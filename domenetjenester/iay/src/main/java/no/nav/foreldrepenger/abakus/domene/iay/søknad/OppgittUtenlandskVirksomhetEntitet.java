@@ -11,7 +11,7 @@ import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittUtenlandskVirksomhet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittVirksomhet;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
 
@@ -19,7 +19,7 @@ import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
  * Hibernate entitet som modellerer en utenlandsk virksomhet.
  */
 @Embeddable
-public class OppgittUtenlandskVirksomhetEntitet implements OppgittUtenlandskVirksomhet, IndexKey, Serializable {
+public class OppgittUtenlandskVirksomhetEntitet implements OppgittVirksomhet, IndexKey, Serializable {
 
     @ManyToOne
     @JoinColumnsOrFormulas({
@@ -50,7 +50,7 @@ public class OppgittUtenlandskVirksomhetEntitet implements OppgittUtenlandskVirk
     }
 
     @Override
-    public String getUtenlandskVirksomhetNavn() {
+    public String getNavn() {
         return utenlandskVirksomhetNavn;
     }
 }

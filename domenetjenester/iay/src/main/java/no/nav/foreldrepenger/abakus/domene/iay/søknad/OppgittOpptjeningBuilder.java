@@ -13,7 +13,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsfo
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittUtenlandskVirksomhet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittVirksomhet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
@@ -128,7 +128,7 @@ public class OppgittOpptjeningBuilder {
             return this;
         }
 
-        public EgenNæringBuilder medUtenlandskVirksomhet(OppgittUtenlandskVirksomhet utenlandskVirksomhet) {
+        public EgenNæringBuilder medUtenlandskVirksomhet(OppgittVirksomhet utenlandskVirksomhet) {
             this.entitet.setUtenlandskVirksomhet(utenlandskVirksomhet);
             return this;
         }
@@ -170,7 +170,7 @@ public class OppgittOpptjeningBuilder {
             return this;
         }
 
-        public OppgittArbeidsforholdBuilder medUtenlandskVirksomhet(OppgittUtenlandskVirksomhet utenlandskVirksomhet) {
+        public OppgittArbeidsforholdBuilder medUtenlandskVirksomhet(OppgittVirksomhet utenlandskVirksomhet) {
             this.entitet.setUtenlandskVirksomhet(utenlandskVirksomhet);
             return this;
         }

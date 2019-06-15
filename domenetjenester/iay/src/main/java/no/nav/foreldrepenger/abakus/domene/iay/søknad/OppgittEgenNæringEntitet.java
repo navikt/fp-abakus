@@ -19,7 +19,7 @@ import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinFormula;
 
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittUtenlandskVirksomhet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittVirksomhet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
@@ -215,11 +215,11 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
     }
 
     @Override
-    public OppgittUtenlandskVirksomhet getUtenlandskVirksomhet() {
+    public OppgittVirksomhet getUtenlandskVirksomhet() {
         return utenlandskVirksomhet;
     }
 
-    void setUtenlandskVirksomhet(OppgittUtenlandskVirksomhet utenlandskVirksomhet) {
+    void setUtenlandskVirksomhet(OppgittVirksomhet utenlandskVirksomhet) {
         this.utenlandskVirksomhet = (OppgittUtenlandskVirksomhetEntitet) utenlandskVirksomhet;
     }
 
