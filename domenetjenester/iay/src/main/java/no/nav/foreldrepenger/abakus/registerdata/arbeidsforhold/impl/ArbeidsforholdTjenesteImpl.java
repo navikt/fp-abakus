@@ -217,7 +217,7 @@ public class ArbeidsforholdTjenesteImpl implements ArbeidsforholdTjeneste {
             .medPermisjonFom(DateUtil.convertToLocalDate(permisjonOgPermittering.getPermisjonsPeriode().getFom()))
             .medPermisjonTom(DateUtil.convertToLocalDate(permisjonOgPermittering.getPermisjonsPeriode().getTom()))
             .medPermisjonsprosent(permisjonOgPermittering.getPermisjonsprosent())
-            .medPermisjonsÅrsak(permisjonOgPermittering.getPermisjonOgPermittering().getValue())
+            .medPermisjonsÅrsak(permisjonOgPermittering.getPermisjonOgPermittering().getKodeRef())
             .build();
     }
 
