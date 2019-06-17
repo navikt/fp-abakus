@@ -100,11 +100,14 @@ public class MapAktørYtelse {
         }
 
         private YtelseStørrelse mapYtelseStørrelse(FordelingDto fordeling) {
-            if(fordeling == null) return null;
+            if (fordeling == null) {
+                return null;
+            }
+            var arbeidsgiver = fordeling.getArbeidsgiver();
             return YtelseStørrelseBuilder.ny()
                 .medBeløp(fordeling.getBeløp())
                 .medHyppighet(KodeverkMapper.mapInntektPeriodeTypeFraDto(fordeling.getHyppighet()))
-                .medVirksomhet(new OrgNummer(fordeling.getArbeidsgiver().getIdent()))
+                .medVirksomhet(arbeidsgiver == null ? null : new OrgNummer(arbeidsgiver.getIdent()))
                 .build();
         }
 

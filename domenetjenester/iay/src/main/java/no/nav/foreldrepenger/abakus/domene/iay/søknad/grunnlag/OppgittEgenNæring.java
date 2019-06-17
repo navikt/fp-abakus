@@ -37,6 +37,6 @@ public interface OppgittEgenNæring {
 
     boolean getNærRelasjon();
 
-    OppgittUtenlandskVirksomhet getUtenlandskVirksomhet();
+    OppgittVirksomhet getUtenlandskVirksomhet();
 
 }
