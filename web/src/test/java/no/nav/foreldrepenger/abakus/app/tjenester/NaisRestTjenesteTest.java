@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import no.nav.foreldrepenger.abakus.app.konfig.ApplicationServiceStarter;
 import no.nav.foreldrepenger.abakus.app.selftest.NaisRestTjeneste;
-import no.nav.foreldrepenger.abakus.app.selftest.SelftestService;
 
 @SuppressWarnings("resource")
 public class NaisRestTjenesteTest {
@@ -20,7 +19,6 @@ public class NaisRestTjenesteTest {
     private NaisRestTjeneste restTjeneste;
 
     private ApplicationServiceStarter serviceStarterMock = mock(ApplicationServiceStarter.class);
-    private SelftestService selftestServiceMock = mock(SelftestService.class);
 
     @Before
     public void setup() {
@@ -29,6 +27,7 @@ public class NaisRestTjenesteTest {
 
     @Test
     public void test_isAlive_skal_returnere_status_200() {
+        when(serviceStarterMock.isKafkaAlive()).thenReturn(true);
         Response response = restTjeneste.isAlive();
 
         assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
@@ -36,7 +35,7 @@ public class NaisRestTjenesteTest {
 
     @Test
     public void test_isReady_skal_returnere_service_unavailable_når_kritiske_selftester_feiler() {
-        when(selftestServiceMock.kritiskTjenesteFeilet()).thenReturn(true);
+        when(serviceStarterMock.isKafkaAlive()).thenReturn(true);
 
         Response response = restTjeneste.isReady();
 
@@ -46,7 +45,7 @@ public class NaisRestTjenesteTest {
 
     @Test
     public void test_isReady_skal_returnere_status_ok_når_selftester_er_ok() {
-        when(selftestServiceMock.kritiskTjenesteFeilet()).thenReturn(false);
+        when(serviceStarterMock.isKafkaAlive()).thenReturn(true);
 
         Response response = restTjeneste.isReady();
 
