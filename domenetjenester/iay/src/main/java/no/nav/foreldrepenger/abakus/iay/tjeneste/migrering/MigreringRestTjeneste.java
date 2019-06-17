@@ -95,13 +95,16 @@ public class MigreringRestTjeneste {
         Kobling kobling;
         if (koblingOpt.isEmpty()) {
             // Lagre kobling
-            var opplysningsperiode = konvolutt.getOpplysningsperiode();
-            var ytelseType = mapTilYtelseType(sakDto.getYtelseType());
-            var opplysningsperiodeEntitet = DatoIntervallEntitet.fraOgMedTilOgMed(opplysningsperiode.getFom(), opplysningsperiode.getTom());
             var aktørId = new AktørId(sakDto.getAktør().getIdent());
-            kobling = new Kobling(new Saksnummer(sakDto.getSaksnummer()), referanse, aktørId, opplysningsperiodeEntitet, ytelseType);
+            kobling = new Kobling(new Saksnummer(sakDto.getSaksnummer()), referanse, aktørId);
         } else {
             kobling = koblingOpt.get();
+        }
+        if (YtelseType.UDEFINERT.equals(kobling.getYtelseType())) {
+            var ytelseType = mapTilYtelseType(sakDto.getYtelseType());
+            if (ytelseType != null) {
+                kobling.setYtelseType(ytelseType);
+            }
         }
         // Oppdater kobling
         var annenPartAktør = sakDto.getAnnenPartAktør();

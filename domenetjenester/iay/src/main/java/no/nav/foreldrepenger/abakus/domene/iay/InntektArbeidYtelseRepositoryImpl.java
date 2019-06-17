@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.abakus.diff.RegisterdataDiffsjekker;
 import no.nav.foreldrepenger.abakus.diff.TraverseEntityGraphFactory;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
@@ -101,20 +100,22 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     }
 
     @Override
-    public void lagre(KoblingReferanse koblingReferanse, OppgittOpptjeningBuilder oppgittOpptjening) {
+    public GrunnlagReferanse lagre(KoblingReferanse koblingReferanse, OppgittOpptjeningBuilder oppgittOpptjening) {
         if (oppgittOpptjening == null) {
-            return;
+            return null;
         }
         Optional<InntektArbeidYtelseGrunnlag> iayGrunnlag = hentInntektArbeidYtelseGrunnlagForBehandling(koblingReferanse);
 
         InntektArbeidYtelseGrunnlagBuilder grunnlag = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayGrunnlag);
         grunnlag.medOppgittOpptjening(oppgittOpptjening);
 
-        lagreOgFlush(koblingReferanse, grunnlag.build());
+        InntektArbeidYtelseGrunnlag build = grunnlag.build();
+        lagreOgFlush(koblingReferanse, build);
+        return build.getGrunnlagReferanse();
     }
 
     @Override
-    public void lagre(KoblingReferanse koblingReferanse, AktørId søkerAktørId, ArbeidsforholdInformasjonBuilder informasjon) {
+    public GrunnlagReferanse lagre(KoblingReferanse koblingReferanse, AktørId søkerAktørId, ArbeidsforholdInformasjonBuilder informasjon) {
         Objects.requireNonNull(informasjon, "informasjon"); // NOSONAR
         InntektArbeidYtelseGrunnlagBuilder builder = opprettGrunnlagBuilderFor(koblingReferanse);
 
@@ -122,44 +123,52 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         builder.ryddOppErstattedeArbeidsforhold(søkerAktørId, informasjon.getErstattArbeidsforhold());
         builder.medInformasjon(informasjon.build());
 
-        lagreOgFlush(koblingReferanse, builder.build());
+        InntektArbeidYtelseGrunnlag build = builder.build();
+        lagreOgFlush(koblingReferanse, build);
+        return build.getGrunnlagReferanse();
     }
 
     @Override
-    public void lagre(KoblingReferanse koblingReferanse, InntektsmeldingBuilder inntektsmeldingBuilder) {
-        Objects.requireNonNull(inntektsmeldingBuilder, "inntektsmeldingBuilder"); // NOSONAR
+    public GrunnlagReferanse lagre(KoblingReferanse koblingReferanse, ArbeidsforholdInformasjonBuilder informasjonBuilder, Inntektsmelding inntektsmelding) {
+        Objects.requireNonNull(inntektsmelding, "inntektsmelding"); // NOSONAR
         InntektArbeidYtelseGrunnlagBuilder builder = opprettGrunnlagBuilderFor(koblingReferanse);
-        final ArbeidsforholdInformasjon informasjon = builder.getInformasjon();
-
-        konverterEksternArbeidsforholdRefTilInterne(inntektsmeldingBuilder, informasjon);
-
-        var inntektsmelding = inntektsmeldingBuilder.build();
 
         final InntektsmeldingAggregatEntitet inntektsmeldinger = (InntektsmeldingAggregatEntitet) builder.getInntektsmeldinger();
 
         // Kommet inn inntektsmelding på arbeidsforhold som vi har gått videre med uten inntektsmelding?
-        if (kommetInntektsmeldingPåArbeidsforholdHvorViTidligereBehandletUtenInntektsmelding(inntektsmelding, informasjon)) {
-            final ArbeidsforholdInformasjonBuilder informasjonBuilder = ArbeidsforholdInformasjonBuilder.oppdatere(informasjon);
-            informasjonBuilder.fjernOverstyringVedrørende(inntektsmeldingBuilder.getArbeidsgiver(), inntektsmelding.getArbeidsforholdRef());
-            builder.medInformasjon(informasjonBuilder.build());
+        if (informasjonBuilder.kommetInntektsmeldingPåArbeidsforholdHvorViTidligereBehandletUtenInntektsmelding(inntektsmelding)) {
+            informasjonBuilder.fjernOverstyringVedrørende(inntektsmelding.getArbeidsgiver(), inntektsmelding.getArbeidsforholdRef());
         }
+        builder.medInformasjon(informasjonBuilder.build());
 
         inntektsmeldinger.leggTil(inntektsmelding);
         builder.setInntektsmeldinger(inntektsmeldinger);
 
-        lagreOgFlush(koblingReferanse, builder.build());
+        InntektArbeidYtelseGrunnlag build = builder.build();
+        lagreOgFlush(koblingReferanse, build);
+        return build.getGrunnlagReferanse();
     }
 
-    private boolean kommetInntektsmeldingPåArbeidsforholdHvorViTidligereBehandletUtenInntektsmelding(Inntektsmelding inntektsmelding,
-                                                                                                     ArbeidsforholdInformasjon informasjon) {
-        return informasjon.getOverstyringer()
-            .stream()
-            .anyMatch(ov -> (Objects.equals(ov.getHandling(), ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING)
-                || Objects.equals(ov.getHandling(), ArbeidsforholdHandlingType.IKKE_BRUK)
-                || Objects.equals(ov.getHandling(), ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE))
-                && ov.getArbeidsgiver().getErVirksomhet()
-                && ov.getArbeidsgiver().equals(inntektsmelding.getArbeidsgiver())
-                && ov.getArbeidsforholdRef().gjelderFor(inntektsmelding.getArbeidsforholdRef()));
+    @Override
+    public GrunnlagReferanse lagre(KoblingReferanse koblingReferanse, ArbeidsforholdInformasjonBuilder informasjonBuilder, List<Inntektsmelding> inntektsmeldingerList) {
+        Objects.requireNonNull(inntektsmeldingerList, "inntektsmelding"); // NOSONAR
+        InntektArbeidYtelseGrunnlagBuilder builder = opprettGrunnlagBuilderFor(koblingReferanse);
+
+        final InntektsmeldingAggregatEntitet inntektsmeldinger = (InntektsmeldingAggregatEntitet) builder.getInntektsmeldinger();
+        for (Inntektsmelding inntektsmelding : inntektsmeldingerList) {
+            // Kommet inn inntektsmelding på arbeidsforhold som vi har gått videre med uten inntektsmelding?
+            if (informasjonBuilder.kommetInntektsmeldingPåArbeidsforholdHvorViTidligereBehandletUtenInntektsmelding(inntektsmelding)) {
+                informasjonBuilder.fjernOverstyringVedrørende(inntektsmelding.getArbeidsgiver(), inntektsmelding.getArbeidsforholdRef());
+            }
+
+            inntektsmeldinger.leggTil(inntektsmelding);
+        }
+        builder.setInntektsmeldinger(inntektsmeldinger);
+        builder.medInformasjon(informasjonBuilder.build());
+
+        InntektArbeidYtelseGrunnlag build = builder.build();
+        lagreOgFlush(koblingReferanse, build);
+        return build.getGrunnlagReferanse();
     }
 
     private InntektArbeidYtelseGrunnlagBuilder getGrunnlagBuilder(KoblingReferanse koblingReferanse, InntektArbeidYtelseAggregatBuilder builder) {
@@ -212,7 +221,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         }
         entityManager.flush();
     }
-    
+
     private void konverterEksternArbeidsforholdRefTilInterne(InntektsmeldingBuilder inntektsmeldingBuilder, final ArbeidsforholdInformasjon informasjon) {
         if (inntektsmeldingBuilder.getEksternArbeidsforholdRef().isPresent()) {
             var ekstern = inntektsmeldingBuilder.getEksternArbeidsforholdRef().get();
@@ -483,14 +492,19 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     }
 
     private Optional<InntektArbeidYtelseGrunnlagEntitet> getAktivtInntektArbeidGrunnlag(KoblingReferanse koblingReferanse) {
-        final TypedQuery<InntektArbeidYtelseGrunnlagEntitet> query = entityManager.createQuery("FROM InntektArbeidGrunnlag gr JOIN KOBLING k " + // NOSONAR
+        final TypedQuery<InntektArbeidYtelseGrunnlagEntitet> query = entityManager.createQuery("SELECT gr FROM InntektArbeidGrunnlag gr " +
+            "JOIN Kobling k ON gr.koblingId = k.id " + // NOSONAR
             "WHERE k.koblingReferanse = :ref " + //$NON-NLS-1$ //NOSONAR
             "AND gr.aktiv = :aktivt", InntektArbeidYtelseGrunnlagEntitet.class);
         query.setParameter("ref", koblingReferanse); // NOSONAR $NON-NLS-1$
         query.setParameter("aktivt", true);
-        final Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlag = HibernateVerktøy.hentUniktResultat(query);
-        grunnlag.ifPresent(InntektArbeidYtelseGrunnlagEntitet::taHensynTilBetraktninger);
-        return grunnlag;
+        List<InntektArbeidYtelseGrunnlagEntitet> resultList = query.getResultList();
+        if (resultList.size() < 2) {
+            final Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlag = resultList.stream().findFirst();
+            grunnlag.ifPresent(InntektArbeidYtelseGrunnlagEntitet::taHensynTilBetraktninger);
+            return grunnlag;
+        }
+        throw new IllegalStateException("Finner flere aktive grunnlag på koblingReferanse=" + koblingReferanse);
     }
 
     private Optional<ArbeidsforholdInformasjon> hentArbeidsforholdInformasjon(Optional<InntektArbeidYtelseGrunnlag> grunnlag) {
@@ -540,8 +554,8 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     }
 
     private Long hentKoblingIdFor(KoblingReferanse koblingReferanse) {
-        final TypedQuery<Long> query = entityManager.createQuery("SELECT k.id FROM Kobling k k.koblingReferanse=:ref", Long.class);
+        final TypedQuery<Long> query = entityManager.createQuery("SELECT k.id FROM Kobling k WHERE k.koblingReferanse=:ref", Long.class);
         query.setParameter("ref", koblingReferanse);
-        return query.getSingleResult();
+        return HibernateVerktøy.hentUniktResultat(query).orElse(null);
     }
 }

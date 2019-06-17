@@ -36,7 +36,7 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 
 @Api(tags = "arbeidsforhold")
-@Path("/iay/v1")
+@Path("/iay/grunnlag/v1")
 @ApplicationScoped
 @Transaction
 public class GrunnlagRestTjeneste {
@@ -56,7 +56,7 @@ public class GrunnlagRestTjeneste {
     }
 
     @POST
-    @Path("/grunnlag")
+    @Path("/")
     @ApiOperation(value = "Hent IAY Grunnlag for angitt søke spesifikasjon", response = InntektArbeidYtelseGrunnlagDto.class)
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")

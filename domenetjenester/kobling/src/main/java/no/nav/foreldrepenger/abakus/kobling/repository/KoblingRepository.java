@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.kobling.repository;
 
 import java.util.Objects;
 import java.util.Optional;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -46,7 +47,7 @@ public class KoblingRepository {
     public Long hentKoblingIdForKoblingReferanse(KoblingReferanse referanse) {
         TypedQuery<Long> query = entityManager.createQuery("SELECT k.id FROM Kobling k WHERE k.koblingReferanse = :referanse", Long.class);
         query.setParameter("referanse", referanse);
-        return HibernateVerktøy.hentEksaktResultat(query);
+        return HibernateVerktøy.hentUniktResultat(query).orElse(null);
     }
 
     public void lagre(Kobling nyKobling) {

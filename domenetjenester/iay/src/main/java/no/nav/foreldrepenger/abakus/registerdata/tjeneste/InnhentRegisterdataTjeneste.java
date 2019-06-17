@@ -97,13 +97,17 @@ public class InnhentRegisterdataTjeneste {
         Kobling kobling;
         if (koblingOpt.isEmpty()) {
             // Lagre kobling
-            Periode opplysningsperiode = dto.getOpplysningsperiode();
-            YtelseType ytelseType = mapTilYtelseType(dto);
-            DatoIntervallEntitet opplysningsperiode1 = DatoIntervallEntitet.fraOgMedTilOgMed(opplysningsperiode.getFom(), opplysningsperiode.getTom());
             AktørId aktørId = new AktørId(dto.getAktør().getIdent());
-            kobling = new Kobling(new Saksnummer(dto.getSaksnummer()), referanse, aktørId, opplysningsperiode1, ytelseType);
+            kobling = new Kobling(new Saksnummer(dto.getSaksnummer()), referanse, aktørId);
         } else {
             kobling = koblingOpt.get();
+        }
+
+        if (YtelseType.UDEFINERT.equals(kobling.getYtelseType())) {
+            var ytelseType = mapTilYtelseType(dto);
+            if (ytelseType != null) {
+                kobling.setYtelseType(ytelseType);
+            }
         }
         // Oppdater kobling
         Aktør annenPartAktør = dto.getAnnenPartAktør();
