@@ -35,7 +35,7 @@ import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 
-@Api(tags = "arbeidsforhold")
+@Api(tags = "iay")
 @Path("/iay/grunnlag/v1")
 @ApplicationScoped
 @Transaction
