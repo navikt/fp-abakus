@@ -42,19 +42,37 @@ public class NaisRestTjeneste {
     @GET
     @Path("isAlive")
     public Response isAlive() {
-        // TODO: Check state of kafkastream?
-        logger.debug("Application is alive.");
-        return Response
-            .ok(RESPONSE_OK)
-            .header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL)
-            .build();
+        if (starterService.isKafkaAlive()) {
+            // TODO: Check state of kafkastream?
+            logger.debug("Application is alive.");
+            return Response
+                .ok(RESPONSE_OK)
+                .header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL)
+                .build();
+        } else {
+            return Response
+                .serverError()
+                .header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL)
+                .build();
+        }
     }
 
     @GET
     @Path("isReady")
     public Response isReady() {
-        return Response.ok(RESPONSE_OK).header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL).build();
-
+        if (starterService.isKafkaAlive()) {
+            // TODO: Check state of kafkastream?
+            logger.debug("Application is alive.");
+            return Response
+                .ok(RESPONSE_OK)
+                .header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL)
+                .build();
+        } else {
+            return Response
+                .serverError()
+                .header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL)
+                .build();
+        }
     }
 
     @GET

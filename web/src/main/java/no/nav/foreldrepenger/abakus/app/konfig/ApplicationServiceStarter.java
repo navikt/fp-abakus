@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import no.nav.foreldrepenger.abakus.kafka.KafkaIntegration;
 import no.nav.vedtak.apptjeneste.AppServiceHandler;
 
 /**
@@ -41,6 +42,13 @@ public class ApplicationServiceStarter {
                 key.start();
             }
         });
+    }
+
+    public boolean isKafkaAlive() {
+        return serviceMap.entrySet()
+            .stream()
+            .filter(it -> it.getKey() instanceof KafkaIntegration)
+            .allMatch(it -> ((KafkaIntegration) it.getKey()).isAlive());
     }
 
     public void stopServices() {

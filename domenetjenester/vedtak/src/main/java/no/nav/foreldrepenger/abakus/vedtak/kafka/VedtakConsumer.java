@@ -1,7 +1,8 @@
 package no.nav.foreldrepenger.abakus.vedtak.kafka;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -19,10 +20,11 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import no.nav.foreldrepenger.abakus.kafka.KafkaIntegration;
 import no.nav.vedtak.apptjeneste.AppServiceHandler;
 
 @ApplicationScoped
-public class VedtakConsumer implements AppServiceHandler {
+public class VedtakConsumer implements KafkaIntegration, AppServiceHandler {
 
     private static final Logger log = LoggerFactory.getLogger(VedtakConsumer.class);
     private KafkaStreams stream;
@@ -116,6 +118,11 @@ public class VedtakConsumer implements AppServiceHandler {
         return stream.state();
     }
 
+    @Override
+    public boolean isAlive() {
+        return stream.state().isRunning() || KafkaStreams.State.CREATED.equals(stream.state());
+    }
+
     public String getTopic() {
         return topic;
     }
@@ -123,7 +130,7 @@ public class VedtakConsumer implements AppServiceHandler {
     @Override
     public void stop() {
         log.info("Starter shutdown av topic={}, tilstand={} med 10 sekunder timeout", topic, stream.state());
-        stream.close(60, TimeUnit.SECONDS);
+        stream.close(Duration.of(60, ChronoUnit.SECONDS));
         log.info("Shutdown av topic={}, tilstand={} med 10 sekunder timeout", topic, stream.state());
     }
 }
