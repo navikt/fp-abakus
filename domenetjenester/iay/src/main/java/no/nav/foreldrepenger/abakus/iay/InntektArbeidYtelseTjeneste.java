@@ -45,7 +45,7 @@ public interface InntektArbeidYtelseTjeneste {
 
     /**
      * Oopprett builder for register data.
-     * 
+     *
      * @param koblingReferanse
      * @return Register inntekt og arbeid før skjæringstidspunktet (Opprett for å endre eller legge til registeropplysning)
      */
@@ -54,7 +54,7 @@ public interface InntektArbeidYtelseTjeneste {
 
     /**
      * Opprett builder for saksbehandlers overstyringer.
-     * 
+     *
      * @param koblingReferanse
      * @return Saksbehandlers overstyringer av IAY (primært {@link no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid}).
      */

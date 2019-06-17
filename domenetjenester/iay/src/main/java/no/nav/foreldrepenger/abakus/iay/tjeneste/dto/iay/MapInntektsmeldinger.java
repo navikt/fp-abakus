@@ -152,8 +152,9 @@ public class MapInntektsmeldinger {
             var internRef = InternArbeidsforholdRef.ref(arbeidsforholdRef == null ? null : arbeidsforholdRef.getAbakusReferanse());
             var eksternRef = EksternArbeidsforholdRef.ref(arbeidsforholdRef == null ? null : arbeidsforholdRef.getEksternReferanse());
             var arbeidsgiver = mapArbeidsgiver(dto.getArbeidsgiver());
-            arbeidsforholdInformasjon.leggTilNyReferanse(new ArbeidsforholdReferanseEntitet(arbeidsgiver, internRef, eksternRef));
-
+            if (arbeidsforholdRef != null && eksternRef.gjelderForSpesifiktArbeidsforhold()) {
+                arbeidsforholdInformasjon.leggTilNyReferanse(new ArbeidsforholdReferanseEntitet(arbeidsgiver, internRef, eksternRef));
+            }
             var journalpostId = dto.getJournalpostId().getId();
             var innsendingstidspunkt = dto.getInnsendingstidspunkt().toLocalDateTime();
             var innsendingsårsak = KodeverkMapper.mapInntektsmeldingInnsendingsårsakFraDto(dto.getInnsendingsårsak());

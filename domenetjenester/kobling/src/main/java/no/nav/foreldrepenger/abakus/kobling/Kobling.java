@@ -89,15 +89,13 @@ public class Kobling extends no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet
     public Kobling() {
     }
 
-    public Kobling(Saksnummer saksnummer, KoblingReferanse koblingReferanse, AktørId aktørId, DatoIntervallEntitet opplysningsperiode, YtelseType ytelseType) {
+    public Kobling(Saksnummer saksnummer, KoblingReferanse koblingReferanse, AktørId aktørId) {
         Objects.requireNonNull(saksnummer, "saksnummer");
         Objects.requireNonNull(koblingReferanse, "koblingReferanse");
         Objects.requireNonNull(aktørId, "aktørId");
-        Objects.requireNonNull(opplysningsperiode, "opplysningsperiode");
+        this.saksnummer = saksnummer;
         this.koblingReferanse = koblingReferanse;
         this.aktørId = aktørId;
-        this.opplysningsperiode = opplysningsperiode;
-        this.ytelseType = ytelseType;
     }
 
     @Override
@@ -147,6 +145,10 @@ public class Kobling extends no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet
 
     public YtelseType getYtelseType() {
         return ytelseType;
+    }
+
+    public void setYtelseType(YtelseType ytelseType) {
+        this.ytelseType = ytelseType;
     }
 
     @Override

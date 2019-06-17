@@ -30,7 +30,6 @@
         <prometheus.version>0.6.0</prometheus.version>
       
         <felles.version>1.1.0_20190616092907_44c1fd1</felles.version>
-      
         <kontrakter.version>5.0_20190617074315_d8f1dc8</kontrakter.version>
     </properties>
 
@@ -257,7 +256,7 @@
                 <artifactId>hibernate-validator</artifactId>
                 <version>6.0.16.Final</version>
             </dependency>
-            
+
             <!-- Følgende kan fjernes når fpfelles får jaxws-rt istd håndkodede versjoner av disse bibliotekene. Men må overstyres nå pga kompatibilitet. -->
             <dependency>
                 <groupId>org.glassfish.jaxb</groupId>

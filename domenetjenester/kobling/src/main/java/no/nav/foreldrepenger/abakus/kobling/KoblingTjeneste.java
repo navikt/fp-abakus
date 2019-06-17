@@ -1,11 +1,14 @@
 package no.nav.foreldrepenger.abakus.kobling;
 
 import java.util.Optional;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import no.nav.foreldrepenger.abakus.kobling.repository.KoblingRepository;
 import no.nav.foreldrepenger.abakus.kobling.repository.LåsRepository;
+import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 
 @ApplicationScoped
 public class KoblingTjeneste {
@@ -20,6 +23,12 @@ public class KoblingTjeneste {
     public KoblingTjeneste(KoblingRepository repository, LåsRepository låsRepository) {
         this.repository = repository;
         this.låsRepository = låsRepository;
+    }
+
+    public Kobling finnEllerOpprett(KoblingReferanse referanse, AktørId aktørId, Saksnummer saksnummer) {
+        Kobling kobling = hentFor(referanse).orElse(new Kobling(saksnummer, referanse, aktørId));
+        repository.lagre(kobling);
+        return kobling;
     }
 
     public Optional<Kobling> hentFor(KoblingReferanse referanse) {

@@ -19,6 +19,12 @@
         <dependency>
             <groupId>no.nav.foreldrepenger.felles</groupId>
             <artifactId>felles-db</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>woodstox-core-asl</artifactId>
+                    <groupId>org.codehaus.woodstox</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>

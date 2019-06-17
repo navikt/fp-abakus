@@ -3,10 +3,12 @@ package no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.vedtak.util.Tuple;
 
@@ -22,6 +24,11 @@ public class ArbeidsforholdInformasjonBuilder {
 
     public static ArbeidsforholdInformasjonBuilder oppdatere(ArbeidsforholdInformasjon oppdatere) {
         return new ArbeidsforholdInformasjonBuilder(new ArbeidsforholdInformasjonEntitet(oppdatere));
+    }
+
+    public static ArbeidsforholdInformasjonBuilder builder(Optional<ArbeidsforholdInformasjon> arbeidsforholdInformasjon) {
+        var arbeidInfo = arbeidsforholdInformasjon.map(ai -> new ArbeidsforholdInformasjonEntitet(ai)).orElseGet(() -> new ArbeidsforholdInformasjonEntitet());
+        return new ArbeidsforholdInformasjonBuilder(arbeidInfo);
     }
 
     public ArbeidsforholdOverstyringBuilder getOverstyringBuilderFor(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef ref) {
@@ -93,10 +100,15 @@ public class ArbeidsforholdInformasjonBuilder {
     public void leggTilNyReferanse(ArbeidsforholdReferanseEntitet arbeidsforholdReferanse) {
         kladd.leggTilNyReferanse(arbeidsforholdReferanse);
     }
-    
-    public static ArbeidsforholdInformasjonBuilder builder(Optional<ArbeidsforholdInformasjon> arbeidsforholdInformasjon) {
-        var arbeidInfo = arbeidsforholdInformasjon.map(ai -> new ArbeidsforholdInformasjonEntitet(ai)).orElseGet(() -> new ArbeidsforholdInformasjonEntitet());
-        return new ArbeidsforholdInformasjonBuilder(arbeidInfo);
-    }
 
+    public boolean kommetInntektsmeldingPåArbeidsforholdHvorViTidligereBehandletUtenInntektsmelding(Inntektsmelding inntektsmelding) {
+        return kladd.getOverstyringer()
+            .stream()
+            .anyMatch(ov -> (Objects.equals(ov.getHandling(), ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING)
+                || Objects.equals(ov.getHandling(), ArbeidsforholdHandlingType.IKKE_BRUK)
+                || Objects.equals(ov.getHandling(), ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE))
+                && ov.getArbeidsgiver().getErVirksomhet()
+                && ov.getArbeidsgiver().equals(inntektsmelding.getArbeidsgiver())
+                && ov.getArbeidsforholdRef().gjelderFor(inntektsmelding.getArbeidsforholdRef()));
+    }
 }
