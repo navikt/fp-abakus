@@ -1,7 +1,7 @@
 package no.nav.foreldrepenger.abakus.jetty.sikkerhet;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.Priority;
@@ -32,7 +32,7 @@ public class XacmlRequestBuilderTjenesteImpl implements XacmlRequestBuilderTjene
         actionAttributeSet.addAttribute(CommonAttributter.XACML_1_0_ACTION_ACTION_ID, pdpRequest.getString(CommonAttributter.XACML_1_0_ACTION_ACTION_ID));
         xacmlBuilder.addActionAttributeSet(actionAttributeSet);
 
-        List<Tuple<String, String>> identer = hentIdenter(pdpRequest,
+        Set<Tuple<String, String>> identer = hentIdenter(pdpRequest,
             CommonAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE,
             CommonAttributter.RESOURCE_FELLES_PERSON_FNR);
 
@@ -64,8 +64,8 @@ public class XacmlRequestBuilderTjenesteImpl implements XacmlRequestBuilderTjene
         return resourceAttributeSet;
     }
 
-    private List<Tuple<String, String>> hentIdenter(PdpRequest pdpRequest, String... identNøkler) {
-        List<Tuple<String, String>> identer = new ArrayList<>();
+    private Set<Tuple<String, String>> hentIdenter(PdpRequest pdpRequest, String... identNøkler) {
+        Set<Tuple<String, String>> identer = new HashSet<>();
         for (String key : identNøkler) {
             identer.addAll(pdpRequest.getListOfString(key).stream().map(it -> new Tuple<>(key, it)).collect(Collectors.toList()));
         }
