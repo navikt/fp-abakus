@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.vedtak.extract.v1;
 
 import java.util.Map;
+import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -49,6 +50,7 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
 
         VedtakYtelseBuilder builder = repository.opprettBuilderFor(aktørId, saksnummer, fagsystem, ytelseType);
         builder.medAktør(aktørId)
+            .medVedtakReferanse(UUID.fromString(ytelse.getVedtakReferanse()))
             .medVedtattTidspunkt(ytelse.getVedtattTidspunkt())
             .medSaksnummer(saksnummer)
             .medKilde(fagsystem)
