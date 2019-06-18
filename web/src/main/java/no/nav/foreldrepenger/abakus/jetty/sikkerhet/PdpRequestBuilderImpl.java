@@ -5,7 +5,10 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
 
 import no.nav.abac.common.xacml.CommonAttributter;
+import no.nav.abac.foreldrepenger.xacml.ForeldrepengerAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacAttributtSamling;
+import no.nav.vedtak.sikkerhet.abac.AbacBehandlingStatus;
+import no.nav.vedtak.sikkerhet.abac.AbacFagsakStatus;
 import no.nav.vedtak.sikkerhet.abac.PdpKlient;
 import no.nav.vedtak.sikkerhet.abac.PdpRequest;
 import no.nav.vedtak.sikkerhet.abac.PdpRequestBuilder;
@@ -31,6 +34,9 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
         pdpRequest.put(CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE, attributter.getResource().getEksternKode());
         pdpRequest.put(CommonAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, attributter.getVerdier(StandardAbacAttributtType.AKTØR_ID));
         pdpRequest.put(CommonAttributter.RESOURCE_FELLES_PERSON_FNR, attributter.getVerdier(StandardAbacAttributtType.FNR));
+        // TODO: Hente fra pip-tjenesten?
+        pdpRequest.put(ForeldrepengerAttributter.RESOURCE_FORELDREPENGER_SAK_BEHANDLINGSSTATUS, AbacBehandlingStatus.UTREDES.getEksternKode());
+        pdpRequest.put(ForeldrepengerAttributter.RESOURCE_FORELDREPENGER_SAK_SAKSSTATUS, AbacFagsakStatus.UNDER_BEHANDLING.getEksternKode());
         return pdpRequest;
     }
 }

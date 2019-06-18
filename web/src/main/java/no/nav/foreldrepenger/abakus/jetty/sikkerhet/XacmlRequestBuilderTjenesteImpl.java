@@ -9,6 +9,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Alternative;
 
 import no.nav.abac.common.xacml.CommonAttributter;
+import no.nav.abac.foreldrepenger.xacml.ForeldrepengerAttributter;
 import no.nav.vedtak.sikkerhet.abac.PdpRequest;
 import no.nav.vedtak.sikkerhet.pdp.XacmlRequestBuilderTjeneste;
 import no.nav.vedtak.sikkerhet.pdp.xacml.XacmlAttributeSet;
@@ -54,6 +55,8 @@ public class XacmlRequestBuilderTjenesteImpl implements XacmlRequestBuilderTjene
         XacmlAttributeSet resourceAttributeSet = new XacmlAttributeSet();
         resourceAttributeSet.addAttribute(CommonAttributter.RESOURCE_FELLES_DOMENE, pdpRequest.getString(CommonAttributter.RESOURCE_FELLES_DOMENE));
         resourceAttributeSet.addAttribute(CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE, pdpRequest.getString(CommonAttributter.RESOURCE_FELLES_RESOURCE_TYPE));
+        resourceAttributeSet.addAttribute(ForeldrepengerAttributter.RESOURCE_FORELDREPENGER_SAK_SAKSSTATUS, pdpRequest.getString(ForeldrepengerAttributter.RESOURCE_FORELDREPENGER_SAK_SAKSSTATUS));
+        resourceAttributeSet.addAttribute(ForeldrepengerAttributter.RESOURCE_FORELDREPENGER_SAK_BEHANDLINGSSTATUS, pdpRequest.getString(ForeldrepengerAttributter.RESOURCE_FORELDREPENGER_SAK_BEHANDLINGSSTATUS));
         if (ident != null) {
             resourceAttributeSet.addAttribute(ident.getElement1(), ident.getElement2());
         }
