@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,9 +42,11 @@ public class ExtractFromYtelseV1Test {
         String aktørId = "1234123412312";
         aktør.setVerdi(aktørId);
         ytelseV1.setAktør(aktør);
+        ytelseV1.setVedtakReferanse(UUID.randomUUID().toString());
         ytelseV1.setFagsystem(Fagsystem.FPSAK);
         ytelseV1.setStatus(YtelseStatus.LØPENDE);
         ytelseV1.setType(YtelseType.FORELDREPENGER);
+        ytelseV1.setVedtattTidspunkt(LocalDateTime.now());
         Periode periode = new Periode();
         periode.setFom(LocalDate.now().minusDays(30));
         periode.setTom(LocalDate.now().plusDays(30));
@@ -58,7 +62,9 @@ public class ExtractFromYtelseV1Test {
         ytelseV1.setAnvist(List.of(anvisning));
 
         VedtakYtelseBuilder builder = extractor.extractFrom(ytelseV1);
+        repository.lagre(builder);
         VedtattYtelse entitet = builder.build();
+
 
         assertThat(entitet).isNotNull();
         assertThat(entitet.getSaksnummer()).isNotNull();
