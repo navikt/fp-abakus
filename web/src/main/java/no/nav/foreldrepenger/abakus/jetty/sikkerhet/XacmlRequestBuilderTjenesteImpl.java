@@ -34,7 +34,7 @@ public class XacmlRequestBuilderTjenesteImpl implements XacmlRequestBuilderTjene
 
         List<Tuple<String, String>> identer = hentIdenter(pdpRequest,
             CommonAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE,
-            CommonAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE);
+            CommonAttributter.RESOURCE_FELLES_PERSON_FNR);
 
         if (identer.isEmpty()) {
             populerResources(xacmlBuilder, pdpRequest, null);

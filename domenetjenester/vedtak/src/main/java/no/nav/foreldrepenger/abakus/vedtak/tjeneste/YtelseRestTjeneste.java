@@ -59,10 +59,9 @@ public class YtelseRestTjeneste {
     }
 
     public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
-
         @Override
         public AbacDataAttributter apply(Object obj) {
-            YtelseV1 req = (YtelseV1) obj;
+            Ytelse req = (Ytelse) obj;
             return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, req.getAktør().getVerdi());
         }
     }
