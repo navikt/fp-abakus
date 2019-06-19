@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
+import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.vedtak.util.Tuple;
 
@@ -66,6 +67,18 @@ public class ArbeidsforholdInformasjonBuilder {
      */
     public List<Tuple<Arbeidsgiver, Tuple<InternArbeidsforholdRef, InternArbeidsforholdRef>>> getReverserteErstattArbeidsforhold() {
         return Collections.unmodifiableList(reverserteErstattninger);
+    }
+
+    public InternArbeidsforholdRef finnEllerOpprett(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef eksternArbeidsforholdRef) {
+        InternArbeidsforholdRef internArbeidsforholdRef = kladd.finnEllerOpprett(arbeidsgiver, eksternArbeidsforholdRef);
+        if (erUkjentReferanse(arbeidsgiver, internArbeidsforholdRef)) {
+            leggTilNyReferanse(new ArbeidsforholdReferanseEntitet(arbeidsgiver, internArbeidsforholdRef, eksternArbeidsforholdRef));
+        }
+        return internArbeidsforholdRef;
+    }
+
+    public boolean erUkjentReferanse(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef internArbeidsforholdRef) {
+        return kladd.getArbeidsforholdReferanser().stream().noneMatch(referanse -> referanse.getArbeidsgiver().equals(arbeidsgiver) && referanse.getInternReferanse().equals(internArbeidsforholdRef));
     }
 
     public ArbeidsforholdInformasjonBuilder erstattArbeidsforhold(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef gammelRef, InternArbeidsforholdRef ref) {

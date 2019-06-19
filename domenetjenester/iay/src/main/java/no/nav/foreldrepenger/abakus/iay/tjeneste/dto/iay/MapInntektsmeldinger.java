@@ -152,8 +152,14 @@ public class MapInntektsmeldinger {
             var internRef = InternArbeidsforholdRef.ref(arbeidsforholdRef == null ? null : arbeidsforholdRef.getAbakusReferanse());
             var eksternRef = EksternArbeidsforholdRef.ref(arbeidsforholdRef == null ? null : arbeidsforholdRef.getEksternReferanse());
             var arbeidsgiver = mapArbeidsgiver(dto.getArbeidsgiver());
-            if (arbeidsforholdRef != null && eksternRef.gjelderForSpesifiktArbeidsforhold()) {
-                arbeidsforholdInformasjon.leggTilNyReferanse(new ArbeidsforholdReferanseEntitet(arbeidsgiver, internRef, eksternRef));
+
+            if (eksternRef.gjelderForSpesifiktArbeidsforhold() && !internRef.gjelderForSpesifiktArbeidsforhold()) {
+                internRef = arbeidsforholdInformasjon.finnEllerOpprett(arbeidsgiver, eksternRef);
+            } else {
+                if (eksternRef.gjelderForSpesifiktArbeidsforhold() && internRef.gjelderForSpesifiktArbeidsforhold()
+                    && arbeidsforholdInformasjon.erUkjentReferanse(arbeidsgiver, internRef)) {
+                    arbeidsforholdInformasjon.leggTilNyReferanse(new ArbeidsforholdReferanseEntitet(arbeidsgiver, internRef, eksternRef));
+                }
             }
             var journalpostId = dto.getJournalpostId().getId();
             var innsendingstidspunkt = dto.getInnsendingstidspunkt().toLocalDateTime();
