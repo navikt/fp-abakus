@@ -71,9 +71,9 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
     private void mapAnvisning(VedtakYtelseBuilder builder, Anvisning anv) {
         YtelseAnvistBuilder anvistBuilder = builder.getAnvistBuilder();
         anvistBuilder.medAnvistPeriode(mapTilEntitet(anv.getPeriode()))
-            .medBeløp(anv.getBeløp().getVerdi())
-            .medDagsats(anv.getDagsats().getVerdi())
-            .medUtbetalingsgradProsent(anv.getUtbetalingsgrad().getVerdi());
+            .medBeløp(anv.getBeløp() != null ? anv.getBeløp().getVerdi() : null)
+            .medDagsats(anv.getDagsats() != null ? anv.getDagsats().getVerdi() : null)
+            .medUtbetalingsgradProsent(anv.getUtbetalingsgrad() != null ? anv.getUtbetalingsgrad().getVerdi() : null);
         builder.leggTil(anvistBuilder);
     }
 

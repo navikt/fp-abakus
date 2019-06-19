@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.vedtak.extract.v1;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +17,6 @@ import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtattYtelse;
 import no.nav.vedtak.ytelse.Aktør;
-import no.nav.vedtak.ytelse.Desimaltall;
 import no.nav.vedtak.ytelse.Periode;
 import no.nav.vedtak.ytelse.v1.Fagsystem;
 import no.nav.vedtak.ytelse.v1.YtelseStatus;
@@ -55,9 +53,6 @@ public class ExtractFromYtelseV1Test {
         ytelseV1.setSaksnummer(saksnummer);
 
         Anvisning anvisning = new Anvisning();
-        anvisning.setBeløp(new Desimaltall(BigDecimal.TEN));
-        anvisning.setDagsats(new Desimaltall(BigDecimal.TEN));
-        anvisning.setUtbetalingsgrad(new Desimaltall(BigDecimal.TEN));
         anvisning.setPeriode(periode);
         ytelseV1.setAnvist(List.of(anvisning));
 
