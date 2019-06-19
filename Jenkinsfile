@@ -58,7 +58,7 @@ import no.nav.jenkins.*
 
                             echo "GIT_COMMIT_HASH: $GIT_COMMIT_HASH, latestTagCommitHash: $latestTagCommitHash"
 
-                            skipBuild = GIT_COMMIT_HASH.equals(latestTagCommitHash)
+                            skipBuild = latestTagCommitHash.endsWith(GIT_COMMIT_HASH)
                             if (skipBuild) {
                                 version = latestTag
                                 echo "No change detected in sourcecode, skipping build and deploy existing tag={$latestTag}."
