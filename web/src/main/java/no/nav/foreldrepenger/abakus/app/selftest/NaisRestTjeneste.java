@@ -43,7 +43,6 @@ public class NaisRestTjeneste {
     @Path("isAlive")
     public Response isAlive() {
         if (starterService.isKafkaAlive()) {
-            // TODO: Check state of kafkastream?
             logger.debug("Application is alive.");
             return Response
                 .ok(RESPONSE_OK)
@@ -61,7 +60,6 @@ public class NaisRestTjeneste {
     @Path("isReady")
     public Response isReady() {
         if (starterService.isKafkaAlive()) {
-            // TODO: Check state of kafkastream?
             logger.debug("Application is alive.");
             return Response
                 .ok(RESPONSE_OK)
