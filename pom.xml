@@ -249,7 +249,6 @@
                 <artifactId>simpleclient_common</artifactId>
                 <version>${prometheus.version}</version>
             </dependency>
-
             <dependency>
                 <!-- for Bean validation -->
                 <groupId>org.hibernate.validator</groupId>

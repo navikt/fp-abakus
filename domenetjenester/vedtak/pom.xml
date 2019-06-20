@@ -16,6 +16,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+        <dependency>
             <groupId>no.nav.foreldrepenger.abakus</groupId>
             <artifactId>prosesstask</artifactId>
         </dependency>
@@ -42,6 +46,10 @@
         <dependency>
             <groupId>no.nav.foreldrepenger.kontrakter.topics</groupId>
             <artifactId>fp-topics-manifest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.el</artifactId>
         </dependency>
 
         <!-- TEST -->

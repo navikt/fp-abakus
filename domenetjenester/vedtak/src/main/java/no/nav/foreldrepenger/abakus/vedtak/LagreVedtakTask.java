@@ -1,8 +1,15 @@
 package no.nav.foreldrepenger.abakus.vedtak;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -21,7 +28,7 @@ public class LagreVedtakTask implements ProsessTaskHandler {
 
     public static final String TASKTYPE = "vedtakEvent.lagre";
     public static final String KEY = "kafka.key";
-    private static ObjectMapper objectMapper = JacksonJsonConfig.getObjectMapper();
+    private final static ObjectMapper OBJECT_MAPPER = JacksonJsonConfig.getMapper();
 
     private VedtakYtelseRepository ytelseRepository;
     private ExtractFromYtelseV1 extractor;
@@ -42,7 +49,19 @@ public class LagreVedtakTask implements ProsessTaskHandler {
 
         Ytelse mottattVedtak;
         try {
-            mottattVedtak = objectMapper.readValue(payload, Ytelse.class);
+            mottattVedtak = OBJECT_MAPPER.readValue(payload, Ytelse.class);
+
+            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+            Validator validator = factory.getValidator();
+            Set<ConstraintViolation<Ytelse>> violations = validator.validate(mottattVedtak);
+            if (!violations.isEmpty()) {
+                // Har feilet validering
+                List<String> allErrors = violations
+                    .stream()
+                    .map(it -> it.getPropertyPath().toString() + " :: " + it.getMessage())
+                    .collect(Collectors.toList());
+                throw new IllegalArgumentException("Vedtatt-ytelse valideringsfeil \n " + allErrors);
+            }
         } catch (IOException e) {
             throw YtelseFeil.FACTORY.parsingFeil(key, payload, e).toException();
         }
