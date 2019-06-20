@@ -27,7 +27,7 @@ public class VedtaksHendelseHåndterer {
     }
 
     void handleMessage(String key, String payload) {
-        log.info("Mottatt ytelse-vedtatt hendelse med key='{}'", key);
+        log.info("Mottatt ytelse-vedtatt hendelse med key='{}', payload={}", key, payload);
         ProsessTaskData data = new ProsessTaskData(LagreVedtakTask.TASKTYPE);
         data.setProperty(LagreVedtakTask.KEY, key);
         data.setPayload(payload);

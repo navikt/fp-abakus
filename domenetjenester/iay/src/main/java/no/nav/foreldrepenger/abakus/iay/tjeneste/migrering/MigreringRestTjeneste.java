@@ -16,6 +16,9 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
@@ -43,6 +46,8 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 @ApplicationScoped
 @Transaction
 public class MigreringRestTjeneste {
+
+    private static final Logger log = LoggerFactory.getLogger(MigreringRestTjeneste.class);
 
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private KoblingTjeneste koblingTjeneste;
@@ -72,6 +77,7 @@ public class MigreringRestTjeneste {
                               @TilpassetAbacAttributt(supplierClass = MigreringRestTjeneste.AbacDataSupplier.class)
                               @Valid InntektArbeidYtelseGrunnlagSakSnapshotDto sakSnapshot) {
 
+        log.info("Mottatt migrering for sak={}", sakSnapshot.getSaksnummer());
         var aktørId = new AktørId(sakSnapshot.getAktør().getIdent());
 
         for (InntektArbeidYtelseGrunnlagSakSnapshotDto.Konvolutt konvolutt : sakSnapshot.getGrunnlag()) {
@@ -83,7 +89,9 @@ public class MigreringRestTjeneste {
 
             var aktiv = konvolutt.erAktiv() != null ? konvolutt.erAktiv() : false;
             repository.lagreMigrertGrunnlag(grunnlag, koblingReferanse, aktiv);
+            log.info("Migrert grunnlag={}", grunnlag.getGrunnlagReferanse());
         }
+        log.info("Migrert sak={} med {} grunnlag", sakSnapshot.getSaksnummer(), sakSnapshot.getGrunnlag().size());
 
         return Response.ok().build();
     }
