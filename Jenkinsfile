@@ -54,7 +54,7 @@ import no.nav.jenkins.*
                         if (env.BRANCH_NAME == 'master') {
                             sh "git fetch"
                             latestTag = sh(script: "git describe --tags", returnStdout: true)?.trim()
-                            latestTagCommitHash = sh(script: "git describe --tags | sed 's/.*\\_//'", returnStdout: true)?.trim()
+                            latestTagCommitHash = sh(script: "git describe \$(git rev-list --tags --max-count=1) | sed 's/.*\\_//'", returnStdout: true)?.trim()
 
                             echo "GIT_COMMIT_HASH: $GIT_COMMIT_HASH, latestTagCommitHash: $latestTagCommitHash"
 
