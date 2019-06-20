@@ -51,16 +51,16 @@ public class VedtakConsumer implements KafkaIntegration, AppServiceHandler {
 
     private void addShutdownHooks() {
         stream.setStateListener((newState, oldState) -> {
-            log.info("From state={} to state={}", oldState, newState);
+            log.info("{} :: From state={} to state={}", topic, oldState, newState);
 
             if (newState == KafkaStreams.State.ERROR) {
                 // if the stream has died there is no reason to keep spinning
-                log.warn("No reason to keep living, closing stream");
+                log.warn("{} :: No reason to keep living, closing stream", topic);
                 stop();
             }
         });
         stream.setUncaughtExceptionHandler((t, e) -> {
-            log.error("Caught exception in stream, exiting", e);
+            log.error(topic + " :: Caught exception in stream, exiting", e);
             stop();
         });
     }
