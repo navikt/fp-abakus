@@ -13,7 +13,11 @@ public class GrunnlagReferanse {
 
     @JsonValue
     @Column(name = "grunnlag_referanse", updatable = false)
-    private final UUID referanse;
+    private UUID referanse;
+
+    protected GrunnlagReferanse() {
+        // For hibernate
+    }
 
     public GrunnlagReferanse(UUID referanse) {
         Objects.requireNonNull(referanse, "referanse");
