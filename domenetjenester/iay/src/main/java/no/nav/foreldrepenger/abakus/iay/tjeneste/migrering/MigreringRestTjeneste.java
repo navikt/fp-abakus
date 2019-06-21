@@ -78,7 +78,7 @@ public class MigreringRestTjeneste {
     @BeskyttetRessurs(action = CREATE, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response migrerSak(@NotNull
-                              @TilpassetAbacAttributt(supplierClass = MigreringRestTjeneste.AbacDataSupplier.class)
+                              @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class)
                               @Valid InntektArbeidYtelseGrunnlagSakSnapshotDto sakSnapshot) {
 
         log.info("Mottatt migrering for sak={}", sakSnapshot.getSaksnummer());
