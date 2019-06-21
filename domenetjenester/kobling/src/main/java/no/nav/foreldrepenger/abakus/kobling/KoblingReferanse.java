@@ -13,7 +13,11 @@ public class KoblingReferanse {
 
     @JsonValue
     @Column(name = "kobling_referanse", updatable = false)
-    private final UUID referanse;
+    private UUID referanse;
+
+    protected KoblingReferanse() {
+        // For hibernate
+    }
 
     public KoblingReferanse(UUID referanse) {
         Objects.requireNonNull(referanse, "referanse");
