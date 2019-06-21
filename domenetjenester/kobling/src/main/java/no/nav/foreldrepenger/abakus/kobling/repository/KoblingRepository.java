@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.kobling.repository;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -18,6 +19,7 @@ import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kodeverk.Kodeliste;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkTabell;
+import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
@@ -76,5 +78,10 @@ public class KoblingRepository {
 
     public Kobling hentForKoblingId(Long koblingId) {
         return entityManager.find(Kobling.class, koblingId);
+    }
+
+    public List<Saksnummer> hentAlleSaksnummer() {
+        TypedQuery<Saksnummer> query = entityManager.createQuery("SELECT k.saksnummer FROM Kobling k", Saksnummer.class);
+        return query.getResultList();
     }
 }

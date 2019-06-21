@@ -49,4 +49,5 @@ public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRe
      */
     InntektArbeidYtelseAggregatBuilder opprettBuilderFor(KoblingReferanse koblingReferanse, UUID angittAggregatReferanse, LocalDateTime angittOpprettetTidspunkt, VersjonType versjonType);
 
+    Statistikk hentStats();
 }

@@ -1,8 +1,11 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.migrering;
 
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
+import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -12,6 +15,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
@@ -94,6 +98,21 @@ public class MigreringRestTjeneste {
         log.info("Migrert sak={} med {} grunnlag", sakSnapshot.getSaksnummer(), sakSnapshot.getGrunnlag().size());
 
         return Response.ok().build();
+    }
+
+    @GET
+    @Path("/status")
+    @ApiOperation(value = "Gir status / stats på migrering")
+    @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
+    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    public Response status() {
+
+        Map<String, Object> responsMap = new HashMap<>();
+
+        responsMap.put("saksnummer", koblingTjeneste.hentAlleSaksnummer());
+        responsMap.put("iay", repository.hentStats());
+
+        return Response.ok(responsMap).build();
     }
 
     private Kobling finnEllerOpprett(InntektArbeidYtelseGrunnlagSakSnapshotDto.Konvolutt konvolutt, InntektArbeidYtelseGrunnlagSakSnapshotDto sakDto) {

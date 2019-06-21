@@ -80,6 +80,13 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         return opprettBuilderFor(versjonType, angittAggregatReferanse, angittOpprettetTidspunkt, grunnlag);
     }
 
+    @Override
+    public Statistikk hentStats() {
+        final TypedQuery<Long> query = entityManager.createQuery("SELECT COUNT(gr) FROM InntektArbeidGrunnlag gr ", Long.class);
+        Long antallGrunnlag = HibernateVerktøy.hentEksaktResultat(query);
+        return new Statistikk(antallGrunnlag);
+    }
+
     private InntektArbeidYtelseAggregatBuilder opprettBuilderFor(VersjonType versjonType, UUID angittReferanse, LocalDateTime opprettetTidspunkt,
                                                                  Optional<InntektArbeidYtelseGrunnlag> grunnlag) {
         InntektArbeidYtelseGrunnlagBuilder grunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(grunnlag);

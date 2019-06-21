@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.kobling;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -53,5 +54,10 @@ public class KoblingTjeneste {
 
     public void oppdaterLåsVersjon(KoblingLås lås) {
         låsRepository.oppdaterLåsVersjon(lås);
+    }
+
+
+    public List<Saksnummer> hentAlleSaksnummer() {
+        return repository.hentAlleSaksnummer();
     }
 }
