@@ -73,7 +73,7 @@ public class OppgittOpptjeningRestTjeneste {
         return Response.noContent().build();
     }
 
-    public class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
+    public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         public AbacDataSupplier() {
         }

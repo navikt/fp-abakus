@@ -77,7 +77,7 @@ public class InntektsmeldingerRestTjeneste {
         return null;
     }
 
-    public class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
+    public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         public AbacDataSupplier() {
         }

@@ -119,7 +119,7 @@ public class ArbeidsforholdRestTjeneste {
         }
     }
 
-    public class ArbeidsforholdReferanseAbacDataSupplier implements Function<Object, AbacDataAttributter> {
+    public static class ArbeidsforholdReferanseAbacDataSupplier implements Function<Object, AbacDataAttributter> {
         public ArbeidsforholdReferanseAbacDataSupplier() {
         }
 

@@ -111,7 +111,7 @@ public class GrunnlagRestTjeneste {
         throw new UnsupportedOperationException("Må ha grunnlagReferanse eller koblingReferanse");
     }
 
-    public class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
+    public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         public AbacDataSupplier() {
         }
