@@ -73,7 +73,11 @@ public class OppgittOpptjeningRestTjeneste {
         return Response.noContent().build();
     }
 
-    private class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
+    public class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
+
+        public AbacDataSupplier() {
+        }
+
         @Override
         public AbacDataAttributter apply(Object o) {
             var req = (OppgittOpptjeningMottattRequest) o;

@@ -77,7 +77,10 @@ public class InntektsmeldingerRestTjeneste {
         return null;
     }
 
-    private class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
+    public class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
+
+        public AbacDataSupplier() {
+        }
 
         @Override
         public AbacDataAttributter apply(Object obj) {

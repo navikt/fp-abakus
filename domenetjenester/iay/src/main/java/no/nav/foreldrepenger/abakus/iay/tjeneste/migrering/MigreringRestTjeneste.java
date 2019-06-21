@@ -155,7 +155,10 @@ public class MigreringRestTjeneste {
         return kodeverkRepository.finn(YtelseType.class, ytelseType.getKode());
     }
 
-    private class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
+    public class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
+        public AbacDataSupplier() {
+        }
+
         @Override
         public AbacDataAttributter apply(Object obj) {
             var req = (InntektArbeidYtelseGrunnlagSakSnapshotDto) obj;

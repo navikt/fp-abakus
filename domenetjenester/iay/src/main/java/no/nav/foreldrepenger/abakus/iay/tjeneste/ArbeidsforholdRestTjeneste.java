@@ -107,7 +107,10 @@ public class ArbeidsforholdRestTjeneste {
         return Arbeidsgiver.person(new AktørId(arbeidsgiver.getIdent()));
     }
 
-    private class AktørDatoRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
+    public class AktørDatoRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
+
+        public AktørDatoRequestAbacDataSupplier() {
+        }
 
         @Override
         public AbacDataAttributter apply(Object obj) {
@@ -116,7 +119,9 @@ public class ArbeidsforholdRestTjeneste {
         }
     }
 
-    private class ArbeidsforholdReferanseAbacDataSupplier implements Function<Object, AbacDataAttributter> {
+    public class ArbeidsforholdReferanseAbacDataSupplier implements Function<Object, AbacDataAttributter> {
+        public ArbeidsforholdReferanseAbacDataSupplier() {
+        }
 
         @Override
         public AbacDataAttributter apply(Object obj) {
