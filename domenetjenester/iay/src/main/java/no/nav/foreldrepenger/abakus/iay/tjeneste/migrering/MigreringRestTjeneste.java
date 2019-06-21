@@ -7,9 +7,7 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAG
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -162,13 +160,14 @@ public class MigreringRestTjeneste {
         @Override
         public AbacDataAttributter apply(Object obj) {
             var req = (InntektArbeidYtelseGrunnlagSakSnapshotDto) obj;
-            Set<String> personIdenter = req.getGrunnlag().stream()
+            AbacDataAttributter opprett = AbacDataAttributter.opprett();
+            req.getGrunnlag().stream()
                 .map(InntektArbeidYtelseGrunnlagSakSnapshotDto.Konvolutt::getData)
                 .map(InntektArbeidYtelseGrunnlagDto::getPerson)
                 .map(PersonIdent::getIdent)
-                .collect(Collectors.toSet());
+                .forEach(personIdent -> opprett.leggTil(StandardAbacAttributtType.AKTØR_ID, personIdent));
             // Legger alle her inn som aktørId da dette feltet kun skal inneholde aktørIder
-            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, personIdenter);
+            return opprett;
         }
     }
 }
