@@ -29,13 +29,24 @@ public class OppgittOpptjeningBuilder {
     public static OppgittOpptjeningBuilder ny() {
         return ny(UUID.randomUUID(), LocalDateTime.now());
     }
-    
+
     public static OppgittOpptjeningBuilder ny(UUID eksternReferanse, LocalDateTime opprettetTidspunktOriginalt) {
         return new OppgittOpptjeningBuilder(new OppgittOpptjeningEntitet(eksternReferanse, opprettetTidspunktOriginalt));
     }
 
     public static OppgittOpptjeningBuilder ny(UUID eksternReferanse, OffsetDateTime opprettetTidspunktOriginalt) {
         return new OppgittOpptjeningBuilder(new OppgittOpptjeningEntitet(eksternReferanse, opprettetTidspunktOriginalt.toLocalDateTime()));
+    }
+
+    /**
+     * For migreringen
+     * @deprecated Kun for migreringen?
+     * @param oppgittOpptjeningEntitet entitet
+     * @return builder
+     */
+    @Deprecated(forRemoval = true)
+    public static OppgittOpptjeningBuilder eksisterende(OppgittOpptjeningEntitet oppgittOpptjeningEntitet) {
+        return new OppgittOpptjeningBuilder(oppgittOpptjeningEntitet);
     }
 
     public OppgittOpptjeningBuilder leggTilAnnenAktivitet(OppgittAnnenAktivitet annenAktivitet) {
@@ -57,7 +68,7 @@ public class OppgittOpptjeningBuilder {
         this.kladd.leggTilOppgittArbeidsforhold(builder.build());
         return this;
     }
-    
+
     public OppgittOpptjening build() {
         return kladd;
     }

@@ -120,7 +120,7 @@ public class IAYFraDtoMapper {
         var arbeidsforholdInformasjonBuilder = new MapArbeidsforholdInformasjon.MapFraDto(builder).map(dto.getArbeidsforholdInformasjon());
         var mapInntektsmeldinger = new MapInntektsmeldinger.MapFraDto();
         var inntektsmeldinger = mapInntektsmeldinger.map(arbeidsforholdInformasjonBuilder, dto.getInntektsmeldinger());
-        var oppgittOpptjening = new MapOppgittOpptjening().mapFraDto(dto.getOppgittOpptjening());
+        var oppgittOpptjening = new MapOppgittOpptjening(iayTjeneste).mapFraDto(new KoblingReferanse(dto.getKoblingReferanse()), dto.getOppgittOpptjening());
         var arbeidsforholdInformasjon = arbeidsforholdInformasjonBuilder.build();
 
         builder.medOppgittOpptjening(oppgittOpptjening);

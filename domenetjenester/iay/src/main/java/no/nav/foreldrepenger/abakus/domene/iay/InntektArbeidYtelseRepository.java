@@ -8,6 +8,7 @@ import java.util.UUID;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 
@@ -50,4 +51,6 @@ public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRe
     InntektArbeidYtelseAggregatBuilder opprettBuilderFor(KoblingReferanse koblingReferanse, UUID angittAggregatReferanse, LocalDateTime angittOpprettetTidspunkt, VersjonType versjonType);
 
     Statistikk hentStats();
+
+    Optional<OppgittOpptjeningEntitet> hentOppgittOpptjeningFor(KoblingReferanse koblingReferanse, UUID oppgittOpptjeningEksternReferanse);
 }

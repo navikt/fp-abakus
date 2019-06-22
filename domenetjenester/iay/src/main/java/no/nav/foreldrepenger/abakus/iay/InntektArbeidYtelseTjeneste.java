@@ -9,6 +9,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilde
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 
@@ -73,4 +74,5 @@ public interface InntektArbeidYtelseTjeneste {
 
     ArbeidsforholdInformasjon hentArbeidsforholdInformasjonForKobling(KoblingReferanse koblingReferanse);
 
+    Optional<OppgittOpptjeningEntitet> hentOppgittOpptjeningFor(KoblingReferanse koblingReferanse, UUID oppgittOpptjeningEksternReferanse);
 }

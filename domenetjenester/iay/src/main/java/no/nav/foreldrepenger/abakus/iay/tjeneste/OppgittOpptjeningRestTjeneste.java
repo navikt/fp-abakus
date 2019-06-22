@@ -17,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
+import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.OppgittOpptjeningTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapOppgittOpptjening;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
@@ -39,14 +40,18 @@ public class OppgittOpptjeningRestTjeneste {
 
     private KoblingTjeneste koblingTjeneste;
     private OppgittOpptjeningTjeneste oppgittOpptjeningTjeneste;
+    private InntektArbeidYtelseTjeneste iayTjeneste;
 
     public OppgittOpptjeningRestTjeneste() {
     }
 
     @Inject
-    public OppgittOpptjeningRestTjeneste(KoblingTjeneste koblingTjeneste, OppgittOpptjeningTjeneste oppgittOpptjeningTjeneste) {
+    public OppgittOpptjeningRestTjeneste(KoblingTjeneste koblingTjeneste,
+                                         OppgittOpptjeningTjeneste oppgittOpptjeningTjeneste,
+                                         InntektArbeidYtelseTjeneste iayTjeneste) {
         this.koblingTjeneste = koblingTjeneste;
         this.oppgittOpptjeningTjeneste = oppgittOpptjeningTjeneste;
+        this.iayTjeneste = iayTjeneste;
     }
 
     @POST
@@ -61,7 +66,7 @@ public class OppgittOpptjeningRestTjeneste {
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
         var kobling = koblingTjeneste.finnEllerOpprett(koblingReferanse, aktørId, new Saksnummer(mottattRequest.getSaksnummer()));
 
-        OppgittOpptjeningBuilder builder = new MapOppgittOpptjening().mapFraDto(mottattRequest.getOppgittOpptjening());
+        OppgittOpptjeningBuilder builder = new MapOppgittOpptjening(iayTjeneste).mapFraDto(koblingReferanse, mottattRequest.getOppgittOpptjening());
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagre(koblingReferanse, builder);
 
         koblingTjeneste.lagre(kobling);

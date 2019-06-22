@@ -16,6 +16,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.VersjonType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -85,6 +86,11 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
     @Override
     public ArbeidsforholdInformasjon hentArbeidsforholdInformasjonForKobling(KoblingReferanse koblingReferanse) {
         return repository.hentArbeidsforholdInformasjonForBehandling(koblingReferanse).orElseGet(ArbeidsforholdInformasjonEntitet::new);
+    }
+
+    @Override
+    public Optional<OppgittOpptjeningEntitet> hentOppgittOpptjeningFor(KoblingReferanse koblingReferanse, UUID oppgittOpptjeningEksternReferanse) {
+        return repository.hentOppgittOpptjeningFor(koblingReferanse, oppgittOpptjeningEksternReferanse);
     }
 
     @Override

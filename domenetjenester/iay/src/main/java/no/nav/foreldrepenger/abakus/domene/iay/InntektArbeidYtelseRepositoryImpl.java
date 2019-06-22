@@ -28,6 +28,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelse;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Refusjon;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriode;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittAnnenAktivitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
@@ -85,6 +86,19 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         final TypedQuery<Long> query = entityManager.createQuery("SELECT COUNT(gr) FROM InntektArbeidGrunnlag gr ", Long.class);
         Long antallGrunnlag = HibernateVerktøy.hentEksaktResultat(query);
         return new Statistikk(antallGrunnlag);
+    }
+
+    @Override
+    public Optional<OppgittOpptjeningEntitet> hentOppgittOpptjeningFor(KoblingReferanse koblingReferanse, UUID oppgittOpptjeningEksternReferanse) {
+        TypedQuery<OppgittOpptjeningEntitet> query = entityManager.createQuery("SELECT oo " +
+            "FROM InntektArbeidGrunnlag gr " +
+            "JOIN Kobling k ON k.id = gr.koblingId " +
+            "JOIN OppgittOpptjening oo ON gr.oppgittOpptjening = oo " +
+            "WHERE k.koblingReferanse = :koblingReferanse " +
+            "AND oo.eksternReferanse = :eksternReferanse", OppgittOpptjeningEntitet.class);
+        query.setParameter("koblingReferanse", koblingReferanse)
+            .setParameter("eksternReferanse", oppgittOpptjeningEksternReferanse);
+        return HibernateVerktøy.hentUniktResultat(query);
     }
 
     private InntektArbeidYtelseAggregatBuilder opprettBuilderFor(VersjonType versjonType, UUID angittReferanse, LocalDateTime opprettetTidspunkt,
