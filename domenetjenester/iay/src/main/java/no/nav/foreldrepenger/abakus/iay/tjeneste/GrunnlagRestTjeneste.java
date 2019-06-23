@@ -10,8 +10,11 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.jboss.weld.exceptions.IllegalStateException;
@@ -26,10 +29,15 @@ import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYTilDtoMapper;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagSakSnapshotDto;
 import no.nav.vedtak.felles.jpa.Transaction;
+import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
@@ -57,6 +65,8 @@ public class GrunnlagRestTjeneste {
 
     @POST
     @Path("/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Hent IAY Grunnlag for angitt søke spesifikasjon", response = InntektArbeidYtelseGrunnlagDto.class)
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
@@ -71,6 +81,40 @@ public class GrunnlagRestTjeneste {
         var dtoMapper = new IAYTilDtoMapper(aktørId, grunnlagReferanse, koblingReferanse);
 
         return Response.ok(dtoMapper.mapTilDto(grunnlag, spesifikasjon)).build();
+    }
+
+    @POST
+    @Path("/snapshot")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Hent alle IAY Grunnlag for angitt søke spesifikasjon", response = InntektArbeidYtelseGrunnlagSakSnapshotDto.class)
+    @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
+    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    public Response hentAlleIayGrunnlag(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid InntektArbeidYtelseGrunnlagRequest spesifikasjon) {
+
+        var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
+
+        var saksnummer = Objects.requireNonNull(spesifikasjon.getSaksnummer(), "saksnummer");
+        var ytelseType = Objects.requireNonNull(spesifikasjon.getYtelseType(), "ytelseType");
+
+        var snapshot = new InntektArbeidYtelseGrunnlagSakSnapshotDto(saksnummer, ytelseType, spesifikasjon.getPerson());
+
+        var grunnlag = iayTjeneste.hentAlleGrunnlagFor(aktørId, new Saksnummer(saksnummer), new YtelseType(ytelseType.getKode()), false);
+
+        grunnlag.stream().forEach(g -> {
+            var kobling = koblingTjeneste.hent(g.getKoblingId());
+            
+            var dtoMapper = new IAYTilDtoMapper(aktørId, g.getGrunnlagReferanse(), kobling.getKoblingReferanse());
+            var dto = dtoMapper.mapTilDto(g, spesifikasjon);
+            
+            snapshot.leggTil(dto, g.isAktiv(), mapPeriode(kobling.getOpplysningsperiode()), mapPeriode(kobling.getOpptjeningsperiode()));
+        });
+
+        return Response.ok(snapshot).build();
+    }
+
+    private static Periode mapPeriode(DatoIntervallEntitet datoIntervall) {
+        return new Periode(datoIntervall.getFomDato(), datoIntervall.getTomDato());
     }
 
     private KoblingReferanse getKoblingReferanse(AktørId aktørId, InntektArbeidYtelseGrunnlagRequest spesifikasjon) {

@@ -1,10 +1,12 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -39,6 +41,7 @@ import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseEntityGraph;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
 
@@ -61,6 +64,49 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     public InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForBehandling(KoblingReferanse koblingReferanse) {
         Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlag = getAktivtInntektArbeidGrunnlag(koblingReferanse);
         return grunnlag.orElseThrow(() -> InntektArbeidYtelseFeil.FACTORY.fantIkkeForventetGrunnlagPåBehandling(koblingReferanse).toException());
+    }
+
+    @Override
+    public List<InntektArbeidYtelseGrunnlag> hentAlleInntektArbeidYtelseGrunnlagFor(AktørId aktørId, KoblingReferanse koblingReferanse, boolean kunAktiv) {
+        final TypedQuery<InntektArbeidYtelseGrunnlagEntitet> query = entityManager.createQuery("FROM InntektArbeidGrunnlag gr JOIN KOBLING k " + // NOSONAR
+            " WHERE k.koblingReferanse = :ref AND k.aktørId = :aktørId " + //NOSONAR
+            " AND gr.aktiv = :aktivt", InntektArbeidYtelseGrunnlagEntitet.class);
+        query.setParameter("ref", koblingReferanse); // NOSONAR
+        query.setParameter("aktivt", kunAktiv);
+        query.setParameter("aktørId", aktørId);
+
+        if (kunAktiv) {
+            final Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlag = HibernateVerktøy.hentUniktResultat(query);
+            grunnlag.ifPresent(InntektArbeidYtelseGrunnlagEntitet::taHensynTilBetraktninger);
+            return grunnlag.isPresent() ? List.of(grunnlag.get()) : Collections.emptyList();
+        } else {
+            var grunnlag = query.getResultStream().map(g -> {
+                g.taHensynTilBetraktninger();
+                return (InntektArbeidYtelseGrunnlag) g;
+            }).collect(Collectors.toList());
+            return grunnlag;
+        }
+    }
+
+    @Override
+    public List<InntektArbeidYtelseGrunnlag> hentAlleInntektArbeidYtelseGrunnlagFor(AktørId aktørId,
+                                                                                    Saksnummer saksnummer,
+                                                                                    no.nav.foreldrepenger.abakus.kodeverk.YtelseType ytelseType,
+                                                                                    boolean kunAktive) {
+        
+        final TypedQuery<InntektArbeidYtelseGrunnlagEntitet> query = entityManager.createQuery("FROM InntektArbeidGrunnlag gr JOIN KOBLING k " + // NOSONAR
+            " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId " + //NOSONAR
+            " AND gr.aktiv = :aktivt", InntektArbeidYtelseGrunnlagEntitet.class);
+        query.setParameter("aktørId", aktørId);
+        query.setParameter("ref", saksnummer);
+        query.setParameter("ytelse", ytelseType);
+        query.setParameter("aktivt", kunAktive);
+
+        var grunnlag = query.getResultStream().map(g -> {
+            g.taHensynTilBetraktninger();
+            return (InntektArbeidYtelseGrunnlag) g;
+        }).collect(Collectors.toList());
+        return grunnlag;
     }
 
     @Override
@@ -105,8 +151,8 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
                                                                  Optional<InntektArbeidYtelseGrunnlag> grunnlag) {
         InntektArbeidYtelseGrunnlagBuilder grunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(grunnlag);
         Objects.requireNonNull(grunnlagBuilder, "grunnlagBuilder");
-        Optional<InntektArbeidYtelseGrunnlag> aggregat = Optional.ofNullable(grunnlagBuilder.getKladd()); // NOSONAR $NON-NLS-1$
-        Objects.requireNonNull(aggregat, "aggregat"); // NOSONAR $NON-NLS-1$
+        Optional<InntektArbeidYtelseGrunnlag> aggregat = Optional.ofNullable(grunnlagBuilder.getKladd()); // NOSONAR
+        Objects.requireNonNull(aggregat, "aggregat"); // NOSONAR
         if (aggregat.isPresent()) {
             final InntektArbeidYtelseGrunnlag aggregat1 = aggregat.get();
             return InntektArbeidYtelseAggregatBuilder.builderFor(hentRiktigVersjon(versjonType, aggregat1), angittReferanse, opprettetTidspunkt, versjonType);
@@ -267,13 +313,13 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         } // else do nothing
     }
 
-
     @Override
     public void lagreMigrertGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, KoblingReferanse koblingReferanse, boolean aktiv) {
         InntektArbeidYtelseGrunnlagEntitet entitet = (InntektArbeidYtelseGrunnlagEntitet) nyttGrunnlag;
         entitet.setAktivt(aktiv);
         // Sjekker om grunnlaget finnes fra før. Hvis tilfelle så slettes dette.
-        hentInntektArbeidYtelseForReferanse(nyttGrunnlag.getGrunnlagReferanse()).map(InntektArbeidYtelseGrunnlagEntitet.class::cast).ifPresent(this::slettGrunnlag);
+        hentInntektArbeidYtelseForReferanse(nyttGrunnlag.getGrunnlagReferanse()).map(InntektArbeidYtelseGrunnlagEntitet.class::cast)
+            .ifPresent(this::slettGrunnlag);
 
         lagreGrunnlag(entitet, koblingReferanse);
         entityManager.flush();
@@ -495,7 +541,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     }
 
     private InntektArbeidYtelseAggregatBuilder opprettBuilderFor(Optional<InntektArbeidYtelseGrunnlag> aggregat, VersjonType versjon) {
-        Objects.requireNonNull(aggregat, "aggregat"); // NOSONAR $NON-NLS-1$
+        Objects.requireNonNull(aggregat, "aggregat"); // NOSONAR
         if (aggregat.isPresent()) {
             final InntektArbeidYtelseGrunnlag aggregat1 = aggregat.get();
             return InntektArbeidYtelseAggregatBuilder.oppdatere(hentRiktigVersjon(versjon, aggregat1), versjon);
@@ -517,7 +563,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
             "JOIN Kobling k ON gr.koblingId = k.id " + // NOSONAR
             "WHERE k.koblingReferanse = :ref " + //$NON-NLS-1$ //NOSONAR
             "AND gr.aktiv = :aktivt", InntektArbeidYtelseGrunnlagEntitet.class);
-        query.setParameter("ref", koblingReferanse); // NOSONAR $NON-NLS-1$
+        query.setParameter("ref", koblingReferanse); // NOSONAR
         query.setParameter("aktivt", true);
         List<InntektArbeidYtelseGrunnlagEntitet> resultList = query.getResultList();
         if (resultList.size() < 2) {
@@ -557,7 +603,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     }
 
     private Optional<InntektArbeidYtelseGrunnlagEntitet> getVersjonAvInntektArbeidYtelseForReferanseId(GrunnlagReferanse grunnlagReferanse) {
-        Objects.requireNonNull(grunnlagReferanse, "aggregatId"); // NOSONAR $NON-NLS-1$
+        Objects.requireNonNull(grunnlagReferanse, "aggregatId"); // NOSONAR
         final TypedQuery<InntektArbeidYtelseGrunnlagEntitet> query = entityManager.createQuery("FROM InntektArbeidGrunnlag gr " +
             "WHERE gr.grunnlagReferanse = :ref ", InntektArbeidYtelseGrunnlagEntitet.class);
         query.setParameter("ref", grunnlagReferanse);

@@ -12,8 +12,11 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import io.swagger.annotations.Api;
@@ -62,6 +65,8 @@ public class ArbeidsforholdRestTjeneste {
 
     @POST
     @Path("/arbeidstaker")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Gir ut alle arbeidsforhold i en gitt periode/dato for en gitt aktør. NB! Kaller direkte til aa-registeret")
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
@@ -80,6 +85,8 @@ public class ArbeidsforholdRestTjeneste {
 
     @POST
     @Path("/referanse")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Finner eksisterende intern referanse for arbeidsforholdId eller lager en ny")
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")

@@ -308,6 +308,7 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
         this.aktiv = aktiv;
     }
 
+    @Override
     public boolean isAktiv() {
         return aktiv;
     }
