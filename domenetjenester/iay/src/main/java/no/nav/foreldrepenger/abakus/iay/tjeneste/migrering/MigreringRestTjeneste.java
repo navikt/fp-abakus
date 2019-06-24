@@ -103,6 +103,7 @@ public class MigreringRestTjeneste {
                 log.info("Migrert grunnlag={}", grunnlag.getGrunnlagReferanse());
             } catch (Exception e) {
                 log.info("Feilet migrering av sak={} for grunnlag med json='{}'", sakSnapshot.getSaksnummer(), JacksonJsonConfig.getMapper().writeValueAsString(konvolutt));
+                throw new IllegalStateException(e);
             }
         }
         log.info("Migrert sak={} med {} grunnlag", sakSnapshot.getSaksnummer(), sakSnapshot.getGrunnlag().size());
