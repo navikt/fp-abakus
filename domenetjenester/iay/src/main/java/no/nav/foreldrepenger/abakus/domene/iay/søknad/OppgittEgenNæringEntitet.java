@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.JoinColumnOrFormula;
+import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
@@ -24,6 +25,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
@@ -85,15 +87,21 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
     @Column(name = "ny_i_arbeidslivet", nullable = false)
     private boolean nyIArbeidslivet;
 
-    @Embedded
-    private OppgittUtenlandskVirksomhetEntitet utenlandskVirksomhet = new OppgittUtenlandskVirksomhetEntitet();
+    @ManyToOne
+    @JoinColumnsOrFormulas({
+        @JoinColumnOrFormula(column = @JoinColumn(name = "land", referencedColumnName = "kode", nullable = false)),
+        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + Landkoder.DISCRIMINATOR + "'"))})
+    private Landkoder landkode = Landkoder.NOR;
+
+    @Column(name = "utenlandsk_virksomhet_navn")
+    private String utenlandskVirksomhetNavn;
 
     OppgittEgenNæringEntitet() {
     }
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(periode, orgNummer, utenlandskVirksomhet);
+        return IndexKey.createKey(periode, orgNummer, landkode, utenlandskVirksomhetNavn);
     }
 
     @Override
@@ -215,12 +223,21 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
     }
 
     @Override
-    public OppgittVirksomhet getUtenlandskVirksomhet() {
-        return utenlandskVirksomhet;
+    public Landkoder getLandkode() {
+        return landkode;
     }
 
-    void setUtenlandskVirksomhet(OppgittVirksomhet utenlandskVirksomhet) {
-        this.utenlandskVirksomhet = (OppgittUtenlandskVirksomhetEntitet) utenlandskVirksomhet;
+    void setLandkode(Landkoder landkode) {
+        this.landkode = landkode;
+    }
+
+    @Override
+    public String getUtenlandskVirksomhetNavn() {
+        return utenlandskVirksomhetNavn;
+    }
+
+    void setUtenlandskVirksomhetNavn(String utenlandskVirksomhetNavn) {
+        this.utenlandskVirksomhetNavn = utenlandskVirksomhetNavn;
     }
 
     void setOppgittOpptjening(OppgittOpptjeningEntitet oppgittOpptjening) {
@@ -241,13 +258,14 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
             Objects.equals(endringDato, that.endringDato) &&
             Objects.equals(begrunnelse, that.begrunnelse) &&
             Objects.equals(bruttoInntekt, that.bruttoInntekt) &&
-            Objects.equals(utenlandskVirksomhet, that.utenlandskVirksomhet);
+            Objects.equals(landkode, that.landkode) &&
+            Objects.equals(utenlandskVirksomhetNavn, that.utenlandskVirksomhetNavn);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(periode, orgNummer, virksomhetType, nyoppstartet, regnskapsførerNavn, regnskapsførerTlf, endringDato, begrunnelse,
-            bruttoInntekt, utenlandskVirksomhet);
+            bruttoInntekt, landkode, utenlandskVirksomhetNavn);
     }
 
     @Override
@@ -263,7 +281,8 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
             ", endringDato=" + endringDato +
             ", begrunnelse='" + begrunnelse + '\'' +
             ", bruttoInntekt=" + bruttoInntekt +
-            ", utenlandskVirksomhet=" + utenlandskVirksomhet +
+            ", landkode=" + landkode +
+            ", utenlandskVirksomhetNavn=" + utenlandskVirksomhetNavn +
             '}';
     }
 }

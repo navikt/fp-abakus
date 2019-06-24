@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
+import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
@@ -37,6 +38,8 @@ public interface OppgittEgenNæring {
 
     boolean getNærRelasjon();
 
-    OppgittVirksomhet getUtenlandskVirksomhet();
 
+    Landkoder getLandkode();
+
+    String getUtenlandskVirksomhetNavn();
 }

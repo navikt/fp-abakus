@@ -13,8 +13,8 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsfo
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittVirksomhet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
+import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
@@ -144,8 +144,9 @@ public class OppgittOpptjeningBuilder {
             return this;
         }
 
-        public EgenNæringBuilder medUtenlandskVirksomhet(OppgittVirksomhet utenlandskVirksomhet) {
-            this.entitet.setUtenlandskVirksomhet(utenlandskVirksomhet);
+        public EgenNæringBuilder medUtenlandskVirksomhet(Landkoder landkode, String utenlandskVirksomhetNavn) {
+            this.entitet.setLandkode(landkode);
+            this.entitet.setUtenlandskVirksomhetNavn(utenlandskVirksomhetNavn);
             return this;
         }
 
@@ -186,8 +187,11 @@ public class OppgittOpptjeningBuilder {
             return this;
         }
 
-        public OppgittArbeidsforholdBuilder medUtenlandskVirksomhet(OppgittVirksomhet utenlandskVirksomhet) {
-            this.entitet.setUtenlandskVirksomhet(utenlandskVirksomhet);
+        public OppgittArbeidsforholdBuilder medUtenlandskVirksomhet(Landkoder landkode, String utenlandskVirksomhetNavn) {
+            if (utenlandskVirksomhetNavn != null) {
+                this.entitet.setLandkode(landkode);
+                this.entitet.setUtenlandskVirksomhetNavn(utenlandskVirksomhetNavn);
+            }
             return this;
         }
 

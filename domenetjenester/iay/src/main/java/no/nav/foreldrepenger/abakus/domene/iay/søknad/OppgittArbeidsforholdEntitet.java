@@ -15,14 +15,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.JoinColumnOrFormula;
+import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittVirksomhet;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
@@ -61,8 +62,14 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
     @ChangeTracked
     private ArbeidType arbeidType;
 
-    @Embedded
-    private OppgittUtenlandskVirksomhetEntitet utenlandskVirksomhet = new OppgittUtenlandskVirksomhetEntitet();
+    @ManyToOne
+    @JoinColumnsOrFormulas({
+        @JoinColumnOrFormula(column = @JoinColumn(name = "land", referencedColumnName = "kode", nullable = false)),
+        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + Landkoder.DISCRIMINATOR + "'"))})
+    private Landkoder landkode = Landkoder.NOR;
+
+    @Column(name = "utenlandsk_virksomhet_navn")
+    private String utenlandskVirksomhetNavn;
 
     public OppgittArbeidsforholdEntitet() {
         // hibernate
@@ -70,7 +77,7 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(periode, utenlandskVirksomhet, arbeidType);
+        return IndexKey.createKey(periode, landkode, utenlandskVirksomhetNavn, arbeidType);
     }
 
     @Override
@@ -107,12 +114,21 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
     }
 
     @Override
-    public OppgittVirksomhet getUtenlandskVirksomhet() {
-        return utenlandskVirksomhet;
+    public Landkoder getLandkode() {
+        return landkode;
     }
 
-    void setUtenlandskVirksomhet(OppgittVirksomhet utenlandskVirksomhet) {
-        this.utenlandskVirksomhet = (OppgittUtenlandskVirksomhetEntitet) utenlandskVirksomhet;
+    void setLandkode(Landkoder landkode) {
+        this.landkode = landkode;
+    }
+
+    @Override
+    public String getUtenlandskVirksomhetNavn() {
+        return utenlandskVirksomhetNavn;
+    }
+
+    void setUtenlandskVirksomhetNavn(String utenlandskVirksomhetNavn) {
+        this.utenlandskVirksomhetNavn = utenlandskVirksomhetNavn;
     }
 
     @Override
@@ -124,12 +140,13 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
 
         return Objects.equals(periode, that.periode) &&
             Objects.equals(arbeidType, that.arbeidType) &&
-            Objects.equals(utenlandskVirksomhet, that.utenlandskVirksomhet);
+            Objects.equals(utenlandskVirksomhetNavn, that.utenlandskVirksomhetNavn) &&
+            Objects.equals(landkode, that.landkode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(periode, arbeidType, utenlandskVirksomhet);
+        return Objects.hash(periode, arbeidType, landkode, utenlandskVirksomhetNavn);
     }
 
     @Override
@@ -139,7 +156,8 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
             ", periode=" + periode +
             ", erUtenlandskInntekt=" + erUtenlandskInntekt +
             ", arbeidType=" + arbeidType +
-            ", utenlandskVirksomhet=" + utenlandskVirksomhet +
+            ", landkode=" + landkode +
+            ", utenlandskVirksomhetNavn=" + utenlandskVirksomhetNavn +
             '}';
     }
 
