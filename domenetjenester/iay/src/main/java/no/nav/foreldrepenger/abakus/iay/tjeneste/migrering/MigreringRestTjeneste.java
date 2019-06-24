@@ -13,8 +13,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.GET;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -23,6 +23,8 @@ import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,6 +38,7 @@ import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+import no.nav.foreldrepenger.abakus.vedtak.json.JacksonJsonConfig;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.PersonIdent;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagSakSnapshotDto;
@@ -84,10 +87,15 @@ public class MigreringRestTjeneste {
                               @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class)
                               @Valid InntektArbeidYtelseGrunnlagSakSnapshotDto sakSnapshot) {
 
-        log.info("Mottatt migrering for sak={}", sakSnapshot.getSaksnummer());
+        try {
+            log.info("Mottatt migrering for sak med json='{}'", JacksonJsonConfig.getMapper().writeValueAsString(sakSnapshot));
+        } catch (JsonProcessingException e) {
+            log.info("Mottatt migrering for sak={}", sakSnapshot.getSaksnummer());
+        }
         var aktørId = new AktørId(sakSnapshot.getAktør().getIdent());
 
         for (InntektArbeidYtelseGrunnlagSakSnapshotDto.Konvolutt konvolutt : sakSnapshot.getGrunnlag()) {
+            log.info("Migrerer grunnlag={}", konvolutt.getData().getGrunnlagReferanse());
             var kobling = finnEllerOpprett(konvolutt, sakSnapshot);
 
             var koblingReferanse = kobling.getKoblingReferanse();
