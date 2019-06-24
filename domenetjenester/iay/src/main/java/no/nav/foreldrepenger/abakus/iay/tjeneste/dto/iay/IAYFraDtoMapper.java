@@ -70,11 +70,14 @@ public class IAYFraDtoMapper {
      * @see #mapTilGrunnlagInklusivRegisterdata(InntektArbeidYtelseGrunnlagDto)
      */
     public InntektArbeidYtelseGrunnlag mapTilGrunnlagInklusivRegisterdata(InntektArbeidYtelseGrunnlagDto dto, InntektArbeidYtelseGrunnlagBuilder builder) {
-        mapSaksbehandlerDataTilBuilder(dto, builder);
-        mapTilGrunnlagBuilder(dto, builder);
-
+        
         // ta med registerdata til grunnlaget
         mapRegisterDataTilMigrering(dto, builder);
+        
+        // ta saksbehandler når vi er sikker på å ha fått med register først
+        mapSaksbehandlerDataTilBuilder(dto, builder);
+        
+        mapTilGrunnlagBuilder(dto, builder);
 
         return builder.build();
     }
@@ -138,12 +141,13 @@ public class IAYFraDtoMapper {
         var arbeidsforholdInformasjonBuilder = new MapArbeidsforholdInformasjon.MapFraDto(kodeverkRepository, builder).map(dto.getArbeidsforholdInformasjon());
         var mapInntektsmeldinger = new MapInntektsmeldinger.MapFraDto();
         var inntektsmeldinger = mapInntektsmeldinger.map(arbeidsforholdInformasjonBuilder, dto.getInntektsmeldinger());
-        var oppgittOpptjening = new MapOppgittOpptjening(iayTjeneste, kodeverkRepository).mapFraDto(dto.getOppgittOpptjening());
         var arbeidsforholdInformasjon = arbeidsforholdInformasjonBuilder.build();
 
-        builder.medOppgittOpptjening(oppgittOpptjening);
         builder.setInntektsmeldinger(inntektsmeldinger);
         builder.medInformasjon(arbeidsforholdInformasjon);
+        
+        var oppgittOpptjening = new MapOppgittOpptjening(iayTjeneste, kodeverkRepository).mapFraDto(dto.getOppgittOpptjening());
+        builder.medOppgittOpptjening(oppgittOpptjening);
     }
 
 }
