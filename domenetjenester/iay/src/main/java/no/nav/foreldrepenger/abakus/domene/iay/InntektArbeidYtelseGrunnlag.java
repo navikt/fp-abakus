@@ -115,4 +115,7 @@ public interface InntektArbeidYtelseGrunnlag {
 
     Optional<ArbeidsforholdInformasjon> getArbeidsforholdInformasjon();
 
+    /** Hvorvidt dette er et aktivt grunnlag (siste angitt for en koblingreferanse), eller er historisk. */
+    boolean isAktiv();
+
 }

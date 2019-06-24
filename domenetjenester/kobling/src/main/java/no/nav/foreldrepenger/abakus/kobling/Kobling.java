@@ -39,7 +39,7 @@ public class Kobling extends no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet
     private Long id;
 
     /**
-     * Saksnummer (fra Arena, Infotrygd, ..).
+     * Saksnummer (gruppererer alle koblinger under samme saksnummer - typisk generert av FPSAK, eller annet saksbehandlingsystem)
      */
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "saksnummer", column = @Column(name = "saksnummer")))
@@ -156,6 +156,7 @@ public class Kobling extends no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet
         return "Kobling{" +
             "KoblingReferanse=" + koblingReferanse +
             ", aktørId=" + aktørId +
+            ", saksnummer = " + saksnummer + 
             ", annenPartAktørId=" + annenPartAktørId +
             ", opplysningsperiode=" + opplysningsperiode +
             ", opptjeningsperiode=" + opptjeningsperiode +

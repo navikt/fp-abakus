@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.iay;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,7 +12,9 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInfo
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 
 public interface InntektArbeidYtelseTjeneste {
     /**
@@ -38,6 +41,22 @@ public interface InntektArbeidYtelseTjeneste {
      */
     Optional<InntektArbeidYtelseGrunnlag> hentGrunnlagFor(KoblingReferanse koblingReferanse);
 
+    /**
+     * Hent alle grunnlag for angitt saksnummer
+     * @param saksnummer
+     * @param boolean kunAktive - hvis true henter kun aktive grunnlag (ikke historiske versjoner)
+     * @return henter optional aggregat
+     */
+    List<InntektArbeidYtelseGrunnlag> hentAlleGrunnlagFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType, boolean kunAktive);
+    
+    /**
+     * Hent alle grunnlag for angitt koblingsreferanse (behandling)
+     * @param koblingReferanse
+     * @param boolean kunAktive - hvis true henter kun aktive grunnlag (ikke historiske versjoner)
+     * @return henter optional aggregat
+     */
+    List<InntektArbeidYtelseGrunnlag> hentAlleGrunnlagFor(AktørId aktørId, KoblingReferanse koblingReferanse, boolean kunAktive);
+    
     /**
      * @param grunnlagReferanse
      * @return henter optional aggregat
@@ -75,4 +94,5 @@ public interface InntektArbeidYtelseTjeneste {
     ArbeidsforholdInformasjon hentArbeidsforholdInformasjonForKobling(KoblingReferanse koblingReferanse);
 
     Optional<OppgittOpptjeningEntitet> hentOppgittOpptjeningFor(KoblingReferanse koblingReferanse, UUID oppgittOpptjeningEksternReferanse);
+
 }
