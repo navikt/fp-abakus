@@ -63,6 +63,13 @@ public class GrunnlagRestTjeneste {
         this.koblingTjeneste = koblingTjeneste;
     }
 
+    private static Periode mapPeriode(DatoIntervallEntitet datoIntervall) {
+        if (datoIntervall == null) {
+            return null;
+        }
+        return new Periode(datoIntervall.getFomDato(), datoIntervall.getTomDato());
+    }
+
     @POST
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -103,18 +110,14 @@ public class GrunnlagRestTjeneste {
 
         grunnlag.stream().forEach(g -> {
             var kobling = koblingTjeneste.hent(g.getKoblingId());
-            
+
             var dtoMapper = new IAYTilDtoMapper(aktørId, g.getGrunnlagReferanse(), kobling.getKoblingReferanse());
             var dto = dtoMapper.mapTilDto(g, spesifikasjon);
-            
+
             snapshot.leggTil(dto, g.isAktiv(), mapPeriode(kobling.getOpplysningsperiode()), mapPeriode(kobling.getOpptjeningsperiode()));
         });
 
         return Response.ok(snapshot).build();
-    }
-
-    private static Periode mapPeriode(DatoIntervallEntitet datoIntervall) {
-        return new Periode(datoIntervall.getFomDato(), datoIntervall.getTomDato());
     }
 
     private KoblingReferanse getKoblingReferanse(AktørId aktørId, InntektArbeidYtelseGrunnlagRequest spesifikasjon) {
