@@ -108,7 +108,9 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
                                                                                     no.nav.foreldrepenger.abakus.kodeverk.YtelseType ytelseType,
                                                                                     boolean kunAktive) {
 
-        final TypedQuery<InntektArbeidYtelseGrunnlagEntitet> query = entityManager.createQuery("FROM InntektArbeidGrunnlag gr JOIN KOBLING k " + // NOSONAR
+        final TypedQuery<InntektArbeidYtelseGrunnlagEntitet> query = entityManager.createQuery("SELECT gr" +
+            " FROM InntektArbeidGrunnlag gr" +
+            " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
             " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId " + //NOSONAR
             " AND gr.aktiv = :aktivt", InntektArbeidYtelseGrunnlagEntitet.class);
         query.setParameter("aktørId", aktørId);
