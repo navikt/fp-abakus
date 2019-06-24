@@ -136,15 +136,15 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
 
     @Override
     public Optional<OppgittOpptjeningEntitet> hentOppgittOpptjeningFor(KoblingReferanse koblingReferanse, UUID oppgittOpptjeningEksternReferanse) {
-        TypedQuery<OppgittOpptjeningEntitet> query = entityManager.createQuery("SELECT DISTINCT oo " +
-            "FROM InntektArbeidGrunnlag gr " +
+        TypedQuery<OppgittOpptjeningEntitet> query = entityManager.createQuery("SELECT oo " +
+            "FROM OppgittOpptjening oo " +
+            "JOIN InntektArbeidGrunnlag gr ON gr.oppgittOpptjening = oo " +
             "JOIN Kobling k ON k.id = gr.koblingId " +
-            "JOIN OppgittOpptjening oo ON gr.oppgittOpptjening = oo " +
             "WHERE k.koblingReferanse = :koblingReferanse " +
             "AND oo.eksternReferanse = :eksternReferanse", OppgittOpptjeningEntitet.class);
         query.setParameter("koblingReferanse", koblingReferanse)
             .setParameter("eksternReferanse", oppgittOpptjeningEksternReferanse);
-        return HibernateVerktøy.hentUniktResultat(query);
+        return query.getResultStream().findFirst(); // Skal være samme som henger på flere grunnlag ved samme kobling og oo eksterref
     }
 
     private InntektArbeidYtelseAggregatBuilder opprettBuilderFor(VersjonType versjonType, UUID angittReferanse, LocalDateTime opprettetTidspunkt,
