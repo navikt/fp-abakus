@@ -135,7 +135,7 @@ public class IAYFraDtoMapper {
 
     private void mapTilGrunnlagBuilder(InntektArbeidYtelseGrunnlagDto dto, InntektArbeidYtelseGrunnlagBuilder builder) {
 
-        var arbeidsforholdInformasjonBuilder = new MapArbeidsforholdInformasjon.MapFraDto(builder).map(dto.getArbeidsforholdInformasjon());
+        var arbeidsforholdInformasjonBuilder = new MapArbeidsforholdInformasjon.MapFraDto(kodeverkRepository, builder).map(dto.getArbeidsforholdInformasjon());
         var mapInntektsmeldinger = new MapInntektsmeldinger.MapFraDto();
         var inntektsmeldinger = mapInntektsmeldinger.map(arbeidsforholdInformasjonBuilder, dto.getInntektsmeldinger());
         var oppgittOpptjening = new MapOppgittOpptjening(iayTjeneste, kodeverkRepository).mapFraDto(dto.getOppgittOpptjening());

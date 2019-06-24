@@ -11,6 +11,8 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInfo
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyringBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyrtePerioderEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanseEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.BekreftetPermisjonStatus;
+import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
@@ -28,9 +30,11 @@ import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 class MapArbeidsforholdInformasjon {
     static class MapFraDto {
+        private KodeverkRepository kodeverkRepository;
         private InntektArbeidYtelseGrunnlagBuilder grunnlagBuilder;
 
-        public MapFraDto(InntektArbeidYtelseGrunnlagBuilder builder) {
+        public MapFraDto(KodeverkRepository kodeverkRepository, InntektArbeidYtelseGrunnlagBuilder builder) {
+            this.kodeverkRepository = kodeverkRepository;
             this.grunnlagBuilder = builder;
         }
 
@@ -63,7 +67,9 @@ class MapArbeidsforholdInformasjon {
                 .medAngittStillingsprosent(new Stillingsprosent(ov.getStillingsprosent()));
 
             ov.getBekreftetPermisjon().ifPresent(bp -> {
-                var bekreftetPermisjon = new BekreftetPermisjon(bp.getPeriode().getFom(), bp.getPeriode().getTom(), KodeverkMapper.getBekreftetPermisjonStatus(bp.getBekreftetPermisjonStatus()));
+                BekreftetPermisjonStatus bekreftetPermisjonStatus = KodeverkMapper.getBekreftetPermisjonStatus(bp.getBekreftetPermisjonStatus());
+                BekreftetPermisjonStatus status = kodeverkRepository.finn(BekreftetPermisjonStatus.class, bekreftetPermisjonStatus.getKode());
+                var bekreftetPermisjon = new BekreftetPermisjon(bp.getPeriode().getFom(), bp.getPeriode().getTom(), status);
                 overstyringBuilder.medBekreftetPermisjon(bekreftetPermisjon);
             });
 
