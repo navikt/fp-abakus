@@ -29,6 +29,7 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.jpa.QueryHints;
 
+import no.nav.foreldrepenger.abakus.kodeverk.tjeneste.Kodeverk;
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
 import no.nav.vedtak.util.LRUCache;
@@ -61,6 +62,22 @@ public class KodeverkRepositoryImpl implements KodeverkRepository {
         } else {
             return Optional.of(list.get(0)); // NOSONAR
         }
+    }
+
+    @Override
+    public Map<String, Set<String>> hentAlle() {
+        Query query = entityManager.createNativeQuery("SELECT k.kodeverk, k.kode from Kodeliste k");
+        @SuppressWarnings("unchecked")
+        List<Object[]> resultList = query.getResultList();
+        List<Kodeverk> kodeverk = new ArrayList<>();
+        for (Object[] objects : resultList) {
+            kodeverk.add(new Kodeverk((String) objects[0], (String) objects[1]));
+        }
+        return kodeverk.stream().collect(Collectors.groupingBy(
+            Kodeverk::getKodeverk,
+            Collectors.mapping(
+                Kodeverk::getKode,
+                Collectors.toSet())));
     }
 
     @Override

@@ -16,6 +16,7 @@ import no.nav.foreldrepenger.abakus.app.jackson.JacksonJsonConfig;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.ArbeidsforholdRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.GrunnlagRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.migrering.MigreringRestTjeneste;
+import no.nav.foreldrepenger.abakus.kodeverk.tjeneste.KodeverkRestTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataRestTjeneste;
 import no.nav.foreldrepenger.abakus.vedtak.tjeneste.YtelseRestTjeneste;
 import no.nav.vedtak.felles.prosesstask.rest.ProsessTaskRestTjeneste;
@@ -57,6 +58,7 @@ public class ApplicationConfig extends Application {
         classes.add(ProsessTaskRestTjeneste.class);
         classes.add(RegisterdataRestTjeneste.class);
         classes.add(MigreringRestTjeneste.class);
+        classes.add(KodeverkRestTjeneste.class);
         classes.add(GrunnlagRestTjeneste.class);
         classes.add(ArbeidsforholdRestTjeneste.class);
         classes.add(YtelseRestTjeneste.class);

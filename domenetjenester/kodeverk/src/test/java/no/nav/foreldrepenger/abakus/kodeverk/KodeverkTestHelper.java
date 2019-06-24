@@ -136,6 +136,11 @@ public class KodeverkTestHelper {
             return Optional.of(finn(cls, kode));
         }
 
+        @Override
+        public Map<String, Set<String>> hentAlle() {
+            return Map.of();
+        }
+
         public synchronized Map<String, Kodeliste> getKodelistePrOffisiellKodePrKlasse(Class<? extends Kodeliste> cls) {
             lazyLoadKodeliste(cls);
             return kodelistePrOffisiellKodePrKlasse.get(cls);

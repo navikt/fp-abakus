@@ -56,4 +56,6 @@ public interface KodeverkRepository {
      * Finn kode, return er optional empty hvis ikke finnes.
      */
     <V extends Kodeliste> Optional<V> finnOptional(Class<V> cls, String kode);
+
+    Map<String, Set<String>> hentAlle();
 }
