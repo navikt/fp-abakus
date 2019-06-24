@@ -92,14 +92,10 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     public Optional<InntektArbeidYtelseAggregatEntitet> hentIAYAggregatFor(KoblingReferanse koblingReferanse, UUID eksternReferanse) {
         TypedQuery<InntektArbeidYtelseAggregatEntitet> query = entityManager.createQuery("SELECT iay " +
             "FROM InntektArbeidYtelser iay " +
-            "JOIN InntektArbeidGrunnlag gr ON (gr.register = iay OR gr.saksbehandlet = iay) " +
-            "JOIN Kobling k ON k.id = gr.koblingId " +
-            "WHERE k.koblingReferanse = :koblingReferanse " +
-            "AND iay.eksternReferanse = :eksternReferanse", InntektArbeidYtelseAggregatEntitet.class);
-        query.setParameter("koblingReferanse", koblingReferanse)
-            .setParameter("eksternReferanse", eksternReferanse);
+            "WHERE iay.eksternReferanse = :eksternReferanse", InntektArbeidYtelseAggregatEntitet.class);
+        query.setParameter("eksternReferanse", eksternReferanse);
 
-        return query.getResultStream().findFirst();
+        return HibernateVerktøy.hentUniktResultat(query);
     }
 
     @Override
@@ -154,13 +150,9 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     public Optional<OppgittOpptjeningEntitet> hentOppgittOpptjeningFor(KoblingReferanse koblingReferanse, UUID oppgittOpptjeningEksternReferanse) {
         TypedQuery<OppgittOpptjeningEntitet> query = entityManager.createQuery("SELECT oo " +
             "FROM OppgittOpptjening oo " +
-            "JOIN InntektArbeidGrunnlag gr ON gr.oppgittOpptjening = oo " +
-            "JOIN Kobling k ON k.id = gr.koblingId " +
-            "WHERE k.koblingReferanse = :koblingReferanse " +
-            "AND oo.eksternReferanse = :eksternReferanse", OppgittOpptjeningEntitet.class);
-        query.setParameter("koblingReferanse", koblingReferanse)
-            .setParameter("eksternReferanse", oppgittOpptjeningEksternReferanse);
-        return query.getResultStream().findFirst(); // Skal være samme som henger på flere grunnlag ved samme kobling og oo eksterref
+            "WHERE oo.eksternReferanse = :eksternReferanse", OppgittOpptjeningEntitet.class);
+        query.setParameter("eksternReferanse", oppgittOpptjeningEksternReferanse);
+        return HibernateVerktøy.hentUniktResultat(query);
     }
 
     private InntektArbeidYtelseAggregatBuilder opprettBuilderFor(VersjonType versjonType, UUID angittReferanse, LocalDateTime opprettetTidspunkt,
