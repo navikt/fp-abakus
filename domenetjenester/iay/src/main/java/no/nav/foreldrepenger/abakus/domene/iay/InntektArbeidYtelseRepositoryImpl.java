@@ -136,7 +136,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
 
     @Override
     public Optional<OppgittOpptjeningEntitet> hentOppgittOpptjeningFor(KoblingReferanse koblingReferanse, UUID oppgittOpptjeningEksternReferanse) {
-        TypedQuery<OppgittOpptjeningEntitet> query = entityManager.createQuery("SELECT oo " +
+        TypedQuery<OppgittOpptjeningEntitet> query = entityManager.createQuery("SELECT DISTINCT oo " +
             "FROM InntektArbeidGrunnlag gr " +
             "JOIN Kobling k ON k.id = gr.koblingId " +
             "JOIN OppgittOpptjening oo ON gr.oppgittOpptjening = oo " +

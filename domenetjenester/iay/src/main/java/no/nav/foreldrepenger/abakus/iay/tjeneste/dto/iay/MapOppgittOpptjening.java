@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
@@ -147,6 +148,10 @@ public class MapOppgittOpptjening {
     }
 
     private class MapFraDto {
+
+        MapFraDto() {
+            Objects.requireNonNull(iayTjeneste, "iayTjeneste");
+        }
 
         public OppgittOpptjeningBuilder map(KoblingReferanse koblingReferanse, OppgittOpptjeningDto dto) {
             if (dto == null) return null;
