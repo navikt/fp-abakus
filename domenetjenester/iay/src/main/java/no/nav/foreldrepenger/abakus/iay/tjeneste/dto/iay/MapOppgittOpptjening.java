@@ -22,7 +22,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilansoppdrag;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
-import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
+import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Organisasjon;
@@ -39,17 +39,19 @@ import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 public class MapOppgittOpptjening {
 
     private InntektArbeidYtelseTjeneste iayTjeneste;
+    private KodeverkRepository kodeverkRepository;
 
-    public MapOppgittOpptjening(InntektArbeidYtelseTjeneste iayTjeneste) {
+    public MapOppgittOpptjening(InntektArbeidYtelseTjeneste iayTjeneste, KodeverkRepository kodeverkRepository) {
         this.iayTjeneste = iayTjeneste;
+        this.kodeverkRepository = kodeverkRepository;
     }
 
     public OppgittOpptjeningDto mapTilDto(OppgittOpptjening oppgittOpptjening) {
         return new MapTilDto().map(oppgittOpptjening);
     }
 
-    public OppgittOpptjeningBuilder mapFraDto(KoblingReferanse koblingReferanse, OppgittOpptjeningDto oppgittOpptjening) {
-        return new MapFraDto().map(koblingReferanse, oppgittOpptjening);
+    public OppgittOpptjeningBuilder mapFraDto(OppgittOpptjeningDto oppgittOpptjening) {
+        return new MapFraDto().map(oppgittOpptjening);
     }
 
     private class MapTilDto {
@@ -150,13 +152,14 @@ public class MapOppgittOpptjening {
 
         MapFraDto() {
             Objects.requireNonNull(iayTjeneste, "iayTjeneste");
+            Objects.requireNonNull(kodeverkRepository, "kodeverkRepository");
         }
 
-        public OppgittOpptjeningBuilder map(KoblingReferanse koblingReferanse, OppgittOpptjeningDto dto) {
+        public OppgittOpptjeningBuilder map(OppgittOpptjeningDto dto) {
             if (dto == null) return null;
 
             var oppgittOpptjeningEksternReferanse = UUID.fromString(dto.getEksternReferanse().getReferanse());
-            Optional<OppgittOpptjeningEntitet> oppgittOpptjening = iayTjeneste.hentOppgittOpptjeningFor(koblingReferanse, oppgittOpptjeningEksternReferanse);
+            Optional<OppgittOpptjeningEntitet> oppgittOpptjening = iayTjeneste.hentOppgittOpptjeningFor(oppgittOpptjeningEksternReferanse);
             if (oppgittOpptjening.isPresent()) {
                 return OppgittOpptjeningBuilder.eksisterende(oppgittOpptjening.get());
             }
@@ -251,7 +254,7 @@ public class MapOppgittOpptjening {
             if (landkode == null) {
                 return null;
             }
-            return new Landkoder(landkode.getKode());
+            return kodeverkRepository.finn(Landkoder.class, landkode.getKode());
         }
 
     }

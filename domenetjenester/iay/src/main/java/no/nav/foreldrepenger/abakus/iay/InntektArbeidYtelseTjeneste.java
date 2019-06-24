@@ -96,7 +96,7 @@ public interface InntektArbeidYtelseTjeneste {
 
     ArbeidsforholdInformasjon hentArbeidsforholdInformasjonForKobling(KoblingReferanse koblingReferanse);
 
-    Optional<OppgittOpptjeningEntitet> hentOppgittOpptjeningFor(KoblingReferanse koblingReferanse, UUID oppgittOpptjeningEksternReferanse);
+    Optional<OppgittOpptjeningEntitet> hentOppgittOpptjeningFor(UUID oppgittOpptjeningEksternReferanse);
 
-    Optional<InntektArbeidYtelseAggregatEntitet> hentIAYAggregatFor(KoblingReferanse koblingReferanse, UUID eksternReferanse);
+    Optional<InntektArbeidYtelseAggregatEntitet> hentIAYAggregatFor(UUID eksternReferanse);
 }

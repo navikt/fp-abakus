@@ -89,7 +89,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     }
 
     @Override
-    public Optional<InntektArbeidYtelseAggregatEntitet> hentIAYAggregatFor(KoblingReferanse koblingReferanse, UUID eksternReferanse) {
+    public Optional<InntektArbeidYtelseAggregatEntitet> hentIAYAggregatFor(UUID eksternReferanse) {
         TypedQuery<InntektArbeidYtelseAggregatEntitet> query = entityManager.createQuery("SELECT iay " +
             "FROM InntektArbeidYtelser iay " +
             "WHERE iay.eksternReferanse = :eksternReferanse", InntektArbeidYtelseAggregatEntitet.class);
@@ -147,7 +147,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     }
 
     @Override
-    public Optional<OppgittOpptjeningEntitet> hentOppgittOpptjeningFor(KoblingReferanse koblingReferanse, UUID oppgittOpptjeningEksternReferanse) {
+    public Optional<OppgittOpptjeningEntitet> hentOppgittOpptjeningFor(UUID oppgittOpptjeningEksternReferanse) {
         TypedQuery<OppgittOpptjeningEntitet> query = entityManager.createQuery("SELECT oo " +
             "FROM OppgittOpptjening oo " +
             "WHERE oo.eksternReferanse = :eksternReferanse", OppgittOpptjeningEntitet.class);

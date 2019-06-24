@@ -95,7 +95,7 @@ public class MigreringRestTjeneste {
                 var kobling = finnEllerOpprett(konvolutt, sakSnapshot);
 
                 var koblingReferanse = kobling.getKoblingReferanse();
-                var dtoMapper = new IAYFraDtoMapper(iayTjeneste, aktørId, koblingReferanse);
+                var dtoMapper = new IAYFraDtoMapper(iayTjeneste, kodeverkRepository, aktørId, koblingReferanse);
                 var grunnlag = dtoMapper.mapTilGrunnlag(konvolutt.getData());
 
                 var aktiv = konvolutt.erAktiv() != null ? konvolutt.erAktiv() : false;

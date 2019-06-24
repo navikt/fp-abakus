@@ -55,11 +55,11 @@ public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRe
 
     Statistikk hentStats();
 
-    Optional<OppgittOpptjeningEntitet> hentOppgittOpptjeningFor(KoblingReferanse koblingReferanse, UUID oppgittOpptjeningEksternReferanse);
+    Optional<OppgittOpptjeningEntitet> hentOppgittOpptjeningFor(UUID oppgittOpptjeningEksternReferanse);
 
     List<InntektArbeidYtelseGrunnlag> hentAlleInntektArbeidYtelseGrunnlagFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType, boolean kunAktive);
 
     List<InntektArbeidYtelseGrunnlag> hentAlleInntektArbeidYtelseGrunnlagFor(AktørId aktørId, KoblingReferanse koblingReferanse, boolean kunAktive);
 
-    Optional<InntektArbeidYtelseAggregatEntitet> hentIAYAggregatFor(KoblingReferanse koblingReferanse, UUID eksternReferanse);
+    Optional<InntektArbeidYtelseAggregatEntitet> hentIAYAggregatFor(UUID eksternReferanse);
 }

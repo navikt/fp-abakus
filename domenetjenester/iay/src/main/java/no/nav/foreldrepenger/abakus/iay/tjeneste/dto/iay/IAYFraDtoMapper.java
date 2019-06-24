@@ -11,17 +11,20 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilde
 import no.nav.foreldrepenger.abakus.domene.iay.VersjonType;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
+import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 
 public class IAYFraDtoMapper {
 
     private InntektArbeidYtelseTjeneste iayTjeneste;
+    private KodeverkRepository kodeverkRepository;
     private AktørId aktørId;
     private KoblingReferanse koblingReferanse;
 
-    public IAYFraDtoMapper(InntektArbeidYtelseTjeneste tjeneste, AktørId aktørId, KoblingReferanse koblingReferanse) {
+    public IAYFraDtoMapper(InntektArbeidYtelseTjeneste tjeneste, KodeverkRepository kodeverkRepository, AktørId aktørId, KoblingReferanse koblingReferanse) {
         this.iayTjeneste = tjeneste;
+        this.kodeverkRepository = kodeverkRepository;
         this.aktørId = aktørId;
         this.koblingReferanse = koblingReferanse;
     }
@@ -92,7 +95,7 @@ public class IAYFraDtoMapper {
         var register = dto.getRegister();
         if (register == null) return;
 
-        Optional<InntektArbeidYtelseAggregatEntitet> aggregatEntitet = iayTjeneste.hentIAYAggregatFor(new KoblingReferanse(dto.getKoblingReferanse()), register.getEksternReferanse());
+        Optional<InntektArbeidYtelseAggregatEntitet> aggregatEntitet = iayTjeneste.hentIAYAggregatFor(register.getEksternReferanse());
         if (aggregatEntitet.isPresent()) {
             InntektArbeidYtelseAggregatBuilder aggregatBuilder = InntektArbeidYtelseAggregatBuilder.pekeTil(aggregatEntitet.get(), VersjonType.REGISTER);
             builder.medData(aggregatBuilder);
@@ -116,7 +119,7 @@ public class IAYFraDtoMapper {
     private void mapSaksbehandlerDataTilBuilder(InntektArbeidYtelseGrunnlagDto dto, InntektArbeidYtelseGrunnlagBuilder builder) {
         var overstyrt = dto.getOverstyrt();
         if (overstyrt != null) {
-            Optional<InntektArbeidYtelseAggregatEntitet> aggregatEntitet = iayTjeneste.hentIAYAggregatFor(new KoblingReferanse(dto.getKoblingReferanse()), overstyrt.getEksternReferanse());
+            Optional<InntektArbeidYtelseAggregatEntitet> aggregatEntitet = iayTjeneste.hentIAYAggregatFor(overstyrt.getEksternReferanse());
             if (aggregatEntitet.isPresent()) {
                 InntektArbeidYtelseAggregatBuilder aggregatBuilder = InntektArbeidYtelseAggregatBuilder.pekeTil(aggregatEntitet.get(), VersjonType.SAKSBEHANDLET);
                 builder.medData(aggregatBuilder);
@@ -135,7 +138,7 @@ public class IAYFraDtoMapper {
         var arbeidsforholdInformasjonBuilder = new MapArbeidsforholdInformasjon.MapFraDto(builder).map(dto.getArbeidsforholdInformasjon());
         var mapInntektsmeldinger = new MapInntektsmeldinger.MapFraDto();
         var inntektsmeldinger = mapInntektsmeldinger.map(arbeidsforholdInformasjonBuilder, dto.getInntektsmeldinger());
-        var oppgittOpptjening = new MapOppgittOpptjening(iayTjeneste).mapFraDto(new KoblingReferanse(dto.getKoblingReferanse()), dto.getOppgittOpptjening());
+        var oppgittOpptjening = new MapOppgittOpptjening(iayTjeneste, kodeverkRepository).mapFraDto(dto.getOppgittOpptjening());
         var arbeidsforholdInformasjon = arbeidsforholdInformasjonBuilder.build();
 
         builder.medOppgittOpptjening(oppgittOpptjening);

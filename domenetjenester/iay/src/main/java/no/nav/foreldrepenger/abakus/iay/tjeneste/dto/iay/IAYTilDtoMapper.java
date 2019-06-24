@@ -64,7 +64,7 @@ public class IAYTilDtoMapper {
 
         if (dataset.contains(Dataset.OPPGITT_OPPTJENING)) {
             grunnlag.getOppgittOpptjening().ifPresent(oo -> {
-                var mapper = new MapOppgittOpptjening(null).mapTilDto(oo);
+                var mapper = new MapOppgittOpptjening(null, null).mapTilDto(oo);
                 dto.medOppgittOpptjening(mapper);
             });
         }

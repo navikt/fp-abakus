@@ -103,13 +103,13 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
     }
 
     @Override
-    public Optional<OppgittOpptjeningEntitet> hentOppgittOpptjeningFor(KoblingReferanse koblingReferanse, UUID oppgittOpptjeningEksternReferanse) {
-        return repository.hentOppgittOpptjeningFor(koblingReferanse, oppgittOpptjeningEksternReferanse);
+    public Optional<OppgittOpptjeningEntitet> hentOppgittOpptjeningFor(UUID oppgittOpptjeningEksternReferanse) {
+        return repository.hentOppgittOpptjeningFor(oppgittOpptjeningEksternReferanse);
     }
 
     @Override
-    public Optional<InntektArbeidYtelseAggregatEntitet> hentIAYAggregatFor(KoblingReferanse koblingReferanse, UUID eksternReferanse) {
-        return repository.hentIAYAggregatFor(koblingReferanse, eksternReferanse);
+    public Optional<InntektArbeidYtelseAggregatEntitet> hentIAYAggregatFor(UUID eksternReferanse) {
+        return repository.hentIAYAggregatFor(eksternReferanse);
     }
 
     @Override
