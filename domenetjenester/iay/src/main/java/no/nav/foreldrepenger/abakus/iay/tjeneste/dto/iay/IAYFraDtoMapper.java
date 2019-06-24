@@ -4,8 +4,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.VersjonType;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -87,8 +90,14 @@ public class IAYFraDtoMapper {
     // brukes kun til migrering av data (dytter inn IAYG)
     private void mapRegisterDataTilMigrering(InntektArbeidYtelseGrunnlagDto dto, InntektArbeidYtelseGrunnlagBuilder builder) {
         var register = dto.getRegister();
-        if(register==null) return;
-        
+        if (register == null) return;
+
+        Optional<InntektArbeidYtelseAggregatEntitet> aggregatEntitet = iayTjeneste.hentIAYAggregatFor(new KoblingReferanse(dto.getKoblingReferanse()), register.getEksternReferanse());
+        if (aggregatEntitet.isPresent()) {
+            InntektArbeidYtelseAggregatBuilder aggregatBuilder = InntektArbeidYtelseAggregatBuilder.pekeTil(aggregatEntitet.get(), VersjonType.REGISTER);
+            builder.medData(aggregatBuilder);
+            return;
+        }
         var tidspunkt = register.getOpprettetTidspunkt().toLocalDateTime();
 
         var registerBuilder = iayTjeneste.opprettBuilderForRegister(koblingReferanse, register.getEksternReferanse(), tidspunkt);
@@ -107,6 +116,12 @@ public class IAYFraDtoMapper {
     private void mapSaksbehandlerDataTilBuilder(InntektArbeidYtelseGrunnlagDto dto, InntektArbeidYtelseGrunnlagBuilder builder) {
         var overstyrt = dto.getOverstyrt();
         if (overstyrt != null) {
+            Optional<InntektArbeidYtelseAggregatEntitet> aggregatEntitet = iayTjeneste.hentIAYAggregatFor(new KoblingReferanse(dto.getKoblingReferanse()), overstyrt.getEksternReferanse());
+            if (aggregatEntitet.isPresent()) {
+                InntektArbeidYtelseAggregatBuilder aggregatBuilder = InntektArbeidYtelseAggregatBuilder.pekeTil(aggregatEntitet.get(), VersjonType.SAKSBEHANDLET);
+                builder.medData(aggregatBuilder);
+                return;
+            }
             var tidspunkt = overstyrt.getOpprettetTidspunkt().toLocalDateTime();
             var saksbehandlerOverstyringer = iayTjeneste.opprettBuilderForSaksbehandlet(koblingReferanse, overstyrt.getEksternReferanse(), tidspunkt);
             var overstyrtAktørArbeid = new MapAktørArbeid.MapFraDto(aktørId, saksbehandlerOverstyringer).map(overstyrt.getArbeid());

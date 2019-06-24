@@ -61,4 +61,5 @@ public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRe
 
     List<InntektArbeidYtelseGrunnlag> hentAlleInntektArbeidYtelseGrunnlagFor(AktørId aktørId, KoblingReferanse koblingReferanse, boolean kunAktive);
 
+    Optional<InntektArbeidYtelseAggregatEntitet> hentIAYAggregatFor(KoblingReferanse koblingReferanse, UUID eksternReferanse);
 }

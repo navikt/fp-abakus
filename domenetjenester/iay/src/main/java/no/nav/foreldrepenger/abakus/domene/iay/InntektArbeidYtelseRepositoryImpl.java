@@ -89,11 +89,25 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     }
 
     @Override
+    public Optional<InntektArbeidYtelseAggregatEntitet> hentIAYAggregatFor(KoblingReferanse koblingReferanse, UUID eksternReferanse) {
+        TypedQuery<InntektArbeidYtelseAggregatEntitet> query = entityManager.createQuery("SELECT iay " +
+            "FROM InntektArbeidYtelser iay " +
+            "JOIN InntektArbeidGrunnlag gr ON gr.oppgittOpptjening = iay " +
+            "JOIN Kobling k ON k.id = gr.koblingId " +
+            "WHERE k.koblingReferanse = :koblingReferanse " +
+            "AND iay.eksternReferanse = :eksternReferanse", InntektArbeidYtelseAggregatEntitet.class);
+        query.setParameter("koblingReferanse", koblingReferanse)
+            .setParameter("eksternReferanse", eksternReferanse);
+
+        return query.getResultStream().findFirst();
+    }
+
+    @Override
     public List<InntektArbeidYtelseGrunnlag> hentAlleInntektArbeidYtelseGrunnlagFor(AktørId aktørId,
                                                                                     Saksnummer saksnummer,
                                                                                     no.nav.foreldrepenger.abakus.kodeverk.YtelseType ytelseType,
                                                                                     boolean kunAktive) {
-        
+
         final TypedQuery<InntektArbeidYtelseGrunnlagEntitet> query = entityManager.createQuery("FROM InntektArbeidGrunnlag gr JOIN KOBLING k " + // NOSONAR
             " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId " + //NOSONAR
             " AND gr.aktiv = :aktivt", InntektArbeidYtelseGrunnlagEntitet.class);

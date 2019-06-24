@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
@@ -43,20 +44,22 @@ public interface InntektArbeidYtelseTjeneste {
 
     /**
      * Hent alle grunnlag for angitt saksnummer
+     *
      * @param saksnummer
-     * @param boolean kunAktive - hvis true henter kun aktive grunnlag (ikke historiske versjoner)
+     * @param boolean    kunAktive - hvis true henter kun aktive grunnlag (ikke historiske versjoner)
      * @return henter optional aggregat
      */
     List<InntektArbeidYtelseGrunnlag> hentAlleGrunnlagFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType, boolean kunAktive);
-    
+
     /**
      * Hent alle grunnlag for angitt koblingsreferanse (behandling)
+     *
      * @param koblingReferanse
-     * @param boolean kunAktive - hvis true henter kun aktive grunnlag (ikke historiske versjoner)
+     * @param boolean          kunAktive - hvis true henter kun aktive grunnlag (ikke historiske versjoner)
      * @return henter optional aggregat
      */
     List<InntektArbeidYtelseGrunnlag> hentAlleGrunnlagFor(AktørId aktørId, KoblingReferanse koblingReferanse, boolean kunAktive);
-    
+
     /**
      * @param grunnlagReferanse
      * @return henter optional aggregat
@@ -95,4 +98,5 @@ public interface InntektArbeidYtelseTjeneste {
 
     Optional<OppgittOpptjeningEntitet> hentOppgittOpptjeningFor(KoblingReferanse koblingReferanse, UUID oppgittOpptjeningEksternReferanse);
 
+    Optional<InntektArbeidYtelseAggregatEntitet> hentIAYAggregatFor(KoblingReferanse koblingReferanse, UUID eksternReferanse);
 }

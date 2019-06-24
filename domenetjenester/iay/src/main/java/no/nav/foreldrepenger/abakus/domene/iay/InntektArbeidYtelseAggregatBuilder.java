@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -42,6 +43,11 @@ public class InntektArbeidYtelseAggregatBuilder {
 
     public static InntektArbeidYtelseAggregatBuilder oppdatere(Optional<InntektArbeidYtelseAggregat> oppdatere, VersjonType versjon) {
         return builderFor(oppdatere, UUID.randomUUID(), LocalDateTime.now(), versjon);
+    }
+
+    public static InntektArbeidYtelseAggregatBuilder pekeTil(InntektArbeidYtelseAggregatEntitet oppdatere, VersjonType versjon) {
+        Objects.requireNonNull(oppdatere);
+        return new InntektArbeidYtelseAggregatBuilder(oppdatere, versjon);
     }
 
     public static InntektArbeidYtelseAggregatBuilder builderFor(Optional<InntektArbeidYtelseAggregat> kopierDataFra,
