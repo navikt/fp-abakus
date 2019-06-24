@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Alternative;
 import javax.persistence.NoResultException;
 
 /**
@@ -23,6 +24,7 @@ public class KodeverkTestHelper {
         return new MockKodeverkRepository();
     }
 
+    @Alternative
     private static class MockKodeverkRepository implements KodeverkRepository {
 
         private static final List<Class<?>> initialisert = new ArrayList<>(); // NOSONAR
