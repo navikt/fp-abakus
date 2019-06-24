@@ -88,12 +88,16 @@ public class InntektArbeidYtelseGrunnlagBuilder {
 
     public InntektArbeidYtelseGrunnlagBuilder medOppgittOpptjening(OppgittOpptjeningBuilder builder) {
         if (builder != null) {
-            if (kladd.getOppgittOpptjening().isPresent()) {
+            if (kladd.getOppgittOpptjening().isPresent() && erIkkeSammeSomSist(builder)) {
                 throw new IllegalStateException("Utviklerfeil: Er ikke lov å endre oppgitt opptjening!");
             }
             kladd.setOppgittOpptjening((OppgittOpptjeningEntitet) builder.build());
         }
         return this;
+    }
+
+    private boolean erIkkeSammeSomSist(OppgittOpptjeningBuilder builder) {
+        return !kladd.getOppgittOpptjening().get().getEksternReferanse().equals(builder.getEksternReferanse());
     }
 
     public InntektArbeidYtelseGrunnlag build() {

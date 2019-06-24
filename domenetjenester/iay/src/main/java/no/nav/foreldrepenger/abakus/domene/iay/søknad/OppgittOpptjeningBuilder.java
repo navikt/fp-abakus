@@ -40,9 +40,10 @@ public class OppgittOpptjeningBuilder {
 
     /**
      * For migreringen
-     * @deprecated Kun for migreringen?
+     *
      * @param oppgittOpptjeningEntitet entitet
      * @return builder
+     * @deprecated Kun for migreringen?
      */
     @Deprecated(forRemoval = true)
     public static OppgittOpptjeningBuilder eksisterende(OppgittOpptjeningEntitet oppgittOpptjeningEntitet) {
@@ -67,6 +68,10 @@ public class OppgittOpptjeningBuilder {
     public OppgittOpptjeningBuilder leggTilOppgittArbeidsforhold(OppgittArbeidsforholdBuilder builder) {
         this.kladd.leggTilOppgittArbeidsforhold(builder.build());
         return this;
+    }
+
+    public UUID getEksternReferanse() {
+        return kladd.getEksternReferanse();
     }
 
     public OppgittOpptjening build() {
