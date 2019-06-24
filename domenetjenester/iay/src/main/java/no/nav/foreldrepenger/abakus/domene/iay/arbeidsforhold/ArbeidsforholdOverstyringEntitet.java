@@ -96,7 +96,7 @@ public class ArbeidsforholdOverstyringEntitet extends BaseEntitet implements Ind
      * {@link no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet#getPermisjon()}.
      */
     @Embedded
-    private BekreftetPermisjon bekreftetPermisjon;
+    private BekreftetPermisjon bekreftetPermisjon = new BekreftetPermisjon();
 
     ArbeidsforholdOverstyringEntitet() {
     }

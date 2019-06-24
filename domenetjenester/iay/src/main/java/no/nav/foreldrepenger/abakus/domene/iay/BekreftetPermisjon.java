@@ -27,15 +27,15 @@ public class BekreftetPermisjon {
 
     @Embedded
     @AttributeOverrides({
-        @AttributeOverride(name = "fomDato", column = @Column(name = "BEKREFTET_PERMISJON_FOM")),
-        @AttributeOverride(name = "tomDato", column = @Column(name = "BEKREFTET_PERMISJON_TOM"))
+        @AttributeOverride(name = "fomDato", column = @Column(name = "bekreftet_permisjon_fom")),
+        @AttributeOverride(name = "tomDato", column = @Column(name = "bekreftet_permisjon_tom"))
     })
     private DatoIntervallEntitet periode;
 
-    BekreftetPermisjon() {
+    public BekreftetPermisjon() {
     }
 
-    public BekreftetPermisjon(LocalDate permisjonFom, LocalDate permisjonTom, BekreftetPermisjonStatus status){
+    public BekreftetPermisjon(LocalDate permisjonFom, LocalDate permisjonTom, BekreftetPermisjonStatus status) {
         this.periode = DatoIntervallEntitet.fraOgMedTilOgMed(permisjonFom, permisjonTom);
         this.status = status;
     }
