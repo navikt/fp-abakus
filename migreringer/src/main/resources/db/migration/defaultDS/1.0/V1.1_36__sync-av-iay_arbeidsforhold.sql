@@ -1,3 +1,4 @@
+ALTER TABLE iay_arbeidsforhold alter column bekreftet_permisjon_status type varchar(100);
 ALTER TABLE IAY_ARBEIDSFORHOLD
     ADD KL_BEKREFTET_PERMISJON_STATUS varchar(100) DEFAULT ('BEKREFTET_PERMISJON_STATUS');
 
