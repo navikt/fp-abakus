@@ -92,7 +92,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     public Optional<InntektArbeidYtelseAggregatEntitet> hentIAYAggregatFor(KoblingReferanse koblingReferanse, UUID eksternReferanse) {
         TypedQuery<InntektArbeidYtelseAggregatEntitet> query = entityManager.createQuery("SELECT iay " +
             "FROM InntektArbeidYtelser iay " +
-            "JOIN InntektArbeidGrunnlag gr ON gr.oppgittOpptjening = iay " +
+            "JOIN InntektArbeidGrunnlag gr ON (gr.register = iay OR gr.saksbehandlet = iay) " +
             "JOIN Kobling k ON k.id = gr.koblingId " +
             "WHERE k.koblingReferanse = :koblingReferanse " +
             "AND iay.eksternReferanse = :eksternReferanse", InntektArbeidYtelseAggregatEntitet.class);
