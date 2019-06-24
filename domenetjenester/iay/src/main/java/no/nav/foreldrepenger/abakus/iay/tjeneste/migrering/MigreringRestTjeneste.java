@@ -85,26 +85,25 @@ public class MigreringRestTjeneste {
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response migrerSak(@NotNull
                               @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class)
-                              @Valid InntektArbeidYtelseGrunnlagSakSnapshotDto sakSnapshot) {
+                              @Valid InntektArbeidYtelseGrunnlagSakSnapshotDto sakSnapshot) throws JsonProcessingException {
 
-        try {
-            log.info("Mottatt migrering for sak med json='{}'", JacksonJsonConfig.getMapper().writeValueAsString(sakSnapshot));
-        } catch (JsonProcessingException e) {
-            log.info("Mottatt migrering for sak={}", sakSnapshot.getSaksnummer());
-        }
         var aktørId = new AktørId(sakSnapshot.getAktør().getIdent());
 
         for (InntektArbeidYtelseGrunnlagSakSnapshotDto.Konvolutt konvolutt : sakSnapshot.getGrunnlag()) {
-            log.info("Migrerer grunnlag={}", konvolutt.getData().getGrunnlagReferanse());
-            var kobling = finnEllerOpprett(konvolutt, sakSnapshot);
+            try {
+                log.info("Migrerer grunnlag={}", konvolutt.getData().getGrunnlagReferanse());
+                var kobling = finnEllerOpprett(konvolutt, sakSnapshot);
 
-            var koblingReferanse = kobling.getKoblingReferanse();
-            var dtoMapper = new IAYFraDtoMapper(iayTjeneste, aktørId, koblingReferanse);
-            var grunnlag = dtoMapper.mapTilGrunnlag(konvolutt.getData());
+                var koblingReferanse = kobling.getKoblingReferanse();
+                var dtoMapper = new IAYFraDtoMapper(iayTjeneste, aktørId, koblingReferanse);
+                var grunnlag = dtoMapper.mapTilGrunnlag(konvolutt.getData());
 
-            var aktiv = konvolutt.erAktiv() != null ? konvolutt.erAktiv() : false;
-            repository.lagreMigrertGrunnlag(grunnlag, koblingReferanse, aktiv);
-            log.info("Migrert grunnlag={}", grunnlag.getGrunnlagReferanse());
+                var aktiv = konvolutt.erAktiv() != null ? konvolutt.erAktiv() : false;
+                repository.lagreMigrertGrunnlag(grunnlag, koblingReferanse, aktiv);
+                log.info("Migrert grunnlag={}", grunnlag.getGrunnlagReferanse());
+            } catch (Exception e) {
+                log.info("Feilet migrering av sak={} for grunnlag med json='{}'", sakSnapshot.getSaksnummer(), JacksonJsonConfig.getMapper().writeValueAsString(konvolutt));
+            }
         }
         log.info("Migrert sak={} med {} grunnlag", sakSnapshot.getSaksnummer(), sakSnapshot.getGrunnlag().size());
 
