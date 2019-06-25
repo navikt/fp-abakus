@@ -65,4 +65,15 @@ public class MigreringRestTjenesteTest {
         dto.leggTil(konvolutt.getData(), konvolutt.erAktiv(), konvolutt.getOpplysningsperiode(), konvolutt.getOpptjeningsperiode());
         tjeneste.doMigrering(dto);
     }
+
+    @Test
+    public void skal_ikke_feile_4() throws IOException {
+        URL resource = MigreringRestTjenesteTest.class.getResource("/migrering-grunnlag-4.json");
+        InntektArbeidYtelseGrunnlagSakSnapshotDto.Konvolutt konvolutt = JacksonJsonConfig.getMapper().readValue(resource, InntektArbeidYtelseGrunnlagSakSnapshotDto.Konvolutt.class);
+
+
+        InntektArbeidYtelseGrunnlagSakSnapshotDto dto = new InntektArbeidYtelseGrunnlagSakSnapshotDto("12341234123", YtelseType.FORELDREPENGER, new AktørIdPersonident("1234123412341"));
+        dto.leggTil(konvolutt.getData(), konvolutt.erAktiv(), konvolutt.getOpplysningsperiode(), konvolutt.getOpptjeningsperiode());
+        tjeneste.doMigrering(dto);
+    }
 }

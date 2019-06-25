@@ -46,6 +46,7 @@
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtaleEntitet" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.OffentligYtelseType" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.PensjonTrygdType" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.NæringsinntektType" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.AktørArbeidEntitet" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.AktørInntektEntitet" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.AktørYtelseEntitet" />
