@@ -70,6 +70,11 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
         return Collections.unmodifiableList(inntektsmeldinger);
     }
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+
     private boolean skalBrukes(InntektsmeldingEntitet im) {
         return arbeidsforholdInformasjon == null || arbeidsforholdInformasjon.getOverstyringer()
             .stream()

@@ -349,46 +349,91 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     @Deprecated(forRemoval = true)
     private void slettGrunnlag(InntektArbeidYtelseGrunnlagEntitet grunnlag) {
         log.info("[MIGRERING] Mottatt nytt grunnlag med samme referanse. Sletter grunnlag med grunnlagsref={}", grunnlag.getGrunnlagReferanse());
-        entityManager.remove(grunnlag);
         grunnlag.getRegisterVersjon().ifPresent(this::slettAggregat);
         grunnlag.getSaksbehandletVersjon().ifPresent(this::slettAggregat);
         grunnlag.getInntektsmeldinger().ifPresent(this::slettInntektsmeldinger);
         grunnlag.getArbeidsforholdInformasjon().ifPresent(this::slettInformasjon);
         grunnlag.getOppgittOpptjening().ifPresent(this::slettOppgittOpptjening);
+        entityManager.createNativeQuery("DELETE FROM gr_arbeid_inntekt WHERE id = :grunnlagId")
+            .setParameter("grunnlagId", grunnlag.getId())
+            .executeUpdate();
     }
 
     @Deprecated(forRemoval = true)
     private void slettInformasjon(ArbeidsforholdInformasjon arbeidsforholdInformasjon) {
-        entityManager.remove(arbeidsforholdInformasjon);
-        arbeidsforholdInformasjon.getOverstyringer().forEach(ov -> {
-            entityManager.remove(ov);
-            ov.getArbeidsforholdOverstyrtePerioder().forEach(entityManager::remove);
-        });
-        arbeidsforholdInformasjon.getArbeidsforholdReferanser().forEach(entityManager::remove);
+        entityManager.createNativeQuery("DELETE FROM iay_arbeidsforhold_refer WHERE informasjon_id = :informasjonId")
+            .setParameter("informasjonId", arbeidsforholdInformasjon.getId())
+            .executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM iay_overstyrte_perioder WHERE arbeidsforhold_id " +
+            "IN (SELECT id FROM iay_arbeidsforhold WHERE informasjon_id = :informasjonId)")
+            .setParameter("informasjonId", arbeidsforholdInformasjon.getId())
+            .executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM iay_arbeidsforhold WHERE informasjon_id = :informasjonId")
+            .setParameter("informasjonId", arbeidsforholdInformasjon.getId())
+            .executeUpdate();
+        entityManager.createNativeQuery("UPDATE gr_arbeid_inntekt SET informasjon_id = null " +
+            "WHERE informasjon_id = :informasjonId")
+            .setParameter("informasjonId", arbeidsforholdInformasjon.getId())
+            .executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM iay_informasjon WHERE id = :informasjonId")
+            .setParameter("informasjonId", arbeidsforholdInformasjon.getId())
+            .executeUpdate();
     }
 
     @Deprecated(forRemoval = true)
     private void slettInntektsmeldinger(InntektsmeldingAggregat inntektsmeldinger) {
-        entityManager.remove(inntektsmeldinger);
-        inntektsmeldinger.getAlleInntektsmeldinger().forEach(im -> {
-            entityManager.remove(im);
-            im.getEndringerRefusjon().forEach(entityManager::remove);
-            im.getGraderinger().forEach(entityManager::remove);
-            im.getNaturalYtelser().forEach(entityManager::remove);
-            im.getUtsettelsePerioder().forEach(entityManager::remove);
-        });
+        entityManager.createNativeQuery("DELETE FROM iay_gradering WHERE inntektsmelding_id " +
+            "IN (SELECT ID FROM iay_inntektsmelding WHERE inntektsmeldinger_id = :inntektsmeldingerId)")
+            .setParameter("inntektsmeldingerId", inntektsmeldinger.getId())
+            .executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM iay_natural_ytelse WHERE inntektsmelding_id " +
+            "IN (SELECT ID FROM iay_inntektsmelding WHERE inntektsmeldinger_id = :inntektsmeldingerId)")
+            .setParameter("inntektsmeldingerId", inntektsmeldinger.getId())
+            .executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM iay_utsettelse_periode WHERE inntektsmelding_id " +
+            "IN (SELECT ID FROM iay_inntektsmelding WHERE inntektsmeldinger_id = :inntektsmeldingerId)")
+            .setParameter("inntektsmeldingerId", inntektsmeldinger.getId())
+            .executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM iay_refusjon WHERE inntektsmelding_id " +
+            "IN (SELECT ID FROM iay_inntektsmelding WHERE inntektsmeldinger_id = :inntektsmeldingerId)")
+            .setParameter("inntektsmeldingerId", inntektsmeldinger.getId())
+            .executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM iay_inntektsmelding WHERE inntektsmeldinger_id = :inntektsmeldingerId")
+            .setParameter("inntektsmeldingerId", inntektsmeldinger.getId())
+            .executeUpdate();
+        entityManager.createNativeQuery("UPDATE gr_arbeid_inntekt SET inntektsmeldinger_id = null " +
+            "WHERE inntektsmeldinger_id = :inntektsmeldingerId")
+            .setParameter("inntektsmeldingerId", inntektsmeldinger.getId())
+            .executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM iay_inntektsmeldinger WHERE id = :inntektsmeldingerId")
+            .setParameter("inntektsmeldingerId", inntektsmeldinger.getId())
+            .executeUpdate();
     }
 
     @Deprecated(forRemoval = true)
     private void slettOppgittOpptjening(OppgittOpptjening oppgittOpptjening) {
-        entityManager.remove(oppgittOpptjening);
-        oppgittOpptjening.getAnnenAktivitet().forEach(entityManager::remove);
-        oppgittOpptjening.getEgenNæring().forEach(entityManager::remove);
-        oppgittOpptjening.getOppgittArbeidsforhold().forEach(entityManager::remove);
-        oppgittOpptjening.getFrilans().ifPresent(it -> {
-            entityManager.remove(it);
-            it.getFrilansoppdrag().forEach(entityManager::remove);
-        });
+        entityManager.createNativeQuery("DELETE FROM iay_oppgitt_arbeidsforhold WHERE oppgitt_opptjening_id = :oppgittOpptjeningId")
+            .setParameter("oppgittOpptjeningId", oppgittOpptjening.getId())
+            .executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM iay_egen_naering WHERE oppgitt_opptjening_id = :oppgittOpptjeningId")
+            .setParameter("oppgittOpptjeningId", oppgittOpptjening.getId())
+            .executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM iay_annen_aktivitet WHERE oppgitt_opptjening_id = :oppgittOpptjeningId")
+            .setParameter("oppgittOpptjeningId", oppgittOpptjening.getId())
+            .executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM iay_oppgitt_frilansoppdrag WHERE frilans_id " +
+            "IN (SELECT id FROM iay_oppgitt_frilans WHERE oppgitt_opptjening_id = :oppgittOpptjeningId)")
+            .setParameter("oppgittOpptjeningId", oppgittOpptjening.getId())
+            .executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM iay_oppgitt_frilans WHERE oppgitt_opptjening_id = :oppgittOpptjeningId")
+            .setParameter("oppgittOpptjeningId", oppgittOpptjening.getId())
+            .executeUpdate();
+        entityManager.createNativeQuery("UPDATE gr_arbeid_inntekt set oppgitt_opptjening_id = null WHERE oppgitt_opptjening_id IN (SELECT ID FROM iay_oppgitt_opptjening WHERE ekstern_referanse = :eksterRef)")
+            .setParameter("eksterRef", oppgittOpptjening.getEksternReferanse())
+            .executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM iay_oppgitt_opptjening WHERE ekstern_referanse = :eksterRef")
+            .setParameter("eksterRef", oppgittOpptjening.getEksternReferanse())
+            .executeUpdate();
     }
 
     @Deprecated(forRemoval = true)

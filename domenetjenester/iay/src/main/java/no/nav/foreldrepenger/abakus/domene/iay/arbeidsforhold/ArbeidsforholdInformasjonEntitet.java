@@ -63,6 +63,7 @@ public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements Arb
         }
     }
 
+    @Override
     public Long getId() {
         return id;
     }

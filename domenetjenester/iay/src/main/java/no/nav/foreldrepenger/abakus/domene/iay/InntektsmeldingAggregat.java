@@ -23,4 +23,5 @@ public interface InntektsmeldingAggregat {
     /** Get alle inntetksmeldinger (både de som skal brukes og ikke brukes). */
     List<Inntektsmelding> getAlleInntektsmeldinger();
 
+    Long getId();
 }

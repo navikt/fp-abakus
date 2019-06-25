@@ -20,9 +20,9 @@ import javax.persistence.Table;
 import org.hibernate.annotations.NaturalId;
 
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittAnnenAktivitet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
@@ -82,6 +82,11 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
     @Override
     public UUID getEksternReferanse() {
         return eksternReferanse;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
     }
 
     @Override

@@ -29,4 +29,5 @@ public interface ArbeidsforholdInformasjon {
     
     Collection<ArbeidsforholdReferanseEntitet> getArbeidsforholdReferanser();
 
+    Long getId();
 }
