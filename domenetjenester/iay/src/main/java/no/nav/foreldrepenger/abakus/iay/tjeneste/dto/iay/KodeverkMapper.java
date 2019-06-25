@@ -3,6 +3,8 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.spi.CDI;
+
 import no.nav.foreldrepenger.abakus.domene.iay.NæringsinntektType;
 import no.nav.foreldrepenger.abakus.domene.iay.OffentligYtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.PensjonTrygdType;
@@ -20,6 +22,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.PermisjonsbeskrivelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.SkatteOgAvgiftsregelType;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
+import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
@@ -27,9 +30,7 @@ import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 final class KodeverkMapper {
     private static final Map<String, String> YTELSETYPE_FPSAK_TIL_ABAKUS;
     private static final Map<String, String> YTELSETYPE_ABAKUS_TIL_FPSAK;
-
-    private KodeverkMapper() {
-    }
+    private static KodeverkRepository repository = null;
 
     static {
         YTELSETYPE_FPSAK_TIL_ABAKUS = Map.of(
@@ -38,6 +39,17 @@ final class KodeverkMapper {
             "SVANGERSKAPSPENGER", "SVP");
 
         YTELSETYPE_ABAKUS_TIL_FPSAK = YTELSETYPE_FPSAK_TIL_ABAKUS.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+    }
+
+    private KodeverkMapper() {
+
+    }
+
+    static KodeverkRepository repository() {
+        if (repository == null) {
+            repository = CDI.current().select(KodeverkRepository.class).get();
+        }
+        return repository;
     }
 
     static String getFpsakYtelseTypeFraAbakus(String kode) {
@@ -67,16 +79,16 @@ final class KodeverkMapper {
     }
 
     public static YtelseType mapUtbetaltYtelseTypeTilGrunnlag(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtbetaltYtelseType type) {
-        if(type==null) return OffentligYtelseType.UDEFINERT;
+        if (type == null) return OffentligYtelseType.UDEFINERT;
         var kodeverk = (no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.Kodeverk) type;
         String kode = kodeverk.getKode();
         switch (kodeverk.getKodeverk()) {
             case no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtbetaltYtelseFraOffentligeType.KODEVERK:
-                return new OffentligYtelseType(kode);
+                return repository().finn(OffentligYtelseType.class, kode);
             case no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtbetaltNæringsYtelseType.KODEVERK:
-                return new NæringsinntektType(kode);
+                return repository().finn(NæringsinntektType.class, kode);
             case no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtbetaltPensjonTrygdType.KODEVERK:
-                return new PensjonTrygdType(kode);
+                return repository().finn(PensjonTrygdType.class, kode);
             default:
                 throw new IllegalArgumentException("Ukjent UtbetaltYtelseType: " + type);
         }
@@ -85,7 +97,7 @@ final class KodeverkMapper {
     public static TemaUnderkategori getTemaUnderkategori(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.TemaUnderkategori kode) {
         return kode == null || kode.getKode().equals("-")
             ? TemaUnderkategori.UDEFINERT
-            : new TemaUnderkategori(kode.getKode());
+            : repository().finn(TemaUnderkategori.class, kode.getKode());
     }
 
     public static no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.TemaUnderkategori getBehandlingsTemaUnderkategori(TemaUnderkategori kode) {
@@ -97,7 +109,7 @@ final class KodeverkMapper {
     public static BekreftetPermisjonStatus getBekreftetPermisjonStatus(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.BekreftetPermisjonStatus kode) {
         return kode == null || kode.getKode().equals("-")
             ? BekreftetPermisjonStatus.UDEFINERT
-            : new BekreftetPermisjonStatus(kode.getKode());
+            : repository().finn(BekreftetPermisjonStatus.class, kode.getKode());
     }
 
     public static no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.BekreftetPermisjonStatus mapBekreftetPermisjonStatus(BekreftetPermisjonStatus status) {
@@ -109,7 +121,7 @@ final class KodeverkMapper {
     public static Fagsystem mapFagsystemFraDto(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.Fagsystem dto) {
         return dto == null
             ? Fagsystem.UDEFINERT
-            : new Fagsystem(dto.getKode());
+            : repository().finn(Fagsystem.class, dto.getKode());
     }
 
     public static no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.Fagsystem mapFagsystemTilDto(Fagsystem kode) {
@@ -169,7 +181,7 @@ final class KodeverkMapper {
     public static ArbeidType mapArbeidType(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.ArbeidType dto) {
         return dto == null
             ? ArbeidType.UDEFINERT
-            : new ArbeidType(dto.getKode());
+            : repository().finn(ArbeidType.class, dto.getKode());
     }
 
     public static no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType mapInntektsmeldingInnsendingsårsak(InntektsmeldingInnsendingsårsak kode) {
@@ -193,79 +205,79 @@ final class KodeverkMapper {
     public static InntektsKilde mapInntektsKildeFraDto(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.InntektskildeType dto) {
         return dto == null
             ? InntektsKilde.UDEFINERT
-            : new InntektsKilde(dto.getKode());
+            : repository().finn(InntektsKilde.class, dto.getKode());
     }
 
     public static ArbeidsforholdHandlingType mapArbeidsforholdHandlingTypeFraDto(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType dto) {
         return dto == null
             ? ArbeidsforholdHandlingType.UDEFINERT
-            : new ArbeidsforholdHandlingType(dto.getKode());
+            : repository().finn(ArbeidsforholdHandlingType.class, dto.getKode());
     }
 
     public static NaturalYtelseType mapNaturalYtelseFraDto(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.NaturalytelseType dto) {
         return dto == null
             ? NaturalYtelseType.UDEFINERT
-            : new NaturalYtelseType(dto.getKode());
+            : repository().finn(NaturalYtelseType.class, dto.getKode());
     }
 
     public static VirksomhetType mapVirksomhetTypeFraDto(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.VirksomhetType dto) {
         return dto == null
             ? VirksomhetType.UDEFINERT
-            : new VirksomhetType(dto.getKode());
+            : repository().finn(VirksomhetType.class, dto.getKode());
     }
 
     public static no.nav.foreldrepenger.abakus.kodeverk.YtelseType mapYtelseTypeFraDto(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.YtelseType dto) {
         return dto == null
             ? no.nav.foreldrepenger.abakus.kodeverk.YtelseType.UDEFINERT
-            : new no.nav.foreldrepenger.abakus.kodeverk.YtelseType(dto.getKode());
+            : repository().finn(no.nav.foreldrepenger.abakus.kodeverk.YtelseType.class, dto.getKode());
     }
 
     public static YtelseStatus mapYtelseStatusFraDto(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.YtelseStatus dto) {
         return dto == null
             ? YtelseStatus.UDEFINERT
-            : new YtelseStatus(dto.getKode());
+            : repository().finn(YtelseStatus.class, dto.getKode());
     }
 
     public static SkatteOgAvgiftsregelType mapSkatteOgAvgiftsregelFraDto(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType dto) {
         return dto == null
             ? SkatteOgAvgiftsregelType.UDEFINERT
-            : new SkatteOgAvgiftsregelType(dto.getKode());
+            : repository().finn(SkatteOgAvgiftsregelType.class, dto.getKode());
     }
 
     public static InntektspostType mapInntektspostTypeFraDto(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.InntektspostType dto) {
         return dto == null
             ? InntektspostType.UDEFINERT
-            : new InntektspostType(dto.getKode());
+            : repository().finn(InntektspostType.class, dto.getKode());
     }
 
     public static PermisjonsbeskrivelseType mapPermisjonbeskrivelseTypeFraDto(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType dto) {
         return dto == null
             ? PermisjonsbeskrivelseType.UDEFINERT
-            : new PermisjonsbeskrivelseType(dto.getKode());
+            : repository().finn(PermisjonsbeskrivelseType.class, dto.getKode());
     }
 
     public static Arbeidskategori mapArbeidskategoriFraDto(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.Arbeidskategori dto) {
         return dto == null
             ? Arbeidskategori.UDEFINERT
-            : new Arbeidskategori(dto.getKode());
+            : repository().finn(Arbeidskategori.class, dto.getKode());
     }
 
     public static InntektPeriodeType mapInntektPeriodeTypeFraDto(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.InntektPeriodeType dto) {
         return dto == null
             ? InntektPeriodeType.UDEFINERT
-            : new InntektPeriodeType(dto.getKode());
+            : repository().finn(InntektPeriodeType.class, dto.getKode());
     }
 
     public static InntektsmeldingInnsendingsårsak mapInntektsmeldingInnsendingsårsakFraDto(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType dto) {
         return dto == null
             ? InntektsmeldingInnsendingsårsak.UDEFINERT
-            : new InntektsmeldingInnsendingsårsak(dto.getKode());
+            : repository().finn(InntektsmeldingInnsendingsårsak.class, dto.getKode());
     }
 
     public static UtsettelseÅrsak mapUtsettelseÅrsakFraDto(no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.UtsettelseÅrsakType dto) {
         return dto == null
             ? UtsettelseÅrsak.UDEFINERT
-            : new UtsettelseÅrsak(dto.getKode());
+            : repository().finn(UtsettelseÅrsak.class, dto.getKode());
     }
 
     public static no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.VirksomhetType mapVirksomhetTypeTilDto(VirksomhetType kode) {

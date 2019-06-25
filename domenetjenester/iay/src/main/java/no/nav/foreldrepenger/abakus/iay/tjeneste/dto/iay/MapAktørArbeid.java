@@ -81,7 +81,7 @@ public class MapAktørArbeid {
         private Permisjon mapPermisjon(PermisjonDto dto, PermisjonBuilder permisjonBuilder) {
             return permisjonBuilder
                 .medPeriode(dto.getPeriode().getFom(), dto.getPeriode().getTom())
-                .medPermisjonsbeskrivelseType(KodeverkMapper.mapPermisjonbeskrivelseTypeFraDto(dto.getType()))
+                .medPermisjonsbeskrivelseType(KodeverkMapper.mapPermisjonbeskrivelseTypeFraDto(dto.getType()).getKode())
                 .medProsentsats(dto.getProsentsats())
                 .build();
         }
@@ -177,17 +177,17 @@ public class MapAktørArbeid {
 
         private ArbeidsforholdRefDto mapArbeidsforholdsId(Arbeidsgiver arbeidsgiver, Yrkesaktivitet yrkesaktivitet) {
             var internRef = yrkesaktivitet.getArbeidsforholdRef();
-            if(internRef == null || internRef.getReferanse() == null) {
+            if (internRef == null || internRef.getReferanse() == null) {
                 return null;
             }
             var eksternRef = arbeidsforholdInformasjon == null
                 ? null
                 : arbeidsforholdInformasjon.finnEkstern(arbeidsgiver, InternArbeidsforholdRef.ref(internRef.getReferanse()));
-            
-            if(eksternRef==null) {
-                throw new IllegalStateException("Savner eksternRef for internRef: "+ internRef);
+
+            if (eksternRef == null) {
+                throw new IllegalStateException("Savner eksternRef for internRef: " + internRef);
             }
-            
+
             return new ArbeidsforholdRefDto(internRef.getReferanse(), eksternRef.getReferanse(),
                 no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.Fagsystem.AAREGISTERET);
         }

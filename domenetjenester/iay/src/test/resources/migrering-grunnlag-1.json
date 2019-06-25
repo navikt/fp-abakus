@@ -1,0 +1,299 @@
+{
+  "data": {
+    "person": {
+      "identType": "AKTØRID",
+      "ident": "1000045441852"
+    },
+    "grunnlagTidspunkt": "2019-01-25T11:43:05.364Z",
+    "grunnlagReferanse": "8abb7315-1516-0abc-e053-2880340a57a0",
+    "koblingReferanse": "88487f4b-f9e7-2133-e053-2880340a6560",
+    "registerGrunnlag": {
+      "opprettetTidspunkt": "2019-01-25T11:43:05.328Z",
+      "eksternReferanse": "8a6bc441-4801-1f94-e053-2880340a2b28",
+      "arbeid": [
+        {
+          "person": {
+            "identType": "AKTØRID",
+            "ident": "1000045441852"
+          },
+          "yrkesaktiviteter": [
+            {
+              "arbeidsgiver": {
+                "identType": "ORGNUMMER",
+                "ident": "975294935"
+              },
+              "arbeidsforholdId": {
+                "abakusReferanse": "6168be56-14fd-4715-b465-8840478cef3e",
+                "eksternReferanse": "0001-0001-20130801",
+                "eksternReferanseSystem": {
+                  "kodeverk": "FAGSYSTEM",
+                  "kode": "AAREGISTERET"
+                }
+              },
+              "arbeidType": {
+                "kodeverk": "ARBEID_TYPE",
+                "kode": "ORDINÆRT_ARBEIDSFORHOLD"
+              },
+              "aktivitetsAvtaler": [
+                {
+                  "periode": {
+                    "fom": "2017-07-01",
+                    "tom": "2017-12-31"
+                  },
+                  "stillingsprosent": 100.00,
+                  "sistLønnsendring": "2017-07-01"
+                },
+                {
+                  "periode": {
+                    "fom": "2013-08-01",
+                    "tom": "9999-12-31"
+                  },
+                  "stillingsprosent": 0.00
+                },
+                {
+                  "periode": {
+                    "fom": "2018-07-01",
+                    "tom": "2018-11-30"
+                  },
+                  "stillingsprosent": 100.00,
+                  "sistLønnsendring": "2018-05-01"
+                },
+                {
+                  "periode": {
+                    "fom": "2018-12-01",
+                    "tom": "9999-12-31"
+                  },
+                  "stillingsprosent": 100.00,
+                  "sistLønnsendring": "2019-01-01"
+                },
+                {
+                  "periode": {
+                    "fom": "2018-01-01",
+                    "tom": "2018-06-30"
+                  },
+                  "stillingsprosent": 100.00,
+                  "sistLønnsendring": "2017-07-01"
+                }
+              ],
+              "permisjoner": [
+                {
+                  "periode": {
+                    "fom": "2015-11-07",
+                    "tom": "2016-07-15"
+                  },
+                  "type": null,
+                  "prosentsats": 100.00
+                },
+                {
+                  "periode": {
+                    "fom": "2018-02-07",
+                    "tom": "2019-12-31"
+                  },
+                  "type": {
+                    "kodeverk": "PERMISJONSBESKRIVELSE_TYPE",
+                    "kode": "VELFERDSPERMISJON"
+                  },
+                  "prosentsats": 100.00
+                },
+                {
+                  "periode": {
+                    "fom": "2015-10-12",
+                    "tom": "2016-07-08"
+                  },
+                  "type": null,
+                  "prosentsats": 100.00
+                },
+                {
+                  "periode": {
+                    "fom": "2017-02-08",
+                    "tom": "2017-10-16"
+                  },
+                  "type": null,
+                  "prosentsats": 100.00
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "inntekter": [
+        {
+          "person": {
+            "identType": "AKTØRID",
+            "ident": "1000045441852"
+          },
+          "utbetalinger": [
+            {
+              "arbeidsgiver": null,
+              "inntektsKilde": {
+                "kodeverk": "INNTEKTS_KILDE",
+                "kode": "INNTEKT_OPPTJENING"
+              },
+              "utbetalingsPoster": [
+                {
+                  "inntektspostType": {
+                    "kodeverk": "INNTEKTSPOST_TYPE",
+                    "kode": "YTELSE"
+                  },
+                  "periode": {
+                    "fom": "2018-12-01",
+                    "tom": "2018-12-31"
+                  },
+                  "beløp": 14720.00,
+                  "ytelseType": {
+                    "kodeverk": "YTELSE_FRA_OFFENTLIGE",
+                    "kode": "AAP"
+                  }
+                }
+              ]
+            },
+            {
+              "arbeidsgiver": {
+                "identType": "ORGNUMMER",
+                "ident": "975294935"
+              },
+              "inntektsKilde": {
+                "kodeverk": "INNTEKTS_KILDE",
+                "kode": "INNTEKT_OPPTJENING"
+              },
+              "utbetalingsPoster": [
+                {
+                  "inntektspostType": {
+                    "kodeverk": "INNTEKTSPOST_TYPE",
+                    "kode": "LØNN"
+                  },
+                  "periode": {
+                    "fom": "2017-11-01",
+                    "tom": "2017-11-30"
+                  },
+                  "beløp": 47445.50
+                },
+                {
+                  "inntektspostType": {
+                    "kodeverk": "INNTEKTSPOST_TYPE",
+                    "kode": "LØNN"
+                  },
+                  "periode": {
+                    "fom": "2017-12-01",
+                    "tom": "2017-12-31"
+                  },
+                  "beløp": 45945.50
+                },
+                {
+                  "inntektspostType": {
+                    "kodeverk": "INNTEKTSPOST_TYPE",
+                    "kode": "LØNN"
+                  },
+                  "periode": {
+                    "fom": "2018-01-01",
+                    "tom": "2018-01-31"
+                  },
+                  "beløp": 45945.25
+                },
+                {
+                  "inntektspostType": {
+                    "kodeverk": "INNTEKTSPOST_TYPE",
+                    "kode": "LØNN"
+                  },
+                  "periode": {
+                    "fom": "2018-02-01",
+                    "tom": "2018-02-28"
+                  },
+                  "beløp": 8482.18
+                },
+                {
+                  "inntektspostType": {
+                    "kodeverk": "INNTEKTSPOST_TYPE",
+                    "kode": "LØNN"
+                  },
+                  "periode": {
+                    "fom": "2018-06-01",
+                    "tom": "2018-06-30"
+                  },
+                  "beløp": 58869.01
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "ytelser": [
+        {
+          "person": {
+            "identType": "AKTØRID",
+            "ident": "1000045441852"
+          },
+          "ytelser": [
+            {
+              "fagsystem": {
+                "kodeverk": "FAGSYSTEM",
+                "kode": "FPSAK"
+              },
+              "ytelseType": {
+                "kodeverk": "YTELSE_TYPE",
+                "kode": "ES"
+              },
+              "periode": {
+                "fom": "2018-09-21",
+                "tom": "2018-09-21"
+              },
+              "status": {
+                "kodeverk": "YTELSE_STATUS",
+                "kode": "UBEH"
+              },
+              "saksnummer": "136528384",
+              "anvisninger": []
+            },
+            {
+              "fagsystem": {
+                "kodeverk": "FAGSYSTEM",
+                "kode": "INFOTRYGD"
+              },
+              "ytelseType": {
+                "kodeverk": "YTELSE_TYPE",
+                "kode": "FP"
+              },
+              "periode": {
+                "fom": "2017-12-26",
+                "tom": "2018-01-03"
+              },
+              "status": {
+                "kodeverk": "YTELSE_STATUS",
+                "kode": "AVSLU"
+              },
+              "temaUnderkategori": {
+                "kodeverk": "TemaUnderkategori",
+                "kode": "FØ"
+              },
+              "anvisninger": []
+            }
+          ]
+        }
+      ]
+    },
+    "arbeidsforholdInformasjon": {
+      "referanser": [
+        {
+          "arbeidsgiver": {
+            "identType": "ORGNUMMER",
+            "ident": "975294935"
+          },
+          "arbeidsforholdId": {
+            "abakusReferanse": "6168be56-14fd-4715-b465-8840478cef3e",
+            "eksternReferanse": "0001-0001-20130801",
+            "eksternReferanseSystem": {
+              "kodeverk": "FAGSYSTEM",
+              "kode": "AAREGISTERET"
+            }
+          }
+        }
+      ],
+      "overstyringer": []
+    }
+  },
+  "aktiv": true,
+  "opplysningsperiode": {
+    "fom": "2017-11-18",
+    "tom": "2019-05-18"
+  }
+}

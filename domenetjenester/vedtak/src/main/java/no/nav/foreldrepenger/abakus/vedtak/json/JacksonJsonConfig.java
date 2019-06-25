@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.ser.std.StringSerializer;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.KodeValidator;
+
 public final class JacksonJsonConfig {
 
     private static final ObjectMapper OM;
@@ -30,6 +32,7 @@ public final class JacksonJsonConfig {
         objectMapper.setVisibility(PropertyAccessor.CREATOR, JsonAutoDetect.Visibility.ANY);
 
         InjectableValues.Std std = new InjectableValues.Std();
+        std.addValue(KodeValidator.class, KodeValidator.HAPPY_VALIDATOR);
         objectMapper.setInjectableValues(std);
         OM = objectMapper;
     }

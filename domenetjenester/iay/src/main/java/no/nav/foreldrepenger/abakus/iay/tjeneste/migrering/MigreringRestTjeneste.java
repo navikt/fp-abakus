@@ -87,6 +87,18 @@ public class MigreringRestTjeneste {
                               @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class)
                               @Valid InntektArbeidYtelseGrunnlagSakSnapshotDto sakSnapshot) throws JsonProcessingException {
 
+        doMigrering(sakSnapshot);
+
+        log.info("Migrert sak={} med {} grunnlag", sakSnapshot.getSaksnummer(), sakSnapshot.getGrunnlag().size());
+        return Response.ok().build();
+    }
+
+    /**
+     * Synling for testing
+     * @param sakSnapshot
+     * @throws JsonProcessingException
+     */
+    void doMigrering(InntektArbeidYtelseGrunnlagSakSnapshotDto sakSnapshot) throws JsonProcessingException {
         var aktørId = new AktørId(sakSnapshot.getAktør().getIdent());
         iayTjeneste.slettAltForSak(aktørId, new Saksnummer(sakSnapshot.getSaksnummer()), kodeverkRepository.finn(YtelseType.class, sakSnapshot.getYtelseType().getKode()));
 
@@ -107,9 +119,6 @@ public class MigreringRestTjeneste {
                 throw new IllegalStateException(e);
             }
         }
-        log.info("Migrert sak={} med {} grunnlag", sakSnapshot.getSaksnummer(), sakSnapshot.getGrunnlag().size());
-
-        return Response.ok().build();
     }
 
     @GET
