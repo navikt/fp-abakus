@@ -329,6 +329,14 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         hentInntektArbeidYtelseForReferanse(nyttGrunnlag.getGrunnlagReferanse()).map(InntektArbeidYtelseGrunnlagEntitet.class::cast)
             .ifPresent(this::slettGrunnlag);
 
+        Optional<InntektArbeidYtelseGrunnlagEntitet> tidligereAggregat = getAktivtInntektArbeidGrunnlag(koblingReferanse);
+
+        if (tidligereAggregat.isPresent() && aktiv) {
+            InntektArbeidYtelseGrunnlagEntitet aggregat = tidligereAggregat.get();
+            aggregat.setAktivt(false);
+            entityManager.persist(aggregat);
+            entityManager.flush();
+        }
         lagreGrunnlag(entitet, koblingReferanse);
         entityManager.flush();
     }
@@ -598,6 +606,9 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
 
     @Override
     public Optional<InntektArbeidYtelseGrunnlag> hentInntektArbeidYtelseForReferanse(GrunnlagReferanse grunnlagReferanse) {
+        if (grunnlagReferanse == null) {
+            return Optional.empty();
+        }
         Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlag = getVersjonAvInntektArbeidYtelseForReferanseId(grunnlagReferanse);
         return grunnlag.map(InntektArbeidYtelseGrunnlag.class::cast);
     }
