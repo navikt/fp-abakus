@@ -95,6 +95,7 @@ public class MigreringRestTjeneste {
 
     /**
      * Synling for testing
+     *
      * @param sakSnapshot
      * @throws JsonProcessingException
      */

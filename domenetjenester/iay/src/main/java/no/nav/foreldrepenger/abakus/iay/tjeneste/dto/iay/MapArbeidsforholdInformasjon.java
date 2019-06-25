@@ -167,12 +167,14 @@ class MapArbeidsforholdInformasjon {
              * I Abakus er disse skilt. ArbeidsforholdRef holder intern abakus referanse (ikke AAREGISTER referanse som i FPSAK)
              */
             String internId = ref.getReferanse();
-
             if (internId != null) {
                 EksternArbeidsforholdRef eksternReferanse = arbeidsforholdInformasjon.finnEkstern(arbeidsgiver, ref);
+                if (eksternReferanse == null || eksternReferanse.getReferanse() == null) {
+                    throw new IllegalStateException("Mangler eksternReferanse for internReferanse=" + ref);
+                }
                 return new ArbeidsforholdRefDto(internId, eksternReferanse.getReferanse());
             }
-            return new ArbeidsforholdRefDto(internId, null);
+            return null;
         }
 
         private Aktør mapAktør(Arbeidsgiver arbeidsgiver) {
