@@ -48,5 +48,10 @@ public class KoblingReferanse {
     public int hashCode() {
         return Objects.hash(referanse);
     }
+    
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() +"<"+referanse+">";
+    }
 
 }
