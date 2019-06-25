@@ -208,6 +208,11 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
         return ArbeidType.AA_REGISTER_TYPER.contains(arbeidType);
     }
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+
     void tilbakestillPermisjon() {
         permisjon.clear();
     }

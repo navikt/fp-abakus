@@ -118,6 +118,11 @@ public class AktørArbeidEntitet extends BaseEntitet implements AktørArbeid, In
             .collect(Collectors.toSet()));
     }
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+
     private boolean skalBrukes(Yrkesaktivitet entitet) {
         return arbeidsforholdInformasjon == null || arbeidsforholdInformasjon.getOverstyringer()
             .stream()

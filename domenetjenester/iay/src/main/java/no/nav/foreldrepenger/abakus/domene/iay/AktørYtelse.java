@@ -19,4 +19,6 @@ public interface AktørYtelse {
      * @return liste av {@link Ytelse}
      */
     Collection<Ytelse> getYtelser();
+
+    Long getId();
 }

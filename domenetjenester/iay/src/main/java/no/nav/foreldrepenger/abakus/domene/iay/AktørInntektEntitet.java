@@ -124,6 +124,11 @@ public class AktørInntektEntitet extends BaseEntitet implements AktørInntekt, 
             .collect(Collectors.toUnmodifiableList());
     }
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+
     public boolean hasValues() {
         return aktørId != null || inntekt != null;
     }

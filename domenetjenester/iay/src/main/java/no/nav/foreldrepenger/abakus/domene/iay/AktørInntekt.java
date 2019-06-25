@@ -40,4 +40,6 @@ public interface AktørInntekt {
      * @return Liste med inntekter per arbeidsgiver
      */
     List<Inntekt> getInntektSammenligningsgrunnlag();
+
+    Long getId();
 }

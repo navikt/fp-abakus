@@ -1,10 +1,12 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -126,10 +128,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
             query.setParameter("aktivt", kunAktive);
         }
 
-        var grunnlag = query.getResultStream().map(g -> {
-            g.taHensynTilBetraktninger();
-            return (InntektArbeidYtelseGrunnlag) g;
-        }).collect(Collectors.toList());
+        var grunnlag = query.getResultStream().map(g -> (InntektArbeidYtelseGrunnlag) g).collect(Collectors.toList());
         return grunnlag;
     }
 
@@ -396,39 +395,46 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
 
     @Deprecated(forRemoval = true)
     private void slettAggregat(InntektArbeidYtelseAggregat aggregat) {
-        entityManager.remove(aggregat);
-        aggregat.getAktørArbeid()
-            .forEach(aa -> {
-                entityManager.remove(aa);
-                ((AktørArbeidEntitet) aa).hentAlleYrkesaktiviter()
-                    .forEach(yr -> {
-                        entityManager.remove(yr);
-                        yr.getAlleAktivitetsAvtaler()
-                            .forEach(entityManager::remove);
-                        yr.getPermisjon()
-                            .forEach(entityManager::remove);
-                    });
-            });
-        aggregat.getAktørInntekt()
-            .forEach(aa -> {
-                entityManager.remove(aa);
-                ((AktørInntektEntitet) aa).getInntekt()
-                    .forEach(yr -> {
-                        entityManager.remove(yr);
-                        yr.getInntektspost()
-                            .forEach(entityManager::remove);
-                    });
-            });
-        aggregat.getAktørYtelse()
-            .forEach(aa -> {
-                entityManager.remove(aa);
-                aa.getYtelser()
-                    .forEach(yr -> {
-                        entityManager.remove(yr);
-                        yr.getYtelseGrunnlag().ifPresent(entityManager::remove);
-                        yr.getYtelseAnvist().forEach(entityManager::remove);
-                    });
-            });
+        Set<Long> aktørArbeider = aggregat.getAktørArbeid().stream().map(AktørArbeid::getId).collect(Collectors.toSet());
+        Set<Long> aktørInntekt = aggregat.getAktørInntekt().stream().map(AktørInntekt::getId).collect(Collectors.toSet());
+        Set<Long> aktørYtelse = aggregat.getAktørYtelse().stream().map(AktørYtelse::getId).collect(Collectors.toSet());
+        Set<Long> yrkesaktivteter = aggregat.getAktørArbeid().stream().map(AktørArbeid::getYrkesaktiviteter).flatMap(Collection::stream).map(Yrkesaktivitet::getId).collect(Collectors.toSet());
+        Set<Long> inntekter = aggregat.getAktørInntekt().stream().map(AktørInntektEntitet.class::cast).map(AktørInntektEntitet::getInntekt).flatMap(Collection::stream).map(Inntekt::getId).collect(Collectors.toSet());
+        Set<Long> ytelser = aggregat.getAktørYtelse().stream().map(AktørYtelse::getYtelser).flatMap(Collection::stream).map(Ytelse::getId).collect(Collectors.toSet());
+
+        entityManager.createNativeQuery("DELETE FROM iay_permisjon WHERE yrkesaktivitet_id IN (:yrkesaktivteter)")
+            .setParameter("yrkesaktivteter", yrkesaktivteter)
+            .executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM iay_aktivitets_avtale WHERE yrkesaktivitet_id IN (:yrkesaktivteter)")
+            .setParameter("yrkesaktivteter", yrkesaktivteter)
+            .executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM iay_yrkesaktivitet WHERE aktoer_arbeid_id IN (:aktørArbeid)")
+            .setParameter("aktørArbeid", aktørArbeider)
+            .executeUpdate();
+
+        entityManager.createNativeQuery("DELETE FROM iay_inntektspost WHERE inntekt_id IN (:inntekter)")
+            .setParameter("inntekter", inntekter)
+            .executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM iay_inntekt WHERE aktoer_inntekt_id IN (:aktørInntekt)")
+            .setParameter("aktørInntekt", aktørInntekt)
+            .executeUpdate();
+
+        entityManager.createNativeQuery("DELETE FROM iay_ytelse_anvist WHERE ytelse_id IN (:ytelser)")
+            .setParameter("ytelser", ytelser)
+            .executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM iay_ytelse_stoerrelse WHERE ytelse_grunnlag_id IN (SELECT id FROM iay_ytelse_grunnlag WHERE ytelse_id IN (:ytelser))")
+            .setParameter("ytelser", ytelser)
+            .executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM iay_ytelse_grunnlag WHERE ytelse_id IN (:ytelser)")
+            .setParameter("ytelser", ytelser)
+            .executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM iay_relatert_ytelse WHERE aktoer_ytelse_id IN (:aktørYtelse)")
+            .setParameter("aktørYtelse", aktørYtelse)
+            .executeUpdate();
+
+        entityManager.createNativeQuery("DELETE FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef")
+            .setParameter("eksterRef", aggregat.getEksternReferanse().toString())
+            .executeUpdate();
     }
 
     private void lagreGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, KoblingReferanse koblingReferanse) {
@@ -543,7 +549,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     private void lagreAktørArbeid(AktørArbeid aktørArbeid) {
         for (Yrkesaktivitet yrkesaktivitet : ((AktørArbeidEntitet) aktørArbeid).hentAlleYrkesaktiviter()) {
             entityManager.persist(yrkesaktivitet);
-            for (AktivitetsAvtale aktivitetsAvtale : ((YrkesaktivitetEntitet) yrkesaktivitet).getAlleAktivitetsAvtaler()) {
+            for (AktivitetsAvtale aktivitetsAvtale : yrkesaktivitet.getAlleAktivitetsAvtaler()) {
                 entityManager.persist(aktivitetsAvtale);
             }
             for (Permisjon permisjon : yrkesaktivitet.getPermisjon()) {

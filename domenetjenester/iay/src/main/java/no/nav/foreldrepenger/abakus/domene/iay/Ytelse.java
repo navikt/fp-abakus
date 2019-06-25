@@ -27,4 +27,6 @@ public interface Ytelse {
     Optional<YtelseGrunnlag> getYtelseGrunnlag();
 
     Collection<YtelseAnvist> getYtelseAnvist();
+
+    Long getId();
 }

@@ -26,4 +26,6 @@ public interface AktørArbeid {
      * @return Liste av {@link Yrkesaktivitet}
      */
     Collection<Yrkesaktivitet> getFrilansOppdrag();
+
+    Long getId();
 }

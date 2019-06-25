@@ -88,6 +88,11 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
         return Collections.unmodifiableSet(ytelser.stream().filter(YtelseEntitet::skalMedEtterSkjæringstidspunktVurdering).collect(Collectors.toSet()));
     }
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+
     void setInntektArbeidYtelser(InntektArbeidYtelseAggregatEntitet inntektArbeidYtelser) {
         this.inntektArbeidYtelser = inntektArbeidYtelser;
     }

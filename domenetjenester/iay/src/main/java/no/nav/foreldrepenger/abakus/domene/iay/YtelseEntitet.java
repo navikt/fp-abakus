@@ -211,6 +211,11 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
         return Collections.unmodifiableCollection(ytelseAnvist);
     }
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+
     void leggTilYtelseAnvist(YtelseAnvist ytelseAnvist) {
         YtelseAnvistEntitet ytelseAnvistEntitet = (YtelseAnvistEntitet) ytelseAnvist;
         ytelseAnvistEntitet.setYtelse(this);

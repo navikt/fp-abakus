@@ -27,4 +27,5 @@ public interface Inntekt {
      */
     Collection<Inntektspost> getInntektspost();
 
+    Long getId();
 }

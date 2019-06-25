@@ -86,4 +86,5 @@ public interface Yrkesaktivitet {
 
     boolean erArbeidsforhold();
 
+    Long getId();
 }

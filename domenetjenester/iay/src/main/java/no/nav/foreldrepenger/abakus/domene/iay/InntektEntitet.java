@@ -127,6 +127,11 @@ public class InntektEntitet extends BaseEntitet implements Inntekt, IndexKey {
             .collect(Collectors.toSet()));
     }
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+
     void leggTilInntektspost(Inntektspost inntektspost) {
         InntektspostEntitet inntektspostEntitet = (InntektspostEntitet) inntektspost;
         inntektspostEntitet.setInntekt(this);
