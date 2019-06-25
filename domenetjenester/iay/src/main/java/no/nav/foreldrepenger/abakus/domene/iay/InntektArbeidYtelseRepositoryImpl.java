@@ -398,68 +398,74 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
             "IN (SELECT id FROM iay_yrkesaktivitet WHERE aktoer_arbeid_id " +
             "IN (SELECT id FROM iay_aktoer_arbeid WHERE inntekt_arbeid_ytelser_id " +
             "IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef)))")
-            .setParameter("eksterRef", aggregat.getEksternReferanse().toString())
+            .setParameter("eksterRef", aggregat.getEksternReferanse())
             .executeUpdate();
         entityManager.createNativeQuery("DELETE FROM iay_aktivitets_avtale WHERE yrkesaktivitet_id " +
             "IN (SELECT id FROM iay_yrkesaktivitet WHERE aktoer_arbeid_id " +
             "IN (SELECT id FROM iay_aktoer_arbeid WHERE inntekt_arbeid_ytelser_id " +
             "IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef)))")
-            .setParameter("eksterRef", aggregat.getEksternReferanse().toString())
+            .setParameter("eksterRef", aggregat.getEksternReferanse())
             .executeUpdate();
         entityManager.createNativeQuery("DELETE FROM iay_yrkesaktivitet WHERE aktoer_arbeid_id " +
             "IN (SELECT id FROM iay_aktoer_arbeid WHERE inntekt_arbeid_ytelser_id " +
             "IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef))")
-            .setParameter("eksterRef", aggregat.getEksternReferanse().toString())
+            .setParameter("eksterRef", aggregat.getEksternReferanse())
             .executeUpdate();
         entityManager.createNativeQuery("DELETE FROM iay_aktoer_arbeid WHERE inntekt_arbeid_ytelser_id " +
             "IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef)")
-            .setParameter("eksterRef", aggregat.getEksternReferanse().toString())
+            .setParameter("eksterRef", aggregat.getEksternReferanse())
             .executeUpdate();
 
         entityManager.createNativeQuery("DELETE FROM iay_inntektspost WHERE inntekt_id " +
             "IN (SELECT id FROM iay_inntekt WHERE aktoer_inntekt_id " +
             "IN (SELECT id FROM iay_aktoer_inntekt WHERE inntekt_arbeid_ytelser_id " +
             "IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef)))")
-            .setParameter("eksterRef", aggregat.getEksternReferanse().toString())
+            .setParameter("eksterRef", aggregat.getEksternReferanse())
             .executeUpdate();
         entityManager.createNativeQuery("DELETE FROM iay_inntekt WHERE aktoer_inntekt_id " +
             "IN (SELECT id FROM iay_aktoer_inntekt WHERE inntekt_arbeid_ytelser_id " +
             "IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef))")
-            .setParameter("eksterRef", aggregat.getEksternReferanse().toString())
+            .setParameter("eksterRef", aggregat.getEksternReferanse())
             .executeUpdate();
         entityManager.createNativeQuery("DELETE FROM iay_aktoer_inntekt WHERE inntekt_arbeid_ytelser_id " +
             "IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef)")
-            .setParameter("eksterRef", aggregat.getEksternReferanse().toString())
+            .setParameter("eksterRef", aggregat.getEksternReferanse())
             .executeUpdate();
 
         entityManager.createNativeQuery("DELETE FROM iay_ytelse_anvist WHERE ytelse_id " +
             "IN (SELECT id FROM iay_relatert_ytelse WHERE aktoer_ytelse_id " +
             "IN (SELECT id FROM iay_aktoer_ytelse WHERE inntekt_arbeid_ytelser_id " +
             "IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef)))")
-            .setParameter("eksterRef", aggregat.getEksternReferanse().toString())
+            .setParameter("eksterRef", aggregat.getEksternReferanse())
             .executeUpdate();
         entityManager.createNativeQuery("DELETE FROM iay_ytelse_stoerrelse WHERE ytelse_grunnlag_id IN (SELECT id FROM iay_ytelse_grunnlag WHERE ytelse_id " +
             "IN (SELECT id FROM iay_relatert_ytelse WHERE aktoer_ytelse_id " +
             "IN (SELECT id FROM iay_aktoer_ytelse WHERE inntekt_arbeid_ytelser_id " +
             "IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef))))")
-            .setParameter("eksterRef", aggregat.getEksternReferanse().toString())
+            .setParameter("eksterRef", aggregat.getEksternReferanse())
             .executeUpdate();
         entityManager.createNativeQuery("DELETE FROM iay_ytelse_grunnlag WHERE ytelse_id IN (SELECT id FROM iay_relatert_ytelse WHERE aktoer_ytelse_id " +
             "IN (SELECT id FROM iay_aktoer_ytelse WHERE inntekt_arbeid_ytelser_id " +
             "IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef)))")
-            .setParameter("eksterRef", aggregat.getEksternReferanse().toString())
+            .setParameter("eksterRef", aggregat.getEksternReferanse())
             .executeUpdate();
         entityManager.createNativeQuery("DELETE FROM iay_relatert_ytelse WHERE aktoer_ytelse_id IN (SELECT id FROM iay_aktoer_ytelse WHERE inntekt_arbeid_ytelser_id " +
             "IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef))")
-            .setParameter("eksterRef", aggregat.getEksternReferanse().toString())
+            .setParameter("eksterRef", aggregat.getEksternReferanse())
             .executeUpdate();
         entityManager.createNativeQuery("DELETE FROM iay_aktoer_ytelse WHERE inntekt_arbeid_ytelser_id " +
             "IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef)")
-            .setParameter("eksterRef", aggregat.getEksternReferanse().toString())
+            .setParameter("eksterRef", aggregat.getEksternReferanse())
             .executeUpdate();
 
+        entityManager.createNativeQuery("UPDATE gr_arbeid_inntekt set register_id = null WHERE register_id IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef)")
+            .setParameter("eksterRef", aggregat.getEksternReferanse())
+            .executeUpdate();
+        entityManager.createNativeQuery("UPDATE gr_arbeid_inntekt set saksbehandlet_id = null WHERE saksbehandlet_id IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef)")
+            .setParameter("eksterRef", aggregat.getEksternReferanse())
+            .executeUpdate();
         entityManager.createNativeQuery("DELETE FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef")
-            .setParameter("eksterRef", aggregat.getEksternReferanse().toString())
+            .setParameter("eksterRef", aggregat.getEksternReferanse())
             .executeUpdate();
     }
 
