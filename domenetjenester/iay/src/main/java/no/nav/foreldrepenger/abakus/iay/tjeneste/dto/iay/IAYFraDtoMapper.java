@@ -52,14 +52,9 @@ public class IAYFraDtoMapper {
     }
 
     /**
-     * Til bruk for migrering (sender inn registerdata, istdf. å hente fra registerne.). Dersom finnes fra før vil denne kaste exception.
+     * Til bruk for migrering (sender inn registerdata, istdf. å hente fra registerne.).
      */
     public InntektArbeidYtelseGrunnlag mapTilGrunnlagInklusivRegisterdata(InntektArbeidYtelseGrunnlagDto dto) {
-
-        var kladd = hentGrunnlag(dto);
-        if (kladd.isPresent()) {
-            throw new IllegalStateException("Kan ikke oppdatere grunnlag med registerdata:" + dto.getGrunnlagReferanse());
-        }
 
         var builder = InntektArbeidYtelseGrunnlagBuilder.ny(UUID.fromString(dto.getGrunnlagReferanse()), dto.getGrunnlagTidspunkt().toLocalDateTime());
 
