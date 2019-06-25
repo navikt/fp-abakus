@@ -398,28 +398,37 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     private void slettAggregat(InntektArbeidYtelseAggregat aggregat) {
         entityManager.remove(aggregat);
         aggregat.getAktørArbeid()
-            .forEach(aa -> ((AktørArbeidEntitet) aa).hentAlleYrkesaktiviter()
-                .forEach(yr -> {
-                    entityManager.remove(yr);
-                    yr.getAlleAktivitetsAvtaler()
-                        .forEach(entityManager::remove);
-                    yr.getPermisjon()
-                        .forEach(entityManager::remove);
-                }));
+            .forEach(aa -> {
+                entityManager.remove(aa);
+                ((AktørArbeidEntitet) aa).hentAlleYrkesaktiviter()
+                    .forEach(yr -> {
+                        entityManager.remove(yr);
+                        yr.getAlleAktivitetsAvtaler()
+                            .forEach(entityManager::remove);
+                        yr.getPermisjon()
+                            .forEach(entityManager::remove);
+                    });
+            });
         aggregat.getAktørInntekt()
-            .forEach(aa -> ((AktørInntektEntitet) aa).getInntekt()
-                .forEach(yr -> {
-                    entityManager.remove(yr);
-                    yr.getInntektspost()
-                        .forEach(entityManager::remove);
-                }));
+            .forEach(aa -> {
+                entityManager.remove(aa);
+                ((AktørInntektEntitet) aa).getInntekt()
+                    .forEach(yr -> {
+                        entityManager.remove(yr);
+                        yr.getInntektspost()
+                            .forEach(entityManager::remove);
+                    });
+            });
         aggregat.getAktørYtelse()
-            .forEach(aa -> aa.getYtelser()
-                .forEach(yr -> {
-                    entityManager.remove(yr);
-                    yr.getYtelseGrunnlag().ifPresent(entityManager::remove);
-                    yr.getYtelseAnvist().forEach(entityManager::remove);
-                }));
+            .forEach(aa -> {
+                entityManager.remove(aa);
+                aa.getYtelser()
+                    .forEach(yr -> {
+                        entityManager.remove(yr);
+                        yr.getYtelseGrunnlag().ifPresent(entityManager::remove);
+                        yr.getYtelseAnvist().forEach(entityManager::remove);
+                    });
+            });
     }
 
     private void lagreGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, KoblingReferanse koblingReferanse) {
