@@ -118,11 +118,13 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
             " FROM InntektArbeidGrunnlag gr" +
             " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
             " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId " + //NOSONAR
-            " AND gr.aktiv = :aktivt", InntektArbeidYtelseGrunnlagEntitet.class);
+            (kunAktive ? " AND gr.aktiv = :aktivt" : ""), InntektArbeidYtelseGrunnlagEntitet.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("ref", saksnummer);
         query.setParameter("ytelse", ytelseType);
-        query.setParameter("aktivt", kunAktive);
+        if (kunAktive) {
+            query.setParameter("aktivt", kunAktive);
+        }
 
         var grunnlag = query.getResultStream().map(g -> {
             g.taHensynTilBetraktninger();
