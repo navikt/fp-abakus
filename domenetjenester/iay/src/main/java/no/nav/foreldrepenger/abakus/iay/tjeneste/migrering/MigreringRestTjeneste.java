@@ -88,6 +88,7 @@ public class MigreringRestTjeneste {
                               @Valid InntektArbeidYtelseGrunnlagSakSnapshotDto sakSnapshot) throws JsonProcessingException {
 
         var aktørId = new AktørId(sakSnapshot.getAktør().getIdent());
+        iayTjeneste.slettAltForSak(aktørId, new Saksnummer(sakSnapshot.getSaksnummer()), kodeverkRepository.finn(YtelseType.class, sakSnapshot.getYtelseType().getKode()));
 
         for (InntektArbeidYtelseGrunnlagSakSnapshotDto.Konvolutt konvolutt : sakSnapshot.getGrunnlag()) {
             try {

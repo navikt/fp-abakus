@@ -99,4 +99,15 @@ public interface InntektArbeidYtelseTjeneste {
     Optional<OppgittOpptjeningEntitet> hentOppgittOpptjeningFor(UUID oppgittOpptjeningEksternReferanse);
 
     Optional<InntektArbeidYtelseAggregatEntitet> hentIAYAggregatFor(UUID eksternReferanse);
+
+    /**
+     * For migrering
+     *
+     * @param aktørId
+     * @param saksnummer
+     * @param ytelseType
+     * @deprecated For migrering
+     */
+    @Deprecated(forRemoval = true)
+    void slettAltForSak(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType);
 }

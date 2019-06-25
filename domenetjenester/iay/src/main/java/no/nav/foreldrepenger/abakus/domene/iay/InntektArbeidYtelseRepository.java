@@ -62,4 +62,15 @@ public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRe
     List<InntektArbeidYtelseGrunnlag> hentAlleInntektArbeidYtelseGrunnlagFor(AktørId aktørId, KoblingReferanse koblingReferanse, boolean kunAktive);
 
     Optional<InntektArbeidYtelseAggregatEntitet> hentIAYAggregatFor(UUID eksternReferanse);
+
+    /**
+     * Kun for migrering
+     *
+     * @param aktørId
+     * @param saksnummer
+     * @param ytelseType
+     * @deprecated Kun for migrering
+     */
+    @Deprecated(forRemoval = true)
+    void slettAltForSak(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType);
 }

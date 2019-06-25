@@ -113,6 +113,11 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
     }
 
     @Override
+    public void slettAltForSak(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
+        repository.slettAltForSak(aktørId, saksnummer, ytelseType);
+    }
+
+    @Override
     public KoblingReferanse hentKoblingReferanse(GrunnlagReferanse grunnlagReferanse) {
         return repository.hentKoblingReferanseFor(grunnlagReferanse);
     }

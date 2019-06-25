@@ -65,13 +65,13 @@ public class IAYFraDtoMapper {
      * @see #mapTilGrunnlagInklusivRegisterdata(InntektArbeidYtelseGrunnlagDto)
      */
     public InntektArbeidYtelseGrunnlag mapTilGrunnlagInklusivRegisterdata(InntektArbeidYtelseGrunnlagDto dto, InntektArbeidYtelseGrunnlagBuilder builder) {
-        
+
         // ta med registerdata til grunnlaget
         mapRegisterDataTilMigrering(dto, builder);
-        
+
         // ta saksbehandler når vi er sikker på å ha fått med register først
         mapSaksbehandlerDataTilBuilder(dto, builder);
-        
+
         mapTilGrunnlagBuilder(dto, builder);
 
         return builder.build();
@@ -119,7 +119,7 @@ public class IAYFraDtoMapper {
         if (overstyrt != null) {
             Optional<InntektArbeidYtelseAggregatEntitet> aggregatEntitet = iayTjeneste.hentIAYAggregatFor(overstyrt.getEksternReferanse());
             if (aggregatEntitet.isPresent()) {
-                InntektArbeidYtelseAggregatBuilder aggregatBuilder = InntektArbeidYtelseAggregatBuilder.pekeTil(aggregatEntitet.get(), VersjonType.SAKSBEHANDLET);
+                var aggregatBuilder = InntektArbeidYtelseAggregatBuilder.pekeTil(aggregatEntitet.get(), VersjonType.SAKSBEHANDLET);
                 builder.medData(aggregatBuilder);
                 return;
             }
@@ -140,7 +140,7 @@ public class IAYFraDtoMapper {
 
         builder.setInntektsmeldinger(inntektsmeldinger);
         builder.medInformasjon(arbeidsforholdInformasjon);
-        
+
         var oppgittOpptjening = new MapOppgittOpptjening(iayTjeneste, kodeverkRepository).mapFraDto(dto.getOppgittOpptjening());
         builder.medOppgittOpptjening(oppgittOpptjening);
     }

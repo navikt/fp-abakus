@@ -40,6 +40,7 @@ import no.nav.foreldrepenger.abakus.felles.diff.DiffEntity;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseEntityGraph;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
@@ -96,6 +97,15 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         query.setParameter("eksternReferanse", eksternReferanse);
 
         return HibernateVerktøy.hentUniktResultat(query);
+    }
+
+    @Override
+    public void slettAltForSak(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
+        hentAlleInntektArbeidYtelseGrunnlagFor(aktørId, saksnummer, ytelseType, false)
+            .stream()
+            .map(InntektArbeidYtelseGrunnlagEntitet.class::cast)
+            .forEach(this::slettGrunnlag);
+        entityManager.flush();
     }
 
     @Override
@@ -325,12 +335,8 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     public void lagreMigrertGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, KoblingReferanse koblingReferanse, boolean aktiv) {
         InntektArbeidYtelseGrunnlagEntitet entitet = (InntektArbeidYtelseGrunnlagEntitet) nyttGrunnlag;
         entitet.setAktivt(aktiv);
-        // Sjekker om grunnlaget finnes fra før. Hvis tilfelle så slettes dette.
-        hentInntektArbeidYtelseForReferanse(nyttGrunnlag.getGrunnlagReferanse()).map(InntektArbeidYtelseGrunnlagEntitet.class::cast)
-            .ifPresent(this::slettGrunnlag);
 
         Optional<InntektArbeidYtelseGrunnlagEntitet> tidligereAggregat = getAktivtInntektArbeidGrunnlag(koblingReferanse);
-
         if (tidligereAggregat.isPresent() && aktiv) {
             InntektArbeidYtelseGrunnlagEntitet aggregat = tidligereAggregat.get();
             aggregat.setAktivt(false);
@@ -345,10 +351,11 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     private void slettGrunnlag(InntektArbeidYtelseGrunnlagEntitet grunnlag) {
         log.info("[MIGRERING] Mottatt nytt grunnlag med samme referanse. Sletter grunnlag med grunnlagsref={}", grunnlag.getGrunnlagReferanse());
         entityManager.remove(grunnlag);
+        grunnlag.getRegisterVersjon().ifPresent(this::slettAggregat);
+        grunnlag.getSaksbehandletVersjon().ifPresent(this::slettAggregat);
         grunnlag.getInntektsmeldinger().ifPresent(this::slettInntektsmeldinger);
         grunnlag.getArbeidsforholdInformasjon().ifPresent(this::slettInformasjon);
-
-        entityManager.flush();
+        grunnlag.getOppgittOpptjening().ifPresent(this::slettOppgittOpptjening);
     }
 
     @Deprecated(forRemoval = true)
@@ -371,7 +378,46 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
             im.getNaturalYtelser().forEach(entityManager::remove);
             im.getUtsettelsePerioder().forEach(entityManager::remove);
         });
+    }
 
+    @Deprecated(forRemoval = true)
+    private void slettOppgittOpptjening(OppgittOpptjening oppgittOpptjening) {
+        entityManager.remove(oppgittOpptjening);
+        oppgittOpptjening.getAnnenAktivitet().forEach(entityManager::remove);
+        oppgittOpptjening.getEgenNæring().forEach(entityManager::remove);
+        oppgittOpptjening.getOppgittArbeidsforhold().forEach(entityManager::remove);
+        oppgittOpptjening.getFrilans().ifPresent(it -> {
+            entityManager.remove(it);
+            it.getFrilansoppdrag().forEach(entityManager::remove);
+        });
+    }
+
+    @Deprecated(forRemoval = true)
+    private void slettAggregat(InntektArbeidYtelseAggregat aggregat) {
+        entityManager.remove(aggregat);
+        aggregat.getAktørArbeid()
+            .forEach(aa -> ((AktørArbeidEntitet) aa).hentAlleYrkesaktiviter()
+                .forEach(yr -> {
+                    entityManager.remove(yr);
+                    yr.getAlleAktivitetsAvtaler()
+                        .forEach(entityManager::remove);
+                    yr.getPermisjon()
+                        .forEach(entityManager::remove);
+                }));
+        aggregat.getAktørInntekt()
+            .forEach(aa -> ((AktørInntektEntitet) aa).getInntekt()
+                .forEach(yr -> {
+                    entityManager.remove(yr);
+                    yr.getInntektspost()
+                        .forEach(entityManager::remove);
+                }));
+        aggregat.getAktørYtelse()
+            .forEach(aa -> aa.getYtelser()
+                .forEach(yr -> {
+                    entityManager.remove(yr);
+                    yr.getYtelseGrunnlag().ifPresent(entityManager::remove);
+                    yr.getYtelseAnvist().forEach(entityManager::remove);
+                }));
     }
 
     private void lagreGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, KoblingReferanse koblingReferanse) {
