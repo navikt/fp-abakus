@@ -49,4 +49,10 @@ public class KoblingReferanse {
         return Objects.hash(referanse);
     }
 
+    @Override
+    public String toString() {
+        return getClass().getName() + "{" +
+            "referanse=" + referanse +
+            '}';
+    }
 }
