@@ -344,80 +344,34 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     @Deprecated(forRemoval = true)
     private void slettGrunnlag(InntektArbeidYtelseGrunnlagEntitet grunnlag) {
         log.info("[MIGRERING] Mottatt nytt grunnlag med samme referanse. Sletter grunnlag med grunnlagsref={}", grunnlag.getGrunnlagReferanse());
-        grunnlag.getRegisterVersjon().ifPresent(this::slettAggregat);
-        grunnlag.getSaksbehandletVersjon().ifPresent(this::slettAggregat);
+        entityManager.remove(grunnlag);
         grunnlag.getInntektsmeldinger().ifPresent(this::slettInntektsmeldinger);
         grunnlag.getArbeidsforholdInformasjon().ifPresent(this::slettInformasjon);
-        grunnlag.getOppgittOpptjening().ifPresent(this::slettOppgittOpptjening);
 
-        entityManager.remove(grunnlag);
         entityManager.flush();
     }
 
     @Deprecated(forRemoval = true)
     private void slettInformasjon(ArbeidsforholdInformasjon arbeidsforholdInformasjon) {
+        entityManager.remove(arbeidsforholdInformasjon);
         arbeidsforholdInformasjon.getOverstyringer().forEach(ov -> {
-            ov.getArbeidsforholdOverstyrtePerioder().forEach(entityManager::remove);
             entityManager.remove(ov);
+            ov.getArbeidsforholdOverstyrtePerioder().forEach(entityManager::remove);
         });
         arbeidsforholdInformasjon.getArbeidsforholdReferanser().forEach(entityManager::remove);
-
-        entityManager.remove(arbeidsforholdInformasjon);
-    }
-
-    @Deprecated(forRemoval = true)
-    private void slettOppgittOpptjening(OppgittOpptjening oppgittOpptjening) {
-        oppgittOpptjening.getAnnenAktivitet().forEach(entityManager::remove);
-        oppgittOpptjening.getEgenNæring().forEach(entityManager::remove);
-        oppgittOpptjening.getOppgittArbeidsforhold().forEach(entityManager::remove);
-        oppgittOpptjening.getFrilans().ifPresent(it -> {
-            it.getFrilansoppdrag().forEach(entityManager::remove);
-            entityManager.remove(it);
-        });
-
-        entityManager.remove(oppgittOpptjening);
     }
 
     @Deprecated(forRemoval = true)
     private void slettInntektsmeldinger(InntektsmeldingAggregat inntektsmeldinger) {
+        entityManager.remove(inntektsmeldinger);
         inntektsmeldinger.getAlleInntektsmeldinger().forEach(im -> {
+            entityManager.remove(im);
             im.getEndringerRefusjon().forEach(entityManager::remove);
             im.getGraderinger().forEach(entityManager::remove);
             im.getNaturalYtelser().forEach(entityManager::remove);
             im.getUtsettelsePerioder().forEach(entityManager::remove);
-
-            entityManager.remove(im);
         });
 
-        entityManager.remove(inntektsmeldinger);
-    }
-
-    @Deprecated(forRemoval = true)
-    private void slettAggregat(InntektArbeidYtelseAggregat aggregat) {
-        aggregat.getAktørArbeid()
-            .forEach(aa -> ((AktørArbeidEntitet) aa).hentAlleYrkesaktiviter()
-                .forEach(yr -> {
-                    yr.getAlleAktivitetsAvtaler()
-                        .forEach(entityManager::remove);
-                    yr.getPermisjon()
-                        .forEach(entityManager::remove);
-                    entityManager.remove(yr);
-                }));
-        aggregat.getAktørInntekt()
-            .forEach(aa -> ((AktørInntektEntitet) aa).getInntekt()
-                .forEach(yr -> {
-                    yr.getInntektspost()
-                        .forEach(entityManager::remove);
-                    entityManager.remove(yr);
-                }));
-        aggregat.getAktørYtelse()
-            .forEach(aa -> aa.getYtelser()
-                .forEach(yr -> {
-                    yr.getYtelseGrunnlag().ifPresent(entityManager::remove);
-                    yr.getYtelseAnvist().forEach(entityManager::remove);
-                    entityManager.remove(yr);
-                }));
-        entityManager.remove(aggregat);
     }
 
     private void lagreGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, KoblingReferanse koblingReferanse) {
