@@ -41,8 +41,10 @@ class MapArbeidsforholdInformasjon {
         ArbeidsforholdInformasjonBuilder map(ArbeidsforholdInformasjon dto) {
             var eksisterende = grunnlagBuilder.getArbeidsforholdInformasjon();
             var builder = ArbeidsforholdInformasjonBuilder.builder(eksisterende);
-            dto.getOverstyringer().stream().map(ov -> mapArbeidsforholdOverstyring(ov, builder)).forEach(builder::leggTil);
-            dto.getReferanser().stream().map(this::mapArbeidsforholdReferanse).forEach(builder::leggTilNyReferanse);
+            if (dto != null) {
+                dto.getOverstyringer().stream().map(ov -> mapArbeidsforholdOverstyring(ov, builder)).forEach(builder::leggTil);
+                dto.getReferanser().stream().map(this::mapArbeidsforholdReferanse).forEach(builder::leggTilNyReferanse);
+            }
             return builder;
         }
 

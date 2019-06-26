@@ -5,6 +5,7 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -131,7 +132,9 @@ public class MigreringRestTjeneste {
 
         Map<String, Object> responsMap = new HashMap<>();
 
-        responsMap.put("saksnummer", koblingTjeneste.hentAlleSaksnummer());
+        List<Saksnummer> value = koblingTjeneste.hentAlleSaksnummer();
+        responsMap.put("saksnummer", value);
+        responsMap.put("antallSaker", value.size());
         responsMap.put("iay", repository.hentStats());
 
         return Response.ok(responsMap).build();
