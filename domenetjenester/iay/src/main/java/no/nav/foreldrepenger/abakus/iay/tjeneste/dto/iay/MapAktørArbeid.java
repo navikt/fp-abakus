@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.jboss.weld.exceptions.IllegalStateException;
-
 import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtale;
 import no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
@@ -180,12 +178,10 @@ public class MapAktørArbeid {
             if (internRef == null || internRef.getReferanse() == null) {
                 return null;
             }
-            var eksternRef = arbeidsforholdInformasjon == null
-                ? null
-                : arbeidsforholdInformasjon.finnEkstern(arbeidsgiver, InternArbeidsforholdRef.ref(internRef.getReferanse()));
+            var eksternRef = arbeidsforholdInformasjon == null ? null : arbeidsforholdInformasjon.finnEkstern(arbeidsgiver, internRef);
 
-            if (eksternRef == null) {
-                throw new IllegalStateException("Savner eksternRef for internRef: " + internRef);
+            if (eksternRef == null || eksternRef.getReferanse() == null) {
+                throw new java.lang.IllegalStateException("Mapping til Abakus: Savner eksternRef for internRef: " + internRef);
             }
 
             return new ArbeidsforholdRefDto(internRef.getReferanse(), eksternRef.getReferanse(),

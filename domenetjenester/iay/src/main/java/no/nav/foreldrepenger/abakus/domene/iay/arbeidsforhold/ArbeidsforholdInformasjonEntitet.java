@@ -25,7 +25,9 @@ import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
-/** Gjelder ekstra informasjon om arbeidsforhold (overstyringer, angitte eksterne/interne referanser for arbeidsforhold). */
+/**
+ * Gjelder ekstra informasjon om arbeidsforhold (overstyringer, angitte eksterne/interne referanser for arbeidsforhold).
+ */
 @Table(name = "IAY_INFORMASJON")
 @Entity(name = "ArbeidsforholdInformasjon")
 public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements ArbeidsforholdInformasjon {
@@ -105,7 +107,7 @@ public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements Arb
         return finnEksisterendeReferanse(arbeidsgiverEntitet, ref)
             .orElseGet(() -> opprettNyReferanse(arbeidsgiverEntitet, InternArbeidsforholdRef.nyRef(), ref));
     }
-    
+
     private Optional<ArbeidsforholdReferanseEntitet> finnEksisterendeReferanse(Arbeidsgiver arbeidsgiverEntitet, EksternArbeidsforholdRef ref) {
         return this.referanser.stream()
             .filter(this::erIkkeMerget)
@@ -114,9 +116,11 @@ public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements Arb
     }
 
 
-    /** @deprecated Bruk {@link ArbeidsforholdInformasjonBuilder} i stedet. */
+    /**
+     * @deprecated Bruk {@link ArbeidsforholdInformasjonBuilder} i stedet.
+     */
     @Override
-    @Deprecated(forRemoval=true)
+    @Deprecated(forRemoval = true)
     public ArbeidsforholdReferanseEntitet opprettNyReferanse(Arbeidsgiver arbeidsgiverEntitet, InternArbeidsforholdRef internReferanse, EksternArbeidsforholdRef eksternReferanse) {
         final ArbeidsforholdReferanseEntitet arbeidsforholdReferanseEntitet = new ArbeidsforholdReferanseEntitet(arbeidsgiverEntitet,
             internReferanse, eksternReferanse);
@@ -181,7 +185,7 @@ public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements Arb
 
     /**
      * @deprecated FIXME (FC): Trengs denne eller kan vi alltid stole på ref er den vi skal returnere? Skal egentlig returnere ref,
-     *             men per nå har vi antagelig interne ider som har erstattet andre interne id'er. Må isåfall avsjekke migrering av disse.
+     * men per nå har vi antagelig interne ider som har erstattet andre interne id'er. Må isåfall avsjekke migrering av disse.
      */
     @Deprecated(forRemoval = true)
     @Override
@@ -192,7 +196,7 @@ public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements Arb
                 && ov.getArbeidsforholdRef().gjelderFor(ref))
             .findAny();
         if (erstattning.isPresent() && !erstattning.get().getNyArbeidsforholdRef().equals(ref)) {
-            var r =finnEllerOpprett(arbeidsgiver, erstattning.get().getNyArbeidsforholdRef());
+            var r = finnEllerOpprett(arbeidsgiver, erstattning.get().getNyArbeidsforholdRef());
             return InternArbeidsforholdRef.ref(r.getReferanse());
         } else {
             final ArbeidsforholdReferanseEntitet referanse = this.referanser.stream()
@@ -236,21 +240,22 @@ public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements Arb
             .findAny();
         if (referanseEntitet.isPresent()) {
             var internRef = referanseEntitet.get().getInternReferanse();
-            return Optional.ofNullable(internRef==null?null:InternArbeidsforholdRef.ref(internRef.getReferanse()));
+            return Optional.ofNullable(internRef == null ? null : InternArbeidsforholdRef.ref(internRef.getReferanse()));
         }
         return finnForEkstern(arbeidsgiver, arbeidsforholdRef);
     }
 
     @Override
     public EksternArbeidsforholdRef finnEkstern(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef internReferanse) {
+        if (internReferanse.getReferanse() == null) return EksternArbeidsforholdRef.nullRef();
+
         return referanser.stream()
-                .filter(this::erIkkeMerget)
-                .filter(r -> Objects.equals(r.getInternReferanse(), internReferanse) && Objects.equals(r.getArbeidsgiver(), arbeidsgiver))
-                .findFirst()
-                .map(ArbeidsforholdReferanseEntitet::getEksternReferanse)
-                .map(r -> EksternArbeidsforholdRef.ref(r.getReferanse()))
-                .orElseThrow(
-                    () -> new IllegalStateException("Mangler eksternReferanse for internReferanse: " + internReferanse + ", arbeidsgiver: " + arbeidsgiver));
+            .filter(this::erIkkeMerget)
+            .filter(r -> Objects.equals(r.getInternReferanse(), internReferanse) && Objects.equals(r.getArbeidsgiver(), arbeidsgiver))
+            .findFirst()
+            .map(ArbeidsforholdReferanseEntitet::getEksternReferanse)
+            .orElseThrow(
+                () -> new IllegalStateException("Mangler eksternReferanse for internReferanse: " + internReferanse + ", arbeidsgiver: " + arbeidsgiver + ",\n blant referanser=" + referanser));
     }
 
     void leggTilNyReferanse(ArbeidsforholdReferanseEntitet arbeidsforholdReferanse) {
