@@ -60,7 +60,9 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
     @ChangeTracked
     private String navnArbeidsgiverUtland;
 
-    /** Kan være privat eller virksomhet som arbeidsgiver. Dersom {@link #arbeidType} = 'NÆRING', er denne null. */
+    /**
+     * Kan være privat eller virksomhet som arbeidsgiver. Dersom {@link #arbeidType} = 'NÆRING', er denne null.
+     */
     @Embedded
     @ChangeTracked
     private Arbeidsgiver arbeidsgiver;
@@ -74,8 +76,8 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
 
     @ManyToOne
     @JoinColumnsOrFormulas({
-            @JoinColumnOrFormula(column = @JoinColumn(name = "arbeid_type", referencedColumnName = "kode", nullable = false)),
-            @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + ArbeidType.DISCRIMINATOR + "'")) })
+        @JoinColumnOrFormula(column = @JoinColumn(name = "arbeid_type", referencedColumnName = "kode", nullable = false)),
+        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + ArbeidType.DISCRIMINATOR + "'"))})
     @ChangeTracked
     private ArbeidType arbeidType;
 
@@ -126,7 +128,7 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
 
     @Override
     public InternArbeidsforholdRef getArbeidsforholdRef() {
-        return arbeidsforholdRef;
+        return arbeidsforholdRef != null ? arbeidsforholdRef : InternArbeidsforholdRef.nullRef();
     }
 
     void setArbeidsforholdId(InternArbeidsforholdRef arbeidsforholdId) {
