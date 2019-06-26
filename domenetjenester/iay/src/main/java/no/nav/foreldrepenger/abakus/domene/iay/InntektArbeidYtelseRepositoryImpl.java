@@ -1,8 +1,11 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -11,6 +14,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.slf4j.Logger;
@@ -152,7 +156,23 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     public Statistikk hentStats() {
         final TypedQuery<Long> query = entityManager.createQuery("SELECT COUNT(gr) FROM InntektArbeidGrunnlag gr ", Long.class);
         Long antallGrunnlag = HibernateVerktøy.hentEksaktResultat(query);
-        return new Statistikk(antallGrunnlag);
+        Query histogramQuery = entityManager.createNativeQuery("select cnt, count(*) from " +
+            "( " +
+            "select count(*) cnt, kobling_id from gr_arbeid_inntekt grai " +
+            "group by kobling_id " +
+            ") b " +
+            "group by cnt " +
+            "order by cnt");
+        Map<BigInteger, BigInteger> histogram = new HashMap<>();
+
+        @SuppressWarnings("unchecked")
+        List<Object[]> resultList = histogramQuery.getResultList();
+        for (Object[] rs : resultList) {
+
+            histogram.put((BigInteger) rs[0], (BigInteger) rs[1]);
+        }
+
+        return new Statistikk(antallGrunnlag, histogram);
     }
 
     @Override

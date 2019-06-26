@@ -133,7 +133,6 @@ public class MigreringRestTjeneste {
         Map<String, Object> responsMap = new HashMap<>();
 
         List<Saksnummer> value = koblingTjeneste.hentAlleSaksnummer();
-        responsMap.put("saksnummer", value);
         responsMap.put("antallSaker", value.size());
         responsMap.put("iay", repository.hentStats());
 
