@@ -104,10 +104,6 @@ public class MigreringRestTjeneste {
         var aktørId = new AktørId(sakSnapshot.getAktør().getIdent());
         iayTjeneste.slettAltForSak(aktørId, new Saksnummer(sakSnapshot.getSaksnummer()), kodeverkRepository.finn(YtelseType.class, sakSnapshot.getYtelseType().getKode()));
 
-        // FIXME(MG): Fjern når feil fikset
-        if (sakSnapshot.getSaksnummer().equals("139016732")) {
-            log.info("Sak={}, json='{}'", sakSnapshot.getSaksnummer(), JacksonJsonConfig.getMapper().writeValueAsString(sakSnapshot));
-        }
         for (InntektArbeidYtelseGrunnlagSakSnapshotDto.Konvolutt konvolutt : sakSnapshot.getGrunnlag()) {
             try {
                 log.info("Migrerer grunnlag={}", konvolutt.getData().getGrunnlagReferanse());

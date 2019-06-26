@@ -101,7 +101,7 @@ public class IAYFraDtoMapper {
         }
         var tidspunkt = register.getOpprettetTidspunkt().toLocalDateTime();
 
-        var registerBuilder = iayTjeneste.opprettBuilderForRegister(koblingReferanse, register.getEksternReferanse(), tidspunkt);
+        var registerBuilder = InntektArbeidYtelseAggregatBuilder.builderFor(Optional.empty(), register.getEksternReferanse(), tidspunkt, VersjonType.REGISTER);
 
         var aktørArbeid = new MapAktørArbeid.MapFraDto(aktørId, registerBuilder).map(dto.getRegister().getArbeid());
         var aktørInntekt = new MapAktørInntekt.MapFraDto(aktørId, registerBuilder).map(dto.getRegister().getInntekt());
