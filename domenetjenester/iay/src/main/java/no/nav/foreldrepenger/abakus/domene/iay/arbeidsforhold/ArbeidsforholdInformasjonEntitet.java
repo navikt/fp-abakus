@@ -157,8 +157,8 @@ public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements Arb
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ArbeidsforholdInformasjonEntitet that = (ArbeidsforholdInformasjonEntitet) o;
+        if (o == null || !(o instanceof ArbeidsforholdInformasjonEntitet)) return false;
+        var that = (ArbeidsforholdInformasjonEntitet) o;
         return Objects.equals(referanser, that.referanser) &&
             Objects.equals(overstyringer, that.overstyringer);
     }

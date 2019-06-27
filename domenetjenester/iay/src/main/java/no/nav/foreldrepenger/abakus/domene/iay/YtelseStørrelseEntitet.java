@@ -108,8 +108,8 @@ public class YtelseStørrelseEntitet extends BaseEntitet implements YtelseStørr
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        YtelseStørrelseEntitet that = (YtelseStørrelseEntitet) o;
+        if (o == null || !(o instanceof YtelseStørrelseEntitet)) return false;
+        var that = (YtelseStørrelseEntitet) o;
         return Objects.equals(orgNummer, that.orgNummer) &&
             Objects.equals(beløp, that.beløp) &&
             Objects.equals(hyppighet, that.hyppighet);

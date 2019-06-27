@@ -140,8 +140,8 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        InntektsmeldingAggregatEntitet that = (InntektsmeldingAggregatEntitet) o;
+        if (o == null || !(o instanceof InntektsmeldingAggregatEntitet)) return false;
+        var that = (InntektsmeldingAggregatEntitet) o;
         return Objects.equals(inntektsmeldinger, that.inntektsmeldinger);
     }
 

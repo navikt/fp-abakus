@@ -77,8 +77,8 @@ public class OppgittAnnenAktivitetEntitet extends BaseEntitet implements Oppgitt
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OppgittAnnenAktivitetEntitet that = (OppgittAnnenAktivitetEntitet) o;
+        if (o == null || !(o instanceof OppgittAnnenAktivitetEntitet)) return false;
+        var that = (OppgittAnnenAktivitetEntitet) o;
         return Objects.equals(periode, that.periode) &&
             Objects.equals(arbeidType, that.arbeidType);
     }

@@ -231,9 +231,9 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (o == null || !(o instanceof YtelseEntitet))
             return false;
-        YtelseEntitet that = (YtelseEntitet) o;
+        var that = (YtelseEntitet) o;
         return Objects.equals(relatertYtelseType, that.relatertYtelseType) &&
             Objects.equals(temaUnderkategori, that.temaUnderkategori) &&
             (Objects.equals(periode, that.periode) || Objects.equals(periode.getFomDato(), that.periode.getFomDato())) &&

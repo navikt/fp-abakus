@@ -58,8 +58,8 @@ public class OppgittFrilansEntitet extends BaseEntitet implements OppgittFrilans
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OppgittFrilansEntitet that = (OppgittFrilansEntitet) o;
+        if (o == null || !(o instanceof OppgittFrilansEntitet)) return false;
+        var that = (OppgittFrilansEntitet) o;
         return harInntektFraFosterhjem == that.harInntektFraFosterhjem &&
             erNyoppstartet == that.erNyoppstartet &&
             harNærRelasjon == that.harNærRelasjon &&

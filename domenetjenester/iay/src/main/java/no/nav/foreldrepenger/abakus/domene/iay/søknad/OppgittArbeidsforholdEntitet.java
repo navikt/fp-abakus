@@ -135,9 +135,9 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || !(o instanceof OppgittArbeidsforholdEntitet)) return false;
 
-        OppgittArbeidsforholdEntitet that = (OppgittArbeidsforholdEntitet) o;
+        var that = (OppgittArbeidsforholdEntitet) o;
 
         return Objects.equals(periode, that.periode) &&
             Objects.equals(arbeidType, that.arbeidType) &&

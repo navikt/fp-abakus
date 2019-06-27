@@ -123,8 +123,8 @@ public class YtelseAnvistEntitet extends BaseEntitet implements YtelseAnvist, In
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        YtelseAnvistEntitet that = (YtelseAnvistEntitet) o;
+        if (o == null || !(o instanceof YtelseAnvistEntitet)) return false;
+        var that = (YtelseAnvistEntitet) o;
         return Objects.equals(anvistPeriode, that.anvistPeriode) &&
             Objects.equals(beløp, that.beløp) &&
             Objects.equals(dagsats, that.dagsats) &&

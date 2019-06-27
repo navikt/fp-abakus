@@ -59,8 +59,8 @@ public class ArbeidsforholdOverstyrtePerioderEntitet extends BaseEntitet impleme
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ArbeidsforholdOverstyrtePerioderEntitet that = (ArbeidsforholdOverstyrtePerioderEntitet) o;
+        if (o == null || !(o instanceof ArbeidsforholdOverstyrtePerioderEntitet)) return false;
+        var that = (ArbeidsforholdOverstyrtePerioderEntitet) o;
         return Objects.equals(periode, that.periode) && Objects.equals(arbeidsforholdOverstyring, that.arbeidsforholdOverstyring);
     }
 

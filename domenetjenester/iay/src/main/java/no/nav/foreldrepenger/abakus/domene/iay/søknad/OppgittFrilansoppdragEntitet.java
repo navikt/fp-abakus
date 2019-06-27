@@ -62,12 +62,13 @@ public class OppgittFrilansoppdragEntitet extends BaseEntitet implements Oppgitt
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || !(o instanceof OppgittFrilansoppdragEntitet)) return false;
         OppgittFrilansoppdragEntitet that = (OppgittFrilansoppdragEntitet) o;
         return Objects.equals(frilans, that.frilans) &&
             Objects.equals(oppdragsgiver, that.oppdragsgiver) &&
             Objects.equals(periode, that.periode);
     }
+    
 
     @Override
     public int hashCode() {

@@ -96,9 +96,9 @@ public class UtsettelsePeriodeEntitet extends BaseEntitet implements UtsettelseP
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (o == null || !(o instanceof UtsettelsePeriodeEntitet))
             return false;
-        UtsettelsePeriodeEntitet that = (UtsettelsePeriodeEntitet) o;
+        var that = (UtsettelsePeriodeEntitet) o;
         return Objects.equals(periode, that.periode) &&
             Objects.equals(årsak, that.årsak);
     }

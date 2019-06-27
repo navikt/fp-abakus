@@ -247,9 +247,9 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (o == null || !(o instanceof VedtakYtelseEntitet))
             return false;
-        VedtakYtelseEntitet that = (VedtakYtelseEntitet) o;
+        var that = (VedtakYtelseEntitet) o;
         return Objects.equals(ytelseType, that.ytelseType) &&
             Objects.equals(kilde, that.kilde) &&
             Objects.equals(aktørId, that.aktørId) &&
