@@ -17,6 +17,10 @@ def GIT_COMMIT_HASH_FULL
 boolean skipBuild = false
 
 pipeline {
+    tools {
+        maven 'maven-3.6.1'
+        jdk '11'
+    }
     //agent any
     agent {
         node {
