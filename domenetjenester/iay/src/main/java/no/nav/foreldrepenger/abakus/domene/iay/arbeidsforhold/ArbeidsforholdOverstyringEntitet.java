@@ -213,9 +213,9 @@ public class ArbeidsforholdOverstyringEntitet extends BaseEntitet implements Ind
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (o == null ||!(o instanceof ArbeidsforholdOverstyringEntitet))
             return false;
-        ArbeidsforholdOverstyringEntitet that = (ArbeidsforholdOverstyringEntitet) o;
+        var that = (ArbeidsforholdOverstyringEntitet) o;
         return Objects.equals(arbeidsgiver, that.arbeidsgiver) &&
             Objects.equals(arbeidsforholdRef, that.arbeidsforholdRef);
     }

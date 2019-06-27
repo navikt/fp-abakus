@@ -182,8 +182,8 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AktivitetsAvtaleEntitet that = (AktivitetsAvtaleEntitet) o;
+        if (o == null || !(o instanceof AktivitetsAvtaleEntitet)) return false;
+        var that = (AktivitetsAvtaleEntitet) o;
         return 
             Objects.equals(prosentsats, that.prosentsats) &&
             Objects.equals(periode, that.periode) &&

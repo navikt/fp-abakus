@@ -57,9 +57,9 @@ public class BekreftetPermisjon {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (o == null || !(o instanceof BekreftetPermisjon))
             return false;
-        BekreftetPermisjon that = (BekreftetPermisjon) o;
+        var that = (BekreftetPermisjon) o;
         return Objects.equals(periode, that.periode)
             && Objects.equals(status, that.status);
     }

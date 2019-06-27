@@ -341,9 +341,9 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (o == null || !(o instanceof InntektArbeidYtelseGrunnlagEntitet))
             return false;
-        InntektArbeidYtelseGrunnlagEntitet that = (InntektArbeidYtelseGrunnlagEntitet) o;
+        var that = (InntektArbeidYtelseGrunnlagEntitet) o;
         return aktiv == that.aktiv &&
             Objects.equals(register, that.register) &&
             Objects.equals(saksbehandlet, that.saksbehandlet);

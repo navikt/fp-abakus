@@ -158,8 +158,8 @@ public class YtelseGrunnlagEntitet extends BaseEntitet implements YtelseGrunnlag
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        YtelseGrunnlagEntitet that = (YtelseGrunnlagEntitet) o;
+        if (o == null || !(o instanceof YtelseGrunnlagEntitet)) return false;
+        var that = (YtelseGrunnlagEntitet) o;
         return Objects.equals(arbeidskategori, that.arbeidskategori) &&
             Objects.equals(dekngradProsent, that.dekngradProsent) &&
             Objects.equals(graderingProsent, that.graderingProsent) &&

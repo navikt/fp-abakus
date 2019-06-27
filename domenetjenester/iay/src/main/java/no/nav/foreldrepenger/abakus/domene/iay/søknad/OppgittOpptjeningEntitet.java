@@ -157,9 +157,9 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (o == null || !(o instanceof OppgittOpptjeningEntitet))
             return false;
-        OppgittOpptjeningEntitet that = (OppgittOpptjeningEntitet) o;
+        var that = (OppgittOpptjeningEntitet) o;
         return Objects.equals(oppgittArbeidsforhold, that.oppgittArbeidsforhold) &&
             Objects.equals(egenNæring, that.egenNæring) &&
             Objects.equals(annenAktivitet, that.annenAktivitet);

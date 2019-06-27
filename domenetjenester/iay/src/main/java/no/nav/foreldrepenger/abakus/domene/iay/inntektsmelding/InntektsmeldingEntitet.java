@@ -343,10 +343,10 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || !(o instanceof InntektsmeldingEntitet)) {
             return false;
         }
-        InntektsmeldingEntitet entitet = (InntektsmeldingEntitet) o;
+        var entitet = (InntektsmeldingEntitet) o;
         return Objects.equals(getArbeidsgiver(), entitet.getArbeidsgiver()) &&
             Objects.equals(getArbeidsforholdRef(), entitet.getArbeidsforholdRef());
     }

@@ -75,8 +75,8 @@ public class RefusjonEntitet extends BaseEntitet implements Refusjon {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RefusjonEntitet that = (RefusjonEntitet) o;
+        if (o == null || !(o instanceof RefusjonEntitet)) return false;
+        var that = (RefusjonEntitet) o;
         return Objects.equals(refusjonsbeløpMnd, that.refusjonsbeløpMnd) &&
             Objects.equals(fom, that.fom);
     }

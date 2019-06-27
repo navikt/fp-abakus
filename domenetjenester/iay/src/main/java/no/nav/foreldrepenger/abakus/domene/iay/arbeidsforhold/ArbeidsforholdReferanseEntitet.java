@@ -93,9 +93,9 @@ public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements Index
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (o == null || !(o instanceof ArbeidsforholdReferanseEntitet))
             return false;
-        ArbeidsforholdReferanseEntitet that = (ArbeidsforholdReferanseEntitet) o;
+        var that = (ArbeidsforholdReferanseEntitet) o;
         return Objects.equals(arbeidsgiverEntitet, that.arbeidsgiverEntitet) &&
             Objects.equals(internReferanse, that.internReferanse) &&
             Objects.equals(eksternReferanse, that.eksternReferanse);

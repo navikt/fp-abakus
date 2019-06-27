@@ -105,8 +105,8 @@ public class NaturalYtelseEntitet extends BaseEntitet implements NaturalYtelse, 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NaturalYtelseEntitet that = (NaturalYtelseEntitet) o;
+        if (o == null || !(o instanceof NaturalYtelseEntitet)) return false;
+        var that = (NaturalYtelseEntitet) o;
         return Objects.equals(periode, that.periode) &&
             Objects.equals(type, that.type);
     }

@@ -95,8 +95,8 @@ public class GraderingEntitet extends BaseEntitet implements Gradering, IndexKey
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        GraderingEntitet that = (GraderingEntitet) o;
+        if (o == null || !(o instanceof GraderingEntitet)) return false;
+        var that = (GraderingEntitet) o;
         return Objects.equals(periode, that.periode);
     }
 

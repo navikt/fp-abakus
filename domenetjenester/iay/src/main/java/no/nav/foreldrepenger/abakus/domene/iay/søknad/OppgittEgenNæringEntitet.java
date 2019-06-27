@@ -247,8 +247,8 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OppgittEgenNæringEntitet that = (OppgittEgenNæringEntitet) o;
+        if (o == null || !(o instanceof OppgittEgenNæringEntitet)) return false;
+        var that = (OppgittEgenNæringEntitet) o;
         return Objects.equals(periode, that.periode) &&
             Objects.equals(orgNummer, that.orgNummer) &&
             Objects.equals(nyoppstartet, that.nyoppstartet) &&
