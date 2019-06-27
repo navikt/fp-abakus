@@ -4,7 +4,7 @@
 import no.nav.jenkins.*
 
 
-def maven = new maven()
+def mvn = new maven()
 def fpgithub = new fpgithub()
 //def artifactId
 def latestTag
@@ -18,8 +18,8 @@ boolean skipBuild = false
 
 pipeline {
     tools {
-        maven 'maven-3.6.1'
         jdk '11'
+        maven 'maven-3.6.1'
     }
     //agent any
     agent {
@@ -51,7 +51,7 @@ pipeline {
                     GIT_COMMIT_HASH_FULL = sh(script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
                     changelist = "_" + date.format("YYYYMMddHHmmss") + "_" + GIT_COMMIT_HASH
 
-                    mRevision = maven.revision()
+                    mRevision = mvn.revision()
                     version = mRevision + changelist
                     githubRepoName = sh(script: "basename -s .git `git config --get remote.origin.url`", returnStdout: true).trim()
                     currentBuild.displayName = version
@@ -92,8 +92,8 @@ pipeline {
                     withMaven(mavenSettingsConfig: 'navMavenSettings') {
                         buildEnvironment = new buildEnvironment()
                         buildEnvironment.setEnv()
-                        if (maven.javaVersion() != null) {
-                            buildEnvironment.overrideJDK(maven.javaVersion())
+                        if (mvn.javaVersion() != null) {
+                            buildEnvironment.overrideJDK(mvn.javaVersion())
                         }
 
                         envs = sh(returnStdout: true, script: 'env | sort -h').trim()
