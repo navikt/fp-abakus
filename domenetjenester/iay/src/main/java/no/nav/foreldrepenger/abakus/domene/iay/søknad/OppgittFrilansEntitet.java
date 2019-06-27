@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.domene.iay.søknad;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -122,6 +123,8 @@ public class OppgittFrilansEntitet extends BaseEntitet implements OppgittFrilans
     }
 
     public void setFrilansoppdrag(List<OppgittFrilansoppdragEntitet> frilansoppdrag) {
-        this.frilansoppdrag = frilansoppdrag;
+        this.frilansoppdrag = frilansoppdrag.stream()
+            .peek(it -> it.setFrilans(this))
+            .collect(Collectors.toList());
     }
 }

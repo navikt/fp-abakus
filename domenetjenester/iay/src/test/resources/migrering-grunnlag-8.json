@@ -1,0 +1,81 @@
+{
+  "data": {
+    "person": {
+      "identType": "AKTØRID",
+      "ident": "1000104922534"
+    },
+    "grunnlagTidspunkt": "2019-03-11T11:04:08.516Z",
+    "grunnlagReferanse": "8abb7316-9a81-0abc-e053-2880340a57a0",
+    "koblingReferanse": "88487f4c-46a5-2133-e053-2880340a6560",
+    "oppgittOpptjening": {
+      "eksternReferanse": "8a6bc443-723d-1f94-e053-2880340a2b28",
+      "opprettetTidspunkt": "2019-03-11T11:04:08.507Z",
+      "arbeidsforhold": [],
+      "egenNæring": [
+        {
+          "periode": {
+            "fom": "2018-04-02",
+            "tom": "9999-12-31"
+          },
+          "virksomhet": {
+            "identType": "ORGNUMMER",
+            "ident": "915527329"
+          },
+          "virksomhetType": {
+            "kodeverk": "VIRKSOMHET_TYPE",
+            "kode": "ANNEN"
+          },
+          "regnskapsførerNavn": null,
+          "regnskapsførerTlf": null,
+          "virksomhetNavn": null,
+          "landkode": {
+            "kodeverk": "LANDKODER",
+            "kode": "NOR"
+          },
+          "endringDato": null,
+          "erVarigEndring": false,
+          "endringBegrunnelse": null,
+          "bruttoInntekt": 100000.00,
+          "erNyoppstartet": true,
+          "erNærRelasjon": false,
+          "erNyIArbeidslivet": true
+        }
+      ],
+      "annenAktivitet": [
+        {
+          "periode": {
+            "fom": "2018-04-02",
+            "tom": "9999-12-31"
+          },
+          "arbeidType": {
+            "kodeverk": "ARBEID_TYPE",
+            "kode": "FRILANSER"
+          }
+        }
+      ],
+      "frilans": {
+        "harInntektFraFosterhjem": false,
+        "erNyoppstartet": false,
+        "erNærRelasjon": true,
+        "frilansoppdrag": [
+          {
+            "periode": {
+              "fom": "2018-04-02",
+              "tom": "2018-12-31"
+            },
+            "oppdragsgiver": "Karol Cieslinski"
+          }
+        ]
+      }
+    },
+    "arbeidsforholdInformasjon": {
+      "referanser": [],
+      "overstyringer": []
+    }
+  },
+  "aktiv": true,
+  "opplysningsperiode": {
+    "fom": "2017-12-25",
+    "tom": "2023-05-25"
+  }
+}
