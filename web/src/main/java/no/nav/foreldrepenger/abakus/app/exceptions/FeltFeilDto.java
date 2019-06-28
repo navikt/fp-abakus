@@ -2,6 +2,8 @@ package no.nav.foreldrepenger.abakus.app.exceptions;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class FeltFeilDto implements Serializable {
 
     private String navn;
@@ -29,5 +31,15 @@ public class FeltFeilDto implements Serializable {
 
     public String getMetainformasjon() {
         return metainformasjon;
+    }
+
+    @JsonIgnore
+    @Override
+    public String toString() {
+        return "FeltFeilDto{" +
+            "navn='" + navn + '\'' +
+            ", melding='" + melding + '\'' +
+            ", metainformasjon='" + metainformasjon + '\'' +
+            '}';
     }
 }

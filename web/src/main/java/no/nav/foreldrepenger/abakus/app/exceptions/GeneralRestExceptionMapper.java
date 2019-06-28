@@ -54,21 +54,21 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationEx
 
     private Response handleTomtResultatFeil(TomtResultatException tomtResultatException) {
         return Response
-                .status(Response.Status.NOT_FOUND)
-                .entity(new FeilDto(FeilType.TOMT_RESULTAT_FEIL, tomtResultatException.getMessage()))
-                .type(MediaType.APPLICATION_JSON)
-                .build();
+            .status(Response.Status.NOT_FOUND)
+            .entity(new FeilDto(FeilType.TOMT_RESULTAT_FEIL, tomtResultatException.getMessage()))
+            .type(MediaType.APPLICATION_JSON)
+            .build();
     }
 
     private Response handleValideringsfeil(Valideringsfeil valideringsfeil) {
-        List<String> feltNavn = valideringsfeil.getFeltFeil().stream().map(felt -> felt.getNavn()).collect(Collectors.toList());
+        List<String> feltNavn = valideringsfeil.getFeltFeil().stream().map(FeltFeilDto::getNavn).collect(Collectors.toList());
         return Response
-                .status(Response.Status.BAD_REQUEST)
-                .entity(new FeilDto(
-                        FeltValideringFeil.FACTORY.feltverdiKanIkkeValideres(feltNavn).getFeilmelding(),
-                        valideringsfeil.getFeltFeil()))
-                .type(MediaType.APPLICATION_JSON)
-                .build();
+            .status(Response.Status.BAD_REQUEST)
+            .entity(new FeilDto(
+                FeltValideringFeil.FACTORY.feltverdiKanIkkeValideres(feltNavn).getFeilmelding(),
+                valideringsfeil.getFeltFeil()))
+            .type(MediaType.APPLICATION_JSON)
+            .build();
     }
 
     private Response handleVLException(VLException vlException, String callId) {
@@ -77,7 +77,7 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationEx
             return ikkeTilgang(feil);
         } else if (FRITEKST_TOM_FEIL.equals(feil.getKode())) {
             return handleValideringsfeil(new Valideringsfeil(Collections.singleton(new FeltFeilDto("fritekst",
-                    feil.getKode() + " " + feil.getFeilmelding()))));
+                feil.getKode() + " " + feil.getFeilmelding()))));
         } else if (BEHANDLING_ENDRET_FEIL.equals(feil.getKode())) {
             return behandlingEndret(feil);
         } else {
@@ -89,27 +89,27 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationEx
         String feilmelding = getVLExceptionFeilmelding(callId, feil);
         FeilType feilType = FeilType.GENERELL_FEIL;
         return Response.serverError()
-                .entity(new FeilDto(feilType, feilmelding))
-                .type(MediaType.APPLICATION_JSON)
-                .build();
+            .entity(new FeilDto(feilType, feilmelding))
+            .type(MediaType.APPLICATION_JSON)
+            .build();
     }
 
     private Response ikkeTilgang(Feil feil) {
         String feilmelding = feil.getFeilmelding();
         FeilType feilType = FeilType.MANGLER_TILGANG_FEIL;
         return Response.status(Response.Status.FORBIDDEN)
-                .entity(new FeilDto(feilType, feilmelding))
-                .type(MediaType.APPLICATION_JSON)
-                .build();
+            .entity(new FeilDto(feilType, feilmelding))
+            .type(MediaType.APPLICATION_JSON)
+            .build();
     }
 
     private Response behandlingEndret(Feil feil) {
         String feilmelding = feil.getFeilmelding();
         FeilType feilType = FeilType.BEHANDLING_ENDRET_FEIL;
         return Response.status(Response.Status.CONFLICT)
-                .entity(new FeilDto(feilType, feilmelding))
-                .type(MediaType.APPLICATION_JSON)
-                .build();
+            .entity(new FeilDto(feilType, feilmelding))
+            .type(MediaType.APPLICATION_JSON)
+            .build();
     }
 
     private String getVLExceptionFeilmelding(String callId, Feil feil) {
@@ -117,22 +117,22 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationEx
         if (feil instanceof FunksjonellFeil) {
             String løsningsforslag = ((FunksjonellFeil) feil).getLøsningsforslag();
             return "Det oppstod en feil: " //$NON-NLS-1$
-                    + avsluttMedPunktum(feilbeskrivelse)
-                    + avsluttMedPunktum(løsningsforslag)
-                    + ". Referanse-id: " + callId; //$NON-NLS-1$
+                + avsluttMedPunktum(feilbeskrivelse)
+                + avsluttMedPunktum(løsningsforslag)
+                + ". Referanse-id: " + callId; //$NON-NLS-1$
         } else {
             return "Det oppstod en serverfeil: " //$NON-NLS-1$
-                    + avsluttMedPunktum(feilbeskrivelse)
-                    + ". Meld til support med referanse-id: " + callId; //$NON-NLS-1$
+                + avsluttMedPunktum(feilbeskrivelse)
+                + ". Meld til support med referanse-id: " + callId; //$NON-NLS-1$
         }
     }
 
     private Response handleGenerellFeil(Throwable cause, String callId) {
         String generellFeilmelding = "Det oppstod en serverfeil: " + cause.getMessage() + ". Meld til support med referanse-id: " + callId; //$NON-NLS-1$ //$NON-NLS-2$
         return Response.serverError()
-                .entity(new FeilDto(FeilType.GENERELL_FEIL, generellFeilmelding))
-                .type(MediaType.APPLICATION_JSON)
-                .build();
+            .entity(new FeilDto(FeilType.GENERELL_FEIL, generellFeilmelding))
+            .type(MediaType.APPLICATION_JSON)
+            .build();
     }
 
     private String avsluttMedPunktum(String tekst) {

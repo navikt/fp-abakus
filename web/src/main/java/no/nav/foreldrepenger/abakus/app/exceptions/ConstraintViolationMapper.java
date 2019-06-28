@@ -36,7 +36,7 @@ public class ConstraintViolationMapper implements ExceptionMapper<ConstraintViol
         if (feilene.isEmpty()) {
             feil = FeltValideringFeil.FACTORY.feilUnderValideringAvContraints(exception);
         } else {
-            List<String> feltNavn = feilene.stream().map(FeltFeilDto::getNavn).collect(Collectors.toList());
+            List<String> feltNavn = feilene.stream().map(FeltFeilDto::toString).collect(Collectors.toList());
             feil = FeltValideringFeil.FACTORY.feltverdiKanIkkeValideres(feltNavn);
         }
         feil.log(log);
