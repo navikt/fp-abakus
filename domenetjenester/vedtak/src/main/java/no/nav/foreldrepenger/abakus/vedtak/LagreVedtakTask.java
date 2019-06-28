@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.vedtak;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -56,11 +55,8 @@ public class LagreVedtakTask implements ProsessTaskHandler {
             Set<ConstraintViolation<Ytelse>> violations = validator.validate(mottattVedtak);
             if (!violations.isEmpty()) {
                 // Har feilet validering
-                List<String> allErrors = violations
-                    .stream()
-                    .map(it -> it.getPropertyPath().toString() + " :: " + it.getMessage())
-                    .collect(Collectors.toList());
-                throw new IllegalArgumentException("Vedtatt-ytelse valideringsfeil \n " + allErrors);
+                String allErrors = violations.stream().map(String::valueOf).collect(Collectors.joining("\\n"));
+                throw new IllegalArgumentException("Vedtatt-ytelse valideringsfeil :: \n " + allErrors);
             }
         } catch (IOException e) {
             throw YtelseFeil.FACTORY.parsingFeil(key, payload, e).toException();

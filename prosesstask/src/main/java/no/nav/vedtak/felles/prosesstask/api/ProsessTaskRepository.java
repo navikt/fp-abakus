@@ -56,4 +56,6 @@ public interface ProsessTaskRepository {
     boolean suspenderAlle(Collection<ProsessTaskData> tasks);
 
     int rekjørAlleFeiledeTasks();
+
+    int tømNestePartisjon();
 }

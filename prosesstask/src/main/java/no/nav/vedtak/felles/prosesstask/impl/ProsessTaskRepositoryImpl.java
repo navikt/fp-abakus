@@ -2,6 +2,7 @@ package no.nav.vedtak.felles.prosesstask.impl;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -374,6 +375,24 @@ public class ProsessTaskRepositoryImpl implements ProsessTaskRepository {
         entityManager.flush();
 
         return updatedRows;
+    }
+
+    @Override
+    public int tømNestePartisjon() {
+        String partisjonsNr = utledPartisjonsNr(LocalDate.now());
+        Query query = entityManager.createNativeQuery("TRUNCATE prosess_task_partition_ferdig_" + partisjonsNr);
+        int updatedRows = query.executeUpdate();
+        entityManager.flush();
+
+        return updatedRows;
+    }
+
+    static String utledPartisjonsNr(LocalDate date) {
+        int måned = date.plusMonths(1).getMonth().getValue();
+        if (måned < 10) {
+            return "0" + måned;
+        }
+        return "" + måned;
     }
 
 }

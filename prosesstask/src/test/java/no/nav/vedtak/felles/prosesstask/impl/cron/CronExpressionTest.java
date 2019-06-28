@@ -818,4 +818,13 @@ public class CronExpressionTest {
 
         assertThat(cronExpression.nextTimeAfter(after)).isEqualTo(expected);
     }
+
+    @Test
+    public void test_month_at_() {
+        ZonedDateTime after = ZonedDateTime.of(2012, 3, 25, 0, 0, 0, 0, zoneId);
+        ZonedDateTime expected = ZonedDateTime.of(2012, 4, 1, 7, 0, 0, 0, zoneId);
+        CronExpression cronExpression = CronExpression.create("0 0 7 1 * *");
+
+        assertThat(cronExpression.nextTimeAfter(after)).isEqualTo(expected);
+    }
 }
