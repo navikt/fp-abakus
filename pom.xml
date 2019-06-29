@@ -31,7 +31,7 @@
       
         <felles.version>1.1.0_20190616092907_44c1fd1</felles.version>
       
-        <kontrakter.version>5.0_20190626140318_7622b68</kontrakter.version>
+        <kontrakter.version>5.0_20190628213603_6ab70dc</kontrakter.version>
     </properties>
 
     <prerequisites>
