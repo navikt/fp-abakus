@@ -66,6 +66,14 @@ public class ProsessTaskRepositoryImpl implements ProsessTaskRepository {
         this.handleLifecycleObserver = handleLifecycleObserver;
     }
 
+    static String utledPartisjonsNr(LocalDate date) {
+        int måned = date.plusMonths(1).getMonth().getValue();
+        if (måned < 10) {
+            return "0" + måned;
+        }
+        return "" + måned;
+    }
+
     @Override
     public String lagre(ProsessTaskGruppe sammensattTask) {
         String unikGruppeId = null;
@@ -232,7 +240,6 @@ public class ProsessTaskRepositoryImpl implements ProsessTaskRepository {
         return tilProsessTask(query.getResultList());
     }
 
-
     @Override
     public Map<ProsessTaskType, ProsessTaskEntitet> finnStatusForBatchTasks() {
         TypedQuery<ProsessTaskType> query = entityManager
@@ -380,19 +387,13 @@ public class ProsessTaskRepositoryImpl implements ProsessTaskRepository {
     @Override
     public int tømNestePartisjon() {
         String partisjonsNr = utledPartisjonsNr(LocalDate.now());
-        Query query = entityManager.createNativeQuery("TRUNCATE prosess_task_partition_ferdig_" + partisjonsNr);
+        Query query = entityManager.createNativeQuery("DELETE FROM prosess_task_partition_ferdig " +
+            "WHERE partition_key = :partitionKey");
+        query.setParameter("partitionKey", partisjonsNr);
         int updatedRows = query.executeUpdate();
         entityManager.flush();
 
         return updatedRows;
-    }
-
-    static String utledPartisjonsNr(LocalDate date) {
-        int måned = date.plusMonths(1).getMonth().getValue();
-        if (måned < 10) {
-            return "0" + måned;
-        }
-        return "" + måned;
     }
 
 }
