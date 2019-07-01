@@ -58,7 +58,7 @@ public class InntektArbeidYtelseAggregatEntitet extends BaseEntitet implements I
     InntektArbeidYtelseAggregatEntitet() {
         // hibernate
     }
-    
+
     InntektArbeidYtelseAggregatEntitet(UUID angittEksternReferanse, LocalDateTime angittOpprettetTidspunkt) {
         setOpprettetTidspunkt(angittOpprettetTidspunkt);
         this.eksternReferanse = angittEksternReferanse;
@@ -88,8 +88,12 @@ public class InntektArbeidYtelseAggregatEntitet extends BaseEntitet implements I
         this.eksternReferanse = eksternReferanse;
     }
 
+    /**
+     * Copy constructor - inklusiv angitt referanse og opprettet tid. Brukes for immutable copy internt i minne. Hvis lagres i samme database
+     * vil det gi unik constraint exception. Men nyttig for å sende data til andre systemer.
+     */
     InntektArbeidYtelseAggregatEntitet(InntektArbeidYtelseAggregat kopierFra) {
-        this(UUID.randomUUID(), kopierFra.getOpprettetTidspunkt(), kopierFra);
+        this(kopierFra.getEksternReferanse(), kopierFra.getOpprettetTidspunkt(), kopierFra);
     }
 
     @Override

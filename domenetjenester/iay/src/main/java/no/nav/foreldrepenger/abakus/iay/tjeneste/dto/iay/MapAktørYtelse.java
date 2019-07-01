@@ -24,6 +24,7 @@ import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Organisasjon;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.PersonIdent;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.ytelse.v1.AnvisningDto;
@@ -36,10 +37,12 @@ import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 public class MapAktørYtelse {
     static class MapFraDto {
         private InntektArbeidYtelseAggregatBuilder aggregatBuilder;
-        private AktørId aktørId;
+        
+        @SuppressWarnings("unused")
+        private AktørId søkerAktørId;
 
-        MapFraDto(AktørId aktørId, InntektArbeidYtelseAggregatBuilder aggregatBuilder) {
-            this.aktørId = aktørId;
+        MapFraDto(AktørId søkerAktørId, InntektArbeidYtelseAggregatBuilder aggregatBuilder) {
+            this.søkerAktørId = søkerAktørId;
             this.aggregatBuilder = aggregatBuilder;
         }
 
@@ -51,9 +54,17 @@ public class MapAktørYtelse {
         }
 
         private AktørYtelseBuilder mapAktørYtelse(YtelserDto dto) {
-            var builder = aggregatBuilder.getAktørYtelseBuilder(aktørId);
+            var builder = aggregatBuilder.getAktørYtelseBuilder(tilAktørId(dto.getPerson()));
             dto.getYtelser().forEach(ytelseDto -> builder.leggTilYtelse(mapYtelse(ytelseDto)));
             return builder;
+        }
+        
+        /** Returnerer person sin aktørId.  Denne trenger ikke være samme som søkers aktørid men kan f.eks. være annen part i en sak. */
+        private AktørId tilAktørId(PersonIdent person) {
+            if(!(person instanceof AktørIdPersonident)) {
+                throw new IllegalArgumentException("Støtter kun " + AktørIdPersonident.class.getSimpleName() + " her");
+            }
+            return new AktørId(person.getIdent());
         }
 
         private DatoIntervallEntitet mapPeriode(Periode periode) {

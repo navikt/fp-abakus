@@ -29,7 +29,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOver
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanseEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Gradering;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelse;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Refusjon;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriode;
@@ -219,41 +218,6 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     }
 
     @Override
-    public GrunnlagReferanse lagre(KoblingReferanse koblingReferanse, AktørId søkerAktørId, ArbeidsforholdInformasjonBuilder informasjon) {
-        Objects.requireNonNull(informasjon, "informasjon"); // NOSONAR
-        InntektArbeidYtelseGrunnlagBuilder builder = opprettGrunnlagBuilderFor(koblingReferanse);
-
-        builder.ryddOppErstattedeArbeidsforhold(søkerAktørId, informasjon.getReverserteErstattArbeidsforhold());
-        builder.ryddOppErstattedeArbeidsforhold(søkerAktørId, informasjon.getErstattArbeidsforhold());
-        builder.medInformasjon(informasjon.build());
-
-        InntektArbeidYtelseGrunnlag build = builder.build();
-        lagreOgFlush(koblingReferanse, build);
-        return build.getGrunnlagReferanse();
-    }
-
-    @Override
-    public GrunnlagReferanse lagre(KoblingReferanse koblingReferanse, ArbeidsforholdInformasjonBuilder informasjonBuilder, Inntektsmelding inntektsmelding) {
-        Objects.requireNonNull(inntektsmelding, "inntektsmelding"); // NOSONAR
-        InntektArbeidYtelseGrunnlagBuilder builder = opprettGrunnlagBuilderFor(koblingReferanse);
-
-        final InntektsmeldingAggregatEntitet inntektsmeldinger = (InntektsmeldingAggregatEntitet) builder.getInntektsmeldinger();
-
-        // Kommet inn inntektsmelding på arbeidsforhold som vi har gått videre med uten inntektsmelding?
-        if (informasjonBuilder.kommetInntektsmeldingPåArbeidsforholdHvorViTidligereBehandletUtenInntektsmelding(inntektsmelding)) {
-            informasjonBuilder.fjernOverstyringVedrørende(inntektsmelding.getArbeidsgiver(), inntektsmelding.getArbeidsforholdRef());
-        }
-        builder.medInformasjon(informasjonBuilder.build());
-
-        inntektsmeldinger.leggTil(inntektsmelding);
-        builder.setInntektsmeldinger(inntektsmeldinger);
-
-        InntektArbeidYtelseGrunnlag build = builder.build();
-        lagreOgFlush(koblingReferanse, build);
-        return build.getGrunnlagReferanse();
-    }
-
-    @Override
     public GrunnlagReferanse lagre(KoblingReferanse koblingReferanse, ArbeidsforholdInformasjonBuilder informasjonBuilder, List<Inntektsmelding> inntektsmeldingerList) {
         Objects.requireNonNull(inntektsmeldingerList, "inntektsmelding"); // NOSONAR
         InntektArbeidYtelseGrunnlagBuilder builder = opprettGrunnlagBuilderFor(koblingReferanse);
@@ -324,30 +288,6 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
             lagreGrunnlag(nyttGrunnlag, koblingReferanse);
         }
         entityManager.flush();
-    }
-
-    private void konverterEksternArbeidsforholdRefTilInterne(InntektsmeldingBuilder inntektsmeldingBuilder, final ArbeidsforholdInformasjon informasjon) {
-        if (inntektsmeldingBuilder.getEksternArbeidsforholdRef().isPresent()) {
-            var ekstern = inntektsmeldingBuilder.getEksternArbeidsforholdRef().get();
-            var intern = inntektsmeldingBuilder.getInternArbeidsforholdRef();
-            if (ekstern.gjelderForSpesifiktArbeidsforhold()) {
-                if (!intern.get().gjelderForSpesifiktArbeidsforhold()) {
-                    // lag ny intern id siden vi i
-                    var internId = informasjon.finnEllerOpprett(inntektsmeldingBuilder.getArbeidsgiver(), ekstern);
-                    inntektsmeldingBuilder.medArbeidsforholdId(internId);
-                } else {
-                    // registrer ekstern <-> intern mapping for allerede opprettet intern id
-                    informasjon.opprettNyReferanse(inntektsmeldingBuilder.getArbeidsgiver(), intern.get(), ekstern);
-                }
-            } else {
-                // sikre at også intern referanse for builder er generell
-                intern.ifPresent(v -> {
-                    if (v.getReferanse() != null) {
-                        throw new IllegalStateException("Har ekstern referanse som gjelder alle arbeidsforhold, men intern er spesifikk: " + v);
-                    }
-                });
-            }
-        } // else do nothing
     }
 
     @Override
@@ -668,15 +608,6 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
                 }
             });
         }
-    }
-
-    private InntektArbeidYtelseAggregatBuilder opprettBuilderFor(Optional<InntektArbeidYtelseGrunnlag> aggregat, VersjonType versjon) {
-        Objects.requireNonNull(aggregat, "aggregat"); // NOSONAR
-        if (aggregat.isPresent()) {
-            final InntektArbeidYtelseGrunnlag aggregat1 = aggregat.get();
-            return InntektArbeidYtelseAggregatBuilder.oppdatere(hentRiktigVersjon(versjon, aggregat1), versjon);
-        }
-        throw InntektArbeidYtelseFeil.FACTORY.aggregatKanIkkeVæreNull().toException();
     }
 
     private Optional<InntektArbeidYtelseAggregat> hentRiktigVersjon(VersjonType versjonType, InntektArbeidYtelseGrunnlag aggregat) {
