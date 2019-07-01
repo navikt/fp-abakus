@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
+import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -56,7 +57,8 @@ public class IAYFraDtoMapper {
      */
     public InntektArbeidYtelseGrunnlag mapTilGrunnlagInklusivRegisterdata(InntektArbeidYtelseGrunnlagDto dto) {
 
-        var builder = InntektArbeidYtelseGrunnlagBuilder.ny(UUID.fromString(dto.getGrunnlagReferanse()), dto.getGrunnlagTidspunkt().toLocalDateTime());
+        OffsetDateTime grunnlagTidspunkt = dto.getGrunnlagTidspunkt();
+        var builder = InntektArbeidYtelseGrunnlagBuilder.ny(UUID.fromString(dto.getGrunnlagReferanse()), grunnlagTidspunkt.toLocalDateTime());
 
         return mapTilGrunnlagInklusivRegisterdata(dto, builder);
     }
