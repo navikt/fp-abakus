@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
@@ -109,6 +110,15 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
             .map(InntektArbeidYtelseGrunnlagEntitet.class::cast)
             .forEach(this::slettGrunnlag);
         entityManager.flush();
+    }
+
+    @Override
+    public TidssoneConfig hentKonfigurasjon() {
+        Query showTimezone = entityManager.createNativeQuery("show timezone");
+        Query currentTimestamp = entityManager.createNativeQuery("SELECT current_timestamp");
+        Object timezone = showTimezone.getSingleResult();
+        LocalDateTime tidsstempel = ((Timestamp) currentTimestamp.getSingleResult()).toLocalDateTime();
+        return new TidssoneConfig((String) timezone, tidsstempel);
     }
 
     @Override

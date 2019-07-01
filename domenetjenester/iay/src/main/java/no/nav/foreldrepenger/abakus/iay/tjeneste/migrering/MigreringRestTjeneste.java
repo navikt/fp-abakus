@@ -4,6 +4,9 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREAT
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +33,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
+import no.nav.foreldrepenger.abakus.domene.iay.TidssoneConfig;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYFraDtoMapper;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
@@ -135,6 +139,22 @@ public class MigreringRestTjeneste {
         List<Saksnummer> value = koblingTjeneste.hentAlleSaksnummer();
         responsMap.put("antallSaker", value.size());
         responsMap.put("iay", repository.hentStats());
+
+        return Response.ok(responsMap).build();
+    }
+
+    @GET
+    @Path("/konfigurasjon")
+    @ApiOperation(value = "Gir status / stats på migrering")
+    @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
+    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    public Response konfig() {
+
+        Map<String, Object> responsMap = new HashMap<>();
+
+        responsMap.put("offset", OffsetDateTime.now());
+        responsMap.put("jvm", new TidssoneConfig(ZoneId.systemDefault().getId(), LocalDateTime.now()));
+        responsMap.put("db", repository.hentKonfigurasjon());
 
         return Response.ok(responsMap).build();
     }

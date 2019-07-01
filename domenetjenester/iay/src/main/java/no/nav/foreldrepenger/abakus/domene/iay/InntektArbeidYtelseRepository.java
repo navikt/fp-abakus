@@ -73,4 +73,6 @@ public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRe
      */
     @Deprecated(forRemoval = true)
     void slettAltForSak(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType);
+
+    TidssoneConfig hentKonfigurasjon();
 }
