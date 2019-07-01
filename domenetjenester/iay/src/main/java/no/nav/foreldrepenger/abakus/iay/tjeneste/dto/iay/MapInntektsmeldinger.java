@@ -1,5 +1,8 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.stream.Collectors;
 
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
@@ -36,7 +39,8 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.RefusjonD
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.UtsettelsePeriodeDto;
 
 public class MapInntektsmeldinger {
-
+    private static final ZoneOffset DEFAULT_ZONE_OFFSET = ZoneId.systemDefault().getRules().getOffset(LocalDateTime.now());
+    
     public static class MapTilDto {
 
         private ArbeidsforholdInformasjon arbeidsforholdInformasjon;
@@ -162,7 +166,7 @@ public class MapInntektsmeldinger {
                 }
             }
             var journalpostId = dto.getJournalpostId().getId();
-            var innsendingstidspunkt = dto.getInnsendingstidspunkt().toLocalDateTime();
+            var innsendingstidspunkt = dto.getInnsendingstidspunkt().withOffsetSameInstant(DEFAULT_ZONE_OFFSET).toLocalDateTime();
             var innsendingsårsak = KodeverkMapper.mapInntektsmeldingInnsendingsårsakFraDto(dto.getInnsendingsårsak());
 
             var builder = InntektsmeldingBuilder.builder()
