@@ -16,7 +16,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
 import no.nav.foreldrepenger.abakus.domene.iay.VersjonType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
@@ -90,11 +89,6 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
     @Override
     public void lagre(KoblingReferanse koblingReferanse, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder) {
         repository.lagre(koblingReferanse, inntektArbeidYtelseAggregatBuilder);
-    }
-
-    @Override
-    public void lagre(KoblingReferanse koblingReferanse, AktørId aktørId, ArbeidsforholdInformasjonBuilder builder) {
-        repository.lagre(koblingReferanse, aktørId, builder);
     }
 
     @Override

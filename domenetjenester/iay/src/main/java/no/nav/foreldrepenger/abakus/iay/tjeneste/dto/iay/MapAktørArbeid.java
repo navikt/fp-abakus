@@ -26,6 +26,7 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.ArbeidsforholdRefDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Organisasjon;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.PersonIdent;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeid.v1.AktivitetsAvtaleDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeid.v1.ArbeidDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeid.v1.PermisjonDto;
@@ -36,12 +37,14 @@ public class MapAktørArbeid {
 
     static class MapFraDto {
 
-        private AktørId aktørId;
+        @SuppressWarnings("unused")
+        private AktørId søkerAktørId;
+        
         private InntektArbeidYtelseAggregatBuilder registerData;
 
-        MapFraDto(AktørId aktørId, InntektArbeidYtelseAggregatBuilder registerData) {
+        MapFraDto(AktørId søkerAktørId, InntektArbeidYtelseAggregatBuilder registerData) {
             this.registerData = registerData;
-            this.aktørId = aktørId;
+            this.søkerAktørId = søkerAktørId;
         }
 
         List<AktørArbeidBuilder> map(Collection<ArbeidDto> dtos) {
@@ -52,9 +55,17 @@ public class MapAktørArbeid {
         }
 
         private AktørArbeidBuilder mapAktørArbeid(ArbeidDto dto) {
-            var builder = registerData.getAktørArbeidBuilder(aktørId);
+            var builder = registerData.getAktørArbeidBuilder(tilAktørId(dto.getPerson()));
             dto.getYrkesaktiviteter().forEach(yrkesaktivitetDto -> builder.leggTilYrkesaktivitet(mapYrkesaktivitet(yrkesaktivitetDto)));
             return builder;
+        }
+
+        /** Returnerer person sin aktørId.  Denne trenger ikke være samme som søkers aktørid men kan f.eks. være annen part i en sak. */
+        private AktørId tilAktørId(PersonIdent person) {
+            if(!(person instanceof AktørIdPersonident)) {
+                throw new IllegalArgumentException("Støtter kun " + AktørIdPersonident.class.getSimpleName() + " her");
+            }
+            return new AktørId(person.getIdent());
         }
 
         private YrkesaktivitetBuilder mapYrkesaktivitet(YrkesaktivitetDto dto) {

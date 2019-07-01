@@ -10,7 +10,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilde
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
@@ -89,8 +88,6 @@ public interface InntektArbeidYtelseTjeneste {
      * @param inntektArbeidYtelseAggregatBuilder lagrer ned aggregat (builder bestemmer hvilke del av treet som blir lagret)
      */
     void lagre(KoblingReferanse koblingReferanse, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder);
-
-    void lagre(KoblingReferanse koblingReferanse, AktørId aktørId, ArbeidsforholdInformasjonBuilder builder);
 
     KoblingReferanse hentKoblingReferanse(GrunnlagReferanse grunnlagReferanse);
 

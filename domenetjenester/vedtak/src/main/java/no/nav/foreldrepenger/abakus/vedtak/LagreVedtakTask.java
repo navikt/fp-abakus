@@ -47,10 +47,8 @@ public class LagreVedtakTask implements ProsessTaskHandler {
         String payload = data.getPayloadAsString();
 
         Ytelse mottattVedtak;
-        try {
+        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()){
             mottattVedtak = OBJECT_MAPPER.readValue(payload, Ytelse.class);
-
-            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
             Validator validator = factory.getValidator();
             Set<ConstraintViolation<Ytelse>> violations = validator.validate(mottattVedtak);
             if (!violations.isEmpty()) {

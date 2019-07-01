@@ -22,6 +22,7 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Aktør;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Organisasjon;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.PersonIdent;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntekt.v1.InntekterDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntekt.v1.UtbetalingDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntekt.v1.UtbetalingsPostDto;
@@ -29,11 +30,12 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntekt.v1.UtbetalingsPostDt
 public class MapAktørInntekt {
     static class MapFraDto {
 
-        private final AktørId aktørId;
+        @SuppressWarnings("unused")
+        private final AktørId søkerAktørId;
         private final InntektArbeidYtelseAggregatBuilder aggregatBuilder;
 
-        MapFraDto(AktørId aktørId, InntektArbeidYtelseAggregatBuilder aggregatBuilder) {
-            this.aktørId = aktørId;
+        MapFraDto(AktørId søkerAktørId, InntektArbeidYtelseAggregatBuilder aggregatBuilder) {
+            this.søkerAktørId = søkerAktørId;
             this.aggregatBuilder = aggregatBuilder;
         }
 
@@ -42,12 +44,20 @@ public class MapAktørInntekt {
                 return Collections.emptyList();
             }
             var builders = dtos.stream().map(idto -> {
-                var builder = aggregatBuilder.getAktørInntektBuilder(aktørId);
+                var builder = aggregatBuilder.getAktørInntektBuilder(tilAktørId(idto.getPerson()));
                 idto.getUtbetalinger().forEach(utbetalingDto -> builder.leggTilInntekt(mapUtbetaling(utbetalingDto)));
                 return builder;
             }).collect(Collectors.toUnmodifiableList());
 
             return builders;
+        }
+        
+        /** Returnerer person sin aktørId.  Denne trenger ikke være samme som søkers aktørid men kan f.eks. være annen part i en sak. */
+        private AktørId tilAktørId(PersonIdent person) {
+            if(!(person instanceof AktørIdPersonident)) {
+                throw new IllegalArgumentException("Støtter kun " + AktørIdPersonident.class.getSimpleName() + " her");
+            }
+            return new AktørId(person.getIdent());
         }
 
         private InntektBuilder mapUtbetaling(UtbetalingDto dto) {
