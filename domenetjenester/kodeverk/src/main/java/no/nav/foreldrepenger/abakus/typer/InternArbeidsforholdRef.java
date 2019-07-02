@@ -12,14 +12,16 @@ import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 
 /**
  * Intern arbeidsforhold referanse.
- * 
+ * <p>
  * Hvis null gjelder det flere arbeidsforhold, ellers for et spesifikt forhold
  */
 
 @Embeddable
 public class InternArbeidsforholdRef implements IndexKey, Serializable {
 
-    /** Instans som representerer alle arbeidsforhold (for en arbeidsgiver). */
+    /**
+     * Instans som representerer alle arbeidsforhold (for en arbeidsgiver).
+     */
     private static final InternArbeidsforholdRef NULL_OBJECT = new InternArbeidsforholdRef(null);
 
     @Column(name = "arbeidsforhold_intern_id")
@@ -44,6 +46,17 @@ public class InternArbeidsforholdRef implements IndexKey, Serializable {
         return NULL_OBJECT;
     }
 
+    public static InternArbeidsforholdRef nyRef() {
+        return ref(UUID.randomUUID().toString());
+    }
+
+    /**
+     * Genererer en UUID type 3 basert på angitt seed. Gir konsekvente UUIDer
+     */
+    public static InternArbeidsforholdRef namedRef(String seed) {
+        return ref(UUID.nameUUIDFromBytes(seed.getBytes(Charset.forName("UTF8"))).toString());
+    }
+
     public String getReferanse() {
         return referanse == null ? null : referanse.toString();
     }
@@ -54,7 +67,7 @@ public class InternArbeidsforholdRef implements IndexKey, Serializable {
 
     @Override
     public String getIndexKey() {
-        return referanse == null ? null : IndexKey.createKey(referanse.toString());
+        return IndexKey.createKey(referanse == null ? null : referanse.toString());
     }
 
     public boolean gjelderForSpesifiktArbeidsforhold() {
@@ -90,14 +103,5 @@ public class InternArbeidsforholdRef implements IndexKey, Serializable {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "<" + (referanse == null ? "" : referanse.toString()) + ">";
-    }
-
-    public static InternArbeidsforholdRef nyRef() {
-        return ref(UUID.randomUUID().toString());
-    }
-
-    /** Genererer en UUID type 3 basert på angitt seed. Gir konsekvente UUIDer */
-    public static InternArbeidsforholdRef namedRef(String seed) {
-        return ref(UUID.nameUUIDFromBytes(seed.getBytes(Charset.forName("UTF8"))).toString());
     }
 }
