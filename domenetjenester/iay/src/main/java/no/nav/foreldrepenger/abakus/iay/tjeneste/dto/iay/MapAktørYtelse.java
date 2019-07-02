@@ -144,10 +144,11 @@ public class MapAktørYtelse {
 
         private List<YtelseDto> mapTilYtelser(Collection<Ytelse> ytelser) {
             Comparator<YtelseDto> compYt = Comparator.comparing((YtelseDto dto) -> dto.getSaksnummer())
-                .thenComparing(dto -> dto.getYtelseType() == null ? null : dto.getYtelseType().getKode())
-                .thenComparing(dto -> dto.getTemaUnderkategori() == null ? null : dto.getTemaUnderkategori().getKode())
-                .thenComparing(dto -> dto.getPeriode().getFom())
-                .thenComparing(dto -> dto.getPeriode().getTom());
+                .thenComparing(dto -> dto.getYtelseType() == null ? null : dto.getYtelseType().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(dto -> dto.getTemaUnderkategori() == null ? null : dto.getTemaUnderkategori().getKode(),
+                    Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+                .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
 
             return ytelser.stream().map(this::tilYtelse).sorted(compYt).collect(Collectors.toList());
         }

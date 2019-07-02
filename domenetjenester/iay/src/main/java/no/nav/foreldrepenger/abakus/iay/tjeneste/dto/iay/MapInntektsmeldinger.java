@@ -41,7 +41,7 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.Utsettels
 
 public class MapInntektsmeldinger {
     private static final ZoneOffset DEFAULT_ZONE_OFFSET = ZoneId.systemDefault().getRules().getOffset(LocalDateTime.now());
-    
+
     public static class MapTilDto {
 
         private ArbeidsforholdInformasjon arbeidsforholdInformasjon;
@@ -56,9 +56,11 @@ public class MapInntektsmeldinger {
             } else if (arbeidsforholdInformasjon != null && inntektsmeldingAggregat != null) {
                 var dto = new InntektsmeldingerDto();
                 Comparator<InntektsmeldingDto> comp = Comparator
-                        .comparing((InntektsmeldingDto im) -> im.getArbeidsgiver().getIdent())
-                        .thenComparing(im -> im.getInnsendingstidspunkt())
-                        .thenComparing(im -> im.getArbeidsforholdRef() == null ? null : im.getArbeidsforholdRef().getAbakusReferanse());
+                    .comparing((InntektsmeldingDto im) -> im.getArbeidsgiver().getIdent())
+                    .thenComparing(im -> im.getInnsendingstidspunkt())
+                    .thenComparing(im -> im.getArbeidsforholdRef() == null ? null : im.getArbeidsforholdRef().getAbakusReferanse(),
+                        Comparator.nullsLast(Comparator.naturalOrder()));
+                
                 var inntektsmeldinger = inntektsmeldingAggregat.getAlleInntektsmeldinger().stream()
                     .map(im -> this.mapInntektsmelding(im)).sorted(comp).collect(Collectors.toList());
                 dto.medInntektsmeldinger(inntektsmeldinger);
@@ -131,7 +133,8 @@ public class MapInntektsmeldinger {
                 : new Organisasjon(arbeidsgiverEntitet.getOrgnr().getId());
         }
 
-        private ArbeidsforholdRefDto mapArbeidsforholdsId(@SuppressWarnings("unused") Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef internRef, EksternArbeidsforholdRef eksternRef) {
+        private ArbeidsforholdRefDto mapArbeidsforholdsId(@SuppressWarnings("unused") Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef internRef,
+                                                          EksternArbeidsforholdRef eksternRef) {
             if ((internRef == null || internRef.getReferanse() == null) && (eksternRef == null || eksternRef.getReferanse() == null)) {
                 return null;
             } else if (internRef != null && eksternRef != null && internRef.getReferanse() != null && eksternRef.getReferanse() != null) {

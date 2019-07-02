@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Comparators;
-
 import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtale;
 import no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
@@ -148,7 +146,7 @@ public class MapAktørArbeid {
 
             Comparator<YrkesaktivitetDto> compYrk = Comparator.comparing((YrkesaktivitetDto dto) -> dto.getArbeidsgiver().map(Aktør::getIdent).orElse(null))
                 .thenComparing(dto -> dto.getArbeidsforholdId() == null ? null : dto.getArbeidsforholdId().getAbakusReferanse());
-            
+
             Collections.sort(yrkesaktiviteter, compYrk);
             var dto = new ArbeidDto(new AktørIdPersonident(arb.getAktørId().getId()))
                 .medYrkesaktiviteter(yrkesaktiviteter);
@@ -175,12 +173,14 @@ public class MapAktørArbeid {
         }
 
         private YrkesaktivitetDto mapYrkesaktivitet(Yrkesaktivitet a) {
-            Comparator<AktivitetsAvtaleDto> compAvt = Comparator.comparing((AktivitetsAvtaleDto dto) -> dto.getPeriode().getFom())
-                .thenComparing(dto -> dto.getPeriode().getTom());
+            Comparator<AktivitetsAvtaleDto> compAvt = Comparator
+                .comparing((AktivitetsAvtaleDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+                .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
             var aktivitetsAvtaler = a.getAlleAktivitetsAvtaler().stream().map(this::map).sorted(compAvt).collect(Collectors.toList());
 
-            Comparator<PermisjonDto> compPerm = Comparator.comparing((PermisjonDto dto) -> dto.getPeriode().getFom())
-                .thenComparing(dto -> dto.getPeriode().getTom());
+            Comparator<PermisjonDto> compPerm = Comparator
+                .comparing((PermisjonDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+                .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
             var permisjoner = a.getPermisjon().stream().map(this::map).sorted(compPerm).collect(Collectors.toList());
 
             var arbeidsforholdId = mapArbeidsforholdsId(a.getArbeidsgiver(), a);

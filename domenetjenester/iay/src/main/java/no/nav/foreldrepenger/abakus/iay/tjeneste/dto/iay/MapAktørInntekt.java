@@ -113,8 +113,9 @@ public class MapAktørInntekt {
         }
 
         private List<UtbetalingDto> tilUtbetalinger(List<Inntekt> inntekter, InntektsKilde kilde) {
-            Comparator<UtbetalingDto> compUtb = Comparator.comparing((UtbetalingDto dto) -> dto.getKilde() == null ? null : dto.getKilde().getKode())
-                .thenComparing(dto -> dto.getUtbetaler() == null ? null : dto.getUtbetaler().getIdent());
+            Comparator<UtbetalingDto> compUtb = Comparator
+                .comparing((UtbetalingDto dto) -> dto.getKilde() == null ? null : dto.getKilde().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(dto -> dto.getUtbetaler() == null ? null : dto.getUtbetaler().getIdent(), Comparator.nullsLast(Comparator.naturalOrder()));
 
             return inntekter.stream().map(in -> tilUtbetaling(in, kilde)).sorted(compUtb).collect(Collectors.toList());
         }
@@ -139,9 +140,10 @@ public class MapAktørInntekt {
         }
 
         private List<UtbetalingsPostDto> tilPoster(Collection<Inntektspost> inntektspost) {
-            Comparator<UtbetalingsPostDto> compUtb = Comparator.comparing((UtbetalingsPostDto dto) -> dto.getInntektspostType().getKode())
-                .thenComparing(dto -> dto.getPeriode().getFom())
-                .thenComparing(dto -> dto.getPeriode().getTom());
+            Comparator<UtbetalingsPostDto> compUtb = Comparator
+                .comparing((UtbetalingsPostDto dto) -> dto.getInntektspostType().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+                .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
 
             return inntektspost.stream().map(this::tilPost).sorted(compUtb).collect(Collectors.toList());
         }
