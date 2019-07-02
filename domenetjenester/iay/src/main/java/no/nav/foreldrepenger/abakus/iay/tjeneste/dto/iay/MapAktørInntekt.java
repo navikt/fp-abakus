@@ -114,7 +114,7 @@ public class MapAktørInntekt {
 
         private List<UtbetalingDto> tilUtbetalinger(List<Inntekt> inntekter, InntektsKilde kilde) {
             Comparator<UtbetalingDto> compUtb = Comparator.comparing((UtbetalingDto dto) -> dto.getKilde() == null ? null : dto.getKilde().getKode())
-                .thenComparing(dto -> dto.getUtbetaler().getIdent());
+                .thenComparing(dto -> dto.getUtbetaler() == null ? null : dto.getUtbetaler().getIdent());
 
             return inntekter.stream().map(in -> tilUtbetaling(in, kilde)).sorted(compUtb).collect(Collectors.toList());
         }
