@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -103,6 +104,14 @@ class MapArbeidsforholdInformasjon {
             if (entitet == null) return null;
 
             var arbeidsforholdInformasjon = new ArbeidsforholdInformasjon();
+            Comparator<ArbeidsforholdReferanseDto> compRef = Comparator
+                    .comparing((ArbeidsforholdReferanseDto ref) -> ref.getArbeidsgiver().getIdent())
+                    .thenComparing(ref -> ref.getArbeidsforholdReferanse() == null ? null : ref.getArbeidsforholdReferanse().getAbakusReferanse());
+            
+            Comparator<ArbeidsforholdOverstyringDto> compOv = Comparator
+                    .comparing((ArbeidsforholdOverstyringDto ov) -> ov.getArbeidsgiver().getIdent())
+                    .thenComparing(ov ->  ov.getArbeidsforholdRef() == null ? null : ov.getArbeidsforholdRef().getAbakusReferanse());
+            
             var overstyringer = entitet.getOverstyringer().stream()
                 .map(ao -> {
                     var dto = new ArbeidsforholdOverstyringDto(mapAktør(ao.getArbeidsgiver()),
@@ -117,10 +126,12 @@ class MapArbeidsforholdInformasjon {
                         .medArbeidsforholdOverstyrtePerioder(map(ao.getArbeidsforholdOverstyrtePerioder()));
                     return dto;
                 })
+                .sorted(compOv)
                 .collect(Collectors.toList());
 
             var referanser = entitet.getArbeidsforholdReferanser().stream()
                 .map(ar -> this.mapArbeidsforholdReferanse(ar))
+                .sorted(compRef)
                 .collect(Collectors.toList());
 
             return arbeidsforholdInformasjon
@@ -129,10 +140,12 @@ class MapArbeidsforholdInformasjon {
         }
 
         private List<Periode> map(List<ArbeidsforholdOverstyrtePerioderEntitet> perioder) {
+            Comparator<Periode> comp = Comparator.comparing((Periode per) -> per.getFom()).thenComparing(per -> per.getTom());
             return perioder == null ? null
                 : perioder.stream()
                 .map(ArbeidsforholdOverstyrtePerioderEntitet::getOverstyrtePeriode)
                 .map(this::mapPeriode)
+                .sorted(comp)
                 .collect(Collectors.toList());
         }
 

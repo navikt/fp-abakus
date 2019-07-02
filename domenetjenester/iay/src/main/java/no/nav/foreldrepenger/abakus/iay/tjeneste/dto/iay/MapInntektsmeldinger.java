@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
@@ -54,9 +55,12 @@ public class MapInntektsmeldinger {
                 return null;
             } else if (arbeidsforholdInformasjon != null && inntektsmeldingAggregat != null) {
                 var dto = new InntektsmeldingerDto();
-
+                Comparator<InntektsmeldingDto> comp = Comparator
+                        .comparing((InntektsmeldingDto im) -> im.getArbeidsgiver().getIdent())
+                        .thenComparing(im -> im.getInnsendingstidspunkt())
+                        .thenComparing(im -> im.getArbeidsforholdRef() == null ? null : im.getArbeidsforholdRef().getAbakusReferanse());
                 var inntektsmeldinger = inntektsmeldingAggregat.getAlleInntektsmeldinger().stream()
-                    .map(im -> this.mapInntektsmelding(im)).collect(Collectors.toList());
+                    .map(im -> this.mapInntektsmelding(im)).sorted(comp).collect(Collectors.toList());
                 dto.medInntektsmeldinger(inntektsmeldinger);
 
                 return dto;
