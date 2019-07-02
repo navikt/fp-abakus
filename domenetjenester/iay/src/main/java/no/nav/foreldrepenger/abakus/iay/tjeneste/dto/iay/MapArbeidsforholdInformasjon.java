@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -100,27 +101,40 @@ class MapArbeidsforholdInformasjon {
     static class MapTilDto {
 
         ArbeidsforholdInformasjon map(no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon entitet) {
-            if (entitet == null) return null;
+            if (entitet == null)
+                return null;
 
             var arbeidsforholdInformasjon = new ArbeidsforholdInformasjon();
+            Comparator<ArbeidsforholdReferanseDto> compRef = Comparator
+                .comparing((ArbeidsforholdReferanseDto ref) -> ref.getArbeidsgiver().getIdent())
+                .thenComparing(ref -> ref.getArbeidsforholdReferanse() == null ? null : ref.getArbeidsforholdReferanse().getAbakusReferanse(),
+                    Comparator.nullsLast(Comparator.naturalOrder()));
+
+            Comparator<ArbeidsforholdOverstyringDto> compOv = Comparator
+                .comparing((ArbeidsforholdOverstyringDto ov) -> ov.getArbeidsgiver().getIdent())
+                .thenComparing(ov -> ov.getArbeidsforholdRef() == null ? null : ov.getArbeidsforholdRef().getAbakusReferanse(),
+                    Comparator.nullsLast(Comparator.naturalOrder()));
+
             var overstyringer = entitet.getOverstyringer().stream()
                 .map(ao -> {
                     var dto = new ArbeidsforholdOverstyringDto(mapAktør(ao.getArbeidsgiver()),
                         mapArbeidsforholdsId(entitet, ao.getArbeidsgiver(), ao.getArbeidsforholdRef()))
-                        .medBegrunnelse(ao.getBegrunnelse())
-                        .medBekreftetPermisjon(mapBekreftetPermisjon(ao.getBekreftetPermisjon()))
-                        .medHandling(KodeverkMapper.mapArbeidsforholdHandlingTypeTilDto(ao.getHandling()))
-                        .medNavn(ao.getArbeidsgiverNavn())
-                        .medStillingsprosent(ao.getStillingsprosent() == null ? null : ao.getStillingsprosent().getVerdi())
-                        .medNyArbeidsforholdRef(
-                            ao.getNyArbeidsforholdRef() == null ? null : mapArbeidsforholdsId(entitet, ao.getArbeidsgiver(), ao.getNyArbeidsforholdRef()))
-                        .medArbeidsforholdOverstyrtePerioder(map(ao.getArbeidsforholdOverstyrtePerioder()));
+                            .medBegrunnelse(ao.getBegrunnelse())
+                            .medBekreftetPermisjon(mapBekreftetPermisjon(ao.getBekreftetPermisjon()))
+                            .medHandling(KodeverkMapper.mapArbeidsforholdHandlingTypeTilDto(ao.getHandling()))
+                            .medNavn(ao.getArbeidsgiverNavn())
+                            .medStillingsprosent(ao.getStillingsprosent() == null ? null : ao.getStillingsprosent().getVerdi())
+                            .medNyArbeidsforholdRef(
+                                ao.getNyArbeidsforholdRef() == null ? null : mapArbeidsforholdsId(entitet, ao.getArbeidsgiver(), ao.getNyArbeidsforholdRef()))
+                            .medArbeidsforholdOverstyrtePerioder(map(ao.getArbeidsforholdOverstyrtePerioder()));
                     return dto;
                 })
+                .sorted(compOv)
                 .collect(Collectors.toList());
 
             var referanser = entitet.getArbeidsforholdReferanser().stream()
                 .map(ar -> this.mapArbeidsforholdReferanse(ar))
+                .sorted(compRef)
                 .collect(Collectors.toList());
 
             return arbeidsforholdInformasjon
@@ -129,11 +143,14 @@ class MapArbeidsforholdInformasjon {
         }
 
         private List<Periode> map(List<ArbeidsforholdOverstyrtePerioderEntitet> perioder) {
+            Comparator<Periode> comp = Comparator.comparing((Periode per) -> per.getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+                .thenComparing(per -> per.getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
             return perioder == null ? null
                 : perioder.stream()
-                .map(ArbeidsforholdOverstyrtePerioderEntitet::getOverstyrtePeriode)
-                .map(this::mapPeriode)
-                .collect(Collectors.toList());
+                    .map(ArbeidsforholdOverstyrtePerioderEntitet::getOverstyrtePeriode)
+                    .map(this::mapPeriode)
+                    .sorted(comp)
+                    .collect(Collectors.toList());
         }
 
         private no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeidsforhold.v1.BekreftetPermisjon mapBekreftetPermisjon(Optional<BekreftetPermisjon> entitet) {

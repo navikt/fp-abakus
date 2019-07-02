@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -51,10 +52,10 @@ public class MapAktørInntekt {
 
             return builders;
         }
-        
-        /** Returnerer person sin aktørId.  Denne trenger ikke være samme som søkers aktørid men kan f.eks. være annen part i en sak. */
+
+        /** Returnerer person sin aktørId. Denne trenger ikke være samme som søkers aktørid men kan f.eks. være annen part i en sak. */
         private AktørId tilAktørId(PersonIdent person) {
-            if(!(person instanceof AktørIdPersonident)) {
+            if (!(person instanceof AktørIdPersonident)) {
                 throw new IllegalArgumentException("Støtter kun " + AktørIdPersonident.class.getSimpleName() + " her");
             }
             return new AktørId(person.getIdent());
@@ -79,7 +80,8 @@ public class MapAktørInntekt {
         }
 
         private Arbeidsgiver mapArbeidsgiver(Aktør arbeidsgiver) {
-            if (arbeidsgiver == null) return null;
+            if (arbeidsgiver == null)
+                return null;
             if (arbeidsgiver.getErOrganisasjon()) {
                 return Arbeidsgiver.virksomhet(new OrgNummer(arbeidsgiver.getIdent()));
             }
@@ -111,7 +113,11 @@ public class MapAktørInntekt {
         }
 
         private List<UtbetalingDto> tilUtbetalinger(List<Inntekt> inntekter, InntektsKilde kilde) {
-            return inntekter.stream().map(in -> tilUtbetaling(in, kilde)).collect(Collectors.toList());
+            Comparator<UtbetalingDto> compUtb = Comparator
+                .comparing((UtbetalingDto dto) -> dto.getKilde() == null ? null : dto.getKilde().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(dto -> dto.getUtbetaler() == null ? null : dto.getUtbetaler().getIdent(), Comparator.nullsLast(Comparator.naturalOrder()));
+
+            return inntekter.stream().map(in -> tilUtbetaling(in, kilde)).sorted(compUtb).collect(Collectors.toList());
         }
 
         private UtbetalingDto tilUtbetaling(Inntekt inntekt, InntektsKilde kilde) {
@@ -134,7 +140,12 @@ public class MapAktørInntekt {
         }
 
         private List<UtbetalingsPostDto> tilPoster(Collection<Inntektspost> inntektspost) {
-            return inntektspost.stream().map(this::tilPost).collect(Collectors.toList());
+            Comparator<UtbetalingsPostDto> compUtb = Comparator
+                .comparing((UtbetalingsPostDto dto) -> dto.getInntektspostType().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+                .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
+
+            return inntektspost.stream().map(this::tilPost).sorted(compUtb).collect(Collectors.toList());
         }
 
         private UtbetalingsPostDto tilPost(Inntektspost inntektspost) {

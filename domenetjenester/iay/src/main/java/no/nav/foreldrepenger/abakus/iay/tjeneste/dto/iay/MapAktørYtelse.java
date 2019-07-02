@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,7 +38,7 @@ import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 public class MapAktørYtelse {
     static class MapFraDto {
         private InntektArbeidYtelseAggregatBuilder aggregatBuilder;
-        
+
         @SuppressWarnings("unused")
         private AktørId søkerAktørId;
 
@@ -58,10 +59,10 @@ public class MapAktørYtelse {
             dto.getYtelser().forEach(ytelseDto -> builder.leggTilYtelse(mapYtelse(ytelseDto)));
             return builder;
         }
-        
-        /** Returnerer person sin aktørId.  Denne trenger ikke være samme som søkers aktørid men kan f.eks. være annen part i en sak. */
+
+        /** Returnerer person sin aktørId. Denne trenger ikke være samme som søkers aktørid men kan f.eks. være annen part i en sak. */
         private AktørId tilAktørId(PersonIdent person) {
-            if(!(person instanceof AktørIdPersonident)) {
+            if (!(person instanceof AktørIdPersonident)) {
                 throw new IllegalArgumentException("Støtter kun " + AktørIdPersonident.class.getSimpleName() + " her");
             }
             return new AktørId(person.getIdent());
@@ -88,7 +89,8 @@ public class MapAktørYtelse {
         }
 
         private YtelseAnvist mapYtelseAnvist(AnvisningDto anvisning, YtelseAnvistBuilder anvistBuilder) {
-            if(anvisning == null) return null;
+            if (anvisning == null)
+                return null;
             return anvistBuilder
                 .medAnvistPeriode(mapPeriode(anvisning.getPeriode()))
                 .medBeløp(anvisning.getBeløp())
@@ -98,7 +100,8 @@ public class MapAktørYtelse {
         }
 
         private YtelseGrunnlag mapYtelseGrunnlag(YtelseGrunnlagDto grunnlag, YtelseGrunnlagBuilder grunnlagBuilder) {
-            if(grunnlag == null) return null;
+            if (grunnlag == null)
+                return null;
             grunnlagBuilder
                 .medArbeidskategori(KodeverkMapper.mapArbeidskategoriFraDto(grunnlag.getArbeidskategoriDto()))
                 .medDekningsgradProsent(grunnlag.getDekningsgradProsent())
@@ -140,11 +143,18 @@ public class MapAktørYtelse {
         }
 
         private List<YtelseDto> mapTilYtelser(Collection<Ytelse> ytelser) {
-            return ytelser.stream().map(this::tilYtelse).collect(Collectors.toList());
+            Comparator<YtelseDto> compYt = Comparator.comparing((YtelseDto dto) -> dto.getSaksnummer(), Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(dto -> dto.getYtelseType() == null ? null : dto.getYtelseType().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(dto -> dto.getTemaUnderkategori() == null ? null : dto.getTemaUnderkategori().getKode(),
+                    Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+                .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
+
+            return ytelser.stream().map(this::tilYtelse).sorted(compYt).collect(Collectors.toList());
         }
 
         private YtelseGrunnlagDto mapYtelseGrunnlag(YtelseGrunnlag gr) {
-            
+
             YtelseGrunnlagDto dto = new YtelseGrunnlagDto();
             gr.getArbeidskategori().ifPresent(ak -> dto.setArbeidskategoriDto(KodeverkMapper.mapArbeidskategoriTilDto(ak)));
             gr.getOpprinneligIdentdato().ifPresent(dto::setOpprinneligIdentDato);
@@ -163,7 +173,7 @@ public class MapAktørYtelse {
         }
 
         private YtelseDto tilYtelse(Ytelse ytelse) {
-            
+
             var fagsystem = KodeverkMapper.mapFagsystemTilDto(ytelse.getKilde());
             var periode = new Periode(ytelse.getPeriode().getFomDato(), ytelse.getPeriode().getTomDato());
             var ytelseType = new YtelseType(ytelse.getRelatertYtelseType().getKode());
@@ -173,9 +183,9 @@ public class MapAktørYtelse {
                 .medSaksnummer(ytelse.getSaksnummer() == null ? null : ytelse.getSaksnummer().getVerdi());
 
             dto.medTemaUnderkategori(temaUnderkategori);
-            
+
             ytelse.getYtelseGrunnlag().ifPresent(gr -> dto.setGrunnlag(mapYtelseGrunnlag(gr)));
-            
+
             var anvisninger = ytelse.getYtelseAnvist().stream().map(this::map).collect(Collectors.toList());
             dto.setAnvisninger(anvisninger);
 
