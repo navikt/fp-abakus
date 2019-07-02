@@ -143,7 +143,7 @@ public class MapAktørYtelse {
         }
 
         private List<YtelseDto> mapTilYtelser(Collection<Ytelse> ytelser) {
-            Comparator<YtelseDto> compYt = Comparator.comparing((YtelseDto dto) -> dto.getSaksnummer())
+            Comparator<YtelseDto> compYt = Comparator.comparing((YtelseDto dto) -> dto.getSaksnummer(), Comparator.nullsLast(Comparator.naturalOrder()))
                 .thenComparing(dto -> dto.getYtelseType() == null ? null : dto.getYtelseType().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
                 .thenComparing(dto -> dto.getTemaUnderkategori() == null ? null : dto.getTemaUnderkategori().getKode(),
                     Comparator.nullsLast(Comparator.naturalOrder()))
