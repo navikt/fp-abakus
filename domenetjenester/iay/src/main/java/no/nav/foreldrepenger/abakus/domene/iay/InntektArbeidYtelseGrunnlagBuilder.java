@@ -37,7 +37,7 @@ public class InntektArbeidYtelseGrunnlagBuilder {
     public static InntektArbeidYtelseGrunnlagBuilder oppdatere(Optional<InntektArbeidYtelseGrunnlag> kladd) {
         return kladd.map(InntektArbeidYtelseGrunnlagBuilder::oppdatere).orElseGet(InntektArbeidYtelseGrunnlagBuilder::nytt);
     }
-
+    
     InntektArbeidYtelseGrunnlagEntitet getKladd() {
         return kladd;
     }
@@ -74,6 +74,11 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         return this;
     }
 
+    public InntektArbeidYtelseGrunnlagBuilder medErAktivtGrunnlag(boolean erAktivtGrunnlag) {
+        kladd.setAktivt(erAktivtGrunnlag);
+        return this;
+    }
+    
     private void medSaksbehandlet(InntektArbeidYtelseAggregatBuilder builder) {
         if (builder != null) {
             kladd.setSaksbehandlet((InntektArbeidYtelseAggregatEntitet) builder.build());
@@ -135,4 +140,5 @@ public class InntektArbeidYtelseGrunnlagBuilder {
     public Optional<ArbeidsforholdInformasjon> getArbeidsforholdInformasjon() {
         return kladd.getArbeidsforholdInformasjon();
     }
+
 }

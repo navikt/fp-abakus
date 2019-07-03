@@ -75,7 +75,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     @Override
     public List<InntektArbeidYtelseGrunnlag> hentAlleInntektArbeidYtelseGrunnlagFor(AktørId aktørId, KoblingReferanse koblingReferanse, boolean kunAktiv) {
         final TypedQuery<InntektArbeidYtelseGrunnlagEntitet> query = entityManager.createQuery("FROM InntektArbeidGrunnlag gr JOIN KOBLING k " + // NOSONAR
-            " WHERE k.koblingReferanse = :ref AND k.aktørId = :aktørId " + //NOSONAR
+            " WHERE k.koblingReferanse = :ref AND k.aktørId = :aktørId " + // NOSONAR
             " AND gr.aktiv = :aktivt", InntektArbeidYtelseGrunnlagEntitet.class);
         query.setParameter("ref", koblingReferanse); // NOSONAR
         query.setParameter("aktivt", kunAktiv);
@@ -131,7 +131,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         final TypedQuery<InntektArbeidYtelseGrunnlagEntitet> query = entityManager.createQuery("SELECT gr" +
             " FROM InntektArbeidGrunnlag gr" +
             " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
-            " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId " + //NOSONAR
+            " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId " + // NOSONAR
             (kunAktive ? " AND gr.aktiv = :aktivt" : ""), InntektArbeidYtelseGrunnlagEntitet.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("ref", saksnummer);
@@ -229,7 +229,8 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     }
 
     @Override
-    public GrunnlagReferanse lagre(KoblingReferanse koblingReferanse, ArbeidsforholdInformasjonBuilder informasjonBuilder, List<Inntektsmelding> inntektsmeldingerList) {
+    public GrunnlagReferanse lagre(KoblingReferanse koblingReferanse, ArbeidsforholdInformasjonBuilder informasjonBuilder,
+                                   List<Inntektsmelding> inntektsmeldingerList) {
         Objects.requireNonNull(inntektsmeldingerList, "inntektsmelding"); // NOSONAR
         InntektArbeidYtelseGrunnlagBuilder builder = opprettGrunnlagBuilderFor(koblingReferanse);
 
@@ -302,16 +303,17 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     }
 
     @Override
-    public void lagreMigrertGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, KoblingReferanse koblingReferanse, boolean aktiv) {
+    public void lagreMigrertGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, KoblingReferanse koblingReferanse) {
         InntektArbeidYtelseGrunnlagEntitet entitet = (InntektArbeidYtelseGrunnlagEntitet) nyttGrunnlag;
-        entitet.setAktivt(aktiv);
 
-        Optional<InntektArbeidYtelseGrunnlagEntitet> tidligereAggregat = getAktivtInntektArbeidGrunnlag(koblingReferanse);
-        if (tidligereAggregat.isPresent() && aktiv) {
-            InntektArbeidYtelseGrunnlagEntitet aggregat = tidligereAggregat.get();
-            aggregat.setAktivt(false);
-            entityManager.persist(aggregat);
-            entityManager.flush();
+        if (nyttGrunnlag.isAktiv()) {
+            Optional<InntektArbeidYtelseGrunnlagEntitet> tidligereAggregat = getAktivtInntektArbeidGrunnlag(koblingReferanse);
+            if (tidligereAggregat.isPresent()) {
+                InntektArbeidYtelseGrunnlagEntitet aggregat = tidligereAggregat.get();
+                aggregat.setAktivt(false);
+                entityManager.persist(aggregat);
+                entityManager.flush();
+            }
         }
         lagreGrunnlag(entitet, koblingReferanse);
         entityManager.flush();
@@ -399,7 +401,8 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         entityManager.createNativeQuery("DELETE FROM iay_oppgitt_frilans WHERE oppgitt_opptjening_id = :oppgittOpptjeningId")
             .setParameter("oppgittOpptjeningId", oppgittOpptjening.getId())
             .executeUpdate();
-        entityManager.createNativeQuery("UPDATE gr_arbeid_inntekt set oppgitt_opptjening_id = null WHERE oppgitt_opptjening_id IN (SELECT ID FROM iay_oppgitt_opptjening WHERE ekstern_referanse = :eksterRef)")
+        entityManager.createNativeQuery(
+            "UPDATE gr_arbeid_inntekt set oppgitt_opptjening_id = null WHERE oppgitt_opptjening_id IN (SELECT ID FROM iay_oppgitt_opptjening WHERE ekstern_referanse = :eksterRef)")
             .setParameter("eksterRef", oppgittOpptjening.getEksternReferanse())
             .executeUpdate();
         entityManager.createNativeQuery("DELETE FROM iay_oppgitt_opptjening WHERE ekstern_referanse = :eksterRef")
@@ -465,8 +468,9 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
             "IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef)))")
             .setParameter("eksterRef", aggregat.getEksternReferanse())
             .executeUpdate();
-        entityManager.createNativeQuery("DELETE FROM iay_relatert_ytelse WHERE aktoer_ytelse_id IN (SELECT id FROM iay_aktoer_ytelse WHERE inntekt_arbeid_ytelser_id " +
-            "IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef))")
+        entityManager
+            .createNativeQuery("DELETE FROM iay_relatert_ytelse WHERE aktoer_ytelse_id IN (SELECT id FROM iay_aktoer_ytelse WHERE inntekt_arbeid_ytelser_id " +
+                "IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef))")
             .setParameter("eksterRef", aggregat.getEksternReferanse())
             .executeUpdate();
         entityManager.createNativeQuery("DELETE FROM iay_aktoer_ytelse WHERE inntekt_arbeid_ytelser_id " +
@@ -474,10 +478,12 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
             .setParameter("eksterRef", aggregat.getEksternReferanse())
             .executeUpdate();
 
-        entityManager.createNativeQuery("UPDATE gr_arbeid_inntekt set register_id = null WHERE register_id IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef)")
+        entityManager.createNativeQuery(
+            "UPDATE gr_arbeid_inntekt set register_id = null WHERE register_id IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef)")
             .setParameter("eksterRef", aggregat.getEksternReferanse())
             .executeUpdate();
-        entityManager.createNativeQuery("UPDATE gr_arbeid_inntekt set saksbehandlet_id = null WHERE saksbehandlet_id IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef)")
+        entityManager.createNativeQuery(
+            "UPDATE gr_arbeid_inntekt set saksbehandlet_id = null WHERE saksbehandlet_id IN (SELECT ID FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef)")
             .setParameter("eksterRef", aggregat.getEksternReferanse())
             .executeUpdate();
         entityManager.createNativeQuery("DELETE FROM iay_inntekt_arbeid_ytelser WHERE ekstern_referanse = :eksterRef")
