@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,6 +44,34 @@ public class MapOppgittOpptjening {
 
     private static final Logger log = LoggerFactory.getLogger(MapOppgittOpptjening.class);
 
+    private static final Comparator<OppgittFrilansoppdragDto> COMP_FRILANSOPPDRAG = Comparator
+        .comparing((OppgittFrilansoppdragDto dto) -> dto.getOppdragsgiver(), Comparator.nullsLast(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
+
+    private static final Comparator<OppgittAnnenAktivitetDto> COMP_ANNEN_AKTIVITET = Comparator
+        .comparing((OppgittAnnenAktivitetDto dto) -> dto.getArbeidTypeDto() == null ? null : dto.getArbeidTypeDto().getKode(),
+            Comparator.nullsLast(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
+
+    private static final Comparator<OppgittArbeidsforholdDto> COMP_OPPGITT_ARBEIDSFORHOLD = Comparator
+        .comparing((OppgittArbeidsforholdDto dto) -> dto.getArbeidTypeDto() == null ? null : dto.getArbeidTypeDto().getKode(),
+            Comparator.nullsLast(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getLandkode() == null ? null : dto.getLandkode().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getVirksomhetNavn(), Comparator.nullsLast(Comparator.naturalOrder()));
+
+    private static final Comparator<OppgittEgenNæringDto> COMP_OPPGITT_EGEN_NÆRING = Comparator
+        .comparing((OppgittEgenNæringDto dto) -> dto.getVirksomhetTypeDto() == null ? null : dto.getVirksomhetTypeDto().getKode(),
+            Comparator.nullsLast(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getVirksomhet() == null ? null : dto.getVirksomhet().getIdent(), Comparator.nullsLast(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getLandkode() == null ? null : dto.getLandkode().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getVirksomhetNavn(), Comparator.nullsLast(Comparator.naturalOrder()));
+
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private KodeverkRepository kodeverkRepository;
 
@@ -67,10 +96,12 @@ public class MapOppgittOpptjening {
 
             var dto = new OppgittOpptjeningDto(oppgittOpptjening.getEksternReferanse(), oppgittOpptjening.getOpprettetTidspunkt());
 
-            dto.medArbeidsforhold(
-                oppgittOpptjening.getOppgittArbeidsforhold().stream().map(oa -> this.mapArbeidsforhold(oppgittOpptjening, oa)).collect(Collectors.toList()));
-            dto.medEgenNæring(oppgittOpptjening.getEgenNæring().stream().map(this::mapEgenNæring).collect(Collectors.toList()));
-            dto.medAnnenAktivitet(oppgittOpptjening.getAnnenAktivitet().stream().map(this::mapAnnenAktivitet).collect(Collectors.toList()));
+            dto.medArbeidsforhold(oppgittOpptjening.getOppgittArbeidsforhold().stream()
+                .map(oa -> this.mapArbeidsforhold(oppgittOpptjening, oa)).sorted(COMP_OPPGITT_ARBEIDSFORHOLD).collect(Collectors.toList()));
+            dto.medEgenNæring(oppgittOpptjening.getEgenNæring().stream()
+                .map(this::mapEgenNæring).sorted(COMP_OPPGITT_EGEN_NÆRING).collect(Collectors.toList()));
+            dto.medAnnenAktivitet(oppgittOpptjening.getAnnenAktivitet().stream()
+                .map(this::mapAnnenAktivitet).sorted(COMP_ANNEN_AKTIVITET).collect(Collectors.toList()));
 
             oppgittOpptjening.getFrilans().ifPresent(f -> dto.medFrilans(mapFrilans(f)));
 
@@ -81,7 +112,7 @@ public class MapOppgittOpptjening {
             if (frilans == null)
                 return null;
 
-            var frilansoppdrag = frilans.getFrilansoppdrag().stream().map(this::mapFrilansoppdrag).collect(Collectors.toList());
+            var frilansoppdrag = frilans.getFrilansoppdrag().stream().map(this::mapFrilansoppdrag).sorted(COMP_FRILANSOPPDRAG).collect(Collectors.toList());
             var frilansDto = new OppgittFrilansDto(frilansoppdrag)
                 .medErNyoppstartet(frilans.getErNyoppstartet())
                 .medHarInntektFraFosterhjem(frilans.getHarInntektFraFosterhjem())

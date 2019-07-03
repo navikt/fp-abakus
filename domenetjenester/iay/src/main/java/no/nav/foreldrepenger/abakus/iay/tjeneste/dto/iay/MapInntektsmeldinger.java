@@ -1,8 +1,6 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
@@ -40,7 +38,29 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.RefusjonD
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.UtsettelsePeriodeDto;
 
 public class MapInntektsmeldinger {
-    private static final ZoneOffset DEFAULT_ZONE_OFFSET = ZoneId.systemDefault().getRules().getOffset(LocalDateTime.now());
+
+    private static final Comparator<RefusjonDto> COMP_ENDRINGER_REFUSJON = Comparator
+        .comparing((RefusjonDto re) -> re.getFom(), Comparator.nullsLast(Comparator.naturalOrder()));
+
+    private static final Comparator<GraderingDto> COMP_GRADERING = Comparator
+        .comparing((GraderingDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
+
+    private static final Comparator<NaturalytelseDto> COMP_NATURALYTELSE = Comparator
+        .comparing((NaturalytelseDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getType() == null ? null : dto.getType().getKode(), Comparator.nullsLast(Comparator.naturalOrder()));
+    
+    private static final Comparator<UtsettelsePeriodeDto> COMP_UTSETTELSE = Comparator
+            .comparing((UtsettelsePeriodeDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+            .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()))
+            .thenComparing(dto -> dto.getUtsettelseÅrsakDto() == null ? null : dto.getUtsettelseÅrsakDto().getKode(), Comparator.nullsLast(Comparator.naturalOrder()));
+
+    private static final Comparator<InntektsmeldingDto> COMP_INNTEKTSMELDING = Comparator
+        .comparing((InntektsmeldingDto im) -> im.getArbeidsgiver().getIdent())
+        .thenComparing(im -> im.getInnsendingstidspunkt())
+        .thenComparing(im -> im.getArbeidsforholdRef() == null ? null : im.getArbeidsforholdRef().getAbakusReferanse(),
+            Comparator.nullsLast(Comparator.naturalOrder()));
 
     public static class MapTilDto {
 
@@ -55,14 +75,8 @@ public class MapInntektsmeldinger {
                 return null;
             } else if (arbeidsforholdInformasjon != null && inntektsmeldingAggregat != null) {
                 var dto = new InntektsmeldingerDto();
-                Comparator<InntektsmeldingDto> comp = Comparator
-                    .comparing((InntektsmeldingDto im) -> im.getArbeidsgiver().getIdent())
-                    .thenComparing(im -> im.getInnsendingstidspunkt())
-                    .thenComparing(im -> im.getArbeidsforholdRef() == null ? null : im.getArbeidsforholdRef().getAbakusReferanse(),
-                        Comparator.nullsLast(Comparator.naturalOrder()));
-                
                 var inntektsmeldinger = inntektsmeldingAggregat.getAlleInntektsmeldinger().stream()
-                    .map(im -> this.mapInntektsmelding(im)).sorted(comp).collect(Collectors.toList());
+                    .map(im -> this.mapInntektsmelding(im)).sorted(COMP_INNTEKTSMELDING).collect(Collectors.toList());
                 dto.medInntektsmeldinger(inntektsmeldinger);
 
                 return dto;
@@ -93,13 +107,14 @@ public class MapInntektsmeldinger {
                 .medStartDatoPermisjon(im.getStartDatoPermisjon())
                 .medNærRelasjon(im.getErNærRelasjon());
 
-            inntektsmeldingDto.medEndringerRefusjon(im.getEndringerRefusjon().stream().map(this::mapEndringRefusjon).collect(Collectors.toList()));
+            inntektsmeldingDto.medEndringerRefusjon(
+                im.getEndringerRefusjon().stream().map(this::mapEndringRefusjon).sorted(COMP_ENDRINGER_REFUSJON).collect(Collectors.toList()));
 
-            inntektsmeldingDto.medGraderinger(im.getGraderinger().stream().map(this::mapGradering).collect(Collectors.toList()));
+            inntektsmeldingDto.medGraderinger(im.getGraderinger().stream().map(this::mapGradering).sorted(COMP_GRADERING).collect(Collectors.toList()));
 
-            inntektsmeldingDto.medNaturalytelser(im.getNaturalYtelser().stream().map(this::mapNaturalytelse).collect(Collectors.toList()));
+            inntektsmeldingDto.medNaturalytelser(im.getNaturalYtelser().stream().map(this::mapNaturalytelse).sorted(COMP_NATURALYTELSE).collect(Collectors.toList()));
 
-            inntektsmeldingDto.medUtsettelsePerioder(im.getUtsettelsePerioder().stream().map(this::mapUtsettelsePeriode).collect(Collectors.toList()));
+            inntektsmeldingDto.medUtsettelsePerioder(im.getUtsettelsePerioder().stream().map(this::mapUtsettelsePeriode).sorted(COMP_UTSETTELSE).collect(Collectors.toList()));
 
             return inntektsmeldingDto;
         }
@@ -173,7 +188,7 @@ public class MapInntektsmeldinger {
                 }
             }
             var journalpostId = dto.getJournalpostId().getId();
-            var innsendingstidspunkt = dto.getInnsendingstidspunkt().withOffsetSameInstant(DEFAULT_ZONE_OFFSET).toLocalDateTime();
+            var innsendingstidspunkt = dto.getInnsendingstidspunkt().atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
             var innsendingsårsak = KodeverkMapper.mapInntektsmeldingInnsendingsårsakFraDto(dto.getInnsendingsårsak());
 
             var builder = InntektsmeldingBuilder.builder()

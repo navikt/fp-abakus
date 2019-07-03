@@ -30,6 +30,21 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeidsforhold.v1.Arbeidsfor
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 class MapArbeidsforholdInformasjon {
+
+    private static final Comparator<ArbeidsforholdReferanseDto> COMP_ARBEIDSFORHOLD_REFERANSE = Comparator
+        .comparing((ArbeidsforholdReferanseDto ref) -> ref.getArbeidsgiver().getIdent())
+        .thenComparing(ref -> ref.getArbeidsforholdReferanse() == null ? null : ref.getArbeidsforholdReferanse().getAbakusReferanse(),
+            Comparator.nullsLast(Comparator.naturalOrder()));
+
+    private static final Comparator<ArbeidsforholdOverstyringDto> COMP_ARBEIDSFORHOLD_OVERSTYRING = Comparator
+        .comparing((ArbeidsforholdOverstyringDto ov) -> ov.getArbeidsgiver().getIdent())
+        .thenComparing(ov -> ov.getArbeidsforholdRef() == null ? null : ov.getArbeidsforholdRef().getAbakusReferanse(),
+            Comparator.nullsLast(Comparator.naturalOrder()));
+
+    private static final Comparator<Periode> COMP_PERIODE = Comparator
+        .comparing((Periode per) -> per.getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+        .thenComparing(per -> per.getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
+
     static class MapFraDto {
         private KodeverkRepository kodeverkRepository;
         private InntektArbeidYtelseGrunnlagBuilder grunnlagBuilder;
@@ -105,16 +120,6 @@ class MapArbeidsforholdInformasjon {
                 return null;
 
             var arbeidsforholdInformasjon = new ArbeidsforholdInformasjon();
-            Comparator<ArbeidsforholdReferanseDto> compRef = Comparator
-                .comparing((ArbeidsforholdReferanseDto ref) -> ref.getArbeidsgiver().getIdent())
-                .thenComparing(ref -> ref.getArbeidsforholdReferanse() == null ? null : ref.getArbeidsforholdReferanse().getAbakusReferanse(),
-                    Comparator.nullsLast(Comparator.naturalOrder()));
-
-            Comparator<ArbeidsforholdOverstyringDto> compOv = Comparator
-                .comparing((ArbeidsforholdOverstyringDto ov) -> ov.getArbeidsgiver().getIdent())
-                .thenComparing(ov -> ov.getArbeidsforholdRef() == null ? null : ov.getArbeidsforholdRef().getAbakusReferanse(),
-                    Comparator.nullsLast(Comparator.naturalOrder()));
-
             var overstyringer = entitet.getOverstyringer().stream()
                 .map(ao -> {
                     var dto = new ArbeidsforholdOverstyringDto(mapAktør(ao.getArbeidsgiver()),
@@ -129,12 +134,12 @@ class MapArbeidsforholdInformasjon {
                             .medArbeidsforholdOverstyrtePerioder(map(ao.getArbeidsforholdOverstyrtePerioder()));
                     return dto;
                 })
-                .sorted(compOv)
+                .sorted(COMP_ARBEIDSFORHOLD_OVERSTYRING)
                 .collect(Collectors.toList());
 
             var referanser = entitet.getArbeidsforholdReferanser().stream()
                 .map(ar -> this.mapArbeidsforholdReferanse(ar))
-                .sorted(compRef)
+                .sorted(COMP_ARBEIDSFORHOLD_REFERANSE)
                 .collect(Collectors.toList());
 
             return arbeidsforholdInformasjon
@@ -143,13 +148,11 @@ class MapArbeidsforholdInformasjon {
         }
 
         private List<Periode> map(List<ArbeidsforholdOverstyrtePerioderEntitet> perioder) {
-            Comparator<Periode> comp = Comparator.comparing((Periode per) -> per.getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
-                .thenComparing(per -> per.getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
             return perioder == null ? null
                 : perioder.stream()
                     .map(ArbeidsforholdOverstyrtePerioderEntitet::getOverstyrtePeriode)
                     .map(this::mapPeriode)
-                    .sorted(comp)
+                    .sorted(COMP_PERIODE)
                     .collect(Collectors.toList());
         }
 

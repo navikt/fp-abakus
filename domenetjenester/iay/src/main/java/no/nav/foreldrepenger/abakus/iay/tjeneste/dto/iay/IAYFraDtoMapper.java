@@ -1,9 +1,7 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,7 +18,6 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 
 public class IAYFraDtoMapper {
-    private static final ZoneOffset DEFAULT_ZONE_OFFSET = ZoneId.systemDefault().getRules().getOffset(LocalDateTime.now());
     
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private KodeverkRepository kodeverkRepository;
@@ -41,7 +38,7 @@ public class IAYFraDtoMapper {
     public InntektArbeidYtelseGrunnlag mapTilGrunnlag(InntektArbeidYtelseGrunnlagDto dto) {
         var kladd = hentGrunnlag(dto);
         var builder = !kladd.isPresent()
-            ? InntektArbeidYtelseGrunnlagBuilder.ny(UUID.fromString(dto.getGrunnlagReferanse()), dto.getGrunnlagTidspunkt().withOffsetSameInstant(DEFAULT_ZONE_OFFSET).toLocalDateTime())
+            ? InntektArbeidYtelseGrunnlagBuilder.ny(UUID.fromString(dto.getGrunnlagReferanse()), dto.getGrunnlagTidspunkt().atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime())
             : InntektArbeidYtelseGrunnlagBuilder.oppdatere(kladd.get());
 
         return mapTilGrunnlag(dto, builder);
@@ -62,7 +59,7 @@ public class IAYFraDtoMapper {
     public InntektArbeidYtelseGrunnlag mapTilGrunnlagInklusivRegisterdata(InntektArbeidYtelseGrunnlagDto dto) {
 
         OffsetDateTime grunnlagTidspunkt = dto.getGrunnlagTidspunkt();
-        var builder = InntektArbeidYtelseGrunnlagBuilder.ny(UUID.fromString(dto.getGrunnlagReferanse()), grunnlagTidspunkt.withOffsetSameInstant(DEFAULT_ZONE_OFFSET).toLocalDateTime());
+        var builder = InntektArbeidYtelseGrunnlagBuilder.ny(UUID.fromString(dto.getGrunnlagReferanse()), grunnlagTidspunkt.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime());
 
         return mapTilGrunnlagInklusivRegisterdata(dto, builder);
     }
@@ -105,7 +102,7 @@ public class IAYFraDtoMapper {
             builder.medData(aggregatBuilder);
             return;
         }
-        var tidspunkt = register.getOpprettetTidspunkt().withOffsetSameInstant(DEFAULT_ZONE_OFFSET).toLocalDateTime();
+        var tidspunkt = register.getOpprettetTidspunkt().atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
 
         var registerBuilder = InntektArbeidYtelseAggregatBuilder.builderFor(Optional.empty(), register.getEksternReferanse(), tidspunkt, VersjonType.REGISTER);
 
@@ -129,7 +126,7 @@ public class IAYFraDtoMapper {
                 builder.medData(aggregatBuilder);
                 return;
             }
-            var tidspunkt = overstyrt.getOpprettetTidspunkt().withOffsetSameInstant(DEFAULT_ZONE_OFFSET).toLocalDateTime();
+            var tidspunkt = overstyrt.getOpprettetTidspunkt().atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
             var saksbehandlerOverstyringer = iayTjeneste.opprettBuilderForSaksbehandlet(koblingReferanse, overstyrt.getEksternReferanse(), tidspunkt);
             var overstyrtAktørArbeid = new MapAktørArbeid.MapFraDto(aktørId, saksbehandlerOverstyringer).map(overstyrt.getArbeid());
             overstyrtAktørArbeid.forEach(saksbehandlerOverstyringer::leggTilAktørArbeid);

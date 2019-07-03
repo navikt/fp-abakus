@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,8 +21,6 @@ import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class OppgittOpptjeningBuilder {
 
-    private static final ZoneOffset DEFAULT_ZONE_OFFSET = ZoneId.systemDefault().getRules().getOffset(LocalDateTime.now());
-    
     private final OppgittOpptjeningEntitet kladd;
 
     private OppgittOpptjeningBuilder(OppgittOpptjeningEntitet kladd) {
@@ -39,7 +36,7 @@ public class OppgittOpptjeningBuilder {
     }
 
     public static OppgittOpptjeningBuilder ny(UUID eksternReferanse, OffsetDateTime opprettetTidspunktOriginalt) {
-        return new OppgittOpptjeningBuilder(new OppgittOpptjeningEntitet(eksternReferanse, opprettetTidspunktOriginalt.withOffsetSameInstant(DEFAULT_ZONE_OFFSET).toLocalDateTime()));
+        return new OppgittOpptjeningBuilder(new OppgittOpptjeningEntitet(eksternReferanse, opprettetTidspunktOriginalt.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()));
     }
 
     /**
