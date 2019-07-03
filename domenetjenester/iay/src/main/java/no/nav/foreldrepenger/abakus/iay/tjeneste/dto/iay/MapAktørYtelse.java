@@ -36,6 +36,13 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.ytelse.v1.YtelserDto;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class MapAktørYtelse {
+    private static final Comparator<YtelseDto> COMP_YTELSE = Comparator
+        .comparing((YtelseDto dto) -> dto.getSaksnummer(), Comparator.nullsLast(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getYtelseType() == null ? null : dto.getYtelseType().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getTemaUnderkategori() == null ? null : dto.getTemaUnderkategori().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
+
     static class MapFraDto {
         private InntektArbeidYtelseAggregatBuilder aggregatBuilder;
 
@@ -143,14 +150,7 @@ public class MapAktørYtelse {
         }
 
         private List<YtelseDto> mapTilYtelser(Collection<Ytelse> ytelser) {
-            Comparator<YtelseDto> compYt = Comparator.comparing((YtelseDto dto) -> dto.getSaksnummer(), Comparator.nullsLast(Comparator.naturalOrder()))
-                .thenComparing(dto -> dto.getYtelseType() == null ? null : dto.getYtelseType().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
-                .thenComparing(dto -> dto.getTemaUnderkategori() == null ? null : dto.getTemaUnderkategori().getKode(),
-                    Comparator.nullsLast(Comparator.naturalOrder()))
-                .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
-                .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
-
-            return ytelser.stream().map(this::tilYtelse).sorted(compYt).collect(Collectors.toList());
+            return ytelser.stream().map(this::tilYtelse).sorted(COMP_YTELSE).collect(Collectors.toList());
         }
 
         private YtelseGrunnlagDto mapYtelseGrunnlag(YtelseGrunnlag gr) {

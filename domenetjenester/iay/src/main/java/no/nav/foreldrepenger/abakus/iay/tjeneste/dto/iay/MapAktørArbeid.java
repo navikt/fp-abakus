@@ -36,6 +36,18 @@ import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class MapAktørArbeid {
 
+    private static final Comparator<YrkesaktivitetDto> COMP_YRKESAKTIVITET = Comparator
+        .comparing((YrkesaktivitetDto dto) -> dto.getArbeidsgiver().map(Aktør::getIdent).orElse(null))
+        .thenComparing(dto -> dto.getArbeidsforholdId() == null ? null : dto.getArbeidsforholdId().getAbakusReferanse());
+
+    private static final Comparator<AktivitetsAvtaleDto> COMP_AKTIVITETSAVTALE = Comparator
+        .comparing((AktivitetsAvtaleDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
+
+    private static final Comparator<PermisjonDto> COMP_PERMISJON = Comparator
+        .comparing((PermisjonDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));;
+
     static class MapFraDto {
 
         @SuppressWarnings("unused")
@@ -143,11 +155,7 @@ public class MapAktørArbeid {
             List<YrkesaktivitetDto> yrkesaktiviteter = new ArrayList<>(getYrkesaktiviteter(arb.getYrkesaktiviteter()));
             List<YrkesaktivitetDto> frilansOppdrag = getYrkesaktiviteter(arb.getFrilansOppdrag());
             yrkesaktiviteter.addAll(frilansOppdrag);
-
-            Comparator<YrkesaktivitetDto> compYrk = Comparator.comparing((YrkesaktivitetDto dto) -> dto.getArbeidsgiver().map(Aktør::getIdent).orElse(null))
-                .thenComparing(dto -> dto.getArbeidsforholdId() == null ? null : dto.getArbeidsforholdId().getAbakusReferanse());
-
-            Collections.sort(yrkesaktiviteter, compYrk);
+            Collections.sort(yrkesaktiviteter, COMP_YRKESAKTIVITET);
             var dto = new ArbeidDto(new AktørIdPersonident(arb.getAktørId().getId()))
                 .medYrkesaktiviteter(yrkesaktiviteter);
             return dto;
@@ -173,15 +181,8 @@ public class MapAktørArbeid {
         }
 
         private YrkesaktivitetDto mapYrkesaktivitet(Yrkesaktivitet a) {
-            Comparator<AktivitetsAvtaleDto> compAvt = Comparator
-                .comparing((AktivitetsAvtaleDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
-                .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
-            var aktivitetsAvtaler = a.getAlleAktivitetsAvtaler().stream().map(this::map).sorted(compAvt).collect(Collectors.toList());
-
-            Comparator<PermisjonDto> compPerm = Comparator
-                .comparing((PermisjonDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
-                .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
-            var permisjoner = a.getPermisjon().stream().map(this::map).sorted(compPerm).collect(Collectors.toList());
+            var aktivitetsAvtaler = a.getAlleAktivitetsAvtaler().stream().map(this::map).sorted(COMP_AKTIVITETSAVTALE).collect(Collectors.toList());
+            var permisjoner = a.getPermisjon().stream().map(this::map).sorted(COMP_PERMISJON).collect(Collectors.toList());
 
             var arbeidsforholdId = mapArbeidsforholdsId(a.getArbeidsgiver(), a);
 
