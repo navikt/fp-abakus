@@ -186,7 +186,11 @@ public class MapAktørYtelse {
 
             ytelse.getYtelseGrunnlag().ifPresent(gr -> dto.setGrunnlag(mapYtelseGrunnlag(gr)));
 
-            var anvisninger = ytelse.getYtelseAnvist().stream().map(this::map).collect(Collectors.toList());
+            Comparator<AnvisningDto> compAnvisning = Comparator
+                .comparing((AnvisningDto anv) -> anv.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+                .thenComparing(anv -> anv.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
+
+            var anvisninger = ytelse.getYtelseAnvist().stream().map(this::map).sorted(compAnvisning).collect(Collectors.toList());
             dto.setAnvisninger(anvisninger);
 
             return dto;
