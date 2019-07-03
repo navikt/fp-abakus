@@ -56,11 +56,9 @@ public class IAYFraDtoMapper {
     /**
      * Til bruk for migrering (sender inn registerdata, istdf. å hente fra registerne.).
      */
-    public InntektArbeidYtelseGrunnlag mapTilGrunnlagInklusivRegisterdata(InntektArbeidYtelseGrunnlagDto dto) {
-
-        OffsetDateTime grunnlagTidspunkt = dto.getGrunnlagTidspunkt();
-        var builder = InntektArbeidYtelseGrunnlagBuilder.ny(UUID.fromString(dto.getGrunnlagReferanse()), grunnlagTidspunkt.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime());
-
+    public InntektArbeidYtelseGrunnlag mapTilGrunnlagInklusivRegisterdata(InntektArbeidYtelseGrunnlagDto dto, boolean erAktivtGrunnlag) {
+        var builder = InntektArbeidYtelseGrunnlagBuilder.ny(UUID.fromString(dto.getGrunnlagReferanse()), dto.getGrunnlagTidspunkt().atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime());
+        builder.medErAktivtGrunnlag(erAktivtGrunnlag);
         return mapTilGrunnlagInklusivRegisterdata(dto, builder);
     }
 

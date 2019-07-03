@@ -122,10 +122,10 @@ public class MigreringRestTjeneste {
 
                 var koblingReferanse = kobling.getKoblingReferanse();
                 var dtoMapper = new IAYFraDtoMapper(iayTjeneste, kodeverkRepository, aktørId, koblingReferanse);
-                var grunnlag = dtoMapper.mapTilGrunnlagInklusivRegisterdata(konvolutt.getData());
-
                 var aktiv = konvolutt.erAktiv() != null ? konvolutt.erAktiv() : false;
-                repository.lagreMigrertGrunnlag(grunnlag, koblingReferanse, aktiv);
+                var grunnlag = dtoMapper.mapTilGrunnlagInklusivRegisterdata(konvolutt.getData(), aktiv);
+
+                repository.lagreMigrertGrunnlag(grunnlag, koblingReferanse);
 
                 var tidsstempler = tidsstemplerTekst(sakSnapshot, aktørId, konvolutt, grunnlagReferanse, koblingReferanse, grunnlag);
                 log.info("Migrert grunnlagReferanse={} (koblingReferanse={}), tidsstempler [{}]", grunnlagReferanse, koblingReferanse, tidsstempler);

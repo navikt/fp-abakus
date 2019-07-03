@@ -34,7 +34,7 @@ public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRe
      * @deprecated OBS! Kun for migrering av vedtak fra FPSAK til abakus
      */
     @Deprecated(forRemoval = true)
-    void lagreMigrertGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, KoblingReferanse koblingReferanse, boolean aktiv);
+    void lagreMigrertGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, KoblingReferanse koblingReferanse);
 
     Optional<ArbeidsforholdInformasjon> hentArbeidsforholdInformasjonForBehandling(KoblingReferanse koblingReferanse);
 
