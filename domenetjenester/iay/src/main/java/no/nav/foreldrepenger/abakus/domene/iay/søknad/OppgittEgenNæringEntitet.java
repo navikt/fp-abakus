@@ -87,7 +87,7 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
     @Column(name = "ny_i_arbeidslivet", nullable = false)
     private boolean nyIArbeidslivet;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumnsOrFormulas({
         @JoinColumnOrFormula(column = @JoinColumn(name = "land", referencedColumnName = "kode", nullable = false)),
         @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + Landkoder.DISCRIMINATOR + "'"))})
@@ -97,6 +97,7 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
     private String utenlandskVirksomhetNavn;
 
     OppgittEgenNæringEntitet() {
+        // for hibernate
     }
 
     @Override
@@ -228,7 +229,7 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
     }
 
     void setLandkode(Landkoder landkode) {
-        this.landkode = landkode;
+        this.landkode = Objects.requireNonNull(landkode, "landkode");
     }
 
     @Override
