@@ -73,6 +73,8 @@ class ByggYrkesaktiviteterTjeneste {
             .getAktivitetsAvtaleBuilder()
             .medProsentsats(arbeidsavtale.getStillingsprosent())
             .medSisteLønnsendringsdato(arbeidsavtale.getSisteLønnsendringsdato())
+            .medAntallTimer(arbeidsavtale.getAvtaltArbeidstimerPerUke()) // merk, inneholder mye søppel
+            .medAntallTimerFulltid(arbeidsavtale.getBeregnetAntallTimerPrUke()) // merk, innneholder mye søppel
             .medPeriode(DatoIntervallEntitet.fraOgMed(fom));
     }
 
@@ -150,6 +152,8 @@ class ByggYrkesaktiviteterTjeneste {
         aktivitetsAvtaleBuilder
             .medProsentsats(arbeidsavtale.getStillingsprosent())
             .medSisteLønnsendringsdato(arbeidsavtale.getSisteLønnsendringsdato())
+            .medAntallTimer(arbeidsavtale.getAvtaltArbeidstimerPerUke()) // merk, innneholder mye søppel
+            .medAntallTimerFulltid(arbeidsavtale.getBeregnetAntallTimerPrUke()) // merk, innneholder mye søppel
             .medPeriode(periode);
 
         return aktivitetsAvtaleBuilder;

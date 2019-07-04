@@ -21,6 +21,7 @@ import javax.persistence.Version;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.typer.AntallTimer;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 import no.nav.vedtak.konfig.Tid;
@@ -41,6 +42,18 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "prosentsats")))
     private Stillingsprosent prosentsats;
+
+    /** TODO (FC): Se om vi kan bli kvitt antallTimer. Brukes bare til å sjekke om det finnes verdi i {@link #erAnsettelsesPeriode()}. */
+    @ChangeTracked
+    @Embedded
+    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "antall_timer")))
+    private AntallTimer antallTimer;
+
+    /** TODO (FC): Se om vi kan bli kvitt antallTimerFulltid. Brukes bare til å sjekke om det finnes verdi i {@link #erAnsettelsesPeriode()}. */
+    @ChangeTracked
+    @Embedded
+    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "antall_timer_fulltid")))
+    private AntallTimer antallTimerFulltid;
 
     @Column(name = "beskrivelse")
     private String beskrivelse;
@@ -72,7 +85,7 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
      * Deep copy ctor
      */
     AktivitetsAvtaleEntitet(AktivitetsAvtale aktivitetsAvtale) {
-        AktivitetsAvtaleEntitet entitet = (AktivitetsAvtaleEntitet) aktivitetsAvtale; //NOSONAR
+        AktivitetsAvtaleEntitet entitet = (AktivitetsAvtaleEntitet) aktivitetsAvtale; // NOSONAR
         this.prosentsats = entitet.prosentsats;
         this.beskrivelse = entitet.beskrivelse;
         this.periode = entitet.periode;
@@ -81,17 +94,35 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(periode, prosentsats);
+        return IndexKey.createKey(periode, prosentsats, sisteLønnsendringsdato);
     }
 
     @Override
     public Stillingsprosent getProsentsats() {
         return prosentsats;
     }
-    
+
     @Override
     public BigDecimal getProsentsatsVerdi() {
-        return prosentsats==null?null:prosentsats.getVerdi();
+        return prosentsats == null ? null : prosentsats.getVerdi();
+    }
+
+    @Override
+    public AntallTimer getAntallTimer() {
+        return antallTimer;
+    }
+
+    void setAntallTimer(AntallTimer antallTimer) {
+        this.antallTimer = antallTimer;
+    }
+
+    @Override
+    public AntallTimer getAntallTimerFulltid() {
+        return antallTimerFulltid;
+    }
+
+    void setAntallTimerFulltid(AntallTimer antallTimerFulltid) {
+        this.antallTimerFulltid = antallTimerFulltid;
     }
 
     void setProsentsats(Stillingsprosent prosentsats) {
@@ -181,11 +212,12 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof AktivitetsAvtaleEntitet)) return false;
+        if (this == o)
+            return true;
+        if (o == null || !(o instanceof AktivitetsAvtaleEntitet))
+            return false;
         var that = (AktivitetsAvtaleEntitet) o;
-        return 
-            Objects.equals(prosentsats, that.prosentsats) &&
+        return Objects.equals(prosentsats, that.prosentsats) &&
             Objects.equals(periode, that.periode) &&
             Objects.equals(sisteLønnsendringsdato, that.sisteLønnsendringsdato);
     }
@@ -209,7 +241,9 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
 
     @Override
     public boolean erAnsettelsesPeriode() {
-        return (prosentsats == null || prosentsats.erNulltall())
+        return (antallTimer == null || antallTimer.getVerdi() == null)
+            && (antallTimerFulltid == null || antallTimerFulltid.getVerdi() == null)
+            && (prosentsats == null || prosentsats.erNulltall())
             && sisteLønnsendringsdato == null;
     }
 
