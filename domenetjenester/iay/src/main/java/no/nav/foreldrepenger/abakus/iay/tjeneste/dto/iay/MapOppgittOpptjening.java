@@ -9,9 +9,6 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittAnnenAktivitetEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittFrilansEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittFrilansoppdragEntitet;
@@ -41,8 +38,6 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.oppgittopptjening.v1.Oppgitt
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class MapOppgittOpptjening {
-
-    private static final Logger log = LoggerFactory.getLogger(MapOppgittOpptjening.class);
 
     private static final Comparator<OppgittFrilansoppdragDto> COMP_FRILANSOPPDRAG = Comparator
         .comparing((OppgittFrilansoppdragDto dto) -> dto.getOppdragsgiver(), Comparator.nullsLast(Comparator.naturalOrder()))
@@ -97,7 +92,7 @@ public class MapOppgittOpptjening {
             var dto = new OppgittOpptjeningDto(oppgittOpptjening.getEksternReferanse(), oppgittOpptjening.getOpprettetTidspunkt());
 
             dto.medArbeidsforhold(oppgittOpptjening.getOppgittArbeidsforhold().stream()
-                .map(oa -> this.mapArbeidsforhold(oppgittOpptjening, oa)).sorted(COMP_OPPGITT_ARBEIDSFORHOLD).collect(Collectors.toList()));
+                .map(oa -> this.mapArbeidsforhold(oa)).sorted(COMP_OPPGITT_ARBEIDSFORHOLD).collect(Collectors.toList()));
             dto.medEgenNæring(oppgittOpptjening.getEgenNæring().stream()
                 .map(this::mapEgenNæring).sorted(COMP_OPPGITT_EGEN_NÆRING).collect(Collectors.toList()));
             dto.medAnnenAktivitet(oppgittOpptjening.getAnnenAktivitet().stream()
@@ -120,7 +115,7 @@ public class MapOppgittOpptjening {
             return frilansDto;
         }
 
-        private OppgittArbeidsforholdDto mapArbeidsforhold(OppgittOpptjening oppgittOpptjening, OppgittArbeidsforhold arbeidsforhold) {
+        private OppgittArbeidsforholdDto mapArbeidsforhold(OppgittArbeidsforhold arbeidsforhold) {
             if (arbeidsforhold == null)
                 return null;
 
@@ -131,17 +126,14 @@ public class MapOppgittOpptjening {
             var dto = new OppgittArbeidsforholdDto(periode, arbeidType)
                 .medErUtenlandskInntekt(arbeidsforhold.erUtenlandskInntekt());
 
+            Landkoder landkode = arbeidsforhold.getLandkode();
+            var land = landkode == null || landkode.getKode() == null ? Landkode.NORGE : new Landkode(landkode.getKode());
+
             var virksomhet = arbeidsforhold.getUtenlandskVirksomhetNavn();
             if (virksomhet != null) {
-                if (arbeidsforhold.getLandkode() == null) {
-                    // TODO (FC) : hvorfor manglet vi landkode i et grunnlag? Legger på logging for å feilsøke om det skjer igjen.
-                    log.warn("Mangler landkode for virksomhet=" + virksomhet + ", oppgittOpptjening=" + oppgittOpptjening.getEksternReferanse());
-                    dto.medOppgittVirksomhetNavn(virksomhet, null);
-                } else {
-                    String kode = arbeidsforhold.getLandkode().getKode();
-                    var landKode = kode == null ? null : new Landkode(kode);
-                    dto.medOppgittVirksomhetNavn(virksomhet, landKode);
-                }
+                dto.medOppgittVirksomhetNavn(virksomhet, land);
+            } else {
+                dto.setLandkode(land);
             }
 
             return dto;
@@ -171,14 +163,13 @@ public class MapOppgittOpptjening {
                 .medVirksomhetType(virksomhetType);
 
             var virksomhet = egenNæring.getUtenlandskVirksomhetNavn();
+            Landkoder landkode = egenNæring.getLandkode();
+
+            var land = landkode == null || landkode.getKode() == null ? Landkode.NORGE : new Landkode(landkode.getKode());
             if (virksomhet != null) {
-                var landKode = new Landkode(egenNæring.getLandkode().getKode());
-                dto.medOppgittVirksomhetNavn(virksomhet, landKode);
-            } else if (egenNæring.getLandkode() != null) {
-                var landKode = new Landkode(egenNæring.getLandkode().getKode());
-                dto.setLandkode(landKode);
+                dto.medOppgittVirksomhetNavn(virksomhet, land);
             } else {
-                dto.setLandkode(Landkode.NORGE);
+                dto.setLandkode(land);
             }
             return dto;
         }
@@ -283,7 +274,7 @@ public class MapOppgittOpptjening {
                 .medPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom()));
 
             Landkoder landkode;
-            if (dto.getLandkode() != null) {
+            if (dto.getLandkode() != null && dto.getLandkode().getKode()!=null) {
                 landkode = mapLandkoder(dto.getLandkode());
             } else {
                 landkode = mapLandkoder(Landkode.NORGE);
@@ -304,7 +295,7 @@ public class MapOppgittOpptjening {
                 .medPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(dto1.getFom(), dto1.getTom()));
 
             Landkoder landkode;
-            if (dto.getLandkode() != null) {
+            if (dto.getLandkode() != null && dto.getLandkode().getKode()!=null) {
                 landkode = mapLandkoder(dto.getLandkode());
             } else {
                 landkode = mapLandkoder(Landkode.NORGE);
