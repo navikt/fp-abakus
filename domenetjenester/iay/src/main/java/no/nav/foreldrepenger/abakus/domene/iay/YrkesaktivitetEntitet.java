@@ -36,6 +36,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.PermisjonsbeskrivelseTyp
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.typer.AntallTimer;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
@@ -337,6 +338,20 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
                 prosentsats = BigDecimal.ZERO;
             }
             this.aktivitetsAvtaleEntitet.setProsentsats(new Stillingsprosent(prosentsats));
+            return this;
+        }
+        
+        public AktivitetsAvtaleBuilder medAntallTimer(BigDecimal antallTimer) {
+            if (antallTimer != null) {
+                this.aktivitetsAvtaleEntitet.setAntallTimer(new AntallTimer(antallTimer));
+            }
+            return this;
+        }
+
+        public AktivitetsAvtaleBuilder medAntallTimerFulltid(BigDecimal antallTimerFulltid) {
+            if (antallTimerFulltid != null) {
+                this.aktivitetsAvtaleEntitet.setAntallTimerFulltid(new AntallTimer(antallTimerFulltid));
+            }
             return this;
         }
 

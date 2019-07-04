@@ -113,6 +113,8 @@ public class MapAktørArbeid {
                 .medBeskrivelse(dto.getBeskrivelse())
                 .medPeriode(mapPeriode(dto.getPeriode()))
                 .medProsentsats(dto.getStillingsprosent())
+                .medAntallTimer(dto.getAntallTimer())
+                .medAntallTimerFulltid(dto.getAntallTimerFulltid())
                 .medSisteLønnsendringsdato(dto.getSistLønnsendring());
         }
 
@@ -169,6 +171,8 @@ public class MapAktørArbeid {
             var avtale = new AktivitetsAvtaleDto(aa.getFraOgMed(), aa.getTilOgMed())
                 .medBeskrivelse(aa.getBeskrivelse())
                 .medSistLønnsendring(aa.getSisteLønnsendringsdato())
+                .medAntallTimer(aa.getAntallTimer() == null ? null : aa.getAntallTimer().getSkalertVerdi())
+                .medAntallTimerFulltid(aa.getAntallTimerFulltid() == null ? null : aa.getAntallTimerFulltid().getSkalertVerdi())
                 .medStillingsprosent(aa.getProsentsats() != null ? aa.getProsentsats().getVerdi() : null);
             return avtale;
         }
