@@ -63,7 +63,7 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
     @ChangeTracked
     private ArbeidType arbeidType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumnsOrFormulas({
         @JoinColumnOrFormula(column = @JoinColumn(name = "land", referencedColumnName = "kode", nullable = false)),
         @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + Landkoder.DISCRIMINATOR + "'"))})
@@ -120,7 +120,7 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
     }
 
     void setLandkode(Landkoder landkode) {
-        this.landkode = landkode;
+        this.landkode = Objects.requireNonNull(landkode, "landkode");
     }
 
     @Override

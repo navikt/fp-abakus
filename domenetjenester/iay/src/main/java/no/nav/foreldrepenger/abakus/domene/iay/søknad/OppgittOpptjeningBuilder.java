@@ -36,7 +36,8 @@ public class OppgittOpptjeningBuilder {
     }
 
     public static OppgittOpptjeningBuilder ny(UUID eksternReferanse, OffsetDateTime opprettetTidspunktOriginalt) {
-        return new OppgittOpptjeningBuilder(new OppgittOpptjeningEntitet(eksternReferanse, opprettetTidspunktOriginalt.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()));
+        return new OppgittOpptjeningBuilder(
+            new OppgittOpptjeningEntitet(eksternReferanse, opprettetTidspunktOriginalt.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()));
     }
 
     /**
@@ -160,6 +161,11 @@ public class OppgittOpptjeningBuilder {
             return this;
 
         }
+
+        public EgenNæringBuilder medLandkode(Landkoder landkode) {
+            this.entitet.setLandkode(landkode);
+            return this;
+        }
     }
 
     public static class OppgittArbeidsforholdBuilder {
@@ -198,6 +204,11 @@ public class OppgittOpptjeningBuilder {
 
         public OppgittArbeidsforhold build() {
             return entitet;
+        }
+
+        public OppgittArbeidsforholdBuilder medLandkode(Landkoder landkode) {
+            this.entitet.setLandkode(landkode);
+            return this;
         }
     }
 }
