@@ -38,12 +38,10 @@ public class IAYTilDtoMapper {
         var dto = new InntektArbeidYtelseGrunnlagDto(new AktørIdPersonident(aktørId.getId()),
             grunnlagTidspunkt, grunnlagReferanse.getReferanse(), koblingReferanse.getReferanse());
 
-        var aggregatOpt = grunnlag.getOpplysningerEtterSkjæringstidspunkt(null);
-
         // Selektiv mapping avhengig av hva som er forspurt av data
 
         if (dataset.contains(Dataset.REGISTER)) {
-            aggregatOpt.ifPresent(a -> mapRegisterOpplysninger(a, getArbeidsforholdInformasjon(grunnlag), dto));
+            grunnlag.getRegisterVersjon().ifPresent(a -> mapRegisterOpplysninger(a, getArbeidsforholdInformasjon(grunnlag), dto));
         }
 
         if (dataset.contains(Dataset.OVERSTYRT)) {

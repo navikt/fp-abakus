@@ -15,6 +15,11 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 public interface InntektArbeidYtelseGrunnlag {
 
     /**
+     * Returnerer innhentede registeropplysninger som aggregat.  Tar ikke hensyn til saksbehandlers overstyringer (se {@link #getSaksbehandletVersjon()}.
+     */
+    Optional<InntektArbeidYtelseAggregat> getRegisterVersjon();
+    
+    /**
      * Returnerer en overstyrt versjon av aggregat. Hvis saksbehandler har løst et aksjonspunkt i forbindele med
      * opptjening vil det finnes et overstyrt aggregat, gjelder for FØR første dag i permisjonsuttaket (skjæringstidspunktet)
      */

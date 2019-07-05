@@ -146,7 +146,8 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
         this.saksbehandlet = saksbehandletFør;
     }
 
-    Optional<InntektArbeidYtelseAggregat> getRegisterVersjon() {
+    @Override
+    public Optional<InntektArbeidYtelseAggregat> getRegisterVersjon() {
         return Optional.ofNullable(register);
     }
 
