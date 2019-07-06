@@ -76,8 +76,17 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
+    /**
+     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
+     */
+    @Deprecated
     @Transient
     private LocalDate skjæringstidspunkt;
+    
+    /**
+     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
+     */
+    @Deprecated
     @Transient
     private boolean ventreSideAvSkjæringstidspunkt;
 
@@ -161,6 +170,11 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
         this.ytelse = ytelse;
     }
 
+    
+    /**
+     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
+     */
+    @Deprecated
     boolean skalMedEtterSkjæringstidspunktVurdering() {
         if (skjæringstidspunkt != null) {
             if (ventreSideAvSkjæringstidspunkt) {
@@ -209,6 +223,11 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
         return inntektspostType != null || periode.getFomDato() != null || periode.getTomDato() != null || beløp != null;
     }
 
+    
+    /**
+     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
+     */
+    @Deprecated
     void setSkjæringstidspunkt(LocalDate skjæringstidspunkt, boolean ventreSide) {
         this.skjæringstidspunkt = skjæringstidspunkt;
         this.ventreSideAvSkjæringstidspunkt = ventreSide;

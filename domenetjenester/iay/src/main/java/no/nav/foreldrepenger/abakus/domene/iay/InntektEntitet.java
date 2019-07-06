@@ -128,6 +128,11 @@ public class InntektEntitet extends BaseEntitet implements Inntekt, IndexKey {
     }
 
     @Override
+    public Collection<Inntektspost> getAlleInntektsposter() {
+        return Collections.unmodifiableSet(inntektspost);
+    }
+    
+    @Override
     public Long getId() {
         return id;
     }

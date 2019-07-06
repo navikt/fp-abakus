@@ -146,7 +146,7 @@ public class MapAktørYtelse {
         private YtelserDto mapTilYtelser(AktørYtelse ay) {
             AktørIdPersonident person = new AktørIdPersonident(ay.getAktørId().getId());
             return new YtelserDto(person)
-                .medYtelser(mapTilYtelser(ay.getYtelser()));
+                .medYtelser(mapTilYtelser(ay.getAlleYtelser()));
         }
 
         private List<YtelseDto> mapTilYtelser(Collection<Ytelse> ytelser) {
