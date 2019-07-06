@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.felles.diff;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableSet;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -23,8 +22,10 @@ import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -50,8 +51,18 @@ import javassist.Modifier;
  * Denne klassen kan traverse en Entity graph og trekk ut verdier som key/value.
  * <p>
  * Genererte verdier, {@link Id}, {@link Version}, {@link GeneratedValue} vil ignoreres.
+ * 
+ * Bør opprette ny instans for hver gang det brukes til sammenligning.
  */
 public class TraverseEntityGraph {
+    
+    /** Return alltid true, dvs. vil aldri filtrere bort noe. */
+    public static final Function<Object, Boolean> NO_FILTER = new Function<Object, Boolean> () {
+        @Override
+        public Boolean apply(Object t) {
+            return Boolean.TRUE;
+        }
+    };
 
     /** Final klasser som ikke trenger videre forklaring. For raskest oppslag. */
     private static final Set<Class<?>> LEAVES_FINAL = Set.of(
@@ -70,8 +81,7 @@ public class TraverseEntityGraph {
     private static final Set<Class<?>> LEAVES_EXTENDABLE = Set.of(Number.class, Enum.class, TemporalAccessor.class, TemporalAmount.class, TemporalField.class, TraverseValue.class);
 
     /** Rot klasser som ikke skal inspiseres i et hierarki. */
-    private static final Set<Class<?>> ROOTS_CLASSES = unmodifiableSet(new HashSet<>(
-        asList(Object.class)));
+    private static final Set<Class<?>> ROOTS_CLASSES = Set.of(Object.class);
 
     private Set<Class<?>> leafFinalClasses = LEAVES_FINAL;
     private Set<Class<?>> leafExtendableClasses = LEAVES_EXTENDABLE;
@@ -82,6 +92,9 @@ public class TraverseEntityGraph {
     private boolean onlyCheckTrackedFields;
 
     private final ListPositionEquality listPositionEq = new ListPositionEquality();
+    
+    /** Filter - returnerer false dersom objekt ikke skal sammmenlignes. Default sammenligner alt. */
+    private Function<Object, Boolean> inclusionFilter = NO_FILTER;
 
     public TraverseEntityGraph() {
     }
@@ -148,12 +161,17 @@ public class TraverseEntityGraph {
     }
 
     private void doTraverseRecursiveInternal(Node currentPath, TraverseResult result, Object obj) {
-        Class<?> targetClass = getClassOf(obj);
-        validateEntity(currentPath, targetClass);
         if (obj instanceof HibernateProxy) {
             // PKMANTIS-1395 nødvendig for at lazy children av entitet loades
             obj = Hibernate.unproxy(obj);
         }
+        
+        if(!inclusionFilter.apply(obj)) {
+            return;
+        }
+
+        Class<?> targetClass = obj.getClass();
+        validateEntity(currentPath, targetClass);
 
         Class<?> currentClass = targetClass;
 
@@ -175,14 +193,7 @@ public class TraverseEntityGraph {
         }
     }
 
-    private Class<?> getClassOf(Object obj) {
-        if (obj instanceof HibernateProxy) {
-            return Hibernate.unproxy(obj).getClass();
-        }
-        return obj.getClass();
-    }
-
-    private boolean isTraverseField(final Field field) {
+    protected boolean isTraverseField(final Field field) {
         return (onlyCheckTrackedFields && isChangeTrackedField(field))
             || (!onlyCheckTrackedFields && isMappedField(field));
     }
@@ -243,11 +254,11 @@ public class TraverseEntityGraph {
         return cls == null || rootClasses.contains(cls);
     }
 
-    private static boolean isMappedField(Field fld) {
+    protected boolean isMappedField(Field fld) {
         return isExpectedField(fld) && !isSkippedFields(fld);
     }
 
-    private static boolean isExpectedField(Field fld) {
+    protected boolean isExpectedField(Field fld) {
         int mods = fld.getModifiers();
         if (Modifier.isFinal(mods) || Modifier.isStatic(mods) || Modifier.isTransient(mods)) {
             return false;
@@ -263,7 +274,7 @@ public class TraverseEntityGraph {
             || fld.isAnnotationPresent(Embedded.class);
     }
 
-    private static boolean isSkippedFields(Field fld) {
+    protected boolean isSkippedFields(Field fld) {
         return fld.isAnnotationPresent(DiffIgnore.class)
             || (fld.isAnnotationPresent(Id.class) && fld.isAnnotationPresent(GeneratedValue.class))
             || fld.isAnnotationPresent(Version.class)
@@ -275,7 +286,7 @@ public class TraverseEntityGraph {
         return fld.isAnnotationPresent(ChangeTracked.class);
     }
 
-    private static void validateEntity(Node currentPath, Class<?> targetClass) {
+    protected void validateEntity(Node currentPath, Class<?> targetClass) {
         boolean ok = targetClass.isAnnotationPresent(Entity.class)
             || targetClass.isAnnotationPresent(Embeddable.class);
         if (!ok) {
@@ -294,6 +305,10 @@ public class TraverseEntityGraph {
         this.leafFinalClasses = new HashSet<>(this.leafFinalClasses);
         this.leafFinalClasses.addAll(newLeafClasses);
 
+    }
+    
+    public void setInclusionFilter(Function<Object, Boolean> inclusionFilter) {
+        this.inclusionFilter = Objects.requireNonNull(inclusionFilter, "inclusionFilter");
     }
 
     public static class TraverseResult {

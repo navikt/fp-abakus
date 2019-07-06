@@ -12,7 +12,7 @@ interface YtelseFeil extends DeklarerteFeil {
 
     YtelseFeil FACTORY = FeilFactory.create(YtelseFeil.class);
 
-    @TekniskFeil(feilkode = "FP-328673",
+    @TekniskFeil(feilkode = "FP-328773",
         feilmelding = "Feil under parsing av vedtak. key={%s} payload={%s}",
         logLevel = LogLevel.WARN)
     Feil parsingFeil(String key, String payload, IOException e);

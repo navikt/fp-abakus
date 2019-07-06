@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtale;
 import no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid;
+import no.nav.foreldrepenger.abakus.domene.iay.AktørArbeidEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder;
@@ -154,13 +155,17 @@ public class MapAktørArbeid {
         }
 
         private ArbeidDto map(AktørArbeid arb) {
-            List<YrkesaktivitetDto> yrkesaktiviteter = new ArrayList<>(getYrkesaktiviteter(arb.getYrkesaktiviteter()));
-            List<YrkesaktivitetDto> frilansOppdrag = getYrkesaktiviteter(arb.getFrilansOppdrag());
-            yrkesaktiviteter.addAll(frilansOppdrag);
-            Collections.sort(yrkesaktiviteter, COMP_YRKESAKTIVITET);
+            List<YrkesaktivitetDto> yrkesaktiviteter = new ArrayList<>(getYrkesaktiviteter(((AktørArbeidEntitet) arb).hentAlleYrkesaktiviter()));
+
+            var aktiviteter = yrkesaktiviteter.stream().filter(this::erGyldigYrkesaktivitet).sorted(COMP_YRKESAKTIVITET).collect(Collectors.toList());
+
             var dto = new ArbeidDto(new AktørIdPersonident(arb.getAktørId().getId()))
-                .medYrkesaktiviteter(yrkesaktiviteter);
+                .medYrkesaktiviteter(aktiviteter);
             return dto;
+        }
+        
+        private boolean erGyldigYrkesaktivitet(YrkesaktivitetDto yrkesaktivitet) {
+            return !yrkesaktivitet.getAktivitetsAvtaler().isEmpty() || !yrkesaktivitet.getPermisjoner().isEmpty();
         }
 
         private List<YrkesaktivitetDto> getYrkesaktiviteter(Collection<Yrkesaktivitet> aktiviteter) {

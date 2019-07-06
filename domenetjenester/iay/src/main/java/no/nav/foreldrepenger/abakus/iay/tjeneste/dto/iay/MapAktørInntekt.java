@@ -1,6 +1,5 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,7 +15,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilde
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektEntitet.InntektspostBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Inntektspost;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Aktør;
@@ -110,25 +108,18 @@ public class MapAktørInntekt {
 
         private InntekterDto mapTilInntekt(AktørInntekt ai) {
             InntekterDto dto = new InntekterDto(new AktørIdPersonident(ai.getAktørId().getId()));
-            List<UtbetalingDto> pensjonsgivende = tilUtbetalinger(ai.getInntektPensjonsgivende(), InntektsKilde.INNTEKT_OPPTJENING);
-            List<UtbetalingDto> sammenligning = tilUtbetalinger(ai.getInntektSammenligningsgrunnlag(), InntektsKilde.INNTEKT_SAMMENLIGNING);
-            List<UtbetalingDto> beregning = tilUtbetalinger(ai.getInntektBeregningsgrunnlag(), InntektsKilde.INNTEKT_BEREGNING);
-            List<UtbetalingDto> sigrun = tilUtbetalinger(ai.getBeregnetSkatt(), InntektsKilde.SIGRUN);
-            ArrayList<UtbetalingDto> utbetalinger = new ArrayList<>(pensjonsgivende);
-            utbetalinger.addAll(sammenligning);
-            utbetalinger.addAll(beregning);
-            utbetalinger.addAll(sigrun);
+            List<UtbetalingDto> utbetalinger = tilUtbetalinger(ai.getInntekt());
             dto.setUtbetalinger(utbetalinger);
             return dto;
         }
 
-        private List<UtbetalingDto> tilUtbetalinger(List<Inntekt> inntekter, InntektsKilde kilde) {
-            return inntekter.stream().map(in -> tilUtbetaling(in, kilde)).sorted(COMP_UTBETALING).collect(Collectors.toList());
+        private List<UtbetalingDto> tilUtbetalinger(Collection<Inntekt> inntekter) {
+            return inntekter.stream().map(in -> tilUtbetaling(in)).sorted(COMP_UTBETALING).collect(Collectors.toList());
         }
 
-        private UtbetalingDto tilUtbetaling(Inntekt inntekt, InntektsKilde kilde) {
+        private UtbetalingDto tilUtbetaling(Inntekt inntekt) {
             Arbeidsgiver arbeidsgiver = inntekt.getArbeidsgiver();
-            UtbetalingDto dto = new UtbetalingDto(KodeverkMapper.mapInntektsKildeTilDto(kilde));
+            UtbetalingDto dto = new UtbetalingDto(KodeverkMapper.mapInntektsKildeTilDto(inntekt.getInntektsKilde()));
             dto.medArbeidsgiver(mapArbeidsgiver(arbeidsgiver));
             dto.setPoster(tilPoster(inntekt.getInntektspost()));
             return dto;

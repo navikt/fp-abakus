@@ -1,5 +1,7 @@
 package no.nav.foreldrepenger.abakus.diff;
 
+import java.util.function.Function;
+
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseEntityGraph;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kodeverk.Kodeliste;
@@ -15,6 +17,10 @@ public final class TraverseEntityGraphFactory {
     }
 
     public static TraverseEntityGraph build(boolean medChangedTrackedOnly) {
+        return build(medChangedTrackedOnly, TraverseEntityGraph.NO_FILTER);
+    }
+    
+    public static TraverseEntityGraph build(boolean medChangedTrackedOnly, Function<Object, Boolean> inclusionFilter) {
         /* default oppsett for behandlingslager. */
         TraverseEntityGraph traverseEntityGraph = new TraverseEntityGraph(); // NOSONAR
         traverseEntityGraph.setIgnoreNulls(true);
@@ -23,6 +29,7 @@ public final class TraverseEntityGraphFactory {
         traverseEntityGraph.addLeafClasses(Kodeliste.class);
         traverseEntityGraph.addLeafClasses(DatoIntervallEntitet.class, ÅpenDatoIntervallEntitet.class);
         traverseEntityGraph.addRootClasses(Kobling.class);
+        traverseEntityGraph.setInclusionFilter(inclusionFilter);
         return traverseEntityGraph;
     }
 

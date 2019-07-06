@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
+import java.util.Collection;
 import java.util.List;
 
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -42,4 +43,7 @@ public interface AktørInntekt {
     List<Inntekt> getInntektSammenligningsgrunnlag();
 
     Long getId();
+
+    /** Returner alle inntekter, ufiltrert. */
+    Collection<Inntekt> getInntekt();
 }
