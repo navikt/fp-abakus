@@ -333,25 +333,23 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
             return new AktivitetsAvtaleBuilder(aktivitetsAvtale.orElse(new AktivitetsAvtaleEntitet()), aktivitetsAvtale.isPresent());
         }
 
+        public AktivitetsAvtaleBuilder medProsentsats(Stillingsprosent prosentsats) {
+            this.aktivitetsAvtaleEntitet.setProsentsats(prosentsats);
+            return this;
+        }
+
         public AktivitetsAvtaleBuilder medProsentsats(BigDecimal prosentsats) {
-            if (prosentsats == null) {
-                prosentsats = BigDecimal.ZERO;
-            }
-            this.aktivitetsAvtaleEntitet.setProsentsats(new Stillingsprosent(prosentsats));
+            this.aktivitetsAvtaleEntitet.setProsentsats(prosentsats == null ? null : new Stillingsprosent(prosentsats));
             return this;
         }
         
         public AktivitetsAvtaleBuilder medAntallTimer(BigDecimal antallTimer) {
-            if (antallTimer != null) {
-                this.aktivitetsAvtaleEntitet.setAntallTimer(new AntallTimer(antallTimer));
-            }
+            this.aktivitetsAvtaleEntitet.setAntallTimer(antallTimer == null ? null : new AntallTimer(antallTimer));
             return this;
         }
 
         public AktivitetsAvtaleBuilder medAntallTimerFulltid(BigDecimal antallTimerFulltid) {
-            if (antallTimerFulltid != null) {
-                this.aktivitetsAvtaleEntitet.setAntallTimerFulltid(new AntallTimer(antallTimerFulltid));
-            }
+            this.aktivitetsAvtaleEntitet.setAntallTimerFulltid(antallTimerFulltid == null ? null : new AntallTimer(antallTimerFulltid));
             return this;
         }
 
