@@ -92,6 +92,7 @@ public class AktørInntektEntitet extends BaseEntitet implements AktørInntekt, 
         this.aktørId = aktørId;
     }
 
+    @Override
     public Collection<Inntekt> getInntekt() {
         return Collections.unmodifiableSet(inntekt);
     }
