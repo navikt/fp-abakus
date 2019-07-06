@@ -108,7 +108,7 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(periode, prosentsats, sisteLønnsendringsdato);
+        return IndexKey.createKey(periode, sisteLønnsendringsdato);
     }
 
     @Override
@@ -238,19 +238,20 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || !(o instanceof AktivitetsAvtaleEntitet))
-            return false;
-        var that = (AktivitetsAvtaleEntitet) o;
-        return Objects.equals(prosentsats, that.prosentsats) &&
+        if (this == o) return true;
+        if (o == null || !(o instanceof AktivitetsAvtaleEntitet)) return false;
+        AktivitetsAvtaleEntitet that = (AktivitetsAvtaleEntitet) o;
+        return Objects.equals(antallTimer, that.antallTimer) &&
+            Objects.equals(antallTimerFulltid, that.antallTimerFulltid) &&
+            Objects.equals(beskrivelse, that.beskrivelse) &&
+            Objects.equals(prosentsats, that.prosentsats) &&
             Objects.equals(periode, that.periode) &&
             Objects.equals(sisteLønnsendringsdato, that.sisteLønnsendringsdato);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(prosentsats, periode, sisteLønnsendringsdato);
+        return Objects.hash(antallTimer, antallTimerFulltid, beskrivelse, prosentsats, periode, sisteLønnsendringsdato);
     }
 
     @Override
