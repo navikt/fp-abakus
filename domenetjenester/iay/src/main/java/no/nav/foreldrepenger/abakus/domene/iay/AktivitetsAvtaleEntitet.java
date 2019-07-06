@@ -70,10 +70,24 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
+    /**
+     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
+     */
+    @Deprecated
     @Transient
     private LocalDate skjæringstidspunkt;
+    
+    /**
+     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
+     */
+    @Deprecated
     @Transient
     private boolean ventreSideAvSkjæringstidspunkt;
+    
+    /**
+     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
+     */
+    @Deprecated
     @Transient
     private DatoIntervallEntitet overstyrtPeriode;
 
@@ -143,6 +157,10 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
         this.periode = periode;
     }
 
+    /**
+     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient overstyrt periode.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
+     */
+    @Deprecated
     @Override
     public boolean erOverstyrtPeriode() {
         return overstyrtPeriode != null;
@@ -190,6 +208,10 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
         return overstyrtPeriode;
     }
 
+    /**
+     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient overstyrt periode.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
+     */
+    @Deprecated
     void setOverstyrtPeriode(DatoIntervallEntitet overstyrtPeriode) {
         this.overstyrtPeriode = overstyrtPeriode;
     }
@@ -198,6 +220,10 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
         this.sisteLønnsendringsdato = sisteLønnsendringsdato;
     }
 
+    /**
+     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
+     */
+    @Deprecated
     boolean skalMedEtterSkjæringstidspunktVurdering() {
         if (skjæringstidspunkt != null) {
             if (ventreSideAvSkjæringstidspunkt) {
@@ -247,6 +273,10 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
             && sisteLønnsendringsdato == null;
     }
 
+    /**
+     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
+     */
+    @Deprecated
     void setSkjæringstidspunkt(LocalDate skjæringstidspunkt, boolean ventreSide) {
         this.skjæringstidspunkt = skjæringstidspunkt;
         this.ventreSideAvSkjæringstidspunkt = ventreSide;

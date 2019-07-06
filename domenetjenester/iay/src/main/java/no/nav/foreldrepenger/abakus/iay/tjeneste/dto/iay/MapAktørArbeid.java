@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtale;
 import no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid;
-import no.nav.foreldrepenger.abakus.domene.iay.AktørArbeidEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder;
@@ -155,7 +154,7 @@ public class MapAktørArbeid {
         }
 
         private ArbeidDto map(AktørArbeid arb) {
-            List<YrkesaktivitetDto> yrkesaktiviteter = new ArrayList<>(getYrkesaktiviteter(((AktørArbeidEntitet) arb).hentAlleYrkesaktiviter()));
+            List<YrkesaktivitetDto> yrkesaktiviteter = new ArrayList<>(getYrkesaktiviteter(arb.hentAlleYrkesaktiviter()));
 
             var aktiviteter = yrkesaktiviteter.stream().filter(this::erGyldigYrkesaktivitet).sorted(COMP_YRKESAKTIVITET).collect(Collectors.toList());
 

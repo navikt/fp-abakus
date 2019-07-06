@@ -21,11 +21,14 @@ public interface Inntekt {
     Arbeidsgiver getArbeidsgiver();
 
     /**
-     * Utbetalinger utført av utbetaler
+     * Utbetalinger utført av utbetaler. Filtrert for skjæringstidspunkt vurdering hvis satt. 
      *
      * @return liste av {@link Inntektspost}
      */
     Collection<Inntektspost> getInntektspost();
 
     Long getId();
+
+    /** Hent alle utbetalinger (ufiltrert). */
+    Collection<Inntektspost> getAlleInntektsposter();
 }

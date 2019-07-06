@@ -3,7 +3,6 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Optional;
@@ -106,8 +105,9 @@ public class AktørArbeidEntitet extends BaseEntitet implements AktørArbeid, In
         return it.erArbeidsforhold() && it.getAnsettelsesPerioder().stream().anyMatch(ap -> ((AktivitetsAvtaleEntitet) ap).skalMedEtterSkjæringstidspunktVurdering());
     }
 
+    @Override
     public Collection<Yrkesaktivitet> hentAlleYrkesaktiviter() {
-        return Collections.unmodifiableSet(new HashSet<>(yrkesaktiviter));
+        return Set.copyOf(yrkesaktiviter);
     }
 
     @Override

@@ -101,9 +101,19 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
     @Version
     @Column(name = "versjon", nullable = false)
     private long versjon;
-
+    
+    /**
+     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
+     */
+    @Deprecated
     @Transient
     private LocalDate skjæringstidspunkt;
+    
+    
+    /**
+     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
+     */
+    @Deprecated
     @Transient
     private boolean ventreSideAvSkjæringstidspunkt;
 
@@ -256,11 +266,19 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
             '}';
     }
 
+    /**
+     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
+     */
+    @Deprecated
     void setSkjæringstidspunkt(LocalDate skjæringstidspunkt, boolean ventreSide) {
         this.skjæringstidspunkt = skjæringstidspunkt;
         this.ventreSideAvSkjæringstidspunkt = ventreSide;
     }
 
+    /**
+     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
+     */
+    @Deprecated
     boolean skalMedEtterSkjæringstidspunktVurdering() {
         if (skjæringstidspunkt != null) {
             if (ventreSideAvSkjæringstidspunkt) {

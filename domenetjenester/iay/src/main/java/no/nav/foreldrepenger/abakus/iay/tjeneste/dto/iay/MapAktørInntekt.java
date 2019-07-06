@@ -121,7 +121,7 @@ public class MapAktørInntekt {
             Arbeidsgiver arbeidsgiver = inntekt.getArbeidsgiver();
             UtbetalingDto dto = new UtbetalingDto(KodeverkMapper.mapInntektsKildeTilDto(inntekt.getInntektsKilde()));
             dto.medArbeidsgiver(mapArbeidsgiver(arbeidsgiver));
-            dto.setPoster(tilPoster(inntekt.getInntektspost()));
+            dto.setPoster(tilPoster(inntekt.getAlleInntektsposter()));
             return dto;
         }
 

@@ -28,4 +28,9 @@ public interface AktørArbeid {
     Collection<Yrkesaktivitet> getFrilansOppdrag();
 
     Long getId();
+
+    /** 
+     * Alle yrkesaktiviteter (ufiltret ifht skjæringstidspunkt vurdering. )
+     */
+    Collection<Yrkesaktivitet> hentAlleYrkesaktiviter();
 }

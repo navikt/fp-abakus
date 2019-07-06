@@ -82,6 +82,11 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
     void setAktørId(AktørId aktørId) {
         this.aktørId = aktørId;
     }
+    
+    @Override
+    public Collection<Ytelse> getAlleYtelser() {
+        return Collections.unmodifiableSet(ytelser);
+    }
 
     @Override
     public Collection<Ytelse> getYtelser() {
