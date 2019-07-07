@@ -195,8 +195,8 @@ public class OppgittOpptjeningBuilder {
         }
 
         public OppgittArbeidsforholdBuilder medUtenlandskVirksomhet(Landkoder landkode, String utenlandskVirksomhetNavn) {
+            this.entitet.setLandkode(landkode);
             if (utenlandskVirksomhetNavn != null) {
-                this.entitet.setLandkode(landkode);
                 this.entitet.setUtenlandskVirksomhetNavn(utenlandskVirksomhetNavn);
             }
             return this;

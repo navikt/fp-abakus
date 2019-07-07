@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -52,12 +53,15 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
     }
 
     InntektsmeldingAggregatEntitet(InntektsmeldingAggregat inntektsmeldingAggregat) {
-        final InntektsmeldingAggregatEntitet inntektsmeldingAggregat1 = (InntektsmeldingAggregatEntitet) inntektsmeldingAggregat; // NOSONAR
-        this.inntektsmeldinger = inntektsmeldingAggregat1.inntektsmeldinger.stream().map(i -> {
+        this(inntektsmeldingAggregat.getAlleInntektsmeldinger());
+    }
+
+    public InntektsmeldingAggregatEntitet(Collection<Inntektsmelding> inntektsmeldinger) {
+        this.inntektsmeldinger.addAll(inntektsmeldinger.stream().map(i -> {
             final InntektsmeldingEntitet inntektsmeldingEntitet = new InntektsmeldingEntitet(i);
             inntektsmeldingEntitet.setInntektsmeldinger(this);
             return inntektsmeldingEntitet;
-        }).collect(Collectors.toList());
+        }).collect(Collectors.toList()));
     }
 
     @Override
@@ -85,9 +89,9 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
         return (ov.getArbeidsforholdRef().gjelderFor(im.getArbeidsforholdRef()))
             && ov.getArbeidsgiver().equals(im.getArbeidsgiver())
             && (Objects.equals(ArbeidsforholdHandlingType.IKKE_BRUK, ov.getHandling())
-            || Objects.equals(ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING, ov.getHandling())
-            || Objects.equals(ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE, ov.getHandling())
-            || Objects.equals(ArbeidsforholdHandlingType.SLÅTT_SAMMEN_MED_ANNET, ov.getHandling()));
+                || Objects.equals(ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING, ov.getHandling())
+                || Objects.equals(ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE, ov.getHandling())
+                || Objects.equals(ArbeidsforholdHandlingType.SLÅTT_SAMMEN_MED_ANNET, ov.getHandling()));
     }
 
     @Override
@@ -110,7 +114,8 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
         }
 
         inntektsmeldinger.stream().filter(it -> it.gjelderSammeArbeidsforhold(inntektsmelding) && !fjernet).findFirst().ifPresent(e -> {
-            logger.info("Persistert inntektsmelding med journalpostid {} er nyere enn den mottatte med journalpostid {}. Ignoreres", e.getJournalpostId(), inntektsmelding.getJournalpostId());
+            logger.info("Persistert inntektsmelding med journalpostid {} er nyere enn den mottatte med journalpostid {}. Ignoreres", e.getJournalpostId(),
+                inntektsmelding.getJournalpostId());
         });
     }
 
@@ -139,8 +144,10 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof InntektsmeldingAggregatEntitet)) return false;
+        if (this == o)
+            return true;
+        if (o == null || !(o instanceof InntektsmeldingAggregatEntitet))
+            return false;
         var that = (InntektsmeldingAggregatEntitet) o;
         return Objects.equals(inntektsmeldinger, that.inntektsmeldinger);
     }
