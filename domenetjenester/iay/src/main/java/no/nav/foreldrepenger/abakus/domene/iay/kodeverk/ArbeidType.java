@@ -25,7 +25,12 @@ import javax.persistence.Entity;
 public class ArbeidType extends ArbeidTypeKode {
     public static final String DISCRIMINATOR = "ARBEID_TYPE"; //$NON-NLS-1$
 
+    /**
+     * @deprecated UDEFINERT Forekommer ikke i praksis. Skal ha fornuftig verdi
+     */
+    @Deprecated
     public static final ArbeidType UDEFINERT = new ArbeidType("-"); //$NON-NLS-1$
+    
     public static final ArbeidType ORDINÆRT_ARBEIDSFORHOLD = new ArbeidType("ORDINÆRT_ARBEIDSFORHOLD"); //$NON-NLS-1$
     public static final ArbeidType FORENKLET_OPPGJØRSORDNING = new ArbeidType("FORENKLET_OPPGJØRSORDNING"); //$NON-NLS-1$
     // FRILANSER er en syntetisk type for overordnet aktivitet som frilanser. F_O_M_M brukes til enkeltoppdrag fra Inntektskomponent og arbeidsforhold avledet derfra

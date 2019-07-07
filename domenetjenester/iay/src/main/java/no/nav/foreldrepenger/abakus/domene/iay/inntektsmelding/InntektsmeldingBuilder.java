@@ -60,7 +60,7 @@ public class InntektsmeldingBuilder {
         return this;
     }
     public InntektsmeldingBuilder medBeløp(BigDecimal verdi) {
-        kladd.setInntektBeløp(new Beløp(verdi));
+        kladd.setInntektBeløp(verdi == null ? null : new Beløp(verdi));
         return this;
     }
 
@@ -80,13 +80,13 @@ public class InntektsmeldingBuilder {
     }
 
     public InntektsmeldingBuilder medRefusjon(BigDecimal verdi, LocalDate opphører) {
-        kladd.setRefusjonBeløpPerMnd(new Beløp(verdi));
+        kladd.setRefusjonBeløpPerMnd(verdi == null ? null : new Beløp(verdi));
         kladd.setRefusjonOpphører(opphører);
         return this;
     }
 
     public InntektsmeldingBuilder medRefusjon(BigDecimal verdi) {
-        kladd.setRefusjonBeløpPerMnd(new Beløp(verdi));
+        kladd.setRefusjonBeløpPerMnd(verdi == null ? null : new Beløp(verdi));
         kladd.setRefusjonOpphører(Tid.TIDENES_ENDE);
         return this;
     }
@@ -138,7 +138,7 @@ public class InntektsmeldingBuilder {
     }
 
     public InntektsmeldingBuilder medInntektsmeldingaarsak(String inntektsmeldingInnsendingsårsak) {
-        return medInntektsmeldingaarsak(new InntektsmeldingInnsendingsårsak(inntektsmeldingInnsendingsårsak));
+        return medInntektsmeldingaarsak(inntektsmeldingInnsendingsårsak == null ? null : new InntektsmeldingInnsendingsårsak(inntektsmeldingInnsendingsårsak));
     }
 
     public Inntektsmelding build() {
@@ -146,7 +146,7 @@ public class InntektsmeldingBuilder {
     }
 
     public InntektsmeldingBuilder medJournalpostId(String journalpostId) {
-        return medJournalpostId(new JournalpostId(journalpostId));
+        return medJournalpostId(journalpostId == null ? null : new JournalpostId(journalpostId));
     }
 
 }

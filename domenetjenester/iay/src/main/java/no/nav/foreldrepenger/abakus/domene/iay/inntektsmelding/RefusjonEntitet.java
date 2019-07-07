@@ -17,12 +17,13 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 
 @Entity(name = "Refusjon")
 @Table(name = "IAY_REFUSJON")
-public class RefusjonEntitet extends BaseEntitet implements Refusjon {
+public class RefusjonEntitet extends BaseEntitet implements Refusjon, IndexKey {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_REFUSJON")
@@ -48,7 +49,7 @@ public class RefusjonEntitet extends BaseEntitet implements Refusjon {
     }
 
     public RefusjonEntitet(BigDecimal refusjonsbeløpMnd, LocalDate fom) {
-        this.refusjonsbeløpMnd = new Beløp(refusjonsbeløpMnd);
+        this.refusjonsbeløpMnd = refusjonsbeløpMnd == null ? null : new Beløp(refusjonsbeløpMnd);
         this.fom = fom;
     }
 
@@ -61,6 +62,10 @@ public class RefusjonEntitet extends BaseEntitet implements Refusjon {
         this.inntektsmelding = inntektsmelding;
     }
 
+    @Override
+    public String getIndexKey() {
+        return IndexKey.createKey(fom, refusjonsbeløpMnd);
+    }
 
     @Override
     public Beløp getRefusjonsbeløp() {
