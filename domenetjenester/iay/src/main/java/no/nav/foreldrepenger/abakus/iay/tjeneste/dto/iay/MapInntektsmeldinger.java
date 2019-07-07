@@ -166,11 +166,11 @@ public class MapInntektsmeldinger {
     public static class MapFraDto {
 
         public InntektsmeldingAggregatEntitet map(ArbeidsforholdInformasjonBuilder arbeidsforholdInformasjon, InntektsmeldingerDto dto) {
-            if (dto == null)
+            if (dto == null) {
                 return null;
-            var inntektsmeldingAggregat = new InntektsmeldingAggregatEntitet();
-            dto.getInntektsmeldinger().stream().map(im -> mapInntektsmelding(arbeidsforholdInformasjon, im)).forEach(inntektsmeldingAggregat::leggTil);
-            return inntektsmeldingAggregat;
+            }
+            var inntektsmeldinger = dto.getInntektsmeldinger().stream().map(im -> mapInntektsmelding(arbeidsforholdInformasjon, im)).collect(Collectors.toList());
+            return new InntektsmeldingAggregatEntitet(inntektsmeldinger);
         }
 
         private Inntektsmelding mapInntektsmelding(ArbeidsforholdInformasjonBuilder arbeidsforholdInformasjon, InntektsmeldingDto dto) {
