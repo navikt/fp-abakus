@@ -127,7 +127,7 @@ public class MapOppgittOpptjening {
                 .medErUtenlandskInntekt(arbeidsforhold.erUtenlandskInntekt());
 
             Landkoder landkode = arbeidsforhold.getLandkode();
-            var land = landkode == null || landkode.getKode() == null ? Landkode.NORGE : new Landkode(landkode.getKode());
+            var land = new Landkode(landkode.getKode());
 
             var virksomhet = arbeidsforhold.getUtenlandskVirksomhetNavn();
             if (virksomhet != null) {
