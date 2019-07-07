@@ -295,9 +295,9 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
             entityManager.persist(aggregat);
             entityManager.flush();
 
-            lagreGrunnlag(nyttGrunnlag, koblingReferanse);
+            lagreGrunnlag(nyttGrunnlag, koblingReferanse, false);
         } else {
-            lagreGrunnlag(nyttGrunnlag, koblingReferanse);
+            lagreGrunnlag(nyttGrunnlag, koblingReferanse, false);
         }
         entityManager.flush();
     }
@@ -315,7 +315,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
                 entityManager.flush();
             }
         }
-        lagreGrunnlag(entitet, koblingReferanse);
+        lagreGrunnlag(entitet, koblingReferanse, true);
         entityManager.flush();
     }
 
@@ -491,7 +491,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
             .executeUpdate();
     }
 
-    private void lagreGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, KoblingReferanse koblingReferanse) {
+    private void lagreGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, KoblingReferanse koblingReferanse, boolean lagreAlleInntektsmeldinger) {
         InntektArbeidYtelseGrunnlagEntitet entitet = (InntektArbeidYtelseGrunnlagEntitet) nyttGrunnlag;
         Long koblingId = hentKoblingIdFor(koblingReferanse);
         entitet.setKobling(koblingId);
@@ -509,7 +509,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         final Optional<InntektArbeidYtelseAggregat> saksbehandletFørVersjon = nyttGrunnlag.getSaksbehandletVersjon();
         saksbehandletFørVersjon.ifPresent(this::lagreInntektArbeid);
 
-        nyttGrunnlag.getInntektsmeldinger().ifPresent(this::lagreInntektsMeldinger);
+        nyttGrunnlag.getInntektsmeldinger().ifPresent(ims -> this.lagreInntektsMeldinger(ims, lagreAlleInntektsmeldinger));
 
         entitet.getArbeidsforholdInformasjon().ifPresent(this::lagreInformasjon);
         entityManager.persist(nyttGrunnlag);
@@ -550,9 +550,11 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         }
     }
 
-    private void lagreInntektsMeldinger(InntektsmeldingAggregat inntektsmeldingAggregat) {
+    private void lagreInntektsMeldinger(InntektsmeldingAggregat inntektsmeldingAggregat, boolean lagreAlleInntektsmeldinger) {
         entityManager.persist(inntektsmeldingAggregat);
-        for (Inntektsmelding entitet : inntektsmeldingAggregat.getInntektsmeldinger()) {
+        // TODO (MariusGlittum): Trenger vi ta hensyn til om inntektsmelding skal brukes her? Kan vi ikke uansett lagre alle?
+        var inntektsmeldinger = lagreAlleInntektsmeldinger ? inntektsmeldingAggregat.getAlleInntektsmeldinger() : inntektsmeldingAggregat.getInntektsmeldinger();
+        for (Inntektsmelding entitet : inntektsmeldinger) {
             entityManager.persist(entitet);
             for (Gradering gradering : entitet.getGraderinger()) {
                 entityManager.persist(gradering);

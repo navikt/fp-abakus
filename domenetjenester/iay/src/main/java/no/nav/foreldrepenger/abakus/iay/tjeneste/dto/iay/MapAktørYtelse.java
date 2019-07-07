@@ -42,6 +42,11 @@ public class MapAktørYtelse {
         .thenComparing(dto -> dto.getTemaUnderkategori() == null ? null : dto.getTemaUnderkategori().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
+    
+    private static final Comparator<FordelingDto> COMP_FORDELING = Comparator
+            .comparing((FordelingDto dto) -> dto.getArbeidsgiver() == null ? null : dto.getArbeidsgiver().getIdent(), Comparator.nullsLast(Comparator.naturalOrder()))
+            .thenComparing(dto -> dto.getHyppighet() == null ? null : dto.getHyppighet().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
+            ;
 
     static class MapFraDto {
         private InntektArbeidYtelseAggregatBuilder aggregatBuilder;
@@ -140,7 +145,7 @@ public class MapAktørYtelse {
             if (ytelseStørrelse == null || ytelseStørrelse.isEmpty()) {
                 return Collections.emptyList();
             }
-            return ytelseStørrelse.stream().map(this::tilFordeling).collect(Collectors.toUnmodifiableList());
+            return ytelseStørrelse.stream().map(this::tilFordeling).sorted(COMP_FORDELING).collect(Collectors.toUnmodifiableList());
         }
 
         private YtelserDto mapTilYtelser(AktørYtelse ay) {

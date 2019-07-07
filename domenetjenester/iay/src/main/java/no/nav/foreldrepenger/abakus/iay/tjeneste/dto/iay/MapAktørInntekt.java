@@ -34,6 +34,8 @@ public class MapAktørInntekt {
 
     private static final Comparator<UtbetalingsPostDto> COMP_UTBETALINGSPOST = Comparator
         .comparing((UtbetalingsPostDto dto) -> dto.getInntektspostType().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
+        .thenComparing((UtbetalingsPostDto dto) -> KodeverkMapper.mapUtbetaltYtelseTypeTilGrunnlag(dto.getYtelseType()).getKode(),
+            Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
 
