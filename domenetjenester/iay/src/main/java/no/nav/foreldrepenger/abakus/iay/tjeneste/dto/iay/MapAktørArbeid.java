@@ -177,14 +177,14 @@ public class MapAktørArbeid {
                 .medSistLønnsendring(aa.getSisteLønnsendringsdato())
                 .medAntallTimer(aa.getAntallTimer() == null ? null : aa.getAntallTimer().getSkalertVerdi())
                 .medAntallTimerFulltid(aa.getAntallTimerFulltid() == null ? null : aa.getAntallTimerFulltid().getSkalertVerdi())
-                .medStillingsprosent(aa.getProsentsats() != null ? aa.getProsentsats().getVerdi() : null);
+                .medStillingsprosent(aa.getProsentsats() == null ? null : aa.getProsentsats().getVerdi());
             return avtale;
         }
 
         private PermisjonDto map(Permisjon p) {
             var permisjonsbeskrivelseType = KodeverkMapper.mapPermisjonbeskrivelseTypeTilDto(p.getPermisjonsbeskrivelseType());
             var permisjon = new PermisjonDto(new Periode(p.getFraOgMed(), p.getTilOgMed()), permisjonsbeskrivelseType)
-                .medProsentsats(p.getProsentsats().getVerdi());
+                .medProsentsats(p.getProsentsats()==null ? null : p.getProsentsats().getVerdi());
             return permisjon;
         }
 
