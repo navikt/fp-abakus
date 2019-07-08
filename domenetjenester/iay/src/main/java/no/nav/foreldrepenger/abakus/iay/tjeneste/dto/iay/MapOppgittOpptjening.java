@@ -127,7 +127,7 @@ public class MapOppgittOpptjening {
                 .medErUtenlandskInntekt(arbeidsforhold.erUtenlandskInntekt());
 
             Landkoder landkode = arbeidsforhold.getLandkode();
-            var land = new Landkode(landkode.getKode());
+            var land = landkode == null ? Landkode.NORGE : new Landkode(landkode.getKode());
 
             var virksomhet = arbeidsforhold.getUtenlandskVirksomhetNavn();
             if (virksomhet != null) {
@@ -165,7 +165,7 @@ public class MapOppgittOpptjening {
             var virksomhet = egenNæring.getUtenlandskVirksomhetNavn();
             Landkoder landkode = egenNæring.getLandkode();
 
-            var land = landkode == null || landkode.getKode() == null ? Landkode.NORGE : new Landkode(landkode.getKode());
+            var land = landkode == null ? Landkode.NORGE : new Landkode(landkode.getKode());
             if (virksomhet != null) {
                 dto.medOppgittVirksomhetNavn(virksomhet, land);
             } else {
