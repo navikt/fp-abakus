@@ -273,12 +273,7 @@ public class MapOppgittOpptjening {
                 .medVarigEndring(dto.isVarigEndring())
                 .medPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom()));
 
-            Landkoder landkode;
-            if (dto.getLandkode() != null && dto.getLandkode().getKode()!=null) {
-                landkode = mapLandkoder(dto.getLandkode());
-            } else {
-                landkode = mapLandkoder(Landkode.NORGE);
-            }
+            Landkoder landkode = mapLandkoder(dto.getLandkode());
             builder.medUtenlandskVirksomhet(landkode, dto.getVirksomhetNavn());
 
             return builder;
@@ -294,12 +289,7 @@ public class MapOppgittOpptjening {
                 .medErUtenlandskInntekt(dto.isErUtenlandskInntekt())
                 .medPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(dto1.getFom(), dto1.getTom()));
 
-            Landkoder landkode;
-            if (dto.getLandkode() != null && dto.getLandkode().getKode()!=null) {
-                landkode = mapLandkoder(dto.getLandkode());
-            } else {
-                landkode = mapLandkoder(Landkode.NORGE);
-            }
+            Landkoder landkode = mapLandkoder(dto.getLandkode());
             builder.medUtenlandskVirksomhet(landkode, dto.getVirksomhetNavn());
 
             return builder;
@@ -316,7 +306,7 @@ public class MapOppgittOpptjening {
         }
 
         private Landkoder mapLandkoder(Landkode landkode) {
-            return kodeverkRepository.finn(Landkoder.class, landkode.getKode());
+            return new Landkoder(landkode==null || landkode.getKode() == null ? Landkode.NORGE.getKode() : landkode.getKode());
         }
 
     }
