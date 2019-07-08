@@ -63,11 +63,11 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
     @ChangeTracked
     private ArbeidType arbeidType;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional=false)
+    @ManyToOne(optional=false)
     @JoinColumnsOrFormulas({
         @JoinColumnOrFormula(column = @JoinColumn(name = "land", referencedColumnName = "kode", nullable = false)),
         @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + Landkoder.DISCRIMINATOR + "'"))})
-    private Landkoder landkode = Landkoder.NOR;
+    private Landkoder landkode;
 
     @Column(name = "utenlandsk_virksomhet_navn")
     private String utenlandskVirksomhetNavn;
