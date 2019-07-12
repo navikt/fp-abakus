@@ -37,8 +37,9 @@ import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 public class MapAktørArbeid {
 
     private static final Comparator<YrkesaktivitetDto> COMP_YRKESAKTIVITET = Comparator
-        .comparing((YrkesaktivitetDto dto) -> dto.getArbeidsgiver().map(Aktør::getIdent).orElse(null))
-        .thenComparing(dto -> dto.getArbeidsforholdId() == null ? null : dto.getArbeidsforholdId().getAbakusReferanse());
+        .comparing((YrkesaktivitetDto dto) -> dto.getArbeidsgiver().map(Aktør::getIdent).orElse(null), Comparator.nullsFirst(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getArbeidsforholdId() == null ? null : dto.getArbeidsforholdId().getAbakusReferanse(),
+            Comparator.nullsFirst(Comparator.naturalOrder()));
 
     private static final Comparator<AktivitetsAvtaleDto> COMP_AKTIVITETSAVTALE = Comparator
         .comparing((AktivitetsAvtaleDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
@@ -162,7 +163,7 @@ public class MapAktørArbeid {
                 .medYrkesaktiviteter(aktiviteter);
             return dto;
         }
-        
+
         private boolean erGyldigYrkesaktivitet(YrkesaktivitetDto yrkesaktivitet) {
             return !yrkesaktivitet.getAktivitetsAvtaler().isEmpty() || !yrkesaktivitet.getPermisjoner().isEmpty();
         }
@@ -184,7 +185,7 @@ public class MapAktørArbeid {
         private PermisjonDto map(Permisjon p) {
             var permisjonsbeskrivelseType = KodeverkMapper.mapPermisjonbeskrivelseTypeTilDto(p.getPermisjonsbeskrivelseType());
             var permisjon = new PermisjonDto(new Periode(p.getFraOgMed(), p.getTilOgMed()), permisjonsbeskrivelseType)
-                .medProsentsats(p.getProsentsats()==null ? null : p.getProsentsats().getVerdi());
+                .medProsentsats(p.getProsentsats() == null ? null : p.getProsentsats().getVerdi());
             return permisjon;
         }
 
