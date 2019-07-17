@@ -48,6 +48,11 @@ public class YtelseGrunnlagBuilder {
         return this;
     }
 
+    public YtelseGrunnlagBuilder medVedtaksDagsats(BigDecimal vedtaksDagsats) {
+        this.ytelseGrunnlagEntitet.setVedtaksDagsats(new Beløp(vedtaksDagsats));
+        return this;
+    }
+
     public YtelseGrunnlagBuilder medVedtaksDagsats(Beløp vedtaksDagsats) {
         this.ytelseGrunnlagEntitet.setVedtaksDagsats(vedtaksDagsats);
         return this;

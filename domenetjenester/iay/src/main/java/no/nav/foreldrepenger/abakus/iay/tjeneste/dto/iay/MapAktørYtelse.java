@@ -18,10 +18,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelse;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelseBuilder;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.OrgNummer;
-import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
+import no.nav.foreldrepenger.abakus.typer.*;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Organisasjon;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
@@ -67,7 +64,7 @@ public class MapAktørYtelse {
         }
 
         private AktørYtelseBuilder mapAktørYtelse(YtelserDto dto) {
-            var builder = aggregatBuilder.getAktørYtelseBuilder(tilAktørId(dto.getPerson()));
+            var builder = aggregatBuilder.getAktørYtelseBuilder(tilAktørId(dto.getPerson()));git sta
             dto.getYtelser().forEach(ytelseDto -> builder.leggTilYtelse(mapYtelse(ytelseDto)));
             return builder;
         }
@@ -119,7 +116,8 @@ public class MapAktørYtelse {
                 .medDekningsgradProsent(grunnlag.getDekningsgradProsent())
                 .medGraderingProsent(grunnlag.getGraderingProsent())
                 .medInntektsgrunnlagProsent(grunnlag.getInntektsgrunnlagProsent())
-                .medOpprinneligIdentdato(grunnlag.getOpprinneligIdentDato());
+                .medOpprinneligIdentdato(grunnlag.getOpprinneligIdentDato())
+                .medVedtaksDagsats(grunnlag.getVedtaksDagsats());
             grunnlag.getFordeling()
                 .forEach(fordeling -> grunnlagBuilder.medYtelseStørrelse(mapYtelseStørrelse(fordeling)));
             return grunnlagBuilder.build();
@@ -166,6 +164,7 @@ public class MapAktørYtelse {
             gr.getDekningsgradProsent().map(Stillingsprosent::getVerdi).ifPresent(dto::setDekningsgradProsent);
             gr.getGraderingProsent().map(Stillingsprosent::getVerdi).ifPresent(dto::setGraderingProsent);
             gr.getInntektsgrunnlagProsent().map(Stillingsprosent::getVerdi).ifPresent(dto::setInntektsgrunnlagProsent);
+            gr.getVedtaksDagsats().map(Beløp::getVerdi).ifPresent(dto::setVedtaksDagsats);
             dto.setFordeling(mapFordeling(gr.getYtelseStørrelse()));
             return dto;
         }
