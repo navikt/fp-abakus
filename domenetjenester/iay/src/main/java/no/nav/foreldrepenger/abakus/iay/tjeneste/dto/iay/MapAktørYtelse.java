@@ -64,7 +64,7 @@ public class MapAktørYtelse {
         }
 
         private AktørYtelseBuilder mapAktørYtelse(YtelserDto dto) {
-            var builder = aggregatBuilder.getAktørYtelseBuilder(tilAktørId(dto.getPerson()));git sta
+            var builder = aggregatBuilder.getAktørYtelseBuilder(tilAktørId(dto.getPerson()));
             dto.getYtelser().forEach(ytelseDto -> builder.leggTilYtelse(mapYtelse(ytelseDto)));
             return builder;
         }

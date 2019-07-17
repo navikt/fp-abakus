@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -140,6 +141,10 @@ public class MeldekortUtbetalingsgrunnlagSak {
 
         public MeldekortSakBuilder medVedtaksDagsats(Beløp vedtaksDagsats) {
             this.sak.vedtaksDagsats = vedtaksDagsats;
+            return this;
+        }
+        public MeldekortSakBuilder medVedtaksDagsats(BigDecimal vedtaksDagsats) {
+            this.sak.vedtaksDagsats = new Beløp(vedtaksDagsats);
             return this;
         }
 
