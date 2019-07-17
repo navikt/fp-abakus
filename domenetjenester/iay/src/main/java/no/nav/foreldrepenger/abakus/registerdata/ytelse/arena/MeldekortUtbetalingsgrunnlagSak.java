@@ -6,6 +6,7 @@ import java.util.List;
 
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 
@@ -22,6 +23,7 @@ public class MeldekortUtbetalingsgrunnlagSak {
     private LocalDate vedtattDato;
     private LocalDate vedtaksPeriodeFom;
     private LocalDate vedtaksPeriodeTom;
+    private Beløp vedtaksDagsats;
 
     private MeldekortUtbetalingsgrunnlagSak() { // NOSONAR
     }
@@ -64,6 +66,10 @@ public class MeldekortUtbetalingsgrunnlagSak {
 
     public LocalDate getVedtaksPeriodeTom() {
         return vedtaksPeriodeTom;
+    }
+
+    public Beløp getVedtaksDagsats() {
+        return vedtaksDagsats;
     }
 
     public List<MeldekortUtbetalingsgrunnlagMeldekort> getMeldekortene() {
@@ -129,6 +135,11 @@ public class MeldekortUtbetalingsgrunnlagSak {
 
         public MeldekortSakBuilder medVedtaksPeriodeTom(LocalDate vedtaksPeriodeTom) {
             this.sak.vedtaksPeriodeTom = vedtaksPeriodeTom;
+            return this;
+        }
+
+        public MeldekortSakBuilder medVedtaksDagsats(Beløp vedtaksDagsats) {
+            this.sak.vedtaksDagsats = vedtaksDagsats;
             return this;
         }
 

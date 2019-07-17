@@ -3,6 +3,6 @@
     "datasource": "defaultDS",
     "user": "fpabakus",
     "password": "fpabakus",
-    "url": "jdbc:postgresql://localhost:5432/fpabakus"
+    "url": "jdbc:postgresql://127.0.0.1:5432/fpabakus"
   }
 ]

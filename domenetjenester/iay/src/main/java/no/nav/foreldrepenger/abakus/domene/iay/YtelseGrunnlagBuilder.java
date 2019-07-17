@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.Arbeidskategori;
+import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
 public class YtelseGrunnlagBuilder {
@@ -44,6 +45,11 @@ public class YtelseGrunnlagBuilder {
 
     public YtelseGrunnlagBuilder medYtelseStørrelse(YtelseStørrelse ytelseStørrelse) {
         this.ytelseGrunnlagEntitet.leggTilYtelseStørrelse(ytelseStørrelse);
+        return this;
+    }
+
+    public YtelseGrunnlagBuilder medVedtaksDagsats(Beløp vedtaksDagsats) {
+        this.ytelseGrunnlagEntitet.setVedtaksDagsats(vedtaksDagsats);
         return this;
     }
 

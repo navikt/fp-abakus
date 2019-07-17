@@ -22,6 +22,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import no.nav.foreldrepenger.abakus.typer.Beløp;
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
@@ -72,6 +73,11 @@ public class YtelseGrunnlagEntitet extends BaseEntitet implements YtelseGrunnlag
     @ChangeTracked
     private LocalDate opprinneligIdentdato;
 
+    @Embedded
+    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "dagsats")))
+    @ChangeTracked
+    private Beløp vedtaksDagsats;
+
     public YtelseGrunnlagEntitet() {
         // hibernate
     }
@@ -87,6 +93,7 @@ public class YtelseGrunnlagEntitet extends BaseEntitet implements YtelseGrunnlag
             ytelseStørrelseEntitet.setYtelseGrunnlag(this);
             return ytelseStørrelseEntitet;
         }).collect(Collectors.toList());
+        this.vedtaksDagsats = ytelseGrunnlag.getVedtaksDagsats().orElse(null);
     }
 
     @Override
@@ -155,6 +162,11 @@ public class YtelseGrunnlagEntitet extends BaseEntitet implements YtelseGrunnlag
         this.ytelse = ytelse;
     }
 
+    void setVedtaksDagsats(Beløp vedtaksDagsats) { this.vedtaksDagsats = vedtaksDagsats; }
+
+    @Override
+    public Optional<Beløp> getVedtaksDagsats() { return Optional.ofNullable(vedtaksDagsats); }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -164,12 +176,13 @@ public class YtelseGrunnlagEntitet extends BaseEntitet implements YtelseGrunnlag
             Objects.equals(dekngradProsent, that.dekngradProsent) &&
             Objects.equals(graderingProsent, that.graderingProsent) &&
             Objects.equals(inntektProsent, that.inntektProsent) &&
-            Objects.equals(opprinneligIdentdato, that.opprinneligIdentdato);
+            Objects.equals(opprinneligIdentdato, that.opprinneligIdentdato) &&
+            Objects.equals(vedtaksDagsats, that.vedtaksDagsats);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(arbeidskategori, dekngradProsent, graderingProsent, inntektProsent, opprinneligIdentdato);
+        return Objects.hash(arbeidskategori, dekngradProsent, graderingProsent, inntektProsent, opprinneligIdentdato, vedtaksDagsats);
     }
 
     @Override
@@ -180,6 +193,7 @@ public class YtelseGrunnlagEntitet extends BaseEntitet implements YtelseGrunnlag
             ", graderingProsent=" + graderingProsent +
             ", inntektProsent=" + inntektProsent +
             ", opprinneligIdentdato=" + opprinneligIdentdato +
+            ", vedtaksDagsats=" + vedtaksDagsats +
             '}';
     }
 }
