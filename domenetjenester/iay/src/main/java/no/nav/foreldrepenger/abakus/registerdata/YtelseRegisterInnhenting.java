@@ -141,7 +141,10 @@ public class YtelseRegisterInnhenting {
         ytelseBuilder
             .medPeriode(periode)
             .medStatus(ytelse.getYtelseTilstand())
-            .medYtelseGrunnlag(ytelseBuilder.getGrunnlagBuilder().medOpprinneligIdentdato(ytelse.getKravMottattDato()).build())
+            .medYtelseGrunnlag(ytelseBuilder.getGrunnlagBuilder()
+                .medOpprinneligIdentdato(ytelse.getKravMottattDato())
+                .medVedtaksDagsats(ytelse.getVedtaksDagsats())
+                .build())
             .tilbakestillAnvisninger();
         for (MeldekortUtbetalingsgrunnlagMeldekort meldekort : ytelse.getMeldekortene()) {
             ytelseBuilder.medYtelseAnvist(ytelseBuilder.getAnvistBuilder()
