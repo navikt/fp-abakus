@@ -233,23 +233,17 @@ public class AktørArbeidEntitet extends BaseEntitet implements AktørArbeid, In
         }
     }
 
-    void overstyrAnsettelsesPeriode() {
+    void overstyrYrkesaktiviteter() {
         yrkesaktiviter.forEach(yrkesaktivitet -> {
-            Optional<ArbeidsforholdOverstyringEntitet> arbeidsforholdOverstyringEntitet = finnMatchendeOverstyring(yrkesaktivitet);
-            arbeidsforholdOverstyringEntitet.ifPresent(yrkesaktivitet::setOverstyrtPeriode);
+            Optional<ArbeidsforholdOverstyringEntitet> overstyringOpt = finnMatchendeOverstyring(yrkesaktivitet);
+            overstyringOpt.ifPresent(yrkesaktivitet::overstyrYrkesaktivtet);
         });
-
     }
 
     private Optional<ArbeidsforholdOverstyringEntitet> finnMatchendeOverstyring(YrkesaktivitetEntitet ya) {
         return arbeidsforholdInformasjon.getOverstyringer().stream()
-            .filter(os -> matcherArbeidsgiverOgArbeidsforholdRef(ya, os))
+            .filter(os -> ya.gjelderFor(os.getArbeidsgiver(), os.getArbeidsforholdRef()))
             .findFirst();
-    }
-
-    private boolean matcherArbeidsgiverOgArbeidsforholdRef(YrkesaktivitetEntitet ya, ArbeidsforholdOverstyringEntitet os) {
-        return Objects.equals(ya.getArbeidsgiver(), os.getArbeidsgiver())
-            && Objects.equals(ya.getArbeidsforholdRef(), os.getArbeidsforholdRef());
     }
 
 }

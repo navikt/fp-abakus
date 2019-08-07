@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,6 +10,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtale;
+import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtaleEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
@@ -173,7 +175,9 @@ public class MapAktørArbeid {
         }
 
         private AktivitetsAvtaleDto map(AktivitetsAvtale aa) {
-            var avtale = new AktivitetsAvtaleDto(aa.getFraOgMed(), aa.getTilOgMed())
+            LocalDate fomDato = ((AktivitetsAvtaleEntitet) aa).getPeriodeUtenOverstyring().getFomDato();
+            LocalDate tomDato = ((AktivitetsAvtaleEntitet) aa).getPeriodeUtenOverstyring().getTomDato();
+            AktivitetsAvtaleDto avtale = new AktivitetsAvtaleDto(fomDato, tomDato)
                 .medBeskrivelse(aa.getBeskrivelse())
                 .medSistLønnsendring(aa.getSisteLønnsendringsdato())
                 .medAntallTimer(aa.getAntallTimer() == null ? null : aa.getAntallTimer().getSkalertVerdi())

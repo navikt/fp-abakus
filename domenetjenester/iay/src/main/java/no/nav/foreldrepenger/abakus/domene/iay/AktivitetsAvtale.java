@@ -13,6 +13,7 @@ public interface AktivitetsAvtale {
     /**
      * For timelønnede så vil antallet timer i arbeidsavtalen være satt her
      * @return antall timer
+     *
      */
     AntallTimer getAntallTimer();
 
@@ -21,7 +22,7 @@ public interface AktivitetsAvtale {
      * @return antall timer
      */
     AntallTimer getAntallTimerFulltid();
-    
+
     /**
      * Avtalt prosentsats i avtalen
      *
@@ -30,25 +31,17 @@ public interface AktivitetsAvtale {
     Stillingsprosent getProsentsats();
 
     /**
-     * Periode start
+     * Hvorvidt aktivitetsavtalen har en overstyrt periode eller ikke.
      *
-     * @return Første dag i perioden
+     * @return boolean, true hvis overstyrt, false hvis ikke.
      */
-    LocalDate getFraOgMed();
-
     boolean erOverstyrtPeriode();
 
     /**
-     * Periode slutt
+     * Perioden til aktivitetsavtalen.
+     * Tar hensyn til overstyring gjort i 5080.
      *
-     * @return siste dag i perioden
-     */
-    LocalDate getTilOgMed();
-
-    /**
-     * Periode
-     *
-     * @return hele perioden
+     * @return Hele perioden, tar hensyn til overstyringer.
      */
     DatoIntervallEntitet getPeriode();
 

@@ -76,14 +76,14 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     @Deprecated
     @Transient
     private LocalDate skjæringstidspunkt;
-    
+
     /**
      * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
      */
     @Deprecated
     @Transient
     private boolean ventreSideAvSkjæringstidspunkt;
-    
+
     /**
      * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
      */
@@ -144,13 +144,17 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     }
 
     @Override
-    public LocalDate getFraOgMed() {
-        return periode.getFomDato();
+    public DatoIntervallEntitet getPeriode() {
+        return erOverstyrtPeriode() ? overstyrtPeriode : periode;
     }
 
-    @Override
-    public DatoIntervallEntitet getPeriode() {
-        return overstyrtPeriode == null ? periode : overstyrtPeriode;
+    /**
+     * Henter kun den originale perioden, ikke den overstyrte perioden.
+     * Bruk heller {@link #getPeriode} i de fleste tilfeller
+     * @return Hele den originale perioden, uten overstyringer.
+     */
+    public DatoIntervallEntitet getPeriodeUtenOverstyring() {
+        return periode;
     }
 
     void setPeriode(DatoIntervallEntitet periode) {
@@ -167,23 +171,18 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     }
 
     @Override
-    public LocalDate getTilOgMed() {
-        return periode.getTomDato();
-    }
-
-    @Override
     public LocalDate getSisteLønnsendringsdato() {
         return sisteLønnsendringsdato;
     }
 
     @Override
     public boolean matcherPeriode(DatoIntervallEntitet aktivitetsAvtale) {
-        return periode.equals(aktivitetsAvtale);
+        return getPeriode().equals(aktivitetsAvtale);
     }
 
     @Override
     public boolean getErLøpende() {
-        return Tid.TIDENES_ENDE.equals(periode.getTomDato());
+        return Tid.TIDENES_ENDE.equals(getPeriode().getTomDato());
     }
 
     @Override
@@ -202,10 +201,6 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
 
     void setYrkesaktivitet(YrkesaktivitetEntitet yrkesaktivitet) {
         this.yrkesaktivitet = yrkesaktivitet;
-    }
-
-    public DatoIntervallEntitet getOverstyrtPeriode() {
-        return overstyrtPeriode;
     }
 
     /**
@@ -227,10 +222,10 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     boolean skalMedEtterSkjæringstidspunktVurdering() {
         if (skjæringstidspunkt != null) {
             if (ventreSideAvSkjæringstidspunkt) {
-                return periode.getFomDato().isBefore(skjæringstidspunkt);
+                return getPeriode().getFomDato().isBefore(skjæringstidspunkt);
             } else {
-                return periode.getFomDato().isAfter(skjæringstidspunkt.minusDays(1)) ||
-                    periode.getFomDato().isBefore(skjæringstidspunkt) && periode.getTomDato().isAfter(skjæringstidspunkt.minusDays(1));
+                return getPeriode().getFomDato().isAfter(skjæringstidspunkt.minusDays(1)) ||
+                    getPeriode().getFomDato().isBefore(skjæringstidspunkt) && getPeriode().getTomDato().isAfter(skjæringstidspunkt.minusDays(1));
             }
         }
         return true;
@@ -246,19 +241,25 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
             Objects.equals(beskrivelse, that.beskrivelse) &&
             Objects.equals(prosentsats, that.prosentsats) &&
             Objects.equals(periode, that.periode) &&
+            Objects.equals(overstyrtPeriode, that.overstyrtPeriode) &&
             Objects.equals(sisteLønnsendringsdato, that.sisteLønnsendringsdato);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(antallTimer, antallTimerFulltid, beskrivelse, prosentsats, periode, sisteLønnsendringsdato);
+        return Objects.hash(antallTimer, antallTimerFulltid, beskrivelse, prosentsats, periode, overstyrtPeriode, sisteLønnsendringsdato);
     }
 
     @Override
     public String toString() {
         return getClass().getSimpleName() + "<" + //$NON-NLS-1$
-            "periode=" + periode + //$NON-NLS-1$
+            "antallTimer=" + antallTimer + //$NON-NLS-1$
+            ", antallTimerFulltid=" + antallTimerFulltid + //$NON-NLS-1$
+            ", periode=" + periode + //$NON-NLS-1$
+            ", overstyrtPeriode=" + overstyrtPeriode + //$NON-NLS-1$
             ", prosentsats=" + prosentsats + //$NON-NLS-1$
+            ", beskrivelse=" + beskrivelse + //$NON-NLS-1$
+            ", sisteLønnsendringsdato="+sisteLønnsendringsdato + //$NON-NLS-1$
             '>';
     }
 

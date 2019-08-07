@@ -39,6 +39,15 @@ public interface Yrkesaktivitet {
     InternArbeidsforholdRef getArbeidsforholdRef();
 
     /**
+     * Identifiser om yrkesaktiviteten gjelder for arbeidsgiver og arbeidsforholdRef.
+     *
+     * @param arbeidsgiver en {@link Arbeidsgiver}
+     * @param arbeidsforholdRef et {@link InternArbeidsforholdRef}
+     * @return true hvis arbeidsgiver og arbeidsforholdRef macther
+     */
+    boolean gjelderFor(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef arbeidsforholdRef);
+
+    /**
      * Liste over fremtidige / historiske permisjoner hos arbeidsgiver.
      * <p>
      * NB! Vil kun forekomme i aktiviteter som er hentet inn fra aa-reg
@@ -58,7 +67,7 @@ public interface Yrkesaktivitet {
      * Alle aktivitetsavtaler
      */
     Collection<AktivitetsAvtale> getAlleAktivitetsAvtaler();
-    
+
     /**
      * ArbeidsgiverEntitet
      * <p>
