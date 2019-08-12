@@ -124,6 +124,14 @@
                 <artifactId>web</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            
+            <!-- NAV tjenestespesifikasjoner -->
+            <dependency>
+                <groupId>no.nav.tjenester</groupId>
+                <artifactId>aordningen-inntektsinformasjon-v1</artifactId>
+                <version>1.7</version>
+            </dependency>
+            
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>

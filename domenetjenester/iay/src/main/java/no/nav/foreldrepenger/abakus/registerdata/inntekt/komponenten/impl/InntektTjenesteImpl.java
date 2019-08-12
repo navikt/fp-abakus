@@ -27,21 +27,18 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FrilansArbe
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.request.HentInntektListeBolkRequest;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.Aktoer;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.AktoerType;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.ArbeidsInntektIdent;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.ArbeidsInntektInformasjon;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.ArbeidsInntektMaaned;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.ArbeidsforholdFrilanser;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.Sikkerhetsavvik;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.inntekt.Inntekt;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.inntekt.Loennsinntekt;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.inntekt.Naeringsinntekt;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.inntekt.PensjonEllerTrygd;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.inntekt.YtelseFraOffentlige;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.response.HentInntektListeBolkResponse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.tjenester.aordningen.inntektsinformasjon.Aktoer;
+import no.nav.tjenester.aordningen.inntektsinformasjon.AktoerType;
+import no.nav.tjenester.aordningen.inntektsinformasjon.ArbeidsInntektIdent;
+import no.nav.tjenester.aordningen.inntektsinformasjon.ArbeidsInntektInformasjon;
+import no.nav.tjenester.aordningen.inntektsinformasjon.ArbeidsInntektMaaned;
+import no.nav.tjenester.aordningen.inntektsinformasjon.ArbeidsforholdFrilanser;
+import no.nav.tjenester.aordningen.inntektsinformasjon.Sikkerhetsavvik;
+import no.nav.tjenester.aordningen.inntektsinformasjon.inntekt.Inntekt;
+import no.nav.tjenester.aordningen.inntektsinformasjon.inntekt.InntektType;
+import no.nav.tjenester.aordningen.inntektsinformasjon.request.HentInntektListeBolkRequest;
+import no.nav.tjenester.aordningen.inntektsinformasjon.response.HentInntektListeBolkResponse;
 import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
 import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
 import no.nav.vedtak.konfig.KonfigVerdi;
@@ -180,7 +177,7 @@ public class InntektTjenesteImpl implements InntektTjeneste {
     }
 
     private void oversettArbeidsgiver(ArbeidsforholdFrilanser arbeidsforholdFrilanser, FrilansArbeidsforhold.Builder builder) {
-        no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.Aktoer arbeidsgiver = arbeidsforholdFrilanser.getArbeidsgiver();
+        var arbeidsgiver = arbeidsforholdFrilanser.getArbeidsgiver();
         if (AktoerType.AKTOER_ID.equals(arbeidsgiver.getAktoerType())) { // OK med NPE hvis arbeidsgiver er null
             builder.medArbeidsgiverAktørId(new AktørId(arbeidsgiver.getIdentifikator()));
         } else if (AktoerType.ORGANISASJON.equals(arbeidsgiver.getAktoerType())) {
@@ -195,19 +192,16 @@ public class InntektTjenesteImpl implements InntektTjeneste {
 
     private void utledOgSettUtbetalerOgYtelse(Inntekt inntekt, Månedsinntekt.Builder månedsinntekt) {
         if (erYtelse(inntekt)) {
-            YtelseFraOffentlige ytelseFraOffentlige = (YtelseFraOffentlige) inntekt;
             månedsinntekt.medYtelse(true)
-                .medYtelseKode(ytelseFraOffentlige.getBeskrivelse());
+                .medYtelseKode(inntekt.getBeskrivelse());
             return;
         } else if (erPensjonEllerTrygd(inntekt)) {
-            PensjonEllerTrygd pensjonEllerTrygd = (PensjonEllerTrygd) inntekt; // NOSONAR
             månedsinntekt.medYtelse(true)
-                .medPensjonEllerTrygdKode(pensjonEllerTrygd.getBeskrivelse());
+                .medPensjonEllerTrygdKode(inntekt.getBeskrivelse());
             return;
         } else if (erNæringsinntekt(inntekt)) {
-            final Naeringsinntekt næringsinntekt = (Naeringsinntekt) inntekt; // NOSONAR
             månedsinntekt.medYtelse(true)
-                .medNæringsinntektKode(næringsinntekt.getBeskrivelse());
+                .medNæringsinntektKode(inntekt.getBeskrivelse());
             return;
         } else if (erLønn(inntekt)) {
             månedsinntekt.medYtelse(false);
@@ -219,19 +213,19 @@ public class InntektTjenesteImpl implements InntektTjeneste {
     }
 
     private boolean erLønn(Inntekt inntekt) {
-        return inntekt instanceof Loennsinntekt;
+        return InntektType.LOENNSINNTEKT.equals(inntekt.getInntektType());
     }
 
     private boolean erYtelse(Inntekt inntekt) {
-        return inntekt instanceof YtelseFraOffentlige;
+        return InntektType.YTELSE_FRA_OFFENTLIGE.equals(inntekt.getInntektType());
     }
 
     private boolean erPensjonEllerTrygd(Inntekt inntekt) {
-        return inntekt instanceof PensjonEllerTrygd;
+        return InntektType.PENSJON_ELLER_TRYGD.equals(inntekt.getInntektType());
     }
 
     private boolean erNæringsinntekt(Inntekt inntekt) {
-        return inntekt instanceof Naeringsinntekt;
+        return InntektType.NAERINGSINNTEKT.equals(inntekt.getInntektType());
     }
 
     private String byggSikkerhetsavvikString(HentInntektListeBolkResponse response) {

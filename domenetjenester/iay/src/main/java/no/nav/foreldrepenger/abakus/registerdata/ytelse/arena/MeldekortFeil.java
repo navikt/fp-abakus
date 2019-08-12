@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.impl;
+package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 

@@ -1,12 +1,9 @@
-package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.impl;
+package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTema;
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortTjeneste;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagMeldekort;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
