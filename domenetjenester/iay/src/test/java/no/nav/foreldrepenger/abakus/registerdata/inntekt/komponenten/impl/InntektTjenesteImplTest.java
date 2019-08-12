@@ -29,17 +29,16 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FinnInntekt
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.request.HentInntektListeBolkRequest;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.Aktoer;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.AktoerType;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.ArbeidsInntektIdent;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.ArbeidsInntektInformasjon;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.ArbeidsInntektMaaned;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.Sikkerhetsavvik;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.inntekt.Inntekt;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.inntekt.Loennsinntekt;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.inntekt.YtelseFraOffentlige;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl.respons.aordningen.inntektsinformasjon.response.HentInntektListeBolkResponse;
+import no.nav.tjenester.aordningen.inntektsinformasjon.Aktoer;
+import no.nav.tjenester.aordningen.inntektsinformasjon.AktoerType;
+import no.nav.tjenester.aordningen.inntektsinformasjon.ArbeidsInntektIdent;
+import no.nav.tjenester.aordningen.inntektsinformasjon.ArbeidsInntektInformasjon;
+import no.nav.tjenester.aordningen.inntektsinformasjon.ArbeidsInntektMaaned;
+import no.nav.tjenester.aordningen.inntektsinformasjon.Sikkerhetsavvik;
+import no.nav.tjenester.aordningen.inntektsinformasjon.inntekt.Inntekt;
+import no.nav.tjenester.aordningen.inntektsinformasjon.inntekt.InntektType;
+import no.nav.tjenester.aordningen.inntektsinformasjon.request.HentInntektListeBolkRequest;
+import no.nav.tjenester.aordningen.inntektsinformasjon.response.HentInntektListeBolkResponse;
 import no.nav.vedtak.exception.VLException;
 import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
 
@@ -76,7 +75,7 @@ public class InntektTjenesteImplTest {
         // Tre måneder siden
         ArbeidsInntektInformasjon arbeidsInntektInformasjonMnd1 = new ArbeidsInntektInformasjon();
         arbeidsInntektInformasjonMnd1.setInntektListe(Collections.singletonList(
-            opprettInntekt(new BigDecimal(50), GJELDENDE_MÅNED.minusMonths(3), null, SYKEPENGER, new YtelseFraOffentlige())));
+            opprettInntekt(new BigDecimal(50), GJELDENDE_MÅNED.minusMonths(3), null, SYKEPENGER, InntektType.YTELSE_FRA_OFFENTLIGE)));
         ArbeidsInntektMaaned arbeidsInntektMaaned1 = new ArbeidsInntektMaaned();
         arbeidsInntektMaaned1.setArbeidsInntektInformasjon(arbeidsInntektInformasjonMnd1);
         response.getArbeidsInntektIdentListe().get(0).getArbeidsInntektMaaned().add(arbeidsInntektMaaned1);
@@ -85,9 +84,9 @@ public class InntektTjenesteImplTest {
         ArbeidsInntektInformasjon arbeidsInntektInformasjonMnd2 = new ArbeidsInntektInformasjon();
         arbeidsInntektInformasjonMnd2.setInntektListe(new ArrayList<>());
         arbeidsInntektInformasjonMnd2.getInntektListe().add(
-            opprettInntekt(new BigDecimal(100), GJELDENDE_MÅNED.minusMonths(2), null, SYKEPENGER, new YtelseFraOffentlige()));
+            opprettInntekt(new BigDecimal(100), GJELDENDE_MÅNED.minusMonths(2), null, SYKEPENGER, InntektType.YTELSE_FRA_OFFENTLIGE));
         arbeidsInntektInformasjonMnd2.getInntektListe().add(
-            opprettInntekt(new BigDecimal(200), GJELDENDE_MÅNED.minusMonths(2), arbeidsplassen, null, new Loennsinntekt()));
+            opprettInntekt(new BigDecimal(200), GJELDENDE_MÅNED.minusMonths(2), arbeidsplassen, null, InntektType.LOENNSINNTEKT));
         ArbeidsInntektMaaned arbeidsInntektMaaned2 = new ArbeidsInntektMaaned();
         arbeidsInntektMaaned2.setArbeidsInntektInformasjon(arbeidsInntektInformasjonMnd2);
         response.getArbeidsInntektIdentListe().get(0).getArbeidsInntektMaaned().add(arbeidsInntektMaaned2);
@@ -95,7 +94,7 @@ public class InntektTjenesteImplTest {
         // En måned siden
         ArbeidsInntektInformasjon arbeidsInntektInformasjonMnd3 = new ArbeidsInntektInformasjon();
         arbeidsInntektInformasjonMnd3.setInntektListe(Collections.singletonList(
-            opprettInntekt(new BigDecimal(400), GJELDENDE_MÅNED.minusMonths(1), arbeidsplassen, null, new Loennsinntekt())));
+            opprettInntekt(new BigDecimal(400), GJELDENDE_MÅNED.minusMonths(1), arbeidsplassen, null, InntektType.LOENNSINNTEKT)));
         ArbeidsInntektMaaned arbeidsInntektMaaned3 = new ArbeidsInntektMaaned();
         arbeidsInntektMaaned3.setArbeidsInntektInformasjon(arbeidsInntektInformasjonMnd3);
         response.getArbeidsInntektIdentListe().get(0).getArbeidsInntektMaaned().add(arbeidsInntektMaaned3);
@@ -103,7 +102,7 @@ public class InntektTjenesteImplTest {
         // Denne måneden
         ArbeidsInntektInformasjon arbeidsInntektInformasjonMnd4 = new ArbeidsInntektInformasjon();
         arbeidsInntektInformasjonMnd4.setInntektListe(Collections.singletonList(
-            opprettInntekt(new BigDecimal(405), GJELDENDE_MÅNED, arbeidsplassen, null, new Loennsinntekt())));
+            opprettInntekt(new BigDecimal(405), GJELDENDE_MÅNED, arbeidsplassen, null, InntektType.LOENNSINNTEKT)));
         ArbeidsInntektMaaned arbeidsInntektMaaned4 = new ArbeidsInntektMaaned();
         arbeidsInntektMaaned4.setArbeidsInntektInformasjon(arbeidsInntektInformasjonMnd4);
         response.getArbeidsInntektIdentListe().get(0).getArbeidsInntektMaaned().add(arbeidsInntektMaaned4);
@@ -207,7 +206,9 @@ public class InntektTjenesteImplTest {
         return response;
     }
 
-    private Inntekt opprettInntekt(BigDecimal beløp, YearMonth måned, Aktoer virksomhet, String beskrivelse, Inntekt inntekt) {
+    private Inntekt opprettInntekt(BigDecimal beløp, YearMonth måned, Aktoer virksomhet, String beskrivelse, InntektType inntektType) {
+        var inntekt = new Inntekt();
+        inntekt.setInntektType(inntektType);
         inntekt.setBeloep(beløp);
         inntekt.setUtbetaltIMaaned(måned);
         inntekt.setVirksomhet(virksomhet);
