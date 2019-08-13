@@ -26,6 +26,6 @@ public interface InntektFeil extends DeklarerteFeil {
     @TekniskFeil(feilkode = "FP-722674", feilmelding = "Kunne ikke serialisere response fra Inntektskomponenten.", logLevel = LogLevel.ERROR)
     Feil kunneIkkeSerialisereResponse(JAXBException e);
 
-    @TekniskFeil(feilkode = "FP-711674", feilmelding = "Kunne ikke mappe svar fra Inntektskomponenten", logLevel = LogLevel.ERROR)
-    Feil kunneIkkeMappeResponse();
+    @TekniskFeil(feilkode = "FP-711674", feilmelding = "Kunne ikke mappe svar fra Inntektskomponenten: virksomhet=%s, inntektType=%s", logLevel = LogLevel.ERROR)
+    Feil kunneIkkeMappeResponse(String virksomhet, String inntektType);
 }
