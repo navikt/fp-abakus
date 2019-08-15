@@ -187,7 +187,7 @@ public class InntektArbeidYtelseAggregatEntitet extends BaseEntitet implements I
 
     void taHensynTilOverstyring() {
         for (AktørArbeidEntitet aktør : aktørArbeid) {
-            aktør.overstyrAnsettelsesPeriode();
+            aktør.overstyrYrkesaktiviteter();
         }
     }
 

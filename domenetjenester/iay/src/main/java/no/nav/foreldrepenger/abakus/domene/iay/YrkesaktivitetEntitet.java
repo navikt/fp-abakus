@@ -29,6 +29,7 @@ import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyringEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyrtePerioderEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
@@ -137,6 +138,13 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
     }
 
     @Override
+    public boolean gjelderFor(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef arbeidsforholdRef) {
+        boolean gjelderForArbeidsgiver = Objects.equals(getArbeidsgiver(), arbeidsgiver);
+        boolean gjelderFor = gjelderForArbeidsgiver && getArbeidsforholdRef().gjelderFor(arbeidsforholdRef);
+        return gjelderFor;
+    }
+
+    @Override
     public Collection<Permisjon> getPermisjon() {
         return Collections.unmodifiableSet(permisjon);
     }
@@ -187,23 +195,11 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
     @Override
     public List<AktivitetsAvtale> getAnsettelsesPerioder() {
         if (erArbeidsforhold()) {
-            List<AktivitetsAvtale> overstyrtAnsettelsesperiode = hentOverstyrteAnsettelsesperioder();
-            return overstyrtAnsettelsesperiode.isEmpty() ? hentAnsettelsesperioder() : overstyrtAnsettelsesperiode;
+            return aktivitetsAvtale.stream()
+                .filter(AktivitetsAvtale::erAnsettelsesPeriode)
+                .collect(Collectors.toList());
         }
         return Collections.emptyList();
-    }
-
-    private List<AktivitetsAvtale> hentAnsettelsesperioder() {
-        return aktivitetsAvtale.stream()
-            .filter(AktivitetsAvtale::erAnsettelsesPeriode)
-            .collect(Collectors.toList());
-    }
-
-    private List<AktivitetsAvtale> hentOverstyrteAnsettelsesperioder() {
-        return aktivitetsAvtale.stream()
-            .filter(avtale -> avtale.getOverstyrtPeriode() != null)
-            .filter(AktivitetsAvtale::erAnsettelsesPeriode)
-            .collect(Collectors.toList());
     }
 
     @Override
@@ -263,19 +259,16 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
         }
     }
 
-    void setOverstyrtPeriode(ArbeidsforholdOverstyringEntitet overstyring) {
-        Optional<ArbeidsforholdOverstyrtePerioderEntitet> overstyrtPeriode = finnOverstyrtPeriode(overstyring);
-        overstyrtPeriode.ifPresent(arbeidsforholdOverstyrtePerioderEntitet -> aktivitetsAvtale.stream()
-            .filter(AktivitetsAvtaleEntitet::erAnsettelsesPeriode)
-            .filter(AktivitetsAvtale::getErLøpende)
-            .forEach(avtale -> avtale.setOverstyrtPeriode(arbeidsforholdOverstyrtePerioderEntitet.getOverstyrtePeriode())));
-    }
-
-    private Optional<ArbeidsforholdOverstyrtePerioderEntitet> finnOverstyrtPeriode(ArbeidsforholdOverstyringEntitet overstyring) {
-        return overstyring.getArbeidsforholdOverstyrtePerioder().stream()
-            .filter(p -> p.getOverstyrtePeriode().getTomDato() != null)
-            .filter(p -> !p.getOverstyrtePeriode().getTomDato().isEqual(TIDENES_ENDE))
-            .findFirst(); // TODO : Kanskje ikke findFirst her? Kan i teorien være flere ved feil data
+    void overstyrYrkesaktivtet(ArbeidsforholdOverstyringEntitet overstyring) {
+        ArbeidsforholdHandlingType handling = overstyring.getHandling();
+        if (ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE.equals(handling)) {
+            List<ArbeidsforholdOverstyrtePerioderEntitet> overstyrtePerioder = overstyring.getArbeidsforholdOverstyrtePerioder();
+            overstyrtePerioder.forEach(overstyrtPeriode -> aktivitetsAvtale.stream()
+                .filter(AktivitetsAvtaleEntitet::erAnsettelsesPeriode)
+                .filter(aa -> TIDENES_ENDE.equals(aa.getPeriodeUtenOverstyring().getTomDato()))
+                .filter(aa -> overstyrtPeriode.getOverstyrtePeriode().getFomDato().isEqual(aa.getPeriodeUtenOverstyring().getFomDato()))
+                .forEach(avtale -> avtale.setOverstyrtPeriode(overstyrtPeriode.getOverstyrtePeriode())));
+        }
     }
 
     public static class PermisjonBuilder {
@@ -342,7 +335,7 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
             this.aktivitetsAvtaleEntitet.setProsentsats(prosentsats == null ? null : new Stillingsprosent(prosentsats));
             return this;
         }
-        
+
         public AktivitetsAvtaleBuilder medAntallTimer(BigDecimal antallTimer) {
             this.aktivitetsAvtaleEntitet.setAntallTimer(antallTimer == null ? null : new AntallTimer(antallTimer));
             return this;
