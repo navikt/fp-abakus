@@ -10,23 +10,23 @@ import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
 public class ArbeidsforholdOverstyringBuilder {
 
-    private final ArbeidsforholdOverstyringEntitet kladd;
+    private final ArbeidsforholdOverstyring kladd;
     private final boolean oppdatering;
 
-    private ArbeidsforholdOverstyringBuilder(ArbeidsforholdOverstyringEntitet kladd, boolean oppdatering) {
+    private ArbeidsforholdOverstyringBuilder(ArbeidsforholdOverstyring kladd, boolean oppdatering) {
         this.kladd = kladd;
         this.oppdatering = oppdatering;
     }
 
     static ArbeidsforholdOverstyringBuilder ny() {
-        return new ArbeidsforholdOverstyringBuilder(new ArbeidsforholdOverstyringEntitet(), false);
+        return new ArbeidsforholdOverstyringBuilder(new ArbeidsforholdOverstyring(), false);
     }
 
-    static ArbeidsforholdOverstyringBuilder oppdatere(ArbeidsforholdOverstyringEntitet oppdatere) {
-        return new ArbeidsforholdOverstyringBuilder(new ArbeidsforholdOverstyringEntitet(oppdatere), true);
+    static ArbeidsforholdOverstyringBuilder oppdatere(ArbeidsforholdOverstyring oppdatere) {
+        return new ArbeidsforholdOverstyringBuilder(new ArbeidsforholdOverstyring(oppdatere), true);
     }
 
-    public static ArbeidsforholdOverstyringBuilder oppdatere(Optional<ArbeidsforholdOverstyringEntitet> oppdatere) {
+    public static ArbeidsforholdOverstyringBuilder oppdatere(Optional<ArbeidsforholdOverstyring> oppdatere) {
         return oppdatere.map(ArbeidsforholdOverstyringBuilder::oppdatere).orElseGet(ArbeidsforholdOverstyringBuilder::ny);
     }
 
@@ -81,7 +81,7 @@ public class ArbeidsforholdOverstyringBuilder {
         return this;
     }
 
-    public ArbeidsforholdOverstyringEntitet build() {
+    public ArbeidsforholdOverstyring build() {
         return kladd;
     }
 

@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyringEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyring;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingEntitet;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -33,7 +33,8 @@ import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 public class InntektsmeldingAggregatEntitet extends BaseEntitet implements InntektsmeldingAggregat {
 
     private static final Logger logger = LoggerFactory.getLogger(InntektsmeldingAggregatEntitet.class);
-
+    private static final String ALTINN_SYSTEM_NAVN = "AltinnPortal";
+    
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_INNTEKTSMELDINGER")
     private Long id;
@@ -85,7 +86,7 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
             .noneMatch(ov -> erFjernet(im, ov));
     }
 
-    private boolean erFjernet(InntektsmeldingEntitet im, ArbeidsforholdOverstyringEntitet ov) {
+    private boolean erFjernet(InntektsmeldingEntitet im, ArbeidsforholdOverstyring ov) {
         return (ov.getArbeidsforholdRef().gjelderFor(im.getArbeidsforholdRef()))
             && ov.getArbeidsgiver().equals(im.getArbeidsgiver())
             && (Objects.equals(ArbeidsforholdHandlingType.IKKE_BRUK, ov.getHandling())
@@ -125,6 +126,13 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
 
     private boolean skalFjerneInntektsmelding(Inntektsmelding gammel, Inntektsmelding ny) {
         if (gammel.gjelderSammeArbeidsforhold(ny)) {
+            if (ALTINN_SYSTEM_NAVN.equals(gammel.getKildesystem()) || ALTINN_SYSTEM_NAVN.equals(ny.getKildesystem())) {
+                // WTF?  Hvorfor trengs ALTINN å spesialbehandles?
+                if (gammel.getKanalreferanse() != null && ny.getKanalreferanse() != null) {
+                    // skummelt å stole på stigende arkivreferanser fra Altinn. :-(
+                    return ny.getKanalreferanse().compareTo(gammel.getKanalreferanse()) > 0;
+                }
+            }
             if (gammel.getInnsendingstidspunkt().isBefore(ny.getInnsendingstidspunkt())) {
                 return true;
             }

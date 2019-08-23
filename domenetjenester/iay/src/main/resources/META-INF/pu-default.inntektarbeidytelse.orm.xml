@@ -40,7 +40,7 @@
 
     <!-- InntektArbeidYtelser aggregat og grunnlag -->
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyringEntitet" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyring" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanseEntitet" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtaleEntitet" />

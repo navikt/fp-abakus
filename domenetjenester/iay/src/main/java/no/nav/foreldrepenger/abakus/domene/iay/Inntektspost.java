@@ -1,10 +1,9 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.time.LocalDate;
-
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.SkatteOgAvgiftsregelType;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
+import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public interface Inntektspost {
 
@@ -31,20 +30,6 @@ public interface Inntektspost {
     SkatteOgAvgiftsregelType getSkatteOgAvgiftsregelType();
 
     /**
-     * Periode start
-     *
-     * @return første dag i perioden
-     */
-    LocalDate getFraOgMed();
-
-    /**
-     * Periode slutt
-     *
-     * @return siste dag i perioden
-     */
-    LocalDate getTilOgMed();
-
-    /**
      * Beløpet som har blitt utbetalt i perioden
      *
      * @return Beløpet
@@ -52,5 +37,8 @@ public interface Inntektspost {
     Beløp getBeløp();
 
     YtelseType getYtelseType();
+    
+    /** Periode inntektsposten gjelder. */
+    DatoIntervallEntitet getPeriode();
 
 }

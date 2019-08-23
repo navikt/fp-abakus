@@ -26,14 +26,14 @@ public class ArbeidsforholdHandlingType extends Kodeliste {
     
     /**
      * @deprecated
-     * TODO: Refaktorer til å kun bruke variabelen i ArbeidsforholdOverstyringEntitet (PFP-8119)
+     * TODO: Refaktorer til å kun bruke variabelen i ArbeidsforholdOverstyring (PFP-8119)
      */
     public static final ArbeidsforholdHandlingType BRUK_MED_OVERSTYRT_PERIODE = new ArbeidsforholdHandlingType("BRUK_MED_OVERSTYRT_PERIODE"); //$NON-NLS-1$
 
     
     /**
      * @deprecated
-     * TODO: Refaktorer til variable i ArbeidsforholdOverstyringEntitet (PFP-8118)
+     * TODO: Refaktorer til variable i ArbeidsforholdOverstyring (PFP-8118)
      */
     public static final ArbeidsforholdHandlingType INNTEKT_IKKE_MED_I_BG = new ArbeidsforholdHandlingType("INNTEKT_IKKE_MED_I_BG"); //$NON-NLS-1$
     

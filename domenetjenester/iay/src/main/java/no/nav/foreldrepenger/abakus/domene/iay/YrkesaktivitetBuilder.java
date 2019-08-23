@@ -2,8 +2,6 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.util.Optional;
 
-import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetEntitet.AktivitetsAvtaleBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetEntitet.PermisjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
@@ -61,7 +59,7 @@ public class YrkesaktivitetBuilder {
         return kladd;
     }
 
-    public YrkesaktivitetEntitet.PermisjonBuilder getPermisjonBuilder() {
+    public PermisjonBuilder getPermisjonBuilder() {
         return nyPermisjonBuilder();
     }
 
@@ -81,7 +79,7 @@ public class YrkesaktivitetBuilder {
         return this;
     }
 
-    public YrkesaktivitetEntitet.AktivitetsAvtaleBuilder getAktivitetsAvtaleBuilder() {
+    public AktivitetsAvtaleBuilder getAktivitetsAvtaleBuilder() {
         return nyAktivitetsAvtaleBuilder();
     }
 
@@ -114,10 +112,6 @@ public class YrkesaktivitetBuilder {
             .findFirst());
         oppdater.medPeriode(aktivitetsPeriode);
         return oppdater;
-    }
-
-    public boolean harIngenAvtaler() {
-        return kladd.getAktivitetsAvtalerForArbeid().isEmpty();
     }
 
     public void fjernPeriode(DatoIntervallEntitet aktivitetsPeriode) {

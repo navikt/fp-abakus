@@ -1,15 +1,9 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import static no.nav.vedtak.konfig.Tid.TIDENES_ENDE;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,17 +23,11 @@ import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyringEntitet;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyrtePerioderEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.PermisjonsbeskrivelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
-import no.nav.foreldrepenger.abakus.typer.AntallTimer;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "Yrkesaktivitet")
@@ -138,13 +126,6 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
     }
 
     @Override
-    public boolean gjelderFor(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef arbeidsforholdRef) {
-        boolean gjelderForArbeidsgiver = Objects.equals(getArbeidsgiver(), arbeidsgiver);
-        boolean gjelderFor = gjelderForArbeidsgiver && getArbeidsforholdRef().gjelderFor(arbeidsforholdRef);
-        return gjelderFor;
-    }
-
-    @Override
     public Collection<Permisjon> getPermisjon() {
         return Collections.unmodifiableSet(permisjon);
     }
@@ -153,14 +134,6 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
         PermisjonEntitet permisjonEntitet = (PermisjonEntitet) permisjon;
         this.permisjon.add(permisjonEntitet);
         permisjonEntitet.setYrkesaktivitet(this);
-    }
-
-    @Override
-    public Collection<AktivitetsAvtale> getAktivitetsAvtalerForArbeid() {
-        return aktivitetsAvtale.stream()
-            .filter(av -> (!this.erArbeidsforhold() || !av.erAnsettelsesPeriode()))
-            .filter(AktivitetsAvtaleEntitet::skalMedEtterSkjæringstidspunktVurdering)
-            .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
@@ -191,15 +164,12 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
     void setNavnArbeidsgiverUtland(String navnArbeidsgiverUtland) {
         this.navnArbeidsgiverUtland = navnArbeidsgiverUtland;
     }
-
+    
     @Override
-    public List<AktivitetsAvtale> getAnsettelsesPerioder() {
-        if (erArbeidsforhold()) {
-            return aktivitetsAvtale.stream()
-                .filter(AktivitetsAvtale::erAnsettelsesPeriode)
-                .collect(Collectors.toList());
-        }
-        return Collections.emptyList();
+    public boolean gjelderFor(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef arbeidsforholdRef) {
+        boolean gjelderForArbeidsgiver = Objects.equals(getArbeidsgiver(), arbeidsgiver);
+        boolean gjelderFor = gjelderForArbeidsgiver && getArbeidsforholdRef().gjelderFor(arbeidsforholdRef);
+        return gjelderFor;
     }
 
     @Override
@@ -207,7 +177,6 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
         return ArbeidType.AA_REGISTER_TYPER.contains(arbeidType);
     }
 
-    @Override
     public Long getId() {
         return id;
     }
@@ -253,123 +222,4 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
         aktivitetsAvtale.removeIf(aa -> aa.matcherPeriode(aktivitetsPeriode));
     }
 
-    void setSkjæringstidspunkt(LocalDate skjæringstidspunkt, boolean ventreSide) {
-        for (AktivitetsAvtaleEntitet avtale : aktivitetsAvtale) {
-            avtale.setSkjæringstidspunkt(skjæringstidspunkt, ventreSide);
-        }
-    }
-
-    void overstyrYrkesaktivtet(ArbeidsforholdOverstyringEntitet overstyring) {
-        ArbeidsforholdHandlingType handling = overstyring.getHandling();
-        if (ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE.equals(handling)) {
-            List<ArbeidsforholdOverstyrtePerioderEntitet> overstyrtePerioder = overstyring.getArbeidsforholdOverstyrtePerioder();
-            overstyrtePerioder.forEach(overstyrtPeriode -> aktivitetsAvtale.stream()
-                .filter(AktivitetsAvtaleEntitet::erAnsettelsesPeriode)
-                .filter(aa -> TIDENES_ENDE.equals(aa.getPeriodeUtenOverstyring().getTomDato()))
-                .filter(aa -> overstyrtPeriode.getOverstyrtePeriode().getFomDato().isEqual(aa.getPeriodeUtenOverstyring().getFomDato()))
-                .forEach(avtale -> avtale.setOverstyrtPeriode(overstyrtPeriode.getOverstyrtePeriode())));
-        }
-    }
-
-    public static class PermisjonBuilder {
-        private final PermisjonEntitet permisjonEntitet;
-
-        PermisjonBuilder(PermisjonEntitet permisjonEntitet) {
-            this.permisjonEntitet = permisjonEntitet;
-        }
-
-        static PermisjonBuilder ny() {
-            return new PermisjonBuilder(new PermisjonEntitet());
-        }
-
-        public PermisjonBuilder medPermisjonsbeskrivelseType(PermisjonsbeskrivelseType permisjonsbeskrivelseType) {
-            this.permisjonEntitet.setPermisjonsbeskrivelseType(permisjonsbeskrivelseType);
-            return this;
-        }
-
-        public PermisjonBuilder medProsentsats(BigDecimal prosentsats) {
-            this.permisjonEntitet.setProsentsats(new Stillingsprosent(prosentsats));
-            return this;
-        }
-
-        public PermisjonBuilder medPeriode(LocalDate fraOgMed, LocalDate tilOgMed) {
-            this.permisjonEntitet.setPeriode(fraOgMed, tilOgMed);
-            return this;
-        }
-
-        public Permisjon build() {
-            if (permisjonEntitet.hasValues()) {
-                return permisjonEntitet;
-            }
-            throw new IllegalStateException();
-        }
-
-        public PermisjonBuilder medPermisjonsbeskrivelseType(String kode) {
-            return medPermisjonsbeskrivelseType(new PermisjonsbeskrivelseType(kode));
-        }
-    }
-
-    public static class AktivitetsAvtaleBuilder {
-        private final AktivitetsAvtaleEntitet aktivitetsAvtaleEntitet;
-        private boolean oppdatering = false;
-
-        AktivitetsAvtaleBuilder(AktivitetsAvtale aktivitetsAvtaleEntitet, boolean oppdatering) {
-            this.aktivitetsAvtaleEntitet = (AktivitetsAvtaleEntitet) aktivitetsAvtaleEntitet; // NOSONAR
-            this.oppdatering = oppdatering;
-        }
-
-        public static AktivitetsAvtaleBuilder ny() {
-            return new AktivitetsAvtaleBuilder(new AktivitetsAvtaleEntitet(), false);
-        }
-
-        static AktivitetsAvtaleBuilder oppdater(Optional<AktivitetsAvtale> aktivitetsAvtale) {
-            return new AktivitetsAvtaleBuilder(aktivitetsAvtale.orElse(new AktivitetsAvtaleEntitet()), aktivitetsAvtale.isPresent());
-        }
-
-        public AktivitetsAvtaleBuilder medProsentsats(Stillingsprosent prosentsats) {
-            this.aktivitetsAvtaleEntitet.setProsentsats(prosentsats);
-            return this;
-        }
-
-        public AktivitetsAvtaleBuilder medProsentsats(BigDecimal prosentsats) {
-            this.aktivitetsAvtaleEntitet.setProsentsats(prosentsats == null ? null : new Stillingsprosent(prosentsats));
-            return this;
-        }
-
-        public AktivitetsAvtaleBuilder medAntallTimer(BigDecimal antallTimer) {
-            this.aktivitetsAvtaleEntitet.setAntallTimer(antallTimer == null ? null : new AntallTimer(antallTimer));
-            return this;
-        }
-
-        public AktivitetsAvtaleBuilder medAntallTimerFulltid(BigDecimal antallTimerFulltid) {
-            this.aktivitetsAvtaleEntitet.setAntallTimerFulltid(antallTimerFulltid == null ? null : new AntallTimer(antallTimerFulltid));
-            return this;
-        }
-
-        public AktivitetsAvtaleBuilder medPeriode(DatoIntervallEntitet periode) {
-            this.aktivitetsAvtaleEntitet.setPeriode(periode);
-            return this;
-        }
-
-        public AktivitetsAvtaleBuilder medBeskrivelse(String begrunnelse) {
-            this.aktivitetsAvtaleEntitet.setBeskrivelse(begrunnelse);
-            return this;
-        }
-
-        public AktivitetsAvtale build() {
-            if (aktivitetsAvtaleEntitet.hasValues()) {
-                return aktivitetsAvtaleEntitet;
-            }
-            throw new IllegalStateException();
-        }
-
-        public boolean isOppdatering() {
-            return oppdatering;
-        }
-
-        public AktivitetsAvtaleBuilder medSisteLønnsendringsdato(LocalDate sisteLønnsendringsdato) {
-            this.aktivitetsAvtaleEntitet.sisteLønnsendringsdato(sisteLønnsendringsdato);
-            return this;
-        }
-    }
 }

@@ -86,7 +86,7 @@ public class ProsessTaskGruppe {
 
     }
 
-    public void setBehandling(Long fagsakId, Long behandlingId, String aktørId) {
+    public void setBehandling(Long behandlingId, String aktørId) {
         this.getTasks().forEach(e -> e.getTask().setKobling(behandlingId, aktørId));
     }
 

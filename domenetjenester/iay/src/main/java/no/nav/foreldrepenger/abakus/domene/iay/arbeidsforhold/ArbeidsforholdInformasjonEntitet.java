@@ -42,7 +42,7 @@ public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements Arb
 
     @ChangeTracked
     @OneToMany(mappedBy = "informasjon")
-    private List<ArbeidsforholdOverstyringEntitet> overstyringer = new ArrayList<>();
+    private List<ArbeidsforholdOverstyring> overstyringer = new ArrayList<>();
 
     @Version
     @Column(name = "versjon", nullable = false)
@@ -53,15 +53,15 @@ public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements Arb
 
     public ArbeidsforholdInformasjonEntitet(ArbeidsforholdInformasjon arbeidsforholdInformasjon) {
         ArbeidsforholdInformasjonEntitet arbeidsforholdInformasjonEntitet = (ArbeidsforholdInformasjonEntitet) arbeidsforholdInformasjon; // NOSONAR
-        for (ArbeidsforholdReferanseEntitet arbeidsforholdReferanseEntitet : arbeidsforholdInformasjonEntitet.referanser) {
-            final ArbeidsforholdReferanseEntitet referanseEntitet = new ArbeidsforholdReferanseEntitet(arbeidsforholdReferanseEntitet);
-            referanseEntitet.setInformasjon(this);
-            this.referanser.add(referanseEntitet);
+        for (var arbeidsforholdReferanse : arbeidsforholdInformasjonEntitet.referanser) {
+            final ArbeidsforholdReferanseEntitet nyArbeidsforholdReferanse = new ArbeidsforholdReferanseEntitet(arbeidsforholdReferanse);
+            nyArbeidsforholdReferanse.setInformasjon(this);
+            this.referanser.add(nyArbeidsforholdReferanse);
         }
-        for (ArbeidsforholdOverstyringEntitet arbeidsforholdOverstyringEntitet : arbeidsforholdInformasjonEntitet.overstyringer) {
-            final ArbeidsforholdOverstyringEntitet overstyringEntitet = new ArbeidsforholdOverstyringEntitet(arbeidsforholdOverstyringEntitet);
-            overstyringEntitet.setInformasjon(this);
-            this.overstyringer.add(overstyringEntitet);
+        for (var overstyring : arbeidsforholdInformasjonEntitet.overstyringer) {
+            final ArbeidsforholdOverstyring nyOverstyring = new ArbeidsforholdOverstyring(overstyring);
+            nyOverstyring.setInformasjon(this);
+            this.overstyringer.add(nyOverstyring);
         }
     }
 
@@ -76,7 +76,7 @@ public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements Arb
     }
 
     @Override
-    public List<ArbeidsforholdOverstyringEntitet> getOverstyringer() {
+    public List<ArbeidsforholdOverstyring> getOverstyringer() {
         return Collections.unmodifiableList(this.overstyringer);
     }
 
@@ -140,7 +140,7 @@ public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements Arb
             .medArbeidsgiver(arbeidsgiverEntitet);
     }
 
-    void leggTilOverstyring(ArbeidsforholdOverstyringEntitet build) {
+    void leggTilOverstyring(ArbeidsforholdOverstyring build) {
         build.setInformasjon(this);
         this.overstyringer.add(build);
     }
@@ -190,7 +190,7 @@ public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements Arb
     @Deprecated(forRemoval = true)
     @Override
     public InternArbeidsforholdRef finnEllerOpprett(Arbeidsgiver arbeidsgiver, final InternArbeidsforholdRef ref) {
-        final Optional<ArbeidsforholdOverstyringEntitet> erstattning = overstyringer.stream()
+        final Optional<ArbeidsforholdOverstyring> erstattning = overstyringer.stream()
             .filter(ov -> ov.getHandling().equals(ArbeidsforholdHandlingType.SLÅTT_SAMMEN_MED_ANNET)
                 && ov.getArbeidsgiver().equals(arbeidsgiver)
                 && ov.getArbeidsforholdRef().gjelderFor(ref))
@@ -211,7 +211,7 @@ public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements Arb
 
     @Override
     public InternArbeidsforholdRef finnEllerOpprett(Arbeidsgiver arbeidsgiver, final EksternArbeidsforholdRef ref) {
-        final Optional<ArbeidsforholdOverstyringEntitet> erstattning = overstyringer.stream()
+        final Optional<ArbeidsforholdOverstyring> erstattning = overstyringer.stream()
             .filter(ov -> {
                 var historiskReferanse = finnForEksternBeholdHistoriskReferanse(arbeidsgiver, ref);
                 return historiskReferanse.isPresent()

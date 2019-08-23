@@ -1,6 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,7 +30,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInfo
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingSomIkkeKommer;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -99,16 +97,17 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
     InntektArbeidYtelseGrunnlagEntitet(InntektArbeidYtelseGrunnlag grunnlag) {
         this(UUID.randomUUID(), grunnlag.getOpprettetTidspunkt());
 
-        // NB! skal aldri lage ny versjon av oppgitt opptjening!
+        // NB! skal ikke lage ny versjon av oppgitt opptjening! Lenker bare inn
         grunnlag.getOppgittOpptjening().ifPresent(kopiAvOppgittOpptjening -> this.setOppgittOpptjening((OppgittOpptjeningEntitet) kopiAvOppgittOpptjening));
         ((InntektArbeidYtelseGrunnlagEntitet) grunnlag).getRegisterVersjon()
             .ifPresent(nyRegisterVerson -> this.setRegister((InntektArbeidYtelseAggregatEntitet) nyRegisterVerson));
+
         grunnlag.getSaksbehandletVersjon()
             .ifPresent(nySaksbehandletFørVersjon -> this.setSaksbehandlet((InntektArbeidYtelseAggregatEntitet) nySaksbehandletFørVersjon));
-        grunnlag.getInntektsmeldinger().ifPresent(this::setInntektsmeldinger);
-        ((InntektArbeidYtelseGrunnlagEntitet) grunnlag).getArbeidsforholdInformasjon()
-            .ifPresent(info -> this.setInformasjon((ArbeidsforholdInformasjonEntitet) info));
 
+        grunnlag.getInntektsmeldinger().ifPresent(this::setInntektsmeldinger);
+
+        grunnlag.getArbeidsforholdInformasjon().ifPresent(info -> this.setInformasjon((ArbeidsforholdInformasjonEntitet) info));
     }
 
     InntektArbeidYtelseGrunnlagEntitet(GrunnlagReferanse grunnlagReferanse, LocalDateTime opprettetTidspunkt) {
@@ -152,83 +151,8 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
     }
 
     @Override
-    public Optional<InntektArbeidYtelseAggregat> getOpplysningerFørSkjæringstidspunkt(LocalDate skjæringstidspunkt) {
-        if (register != null) {
-            final InntektArbeidYtelseAggregatEntitet aggregat = new InntektArbeidYtelseAggregatEntitet(register);
-            aggregat.taHensynTilBetraktninger(arbeidsforholdInformasjon);
-            aggregat.setSkjæringstidspunkt(skjæringstidspunkt, true);
-            aggregat.taHensynTilOverstyring();
-            return Optional.of(aggregat);
-        }
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<InntektArbeidYtelseAggregat> getOpplysningerEtterSkjæringstidspunkt(LocalDate skjæringstidspunkt) {
-        if (register != null) {
-            final InntektArbeidYtelseAggregatEntitet aggregat = new InntektArbeidYtelseAggregatEntitet(register);
-            aggregat.taHensynTilBetraktninger(arbeidsforholdInformasjon);
-            aggregat.setSkjæringstidspunkt(skjæringstidspunkt, false);
-            aggregat.taHensynTilOverstyring();
-            return Optional.of(aggregat);
-        }
-        return Optional.empty();
-    }
-
-    @Override
     public boolean harBlittSaksbehandlet() {
         return getSaksbehandletVersjon().isPresent();
-    }
-
-    @Override
-    public Collection<AktørInntekt> getAktørInntektFørStp(LocalDate skjæringstidspunkt) {
-        return getOpplysningerFørSkjæringstidspunkt(skjæringstidspunkt).map(InntektArbeidYtelseAggregat::getAktørInntekt).orElse(Collections.emptyList());
-    }
-
-    @Override
-    public Optional<AktørInntekt> getAktørInntektFørStp(AktørId aktørId, LocalDate skjæringstidspunkt) {
-        return getAktørInntektFørStp(skjæringstidspunkt).stream().filter(a -> aktørId.equals(a.getAktørId())).findFirst();
-    }
-
-    @Override
-    public Optional<AktørInntekt> getAktørInntektEtterStp(AktørId aktørId, LocalDate skjæringstidspunkt) {
-        return getOpplysningerEtterSkjæringstidspunkt(skjæringstidspunkt)
-            .map(InntektArbeidYtelseAggregat::getAktørInntekt).orElse(Collections.emptyList())
-            .stream().filter(a -> aktørId.equals(a.getAktørId())).findFirst();
-    }
-
-    @Override
-    public Collection<AktørArbeid> getAktørArbeidFørStp(LocalDate skjæringstidspunkt) {
-        return getOpplysningerFørSkjæringstidspunkt(skjæringstidspunkt).map(InntektArbeidYtelseAggregat::getAktørArbeid).orElse(Collections.emptyList());
-    }
-
-    @Override
-    public Optional<AktørArbeid> getAktørArbeidFørStp(AktørId aktørId, LocalDate skjæringstidspunkt) {
-        return getAktørArbeidFørStp(skjæringstidspunkt).stream().filter(a -> aktørId.equals(a.getAktørId())).findFirst();
-    }
-
-    @Override
-    public Optional<AktørArbeid> getAktørArbeidEtterStp(AktørId aktørId, LocalDate skjæringstidspunkt) {
-        return getOpplysningerEtterSkjæringstidspunkt(skjæringstidspunkt).map(InntektArbeidYtelseAggregat::getAktørArbeid).orElse(Collections.emptyList())
-            .stream().filter(a -> aktørId.equals(a.getAktørId())).findFirst();
-    }
-
-    @Override
-    public Collection<AktørYtelse> getAktørYtelseFørStp(LocalDate skjæringstidspunkt) {
-        return getOpplysningerFørSkjæringstidspunkt(skjæringstidspunkt).map(InntektArbeidYtelseAggregat::getAktørYtelse).orElse(Collections.emptyList());
-    }
-
-    @Override
-    public Optional<AktørYtelse> getAktørYtelseFørStp(AktørId aktørId, LocalDate skjæringstidspunkt) {
-        return getAktørYtelseFørStp(skjæringstidspunkt).stream().filter(a -> aktørId.equals(a.getAktørId())).findFirst();
-    }
-
-    @Override
-    public Optional<AktørYtelse> getAktørYtelseFørStpSaksBehFørReg(AktørId aktørId, LocalDate skjæringstidspunkt) {
-        return getOpplysningerFørSkjæringstidspunkt(skjæringstidspunkt).map(InntektArbeidYtelseAggregat::getAktørYtelse)
-            .orElse(Collections.emptyList()).stream()
-            .filter(a -> aktørId.equals(a.getAktørId()))
-            .findFirst();
     }
 
     @Override
@@ -247,23 +171,48 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
             .flatMap(it -> it.stream().filter(aa -> aa.getAktørId().equals(aktørId))
                 .findFirst());
     }
-
+    
     @Override
-    public Collection<Yrkesaktivitet> hentAlleYrkesaktiviteterFørStpFor(AktørId aktørId, LocalDate skjæringstidspunkt, boolean overstyrt) {
-        if (overstyrt && getSaksbehandletVersjon().isPresent()) {
-            InntektArbeidYtelseAggregat inntektArbeidYtelseAggregat = getSaksbehandletVersjon().get(); // $NON-NLS-1$ //NOSONAR
-            return inntektArbeidYtelseAggregat.getAktørArbeid().stream()
-                .filter(a -> a.getAktørId().equals(aktørId))
-                .findAny().map(AktørArbeid::getYrkesaktiviteter).orElse(Collections.emptyList());
-        } else if (getOpplysningerFørSkjæringstidspunkt(skjæringstidspunkt).isPresent()) {
-            InntektArbeidYtelseAggregat inntektArbeidYtelseAggregat = getOpplysningerFørSkjæringstidspunkt(skjæringstidspunkt).get(); // $NON-NLS-1$ //NOSONAR
-            return inntektArbeidYtelseAggregat.getAktørArbeid().stream()
-                .filter(a -> a.getAktørId().equals(aktørId))
-                .findAny().map(AktørArbeid::getYrkesaktiviteter).orElse(Collections.emptyList());
+    public Optional<AktørArbeid> getAktørArbeidFraRegister(AktørId aktørId) {
+        if(register!=null) {
+            var aktørArbeid = register.getAktørArbeid().stream().filter(aa -> Objects.equals(aa.getAktørId(), aktørId)).collect(Collectors.toList());
+            if(aktørArbeid.size()>1) {
+                throw new IllegalStateException("Kan kun ha ett innslag av AktørArbeid for aktørId:" + aktørId + " i  grunnlag " + this.getGrunnlagReferanse());
+            }
+            return aktørArbeid.stream().findFirst();
         }
-        return Collections.emptyList();
+        return Optional.empty();
     }
-
+    
+    @Override
+    public Optional<AktørYtelse> getAktørYtelseFraRegister(AktørId aktørId) {
+        if(register!=null) {
+            var aktørYtelse = register.getAktørYtelse().stream().filter(aa -> Objects.equals(aa.getAktørId(), aktørId)).collect(Collectors.toList());
+            if(aktørYtelse.size()>1) {
+                throw new IllegalStateException("Kan kun ha ett innslag av AktørYtelse for aktørId:" + aktørId + " i  grunnlag " + this.getGrunnlagReferanse());
+            }
+            return aktørYtelse.stream().findFirst();
+        }
+        return Optional.empty();
+    }
+    
+    @Override
+    public Optional<AktørInntekt> getAktørInntektFraRegister(AktørId aktørId) {
+        if(register!=null) {
+            var aktørInntekt = register.getAktørInntekt().stream().filter(aa -> Objects.equals(aa.getAktørId(), aktørId)).collect(Collectors.toList());
+            if(aktørInntekt.size()>1) {
+                throw new IllegalStateException("Kan kun ha ett innslag av AktørInntekt for aktørId:" + aktørId + " i  grunnlag " + this.getGrunnlagReferanse());
+            }
+            return aktørInntekt.stream().findFirst();
+        }
+        return Optional.empty();
+    }
+    
+    @Override
+    public Collection<AktørInntekt> getAlleAktørInntektFraRegister() {
+        return register!=null ? register.getAktørInntekt() : Collections.emptyList();
+    }
+    
     @Override
     public Optional<OppgittOpptjening> getOppgittOpptjening() {
         return Optional.ofNullable(oppgittOpptjening);
@@ -289,15 +238,6 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
         }
     }
 
-    @Override
-    public List<InntektsmeldingSomIkkeKommer> getInntektsmeldingerSomIkkeKommerFor(Virksomhet virksomhet) {
-        return getInntektsmeldingerSomIkkeKommer()
-            .stream()
-            .filter(i -> i.getArbeidsgiver().getErVirksomhet()
-                && i.getArbeidsgiver().getIdentifikator().equals(virksomhet.getOrgnr()))
-            .collect(Collectors.toList());
-    }
-
     void setKobling(Long koblingId) {
         if (this.koblingId != null && !Objects.equals(this.koblingId, koblingId)) {
             throw new IllegalStateException(String.format("Kan ikke overskrive koblingId %s: %s", this.koblingId, koblingId));
@@ -314,8 +254,8 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
         return aktiv;
     }
 
-    /* eksponeres ikke public for andre. */
-    Long getId() {
+    @Override
+    public Long getId() {
         return id;
     }
 
@@ -330,12 +270,6 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
 
     void setInformasjon(ArbeidsforholdInformasjonEntitet informasjon) {
         this.arbeidsforholdInformasjon = informasjon;
-    }
-
-    void taHensynTilBetraktninger() {
-        Optional.ofNullable(register).ifPresent(it -> it.taHensynTilBetraktninger(this.arbeidsforholdInformasjon));
-        Optional.ofNullable(saksbehandlet).ifPresent(it -> it.taHensynTilBetraktninger(this.arbeidsforholdInformasjon));
-        Optional.ofNullable(inntektsmeldinger).ifPresent(it -> it.taHensynTilBetraktninger(this.arbeidsforholdInformasjon));
     }
 
     @Override
@@ -353,5 +287,13 @@ public class InntektArbeidYtelseGrunnlagEntitet extends BaseEntitet implements I
     @Override
     public int hashCode() {
         return Objects.hash(register, saksbehandlet);
+    }
+
+    void fjernSaksbehandlet() {
+        saksbehandlet = null;
+    }
+
+    void taHensynTilBetraktninger() {
+        Optional.ofNullable(inntektsmeldinger).ifPresent(it -> it.taHensynTilBetraktninger(this.arbeidsforholdInformasjon));
     }
 }

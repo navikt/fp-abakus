@@ -8,13 +8,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import no.nav.foreldrepenger.abakus.domene.iay.AktørInntekt;
-import no.nav.foreldrepenger.abakus.domene.iay.AktørInntektEntitet.InntektBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.Inntekt;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektEntitet.InntektspostBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Inntektspost;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektspostBuilder;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Aktør;
@@ -143,7 +143,7 @@ public class MapAktørInntekt {
         }
 
         private UtbetalingsPostDto tilPost(Inntektspost inntektspost) {
-            var periode = new Periode(inntektspost.getFraOgMed(), inntektspost.getTilOgMed());
+            var periode = new Periode(inntektspost.getPeriode().getFomDato(), inntektspost.getPeriode().getTomDato());
             var inntektspostType = KodeverkMapper.mapInntektspostTypeTilDto(inntektspost.getInntektspostType());
             var ytelseType = KodeverkMapper.mapYtelseTypeTilDto(inntektspost.getYtelseType());
             var skattOgAvgiftType = KodeverkMapper.mapSkatteOgAvgiftsregelTilDto(inntektspost.getSkatteOgAvgiftsregelType());
