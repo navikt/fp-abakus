@@ -38,12 +38,19 @@ public interface AktivitetsAvtale {
     boolean erOverstyrtPeriode();
 
     /**
-     * Perioden til aktivitetsavtalen.
-     * Tar hensyn til overstyring gjort i 5080.
+     * Periode
      *
-     * @return Hele perioden, tar hensyn til overstyringer.
+     * @return hele perioden
      */
     DatoIntervallEntitet getPeriode();
+
+    /**
+     * Perioden til aktivitetsavtalen.
+     * Tar Ikke hensyn til overstyring gjort i 5080.
+     *
+     * @return Hele perioden, tar Ikke hensyn til overstyringer.
+     */
+    DatoIntervallEntitet getPeriodeUtenOverstyring();
 
     /**
      * Siste lønnsendingsdato
@@ -62,8 +69,6 @@ public interface AktivitetsAvtale {
     boolean getErLøpende();
 
     String getBeskrivelse();
-
-    Yrkesaktivitet getYrkesaktivitet();
 
     boolean erAnsettelsesPeriode();
 

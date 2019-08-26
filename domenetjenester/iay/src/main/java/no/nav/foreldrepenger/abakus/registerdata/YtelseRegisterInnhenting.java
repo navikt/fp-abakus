@@ -16,7 +16,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelseBuilder;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagMeldekort;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlagArbeidsforhold;
@@ -33,12 +32,10 @@ import no.nav.foreldrepenger.abakus.vedtak.domene.VedtattYtelse;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class YtelseRegisterInnhenting {
-    private final VirksomhetTjeneste virksomhetTjeneste;
     private final InnhentingSamletTjeneste innhentingSamletTjeneste;
     private final VedtakYtelseRepository vedtakYtelseRepository;
 
-    YtelseRegisterInnhenting(VirksomhetTjeneste virksomhetTjeneste, InnhentingSamletTjeneste innhentingSamletTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
-        this.virksomhetTjeneste = virksomhetTjeneste;
+    YtelseRegisterInnhenting(InnhentingSamletTjeneste innhentingSamletTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
         this.innhentingSamletTjeneste = innhentingSamletTjeneste;
         this.vedtakYtelseRepository = vedtakYtelseRepository;
     }
@@ -56,7 +53,7 @@ public class YtelseRegisterInnhenting {
         }
 
         if (medGrunnlag) {
-            List<MeldekortUtbetalingsgrunnlagSak> arena = innhentingSamletTjeneste.hentYtelserTjenester(behandling, aktørId, opplysningsPeriode);
+            List<MeldekortUtbetalingsgrunnlagSak> arena = innhentingSamletTjeneste.hentYtelserTjenester(aktørId, opplysningsPeriode);
             for (MeldekortUtbetalingsgrunnlagSak sak : arena) {
                 oversettMeldekortUtbetalingsgrunnlagTilYtelse(aktørYtelseBuilder, sak);
             }

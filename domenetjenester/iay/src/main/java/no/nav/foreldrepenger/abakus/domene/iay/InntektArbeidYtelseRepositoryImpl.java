@@ -27,7 +27,7 @@ import no.nav.foreldrepenger.abakus.diff.TraverseEntityGraphFactory;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyringEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyring;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanseEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Gradering;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
@@ -521,7 +521,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         for (ArbeidsforholdReferanseEntitet referanseEntitet : arbeidsforholdInformasjonEntitet.getArbeidsforholdReferanser()) {
             entityManager.persist(referanseEntitet);
         }
-        for (ArbeidsforholdOverstyringEntitet overstyringEntitet : arbeidsforholdInformasjonEntitet.getOverstyringer()) {
+        for (ArbeidsforholdOverstyring overstyringEntitet : arbeidsforholdInformasjonEntitet.getOverstyringer()) {
             entityManager.persist(overstyringEntitet);
         }
     }
@@ -596,14 +596,14 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     private void lagreInntekt(AktørInntekt aktørInntekt) {
         for (Inntekt inntekt : ((AktørInntektEntitet) aktørInntekt).getInntekt()) {
             entityManager.persist(inntekt);
-            for (Inntektspost inntektspost : inntekt.getInntektspost()) {
+            for (Inntektspost inntektspost : inntekt.getAlleInntektsposter()) {
                 entityManager.persist(inntektspost);
             }
         }
     }
 
     private void lagreAktørArbeid(AktørArbeid aktørArbeid) {
-        for (Yrkesaktivitet yrkesaktivitet : ((AktørArbeidEntitet) aktørArbeid).hentAlleYrkesaktiviter()) {
+        for (Yrkesaktivitet yrkesaktivitet : ((AktørArbeidEntitet) aktørArbeid).hentAlleYrkesaktiviteter()) {
             entityManager.persist(yrkesaktivitet);
             for (AktivitetsAvtale aktivitetsAvtale : yrkesaktivitet.getAlleAktivitetsAvtaler()) {
                 entityManager.persist(aktivitetsAvtale);
@@ -615,7 +615,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     }
 
     private void lagreAktørYtelse(AktørYtelse aktørYtelse) {
-        for (Ytelse ytelse : aktørYtelse.getYtelser()) {
+        for (Ytelse ytelse : aktørYtelse.getAlleYtelser()) {
             entityManager.persist(ytelse);
             for (YtelseAnvist ytelseAnvist : ytelse.getYtelseAnvist()) {
                 entityManager.persist(ytelseAnvist);

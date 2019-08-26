@@ -10,16 +10,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtale;
-import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtaleEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtaleBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Permisjon;
+import no.nav.foreldrepenger.abakus.domene.iay.PermisjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet;
 import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetEntitet.AktivitetsAvtaleBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetEntitet.PermisjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
@@ -157,7 +156,7 @@ public class MapAktørArbeid {
         }
 
         private ArbeidDto map(AktørArbeid arb) {
-            List<YrkesaktivitetDto> yrkesaktiviteter = new ArrayList<>(getYrkesaktiviteter(arb.hentAlleYrkesaktiviter()));
+            List<YrkesaktivitetDto> yrkesaktiviteter = new ArrayList<>(getYrkesaktiviteter(arb.hentAlleYrkesaktiviteter()));
 
             var aktiviteter = yrkesaktiviteter.stream().filter(this::erGyldigYrkesaktivitet).sorted(COMP_YRKESAKTIVITET).collect(Collectors.toList());
 
@@ -175,9 +174,9 @@ public class MapAktørArbeid {
         }
 
         private AktivitetsAvtaleDto map(AktivitetsAvtale aa) {
-            LocalDate fomDato = ((AktivitetsAvtaleEntitet) aa).getPeriodeUtenOverstyring().getFomDato();
-            LocalDate tomDato = ((AktivitetsAvtaleEntitet) aa).getPeriodeUtenOverstyring().getTomDato();
-            AktivitetsAvtaleDto avtale = new AktivitetsAvtaleDto(fomDato, tomDato)
+            LocalDate fomDato = aa.getPeriodeUtenOverstyring().getFomDato();
+            LocalDate tomDato = aa.getPeriodeUtenOverstyring().getTomDato();
+            var avtale = new AktivitetsAvtaleDto(fomDato, tomDato)
                 .medBeskrivelse(aa.getBeskrivelse())
                 .medSistLønnsendring(aa.getSisteLønnsendringsdato())
                 .medAntallTimer(aa.getAntallTimer() == null ? null : aa.getAntallTimer().getSkalertVerdi())

@@ -40,7 +40,7 @@ import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
  */
 @Entity(name = "ArbeidsforholdOverstyring")
 @Table(name = "IAY_ARBEIDSFORHOLD")
-public class ArbeidsforholdOverstyringEntitet extends BaseEntitet implements IndexKey {
+public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_IAY_ARBEIDSFORHOLD")
@@ -98,14 +98,14 @@ public class ArbeidsforholdOverstyringEntitet extends BaseEntitet implements Ind
     @Embedded
     private BekreftetPermisjon bekreftetPermisjon = new BekreftetPermisjon();
 
-    ArbeidsforholdOverstyringEntitet() {
+    ArbeidsforholdOverstyring() {
     }
 
-    ArbeidsforholdOverstyringEntitet(ArbeidsforholdOverstyringEntitet arbeidsforholdOverstyringEntitet) {
-        this.arbeidsgiver = arbeidsforholdOverstyringEntitet.getArbeidsgiver();
-        this.arbeidsforholdRef = arbeidsforholdOverstyringEntitet.getArbeidsforholdRef();
-        this.handling = arbeidsforholdOverstyringEntitet.getHandling();
-        this.nyArbeidsforholdRef = arbeidsforholdOverstyringEntitet.getNyArbeidsforholdRef();
+    ArbeidsforholdOverstyring(ArbeidsforholdOverstyring kopierFra) {
+        this.arbeidsgiver = kopierFra.getArbeidsgiver();
+        this.arbeidsforholdRef = kopierFra.getArbeidsforholdRef();
+        this.handling = kopierFra.getHandling();
+        this.nyArbeidsforholdRef = kopierFra.getNyArbeidsforholdRef();
     }
 
     @Override
@@ -213,9 +213,9 @@ public class ArbeidsforholdOverstyringEntitet extends BaseEntitet implements Ind
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null ||!(o instanceof ArbeidsforholdOverstyringEntitet))
+        if (o == null ||!(o instanceof ArbeidsforholdOverstyring))
             return false;
-        var that = (ArbeidsforholdOverstyringEntitet) o;
+        var that = (ArbeidsforholdOverstyring) o;
         return Objects.equals(arbeidsgiver, that.arbeidsgiver) &&
             Objects.equals(arbeidsforholdRef, that.arbeidsforholdRef);
     }
@@ -227,10 +227,10 @@ public class ArbeidsforholdOverstyringEntitet extends BaseEntitet implements Ind
 
     @Override
     public String toString() {
-        return "ArbeidsforholdOverstyringEntitet{" +
-            "arbeidsgiver=" + arbeidsgiver +
+        return getClass().getSimpleName()+
+            "<arbeidsgiver=" + arbeidsgiver +
             ", arbeidsforholdRef=" + arbeidsforholdRef +
             ", handling=" + handling +
-            '}';
+            '>';
     }
 }

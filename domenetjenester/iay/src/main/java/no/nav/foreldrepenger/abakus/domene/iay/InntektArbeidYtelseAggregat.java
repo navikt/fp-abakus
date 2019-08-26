@@ -12,10 +12,10 @@ public interface InntektArbeidYtelseAggregat {
 
     Collection<AktørYtelse> getAktørYtelse();
 
-    /** Tidspunkt dette grunnlaget ble opprettet. (normalt lagret i databasen her). */
-    LocalDateTime getOpprettetTidspunkt();
-
     /** Identifisere en immutable instans av grunnlaget unikt og er egnet for utveksling (eks. til abakus eller andre systemer) */
     UUID getEksternReferanse();
+
+    /** Tidspunkt dette grunnlaget ble opprettet. (normalt lagret i databasen her). */
+    LocalDateTime getOpprettetTidspunkt();
     
 }

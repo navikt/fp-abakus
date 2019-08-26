@@ -1,11 +1,9 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -97,39 +95,6 @@ public class AktørInntektEntitet extends BaseEntitet implements AktørInntekt, 
         return Collections.unmodifiableSet(inntekt);
     }
 
-    @Override
-    public List<Inntekt> getBeregnetSkatt() {
-        return inntekt.stream()
-            .filter(it -> InntektsKilde.SIGRUN.equals(it.getInntektsKilde()))
-            .collect(Collectors.toUnmodifiableList());
-    }
-
-    @Override
-    public List<Inntekt> getInntektPensjonsgivende() {
-        return inntekt.stream()
-            .filter(it -> InntektsKilde.INNTEKT_OPPTJENING.equals(it.getInntektsKilde()))
-            .collect(Collectors.toUnmodifiableList());
-    }
-
-    @Override
-    public List<Inntekt> getInntektBeregningsgrunnlag() {
-        return inntekt.stream()
-            .filter(it -> InntektsKilde.INNTEKT_BEREGNING.equals(it.getInntektsKilde()))
-            .collect(Collectors.toUnmodifiableList());
-    }
-
-    @Override
-    public List<Inntekt> getInntektSammenligningsgrunnlag() {
-        return inntekt.stream()
-            .filter(it -> InntektsKilde.INNTEKT_SAMMENLIGNING.equals(it.getInntektsKilde()))
-            .collect(Collectors.toUnmodifiableList());
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
     public boolean hasValues() {
         return aktørId != null || inntekt != null;
     }
@@ -152,7 +117,7 @@ public class AktørInntektEntitet extends BaseEntitet implements AktørInntekt, 
             .stream()
             .filter(i -> i.getArbeidsgiver() == null)
             .filter(i -> inntektsKilde.equals(i.getInntektsKilde()))
-            .filter(i -> i.getInntektspost().stream()
+            .filter(i -> i.getAlleInntektsposter().stream()
                 .anyMatch(post -> post.getInntektspostType().equals(InntektspostType.YTELSE)))
             .findFirst();
         InntektBuilder oppdatere = InntektBuilder.oppdatere(inntektOptional);
@@ -194,64 +159,5 @@ public class AktørInntektEntitet extends BaseEntitet implements AktørInntekt, 
             "aktørId=" + aktørId +
             ", inntekt=" + inntekt +
             '>';
-    }
-
-    void setSkjæringstidspunkt(LocalDate skjæringstidspunkt, boolean ventreSide) {
-        for (InntektEntitet entitet : inntekt) {
-            entitet.setSkjæringstidspunkt(skjæringstidspunkt, ventreSide);
-        }
-    }
-
-    public static class InntektBuilder {
-        private final boolean oppdaterer;
-        private InntektEntitet inntektEntitet;
-
-        private InntektBuilder(InntektEntitet inntektEntitet, boolean oppdaterer) {
-            this.inntektEntitet = inntektEntitet;
-            this.oppdaterer = oppdaterer;
-        }
-
-        static InntektBuilder ny() {
-            return new InntektBuilder(new InntektEntitet(), false);
-        }
-
-        static InntektBuilder oppdatere(Inntekt oppdatere) {
-            return new InntektBuilder((InntektEntitet) oppdatere, true);
-        }
-
-        public static InntektBuilder oppdatere(Optional<Inntekt> oppdatere) {
-            return oppdatere.map(InntektBuilder::oppdatere).orElseGet(InntektBuilder::ny);
-        }
-
-        public InntektBuilder medInntektsKilde(InntektsKilde inntektsKilde) {
-            this.inntektEntitet.setInntektsKilde(inntektsKilde);
-            return this;
-        }
-
-        public InntektBuilder leggTilInntektspost(InntektEntitet.InntektspostBuilder inntektspost) {
-            InntektspostEntitet inntektspostEntitet = (InntektspostEntitet) inntektspost.build();
-            inntektEntitet.leggTilInntektspost(inntektspostEntitet);
-            return this;
-        }
-
-        public InntektBuilder medArbeidsgiver(Arbeidsgiver arbeidsgiver) {
-            this.inntektEntitet.setArbeidsgiver(arbeidsgiver);
-            return this;
-        }
-
-        public InntektEntitet.InntektspostBuilder getInntektspostBuilder() {
-            return inntektEntitet.getInntektspostBuilder();
-        }
-
-        boolean getErOppdatering() {
-            return this.oppdaterer;
-        }
-
-        public Inntekt build() {
-            if (inntektEntitet.hasValues()) {
-                return inntektEntitet;
-            }
-            throw new IllegalStateException();
-        }
     }
 }

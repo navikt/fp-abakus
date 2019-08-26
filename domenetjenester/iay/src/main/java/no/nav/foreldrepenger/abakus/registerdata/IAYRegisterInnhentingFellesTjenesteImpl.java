@@ -16,17 +16,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.threeten.extra.Interval;
 
-import no.nav.foreldrepenger.abakus.domene.iay.AktørInntektEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtaleBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektspostBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.NæringsinntektType;
 import no.nav.foreldrepenger.abakus.domene.iay.OffentligYtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.Opptjeningsnøkkel;
 import no.nav.foreldrepenger.abakus.domene.iay.PensjonTrygdType;
 import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
@@ -80,7 +80,7 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
         this.innhentingSamletTjeneste = innhentingSamletTjeneste;
         this.aktørConsumer = aktørConsumer;
         this.sigrunTjeneste = sigrunTjeneste;
-        this.ytelseRegisterInnhenting = new YtelseRegisterInnhenting(virksomhetTjeneste, innhentingSamletTjeneste, vedtakYtelseRepository);
+        this.ytelseRegisterInnhenting = new YtelseRegisterInnhenting(innhentingSamletTjeneste, vedtakYtelseRepository);
         this.byggYrkesaktiviteterTjeneste = new ByggYrkesaktiviteterTjeneste(kodeverkRepository);
     }
 
@@ -92,11 +92,11 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
         InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder = inntektArbeidYtelseAggregatBuilder
             .getAktørInntektBuilder(kobling.getAktørId());
 
-        AktørInntektEntitet.InntektBuilder inntektBuilder = aktørInntektBuilder.getInntektBuilder(InntektsKilde.SIGRUN, null);
+        InntektBuilder inntektBuilder = aktørInntektBuilder.getInntektBuilder(InntektsKilde.SIGRUN, null);
 
         for (Map.Entry<DatoIntervallEntitet, Map<InntektspostType, BigDecimal>> entry : map.entrySet()) {
             for (Map.Entry<InntektspostType, BigDecimal> type : entry.getValue().entrySet()) {
-                InntektEntitet.InntektspostBuilder inntektspostBuilder = inntektBuilder.getInntektspostBuilder();
+                InntektspostBuilder inntektspostBuilder = inntektBuilder.getInntektspostBuilder();
                 inntektspostBuilder
                     .medInntektspostType(type.getKey())
                     .medBeløp(type.getValue())
@@ -181,7 +181,7 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
     private void leggTilYtelseInntekter(List<Månedsinntekt> ytelsesTrygdEllerPensjonInntekt, InntektArbeidYtelseAggregatBuilder builder, AktørId aktørId,
                                         InntektsKilde inntektOpptjening) {
         final InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder = builder.getAktørInntektBuilder(aktørId);
-        final AktørInntektEntitet.InntektBuilder inntektBuilderForYtelser = aktørInntektBuilder.getInntektBuilderForYtelser(inntektOpptjening);
+        final InntektBuilder inntektBuilderForYtelser = aktørInntektBuilder.getInntektBuilderForYtelser(inntektOpptjening);
         ytelsesTrygdEllerPensjonInntekt.forEach(mi -> lagInntektsposterYtelse(mi, inntektBuilderForYtelser));
 
         aktørInntektBuilder.leggTilInntekt(inntektBuilderForYtelser);
@@ -316,7 +316,7 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
         throw new IllegalArgumentException("Utvikler feil: ArbeidsgiverEntitet av ukjent type.");
     }
 
-    private YrkesaktivitetEntitet.AktivitetsAvtaleBuilder opprettAktivitetsAvtaleFrilans(FrilansArbeidsforhold frilansArbeidsforhold,
+    private AktivitetsAvtaleBuilder opprettAktivitetsAvtaleFrilans(FrilansArbeidsforhold frilansArbeidsforhold,
                                                                                          YrkesaktivitetBuilder yrkesaktivitetBuilder) {
         DatoIntervallEntitet periode;
         if (frilansArbeidsforhold.getTom() == null || frilansArbeidsforhold.getTom().isBefore(frilansArbeidsforhold.getFom())) {
@@ -327,12 +327,12 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
         return yrkesaktivitetBuilder.getAktivitetsAvtaleBuilder(periode, true);
     }
 
-    private AktørInntektEntitet.InntektBuilder byggInntekt(Map<YearMonth, List<InntektsInformasjon.MånedsbeløpOgSkatteOgAvgiftsregel>> inntekter,
+    private InntektBuilder byggInntekt(Map<YearMonth, List<InntektsInformasjon.MånedsbeløpOgSkatteOgAvgiftsregel>> inntekter,
                                                            Arbeidsgiver arbeidsgiver,
                                                            InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder,
                                                            InntektsKilde inntektOpptjening) {
 
-        AktørInntektEntitet.InntektBuilder inntektBuilder = aktørInntektBuilder.getInntektBuilder(inntektOpptjening, new Opptjeningsnøkkel(arbeidsgiver));
+        InntektBuilder inntektBuilder = aktørInntektBuilder.getInntektBuilder(inntektOpptjening, new Opptjeningsnøkkel(arbeidsgiver));
 
         for (YearMonth måned : inntekter.keySet()) {
             List<InntektsInformasjon.MånedsbeløpOgSkatteOgAvgiftsregel> månedsinnteker = inntekter.get(måned);
@@ -365,7 +365,7 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
             .medArbeidsgiver(arbeidsgiver);
     }
 
-    private void lagInntektsposterYtelse(Månedsinntekt månedsinntekt, AktørInntektEntitet.InntektBuilder inntektBuilder) {
+    private void lagInntektsposterYtelse(Månedsinntekt månedsinntekt, InntektBuilder inntektBuilder) {
         inntektBuilder.leggTilInntektspost(inntektBuilder.getInntektspostBuilder()
             .medBeløp(månedsinntekt.getBeløp())
             .medPeriode(månedsinntekt.getMåned().atDay(1), månedsinntekt.getMåned().atEndOfMonth())
@@ -374,9 +374,9 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
     }
 
     private void lagInntektsposter(YearMonth måned, BigDecimal sumInntektsbeløp, Optional<String> valgtSkatteOgAvgiftsregel,
-                                   AktørInntektEntitet.InntektBuilder inntektBuilder) {
+                                   InntektBuilder inntektBuilder) {
 
-        InntektEntitet.InntektspostBuilder inntektspostBuilder = inntektBuilder.getInntektspostBuilder();
+        InntektspostBuilder inntektspostBuilder = inntektBuilder.getInntektspostBuilder();
         inntektspostBuilder
             .medBeløp(sumInntektsbeløp)
             .medPeriode(måned.atDay(1), måned.atEndOfMonth())

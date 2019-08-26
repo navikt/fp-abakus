@@ -38,11 +38,6 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     @JoinColumn(name = "yrkesaktivitet_id", nullable = false, updatable = false, unique = true)
     private YrkesaktivitetEntitet yrkesaktivitet;
 
-    @ChangeTracked
-    @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "prosentsats")))
-    private Stillingsprosent prosentsats;
-
     /** TODO (FC): Se om vi kan bli kvitt antallTimer. Brukes bare til å sjekke om det finnes verdi i {@link #erAnsettelsesPeriode()}. */
     @ChangeTracked
     @Embedded
@@ -54,6 +49,11 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "antall_timer_fulltid")))
     private AntallTimer antallTimerFulltid;
+
+    @ChangeTracked
+    @Embedded
+    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "prosentsats")))
+    private Stillingsprosent prosentsats;
 
     @Column(name = "beskrivelse")
     private String beskrivelse;
@@ -71,6 +71,7 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     private long versjon;
 
     /**
+<<<<<<< Updated upstream
      * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
      */
     @Deprecated
@@ -85,9 +86,8 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     private boolean ventreSideAvSkjæringstidspunkt;
 
     /**
-     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
+     * Setter en periode brukt til overstyring av angitt periode (avledet fra saksbehandlers vurderinger). Benyttes kun transient (ved filtrering av modellen)
      */
-    @Deprecated
     @Transient
     private DatoIntervallEntitet overstyrtPeriode;
 
@@ -104,6 +104,11 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
         this.beskrivelse = entitet.beskrivelse;
         this.periode = entitet.periode;
         this.sisteLønnsendringsdato = entitet.sisteLønnsendringsdato;
+    }
+    
+    public AktivitetsAvtaleEntitet(AktivitetsAvtale avtale, DatoIntervallEntitet overstyrtPeriode) {
+        this(avtale);
+        this.overstyrtPeriode = overstyrtPeriode;
     }
 
     @Override
@@ -153,6 +158,7 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
      * Bruk heller {@link #getPeriode} i de fleste tilfeller
      * @return Hele den originale perioden, uten overstyringer.
      */
+    @Override
     public DatoIntervallEntitet getPeriodeUtenOverstyring() {
         return periode;
     }
@@ -194,41 +200,19 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
         this.beskrivelse = beskrivelse;
     }
 
-    @Override
-    public YrkesaktivitetEntitet getYrkesaktivitet() {
-        return yrkesaktivitet;
-    }
-
     void setYrkesaktivitet(YrkesaktivitetEntitet yrkesaktivitet) {
         this.yrkesaktivitet = yrkesaktivitet;
     }
 
     /**
-     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient overstyrt periode.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
+     * Hvorvidet denne avtalen har en overstyrt periode.
      */
-    @Deprecated
     void setOverstyrtPeriode(DatoIntervallEntitet overstyrtPeriode) {
         this.overstyrtPeriode = overstyrtPeriode;
     }
 
     void sisteLønnsendringsdato(LocalDate sisteLønnsendringsdato) {
         this.sisteLønnsendringsdato = sisteLønnsendringsdato;
-    }
-
-    /**
-     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
-     */
-    @Deprecated
-    boolean skalMedEtterSkjæringstidspunktVurdering() {
-        if (skjæringstidspunkt != null) {
-            if (ventreSideAvSkjæringstidspunkt) {
-                return getPeriode().getFomDato().isBefore(skjæringstidspunkt);
-            } else {
-                return getPeriode().getFomDato().isAfter(skjæringstidspunkt.minusDays(1)) ||
-                    getPeriode().getFomDato().isBefore(skjæringstidspunkt) && getPeriode().getTomDato().isAfter(skjæringstidspunkt.minusDays(1));
-            }
-        }
-        return true;
     }
 
     @Override
@@ -273,15 +257,6 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
             && (antallTimerFulltid == null || antallTimerFulltid.getVerdi() == null)
             && (prosentsats == null || prosentsats.erNulltall())
             && sisteLønnsendringsdato == null;
-    }
-
-    /**
-     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
-     */
-    @Deprecated
-    void setSkjæringstidspunkt(LocalDate skjæringstidspunkt, boolean ventreSide) {
-        this.skjæringstidspunkt = skjæringstidspunkt;
-        this.ventreSideAvSkjæringstidspunkt = ventreSide;
     }
 
 }

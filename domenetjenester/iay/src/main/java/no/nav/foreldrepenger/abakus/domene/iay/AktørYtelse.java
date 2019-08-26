@@ -13,15 +13,6 @@ public interface AktørYtelse {
      */
     AktørId getAktørId();
 
-    /**
-     * Tilstøtende ytelser (filtrert ifht skjæringstidspunkt vurdering - hvis satt).
-     *
-     * @return liste av {@link Ytelse}
-     */
-    Collection<Ytelse> getYtelser();
-
-    Long getId();
-
     /** Alle tilstøende ytelser (ufiltrert). */
     Collection<Ytelse> getAlleYtelser();
 }

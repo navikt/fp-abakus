@@ -214,7 +214,7 @@ public class InnhentingSamletTjeneste {
         return YtelseType.ENGANGSSTØNAD.equals(type) || YtelseType.FORELDREPENGER.equals(type);
     }
 
-    public List<MeldekortUtbetalingsgrunnlagSak> hentYtelserTjenester(Kobling behandling, AktørId aktørId, Interval opplysningsPeriode) {
+    public List<MeldekortUtbetalingsgrunnlagSak> hentYtelserTjenester(AktørId aktørId, Interval opplysningsPeriode) {
         List<MeldekortUtbetalingsgrunnlagSak> saker = meldekortTjeneste.hentMeldekortListe(aktørId,
             LocalDateTime.ofInstant(opplysningsPeriode.getStart(), ZoneId.systemDefault()).toLocalDate(),
             LocalDateTime.ofInstant(opplysningsPeriode.getEnd(), ZoneId.systemDefault()).toLocalDate());

@@ -1,8 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.util.Collection;
-import java.util.List;
-
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
@@ -57,13 +55,6 @@ public interface Yrkesaktivitet {
     Collection<Permisjon> getPermisjon();
 
     /**
-     * Aktivitet som gjelder arbeid
-     *
-     * @return liste med aktiviteter for arbeid
-     */
-    Collection<AktivitetsAvtale> getAktivitetsAvtalerForArbeid();
-
-    /**
      * Alle aktivitetsavtaler
      */
     Collection<AktivitetsAvtale> getAlleAktivitetsAvtaler();
@@ -84,16 +75,6 @@ public interface Yrkesaktivitet {
      */
     String getNavnArbeidsgiverUtland();
 
-    /**
-     * Gir hele ansettelsesperioden for et arbeidsforhold.
-     * <p>
-     * NB! Gjelder kun arbeidsforhold.
-     *
-     * @return perioden
-     */
-    List<AktivitetsAvtale> getAnsettelsesPerioder();
-
     boolean erArbeidsforhold();
 
-    Long getId();
 }

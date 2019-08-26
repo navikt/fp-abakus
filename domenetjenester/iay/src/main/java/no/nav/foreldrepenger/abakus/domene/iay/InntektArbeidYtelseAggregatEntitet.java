@@ -1,6 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,7 +20,6 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.NaturalId;
 
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -171,29 +169,5 @@ public class InntektArbeidYtelseAggregatEntitet extends BaseEntitet implements I
             ", aktørArbeid=" + aktørArbeid +
             ", aktørYtelse=" + aktørYtelse +
             '>';
-    }
-
-    void setSkjæringstidspunkt(LocalDate skjæringstidspunkt, boolean ventreSide) {
-        for (AktørArbeidEntitet aktør : aktørArbeid) {
-            aktør.setSkjæringstidspunkt(skjæringstidspunkt, ventreSide);
-        }
-        for (AktørInntektEntitet aktør : aktørInntekt) {
-            aktør.setSkjæringstidspunkt(skjæringstidspunkt, ventreSide);
-        }
-        for (AktørYtelseEntitet aktør : aktørYtelse) {
-            aktør.setSkjæringstidspunkt(skjæringstidspunkt, ventreSide);
-        }
-    }
-
-    void taHensynTilOverstyring() {
-        for (AktørArbeidEntitet aktør : aktørArbeid) {
-            aktør.overstyrYrkesaktiviteter();
-        }
-    }
-
-    void taHensynTilBetraktninger(ArbeidsforholdInformasjonEntitet informasjon) {
-        for (AktørArbeidEntitet aktør : aktørArbeid) {
-            aktør.taHensynTilBetraktninger(informasjon);
-        }
     }
 }

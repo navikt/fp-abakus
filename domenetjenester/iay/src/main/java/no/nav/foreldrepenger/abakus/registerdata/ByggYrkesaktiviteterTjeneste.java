@@ -9,12 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtaleBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Opptjeningsnøkkel;
 import no.nav.foreldrepenger.abakus.domene.iay.Permisjon;
+import no.nav.foreldrepenger.abakus.domene.iay.PermisjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.PermisjonsbeskrivelseType;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
@@ -68,7 +69,7 @@ class ByggYrkesaktiviteterTjeneste {
             );
     }
 
-    private YrkesaktivitetEntitet.AktivitetsAvtaleBuilder lagAktivitetsavtale(YrkesaktivitetBuilder builder, LocalDate fom, Arbeidsavtale arbeidsavtale) {
+    private AktivitetsAvtaleBuilder lagAktivitetsavtale(YrkesaktivitetBuilder builder, LocalDate fom, Arbeidsavtale arbeidsavtale) {
         return builder
             .getAktivitetsAvtaleBuilder()
             .medProsentsats(arbeidsavtale.getStillingsprosent())
@@ -92,7 +93,7 @@ class ByggYrkesaktiviteterTjeneste {
             .min(LocalDate::compareTo).orElse(TIDENES_BEGYNNELSE);
     }
 
-    private YrkesaktivitetEntitet.AktivitetsAvtaleBuilder byggAnsettelsesPeriode(YrkesaktivitetBuilder builder, LocalDate fom) {
+    private AktivitetsAvtaleBuilder byggAnsettelsesPeriode(YrkesaktivitetBuilder builder, LocalDate fom) {
         return builder
             .getAktivitetsAvtaleBuilder()
             .medPeriode(DatoIntervallEntitet.fraOgMed(fom));
@@ -120,7 +121,7 @@ class ByggYrkesaktiviteterTjeneste {
 
     private Permisjon opprettPermisjoner(no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Permisjon permisjon,
                                          YrkesaktivitetBuilder yrkesaktivitetBuilder, LocalDate arbeidsforholdTom) {
-        YrkesaktivitetEntitet.PermisjonBuilder permisjonBuilder = yrkesaktivitetBuilder.getPermisjonBuilder();
+        PermisjonBuilder permisjonBuilder = yrkesaktivitetBuilder.getPermisjonBuilder();
         LocalDate permisjonTom = permisjon.getPermisjonTom() == null ? arbeidsforholdTom : permisjon.getPermisjonTom();
         return permisjonBuilder
             .medProsentsats(permisjon.getPermisjonsprosent())
@@ -140,7 +141,7 @@ class ByggYrkesaktiviteterTjeneste {
     }
 
 
-    private YrkesaktivitetEntitet.AktivitetsAvtaleBuilder opprettAktivitetsAvtaler(Arbeidsavtale arbeidsavtale,
+    private AktivitetsAvtaleBuilder opprettAktivitetsAvtaler(Arbeidsavtale arbeidsavtale,
                                                                                    YrkesaktivitetBuilder yrkesaktivitetBuilder) {
         DatoIntervallEntitet periode;
         if (arbeidsavtale.getArbeidsavtaleTom() == null) {
@@ -148,7 +149,7 @@ class ByggYrkesaktiviteterTjeneste {
         } else {
             periode = DatoIntervallEntitet.fraOgMedTilOgMed(arbeidsavtale.getArbeidsavtaleFom(), arbeidsavtale.getArbeidsavtaleTom());
         }
-        YrkesaktivitetEntitet.AktivitetsAvtaleBuilder aktivitetsAvtaleBuilder = yrkesaktivitetBuilder.getAktivitetsAvtaleBuilder(periode, arbeidsavtale.getErAnsettelsesPerioden());
+        AktivitetsAvtaleBuilder aktivitetsAvtaleBuilder = yrkesaktivitetBuilder.getAktivitetsAvtaleBuilder(periode, arbeidsavtale.getErAnsettelsesPerioden());
         aktivitetsAvtaleBuilder
             .medProsentsats(arbeidsavtale.getStillingsprosent())
             .medSisteLønnsendringsdato(arbeidsavtale.getSisteLønnsendringsdato())

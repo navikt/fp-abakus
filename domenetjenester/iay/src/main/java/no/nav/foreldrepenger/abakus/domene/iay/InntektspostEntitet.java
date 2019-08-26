@@ -14,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.JoinColumnOrFormula;
@@ -76,20 +75,6 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-    /**
-     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
-     */
-    @Deprecated
-    @Transient
-    private LocalDate skjæringstidspunkt;
-    
-    /**
-     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
-     */
-    @Deprecated
-    @Transient
-    private boolean ventreSideAvSkjæringstidspunkt;
-
     public InntektspostEntitet() {
         //hibernate
     }
@@ -101,7 +86,7 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
         this.inntektspostType = inntektspost.getInntektspostType();
         this.skatteOgAvgiftsregelType = inntektspost.getSkatteOgAvgiftsregelType();
         this.ytelse = inntektspost.getYtelseType();
-        this.periode = DatoIntervallEntitet.fraOgMedTilOgMed(inntektspost.getFraOgMed(), inntektspost.getTilOgMed());
+        this.periode = inntektspost.getPeriode();
         this.beløp = inntektspost.getBeløp();
         this.ytelseType = inntektspost.getYtelseType().getKodeverk();
     }
@@ -134,20 +119,15 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
     }
 
     @Override
-    public LocalDate getFraOgMed() {
-        return periode.getFomDato();
-    }
-
-    @Override
-    public LocalDate getTilOgMed() {
-        return periode.getTomDato();
-    }
-
-    @Override
     public Beløp getBeløp() {
         return beløp;
     }
-
+    
+    @Override
+    public DatoIntervallEntitet getPeriode() {
+        return periode;
+    }
+    
     void setBeløp(Beløp beløp) {
         this.beløp = beløp;
     }
@@ -170,23 +150,6 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
         this.ytelse = ytelse;
     }
 
-    
-    /**
-     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
-     */
-    @Deprecated
-    boolean skalMedEtterSkjæringstidspunktVurdering() {
-        if (skjæringstidspunkt != null) {
-            if (ventreSideAvSkjæringstidspunkt) {
-                return periode.getFomDato().isBefore(skjæringstidspunkt.plusDays(1));
-            } else {
-                return periode.getFomDato().isAfter(skjæringstidspunkt) ||
-                    periode.getFomDato().isBefore(skjæringstidspunkt.plusDays(1)) && periode.getTomDato().isAfter(skjæringstidspunkt);
-            }
-        }
-        return true;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {
@@ -198,8 +161,7 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
         return Objects.equals(this.getInntektspostType(), other.getInntektspostType())
             && Objects.equals(this.getYtelseType(), other.getYtelseType())
             && Objects.equals(this.getSkatteOgAvgiftsregelType(), other.getSkatteOgAvgiftsregelType())
-            && Objects.equals(this.getFraOgMed(), other.getFraOgMed())
-            && Objects.equals(this.getTilOgMed(), other.getTilOgMed());
+            && Objects.equals(this.getPeriode(), other.getPeriode());
     }
 
     @Override
@@ -223,13 +185,4 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
         return inntektspostType != null || periode.getFomDato() != null || periode.getTomDato() != null || beløp != null;
     }
 
-    
-    /**
-     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
-     */
-    @Deprecated
-    void setSkjæringstidspunkt(LocalDate skjæringstidspunkt, boolean ventreSide) {
-        this.skjæringstidspunkt = skjæringstidspunkt;
-        this.ventreSideAvSkjæringstidspunkt = ventreSide;
-    }
 }

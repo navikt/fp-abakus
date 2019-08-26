@@ -38,7 +38,7 @@ public class ArbeidsforholdOverstyrtePerioderEntitet extends BaseEntitet impleme
     @JsonBackReference
     @ManyToOne(optional = false)
     @JoinColumn(name = "ARBEIDSFORHOLD_ID", nullable = false, updatable = false)
-    private ArbeidsforholdOverstyringEntitet arbeidsforholdOverstyring;
+    private ArbeidsforholdOverstyring arbeidsforholdOverstyring;
 
     @Version
     @Column(name = "versjon", nullable = false)
@@ -52,7 +52,7 @@ public class ArbeidsforholdOverstyrtePerioderEntitet extends BaseEntitet impleme
         this.periode = periode;
     }
 
-    void setArbeidsforholdOverstyring(ArbeidsforholdOverstyringEntitet arbeidsforholdOverstyring) {
+    void setArbeidsforholdOverstyring(ArbeidsforholdOverstyring arbeidsforholdOverstyring) {
         this.arbeidsforholdOverstyring = arbeidsforholdOverstyring;
     }
 

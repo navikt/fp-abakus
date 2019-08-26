@@ -38,11 +38,15 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         return kladd.map(InntektArbeidYtelseGrunnlagBuilder::oppdatere).orElseGet(InntektArbeidYtelseGrunnlagBuilder::nytt);
     }
     
-    InntektArbeidYtelseGrunnlagEntitet getKladd() {
+    protected InntektArbeidYtelseGrunnlagEntitet getKladd() {
         return kladd;
     }
 
-    InntektsmeldingAggregat getInntektsmeldinger() {
+    protected void fjernSaksbehandlet() {
+        kladd.fjernSaksbehandlet();
+    }
+    
+    protected InntektsmeldingAggregat getInntektsmeldinger() {
         final Optional<InntektsmeldingAggregat> inntektsmeldinger = kladd.getInntektsmeldinger();
         return inntektsmeldinger.map(InntektsmeldingAggregatEntitet::new).orElseGet(InntektsmeldingAggregatEntitet::new);
     }

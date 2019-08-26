@@ -11,7 +11,6 @@ import org.junit.Test;
 public class DatoTidkonverteringTest {
     
     private static final LocalDate VINTERDAG = LocalDate.of(2019, 02, 17);
-    private static final LocalDate SOMMERDAG = LocalDate.of(2019, 06, 17);
     private static final LocalTime NOON = LocalTime.of(12, 00);
     
     @Test

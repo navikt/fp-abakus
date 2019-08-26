@@ -62,7 +62,7 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
      */
     AktørYtelseEntitet(AktørYtelse aktørYtelse) {
         this.aktørId = aktørYtelse.getAktørId();
-        this.ytelser = aktørYtelse.getYtelser().stream().map(ytelse -> {
+        this.ytelser = aktørYtelse.getAlleYtelser().stream().map(ytelse -> {
             YtelseEntitet ytelseEntitet = new YtelseEntitet(ytelse);
             ytelseEntitet.setAktørYtelse(this);
             return ytelseEntitet;
@@ -88,16 +88,6 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
         return Collections.unmodifiableSet(ytelser);
     }
 
-    @Override
-    public Collection<Ytelse> getYtelser() {
-        return Collections.unmodifiableSet(ytelser.stream().filter(YtelseEntitet::skalMedEtterSkjæringstidspunktVurdering).collect(Collectors.toSet()));
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
     void setInntektArbeidYtelser(InntektArbeidYtelseAggregatEntitet inntektArbeidYtelser) {
         this.inntektArbeidYtelser = inntektArbeidYtelser;
     }
@@ -107,14 +97,14 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
     }
 
     YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer saksnummer) {
-        Optional<Ytelse> ytelse = getYtelser().stream()
+        Optional<Ytelse> ytelse = getAlleYtelser().stream()
             .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type) && (saksnummer.equals(ya.getSaksnummer())))
             .findFirst();
         return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medSaksnummer(saksnummer);
     }
 
     YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer saksnummer, DatoIntervallEntitet periode) {
-        Optional<Ytelse> ytelse = getYtelser().stream()
+        Optional<Ytelse> ytelse = getAlleYtelser().stream()
             .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type) && (saksnummer.equals(ya.getSaksnummer())
                 && periode.equals(ya.getPeriode())))
             .findFirst();
@@ -123,7 +113,7 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
 
     YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer saksnummer, DatoIntervallEntitet periode, Optional<LocalDate> tidligsteAnvistFom) {
         // OBS kan være flere med samme Saksnummer+FOM: Konvensjon ifm satsjustering
-        List<Ytelse> aktuelleYtelser = getYtelser().stream()
+        List<Ytelse> aktuelleYtelser = getAlleYtelser().stream()
             .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type) && (saksnummer.equals(ya.getSaksnummer())
                 && periode.getFomDato().equals(ya.getPeriode().getFomDato())))
             .collect(Collectors.toList());
@@ -145,7 +135,7 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
     }
 
     YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, YtelseType type, TemaUnderkategori typeKategori, DatoIntervallEntitet periode) {
-        Optional<Ytelse> ytelse = getYtelser().stream()
+        Optional<Ytelse> ytelse = getAlleYtelser().stream()
             .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type)
                 && ya.getBehandlingsTema().equals(typeKategori) && (periode.getFomDato().equals(ya.getPeriode().getFomDato())))
             .findFirst();
@@ -188,9 +178,4 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
             '>';
     }
 
-    void setSkjæringstidspunkt(LocalDate skjæringstidspunkt, boolean ventreSide) {
-        for (YtelseEntitet ytelseEntitet : ytelser) {
-            ytelseEntitet.setSkjæringstidspunkt(skjæringstidspunkt, ventreSide);
-        }
-    }
 }

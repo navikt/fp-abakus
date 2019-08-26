@@ -1,8 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Optional;
@@ -21,12 +19,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyringEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
@@ -52,9 +46,6 @@ public class AktørArbeidEntitet extends BaseEntitet implements AktørArbeid, In
     @OneToMany(mappedBy = "aktørArbeid")
     @ChangeTracked
     private Set<YrkesaktivitetEntitet> yrkesaktiviter = new LinkedHashSet<>();
-
-    @Transient
-    private ArbeidsforholdInformasjonEntitet arbeidsforholdInformasjon;
 
     @Version
     @Column(name = "versjon", nullable = false)
@@ -93,50 +84,8 @@ public class AktørArbeidEntitet extends BaseEntitet implements AktørArbeid, In
     }
 
     @Override
-    public Collection<Yrkesaktivitet> getYrkesaktiviteter() {
-        return Collections.unmodifiableSet(yrkesaktiviter.stream()
-            .filter(this::erIkkeFrilansOppdrag)
-            .filter(this::skalBrukes)
-            .filter(it -> (erArbeidsforholdOgStarterPåRettSideAvSkjæringstidspunkt(it) || !it.getAktivitetsAvtalerForArbeid().isEmpty()))
-            .collect(Collectors.toSet()));
-    }
-
-    private boolean erArbeidsforholdOgStarterPåRettSideAvSkjæringstidspunkt(YrkesaktivitetEntitet it) {
-        return it.erArbeidsforhold() && it.getAnsettelsesPerioder().stream().anyMatch(ap -> ((AktivitetsAvtaleEntitet) ap).skalMedEtterSkjæringstidspunktVurdering());
-    }
-
-    @Override
-    public Collection<Yrkesaktivitet> hentAlleYrkesaktiviter() {
+    public Collection<Yrkesaktivitet> hentAlleYrkesaktiviteter() {
         return Set.copyOf(yrkesaktiviter);
-    }
-
-    @Override
-    public Collection<Yrkesaktivitet> getFrilansOppdrag() {
-        return Collections.unmodifiableSet(yrkesaktiviter.stream()
-            .filter(this::erFrilansOppdrag)
-            .filter(it -> !it.getAktivitetsAvtalerForArbeid().isEmpty())
-            .collect(Collectors.toSet()));
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    private boolean skalBrukes(Yrkesaktivitet entitet) {
-        return arbeidsforholdInformasjon == null || arbeidsforholdInformasjon.getOverstyringer()
-            .stream()
-            .noneMatch(ov -> ov.getArbeidsgiver().equals(entitet.getArbeidsgiver())
-                && ov.getArbeidsforholdRef().gjelderFor(entitet.getArbeidsforholdRef())
-                && Objects.equals(ArbeidsforholdHandlingType.IKKE_BRUK, ov.getHandling()));
-    }
-
-    private boolean erFrilansOppdrag(Yrkesaktivitet aktivitet) {
-        return ArbeidType.FRILANSER_OPPDRAGSTAKER_MED_MER.equals(aktivitet.getArbeidType());
-    }
-
-    private boolean erIkkeFrilansOppdrag(Yrkesaktivitet aktivitet) {
-        return !ArbeidType.FRILANSER_OPPDRAGSTAKER_MED_MER.equals(aktivitet.getArbeidType());
     }
 
     void setYrkesaktiviter() {
@@ -221,29 +170,6 @@ public class AktørArbeidEntitet extends BaseEntitet implements AktørArbeid, In
             "aktørId=" + aktørId +
             ", yrkesaktiviteter=" + yrkesaktiviter +
             '>';
-    }
-
-    void taHensynTilBetraktninger(ArbeidsforholdInformasjonEntitet informasjon) {
-        this.arbeidsforholdInformasjon = informasjon;
-    }
-
-    void setSkjæringstidspunkt(LocalDate skjæringstidspunkt, boolean ventreSide) {
-        for (YrkesaktivitetEntitet yrkesaktivitet : yrkesaktiviter) {
-            yrkesaktivitet.setSkjæringstidspunkt(skjæringstidspunkt, ventreSide);
-        }
-    }
-
-    void overstyrYrkesaktiviteter() {
-        yrkesaktiviter.forEach(yrkesaktivitet -> {
-            Optional<ArbeidsforholdOverstyringEntitet> overstyringOpt = finnMatchendeOverstyring(yrkesaktivitet);
-            overstyringOpt.ifPresent(yrkesaktivitet::overstyrYrkesaktivtet);
-        });
-    }
-
-    private Optional<ArbeidsforholdOverstyringEntitet> finnMatchendeOverstyring(YrkesaktivitetEntitet ya) {
-        return arbeidsforholdInformasjon.getOverstyringer().stream()
-            .filter(os -> ya.gjelderFor(os.getArbeidsgiver(), os.getArbeidsforholdRef()))
-            .findFirst();
     }
 
 }

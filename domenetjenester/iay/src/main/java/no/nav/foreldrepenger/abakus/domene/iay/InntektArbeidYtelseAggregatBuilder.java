@@ -280,15 +280,15 @@ public class InntektArbeidYtelseAggregatBuilder {
             this.aktørInntektEntitet.setAktørId(aktørId);
         }
 
-        public AktørInntektEntitet.InntektBuilder getInntektBuilder(InntektsKilde inntektsKilde, Opptjeningsnøkkel opptjeningsnøkkel) {
+        public InntektBuilder getInntektBuilder(InntektsKilde inntektsKilde, Opptjeningsnøkkel opptjeningsnøkkel) {
             return aktørInntektEntitet.getInntektBuilder(inntektsKilde, opptjeningsnøkkel);
         }
 
-        public AktørInntektEntitet.InntektBuilder getInntektBuilderForYtelser(InntektsKilde inntektsKilde) {
+        public InntektBuilder getInntektBuilderForYtelser(InntektsKilde inntektsKilde) {
             return aktørInntektEntitet.getInntektBuilderForYtelser(inntektsKilde);
         }
 
-        public AktørInntektBuilder leggTilInntekt(AktørInntektEntitet.InntektBuilder inntektBuilder) {
+        public AktørInntektBuilder leggTilInntekt(InntektBuilder inntektBuilder) {
             if (!inntektBuilder.getErOppdatering()) {
                 InntektEntitet inntektTmpEntitet = (InntektEntitet) inntektBuilder.build();
                 aktørInntektEntitet.leggTilInntekt(inntektTmpEntitet);
@@ -361,7 +361,7 @@ public class InntektArbeidYtelseAggregatBuilder {
         }
 
         public void tilbakestillYtelserFraKildeBeholdAvsluttede(Fagsystem kilde) {
-            this.kladd.getYtelser().stream()
+            this.kladd.getAlleYtelser().stream()
                 .filter(yt -> kilde.equals(yt.getKilde()))
                 .filter(yt -> !YtelseStatus.AVSLUTTET.equals(yt.getStatus()))
                 .forEach(this.kladd::fjernYtelse);

@@ -11,7 +11,7 @@ import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
 public interface ArbeidsforholdInformasjon {
 
-    List<ArbeidsforholdOverstyringEntitet> getOverstyringer();
+    List<ArbeidsforholdOverstyring> getOverstyringer();
     
     Optional<InternArbeidsforholdRef> finnForEkstern(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef ref);
 

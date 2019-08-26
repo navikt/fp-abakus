@@ -1,7 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -26,12 +24,9 @@ import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.SkatteOgAvgiftsregelType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
-import no.nav.foreldrepenger.abakus.typer.Beløp;
 
 @Entity(name = "Inntekt")
 @Table(name = "IAY_INNTEKT")
@@ -73,7 +68,7 @@ public class InntektEntitet extends BaseEntitet implements Inntekt, IndexKey {
     InntektEntitet(Inntekt inntektMal) {
         this.inntektsKilde = inntektMal.getInntektsKilde();
         this.arbeidsgiver = inntektMal.getArbeidsgiver();
-        this.inntektspost = inntektMal.getInntektspost().stream().map(ip -> {
+        this.inntektspost = inntektMal.getAlleInntektsposter().stream().map(ip -> {
             InntektspostEntitet inntektspostEntitet = new InntektspostEntitet(ip);
             inntektspostEntitet.setInntekt(this);
             return inntektspostEntitet;
@@ -121,20 +116,8 @@ public class InntektEntitet extends BaseEntitet implements Inntekt, IndexKey {
     }
 
     @Override
-    public Collection<Inntektspost> getInntektspost() {
-        return Collections.unmodifiableSet(inntektspost.stream()
-            .filter(InntektspostEntitet::skalMedEtterSkjæringstidspunktVurdering)
-            .collect(Collectors.toSet()));
-    }
-
-    @Override
     public Collection<Inntektspost> getAlleInntektsposter() {
         return Collections.unmodifiableSet(inntektspost);
-    }
-    
-    @Override
-    public Long getId() {
-        return id;
     }
 
     void leggTilInntektspost(Inntektspost inntektspost) {
@@ -157,67 +140,5 @@ public class InntektEntitet extends BaseEntitet implements Inntekt, IndexKey {
 
     public boolean hasValues() {
         return arbeidsgiver != null || inntektsKilde != null || inntektspost != null;
-    }
-
-    boolean erPersistert() {
-        return id != null;
-    }
-
-    void setSkjæringstidspunkt(LocalDate skjæringstidspunkt, boolean ventreSide) {
-        for (InntektspostEntitet inntektspostEntitet : inntektspost) {
-            inntektspostEntitet.setSkjæringstidspunkt(skjæringstidspunkt, ventreSide);
-        }
-    }
-
-    public static class InntektspostBuilder {
-        private InntektspostEntitet inntektspostEntitet;
-
-        InntektspostBuilder(InntektspostEntitet inntektspostEntitet) {
-            this.inntektspostEntitet = inntektspostEntitet;
-        }
-
-        public static InntektspostBuilder ny() {
-            return new InntektspostBuilder(new InntektspostEntitet());
-        }
-
-        public InntektspostBuilder medInntektspostType(InntektspostType inntektspostType) {
-            this.inntektspostEntitet.setInntektspostType(inntektspostType);
-            return this;
-        }
-
-        public InntektspostBuilder medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType skatteOgAvgiftsregelType) {
-            this.inntektspostEntitet.setSkatteOgAvgiftsregelType(skatteOgAvgiftsregelType);
-            return this;
-        }
-
-        public InntektspostBuilder medPeriode(LocalDate fraOgMed, LocalDate tilOgMed) {
-            this.inntektspostEntitet.setPeriode(fraOgMed, tilOgMed);
-            return this;
-        }
-
-        public InntektspostBuilder medBeløp(BigDecimal verdi) {
-            this.inntektspostEntitet.setBeløp(new Beløp(verdi));
-            return this;
-        }
-
-        public InntektspostBuilder medYtelse(YtelseType offentligYtelseType) {
-            this.inntektspostEntitet.setYtelse(offentligYtelseType);
-            return this;
-        }
-
-        public Inntektspost build() {
-            if (inntektspostEntitet.hasValues()) {
-                return inntektspostEntitet;
-            }
-            throw new IllegalStateException();
-        }
-
-        public InntektspostBuilder medInntektspostType(String kode) {
-            return medInntektspostType(new InntektspostType(kode));
-        }
-
-        public InntektspostBuilder medSkatteOgAvgiftsregelType(String kode) {
-            return medSkatteOgAvgiftsregelType(new SkatteOgAvgiftsregelType(kode));
-        }
     }
 }
