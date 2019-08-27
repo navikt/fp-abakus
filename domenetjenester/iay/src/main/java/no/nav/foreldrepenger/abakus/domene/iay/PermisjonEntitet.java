@@ -78,11 +78,11 @@ public class PermisjonEntitet extends BaseEntitet implements Permisjon, IndexKey
         return permisjonsbeskrivelseType;
     }
 
-    public void setPermisjonsbeskrivelseType(PermisjonsbeskrivelseType permisjonsbeskrivelseType) {
+    void setPermisjonsbeskrivelseType(PermisjonsbeskrivelseType permisjonsbeskrivelseType) {
         this.permisjonsbeskrivelseType = permisjonsbeskrivelseType;
     }
 
-    public void setPeriode(LocalDate fraOgMed, LocalDate tilOgMed) {
+    void setPeriode(LocalDate fraOgMed, LocalDate tilOgMed) {
         if (tilOgMed != null) {
             this.periode = DatoIntervallEntitet.fraOgMedTilOgMed(fraOgMed, tilOgMed);
         } else {
@@ -105,7 +105,7 @@ public class PermisjonEntitet extends BaseEntitet implements Permisjon, IndexKey
         return prosentsats;
     }
 
-    public void setProsentsats(Stillingsprosent prosentsats) {
+    void setProsentsats(Stillingsprosent prosentsats) {
         this.prosentsats = prosentsats;
     }
 
@@ -135,10 +135,6 @@ public class PermisjonEntitet extends BaseEntitet implements Permisjon, IndexKey
             ", tilOgMed=" + periode.getTomDato() + //$NON-NLS-1$
             ", v=" + prosentsats + //$NON-NLS-1$
             '}';
-    }
-
-    public YrkesaktivitetEntitet getYrkesaktivitet() {
-        return yrkesaktivitet;
     }
 
     void setYrkesaktivitet(YrkesaktivitetEntitet yrkesaktivitet) {

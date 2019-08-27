@@ -71,21 +71,6 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     private long versjon;
 
     /**
-<<<<<<< Updated upstream
-     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
-     */
-    @Deprecated
-    @Transient
-    private LocalDate skjæringstidspunkt;
-
-    /**
-     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
-     */
-    @Deprecated
-    @Transient
-    private boolean ventreSideAvSkjæringstidspunkt;
-
-    /**
      * Setter en periode brukt til overstyring av angitt periode (avledet fra saksbehandlers vurderinger). Benyttes kun transient (ved filtrering av modellen)
      */
     @Transient
@@ -202,13 +187,6 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
 
     void setYrkesaktivitet(YrkesaktivitetEntitet yrkesaktivitet) {
         this.yrkesaktivitet = yrkesaktivitet;
-    }
-
-    /**
-     * Hvorvidet denne avtalen har en overstyrt periode.
-     */
-    void setOverstyrtPeriode(DatoIntervallEntitet overstyrtPeriode) {
-        this.overstyrtPeriode = overstyrtPeriode;
     }
 
     void sisteLønnsendringsdato(LocalDate sisteLønnsendringsdato) {
