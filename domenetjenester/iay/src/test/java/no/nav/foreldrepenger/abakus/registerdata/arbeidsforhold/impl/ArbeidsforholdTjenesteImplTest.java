@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Organisasjon;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.person.TpsTjeneste;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
@@ -49,7 +50,7 @@ public class ArbeidsforholdTjenesteImplTest {
         response1.setArbeidsforhold(response.getArbeidsforhold().get(0));
         when(arbeidsforholdConsumer.hentArbeidsforholdHistorikk(any())).thenReturn(response1);
 
-        ArbeidsforholdTjenesteImpl arbeidsforholdTjeneste = new ArbeidsforholdTjenesteImpl(arbeidsforholdConsumer, mock(TpsTjeneste.class));
+        ArbeidsforholdTjeneste arbeidsforholdTjeneste = new ArbeidsforholdTjeneste(arbeidsforholdConsumer, mock(TpsTjeneste.class));
 
         // Act
         Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(new PersonIdent(FNR), IntervallUtil.byggIntervall(FOM, LocalDate.now()));
@@ -67,7 +68,7 @@ public class ArbeidsforholdTjenesteImplTest {
 
         doThrow(new FinnArbeidsforholdPrArbeidstakerUgyldigInput("Feil", new UgyldigInput())).when(arbeidsforholdConsumer).finnArbeidsforholdPrArbeidstaker(any());
 
-        ArbeidsforholdTjenesteImpl arbeidsforholdTjeneste = new ArbeidsforholdTjenesteImpl(arbeidsforholdConsumer, mock(TpsTjeneste.class));
+        ArbeidsforholdTjeneste arbeidsforholdTjeneste = new ArbeidsforholdTjeneste(arbeidsforholdConsumer, mock(TpsTjeneste.class));
 
         try {
             // Act

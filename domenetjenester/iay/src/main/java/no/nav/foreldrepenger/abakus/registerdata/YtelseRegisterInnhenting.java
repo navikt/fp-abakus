@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.registerdata;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,8 +17,8 @@ import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagMeldekort;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlagArbeidsforhold;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlagGrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlagVedtak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdSakOgGrunnlag;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -42,11 +41,11 @@ public class YtelseRegisterInnhenting {
 
     void byggYtelser(Kobling behandling, AktørId aktørId, Interval opplysningsPeriode,
                      InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder, boolean medGrunnlag) {
-        List<InfotrygdSakOgGrunnlag> sammenstilt = innhentingSamletTjeneste.getSammenstiltSakOgGrunnlag(behandling, aktørId, opplysningsPeriode, medGrunnlag);
+        List<InfotrygdSakOgGrunnlag> sammenstilt = innhentingSamletTjeneste.getSammenstiltSakOgGrunnlag(aktørId, opplysningsPeriode, medGrunnlag);
 
         InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder = inntektArbeidYtelseAggregatBuilder.getAktørYtelseBuilder(aktørId);
         for (InfotrygdSakOgGrunnlag ytelse : sammenstilt) {
-            YtelseType type = ytelse.getGrunnlag().map(YtelseBeregningsgrunnlagGrunnlag::getType).orElse(ytelse.getSak().getRelatertYtelseType());
+            YtelseType type = ytelse.getGrunnlag().map(YtelseBeregningsgrunnlag::getType).orElse(ytelse.getSak().getYtelseType());
             if (skalKopiereTilYtelse(behandling, aktørId, type)) {
                 oversettSakGrunnlagTilYtelse(aktørYtelseBuilder, ytelse);
             }
@@ -93,17 +92,16 @@ public class YtelseRegisterInnhenting {
      * Bestemmer hvilke {@link YtelseType} som skal kopieres inn for søker og annenpart.
      */
     private boolean skalKopiereTilYtelse(Kobling behandling, AktørId aktørId, YtelseType relatertYtelseType) {
-        List<YtelseType> ytelseTyperSomErRelevantForAnnenPart = Arrays.asList(YtelseType.FORELDREPENGER, YtelseType.ENGANGSSTØNAD);
         if (aktørId.equals(behandling.getAktørId())) {
             return true;
         }
-        return !aktørId.equals(behandling.getAktørId()) && ytelseTyperSomErRelevantForAnnenPart.contains(relatertYtelseType);
+        return !aktørId.equals(behandling.getAktørId()) && List.of(YtelseType.FORELDREPENGER, YtelseType.ENGANGSSTØNAD).contains(relatertYtelseType);
     }
 
     private void oversettSakGrunnlagTilYtelse(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder, InfotrygdSakOgGrunnlag ytelse) {
-        YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.INFOTRYGD, ytelse.getSak().getRelatertYtelseType(), ytelse.getSak().getTemaUnderkategori(), ytelse.getPeriode())
+        YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.INFOTRYGD, ytelse.getSak().getYtelseType(),
+            ytelse.getSak().getTemaUnderkategori(), ytelse.getPeriode())
             .medBehandlingsTema(ytelse.getSak().getTemaUnderkategori())
-            .medSaksnummer(ytelse.getSaksnummer())
             .medStatus(ytelse.getSak().getYtelseStatus());
         ytelseBuilder.tilbakestillAnvisninger();
         ytelse.getGrunnlag().ifPresent(grunnlag -> {
@@ -120,7 +118,7 @@ public class YtelseRegisterInnhenting {
         aktørYtelseBuilder.leggTilYtelse(ytelseBuilder);
     }
 
-    private YtelseGrunnlag oversettYtelseGrunnlag(YtelseBeregningsgrunnlagGrunnlag grunnlag, YtelseGrunnlagBuilder grunnlagBuilder) {
+    private YtelseGrunnlag oversettYtelseGrunnlag(YtelseBeregningsgrunnlag grunnlag, YtelseGrunnlagBuilder grunnlagBuilder) {
         grunnlag.mapSpesialverdier(grunnlagBuilder);
         grunnlagBuilder.medArbeidskategori(grunnlag.getArbeidskategori());
         grunnlagBuilder.tilbakestillStørrelse();

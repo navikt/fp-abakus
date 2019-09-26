@@ -58,7 +58,7 @@ public class InntektTjenesteImplTest {
 
     @Before
     public void before() {
-        inntektTjeneste = new InntektTjenesteImpl(uri, KONFIG_FOM, restKlient, kodeverkRepository, null);
+        inntektTjeneste = new InntektTjeneste(uri, KONFIG_FOM, restKlient, kodeverkRepository, null);
     }
 
     @Test

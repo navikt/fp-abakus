@@ -1,8 +1,5 @@
-package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.impl;
+package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdUgyldigInputException;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.binding.FinnGrunnlagListeUgyldigInput;
 import no.nav.tjeneste.virksomhet.infotrygdsak.v1.binding.FinnSakListeUgyldigInput;
 import no.nav.vedtak.exception.IntegrasjonException;
@@ -28,9 +25,6 @@ public interface InfotrygdTjenesteFeil extends DeklarerteFeil {
 
     @TekniskFeil(feilkode = "FP-250917", feilmelding = "%s ikke tilgjengelig (sikkerhetsbegrensning)", logLevel = LogLevel.WARN)
     Feil tjenesteUtilgjengeligSikkerhetsbegrensning(String tjeneste, Exception exceptionMessage);
-
-    @TekniskFeil(feilkode = "FP-173623", feilmelding = "Teknisk feil i grensesnitt mot %s", logLevel = LogLevel.ERROR)
-    Feil tekniskFeil(String tjeneste, DatatypeConfigurationException årsak);
 
     @TekniskFeil(feilkode = "FP-180124", feilmelding = "Tjeneste %s ikke tilgjengelig (nedetid)", logLevel = LogLevel.WARN)
     Feil nedetid(String tjeneste, IntegrasjonException årsak);

@@ -2,13 +2,12 @@ package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak;
 
 import java.util.Optional;
 
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlagGrunnlag;
-import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlag;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class InfotrygdSakOgGrunnlag {
     private InfotrygdSak sak;
-    private YtelseBeregningsgrunnlagGrunnlag grunnlag;
+    private YtelseBeregningsgrunnlag grunnlag;
     private DatoIntervallEntitet periode;
 
     public InfotrygdSakOgGrunnlag(InfotrygdSak sak) {
@@ -20,16 +19,12 @@ public class InfotrygdSakOgGrunnlag {
         return sak;
     }
 
-    public Optional<YtelseBeregningsgrunnlagGrunnlag> getGrunnlag() {
+    public Optional<YtelseBeregningsgrunnlag> getGrunnlag() {
         return Optional.ofNullable(grunnlag);
     }
 
-    public void setGrunnlag(YtelseBeregningsgrunnlagGrunnlag grunnlag) {
+    public void setGrunnlag(YtelseBeregningsgrunnlag grunnlag) {
         this.grunnlag = grunnlag;
-    }
-
-    public Saksnummer getSaksnummer() {
-        return getSak().getSakId();
     }
 
     public DatoIntervallEntitet getPeriode() {

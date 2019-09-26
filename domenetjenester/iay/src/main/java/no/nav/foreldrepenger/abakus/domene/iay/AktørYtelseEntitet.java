@@ -82,7 +82,7 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
     void setAktørId(AktørId aktørId) {
         this.aktørId = aktørId;
     }
-    
+
     @Override
     public Collection<Ytelse> getAlleYtelser() {
         return Collections.unmodifiableSet(ytelser);
@@ -99,14 +99,6 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
     YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer saksnummer) {
         Optional<Ytelse> ytelse = getAlleYtelser().stream()
             .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type) && (saksnummer.equals(ya.getSaksnummer())))
-            .findFirst();
-        return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medSaksnummer(saksnummer);
-    }
-
-    YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer saksnummer, DatoIntervallEntitet periode) {
-        Optional<Ytelse> ytelse = getAlleYtelser().stream()
-            .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type) && (saksnummer.equals(ya.getSaksnummer())
-                && periode.equals(ya.getPeriode())))
             .findFirst();
         return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medSaksnummer(saksnummer);
     }

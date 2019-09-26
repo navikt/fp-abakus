@@ -21,6 +21,7 @@ import org.threeten.extra.Interval;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
+import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
@@ -32,8 +33,7 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInf
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.InfotrygdBeregningsgrunnlagTjeneste;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlagGrunnlag;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelsesBeregningsgrunnlag;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdSak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdSakOgGrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdTjeneste;
@@ -45,6 +45,7 @@ import no.nav.vedtak.feil.deklarasjon.DeklarerteFeil;
 import no.nav.vedtak.feil.deklarasjon.TekniskFeil;
 import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
+import no.nav.vedtak.util.FPDateUtil;
 
 @ApplicationScoped
 public class InnhentingSamletTjeneste {
@@ -78,7 +79,6 @@ public class InnhentingSamletTjeneste {
         FinnInntektRequest.FinnInntektRequestBuilder builder = FinnInntektRequest.builder(YearMonth.from(LocalDateTime.ofInstant(periode.getStart(), ZoneId.systemDefault())),
             YearMonth.from(LocalDateTime.ofInstant(periode.getEnd(), ZoneId.systemDefault())));
 
-        LOGGER.info("Bruker aktørId mot inntektskomponenten for behandlingId {}", behandling.getId());
         builder.medAktørId(aktørId.getId());
 
         return inntektTjeneste.finnInntekt(builder.build(), kilde);
@@ -92,17 +92,11 @@ public class InnhentingSamletTjeneste {
         return aktørConsumer.hentPersonIdentForAktørId(aktørId.getId()).map(PersonIdent::new).orElseThrow();
     }
 
-    public List<InfotrygdSakOgGrunnlag> getSammenstiltSakOgGrunnlag(Kobling behandling, AktørId aktørId, Interval opplysningsPeriode, boolean medGrunnlag) {
-        final List<InfotrygdSak> infotrygdSakList = filtrerSaker(getInfotrygdSaker(behandling, aktørId, opplysningsPeriode), medGrunnlag);
+    public List<InfotrygdSakOgGrunnlag> getSammenstiltSakOgGrunnlag(AktørId aktørId, Interval opplysningsPeriode, boolean medGrunnlag) {
+        final List<InfotrygdSak> infotrygdSakList = filtrerSaker(getInfotrygdSaker(aktørId, opplysningsPeriode), medGrunnlag);
         LOGGER.info("InfotrygdSak sammentilling antall saker/vedtak: {}", infotrygdSakList.size());
         if (medGrunnlag) {
-            final YtelsesBeregningsgrunnlag ytelsesBeregningsgrunnlag = getInfotrygdBeregningsgrunnlag(behandling, aktørId, opplysningsPeriode);
-            List<YtelseBeregningsgrunnlagGrunnlag> alleGrunnlag;
-            if (ytelsesBeregningsgrunnlag != null) {
-                alleGrunnlag = ytelsesBeregningsgrunnlag.getAlleGrunnlag();
-            } else {
-                alleGrunnlag = new ArrayList<>();
-            }
+            List<YtelseBeregningsgrunnlag> alleGrunnlag = getInfotrygdBeregningsgrunnlag(aktørId, opplysningsPeriode);
             LOGGER.info("InfotrygdBeregningsgrunnlag antall grunnlag: {}", alleGrunnlag.size());
             return sammenstillSakOgGrunnlag(infotrygdSakList, alleGrunnlag, opplysningsPeriode);
         }
@@ -129,50 +123,53 @@ public class InnhentingSamletTjeneste {
     }
 
     private boolean skalLagresBetinget(InfotrygdSak infotrygdSak, boolean medGrunnlag) {
-        if (YtelseType.ENSLIG_FORSØRGER.equals(infotrygdSak.getRelatertYtelseType())) {
+        if (YtelseType.ENSLIG_FORSØRGER.equals(infotrygdSak.getYtelseType())) {
             return false;
         }
-        if (infotrygdSak.erLøpendeVedtak() || infotrygdSak.erAvsluttetVedtak()) {
-            if (infotrygdSak.erAvRelatertYtelseType(YtelseType.ENGANGSSTØNAD, YtelseType.SYKEPENGER,
-                YtelseType.SVANGERSKAPSPENGER, YtelseType.FORELDREPENGER, YtelseType.PÅRØRENDESYKDOM)) {
-                return true;
-            }
+        if (YtelseStatus.LØPENDE.equals(infotrygdSak.getYtelseStatus()) || YtelseStatus.AVSLUTTET.equals(infotrygdSak.getYtelseStatus())) {
+            return infotrygdSak.erAvRelatertYtelseType(YtelseType.ENGANGSSTØNAD, YtelseType.SYKEPENGER,
+                YtelseType.SVANGERSKAPSPENGER, YtelseType.FORELDREPENGER, YtelseType.PÅRØRENDESYKDOM);
         } else if (infotrygdSak.erVedtak()) {
             if (infotrygdSak.erAvRelatertYtelseType(YtelseType.ENGANGSSTØNAD, YtelseType.FORELDREPENGER)) {
                 return true;
             }
-            if (medGrunnlag && infotrygdSak.erAvRelatertYtelseType(YtelseType.SYKEPENGER,
-                YtelseType.PÅRØRENDESYKDOM, YtelseType.SVANGERSKAPSPENGER)) {
-                return true;
-            }
+            return medGrunnlag && infotrygdSak.erAvRelatertYtelseType(YtelseType.SYKEPENGER,
+                YtelseType.PÅRØRENDESYKDOM, YtelseType.SVANGERSKAPSPENGER);
         }
         return false;
     }
 
-    private List<InfotrygdSak> getInfotrygdSaker(Kobling behandling, AktørId aktørId, Interval opplysningsPeriode) {
-        return infotrygdTjeneste.finnSakListe(behandling, getFnrFraAktørId(aktørId).getIdent(), LocalDateTime.ofInstant(opplysningsPeriode.getStart(), ZoneId.systemDefault()).toLocalDate());
+    private List<InfotrygdSak> getInfotrygdSaker(AktørId aktørId, Interval opplysningsPeriode) {
+        return infotrygdTjeneste.finnSakListe(getFnrFraAktørId(aktørId).getIdent(), LocalDateTime.ofInstant(opplysningsPeriode.getStart(), ZoneId.systemDefault()).toLocalDate());
     }
 
-    private YtelsesBeregningsgrunnlag getInfotrygdBeregningsgrunnlag(Kobling behandling, AktørId aktørId, Interval opplysningsPeriode) {
-        return infotrygdBeregningsgrunnlagTjeneste.hentGrunnlagListeFull(behandling, getFnrFraAktørId(aktørId).getIdent(),
+    private List<YtelseBeregningsgrunnlag> getInfotrygdBeregningsgrunnlag(AktørId aktørId, Interval opplysningsPeriode) {
+        return infotrygdBeregningsgrunnlagTjeneste.hentGrunnlagListeFull(aktørId,
             LocalDateTime.ofInstant(opplysningsPeriode.getStart(), ZoneId.systemDefault()).toLocalDate());
     }
 
-    private boolean matcherSakOgGrunnlag(InfotrygdSakOgGrunnlag sak, YtelseBeregningsgrunnlagGrunnlag grunnlag) {
+    private boolean matcherSakOgGrunnlag(InfotrygdSakOgGrunnlag sak, YtelseBeregningsgrunnlag grunnlag) {
         if (sak.getGrunnlag().isPresent() || sak.getSak().getIverksatt() == null) {
             return false;
         }
         // Samme type (ITrygd tema+behandlingstema) og grunnlag/identdato = sak/iverksattdato
-        return grunnlag.getType().equals(sak.getSak().hentRelatertYtelseTypeForSammenstillingMedBeregningsgrunnlag()) && grunnlag.getIdentdato().equals(sak.getSak().getIverksatt());
+        return grunnlag.getType().equals(sak.getSak().hentRelatertYtelseTypeForSammenstillingMedBeregningsgrunnlag())
+            && grunnlag.getIdentdato().equals(sak.getSak().getIverksatt());
     }
 
-    private List<InfotrygdSakOgGrunnlag> sammenstillSakOgGrunnlag(List<InfotrygdSak> saker, List<YtelseBeregningsgrunnlagGrunnlag> grunnlagene, Interval opplysningsPeriode) {
+    private List<InfotrygdSakOgGrunnlag> sammenstillSakOgGrunnlag(List<InfotrygdSak> saker, List<YtelseBeregningsgrunnlag> grunnlagene,
+                                                                  Interval opplysningsPeriode) {
         List<InfotrygdSakOgGrunnlag> sammenstilling = saker.stream().map(InfotrygdSakOgGrunnlag::new).collect(Collectors.toList());
         LocalDate periodeFom = LocalDateTime.ofInstant(opplysningsPeriode.getStart(), ZoneId.systemDefault()).toLocalDate();
 
-        for (YtelseBeregningsgrunnlagGrunnlag grunnlag : grunnlagene) {
+        for (YtelseBeregningsgrunnlag grunnlag : grunnlagene) {
             Optional<InfotrygdSakOgGrunnlag> funnet = settSammenSakMatchendeGrunnlag(sammenstilling, grunnlag);
-            if (!funnet.isPresent() && grunnlag.getTom() != null && !grunnlag.getTom().isBefore(periodeFom)) {
+            if (funnet.isEmpty() && grunnlag.getTom() != null && !grunnlag.getTom().isBefore(periodeFom)) {
+                InfotrygdSak sak = lagSakForYtelseUtenomSaksbasen(grunnlag.getType(), grunnlag.getTemaUnderkategori(), grunnlag.getIdentdato(),
+                    DatoIntervallEntitet.fraOgMedTilOgMed(grunnlag.getFom(), grunnlag.getTom()));
+                InfotrygdSakOgGrunnlag isog = new InfotrygdSakOgGrunnlag(sak);
+                isog.setGrunnlag(grunnlag);
+                sammenstilling.add(isog);
                 InnhentingSamletTjeneste.Feilene.FACTORY.manglerInfotrygdSak(grunnlag.getType().toString(), grunnlag.getIdentdato().toString()).log(LOGGER);
             }
         }
@@ -183,10 +180,23 @@ public class InnhentingSamletTjeneste {
             .collect(Collectors.toList());
     }
 
-    private Optional<InfotrygdSakOgGrunnlag> settSammenSakMatchendeGrunnlag(List<InfotrygdSakOgGrunnlag> sakene, YtelseBeregningsgrunnlagGrunnlag grunnlag) {
+    /* Faker sak fra Infotrygd når saken mangler i saksbasen, men finnes i vedtak */
+    private InfotrygdSak lagSakForYtelseUtenomSaksbasen(YtelseType type, TemaUnderkategori temaUnderkategori, LocalDate identdato, DatoIntervallEntitet periode) {
+        YtelseStatus tilstand = FPDateUtil.iDag().isBefore(periode.getTomDato()) ? YtelseStatus.LØPENDE : YtelseStatus.AVSLUTTET;
+        return InfotrygdSak.InfotrygdSakBuilder.ny()
+            .medIverksatt(identdato)
+            .medRegistrert(identdato)
+            .medYtelseType(type)
+            .medTemaUnderkategori(temaUnderkategori)
+            .medRelatertYtelseTilstand(tilstand)
+            .medPeriode(periode)
+            .build();
+    }
+
+    private Optional<InfotrygdSakOgGrunnlag> settSammenSakMatchendeGrunnlag(List<InfotrygdSakOgGrunnlag> sakene, YtelseBeregningsgrunnlag grunnlag) {
         Optional<InfotrygdSakOgGrunnlag> funnet = Optional.empty();
         for (InfotrygdSakOgGrunnlag sak : sakene) {
-            if (!funnet.isPresent() && matcherSakOgGrunnlag(sak, grunnlag)) {
+            if (funnet.isEmpty() && matcherSakOgGrunnlag(sak, grunnlag)) {
                 sak.setGrunnlag(grunnlag);
                 funnet = Optional.of(sak);
                 if (grunnlag.getFom() != null && grunnlag.getFom().isBefore(sak.getPeriode().getFomDato())) {
@@ -210,8 +220,8 @@ public class InnhentingSamletTjeneste {
     }
 
     private boolean skalTypeLagresUansett(InfotrygdSakOgGrunnlag infotrygdSakOgGrunnlag) {
-        YtelseType type = infotrygdSakOgGrunnlag.getSak().getRelatertYtelseType();
-        return YtelseType.ENGANGSSTØNAD.equals(type) || YtelseType.FORELDREPENGER.equals(type);
+        YtelseType type = infotrygdSakOgGrunnlag.getSak().getYtelseType();
+        return List.of(YtelseType.ENGANGSSTØNAD, YtelseType.FORELDREPENGER).contains(type);
     }
 
     public List<MeldekortUtbetalingsgrunnlagSak> hentYtelserTjenester(AktørId aktørId, Interval opplysningsPeriode) {
@@ -234,7 +244,8 @@ public class InnhentingSamletTjeneste {
                 InnhentingFeil.FACTORY.ignorerArenaSakInfoLogg("meldekort", sak.getSaksnummer()).log(LOGGER);
             } else if (sak.getVedtaksPeriodeFom() == null && sak.getMeldekortene().isEmpty()) {
                 InnhentingFeil.FACTORY.ignorerArenaSakInfoLogg("vedtaksDato", sak.getSaksnummer()).log(LOGGER);
-            } else if (sak.getVedtaksPeriodeTom() != null && sak.getVedtaksPeriodeTom().isBefore(sak.getVedtaksPeriodeFom()) && sak.getMeldekortene().isEmpty()) {
+            } else if (sak.getVedtaksPeriodeTom() != null && sak.getVedtaksPeriodeTom().isBefore(sak.getVedtaksPeriodeFom())
+                && sak.getMeldekortene().isEmpty()) {
                 InnhentingFeil.FACTORY.ignorerArenaSakMedVedtakTomFørVedtakFom(sak.getSaksnummer()).log(LOGGER);
             } else {
                 filtrert.add(sak);

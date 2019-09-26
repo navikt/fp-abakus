@@ -3,8 +3,8 @@ package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgru
 import java.math.BigDecimal;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektPeriodeType;
-import no.nav.foreldrepenger.abakus.typer.OrganisasjonsNummerValidator;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
+import no.nav.foreldrepenger.abakus.typer.OrganisasjonsNummerValidator;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.Arbeidsforhold;
 
 public class YtelseBeregningsgrunnlagArbeidsforhold {

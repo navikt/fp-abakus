@@ -4,16 +4,17 @@ import java.time.LocalDate;
 
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
+import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.PaaroerendeSykdom;
 import no.nav.vedtak.felles.integrasjon.felles.ws.DateUtil;
 
-public class YtelseBeregningsgrunnlagPaaroerendeSykdom extends YtelseBeregningsgrunnlagPeriodeYtelse {
+public class YtelseBeregningsgrunnlagPårørendeSykdom extends YtelseBeregningsgrunnlagPeriodeYtelse {
 
     private final LocalDate foedselsdatoPleietrengende;
 
-    YtelseBeregningsgrunnlagPaaroerendeSykdom(PaaroerendeSykdom paaroerendeSykdom, KodeverkRepository kodeverkRepository) {
-        super(YtelseType.PÅRØRENDESYKDOM, paaroerendeSykdom, kodeverkRepository);
+    YtelseBeregningsgrunnlagPårørendeSykdom(PaaroerendeSykdom paaroerendeSykdom, TemaUnderkategori tuk, KodeverkRepository kodeverkRepository) {
+        super(YtelseType.PÅRØRENDESYKDOM, tuk, paaroerendeSykdom, kodeverkRepository);
         foedselsdatoPleietrengende = DateUtil.convertToLocalDate(paaroerendeSykdom.getFoedselsdatoPleietrengende());
     }
 
