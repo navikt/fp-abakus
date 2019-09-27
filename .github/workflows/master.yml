@@ -38,7 +38,7 @@ jobs:
         shell: bash
         run: |
           echo "Building artifacts $(cat .docker_tag)"
-          mvn package --batch-mode --file pom.xml -Dchangelist= -Dsha1=-$(cat .docker_tag)
+          mvn package --settings ./.m2/settings.xml  --batch-mode --file pom.xml -Dchangelist= -Dsha1=-$(cat .docker_tag)
           echo "Building docker image
           docker build --pull -t $(cat .docker_image):$(cat .docker_tag) .
         env:
