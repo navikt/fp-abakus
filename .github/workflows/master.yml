@@ -42,13 +42,14 @@ jobs:
           echo "Building docker image
           docker build --pull -t $(cat .docker_image):$(cat .docker_tag) .
         env:
-          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USER: "x-access-token"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DATASOURCE_HOST: localhost
           DATASOURCE_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
       - name: push docker image
         run: |
-          echo "${ACCESS_TOKEN}" | docker login --username "x-access-token" --password-stdin https://docker.pkg.github.com
+          echo "${GITHUB_TOKEN}" | docker login --username "x-access-token" --password-stdin https://docker.pkg.github.com
           docker push $(cat .docker_image):$(cat .docker_tag)
         env:
-          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

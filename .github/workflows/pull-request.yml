@@ -31,6 +31,7 @@ jobs:
           echo "Building $(echo $GITHUB_SHA | cut -c1-7)"
           mvn package --settings ./.m2/settings.xml --batch-mode --file pom.xml -Dchangelist= -Dsha1=-$(echo $GITHUB_SHA | cut -c1-7)
         env:
+          GITHUB_USER: "x-access-token"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DATASOURCE_HOST: localhost
           DATASOURCE_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
