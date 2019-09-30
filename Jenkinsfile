@@ -19,7 +19,7 @@ boolean skipBuild = false
 pipeline {
     tools {
         jdk '11'
-        maven 'maven-3.6.1'
+        maven 'default-maven'
     }
     //agent any
     agent {
