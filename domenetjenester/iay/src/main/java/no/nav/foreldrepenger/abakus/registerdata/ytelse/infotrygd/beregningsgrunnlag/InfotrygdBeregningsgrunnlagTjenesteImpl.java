@@ -2,6 +2,8 @@ package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgru
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -9,14 +11,22 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.impl.InfotrygdTjenesteFeil;
+import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdTjenesteFeil;
+import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.binding.FinnGrunnlagListePersonIkkeFunnet;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.binding.FinnGrunnlagListeSikkerhetsbegrensning;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.binding.FinnGrunnlagListeUgyldigInput;
+import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.Engangsstoenad;
+import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.Foreldrepenger;
+import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.Grunnlag;
+import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.PaaroerendeSykdom;
+import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.Sykepenger;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.meldinger.FinnGrunnlagListeRequest;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.meldinger.FinnGrunnlagListeResponse;
+import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
 import no.nav.vedtak.felles.integrasjon.felles.ws.DateUtil;
 import no.nav.vedtak.felles.integrasjon.infotrygdberegningsgrunnlag.InfotrygdBeregningsgrunnlagConsumer;
 
@@ -28,10 +38,14 @@ public class InfotrygdBeregningsgrunnlagTjenesteImpl implements InfotrygdBeregni
 
     private KodeverkRepository kodeverkRepository;
     private InfotrygdBeregningsgrunnlagConsumer infotrygdBeregningsgrunnlagConsumer;
+    private AktørConsumer tpsTjeneste;
 
     @Inject
-    public InfotrygdBeregningsgrunnlagTjenesteImpl(InfotrygdBeregningsgrunnlagConsumer infotrygdBeregningsgrunnlagConsumer, KodeverkRepository kodeverkRepository) {
+    public InfotrygdBeregningsgrunnlagTjenesteImpl(InfotrygdBeregningsgrunnlagConsumer infotrygdBeregningsgrunnlagConsumer,
+                                                   AktørConsumer tpsTjeneste,
+                                                   KodeverkRepository kodeverkRepository) {
         this.infotrygdBeregningsgrunnlagConsumer = infotrygdBeregningsgrunnlagConsumer;
+        this.tpsTjeneste = tpsTjeneste;
         this.kodeverkRepository = kodeverkRepository;
     }
 
@@ -40,13 +54,16 @@ public class InfotrygdBeregningsgrunnlagTjenesteImpl implements InfotrygdBeregni
     }
 
     @Override
-    public YtelsesBeregningsgrunnlag hentGrunnlagListeFull(Kobling behandling, String fnr, LocalDate fom) {
-        FinnGrunnlagListeResponse finnGrunnlagListeResponse = finnGrunnlagListeFull(fnr, fom);
-        return convert(finnGrunnlagListeResponse);
+    public List<YtelseBeregningsgrunnlag> hentGrunnlagListeFull(AktørId aktørId, LocalDate fom) {
+        PersonIdent personIdent = tpsTjeneste.hentPersonIdentForAktørId(aktørId.getId()).map(PersonIdent::new).orElseThrow();
+        FinnGrunnlagListeResponse finnGrunnlagListeResponse = finnGrunnlagListeFull(personIdent.getIdent(), fom);
+        return convertNy(finnGrunnlagListeResponse);
     }
 
-    private YtelsesBeregningsgrunnlag convert(FinnGrunnlagListeResponse finnGrunnlagListeResponse) {
-        return new YtelsesBeregningsgrunnlag(finnGrunnlagListeResponse, kodeverkRepository);
+    @Override
+    public List<YtelseBeregningsgrunnlag> hentGrunnlagListeFull(String fnr, LocalDate fom) {
+        FinnGrunnlagListeResponse finnGrunnlagListeResponse = finnGrunnlagListeFull(fnr, fom);
+        return convertNy(finnGrunnlagListeResponse);
     }
 
     private FinnGrunnlagListeResponse finnGrunnlagListeFull(String fnr, LocalDate fom) {
@@ -66,6 +83,40 @@ public class InfotrygdBeregningsgrunnlagTjenesteImpl implements InfotrygdBeregni
             InfotrygdTjenesteFeil.FACTORY.personIkkeFunnet(e).log(log);
         }
         return new FinnGrunnlagListeResponse();
+    }
+
+    private List<YtelseBeregningsgrunnlag> convertNy(FinnGrunnlagListeResponse finnGrunnlagListeResponse) {
+        List<YtelseBeregningsgrunnlag> alleGrunnlag = new ArrayList<>();
+
+        if (finnGrunnlagListeResponse == null) {
+            return alleGrunnlag;
+        }
+
+        for (Foreldrepenger fp : finnGrunnlagListeResponse.getForeldrepengerListe()) {
+            TemaUnderkategori tuk = getBehandlingsTema(fp, kodeverkRepository);
+            alleGrunnlag.add(new YtelseBeregningsgrunnlagForeldrepenger(fp, tuk, kodeverkRepository));
+        }
+
+        for (Engangsstoenad engangsstoenad : finnGrunnlagListeResponse.getEngangstoenadListe()) {
+            TemaUnderkategori tuk = getBehandlingsTema(engangsstoenad, kodeverkRepository);
+            alleGrunnlag.add(new YtelseBeregningsgrunnlagEngangstønad(engangsstoenad, tuk));
+        }
+
+        for (Sykepenger sykep : finnGrunnlagListeResponse.getSykepengerListe()) {
+            TemaUnderkategori tuk = getBehandlingsTema(sykep, kodeverkRepository);
+            alleGrunnlag.add(new YtelseBeregningsgrunnlagSykepenger(sykep, tuk, kodeverkRepository));
+        }
+
+        for (PaaroerendeSykdom paaroerendeSykdom : finnGrunnlagListeResponse.getPaaroerendeSykdomListe()) {
+            TemaUnderkategori tuk = getBehandlingsTema(paaroerendeSykdom, kodeverkRepository);
+            alleGrunnlag.add(new YtelseBeregningsgrunnlagPårørendeSykdom(paaroerendeSykdom, tuk, kodeverkRepository));
+        }
+
+        return alleGrunnlag;
+    }
+
+    private TemaUnderkategori getBehandlingsTema(Grunnlag grunnlag, KodeverkRepository kodeverkRepository) {
+        return kodeverkRepository.finnForKodeverkEiersKode(TemaUnderkategori.class, grunnlag.getBehandlingstema().getValue(), TemaUnderkategori.UDEFINERT);
     }
 
 }

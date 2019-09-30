@@ -40,8 +40,4 @@ public class YtelseStørrelseBuilder {
         throw new IllegalStateException();
     }
 
-    public YtelseStørrelseBuilder medHyppighet(String kode) {
-        return medHyppighet(new InntektPeriodeType(kode));
-    }
-
 }

@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl;
+package no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;

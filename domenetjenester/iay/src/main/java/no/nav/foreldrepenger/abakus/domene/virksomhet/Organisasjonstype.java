@@ -4,6 +4,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 import no.nav.foreldrepenger.abakus.kodeverk.Kodeliste;
+import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
 @Entity(name = "OrganisasjonsType")
 @DiscriminatorValue(Organisasjonstype.DISCRIMINATOR)
@@ -20,7 +21,7 @@ public class Organisasjonstype extends Kodeliste {
     /** Orgnr for KUNSTIG organisasjoner. Går sammen med Organisasjonstype#KUNSTIG. (p.t. kun en kunstig organisasjon som holder på arbeidsforhold lagt til av saksbehandler.)*/
     public static final String KUNSTIG_ORG = "342352362";
 
-    
+
     @SuppressWarnings("unused")
     private Organisasjonstype() {
         // Hibernate
@@ -29,8 +30,8 @@ public class Organisasjonstype extends Kodeliste {
     public Organisasjonstype(String kode) {
         super(kode, DISCRIMINATOR);
     }
-    
-    public static boolean erKunstig(String orgNr) {
-        return KUNSTIG_ORG.equals(orgNr);
+
+    public static boolean erKunstig(OrgNummer orgNr) {
+        return KUNSTIG_ORG.equals(orgNr.getId());
     }
 }

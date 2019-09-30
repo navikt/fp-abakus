@@ -5,13 +5,14 @@ import java.util.List;
 
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.Arbeidskategori;
+import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.Engangsstoenad;
 
-public class YtelseBeregningsgrunnlagEngangstoenad extends YtelseBeregningsgrunnlagGrunnlag {
+public class YtelseBeregningsgrunnlagEngangstønad extends YtelseBeregningsgrunnlag {
 
-    YtelseBeregningsgrunnlagEngangstoenad(Engangsstoenad engangsstoenad) {
-        super(YtelseType.ENGANGSSTØNAD, engangsstoenad);
+    YtelseBeregningsgrunnlagEngangstønad(Engangsstoenad engangsstoenad, TemaUnderkategori tuk) {
+        super(YtelseType.ENGANGSSTØNAD, tuk, engangsstoenad);
     }
 
     @Override

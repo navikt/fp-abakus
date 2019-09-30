@@ -1,6 +1,5 @@
-package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.impl;
+package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold;
 
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdUgyldigInputException;
 import no.nav.tjeneste.virksomhet.arbeidsforhold.v3.binding.FinnArbeidsforholdPrArbeidstakerUgyldigInput;
 import no.nav.tjeneste.virksomhet.arbeidsforhold.v3.binding.HentArbeidsforholdHistorikkArbeidsforholdIkkeFunnet;
 import no.nav.vedtak.feil.Feil;
@@ -22,8 +21,5 @@ public interface ArbeidsforholdTjenesteFeil extends DeklarerteFeil {
 
     @IntegrasjonFeil(feilkode = "FP-927182", feilmelding = "Funksjonell feil i grensesnitt mot %s", logLevel = LogLevel.WARN, exceptionClass = ArbeidsforholdUgyldigInputException.class)
     Feil ugyldigInput(String tjeneste, HentArbeidsforholdHistorikkArbeidsforholdIkkeFunnet årsak);
-
-    @TekniskFeil(feilkode = "FP-793428", feilmelding = "Teknisk feil i grensesnitt mot %s", logLevel = LogLevel.ERROR)
-    Feil tekniskFeil(String tjeneste, Exception årsak);
 
 }

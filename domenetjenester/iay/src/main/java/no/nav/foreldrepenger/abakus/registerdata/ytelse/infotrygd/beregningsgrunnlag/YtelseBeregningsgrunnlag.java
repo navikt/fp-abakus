@@ -7,23 +7,25 @@ import java.util.List;
 
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.Arbeidskategori;
+import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.Grunnlag;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.Vedtak;
 import no.nav.vedtak.felles.integrasjon.felles.ws.DateUtil;
 
-public abstract class YtelseBeregningsgrunnlagGrunnlag {
+public abstract class YtelseBeregningsgrunnlag {
 
     private final YtelseType type;
+    private final TemaUnderkategori temaUnderkategori;
     private final LocalDate identdato;
     private LocalDate fom;
     private LocalDate tom;
     private List<YtelseBeregningsgrunnlagVedtak> vedtak;
 
 
-    YtelseBeregningsgrunnlagGrunnlag(YtelseType type, Grunnlag grunnlag) {
-
+    YtelseBeregningsgrunnlag(YtelseType type, TemaUnderkategori tuk, Grunnlag grunnlag) {
         this.type = type;
+        this.temaUnderkategori = tuk;
         identdato = DateUtil.convertToLocalDate(grunnlag.getIdentdato());
         if (grunnlag.getPeriode() != null) {
             fom = DateUtil.convertToLocalDate(grunnlag.getPeriode().getFom());
@@ -44,6 +46,10 @@ public abstract class YtelseBeregningsgrunnlagGrunnlag {
 
     public YtelseType getType() {
         return type;
+    }
+
+    public TemaUnderkategori getTemaUnderkategori() {
+        return temaUnderkategori;
     }
 
     public LocalDate getIdentdato() {
