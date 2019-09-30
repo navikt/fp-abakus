@@ -29,7 +29,7 @@
 
         <prometheus.version>0.6.0</prometheus.version>
       
-        <felles.version>1.1.0-aa98d146a7b35d757b1749630e82df66b7166adc</felles.version>
+        <felles.version>1.1.0_20190711105726_80ec15d</felles.version>
       
         <kontrakter.version>5.0_20190829142420_4c79ed9</kontrakter.version>
     </properties>
