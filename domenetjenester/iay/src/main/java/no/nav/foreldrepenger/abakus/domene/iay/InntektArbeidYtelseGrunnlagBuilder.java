@@ -24,7 +24,7 @@ public class InntektArbeidYtelseGrunnlagBuilder {
     public static InntektArbeidYtelseGrunnlagBuilder nytt() {
         return ny(UUID.randomUUID(), LocalDateTime.now());
     }
-    
+
     /** Brukes ved migrering. */
     public static InntektArbeidYtelseGrunnlagBuilder ny(UUID grunnlagReferanse, LocalDateTime opprettetTidspunkt) {
         return new InntektArbeidYtelseGrunnlagBuilder(new InntektArbeidYtelseGrunnlagEntitet(grunnlagReferanse, opprettetTidspunkt));
@@ -37,7 +37,7 @@ public class InntektArbeidYtelseGrunnlagBuilder {
     public static InntektArbeidYtelseGrunnlagBuilder oppdatere(Optional<InntektArbeidYtelseGrunnlag> kladd) {
         return kladd.map(InntektArbeidYtelseGrunnlagBuilder::oppdatere).orElseGet(InntektArbeidYtelseGrunnlagBuilder::nytt);
     }
-    
+
     protected InntektArbeidYtelseGrunnlagEntitet getKladd() {
         return kladd;
     }
@@ -45,7 +45,7 @@ public class InntektArbeidYtelseGrunnlagBuilder {
     protected void fjernSaksbehandlet() {
         kladd.fjernSaksbehandlet();
     }
-    
+
     protected InntektsmeldingAggregat getInntektsmeldinger() {
         final Optional<InntektsmeldingAggregat> inntektsmeldinger = kladd.getInntektsmeldinger();
         return inntektsmeldinger.map(InntektsmeldingAggregatEntitet::new).orElseGet(InntektsmeldingAggregatEntitet::new);
@@ -82,7 +82,7 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         kladd.setAktivt(erAktivtGrunnlag);
         return this;
     }
-    
+
     private void medSaksbehandlet(InntektArbeidYtelseAggregatBuilder builder) {
         if (builder != null) {
             kladd.setSaksbehandlet((InntektArbeidYtelseAggregatEntitet) builder.build());
@@ -111,9 +111,6 @@ public class InntektArbeidYtelseGrunnlagBuilder {
 
     public InntektArbeidYtelseGrunnlag build() {
         var k = kladd;
-        if (kladd.getArbeidsforholdInformasjon().isPresent()) {
-            k.taHensynTilBetraktninger();
-        }
         kladd = null; // må ikke finne på å gjenbruke buildere her, tar heller straffen i en NPE ved første feilkall
         return k;
     }

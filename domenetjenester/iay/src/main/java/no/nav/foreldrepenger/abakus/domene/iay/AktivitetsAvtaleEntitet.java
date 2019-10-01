@@ -38,13 +38,17 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     @JoinColumn(name = "yrkesaktivitet_id", nullable = false, updatable = false, unique = true)
     private YrkesaktivitetEntitet yrkesaktivitet;
 
-    /** TODO (FC): Se om vi kan bli kvitt antallTimer. Brukes bare til å sjekke om det finnes verdi i {@link #erAnsettelsesPeriode()}. */
+    /**
+     * TODO (FC): Se om vi kan bli kvitt antallTimer. Brukes bare til å sjekke om det finnes verdi i {@link #erAnsettelsesPeriode()}.
+     */
     @ChangeTracked
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "antall_timer")))
     private AntallTimer antallTimer;
 
-    /** TODO (FC): Se om vi kan bli kvitt antallTimerFulltid. Brukes bare til å sjekke om det finnes verdi i {@link #erAnsettelsesPeriode()}. */
+    /**
+     * TODO (FC): Se om vi kan bli kvitt antallTimerFulltid. Brukes bare til å sjekke om det finnes verdi i {@link #erAnsettelsesPeriode()}.
+     */
     @ChangeTracked
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "antall_timer_fulltid")))
@@ -71,21 +75,6 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     private long versjon;
 
     /**
-<<<<<<< Updated upstream
-     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
-     */
-    @Deprecated
-    @Transient
-    private LocalDate skjæringstidspunkt;
-
-    /**
-     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
-     */
-    @Deprecated
-    @Transient
-    private boolean ventreSideAvSkjæringstidspunkt;
-
-    /**
      * Setter en periode brukt til overstyring av angitt periode (avledet fra saksbehandlers vurderinger). Benyttes kun transient (ved filtrering av modellen)
      */
     @Transient
@@ -105,7 +94,7 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
         this.periode = entitet.periode;
         this.sisteLønnsendringsdato = entitet.sisteLønnsendringsdato;
     }
-    
+
     public AktivitetsAvtaleEntitet(AktivitetsAvtale avtale, DatoIntervallEntitet overstyrtPeriode) {
         this(avtale);
         this.overstyrtPeriode = overstyrtPeriode;
@@ -119,6 +108,10 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     @Override
     public Stillingsprosent getProsentsats() {
         return prosentsats;
+    }
+
+    void setProsentsats(Stillingsprosent prosentsats) {
+        this.prosentsats = prosentsats;
     }
 
     @Override
@@ -144,27 +137,24 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
         this.antallTimerFulltid = antallTimerFulltid;
     }
 
-    void setProsentsats(Stillingsprosent prosentsats) {
-        this.prosentsats = prosentsats;
-    }
-
     @Override
     public DatoIntervallEntitet getPeriode() {
         return erOverstyrtPeriode() ? overstyrtPeriode : periode;
     }
 
+    void setPeriode(DatoIntervallEntitet periode) {
+        this.periode = periode;
+    }
+
     /**
      * Henter kun den originale perioden, ikke den overstyrte perioden.
      * Bruk heller {@link #getPeriode} i de fleste tilfeller
+     *
      * @return Hele den originale perioden, uten overstyringer.
      */
     @Override
     public DatoIntervallEntitet getPeriodeUtenOverstyring() {
         return periode;
-    }
-
-    void setPeriode(DatoIntervallEntitet periode) {
-        this.periode = periode;
     }
 
     /**
@@ -204,13 +194,6 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
         this.yrkesaktivitet = yrkesaktivitet;
     }
 
-    /**
-     * Hvorvidet denne avtalen har en overstyrt periode.
-     */
-    void setOverstyrtPeriode(DatoIntervallEntitet overstyrtPeriode) {
-        this.overstyrtPeriode = overstyrtPeriode;
-    }
-
     void sisteLønnsendringsdato(LocalDate sisteLønnsendringsdato) {
         this.sisteLønnsendringsdato = sisteLønnsendringsdato;
     }
@@ -243,7 +226,7 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
             ", overstyrtPeriode=" + overstyrtPeriode + //$NON-NLS-1$
             ", prosentsats=" + prosentsats + //$NON-NLS-1$
             ", beskrivelse=" + beskrivelse + //$NON-NLS-1$
-            ", sisteLønnsendringsdato="+sisteLønnsendringsdato + //$NON-NLS-1$
+            ", sisteLønnsendringsdato=" + sisteLønnsendringsdato + //$NON-NLS-1$
             '>';
     }
 
