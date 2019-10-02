@@ -33,6 +33,10 @@
 			<groupId>no.nav.foreldrepenger.abakus</groupId>
 			<artifactId>kobling</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles</groupId>
+            <artifactId>felles-db</artifactId>
+        </dependency>
 
 		<!-- integrasjoner -->
 		<dependency>

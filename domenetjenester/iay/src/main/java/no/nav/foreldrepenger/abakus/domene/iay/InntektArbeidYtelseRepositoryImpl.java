@@ -83,14 +83,9 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
 
         if (kunAktiv) {
             final Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlag = HibernateVerktøy.hentUniktResultat(query);
-            grunnlag.ifPresent(InntektArbeidYtelseGrunnlagEntitet::taHensynTilBetraktninger);
             return grunnlag.isPresent() ? List.of(grunnlag.get()) : Collections.emptyList();
         } else {
-            var grunnlag = query.getResultStream().map(g -> {
-                g.taHensynTilBetraktninger();
-                return (InntektArbeidYtelseGrunnlag) g;
-            }).collect(Collectors.toList());
-            return grunnlag;
+            return query.getResultStream().map(g -> (InntektArbeidYtelseGrunnlag) g).collect(Collectors.toList());
         }
     }
 
@@ -648,7 +643,6 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         List<InntektArbeidYtelseGrunnlagEntitet> resultList = query.getResultList();
         if (resultList.size() < 2) {
             final Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlag = resultList.stream().findFirst();
-            grunnlag.ifPresent(InntektArbeidYtelseGrunnlagEntitet::taHensynTilBetraktninger);
             return grunnlag;
         }
         throw new IllegalStateException("Finner flere aktive grunnlag på koblingReferanse=" + koblingReferanse);
@@ -692,7 +686,6 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         query.setParameter("ref", grunnlagReferanse);
         query.setHint(QueryHints.HINT_CACHE_MODE, "IGNORE");
         Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlagOpt = query.getResultStream().findFirst();
-        grunnlagOpt.ifPresent(InntektArbeidYtelseGrunnlagEntitet::taHensynTilBetraktninger);
         return grunnlagOpt;
     }
 

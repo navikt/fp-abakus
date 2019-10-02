@@ -24,7 +24,9 @@ import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
  */
 public class YrkesaktivitetFilter {
 
-    /** Filter uten innhold. Forenkler NP håndtering. */
+    /**
+     * Filter uten innhold. Forenkler NP håndtering.
+     */
     public static final YrkesaktivitetFilter EMPTY = new YrkesaktivitetFilter(null, Collections.emptyList());
 
     private ArbeidsforholdInformasjon arbeidsforholdOverstyringer;
@@ -57,7 +59,9 @@ public class YrkesaktivitetFilter {
         this(arbeidsforholdInformasjon.orElse(null), yrkesaktivitet == null ? Collections.emptyList() : List.of(yrkesaktivitet));
     }
 
-    /** Tar inn angitte yrkesaktiviteter, uten hensyn til overstyringer. */
+    /**
+     * Tar inn angitte yrkesaktiviteter, uten hensyn til overstyringer.
+     */
     public YrkesaktivitetFilter(Collection<Yrkesaktivitet> yrkesaktiviteter) {
         this(null, yrkesaktiviteter);
     }
@@ -258,7 +262,7 @@ public class YrkesaktivitetFilter {
             return Optional.empty(); // ikke initialisert, så kan ikke ha overstyringer
         }
         List<ArbeidsforholdOverstyring> overstyringer = arbeidsforholdOverstyringer.getOverstyringer();
-        if(overstyringer.isEmpty()) {
+        if (overstyringer.isEmpty()) {
             return Optional.empty();
         }
         return overstyringer.stream()
@@ -292,6 +296,7 @@ public class YrkesaktivitetFilter {
 
     /**
      * Gir ansettelsesperioder for angitte arbeidsforhold.
+     *
      * @see #getAnsettelsesPerioder(Yrkesaktivitet)
      */
     public Collection<AktivitetsAvtale> getAnsettelsesPerioder(Collection<Yrkesaktivitet> yrkesaktiviteter) {
@@ -301,6 +306,7 @@ public class YrkesaktivitetFilter {
 
     /**
      * Gir alle ansettelsesperioder for filteret, inklusiv fiktive fra saksbehandler hvis konfigurert på filteret.
+     *
      * @see #getAnsettelsesPerioder(Yrkesaktivitet)
      */
     public Collection<AktivitetsAvtale> getAnsettelsesPerioder() {
@@ -309,6 +315,6 @@ public class YrkesaktivitetFilter {
     }
 
     public Collection<ArbeidsforholdOverstyring> getArbeidsforholdOverstyringer() {
-        return arbeidsforholdOverstyringer==null ? Collections.emptyList() : arbeidsforholdOverstyringer.getOverstyringer();
+        return arbeidsforholdOverstyringer == null ? Collections.emptyList() : arbeidsforholdOverstyringer.getOverstyringer();
     }
 }
