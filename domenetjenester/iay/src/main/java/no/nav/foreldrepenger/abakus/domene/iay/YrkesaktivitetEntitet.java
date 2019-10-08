@@ -164,7 +164,7 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
     void setNavnArbeidsgiverUtland(String navnArbeidsgiverUtland) {
         this.navnArbeidsgiverUtland = navnArbeidsgiverUtland;
     }
-    
+
     @Override
     public boolean gjelderFor(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef arbeidsforholdRef) {
         boolean gjelderForArbeidsgiver = Objects.equals(getArbeidsgiver(), arbeidsgiver);
@@ -205,7 +205,7 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
 
     @Override
     public int hashCode() {
-        return Objects.hash(arbeidsforholdRef, getNavnArbeidsgiverUtland(), getArbeidType(), getArbeidsgiver());
+        return Objects.hash(this.getArbeidsforholdRef(), getNavnArbeidsgiverUtland(), getArbeidType(), getArbeidsgiver());
     }
 
     @Override
