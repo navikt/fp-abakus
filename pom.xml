@@ -29,7 +29,7 @@
 
         <prometheus.version>0.6.0</prometheus.version>
       
-        <felles.version>1.1.0_20190711105726_80ec15d</felles.version>
+        <felles.version>1.2.0_20191007082808_6d30cb7</felles.version>
       
         <kontrakter.version>5.0_20190829142420_4c79ed9</kontrakter.version>
     </properties>
@@ -70,6 +70,11 @@
                 <version>${felles.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.spec.javax.annotation</groupId>
+                <artifactId>jboss-annotations-api_1.3_spec</artifactId>
+                <version>1.0.1.Final</version>
             </dependency>
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter.topics</groupId>

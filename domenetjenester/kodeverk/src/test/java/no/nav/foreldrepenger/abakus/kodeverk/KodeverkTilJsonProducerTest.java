@@ -2,33 +2,37 @@ package no.nav.foreldrepenger.abakus.kodeverk;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
+import javax.persistence.metamodel.ManagedType;
 
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.Condition;
 import org.junit.Rule;
 import org.junit.Test;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
-import io.github.lukehutch.fastclasspathscanner.scanner.ScanResult;
 import no.nav.foreldrepenger.abakus.dbstoette.UnittestRepositoryRule;
 
 /**
@@ -56,31 +60,33 @@ public class KodeverkTilJsonProducerTest {
     @Test
     public void skal_dumpe_kodeverk_til_json_format_for_bruk_i_scenario_tester() throws Exception {
 
-        Map<Class<?>, Object> dump = new TreeMap<>(Comparator.comparing((Class<?> c) -> c.getName()));
+        Map<Class<?>, Object> dump = new TreeMap<>(Comparator.comparing(Class::getName));
+        Set<Class<?>> classes = new LinkedHashSet<>();
 
-        ScanResult scan = new FastClasspathScanner("no.nav.foreldrepenger")
-                .strictWhitelist()
-                .scan();
+        var emf = em.getEntityManagerFactory();
 
-        dump.putAll(getSubclassesOf(scan, Kodeliste.class));
+        classes.addAll(getEntityClasses(emf, Kodeliste.class::isAssignableFrom));
+        classes.addAll(getEntityClasses(emf, KodeverkTabell.class::isAssignableFrom));
 
+        classes.forEach(c -> dump.put(c, getDump(c, " order by kode")));
+
+        Condition<Class<?>> alwaysTrue = new Condition<>(c -> true, "");
+        Assertions.assertThat(classes).haveAtLeast(1, alwaysTrue); // kun for å sjekk at vi i det minste finner noe
         writeToFile(dump);
 
     }
 
-    private Map<? extends Class<?>, ? extends Object> getSubclassesOf(ScanResult scan, Class<?> superClass) throws ClassNotFoundException {
-        List<String> subclassesOfKodeliste = scan.getNamesOfSubclassesOf(superClass);
-        Map<Class<?>, Object> dump = new LinkedHashMap<>();
-        for (String s : subclassesOfKodeliste) {
-            Class<?> cls = Class.forName(s);
-            Query query = em.createQuery("from " + cls.getName());
-            List<?> results = query.getResultList();
-            dump.put(cls, results);
-        }
-        return dump;
+    private static Set<Class<?>> getEntityClasses(EntityManagerFactory emf, Predicate<Class<?>> filter) {
+        Set<ManagedType<?>> managedTypes = emf.getMetamodel().getManagedTypes();
+        return managedTypes.stream().map(javax.persistence.metamodel.Type::getJavaType).filter(c -> !Modifier.isAbstract(c.getModifiers())).filter(filter).collect(Collectors.toSet());
     }
 
-    private void writeToFile(Map<Class<?>, Object> dump) throws IOException, JsonGenerationException, JsonMappingException {
+    private List<?> getDump(Class<?> cls, String suffix) {
+        Query query = em.createQuery("from " + cls.getName() + suffix);
+        return query.getResultList();
+    }
+
+    private void writeToFile(Map<Class<?>, Object> dump) throws IOException {
         ObjectMapper om = new ObjectMapper();
         om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
         om.registerModule(new MyModule());
@@ -106,7 +112,7 @@ public class KodeverkTilJsonProducerTest {
     }
 
     private void writeKodeverk(ObjectWriter objectWriter, File outputDir, Object value, String name)
-            throws IOException, JsonGenerationException, JsonMappingException {
+            throws IOException {
         File outputFile = new File(outputDir, KodeverkFraJson.FILE_NAME_PREFIX + name + KodeverkFraJson.FILE_NAME_SUFFIX);
         outputFile.delete();
         objectWriter.writeValue(outputFile, value);
