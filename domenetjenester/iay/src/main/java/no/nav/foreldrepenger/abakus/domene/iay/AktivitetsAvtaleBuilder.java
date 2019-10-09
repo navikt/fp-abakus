@@ -9,8 +9,9 @@ import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class AktivitetsAvtaleBuilder {
+    private static final BigDecimal MAKS_ANTALL_TIMER_I_UKEN = BigDecimal.valueOf(168); // https://jira.adeo.no/browse/TFP-1259
     private final AktivitetsAvtaleEntitet aktivitetsAvtaleEntitet;
-    private boolean oppdatering = false;
+    private boolean oppdatering;
 
     AktivitetsAvtaleBuilder(AktivitetsAvtale aktivitetsAvtaleEntitet, boolean oppdatering) {
         this.aktivitetsAvtaleEntitet = (AktivitetsAvtaleEntitet) aktivitetsAvtaleEntitet; // NOSONAR
@@ -25,6 +26,18 @@ public class AktivitetsAvtaleBuilder {
         return new AktivitetsAvtaleBuilder(aktivitetsAvtale.orElse(new AktivitetsAvtaleEntitet()), aktivitetsAvtale.isPresent());
     }
 
+    public AktivitetsAvtaleBuilder medAntallTimer(BigDecimal antallTimer) {
+        AntallTimer avkortetAntallTimer = antallTimer == null ? null : new AntallTimer(antallTimer.min(MAKS_ANTALL_TIMER_I_UKEN));
+        this.aktivitetsAvtaleEntitet.setAntallTimer(avkortetAntallTimer);
+        return this;
+    }
+
+    public AktivitetsAvtaleBuilder medAntallTimerFulltid(BigDecimal antallTimerFulltid) {
+        AntallTimer avkortetAntallTimerFulltid = antallTimerFulltid == null ? null : new AntallTimer(antallTimerFulltid.min(MAKS_ANTALL_TIMER_I_UKEN));
+        this.aktivitetsAvtaleEntitet.setAntallTimerFulltid(avkortetAntallTimerFulltid);
+        return this;
+    }
+
     public AktivitetsAvtaleBuilder medProsentsats(Stillingsprosent prosentsats) {
         this.aktivitetsAvtaleEntitet.setProsentsats(prosentsats);
         return this;
@@ -32,16 +45,6 @@ public class AktivitetsAvtaleBuilder {
 
     public AktivitetsAvtaleBuilder medProsentsats(BigDecimal prosentsats) {
         this.aktivitetsAvtaleEntitet.setProsentsats(prosentsats == null ? null : new Stillingsprosent(prosentsats));
-        return this;
-    }
-    
-    public AktivitetsAvtaleBuilder medAntallTimer(BigDecimal antallTimer) {
-        this.aktivitetsAvtaleEntitet.setAntallTimer(antallTimer == null ? null : new AntallTimer(antallTimer));
-        return this;
-    }
-
-    public AktivitetsAvtaleBuilder medAntallTimerFulltid(BigDecimal antallTimerFulltid) {
-        this.aktivitetsAvtaleEntitet.setAntallTimerFulltid(antallTimerFulltid == null ? null : new AntallTimer(antallTimerFulltid));
         return this;
     }
 

@@ -23,20 +23,21 @@ public class ArbeidsforholdHandlingType extends Kodeliste {
     public static final ArbeidsforholdHandlingType IKKE_BRUK = new ArbeidsforholdHandlingType("IKKE_BRUK"); //$NON-NLS-1$
     public static final ArbeidsforholdHandlingType SLÅTT_SAMMEN_MED_ANNET = new ArbeidsforholdHandlingType("SLÅTT_SAMMEN_MED_ANNET"); //$NON-NLS-1$
     public static final ArbeidsforholdHandlingType LAGT_TIL_AV_SAKSBEHANDLER = new ArbeidsforholdHandlingType("LAGT_TIL_AV_SAKSBEHANDLER"); //$NON-NLS-1$
-    
+    public static final ArbeidsforholdHandlingType BASERT_PÅ_INNTEKTSMELDING = new ArbeidsforholdHandlingType("BASERT_PÅ_INNTEKTSMELDING"); //$NON-NLS-1$
+
     /**
      * @deprecated
      * TODO: Refaktorer til å kun bruke variabelen i ArbeidsforholdOverstyring (PFP-8119)
      */
     public static final ArbeidsforholdHandlingType BRUK_MED_OVERSTYRT_PERIODE = new ArbeidsforholdHandlingType("BRUK_MED_OVERSTYRT_PERIODE"); //$NON-NLS-1$
 
-    
+
     /**
      * @deprecated
      * TODO: Refaktorer til variable i ArbeidsforholdOverstyring (PFP-8118)
      */
     public static final ArbeidsforholdHandlingType INNTEKT_IKKE_MED_I_BG = new ArbeidsforholdHandlingType("INNTEKT_IKKE_MED_I_BG"); //$NON-NLS-1$
-    
+
     public ArbeidsforholdHandlingType() {
     }
 
