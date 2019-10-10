@@ -22,6 +22,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
@@ -52,6 +53,10 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
     @OneToMany(mappedBy = "aktørYtelse")
     @ChangeTracked
     private Set<YtelseEntitet> ytelser = new LinkedHashSet<>();
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     public AktørYtelseEntitet() {
         // hibernate

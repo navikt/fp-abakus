@@ -21,8 +21,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
-import no.nav.foreldrepenger.abakus.typer.Beløp;
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
@@ -30,6 +30,7 @@ import org.hibernate.annotations.JoinFormula;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.Arbeidskategori;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
 @Entity(name = "YtelseGrunnlagEntitet")
@@ -77,6 +78,10 @@ public class YtelseGrunnlagEntitet extends BaseEntitet implements YtelseGrunnlag
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "dagsats")))
     @ChangeTracked
     private Beløp vedtaksDagsats;
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     public YtelseGrunnlagEntitet() {
         // hibernate
