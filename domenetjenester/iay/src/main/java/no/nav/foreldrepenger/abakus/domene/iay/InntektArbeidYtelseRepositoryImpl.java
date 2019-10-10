@@ -205,6 +205,11 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
     @Override
     public void lagre(KoblingReferanse koblingReferanse, InntektArbeidYtelseAggregatBuilder builder) {
         InntektArbeidYtelseGrunnlagBuilder opptjeningAggregatBuilder = getGrunnlagBuilder(koblingReferanse, builder);
+        final ArbeidsforholdInformasjon informasjon = opptjeningAggregatBuilder.getInformasjon();
+
+        // lagre reserverte interne referanser opprettet tidligere
+        builder.getNyeInternArbeidsforholdReferanser()
+            .forEach(aref -> informasjon.opprettNyReferanse(aref.getArbeidsgiver(), aref.getInternReferanse(), aref.getEksternReferanse()));
         lagreOgFlush(koblingReferanse, opptjeningAggregatBuilder.build());
     }
 
