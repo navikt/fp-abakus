@@ -28,12 +28,11 @@ import no.nav.foreldrepenger.abakus.jetty.db.EnvironmentClass;
 
 public class JettyDevServer extends JettyServer {
     private static final String VTP_ARGUMENT = "--vtp";
-    private static boolean vtp;
-
     private static final String TRUSTSTORE_PASSW_PROP = "javax.net.ssl.trustStorePassword";
     private static final String TRUSTSTORE_PATH_PROP = "javax.net.ssl.trustStore";
     private static final String KEYSTORE_PASSW_PROP = "no.nav.modig.security.appcert.password";
     private static final String KEYSTORE_PATH_PROP = "no.nav.modig.security.appcert.keystore";
+    private static boolean vtp;
 
     public JettyDevServer() {
         super(new JettyDevKonfigurasjon());
@@ -43,11 +42,41 @@ public class JettyDevServer extends JettyServer {
         for (String arg : args) {
             if (arg.equals(VTP_ARGUMENT)) {
                 vtp = true;
+                break;
             }
         }
 
         JettyDevServer devServer = new JettyDevServer();
         devServer.bootStrap();
+    }
+
+    private static String initCryptoStoreConfig(String storeName, String storeProperty, String storePasswordProperty, String defaultPassword) {
+        String defaultLocation = getProperty("user.home", ".") + "/.modig/" + storeName + ".jks";
+
+        String storePath = getProperty(storeProperty, defaultLocation);
+        File storeFile = new File(storePath);
+        if (!storeFile.exists()) {
+            throw new IllegalStateException("Finner ikke " + storeName + " i " + storePath
+                + "\n\tKonfigurer enten som System property '" + storeProperty + "' eller environment variabel '"
+                + storeProperty.toUpperCase().replace('.', '_') + "'");
+        }
+        String password = getProperty(storePasswordProperty, defaultPassword);
+        if (password == null) {
+            throw new IllegalStateException("Passord for å aksessere store " + storeName + " i " + storePath + " er null");
+        }
+
+        System.setProperty(storeProperty, storeFile.getAbsolutePath());
+        System.setProperty(storePasswordProperty, password);
+        return storePath;
+    }
+
+    private static String getProperty(String key, String defaultValue) {
+        String val = System.getProperty(key, defaultValue);
+        if (val == null) {
+            val = System.getenv(key.toUpperCase().replace('.', '_'));
+            val = val == null ? defaultValue : val;
+        }
+        return val;
     }
 
     @Override
@@ -105,46 +134,16 @@ public class JettyDevServer extends JettyServer {
         initCryptoStoreConfig("truststore", TRUSTSTORE_PATH_PROP, TRUSTSTORE_PASSW_PROP, "changeit");
 
         // keystore genererer sertifikat og TLS for innkommende kall. Bruker standard prop hvis definert, ellers faller tilbake på modig props
-        var keystoreProp = System.getProperty("javax.net.ssl.keyStore")!=null? "javax.net.ssl.keyStore" : KEYSTORE_PATH_PROP;
-        var keystorePasswProp = System.getProperty("javax.net.ssl.keyStorePassword")!=null? "javax.net.ssl.keyStorePassword" : KEYSTORE_PASSW_PROP;
-        initCryptoStoreConfig("keystore", keystoreProp, keystorePasswProp, "devillokeystore1234");
-    }
-
-    private static String initCryptoStoreConfig(String storeName, String storeProperty, String storePasswordProperty, String defaultPassword) {
-        String defaultLocation = getProperty("user.home", ".") + "/.modig/" + storeName + ".jks";
-
-        String storePath = getProperty(storeProperty, defaultLocation);
-        File storeFile = new File(storePath);
-        if (!storeFile.exists()) {
-            throw new IllegalStateException("Finner ikke " + storeName + " i " + storePath
-                + "\n\tKonfigurer enten som System property \'" + storeProperty + "\' eller environment variabel \'"
-                + storeProperty.toUpperCase().replace('.', '_') + "\'");
-        }
-        String password = getProperty(storePasswordProperty, defaultPassword);
-        if(password==null) {
-            throw new IllegalStateException("Passord for å aksessere store "+storeName + " i " + storePath + " er null");
-        }
-
-        System.setProperty(storeProperty, storeFile.getAbsolutePath());
-        System.setProperty(storePasswordProperty, password);
-        return storePath;
-    }
-
-    private static String getProperty(String key, String defaultValue) {
-        String val = System.getProperty(key, defaultValue);
-        if (val == null) {
-            val = System.getenv(key.toUpperCase().replace('.', '_'));
-            val = val == null ? defaultValue : val;
-        }
-        return val;
+        var keystoreProp = System.getProperty("javax.net.ssl.keyStore") != null ? "javax.net.ssl.keyStore" : KEYSTORE_PATH_PROP;
+        var keystorePasswProp = System.getProperty("javax.net.ssl.keyStorePassword") != null ? "javax.net.ssl.keyStorePassword" : KEYSTORE_PASSW_PROP;
+        initCryptoStoreConfig("keystore", keystoreProp, keystorePasswProp, "changeit");
     }
 
     @SuppressWarnings("resource")
     @Override
     protected List<Connector> createConnectors(AppKonfigurasjon appKonfigurasjon, Server server) {
         List<Connector> connectors = super.createConnectors(appKonfigurasjon, server);
-
-        SslContextFactory sslContextFactory = new SslContextFactory();
+        SslContextFactory sslContextFactory = new SslContextFactory.Server();
         sslContextFactory.setCertAlias("localhost-ssl");
         sslContextFactory.setKeyStorePath(System.getProperty("no.nav.modig.security.appcert.keystore"));
         sslContextFactory.setKeyStorePassword(System.getProperty("no.nav.modig.security.appcert.password"));

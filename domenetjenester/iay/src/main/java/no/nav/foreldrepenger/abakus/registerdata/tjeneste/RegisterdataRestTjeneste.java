@@ -35,6 +35,7 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.FnrPersonident;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.PersonIdent;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.UuidDto;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.SjekkStatusRequest;
 import no.nav.vedtak.felles.jpa.Transaction;
@@ -113,11 +114,12 @@ public class RegisterdataRestTjeneste {
     @JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE)
     public static class InnhentRegisterdataAbacDto extends InnhentRegisterdataRequest implements AbacDto {
 
-        public InnhentRegisterdataAbacDto(@Valid @NotNull String saksnummer,
-                                          @Valid @NotNull UuidDto referanse,
-                                          @Valid @NotNull no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.YtelseType ytelseType,
-                                          @NotNull @Valid Periode opplysningsperiode,
-                                          @NotNull @Valid PersonIdent aktør) {
+        @JsonCreator
+        public InnhentRegisterdataAbacDto(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
+                                          @JsonProperty(value = "referanse", required = true) @Valid @NotNull UuidDto referanse,
+                                          @JsonProperty(value = "ytelseType", required = true) @Valid @NotNull YtelseType ytelseType,
+                                          @JsonProperty(value = "opplysningsperiode", required = true) @NotNull @Valid Periode opplysningsperiode,
+                                          @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør) {
             super(saksnummer, referanse, ytelseType, opplysningsperiode, aktør);
         }
 
