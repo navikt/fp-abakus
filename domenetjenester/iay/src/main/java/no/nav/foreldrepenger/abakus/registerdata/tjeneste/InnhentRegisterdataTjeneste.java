@@ -2,9 +2,7 @@ package no.nav.foreldrepenger.abakus.registerdata.tjeneste;
 
 import static no.nav.foreldrepenger.abakus.registerdata.callback.CallbackTask.EKSISTERENDE_GRUNNLAG_REF;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -40,7 +38,7 @@ import no.nav.vedtak.felles.prosesstask.api.TaskStatus;
 @ApplicationScoped
 public class InnhentRegisterdataTjeneste {
 
-    private Map<YtelseType, IAYRegisterInnhentingTjeneste> registerInnhentingTjeneste;
+    private Instance<IAYRegisterInnhentingTjeneste> innhentTjenester;
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private KoblingTjeneste koblingTjeneste;
     private ProsessTaskRepository prosessTaskRepository;
@@ -56,27 +54,19 @@ public class InnhentRegisterdataTjeneste {
                                        KoblingTjeneste koblingTjeneste,
                                        ProsessTaskRepository prosessTaskRepository,
                                        KodeverkRepository kodeverkRepository) {
-        this.registerInnhentingTjeneste = new HashMap<>();
-        innhentingTjeneste.forEach(innhenter -> populerMap(registerInnhentingTjeneste, innhenter));
+        this.innhentTjenester = innhentingTjeneste;
         this.iayTjeneste = iayTjeneste;
         this.koblingTjeneste = koblingTjeneste;
         this.prosessTaskRepository = prosessTaskRepository;
         this.kodeverkRepository = kodeverkRepository;
     }
 
-    private void populerMap(Map<YtelseType, IAYRegisterInnhentingTjeneste> map, IAYRegisterInnhentingTjeneste innhenter) {
-        YtelseType type = YtelseType.UDEFINERT;
-        if (innhenter.getClass().isAnnotationPresent(YtelseTypeRef.class)) {
-            type = kodeverkRepository.finn(YtelseType.class, innhenter.getClass().getAnnotation(YtelseTypeRef.class).value());
-        }
-        map.put(type, innhenter);
-    }
-
     public Optional<GrunnlagReferanse> innhent(InnhentRegisterdataRequest dto) {
         Kobling kobling = oppdaterKobling(dto);
 
         // Trigg innhenting
-        InntektArbeidYtelseAggregatBuilder builder = finnInnhenter(mapTilYtelseType(dto)).innhentRegisterdata(kobling);
+        final var innhentingTjeneste = finnInnhenter(mapTilYtelseType(dto));
+        InntektArbeidYtelseAggregatBuilder builder = innhentingTjeneste.innhentRegisterdata(kobling);
         iayTjeneste.lagre(kobling.getKoblingReferanse(), builder);
 
         Optional<InntektArbeidYtelseGrunnlag> grunnlag = iayTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse());
@@ -84,11 +74,11 @@ public class InnhentRegisterdataTjeneste {
     }
 
     private IAYRegisterInnhentingTjeneste finnInnhenter(YtelseType ytelseType) {
-        IAYRegisterInnhentingTjeneste innhenter = registerInnhentingTjeneste.get(ytelseType);
-        if (innhenter == null) {
+        final var tjenester = innhentTjenester.select(new YtelseTypeRef.FagsakYtelseTypeRefLiteral(ytelseType.getKode()));
+        if (tjenester.isAmbiguous() || tjenester.isUnsatisfied()) {
             throw new IllegalArgumentException("Finner ikke IAYRegisterInnhenter. Støtter ikke ytelsetype " + ytelseType);
         }
-        return innhenter;
+        return tjenester.get();
     }
 
     private Kobling oppdaterKobling(InnhentRegisterdataRequest dto) {
