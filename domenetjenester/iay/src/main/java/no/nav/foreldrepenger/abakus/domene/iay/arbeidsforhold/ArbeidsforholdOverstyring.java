@@ -21,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinFormula;
@@ -67,7 +68,7 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
 
     /**
      * Kjært navn for arbeidsgiver angitt av Saksbehandler (normalt kun ekstra arbeidsforhold lagt til). Ingen garanti for at dette matcher noe offisielt registrert navn.
-     * 
+     *
      * Settes normalt kun for arbeidsforhold lagt til ekstra. Ellers hent fra
      * {@link no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet#getAktivitetsAvtalerForArbeid()}.
      */
@@ -75,8 +76,8 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
     private String arbeidsgiverNavn;
 
     /**
-     * Stillingsprosent angitt av saksbehandler. 
-     * 
+     * Stillingsprosent angitt av saksbehandler.
+     *
      * Settes normalt kun for arbeidsforhold lagt til ekstra. Ellers hent fra
      * {@link no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet#getAktivitetsAvtalerForArbeid()}.
      */
@@ -97,6 +98,10 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
      */
     @Embedded
     private BekreftetPermisjon bekreftetPermisjon = new BekreftetPermisjon();
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     ArbeidsforholdOverstyring() {
     }
@@ -167,26 +172,26 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
     void setNyArbeidsforholdRef(InternArbeidsforholdRef nyArbeidsforholdRef) {
         this.nyArbeidsforholdRef = nyArbeidsforholdRef;
     }
-    
+
     public String getArbeidsgiverNavn() {
         return arbeidsgiverNavn;
     }
-    
+
     public Stillingsprosent getStillingsprosent() {
         return stillingsprosent;
     }
-    
+
     public Optional<BekreftetPermisjon> getBekreftetPermisjon() {
         if (bekreftetPermisjon.getStatus().equals(BekreftetPermisjonStatus.UDEFINERT)){
             return Optional.empty();
         }
         return Optional.of(bekreftetPermisjon);
     }
-    
+
     void setBekreftetPermisjon(BekreftetPermisjon bekreftetPermisjon) {
         this.bekreftetPermisjon = bekreftetPermisjon;
     }
-    
+
     public boolean erOverstyrt(){
         return !Objects.equals(ArbeidsforholdHandlingType.BRUK, handling)
             || ( Objects.equals(ArbeidsforholdHandlingType.BRUK, handling) &&
@@ -195,16 +200,16 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
 
     @SuppressWarnings("deprecation")
     public boolean kreverIkkeInntektsmelding() {
-        return Set.of(ArbeidsforholdHandlingType.LAGT_TIL_AV_SAKSBEHANDLER, 
+        return Set.of(ArbeidsforholdHandlingType.LAGT_TIL_AV_SAKSBEHANDLER,
             ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING,
-            ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE, 
+            ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE,
             ArbeidsforholdHandlingType.INNTEKT_IKKE_MED_I_BG).contains(handling);
     }
-    
+
     void setArbeidsgiverNavn(String arbeidsgiverNavn) {
         this.arbeidsgiverNavn = arbeidsgiverNavn;
     }
-    
+
     void setStillingsprosent(Stillingsprosent stillingsprosent) {
         this.stillingsprosent = stillingsprosent;
     }
