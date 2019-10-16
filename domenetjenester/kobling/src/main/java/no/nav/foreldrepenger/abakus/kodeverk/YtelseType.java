@@ -10,8 +10,8 @@ public class YtelseType extends Kodeliste {
     public static final String DISCRIMINATOR = "FAGSAK_YTELSE_TYPE"; //$NON-NLS-1$
     public static final YtelseType ENGANGSSTØNAD = new YtelseType("ES"); //$NON-NLS-1$
     public static final YtelseType FORELDREPENGER = new YtelseType("FP"); //$NON-NLS-1$
-
     public static final YtelseType SVANGERSKAPSPENGER = new YtelseType("SVP"); //$NON-NLS-1$
+
     public static final YtelseType UDEFINERT = new YtelseType("-"); //$NON-NLS-1$
     public static final YtelseType ARBEIDSAVKLARINGSPENGER = new YtelseType("AAP");
     public static final YtelseType DAGPENGER = new YtelseType("DAG");

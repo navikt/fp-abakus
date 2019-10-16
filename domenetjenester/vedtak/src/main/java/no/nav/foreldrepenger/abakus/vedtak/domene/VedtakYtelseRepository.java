@@ -55,6 +55,8 @@ public class VedtakYtelseRepository {
             ytelseEntitet.setAktiv(false);
             entityManager.persist(ytelseEntitet);
             entityManager.flush();
+        } else if(builder.erOppdatering()) {
+            ((VedtakYtelseEntitet)ytelse).setAktiv(false);
         }
         if (!vedtakYtelseEntitet.map(VedtakYtelseEntitet::getAktiv).orElse(false)) {
             entityManager.persist(ytelse);

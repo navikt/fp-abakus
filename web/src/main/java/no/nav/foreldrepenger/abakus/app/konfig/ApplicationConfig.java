@@ -15,6 +15,8 @@ import no.nav.foreldrepenger.abakus.app.exceptions.JsonParseExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.jackson.JacksonJsonConfig;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.ArbeidsforholdRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.GrunnlagRestTjeneste;
+import no.nav.foreldrepenger.abakus.iay.tjeneste.InntektsmeldingerRestTjeneste;
+import no.nav.foreldrepenger.abakus.iay.tjeneste.OppgittOpptjeningRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.migrering.MigreringRestTjeneste;
 import no.nav.foreldrepenger.abakus.kodeverk.tjeneste.KodeverkRestTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataRestTjeneste;
@@ -57,6 +59,8 @@ public class ApplicationConfig extends Application {
 
         classes.add(ProsessTaskRestTjeneste.class);
         classes.add(RegisterdataRestTjeneste.class);
+        classes.add(InntektsmeldingerRestTjeneste.class);
+        classes.add(OppgittOpptjeningRestTjeneste.class);
         classes.add(MigreringRestTjeneste.class);
         classes.add(KodeverkRestTjeneste.class);
         classes.add(GrunnlagRestTjeneste.class);

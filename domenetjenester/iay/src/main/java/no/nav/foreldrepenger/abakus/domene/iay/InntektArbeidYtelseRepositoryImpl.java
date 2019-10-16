@@ -135,7 +135,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
             query.setParameter("aktivt", kunAktive);
         }
 
-        var grunnlag = query.getResultStream().map(g -> (InntektArbeidYtelseGrunnlag) g).collect(Collectors.toList());
+        var grunnlag = query.getResultList().stream().map(g -> (InntektArbeidYtelseGrunnlag) g).collect(Collectors.toList());
         return grunnlag;
     }
 
@@ -155,6 +155,19 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
                                                                 LocalDateTime angittOpprettetTidspunkt, VersjonType versjonType) {
         Optional<InntektArbeidYtelseGrunnlag> grunnlag = hentInntektArbeidYtelseGrunnlagForBehandling(koblingReferanse);
         return opprettBuilderFor(versjonType, angittAggregatReferanse, angittOpprettetTidspunkt, grunnlag);
+    }
+
+
+    /**
+     * Kopier grunnlag fra en behandling til en annen.
+     */
+    @Override
+    public void kopierGrunnlagFraEksisterendeBehandling(KoblingReferanse fraKobling, KoblingReferanse tilKobling) {
+        Optional<InntektArbeidYtelseGrunnlag> origAggregat = hentInntektArbeidYtelseGrunnlagForBehandling(fraKobling);
+        origAggregat.ifPresent(orig -> {
+            InntektArbeidYtelseGrunnlagEntitet entitet = new InntektArbeidYtelseGrunnlagEntitet(orig);
+            lagreOgFlush(tilKobling, entitet);
+        });
     }
 
     @Override
@@ -295,9 +308,9 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
             entityManager.persist(aggregat);
             entityManager.flush();
 
-            lagreGrunnlag(nyttGrunnlag, koblingReferanse, false);
+            lagreGrunnlag(nyttGrunnlag, koblingReferanse);
         } else {
-            lagreGrunnlag(nyttGrunnlag, koblingReferanse, false);
+            lagreGrunnlag(nyttGrunnlag, koblingReferanse);
         }
         entityManager.flush();
     }
@@ -315,7 +328,22 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
                 entityManager.flush();
             }
         }
-        lagreGrunnlag(entitet, koblingReferanse, true);
+        lagreGrunnlag(entitet, koblingReferanse);
+        entityManager.flush();
+    }
+
+    @Override
+    public void lagre(KoblingReferanse koblingReferanse, InntektArbeidYtelseGrunnlagBuilder builder) {
+        InntektArbeidYtelseGrunnlagEntitet entitet = (InntektArbeidYtelseGrunnlagEntitet) builder.build();
+
+        Optional<InntektArbeidYtelseGrunnlagEntitet> tidligereAggregat = getAktivtInntektArbeidGrunnlag(koblingReferanse);
+        if (tidligereAggregat.isPresent()) {
+            InntektArbeidYtelseGrunnlagEntitet aggregat = tidligereAggregat.get();
+            aggregat.setAktivt(false);
+            entityManager.persist(aggregat);
+            entityManager.flush();
+        }
+        lagreGrunnlag(entitet, koblingReferanse);
         entityManager.flush();
     }
 
@@ -491,7 +519,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
             .executeUpdate();
     }
 
-    private void lagreGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, KoblingReferanse koblingReferanse, boolean lagreAlleInntektsmeldinger) {
+    private void lagreGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, KoblingReferanse koblingReferanse) {
         InntektArbeidYtelseGrunnlagEntitet entitet = (InntektArbeidYtelseGrunnlagEntitet) nyttGrunnlag;
         Long koblingId = hentKoblingIdFor(koblingReferanse);
         entitet.setKobling(koblingId);
@@ -509,7 +537,7 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         final Optional<InntektArbeidYtelseAggregat> saksbehandletFørVersjon = nyttGrunnlag.getSaksbehandletVersjon();
         saksbehandletFørVersjon.ifPresent(this::lagreInntektArbeid);
 
-        nyttGrunnlag.getInntektsmeldinger().ifPresent(ims -> this.lagreInntektsMeldinger(ims, lagreAlleInntektsmeldinger));
+        nyttGrunnlag.getInntektsmeldinger().ifPresent(ims -> this.lagreInntektsMeldinger(ims));
 
         entitet.getArbeidsforholdInformasjon().ifPresent(this::lagreInformasjon);
         entityManager.persist(nyttGrunnlag);
@@ -550,10 +578,9 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
         }
     }
 
-    private void lagreInntektsMeldinger(InntektsmeldingAggregat inntektsmeldingAggregat, boolean lagreAlleInntektsmeldinger) {
+    private void lagreInntektsMeldinger(InntektsmeldingAggregat inntektsmeldingAggregat) {
         entityManager.persist(inntektsmeldingAggregat);
-        // TODO (MariusGlittum): Trenger vi ta hensyn til om inntektsmelding skal brukes her? Kan vi ikke uansett lagre alle?
-        var inntektsmeldinger = lagreAlleInntektsmeldinger ? inntektsmeldingAggregat.getAlleInntektsmeldinger() : inntektsmeldingAggregat.getInntektsmeldinger();
+        var inntektsmeldinger = inntektsmeldingAggregat.getAlleInntektsmeldinger();
         for (Inntektsmelding entitet : inntektsmeldinger) {
             entityManager.persist(entitet);
             for (Gradering gradering : entitet.getGraderinger()) {
@@ -690,14 +717,14 @@ public class InntektArbeidYtelseRepositoryImpl implements InntektArbeidYtelseRep
             "WHERE gr.grunnlagReferanse = :ref ", InntektArbeidYtelseGrunnlagEntitet.class);
         query.setParameter("ref", grunnlagReferanse);
         query.setHint(QueryHints.HINT_CACHE_MODE, "IGNORE");
-        Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlagOpt = query.getResultStream().findFirst();
+        Optional<InntektArbeidYtelseGrunnlagEntitet> grunnlagOpt = query.getResultList().stream().findFirst();
         return grunnlagOpt;
     }
 
     @Override
     public KoblingReferanse hentKoblingReferanseFor(GrunnlagReferanse grunnlagReferanse) {
         final TypedQuery<KoblingReferanse> query = entityManager
-            .createQuery("SELECT k.koblingReferanse FROM Kobling k JOIN InntektArbeidGrunnlag gr WHERE gr.grunnlagReferanse=:ref", KoblingReferanse.class);
+            .createQuery("SELECT k.koblingReferanse FROM Kobling k JOIN InntektArbeidGrunnlag gr ON gr.koblingId = k.id WHERE gr.grunnlagReferanse=:ref", KoblingReferanse.class);
         query.setParameter("ref", grunnlagReferanse);
         return query.getSingleResult();
     }

@@ -4,6 +4,7 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -116,7 +117,7 @@ public class RegisterdataRestTjeneste {
 
         @JsonCreator
         public InnhentRegisterdataAbacDto(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
-                                          @JsonProperty(value = "referanse", required = true) @Valid @NotNull UuidDto referanse,
+                                          @JsonProperty(value = "referanse", required = true) @Valid @NotNull UUID referanse,
                                           @JsonProperty(value = "ytelseType", required = true) @Valid @NotNull YtelseType ytelseType,
                                           @JsonProperty(value = "opplysningsperiode", required = true) @NotNull @Valid Periode opplysningsperiode,
                                           @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør) {

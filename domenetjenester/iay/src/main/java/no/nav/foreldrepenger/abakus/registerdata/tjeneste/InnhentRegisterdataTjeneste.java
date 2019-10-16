@@ -2,8 +2,10 @@ package no.nav.foreldrepenger.abakus.registerdata.tjeneste;
 
 import static no.nav.foreldrepenger.abakus.registerdata.callback.CallbackTask.EKSISTERENDE_GRUNNLAG_REF;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
@@ -27,6 +29,7 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Aktør;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.RegisterdataType;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
@@ -61,12 +64,42 @@ public class InnhentRegisterdataTjeneste {
         this.kodeverkRepository = kodeverkRepository;
     }
 
+    public static Set<RegisterdataElement> hentUtInformasjonsElementer(InnhentRegisterdataRequest dto) {
+        final var registerdataElementer = new HashSet<RegisterdataElement>();
+        final var elementer = dto.getElementer();
+
+        if (elementer == null || elementer.isEmpty()) {
+            return Set.of();
+        }
+
+        if (elementer.contains(RegisterdataType.ARBEIDSFORHOLD)) {
+            registerdataElementer.add(RegisterdataElement.ARBEIDSFORHOLD);
+        }
+        if (elementer.contains(RegisterdataType.YTELSE)) {
+            registerdataElementer.add(RegisterdataElement.YTELSE);
+        }
+        if (elementer.contains(RegisterdataType.INNTEKT_PENSJONSGIVENDE)) {
+            registerdataElementer.add(RegisterdataElement.INNTEKT_PENSJONSGIVENDE);
+        }
+        if (elementer.contains(RegisterdataType.INNTEKT_BEREGNINGSGRUNNLAG)) {
+            registerdataElementer.add(RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG);
+        }
+        if (elementer.contains(RegisterdataType.INNTEKT_SAMMENLIGNINGSGRUNNLAG)) {
+            registerdataElementer.add(RegisterdataElement.INNTEKT_SAMMENLIGNINGSGRUNNLAG);
+        }
+        if (elementer.contains(RegisterdataType.LIGNET_NÆRING)) {
+            registerdataElementer.add(RegisterdataElement.LIGNET_NÆRING);
+        }
+        return registerdataElementer;
+    }
+
     public Optional<GrunnlagReferanse> innhent(InnhentRegisterdataRequest dto) {
         Kobling kobling = oppdaterKobling(dto);
 
         // Trigg innhenting
         final var innhentingTjeneste = finnInnhenter(mapTilYtelseType(dto));
-        InntektArbeidYtelseAggregatBuilder builder = innhentingTjeneste.innhentRegisterdata(kobling);
+        var informasjonsElementer = hentUtInformasjonsElementer(dto);
+        InntektArbeidYtelseAggregatBuilder builder = innhentingTjeneste.innhentRegisterdata(kobling, informasjonsElementer);
         iayTjeneste.lagre(kobling.getKoblingReferanse(), builder);
 
         Optional<InntektArbeidYtelseGrunnlag> grunnlag = iayTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse());
@@ -74,7 +107,7 @@ public class InnhentRegisterdataTjeneste {
     }
 
     private IAYRegisterInnhentingTjeneste finnInnhenter(YtelseType ytelseType) {
-        final var tjenester = innhentTjenester.select(new YtelseTypeRef.FagsakYtelseTypeRefLiteral(ytelseType.getKode()));
+        final var tjenester = innhentTjenester.select(new YtelseTypeRef.YtelseTypeRefLiteral(ytelseType.getKode()));
         if (tjenester.isAmbiguous() || tjenester.isUnsatisfied()) {
             throw new IllegalArgumentException("Finner ikke IAYRegisterInnhenter. Støtter ikke ytelsetype " + ytelseType);
         }

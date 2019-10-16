@@ -1,5 +1,7 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
+import java.util.Set;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -13,6 +15,7 @@ import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
 import no.nav.foreldrepenger.abakus.kobling.repository.LåsRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataElement;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 
@@ -40,7 +43,7 @@ public class RegisterdataInnhentingTask extends KoblingTask {
     }
 
     private IAYRegisterInnhentingTjeneste finnInnhenter(YtelseType ytelseType) {
-        final var tjenester = innhentTjenester.select(new YtelseTypeRef.FagsakYtelseTypeRefLiteral(ytelseType.getKode()));
+        final var tjenester = innhentTjenester.select(new YtelseTypeRef.YtelseTypeRefLiteral(ytelseType.getKode()));
         if (tjenester.isAmbiguous() || tjenester.isUnsatisfied()) {
             throw new IllegalArgumentException("Finner ikke IAYRegisterInnhenter. Støtter ikke ytelsetype " + ytelseType);
         }
@@ -50,8 +53,15 @@ public class RegisterdataInnhentingTask extends KoblingTask {
     @Override
     protected void prosesser(ProsessTaskData prosessTaskData) {
         Kobling kobling = koblingTjeneste.hent(prosessTaskData.getKoblingId());
+        prosessTaskData.getPayloadAsString();
 
-        InntektArbeidYtelseAggregatBuilder builder = finnInnhenter(kobling.getYtelseType()).innhentRegisterdata(kobling);
+        var informasjonsElementer = Set.of(RegisterdataElement.ARBEIDSFORHOLD,
+            RegisterdataElement.YTELSE,
+            RegisterdataElement.INNTEKT_PENSJONSGIVENDE,
+            RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG,
+            RegisterdataElement.INNTEKT_SAMMENLIGNINGSGRUNNLAG);
+
+        InntektArbeidYtelseAggregatBuilder builder = finnInnhenter(kobling.getYtelseType()).innhentRegisterdata(kobling, informasjonsElementer);
         iayTjeneste.lagre(kobling.getKoblingReferanse(), builder);
     }
 }

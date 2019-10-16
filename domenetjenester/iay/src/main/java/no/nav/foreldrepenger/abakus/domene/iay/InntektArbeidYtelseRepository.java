@@ -36,6 +36,8 @@ public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRe
     @Deprecated(forRemoval = true)
     void lagreMigrertGrunnlag(InntektArbeidYtelseGrunnlag nyttGrunnlag, KoblingReferanse koblingReferanse);
 
+    void lagre(KoblingReferanse koblingReferanse, InntektArbeidYtelseGrunnlagBuilder builder);
+
     Optional<ArbeidsforholdInformasjon> hentArbeidsforholdInformasjonForBehandling(KoblingReferanse koblingReferanse);
 
     Optional<InntektArbeidYtelseGrunnlag> hentInntektArbeidYtelseForReferanse(GrunnlagReferanse grunnlagReferanse);
@@ -52,6 +54,8 @@ public interface InntektArbeidYtelseRepository extends ByggInntektArbeidYtelseRe
      * NB! bør benytte via InntektArbeidYtelseTjeneste og ikke direkte
      */
     InntektArbeidYtelseAggregatBuilder opprettBuilderFor(KoblingReferanse koblingReferanse, UUID angittAggregatReferanse, LocalDateTime angittOpprettetTidspunkt, VersjonType versjonType);
+
+    void kopierGrunnlagFraEksisterendeBehandling(KoblingReferanse fraKobling, KoblingReferanse tilKobling);
 
     Statistikk hentStats();
 

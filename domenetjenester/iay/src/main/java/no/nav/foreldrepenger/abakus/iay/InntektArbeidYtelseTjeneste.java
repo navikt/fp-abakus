@@ -9,6 +9,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
@@ -89,6 +90,8 @@ public interface InntektArbeidYtelseTjeneste {
      */
     void lagre(KoblingReferanse koblingReferanse, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder);
 
+    void lagre(KoblingReferanse koblingReferanse, InntektArbeidYtelseGrunnlagBuilder builder);
+
     KoblingReferanse hentKoblingReferanse(GrunnlagReferanse grunnlagReferanse);
 
     ArbeidsforholdInformasjon hentArbeidsforholdInformasjonForKobling(KoblingReferanse koblingReferanse);
@@ -107,4 +110,6 @@ public interface InntektArbeidYtelseTjeneste {
      */
     @Deprecated(forRemoval = true)
     void slettAltForSak(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType);
+
+    void kopierGrunnlagFraKoblingTilKobling(KoblingReferanse fraKobling, KoblingReferanse tilKobling);
 }

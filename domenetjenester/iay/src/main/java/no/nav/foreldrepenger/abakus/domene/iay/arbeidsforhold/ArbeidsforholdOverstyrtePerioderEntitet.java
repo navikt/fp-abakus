@@ -48,6 +48,10 @@ public class ArbeidsforholdOverstyrtePerioderEntitet extends BaseEntitet impleme
 
     }
 
+    ArbeidsforholdOverstyrtePerioderEntitet(ArbeidsforholdOverstyrtePerioderEntitet arbeidsforholdOverstyrtePerioderEntitet) {
+        this.periode = arbeidsforholdOverstyrtePerioderEntitet.getOverstyrtePeriode();
+    }
+
     void setPeriode(DatoIntervallEntitet periode) {
         this.periode = periode;
     }

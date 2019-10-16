@@ -53,6 +53,7 @@ public class YtelseRegisterInnhenting {
 
         if (medGrunnlag) {
             List<MeldekortUtbetalingsgrunnlagSak> arena = innhentingSamletTjeneste.hentYtelserTjenester(aktørId, opplysningsPeriode);
+            aktørYtelseBuilder.tilbakestillYtelserFraKildeBeholdAvsluttede(Fagsystem.ARENA);
             for (MeldekortUtbetalingsgrunnlagSak sak : arena) {
                 oversettMeldekortUtbetalingsgrunnlagTilYtelse(aktørYtelseBuilder, sak);
             }

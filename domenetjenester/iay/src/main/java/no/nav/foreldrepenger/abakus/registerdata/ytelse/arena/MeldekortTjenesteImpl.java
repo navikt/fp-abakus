@@ -1,6 +1,14 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena;
 
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTema;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
@@ -10,19 +18,17 @@ import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.binding.FinnMeldekortUtbetalingsgrunnlagListeAktoerIkkeFunnet;
 import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.binding.FinnMeldekortUtbetalingsgrunnlagListeSikkerhetsbegrensning;
 import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.binding.FinnMeldekortUtbetalingsgrunnlagListeUgyldigInput;
-import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.informasjon.*;
+import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.informasjon.AktoerId;
+import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.informasjon.Meldekort;
+import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.informasjon.ObjectFactory;
+import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.informasjon.Periode;
+import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.informasjon.Sak;
+import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.informasjon.Tema;
+import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.informasjon.Vedtak;
 import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.meldinger.FinnMeldekortUtbetalingsgrunnlagListeRequest;
 import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.meldinger.FinnMeldekortUtbetalingsgrunnlagListeResponse;
 import no.nav.vedtak.felles.integrasjon.felles.ws.DateUtil;
 import no.nav.vedtak.felles.integrasjon.meldekortutbetalingsgrunnlag.MeldekortUtbetalingsgrunnlagConsumer;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @ApplicationScoped
 public class MeldekortTjenesteImpl implements MeldekortTjeneste {
@@ -51,9 +57,9 @@ public class MeldekortTjenesteImpl implements MeldekortTjeneste {
     }
 
     private YtelseType oversettType(Sak sak) {
-        if (RelatertYtelseTema.AAP.getKode().equals(sak.getTema().getValue())) {
+        if (YtelseType.ARBEIDSAVKLARINGSPENGER.getKode().equals(sak.getTema().getValue())) {
             return YtelseType.ARBEIDSAVKLARINGSPENGER;
-        } else if (RelatertYtelseTema.DAG.getKode().equals(sak.getTema().getValue())) {
+        } else if (YtelseType.DAGPENGER.getKode().equals(sak.getTema().getValue())) {
             return YtelseType.DAGPENGER;
         } else {
             return YtelseType.UDEFINERT;
@@ -151,10 +157,10 @@ public class MeldekortTjenesteImpl implements MeldekortTjeneste {
             request.setPeriode(periode);
 
             Tema aapTema = objectFactory.createTema();
-            aapTema.setValue(RelatertYtelseTema.AAP.getKode());
+            aapTema.setValue(YtelseType.ARBEIDSAVKLARINGSPENGER.getKode());
             request.getTemaListe().add(aapTema);
             Tema dagTema = objectFactory.createTema();
-            dagTema.setValue(RelatertYtelseTema.DAG.getKode());
+            dagTema.setValue(YtelseType.DAGPENGER.getKode());
             request.getTemaListe().add(dagTema);
 
             FinnMeldekortUtbetalingsgrunnlagListeResponse response = meldekortUtbetalingsgrunnlagConsumer.finnMeldekortUtbetalingsgrunnlagListe(request);

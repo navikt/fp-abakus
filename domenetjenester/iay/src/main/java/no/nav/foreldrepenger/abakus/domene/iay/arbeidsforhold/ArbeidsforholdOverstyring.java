@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -110,7 +111,16 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
         this.arbeidsgiver = kopierFra.getArbeidsgiver();
         this.arbeidsforholdRef = kopierFra.getArbeidsforholdRef();
         this.handling = kopierFra.getHandling();
+        this.stillingsprosent = kopierFra.getStillingsprosent();
         this.nyArbeidsforholdRef = kopierFra.getNyArbeidsforholdRef();
+        this.arbeidsgiverNavn = kopierFra.getArbeidsgiverNavn();
+        this.begrunnelse = kopierFra.getBegrunnelse();
+        this.arbeidsforholdOverstyrtePerioder = kopierFra.getArbeidsforholdOverstyrtePerioder()
+            .stream()
+            .map(ArbeidsforholdOverstyrtePerioderEntitet::new)
+            .peek(it -> it.setArbeidsforholdOverstyring(this))
+            .collect(Collectors.toList());
+        this.bekreftetPermisjon = kopierFra.bekreftetPermisjon;
     }
 
     @Override

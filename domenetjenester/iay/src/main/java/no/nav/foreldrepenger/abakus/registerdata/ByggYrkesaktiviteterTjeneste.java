@@ -34,10 +34,10 @@ class ByggYrkesaktiviteterTjeneste {
     }
 
     YrkesaktivitetBuilder byggYrkesaktivitetForSøker(Map.Entry<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold,
-                                                     Arbeidsgiver arbeidsgiver, 
-                                                     InternArbeidsforholdRef internReferanse, 
+                                                     Arbeidsgiver arbeidsgiver,
+                                                     InternArbeidsforholdRef internReferanse,
                                                      InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder aktørArbeidBuilder) {
-        
+
         var opptjeningsNøkkel = new Opptjeningsnøkkel(internReferanse, arbeidsgiver);
         final ArbeidsforholdIdentifikator arbeidsgiverIdent = arbeidsforhold.getKey();
         final ArbeidType arbeidsforholdType = kodeverkRepository.finnForKodeverkEiersKode(ArbeidType.class, arbeidsgiverIdent.getType());
@@ -73,7 +73,7 @@ class ByggYrkesaktiviteterTjeneste {
         return builder
             .getAktivitetsAvtaleBuilder()
             .medProsentsats(arbeidsavtale.getStillingsprosent())
-            .medSisteLønnsendringsdato(arbeidsavtale.getSisteLønnsendringsdato())
+            .medSisteLønnsendringsdato(arbeidsavtale.getSisteLønnsendringsdato() != null ? arbeidsavtale.getSisteLønnsendringsdato() : fom)
             .medAntallTimer(arbeidsavtale.getAvtaltArbeidstimerPerUke()) // merk, inneholder mye søppel
             .medAntallTimerFulltid(arbeidsavtale.getBeregnetAntallTimerPrUke()) // merk, innneholder mye søppel
             .medPeriode(DatoIntervallEntitet.fraOgMed(fom));
@@ -142,7 +142,7 @@ class ByggYrkesaktiviteterTjeneste {
 
 
     private AktivitetsAvtaleBuilder opprettAktivitetsAvtaler(Arbeidsavtale arbeidsavtale,
-                                                                                   YrkesaktivitetBuilder yrkesaktivitetBuilder) {
+                                                             YrkesaktivitetBuilder yrkesaktivitetBuilder) {
         DatoIntervallEntitet periode;
         if (arbeidsavtale.getArbeidsavtaleTom() == null) {
             periode = DatoIntervallEntitet.fraOgMed(arbeidsavtale.getArbeidsavtaleFom());
@@ -152,7 +152,7 @@ class ByggYrkesaktiviteterTjeneste {
         AktivitetsAvtaleBuilder aktivitetsAvtaleBuilder = yrkesaktivitetBuilder.getAktivitetsAvtaleBuilder(periode, arbeidsavtale.getErAnsettelsesPerioden());
         aktivitetsAvtaleBuilder
             .medProsentsats(arbeidsavtale.getStillingsprosent())
-            .medSisteLønnsendringsdato(arbeidsavtale.getSisteLønnsendringsdato())
+            .medSisteLønnsendringsdato(arbeidsavtale.getSisteLønnsendringsdato() != null || arbeidsavtale.getErAnsettelsesPerioden() ? arbeidsavtale.getSisteLønnsendringsdato() : periode.getFomDato())
             .medAntallTimer(arbeidsavtale.getAvtaltArbeidstimerPerUke()) // merk, innneholder mye søppel
             .medAntallTimerFulltid(arbeidsavtale.getBeregnetAntallTimerPrUke()) // merk, innneholder mye søppel
             .medPeriode(periode);

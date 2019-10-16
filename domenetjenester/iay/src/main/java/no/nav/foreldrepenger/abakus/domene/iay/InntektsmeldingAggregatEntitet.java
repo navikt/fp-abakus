@@ -34,7 +34,7 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
 
     private static final Logger logger = LoggerFactory.getLogger(InntektsmeldingAggregatEntitet.class);
     private static final String ALTINN_SYSTEM_NAVN = "AltinnPortal";
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_INNTEKTSMELDINGER")
     private Long id;
@@ -107,6 +107,10 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
     public void leggTil(Inntektsmelding inntektsmelding) {
 
         boolean fjernet = inntektsmeldinger.removeIf(it -> skalFjerneInntektsmelding(it, inntektsmelding));
+        inntektsmeldinger.stream().filter(it -> it.gjelderSammeArbeidsforhold(inntektsmelding) && !fjernet).findFirst().ifPresent(e -> {
+            logger.info("Persistert inntektsmelding med journalpostid {} er nyere enn den mottatte med journalpostid {}. Ignoreres", e.getJournalpostId(),
+                inntektsmelding.getJournalpostId());
+        });
 
         if (fjernet || inntektsmeldinger.stream().noneMatch(it -> it.gjelderSammeArbeidsforhold(inntektsmelding))) {
             final InntektsmeldingEntitet entitet = (InntektsmeldingEntitet) inntektsmelding;
@@ -114,10 +118,6 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
             inntektsmeldinger.add(entitet);
         }
 
-        inntektsmeldinger.stream().filter(it -> it.gjelderSammeArbeidsforhold(inntektsmelding) && !fjernet).findFirst().ifPresent(e -> {
-            logger.info("Persistert inntektsmelding med journalpostid {} er nyere enn den mottatte med journalpostid {}. Ignoreres", e.getJournalpostId(),
-                inntektsmelding.getJournalpostId());
-        });
     }
 
     public void fjern(Inntektsmelding inntektsmelding) {

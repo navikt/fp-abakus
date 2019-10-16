@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.iay;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
@@ -15,6 +16,7 @@ public class OppgittOpptjeningTjeneste {
     public OppgittOpptjeningTjeneste() {
     }
 
+    @Inject
     public OppgittOpptjeningTjeneste(InntektArbeidYtelseRepository repository) {
         this.repository = repository;
     }

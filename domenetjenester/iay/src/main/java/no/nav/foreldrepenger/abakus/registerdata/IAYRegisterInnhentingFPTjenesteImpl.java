@@ -14,6 +14,7 @@ import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
 
 @ApplicationScoped
 @YtelseTypeRef("FP")
+@YtelseTypeRef("SVP")
 public class IAYRegisterInnhentingFPTjenesteImpl extends IAYRegisterInnhentingFellesTjenesteImpl {
 
     IAYRegisterInnhentingFPTjenesteImpl() {

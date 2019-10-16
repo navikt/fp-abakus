@@ -88,11 +88,12 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
      * Deep copy ctor
      */
     AktivitetsAvtaleEntitet(AktivitetsAvtale aktivitetsAvtale) {
-        AktivitetsAvtaleEntitet entitet = (AktivitetsAvtaleEntitet) aktivitetsAvtale; // NOSONAR
-        this.prosentsats = entitet.prosentsats;
-        this.beskrivelse = entitet.beskrivelse;
-        this.periode = entitet.periode;
-        this.sisteLønnsendringsdato = entitet.sisteLønnsendringsdato;
+        this.antallTimer = aktivitetsAvtale.getAntallTimer();
+        this.antallTimerFulltid = aktivitetsAvtale.getAntallTimerFulltid();
+        this.prosentsats = aktivitetsAvtale.getProsentsats();
+        this.beskrivelse = aktivitetsAvtale.getBeskrivelse();
+        this.sisteLønnsendringsdato = aktivitetsAvtale.getSisteLønnsendringsdato();
+        this.periode = aktivitetsAvtale.getPeriodeUtenOverstyring();
     }
 
     public AktivitetsAvtaleEntitet(AktivitetsAvtale avtale, DatoIntervallEntitet overstyrtPeriode) {

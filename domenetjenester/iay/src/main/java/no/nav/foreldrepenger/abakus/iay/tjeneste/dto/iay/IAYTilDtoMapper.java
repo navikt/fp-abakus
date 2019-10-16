@@ -36,7 +36,7 @@ public class IAYTilDtoMapper {
 
         var grunnlagTidspunkt = grunnlag.getOpprettetTidspunkt().atZone(ZoneId.systemDefault()).toOffsetDateTime();
         var dto = new InntektArbeidYtelseGrunnlagDto(new AktørIdPersonident(aktørId.getId()),
-            grunnlagTidspunkt, grunnlagReferanse.getReferanse(), koblingReferanse.getReferanse());
+            grunnlagTidspunkt, grunnlagReferanse != null ? grunnlagReferanse.getReferanse() : grunnlag.getGrunnlagReferanse().getReferanse(), koblingReferanse.getReferanse());
 
         // Selektiv mapping avhengig av hva som er forspurt av data
 

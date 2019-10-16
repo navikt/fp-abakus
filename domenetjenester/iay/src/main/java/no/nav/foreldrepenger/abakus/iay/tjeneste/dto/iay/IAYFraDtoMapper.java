@@ -17,7 +17,7 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 
 public class IAYFraDtoMapper {
-    
+
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private KodeverkRepository kodeverkRepository;
     private AktørId aktørId;
@@ -49,6 +49,15 @@ public class IAYFraDtoMapper {
     public InntektArbeidYtelseGrunnlag mapTilGrunnlag(InntektArbeidYtelseGrunnlagDto dto, InntektArbeidYtelseGrunnlagBuilder builder) {
         mapSaksbehandlerDataTilBuilder(dto, builder);
         mapTilGrunnlagBuilder(dto, builder);
+        return builder.build();
+    }
+
+    /**
+     * @see #mapTilGrunnlag(InntektArbeidYtelseGrunnlagDto)
+     */
+    public InntektArbeidYtelseGrunnlag mapOverstyringerTilGrunnlag(InntektArbeidYtelseGrunnlagDto dto, InntektArbeidYtelseGrunnlagBuilder builder) {
+        mapSaksbehandlerDataTilBuilder(dto, builder);
+        mapOverstyringer(dto, builder);
         return builder.build();
     }
 
@@ -143,6 +152,14 @@ public class IAYFraDtoMapper {
 
         var oppgittOpptjening = new MapOppgittOpptjening(iayTjeneste, kodeverkRepository).mapFraDto(dto.getOppgittOpptjening());
         builder.medOppgittOpptjening(oppgittOpptjening);
+    }
+
+    private void mapOverstyringer(InntektArbeidYtelseGrunnlagDto dto, InntektArbeidYtelseGrunnlagBuilder builder) {
+
+        var arbeidsforholdInformasjonBuilder = new MapArbeidsforholdInformasjon.MapFraDto(kodeverkRepository, builder).map(dto.getArbeidsforholdInformasjon());
+        var arbeidsforholdInformasjon = arbeidsforholdInformasjonBuilder.build();
+
+        builder.medInformasjon(arbeidsforholdInformasjon);
     }
 
 }
