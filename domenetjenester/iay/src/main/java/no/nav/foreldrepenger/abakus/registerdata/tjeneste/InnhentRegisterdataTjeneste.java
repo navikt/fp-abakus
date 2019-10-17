@@ -4,8 +4,10 @@ import static no.nav.foreldrepenger.abakus.registerdata.callback.CallbackTask.EK
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
@@ -41,12 +43,12 @@ import no.nav.vedtak.felles.prosesstask.api.TaskStatus;
 @ApplicationScoped
 public class InnhentRegisterdataTjeneste {
 
+    private static final Map<RegisterdataType, RegisterdataElement> registerdataMapping = initMapping();
     private Instance<IAYRegisterInnhentingTjeneste> innhentTjenester;
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private KoblingTjeneste koblingTjeneste;
     private ProsessTaskRepository prosessTaskRepository;
     private KodeverkRepository kodeverkRepository;
-
     InnhentRegisterdataTjeneste() {
         // CDI
     }
@@ -64,33 +66,25 @@ public class InnhentRegisterdataTjeneste {
         this.kodeverkRepository = kodeverkRepository;
     }
 
+    private static Map<RegisterdataType, RegisterdataElement> initMapping() {
+        return Map.of(RegisterdataType.ARBEIDSFORHOLD, RegisterdataElement.ARBEIDSFORHOLD,
+            RegisterdataType.YTELSE, RegisterdataElement.YTELSE,
+            RegisterdataType.LIGNET_NÆRING, RegisterdataElement.LIGNET_NÆRING,
+            RegisterdataType.INNTEKT_PENSJONSGIVENDE, RegisterdataElement.INNTEKT_PENSJONSGIVENDE,
+            RegisterdataType.INNTEKT_BEREGNINGSGRUNNLAG, RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG,
+            RegisterdataType.INNTEKT_SAMMENLIGNINGSGRUNNLAG, RegisterdataElement.INNTEKT_SAMMENLIGNINGSGRUNNLAG);
+    }
+
     public static Set<RegisterdataElement> hentUtInformasjonsElementer(InnhentRegisterdataRequest dto) {
-        final var registerdataElementer = new HashSet<RegisterdataElement>();
         final var elementer = dto.getElementer();
 
         if (elementer == null || elementer.isEmpty()) {
             return Set.of();
         }
 
-        if (elementer.contains(RegisterdataType.ARBEIDSFORHOLD)) {
-            registerdataElementer.add(RegisterdataElement.ARBEIDSFORHOLD);
-        }
-        if (elementer.contains(RegisterdataType.YTELSE)) {
-            registerdataElementer.add(RegisterdataElement.YTELSE);
-        }
-        if (elementer.contains(RegisterdataType.INNTEKT_PENSJONSGIVENDE)) {
-            registerdataElementer.add(RegisterdataElement.INNTEKT_PENSJONSGIVENDE);
-        }
-        if (elementer.contains(RegisterdataType.INNTEKT_BEREGNINGSGRUNNLAG)) {
-            registerdataElementer.add(RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG);
-        }
-        if (elementer.contains(RegisterdataType.INNTEKT_SAMMENLIGNINGSGRUNNLAG)) {
-            registerdataElementer.add(RegisterdataElement.INNTEKT_SAMMENLIGNINGSGRUNNLAG);
-        }
-        if (elementer.contains(RegisterdataType.LIGNET_NÆRING)) {
-            registerdataElementer.add(RegisterdataElement.LIGNET_NÆRING);
-        }
-        return registerdataElementer;
+        return elementer.stream()
+            .map(registerdataMapping::get)
+            .collect(Collectors.toSet());
     }
 
     public Optional<GrunnlagReferanse> innhent(InnhentRegisterdataRequest dto) {
