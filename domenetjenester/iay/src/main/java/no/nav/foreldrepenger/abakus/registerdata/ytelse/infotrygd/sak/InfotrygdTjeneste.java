@@ -1,9 +1,9 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak;
 
-import static no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTema.ENSLIG_FORSORGER_TEMA;
-import static no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTema.FORELDREPENGER_TEMA;
-import static no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTema.PÅRØRENDE_SYKDOM_TEMA;
-import static no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTema.SYKEPENGER_TEMA;
+import static no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.RelatertYtelseTema.ENSLIG_FORSORGER_TEMA;
+import static no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.RelatertYtelseTema.FORELDREPENGER_TEMA;
+import static no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.RelatertYtelseTema.PÅRØRENDE_SYKDOM_TEMA;
+import static no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.RelatertYtelseTema.SYKEPENGER_TEMA;
 
 import java.time.LocalDate;
 import java.time.Month;

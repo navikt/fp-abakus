@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.domene.iay.kodeverk;
+package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak;
 
 public enum RelatertYtelseTema {
 
