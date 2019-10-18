@@ -4,8 +4,10 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -23,6 +25,12 @@ import javax.ws.rs.core.Response;
 import org.jboss.weld.exceptions.IllegalStateException;
 import org.jboss.weld.exceptions.UnsupportedOperationException;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
@@ -39,7 +47,10 @@ import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Aktør;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.FnrPersonident;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.PersonIdent;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.KopierGrunnlagRequest;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
@@ -47,6 +58,7 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnl
 import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
+import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
@@ -88,7 +100,7 @@ public class GrunnlagRestTjeneste {
     @ApiOperation(value = "Hent IAY Grunnlag for angitt søke spesifikasjon", response = InntektArbeidYtelseGrunnlagDto.class)
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response hentIayGrunnlag(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid InntektArbeidYtelseGrunnlagRequest spesifikasjon) {
+    public Response hentIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
 
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
 
@@ -97,7 +109,7 @@ public class GrunnlagRestTjeneste {
         var koblingReferanse = getKoblingReferanse(aktørId, spesifikasjon);
         var grunnlag = getGrunnlag(spesifikasjon, grunnlagReferanse, koblingReferanse);
 
-        if(grunnlag != null) {
+        if (grunnlag != null) {
             var dtoMapper = new IAYTilDtoMapper(aktørId, grunnlagReferanse, koblingReferanse);
 
             return Response.ok(dtoMapper.mapTilDto(grunnlag, spesifikasjon)).build();
@@ -113,7 +125,7 @@ public class GrunnlagRestTjeneste {
     @ApiOperation(value = "Hent IAY Grunnlag for angitt søke spesifikasjon", response = InntektArbeidYtelseGrunnlagDto.class)
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response oppdaterGrunnlag(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid InntektArbeidYtelseGrunnlagDto dto) {
+    public Response oppdaterGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagAbacDto dto) {
 
         var aktørId = new AktørId(dto.getPerson().getIdent());
 
@@ -133,7 +145,7 @@ public class GrunnlagRestTjeneste {
     @ApiOperation(value = "Hent alle IAY Grunnlag for angitt søke spesifikasjon", response = InntektArbeidYtelseGrunnlagSakSnapshotDto.class)
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response hentAlleIayGrunnlag(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid InntektArbeidYtelseGrunnlagRequest spesifikasjon) {
+    public Response hentAlleIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
 
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
 
@@ -163,7 +175,7 @@ public class GrunnlagRestTjeneste {
     @ApiOperation(value = "Hent alle IAY Grunnlag for angitt søke spesifikasjon", response = InntektArbeidYtelseGrunnlagSakSnapshotDto.class)
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response hentAlleIayGrunnlag(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid KopierGrunnlagRequest request) {
+    public Response hentAlleIayGrunnlag(@NotNull @Valid KopierGrunnlagRequestAbac request) {
         oppdaterKobling(request);
         iayTjeneste.kopierGrunnlagFraKoblingTilKobling(new KoblingReferanse(request.getGammelReferanse()), new KoblingReferanse(request.getNyReferanse()));
 
@@ -273,26 +285,84 @@ public class GrunnlagRestTjeneste {
         throw new UnsupportedOperationException("Må ha grunnlagReferanse eller koblingReferanse");
     }
 
-    public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
+    /**
+     * Json bean med Abac.
+     */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+    @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
+    public static class InntektArbeidYtelseGrunnlagRequestAbacDto extends InntektArbeidYtelseGrunnlagRequest implements AbacDto {
 
-        public AbacDataSupplier() {
+        @JsonCreator
+        public InntektArbeidYtelseGrunnlagRequestAbacDto(@JsonProperty(value = "personIdent", required = true) @Valid @NotNull PersonIdent person) {
+            super(person);
         }
 
         @Override
-        public AbacDataAttributter apply(Object obj) {
-            if (obj instanceof InntektArbeidYtelseGrunnlagRequest) {
-                var req = (InntektArbeidYtelseGrunnlagRequest) obj;
-                return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, req.getPerson().getIdent());
+        public AbacDataAttributter abacAttributter() {
+            final var abacDataAttributter = AbacDataAttributter.opprett();
+            if (FnrPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
+                return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, getPerson().getIdent());
+            } else if(AktørIdPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
+                return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, getPerson().getIdent());
             }
-            if (obj instanceof KopierGrunnlagRequest) {
-                var req = (KopierGrunnlagRequest) obj;
-                return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, req.getAktør().getIdent());
+            throw new java.lang.IllegalStateException("Ukjent identtype");
+        }
+    }
+
+    /**
+     * Json bean med Abac.
+     */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+    @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
+    public static class KopierGrunnlagRequestAbac extends KopierGrunnlagRequest implements AbacDto {
+
+        @JsonCreator
+        public KopierGrunnlagRequestAbac(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
+                                     @JsonProperty(value = "nyReferanse", required = true) @Valid @NotNull UUID nyReferanse,
+                                     @JsonProperty(value = "gammelReferanse", required = true) @Valid @NotNull UUID gammelReferanse,
+                                     @JsonProperty(value = "ytelseType", required = true) @Valid @NotNull no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.YtelseType ytelseType,
+                                     @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør) {
+            super(saksnummer, nyReferanse, gammelReferanse, ytelseType, aktør);
+        }
+
+        @Override
+        public AbacDataAttributter abacAttributter() {
+            final var abacDataAttributter = AbacDataAttributter.opprett();
+            if (FnrPersonident.IDENT_TYPE.equals(getAktør().getIdentType())) {
+                return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, getAktør().getIdent());
+            } else if(AktørIdPersonident.IDENT_TYPE.equals(getAktør().getIdentType())) {
+                return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, getAktør().getIdent());
             }
-            if (obj instanceof InntektArbeidYtelseGrunnlagDto) {
-                var req = (InntektArbeidYtelseGrunnlagDto) obj;
-                return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, req.getPerson().getIdent());
+            throw new java.lang.IllegalStateException("Ukjent identtype");
+        }
+    }
+    /**
+     * Json bean med Abac.
+     */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+    public static class InntektArbeidYtelseGrunnlagAbacDto extends InntektArbeidYtelseGrunnlagDto implements AbacDto {
+
+        @JsonCreator
+        public InntektArbeidYtelseGrunnlagAbacDto(@JsonProperty(value = "person", required = true) @Valid @NotNull PersonIdent person,
+                                              @JsonProperty(value = "grunnlagTidspunkt", required = true) @Valid @NotNull OffsetDateTime grunnlagTidspunkt,
+                                              @JsonProperty(value = "grunnlagReferanse", required = true) @Valid @NotNull UUID grunnlagReferanse,
+                                              @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UUID koblingReferanse) {
+            super(person, grunnlagTidspunkt, grunnlagReferanse, koblingReferanse);
+        }
+
+        @Override
+        public AbacDataAttributter abacAttributter() {
+            final var abacDataAttributter = AbacDataAttributter.opprett();
+            if (FnrPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
+                return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, getPerson().getIdent());
+            } else if(AktørIdPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
+                return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, getPerson().getIdent());
             }
-            return null;
+            throw new java.lang.IllegalStateException("Ukjent identtype");
         }
     }
 }
