@@ -14,18 +14,19 @@ import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
 
 @ApplicationScoped
 @YtelseTypeRef("FP")
-public class IAYRegisterInnhentingFPTjenesteImpl extends IAYRegisterInnhentingFellesTjenesteImpl {
+@YtelseTypeRef("SVP")
+public class IAYRegisterInnhentingSVPOgFPTjenesteImpl extends IAYRegisterInnhentingFellesTjenesteImpl {
 
-    IAYRegisterInnhentingFPTjenesteImpl() {
+    IAYRegisterInnhentingSVPOgFPTjenesteImpl() {
         // CDI
     }
 
     @Inject
-    public IAYRegisterInnhentingFPTjenesteImpl(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
-                                               KodeverkRepository kodeverkRepository,
-                                               VirksomhetTjeneste virksomhetTjeneste,
-                                               InnhentingSamletTjeneste innhentingSamletTjeneste,
-                                               AktørConsumer aktørConsumer, SigrunTjeneste sigrunTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
+    public IAYRegisterInnhentingSVPOgFPTjenesteImpl(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
+                                                    KodeverkRepository kodeverkRepository,
+                                                    VirksomhetTjeneste virksomhetTjeneste,
+                                                    InnhentingSamletTjeneste innhentingSamletTjeneste,
+                                                    AktørConsumer aktørConsumer, SigrunTjeneste sigrunTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
         super(inntektArbeidYtelseTjeneste,
             kodeverkRepository,
             virksomhetTjeneste,

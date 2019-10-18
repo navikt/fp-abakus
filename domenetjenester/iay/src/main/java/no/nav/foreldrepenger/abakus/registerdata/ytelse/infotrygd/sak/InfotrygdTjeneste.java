@@ -1,9 +1,9 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak;
 
-import static no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTema.ENSLIG_FORSORGER_TEMA;
-import static no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTema.FORELDREPENGER_TEMA;
-import static no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTema.PÅRØRENDE_SYKDOM_TEMA;
-import static no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTema.SYKEPENGER_TEMA;
+import static no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.RelatertYtelseTema.ENSLIG_FORSORGER_TEMA;
+import static no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.RelatertYtelseTema.FORELDREPENGER_TEMA;
+import static no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.RelatertYtelseTema.PÅRØRENDE_SYKDOM_TEMA;
+import static no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.RelatertYtelseTema.SYKEPENGER_TEMA;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -17,8 +17,6 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseTema;
-import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
@@ -105,21 +103,17 @@ public class InfotrygdTjeneste {
         LocalDate registrert = DateUtil.convertToLocalDate(sak.getRegistrert());
         LocalDate iverksatt = DateUtil.convertToLocalDate(sak.getIverksatt());
 
-        RelatertYtelseTema tema = null;
         TemaUnderkategori temaUnderkategori = TemaUnderkategori.UDEFINERT;
         YtelseStatus relatertYtelseTilstand = YtelseStatus.AVSLUTTET;
 
-        if (sak.getTema() != null) {
-            tema = kodeverkRepository.finn(RelatertYtelseTema.class, sak.getTema().getValue());
-        }
         if (sak.getBehandlingstema() != null && sak.getBehandlingstema().getValue() != null) {
-            temaUnderkategori = kodeverkRepository.finnForKodeverkEiersKode(TemaUnderkategori.class, sak.getBehandlingstema().getValue(), TemaUnderkategori.UDEFINERT);
+            temaUnderkategori = kodeverkRepository.finnOptional(TemaUnderkategori.class, sak.getBehandlingstema().getValue()).orElse(TemaUnderkategori.UDEFINERT);
         }
         if (sak.getStatus() != null && sak.getStatus().getValue() != null) {
             RelatertYtelseStatus status = kodeverkRepository.finnForKodeverkEiersKode(RelatertYtelseStatus.class, sak.getStatus().getValue(), RelatertYtelseStatus.AVSLUTTET_IT);
             relatertYtelseTilstand = getYtelseTilstand(erVedtak, status);
         }
-        YtelseType ytelseType = utledYtelseType(tema, temaUnderkategori);
+        YtelseType ytelseType = utledYtelseType(sak.getTema().getValue(), temaUnderkategori);
         if (YtelseType.ENGANGSSTØNAD.equals(ytelseType)) {
             opphoerFomDato = iverksatt != null ? iverksatt : registrert;
         }
@@ -133,10 +127,10 @@ public class InfotrygdTjeneste {
             .medRelatertYtelseTilstand(relatertYtelseTilstand);
     }
 
-    private YtelseType utledYtelseType(RelatertYtelseTema ytelseTema, TemaUnderkategori behandlingsTema) {
-        if (ENSLIG_FORSORGER_TEMA.equals(ytelseTema)) {
+    private YtelseType utledYtelseType(String ytelseTema, TemaUnderkategori behandlingsTema) {
+        if (ENSLIG_FORSORGER_TEMA.getKode().equals(ytelseTema)) {
             return YtelseType.ENSLIG_FORSØRGER;
-        } else if (FORELDREPENGER_TEMA.equals(ytelseTema)) {
+        } else if (FORELDREPENGER_TEMA.getKode().equals(ytelseTema)) {
             if (TemaUnderkategori.erGjelderSvangerskapspenger(behandlingsTema.getKode())) {
                 return YtelseType.SVANGERSKAPSPENGER;
             } else if (TemaUnderkategori.erGjelderForeldrepenger(behandlingsTema.getKode())) {
@@ -144,9 +138,9 @@ public class InfotrygdTjeneste {
             } else if (TemaUnderkategori.erGjelderEngangsstonad(behandlingsTema.getKode())) {
                 return YtelseType.ENGANGSSTØNAD;
             }
-        } else if (SYKEPENGER_TEMA.equals(ytelseTema)) {
+        } else if (SYKEPENGER_TEMA.getKode().equals(ytelseTema)) {
             return YtelseType.SYKEPENGER;
-        } else if (PÅRØRENDE_SYKDOM_TEMA.equals(ytelseTema)) {
+        } else if (PÅRØRENDE_SYKDOM_TEMA.getKode().equals(ytelseTema)) {
             return YtelseType.PÅRØRENDESYKDOM;
         }
         return YtelseType.UDEFINERT;

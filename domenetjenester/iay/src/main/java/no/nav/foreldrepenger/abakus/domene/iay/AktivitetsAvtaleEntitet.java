@@ -41,7 +41,6 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     /**
      * TODO (FC): Se om vi kan bli kvitt antallTimer. Brukes bare til å sjekke om det finnes verdi i {@link #erAnsettelsesPeriode()}.
      */
-    @ChangeTracked
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "antall_timer")))
     private AntallTimer antallTimer;
@@ -49,7 +48,6 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     /**
      * TODO (FC): Se om vi kan bli kvitt antallTimerFulltid. Brukes bare til å sjekke om det finnes verdi i {@link #erAnsettelsesPeriode()}.
      */
-    @ChangeTracked
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "antall_timer_fulltid")))
     private AntallTimer antallTimerFulltid;
@@ -88,11 +86,10 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
      * Deep copy ctor
      */
     AktivitetsAvtaleEntitet(AktivitetsAvtale aktivitetsAvtale) {
-        AktivitetsAvtaleEntitet entitet = (AktivitetsAvtaleEntitet) aktivitetsAvtale; // NOSONAR
-        this.prosentsats = entitet.prosentsats;
-        this.beskrivelse = entitet.beskrivelse;
-        this.periode = entitet.periode;
-        this.sisteLønnsendringsdato = entitet.sisteLønnsendringsdato;
+        this.prosentsats = aktivitetsAvtale.getProsentsats();
+        this.beskrivelse = aktivitetsAvtale.getBeskrivelse();
+        this.sisteLønnsendringsdato = aktivitetsAvtale.getSisteLønnsendringsdato();
+        this.periode = aktivitetsAvtale.getPeriodeUtenOverstyring();
     }
 
     public AktivitetsAvtaleEntitet(AktivitetsAvtale avtale, DatoIntervallEntitet overstyrtPeriode) {
