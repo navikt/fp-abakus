@@ -82,8 +82,6 @@
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.FagsystemUnderkategori" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsFilter" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsFormål" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektPeriodeType" />

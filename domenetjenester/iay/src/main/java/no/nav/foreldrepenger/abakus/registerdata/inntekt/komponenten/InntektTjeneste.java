@@ -18,8 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsFilter;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsFormål;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -53,8 +51,7 @@ public class InntektTjeneste {
     private YearMonth requestTillattFom;
     private KodeverkRepository kodeverkRepository;
     private AktørConsumer aktørConsumer;
-    private Map<InntektsKilde, Set<InntektsFilter>> kildeTilFilter;
-    private Map<InntektsFilter, Set<InntektsFormål>> filterTilFormål;
+    private Map<InntektsKilde, InntektsFilter> kildeTilFilter;
 
     InntektTjeneste() {
         // For CDI proxy
@@ -71,8 +68,9 @@ public class InntektTjeneste {
         this.oidcRestClient = oidcRestClient;
         this.kodeverkRepository = kodeverkRepository;
         this.aktørConsumer = aktørConsumer;
-        this.kildeTilFilter = kodeverkRepository.hentKodeRelasjonForKodeverk(InntektsKilde.class, InntektsFilter.class);
-        this.filterTilFormål = kodeverkRepository.hentKodeRelasjonForKodeverk(InntektsFilter.class, InntektsFormål.class);
+        this.kildeTilFilter = Map.of(InntektsKilde.INNTEKT_OPPTJENING, InntektsFilter.OPPTJENINGSGRUNNLAG,
+            InntektsKilde.INNTEKT_BEREGNING, InntektsFilter.BEREGNINGSGRUNNLAG,
+            InntektsKilde.INNTEKT_SAMMENLIGNING, InntektsFilter.SAMMENLIGNINGSGRUNNLAG);
     }
 
     public InntektsInformasjon finnInntekt(FinnInntektRequest finnInntektRequest, InntektsKilde kilde) {
@@ -98,8 +96,10 @@ public class InntektTjeneste {
         }
 
         InntektsFilter filter = getFilter(kilde);
-        request.setAinntektsfilter(filter.getOffisiellKode());
-        request.setFormaal(getFormål(filter).getOffisiellKode());
+        if (filter != null) {
+            request.setAinntektsfilter(filter.getKode());
+            request.setFormaal(filter.getFormål().getKode());
+        }
         request.setMaanedFom(finnInntektRequest.getFom().isAfter(requestTillattFom) ? finnInntektRequest.getFom() : requestTillattFom);
         request.setMaanedTom(finnInntektRequest.getTom().isAfter(requestTillattFom) ? finnInntektRequest.getTom() : requestTillattFom);
         return request;
@@ -107,12 +107,7 @@ public class InntektTjeneste {
 
     private InntektsFilter getFilter(InntektsKilde kilde) {
         // Skal bare få en verdi.
-        return kildeTilFilter.getOrDefault(kilde, Collections.emptySet()).stream().findFirst().orElse(InntektsFilter.UDEFINERT);
-    }
-
-    private InntektsFormål getFormål(InntektsFilter filter) {
-        // Skal bare få en verdi.
-        return filterTilFormål.getOrDefault(filter, Collections.emptySet()).stream().findFirst().orElse(InntektsFormål.UDEFINERT);
+        return kildeTilFilter.getOrDefault(kilde, null);
     }
 
     private InntektsInformasjon oversettResponse(HentInntektListeBolkResponse response, InntektsKilde kilde) {
@@ -250,7 +245,7 @@ public class InntektTjeneste {
     private String byggSikkerhetsavvikString(HentInntektListeBolkResponse response) {
         var stringBuilder = new StringBuilder();
         var sikkerhetsavvikListe = response.getSikkerhetsavvikListe();
-        if (sikkerhetsavvikListe!=null && !sikkerhetsavvikListe.isEmpty()) {
+        if (sikkerhetsavvikListe != null && !sikkerhetsavvikListe.isEmpty()) {
             stringBuilder.append(sikkerhetsavvikListe.get(0).getTekst());
             for (int i = 1; i < sikkerhetsavvikListe.size(); i++) {
                 stringBuilder.append(", ");
