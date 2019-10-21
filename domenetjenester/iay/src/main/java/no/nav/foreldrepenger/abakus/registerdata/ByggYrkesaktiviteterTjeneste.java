@@ -100,11 +100,12 @@ class ByggYrkesaktiviteterTjeneste {
     }
 
     private void byggPermisjoner(YrkesaktivitetBuilder builder, Arbeidsforhold arbeidsforhold1) {
+        final LocalDate arbeidTom = arbeidsforhold1.getArbeidTom() != null ? arbeidsforhold1.getArbeidTom() : TIDENES_ENDE;
         builder.tilbakestillPermisjon();
         arbeidsforhold1.getPermisjoner()
             .stream()
-            .filter(p -> p.getPermisjonFom() != null && p.getPermisjonFom().isBefore(arbeidsforhold1.getArbeidTom()))
-            .map(p -> opprettPermisjoner(p, builder, arbeidsforhold1.getArbeidTom()))
+            .filter(p -> p.getPermisjonFom() != null && p.getPermisjonFom().isBefore(arbeidTom))
+            .map(p -> opprettPermisjoner(p, builder, arbeidTom))
             .forEach(builder::leggTilPermisjon);
     }
 
