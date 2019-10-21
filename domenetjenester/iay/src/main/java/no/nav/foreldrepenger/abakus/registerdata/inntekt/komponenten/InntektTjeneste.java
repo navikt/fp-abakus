@@ -121,9 +121,11 @@ public class InntektTjeneste {
         List<ArbeidsInntektIdent> arbeidsInntektIdentListe = response.getArbeidsInntektIdentListe();
         if (response.getArbeidsInntektIdentListe() != null) {
             for (var arbeidsInntektIdent : arbeidsInntektIdentListe) {
-                for (ArbeidsInntektMaaned arbeidsInntektMaaned : arbeidsInntektIdent.getArbeidsInntektMaaned()) {
-                    ArbeidsInntektInformasjon arbeidsInntektInformasjon = oversettInntekter(månedsinntekter, arbeidsInntektMaaned, kilde);
-                    oversettArbeidsforhold(arbeidsforhold, arbeidsInntektInformasjon);
+                if(arbeidsInntektIdent.getArbeidsInntektMaaned() != null) {
+                    for (ArbeidsInntektMaaned arbeidsInntektMaaned : arbeidsInntektIdent.getArbeidsInntektMaaned()) {
+                        ArbeidsInntektInformasjon arbeidsInntektInformasjon = oversettInntekter(månedsinntekter, arbeidsInntektMaaned, kilde);
+                        oversettArbeidsforhold(arbeidsforhold, arbeidsInntektInformasjon);
+                    }
                 }
             }
         }
