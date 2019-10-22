@@ -53,7 +53,11 @@ pipeline {
                     changelist = "_" + date.format("YYYYMMddHHmmss") + "_" + GIT_COMMIT_HASH
 
                     mRevision = mvn.revision()
-                    version = mRevision + changelist
+                    if("master".equalsIgnoreCase(env.BRANCH_NAME)) {
+                        version = mRevision + changelist
+                    } else {
+                        version = mRevision + changelist + "-SNAPSHOT"
+                    }
                     githubRepoName = sh(script: "basename -s .git `git config --get remote.origin.url`", returnStdout: true).trim()
                     currentBuild.displayName = version
 
