@@ -28,7 +28,8 @@ pipeline {
         }
     }
     parameters {
-        string(defaultValue: 't4', description: '', name: 'miljo')
+        choice(name: 'miljo', choices: ['t4', 'q0', 'q1', 'p'], description: 'Miljøet applikasjonen skal deployes i. Default: t4')
+        string(defaultValue: '', description: 'Overstyrer hvilken versjon som deployes til gitt miljø. Default(blank) deployer siste commit.', name: 'deployVersjon')
     }
     options {
         disableConcurrentBuilds()
@@ -52,7 +53,11 @@ pipeline {
                     changelist = "_" + date.format("YYYYMMddHHmmss") + "_" + GIT_COMMIT_HASH
 
                     mRevision = mvn.revision()
-                    version = mRevision + changelist
+                    if("master".equalsIgnoreCase(env.BRANCH_NAME)) {
+                        version = mRevision + changelist
+                    } else {
+                        version = mRevision + changelist + "-SNAPSHOT"
+                    }
                     githubRepoName = sh(script: "basename -s .git `git config --get remote.origin.url`", returnStdout: true).trim()
                     currentBuild.displayName = version
 
@@ -62,9 +67,13 @@ pipeline {
                         latestTagCommitHash = sh(script: "git describe \$(git rev-list --tags --max-count=1) | sed 's/.*\\_//'", returnStdout: true)?.trim()
 
                         echo "GIT_COMMIT_HASH: $GIT_COMMIT_HASH, latestTagCommitHash: $latestTagCommitHash"
-
-                        skipBuild = GIT_COMMIT_HASH.equals(latestTagCommitHash)
-                        if (skipBuild) {
+                        def deployVersjon = params.deployVersjon
+                        def deployGivenVersion = (deployVersjon != null && !"".equals(deployVersjon))
+                        skipBuild = deployGivenVersion || GIT_COMMIT_HASH.equals(latestTagCommitHash)
+                        if (skipBuild && deployGivenVersion) {
+                            version = deployVersjon
+                            echo "Version supplied, skipping build and deploy declared version={$version}."
+                        } else if (skipBuild) {
                             version = latestTag
                             echo "No change detected in sourcecode, skipping build and deploy existing tag={$latestTag}."
                         }
@@ -127,7 +136,7 @@ pipeline {
         stage('Tag master') {
             when {
                 branch 'master'
-                expression { return !(latestTagCommitHash == GIT_COMMIT_HASH) }
+                expression { return !skipBuild }
             }
             steps {
                 sh "git tag $version -m $version"
