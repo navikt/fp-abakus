@@ -176,6 +176,10 @@ public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements Arb
             '}';
     }
 
+    void fjernOverstyringerSomGjelder(Arbeidsgiver arbeidsgiver) {
+        this.overstyringer.removeIf(ov -> arbeidsgiver.equals(ov.getArbeidsgiver()));
+    }
+
     void fjernOverstyringVedrørende(Arbeidsgiver arbeidsgiverEntitet, InternArbeidsforholdRef arbeidsforholdRef) {
         overstyringer.removeIf(ov -> !Objects.equals(ov.getHandling(), ArbeidsforholdHandlingType.SLÅTT_SAMMEN_MED_ANNET)
             && ov.getArbeidsgiver().getErVirksomhet()
