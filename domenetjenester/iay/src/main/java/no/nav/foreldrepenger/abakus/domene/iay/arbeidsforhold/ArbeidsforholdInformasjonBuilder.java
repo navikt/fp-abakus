@@ -124,4 +124,19 @@ public class ArbeidsforholdInformasjonBuilder {
                 && ov.getArbeidsgiver().equals(inntektsmelding.getArbeidsgiver())
                 && ov.getArbeidsforholdRef().gjelderFor(inntektsmelding.getArbeidsforholdRef()));
     }
+
+    public Optional<Arbeidsgiver> utledeArbeidsgiverSomMåTilbakestilles(Inntektsmelding inntektsmelding) {
+        if (inntektsmelding.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold()) {
+            return kladd.getOverstyringer().stream()
+                .filter(o -> o.getArbeidsgiver().equals(inntektsmelding.getArbeidsgiver()) &&
+                    !o.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold())
+                .map(ArbeidsforholdOverstyring::getArbeidsgiver)
+                .findFirst();
+        }
+        return Optional.empty();
+    }
+
+    public void fjernOverstyringerSomGjelder(Arbeidsgiver arbeidsgiver) {
+        kladd.fjernOverstyringerSomGjelder(arbeidsgiver);
+    }
 }
