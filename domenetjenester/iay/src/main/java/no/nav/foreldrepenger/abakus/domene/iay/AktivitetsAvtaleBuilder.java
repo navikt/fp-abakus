@@ -4,12 +4,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import no.nav.foreldrepenger.abakus.typer.AntallTimer;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class AktivitetsAvtaleBuilder {
-    private static final BigDecimal MAKS_ANTALL_TIMER_I_UKEN = BigDecimal.valueOf(168); // https://jira.adeo.no/browse/TFP-1259
     private final AktivitetsAvtaleEntitet aktivitetsAvtaleEntitet;
     private boolean oppdatering;
 
@@ -24,18 +22,6 @@ public class AktivitetsAvtaleBuilder {
 
     static AktivitetsAvtaleBuilder oppdater(Optional<AktivitetsAvtale> aktivitetsAvtale) {
         return new AktivitetsAvtaleBuilder(aktivitetsAvtale.orElse(new AktivitetsAvtaleEntitet()), aktivitetsAvtale.isPresent());
-    }
-
-    public AktivitetsAvtaleBuilder medAntallTimer(BigDecimal antallTimer) {
-        AntallTimer avkortetAntallTimer = antallTimer == null ? null : new AntallTimer(antallTimer.min(MAKS_ANTALL_TIMER_I_UKEN));
-        this.aktivitetsAvtaleEntitet.setAntallTimer(avkortetAntallTimer);
-        return this;
-    }
-
-    public AktivitetsAvtaleBuilder medAntallTimerFulltid(BigDecimal antallTimerFulltid) {
-        AntallTimer avkortetAntallTimerFulltid = antallTimerFulltid == null ? null : new AntallTimer(antallTimerFulltid.min(MAKS_ANTALL_TIMER_I_UKEN));
-        this.aktivitetsAvtaleEntitet.setAntallTimerFulltid(avkortetAntallTimerFulltid);
-        return this;
     }
 
     public AktivitetsAvtaleBuilder medProsentsats(Stillingsprosent prosentsats) {
