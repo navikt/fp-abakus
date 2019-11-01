@@ -19,6 +19,7 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
+import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.AntallTimer;
@@ -41,6 +42,7 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     /**
      * TODO (FC): Se om vi kan bli kvitt antallTimer. Brukes bare til å sjekke om det finnes verdi i {@link #erAnsettelsesPeriode()}.
      */
+    @DiffIgnore
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "antall_timer")))
     private AntallTimer antallTimer;
@@ -48,6 +50,7 @@ public class AktivitetsAvtaleEntitet extends BaseEntitet implements AktivitetsAv
     /**
      * TODO (FC): Se om vi kan bli kvitt antallTimerFulltid. Brukes bare til å sjekke om det finnes verdi i {@link #erAnsettelsesPeriode()}.
      */
+    @DiffIgnore
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "antall_timer_fulltid")))
     private AntallTimer antallTimerFulltid;
