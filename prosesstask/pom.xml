@@ -1,15 +1,16 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>no.nav.foreldrepenger.abakus</groupId>
-        <artifactId>fpabakus</artifactId>
-        <version>${revision}${sha1}${changelist}</version>
-    </parent>
+	<parent>
+		<groupId>no.nav.foreldrepenger.abakus</groupId>
+		<artifactId>fpabakus</artifactId>
+		<version>${revision}${sha1}${changelist}</version>
+	</parent>
 
-    <artifactId>prosesstask</artifactId>
+	<artifactId>prosesstask</artifactId>
 	<name>Abakus :: Prosesstask</name>
 	<packaging>jar</packaging>
 
@@ -33,69 +34,69 @@
 			<groupId>no.nav.foreldrepenger.felles</groupId>
 			<artifactId>felles-feil</artifactId>
 		</dependency>
-		
+
 		<!-- trengs for workaround for HHH-11020 for å kunne kalle EntityManager.unwrap -->
 		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
 			<artifactId>weld-se-core</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- REST felles -->
 		<dependency>
 			<!-- Trengs for REST grensesnitt -->
-            <groupId>no.nav.foreldrepenger.felles.sikkerhet</groupId>
-            <artifactId>felles-sikkerhet</artifactId>
+			<groupId>no.nav.foreldrepenger.felles.sikkerhet</groupId>
+			<artifactId>felles-sikkerhet</artifactId>
 			<scope>provided</scope>
-        </dependency>
-        <dependency>
+		</dependency>
+		<dependency>
 			<!-- Trengs for REST grensesnitt -->
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jackson2-provider</artifactId>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jackson2-provider</artifactId>
 			<scope>provided</scope>
-        </dependency>
-        <dependency>
+		</dependency>
+		<dependency>
 			<!-- Trengs for REST grensesnitt -->
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jaxb-provider</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
-                    <groupId>org.jboss.spec.javax.xml.bind</groupId>
-                </exclusion>
-            </exclusions>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxb-provider</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+					<groupId>org.jboss.spec.javax.xml.bind</groupId>
+				</exclusion>
+			</exclusions>
 			<scope>provided</scope>
-        </dependency>
-        <dependency>
+		</dependency>
+		<dependency>
 			<!-- Trengs for REST grensesnitt -->
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-jaxrs</artifactId>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-jaxrs</artifactId>
 			<scope>provided</scope>
-        </dependency>
-        <dependency>
+		</dependency>
+		<dependency>
 			<!-- Trengs for REST grensesnitt -->
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jaxrs</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
-                    <groupId>org.jboss.spec.javax.xml.bind</groupId>
-                </exclusion>
-            </exclusions>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+					<groupId>org.jboss.spec.javax.xml.bind</groupId>
+				</exclusion>
+			</exclusions>
 			<scope>provided</scope>
-        </dependency>
-        <dependency>
+		</dependency>
+		<dependency>
 			<!-- Trengs for REST grensesnitt -->
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-validator-provider</artifactId>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-validator-provider</artifactId>
 			<scope>provided</scope>
-        </dependency>
-        <dependency>
+		</dependency>
+		<dependency>
 			<!-- Trengs for REST grensesnitt -->
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-cdi</artifactId>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-cdi</artifactId>
 			<scope>provided</scope>
-        </dependency>
+		</dependency>
 
 
 		<dependency>
@@ -136,11 +137,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-		
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 </project>
