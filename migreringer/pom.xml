@@ -13,6 +13,10 @@
     <artifactId>migreringer</artifactId>
     <packaging>jar</packaging>
     <name>Abakus :: Database migreringer</name>
+	
+	<properties>
+		<skipMigrering>false</skipMigrering>
+	</properties>
 
     <dependencies>
         <!-- NAV -->
@@ -87,6 +91,7 @@
                     <mainClass>no.nav.foreldrepenger.abakus.dbstoette.Databaseskjemainitialisering</mainClass>
                     <classpathScope>test</classpathScope>
                     <cleanupDaemonThreads>false</cleanupDaemonThreads>
+					<skip>${skipMigrering}</skip>
                 </configuration>
             </plugin>
             <plugin>

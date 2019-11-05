@@ -80,12 +80,8 @@
 			<artifactId>organisasjon-klient</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>no.nav.foreldrepenger.kontrakter</groupId>
-			<artifactId>registerdata-callback-v1</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.kontrakter</groupId>
-			<artifactId>iaygrunnlag-v1</artifactId>
+			<groupId>no.nav.foreldrepenger.abakus</groupId>
+			<artifactId>abakus-kontrakt</artifactId>
 		</dependency>
 
         <!-- Andre NAV tjenestespesifikasjoner -->
