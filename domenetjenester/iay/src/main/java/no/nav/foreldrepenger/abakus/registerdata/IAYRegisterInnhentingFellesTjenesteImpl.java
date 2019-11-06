@@ -265,7 +265,7 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
 
     private void innhentInntektsopplysningFor(Kobling kobling, AktørId aktørId, InntektArbeidYtelseAggregatBuilder builder, Set<RegisterdataElement> informasjonsElementer, RegisterdataElement registerdataElement) {
         final var inntektsKilde = ELEMENT_TIL_INNTEKTS_KILDE_MAP.get(registerdataElement);
-        final InntektsInformasjon inntektsInformasjon = innhentingSamletTjeneste.getInntektsInformasjon(aktørId, kobling,
+        final InntektsInformasjon inntektsInformasjon = innhentingSamletTjeneste.getInntektsInformasjon(aktørId,
             kobling.getOpplysningsperiode().tilIntervall(), inntektsKilde);
 
         if (informasjonsElementer.contains(registerdataElement)) {
