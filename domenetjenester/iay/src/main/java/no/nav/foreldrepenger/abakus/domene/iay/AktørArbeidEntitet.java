@@ -172,4 +172,7 @@ public class AktørArbeidEntitet extends BaseEntitet implements AktørArbeid, In
             '>';
     }
 
+    void tilbakestillYrkesaktiviteter() {
+        this.yrkesaktiviter.clear();
+    }
 }

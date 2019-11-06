@@ -118,7 +118,7 @@ public class InntektArbeidYtelseAggregatBuilder {
     public List<ArbeidsforholdReferanseEntitet> getNyeInternArbeidsforholdReferanser() {
         return nyeInternArbeidsforholdReferanser;
     }
-    
+
     /**
      * Oppretter builder for aktiviteter for en gitt aktør. Baserer seg på en kopi av forrige innslag for aktøren hvis det eksisterer.
      *
@@ -161,7 +161,7 @@ public class InntektArbeidYtelseAggregatBuilder {
     VersjonType getVersjon() {
         return versjon;
     }
-    
+
     void oppdaterArbeidsforholdReferanseEtterErstatting(AktørId søker, Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef gammelRef,
                                                         InternArbeidsforholdRef nyRef) {
         final AktørArbeidBuilder builder = getAktørArbeidBuilder(søker);
@@ -252,6 +252,10 @@ public class InntektArbeidYtelseAggregatBuilder {
 
         public void fjernYrkesaktivitetHvisFinnes(YrkesaktivitetBuilder builder) {
             kladd.fjernYrkesaktivitetForBuilder(builder);
+        }
+
+        public void tilbakestillYrkesaktiviteter() {
+            kladd.tilbakestillYrkesaktiviteter();
         }
     }
 

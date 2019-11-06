@@ -249,8 +249,10 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
         }
 
         if (informasjonsElementer.contains(RegisterdataElement.ARBEIDSFORHOLD)) {
+            InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder aktørArbeidBuilder = builder.getAktørArbeidBuilder(aktørId);
+            aktørArbeidBuilder.tilbakestillYrkesaktiviteter();
             Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = innhentingSamletTjeneste.getArbeidsforhold(aktørId, opplysningsPeriode);
-            arbeidsforhold.entrySet().forEach(forholdet -> oversettArbeidsforholdTilYrkesaktivitet(kobling, builder, forholdet, aktørId));
+            arbeidsforhold.entrySet().forEach(forholdet -> oversettArbeidsforholdTilYrkesaktivitet(kobling, builder, forholdet, aktørArbeidBuilder));
         }
 
         if (informasjonsElementer.stream().anyMatch(inntektselementer::contains)) {
@@ -292,18 +294,16 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
 
     private void oversettArbeidsforholdTilYrkesaktivitet(Kobling kobling,
                                                          InntektArbeidYtelseAggregatBuilder builder,
-                                                         Map.Entry<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold, AktørId aktørId) {
+                                                         Map.Entry<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold,
+                                                         InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder aktørArbeidBuilder) {
+
         var koblingReferanse = kobling.getKoblingReferanse();
         final ArbeidsforholdIdentifikator arbeidsgiverIdent = arbeidsforhold.getKey();
         final Arbeidsgiver arbeidsgiver = mapArbeidsgiver(arbeidsgiverIdent);
         final String arbeidsforholdId = arbeidsgiverIdent.harArbeidsforholdRef() ? arbeidsgiverIdent.getArbeidsforholdId().getReferanse() : null;
         var eksternReferanse = EksternArbeidsforholdRef.ref(arbeidsforholdId);
         var arbeidsforholdRef = finnReferanseFor(koblingReferanse, arbeidsgiver, eksternReferanse);
-        var internReferanse = arbeidsforholdRef.orElseGet(() -> {
-            return builder.medNyInternArbeidsforholdRef(arbeidsgiver, eksternReferanse);
-        });
-
-        InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder aktørArbeidBuilder = builder.getAktørArbeidBuilder(aktørId);
+        var internReferanse = arbeidsforholdRef.orElseGet(() -> builder.medNyInternArbeidsforholdRef(arbeidsgiver, eksternReferanse));
 
         YrkesaktivitetBuilder yrkesaktivitetBuilder = byggYrkesaktiviteterTjeneste
             .byggYrkesaktivitetForSøker(arbeidsforhold, arbeidsgiver, internReferanse, aktørArbeidBuilder);
