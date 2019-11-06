@@ -11,7 +11,7 @@
 
 	<artifactId>abakus-kontrakt</artifactId>
 	<packaging>jar</packaging>
-	<name>(ABAKUS) Kontrakter</name>
+	<name>Abakus :: Kontrakter</name>
 
 	<properties>
 	</properties>
