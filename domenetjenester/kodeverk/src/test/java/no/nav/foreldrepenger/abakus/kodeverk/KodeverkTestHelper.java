@@ -1,15 +1,12 @@
 package no.nav.foreldrepenger.abakus.kodeverk;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Alternative;
 import javax.persistence.NoResultException;
@@ -100,40 +97,6 @@ public class KodeverkTestHelper {
         }
 
         @Override
-        public <V extends Kodeliste> List<V> finnForKodeverkEiersKoder(Class<V> cls, String... offisiellKoder) {
-            Set<String> offisiellListe = new HashSet<>(Arrays.asList(offisiellKoder));
-            Map<String, Kodeliste> kodelisterForKlasse = getKodelistePrOffisiellKodePrKlasse(cls);
-            @SuppressWarnings("unchecked")
-            List<V> resultList = kodelisterForKlasse.entrySet().stream().filter(e -> {
-                String offisiellKode = e.getValue().getOffisiellKode();
-                return offisiellListe.contains(offisiellKode);
-            })
-                .map(e -> (V) e.getValue())
-                .collect(Collectors.toList());
-            return resultList;
-        }
-
-        @Override
-        public <V extends Kodeliste> List<V> finnListe(Class<V> cls, List<String> koder) {
-            Map<String, Kodeliste> kodelisterForKlasse = getKodelistePrKodePrKlasse(cls);
-            @SuppressWarnings("unchecked")
-            List<V> resultList = kodelisterForKlasse.entrySet().stream().filter(e -> koder.contains(e.getKey()))
-                .map(e -> (V) e.getValue())
-                .collect(Collectors.toList());
-            return resultList;
-        }
-
-        @Override
-        public <V extends Kodeliste> List<V> hentAlle(Class<V> cls) {
-            Map<String, Kodeliste> kodelisterForKlasse = getKodelistePrOffisiellKodePrKlasse(cls);
-            @SuppressWarnings("unchecked")
-            List<V> resultList = kodelisterForKlasse.entrySet().stream()
-                .map(e -> (V) e.getValue())
-                .collect(Collectors.toList());
-            return resultList;
-        }
-
-        @Override
         public <V extends Kodeliste> Optional<V> finnOptional(Class<V> cls, String kode) {
             return Optional.of(finn(cls, kode));
         }
@@ -153,9 +116,5 @@ public class KodeverkTestHelper {
             return kodelistePrKodePrKlasse.get(cls);
         }
 
-        @Override
-        public <V extends Kodeliste, K extends Kodeliste> Map<V, Set<K>> hentKodeRelasjonForKodeverk(Class<V> cls, Class<K> cls2) {
-            throw new UnsupportedOperationException();
-        }
     }
 }

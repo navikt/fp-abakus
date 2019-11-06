@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.threeten.extra.Interval;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
-import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
@@ -75,7 +74,7 @@ public class InnhentingSamletTjeneste {
         this.meldekortTjeneste = meldekortTjeneste;
     }
 
-    public InntektsInformasjon getInntektsInformasjon(AktørId aktørId, Kobling behandling, Interval periode, InntektsKilde kilde) {
+    public InntektsInformasjon getInntektsInformasjon(AktørId aktørId, Interval periode, InntektsKilde kilde) {
         FinnInntektRequest.FinnInntektRequestBuilder builder = FinnInntektRequest.builder(YearMonth.from(LocalDateTime.ofInstant(periode.getStart(), ZoneId.systemDefault())),
             YearMonth.from(LocalDateTime.ofInstant(periode.getEnd(), ZoneId.systemDefault())));
 
