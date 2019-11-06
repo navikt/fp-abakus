@@ -1,14 +1,9 @@
 package no.nav.foreldrepenger.abakus.kodeverk;
 
-import static java.util.stream.Collectors.joining;
 import static no.nav.foreldrepenger.abakus.kodeverk.KodeverkFeil.FEILFACTORY;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -122,71 +117,6 @@ public class KodeverkRepositoryImpl implements KodeverkRepository {
         return kodeliste;
     }
 
-    @Override
-    public <V extends Kodeliste> List<V> finnForKodeverkEiersKoder(Class<V> cls, String... offisiellKoder) {
-        List<String> koderIkkeICache = new ArrayList<>();
-        List<V> result = new ArrayList<>();
-        //Traverserer alle koder vi skal finne kodeverk for. Kodene som finnes i cache hentes derfra. De som ikke finnes i cache hentes fra DB.
-        Arrays.stream(offisiellKoder).forEach(kode -> {
-            //For hver kode
-            @SuppressWarnings("unchecked")
-            V kodeliste = (V) kodelisteCache.get(kode);
-            if (kodeliste == null) {
-                koderIkkeICache.add(kode);
-            } else {
-                result.add(kodeliste);
-            }
-        });
-        result.addAll(finnForKodeverkEiersKoderFraEm(cls, koderIkkeICache));
-        return result;
-    }
-
-    @Override
-    public <V extends Kodeliste> List<V> finnListe(Class<V> cls, List<String> koder) {
-        List<String> koderIkkeICache = new ArrayList<>();
-        List<V> result = new ArrayList<>();
-        koder.forEach(kode -> {
-            //For hver kode
-            @SuppressWarnings("unchecked")
-            V kodeliste = (V) kodelisteCache.get(kode);
-            if (kodeliste == null) {
-                koderIkkeICache.add(kode);
-            } else {
-                result.add(kodeliste);
-            }
-        });
-        result.addAll(finnListeFraEm(cls, koderIkkeICache));
-        return result;
-    }
-
-    @Override
-    public <V extends Kodeliste> List<V> hentAlle(Class<V> cls) {
-        CriteriaQuery<V> criteria = entityManager.getCriteriaBuilder().createQuery(cls);
-        criteria.select(criteria.from(cls));
-        return entityManager.createQuery(criteria)
-            .setHint(QueryHints.HINT_READONLY, "true")
-            .getResultList();
-    }
-
-    private <V extends Kodeliste> List<V> finnListeFraEm(Class<V> cls, List<String> koder) {
-        CriteriaQuery<V> criteria = createCriteria(cls, koder);
-        return entityManager.createQuery(criteria)
-            .setHint(QueryHints.HINT_READONLY, "true")
-            .getResultList();
-    }
-
-    private <V extends Kodeliste> List<V> finnForKodeverkEiersKoderFraEm(Class<V> cls, List<String> offisiellKoder) {
-        try {
-            CriteriaQuery<V> criteria = createCriteria(cls, "offisiellKode", offisiellKoder);
-            return entityManager.createQuery(criteria)
-                .setHint(QueryHints.HINT_READONLY, "true")
-                .getResultList();
-        } catch (NoResultException e) {
-            String koder = offisiellKoder.stream().collect(joining(","));
-            throw FEILFACTORY.kanIkkeFinneKodeverkForKoder(cls.getSimpleName(), koder, e).toException();
-        }
-    }
-
     private <V extends Kodeliste> V finnFraEM(Class<V> cls, String kode) {
         CriteriaQuery<V> criteria = createCriteria(cls, Collections.singletonList(kode));
         try {
@@ -226,57 +156,4 @@ public class KodeverkRepositoryImpl implements KodeverkRepository {
             from.get(felt).in(koder))); // $NON-NLS-1$
         return criteria;
     }
-
-    @Override
-    public <V extends Kodeliste, K extends Kodeliste> Map<V, Set<K>> hentKodeRelasjonForKodeverk(Class<V> kodeliste1, Class<K> kodeliste2) {
-        DiscriminatorValue discVal = kodeliste1.getDeclaredAnnotation(DiscriminatorValue.class);
-        Objects.requireNonNull(discVal, "Mangler @DiscriminatorValue i klasse:" + kodeliste1); //$NON-NLS-1$
-        String kodeverk = discVal.value();
-        List<KodelisteRelasjon> relasjoner = hentKodelisteRelasjonFor(kodeverk);
-        Map<String, List<V>> vMap = hentAlle(kodeliste1).stream().collect(Collectors.groupingBy(Kodeliste::getKode));
-        Map<String, List<K>> kMap = hentAlle(kodeliste2).stream().collect(Collectors.groupingBy(Kodeliste::getKode));
-
-        Map<V, Set<K>> map = new HashMap<>();
-        // støtter bare mapping en vei atm!!
-        for (KodelisteRelasjon relasjon : relasjoner) {
-            List<V> v = vMap.get(relasjon.getKode1());
-            List<K> k = kMap.get(relasjon.getKode2());
-            if (v != null && k != null) {
-                final Set<K> values = map.getOrDefault(v.get(0), new HashSet<>(k));
-                values.addAll(k);
-                map.put(v.get(0), values);
-            }
-        }
-        return map;
-    }
-
-    private List<KodelisteRelasjon> hentKodelisteRelasjonFor(String kodeverk) {
-        Query query = entityManager.createNativeQuery(
-            "SELECT kodeverk1, kode1, kodeverk2, kode2, gyldig_fom, gyldig_tom " +
-                "FROM kodeliste_relasjon " +
-                "WHERE gyldig_fom <= current_date AND gyldig_tom > current_date " +
-                "AND KODEVERK1 = ?");
-
-        query.setParameter(1, kodeverk);
-
-        int kodeverk1Nr = 0;
-        int kode1Nr = 1;
-        int kodeverk2Nr = 2;
-        int kode2Nr = 3;
-        int fomNr = 4;
-        int tomNr = 5;
-
-        List<KodelisteRelasjon> retval = new ArrayList<>();
-        @SuppressWarnings("unchecked")
-        List<Object[]> koderelasjoner = query.getResultList();
-
-        for (Object[] kr : koderelasjoner) {
-            retval.add(new KodelisteRelasjon((String) kr[kodeverk1Nr], (String) kr[kode1Nr],
-                (String) kr[kodeverk2Nr], (String) kr[kode2Nr],
-                ((Timestamp) kr[fomNr]).toLocalDateTime().toLocalDate(),
-                ((Timestamp) kr[tomNr]).toLocalDateTime().toLocalDate()));
-        }
-        return retval;
-    }
-
 }
