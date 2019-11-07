@@ -26,6 +26,10 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
 
     private static final RoundingMode AVRUNDINGSMODUS = RoundingMode.HALF_EVEN;
 
+    private static final BigDecimal MAX_VERDI = new BigDecimal(500);
+
+    public static final Stillingsprosent ZERO = new Stillingsprosent(0);
+
     @Column(name = "verdi", scale = 2, nullable = false)
     @ChangeTracked
     private BigDecimal verdi;
@@ -35,7 +39,7 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
     }
 
     public Stillingsprosent(BigDecimal verdi) {
-        this.verdi = verdi == null ? null : fiksNegativTilAbsolutt(verdi);
+        this.verdi = verdi == null ? null : fiksNegativOgMax(verdi);
         validerRange(this.verdi);
     }
 
@@ -47,16 +51,6 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
     // Beleilig å kunne opprette gjennom string
     public Stillingsprosent(String verdi) {
         this(new BigDecimal(verdi));
-    }
-
-    private static void validerRange(BigDecimal verdi) {
-        if (verdi == null) {
-            return;
-        } else if (verdi.compareTo(BigDecimal.valueOf(100)) > 0) {
-            log.info("[IAY] Prosent (yrkesaktivitet, permisjon) kan ikke være større enn 100. Verdi fra AA-reg: {}", verdi);
-        }
-        check(verdi.compareTo(BigDecimal.ZERO) >= 0, "Prosent må være >= 0"); //$NON-NLS-1$
-        check(verdi.compareTo(BigDecimal.valueOf(500)) <= 0, "Prosent må være <= 500"); //$NON-NLS-1$
     }
 
     @Override
@@ -96,10 +90,21 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
             '}';
     }
 
-    private BigDecimal fiksNegativTilAbsolutt(BigDecimal verdi) {
+    private static void validerRange(BigDecimal verdi) {
+        if (verdi == null) {
+            return;
+        }
+        check(verdi.compareTo(BigDecimal.ZERO) >= 0, "Prosent må være >= 0"); //$NON-NLS-1$
+    }
+
+    private BigDecimal fiksNegativOgMax(BigDecimal verdi) {
         if (null != verdi && verdi.compareTo(BigDecimal.ZERO) < 0) {
             log.info("[IAY] Prosent (yrkesaktivitet, permisjon) kan ikke være mindre enn 0, absolutt verdi brukes isteden. Verdi fra AA-reg: {}", verdi);
             verdi = verdi.abs();
+        }
+        if (null != verdi && verdi.compareTo(MAX_VERDI) > 0) {
+            log.info("[IAY] Prosent (yrkesaktivitet, permisjon) kan ikke være mer enn 500, avkortet verdi brukes isteden. Verdi fra AA-reg: {}", verdi);
+            verdi = MAX_VERDI;
         }
         return verdi;
     }
