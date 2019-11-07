@@ -1,10 +1,10 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
@@ -41,7 +41,7 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
 
     @OneToMany(mappedBy = "inntektsmeldinger")
     @ChangeTracked
-    private List<InntektsmeldingEntitet> inntektsmeldinger = new ArrayList<>();
+    private Set<InntektsmeldingEntitet> inntektsmeldinger = new HashSet<>();
 
     @Transient
     private ArbeidsforholdInformasjonEntitet arbeidsforholdInformasjon;
@@ -67,12 +67,12 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
 
     @Override
     public List<Inntektsmelding> getInntektsmeldinger() {
-        return Collections.unmodifiableList(inntektsmeldinger.stream().filter(this::skalBrukes).collect(Collectors.toList()));
+        return inntektsmeldinger.stream().filter(this::skalBrukes).collect(Collectors.toUnmodifiableList());
     }
 
     @Override
     public List<Inntektsmelding> getAlleInntektsmeldinger() {
-        return Collections.unmodifiableList(inntektsmeldinger);
+        return inntektsmeldinger.stream().collect(Collectors.toUnmodifiableList());
     }
 
     @Override
@@ -90,9 +90,9 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
         return (ov.getArbeidsforholdRef().gjelderFor(im.getArbeidsforholdRef()))
             && ov.getArbeidsgiver().equals(im.getArbeidsgiver())
             && (Objects.equals(ArbeidsforholdHandlingType.IKKE_BRUK, ov.getHandling())
-                || Objects.equals(ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING, ov.getHandling())
-                || Objects.equals(ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE, ov.getHandling())
-                || Objects.equals(ArbeidsforholdHandlingType.SLÅTT_SAMMEN_MED_ANNET, ov.getHandling()));
+            || Objects.equals(ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING, ov.getHandling())
+            || Objects.equals(ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE, ov.getHandling())
+            || Objects.equals(ArbeidsforholdHandlingType.SLÅTT_SAMMEN_MED_ANNET, ov.getHandling()));
     }
 
     @Override
@@ -120,10 +120,6 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
 
     }
 
-    public void fjern(Inntektsmelding inntektsmelding) {
-        inntektsmeldinger.remove(inntektsmelding);
-    }
-
     private boolean skalFjerneInntektsmelding(Inntektsmelding gammel, Inntektsmelding ny) {
         if (gammel.gjelderSammeArbeidsforhold(ny)) {
             if (ALTINN_SYSTEM_NAVN.equals(gammel.getKildesystem()) || ALTINN_SYSTEM_NAVN.equals(ny.getKildesystem())) {
@@ -144,10 +140,6 @@ public class InntektsmeldingAggregatEntitet extends BaseEntitet implements Innte
             }
         }
         return false;
-    }
-
-    void taHensynTilBetraktninger(ArbeidsforholdInformasjonEntitet arbeidsforholdInformasjon) {
-        this.arbeidsforholdInformasjon = arbeidsforholdInformasjon;
     }
 
     @Override
