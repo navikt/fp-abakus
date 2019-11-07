@@ -140,7 +140,7 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
         this.kanalreferanse = inntektsmelding.getKanalreferanse();
         this.kildesystem = inntektsmelding.getKildesystem();
         this.mottattDato = inntektsmelding.getMottattDato();
-        
+
         this.graderinger = inntektsmelding.getGraderinger().stream().map(g -> {
             final GraderingEntitet graderingEntitet = new GraderingEntitet(g);
             graderingEntitet.setInntektsmelding(this);
@@ -203,7 +203,7 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
     public String getKanalreferanse() {
         return kanalreferanse;
     }
-    
+
     @Override
     public LocalDate getMottattDato() {
         return mottattDato;
@@ -216,7 +216,7 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
     void setMottattDato(LocalDate mottattDato) {
         this.mottattDato = mottattDato;
     }
-    
+
     @Override
     public String getKildesystem() {
         return kildesystem;
@@ -259,7 +259,7 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
     void setArbeidsforholdId(InternArbeidsforholdRef arbeidsforholdRef) {
         this.arbeidsforholdRef = arbeidsforholdRef != null ? arbeidsforholdRef : InternArbeidsforholdRef.nullRef();
     }
-    
+
     @Override
     public LocalDate getStartDatoPermisjon() {
         return startDatoPermisjon;
@@ -348,12 +348,13 @@ public class InntektsmeldingEntitet extends BaseEntitet implements Inntektsmeldi
         }
         var entitet = (InntektsmeldingEntitet) o;
         return Objects.equals(getArbeidsgiver(), entitet.getArbeidsgiver()) &&
+            Objects.equals(getJournalpostId(), entitet.getJournalpostId()) &&
             Objects.equals(getArbeidsforholdRef(), entitet.getArbeidsforholdRef());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getArbeidsgiver(), getArbeidsforholdRef());
+        return Objects.hash(getArbeidsgiver(), getArbeidsforholdRef(), getJournalpostId());
     }
 
     @Override
