@@ -16,6 +16,7 @@ import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
+import no.nav.foreldrepenger.abakus.kobling.TaskConstants;
 import no.nav.foreldrepenger.abakus.registerdata.InnhentingFeil;
 import no.nav.foreldrepenger.kontrakter.callback.registerdata.CallbackDto;
 import no.nav.foreldrepenger.kontrakter.callback.registerdata.Grunnlag;
@@ -50,8 +51,8 @@ public class CallbackTask implements ProsessTaskHandler {
 
     @Override
     public void doTask(ProsessTaskData data) {
-        String callbackUrl = data.getCallbackUrl();
-        Kobling kobling = koblingTjeneste.hent(data.getKoblingId());
+        String callbackUrl = data.getPropertyValue(TaskConstants.CALLBACK_URL);
+        Kobling kobling = koblingTjeneste.hent(data.getBehandlingId());
         if (callbackUrl == null || callbackUrl.isEmpty()) {
             log.info("Prøver callback uten url for kobling: {} ... Ignorerer", kobling);
             return;

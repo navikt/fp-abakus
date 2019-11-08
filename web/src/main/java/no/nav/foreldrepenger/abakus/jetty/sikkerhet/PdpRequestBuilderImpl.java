@@ -5,8 +5,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
 
 import no.nav.vedtak.sikkerhet.abac.AbacAttributtSamling;
-import no.nav.vedtak.sikkerhet.abac.AbacBehandlingStatus;
-import no.nav.vedtak.sikkerhet.abac.AbacFagsakStatus;
 import no.nav.vedtak.sikkerhet.abac.PdpKlient;
 import no.nav.vedtak.sikkerhet.abac.PdpRequest;
 import no.nav.vedtak.sikkerhet.abac.PdpRequestBuilder;
