@@ -2,8 +2,6 @@ package no.nav.foreldrepenger.abakus.registerdata.tjeneste;
 
 import static no.nav.foreldrepenger.abakus.registerdata.callback.CallbackTask.EKSISTERENDE_GRUNNLAG_REF;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -14,6 +12,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import no.nav.abakus.prosesstask.batch.BatchProsessTaskRepository;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
@@ -21,6 +20,7 @@ import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
+import no.nav.foreldrepenger.abakus.kobling.TaskConstants;
 import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
@@ -36,9 +36,7 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InnhentRegisterdataR
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskGruppe;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskRepository;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskStatus;
-import no.nav.vedtak.felles.prosesstask.api.TaskStatus;
 
 @ApplicationScoped
 public class InnhentRegisterdataTjeneste {
@@ -47,8 +45,9 @@ public class InnhentRegisterdataTjeneste {
     private Instance<IAYRegisterInnhentingTjeneste> innhentTjenester;
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private KoblingTjeneste koblingTjeneste;
-    private ProsessTaskRepository prosessTaskRepository;
+    private BatchProsessTaskRepository prosessTaskRepository;
     private KodeverkRepository kodeverkRepository;
+
     InnhentRegisterdataTjeneste() {
         // CDI
     }
@@ -57,7 +56,7 @@ public class InnhentRegisterdataTjeneste {
     public InnhentRegisterdataTjeneste(@Any Instance<IAYRegisterInnhentingTjeneste> innhentingTjeneste,
                                        InntektArbeidYtelseTjeneste iayTjeneste,
                                        KoblingTjeneste koblingTjeneste,
-                                       ProsessTaskRepository prosessTaskRepository,
+                                       BatchProsessTaskRepository prosessTaskRepository,
                                        KodeverkRepository kodeverkRepository) {
         this.innhentTjenester = innhentingTjeneste;
         this.iayTjeneste = iayTjeneste;
@@ -154,15 +153,17 @@ public class InnhentRegisterdataTjeneste {
         ProsessTaskGruppe taskGruppe = new ProsessTaskGruppe();
         ProsessTaskData innhentingTask = new ProsessTaskData(RegisterdataInnhentingTask.TASKTYPE);
         ProsessTaskData callbackTask = new ProsessTaskData(CallbackTask.TASKTYPE);
-        innhentingTask.setKobling(kobling.getId(), kobling.getAktørId().getId());
-        callbackTask.setKobling(kobling.getId(), kobling.getAktørId().getId());
+        innhentingTask.setAktørId(kobling.getAktørId().getId());
+        innhentingTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
+        callbackTask.setAktørId(kobling.getAktørId().getId());
+        callbackTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
 
         Optional<GrunnlagReferanse> eksisterendeGrunnlagRef = hentSisteReferanseFor(kobling.getKoblingReferanse());
         eksisterendeGrunnlagRef.ifPresent(ref -> callbackTask.setProperty(EKSISTERENDE_GRUNNLAG_REF, ref.toString()));
 
         if (dto.getCallbackUrl() != null) {
-            innhentingTask.setCallbackUrl(dto.getCallbackUrl());
-            callbackTask.setCallbackUrl(dto.getCallbackUrl());
+            innhentingTask.setProperty(TaskConstants.CALLBACK_URL, dto.getCallbackUrl());
+            callbackTask.setProperty(TaskConstants.CALLBACK_URL, dto.getCallbackUrl());
         }
         taskGruppe.addNesteSekvensiell(innhentingTask);
         taskGruppe.addNesteSekvensiell(callbackTask);
@@ -171,8 +172,8 @@ public class InnhentRegisterdataTjeneste {
     }
 
     public boolean innhentingFerdig(String taskReferanse) {
-        List<TaskStatus> taskStatuses = prosessTaskRepository.finnStatusForGruppe(taskReferanse);
-        return taskStatuses.stream().anyMatch(it -> !ProsessTaskStatus.KLAR.equals(it.getStatus()));
+        final var statuses = prosessTaskRepository.finnStatusForGruppe(taskReferanse);
+        return statuses.stream().anyMatch(it -> !ProsessTaskStatus.KLAR.equals(it.getStatus()));
     }
 
     public Optional<GrunnlagReferanse> hentSisteReferanseFor(KoblingReferanse koblingRef) {

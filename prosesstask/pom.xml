@@ -34,6 +34,10 @@
 			<groupId>no.nav.foreldrepenger.felles</groupId>
 			<artifactId>felles-feil</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles</groupId>
+            <artifactId>felles-prosesstask</artifactId>
+        </dependency>
 
 		<!-- trengs for workaround for HHH-11020 for å kunne kalle EntityManager.unwrap -->
 		<dependency>
