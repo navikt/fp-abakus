@@ -71,6 +71,10 @@
 			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
 			<artifactId>sigrun-klient</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+            <artifactId>unleash-klient</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>no.nav.foreldrepenger.kontrakter</groupId>
 			<artifactId>fp-feed-vedtak-tjenestespesifikasjon</artifactId>
