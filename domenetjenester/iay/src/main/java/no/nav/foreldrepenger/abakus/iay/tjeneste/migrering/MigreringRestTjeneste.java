@@ -7,7 +7,6 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAG
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,12 +33,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
 import no.nav.foreldrepenger.abakus.domene.iay.TidssoneConfig;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYFraDtoMapper;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYTilDtoMapper;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
@@ -47,10 +44,7 @@ import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.foreldrepenger.abakus.vedtak.json.JacksonJsonConfig;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.PersonIdent;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest.Dataset;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagSakSnapshotDto;
 import no.nav.vedtak.felles.jpa.Transaction;
@@ -94,8 +88,7 @@ public class MigreringRestTjeneste {
     @ApiOperation(value = "Tar i mot alle grunnlag på alle behandlinger på en gitt sak")
     @BeskyttetRessurs(action = CREATE, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response migrerSak(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid InntektArbeidYtelseGrunnlagSakSnapshotDto sakSnapshot)
-            throws JsonProcessingException {
+    public Response migrerSak(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid InntektArbeidYtelseGrunnlagSakSnapshotDto sakSnapshot) {
 
         doMigrering(sakSnapshot);
 
@@ -107,9 +100,8 @@ public class MigreringRestTjeneste {
      * Synling for testing
      *
      * @param sakSnapshot
-     * @throws JsonProcessingException
      */
-    void doMigrering(InntektArbeidYtelseGrunnlagSakSnapshotDto sakSnapshot) throws JsonProcessingException {
+    void doMigrering(InntektArbeidYtelseGrunnlagSakSnapshotDto sakSnapshot) {
         var aktørId = new AktørId(sakSnapshot.getAktør().getIdent());
         iayTjeneste.slettAltForSak(aktørId, new Saksnummer(sakSnapshot.getSaksnummer()),
             kodeverkRepository.finn(YtelseType.class, sakSnapshot.getYtelseType().getKode()));
@@ -126,48 +118,12 @@ public class MigreringRestTjeneste {
                 var grunnlag = dtoMapper.mapTilGrunnlagInklusivRegisterdata(konvolutt.getData(), aktiv);
 
                 repository.lagreMigrertGrunnlag(grunnlag, koblingReferanse);
-
-                var tidsstempler = tidsstemplerTekst(sakSnapshot, aktørId, konvolutt, grunnlagReferanse, koblingReferanse, grunnlag);
-                log.info("Migrert grunnlagReferanse={} (koblingReferanse={}), tidsstempler [{}]", grunnlagReferanse, koblingReferanse, tidsstempler);
+                log.info("Migrert grunnlagReferanse={} (koblingReferanse={}", grunnlagReferanse, koblingReferanse);
             } catch (Exception e) {
-                log.info("Feilet migrering av sak={} for grunnlag med json='{}'", sakSnapshot.getSaksnummer(),
-                    JacksonJsonConfig.getMapper().writeValueAsString(konvolutt));
-                throw new IllegalStateException(e);
+                log.info("Feilet migrering av sak={} for grunnlag", sakSnapshot.getSaksnummer(), e);
+                throw e;
             }
         }
-    }
-
-    /**
-     * @deprecated tester tidsstempel konvertering før/etter konvertering fra dto og lagring
-     */
-    @Deprecated(forRemoval = true)
-    private String tidsstemplerTekst(InntektArbeidYtelseGrunnlagSakSnapshotDto sakSnapshot,
-                                     AktørId aktørId,
-                                     InntektArbeidYtelseGrunnlagSakSnapshotDto.Konvolutt konvolutt,
-                                     GrunnlagReferanse grunnlagReferanse,
-                                     KoblingReferanse koblingReferanse,
-                                     InntektArbeidYtelseGrunnlag grunnlag) {
-        // sideshow - log tidsstempler for feilsøking av mapping feil
-        var iaygEtterLagring = repository.hentInntektArbeidYtelseForReferanse(grunnlagReferanse)
-            .orElseThrow(() -> new IllegalStateException("Mangler for grunnlagReferanse:" + grunnlagReferanse + ", koblingReferanse:" + koblingReferanse));
-
-        var tilDto = new IAYTilDtoMapper(aktørId, grunnlagReferanse, koblingReferanse);
-
-        InntektArbeidYtelseGrunnlagRequest spec = new InntektArbeidYtelseGrunnlagRequest(sakSnapshot.getAktør())
-            .medYtelseType(sakSnapshot.getYtelseType())
-            .medSaksnummer(sakSnapshot.getSaksnummer())
-            .medDataset(EnumSet.allOf(Dataset.class));
-
-        var iaygEtterDto = tilDto.mapTilDto(iaygEtterLagring, spec);
-
-        var tidsstempler = String.format(
-            "IAYG Dto=%s; IAYG Entitet(før lagring)=%s; IAYG Entitet (etter lagring)=%s; IAYG Entitet (etter lagring offset konv)=%s; IAYG Dto (etter)=%s",
-            konvolutt.getData().getGrunnlagTidspunkt(),
-            grunnlag.getOpprettetTidspunkt(),
-            iaygEtterLagring.getOpprettetTidspunkt(),
-            iaygEtterLagring.getOpprettetTidspunkt().atZone(ZoneId.systemDefault()).toOffsetDateTime(),
-            iaygEtterDto.getGrunnlagTidspunkt());
-        return tidsstempler;
     }
 
     @GET
