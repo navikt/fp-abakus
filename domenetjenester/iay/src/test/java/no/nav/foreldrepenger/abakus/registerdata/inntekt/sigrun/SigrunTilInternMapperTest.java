@@ -69,4 +69,22 @@ public class SigrunTilInternMapperTest {
 
         assertThat(map.get(DatoIntervallEntitet.fraOgMedTilOgMed(førsteDagIÅr, sisteDagIÅr)).get(InntektspostType.LØNN)).isEqualByComparingTo(new BigDecimal(10000));
     }
+
+    @Test
+    public void skal_mappe_og_beregne_slå_sammen_lønn_fra_beregent_med_lønn_fra_summertskattegrunnlag_med_forskjellige_lønnstyper() {
+        LocalDate iDag = LocalDate.now();
+        Map<Year, List<BeregnetSkatt>> beregnet = new HashMap<>();
+        Map<Year, Optional<SSGResponse>> summertskattegrunnlag = new HashMap<>();
+
+        Year iÅr = Year.of(iDag.getYear());
+        beregnet.put(iÅr, List.of(new BeregnetSkatt(TekniskNavn.PERSONINNTEKT_FISKE_FANGST_FAMILIEBARNEHAGE.getKode(), "5000")));
+        summertskattegrunnlag.put(iÅr, Optional.of(new SSGResponse(List.of(), List.of(new SSGGrunnlag(TekniskNavn.LØNNSINNTEKT_MED_TRYGDEAVGIFTSPLIKT_OMFATTET_AV_LØNNSTREKKORDNINGEN.getKode(), "5000")), null)));
+
+        Map<DatoIntervallEntitet, Map<InntektspostType, BigDecimal>> map = SigrunTilInternMapper.mapFraSigrunTilIntern(beregnet, summertskattegrunnlag);
+        LocalDate førsteDagIÅr = LocalDate.of(iÅr.getValue(), 1, 1);
+        LocalDate sisteDagIÅr = LocalDate.of(iÅr.getValue(), 12, 31);
+
+        assertThat(map.get(DatoIntervallEntitet.fraOgMedTilOgMed(førsteDagIÅr, sisteDagIÅr)).get(InntektspostType.LØNN)).isEqualByComparingTo(new BigDecimal(5000));
+        assertThat(map.get(DatoIntervallEntitet.fraOgMedTilOgMed(førsteDagIÅr, sisteDagIÅr)).get(InntektspostType.NÆRING_FISKE_FANGST_FAMBARNEHAGE)).isEqualByComparingTo(new BigDecimal(5000));
+    }
 }

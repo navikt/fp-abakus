@@ -50,7 +50,11 @@ class SigrunTilInternMapper {
                             årTilInntektMap.put(datoIntervallEntitet, typeTilVerdiMap);
                         } else {
                             BigDecimal beløp = new BigDecimal(grunnlag.getBeloep());
-                            inntektspost.replace(inntektspostType, inntektspost.get(InntektspostType.LØNN).add(beløp));
+                            if (inntektspost.get(inntektspostType) == null) {
+                                inntektspost.put(inntektspostType, new BigDecimal(grunnlag.getBeloep()));
+                            } else {
+                                inntektspost.replace(inntektspostType, inntektspost.get(InntektspostType.LØNN).add(beløp));
+                            }
                         }
                         LOGGER.info("Lagt til {} fra summertskattegrunnlag for svalbard år {}", grunnlag.getBeloep(), entry.getKey());
                     });
