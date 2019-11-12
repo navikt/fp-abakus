@@ -16,7 +16,6 @@ import no.nav.foreldrepenger.abakus.dbstoette.UnittestRepositoryRule;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepositoryImpl;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.iay.InntektsmeldingerTjeneste;
@@ -40,7 +39,7 @@ public class InntektsmeldingerRestTjenesteTest {
     public UnittestRepositoryRule repositoryRule = new UnittestRepositoryRule();
     private final KoblingRepository repository = new KoblingRepository(repositoryRule.getEntityManager());
     private final KoblingTjeneste koblingTjeneste = new KoblingTjeneste(repository, new LåsRepository(repositoryRule.getEntityManager()));
-    private final InntektArbeidYtelseRepository iayRepository = new InntektArbeidYtelseRepositoryImpl(repositoryRule.getEntityManager());
+    private final InntektArbeidYtelseRepository iayRepository = new InntektArbeidYtelseRepository(repositoryRule.getEntityManager());
 
     private InntektsmeldingerTjeneste imTjenesten;
     private InntektsmeldingerRestTjeneste tjeneste;

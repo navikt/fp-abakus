@@ -12,7 +12,6 @@ import org.junit.Test;
 import no.nav.foreldrepenger.abakus.dbstoette.UnittestRepositoryRule;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepositoryImpl;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.impl.InntektArbeidYtelseTjenesteImpl;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
@@ -33,7 +32,7 @@ public class MigreringRestTjenesteTest {
     public UnittestRepositoryRule repositoryRule = new UnittestRepositoryRule();
 
     private KodeverkRepository kodeverkRepository = new KodeverkRepositoryImpl(repositoryRule.getEntityManager());
-    private InntektArbeidYtelseRepository repository = new InntektArbeidYtelseRepositoryImpl(repositoryRule.getEntityManager());
+    private InntektArbeidYtelseRepository repository = new InntektArbeidYtelseRepository(repositoryRule.getEntityManager());
     private InntektArbeidYtelseTjeneste iayTjeneste = new InntektArbeidYtelseTjenesteImpl(repository);
     private KoblingTjeneste koblingTjeneste = new KoblingTjeneste(new KoblingRepository(repositoryRule.getEntityManager()), new LåsRepository(repositoryRule.getEntityManager()));
 
