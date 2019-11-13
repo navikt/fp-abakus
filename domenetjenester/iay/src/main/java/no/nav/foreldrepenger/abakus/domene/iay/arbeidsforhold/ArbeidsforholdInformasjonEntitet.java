@@ -93,7 +93,7 @@ public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements Arb
     private boolean erIkkeMerget(ArbeidsforholdReferanseEntitet arbeidsforholdReferanseEntitet) {
         return overstyringer.stream().noneMatch(ov -> ov.getHandling().equals(ArbeidsforholdHandlingType.SLÅTT_SAMMEN_MED_ANNET)
             && ov.getArbeidsgiver().equals(arbeidsforholdReferanseEntitet.getArbeidsgiver())
-            && ov.getArbeidsforholdRef().gjelderFor(arbeidsforholdReferanseEntitet.getInternReferanse()));
+            && ov.getArbeidsforholdRef().equals(arbeidsforholdReferanseEntitet.getInternReferanse()));
     }
 
     private Optional<ArbeidsforholdReferanseEntitet> referanseEksistererIkke(Arbeidsgiver arbeidsgiverEntitet, InternArbeidsforholdRef ref) {
