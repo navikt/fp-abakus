@@ -133,7 +133,7 @@ public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements Arb
         return ArbeidsforholdOverstyringBuilder.oppdatere(this.overstyringer
             .stream()
             .filter(ov -> ov.getArbeidsgiver().equals(arbeidsgiverEntitet)
-                && ov.getArbeidsforholdRef().equals(ref))
+                && ov.getArbeidsforholdRef().gjelderFor(ref))
             .findFirst())
             .medInformasjon(this)
             .medArbeidsforholdRef(ref)

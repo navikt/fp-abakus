@@ -76,9 +76,11 @@ class MapArbeidsforholdInformasjon {
             var nyArbeidsgiverRef = mapArbeidsforholdRef(ov.getNyArbeidsforholdRef());
             var arbeidsgiver = mapArbeidsgiver(ov.getArbeidsgiver());
 
-            var overstyringBuilder = builder.getOverstyringBuilderFor(arbeidsgiver, arbeidsgiverRef);
+            var overstyringBuilder = ArbeidsforholdOverstyringBuilder.oppdatere(Optional.empty());
 
             overstyringBuilder.medBeskrivelse(ov.getBegrunnelse())
+                .medArbeidsgiver(arbeidsgiver)
+                .medArbeidsforholdRef(arbeidsgiverRef)
                 .medNyArbeidsforholdRef(nyArbeidsgiverRef)
                 .medHandling(KodeverkMapper.mapArbeidsforholdHandlingTypeFraDto(ov.getHandling()))
                 .medAngittArbeidsgiverNavn(ov.getAngittArbeidsgiverNavn())
@@ -124,14 +126,14 @@ class MapArbeidsforholdInformasjon {
                 .map(ao -> {
                     var dto = new ArbeidsforholdOverstyringDto(mapAktør(ao.getArbeidsgiver()),
                         mapArbeidsforholdsId(entitet, ao.getArbeidsgiver(), ao.getArbeidsforholdRef()))
-                            .medBegrunnelse(ao.getBegrunnelse())
-                            .medBekreftetPermisjon(mapBekreftetPermisjon(ao.getBekreftetPermisjon()))
-                            .medHandling(KodeverkMapper.mapArbeidsforholdHandlingTypeTilDto(ao.getHandling()))
-                            .medNavn(ao.getArbeidsgiverNavn())
-                            .medStillingsprosent(ao.getStillingsprosent() == null ? null : ao.getStillingsprosent().getVerdi())
-                            .medNyArbeidsforholdRef(
-                                ao.getNyArbeidsforholdRef() == null ? null : mapArbeidsforholdsId(entitet, ao.getArbeidsgiver(), ao.getNyArbeidsforholdRef()))
-                            .medArbeidsforholdOverstyrtePerioder(map(ao.getArbeidsforholdOverstyrtePerioder()));
+                        .medBegrunnelse(ao.getBegrunnelse())
+                        .medBekreftetPermisjon(mapBekreftetPermisjon(ao.getBekreftetPermisjon()))
+                        .medHandling(KodeverkMapper.mapArbeidsforholdHandlingTypeTilDto(ao.getHandling()))
+                        .medNavn(ao.getArbeidsgiverNavn())
+                        .medStillingsprosent(ao.getStillingsprosent() == null ? null : ao.getStillingsprosent().getVerdi())
+                        .medNyArbeidsforholdRef(
+                            ao.getNyArbeidsforholdRef() == null ? null : mapArbeidsforholdsId(entitet, ao.getArbeidsgiver(), ao.getNyArbeidsforholdRef()))
+                        .medArbeidsforholdOverstyrtePerioder(map(ao.getArbeidsforholdOverstyrtePerioder()));
                     return dto;
                 })
                 .sorted(COMP_ARBEIDSFORHOLD_OVERSTYRING)
@@ -150,10 +152,10 @@ class MapArbeidsforholdInformasjon {
         private List<Periode> map(List<ArbeidsforholdOverstyrtePerioderEntitet> perioder) {
             return perioder == null ? null
                 : perioder.stream()
-                    .map(ArbeidsforholdOverstyrtePerioderEntitet::getOverstyrtePeriode)
-                    .map(this::mapPeriode)
-                    .sorted(COMP_PERIODE)
-                    .collect(Collectors.toList());
+                .map(ArbeidsforholdOverstyrtePerioderEntitet::getOverstyrtePeriode)
+                .map(this::mapPeriode)
+                .sorted(COMP_PERIODE)
+                .collect(Collectors.toList());
         }
 
         private no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeidsforhold.v1.BekreftetPermisjon mapBekreftetPermisjon(Optional<BekreftetPermisjon> entitet) {
