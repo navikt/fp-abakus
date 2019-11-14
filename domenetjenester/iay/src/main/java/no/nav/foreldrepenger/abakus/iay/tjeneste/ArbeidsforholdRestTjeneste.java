@@ -114,7 +114,7 @@ public class ArbeidsforholdRestTjeneste {
         return Arbeidsgiver.person(new AktørId(arbeidsgiver.getIdent()));
     }
 
-    public class AktørDatoRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
+    public static class AktørDatoRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         public AktørDatoRequestAbacDataSupplier() {
         }
