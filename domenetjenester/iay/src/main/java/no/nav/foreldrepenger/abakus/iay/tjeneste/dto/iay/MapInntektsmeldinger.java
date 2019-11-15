@@ -50,7 +50,7 @@ public class MapInntektsmeldinger {
         .comparing((NaturalytelseDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getType() == null ? null : dto.getType().getKode(), Comparator.nullsLast(Comparator.naturalOrder()));
-    
+
     private static final Comparator<UtsettelsePeriodeDto> COMP_UTSETTELSE = Comparator
             .comparing((UtsettelsePeriodeDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
             .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()))
@@ -91,7 +91,7 @@ public class MapInntektsmeldinger {
             var arbeidsgiver = mapAktør(im.getArbeidsgiver());
             var journalpostId = new JournalpostId(im.getJournalpostId().getVerdi());
             var innsendingstidspunkt = im.getInnsendingstidspunkt();
-            var eksternRef = arbeidsforholdInformasjon.finnEkstern(im.getArbeidsgiver(), im.getArbeidsforholdRef());
+            var eksternRef = arbeidsforholdInformasjon.finnEksternRaw(im.getArbeidsgiver(), im.getArbeidsforholdRef());
             var arbeidsforholdId = mapArbeidsforholdsId(im.getArbeidsgiver(), im.getArbeidsforholdRef(), eksternRef);
             var innsendingsårsak = KodeverkMapper.mapInntektsmeldingInnsendingsårsak(im.getInntektsmeldingInnsendingsårsak());
             var mottattDato = im.getMottattDato();
