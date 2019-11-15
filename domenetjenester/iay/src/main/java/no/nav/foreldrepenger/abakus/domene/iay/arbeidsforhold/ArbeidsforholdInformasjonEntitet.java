@@ -262,6 +262,18 @@ public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements Arb
                 () -> new IllegalStateException("Mangler eksternReferanse for internReferanse: " + internReferanse + ", arbeidsgiver: " + arbeidsgiver + ",\n blant referanser=" + referanser));
     }
 
+    @Override
+    public EksternArbeidsforholdRef finnEksternRaw(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef internReferanse) {
+        if (internReferanse.getReferanse() == null) return EksternArbeidsforholdRef.nullRef();
+
+        return referanser.stream()
+            .filter(r -> Objects.equals(r.getInternReferanse(), internReferanse) && Objects.equals(r.getArbeidsgiver(), arbeidsgiver))
+            .findFirst()
+            .map(ArbeidsforholdReferanseEntitet::getEksternReferanse)
+            .orElseThrow(
+                () -> new IllegalStateException("Mangler eksternReferanse for internReferanse: " + internReferanse + ", arbeidsgiver: " + arbeidsgiver + ",\n blant referanser=" + referanser));
+    }
+
     void leggTilNyReferanse(ArbeidsforholdReferanseEntitet arbeidsforholdReferanse) {
         arbeidsforholdReferanse.setInformasjon(this);
         referanser.add(arbeidsforholdReferanse);
