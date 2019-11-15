@@ -192,7 +192,7 @@ class MapArbeidsforholdInformasjon {
              */
             String internId = ref.getReferanse();
             if (internId != null) {
-                EksternArbeidsforholdRef eksternReferanse = arbeidsforholdInformasjon.finnEkstern(arbeidsgiver, ref);
+                EksternArbeidsforholdRef eksternReferanse = arbeidsforholdInformasjon.finnEksternRaw(arbeidsgiver, ref);
                 if (eksternReferanse == null || eksternReferanse.getReferanse() == null) {
                     throw new IllegalStateException("Mangler eksternReferanse for internReferanse=" + ref);
                 }

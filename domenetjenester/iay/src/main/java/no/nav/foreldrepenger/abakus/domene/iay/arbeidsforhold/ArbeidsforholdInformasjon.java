@@ -12,22 +12,24 @@ import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 public interface ArbeidsforholdInformasjon {
 
     List<ArbeidsforholdOverstyring> getOverstyringer();
-    
+
     Optional<InternArbeidsforholdRef> finnForEkstern(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef ref);
 
     InternArbeidsforholdRef finnEllerOpprett(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef ref);
     InternArbeidsforholdRef finnEllerOpprett(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef ref);
-    
+
     Optional<InternArbeidsforholdRef> finnForEksternBeholdHistoriskReferanse(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef arbeidsforholdRef);
 
     EksternArbeidsforholdRef finnEkstern(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef internReferanse);
-    
+
     /** @deprecated Bruk {@link ArbeidsforholdInformasjonBuilder} i stedet. */
     @Deprecated(forRemoval = true)
     ArbeidsforholdReferanse opprettNyReferanse(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef internReferanse,
                                                       EksternArbeidsforholdRef eksternReferanse);
-    
+
     Collection<ArbeidsforholdReferanseEntitet> getArbeidsforholdReferanser();
 
     Long getId();
+
+    EksternArbeidsforholdRef finnEksternRaw(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef internReferanse);
 }
