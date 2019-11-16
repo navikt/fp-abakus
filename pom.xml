@@ -29,7 +29,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<prometheus.version>0.6.0</prometheus.version>
+		<prometheus.version>0.8.0</prometheus.version>
 
 		<felles.version>1.3.1_20191114105610_0f547dc</felles.version>
 
