@@ -16,6 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -37,6 +38,7 @@ public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements Arb
     private Long id;
 
     @ChangeTracked
+    @OrderBy("opprettetTidspunkt ASC")
     @OneToMany(mappedBy = "informasjon")
     private Set<ArbeidsforholdReferanseEntitet> referanser = new LinkedHashSet<>();
 
@@ -271,7 +273,7 @@ public class ArbeidsforholdInformasjonEntitet extends BaseEntitet implements Arb
             .findFirst()
             .map(ArbeidsforholdReferanseEntitet::getEksternReferanse)
             .orElseThrow(
-                () -> new IllegalStateException("Mangler eksternReferanse for internReferanse: " + internReferanse + ", arbeidsgiver: " + arbeidsgiver + ",\n blant referanser=" + referanser));
+                () -> new IllegalStateException("Mangler eksternReferanse for internReferanse: " + internReferanse + ", arbeidsgiver: " + arbeidsgiver));
     }
 
     void leggTilNyReferanse(ArbeidsforholdReferanseEntitet arbeidsforholdReferanse) {

@@ -210,7 +210,7 @@ public class MapAktørArbeid {
             if (internRef == null || internRef.getReferanse() == null) {
                 return null;
             }
-            var eksternRef = arbeidsforholdInformasjon == null ? null : arbeidsforholdInformasjon.finnEkstern(arbeidsgiver, internRef);
+            var eksternRef = arbeidsforholdInformasjon == null ? null : arbeidsforholdInformasjon.finnEksternRaw(arbeidsgiver, internRef);
 
             if (eksternRef == null || eksternRef.getReferanse() == null) {
                 throw new java.lang.IllegalStateException("Mapping til Abakus: Savner eksternRef for internRef: " + internRef);
