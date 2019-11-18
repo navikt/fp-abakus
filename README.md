@@ -1,4 +1,4 @@
-FPABAKUS
+ABAKUS
 ===============
 
 Dette er repository for kildkode som dekker innhenting og etablering av grunnlag for IAY(inntekt, arbeid & ytelse).  Grunnlaget består av registrerte inntekter, arbeidsgivere og arbeidsforhold, etablerte ytelser, oppgitt opptjening, og saksbehandlers merknader og evt. bekreftede/skjønnsmessig fastsatte vurderinger.
