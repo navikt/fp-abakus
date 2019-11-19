@@ -199,7 +199,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>2.28.2</version>
+				<version>3.1.0</version>
 			</dependency>
 
 			<dependency>
@@ -230,7 +230,7 @@
 				<!-- Transitive avhengighet resolution for å sikre bestemt versjon -->
 				<groupId>org.owasp.encoder</groupId>
 				<artifactId>encoder</artifactId>
-				<version>1.2.1</version>
+				<version>1.2.2</version>
 			</dependency>
 			<dependency>
 				<groupId>io.swagger</groupId>
@@ -349,7 +349,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-clean-plugin</artifactId>
-					<version>3.0.0</version>
+					<version>3.1.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
