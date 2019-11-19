@@ -63,7 +63,7 @@ public class ArbeidsforholdDtoTjeneste {
     }
 
     private ArbeidsforholdRefDto mapArbeidsforholdId(EksternArbeidsforholdRef arbeidsforholdId) {
-        if (arbeidsforholdId == null) {
+        if (arbeidsforholdId == null || arbeidsforholdId.getReferanse() == null || arbeidsforholdId.getReferanse().isEmpty()) {
             return null;
         }
         return new ArbeidsforholdRefDto(null, arbeidsforholdId.getReferanse());
