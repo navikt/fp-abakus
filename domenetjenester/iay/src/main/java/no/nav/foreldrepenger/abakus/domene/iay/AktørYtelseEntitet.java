@@ -135,7 +135,7 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
             .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type)
                 && ya.getBehandlingsTema().equals(typeKategori) && (periode.getFomDato().equals(ya.getPeriode().getFomDato())))
             .findFirst();
-        return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medPeriode(periode);
+        return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medPeriode(periode).medBehandlingsTema(typeKategori);
     }
 
     void leggTilYtelse(Ytelse ytelse) {
