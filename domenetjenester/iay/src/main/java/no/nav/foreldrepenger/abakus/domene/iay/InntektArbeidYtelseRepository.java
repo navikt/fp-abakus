@@ -778,4 +778,14 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
         query.setParameter("ref", koblingReferanse);
         return HibernateVerktøy.hentUniktResultat(query).orElse(null);
     }
+
+    public boolean erGrunnlagAktivt(UUID eksternReferanse) {
+        Objects.requireNonNull(eksternReferanse, "aggregatId"); // NOSONAR
+        final TypedQuery<Boolean> query = entityManager.createQuery("SELECT gr.aktiv FROM InntektArbeidGrunnlag gr " +
+            "WHERE gr.grunnlagReferanse = :ref ", Boolean.class);
+        query.setParameter("ref", new GrunnlagReferanse(eksternReferanse));
+        query.setHint(QueryHints.HINT_CACHE_MODE, "IGNORE");
+        Optional<Boolean> grunnlagOpt = query.getResultList().stream().findFirst();
+        return grunnlagOpt.orElse(false);
+    }
 }

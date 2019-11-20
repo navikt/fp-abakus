@@ -105,20 +105,36 @@ public class GrunnlagRestTjeneste {
         final var forespurtGrunnlagReferanse = spesifikasjon.getGrunnlagReferanse();
         var grunnlagReferanse = forespurtGrunnlagReferanse != null ? new GrunnlagReferanse(forespurtGrunnlagReferanse) : null;
         var koblingReferanse = getKoblingReferanse(aktørId, spesifikasjon);
-        var grunnlag = getGrunnlag(spesifikasjon, grunnlagReferanse, koblingReferanse);
 
-        final var sisteKjenteGrunnlagReferanse = spesifikasjon.getSisteKjenteGrunnlagReferanse();
-        if (grunnlag != null && sisteKjenteGrunnlagReferanse != null && grunnlag.getGrunnlagReferanse() != null
-            && sisteKjenteGrunnlagReferanse.equals(grunnlag.getGrunnlagReferanse().getReferanse())) {
+        final var sisteKjenteGrunnlagReferanse = utledSisteKjenteGrunnlagReferanse(spesifikasjon);
+        final var sistKjenteErAktivt = sisteKjenteGrunnlagReferanse != null && iayTjeneste.erGrunnlagAktivt(sisteKjenteGrunnlagReferanse);
 
+        if (sisteKjenteGrunnlagReferanse != null && sistKjenteErAktivt) {
             return Response.notModified().build();
-        } else if (grunnlag != null) {
+        }
+
+        var grunnlag = getGrunnlag(spesifikasjon, grunnlagReferanse, koblingReferanse);
+        if (grunnlag != null) {
             var dtoMapper = new IAYTilDtoMapper(aktørId, grunnlagReferanse, koblingReferanse);
 
             return Response.ok(dtoMapper.mapTilDto(grunnlag, spesifikasjon)).build();
         } else {
             return Response.noContent().build();
         }
+    }
+
+    private UUID utledSisteKjenteGrunnlagReferanse(InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
+        final var sisteKjenteGrunnlagReferanse = spesifikasjon.getSisteKjenteGrunnlagReferanse();
+        final var forespurtGrunnlagReferanse = spesifikasjon.getGrunnlagReferanse();
+
+        if (forespurtGrunnlagReferanse != null && forespurtGrunnlagReferanse.equals(sisteKjenteGrunnlagReferanse)) {
+            if (forespurtGrunnlagReferanse.equals(sisteKjenteGrunnlagReferanse)) {
+                return sisteKjenteGrunnlagReferanse;
+            }
+        } else {
+            return sisteKjenteGrunnlagReferanse;
+        }
+        return null;
     }
 
     @PUT

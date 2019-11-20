@@ -100,6 +100,8 @@ public interface InntektArbeidYtelseTjeneste {
 
     Optional<InntektArbeidYtelseAggregatEntitet> hentIAYAggregatFor(UUID eksternReferanse);
 
+    boolean erGrunnlagAktivt(UUID eksternReferanse);
+
     /**
      * For migrering
      *
