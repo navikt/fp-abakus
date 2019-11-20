@@ -44,12 +44,14 @@ public class MapInntektsmeldinger {
 
     private static final Comparator<GraderingDto> COMP_GRADERING = Comparator
         .comparing((GraderingDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
-        .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
+        .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()))
+        .thenComparing(GraderingDto::getArbeidstidProsent, Comparator.nullsLast(Comparator.naturalOrder()));
 
     private static final Comparator<NaturalytelseDto> COMP_NATURALYTELSE = Comparator
         .comparing((NaturalytelseDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()))
-        .thenComparing(dto -> dto.getType() == null ? null : dto.getType().getKode(), Comparator.nullsLast(Comparator.naturalOrder()));
+        .thenComparing(dto -> dto.getType() == null ? null : dto.getType().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
+        .thenComparing(NaturalytelseDto::getBeløpPerMnd, Comparator.nullsLast(Comparator.naturalOrder()));
 
     private static final Comparator<UtsettelsePeriodeDto> COMP_UTSETTELSE = Comparator
             .comparing((UtsettelsePeriodeDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))

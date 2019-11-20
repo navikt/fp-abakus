@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -90,7 +89,7 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
 
     @Override
     public Collection<Ytelse> getAlleYtelser() {
-        return Collections.unmodifiableSet(ytelser);
+        return List.copyOf(ytelser);
     }
 
     void setInntektArbeidYtelser(InntektArbeidYtelseAggregatEntitet inntektArbeidYtelser) {
