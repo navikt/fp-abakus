@@ -371,6 +371,12 @@ public class InntektArbeidYtelseAggregatBuilder {
                 .forEach(this.kladd::fjernYtelse);
         }
 
+        public void tilbakestillYtelserFraKildeMedFeil(Fagsystem kilde, YtelseType ytelseType, TemaUnderkategori underkategori) {
+            this.kladd.getAlleYtelser().stream()
+                .filter(yt -> kilde.equals(yt.getKilde()) && ytelseType.equals(yt.getRelatertYtelseType()) && underkategori.equals(yt.getBehandlingsTema()))
+                .forEach(this.kladd::fjernYtelse);
+        }
+
         public AktørYtelseBuilder leggTilYtelse(YtelseBuilder ytelse) {
             YtelseEntitet ytelseEntitet = (YtelseEntitet) ytelse.build();
             if (!ytelse.getErOppdatering()) {

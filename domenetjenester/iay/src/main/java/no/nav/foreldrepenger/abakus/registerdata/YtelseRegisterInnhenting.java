@@ -14,6 +14,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelseBuilder;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
+import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagMeldekort;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
@@ -100,6 +101,7 @@ public class YtelseRegisterInnhenting {
     }
 
     private void oversettSakGrunnlagTilYtelse(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder, InfotrygdSakOgGrunnlag ytelse) {
+        ryddBortFeilaktigeInnhentedeYtelser(aktørYtelseBuilder);
         YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.INFOTRYGD, ytelse.getSak().getYtelseType(),
             ytelse.getSak().getTemaUnderkategori(), ytelse.getPeriode())
             .medBehandlingsTema(ytelse.getSak().getTemaUnderkategori())
@@ -117,6 +119,11 @@ public class YtelseRegisterInnhenting {
             ytelseBuilder.medYtelseGrunnlag(oversettYtelseGrunnlag(grunnlag, ytelseBuilder.getGrunnlagBuilder()));
         });
         aktørYtelseBuilder.leggTilYtelse(ytelseBuilder);
+    }
+
+    @Deprecated(forRemoval = true)
+    private void ryddBortFeilaktigeInnhentedeYtelser(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder) {
+        aktørYtelseBuilder.tilbakestillYtelserFraKildeMedFeil(Fagsystem.INFOTRYGD, YtelseType.PÅRØRENDESYKDOM, TemaUnderkategori.UDEFINERT);
     }
 
     private YtelseGrunnlag oversettYtelseGrunnlag(YtelseBeregningsgrunnlag grunnlag, YtelseGrunnlagBuilder grunnlagBuilder) {
