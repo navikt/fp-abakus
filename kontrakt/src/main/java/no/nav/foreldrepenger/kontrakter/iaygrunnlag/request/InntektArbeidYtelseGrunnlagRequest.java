@@ -12,8 +12,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -26,41 +26,37 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.YtelseType;
  * Spesifikasjon for å hente opp et InntektArbeidYtelseGrunnlag.
  * Merk at props her kan ekskludere/kombineres.
  * Må minimum angi personident og en eller flere referanser (grunnlag, kobling, saksnummer)
- */ 
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
 public class InntektArbeidYtelseGrunnlagRequest {
 
-    public enum Dataset {
-        REGISTER,
-        OVERSTYRT,
-        INNTEKTSMELDING,
-        OPPGITT_OPPTJENING
-    }
-
-    public enum GrunnlagVersjon {
-        ALLE,
-        SISTE,
-        FØRSTE_OG_SISTE,
-        FØRSTE
-    }
-
-    /** Angi hvem grunnlaget hentes for. */
+    @JsonProperty("dataset")
+    @Valid
+    public Set<Dataset> dataset = EnumSet.of(Dataset.REGISTER, Dataset.OVERSTYRT);
+    /**
+     * Angi hvem grunnlaget hentes for.
+     */
     @JsonProperty(value = "personIdent", required = true)
     @Valid
     @NotNull
     private PersonIdent person;
-
     @JsonProperty(value = "ytelseType")
     @Valid
     private YtelseType ytelseType;
-
-    /** Forespørsel på grunnlag referanse gir eksakt grunnlag forespurt (også utdaterte versjoner). */
+    /**
+     * Forespørsel på grunnlag referanse gir eksakt grunnlag forespurt (også utdaterte versjoner).
+     */
     @JsonProperty("grunnlagReferanse")
     @Valid
     private UUID grunnlagReferanse;
-
+    /**
+     * Forespørsel på grunnlag referanse gir eksakt grunnlag forespurt (også utdaterte versjoner).
+     */
+    @JsonProperty("sisteKjenteGrunnlagReferanse")
+    @Valid
+    private UUID sisteKjenteGrunnlagReferanse;
     /**
      * Forespørsel på kobling referanse gir kun siste grunnlag på koblingen (kobling er typisk eks. behandling). Ignoreres dersom
      * grunnlagReferanse er satt.
@@ -68,17 +64,13 @@ public class InntektArbeidYtelseGrunnlagRequest {
     @JsonProperty("koblingReferanse")
     @Valid
     private UUID koblingReferanse;
-
-    /** Angi evt. hvilken sak det gjelder. */
+    /**
+     * Angi evt. hvilken sak det gjelder.
+     */
     @JsonProperty(value = "saksnummer")
     @Valid
     @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "'${validatedValue}' matcher ikke tillatt pattern '{value}'")
     private String saksnummer;
-
-    @JsonProperty("dataset")
-    @Valid
-    public Set<Dataset> dataset = EnumSet.of(Dataset.REGISTER, Dataset.OVERSTYRT);
-
     /**
      * Hvis satt til true hentes første opprettete versjon av grunnlaget, hvis false eller ikke satt hentes den siste aktive grunnlaget.
      */
@@ -114,12 +106,12 @@ public class InntektArbeidYtelseGrunnlagRequest {
         this.saksnummer = saksnummer;
         return this;
     }
-    
+
     public InntektArbeidYtelseGrunnlagRequest medYtelseType(YtelseType ytelseType) {
         this.ytelseType = ytelseType;
         return this;
     }
-    
+
     public InntektArbeidYtelseGrunnlagRequest forKobling(UUID koblingReferanse) {
         this.koblingReferanse = koblingReferanse;
         return this;
@@ -127,6 +119,11 @@ public class InntektArbeidYtelseGrunnlagRequest {
 
     public InntektArbeidYtelseGrunnlagRequest forGrunnlag(UUID grunnlagReferanse) {
         this.grunnlagReferanse = grunnlagReferanse;
+        return this;
+    }
+
+    public InntektArbeidYtelseGrunnlagRequest medSisteKjenteGrunnlagReferanse(UUID sisteKjenteGrunnlagReferanse) {
+        this.sisteKjenteGrunnlagReferanse = sisteKjenteGrunnlagReferanse;
         return this;
     }
 
@@ -147,15 +144,37 @@ public class InntektArbeidYtelseGrunnlagRequest {
         return grunnlagReferanse;
     }
 
+    public UUID getSisteKjenteGrunnlagReferanse() {
+        return sisteKjenteGrunnlagReferanse;
+    }
+
     public PersonIdent getPerson() {
         return person;
     }
 
-    public String getSaksnummer() { return saksnummer; }
+    public String getSaksnummer() {
+        return saksnummer;
+    }
 
     public YtelseType getYtelseType() {
         return ytelseType;
     }
 
-    public GrunnlagVersjon getGrunnlagVersjon() { return grunnlagVersjon; }
+    public GrunnlagVersjon getGrunnlagVersjon() {
+        return grunnlagVersjon;
+    }
+
+    public enum Dataset {
+        REGISTER,
+        OVERSTYRT,
+        INNTEKTSMELDING,
+        OPPGITT_OPPTJENING
+    }
+
+    public enum GrunnlagVersjon {
+        ALLE,
+        SISTE,
+        FØRSTE_OG_SISTE,
+        FØRSTE
+    }
 }
