@@ -107,7 +107,7 @@ public class InfotrygdTjeneste {
         YtelseStatus relatertYtelseTilstand = YtelseStatus.AVSLUTTET;
 
         if (sak.getBehandlingstema() != null && sak.getBehandlingstema().getValue() != null) {
-            temaUnderkategori = kodeverkRepository.finnOptional(TemaUnderkategori.class, sak.getBehandlingstema().getValue()).orElse(TemaUnderkategori.UDEFINERT);
+            temaUnderkategori = kodeverkRepository.finn(TemaUnderkategori.class, sak.getBehandlingstema().getValue());
         }
         if (sak.getStatus() != null && sak.getStatus().getValue() != null) {
             RelatertYtelseStatus status = kodeverkRepository.finnForKodeverkEiersKode(RelatertYtelseStatus.class, sak.getStatus().getValue(), RelatertYtelseStatus.AVSLUTTET_IT);
