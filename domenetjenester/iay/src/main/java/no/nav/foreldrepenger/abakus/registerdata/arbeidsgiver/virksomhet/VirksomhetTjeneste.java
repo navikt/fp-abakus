@@ -122,7 +122,7 @@ public class VirksomhetTjeneste {
             virksomhetRepository.lagre(virksomhet);
             return virksomhet;
         } catch (VirksomhetAlleredeLagretException exception) {
-            return virksomhetOptional.orElseThrow(IllegalStateException::new);
+            return virksomhet;
         }
     }
 
