@@ -18,7 +18,11 @@ import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelse;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelseBuilder;
-import no.nav.foreldrepenger.abakus.typer.*;
+import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.Beløp;
+import no.nav.foreldrepenger.abakus.typer.OrgNummer;
+import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Organisasjon;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
@@ -39,11 +43,10 @@ public class MapAktørYtelse {
         .thenComparing(dto -> dto.getTemaUnderkategori() == null ? null : dto.getTemaUnderkategori().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
-    
+
     private static final Comparator<FordelingDto> COMP_FORDELING = Comparator
             .comparing((FordelingDto dto) -> dto.getArbeidsgiver() == null ? null : dto.getArbeidsgiver().getIdent(), Comparator.nullsLast(Comparator.naturalOrder()))
-            .thenComparing(dto -> dto.getHyppighet() == null ? null : dto.getHyppighet().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
-            ;
+            .thenComparing(dto -> dto.getHyppighet() == null ? null : dto.getHyppighet().getKode(), Comparator.nullsLast(Comparator.naturalOrder()));
 
     static class MapFraDto {
         private InntektArbeidYtelseAggregatBuilder aggregatBuilder;
