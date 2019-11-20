@@ -113,6 +113,11 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
     }
 
     @Override
+    public boolean erGrunnlagAktivt(UUID eksternReferanse) {
+        return repository.erGrunnlagAktivt(eksternReferanse);
+    }
+
+    @Override
     public void slettAltForSak(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
         repository.slettAltForSak(aktørId, saksnummer, ytelseType);
     }

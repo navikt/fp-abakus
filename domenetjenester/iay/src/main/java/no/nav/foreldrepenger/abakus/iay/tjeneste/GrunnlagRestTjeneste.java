@@ -8,7 +8,6 @@ import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -61,7 +60,6 @@ import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
-import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 
 @Api(tags = "iay")
 @Path("/iay/grunnlag/v1")
@@ -107,8 +105,15 @@ public class GrunnlagRestTjeneste {
         final var forespurtGrunnlagReferanse = spesifikasjon.getGrunnlagReferanse();
         var grunnlagReferanse = forespurtGrunnlagReferanse != null ? new GrunnlagReferanse(forespurtGrunnlagReferanse) : null;
         var koblingReferanse = getKoblingReferanse(aktørId, spesifikasjon);
-        var grunnlag = getGrunnlag(spesifikasjon, grunnlagReferanse, koblingReferanse);
 
+        final var sisteKjenteGrunnlagReferanse = utledSisteKjenteGrunnlagReferanse(spesifikasjon);
+        final var sistKjenteErAktivt = sisteKjenteGrunnlagReferanse != null && iayTjeneste.erGrunnlagAktivt(sisteKjenteGrunnlagReferanse);
+
+        if (sisteKjenteGrunnlagReferanse != null && sistKjenteErAktivt) {
+            return Response.notModified().build();
+        }
+
+        var grunnlag = getGrunnlag(spesifikasjon, grunnlagReferanse, koblingReferanse);
         if (grunnlag != null) {
             var dtoMapper = new IAYTilDtoMapper(aktørId, grunnlagReferanse, koblingReferanse);
 
@@ -116,6 +121,20 @@ public class GrunnlagRestTjeneste {
         } else {
             return Response.noContent().build();
         }
+    }
+
+    private UUID utledSisteKjenteGrunnlagReferanse(InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
+        final var sisteKjenteGrunnlagReferanse = spesifikasjon.getSisteKjenteGrunnlagReferanse();
+        final var forespurtGrunnlagReferanse = spesifikasjon.getGrunnlagReferanse();
+
+        if (forespurtGrunnlagReferanse != null && forespurtGrunnlagReferanse.equals(sisteKjenteGrunnlagReferanse)) {
+            if (forespurtGrunnlagReferanse.equals(sisteKjenteGrunnlagReferanse)) {
+                return sisteKjenteGrunnlagReferanse;
+            }
+        } else {
+            return sisteKjenteGrunnlagReferanse;
+        }
+        return null;
     }
 
     @PUT
@@ -303,7 +322,7 @@ public class GrunnlagRestTjeneste {
             final var abacDataAttributter = AbacDataAttributter.opprett();
             if (FnrPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
                 return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, getPerson().getIdent());
-            } else if(AktørIdPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
+            } else if (AktørIdPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
                 return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, getPerson().getIdent());
             }
             throw new java.lang.IllegalStateException("Ukjent identtype");
@@ -320,10 +339,10 @@ public class GrunnlagRestTjeneste {
 
         @JsonCreator
         public KopierGrunnlagRequestAbac(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
-                                     @JsonProperty(value = "nyReferanse", required = true) @Valid @NotNull UUID nyReferanse,
-                                     @JsonProperty(value = "gammelReferanse", required = true) @Valid @NotNull UUID gammelReferanse,
-                                     @JsonProperty(value = "ytelseType", required = true) @Valid @NotNull no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.YtelseType ytelseType,
-                                     @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør) {
+                                         @JsonProperty(value = "nyReferanse", required = true) @Valid @NotNull UUID nyReferanse,
+                                         @JsonProperty(value = "gammelReferanse", required = true) @Valid @NotNull UUID gammelReferanse,
+                                         @JsonProperty(value = "ytelseType", required = true) @Valid @NotNull no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.YtelseType ytelseType,
+                                         @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør) {
             super(saksnummer, nyReferanse, gammelReferanse, ytelseType, aktør);
         }
 
@@ -332,12 +351,13 @@ public class GrunnlagRestTjeneste {
             final var abacDataAttributter = AbacDataAttributter.opprett();
             if (FnrPersonident.IDENT_TYPE.equals(getAktør().getIdentType())) {
                 return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, getAktør().getIdent());
-            } else if(AktørIdPersonident.IDENT_TYPE.equals(getAktør().getIdentType())) {
+            } else if (AktørIdPersonident.IDENT_TYPE.equals(getAktør().getIdentType())) {
                 return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, getAktør().getIdent());
             }
             throw new java.lang.IllegalStateException("Ukjent identtype");
         }
     }
+
     /**
      * Json bean med Abac.
      */
@@ -348,9 +368,9 @@ public class GrunnlagRestTjeneste {
 
         @JsonCreator
         public InntektArbeidYtelseGrunnlagAbacDto(@JsonProperty(value = "person", required = true) @Valid @NotNull PersonIdent person,
-                                              @JsonProperty(value = "grunnlagTidspunkt", required = true) @Valid @NotNull OffsetDateTime grunnlagTidspunkt,
-                                              @JsonProperty(value = "grunnlagReferanse", required = true) @Valid @NotNull UUID grunnlagReferanse,
-                                              @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UUID koblingReferanse) {
+                                                  @JsonProperty(value = "grunnlagTidspunkt", required = true) @Valid @NotNull OffsetDateTime grunnlagTidspunkt,
+                                                  @JsonProperty(value = "grunnlagReferanse", required = true) @Valid @NotNull UUID grunnlagReferanse,
+                                                  @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UUID koblingReferanse) {
             super(person, grunnlagTidspunkt, grunnlagReferanse, koblingReferanse);
         }
 
@@ -359,7 +379,7 @@ public class GrunnlagRestTjeneste {
             final var abacDataAttributter = AbacDataAttributter.opprett();
             if (FnrPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
                 return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, getPerson().getIdent());
-            } else if(AktørIdPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
+            } else if (AktørIdPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
                 return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, getPerson().getIdent());
             }
             throw new java.lang.IllegalStateException("Ukjent identtype");
