@@ -32,6 +32,7 @@ dep.txt
 /logback.xml
 .temp*.txt
 /logs/
+.env
 
 app.properties
 app-local.properties
