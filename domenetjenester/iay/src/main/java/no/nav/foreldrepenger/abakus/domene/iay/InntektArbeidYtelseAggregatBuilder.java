@@ -365,8 +365,10 @@ public class InntektArbeidYtelseAggregatBuilder {
         }
 
         public void tilbakestillYtelserFraKildeBeholdAvsluttede(Fagsystem kilde) {
-            this.kladd.getAlleYtelser()
-                .removeIf(yt -> kilde.equals(yt.getKilde()) && !YtelseStatus.AVSLUTTET.equals(yt.getStatus()));
+            this.kladd.getAlleYtelser().stream()
+                .filter(yt -> kilde.equals(yt.getKilde()))
+                .filter(yt -> !YtelseStatus.AVSLUTTET.equals(yt.getStatus()))
+                .forEach(this.kladd::fjernYtelse);
         }
 
         public AktørYtelseBuilder leggTilYtelse(YtelseBuilder ytelse) {
