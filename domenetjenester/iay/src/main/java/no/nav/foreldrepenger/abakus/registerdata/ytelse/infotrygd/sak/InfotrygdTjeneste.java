@@ -76,7 +76,7 @@ public class InfotrygdTjeneste {
             request.setPeriode(periode);
             request.setPersonident(fnr);
             return infotrygdSakConsumer.finnSakListe(request);
-        } catch (FinnSakListePersonIkkeFunnet e) { //$NON-NLS-1$ //NOSONAR
+        } catch (FinnSakListePersonIkkeFunnet e) { // $NON-NLS-1$ //NOSONAR
             // Skal ut ifra erfaringer fra fundamentet ikke gjøres noe med, fordi dette er normalt.
             InfotrygdTjenesteFeil.FACTORY.personIkkeFunnet(e).log(log);
         } catch (FinnSakListeUgyldigInput e) {
@@ -110,7 +110,8 @@ public class InfotrygdTjeneste {
             temaUnderkategori = kodeverkRepository.finn(TemaUnderkategori.class, sak.getBehandlingstema().getValue());
         }
         if (sak.getStatus() != null && sak.getStatus().getValue() != null) {
-            RelatertYtelseStatus status = kodeverkRepository.finnForKodeverkEiersKode(RelatertYtelseStatus.class, sak.getStatus().getValue(), RelatertYtelseStatus.AVSLUTTET_IT);
+            RelatertYtelseStatus status = kodeverkRepository.finnForKodeverkEiersKode(RelatertYtelseStatus.class, sak.getStatus().getValue(),
+                RelatertYtelseStatus.AVSLUTTET_IT);
             relatertYtelseTilstand = getYtelseTilstand(erVedtak, status);
         }
         YtelseType ytelseType = utledYtelseType(sak.getTema().getValue(), temaUnderkategori);
@@ -137,13 +138,18 @@ public class InfotrygdTjeneste {
                 return YtelseType.FORELDREPENGER;
             } else if (TemaUnderkategori.erGjelderEngangsstonad(behandlingsTema.getKode())) {
                 return YtelseType.ENGANGSSTØNAD;
+            } else {
+                throw new IllegalStateException("Mangler mapping for RelatertYtelseTema(FA), TemaUnderkategori: " + behandlingsTema.getKode());
             }
         } else if (SYKEPENGER_TEMA.getKode().equals(ytelseTema)) {
             return YtelseType.SYKEPENGER;
         } else if (PÅRØRENDE_SYKDOM_TEMA.getKode().equals(ytelseTema)) {
+            // TODO : her må mappes ulike varianter av Pleiepenger
             return YtelseType.PÅRØRENDESYKDOM;
+        } else {
+            // ignore andre temaer foreløpig
+            return YtelseType.UDEFINERT;
         }
-        return YtelseType.UDEFINERT;
     }
 
     private boolean erLøpendeVedtak(boolean erVedtak, RelatertYtelseStatus status) {
