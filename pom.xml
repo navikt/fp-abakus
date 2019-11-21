@@ -255,7 +255,7 @@
 			<dependency>
 				<groupId>io.dropwizard.metrics</groupId>
 				<artifactId>metrics-healthchecks</artifactId>
-				<version>3.2.5</version>
+				<version>4.1.1</version>
 			</dependency>
 			<dependency>
 				<groupId>io.prometheus</groupId>
