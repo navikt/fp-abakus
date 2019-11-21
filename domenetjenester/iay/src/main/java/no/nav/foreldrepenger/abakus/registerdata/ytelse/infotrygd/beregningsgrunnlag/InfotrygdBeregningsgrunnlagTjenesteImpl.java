@@ -116,7 +116,7 @@ public class InfotrygdBeregningsgrunnlagTjenesteImpl implements InfotrygdBeregni
     }
 
     private TemaUnderkategori getBehandlingsTema(Grunnlag grunnlag, KodeverkRepository kodeverkRepository) {
-        return kodeverkRepository.finnForKodeverkEiersKode(TemaUnderkategori.class, grunnlag.getBehandlingstema().getValue(), TemaUnderkategori.UDEFINERT);
+        return kodeverkRepository.finn(TemaUnderkategori.class, grunnlag.getBehandlingstema().getValue());
     }
 
 }
