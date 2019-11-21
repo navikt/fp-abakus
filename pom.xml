@@ -288,7 +288,7 @@
 				<!-- for Bean validation -->
 				<groupId>org.hibernate.validator</groupId>
 				<artifactId>hibernate-validator</artifactId>
-				<version>6.0.16.Final</version>
+				<version>6.1.0.Final</version>
 			</dependency>
 
 			<!-- Følgende kan fjernes når fpfelles får jaxws-rt istd håndkodede versjoner
