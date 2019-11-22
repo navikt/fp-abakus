@@ -109,6 +109,7 @@ public class InnhentRegisterdataTjeneste {
 
     private Kobling oppdaterKobling(InnhentRegisterdataRequest dto) {
         KoblingReferanse referanse = new KoblingReferanse(dto.getReferanse());
+        var koblingLås = koblingTjeneste.taSkrivesLås(referanse);
         Optional<Kobling> koblingOpt = koblingTjeneste.hentFor(referanse);
         Kobling kobling;
         if (koblingOpt.isEmpty()) {
@@ -140,6 +141,7 @@ public class InnhentRegisterdataTjeneste {
         }
         // Diff & log endringer
         koblingTjeneste.lagre(kobling);
+        koblingTjeneste.oppdaterLåsVersjon(koblingLås);
         return kobling;
     }
 
