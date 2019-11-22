@@ -1,4 +1,5 @@
 FROM navikt/java:11-appdynamics
+ENV APPD_ENABLED=true
 
 RUN mkdir lib
 RUN mkdir webapp
