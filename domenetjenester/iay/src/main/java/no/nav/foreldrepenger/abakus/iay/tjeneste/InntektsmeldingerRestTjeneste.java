@@ -30,6 +30,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
+import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.InntektsmeldingerTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapInntektsmeldinger;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
@@ -59,6 +60,7 @@ public class InntektsmeldingerRestTjeneste {
 
     private InntektsmeldingerTjeneste imTjeneste;
     private KoblingTjeneste koblingTjeneste;
+    private InntektArbeidYtelseTjeneste iayTjeneste;
 
     public InntektsmeldingerRestTjeneste() {
         // for CDI
@@ -66,13 +68,14 @@ public class InntektsmeldingerRestTjeneste {
 
     @Inject
     public InntektsmeldingerRestTjeneste(InntektsmeldingerTjeneste imTjeneste,
-                                         KoblingTjeneste koblingTjeneste) {
+                                         KoblingTjeneste koblingTjeneste, InntektArbeidYtelseTjeneste iayTjeneste) {
         this.imTjeneste = imTjeneste;
         this.koblingTjeneste = koblingTjeneste;
+        this.iayTjeneste = iayTjeneste;
     }
 
     @POST
-    @Path("/hentUnikeInntektsmeldingerForSak")
+    @Path("/hentAlle")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Hent inntektsmeldinger for angitt søke spesifikasjon", response = InntektsmeldingerDto.class )
@@ -82,7 +85,8 @@ public class InntektsmeldingerRestTjeneste {
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
         var ytelseType = new YtelseType(spesifikasjon.getYtelseType().getKode());
-        InntektsmeldingerDto inntektsmeldingerDto = imTjeneste.hentAlleInntektsmeldingerForSak(aktørId, saksnummer, ytelseType);
+        var grunnlag = iayTjeneste.hentAlleGrunnlagFor(aktørId, saksnummer, new YtelseType(ytelseType.getKode()), false);
+        InntektsmeldingerDto inntektsmeldingerDto = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(grunnlag);
         return Response.ok(inntektsmeldingerDto).build();
     }
 
@@ -153,7 +157,7 @@ public class InntektsmeldingerRestTjeneste {
             } else if(AktørIdPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
                 return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, getPerson().getIdent());
             }
-            throw new java.lang.IllegalStateException("Ukjent identtype");
+            throw new java.lang.IllegalStateException("Ukjent identtype: " + getPerson().getIdentType());
         }
 
     }
