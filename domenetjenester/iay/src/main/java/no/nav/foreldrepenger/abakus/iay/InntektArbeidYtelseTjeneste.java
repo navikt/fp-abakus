@@ -2,7 +2,9 @@ package no.nav.foreldrepenger.abakus.iay;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
@@ -11,6 +13,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatEntite
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
+import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
@@ -52,7 +55,7 @@ public interface InntektArbeidYtelseTjeneste {
      */
     List<InntektArbeidYtelseGrunnlag> hentAlleGrunnlagFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType, boolean kunAktive);
 
-    
+
     /**
      * Hent alle grunnlag for angitt koblingsreferanse (behandling)
      *
@@ -62,12 +65,14 @@ public interface InntektArbeidYtelseTjeneste {
      */
     List<InntektArbeidYtelseGrunnlag> hentAlleGrunnlagFor(AktørId aktørId, KoblingReferanse koblingReferanse, boolean kunAktive);
 
-    /** 
+    Set<Inntektsmelding> hentAlleInntektsmeldingerFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType);
+
+    /**
      * Hent grunnlag etterspurt (tar hensyn til GrunnlagVersjon) for angitt aktørId, saksnummer, ytelsetype.
      * Skipper mellomliggende versjoner hvis ikke direkte spurt om.
      */
     List<InntektArbeidYtelseGrunnlag> hentGrunnlagEtterspurtFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType, GrunnlagVersjon grunnlagVersjon);
-    
+
     /**
      * @param grunnlagReferanse
      * @return henter optional aggregat

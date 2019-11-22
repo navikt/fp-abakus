@@ -1,12 +1,14 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
 import java.time.ZoneId;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregatEntitet;
@@ -68,24 +70,19 @@ public class MapInntektsmeldinger {
             Comparator.nullsLast(Comparator.naturalOrder()));
 
 
-    public static InntektsmeldingerDto mapUnikeInntektsmeldingerFraGrunnlag(List<InntektArbeidYtelseGrunnlag> grunnlag) {
-        List<InntektsmeldingDto> inntektsmeldinger = mapUnikeInntektsmeldinger(grunnlag);
+    public static InntektsmeldingerDto mapUnikeInntektsmeldingerFraGrunnlag(Set<Inntektsmelding> inntektsmeldinger, InntektArbeidYtelseGrunnlag nyesteGrunnlag) {
+        List<InntektsmeldingDto> inntektsmeldingerDtoList = mapUnikeInntektsmeldinger(inntektsmeldinger, nyesteGrunnlag);
         InntektsmeldingerDto inntektsmeldingerDto = new InntektsmeldingerDto();
-        inntektsmeldingerDto.medInntektsmeldinger(inntektsmeldinger);
+        inntektsmeldingerDto.medInntektsmeldinger(inntektsmeldingerDtoList);
         return inntektsmeldingerDto;
     }
 
-    private static List<InntektsmeldingDto> mapUnikeInntektsmeldinger(List<InntektArbeidYtelseGrunnlag> grunnlag) {
-        return grunnlag.stream().flatMap(iayg ->
-            iayg.getInntektsmeldinger()
-                .stream()
-                .map(InntektsmeldingAggregat::getAlleInntektsmeldinger)
-                .flatMap(Collection::stream)
-                .map(im -> {
-                    var mapper = new MapInntektsmeldinger.MapTilDto(getArbeidsforholdInformasjon(iayg));
-                    return mapper.mapInntektsmelding(im);
-                })
-        ).distinct().collect(Collectors.toList());
+    private static List<InntektsmeldingDto> mapUnikeInntektsmeldinger(Set<Inntektsmelding> inntektsmeldinger, InntektArbeidYtelseGrunnlag nyesteGrunnlag) {
+        return inntektsmeldinger.stream()
+            .map(im -> {
+                var mapper = new MapInntektsmeldinger.MapTilDto(getArbeidsforholdInformasjon(nyesteGrunnlag));
+                return mapper.mapInntektsmelding(im);
+            }).collect(Collectors.toList());
     }
 
     private static ArbeidsforholdInformasjon getArbeidsforholdInformasjon(InntektArbeidYtelseGrunnlag grunnlag) {

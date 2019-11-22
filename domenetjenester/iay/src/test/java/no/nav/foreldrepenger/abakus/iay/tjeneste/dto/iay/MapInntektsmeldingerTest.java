@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.junit.Rule;
@@ -67,8 +68,9 @@ public class MapInntektsmeldingerTest {
         iayRepository.lagre(koblingReferanse2, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(im));
 
         // Act
-        var grunnlag = iayTjeneste.hentAlleGrunnlagFor(aktørId, saksnummer, YtelseType.FORELDREPENGER, false);
-        InntektsmeldingerDto inntektsmeldingerDto = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(grunnlag);
+        Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, foreldrepenger);
+        Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, foreldrepenger).orElseThrow();
+        InntektsmeldingerDto inntektsmeldingerDto = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(alleIm, iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
 
         // Assert
         assertThat(inntektsmeldingerDto.getInntektsmeldinger().size()).isEqualTo(1);

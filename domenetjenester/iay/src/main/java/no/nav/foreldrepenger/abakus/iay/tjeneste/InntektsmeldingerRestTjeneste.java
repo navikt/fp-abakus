@@ -29,6 +29,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.InntektsmeldingerTjeneste;
@@ -78,15 +79,18 @@ public class InntektsmeldingerRestTjeneste {
     @Path("/hentAlle")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Hent inntektsmeldinger for angitt søke spesifikasjon", response = InntektsmeldingerDto.class )
+    @Operation(description = "Hent inntektsmeldinger for angitt søke spesifikasjon", tags = "inntektsmelding")
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentInntektsmeldingerForSak(@NotNull @Valid InntektsmeldingerRequestAbacDto spesifikasjon) {
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
         var ytelseType = new YtelseType(spesifikasjon.getYtelseType().getKode());
-        var grunnlag = iayTjeneste.hentAlleGrunnlagFor(aktørId, saksnummer, new YtelseType(ytelseType.getKode()), false);
-        InntektsmeldingerDto inntektsmeldingerDto = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(grunnlag);
+        var inntektsmeldinger = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, new YtelseType(ytelseType.getKode()));
+        var kobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType)
+            .orElseThrow(() -> new IllegalArgumentException("Fant ingen kobling for aktør: " + aktørId.getId() + "saksnummer: " + saksnummer.getVerdi() + " ytelse: " + ytelseType.getKode()));
+        InntektArbeidYtelseGrunnlag nyesteGrunnlag = iayTjeneste.hentAggregat(kobling.getKoblingReferanse());
+        InntektsmeldingerDto inntektsmeldingerDto = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(inntektsmeldinger, nyesteGrunnlag);
         return Response.ok(inntektsmeldingerDto).build();
     }
 
