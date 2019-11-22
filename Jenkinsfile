@@ -108,7 +108,7 @@ pipeline {
                         envs = sh(returnStdout: true, script: 'env | sort -h').trim()
                         echo("envs: " + envs)
 
-                        sh "mvn -B -e -Dfile.encoding=UTF-8 -DinstallAtEnd=true -DdeployAtEnd=true -Dsha1= -Dchangelist= -Drevision=$version clean deploy"
+                        sh "mvn -B -e -U -Dfile.encoding=UTF-8 -DinstallAtEnd=true -DdeployAtEnd=true -Dsha1= -Dchangelist= -Drevision=$version clean deploy"
                         sh "docker build --pull -t $DOCKERREGISTRY/$ARTIFACTID:$version ."
                         withCredentials([[$class          : 'UsernamePasswordMultiBinding',
                                           credentialsId   : 'nexusUser',
