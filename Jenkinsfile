@@ -98,7 +98,8 @@ pipeline {
                     echo "Building $version"
                     fpgithub.updateBuildStatus(githubRepoName, "pending", GIT_COMMIT_HASH_FULL)
 
-                    withMaven(mavenSettingsConfig: 'navMavenSettings') {
+                    withMaven(mavenSettingsConfig: 'navMavenSettings',
+                              mavenLocalRepo: '.repository') {
                         buildEnvironment = new buildEnvironment()
                         buildEnvironment.setEnv()
                         if (mvn.javaVersion() != null) {
