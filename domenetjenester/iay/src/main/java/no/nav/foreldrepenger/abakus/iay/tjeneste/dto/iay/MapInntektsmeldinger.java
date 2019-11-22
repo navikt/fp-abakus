@@ -89,7 +89,7 @@ public class MapInntektsmeldinger {
             }
         }
 
-        private InntektsmeldingDto mapInntektsmelding(Inntektsmelding im) {
+        public InntektsmeldingDto mapInntektsmelding(Inntektsmelding im) {
             var arbeidsgiver = mapAktør(im.getArbeidsgiver());
             var journalpostId = new JournalpostId(im.getJournalpostId().getVerdi());
             var innsendingstidspunkt = im.getInnsendingstidspunkt();
