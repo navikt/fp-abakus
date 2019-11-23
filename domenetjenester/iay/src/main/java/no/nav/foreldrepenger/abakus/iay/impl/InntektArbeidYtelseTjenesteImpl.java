@@ -1,13 +1,19 @@
 package no.nav.foreldrepenger.abakus.iay.impl;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+
+import org.jboss.weld.exceptions.IllegalStateException;
+import org.jboss.weld.exceptions.UnsupportedOperationException;
 
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
@@ -24,6 +30,7 @@ import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest.GrunnlagVersjon;
 
 @ApplicationScoped
 public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjeneste {
@@ -68,6 +75,24 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
     @Override
     public List<InntektArbeidYtelseGrunnlag> hentAlleGrunnlagFor(AktørId aktørId, KoblingReferanse koblingReferanse, boolean kunAktive) {
         return repository.hentAlleInntektArbeidYtelseGrunnlagFor(aktørId, koblingReferanse, kunAktive);
+    }
+
+    @Override
+    public List<InntektArbeidYtelseGrunnlag> hentGrunnlagEtterspurtFor(AktørId aktørId,
+                                                                       Saksnummer saksnummer,
+                                                                       YtelseType ytelseType,
+                                                                       GrunnlagVersjon grunnlagVersjon) {
+
+        boolean kunAktive = GrunnlagVersjon.SISTE.equals(grunnlagVersjon); // shortcutter litt opphenting
+        var grunnlag = hentAlleGrunnlagFor(aktørId, saksnummer, ytelseType, kunAktive);
+
+        var grunnlagByKobling = grunnlag.stream()
+            .collect(Collectors.groupingBy(InntektArbeidYtelseGrunnlag::getKoblingId));
+
+        var grunnlagEtterspurt = grunnlagByKobling.entrySet().stream()
+            .flatMap(e -> filterGrunnlag(e.getKey(), e.getValue(), grunnlagVersjon).stream());
+
+        return grunnlagEtterspurt.collect(Collectors.toList());
     }
 
     @Override
@@ -130,5 +155,42 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
     @Override
     public KoblingReferanse hentKoblingReferanse(GrunnlagReferanse grunnlagReferanse) {
         return repository.hentKoblingReferanseFor(grunnlagReferanse);
+    }
+    
+
+    private List<InntektArbeidYtelseGrunnlag> filterGrunnlag(Long koblingId, List<InntektArbeidYtelseGrunnlag> grunnlagPerKobling,
+                                                             GrunnlagVersjon grunnlagVersjon) {
+        if (!grunnlagPerKobling.stream().allMatch(g -> Objects.equals(koblingId, g.getKoblingId()))) {
+            throw new IllegalArgumentException("Utvikler-feil: Fikk grunnlag som ikke har riktig koblingId: " + koblingId);
+        }
+
+        // quick returns
+        if (GrunnlagVersjon.ALLE.equals(grunnlagVersjon) || grunnlagPerKobling.isEmpty()) {
+            return grunnlagPerKobling;
+        }
+
+        var sortertKopi = grunnlagPerKobling.stream()
+            .sorted(Comparator.comparing(InntektArbeidYtelseGrunnlag::getOpprettetTidspunkt, Comparator.nullsFirst(Comparator.naturalOrder())))
+            .collect(Collectors.toCollection(LinkedList::new));
+
+        InntektArbeidYtelseGrunnlag første = sortertKopi.getFirst(); // vil alltid være her da vi sjekker på tom liste først
+        InntektArbeidYtelseGrunnlag siste = sortertKopi.getLast();
+
+        // dobbeltsjekk siste skal være aktivt
+        if (!siste.isAktiv()) {
+            throw new IllegalStateException("Siste grunnlag på " + koblingId + " er ikke aktivt, grunnlagReferanse: " + siste.getGrunnlagReferanse());
+        }
+
+        switch (grunnlagVersjon) {
+            case FØRSTE:
+                return List.of(første);
+            case SISTE:
+                return List.of(siste);
+            case FØRSTE_OG_SISTE:
+                return List.of(første, siste);
+            default:
+                throw new UnsupportedOperationException("GrunnlagVersjon " + grunnlagVersjon + " er ikke støttet her for " + koblingId);
+        }
+
     }
 }

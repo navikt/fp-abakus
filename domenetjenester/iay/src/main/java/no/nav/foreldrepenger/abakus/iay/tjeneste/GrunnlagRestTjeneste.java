@@ -95,7 +95,7 @@ public class GrunnlagRestTjeneste {
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Hent IAY Grunnlag for angitt søke spesifikasjon", response = InntektArbeidYtelseGrunnlagDto.class)
+    @ApiOperation(value = "Hent ett enkelt IAY Grunnlag for angitt spesifikasjon. Spesifikasjonen kan angit hvilke data som ønskes", response = InntektArbeidYtelseGrunnlagDto.class)
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
@@ -161,10 +161,10 @@ public class GrunnlagRestTjeneste {
     @Path("/snapshot")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Hent alle IAY Grunnlag for angitt søke spesifikasjon", response = InntektArbeidYtelseGrunnlagSakSnapshotDto.class)
+    @ApiOperation(value = "Hent IAY Grunnlag for angitt søke spesifikasjon", response = InntektArbeidYtelseGrunnlagSakSnapshotDto.class)
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response hentAlleIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
+    public Response hentSnapshotIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
 
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
 
@@ -173,9 +173,12 @@ public class GrunnlagRestTjeneste {
 
         var snapshot = new InntektArbeidYtelseGrunnlagSakSnapshotDto(saksnummer, ytelseType, spesifikasjon.getPerson());
 
-        var grunnlag = iayTjeneste.hentAlleGrunnlagFor(aktørId, new Saksnummer(saksnummer), new YtelseType(ytelseType.getKode()), false);
+        var grunnlagEtterspurt = iayTjeneste.hentGrunnlagEtterspurtFor(aktørId,
+            new Saksnummer(saksnummer),
+            new YtelseType(ytelseType.getKode()),
+            spesifikasjon.getGrunnlagVersjon());
 
-        grunnlag.stream().forEach(g -> {
+        grunnlagEtterspurt.forEach(g -> {
             var kobling = koblingTjeneste.hent(g.getKoblingId());
 
             var dtoMapper = new IAYTilDtoMapper(aktørId, g.getGrunnlagReferanse(), kobling.getKoblingReferanse());
@@ -191,10 +194,10 @@ public class GrunnlagRestTjeneste {
     @Path("/kopier")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Hent alle IAY Grunnlag for angitt søke spesifikasjon", response = InntektArbeidYtelseGrunnlagSakSnapshotDto.class)
+    @ApiOperation(value = "Kopier grunnlag")
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response hentAlleIayGrunnlag(@NotNull @Valid KopierGrunnlagRequestAbac request) {
+    public Response kopierGrunnlag(@NotNull @Valid KopierGrunnlagRequestAbac request) {
         oppdaterKobling(request);
         iayTjeneste.kopierGrunnlagFraKoblingTilKobling(new KoblingReferanse(request.getGammelReferanse()), new KoblingReferanse(request.getNyReferanse()));
 

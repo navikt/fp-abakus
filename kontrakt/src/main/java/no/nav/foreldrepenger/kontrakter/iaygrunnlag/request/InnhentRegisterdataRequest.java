@@ -17,7 +17,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.PersonIdent;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.UuidDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.RegisterdataType;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.YtelseType;
 

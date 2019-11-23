@@ -76,7 +76,7 @@ public class InntektArbeidYtelseGrunnlagRequest {
      */
     @JsonProperty(value = "grunnlagVersjon")
     @Valid
-    private GrunnlagVersjon grunnlagVersjon = GrunnlagVersjon.ALLE;
+    private GrunnlagVersjon grunnlagVersjon = GrunnlagVersjon.FØRSTE_OG_SISTE;
 
     protected InntektArbeidYtelseGrunnlagRequest() {
         // default ctor.
@@ -171,10 +171,25 @@ public class InntektArbeidYtelseGrunnlagRequest {
         OPPGITT_OPPTJENING
     }
 
+    /** Setter scope for hvilke grunnlag som hentes per behandling. */
     public enum GrunnlagVersjon {
+
+        /** Alle grunnlag versjoner per behandling. Egnet kun ved full migrering. */
         ALLE,
+
+        /** Kun siste (dvs. aktiv) grunnlag per behandling. Typisk dersom man ønsker kun gjeldende grunnlag. */
         SISTE,
+
+        /**
+         * første grunnlag per behandling (kan være aktivt hvis det også er eneste), ellers er det typisk starttilstand for behandlingen.
+         * Normalt vil en konsument heller være interesset i {@link #SISTE} eller {@link #FØRSTE_OG_AKTIVT}.
+         */
+        FØRSTE,
+
+        /**
+         * Både første og siste grunnlag per behandling (se #SISTE, #FØRSTE). Ignorerer mellomliggende versjoner på samme behandling. Brukes typisk
+         * for å håndtere Revurdering (om det har vært endringer i behandlingen).
+         */
         FØRSTE_OG_SISTE,
-        FØRSTE
     }
 }
