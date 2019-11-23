@@ -190,6 +190,8 @@ public class InntektArbeidYtelseGrunnlagRequest {
          * Både første og siste grunnlag per behandling (se #SISTE, #FØRSTE). Ignorerer mellomliggende versjoner på samme behandling. Brukes typisk
          * for å håndtere Revurdering (om det har vært endringer i behandlingen).
          */
-        FØRSTE_OG_SISTE,
+        FØRSTE_OG_SISTE,;
+        
+
     }
 }

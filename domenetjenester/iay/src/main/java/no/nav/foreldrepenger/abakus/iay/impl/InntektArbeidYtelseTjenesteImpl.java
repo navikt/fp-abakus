@@ -12,9 +12,6 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.jboss.weld.exceptions.IllegalStateException;
-import org.jboss.weld.exceptions.UnsupportedOperationException;
-
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatEntitet;
@@ -187,7 +184,7 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
             case SISTE:
                 return List.of(siste);
             case FØRSTE_OG_SISTE:
-                return List.of(første, siste);
+                return Objects.equals(første, siste) ? List.of(første) : List.of(første, siste);
             default:
                 throw new UnsupportedOperationException("GrunnlagVersjon " + grunnlagVersjon + " er ikke støttet her for " + koblingId);
         }
