@@ -1,10 +1,5 @@
 package no.nav.foreldrepenger.abakus.kodeverk;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
@@ -37,13 +32,6 @@ public class RelatertYtelseStatus extends Kodeliste {
     public static final RelatertYtelseStatus IKKE_STARTET = new RelatertYtelseStatus("I"); //$NON-NLS-1$
     public static final RelatertYtelseStatus AVSLUTTET_IT = new RelatertYtelseStatus("A"); //$NON-NLS-1$
 
-    private static final List<RelatertYtelseStatus> ÅPEN_SAK_STATUSER = Arrays.asList(IKKE_PÅBEGYNT,
-        UNDER_BEHANDLING, SENDT_TIL_SAKSBEHANDLER, UNDERKJENT_AV_SAKSBEHANDLER, RETUNERT, SENDT, VIDERESENDT_DIREKTORATET,
-        VENTER_IVERKSETTING, VIDERESENDT_TRYGDERETTEN);
-
-    private static final Set<String> LØPENDE_VEDTAK_STATUS = Collections.singleton(LØPENDE_VEDTAK.getKode());
-    private static final Set<String> ER_IKKE_STARTET_STATUS = Collections.singleton(IKKE_STARTET.getKode());
-
     RelatertYtelseStatus() {
         // Hibernate trenger den
     }
@@ -52,15 +40,4 @@ public class RelatertYtelseStatus extends Kodeliste {
         super(kode, DISCRIMINATOR);
     }
 
-    public static boolean erÅpenSakStatus(String statusKode) {
-        return ÅPEN_SAK_STATUSER.stream().anyMatch(relatertYtelseStatus -> relatertYtelseStatus.getKode().equals(statusKode));
-    }
-
-    public static boolean erLøpendeVedtak(String status) {
-        return LØPENDE_VEDTAK_STATUS.contains(status);
-    }
-
-    public static boolean erIkkeStartetStatus(String statusString) {
-        return ER_IKKE_STARTET_STATUS.contains(statusString);
-    }
 }
