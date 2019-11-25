@@ -30,9 +30,9 @@ spec:
   # Compare this value with the $HOSTNAME to see if the current instance is the leader
   preStopHookPath: /fpabakus/internal/preStop # Optional. A HTTP GET will be issued to this endpoint at least once before the pod is terminated.
   # See https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/
-  #prometheus: # Optional.
-  #  enabled: false # if true the pod will be scraped for metrics by prometheus
-  #  path: /fpabakus/prometheus # Path to prometheus-metrics
+  prometheus: # Optional.
+    enabled: true # if true the pod will be scraped for metrics by prometheus
+    path: /fpabakus/internal/metrics/prometheus # Path to prometheus-metrics
   istio: # Optional.
     enabled: false # Optional. When true, envoy-proxy sidecar will be injected into pod and https urls envvars will be rewritten
   resources: # Optional. See: http://kubernetes.io/docs/user-guide/compute-resources/
