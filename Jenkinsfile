@@ -59,7 +59,6 @@ pipeline {
                         version = mRevision + changelist + "-SNAPSHOT"
                     }
                     githubRepoName = sh(script: "basename -s .git `git config --get remote.origin.url`", returnStdout: true).trim()
-                    currentBuild.displayName = version
 
                     if (env.BRANCH_NAME == 'master') {
                         sh "git fetch"
@@ -96,6 +95,7 @@ pipeline {
             steps {
                 script {
                     echo "Building $version"
+                    currentBuild.displayName = version
                     fpgithub.updateBuildStatus(githubRepoName, "pending", GIT_COMMIT_HASH_FULL)
 
                     withMaven(mavenSettingsConfig: 'navMavenSettings',
