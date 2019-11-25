@@ -24,6 +24,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,10 +89,13 @@ public class MigreringRestTjeneste {
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response migrerSak(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid InntektArbeidYtelseGrunnlagSakSnapshotDto sakSnapshot) {
 
-        doMigrering(sakSnapshot);
+        // disabler doMigrering så ikke kalles i ved uhell men er lett å gjeninnsette
+        return Response.status(Status.METHOD_NOT_ALLOWED).build();
 
-        log.info("Migrert sak={} med {} grunnlag", sakSnapshot.getSaksnummer(), sakSnapshot.getGrunnlag().size());
-        return Response.ok().build();
+        // doMigrering(sakSnapshot);
+        // log.info("Migrert sak={} med {} grunnlag", sakSnapshot.getSaksnummer(), sakSnapshot.getGrunnlag().size());
+        // return Response.ok().build();
+        
     }
 
     /**

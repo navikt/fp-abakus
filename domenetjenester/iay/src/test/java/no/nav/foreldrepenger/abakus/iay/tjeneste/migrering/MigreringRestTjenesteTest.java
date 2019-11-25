@@ -33,6 +33,7 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.IayGrunnlagJsonMapper;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest.GrunnlagVersjon;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagSakSnapshotDto;
 
@@ -132,13 +133,16 @@ public class MigreringRestTjenesteTest {
 
     @Test
     public void skal_ikke_feile_9() throws IOException {
+        GrunnlagVersjon grunnlagVersjon = InntektArbeidYtelseGrunnlagRequest.GrunnlagVersjon.ALLE;
+
         URL resource = MigreringRestTjenesteTest.class.getResource("/migrering-grunnlag-9.json");
         final var koblingReferanse = new KoblingReferanse(UUID.fromString("9f2a89fc-84d1-45fb-a0ee-7b982cfa8919"));
         final var aktørId = new AktørId("1000060002501");
         final var fpsakDto = iayMapper.readValue(resource, InntektArbeidYtelseGrunnlagDto.class);
         var abakusGrunnlag = new IAYFraDtoMapper(iayTjeneste, kodeverkRepository, aktørId, koblingReferanse).mapTilGrunnlagInklusivRegisterdata(fpsakDto, true);
-        final var abakusDto = new IAYTilDtoMapper(aktørId, abakusGrunnlag.getGrunnlagReferanse(), koblingReferanse).mapTilDto(abakusGrunnlag, new InntektArbeidYtelseGrunnlagRequest(new AktørIdPersonident(aktørId.getId())).medDataset(Arrays.asList(InntektArbeidYtelseGrunnlagRequest.Dataset.values())).hentGrunnlagVersjon(InntektArbeidYtelseGrunnlagRequest.GrunnlagVersjon.ALLE));
+        final var abakusDto = new IAYTilDtoMapper(aktørId, abakusGrunnlag.getGrunnlagReferanse(), koblingReferanse).mapTilDto(abakusGrunnlag, new InntektArbeidYtelseGrunnlagRequest(new AktørIdPersonident(aktørId.getId())).medDataset(Arrays.asList(InntektArbeidYtelseGrunnlagRequest.Dataset.values())).hentGrunnlagVersjon(grunnlagVersjon));
 
         assertThat(abakusDto.getArbeidsforholdInformasjon().getOverstyringer()).hasSize(2);
     }
+    
 }

@@ -131,7 +131,9 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
             " FROM InntektArbeidGrunnlag gr" +
             " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
             " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId " + // NOSONAR
-            (kunAktive ? " AND gr.aktiv = :aktivt" : ""), InntektArbeidYtelseGrunnlagEntitet.class);
+            (kunAktive ? " AND gr.aktiv = :aktivt" : "") +
+            " ORDER BY gr.koblingId, gr.opprettetTidspunkt"
+            , InntektArbeidYtelseGrunnlagEntitet.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("ref", saksnummer);
         query.setParameter("ytelse", ytelseType);
