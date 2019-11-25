@@ -76,6 +76,7 @@ pipeline {
                             version = latestTag
                             echo "No change detected in sourcecode, skipping build and deploy existing tag={$latestTag}."
                         }
+                        currentBuild.displayName = version
                     }
                 }
             }
@@ -95,7 +96,7 @@ pipeline {
             steps {
                 script {
                     echo "Building $version"
-                    currentBuild.displayName = version
+                    currentBuild.displayName = version + "*"
                     fpgithub.updateBuildStatus(githubRepoName, "pending", GIT_COMMIT_HASH_FULL)
 
                     withMaven(mavenSettingsConfig: 'navMavenSettings',
