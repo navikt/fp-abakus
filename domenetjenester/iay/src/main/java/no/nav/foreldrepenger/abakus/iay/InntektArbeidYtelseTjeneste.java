@@ -16,6 +16,7 @@ import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest.GrunnlagVersjon;
 
 public interface InntektArbeidYtelseTjeneste {
     /**
@@ -51,6 +52,7 @@ public interface InntektArbeidYtelseTjeneste {
      */
     List<InntektArbeidYtelseGrunnlag> hentAlleGrunnlagFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType, boolean kunAktive);
 
+    
     /**
      * Hent alle grunnlag for angitt koblingsreferanse (behandling)
      *
@@ -60,6 +62,12 @@ public interface InntektArbeidYtelseTjeneste {
      */
     List<InntektArbeidYtelseGrunnlag> hentAlleGrunnlagFor(AktørId aktørId, KoblingReferanse koblingReferanse, boolean kunAktive);
 
+    /** 
+     * Hent grunnlag etterspurt (tar hensyn til GrunnlagVersjon) for angitt aktørId, saksnummer, ytelsetype.
+     * Skipper mellomliggende versjoner hvis ikke direkte spurt om.
+     */
+    List<InntektArbeidYtelseGrunnlag> hentGrunnlagEtterspurtFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType, GrunnlagVersjon grunnlagVersjon);
+    
     /**
      * @param grunnlagReferanse
      * @return henter optional aggregat
@@ -114,4 +122,5 @@ public interface InntektArbeidYtelseTjeneste {
     void slettAltForSak(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType);
 
     void kopierGrunnlagFraKoblingTilKobling(KoblingReferanse fraKobling, KoblingReferanse tilKobling);
+
 }
