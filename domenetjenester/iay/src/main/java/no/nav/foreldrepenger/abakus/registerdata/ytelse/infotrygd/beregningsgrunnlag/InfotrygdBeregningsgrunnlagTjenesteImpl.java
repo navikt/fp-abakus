@@ -11,8 +11,8 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.TemaUnderkategoriReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdTjenesteFeil;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
@@ -36,17 +36,14 @@ public class InfotrygdBeregningsgrunnlagTjenesteImpl implements InfotrygdBeregni
     private static final String TJENESTE = "InfotrygdBeregningsgrunnlag";
     private static final Logger log = LoggerFactory.getLogger(InfotrygdBeregningsgrunnlagTjenesteImpl.class);
 
-    private KodeverkRepository kodeverkRepository;
     private InfotrygdBeregningsgrunnlagConsumer infotrygdBeregningsgrunnlagConsumer;
     private AktørConsumer tpsTjeneste;
 
     @Inject
     public InfotrygdBeregningsgrunnlagTjenesteImpl(InfotrygdBeregningsgrunnlagConsumer infotrygdBeregningsgrunnlagConsumer,
-                                                   AktørConsumer tpsTjeneste,
-                                                   KodeverkRepository kodeverkRepository) {
+                                                   AktørConsumer tpsTjeneste) {
         this.infotrygdBeregningsgrunnlagConsumer = infotrygdBeregningsgrunnlagConsumer;
         this.tpsTjeneste = tpsTjeneste;
-        this.kodeverkRepository = kodeverkRepository;
     }
 
     InfotrygdBeregningsgrunnlagTjenesteImpl() {
@@ -93,30 +90,30 @@ public class InfotrygdBeregningsgrunnlagTjenesteImpl implements InfotrygdBeregni
         }
 
         for (Foreldrepenger fp : finnGrunnlagListeResponse.getForeldrepengerListe()) {
-            TemaUnderkategori tuk = getBehandlingsTema(fp, kodeverkRepository);
-            alleGrunnlag.add(new YtelseBeregningsgrunnlagForeldrepenger(fp, tuk, kodeverkRepository));
+            TemaUnderkategori tuk = getBehandlingsTema(fp);
+            alleGrunnlag.add(new YtelseBeregningsgrunnlagForeldrepenger(fp, tuk));
         }
 
         for (Engangsstoenad engangsstoenad : finnGrunnlagListeResponse.getEngangstoenadListe()) {
-            TemaUnderkategori tuk = getBehandlingsTema(engangsstoenad, kodeverkRepository);
+            TemaUnderkategori tuk = getBehandlingsTema(engangsstoenad);
             alleGrunnlag.add(new YtelseBeregningsgrunnlagEngangstønad(engangsstoenad, tuk));
         }
 
         for (Sykepenger sykep : finnGrunnlagListeResponse.getSykepengerListe()) {
-            TemaUnderkategori tuk = getBehandlingsTema(sykep, kodeverkRepository);
-            alleGrunnlag.add(new YtelseBeregningsgrunnlagSykepenger(sykep, tuk, kodeverkRepository));
+            TemaUnderkategori tuk = getBehandlingsTema(sykep);
+            alleGrunnlag.add(new YtelseBeregningsgrunnlagSykepenger(sykep, tuk));
         }
 
         for (PaaroerendeSykdom paaroerendeSykdom : finnGrunnlagListeResponse.getPaaroerendeSykdomListe()) {
-            TemaUnderkategori tuk = getBehandlingsTema(paaroerendeSykdom, kodeverkRepository);
-            alleGrunnlag.add(new YtelseBeregningsgrunnlagPårørendeSykdom(paaroerendeSykdom, tuk, kodeverkRepository));
+            TemaUnderkategori tuk = getBehandlingsTema(paaroerendeSykdom);
+            alleGrunnlag.add(new YtelseBeregningsgrunnlagPårørendeSykdom(paaroerendeSykdom, tuk));
         }
 
         return alleGrunnlag;
     }
 
-    private TemaUnderkategori getBehandlingsTema(Grunnlag grunnlag, KodeverkRepository kodeverkRepository) {
-        return kodeverkRepository.finnOptional(TemaUnderkategori.class, grunnlag.getBehandlingstema().getValue()).orElse(TemaUnderkategori.UDEFINERT);
+    private TemaUnderkategori getBehandlingsTema(Grunnlag grunnlag) {
+        return TemaUnderkategoriReverse.reverseMap(grunnlag.getBehandlingstema().getValue(), log);
     }
 
 }
