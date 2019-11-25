@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -17,11 +18,11 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.TemaUnderkategoriReverse;
 import no.nav.tjeneste.virksomhet.infotrygdsak.v1.binding.FinnSakListePersonIkkeFunnet;
 import no.nav.tjeneste.virksomhet.infotrygdsak.v1.binding.FinnSakListeSikkerhetsbegrensning;
 import no.nav.tjeneste.virksomhet.infotrygdsak.v1.binding.FinnSakListeUgyldigInput;
@@ -37,17 +38,25 @@ public class InfotrygdTjeneste {
     public static final String TJENESTE = "InfotrygdSak";
     private static final String INFOTRYGD_NEDE_EXCEPTION_TEXT = "Basene i Infotrygd er ikke tilgjengelige";
     private static final Logger log = LoggerFactory.getLogger(InfotrygdTjeneste.class);
+
+    private static final Map<String, YtelseStatus> STATUS_VERDI_MAP = Map.ofEntries(
+        Map.entry(RelatertYtelseStatus.LØPENDE_VEDTAK.getKode(), YtelseStatus.LØPENDE),
+        Map.entry(RelatertYtelseStatus.AVSLUTTET_IT.getKode(), YtelseStatus.AVSLUTTET),
+        Map.entry(RelatertYtelseStatus.IKKE_STARTET.getKode(), YtelseStatus.OPPRETTET),
+        Map.entry("xx", YtelseStatus.UDEFINERT),
+        Map.entry("??", YtelseStatus.UDEFINERT)
+    );
+
     private InfotrygdSakConsumer infotrygdSakConsumer;
-    private KodeverkRepository kodeverkRepository;
+
 
     InfotrygdTjeneste() {
         // CDI
     }
 
     @Inject
-    public InfotrygdTjeneste(InfotrygdSakConsumer infotrygdSakConsumer, KodeverkRepository kodeverkRepository) {
+    public InfotrygdTjeneste(InfotrygdSakConsumer infotrygdSakConsumer) {
         this.infotrygdSakConsumer = infotrygdSakConsumer;
-        this.kodeverkRepository = kodeverkRepository;
     }
 
     public List<InfotrygdSak> finnSakListe(String fnr, LocalDate fom) {
@@ -107,12 +116,10 @@ public class InfotrygdTjeneste {
         YtelseStatus relatertYtelseTilstand = YtelseStatus.AVSLUTTET;
 
         if (sak.getBehandlingstema() != null && sak.getBehandlingstema().getValue() != null) {
-            temaUnderkategori = kodeverkRepository.finn(TemaUnderkategori.class, sak.getBehandlingstema().getValue());
+            temaUnderkategori = TemaUnderkategoriReverse.reverseMap(sak.getBehandlingstema().getValue(), log);
         }
         if (sak.getStatus() != null && sak.getStatus().getValue() != null) {
-            RelatertYtelseStatus status = kodeverkRepository.finnForKodeverkEiersKode(RelatertYtelseStatus.class, sak.getStatus().getValue(),
-                RelatertYtelseStatus.AVSLUTTET_IT);
-            relatertYtelseTilstand = getYtelseTilstand(erVedtak, status);
+            relatertYtelseTilstand = getYtelseTilstand(erVedtak, sak.getStatus().getValue());
         }
         YtelseType ytelseType = utledYtelseType(sak.getTema().getValue(), temaUnderkategori);
         if (YtelseType.ENGANGSSTØNAD.equals(ytelseType)) {
@@ -152,27 +159,8 @@ public class InfotrygdTjeneste {
         }
     }
 
-    private boolean erLøpendeVedtak(boolean erVedtak, RelatertYtelseStatus status) {
-        return erVedtak && RelatertYtelseStatus.erLøpendeVedtak(status.getKode());
-    }
-
-    private boolean erÅpenSak(boolean erVedtak, RelatertYtelseStatus status) {
-        return !erVedtak && RelatertYtelseStatus.erÅpenSakStatus(status.getKode());
-    }
-
-    private boolean erIkkeStartet(RelatertYtelseStatus status) {
-        return RelatertYtelseStatus.erIkkeStartetStatus(status.getKode());
-    }
-
-    private YtelseStatus getYtelseTilstand(boolean erVedtak, RelatertYtelseStatus status) {
-        if (erLøpendeVedtak(erVedtak, status)) {
-            return YtelseStatus.LØPENDE;
-        } else if (erÅpenSak(erVedtak, status)) {
-            return YtelseStatus.UNDER_BEHANDLING;
-        } else if (erIkkeStartet(status)) {
-            return YtelseStatus.OPPRETTET;
-        }
-        return YtelseStatus.AVSLUTTET;
+    private YtelseStatus getYtelseTilstand(boolean erVedtak, String status) {
+        return STATUS_VERDI_MAP.getOrDefault(status, erVedtak ? YtelseStatus.AVSLUTTET : YtelseStatus.UNDER_BEHANDLING);
     }
 
 }

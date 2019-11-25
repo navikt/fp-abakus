@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.Foreldrepenger;
@@ -17,8 +16,8 @@ public class YtelseBeregningsgrunnlagForeldrepenger extends YtelseBeregningsgrun
     private BigDecimal dekningsgrad;
     private BigDecimal gradering;
 
-    YtelseBeregningsgrunnlagForeldrepenger(Foreldrepenger foreldrepenger, TemaUnderkategori tuk, KodeverkRepository kodeverkRepository) {
-        super(YtelseType.FORELDREPENGER, tuk, foreldrepenger, kodeverkRepository);
+    YtelseBeregningsgrunnlagForeldrepenger(Foreldrepenger foreldrepenger, TemaUnderkategori tuk) {
+        super(YtelseType.FORELDREPENGER, tuk, foreldrepenger);
         if (foreldrepenger.getDekningsgrad() != null) {
             dekningsgrad = new BigDecimal(foreldrepenger.getDekningsgrad());
         }

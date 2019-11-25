@@ -3,7 +3,6 @@ package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgru
 import java.time.LocalDate;
 
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.PaaroerendeSykdom;
@@ -13,8 +12,8 @@ public class YtelseBeregningsgrunnlagPårørendeSykdom extends YtelseBeregningsg
 
     private final LocalDate foedselsdatoPleietrengende;
 
-    YtelseBeregningsgrunnlagPårørendeSykdom(PaaroerendeSykdom paaroerendeSykdom, TemaUnderkategori tuk, KodeverkRepository kodeverkRepository) {
-        super(YtelseType.PÅRØRENDESYKDOM, tuk, paaroerendeSykdom, kodeverkRepository);
+    YtelseBeregningsgrunnlagPårørendeSykdom(PaaroerendeSykdom paaroerendeSykdom, TemaUnderkategori tuk) {
+        super(YtelseType.PÅRØRENDESYKDOM, tuk, paaroerendeSykdom);
         foedselsdatoPleietrengende = DateUtil.convertToLocalDate(paaroerendeSykdom.getFoedselsdatoPleietrengende());
     }
 
