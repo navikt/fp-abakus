@@ -76,7 +76,7 @@ public class InntektArbeidYtelseGrunnlagRequest {
      */
     @JsonProperty(value = "grunnlagVersjon")
     @Valid
-    private GrunnlagVersjon grunnlagVersjon = GrunnlagVersjon.FØRSTE_OG_SISTE;
+    private GrunnlagVersjon grunnlagVersjon = GrunnlagVersjon.SISTE;
 
     protected InntektArbeidYtelseGrunnlagRequest() {
         // default ctor.
