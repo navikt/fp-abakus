@@ -2,6 +2,8 @@ package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregnin
 
 public enum BehandlingstemaKode {
     AP,
+    FP,
+    FU,
     FØ,
     SV,
     SP,

@@ -18,6 +18,7 @@ import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagMeldekort;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.InnhentingInfotrygdTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlagArbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlagVedtak;
@@ -45,6 +46,9 @@ public class YtelseRegisterInnhenting {
             InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder, boolean medGrunnlag) {
         var sammenstilt = innhentingSamletTjeneste.getSammenstiltSakOgGrunnlag(aktørId, periode,
                 medGrunnlag);
+        var rest = innhentingSamletTjeneste.innhentRest(aktørId, periode);
+        var mappedWs = InnhentingInfotrygdTjeneste.mapISoG(sammenstilt);
+        InnhentingInfotrygdTjeneste.sammenlignGrunnlagKilder(mappedWs, rest);
 
         var aktørYtelseBuilder = inntektArbeidYtelseAggregatBuilder.getAktørYtelseBuilder(aktørId);
         for (InfotrygdSakOgGrunnlag ytelse : sammenstilt) {

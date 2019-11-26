@@ -43,9 +43,11 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjen
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.InnhentingInfotrygdTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.InfotrygdBeregningsgrunnlagTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.Aggregator;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.InfotrygdYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.Grunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.InfotrygdGrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.felles.InfotrygdSakTjeneste;
@@ -71,6 +73,7 @@ public class InnhentingSamletTjeneste {
     private InfotrygdSakTjeneste saker;
     private InfotrygdBeregningsgrunnlagTjeneste wsGrunnlag;
     private MeldekortTjeneste meldekortTjeneste;
+    private InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste;
     private Unleash unleash;
 
     InnhentingSamletTjeneste() {
@@ -83,6 +86,7 @@ public class InnhentingSamletTjeneste {
             InfotrygdBeregningsgrunnlagTjeneste wsGrunnlag,
             @Aggregator InfotrygdGrunnlag grunnlag,
             @Aggregator InfotrygdSakTjeneste saker,
+            InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste,
             MeldekortTjeneste meldekortTjeneste, Unleash unleash) {
         this.arbeidsforhold = arbeidsforholdTjeneste;
         this.aktør = aktørConsumer;
@@ -92,6 +96,7 @@ public class InnhentingSamletTjeneste {
         this.saker = saker;
         this.wsSak = wsSak;
         this.meldekortTjeneste = meldekortTjeneste;
+        this.innhentingInfotrygdTjeneste = innhentingInfotrygdTjeneste;
         this.unleash = unleash;
     }
 
@@ -108,21 +113,25 @@ public class InnhentingSamletTjeneste {
         return arbeidsforhold.finnArbeidsforholdForIdentIPerioden(getFnrFraAktørId(aktørId), periode);
     }
 
+    public List<InfotrygdYtelseGrunnlag> innhentRest(AktørId aktørId, Interval periode) {
+        return innhentingInfotrygdTjeneste.getInfotrygdYtelser(aktørId, periode);
+    }
+
     public List<InfotrygdSakOgGrunnlag> getSammenstiltSakOgGrunnlag(AktørId aktørId, Interval periode,
             boolean medGrunnlag) {
         var wsSaker = filtrerSaker(getInfotrygdSaker(aktørId, periode), medGrunnlag);
-        var restSaker = filtrerSaker(saker.saker(getFnrFraAktørId(aktørId).getIdent(), dato(periode.getStart())),
-                medGrunnlag);
+  //      var restSaker = filtrerSaker(saker.saker(getFnrFraAktørId(aktørId).getIdent(), dato(periode.getStart())),
+    //            medGrunnlag);
 
         LOG.info("InfotrygdSak sammenstilling antall saker/vedtak: {}", wsSaker.size());
         if (medGrunnlag) {
-            var rest = restSakOgGrunnlag(restSaker,
-                    grunnlag.hentGrunnlag(aktørId, dato(periode.getStart()), dato(periode.getEnd())), periode);
+      //      var rest = restSakOgGrunnlag(restSaker,
+        //            grunnlag.hentGrunnlag(aktørId, dato(periode.getStart()), dato(periode.getEnd())), periode);
             var ws = wsSakOgGrunnlag(wsSaker, wsGrunnlag(aktørId, periode), periode);
-            return sammenlign(rest, ws);
+          //  return sammenlign(rest, ws);
         }
 
-        return sammenlign(restSaker, wsSaker)
+        return wsSaker
                 .stream()
                 .map(InfotrygdSakOgGrunnlag::new)
                 .collect(toList());
@@ -168,7 +177,7 @@ public class InnhentingSamletTjeneste {
         if (sak.getGrunnlag().isPresent() || sak.getSak().getIverksatt() == null) {
             return false;
         }
-        return grunnlag.getType().equals(sak.getSak().hentRelatertYtelseTypeForSammenstillingMedBeregningsgrunnlag())
+        return grunnlag.getTema().equals(sak.getSak().hentRelatertYtelseTypeForSammenstillingMedBeregningsgrunnlag())
                 && grunnlag.getIdentdato().equals(sak.getSak().getIverksatt());
     }
 
@@ -181,7 +190,7 @@ public class InnhentingSamletTjeneste {
         return grunnlag.getType().equals(sak.getSak().hentRelatertYtelseTypeForSammenstillingMedBeregningsgrunnlag())
                 && grunnlag.getIdentdato().equals(sak.getSak().getIverksatt());
     }
-
+/*
     private List<InfotrygdSakOgGrunnlag> restSakOgGrunnlag(List<InfotrygdSak> saker, List<Grunnlag> grunnlag,
             Interval periode) {
         var sammenstilling = saker
@@ -215,7 +224,7 @@ public class InnhentingSamletTjeneste {
                 .filter(isog -> skalTypeLagresUansett(isog) || erEtterIverksatt(isog))
                 .collect(toList());
     }
-
+*/
     private List<InfotrygdSakOgGrunnlag> wsSakOgGrunnlag(List<InfotrygdSak> saker,
             List<YtelseBeregningsgrunnlag> grunnlag, Interval periode) {
         var sammenstilling = saker
@@ -260,7 +269,7 @@ public class InnhentingSamletTjeneste {
                 .medPeriode(periode)
                 .build();
     }
-
+/*
     private Optional<InfotrygdSakOgGrunnlag> match(List<InfotrygdSakOgGrunnlag> saker, Grunnlag grunnlag) {
         Optional<InfotrygdSakOgGrunnlag> funnet = Optional.empty();
         for (InfotrygdSakOgGrunnlag sak : saker) {
@@ -281,7 +290,7 @@ public class InnhentingSamletTjeneste {
         }
         return funnet;
     }
-
+*/
     private Optional<InfotrygdSakOgGrunnlag> match(List<InfotrygdSakOgGrunnlag> saker,
             YtelseBeregningsgrunnlag grunnlag) {
         Optional<InfotrygdSakOgGrunnlag> funnet = Optional.empty();
