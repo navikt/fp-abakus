@@ -70,7 +70,7 @@ public class LagreVedtakTask implements ProsessTaskHandler {
                 siste = extractor.hentSisteVedtatteFor((YtelseV1) mottattVedtak);
             }
             VedtakYtelseBuilder builder = extractor.extractFrom((YtelseV1) mottattVedtak);
-            
+
             ytelseRepository.lagre(builder, siste);
         }
     }
