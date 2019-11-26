@@ -44,7 +44,6 @@ public class InfotrygdGrunnlagAggregator implements InfotrygdGrunnlag {
 
     @Override
     public List<Grunnlag> hentGrunnlag(String fnr, LocalDate fom, LocalDate tom) {
-
         return tjenester.stream()
                 .parallel()
                 .map(t -> t.hentGrunnlag(fnr, fom, tom))
@@ -55,7 +54,6 @@ public class InfotrygdGrunnlagAggregator implements InfotrygdGrunnlag {
     @Override
     public List<Grunnlag> hentGrunnlag(AktørId aktørId, LocalDate fom) {
         return hentGrunnlag(aktørId, fom, now());
-
     }
 
     @Override
