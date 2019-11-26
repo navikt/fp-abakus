@@ -25,9 +25,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.TaskResponsDto;
@@ -45,7 +46,7 @@ import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 
-@Api(tags = "registerdata")
+@OpenAPIDefinition(tags = @Tag(name = "registerinnhenting"))
 @Path("/registerdata/v1")
 @ApplicationScoped
 @Transaction
@@ -64,10 +65,10 @@ public class RegisterdataRestTjeneste {
     @POST
     @Path("/innhent/sync")
     @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Trigger registerinnhenting for en gitt id")
+    @Operation(description = "Trigger registerinnhenting for en gitt id", tags = "registerinnhenting")
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response innhentRegisterdata(@ApiParam("innhent") @Valid InnhentRegisterdataAbacDto dto) {
+    public Response innhentRegisterdata(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
         Optional<GrunnlagReferanse> innhent = innhentTjeneste.innhent(dto);
         if (innhent.isPresent()) {
             return Response.ok(new UuidDto(innhent.get().getReferanse().toString())).build();
@@ -78,10 +79,10 @@ public class RegisterdataRestTjeneste {
     @POST
     @Path("/innhent/async")
     @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Trigger registerinnhenting for en gitt id")
+    @Operation(description = "Trigger registerinnhenting for en gitt id", tags = "registerinnhenting")
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response innhentAsyncRegisterdata(@ApiParam("innhent") @Valid InnhentRegisterdataAbacDto dto) {
+    public Response innhentAsyncRegisterdata(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
         String taskGruppe = innhentTjeneste.triggAsyncInnhent(dto);
         if (taskGruppe != null) {
             return Response.accepted(new TaskResponsDto(taskGruppe)).build();
@@ -92,11 +93,11 @@ public class RegisterdataRestTjeneste {
     @POST
     @Path("/innhent/status")
     @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Sjekker innhentingFerdig på async innhenting og gir siste referanseid på grunnlaget når tasken er ferdig. " +
-        "Hvis ikke innhentingFerdig")
+    @Operation(description = "Sjekker innhentingFerdig på async innhenting og gir siste referanseid på grunnlaget når tasken er ferdig. " +
+        "Hvis ikke innhentingFerdig", tags = "registerinnhenting")
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response innhentAsyncStatus(@ApiParam("status") @Valid SjekkStatusAbacDto dto) {
+    public Response innhentAsyncStatus(@Parameter(name = "status") @Valid SjekkStatusAbacDto dto) {
         if (innhentTjeneste.innhentingFerdig(dto.getTaskReferanse())) {
             Optional<GrunnlagReferanse> grunnlagReferanse = innhentTjeneste.hentSisteReferanseFor(new KoblingReferanse(dto.getReferanse().getReferanse()));
             if (grunnlagReferanse.isEmpty()) {

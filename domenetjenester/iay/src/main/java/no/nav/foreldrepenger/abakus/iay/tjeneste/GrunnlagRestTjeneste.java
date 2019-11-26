@@ -30,8 +30,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
@@ -61,7 +65,7 @@ import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 
-@Api(tags = "iay")
+@OpenAPIDefinition(tags = {@Tag(name = "iay-grunnlag")})
 @Path("/iay/grunnlag/v1")
 @ApplicationScoped
 @Transaction
@@ -95,7 +99,15 @@ public class GrunnlagRestTjeneste {
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Hent ett enkelt IAY Grunnlag for angitt spesifikasjon. Spesifikasjonen kan angit hvilke data som ønskes", response = InntektArbeidYtelseGrunnlagDto.class)
+    @Operation(description = "Hent ett enkelt IAY Grunnlag for angitt spesifikasjon. Spesifikasjonen kan angit hvilke data som ønskes",
+        tags = "iay-grunnlag",
+        responses = {
+            @ApiResponse(description = "Grunnlaget",
+                content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = InntektArbeidYtelseGrunnlagDto.class))),
+            @ApiResponse(responseCode = "204", description = "Det finnes ikke et grunnlag for forespørselen"),
+            @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")
+        })
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
@@ -141,7 +153,11 @@ public class GrunnlagRestTjeneste {
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Hent IAY Grunnlag for angitt søke spesifikasjon", response = InntektArbeidYtelseGrunnlagDto.class)
+    @Operation(description = "Lagrer siste versjon",
+        tags = "iay-grunnlag",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Mottatt grunnlaget")
+        })
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response oppdaterGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagAbacDto dto) {
@@ -161,7 +177,13 @@ public class GrunnlagRestTjeneste {
     @Path("/snapshot")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Hent IAY Grunnlag for angitt søke spesifikasjon", response = InntektArbeidYtelseGrunnlagSakSnapshotDto.class)
+    @Operation(description = "Hent IAY Grunnlag for angitt søke spesifikasjon",
+        tags = "iay-grunnlag",
+        responses = {
+            @ApiResponse(description = "Grunnlaget for saken",
+                content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = InntektArbeidYtelseGrunnlagSakSnapshotDto.class)))
+        })
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentSnapshotIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
@@ -194,7 +216,8 @@ public class GrunnlagRestTjeneste {
     @Path("/kopier")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Kopier grunnlag")
+    @Operation(description = "Kopier grunnlag",
+        tags = "iay-grunnlag")
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response kopierGrunnlag(@NotNull @Valid KopierGrunnlagRequestAbac request) {
