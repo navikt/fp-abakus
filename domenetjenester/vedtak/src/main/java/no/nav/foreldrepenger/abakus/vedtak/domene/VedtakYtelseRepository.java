@@ -55,17 +55,17 @@ public class VedtakYtelseRepository {
             ytelseEntitet.setAktiv(false);
             entityManager.persist(ytelseEntitet);
             entityManager.flush();
-        } else if(builder.erOppdatering()) {
-            ((VedtakYtelseEntitet)ytelse).setAktiv(false);
+        } else if (!builder.erOppdatering()) {
+            ((VedtakYtelseEntitet) ytelse).setAktiv(false);
         }
-        if (!vedtakYtelseEntitet.map(VedtakYtelseEntitet::getAktiv).orElse(false)) {
+        if (((VedtakYtelseEntitet) ytelse).getAktiv()) {
             entityManager.persist(ytelse);
             for (YtelseAnvist ytelseAnvist : ytelse.getYtelseAnvist()) {
                 entityManager.persist(ytelseAnvist);
             }
             entityManager.flush();
         } else {
-            log.info("Forkaster vedtak siden en sitter på nyere vedtak. {} er eldre enn {}", ytelse, vedtakYtelseEntitet.get());
+            log.info("Forkaster vedtak siden en sitter på nyere vedtak. {} er eldre enn {}", ytelse, vedtakYtelseEntitet);
         }
     }
 

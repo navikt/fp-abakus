@@ -120,6 +120,7 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
 
     public VedtakYtelseEntitet(VedtattYtelse ytelse) {
         this.ytelseType = ytelse.getYtelseType();
+        this.vedtattTidspunkt = ytelse.getVedtattTidspunkt();
         this.vedtakReferanse = ytelse.getVedtakReferanse();
         this.status = ytelse.getStatus();
         this.periode = ytelse.getPeriode();

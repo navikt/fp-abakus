@@ -105,6 +105,6 @@ public class VedtakYtelseBuilder {
      * @return true / false avhengig av tidsstempel
      */
     boolean erOppdatering() {
-        return originalVedtattTidspunkt != null && originalVedtattTidspunkt.isBefore(ytelse.getVedtattTidspunkt());
+        return originalVedtattTidspunkt != null && ytelse.getVedtattTidspunkt() != null && originalVedtattTidspunkt.isBefore(ytelse.getVedtattTidspunkt());
     }
 }
