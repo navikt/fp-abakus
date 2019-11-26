@@ -58,6 +58,11 @@
                 <artifactId>jaxb2-basics-runtime</artifactId>
                 <version>1.11.1</version>
             </dependency>
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>swagger-ui</artifactId>
+                <version>3.24.3</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -318,10 +323,13 @@
             <artifactId>javax.el</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>swagger-ui</artifactId>
+        </dependency>
+        <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
         </dependency>
-
         <!-- Må gjenta her for å få riktig scope (kolliderer ellers med dependencyManagement -->
         <dependency>
             <groupId>junit</groupId>
@@ -333,6 +341,7 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
