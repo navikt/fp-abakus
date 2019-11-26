@@ -1,10 +1,5 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.BekreftetPermisjon;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
@@ -14,20 +9,17 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOver
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanseEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.BekreftetPermisjonStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.typer.OrgNummer;
-import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Aktør;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.ArbeidsforholdRefDto;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Organisasjon;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
+import no.nav.foreldrepenger.abakus.typer.*;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.*;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdOverstyringDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdReferanseDto;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 class MapArbeidsforholdInformasjon {
 
@@ -42,8 +34,8 @@ class MapArbeidsforholdInformasjon {
             Comparator.nullsLast(Comparator.naturalOrder()));
 
     private static final Comparator<Periode> COMP_PERIODE = Comparator
-        .comparing((Periode per) -> per.getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
-        .thenComparing(per -> per.getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
+        .comparing(Periode::getFom, Comparator.nullsFirst(Comparator.naturalOrder()))
+        .thenComparing(Periode::getTom, Comparator.nullsLast(Comparator.naturalOrder()));
 
     static class MapFraDto {
         private KodeverkRepository kodeverkRepository;
@@ -58,7 +50,8 @@ class MapArbeidsforholdInformasjon {
             var eksisterende = grunnlagBuilder.getArbeidsforholdInformasjon();
             var builder = ArbeidsforholdInformasjonBuilder.builder(eksisterende);
             if (dto != null) {
-                dto.getOverstyringer().stream().map(ov -> mapArbeidsforholdOverstyring(ov, builder)).forEach(builder::leggTil);
+                builder.fjernAlleOverstyringer();
+                dto.getOverstyringer().stream().map(this::mapArbeidsforholdOverstyring).forEach(builder::leggTil);
                 dto.getReferanser().stream().map(this::mapArbeidsforholdReferanse).forEach(builder::leggTilNyReferanse);
             }
             return builder;
@@ -71,7 +64,7 @@ class MapArbeidsforholdInformasjon {
             return new ArbeidsforholdReferanseEntitet(arbeidsgiver, internRef, eksternRef);
         }
 
-        private ArbeidsforholdOverstyringBuilder mapArbeidsforholdOverstyring(ArbeidsforholdOverstyringDto ov, ArbeidsforholdInformasjonBuilder builder) {
+        private ArbeidsforholdOverstyringBuilder mapArbeidsforholdOverstyring(ArbeidsforholdOverstyringDto ov) {
             var arbeidsgiverRef = mapArbeidsforholdRef(ov.getArbeidsforholdRef());
             var nyArbeidsgiverRef = mapArbeidsforholdRef(ov.getNyArbeidsforholdRef());
             var arbeidsgiver = mapArbeidsgiver(ov.getArbeidsgiver());
@@ -140,7 +133,7 @@ class MapArbeidsforholdInformasjon {
                 .collect(Collectors.toList());
 
             var referanser = entitet.getArbeidsforholdReferanser().stream()
-                .map(ar -> this.mapArbeidsforholdReferanse(ar))
+                .map(this::mapArbeidsforholdReferanse)
                 .sorted(COMP_ARBEIDSFORHOLD_REFERANSE)
                 .collect(Collectors.toList());
 
