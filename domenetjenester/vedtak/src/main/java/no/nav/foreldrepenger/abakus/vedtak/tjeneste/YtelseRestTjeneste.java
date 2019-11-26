@@ -58,7 +58,10 @@ public class YtelseRestTjeneste {
 
         //VedtakYtelseBuilder builder = extractor.extractFrom((YtelseV1) request);
 
-        Optional<VedtakYtelseEntitet> siste = extractor.hentSisteVedtatteFor((YtelseV1) request);
+        Optional<VedtakYtelseEntitet> siste = extractor.hentAktivtVedtakFor((YtelseV1)request);
+        if (siste.isEmpty()) {
+            siste = extractor.hentSisteVedtatteFor((YtelseV1) request);
+        }
         VedtakYtelseBuilder builder = extractor.extractFrom((YtelseV1) request);
 
         ytelseRepository.lagre(builder, siste);

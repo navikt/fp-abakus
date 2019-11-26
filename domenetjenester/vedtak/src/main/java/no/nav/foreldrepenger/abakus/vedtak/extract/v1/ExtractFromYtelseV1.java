@@ -76,6 +76,16 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
         return repository.hentSisteYtelseFor(aktørId, saksnummer, fagsystem, ytelseType);
     }
 
+    @Override
+    public Optional<VedtakYtelseEntitet> hentAktivtVedtakFor(YtelseV1 ytelse) {
+        Fagsystem fagsystem = getFagsystem(ytelse.getFagsystem());
+        no.nav.foreldrepenger.abakus.kodeverk.YtelseType ytelseType = getYtelseType(ytelse.getType());
+        Saksnummer saksnummer = new Saksnummer(ytelse.getSaksnummer());
+        AktørId aktørId = new AktørId(ytelse.getAktør().getVerdi());
+
+        return repository.hentYtelseFor(aktørId, saksnummer, fagsystem, ytelseType);
+    }
+
     private YtelseStatus getStatus(no.nav.vedtak.ytelse.v1.YtelseStatus kodeverk) {
         return (YtelseStatus) kodeverkRepository.finn(kodeverkTilKodeliste.get(kodeverk.getKodeverk()), kodeverk.getKode());
     }

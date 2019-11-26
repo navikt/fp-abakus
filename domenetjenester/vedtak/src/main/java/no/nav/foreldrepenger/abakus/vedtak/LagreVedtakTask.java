@@ -65,9 +65,12 @@ public class LagreVedtakTask implements ProsessTaskHandler {
             // TODO: Gjør generisk
             //VedtakYtelseBuilder builder = extractor.extractFrom((YtelseV1) mottattVedtak);
 
-            Optional<VedtakYtelseEntitet> siste = extractor.hentSisteVedtatteFor((YtelseV1) mottattVedtak);
+            Optional<VedtakYtelseEntitet> siste = extractor.hentAktivtVedtakFor((YtelseV1)mottattVedtak);
+            if (siste.isEmpty()) {
+                siste = extractor.hentSisteVedtatteFor((YtelseV1) mottattVedtak);
+            }
             VedtakYtelseBuilder builder = extractor.extractFrom((YtelseV1) mottattVedtak);
-
+            
             ytelseRepository.lagre(builder, siste);
         }
     }

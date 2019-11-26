@@ -89,7 +89,7 @@ public class VedtakYtelseRepository {
         entityManager.flush();
     }
 
-    private Optional<VedtakYtelseEntitet> hentYtelseFor(AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, YtelseType ytelseType) {
+    public Optional<VedtakYtelseEntitet> hentYtelseFor(AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, YtelseType ytelseType) {
         Objects.requireNonNull(aktørId, "aktørId");
         Objects.requireNonNull(saksnummer, "saksnummer");
         Objects.requireNonNull(fagsystem, "fagsystem");

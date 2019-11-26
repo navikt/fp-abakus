@@ -9,4 +9,5 @@ import no.nav.vedtak.ytelse.Ytelse;
 public interface ExtractFromYtelse<T extends Ytelse> {
     VedtakYtelseBuilder extractFrom(T ytelse);
     Optional<VedtakYtelseEntitet> hentSisteVedtatteFor(T ytelse);
+    Optional<VedtakYtelseEntitet> hentAktivtVedtakFor(T ytelse);
 }
