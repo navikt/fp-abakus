@@ -21,6 +21,7 @@ import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
+import no.nav.vedtak.konfig.Tid;
 
 @ApplicationScoped
 public class VedtakYtelseRepository {
@@ -69,6 +70,25 @@ public class VedtakYtelseRepository {
         }
     }
 
+    public void lagre(VedtakYtelseBuilder builder, Optional<VedtakYtelseEntitet> siste) {
+        VedtakYtelseEntitet ytelse = (VedtakYtelseEntitet)builder.build();
+        if (ytelse.getVedtattTidspunkt().isBefore(siste.map(VedtakYtelseEntitet::getVedtattTidspunkt).orElse(Tid.TIDENES_BEGYNNELSE.atStartOfDay()))) {
+            log.info("Forkaster vedtak siden en sitter på nyere vedtak. {} er eldre enn {}", ytelse, siste.get());
+            return;
+        }
+        siste.ifPresent(vedtak -> {
+            vedtak.setAktiv(false);
+            entityManager.persist(vedtak);
+            entityManager.flush();
+        });
+
+        entityManager.persist(ytelse);
+        for (YtelseAnvist ytelseAnvist : ytelse.getYtelseAnvist()) {
+            entityManager.persist(ytelseAnvist);
+        }
+        entityManager.flush();
+    }
+
     private Optional<VedtakYtelseEntitet> hentYtelseFor(AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, YtelseType ytelseType) {
         Objects.requireNonNull(aktørId, "aktørId");
         Objects.requireNonNull(saksnummer, "saksnummer");
@@ -89,6 +109,32 @@ public class VedtakYtelseRepository {
 
         return HibernateVerktøy.hentUniktResultat(query);
     }
+
+    public Optional<VedtakYtelseEntitet> hentSisteYtelseFor(AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, YtelseType ytelseType) {
+        Objects.requireNonNull(aktørId, "aktørId");
+        Objects.requireNonNull(saksnummer, "saksnummer");
+        Objects.requireNonNull(fagsystem, "fagsystem");
+        Objects.requireNonNull(ytelseType, "ytelseType");
+
+        TypedQuery<VedtakYtelseEntitet> query = entityManager.createQuery("FROM VedtakYtelseEntitet " +
+            "WHERE aktørId = :aktørId " +
+            "AND saksnummer = :saksnummer " +
+            "AND kilde = :fagsystem " +
+            "AND ytelseType = :ytelse " +
+            "ORDER BY vedtatt_tidspunkt DESC", VedtakYtelseEntitet.class);
+
+        query.setParameter("aktørId", aktørId);
+        query.setParameter("saksnummer", saksnummer);
+        query.setParameter("fagsystem", fagsystem);
+        query.setParameter("ytelse", ytelseType);
+
+        return optionalFirst(query.getResultList());
+    }
+
+    private static Optional<VedtakYtelseEntitet> optionalFirst(List<VedtakYtelseEntitet> vedtak) {
+        return vedtak.isEmpty() ? Optional.empty() : Optional.of(vedtak.get(0));
+    }
+
 
     public List<VedtattYtelse> hentYtelserForIPeriode(AktørId aktørId, LocalDate fom, LocalDate tom) {
         TypedQuery<VedtakYtelseEntitet> query = entityManager.createQuery("FROM VedtakYtelseEntitet " +

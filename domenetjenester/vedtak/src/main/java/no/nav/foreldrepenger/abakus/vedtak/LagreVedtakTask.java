@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.vedtak;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ import javax.validation.ValidatorFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
+import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseEntitet;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
 import no.nav.foreldrepenger.abakus.vedtak.json.JacksonJsonConfig;
@@ -61,9 +63,12 @@ public class LagreVedtakTask implements ProsessTaskHandler {
         }
         if (mottattVedtak != null) {
             // TODO: Gjør generisk
+            //VedtakYtelseBuilder builder = extractor.extractFrom((YtelseV1) mottattVedtak);
+
+            Optional<VedtakYtelseEntitet> siste = extractor.hentSisteVedtatteFor((YtelseV1) mottattVedtak);
             VedtakYtelseBuilder builder = extractor.extractFrom((YtelseV1) mottattVedtak);
 
-            ytelseRepository.lagre(builder);
+            ytelseRepository.lagre(builder, siste);
         }
     }
 }

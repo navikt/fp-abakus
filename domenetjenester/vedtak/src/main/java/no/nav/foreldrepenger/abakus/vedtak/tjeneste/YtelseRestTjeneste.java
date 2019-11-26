@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.vedtak.tjeneste;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -18,6 +19,7 @@ import javax.ws.rs.core.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
+import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseEntitet;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
 import no.nav.vedtak.felles.jpa.Transaction;
@@ -54,9 +56,12 @@ public class YtelseRestTjeneste {
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response arbeidsforholdForReferanse(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid Ytelse request) {
 
+        //VedtakYtelseBuilder builder = extractor.extractFrom((YtelseV1) request);
+
+        Optional<VedtakYtelseEntitet> siste = extractor.hentSisteVedtatteFor((YtelseV1) request);
         VedtakYtelseBuilder builder = extractor.extractFrom((YtelseV1) request);
 
-        ytelseRepository.lagre(builder);
+        ytelseRepository.lagre(builder, siste);
 
         return Response.accepted().build();
     }

@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.vedtak.extract.v1;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -13,6 +14,7 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
+import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseEntitet;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.domene.YtelseAnvistBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.extract.ExtractFromYtelse;
@@ -48,13 +50,13 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
         Saksnummer saksnummer = new Saksnummer(ytelse.getSaksnummer());
         AktørId aktørId = new AktørId(ytelse.getAktør().getVerdi());
 
-        VedtakYtelseBuilder builder = repository.opprettBuilderFor(aktørId, saksnummer, fagsystem, ytelseType);
+        VedtakYtelseBuilder builder = VedtakYtelseBuilder.oppdatere(Optional.empty());
         builder.medAktør(aktørId)
-            .medVedtakReferanse(UUID.fromString(ytelse.getVedtakReferanse()))
-            .medVedtattTidspunkt(ytelse.getVedtattTidspunkt())
             .medSaksnummer(saksnummer)
             .medKilde(fagsystem)
             .medYtelseType(ytelseType)
+            .medVedtakReferanse(UUID.fromString(ytelse.getVedtakReferanse()))
+            .medVedtattTidspunkt(ytelse.getVedtattTidspunkt())
             .medPeriode(mapTilEntitet(ytelse.getPeriode()))
             .medStatus(getStatus(ytelse.getStatus()))
             .tilbakestillAnvisteYtelser();
@@ -62,6 +64,16 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
         ytelse.getAnvist().forEach(anv -> mapAnvisning(builder, anv));
 
         return builder;
+    }
+
+    @Override
+    public Optional<VedtakYtelseEntitet> hentSisteVedtatteFor(YtelseV1 ytelse) {
+        Fagsystem fagsystem = getFagsystem(ytelse.getFagsystem());
+        no.nav.foreldrepenger.abakus.kodeverk.YtelseType ytelseType = getYtelseType(ytelse.getType());
+        Saksnummer saksnummer = new Saksnummer(ytelse.getSaksnummer());
+        AktørId aktørId = new AktørId(ytelse.getAktør().getVerdi());
+
+        return repository.hentSisteYtelseFor(aktørId, saksnummer, fagsystem, ytelseType);
     }
 
     private YtelseStatus getStatus(no.nav.vedtak.ytelse.v1.YtelseStatus kodeverk) {
