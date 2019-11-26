@@ -76,6 +76,7 @@ public class VedtakYtelseRepositoryTest {
         final var intervallEntitet = DatoIntervallEntitet.fraOgMedTilOgMed(LocalDate.now(), LocalDate.now().plusMonths(3));
         nyBuilder.medVedtakReferanse(UUID.randomUUID())
             .medVedtattTidspunkt(LocalDateTime.now().minusMinutes(10))
+            .medStatus(YtelseStatus.LØPENDE)
             .medPeriode(intervallEntitet);
 
         repository.lagre(nyBuilder);
