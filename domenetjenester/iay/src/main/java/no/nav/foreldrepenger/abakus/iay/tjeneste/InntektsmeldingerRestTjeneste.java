@@ -161,7 +161,7 @@ public class InntektsmeldingerRestTjeneste {
             } else if(AktørIdPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
                 return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, getPerson().getIdent());
             }
-            throw new java.lang.IllegalStateException("Ukjent identtype: " + getPerson().getIdentType());
+            throw new java.lang.IllegalArgumentException("Ukjent identtype: " + getPerson().getIdentType());
         }
 
     }

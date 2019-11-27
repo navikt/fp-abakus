@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -128,14 +129,13 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
                                                              Saksnummer saksnummer,
                                                              no.nav.foreldrepenger.abakus.kodeverk.YtelseType ytelseType) {
 
-        final TypedQuery<InntektsmeldingEntitet> query = entityManager.createQuery("SELECT im" +
+        final TypedQuery<InntektsmeldingEntitet> query = entityManager.createQuery("SELECT DISTINCT(im)" +
                 " FROM InntektArbeidGrunnlag gr" +
                 " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
                 " JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id" + // NOSONAR
                 " JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id" + // NOSONAR
-                " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId " + // NOSONAR
-                " ORDER BY gr.koblingId, gr.opprettetTidspunkt"
-            , InntektsmeldingEntitet.class);
+                " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId "// NOSONAR
+                 ,InntektsmeldingEntitet.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("ref", saksnummer);
         query.setParameter("ytelse", ytelseType);

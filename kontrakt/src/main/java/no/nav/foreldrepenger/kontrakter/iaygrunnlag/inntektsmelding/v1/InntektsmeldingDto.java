@@ -322,32 +322,4 @@ public class InntektsmeldingDto {
         this.utsettelsePerioder = utsettelsePerioder;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        InntektsmeldingDto that = (InntektsmeldingDto) o;
-        return Objects.equals(arbeidsgiver, that.arbeidsgiver) &&
-            Objects.equals(journalpostId, that.journalpostId) &&
-            Objects.equals(innsendingstidspunkt, that.innsendingstidspunkt) &&
-            Objects.equals(mottattDato, that.mottattDato) &&
-            Objects.equals(graderinger, that.graderinger) &&
-            Objects.equals(naturalytelser, that.naturalytelser) &&
-            Objects.equals(utsettelsePerioder, that.utsettelsePerioder) &&
-            Objects.equals(arbeidsforholdRef, that.arbeidsforholdRef) &&
-            Objects.equals(startdatoPermisjon, that.startdatoPermisjon) &&
-            Objects.equals(erNærRelasjon, that.erNærRelasjon) &&
-            Objects.equals(inntektBeløp, that.inntektBeløp) &&
-            Objects.equals(refusjonsBeløpPerMnd, that.refusjonsBeløpPerMnd) &&
-            Objects.equals(kanalreferanse, that.kanalreferanse) &&
-            Objects.equals(kildesystem, that.kildesystem) &&
-            Objects.equals(refusjonOpphører, that.refusjonOpphører) &&
-            Objects.equals(refusjonEndringer, that.refusjonEndringer) &&
-            Objects.equals(innsendingsårsak, that.innsendingsårsak);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(arbeidsgiver, journalpostId, innsendingstidspunkt, mottattDato, graderinger, naturalytelser, utsettelsePerioder, arbeidsforholdRef, startdatoPermisjon, erNærRelasjon, inntektBeløp, refusjonsBeløpPerMnd, kanalreferanse, kildesystem, refusjonOpphører, refusjonEndringer, innsendingsårsak);
-    }
 }
