@@ -8,6 +8,7 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 import io.swagger.jaxrs.config.BeanConfig;
+import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import no.nav.foreldrepenger.abakus.app.exceptions.ConstraintViolationMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.GeneralRestExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.JsonMappingExceptionMapper;
@@ -17,7 +18,6 @@ import no.nav.foreldrepenger.abakus.iay.tjeneste.ArbeidsforholdRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.GrunnlagRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.InntektsmeldingerRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.OppgittOpptjeningRestTjeneste;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.migrering.MigreringRestTjeneste;
 import no.nav.foreldrepenger.abakus.kodeverk.tjeneste.KodeverkRestTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataRestTjeneste;
 import no.nav.foreldrepenger.abakus.vedtak.tjeneste.YtelseRestTjeneste;
@@ -61,14 +61,11 @@ public class ApplicationConfig extends Application {
         classes.add(RegisterdataRestTjeneste.class);
         classes.add(InntektsmeldingerRestTjeneste.class);
         classes.add(OppgittOpptjeningRestTjeneste.class);
-        classes.add(MigreringRestTjeneste.class);
         classes.add(KodeverkRestTjeneste.class);
         classes.add(GrunnlagRestTjeneste.class);
         classes.add(ArbeidsforholdRestTjeneste.class);
         classes.add(YtelseRestTjeneste.class);
-
-        classes.add(io.swagger.jaxrs.listing.ApiListingResource.class);
-        classes.add(io.swagger.jaxrs.listing.SwaggerSerializers.class);
+        classes.add(OpenApiResource.class);
 
         classes.add(ConstraintViolationMapper.class);
         classes.add(JsonMappingExceptionMapper.class);

@@ -12,14 +12,15 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 
 
-@Api(tags = "kodeverk")
+@OpenAPIDefinition(tags = {@Tag(name = "kodeverk")})
 @Path("/kodeverk/v1")
 @ApplicationScoped
 @Transaction
@@ -37,7 +38,7 @@ public class KodeverkRestTjeneste {
 
     @GET
     @Path("/kodeverk")
-    @ApiOperation(value = "Lister ut alle kodeverk og kodeverdier på disse")
+    @Operation(description = "Lister ut alle kodeverk og kodeverdier på disse", tags = "kodeverk")
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response kodeverk() {
@@ -49,7 +50,7 @@ public class KodeverkRestTjeneste {
 
     @GET
     @Path("/kodelister")
-    @ApiOperation(value = "Lister ut alle kodeverk og kodeverdier på disse")
+    @Operation(description = "Lister ut alle kodeverk og kodeverdier på disse", tags = "kodeverk")
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response kodelister() {

@@ -15,8 +15,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
@@ -28,7 +29,7 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.ytelse.Ytelse;
 import no.nav.vedtak.ytelse.v1.YtelseV1;
 
-@Api(tags = "ytelse")
+@OpenAPIDefinition(tags = @Tag(name = "ytelse"))
 @Path("/ytelse/v1")
 @ApplicationScoped
 @Transaction
@@ -49,7 +50,7 @@ public class YtelseRestTjeneste {
     @POST
     @Path("/vedtatt")
     @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Lagrer ytelse vedtak")
+    @Operation(description = "Lagrer ytelse vedtak", tags = "ytelse")
     @BeskyttetRessurs(action = CREATE, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response arbeidsforholdForReferanse(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid Ytelse request) {

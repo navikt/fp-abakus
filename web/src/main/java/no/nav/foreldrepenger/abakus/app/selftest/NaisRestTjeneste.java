@@ -12,11 +12,13 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.foreldrepenger.abakus.app.konfig.ApplicationServiceStarter;
 import no.nav.foreldrepenger.abakus.app.konfig.InternalApplication;
 
-@Api(tags = {"nais"})
+@OpenAPIDefinition(tags = @Tag(name = "nais"))
 @Path("/")
 @Produces(TEXT_PLAIN)
 @RequestScoped
@@ -41,6 +43,7 @@ public class NaisRestTjeneste {
 
     @GET
     @Path("isAlive")
+    @Operation(description = "sjekker om poden lever", tags = "nais")
     public Response isAlive() {
         if (starterService.isKafkaAlive()) {
             logger.debug("Application is alive.");
@@ -58,6 +61,7 @@ public class NaisRestTjeneste {
 
     @GET
     @Path("isReady")
+    @Operation(description = "sjekker om poden er klar", tags = "nais")
     public Response isReady() {
         if (starterService.isKafkaAlive()) {
             logger.debug("Application is alive.");
@@ -75,6 +79,7 @@ public class NaisRestTjeneste {
 
     @GET
     @Path("preStop")
+    @Operation(description = "kalles på før stopp", tags = "nais")
     public Response preStop() {
         starterService.stopServices();
         return Response.ok(RESPONSE_OK).build();

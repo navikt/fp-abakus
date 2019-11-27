@@ -12,8 +12,12 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.iay.InntektsmeldingerTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapInntektsmeldinger;
@@ -29,7 +33,7 @@ import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 
-@Api(tags = "arbeidsforhold")
+@OpenAPIDefinition(tags = @Tag(name = "inntektsmelding"))
 @Path("/iay/inntektsmeldinger/v1")
 @ApplicationScoped
 @Transaction
@@ -51,7 +55,12 @@ public class InntektsmeldingerRestTjeneste {
 
     @POST
     @Path("/motta")
-    @ApiOperation(value = "Hent IAY Grunnlag for angitt søke spesifikasjon", response = UuidDto.class)
+    @Operation(description = "Motta inntektsmelding(er)", tags = "inntektsmelding",
+        responses = {
+            @ApiResponse(description = "Oppdatert grunnlagreferanse",
+                content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = UuidDto.class)))
+        })
     @BeskyttetRessurs(action = CREATE, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public UuidDto mottaInntektsmeldinger(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid InntektsmeldingerMottattRequest mottattRequest) {
