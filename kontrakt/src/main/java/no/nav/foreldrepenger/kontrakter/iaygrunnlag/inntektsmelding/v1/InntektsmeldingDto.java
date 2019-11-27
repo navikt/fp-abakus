@@ -321,4 +321,5 @@ public class InntektsmeldingDto {
     public void setUtsettelsePerioder(List<UtsettelsePeriodeDto> utsettelsePerioder) {
         this.utsettelsePerioder = utsettelsePerioder;
     }
+
 }

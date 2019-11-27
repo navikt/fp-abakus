@@ -33,4 +33,6 @@ public class InntektsmeldingerTjeneste {
     public GrunnlagReferanse lagre(KoblingReferanse koblingReferanse, ArbeidsforholdInformasjonBuilder informasjonBuilder, List<Inntektsmelding> alleInntektsmeldinger) {
         return repository.lagre(koblingReferanse, informasjonBuilder, alleInntektsmeldinger);
     }
+
+
 }
