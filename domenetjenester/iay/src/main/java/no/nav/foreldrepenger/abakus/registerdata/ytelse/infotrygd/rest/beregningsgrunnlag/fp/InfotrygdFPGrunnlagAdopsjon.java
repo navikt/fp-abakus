@@ -13,7 +13,7 @@ import no.nav.vedtak.konfig.KonfigVerdi;
 @FPA
 public class InfotrygdFPGrunnlagAdopsjon extends AbstractInfotrygdGrunnlag {
 
-    private static final String DEFAULT_URI = "http://infotrygd-grunnlag-foreldrepenger.default/foreldrepenger/foedsel";
+    private static final String DEFAULT_URI = "http://infotrygd-grunnlag-foreldrepenger.default/foreldrepenger/adopsjon";
 
     public InfotrygdFPGrunnlagAdopsjon(OidcRestClient restClient,
             @KonfigVerdi(value = "fpabakus.it.fp.grunnlag.adopsjon.url", defaultVerdi = DEFAULT_URI) URI uri) {
