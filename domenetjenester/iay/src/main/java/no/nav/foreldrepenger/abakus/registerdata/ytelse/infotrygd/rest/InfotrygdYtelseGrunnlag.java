@@ -106,6 +106,25 @@ public class InfotrygdYtelseGrunnlag {
         return Objects.hash(identdato, ytelseType, temaUnderkategori, ytelseStatus, utbetaltePerioder, vedtaksPeriodeFom, vedtaksPeriodeTom, kategori, arbeidsforhold, dekningsgrad, gradering, fødselsdatoBarn, opprinneligIdentdato);
     }
 
+    @Override
+    public String toString() {
+        return "InfotrygdYtelseGrunnlag{" +
+            "identdato=" + identdato +
+            ", ytelseType=" + ytelseType +
+            ", temaUnderkategori=" + temaUnderkategori +
+            ", ytelseStatus=" + ytelseStatus +
+            ", utbetaltePerioder=" + utbetaltePerioder +
+            ", vedtaksPeriodeFom=" + vedtaksPeriodeFom +
+            ", vedtaksPeriodeTom=" + vedtaksPeriodeTom +
+            ", kategori=" + kategori +
+            ", arbeidsforhold=" + arbeidsforhold +
+            ", dekningsgrad=" + dekningsgrad +
+            ", gradering=" + gradering +
+            ", fødselsdatoBarn=" + fødselsdatoBarn +
+            ", opprinneligIdentdato=" + opprinneligIdentdato +
+            '}';
+    }
+
     public static Builder getBuilder() {
         return new Builder();
     }
