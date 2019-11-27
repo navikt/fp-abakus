@@ -19,6 +19,8 @@ import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kodeverk.Kodeliste;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkTabell;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
@@ -45,6 +47,19 @@ public class KoblingRepository {
         query.setParameter("referanse", referanse);
         return HibernateVerktøy.hentUniktResultat(query);
     }
+
+    public Optional<Kobling> hentSisteKoblingReferanseFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
+        TypedQuery<Kobling> query = entityManager.createQuery("FROM Kobling k " +
+            " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId " + // NOSONAR
+            "order by k.opprettetTidspunkt desc, k.id desc"
+            , Kobling.class);
+        query.setParameter("ref", saksnummer);
+        query.setParameter("ytelse", ytelseType);
+        query.setParameter("aktørId", aktørId);
+        query.setMaxResults(1);
+        return query.getResultStream().findFirst();
+    }
+
 
     public Long hentKoblingIdForKoblingReferanse(KoblingReferanse referanse) {
         TypedQuery<Long> query = entityManager.createQuery("SELECT k.id FROM Kobling k WHERE k.koblingReferanse = :referanse", Long.class);

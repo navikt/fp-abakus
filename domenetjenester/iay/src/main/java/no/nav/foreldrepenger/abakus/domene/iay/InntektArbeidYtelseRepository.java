@@ -6,10 +6,12 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -32,6 +34,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOver
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanseEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Gradering;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
+import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelse;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Refusjon;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriode;
@@ -120,6 +123,24 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
         Object timezone = showTimezone.getSingleResult();
         LocalDateTime tidsstempel = ((Timestamp) currentTimestamp.getSingleResult()).toLocalDateTime();
         return new TidssoneConfig((String) timezone, tidsstempel);
+    }
+
+    public Set<Inntektsmelding> hentAlleInntektsmeldingerFor(AktørId aktørId,
+                                                             Saksnummer saksnummer,
+                                                             no.nav.foreldrepenger.abakus.kodeverk.YtelseType ytelseType) {
+
+        final TypedQuery<InntektsmeldingEntitet> query = entityManager.createQuery("SELECT DISTINCT(im)" +
+                " FROM InntektArbeidGrunnlag gr" +
+                " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
+                " JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id" + // NOSONAR
+                " JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id" + // NOSONAR
+                " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId "// NOSONAR
+                 ,InntektsmeldingEntitet.class);
+        query.setParameter("aktørId", aktørId);
+        query.setParameter("ref", saksnummer);
+        query.setParameter("ytelse", ytelseType);
+        var inntektsmeldingSet = query.getResultList().stream().map(im -> (Inntektsmelding) im).collect(Collectors.toSet());
+        return inntektsmeldingSet;
     }
 
     public List<InntektArbeidYtelseGrunnlag> hentAlleInntektArbeidYtelseGrunnlagFor(AktørId aktørId,

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
 import no.nav.foreldrepenger.abakus.domene.iay.VersjonType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
@@ -72,6 +74,11 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
     @Override
     public List<InntektArbeidYtelseGrunnlag> hentAlleGrunnlagFor(AktørId aktørId, KoblingReferanse koblingReferanse, boolean kunAktive) {
         return repository.hentAlleInntektArbeidYtelseGrunnlagFor(aktørId, koblingReferanse, kunAktive);
+    }
+
+    @Override
+    public Set<Inntektsmelding> hentAlleInntektsmeldingerFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
+        return repository.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
     }
 
     @Override
@@ -153,7 +160,7 @@ public class InntektArbeidYtelseTjenesteImpl implements InntektArbeidYtelseTjene
     public KoblingReferanse hentKoblingReferanse(GrunnlagReferanse grunnlagReferanse) {
         return repository.hentKoblingReferanseFor(grunnlagReferanse);
     }
-    
+
 
     private List<InntektArbeidYtelseGrunnlag> filterGrunnlag(Long koblingId, List<InntektArbeidYtelseGrunnlag> grunnlagPerKobling,
                                                              GrunnlagVersjon grunnlagVersjon) {

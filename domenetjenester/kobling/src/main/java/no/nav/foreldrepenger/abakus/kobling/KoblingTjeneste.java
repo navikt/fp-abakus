@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import no.nav.foreldrepenger.abakus.kobling.repository.KoblingRepository;
 import no.nav.foreldrepenger.abakus.kobling.repository.LåsRepository;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 
@@ -34,6 +35,10 @@ public class KoblingTjeneste {
 
     public Optional<Kobling> hentFor(KoblingReferanse referanse) {
         return repository.hentForKoblingReferanse(referanse);
+    }
+
+    public Optional<Kobling> hentSisteFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
+        return repository.hentSisteKoblingReferanseFor(aktørId, saksnummer, ytelseType);
     }
 
     public void lagre(Kobling kobling) {
