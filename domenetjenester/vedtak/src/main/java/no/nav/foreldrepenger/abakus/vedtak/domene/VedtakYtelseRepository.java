@@ -55,17 +55,17 @@ public class VedtakYtelseRepository {
             ytelseEntitet.setAktiv(false);
             entityManager.persist(ytelseEntitet);
             entityManager.flush();
-        } else if(builder.erOppdatering()) {
-            ((VedtakYtelseEntitet)ytelse).setAktiv(false);
+        } else if (!builder.erOppdatering()) {
+            ((VedtakYtelseEntitet) ytelse).setAktiv(false);
         }
-        if (!vedtakYtelseEntitet.map(VedtakYtelseEntitet::getAktiv).orElse(false)) {
+        if (((VedtakYtelseEntitet) ytelse).getAktiv()) {
             entityManager.persist(ytelse);
             for (YtelseAnvist ytelseAnvist : ytelse.getYtelseAnvist()) {
                 entityManager.persist(ytelseAnvist);
             }
             entityManager.flush();
         } else {
-            log.info("Forkaster vedtak siden en sitter på nyere vedtak. {} er eldre enn {}", ytelse, vedtakYtelseEntitet.get());
+            log.info("Forkaster vedtak siden en sitter på nyere vedtak. {} er eldre enn {}", ytelse, vedtakYtelseEntitet);
         }
     }
 
@@ -75,13 +75,12 @@ public class VedtakYtelseRepository {
         Objects.requireNonNull(fagsystem, "fagsystem");
         Objects.requireNonNull(ytelseType, "ytelseType");
 
-        TypedQuery<VedtakYtelseEntitet> query = entityManager.createQuery("FROM VedtakYtelseEntitet " +
-            "WHERE aktørId = :aktørId " +
-            "AND saksnummer = :saksnummer " +
-            "AND kilde = :fagsystem " +
-            "AND ytelseType = :ytelse " +
-            "AND aktiv = true", VedtakYtelseEntitet.class);
-
+        TypedQuery<VedtakYtelseEntitet> query = entityManager.createQuery("SELECT v FROM VedtakYtelseEntitet v " +
+            "WHERE v.aktørId = :aktørId " +
+            "AND v.saksnummer = :saksnummer " +
+            "AND v.kilde = :fagsystem " +
+            "AND v.ytelseType = :ytelse " +
+            "AND v.aktiv = true ", VedtakYtelseEntitet.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("saksnummer", saksnummer);
         query.setParameter("fagsystem", fagsystem);
