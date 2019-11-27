@@ -13,7 +13,7 @@ import no.nav.vedtak.konfig.KonfigVerdi;
 @SVP
 public class InfotrygdSVPGrunnlag extends AbstractInfotrygdGrunnlag {
 
-    private static final String DEFAULT_URI = "http://infotrygd-grunnlag-svangerskapspenger.default/foreldrepenger/svangerskap";
+    private static final String DEFAULT_URI = "http://infotrygd-svangerskapspenger.default/grunnlag";
 
     public InfotrygdSVPGrunnlag(OidcRestClient restClient,
             @KonfigVerdi(value = "fpabakus.it.svp.grunnlag.url", defaultVerdi = DEFAULT_URI) URI uri) {
