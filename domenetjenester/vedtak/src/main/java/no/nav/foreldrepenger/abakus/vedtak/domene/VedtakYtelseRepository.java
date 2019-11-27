@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.vedtak.domene;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -88,45 +87,6 @@ public class VedtakYtelseRepository {
         query.setParameter("ytelse", ytelseType);
 
         return HibernateVerktøy.hentUniktResultat(query);
-    }
-
-    private Optional<VedtakYtelseEntitet> hentYtelseFor(AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, YtelseType ytelseType, LocalDateTime vedtattTidspunkt) {
-        Objects.requireNonNull(aktørId, "aktørId");
-        Objects.requireNonNull(saksnummer, "saksnummer");
-        Objects.requireNonNull(fagsystem, "fagsystem");
-        Objects.requireNonNull(ytelseType, "ytelseType");
-
-        TypedQuery<VedtakYtelseEntitet> query = entityManager.createQuery("SELECT v FROM VedtakYtelseEntitet v " +
-            "WHERE v.aktørId = :aktørId " +
-            "AND v.saksnummer = :saksnummer " +
-            "AND v.kilde = :fagsystem " +
-            "AND v.ytelseType = :ytelse " +
-            "AND v.vedtattTidspunkt > :vedtattTidspunkt", VedtakYtelseEntitet.class);
-
-        query.setParameter("aktørId", aktørId);
-        query.setParameter("saksnummer", saksnummer);
-        query.setParameter("fagsystem", fagsystem);
-        query.setParameter("ytelse", ytelseType);
-        query.setParameter("vedtattTidspunkt", vedtattTidspunkt);
-
-        return HibernateVerktøy.hentUniktResultat(query);
-    }
-
-    public void deaktiverGamleVedtak(AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, YtelseType ytelseType) {
-        final var query = entityManager.createQuery("update VedtakYtelseEntitet v " +
-            "set v.aktiv = false " +
-            "WHERE v.aktørId = :aktørId " +
-            "AND v.saksnummer = :saksnummer " +
-            "AND v.kilde = :fagsystem " +
-            "AND v.ytelseType = :ytelse");
-        query.setParameter("aktørId", aktørId);
-        query.setParameter("saksnummer", saksnummer);
-        query.setParameter("fagsystem", fagsystem);
-        query.setParameter("ytelse", ytelseType);
-
-        query.executeUpdate();
-
-        entityManager.flush();
     }
 
     public List<VedtattYtelse> hentYtelserForIPeriode(AktørId aktørId, LocalDate fom, LocalDate tom) {
