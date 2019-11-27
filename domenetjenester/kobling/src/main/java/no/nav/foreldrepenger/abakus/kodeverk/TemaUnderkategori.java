@@ -26,7 +26,6 @@ public class TemaUnderkategori extends Kodeliste {
     public static final TemaUnderkategori PÅRØRENDE_PLEIETRENGENDE_PÅRØRENDE = new TemaUnderkategori("PP"); //$NON-NLS-1$
     public static final TemaUnderkategori PÅRØRENDE_PLEIEPENGER = new TemaUnderkategori("PN"); //$NON-NLS-1$
 
-
     public static final TemaUnderkategori SYKEPENGER_FORSIKRINGSRISIKO = new TemaUnderkategori("SU"); //$NON-NLS-1$
     public static final TemaUnderkategori SYKEPENGER_REISETILSKUDD = new TemaUnderkategori("RT"); //$NON-NLS-1$
     public static final TemaUnderkategori SYKEPENGER_UTENLANDSOPPHOLD = new TemaUnderkategori("RS"); //$NON-NLS-1$
@@ -38,10 +37,10 @@ public class TemaUnderkategori extends Kodeliste {
     public static final TemaUnderkategori ENGANGSSTONAD_FODSEL = new TemaUnderkategori("FE"); //$NON-NLS-1$
 
     private static final List<TemaUnderkategori> FORELDREPENGER_BEHANDLINGSTEMAER = Arrays.asList(
-        FORELDREPENGER_FODSEL, FORELDREPENGER_ADOPSJON, FORELDREPENGER_FODSEL_UTLAND);
+            FORELDREPENGER_FODSEL, FORELDREPENGER_ADOPSJON, FORELDREPENGER_FODSEL_UTLAND);
 
     private static final List<TemaUnderkategori> ENGANGSSTONAD_BEHANDLINGSTEMAER = Arrays.asList(ENGANGSSTONAD_ADOPSJON,
-        ENGANGSSTONAD_FODSEL);
+            ENGANGSSTONAD_FODSEL);
 
     public TemaUnderkategori() {
         // Hibernate trenger den
@@ -52,8 +51,8 @@ public class TemaUnderkategori extends Kodeliste {
     }
 
     public static boolean erGjelderEngangsstonad(String underkategori) {
-        return ENGANGSSTONAD_BEHANDLINGSTEMAER.stream().anyMatch(temaUnderkategori ->
-            temaUnderkategori.getKode().equals(underkategori));
+        return ENGANGSSTONAD_BEHANDLINGSTEMAER.stream()
+                .anyMatch(temaUnderkategori -> temaUnderkategori.getKode().equals(underkategori));
     }
 
     public static boolean erGjelderSvangerskapspenger(String underkategori) {
@@ -61,7 +60,7 @@ public class TemaUnderkategori extends Kodeliste {
     }
 
     public static boolean erGjelderForeldrepenger(String underkategori) {
-        return FORELDREPENGER_BEHANDLINGSTEMAER.stream().anyMatch(temaUnderkategori ->
-            temaUnderkategori.getKode().equals(underkategori));
+        return FORELDREPENGER_BEHANDLINGSTEMAER.stream()
+                .anyMatch(temaUnderkategori -> temaUnderkategori.getKode().equals(underkategori));
     }
 }

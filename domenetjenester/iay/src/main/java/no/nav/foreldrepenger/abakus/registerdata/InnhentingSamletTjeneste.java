@@ -2,11 +2,13 @@ package no.nav.foreldrepenger.abakus.registerdata;
 
 import static no.nav.vedtak.feil.LogLevel.INFO;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.threeten.extra.Interval;
 
+import no.finn.unleash.Unleash;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
@@ -31,8 +34,12 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjen
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.InnhentingInfotrygdTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.InfotrygdBeregningsgrunnlagTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlag;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.Aggregator;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.InfotrygdYtelseGrunnlag;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.InfotrygdGrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdSak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdSakOgGrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdTjeneste;
@@ -50,28 +57,38 @@ import no.nav.vedtak.util.FPDateUtil;
 public class InnhentingSamletTjeneste {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InnhentingSamletTjeneste.class);
+    private static final String REST_GJELDER = "fpabakus.infotrygd.rest";
+
     private ArbeidsforholdTjeneste arbeidsforholdTjeneste;
     private AktørConsumer aktørConsumer;
     private InntektTjeneste inntektTjeneste;
     private InfotrygdTjeneste infotrygdTjeneste;
     private InfotrygdBeregningsgrunnlagTjeneste infotrygdBeregningsgrunnlagTjeneste;
     private MeldekortTjeneste meldekortTjeneste;
+    private InfotrygdGrunnlag grunnlagTjenester;
+    private InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste;
+    private Unleash unleash;
 
     InnhentingSamletTjeneste() {
         //CDI
     }
 
     @Inject
-    public InnhentingSamletTjeneste(ArbeidsforholdTjeneste arbeidsforholdTjeneste,
+    public InnhentingSamletTjeneste(ArbeidsforholdTjeneste arbeidsforholdTjeneste,  // NOSONAR
                                     AktørConsumer aktørConsumer, InntektTjeneste inntektTjeneste, InfotrygdTjeneste infotrygdTjeneste,
                                     InfotrygdBeregningsgrunnlagTjeneste infotrygdBeregningsgrunnlagTjeneste,
-                                    MeldekortTjeneste meldekortTjeneste) {
+                                    @Aggregator InfotrygdGrunnlag grunnlag,
+                                    InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste,
+                                    MeldekortTjeneste meldekortTjeneste, Unleash unleash) {
         this.arbeidsforholdTjeneste = arbeidsforholdTjeneste;
         this.aktørConsumer = aktørConsumer;
         this.inntektTjeneste = inntektTjeneste;
         this.infotrygdBeregningsgrunnlagTjeneste = infotrygdBeregningsgrunnlagTjeneste;
         this.infotrygdTjeneste = infotrygdTjeneste;
         this.meldekortTjeneste = meldekortTjeneste;
+        this.grunnlagTjenester = grunnlag;
+        this.innhentingInfotrygdTjeneste = innhentingInfotrygdTjeneste;
+        this.unleash = unleash;
     }
 
     public InntektsInformasjon getInntektsInformasjon(AktørId aktørId, Interval periode, InntektsKilde kilde) {
@@ -90,6 +107,11 @@ public class InnhentingSamletTjeneste {
     private PersonIdent getFnrFraAktørId(AktørId aktørId) {
         return aktørConsumer.hentPersonIdentForAktørId(aktørId.getId()).map(PersonIdent::new).orElseThrow();
     }
+
+    public List<InfotrygdYtelseGrunnlag> innhentRest(AktørId aktørId, Interval periode) {
+        return innhentingInfotrygdTjeneste.getInfotrygdYtelser(aktørId, periode);
+    }
+
 
     public List<InfotrygdSakOgGrunnlag> getSammenstiltSakOgGrunnlag(AktørId aktørId, Interval opplysningsPeriode, boolean medGrunnlag) {
         final List<InfotrygdSak> infotrygdSakList = filtrerSaker(getInfotrygdSaker(aktørId, opplysningsPeriode), medGrunnlag);
@@ -260,4 +282,23 @@ public class InnhentingSamletTjeneste {
         Feil manglerInfotrygdSak(String type, String dato);
     }
 
+    private <T> List<T> sammenlign(List<T> rest, List<T> ws) {
+        if (!rest.containsAll(ws)) {
+            warn(rest, ws);
+        }
+        return unleash.isEnabled(REST_GJELDER) ? rest : ws;
+    }
+
+    private static <T> void warn(List<T> restSaker, List<T> wsSaker) {
+        var rest = new HashSet<>(restSaker);
+        var ws = new HashSet<>(wsSaker);
+        LOGGER.warn("Forskjellig respons fra WS og REST. Fikk {} fra REST og {} fra WS", restSaker, wsSaker);
+        //LOGGER.warn("Elementer som ikke er tilstede i begge responser er {}", Sets.symmetricDifference(rest, ws));
+        //LOGGER.warn("Elementer fra REST men ikke fra WS {}", Sets.difference(rest, ws));
+        //LOGGER.warn("Elementer fra WS men ikke fra REST {}", Sets.difference(ws, rest));
+    }
+
+    private static LocalDate dato(Instant instant) {
+        return LocalDate.ofInstant(instant, ZoneId.systemDefault());
+    }
 }
