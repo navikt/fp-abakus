@@ -11,19 +11,16 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.Aggregator;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.Grunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.InfotrygdGrunnlag;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 
 @ApplicationScoped
-@Aggregator
-public class InfotrygdGrunnlagAggregator implements InfotrygdGrunnlag {
+public class InfotrygdGrunnlagAggregator {
 
     private List<InfotrygdGrunnlag> tjenester;
 
     InfotrygdGrunnlagAggregator() {
-
     }
 
     @Inject
@@ -37,12 +34,12 @@ public class InfotrygdGrunnlagAggregator implements InfotrygdGrunnlag {
                 .collect(toList());
     }
 
-    @Override
+
     public List<Grunnlag> hentGrunnlag(String fnr, LocalDate fom) {
         return hentGrunnlag(fnr, fom, now());
     }
 
-    @Override
+
     public List<Grunnlag> hentGrunnlag(String fnr, LocalDate fom, LocalDate tom) {
         return tjenester.stream()
                 .parallel()
@@ -51,12 +48,12 @@ public class InfotrygdGrunnlagAggregator implements InfotrygdGrunnlag {
                 .collect(toList());
     }
 
-    @Override
+
     public List<Grunnlag> hentGrunnlag(AktørId aktørId, LocalDate fom) {
         return hentGrunnlag(aktørId, fom, now());
     }
 
-    @Override
+
     public List<Grunnlag> hentGrunnlag(AktørId aktørId, LocalDate fom, LocalDate tom) {
         return tjenester.stream()
                 .parallel()
@@ -65,7 +62,7 @@ public class InfotrygdGrunnlagAggregator implements InfotrygdGrunnlag {
                 .collect(toList());
     }
 
-    @Override
+
     public String toString() {
         return getClass().getSimpleName() + "[tjenester=" + tjenester + "]";
     }

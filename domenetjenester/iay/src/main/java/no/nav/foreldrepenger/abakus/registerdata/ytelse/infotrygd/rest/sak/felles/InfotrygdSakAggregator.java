@@ -8,14 +8,11 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
 
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.Aggregator;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdSak;
 
 @ApplicationScoped
-@Aggregator
-public class InfotrygdSakAggregator implements InfotrygdSakTjeneste {
+public class InfotrygdSakAggregator  {
 
     private List<InfotrygdSakTjeneste> tjenester;
 
@@ -23,7 +20,6 @@ public class InfotrygdSakAggregator implements InfotrygdSakTjeneste {
 
     }
 
-    @Inject
     private InfotrygdSakAggregator(@Any Instance<InfotrygdSakTjeneste> tjenester) {
         this.tjenester = tjenesterFra(tjenester);
     }
@@ -34,7 +30,6 @@ public class InfotrygdSakAggregator implements InfotrygdSakTjeneste {
                 .collect(toList());
     }
 
-    @Override
     public List<InfotrygdSak> saker(String fnr, LocalDate fom) {
         return tjenester.stream()
                 .parallel()
@@ -43,7 +38,6 @@ public class InfotrygdSakAggregator implements InfotrygdSakTjeneste {
                 .collect(toList());
     }
 
-    @Override
     public String toString() {
         return getClass().getSimpleName() + "[tjenester=" + tjenester + "]";
     }

@@ -45,8 +45,6 @@ public class YtelseRegisterInnhenting {
                      InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder, boolean medGrunnlag) {
         List<InfotrygdSakOgGrunnlag> sammenstilt = innhentingSamletTjeneste.getSammenstiltSakOgGrunnlag(aktørId, opplysningsPeriode, medGrunnlag);
         var rest = innhentingSamletTjeneste.innhentRest(aktørId, opplysningsPeriode);
-        var mappedWs = InnhentingInfotrygdTjeneste.mapISoG(sammenstilt);
-        InnhentingInfotrygdTjeneste.sammenlignGrunnlagKilder(mappedWs, rest);
 
 
         InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder = inntektArbeidYtelseAggregatBuilder.getAktørYtelseBuilder(aktørId);

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,9 +38,7 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalin
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.InnhentingInfotrygdTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.InfotrygdBeregningsgrunnlagTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlag;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.Aggregator;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.InfotrygdYtelseGrunnlag;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.InfotrygdGrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdSak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdSakOgGrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdTjeneste;
@@ -65,7 +64,6 @@ public class InnhentingSamletTjeneste {
     private InfotrygdTjeneste infotrygdTjeneste;
     private InfotrygdBeregningsgrunnlagTjeneste infotrygdBeregningsgrunnlagTjeneste;
     private MeldekortTjeneste meldekortTjeneste;
-    private InfotrygdGrunnlag grunnlagTjenester;
     private InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste;
     private Unleash unleash;
 
@@ -77,7 +75,6 @@ public class InnhentingSamletTjeneste {
     public InnhentingSamletTjeneste(ArbeidsforholdTjeneste arbeidsforholdTjeneste,  // NOSONAR
                                     AktørConsumer aktørConsumer, InntektTjeneste inntektTjeneste, InfotrygdTjeneste infotrygdTjeneste,
                                     InfotrygdBeregningsgrunnlagTjeneste infotrygdBeregningsgrunnlagTjeneste,
-                                    @Aggregator InfotrygdGrunnlag grunnlag,
                                     InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste,
                                     MeldekortTjeneste meldekortTjeneste, Unleash unleash) {
         this.arbeidsforholdTjeneste = arbeidsforholdTjeneste;
@@ -86,7 +83,6 @@ public class InnhentingSamletTjeneste {
         this.infotrygdBeregningsgrunnlagTjeneste = infotrygdBeregningsgrunnlagTjeneste;
         this.infotrygdTjeneste = infotrygdTjeneste;
         this.meldekortTjeneste = meldekortTjeneste;
-        this.grunnlagTjenester = grunnlag;
         this.innhentingInfotrygdTjeneste = innhentingInfotrygdTjeneste;
         this.unleash = unleash;
     }
@@ -109,7 +105,11 @@ public class InnhentingSamletTjeneste {
     }
 
     public List<InfotrygdYtelseGrunnlag> innhentRest(AktørId aktørId, Interval periode) {
-        return innhentingInfotrygdTjeneste.getInfotrygdYtelser(aktørId, periode);
+        if (unleash != null && unleash.isEnabled(REST_GJELDER, false)) {
+            var ident = getFnrFraAktørId(aktørId);
+            return innhentingInfotrygdTjeneste.getInfotrygdYtelser(ident, periode);
+        }
+        return Collections.emptyList();
     }
 
 
