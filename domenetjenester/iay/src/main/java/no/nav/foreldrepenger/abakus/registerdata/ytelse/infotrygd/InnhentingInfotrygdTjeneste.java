@@ -39,6 +39,7 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.Infotrygd
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.Grunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.InfotrygdGrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.Periode;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.felles.InfotrygdGrunnlagAggregator;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdSakOgGrunnlag;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
@@ -52,9 +53,7 @@ public class InnhentingInfotrygdTjeneste {
     private static final String REST_GJELDER = "fpabakus.infotrygd.rest";
     private static final Set<YtelseType> YTELSER_STØTTET = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER, YtelseType.SYKEPENGER, YtelseType.PÅRØRENDESYKDOM);
 
-
-    private AktørConsumer aktør;
-    private InfotrygdGrunnlag grunnlag;
+    //private InfotrygdGrunnlagAggregator grunnlag;
     private Unleash unleash;
 
     InnhentingInfotrygdTjeneste() {
@@ -62,18 +61,15 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     @Inject
-    public InnhentingInfotrygdTjeneste(AktørConsumer aktørConsumer,
-                                       @Aggregator InfotrygdGrunnlag grunnlag,
+    public InnhentingInfotrygdTjeneste(//InfotrygdGrunnlagAggregator grunnlag,
                                        Unleash unleash) {
-        this.aktør = aktørConsumer;
-        this.grunnlag = grunnlag;
+        //this.grunnlag = grunnlag;
         this.unleash = unleash;
     }
 
-    public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelser(AktørId aktørId, Interval periode) {
+    public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelser(PersonIdent ident, Interval periode) {
         try {
-            var ident = getFnrFraAktørId(aktørId);
-            List<Grunnlag> rest = grunnlag.hentGrunnlag(ident.getIdent(), dato(periode.getStart()), dato(periode.getEnd()));
+            List<Grunnlag> rest = Collections.emptyList(); // grunnlag.hentGrunnlag(ident.getIdent(), dato(periode.getStart()), dato(periode.getEnd()));
 
             return rest.stream()
                 .filter(g -> !YtelseType.UDEFINERT.equals(TemaReverse.reverseMap(g.getTema().getKode().name(), LOG)))
@@ -127,13 +123,13 @@ public class InnhentingInfotrygdTjeneste {
         return grunnlagBuilder.build();
     }
 
-
+/*
     private PersonIdent getFnrFraAktørId(AktørId aktørId) {
         return aktør.hentPersonIdentForAktørId(aktørId.getId())
                 .map(PersonIdent::new)
                 .orElseThrow();
     }
-
+*/
     private static LocalDate dato(Instant instant) {
         return LocalDate.ofInstant(instant, ZoneId.systemDefault());
     }
