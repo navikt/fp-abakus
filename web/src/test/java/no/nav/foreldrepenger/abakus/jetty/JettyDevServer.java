@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.jetty;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +22,6 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
-import no.nav.foreldrepenger.abakus.development.LocalDevelopmentApplication;
 import no.nav.foreldrepenger.abakus.jetty.db.EnvironmentClass;
 
 public class JettyDevServer extends JettyServer {
@@ -164,13 +162,6 @@ public class JettyDevServer extends JettyServer {
     @Override
     protected EnvironmentClass getEnvironmentClass() {
         return EnvironmentClass.LOCALHOST;
-    }
-
-    @Override
-    protected List<Class<?>> getApplicationClasses() {
-        List<Class<?>> applicationClasses = new ArrayList<>(super.getApplicationClasses());
-        applicationClasses.add(LocalDevelopmentApplication.class);
-        return applicationClasses;
     }
 
     @Override
