@@ -87,10 +87,10 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
         }
     }
 
-    public Optional<InntektArbeidYtelseAggregatEntitet> hentIAYAggregatFor(UUID eksternReferanse) {
-        TypedQuery<InntektArbeidYtelseAggregatEntitet> query = entityManager.createQuery("SELECT iay " +
+    public Optional<InntektArbeidYtelseAggregat> hentIAYAggregatFor(UUID eksternReferanse) {
+        TypedQuery<InntektArbeidYtelseAggregat> query = entityManager.createQuery("SELECT iay " +
             "FROM InntektArbeidYtelser iay " +
-            "WHERE iay.eksternReferanse = :eksternReferanse", InntektArbeidYtelseAggregatEntitet.class);
+            "WHERE iay.eksternReferanse = :eksternReferanse", InntektArbeidYtelseAggregat.class);
         query.setParameter("eksternReferanse", eksternReferanse);
 
         return HibernateVerktøy.hentUniktResultat(query);

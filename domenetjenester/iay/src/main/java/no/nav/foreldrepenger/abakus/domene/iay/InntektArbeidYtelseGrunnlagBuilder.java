@@ -84,13 +84,13 @@ public class InntektArbeidYtelseGrunnlagBuilder {
 
     private void medSaksbehandlet(InntektArbeidYtelseAggregatBuilder builder) {
         if (builder != null) {
-            kladd.setSaksbehandlet((InntektArbeidYtelseAggregatEntitet) builder.build());
+            kladd.setSaksbehandlet((InntektArbeidYtelseAggregat) builder.build());
         }
     }
 
     private void medRegister(InntektArbeidYtelseAggregatBuilder builder) {
         if (builder != null) {
-            kladd.setRegister((InntektArbeidYtelseAggregatEntitet) builder.build());
+            kladd.setRegister((InntektArbeidYtelseAggregat) builder.build());
         }
     }
 

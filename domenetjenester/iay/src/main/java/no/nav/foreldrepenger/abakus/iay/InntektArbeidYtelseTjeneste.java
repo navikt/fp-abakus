@@ -16,7 +16,7 @@ import javax.inject.Inject;
 
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
@@ -177,7 +177,7 @@ public class InntektArbeidYtelseTjeneste {
         return repository.hentOppgittOpptjeningFor(oppgittOpptjeningEksternReferanse);
     }
 
-    public Optional<InntektArbeidYtelseAggregatEntitet> hentIAYAggregatFor(UUID eksternReferanse) {
+    public Optional<InntektArbeidYtelseAggregat> hentIAYAggregatFor(UUID eksternReferanse) {
         return repository.hentIAYAggregatFor(eksternReferanse);
     }
 

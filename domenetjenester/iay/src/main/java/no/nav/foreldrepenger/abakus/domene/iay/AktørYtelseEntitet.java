@@ -47,7 +47,7 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "inntekt_arbeid_ytelser_id", nullable = false, updatable = false)
-    private InntektArbeidYtelseAggregatEntitet inntektArbeidYtelser;
+    private InntektArbeidYtelseAggregat inntektArbeidYtelser;
 
     @OneToMany(mappedBy = "aktørYtelse")
     @ChangeTracked
@@ -92,7 +92,7 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
         return List.copyOf(ytelser);
     }
 
-    void setInntektArbeidYtelser(InntektArbeidYtelseAggregatEntitet inntektArbeidYtelser) {
+    void setInntektArbeidYtelser(InntektArbeidYtelseAggregat inntektArbeidYtelser) {
         this.inntektArbeidYtelser = inntektArbeidYtelser;
     }
 

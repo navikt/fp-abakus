@@ -52,12 +52,12 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     @OneToOne
     @JoinColumn(name = "register_id", updatable = false, unique = true)
     @ChangeTracked
-    private InntektArbeidYtelseAggregatEntitet register;
+    private InntektArbeidYtelseAggregat register;
 
     @OneToOne
     @JoinColumn(name = "saksbehandlet_id", updatable = false, unique = true)
     @ChangeTracked
-    private InntektArbeidYtelseAggregatEntitet saksbehandlet;
+    private InntektArbeidYtelseAggregat saksbehandlet;
 
     @OneToOne
     @JoinColumn(name = "oppgitt_opptjening_id", updatable = false, unique = true)
@@ -91,10 +91,10 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
 
         // NB! skal ikke lage ny versjon av oppgitt opptjening! Lenker bare inn
         grunnlag.getOppgittOpptjening().ifPresent(kopiAvOppgittOpptjening -> this.setOppgittOpptjening((OppgittOpptjeningEntitet) kopiAvOppgittOpptjening));
-        grunnlag.getRegisterVersjon().ifPresent(nyRegisterVerson -> this.setRegister((InntektArbeidYtelseAggregatEntitet) nyRegisterVerson));
+        grunnlag.getRegisterVersjon().ifPresent(nyRegisterVerson -> this.setRegister((InntektArbeidYtelseAggregat) nyRegisterVerson));
 
         grunnlag.getSaksbehandletVersjon()
-            .ifPresent(nySaksbehandletFørVersjon -> this.setSaksbehandlet((InntektArbeidYtelseAggregatEntitet) nySaksbehandletFørVersjon));
+            .ifPresent(nySaksbehandletFørVersjon -> this.setSaksbehandlet((InntektArbeidYtelseAggregat) nySaksbehandletFørVersjon));
 
         grunnlag.getInntektsmeldinger().ifPresent(this::setInntektsmeldinger);
 
@@ -133,7 +133,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
         return Optional.ofNullable(saksbehandlet);
     }
 
-    void setSaksbehandlet(InntektArbeidYtelseAggregatEntitet saksbehandletFør) {
+    void setSaksbehandlet(InntektArbeidYtelseAggregat saksbehandletFør) {
         this.saksbehandlet = saksbehandletFør;
     }
 
@@ -187,7 +187,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
         return id;
     }
 
-    void setRegister(InntektArbeidYtelseAggregatEntitet registerFør) {
+    void setRegister(InntektArbeidYtelseAggregat registerFør) {
         this.register = registerFør;
     }
 
