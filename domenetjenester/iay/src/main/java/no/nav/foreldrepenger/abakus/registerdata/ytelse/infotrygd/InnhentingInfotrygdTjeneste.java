@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.threeten.extra.Interval;
 
-import no.finn.unleash.Unleash;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.Arbeidskategori;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
@@ -32,44 +31,36 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.Innte
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.TemaReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.TemaUnderkategoriReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.YtelseTypeReverse;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.Aggregator;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.InfotrygdYtelseAnvist;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.InfotrygdYtelseArbeid;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.InfotrygdYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.Grunnlag;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.InfotrygdGrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.Periode;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.felles.InfotrygdGrunnlagAggregator;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdSakOgGrunnlag;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
 import no.nav.vedtak.konfig.Tid;
 
 @ApplicationScoped
 public class InnhentingInfotrygdTjeneste {
 
     private static final Logger LOG = LoggerFactory.getLogger(InnhentingInfotrygdTjeneste.class);
-    private static final String REST_GJELDER = "fpabakus.infotrygd.rest";
     private static final Set<YtelseType> YTELSER_STØTTET = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER, YtelseType.SYKEPENGER, YtelseType.PÅRØRENDESYKDOM);
 
-    //private InfotrygdGrunnlagAggregator grunnlag;
-    private Unleash unleash;
+    private InfotrygdGrunnlagAggregator grunnlag;
 
     InnhentingInfotrygdTjeneste() {
         // CDI
     }
 
     @Inject
-    public InnhentingInfotrygdTjeneste(//InfotrygdGrunnlagAggregator grunnlag,
-                                       Unleash unleash) {
-        //this.grunnlag = grunnlag;
-        this.unleash = unleash;
+    public InnhentingInfotrygdTjeneste(InfotrygdGrunnlagAggregator grunnlag) {
+        this.grunnlag = grunnlag;
     }
 
     public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelser(PersonIdent ident, Interval periode) {
         try {
-            List<Grunnlag> rest = Collections.emptyList(); // grunnlag.hentGrunnlag(ident.getIdent(), dato(periode.getStart()), dato(periode.getEnd()));
+            List<Grunnlag> rest = grunnlag.hentGrunnlag(ident.getIdent(), dato(periode.getStart()), dato(periode.getEnd()));
 
             return rest.stream()
                 .filter(g -> !YtelseType.UDEFINERT.equals(TemaReverse.reverseMap(g.getTema().getKode().name(), LOG)))
@@ -123,13 +114,6 @@ public class InnhentingInfotrygdTjeneste {
         return grunnlagBuilder.build();
     }
 
-/*
-    private PersonIdent getFnrFraAktørId(AktørId aktørId) {
-        return aktør.hentPersonIdentForAktørId(aktørId.getId())
-                .map(PersonIdent::new)
-                .orElseThrow();
-    }
-*/
     private static LocalDate dato(Instant instant) {
         return LocalDate.ofInstant(instant, ZoneId.systemDefault());
     }
@@ -159,24 +143,31 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     public static boolean sammenlignGrunnlagKilder(List<InfotrygdYtelseGrunnlag> ws, List<InfotrygdYtelseGrunnlag> rest) {
-        var mappedRest = rest.stream().map(InnhentingInfotrygdTjeneste::nyttGrunnalgTilNytt).collect(Collectors.toList());
-        boolean like = mappedRest.equals(ws);
-        if (!like) {
+        // Likt innhold så equals ikke går bananas
+        var mappedRest = rest.stream().map(InnhentingInfotrygdTjeneste::nyttGrunnlagTilNyttMedRedusertInnhold).filter(Objects::nonNull).collect(Collectors.toList());
+        boolean sammenligning = mappedRest.equals(ws);
+        if (!sammenligning) {
             LOG.info("Infotrygd mapper avvik mellom ws {} og rest {}", ws, mappedRest);
         }
-        return like;
+        return sammenligning;
     }
 
     public static List<InfotrygdYtelseGrunnlag> mapISoG(List<InfotrygdSakOgGrunnlag> sog) {
-        return sog.stream()
-            .filter(g -> YTELSER_STØTTET.contains(g.getSak().getYtelseType()))
-            .filter(g -> g.getGrunnlag().isPresent())
-            .map(InnhentingInfotrygdTjeneste::isogTilNyttGrunnalg)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+        try {
+            return sog.stream()
+                .filter(g -> YTELSER_STØTTET.contains(g.getSak().getYtelseType()))
+                .filter(g -> g.getGrunnlag().isPresent())
+                .map(InnhentingInfotrygdTjeneste::isogTilNyttGrunnlag)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        } catch (Exception e) {
+            LOG.warn("Infotrygd ny mapper fra ISoG ukjent feil", e);
+            return Collections.emptyList();
+        }
+
     }
 
-    private static InfotrygdYtelseGrunnlag isogTilNyttGrunnalg(InfotrygdSakOgGrunnlag grunnlag) {
+    private static InfotrygdYtelseGrunnlag isogTilNyttGrunnlag(InfotrygdSakOgGrunnlag grunnlag) {
         var grunnlagBuilder = InfotrygdYtelseGrunnlag.getBuilder()
             .medYtelseType(grunnlag.getSak().getYtelseType())
             .medTemaUnderkategori(grunnlag.getSak().getTemaUnderkategori())
@@ -197,25 +188,30 @@ public class InnhentingInfotrygdTjeneste {
         return grunnlagBuilder.build();
     }
 
-    private static InfotrygdYtelseGrunnlag nyttGrunnalgTilNytt(InfotrygdYtelseGrunnlag grunnlag) {
-        var grunnlagBuilder = InfotrygdYtelseGrunnlag.getBuilder()
-            .medYtelseType(grunnlag.getYtelseType())
-            .medTemaUnderkategori(grunnlag.getTemaUnderkategori())
-            .medYtelseStatus(grunnlag.getYtelseStatus())
-            .medIdentdato(grunnlag.getIdentdato())
-            .medVedtaksPeriodeFom(grunnlag.getVedtaksPeriodeFom())
-            .medVedtaksPeriodeTom(grunnlag.getVedtaksPeriodeTom())
-            .medArbeidskategori(grunnlag.getKategori());
+    private static InfotrygdYtelseGrunnlag nyttGrunnlagTilNyttMedRedusertInnhold(InfotrygdYtelseGrunnlag grunnlag) {
+        try {
+            var grunnlagBuilder = InfotrygdYtelseGrunnlag.getBuilder()
+                .medYtelseType(grunnlag.getYtelseType())
+                .medTemaUnderkategori(grunnlag.getTemaUnderkategori())
+                .medYtelseStatus(grunnlag.getYtelseStatus())
+                .medIdentdato(grunnlag.getIdentdato())
+                .medVedtaksPeriodeFom(grunnlag.getVedtaksPeriodeFom())
+                .medVedtaksPeriodeTom(grunnlag.getVedtaksPeriodeTom())
+                .medArbeidskategori(grunnlag.getKategori());
 
-        grunnlag.getArbeidsforhold().stream()
-            .map(a -> new InfotrygdYtelseArbeid(a.getOrgnr(), a.getInntekt(), a.getInntektperiode(), null))
-            .forEach(grunnlagBuilder::leggTilArbeidsforhold);
+            grunnlag.getArbeidsforhold().stream()
+                .map(a -> new InfotrygdYtelseArbeid(a.getOrgnr(), a.getInntekt(), a.getInntektperiode(), null))
+                .forEach(grunnlagBuilder::leggTilArbeidsforhold);
 
-        grunnlag.getUtbetaltePerioder().stream()
-            .map(v -> new InfotrygdYtelseAnvist(v.getUtbetaltFom(), v.getUtbetaltTom(), v.getUtbetalingsgrad()))
-            .forEach(grunnlagBuilder::leggTillAnvistPerioder);
+            grunnlag.getUtbetaltePerioder().stream()
+                .map(v -> new InfotrygdYtelseAnvist(v.getUtbetaltFom(), v.getUtbetaltTom(), v.getUtbetalingsgrad()))
+                .forEach(grunnlagBuilder::leggTillAnvistPerioder);
 
-        return grunnlagBuilder.build();
+            return grunnlagBuilder.build();
+        }  catch (Exception e) {
+            LOG.warn("Infotrygd ny mapper til redusert rest ukjent feil", e);
+            return null;
+        }
     }
 
 }
