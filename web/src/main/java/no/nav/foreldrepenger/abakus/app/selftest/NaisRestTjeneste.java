@@ -18,7 +18,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.foreldrepenger.abakus.app.konfig.ApplicationServiceStarter;
 import no.nav.foreldrepenger.abakus.app.konfig.InternalApplication;
 
-@OpenAPIDefinition(tags = @Tag(name = "nais"))
 @Path("/")
 @Produces(TEXT_PLAIN)
 @RequestScoped
@@ -43,7 +42,7 @@ public class NaisRestTjeneste {
 
     @GET
     @Path("isAlive")
-    @Operation(description = "sjekker om poden lever", tags = "nais")
+    @Operation(description = "sjekker om poden lever", tags = "nais", hidden = true)
     public Response isAlive() {
         if (starterService.isKafkaAlive()) {
             logger.debug("Application is alive.");
@@ -61,7 +60,7 @@ public class NaisRestTjeneste {
 
     @GET
     @Path("isReady")
-    @Operation(description = "sjekker om poden er klar", tags = "nais")
+    @Operation(description = "sjekker om poden er klar", tags = "nais", hidden = true)
     public Response isReady() {
         if (starterService.isKafkaAlive()) {
             logger.debug("Application is alive.");
@@ -79,7 +78,7 @@ public class NaisRestTjeneste {
 
     @GET
     @Path("preStop")
-    @Operation(description = "kalles på før stopp", tags = "nais")
+    @Operation(description = "kalles på før stopp", tags = "nais", hidden = true)
     public Response preStop() {
         starterService.stopServices();
         return Response.ok(RESPONSE_OK).build();
