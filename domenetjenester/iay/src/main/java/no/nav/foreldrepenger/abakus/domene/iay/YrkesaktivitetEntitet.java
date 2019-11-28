@@ -40,7 +40,7 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
 
     @OneToMany(mappedBy = "yrkesaktivitet")
     @ChangeTracked
-    private Set<AktivitetsAvtaleEntitet> aktivitetsAvtale = new LinkedHashSet<>();
+    private Set<AktivitetsAvtale> aktivitetsAvtale = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "yrkesaktivitet")
     @ChangeTracked
@@ -86,7 +86,7 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
         this.arbeidsforholdRef = yrkesaktivitetEntitet.getArbeidsforholdRef();
 
         this.aktivitetsAvtale = yrkesaktivitetEntitet.aktivitetsAvtale.stream().map(aa -> {
-            AktivitetsAvtaleEntitet aktivitetsAvtaleEntitet = new AktivitetsAvtaleEntitet(aa);
+            AktivitetsAvtale aktivitetsAvtaleEntitet = new AktivitetsAvtale(aa);
             aktivitetsAvtaleEntitet.setYrkesaktivitet(this);
             return aktivitetsAvtaleEntitet;
         }).collect(Collectors.toCollection(LinkedHashSet::new));
@@ -142,7 +142,7 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
     }
 
     void leggTilAktivitetsAvtale(AktivitetsAvtale aktivitetsAvtale) {
-        AktivitetsAvtaleEntitet aktivitetsAvtaleEntitet = (AktivitetsAvtaleEntitet) aktivitetsAvtale;
+        AktivitetsAvtale aktivitetsAvtaleEntitet = (AktivitetsAvtale) aktivitetsAvtale;
         this.aktivitetsAvtale.add(aktivitetsAvtaleEntitet);
         aktivitetsAvtaleEntitet.setYrkesaktivitet(this);
     }

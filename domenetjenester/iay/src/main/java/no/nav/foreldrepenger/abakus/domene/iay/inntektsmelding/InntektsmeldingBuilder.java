@@ -17,16 +17,20 @@ import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 import no.nav.vedtak.konfig.Tid;
 
 public class InntektsmeldingBuilder {
-    private final InntektsmeldingEntitet kladd;
+    private final Inntektsmelding kladd;
     private boolean erBygget;
     private EksternArbeidsforholdRef eksternArbeidsforholdId;
 
-    InntektsmeldingBuilder(InntektsmeldingEntitet kladd) {
+    InntektsmeldingBuilder(Inntektsmelding kladd) {
         this.kladd = kladd;
     }
 
     public static InntektsmeldingBuilder builder() {
-        return new InntektsmeldingBuilder(new InntektsmeldingEntitet());
+        return new InntektsmeldingBuilder(new Inntektsmelding());
+    }
+    
+    public static InntektsmeldingBuilder kopi(Inntektsmelding inntektsmelding) {
+        return new InntektsmeldingBuilder(new Inntektsmelding(inntektsmelding));
     }
 
     public InntektsmeldingBuilder medArbeidsgiver(Arbeidsgiver arbeidsgiver) {

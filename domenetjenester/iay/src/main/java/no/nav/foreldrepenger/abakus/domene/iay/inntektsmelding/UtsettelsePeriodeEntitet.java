@@ -33,7 +33,7 @@ public class UtsettelsePeriodeEntitet extends BaseEntitet implements UtsettelseP
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "inntektsmelding_id", nullable = false, updatable = false)
-    private InntektsmeldingEntitet inntektsmelding;
+    private Inntektsmelding inntektsmelding;
 
     @Embedded
     @ChangeTracked
@@ -117,7 +117,7 @@ public class UtsettelsePeriodeEntitet extends BaseEntitet implements UtsettelseP
             '}';
     }
 
-    void setInntektsmelding(InntektsmeldingEntitet inntektsmelding) {
+    void setInntektsmelding(Inntektsmelding inntektsmelding) {
         this.inntektsmelding = inntektsmelding;
     }
 }

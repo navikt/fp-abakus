@@ -245,10 +245,10 @@ public class YrkesaktivitetFilter {
                 .filter(AktivitetsAvtale::erAnsettelsesPeriode)
                 .filter(aa -> DatoIntervallEntitet.TIDENES_ENDE.equals(aa.getPeriodeUtenOverstyring().getTomDato()))
                 .filter(aa -> overstyrtPeriode.getOverstyrtePeriode().getFomDato().isEqual(aa.getPeriodeUtenOverstyring().getFomDato()))
-                .forEach(avtale -> avtaler.add(new AktivitetsAvtaleEntitet(avtale, overstyrtPeriode.getOverstyrtePeriode()))));
+                .forEach(avtale -> avtaler.add(new AktivitetsAvtale(avtale, overstyrtPeriode.getOverstyrtePeriode()))));
 
             // legg til resten, bruk av set hindrer oss i å legge dobbelt.
-            yaAvtaler.stream().forEach(avtale -> avtaler.add(new AktivitetsAvtaleEntitet(avtale)));
+            yaAvtaler.stream().forEach(avtale -> avtaler.add(new AktivitetsAvtale(avtale)));
             return avtaler;
         } else {
             // ingen overstyring, returner samme

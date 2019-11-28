@@ -8,20 +8,20 @@ import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class AktivitetsAvtaleBuilder {
-    private final AktivitetsAvtaleEntitet aktivitetsAvtaleEntitet;
+    private final AktivitetsAvtale aktivitetsAvtaleEntitet;
     private boolean oppdatering;
 
     AktivitetsAvtaleBuilder(AktivitetsAvtale aktivitetsAvtaleEntitet, boolean oppdatering) {
-        this.aktivitetsAvtaleEntitet = (AktivitetsAvtaleEntitet) aktivitetsAvtaleEntitet; // NOSONAR
+        this.aktivitetsAvtaleEntitet = (AktivitetsAvtale) aktivitetsAvtaleEntitet; // NOSONAR
         this.oppdatering = oppdatering;
     }
 
     public static AktivitetsAvtaleBuilder ny() {
-        return new AktivitetsAvtaleBuilder(new AktivitetsAvtaleEntitet(), false);
+        return new AktivitetsAvtaleBuilder(new AktivitetsAvtale(), false);
     }
 
     static AktivitetsAvtaleBuilder oppdater(Optional<AktivitetsAvtale> aktivitetsAvtale) {
-        return new AktivitetsAvtaleBuilder(aktivitetsAvtale.orElse(new AktivitetsAvtaleEntitet()), aktivitetsAvtale.isPresent());
+        return new AktivitetsAvtaleBuilder(aktivitetsAvtale.orElse(new AktivitetsAvtale()), aktivitetsAvtale.isPresent());
     }
 
     public AktivitetsAvtaleBuilder medProsentsats(Stillingsprosent prosentsats) {

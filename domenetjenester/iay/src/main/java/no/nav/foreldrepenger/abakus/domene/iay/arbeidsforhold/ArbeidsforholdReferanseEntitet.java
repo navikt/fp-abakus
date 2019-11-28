@@ -14,7 +14,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import no.nav.foreldrepenger.abakus.domene.iay.ArbeidsforholdReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
@@ -25,7 +24,7 @@ import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
 @Entity(name = "ArbeidsforholdReferanse")
 @Table(name = "IAY_ARBEIDSFORHOLD_REFER")
-public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements IndexKey, TraverseValue, ArbeidsforholdReferanse {
+public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements IndexKey, TraverseValue {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_IAY_ARBEIDSFORHOLD_REFER")
@@ -49,7 +48,7 @@ public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements Index
 
     @ManyToOne
     @JoinColumn(name = "informasjon_id", updatable = false, unique = true, nullable = false)
-    private ArbeidsforholdInformasjonEntitet informasjon;
+    private ArbeidsforholdInformasjon informasjon;
 
     ArbeidsforholdReferanseEntitet() {
     }
@@ -70,22 +69,19 @@ public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements Index
         return IndexKey.createKey(internReferanse, eksternReferanse);
     }
 
-    @Override
     public InternArbeidsforholdRef getInternReferanse() {
         return internReferanse;
     }
 
-    @Override
     public EksternArbeidsforholdRef getEksternReferanse() {
         return eksternReferanse;
     }
     
-    @Override
     public Arbeidsgiver getArbeidsgiver() {
         return arbeidsgiverEntitet;
     }
 
-    void setInformasjon(ArbeidsforholdInformasjonEntitet informasjon) {
+    void setInformasjon(ArbeidsforholdInformasjon informasjon) {
         this.informasjon = informasjon;
     }
 

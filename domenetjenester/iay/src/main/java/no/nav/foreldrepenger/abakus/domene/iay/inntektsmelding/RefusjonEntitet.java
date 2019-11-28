@@ -31,7 +31,7 @@ public class RefusjonEntitet extends BaseEntitet implements Refusjon, IndexKey {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "inntektsmelding_id", nullable = false, updatable = false)
-    private InntektsmeldingEntitet inntektsmelding;
+    private Inntektsmelding inntektsmelding;
 
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "refusjonsbeloep_mnd", nullable = false)))
     @ChangeTracked
@@ -58,7 +58,7 @@ public class RefusjonEntitet extends BaseEntitet implements Refusjon, IndexKey {
         this.fom = refusjon.getFom();
     }
 
-    public void setInntektsmelding(InntektsmeldingEntitet inntektsmelding) {
+    public void setInntektsmelding(Inntektsmelding inntektsmelding) {
         this.inntektsmelding = inntektsmelding;
     }
 

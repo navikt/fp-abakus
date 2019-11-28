@@ -71,7 +71,7 @@ public class ArbeidsforholdOverstyringBuilder {
         return this;
     }
 
-    public ArbeidsforholdOverstyringBuilder medInformasjon(ArbeidsforholdInformasjonEntitet informasjonEntitet) {
+    public ArbeidsforholdOverstyringBuilder medInformasjon(ArbeidsforholdInformasjon informasjonEntitet) {
         kladd.setInformasjon(informasjonEntitet);
         return this;
     }

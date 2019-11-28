@@ -11,7 +11,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregatEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanseEntitet;
@@ -195,12 +195,12 @@ public class MapInntektsmeldinger {
 
     public static class MapFraDto {
 
-        public InntektsmeldingAggregatEntitet map(ArbeidsforholdInformasjonBuilder arbeidsforholdInformasjon, InntektsmeldingerDto dto) {
+        public InntektsmeldingAggregat map(ArbeidsforholdInformasjonBuilder arbeidsforholdInformasjon, InntektsmeldingerDto dto) {
             if (dto == null) {
                 return null;
             }
             var inntektsmeldinger = dto.getInntektsmeldinger().stream().map(im -> mapInntektsmelding(arbeidsforholdInformasjon, im)).collect(Collectors.toList());
-            return new InntektsmeldingAggregatEntitet(inntektsmeldinger);
+            return new InntektsmeldingAggregat(inntektsmeldinger);
         }
 
         private Inntektsmelding mapInntektsmelding(ArbeidsforholdInformasjonBuilder arbeidsforholdInformasjon, InntektsmeldingDto dto) {

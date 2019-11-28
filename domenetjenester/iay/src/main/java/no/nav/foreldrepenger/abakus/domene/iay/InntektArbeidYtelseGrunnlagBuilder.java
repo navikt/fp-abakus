@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -15,9 +15,9 @@ import no.nav.vedtak.util.Tuple;
 
 public class InntektArbeidYtelseGrunnlagBuilder {
 
-    private InntektArbeidYtelseGrunnlagEntitet kladd;
+    private InntektArbeidYtelseGrunnlag kladd;
 
-    private InntektArbeidYtelseGrunnlagBuilder(InntektArbeidYtelseGrunnlagEntitet kladd) {
+    private InntektArbeidYtelseGrunnlagBuilder(InntektArbeidYtelseGrunnlag kladd) {
         this.kladd = kladd;
     }
 
@@ -27,18 +27,18 @@ public class InntektArbeidYtelseGrunnlagBuilder {
 
     /** Brukes ved migrering. */
     public static InntektArbeidYtelseGrunnlagBuilder ny(UUID grunnlagReferanse, LocalDateTime opprettetTidspunkt) {
-        return new InntektArbeidYtelseGrunnlagBuilder(new InntektArbeidYtelseGrunnlagEntitet(grunnlagReferanse, opprettetTidspunkt));
+        return new InntektArbeidYtelseGrunnlagBuilder(new InntektArbeidYtelseGrunnlag(grunnlagReferanse, opprettetTidspunkt));
     }
 
     public static InntektArbeidYtelseGrunnlagBuilder oppdatere(InntektArbeidYtelseGrunnlag kladd) {
-        return new InntektArbeidYtelseGrunnlagBuilder(new InntektArbeidYtelseGrunnlagEntitet(kladd));
+        return new InntektArbeidYtelseGrunnlagBuilder(new InntektArbeidYtelseGrunnlag(kladd));
     }
 
     public static InntektArbeidYtelseGrunnlagBuilder oppdatere(Optional<InntektArbeidYtelseGrunnlag> kladd) {
         return kladd.map(InntektArbeidYtelseGrunnlagBuilder::oppdatere).orElseGet(InntektArbeidYtelseGrunnlagBuilder::nytt);
     }
 
-    protected InntektArbeidYtelseGrunnlagEntitet getKladd() {
+    protected InntektArbeidYtelseGrunnlag getKladd() {
         return kladd;
     }
 
@@ -48,10 +48,10 @@ public class InntektArbeidYtelseGrunnlagBuilder {
 
     protected InntektsmeldingAggregat getInntektsmeldinger() {
         final Optional<InntektsmeldingAggregat> inntektsmeldinger = kladd.getInntektsmeldinger();
-        return inntektsmeldinger.map(InntektsmeldingAggregatEntitet::new).orElseGet(InntektsmeldingAggregatEntitet::new);
+        return inntektsmeldinger.map(InntektsmeldingAggregat::new).orElseGet(InntektsmeldingAggregat::new);
     }
 
-    public void setInntektsmeldinger(InntektsmeldingAggregatEntitet inntektsmeldinger) {
+    public void setInntektsmeldinger(InntektsmeldingAggregat inntektsmeldinger) {
         kladd.setInntektsmeldinger(inntektsmeldinger);
     }
 
@@ -60,21 +60,21 @@ public class InntektArbeidYtelseGrunnlagBuilder {
 
         var informasjonEntitet = informasjon
             .map(it -> {
-                var entitet = (ArbeidsforholdInformasjonEntitet) it;
+                var entitet = (ArbeidsforholdInformasjon) it;
                 if (entitet.getId() == null) {
                     // ulagret, med preparert, returner her istdf å lage nye hver gang.
                     return entitet;
                 } else {
-                    return new ArbeidsforholdInformasjonEntitet(it);
+                    return new ArbeidsforholdInformasjon(it);
                 }
             })
-            .orElseGet(() -> new ArbeidsforholdInformasjonEntitet());
+            .orElseGet(() -> new ArbeidsforholdInformasjon());
         kladd.setInformasjon(informasjonEntitet);
         return informasjonEntitet;
     }
 
     public InntektArbeidYtelseGrunnlagBuilder medInformasjon(ArbeidsforholdInformasjon informasjon) {
-        kladd.setInformasjon((ArbeidsforholdInformasjonEntitet) informasjon);
+        kladd.setInformasjon((ArbeidsforholdInformasjon) informasjon);
         return this;
     }
 
