@@ -22,7 +22,6 @@ import javax.persistence.Version;
 import org.hibernate.annotations.NaturalId;
 
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -99,7 +98,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
 
         grunnlag.getInntektsmeldinger().ifPresent(this::setInntektsmeldinger);
 
-        grunnlag.getArbeidsforholdInformasjon().ifPresent(info -> this.setInformasjon((ArbeidsforholdInformasjon) info));
+        grunnlag.getArbeidsforholdInformasjon().ifPresent(info -> this.setInformasjon(info));
     }
 
     InntektArbeidYtelseGrunnlag(GrunnlagReferanse grunnlagReferanse, LocalDateTime opprettetTidspunkt) {
@@ -153,7 +152,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     }
 
     void setInntektsmeldinger(InntektsmeldingAggregat inntektsmeldingAggregat) {
-        this.inntektsmeldinger = (InntektsmeldingAggregat) inntektsmeldingAggregat;
+        this.inntektsmeldinger = inntektsmeldingAggregat;
     }
 
     /**

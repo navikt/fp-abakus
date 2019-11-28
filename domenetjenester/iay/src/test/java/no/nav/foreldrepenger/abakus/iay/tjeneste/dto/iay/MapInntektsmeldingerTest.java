@@ -1,8 +1,6 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,7 +18,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingBuilder;
-import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;

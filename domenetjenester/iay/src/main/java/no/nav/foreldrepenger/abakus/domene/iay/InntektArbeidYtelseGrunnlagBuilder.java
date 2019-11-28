@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -60,7 +59,7 @@ public class InntektArbeidYtelseGrunnlagBuilder {
 
         var informasjonEntitet = informasjon
             .map(it -> {
-                var entitet = (ArbeidsforholdInformasjon) it;
+                var entitet = it;
                 if (entitet.getId() == null) {
                     // ulagret, med preparert, returner her istdf å lage nye hver gang.
                     return entitet;
@@ -74,7 +73,7 @@ public class InntektArbeidYtelseGrunnlagBuilder {
     }
 
     public InntektArbeidYtelseGrunnlagBuilder medInformasjon(ArbeidsforholdInformasjon informasjon) {
-        kladd.setInformasjon((ArbeidsforholdInformasjon) informasjon);
+        kladd.setInformasjon(informasjon);
         return this;
     }
 

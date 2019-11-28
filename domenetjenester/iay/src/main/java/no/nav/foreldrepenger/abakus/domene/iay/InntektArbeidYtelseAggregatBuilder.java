@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanseEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
@@ -34,7 +34,7 @@ public class InntektArbeidYtelseAggregatBuilder {
 
     private final InntektArbeidYtelseAggregatEntitet kladd;
     private final VersjonType versjon;
-    private final List<ArbeidsforholdReferanseEntitet> nyeInternArbeidsforholdReferanser = new ArrayList<>();
+    private final List<ArbeidsforholdReferanse> nyeInternArbeidsforholdReferanser = new ArrayList<>();
 
     private InntektArbeidYtelseAggregatBuilder(InntektArbeidYtelseAggregatEntitet kladd, VersjonType versjon) {
         this.kladd = kladd;
@@ -103,7 +103,7 @@ public class InntektArbeidYtelseAggregatBuilder {
     }
 
     public void medNyInternArbeidsforholdRef(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef nyRef, EksternArbeidsforholdRef eksternReferanse) {
-        nyeInternArbeidsforholdReferanser.add(new ArbeidsforholdReferanseEntitet(arbeidsgiver, nyRef, eksternReferanse));
+        nyeInternArbeidsforholdReferanser.add(new ArbeidsforholdReferanse(arbeidsgiver, nyRef, eksternReferanse));
     }
 
     public InternArbeidsforholdRef medNyInternArbeidsforholdRef(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef eksternReferanse) {
@@ -111,11 +111,11 @@ public class InntektArbeidYtelseAggregatBuilder {
             return InternArbeidsforholdRef.nullRef();
         }
         InternArbeidsforholdRef nyRef = InternArbeidsforholdRef.nyRef();
-        nyeInternArbeidsforholdReferanser.add(new ArbeidsforholdReferanseEntitet(arbeidsgiver, nyRef, eksternReferanse));
+        nyeInternArbeidsforholdReferanser.add(new ArbeidsforholdReferanse(arbeidsgiver, nyRef, eksternReferanse));
         return nyRef;
     }
 
-    public List<ArbeidsforholdReferanseEntitet> getNyeInternArbeidsforholdReferanser() {
+    public List<ArbeidsforholdReferanse> getNyeInternArbeidsforholdReferanser() {
         return nyeInternArbeidsforholdReferanser;
     }
 

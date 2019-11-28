@@ -24,7 +24,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.VersjonType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
@@ -191,18 +190,13 @@ public class InntektArbeidYtelseTjeneste {
      * 
      * @param ytelseType
      */
-    public void kopierGrunnlagFraEksisterendeBehandling(YtelseType ytelseType, AktørId aktørId, Saksnummer saksnummer, KoblingReferanse fraKobling, KoblingReferanse tilKobling) {
-        Optional<InntektArbeidYtelseGrunnlag> origAggregat = hentGrunnlagFor(fraKobling);
-        
-        origAggregat.ifPresent(orig -> {
-            var builder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(orig);
-            var gjeldendeInntektsmeldinger = orig.getInntektsmeldinger().map(InntektsmeldingAggregat::getInntektsmeldinger).orElse(List.of());
-            var innsendingstidspunkt = finnInnsendingstidspunktForNyesteEksisterendeIm(gjeldendeInntektsmeldinger);
-            
-            kopierNyereManglendeInntektsmeldingerTilknyttetSammeFagsak(ytelseType, aktørId, saksnummer, innsendingstidspunkt, orig.getArbeidsforholdInformasjon().orElseGet(ArbeidsforholdInformasjon::new), builder);
-            
+    public void kopierGrunnlagFraEksisterendeBehandling(YtelseType ytelseType, AktørId aktørId, Saksnummer saksnummer, KoblingReferanse fraKobling,
+                                                        KoblingReferanse tilKobling) {
+        var origAggregat = hentGrunnlagFor(fraKobling);
+        if(origAggregat.isPresent()) {
+            var builder = kopierGrunnlagPlussNyereInntektsmeldingerForFagsak(ytelseType, aktørId, saksnummer, origAggregat.get());
             lagre(tilKobling, builder);
-        });
+        }
     }
 
     /**
@@ -210,14 +204,21 @@ public class InntektArbeidYtelseTjeneste {
      * disse kopieres til den angitte behandlingen. Dette trengs i tilfeller der en behandling har fått en ny
      * inntektsmelding, blitt henlagt, og en revurdering er opprettet basert på en tidligere behandling med vedtak
      * som ikke inkluderer en eller flere inntektsmeldinger som er mottatt etter vedtaket, men før revurderingen.
-     * @param arbeidsforholdInformasjon 
+     * 
+     * @param arbeidsforholdInformasjon
+     * @return
      */
-    private void kopierNyereManglendeInntektsmeldingerTilknyttetSammeFagsak(YtelseType ytelseType, 
-                                                                            AktørId aktørId, 
-                                                                            Saksnummer saksnummer, 
-                                                                            LocalDateTime innsendingstidspunkt,
-                                                                            ArbeidsforholdInformasjon arbeidsforholdInformasjon, 
-                                                                            InntektArbeidYtelseGrunnlagBuilder targetBuilder) {
+    private InntektArbeidYtelseGrunnlagBuilder kopierGrunnlagPlussNyereInntektsmeldingerForFagsak(YtelseType ytelseType,
+                                                                                                          AktørId aktørId,
+                                                                                                          Saksnummer saksnummer,
+                                                                                                          InntektArbeidYtelseGrunnlag original) {
+
+        var builder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(original);
+        var gjeldendeInntektsmeldinger = original.getInntektsmeldinger().map(InntektsmeldingAggregat::getInntektsmeldinger).orElse(List.of());
+
+        var innsendingstidspunkt = finnInnsendingstidspunktForNyesteEksisterendeIm(gjeldendeInntektsmeldinger);
+        var arbeidsforholdInformasjon = original.getArbeidsforholdInformasjon().orElseGet(ArbeidsforholdInformasjon::new);
+
         var inntektsmeldinger = hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
         var kopi = inntektsmeldinger.stream()
             .filter(im -> im.getInnsendingstidspunkt().isAfter(innsendingstidspunkt))
@@ -225,9 +226,11 @@ public class InntektArbeidYtelseTjeneste {
             .map(InntektsmeldingBuilder::kopi)
             .map(InntektsmeldingBuilder::build)
             .collect(Collectors.toList());
-        
+
         var informasjonBuilder = ArbeidsforholdInformasjonBuilder.oppdatere(arbeidsforholdInformasjon);
-        repository.oppdaterBuilderMedNyeInntektsmeldinger(informasjonBuilder, kopi, targetBuilder);
+        repository.oppdaterBuilderMedNyeInntektsmeldinger(informasjonBuilder, kopi, builder);
+
+        return builder;
 
     }
 

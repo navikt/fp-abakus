@@ -20,7 +20,7 @@ public class InfotrygdSakAggregator  {
 
     }
 
-    private InfotrygdSakAggregator(@Any Instance<InfotrygdSakTjeneste> tjenester) {
+    public InfotrygdSakAggregator(@Any Instance<InfotrygdSakTjeneste> tjenester) {
         this.tjenester = tjenesterFra(tjenester);
     }
 

@@ -40,7 +40,7 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
     @ChangeTracked
     @OrderBy("opprettetTidspunkt ASC")
     @OneToMany(mappedBy = "informasjon")
-    private Set<ArbeidsforholdReferanseEntitet> referanser = new LinkedHashSet<>();
+    private Set<ArbeidsforholdReferanse> referanser = new LinkedHashSet<>();
 
     @ChangeTracked
     @OneToMany(mappedBy = "informasjon")
@@ -54,9 +54,9 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
     }
 
     public ArbeidsforholdInformasjon(ArbeidsforholdInformasjon arbeidsforholdInformasjon) {
-        ArbeidsforholdInformasjon arbeidsforholdInformasjonEntitet = (ArbeidsforholdInformasjon) arbeidsforholdInformasjon; // NOSONAR
+        ArbeidsforholdInformasjon arbeidsforholdInformasjonEntitet = arbeidsforholdInformasjon; // NOSONAR
         for (var arbeidsforholdReferanse : arbeidsforholdInformasjonEntitet.referanser) {
-            final ArbeidsforholdReferanseEntitet nyArbeidsforholdReferanse = new ArbeidsforholdReferanseEntitet(arbeidsforholdReferanse);
+            final ArbeidsforholdReferanse nyArbeidsforholdReferanse = new ArbeidsforholdReferanse(arbeidsforholdReferanse);
             nyArbeidsforholdReferanse.setInformasjon(this);
             this.referanser.add(nyArbeidsforholdReferanse);
         }
@@ -71,7 +71,7 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
         return id;
     }
 
-    public Collection<ArbeidsforholdReferanseEntitet> getArbeidsforholdReferanser() {
+    public Collection<ArbeidsforholdReferanse> getArbeidsforholdReferanser() {
         return Collections.unmodifiableSet(this.referanser);
     }
 
@@ -85,28 +85,28 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
             .collect(Collectors.toList());
         return arbeidsforholdReferanser.stream()
             .filter(it -> it.getArbeidsgiver().equals(arbeidsgiver) && it.getEksternReferanse().equals(ref))
-            .findFirst().map(ArbeidsforholdReferanseEntitet::getInternReferanse);
+            .findFirst().map(ArbeidsforholdReferanse::getInternReferanse);
     }
 
-    private boolean erIkkeMerget(ArbeidsforholdReferanseEntitet arbeidsforholdReferanseEntitet) {
+    private boolean erIkkeMerget(ArbeidsforholdReferanse arbeidsforholdReferanseEntitet) {
         return overstyringer.stream().noneMatch(ov -> ov.getHandling().equals(ArbeidsforholdHandlingType.SLÅTT_SAMMEN_MED_ANNET)
             && ov.getArbeidsgiver().equals(arbeidsforholdReferanseEntitet.getArbeidsgiver())
             && ov.getArbeidsforholdRef().equals(arbeidsforholdReferanseEntitet.getInternReferanse()));
     }
 
-    private Optional<ArbeidsforholdReferanseEntitet> referanseEksistererIkke(Arbeidsgiver arbeidsgiverEntitet, InternArbeidsforholdRef ref) {
+    private Optional<ArbeidsforholdReferanse> referanseEksistererIkke(Arbeidsgiver arbeidsgiverEntitet, InternArbeidsforholdRef ref) {
         return this.referanser.stream()
             .filter(this::erIkkeMerget)
             .filter(it -> it.getArbeidsgiver().equals(arbeidsgiverEntitet) && it.getInternReferanse().equals(ref))
             .findAny();
     }
 
-    private ArbeidsforholdReferanseEntitet finnEksisterendeInternReferanseEllerOpprettNy(Arbeidsgiver arbeidsgiverEntitet, EksternArbeidsforholdRef ref) {
+    private ArbeidsforholdReferanse finnEksisterendeInternReferanseEllerOpprettNy(Arbeidsgiver arbeidsgiverEntitet, EksternArbeidsforholdRef ref) {
         return finnEksisterendeReferanse(arbeidsgiverEntitet, ref)
             .orElseGet(() -> opprettNyReferanse(arbeidsgiverEntitet, InternArbeidsforholdRef.nyRef(), ref));
     }
 
-    private Optional<ArbeidsforholdReferanseEntitet> finnEksisterendeReferanse(Arbeidsgiver arbeidsgiverEntitet, EksternArbeidsforholdRef ref) {
+    private Optional<ArbeidsforholdReferanse> finnEksisterendeReferanse(Arbeidsgiver arbeidsgiverEntitet, EksternArbeidsforholdRef ref) {
         return this.referanser.stream()
             .filter(this::erIkkeMerget)
             .filter(it -> it.getArbeidsgiver().equals(arbeidsgiverEntitet) && it.getEksternReferanse().equals(ref))
@@ -118,8 +118,8 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
      * @deprecated Bruk {@link ArbeidsforholdInformasjonBuilder} i stedet.
      */
     @Deprecated(forRemoval = true)
-    public ArbeidsforholdReferanseEntitet opprettNyReferanse(Arbeidsgiver arbeidsgiverEntitet, InternArbeidsforholdRef internReferanse, EksternArbeidsforholdRef eksternReferanse) {
-        final ArbeidsforholdReferanseEntitet arbeidsforholdReferanseEntitet = new ArbeidsforholdReferanseEntitet(arbeidsgiverEntitet,
+    public ArbeidsforholdReferanse opprettNyReferanse(Arbeidsgiver arbeidsgiverEntitet, InternArbeidsforholdRef internReferanse, EksternArbeidsforholdRef eksternReferanse) {
+        final ArbeidsforholdReferanse arbeidsforholdReferanseEntitet = new ArbeidsforholdReferanse(arbeidsgiverEntitet,
             internReferanse, eksternReferanse);
         arbeidsforholdReferanseEntitet.setInformasjon(this);
         referanser.add(arbeidsforholdReferanseEntitet);
@@ -147,7 +147,7 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
     }
 
     void erstattArbeidsforhold(Arbeidsgiver arbeidsgiverEntitet, InternArbeidsforholdRef gammelRef, InternArbeidsforholdRef ref) {
-        final Optional<ArbeidsforholdReferanseEntitet> referanseEntitet = referanseEksistererIkke(arbeidsgiverEntitet, gammelRef);
+        final Optional<ArbeidsforholdReferanse> referanseEntitet = referanseEksistererIkke(arbeidsgiverEntitet, gammelRef);
         referanseEntitet.ifPresent(it -> opprettNyReferanse(arbeidsgiverEntitet, ref, it.getEksternReferanse()));
     }
 
@@ -199,7 +199,7 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
             var r = finnEllerOpprett(arbeidsgiver, erstattning.get().getNyArbeidsforholdRef());
             return InternArbeidsforholdRef.ref(r.getReferanse());
         } else {
-            final ArbeidsforholdReferanseEntitet referanse = this.referanser.stream()
+            final ArbeidsforholdReferanse referanse = this.referanser.stream()
                 .filter(this::erIkkeMerget)
                 .filter(it -> it.getArbeidsgiver().equals(arbeidsgiver) && it.getInternReferanse().equals(ref))
                 .findFirst().orElseThrow(() -> new IllegalStateException("InternArbeidsforholdReferanse må eksistere fra før, fant ikke: " + ref));
@@ -230,7 +230,7 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
 
     public Optional<InternArbeidsforholdRef> finnForEksternBeholdHistoriskReferanse(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef arbeidsforholdRef) {
         // For å sike at det ikke mistes data ved sammenslåing av og innhenting av registerdata
-        final Optional<ArbeidsforholdReferanseEntitet> referanseEntitet = referanser.stream().filter(re -> overstyringer.stream()
+        final Optional<ArbeidsforholdReferanse> referanseEntitet = referanser.stream().filter(re -> overstyringer.stream()
             .anyMatch(ov -> ov.getHandling().equals(ArbeidsforholdHandlingType.SLÅTT_SAMMEN_MED_ANNET)
                 && ov.getArbeidsgiver().equals(arbeidsgiver)
                 && re.getEksternReferanse().equals(arbeidsforholdRef)
@@ -250,7 +250,7 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
             .filter(this::erIkkeMerget)
             .filter(r -> Objects.equals(r.getInternReferanse(), internReferanse) && Objects.equals(r.getArbeidsgiver(), arbeidsgiver))
             .findFirst()
-            .map(ArbeidsforholdReferanseEntitet::getEksternReferanse)
+            .map(ArbeidsforholdReferanse::getEksternReferanse)
             .orElseThrow(
                 () -> new IllegalStateException("Mangler eksternReferanse for internReferanse: " + internReferanse + ", arbeidsgiver: " + arbeidsgiver + ",\n blant referanser=" + referanser));
     }
@@ -261,12 +261,12 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
         return referanser.stream()
             .filter(r -> Objects.equals(r.getInternReferanse(), internReferanse) && Objects.equals(r.getArbeidsgiver(), arbeidsgiver))
             .findFirst()
-            .map(ArbeidsforholdReferanseEntitet::getEksternReferanse)
+            .map(ArbeidsforholdReferanse::getEksternReferanse)
             .orElseThrow(
                 () -> new IllegalStateException("Mangler eksternReferanse for internReferanse: " + internReferanse + ", arbeidsgiver: " + arbeidsgiver));
     }
 
-    void leggTilNyReferanse(ArbeidsforholdReferanseEntitet arbeidsforholdReferanse) {
+    void leggTilNyReferanse(ArbeidsforholdReferanse arbeidsforholdReferanse) {
         arbeidsforholdReferanse.setInformasjon(this);
         referanser.add(arbeidsforholdReferanse);
     }

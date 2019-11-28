@@ -37,7 +37,7 @@ public class ArbeidsforholdInformasjonBuilder {
     }
 
     public ArbeidsforholdInformasjonBuilder tilbakestillOverstyringer() {
-        final List<ArbeidsforholdReferanseEntitet> collect = kladd.getArbeidsforholdReferanser().stream().filter(it -> kladd.getOverstyringer().stream()
+        final List<ArbeidsforholdReferanse> collect = kladd.getArbeidsforholdReferanser().stream().filter(it -> kladd.getOverstyringer().stream()
             .anyMatch(ov -> ov.getHandling().equals(ArbeidsforholdHandlingType.SLÅTT_SAMMEN_MED_ANNET)
                 && ov.getNyArbeidsforholdRef().gjelderFor(it.getInternReferanse())))
             .collect(Collectors.toList());
@@ -72,7 +72,7 @@ public class ArbeidsforholdInformasjonBuilder {
     public InternArbeidsforholdRef finnEllerOpprett(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef eksternArbeidsforholdRef) {
         InternArbeidsforholdRef internArbeidsforholdRef = kladd.finnEllerOpprett(arbeidsgiver, eksternArbeidsforholdRef);
         if (erUkjentReferanse(arbeidsgiver, internArbeidsforholdRef)) {
-            leggTilNyReferanse(new ArbeidsforholdReferanseEntitet(arbeidsgiver, internArbeidsforholdRef, eksternArbeidsforholdRef));
+            leggTilNyReferanse(new ArbeidsforholdReferanse(arbeidsgiver, internArbeidsforholdRef, eksternArbeidsforholdRef));
         }
         return internArbeidsforholdRef;
     }
@@ -110,7 +110,7 @@ public class ArbeidsforholdInformasjonBuilder {
         kladd.tilbakestillOverstyringer();
     }
 
-    public void leggTilNyReferanse(ArbeidsforholdReferanseEntitet arbeidsforholdReferanse) {
+    public void leggTilNyReferanse(ArbeidsforholdReferanse arbeidsforholdReferanse) {
         kladd.leggTilNyReferanse(arbeidsforholdReferanse);
     }
 

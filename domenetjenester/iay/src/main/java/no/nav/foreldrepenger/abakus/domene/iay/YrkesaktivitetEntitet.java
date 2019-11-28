@@ -142,7 +142,7 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
     }
 
     void leggTilAktivitetsAvtale(AktivitetsAvtale aktivitetsAvtale) {
-        AktivitetsAvtale aktivitetsAvtaleEntitet = (AktivitetsAvtale) aktivitetsAvtale;
+        AktivitetsAvtale aktivitetsAvtaleEntitet = aktivitetsAvtale;
         this.aktivitetsAvtale.add(aktivitetsAvtaleEntitet);
         aktivitetsAvtaleEntitet.setYrkesaktivitet(this);
     }

@@ -24,7 +24,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHand
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyring;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 
@@ -121,7 +120,7 @@ public class InntektsmeldingAggregat extends BaseEntitet {
         });
 
         if (fjernet || inntektsmeldinger.stream().noneMatch(it -> it.gjelderSammeArbeidsforhold(inntektsmelding))) {
-            final Inntektsmelding entitet = (Inntektsmelding) inntektsmelding;
+            final Inntektsmelding entitet = inntektsmelding;
             entitet.setInntektsmeldinger(this);
             inntektsmeldinger.add(entitet);
         }

@@ -24,7 +24,7 @@ import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
 @Entity(name = "ArbeidsforholdReferanse")
 @Table(name = "IAY_ARBEIDSFORHOLD_REFER")
-public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements IndexKey, TraverseValue {
+public class ArbeidsforholdReferanse extends BaseEntitet implements IndexKey, TraverseValue {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_IAY_ARBEIDSFORHOLD_REFER")
@@ -50,16 +50,16 @@ public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements Index
     @JoinColumn(name = "informasjon_id", updatable = false, unique = true, nullable = false)
     private ArbeidsforholdInformasjon informasjon;
 
-    ArbeidsforholdReferanseEntitet() {
+    ArbeidsforholdReferanse() {
     }
 
-    public ArbeidsforholdReferanseEntitet(Arbeidsgiver arbeidsgiverEntitet, InternArbeidsforholdRef internReferanse, EksternArbeidsforholdRef eksternReferanse) {
+    public ArbeidsforholdReferanse(Arbeidsgiver arbeidsgiverEntitet, InternArbeidsforholdRef internReferanse, EksternArbeidsforholdRef eksternReferanse) {
         this.arbeidsgiverEntitet = arbeidsgiverEntitet;
         this.internReferanse = internReferanse;
         this.eksternReferanse = eksternReferanse;
     }
 
-    ArbeidsforholdReferanseEntitet(ArbeidsforholdReferanseEntitet arbeidsforholdInformasjonEntitet) {
+    ArbeidsforholdReferanse(ArbeidsforholdReferanse arbeidsforholdInformasjonEntitet) {
         this(arbeidsforholdInformasjonEntitet.arbeidsgiverEntitet, arbeidsforholdInformasjonEntitet.internReferanse,
             arbeidsforholdInformasjonEntitet.eksternReferanse);
     }
@@ -89,9 +89,9 @@ public class ArbeidsforholdReferanseEntitet extends BaseEntitet implements Index
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || !(o instanceof ArbeidsforholdReferanseEntitet))
+        if (o == null || !(o instanceof ArbeidsforholdReferanse))
             return false;
-        var that = (ArbeidsforholdReferanseEntitet) o;
+        var that = (ArbeidsforholdReferanse) o;
         return Objects.equals(arbeidsgiverEntitet, that.arbeidsgiverEntitet) &&
             Objects.equals(internReferanse, that.internReferanse) &&
             Objects.equals(eksternReferanse, that.eksternReferanse);
