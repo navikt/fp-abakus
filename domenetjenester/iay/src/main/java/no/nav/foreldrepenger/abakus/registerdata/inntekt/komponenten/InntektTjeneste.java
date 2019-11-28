@@ -2,9 +2,7 @@ package no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten;
 
 import java.math.BigDecimal;
 import java.net.URI;
-import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,14 +39,16 @@ import no.nav.vedtak.konfig.KonfigVerdi;
 @ApplicationScoped
 public class InntektTjeneste {
 
-    private static final String ENDPOINT_KEY = "hentinntektlistebolk.url";
-    private static final String INNTK_DATO_KEY = "inntektskomponent.tidligste.dato";
-    private static final Logger logger = LoggerFactory.getLogger(InntektTjeneste.class);
+    // Dato for eldste request til inntk - det er av og til noen ES saker som spør lenger tilbake i tid
+    private static final YearMonth INNTK_TIDLIGSTE_DATO = YearMonth.of(2015, 7);
     private static final Set<InntektsKilde> SKAL_PERIODISERE_INNTEKTSKILDE = Set.of(InntektsKilde.INNTEKT_SAMMENLIGNING, InntektsKilde.INNTEKT_BEREGNING);
+
+    private static final String ENDPOINT_KEY = "hentinntektlistebolk.url";
+
+    private static final Logger logger = LoggerFactory.getLogger(InntektTjeneste.class);
 
     private OidcRestClient oidcRestClient;
     private URI endpoint;
-    private YearMonth requestTillattFom;
     private KodeverkRepository kodeverkRepository;
     private AktørConsumer aktørConsumer;
     private Map<InntektsKilde, InntektsFilter> kildeTilFilter;
@@ -59,12 +59,10 @@ public class InntektTjeneste {
 
     @Inject
     public InntektTjeneste(@KonfigVerdi(ENDPOINT_KEY) URI endpoint,
-                           @KonfigVerdi(INNTK_DATO_KEY) String inntkDato,
                            OidcRestClient oidcRestClient,
                            KodeverkRepository kodeverkRepository,
                            AktørConsumer aktørConsumer) {
         this.endpoint = endpoint;
-        this.requestTillattFom = YearMonth.from(LocalDate.parse(inntkDato, DateTimeFormatter.ISO_LOCAL_DATE));
         this.oidcRestClient = oidcRestClient;
         this.kodeverkRepository = kodeverkRepository;
         this.aktørConsumer = aktørConsumer;
@@ -100,8 +98,8 @@ public class InntektTjeneste {
             request.setAinntektsfilter(filter.getKode());
             request.setFormaal(filter.getFormål().getKode());
         }
-        request.setMaanedFom(finnInntektRequest.getFom().isAfter(requestTillattFom) ? finnInntektRequest.getFom() : requestTillattFom);
-        request.setMaanedTom(finnInntektRequest.getTom().isAfter(requestTillattFom) ? finnInntektRequest.getTom() : requestTillattFom);
+        request.setMaanedFom(finnInntektRequest.getFom().isAfter(INNTK_TIDLIGSTE_DATO) ? finnInntektRequest.getFom() : INNTK_TIDLIGSTE_DATO);
+        request.setMaanedTom(finnInntektRequest.getTom().isAfter(INNTK_TIDLIGSTE_DATO) ? finnInntektRequest.getTom() : INNTK_TIDLIGSTE_DATO);
         return request;
     }
 
