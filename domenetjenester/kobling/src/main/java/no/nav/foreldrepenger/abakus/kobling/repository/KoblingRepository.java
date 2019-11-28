@@ -57,7 +57,7 @@ public class KoblingRepository {
         query.setParameter("ytelse", ytelseType);
         query.setParameter("aktørId", aktørId);
         query.setMaxResults(1);
-        return query.getResultStream().findFirst();
+        return query.getResultList().stream().findFirst();
     }
 
 

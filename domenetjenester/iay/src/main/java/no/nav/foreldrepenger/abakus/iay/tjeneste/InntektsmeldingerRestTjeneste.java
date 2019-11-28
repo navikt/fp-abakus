@@ -4,6 +4,8 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREAT
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -87,9 +89,11 @@ public class InntektsmeldingerRestTjeneste {
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
         var ytelseType = new YtelseType(spesifikasjon.getYtelseType().getKode());
         var inntektsmeldinger = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, new YtelseType(ytelseType.getKode()));
-        var kobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType)
-            .orElseThrow(() -> new IllegalArgumentException("Fant ingen kobling for aktør: " + aktørId.getId() + "saksnummer: " + saksnummer.getVerdi() + " ytelse: " + ytelseType.getKode()));
-        InntektArbeidYtelseGrunnlag nyesteGrunnlag = iayTjeneste.hentAggregat(kobling.getKoblingReferanse());
+        var kobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType);
+        if (kobling.isEmpty()) {
+            return Response.ok(new InntektsmeldingerDto().medInntektsmeldinger(Collections.emptyList())).build();
+        }
+        InntektArbeidYtelseGrunnlag nyesteGrunnlag = iayTjeneste.hentAggregat(kobling.get().getKoblingReferanse());
         InntektsmeldingerDto inntektsmeldingerDto = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(inntektsmeldinger, nyesteGrunnlag);
         return Response.ok(inntektsmeldingerDto).build();
     }
