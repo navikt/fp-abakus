@@ -99,7 +99,7 @@ pipeline {
                     currentBuild.displayName = version + "*"
                     fpgithub.updateBuildStatus(githubRepoName, "pending", GIT_COMMIT_HASH_FULL)
 
-                    withMaven(mavenSettingsConfig: 'navMavenSettingsPkg', maven: 'maven-3.6.2') {
+                    withMaven(mavenSettingsConfig: 'navMavenSettingsPkg', maven: 'maven-3.6.2', mavenLocalRepo: '.repository') {
                         buildEnvironment = new buildEnvironment()
                         buildEnvironment.setEnv()
                         if (mvn.javaVersion() != null) {
