@@ -70,7 +70,7 @@ public class YtelseRegisterInnhenting {
         inntektArbeidYtelseAggregatBuilder.leggTilAktørYtelse(aktørYtelseBuilder);
     }
 
-    private void innhentFraYtelsesRegister(AktørId aktørId, Kobling kobling, InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder builder) {
+    void innhentFraYtelsesRegister(AktørId aktørId, Kobling kobling, InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder builder) {
         DatoIntervallEntitet opplysningsperiode = kobling.getOpplysningsperiode();
         List<VedtattYtelse> vedtatteYtelser = vedtakYtelseRepository.hentYtelserForIPeriode(aktørId, opplysningsperiode.getFomDato(), opplysningsperiode.getTomDato());
 
@@ -81,6 +81,7 @@ public class YtelseRegisterInnhenting {
                 .medStatus(vedtattYtelse.getStatus());
 
             mapAnvisninger(vedtattYtelse, ytelseBuilder);
+            builder.leggTilYtelse(ytelseBuilder);
         }
     }
 
