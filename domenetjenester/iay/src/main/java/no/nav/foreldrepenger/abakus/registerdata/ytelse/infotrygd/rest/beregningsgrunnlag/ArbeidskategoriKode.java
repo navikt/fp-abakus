@@ -31,6 +31,7 @@ public enum ArbeidskategoriKode {
     K25("25"),
     K26("26"),
     K27("27"),
+    K30("30"),
     K99("99");
 
     private final String kode;

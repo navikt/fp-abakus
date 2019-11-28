@@ -47,6 +47,7 @@ public abstract class YtelseBeregningsgrunnlagPeriodeYtelse extends YtelseBeregn
         Map.entry("25", Arbeidskategori.KOMBINASJON_ARBEIDSTAKER_OG_FRILANSER),
         Map.entry("26", Arbeidskategori.DAGMAMMA),
         Map.entry("27", Arbeidskategori.ARBEIDSTAKER),
+        Map.entry("30", Arbeidskategori.UGYLDIG),
         Map.entry("99", Arbeidskategori.UGYLDIG));
 
 
