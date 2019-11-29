@@ -88,7 +88,7 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
 
     @ManyToOne
     @JoinColumn(name = "informasjon_id", updatable = false, unique = true, nullable = false)
-    private ArbeidsforholdInformasjonEntitet informasjon;
+    private ArbeidsforholdInformasjon informasjon;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "arbeidsforholdOverstyring", cascade = CascadeType.PERSIST)
     private List<ArbeidsforholdOverstyrtePerioderEntitet> arbeidsforholdOverstyrtePerioder = new ArrayList<>();
@@ -128,7 +128,7 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
         return IndexKey.createKey(arbeidsgiver, arbeidsforholdRef);
     }
 
-    void setInformasjon(ArbeidsforholdInformasjonEntitet arbeidsforholdInformasjonEntitet) {
+    void setInformasjon(ArbeidsforholdInformasjon arbeidsforholdInformasjonEntitet) {
         this.informasjon = arbeidsforholdInformasjonEntitet;
     }
 
