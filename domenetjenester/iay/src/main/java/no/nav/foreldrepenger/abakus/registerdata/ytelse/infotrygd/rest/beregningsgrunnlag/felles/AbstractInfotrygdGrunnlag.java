@@ -40,7 +40,7 @@ public abstract class AbstractInfotrygdGrunnlag implements InfotrygdGrunnlag {
     public List<Grunnlag> hentGrunnlag(String fnr, LocalDate fom, LocalDate tom) {
         try {
             var request = new URIBuilder(uri)
-                    .addParameter("fodselNr", fnr)
+                    .addParameter("fnr", fnr)
                     .addParameter("fom", konverter(fom))
                     .addParameter("tom", konverter(tom)).build();
             LOG.trace("Slår opp grunnlag SVP fra {}", request);

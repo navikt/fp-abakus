@@ -14,7 +14,7 @@ import no.nav.vedtak.konfig.KonfigVerdi;
 @FPF
 public class InfotrygdFPGrunnlagFødsel extends AbstractInfotrygdGrunnlag {
 
-    private static final String DEFAULT_URI = "http://infotrygd-grunnlag-foreldrepenger.default/foreldrepenger/foedsel";
+    private static final String DEFAULT_URI = "http://infotrygd-foreldrepenger.default/grunnlag/foedsel";
 
     @Inject
     public InfotrygdFPGrunnlagFødsel(OidcRestClient restClient,
