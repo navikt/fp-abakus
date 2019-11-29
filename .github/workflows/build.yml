@@ -47,7 +47,7 @@ jobs:
 
       - name: Sette Docker- navn og tag
         env:
-          DOCKER_IMAGE: docker.pkg.github.com/${{ github.repository }}/fp-abakus
+          DOCKER_IMAGE: docker.pkg.github.com/${{ github.repository }}/fpabakus
         run: |
           echo $DOCKER_IMAGE > .docker_image
           echo "$(git log -1 --pretty='%ad' --date=format:'%Y%m%d%H%M%S')-$(echo $GITHUB_SHA | cut -c1-7)" > .docker_tag
@@ -59,3 +59,11 @@ jobs:
           docker push $(cat .docker_image):$(cat .docker_tag)
         env:
           GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+      - name: Deploye til dev
+        uses: navikt/deployment-cli/action@0.4.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          cluster: dev-fss
+          team: teamforeldrepenger
+          resources: .deploy/t4.yaml
