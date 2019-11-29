@@ -14,7 +14,7 @@ import no.nav.vedtak.konfig.KonfigVerdi;
 @FPA
 public class InfotrygdFPGrunnlagAdopsjon extends AbstractInfotrygdGrunnlag {
 
-    private static final String DEFAULT_URI = "http://infotrygd-grunnlag-foreldrepenger.default/foreldrepenger/adopsjon";
+    private static final String DEFAULT_URI = "http://infotrygd-foreldrepenger.default/grunnlag/adopsjon";
 
     @Inject
     public InfotrygdFPGrunnlagAdopsjon(OidcRestClient restClient,
