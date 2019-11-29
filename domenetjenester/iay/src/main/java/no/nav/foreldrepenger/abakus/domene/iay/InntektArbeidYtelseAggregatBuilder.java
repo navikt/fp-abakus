@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanseEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
@@ -32,11 +32,11 @@ import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
  */
 public class InntektArbeidYtelseAggregatBuilder {
 
-    private final InntektArbeidYtelseAggregatEntitet kladd;
+    private final InntektArbeidYtelseAggregat kladd;
     private final VersjonType versjon;
-    private final List<ArbeidsforholdReferanseEntitet> nyeInternArbeidsforholdReferanser = new ArrayList<>();
+    private final List<ArbeidsforholdReferanse> nyeInternArbeidsforholdReferanser = new ArrayList<>();
 
-    private InntektArbeidYtelseAggregatBuilder(InntektArbeidYtelseAggregatEntitet kladd, VersjonType versjon) {
+    private InntektArbeidYtelseAggregatBuilder(InntektArbeidYtelseAggregat kladd, VersjonType versjon) {
         this.kladd = kladd;
         this.versjon = versjon;
     }
@@ -45,7 +45,7 @@ public class InntektArbeidYtelseAggregatBuilder {
         return builderFor(oppdatere, UUID.randomUUID(), LocalDateTime.now(), versjon);
     }
 
-    public static InntektArbeidYtelseAggregatBuilder pekeTil(InntektArbeidYtelseAggregatEntitet oppdatere, VersjonType versjon) {
+    public static InntektArbeidYtelseAggregatBuilder pekeTil(InntektArbeidYtelseAggregat oppdatere, VersjonType versjon) {
         Objects.requireNonNull(oppdatere);
         return new InntektArbeidYtelseAggregatBuilder(oppdatere, versjon);
     }
@@ -53,8 +53,8 @@ public class InntektArbeidYtelseAggregatBuilder {
     public static InntektArbeidYtelseAggregatBuilder builderFor(Optional<InntektArbeidYtelseAggregat> kopierDataFra,
                                                                 UUID angittReferanse, LocalDateTime angittTidspunkt, VersjonType versjon) {
         return kopierDataFra
-            .map(kopier -> new InntektArbeidYtelseAggregatBuilder(new InntektArbeidYtelseAggregatEntitet(angittReferanse, angittTidspunkt, kopier), versjon))
-            .orElseGet(() -> new InntektArbeidYtelseAggregatBuilder(new InntektArbeidYtelseAggregatEntitet(angittReferanse, angittTidspunkt), versjon));
+            .map(kopier -> new InntektArbeidYtelseAggregatBuilder(new InntektArbeidYtelseAggregat(angittReferanse, angittTidspunkt, kopier), versjon))
+            .orElseGet(() -> new InntektArbeidYtelseAggregatBuilder(new InntektArbeidYtelseAggregat(angittReferanse, angittTidspunkt), versjon));
     }
 
     /**
@@ -103,7 +103,7 @@ public class InntektArbeidYtelseAggregatBuilder {
     }
 
     public void medNyInternArbeidsforholdRef(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef nyRef, EksternArbeidsforholdRef eksternReferanse) {
-        nyeInternArbeidsforholdReferanser.add(new ArbeidsforholdReferanseEntitet(arbeidsgiver, nyRef, eksternReferanse));
+        nyeInternArbeidsforholdReferanser.add(new ArbeidsforholdReferanse(arbeidsgiver, nyRef, eksternReferanse));
     }
 
     public InternArbeidsforholdRef medNyInternArbeidsforholdRef(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef eksternReferanse) {
@@ -111,11 +111,11 @@ public class InntektArbeidYtelseAggregatBuilder {
             return InternArbeidsforholdRef.nullRef();
         }
         InternArbeidsforholdRef nyRef = InternArbeidsforholdRef.nyRef();
-        nyeInternArbeidsforholdReferanser.add(new ArbeidsforholdReferanseEntitet(arbeidsgiver, nyRef, eksternReferanse));
+        nyeInternArbeidsforholdReferanser.add(new ArbeidsforholdReferanse(arbeidsgiver, nyRef, eksternReferanse));
         return nyRef;
     }
 
-    public List<ArbeidsforholdReferanseEntitet> getNyeInternArbeidsforholdReferanser() {
+    public List<ArbeidsforholdReferanse> getNyeInternArbeidsforholdReferanser() {
         return nyeInternArbeidsforholdReferanser;
     }
 
