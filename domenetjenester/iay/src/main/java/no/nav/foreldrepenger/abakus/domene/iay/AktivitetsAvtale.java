@@ -2,76 +2,274 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.Version;
+
+import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
+import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.AntallTimer;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
+import no.nav.vedtak.konfig.Tid;
 
-public interface AktivitetsAvtale {
+@Table(name = "IAY_AKTIVITETS_AVTALE")
+@Entity(name = "AktivitetsAvtale")
+public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_AKTIVITETS_AVTALE")
+    private Long id;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "yrkesaktivitet_id", nullable = false, updatable = false, unique = true)
+    private YrkesaktivitetEntitet yrkesaktivitet;
 
     /**
-     * For timelønnede så vil antallet timer i arbeidsavtalen være satt her
-     * @return antall timer
-     *
+     * TODO (FC): Se om vi kan bli kvitt antallTimer. Brukes bare til å sjekke om det finnes verdi i {@link #erAnsettelsesPeriode()}.
      */
-    AntallTimer getAntallTimer();
+    @DiffIgnore
+    @Embedded
+    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "antall_timer")))
+    private AntallTimer antallTimer;
 
     /**
-     * Antall timer som tilsvarer fulltid (f.eks 40 timer)
-     * @return antall timer
+     * TODO (FC): Se om vi kan bli kvitt antallTimerFulltid. Brukes bare til å sjekke om det finnes verdi i {@link #erAnsettelsesPeriode()}.
      */
-    AntallTimer getAntallTimerFulltid();
+    @DiffIgnore
+    @Embedded
+    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "antall_timer_fulltid")))
+    private AntallTimer antallTimerFulltid;
+
+    @ChangeTracked
+    @Embedded
+    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "prosentsats")))
+    private Stillingsprosent prosentsats;
+
+    @Column(name = "beskrivelse")
+    private String beskrivelse;
+
+    @Embedded
+    @ChangeTracked
+    private DatoIntervallEntitet periode;
+
+    @ChangeTracked
+    @Column(name = "siste_loennsendringsdato")
+    private LocalDate sisteLønnsendringsdato;
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
+
+    /**
+     * Setter en periode brukt til overstyring av angitt periode (avledet fra saksbehandlers vurderinger). Benyttes kun transient (ved
+     * filtrering av modellen)
+     */
+    @Transient
+    private DatoIntervallEntitet overstyrtPeriode;
+
+    AktivitetsAvtale() {
+        // hibernate
+    }
+
+    /**
+     * Deep copy ctor
+     */
+    AktivitetsAvtale(AktivitetsAvtale aktivitetsAvtale) {
+        this.prosentsats = aktivitetsAvtale.getProsentsats();
+        this.beskrivelse = aktivitetsAvtale.getBeskrivelse();
+        this.sisteLønnsendringsdato = aktivitetsAvtale.getSisteLønnsendringsdato();
+        this.periode = aktivitetsAvtale.getPeriodeUtenOverstyring();
+    }
+
+    public AktivitetsAvtale(AktivitetsAvtale avtale, DatoIntervallEntitet overstyrtPeriode) {
+        this(avtale);
+        this.overstyrtPeriode = overstyrtPeriode;
+    }
+
+    @Override
+    public String getIndexKey() {
+        return IndexKey.createKey(periode, sisteLønnsendringsdato);
+    }
 
     /**
      * Avtalt prosentsats i avtalen
      *
      * @return prosent
      */
-    Stillingsprosent getProsentsats();
+    public Stillingsprosent getProsentsats() {
+        return prosentsats;
+    }
+
+    void setProsentsats(Stillingsprosent prosentsats) {
+        this.prosentsats = prosentsats;
+    }
+
+    /** Returner {@link #getProsentsats()} (skalert) eller null. */
+    public BigDecimal getProsentsatsVerdi() {
+        return prosentsats == null ? null : prosentsats.getVerdi();
+    }
 
     /**
-     * Hvorvidt aktivitetsavtalen har en overstyrt periode eller ikke.
+     * For timelønnede så vil antallet timer i arbeidsavtalen være satt her
+     * 
+     * @return antall timer
      *
-     * @return boolean, true hvis overstyrt, false hvis ikke.
      */
-    boolean erOverstyrtPeriode();
+    public AntallTimer getAntallTimer() {
+        return antallTimer;
+    }
+
+    void setAntallTimer(AntallTimer antallTimer) {
+        this.antallTimer = antallTimer;
+    }
+
+    /**
+     * Antall timer som tilsvarer fulltid (f.eks 40 timer)
+     * 
+     * @return antall timer
+     */
+    public AntallTimer getAntallTimerFulltid() {
+        return antallTimerFulltid;
+    }
+
+    void setAntallTimerFulltid(AntallTimer antallTimerFulltid) {
+        this.antallTimerFulltid = antallTimerFulltid;
+    }
 
     /**
      * Periode
      *
      * @return hele perioden
      */
-    DatoIntervallEntitet getPeriode();
+    public DatoIntervallEntitet getPeriode() {
+        return erOverstyrtPeriode() ? overstyrtPeriode : periode;
+    }
+
+    void setPeriode(DatoIntervallEntitet periode) {
+        this.periode = periode;
+    }
 
     /**
      * Perioden til aktivitetsavtalen.
      * Tar Ikke hensyn til overstyring gjort i 5080.
      *
-     * @return Hele perioden, tar Ikke hensyn til overstyringer.
+     * Henter kun den originale perioden, ikke den overstyrte perioden.
+     * Bruk heller {@link #getPeriode} i de fleste tilfeller
+     *
+     * @return Hele den originale perioden, uten overstyringer.
      */
-    DatoIntervallEntitet getPeriodeUtenOverstyring();
+    public DatoIntervallEntitet getPeriodeUtenOverstyring() {
+        return periode;
+    }
+
+    /**
+     * Hvorvidt aktivitetsavtalen har en overstyrt periode eller ikke.
+     *
+     * @return boolean, true hvis overstyrt, false hvis ikke.
+     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient overstyrt periode. Legg heller til egen Decorator
+     *             klasse som filtrerer output fra entitet
+     */
+    @Deprecated
+    public boolean erOverstyrtPeriode() {
+        return overstyrtPeriode != null;
+    }
 
     /**
      * Siste lønnsendingsdato
      *
      * @return hele perioden
      */
-    LocalDate getSisteLønnsendringsdato();
+    public LocalDate getSisteLønnsendringsdato() {
+        return sisteLønnsendringsdato;
+    }
 
-    boolean matcherPeriode(DatoIntervallEntitet aktivitetsAvtale);
+    public boolean matcherPeriode(DatoIntervallEntitet aktivitetsAvtale) {
+        return getPeriode().equals(aktivitetsAvtale);
+    }
 
     /**
      * Er avtallen løpende
      *
      * @return true/false
      */
-    boolean getErLøpende();
+    public boolean getErLøpende() {
+        return Tid.TIDENES_ENDE.equals(getPeriode().getTomDato());
+    }
 
-    String getBeskrivelse();
+    public String getBeskrivelse() {
+        return beskrivelse;
+    }
 
-    boolean erAnsettelsesPeriode();
+    void setBeskrivelse(String beskrivelse) {
+        this.beskrivelse = beskrivelse;
+    }
 
-    /** Returner {@link #getProsentsats()} (skalert) eller null.*/
-    BigDecimal getProsentsatsVerdi();
+    void setYrkesaktivitet(YrkesaktivitetEntitet yrkesaktivitet) {
+        this.yrkesaktivitet = yrkesaktivitet;
+    }
+
+    void sisteLønnsendringsdato(LocalDate sisteLønnsendringsdato) {
+        this.sisteLønnsendringsdato = sisteLønnsendringsdato;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || !(o instanceof AktivitetsAvtale))
+            return false;
+        AktivitetsAvtale that = (AktivitetsAvtale) o;
+        return Objects.equals(antallTimer, that.antallTimer) &&
+            Objects.equals(antallTimerFulltid, that.antallTimerFulltid) &&
+            Objects.equals(beskrivelse, that.beskrivelse) &&
+            Objects.equals(prosentsats, that.prosentsats) &&
+            Objects.equals(periode, that.periode) &&
+            Objects.equals(overstyrtPeriode, that.overstyrtPeriode) &&
+            Objects.equals(sisteLønnsendringsdato, that.sisteLønnsendringsdato);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(antallTimer, antallTimerFulltid, beskrivelse, prosentsats, periode, overstyrtPeriode, sisteLønnsendringsdato);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "<" + //$NON-NLS-1$
+            "antallTimer=" + antallTimer + //$NON-NLS-1$
+            ", antallTimerFulltid=" + antallTimerFulltid + //$NON-NLS-1$
+            ", periode=" + periode + //$NON-NLS-1$
+            ", overstyrtPeriode=" + overstyrtPeriode + //$NON-NLS-1$
+            ", prosentsats=" + prosentsats + //$NON-NLS-1$
+            ", beskrivelse=" + beskrivelse + //$NON-NLS-1$
+            ", sisteLønnsendringsdato=" + sisteLønnsendringsdato + //$NON-NLS-1$
+            '>';
+    }
+
+    boolean hasValues() {
+        return prosentsats != null || periode != null;
+    }
+
+    public boolean erAnsettelsesPeriode() {
+        return (antallTimer == null || antallTimer.getVerdi() == null)
+            && (antallTimerFulltid == null || antallTimerFulltid.getVerdi() == null)
+            && (prosentsats == null || prosentsats.erNulltall())
+            && sisteLønnsendringsdato == null;
+    }
+
 }

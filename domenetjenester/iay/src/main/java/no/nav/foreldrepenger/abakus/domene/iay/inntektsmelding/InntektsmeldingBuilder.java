@@ -17,16 +17,20 @@ import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 import no.nav.vedtak.konfig.Tid;
 
 public class InntektsmeldingBuilder {
-    private final InntektsmeldingEntitet kladd;
+    private final Inntektsmelding kladd;
     private boolean erBygget;
     private EksternArbeidsforholdRef eksternArbeidsforholdId;
 
-    InntektsmeldingBuilder(InntektsmeldingEntitet kladd) {
+    InntektsmeldingBuilder(Inntektsmelding kladd) {
         this.kladd = kladd;
     }
 
     public static InntektsmeldingBuilder builder() {
-        return new InntektsmeldingBuilder(new InntektsmeldingEntitet());
+        return new InntektsmeldingBuilder(new Inntektsmelding());
+    }
+    
+    public static InntektsmeldingBuilder kopi(Inntektsmelding inntektsmelding) {
+        return new InntektsmeldingBuilder(new Inntektsmelding(inntektsmelding));
     }
 
     public InntektsmeldingBuilder medArbeidsgiver(Arbeidsgiver arbeidsgiver) {
@@ -164,7 +168,11 @@ public class InntektsmeldingBuilder {
     }
 
     public Inntektsmelding build() {
-        final var internRef = getInternArbeidsforholdRef();
+        Objects.requireNonNull(kladd.getArbeidsgiver(), "arbeidsgiver mangler");
+        Objects.requireNonNull(kladd.getInnsendingstidspunkt(), "innsendingstidspunkt mangler");
+        Objects.requireNonNull(kladd.getJournalpostId(), "journalpostId");
+        
+        var internRef = getInternArbeidsforholdRef();
         if (internRef.isPresent()) {
             // magic - hvis har ekstern referanse må også intern referanse være spesifikk
             if ((eksternArbeidsforholdId != null && eksternArbeidsforholdId.gjelderForSpesifiktArbeidsforhold()) && internRef.get().getReferanse() == null) {

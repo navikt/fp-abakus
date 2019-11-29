@@ -39,19 +39,19 @@
     <sequence-generator name="SEQ_AKTIVITETS_AVTALE" allocation-size="50" sequence-name="SEQ_AKTIVITETS_AVTALE" />
 
     <!-- InntektArbeidYtelser aggregat og grunnlag -->
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonEntitet" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyring" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanseEntitet" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanse" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtaleEntitet" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtale" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.OffentligYtelseType" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.PensjonTrygdType" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.NæringsinntektType" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.AktørArbeidEntitet" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.AktørInntektEntitet" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.AktørYtelseEntitet" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagEntitet" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatEntitet" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.InntektspostEntitet" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.PermisjonEntitet" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.InntektEntitet" />
@@ -67,8 +67,8 @@
     <entity class="no.nav.foreldrepenger.abakus.domene.virksomhet.Organisasjonstype" />
 
     <!-- Inntektsmelding -->
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregatEntitet" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingEntitet" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.GraderingEntitet" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelseEntitet" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelseType" />
