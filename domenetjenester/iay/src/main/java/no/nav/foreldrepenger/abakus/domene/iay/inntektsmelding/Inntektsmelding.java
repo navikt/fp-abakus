@@ -415,7 +415,7 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "InntektsmeldingEntitet{" +
+        return getClass().getSimpleName() + "<" +
             "id=" + id +
             ", virksomhet=" + arbeidsgiver +
             ", arbeidsforholdId='" + arbeidsforholdRef + '\'' +
@@ -427,7 +427,7 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
             ", refusjonOpphører=" + refusjonOpphører +
             ", innsendingsårsak= " + innsendingsårsak +
             ", innsendingstidspunkt= " + innsendingstidspunkt +
-            '}';
+            '>';
     }
 
 }

@@ -251,6 +251,11 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
     public void oppdaterBuilderMedNyeInntektsmeldinger(ArbeidsforholdInformasjonBuilder informasjonBuilder,
                                                        List<Inntektsmelding> nyeInntektsmeldinger,
                                                        InntektArbeidYtelseGrunnlagBuilder targetBuilder) {
+        
+        if(nyeInntektsmeldinger.isEmpty()) {
+            return; // quick exit, ingenting nytt å gjøre her
+        }
+        
         final InntektsmeldingAggregat inntektsmeldinger = targetBuilder.getInntektsmeldinger();
         for (Inntektsmelding inntektsmelding : nyeInntektsmeldinger) {
             // Kommet inn inntektsmelding på arbeidsforhold som vi har gått videre med uten inntektsmelding?
@@ -260,7 +265,7 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
             // Gjelder tilfeller der det først har kommet inn inntektsmelding uten id, også kommer det inn en inntektsmelding med spesifik id
             // nullstiller da valg gjort i 5080 slik at saksbehandler må ta stilling til aksjonspunktet på nytt.
             informasjonBuilder.utledeArbeidsgiverSomMåTilbakestilles(inntektsmelding).ifPresent(informasjonBuilder::fjernOverstyringerSomGjelder);
-            inntektsmeldinger.leggTil(inntektsmelding);
+            inntektsmeldinger.leggTilEllerErstatt(inntektsmelding);
         }
         targetBuilder.setInntektsmeldinger(inntektsmeldinger);
         targetBuilder.medInformasjon(informasjonBuilder.build());

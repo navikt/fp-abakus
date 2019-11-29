@@ -168,7 +168,11 @@ public class InntektsmeldingBuilder {
     }
 
     public Inntektsmelding build() {
-        final var internRef = getInternArbeidsforholdRef();
+        Objects.requireNonNull(kladd.getArbeidsgiver(), "arbeidsgiver mangler");
+        Objects.requireNonNull(kladd.getInnsendingstidspunkt(), "innsendingstidspunkt mangler");
+        Objects.requireNonNull(kladd.getJournalpostId(), "journalpostId");
+        
+        var internRef = getInternArbeidsforholdRef();
         if (internRef.isPresent()) {
             // magic - hvis har ekstern referanse må også intern referanse være spesifikk
             if ((eksternArbeidsforholdId != null && eksternArbeidsforholdId.gjelderForSpesifiktArbeidsforhold()) && internRef.get().getReferanse() == null) {

@@ -111,7 +111,7 @@ public class InntektsmeldingAggregat extends BaseEntitet {
      * Den persisterte inntektsmeldingen kan være av nyere dato, bestemmes av
      * innsendingstidspunkt på inntektsmeldingen.
      */
-    public void leggTil(Inntektsmelding inntektsmelding) {
+    public void leggTilEllerErstatt(Inntektsmelding inntektsmelding) {
 
         boolean fjernet = inntektsmeldinger.removeIf(it -> skalFjerneInntektsmelding(it, inntektsmelding));
         inntektsmeldinger.stream().filter(it -> it.gjelderSammeArbeidsforhold(inntektsmelding) && !fjernet).findFirst().ifPresent(e -> {

@@ -1,10 +1,8 @@
 package no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -44,7 +42,7 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
 
     @ChangeTracked
     @OneToMany(mappedBy = "informasjon")
-    private List<ArbeidsforholdOverstyring> overstyringer = new ArrayList<>();
+    private Set<ArbeidsforholdOverstyring> overstyringer = new LinkedHashSet<>();
 
     @Version
     @Column(name = "versjon", nullable = false)
@@ -75,8 +73,8 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
         return Collections.unmodifiableSet(this.referanser);
     }
 
-    public List<ArbeidsforholdOverstyring> getOverstyringer() {
-        return Collections.unmodifiableList(this.overstyringer);
+    public Collection<ArbeidsforholdOverstyring> getOverstyringer() {
+        return Collections.unmodifiableSet(this.overstyringer);
     }
 
     public Optional<InternArbeidsforholdRef> finnForEkstern(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef ref) {

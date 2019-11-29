@@ -261,7 +261,7 @@ public class YrkesaktivitetFilter {
         if (arbeidsforholdOverstyringer == null) {
             return Optional.empty(); // ikke initialisert, så kan ikke ha overstyringer
         }
-        List<ArbeidsforholdOverstyring> overstyringer = arbeidsforholdOverstyringer.getOverstyringer();
+        Collection<ArbeidsforholdOverstyring> overstyringer = arbeidsforholdOverstyringer.getOverstyringer();
         if (overstyringer.isEmpty()) {
             return Optional.empty();
         }
