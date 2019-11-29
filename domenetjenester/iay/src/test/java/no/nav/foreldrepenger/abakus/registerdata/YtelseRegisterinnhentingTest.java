@@ -33,7 +33,7 @@ public class YtelseRegisterinnhentingTest {
 
     private InnhentingSamletTjeneste samletTjeneste = mock(InnhentingSamletTjeneste.class);
 
-    private VedtakYtelseRepository vedtakYtelseRepository = mock(VedtakYtelseRepository.class);;
+    private VedtakYtelseRepository vedtakYtelseRepository = mock(VedtakYtelseRepository.class);
 
     private YtelseRegisterInnhenting ytelseRegisterInnhenting;
 

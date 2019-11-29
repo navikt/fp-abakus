@@ -221,13 +221,17 @@ public class GrunnlagRestTjeneste {
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response kopierGrunnlag(@NotNull @Valid KopierGrunnlagRequestAbac request) {
-        oppdaterKobling(request);
-        iayTjeneste.kopierGrunnlagFraKoblingTilKobling(new KoblingReferanse(request.getGammelReferanse()), new KoblingReferanse(request.getNyReferanse()));
+        var ref = new KoblingReferanse(request.getNyReferanse());
+        var koblingLås = koblingTjeneste.taSkrivesLås(ref); // alltid ta lås før skrive operasjoner
+        
+        var kobling = oppdaterKobling(request);
+        iayTjeneste.kopierGrunnlagFraEksisterendeBehandling(kobling.getYtelseType(), kobling.getAktørId(), new Saksnummer(request.getSaksnummer()), new KoblingReferanse(request.getGammelReferanse()), new KoblingReferanse(request.getNyReferanse()));
 
+        koblingTjeneste.oppdaterLåsVersjon(koblingLås);
         return Response.ok().build();
     }
 
-    private void oppdaterKobling(@NotNull @Valid KopierGrunnlagRequest dto) {
+    private Kobling oppdaterKobling(@NotNull @Valid KopierGrunnlagRequest dto) {
         KoblingReferanse referanse = new KoblingReferanse(dto.getNyReferanse());
         Optional<Kobling> koblingOpt = koblingTjeneste.hentFor(referanse);
         Kobling kobling;
@@ -260,6 +264,7 @@ public class GrunnlagRestTjeneste {
         }
         // Diff & log endringer
         koblingTjeneste.lagre(kobling);
+        return kobling;
     }
 
     private KoblingReferanse getKoblingReferanse(AktørId aktørId, InntektArbeidYtelseGrunnlagRequest spesifikasjon) {
