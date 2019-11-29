@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -106,6 +107,12 @@ public class InntektArbeidYtelseTjeneste {
         return repository.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
     }
 
+
+
+    public Map<ArbeidsforholdInformasjon, Set<Inntektsmelding>> hentArbeidsforholdinfoInntektsmeldingerMapFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
+        return repository.hentArbeidsforholdInfoInntektsmeldingerMapFor(aktørId, saksnummer, ytelseType);
+    };
+
     /**
      * Hent grunnlag etterspurt (tar hensyn til GrunnlagVersjon) for angitt aktørId, saksnummer, ytelsetype.
      * Skipper mellomliggende versjoner hvis ikke direkte spurt om.
@@ -187,7 +194,7 @@ public class InntektArbeidYtelseTjeneste {
 
     /**
      * Kopier grunnlag fra en behandling til en annen.
-     * 
+     *
      * @param ytelseType
      */
     public void kopierGrunnlagFraEksisterendeBehandling(YtelseType ytelseType, AktørId aktørId, Saksnummer saksnummer, KoblingReferanse fraKobling,
@@ -204,7 +211,7 @@ public class InntektArbeidYtelseTjeneste {
      * disse kopieres til den angitte behandlingen. Dette trengs i tilfeller der en behandling har fått en ny
      * inntektsmelding, blitt henlagt, og en revurdering er opprettet basert på en tidligere behandling med vedtak
      * som ikke inkluderer en eller flere inntektsmeldinger som er mottatt etter vedtaket, men før revurderingen.
-     * 
+     *
      * @param arbeidsforholdInformasjon
      * @return
      */

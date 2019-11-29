@@ -1,8 +1,10 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -67,27 +69,21 @@ public class MapInntektsmeldinger {
             Comparator.nullsLast(Comparator.naturalOrder()));
 
 
-    public static InntektsmeldingerDto mapUnikeInntektsmeldingerFraGrunnlag(Set<Inntektsmelding> inntektsmeldinger, InntektArbeidYtelseGrunnlag nyesteGrunnlag) {
-        List<InntektsmeldingDto> inntektsmeldingerDtoList = mapUnikeInntektsmeldinger(inntektsmeldinger, nyesteGrunnlag);
+    public static InntektsmeldingerDto mapUnikeInntektsmeldingerFraGrunnlag(Map<ArbeidsforholdInformasjon, Set<Inntektsmelding>> inntektsmeldingerMap) {
+        List<InntektsmeldingDto> inntektsmeldingerDtoList = mapUnikeInntektsmeldinger(inntektsmeldingerMap);
         InntektsmeldingerDto inntektsmeldingerDto = new InntektsmeldingerDto();
         inntektsmeldingerDto.medInntektsmeldinger(inntektsmeldingerDtoList);
         return inntektsmeldingerDto;
     }
 
-    private static List<InntektsmeldingDto> mapUnikeInntektsmeldinger(Set<Inntektsmelding> inntektsmeldinger, InntektArbeidYtelseGrunnlag nyesteGrunnlag) {
-        return inntektsmeldinger.stream()
-            .map(im -> {
-                var mapper = new MapInntektsmeldinger.MapTilDto(getArbeidsforholdInformasjon(nyesteGrunnlag));
-                return mapper.mapInntektsmelding(im);
-            }).collect(Collectors.toList());
+    private static List<InntektsmeldingDto> mapUnikeInntektsmeldinger(Map<ArbeidsforholdInformasjon, Set<Inntektsmelding>> inntektsmeldingerMap) {
+        List<InntektsmeldingDto> ims = new ArrayList<>();
+        inntektsmeldingerMap.forEach((key, value) -> {
+            var mapper = new MapTilDto(key);
+            ims.addAll(value.stream().map(mapper::mapInntektsmelding).collect(Collectors.toList()));
+        });
+        return ims;
     }
-
-    private static ArbeidsforholdInformasjon getArbeidsforholdInformasjon(InntektArbeidYtelseGrunnlag grunnlag) {
-        return grunnlag.getArbeidsforholdInformasjon()
-            .orElseThrow(() -> new IllegalStateException("Mangler ArbeidsforholdInformasjon i grunnlag (påkrevd her): " + grunnlag.getGrunnlagReferanse()));
-    }
-
-
 
     public static class MapTilDto {
 
