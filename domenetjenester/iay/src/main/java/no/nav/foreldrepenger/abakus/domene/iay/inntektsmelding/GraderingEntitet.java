@@ -33,7 +33,7 @@ public class GraderingEntitet extends BaseEntitet implements Gradering, IndexKey
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "inntektsmelding_id", nullable = false, updatable = false)
-    private InntektsmeldingEntitet inntektsmelding;
+    private Inntektsmelding inntektsmelding;
 
     @Embedded
     @ChangeTracked
@@ -69,7 +69,7 @@ public class GraderingEntitet extends BaseEntitet implements Gradering, IndexKey
         return IndexKey.createKey(periode);
     }
 
-    void setInntektsmelding(InntektsmeldingEntitet inntektsmelding) {
+    void setInntektsmelding(Inntektsmelding inntektsmelding) {
         this.inntektsmelding = inntektsmelding;
     }
 

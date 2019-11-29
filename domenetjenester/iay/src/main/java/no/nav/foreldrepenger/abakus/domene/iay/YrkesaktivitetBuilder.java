@@ -85,7 +85,7 @@ public class YrkesaktivitetBuilder {
 
     public YrkesaktivitetBuilder leggTilAktivitetsAvtale(AktivitetsAvtaleBuilder aktivitetsAvtale) {
         if (!aktivitetsAvtale.isOppdatering()) {
-            AktivitetsAvtaleEntitet aktivitetsAvtaleEntitet = (AktivitetsAvtaleEntitet) aktivitetsAvtale.build();
+            AktivitetsAvtale aktivitetsAvtaleEntitet = aktivitetsAvtale.build();
             kladd.leggTilAktivitetsAvtale(aktivitetsAvtaleEntitet);
         }
         return this;

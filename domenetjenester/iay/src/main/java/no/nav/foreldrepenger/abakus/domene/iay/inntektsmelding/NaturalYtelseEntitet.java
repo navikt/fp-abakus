@@ -37,7 +37,7 @@ public class NaturalYtelseEntitet extends BaseEntitet implements NaturalYtelse, 
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "inntektsmelding_id", nullable = false, updatable = false)
-    private InntektsmeldingEntitet inntektsmelding;
+    private Inntektsmelding inntektsmelding;
 
     @Embedded
     @ChangeTracked
@@ -83,7 +83,7 @@ public class NaturalYtelseEntitet extends BaseEntitet implements NaturalYtelse, 
         return IndexKey.createKey(type, periode);
     }
 
-    void setInntektsmelding(InntektsmeldingEntitet inntektsmelding) {
+    void setInntektsmelding(Inntektsmelding inntektsmelding) {
         this.inntektsmelding = inntektsmelding;
     }
 
