@@ -62,19 +62,12 @@ pipeline {
 
                     if (env.BRANCH_NAME == 'master') {
                         sh "git fetch"
-                        latestTag = sh(script: "git describe --tags", returnStdout: true)?.trim()
-                        latestTagCommitHash = sh(script: "git describe \$(git rev-list --tags --max-count=1) | sed 's/.*\\_//'", returnStdout: true)?.trim()
-
-                        echo "GIT_COMMIT_HASH: $GIT_COMMIT_HASH, latestTagCommitHash: $latestTagCommitHash"
                         def deployVersjon = params.deployVersjon
                         def deployGivenVersion = (deployVersjon != null && !"".equals(deployVersjon))
-                        skipBuild = deployGivenVersion || GIT_COMMIT_HASH.equals(latestTagCommitHash)
+                        skipBuild = deployGivenVersion
                         if (skipBuild && deployGivenVersion) {
                             version = deployVersjon
                             echo "Version supplied, skipping build and deploy declared version={$version}."
-                        } else if (skipBuild) {
-                            version = latestTag
-                            echo "No change detected in sourcecode, skipping build and deploy existing tag={$latestTag}."
                         }
                         currentBuild.displayName = version
                     }
@@ -82,75 +75,14 @@ pipeline {
             }
         }
 
-        stage('Set version') {
-            steps {
-                sh "mvn --version"
-                //sh "echo $version > VERSION"
-            }
-        }
-
-        stage('Build') {
-            when {
-                expression { return !skipBuild }
-            }
-            steps {
-                script {
-                    echo "Building $version"
-                    currentBuild.displayName = version + "*"
-                    fpgithub.updateBuildStatus(githubRepoName, "pending", GIT_COMMIT_HASH_FULL)
-
-                    withMaven(mavenSettingsConfig: 'navMavenSettingsPkg', maven: 'maven-3.6.2', mavenLocalRepo: '.repository') {
-                        buildEnvironment = new buildEnvironment()
-                        buildEnvironment.setEnv()
-                        if (mvn.javaVersion() != null) {
-                            buildEnvironment.overrideJDK(mvn.javaVersion())
-                        }
-
-                        envs = sh(returnStdout: true, script: 'env | sort -h').trim()
-                        echo("envs: " + envs)
-
-                        sh "mvn -B -e -U -Dfile.encoding=UTF-8 -DinstallAtEnd=true -DdeployAtEnd=true -Dsha1= -Dchangelist= -Drevision=$version clean deploy"
-                        sh "docker build --pull -t $DOCKERREGISTRY/$ARTIFACTID:$version ."
-                        withCredentials([[$class          : 'UsernamePasswordMultiBinding',
-                                          credentialsId   : 'nexusUser',
-                                          usernameVariable: 'NEXUS_USERNAME',
-                                          passwordVariable: 'NEXUS_PASSWORD']]) {
-                            sh "docker login -u ${env.NEXUS_USERNAME} -p ${env.NEXUS_PASSWORD} ${DOCKERREGISTRY} && docker push ${DOCKERREGISTRY}/${ARTIFACTID}:${version}"
-                        }
-                    }
-                }
-            }
-            post {
-                success {
-                    script {
-                        fpgithub.updateBuildStatus(githubRepoName, "success", GIT_COMMIT_HASH_FULL)
-                    }
-                }
-                failure {
-                    script {
-                        fpgithub.updateBuildStatus(githubRepoName, "failure", GIT_COMMIT_HASH_FULL)
-                    }
-                }
-            }
-        }
-
-        stage('Tag master') {
-            when {
-                branch 'master'
-                expression { return !skipBuild }
-            }
-            steps {
-                sh "git tag $version -m $version"
-                sh "git push origin --tag"
-            }
-        }
         stage('Deploy') {
             when {
                 branch 'master'
+                expression { return (deployVersjon != null && !"".equals(deployVersjon)) }
             }
             steps {
                 script {
-                    def value = "s/RELEASE_VERSION/${version}/g"
+                    def value = "s/RELEASE_VERSION/${params.deployVersjon}/g"
                     sh "sed \'$value\' .deploy/${MILJO}.yaml > nais.yaml"
 
                     def naisNamespace
