@@ -6,12 +6,15 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -120,6 +123,36 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
         query.setParameter("ytelse", ytelseType);
         var inntektsmeldingSet = query.getResultList().stream().map(im -> im).collect(Collectors.toSet());
         return inntektsmeldingSet;
+    }
+
+    public Map<ArbeidsforholdInformasjon, Set<Inntektsmelding>> hentArbeidsforholdInfoInntektsmeldingerMapFor(AktørId aktørId,
+                                                             Saksnummer saksnummer,
+                                                             no.nav.foreldrepenger.abakus.kodeverk.YtelseType ytelseType) {
+
+        final TypedQuery<Object[]> query = entityManager.createQuery("SELECT DISTINCT(im), arbInf" +
+                " FROM InntektArbeidGrunnlag gr" +
+                " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
+                " JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id" + // NOSONAR
+                " JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id" + // NOSONAR
+                " JOIN ArbeidsforholdInformasjon arbInf on arbInf.id = gr.arbeidsforholdInformasjon.id" + // NOSONAR
+                " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId "// NOSONAR
+            ,Object[].class);
+        query.setParameter("aktørId", aktørId);
+        query.setParameter("ref", saksnummer);
+        query.setParameter("ytelse", ytelseType);
+
+        Map<ArbeidsforholdInformasjon, Set<Inntektsmelding>> arbInfoInntektsmeldingMap = new HashMap<>();
+        query.getResultList()
+            .forEach(res -> {
+                Inntektsmelding im = (Inntektsmelding) res[0];
+                ArbeidsforholdInformasjon arbInf = (ArbeidsforholdInformasjon) res[1];
+                if (arbInfoInntektsmeldingMap.containsKey(arbInf)) {
+                    arbInfoInntektsmeldingMap.get(arbInf).add(im);
+                } else {
+                    arbInfoInntektsmeldingMap.put(arbInf, Set.of(im));
+                }
+            });
+        return arbInfoInntektsmeldingMap;
     }
 
     public List<InntektArbeidYtelseGrunnlag> hentAlleInntektArbeidYtelseGrunnlagFor(AktørId aktørId,
@@ -251,11 +284,11 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
     public void oppdaterBuilderMedNyeInntektsmeldinger(ArbeidsforholdInformasjonBuilder informasjonBuilder,
                                                        List<Inntektsmelding> nyeInntektsmeldinger,
                                                        InntektArbeidYtelseGrunnlagBuilder targetBuilder) {
-        
+
         if(nyeInntektsmeldinger.isEmpty()) {
             return; // quick exit, ingenting nytt å gjøre her
         }
-        
+
         final InntektsmeldingAggregat inntektsmeldinger = targetBuilder.getInntektsmeldinger();
         for (Inntektsmelding inntektsmelding : nyeInntektsmeldinger) {
             // Kommet inn inntektsmelding på arbeidsforhold som vi har gått videre med uten inntektsmelding?

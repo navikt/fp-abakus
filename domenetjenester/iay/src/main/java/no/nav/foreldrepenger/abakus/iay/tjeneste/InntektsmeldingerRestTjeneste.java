@@ -88,13 +88,8 @@ public class InntektsmeldingerRestTjeneste {
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
         var ytelseType = new YtelseType(spesifikasjon.getYtelseType().getKode());
-        var inntektsmeldinger = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, new YtelseType(ytelseType.getKode()));
-        var kobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType);
-        if (kobling.isEmpty()) {
-            return Response.ok(new InntektsmeldingerDto().medInntektsmeldinger(Collections.emptyList())).build();
-        }
-        InntektArbeidYtelseGrunnlag nyesteGrunnlag = iayTjeneste.hentAggregat(kobling.get().getKoblingReferanse());
-        InntektsmeldingerDto inntektsmeldingerDto = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(inntektsmeldinger, nyesteGrunnlag);
+        var inntektsmeldingerMap = iayTjeneste.hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, new YtelseType(ytelseType.getKode()));
+        InntektsmeldingerDto inntektsmeldingerDto = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(inntektsmeldingerMap);
         return Response.ok(inntektsmeldingerDto).build();
     }
 
