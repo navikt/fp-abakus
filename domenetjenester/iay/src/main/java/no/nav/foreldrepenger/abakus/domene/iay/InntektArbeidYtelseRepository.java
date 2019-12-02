@@ -125,34 +125,32 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
         return inntektsmeldingSet;
     }
 
-    public Map<ArbeidsforholdInformasjon, Set<Inntektsmelding>> hentArbeidsforholdInfoInntektsmeldingerMapFor(AktørId aktørId,
+    public Map<Inntektsmelding, ArbeidsforholdInformasjon> hentArbeidsforholdInfoInntektsmeldingerMapFor(AktørId aktørId,
                                                              Saksnummer saksnummer,
                                                              no.nav.foreldrepenger.abakus.kodeverk.YtelseType ytelseType) {
 
-        final TypedQuery<Object[]> query = entityManager.createQuery("SELECT DISTINCT(im), arbInf" +
-                " FROM InntektArbeidGrunnlag gr" +
+        final TypedQuery<Object[]> query = entityManager.createQuery("SELECT im, arbInf" +
+                " FROM InntektArbeidGrunnlag gr" + // NOSONAR
                 " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
                 " JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id" + // NOSONAR
                 " JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id" + // NOSONAR
                 " JOIN ArbeidsforholdInformasjon arbInf on arbInf.id = gr.arbeidsforholdInformasjon.id" + // NOSONAR
-                " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId "// NOSONAR
+                " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId "
             ,Object[].class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("ref", saksnummer);
         query.setParameter("ytelse", ytelseType);
 
-        Map<ArbeidsforholdInformasjon, Set<Inntektsmelding>> arbInfoInntektsmeldingMap = new HashMap<>();
+        Map<Inntektsmelding, ArbeidsforholdInformasjon> inntektsmeldingArbinfoMap = new HashMap<>();
         query.getResultList()
             .forEach(res -> {
                 Inntektsmelding im = (Inntektsmelding) res[0];
                 ArbeidsforholdInformasjon arbInf = (ArbeidsforholdInformasjon) res[1];
-                if (arbInfoInntektsmeldingMap.containsKey(arbInf)) {
-                    arbInfoInntektsmeldingMap.get(arbInf).add(im);
-                } else {
-                    arbInfoInntektsmeldingMap.put(arbInf, Set.of(im));
+                if (!inntektsmeldingArbinfoMap.containsKey(im)) {
+                    inntektsmeldingArbinfoMap.put(im, arbInf);
                 }
             });
-        return arbInfoInntektsmeldingMap;
+        return inntektsmeldingArbinfoMap;
     }
 
     public List<InntektArbeidYtelseGrunnlag> hentAlleInntektArbeidYtelseGrunnlagFor(AktørId aktørId,

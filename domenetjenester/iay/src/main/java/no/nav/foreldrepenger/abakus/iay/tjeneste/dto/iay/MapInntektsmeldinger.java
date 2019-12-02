@@ -69,18 +69,18 @@ public class MapInntektsmeldinger {
             Comparator.nullsLast(Comparator.naturalOrder()));
 
 
-    public static InntektsmeldingerDto mapUnikeInntektsmeldingerFraGrunnlag(Map<ArbeidsforholdInformasjon, Set<Inntektsmelding>> inntektsmeldingerMap) {
+    public static InntektsmeldingerDto mapUnikeInntektsmeldingerFraGrunnlag(Map<Inntektsmelding, ArbeidsforholdInformasjon> inntektsmeldingerMap) {
         List<InntektsmeldingDto> inntektsmeldingerDtoList = mapUnikeInntektsmeldinger(inntektsmeldingerMap);
         InntektsmeldingerDto inntektsmeldingerDto = new InntektsmeldingerDto();
         inntektsmeldingerDto.medInntektsmeldinger(inntektsmeldingerDtoList);
         return inntektsmeldingerDto;
     }
 
-    private static List<InntektsmeldingDto> mapUnikeInntektsmeldinger(Map<ArbeidsforholdInformasjon, Set<Inntektsmelding>> inntektsmeldingerMap) {
+    private static List<InntektsmeldingDto> mapUnikeInntektsmeldinger(Map<Inntektsmelding, ArbeidsforholdInformasjon> inntektsmeldingerMap) {
         List<InntektsmeldingDto> ims = new ArrayList<>();
         inntektsmeldingerMap.forEach((key, value) -> {
-            var mapper = new MapTilDto(key);
-            ims.addAll(value.stream().map(mapper::mapInntektsmelding).collect(Collectors.toList()));
+            var mapper = new MapTilDto(value);
+            ims.add(mapper.mapInntektsmelding(key));
         });
         return ims;
     }
