@@ -42,7 +42,7 @@ public class AbstractInfotrygdSak implements InfotrygdSakTjeneste {
             LOG.info("Fpakakus infotrygd rest. Mappet saker {}", saker);
             return saker;
         } catch (Exception e) {
-            LOG.warn("Feil ved oppslag mot {}, returnerer ingen saker", uri, e);
+            LOG.info("Feil ved oppslag mot {}, returnerer ingen saker", uri, e);
             return emptyList();
         }
     }
