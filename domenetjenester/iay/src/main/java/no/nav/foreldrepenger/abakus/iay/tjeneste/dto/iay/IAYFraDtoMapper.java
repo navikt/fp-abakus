@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.VersjonType;
@@ -102,7 +102,7 @@ public class IAYFraDtoMapper {
         var register = dto.getRegister();
         if (register == null) return;
 
-        Optional<InntektArbeidYtelseAggregatEntitet> aggregatEntitet = iayTjeneste.hentIAYAggregatFor(register.getEksternReferanse());
+        Optional<InntektArbeidYtelseAggregat> aggregatEntitet = iayTjeneste.hentIAYAggregatFor(register.getEksternReferanse());
         if (aggregatEntitet.isPresent()) {
             InntektArbeidYtelseAggregatBuilder aggregatBuilder = InntektArbeidYtelseAggregatBuilder.pekeTil(aggregatEntitet.get(), VersjonType.REGISTER);
             builder.medData(aggregatBuilder);
@@ -126,7 +126,7 @@ public class IAYFraDtoMapper {
     private void mapSaksbehandlerDataTilBuilder(InntektArbeidYtelseGrunnlagDto dto, InntektArbeidYtelseGrunnlagBuilder builder) {
         var overstyrt = dto.getOverstyrt();
         if (overstyrt != null) {
-            Optional<InntektArbeidYtelseAggregatEntitet> aggregatEntitet = iayTjeneste.hentIAYAggregatFor(overstyrt.getEksternReferanse());
+            Optional<InntektArbeidYtelseAggregat> aggregatEntitet = iayTjeneste.hentIAYAggregatFor(overstyrt.getEksternReferanse());
             if (aggregatEntitet.isPresent()) {
                 var aggregatBuilder = InntektArbeidYtelseAggregatBuilder.pekeTil(aggregatEntitet.get(), VersjonType.SAKSBEHANDLET);
                 builder.medData(aggregatBuilder);

@@ -6,7 +6,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilde
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyringBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyrtePerioderEntitet;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanseEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.BekreftetPermisjonStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.typer.*;
@@ -57,11 +57,11 @@ class MapArbeidsforholdInformasjon {
             return builder;
         }
 
-        private ArbeidsforholdReferanseEntitet mapArbeidsforholdReferanse(ArbeidsforholdReferanseDto r) {
+        private ArbeidsforholdReferanse mapArbeidsforholdReferanse(ArbeidsforholdReferanseDto r) {
             var internRef = InternArbeidsforholdRef.ref(r.getArbeidsforholdReferanse().getAbakusReferanse());
             var eksternRef = EksternArbeidsforholdRef.ref(r.getArbeidsforholdReferanse().getEksternReferanse());
             var arbeidsgiver = mapArbeidsgiver(r.getArbeidsgiver());
-            return new ArbeidsforholdReferanseEntitet(arbeidsgiver, internRef, eksternRef);
+            return new ArbeidsforholdReferanse(arbeidsgiver, internRef, eksternRef);
         }
 
         private ArbeidsforholdOverstyringBuilder mapArbeidsforholdOverstyring(ArbeidsforholdOverstyringDto ov) {
@@ -165,7 +165,7 @@ class MapArbeidsforholdInformasjon {
             return new Periode(periode.getFomDato(), periode.getTomDato());
         }
 
-        private ArbeidsforholdReferanseDto mapArbeidsforholdReferanse(ArbeidsforholdReferanseEntitet ref) {
+        private ArbeidsforholdReferanseDto mapArbeidsforholdReferanse(ArbeidsforholdReferanse ref) {
             var arbeidsgiver = mapAktør(ref.getArbeidsgiver());
             var internReferanse = ref.getInternReferanse().getReferanse();
             var eksternReferanse = ref.getEksternReferanse().getReferanse();

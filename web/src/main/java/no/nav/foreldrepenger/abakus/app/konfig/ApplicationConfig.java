@@ -9,8 +9,8 @@ import java.util.stream.Stream;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
+import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
-import io.swagger.v3.oas.integration.GenericOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -53,7 +53,7 @@ public class ApplicationConfig extends Application {
                 .collect(Collectors.toSet()));
 
         try {
-            new GenericOpenApiContextBuilder()
+            new JaxrsOpenApiContextBuilder<>()
                 .openApiConfiguration(oasConfig)
                 .buildContext(true)
                 .read();
