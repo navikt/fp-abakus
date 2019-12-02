@@ -48,7 +48,7 @@ public abstract class AbstractInfotrygdGrunnlag implements InfotrygdGrunnlag {
             LOG.info("fpabacus infotrygd REST SVP fikk grunnlag {}", Arrays.toString(grunnlag));
             return Arrays.asList(grunnlag);
         } catch (Exception e) {
-            LOG.warn("Feil ved oppslag mot {}, returnerer ingen grunnlag", uri, e);
+            LOG.info("Feil ved oppslag mot {}, returnerer ingen grunnlag", uri, e);
             return emptyList();
         }
     }

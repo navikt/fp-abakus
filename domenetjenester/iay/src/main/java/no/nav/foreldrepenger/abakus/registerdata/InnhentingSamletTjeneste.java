@@ -105,11 +105,11 @@ public class InnhentingSamletTjeneste {
     }
 
     public List<InfotrygdYtelseGrunnlag> innhentRest(AktørId aktørId, Interval periode) {
-        if (unleash != null && unleash.isEnabled(REST_GJELDER, false)) {
+        //if (unleash != null && unleash.isEnabled(REST_GJELDER, true)) {
             var ident = getFnrFraAktørId(aktørId);
             return innhentingInfotrygdTjeneste.getInfotrygdYtelser(ident, periode);
-        }
-        return Collections.emptyList();
+        //}
+        //return Collections.emptyList();
     }
 
 
