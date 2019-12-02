@@ -16,8 +16,11 @@ import org.junit.Test;
 import no.nav.foreldrepenger.abakus.dbstoette.UnittestRepositoryRule;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyringBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingBuilder;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
@@ -28,6 +31,8 @@ import no.nav.foreldrepenger.abakus.kobling.repository.KoblingRepository;
 import no.nav.foreldrepenger.abakus.kobling.repository.LåsRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
@@ -65,6 +70,51 @@ public class MapInntektsmeldingerTest {
             .build();
         iayRepository.lagre(koblingReferanse, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(im));
         iayRepository.lagre(koblingReferanse2, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(im));
+
+        // Act
+        Map<ArbeidsforholdInformasjon, Set<Inntektsmelding>> alleIm = iayTjeneste.hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, foreldrepenger);
+        InntektsmeldingerDto inntektsmeldingerDto = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(alleIm);
+
+        // Assert
+        assertThat(inntektsmeldingerDto.getInntektsmeldinger().size()).isEqualTo(1);
+    }
+
+    @Test
+    public void skal_hente_alle_inntektsmeldinger_for_fagsak_uten_duplikater_med_flere_versjoner_av_arbeidsforholdInformasjon() {
+        // Arrange
+        Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
+        KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
+        KoblingReferanse koblingReferanse2 = new KoblingReferanse(UUID.randomUUID());
+        AktørId aktørId = new AktørId("1234123412341");
+        YtelseType foreldrepenger = YtelseType.FORELDREPENGER;
+        Kobling kobling1 = new Kobling(saksnummer, koblingReferanse, aktørId);
+        kobling1.setYtelseType(foreldrepenger);
+        Kobling kobling2 = new Kobling(saksnummer, koblingReferanse2, aktørId);
+        kobling2.setYtelseType(foreldrepenger);
+        koblingTjeneste.lagre(kobling1);
+        koblingTjeneste.lagre(kobling2);
+        UUID internArbeidsforholdRef = UUID.randomUUID();
+        Arbeidsgiver virksomhet = Arbeidsgiver.virksomhet(new OrgNummer("910909088"));
+        InternArbeidsforholdRef ref = InternArbeidsforholdRef.ref(internArbeidsforholdRef);
+        Inntektsmelding im = InntektsmeldingBuilder.builder()
+            .medArbeidsgiver(virksomhet)
+            .medArbeidsforholdId(ref)
+            .medBeløp(BigDecimal.TEN)
+            .medInnsendingstidspunkt(LocalDateTime.now())
+            .medMottattDato(LocalDate.now())
+            .medJournalpostId("journalpost_id")
+            .build();
+        EksternArbeidsforholdRef eksternRef = EksternArbeidsforholdRef.ref("EksternRef");
+        ArbeidsforholdInformasjonBuilder arbeidsforholdInfo1 = ArbeidsforholdInformasjonBuilder.builder(Optional.empty());
+        arbeidsforholdInfo1.leggTilNyReferanse(new ArbeidsforholdReferanse(virksomhet, ref, eksternRef));
+        iayRepository.lagre(koblingReferanse, arbeidsforholdInfo1, List.of(im));
+        ArbeidsforholdInformasjonBuilder arbeidsforholdInfo2 = ArbeidsforholdInformasjonBuilder.builder(Optional.empty())
+            .leggTil(ArbeidsforholdOverstyringBuilder.oppdatere(Optional.empty())
+                .medArbeidsforholdRef(ref)
+                .medArbeidsgiver(virksomhet)
+                .medHandling(ArbeidsforholdHandlingType.BASERT_PÅ_INNTEKTSMELDING));
+        arbeidsforholdInfo2.leggTilNyReferanse(new ArbeidsforholdReferanse(virksomhet, ref, eksternRef));
+        iayRepository.lagre(koblingReferanse2, arbeidsforholdInfo2, List.of(im));
 
         // Act
         Map<ArbeidsforholdInformasjon, Set<Inntektsmelding>> alleIm = iayTjeneste.hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, foreldrepenger);
