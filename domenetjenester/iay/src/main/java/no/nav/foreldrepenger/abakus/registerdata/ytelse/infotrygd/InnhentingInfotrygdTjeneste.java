@@ -70,6 +70,7 @@ public class InnhentingInfotrygdTjeneste {
             if (!mappedGrunnlag.isEmpty()) {
                 LOG.info("Infotrygd abacus mapped grunnlag {}", mappedGrunnlag.toString());
             }
+            return mappedGrunnlag;
         } catch (Exception e) {
             LOG.info("Infotrygd abacus ny mapper ukjent feil", e);
             return Collections.emptyList();
