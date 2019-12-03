@@ -80,7 +80,17 @@ public class YtelseBuilder {
     }
 
     public Ytelse build() {
+        verifiserTemaOgUnderkategori(ytelseEntitet.getRelatertYtelseType(), ytelseEntitet.getBehandlingsTema());
         return ytelseEntitet;
+    }
+
+    private void verifiserTemaOgUnderkategori(YtelseType relatertYtelseType, TemaUnderkategori behandlingsTema) {
+        if (YtelseType.PÅRØRENDESYKDOM.equals(relatertYtelseType)) {
+            // Må ha tema underkategori når ytelsetypen er pleiepenger
+            if (TemaUnderkategori.UDEFINERT.equals(behandlingsTema)) {
+                throw new IllegalStateException("Må han tema underkategori når yteletype er pleiepenger");
+            }
+        }
     }
 
     public YtelseAnvistBuilder getAnvistBuilder() {

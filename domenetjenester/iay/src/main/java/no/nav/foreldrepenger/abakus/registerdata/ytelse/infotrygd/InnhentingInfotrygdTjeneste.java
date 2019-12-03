@@ -68,7 +68,7 @@ public class InnhentingInfotrygdTjeneste {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         } catch (Exception e) {
-            LOG.warn("Infotrygd ny mapper ukjent feil", e);
+            LOG.info("Infotrygd ny mapper ukjent feil", e);
             return Collections.emptyList();
         }
     }
@@ -80,7 +80,7 @@ public class InnhentingInfotrygdTjeneste {
             LOG.info("Infotrygd ny mapper ulike perioder utledet: opphørFom {} vs periode {}", fraSaksdata, grunnlag.getPeriode());
         }
         if (grunnlag.getIverksatt() == null || grunnlag.getIdentdato() == null || !grunnlag.getIverksatt().equals(grunnlag.getIdentdato())) {
-            LOG.warn("Infotrygd ny mapper avvik iverksatt {} vs identdato {}", grunnlag.getIverksatt(), grunnlag.getIdentdato());
+            LOG.info("Infotrygd ny mapper avvik iverksatt {} vs identdato {}", grunnlag.getIverksatt(), grunnlag.getIdentdato());
         }
         LocalDate brukIdentdato = grunnlag.getIdentdato() != null ? grunnlag.getIdentdato() : grunnlag.getIverksatt();
         if (brukIdentdato == null) {
@@ -161,7 +161,7 @@ public class InnhentingInfotrygdTjeneste {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         } catch (Exception e) {
-            LOG.warn("Infotrygd ny mapper fra ISoG ukjent feil", e);
+            LOG.info("Infotrygd ny mapper fra ISoG ukjent feil", e);
             return Collections.emptyList();
         }
 
@@ -209,7 +209,7 @@ public class InnhentingInfotrygdTjeneste {
 
             return grunnlagBuilder.build();
         }  catch (Exception e) {
-            LOG.warn("Infotrygd ny mapper til redusert rest ukjent feil", e);
+            LOG.info("Infotrygd ny mapper til redusert rest ukjent feil", e);
             return null;
         }
     }

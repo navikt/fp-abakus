@@ -48,7 +48,7 @@ public class MapAktørArbeid {
 
     private static final Comparator<PermisjonDto> COMP_PERMISJON = Comparator
         .comparing((PermisjonDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
-        .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));;
+        .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
 
     static class MapFraDto {
 

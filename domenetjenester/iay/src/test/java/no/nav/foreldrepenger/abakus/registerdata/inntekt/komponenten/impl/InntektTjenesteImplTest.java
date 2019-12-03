@@ -45,7 +45,6 @@ import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
 public class InntektTjenesteImplTest {
     private static final String FNR = "01234567890";
     private static final YearMonth GJELDENDE_MÅNED = YearMonth.now();
-    private static final String KONFIG_FOM = "2015-07-01";
     private static final String SYKEPENGER = "sykepenger";
     private static final String ORGNR = "456";
     private static final String SIKKERHETSAVVIK1 = "Mangler rettighet 1";
@@ -58,7 +57,7 @@ public class InntektTjenesteImplTest {
 
     @Before
     public void before() {
-        inntektTjeneste = new InntektTjeneste(uri, KONFIG_FOM, restKlient, kodeverkRepository, null);
+        inntektTjeneste = new InntektTjeneste(uri, restKlient, kodeverkRepository, null);
     }
 
     @Test
@@ -146,7 +145,7 @@ public class InntektTjenesteImplTest {
         Aktoer arbeidsplassen = new Aktoer();
         arbeidsplassen.setAktoerType(AktoerType.ORGANISASJON);
         arbeidsplassen.setIdentifikator(ORGNR);
-        YearMonth tidligst = YearMonth.from(LocalDate.parse(KONFIG_FOM, DateTimeFormatter.ISO_LOCAL_DATE));
+        YearMonth tidligst = YearMonth.from(LocalDate.parse("2015-07-01", DateTimeFormatter.ISO_LOCAL_DATE));
 
         FinnInntektRequest finnInntektRequest = FinnInntektRequest
             .builder(tidligst.minusMonths(3), tidligst.plusMonths(3))

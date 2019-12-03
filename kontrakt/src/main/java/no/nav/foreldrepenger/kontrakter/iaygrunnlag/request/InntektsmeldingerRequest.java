@@ -1,13 +1,7 @@
 package no.nav.foreldrepenger.kontrakter.iaygrunnlag.request;
 
-import java.util.Collection;
-import java.util.EnumSet;
 import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-
 import javax.validation.Valid;
-import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
