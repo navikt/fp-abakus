@@ -22,7 +22,6 @@ public abstract class YtelseBeregningsgrunnlag {
     private LocalDate tom;
     private List<YtelseBeregningsgrunnlagVedtak> vedtak;
 
-
     YtelseBeregningsgrunnlag(YtelseType type, TemaUnderkategori tuk, Grunnlag grunnlag) {
         this.type = type;
         this.temaUnderkategori = tuk;
@@ -75,4 +74,15 @@ public abstract class YtelseBeregningsgrunnlag {
     public abstract List<YtelseBeregningsgrunnlagArbeidsforhold> getArbeidsforhold();
 
     public abstract Arbeidskategori getArbeidskategori();
+
+    @Override
+    public String toString() {
+        return "YtelseBeregningsgrunnlag{" +
+            "type=" + type +
+            ", temaUnderkategori=" + temaUnderkategori +
+            ", identdato=" + identdato +
+            ", fom=" + fom +
+            ", tom=" + tom +
+            '}';
+    }
 }
