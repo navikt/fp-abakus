@@ -5,24 +5,24 @@ import java.net.URI;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.FPA;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.FP;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.felles.AbstractInfotrygdGrunnlag;
 import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
 import no.nav.vedtak.konfig.KonfigVerdi;
 
 @ApplicationScoped
-@FPA
-public class InfotrygdFPGrunnlagAdopsjon extends AbstractInfotrygdGrunnlag {
+@FP
+public class InfotrygdFPGrunnlag extends AbstractInfotrygdGrunnlag {
 
-    private static final String DEFAULT_URI = "http://infotrygd-foreldrepenger.default/grunnlag/adopsjon";
+    private static final String DEFAULT_URI = "http://infotrygd-foreldrepenger.default/grunnlag";
 
     @Inject
-    public InfotrygdFPGrunnlagAdopsjon(OidcRestClient restClient,
-            @KonfigVerdi(value = "fpabakus.it.fp.grunnlag.adopsjon.url", defaultVerdi = DEFAULT_URI) URI uri) {
+    public InfotrygdFPGrunnlag(OidcRestClient restClient,
+                               @KonfigVerdi(value = "fpabakus.it.fp.grunnlag.fødsel.url", defaultVerdi = DEFAULT_URI) URI uri) {
         super(restClient, uri);
     }
 
-    public InfotrygdFPGrunnlagAdopsjon() {
+    public InfotrygdFPGrunnlag() {
         super();
     }
 }
