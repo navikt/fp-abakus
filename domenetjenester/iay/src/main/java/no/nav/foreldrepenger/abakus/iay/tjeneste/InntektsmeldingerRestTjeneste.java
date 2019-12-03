@@ -46,6 +46,7 @@ import no.nav.foreldrepenger.kontrakter.iaygrunnlag.FnrPersonident;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.PersonIdent;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.UuidDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.RefusjonskravDatoerDto;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InntektsmeldingerMottattRequest;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InntektsmeldingerRequest;
 import no.nav.vedtak.felles.jpa.Transaction;
@@ -91,6 +92,27 @@ public class InntektsmeldingerRestTjeneste {
         var inntektsmeldingerMap = iayTjeneste.hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, new YtelseType(ytelseType.getKode()));
         InntektsmeldingerDto inntektsmeldingerDto = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(inntektsmeldingerMap);
         return Response.ok(inntektsmeldingerDto).build();
+    }
+
+    @POST
+    @Path("/hentRefusjonskravDatoer")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Hent inntektsmeldinger for angitt søke spesifikasjon", tags = "inntektsmelding")
+    @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
+    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    public Response hentRefusjonskravDatoForSak(@NotNull @Valid InntektsmeldingerRequestAbacDto spesifikasjon) {
+        var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
+        var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
+        var ytelseType = new YtelseType(spesifikasjon.getYtelseType().getKode());
+        var inntektsmeldinger = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, new YtelseType(ytelseType.getKode()));
+        var kobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType);
+        if (kobling.isEmpty()) {
+            return Response.ok(new InntektsmeldingerDto().medInntektsmeldinger(Collections.emptyList())).build();
+        }
+        InntektArbeidYtelseGrunnlag nyesteGrunnlag = iayTjeneste.hentAggregat(kobling.get().getKoblingReferanse());
+        RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(inntektsmeldinger, nyesteGrunnlag);
+        return Response.ok(refusjonskravDatoerDto).build();
     }
 
     @POST
