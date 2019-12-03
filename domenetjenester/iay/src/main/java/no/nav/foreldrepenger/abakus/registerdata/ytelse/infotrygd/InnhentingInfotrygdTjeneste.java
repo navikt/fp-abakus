@@ -62,13 +62,17 @@ public class InnhentingInfotrygdTjeneste {
         try {
             List<Grunnlag> rest = grunnlag.hentGrunnlag(ident.getIdent(), dato(periode.getStart()), dato(periode.getEnd()));
 
-            return rest.stream()
+            var mappedGrunnlag = rest.stream()
                 .filter(g -> !YtelseType.UDEFINERT.equals(TemaReverse.reverseMap(g.getTema().getKode().name(), LOG)))
                 .map(this::restTilInfotrygdYtelseGrunnlag)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+            if (!mappedGrunnlag.isEmpty()) {
+                LOG.info("Infotrygd abacus mapped grunnlag {}", mappedGrunnlag.toString());
+            }
+            return mappedGrunnlag;
         } catch (Exception e) {
-            LOG.info("Infotrygd ny mapper ukjent feil", e);
+            LOG.info("Infotrygd abacus ny mapper ukjent feil", e);
             return Collections.emptyList();
         }
     }
