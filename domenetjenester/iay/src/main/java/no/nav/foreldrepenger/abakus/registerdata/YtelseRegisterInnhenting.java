@@ -50,6 +50,7 @@ public class YtelseRegisterInnhenting {
 
 
         InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder = inntektArbeidYtelseAggregatBuilder.getAktørYtelseBuilder(aktørId);
+        ryddBortFeilaktigeInnhentedeYtelser(aktørYtelseBuilder);
         for (InfotrygdSakOgGrunnlag ytelse : sammenstilt) {
             YtelseType type = ytelse.getGrunnlag().map(YtelseBeregningsgrunnlag::getType).orElse(ytelse.getSak().getYtelseType());
             if (skalKopiereTilYtelse(behandling, aktørId, type)) {
@@ -107,7 +108,6 @@ public class YtelseRegisterInnhenting {
     }
 
     private void oversettSakGrunnlagTilYtelse(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder, InfotrygdSakOgGrunnlag ytelse) {
-        ryddBortFeilaktigeInnhentedeYtelser(aktørYtelseBuilder);
         YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.INFOTRYGD, ytelse.getSak().getYtelseType(),
             ytelse.getSak().getTemaUnderkategori(), ytelse.getPeriode())
             .medBehandlingsTema(ytelse.getSak().getTemaUnderkategori())

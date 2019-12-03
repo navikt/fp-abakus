@@ -5,8 +5,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 
 import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
+import org.slf4j.LoggerFactory;
 
 public class TemaUnderkategoriReverse {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TemaUnderkategoriReverse.class);
 
     private static final Map<String, TemaUnderkategori> BEHANDLING_TEMA_MAP = Map.ofEntries(
         Map.entry(TemaUnderkategori.FORELDREPENGER_FODSEL.getKode(), TemaUnderkategori.FORELDREPENGER_FODSEL),
@@ -33,9 +36,9 @@ public class TemaUnderkategoriReverse {
     );
 
 
-    public static TemaUnderkategori reverseMap(String kode, Logger logger) {
-        if (BEHANDLING_TEMA_MAP.get(kode) == null) {
-            logger.warn("Infotrygd ga ukjent kode for stønadskategori 2 {}", kode);
+    public static TemaUnderkategori reverseMap(String kode) {
+        if (!BEHANDLING_TEMA_MAP.containsKey(kode)) {
+            LOG.warn("Infotrygd ga ukjent kode for stønadskategori 2 {}", kode);
         }
         return BEHANDLING_TEMA_MAP.getOrDefault(kode, TemaUnderkategori.UDEFINERT);
     }

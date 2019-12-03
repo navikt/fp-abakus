@@ -115,10 +115,10 @@ public class InnhentingSamletTjeneste {
 
     public List<InfotrygdSakOgGrunnlag> getSammenstiltSakOgGrunnlag(AktørId aktørId, Interval opplysningsPeriode, boolean medGrunnlag) {
         final List<InfotrygdSak> infotrygdSakList = filtrerSaker(getInfotrygdSaker(aktørId, opplysningsPeriode), medGrunnlag);
-        LOGGER.info("InfotrygdSak sammentilling antall saker/vedtak: {}", infotrygdSakList.size());
+        LOGGER.info("Infotrygd Sak : {}", infotrygdSakList);
         if (medGrunnlag) {
             List<YtelseBeregningsgrunnlag> alleGrunnlag = getInfotrygdBeregningsgrunnlag(aktørId, opplysningsPeriode);
-            LOGGER.info("InfotrygdBeregningsgrunnlag antall grunnlag: {}", alleGrunnlag.size());
+            LOGGER.info("Infotrygd Beregningsgrunnlag : {}", alleGrunnlag);
             return sammenstillSakOgGrunnlag(infotrygdSakList, alleGrunnlag, opplysningsPeriode);
         }
 

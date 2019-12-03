@@ -64,6 +64,16 @@ public class InfotrygdSak {
         return iverksatt != null;
     }
 
+    @Override
+    public String toString() {
+        return "InfotrygdSak{" +
+            "temaUnderkategori=" + temaUnderkategori +
+            ", relatertYtelseType=" + relatertYtelseType +
+            ", relatertYtelseTilstand=" + relatertYtelseTilstand +
+            ", periode=" + periode +
+            '}';
+    }
+
     public static class InfotrygdSakBuilder {
         private final InfotrygdSak sak;
         private LocalDate opphørFom;

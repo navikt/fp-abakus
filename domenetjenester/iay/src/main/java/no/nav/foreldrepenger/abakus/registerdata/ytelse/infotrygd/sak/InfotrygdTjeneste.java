@@ -116,7 +116,7 @@ public class InfotrygdTjeneste {
         YtelseStatus relatertYtelseTilstand = YtelseStatus.AVSLUTTET;
 
         if (sak.getBehandlingstema() != null && sak.getBehandlingstema().getValue() != null) {
-            temaUnderkategori = TemaUnderkategoriReverse.reverseMap(sak.getBehandlingstema().getValue(), log);
+            temaUnderkategori = TemaUnderkategoriReverse.reverseMap(sak.getBehandlingstema().getValue());
         }
         if (sak.getStatus() != null && sak.getStatus().getValue() != null) {
             relatertYtelseTilstand = getYtelseTilstand(erVedtak, sak.getStatus().getValue());

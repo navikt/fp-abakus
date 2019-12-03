@@ -87,7 +87,7 @@ public class InnhentingInfotrygdTjeneste {
             return null;
         }
         Periode brukPeriode = grunnlag.getPeriode() != null ? grunnlag.getPeriode() : fraSaksdata;
-        TemaUnderkategori tuk = TemaUnderkategoriReverse.reverseMap(grunnlag.getBehandlingsTema().getKode().name(), LOG);
+        TemaUnderkategori tuk = TemaUnderkategoriReverse.reverseMap(grunnlag.getBehandlingsTema().getKode().name());
 
         var grunnlagBuilder = InfotrygdYtelseGrunnlag.getBuilder()
             .medYtelseType(YtelseTypeReverse.reverseMap(tuk, LOG))

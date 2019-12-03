@@ -113,7 +113,7 @@ public class InfotrygdBeregningsgrunnlagTjenesteImpl implements InfotrygdBeregni
     }
 
     private TemaUnderkategori getBehandlingsTema(Grunnlag grunnlag) {
-        return TemaUnderkategoriReverse.reverseMap(grunnlag.getBehandlingstema().getValue(), log);
+        return TemaUnderkategoriReverse.reverseMap(grunnlag.getBehandlingstema().getValue());
     }
 
 }
