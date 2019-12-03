@@ -33,11 +33,13 @@ import no.nav.foreldrepenger.abakus.kobling.repository.KoblingRepository;
 import no.nav.foreldrepenger.abakus.kobling.repository.LåsRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
+import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.RefusjonskravDatoerDto;
 
 public class MapInntektsmeldingerTest {
 
@@ -122,6 +124,183 @@ public class MapInntektsmeldingerTest {
 
         // Assert
         assertThat(inntektsmeldingerDto.getInntektsmeldinger().size()).isEqualTo(1);
+    }
+
+
+    @Test
+    public void skal_mappe_en_inntektsmelding_til_første_refusjonsdato_og_første_innsendelsesdato() {
+        // Arrange
+        Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
+        KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
+        AktørId aktørId = new AktørId("1234123412341");
+        YtelseType foreldrepenger = YtelseType.FORELDREPENGER;
+        Kobling kobling1 = new Kobling(saksnummer, koblingReferanse, aktørId);
+        kobling1.setYtelseType(foreldrepenger);
+        koblingTjeneste.lagre(kobling1);
+        LocalDateTime innsendingstidspunkt = LocalDateTime.now();
+        LocalDate startPermisjon = LocalDate.now().minusDays(10);
+        Arbeidsgiver virksomhet = Arbeidsgiver.virksomhet(new OrgNummer("910909088"));
+        Inntektsmelding im = InntektsmeldingBuilder.builder()
+            .medArbeidsgiver(virksomhet)
+            .medBeløp(BigDecimal.TEN)
+            .medRefusjon(BigDecimal.TEN)
+            .medStartDatoPermisjon(startPermisjon)
+            .medInnsendingstidspunkt(innsendingstidspunkt)
+            .medMottattDato(LocalDate.now())
+            .medJournalpostId("journalpost_id")
+            .build();
+        iayRepository.lagre(koblingReferanse, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(im));
+
+        // Act
+        Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, foreldrepenger);
+        Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, foreldrepenger).orElseThrow();
+        RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm, iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
+
+        // Assert
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().size()).isEqualTo(1);
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getArbeidsgiver().getIdent()).isEqualTo(virksomhet.getIdentifikator());
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteDagMedRefusjonskrav()).isEqualTo(startPermisjon);
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(innsendingstidspunkt.toLocalDate());
+    }
+
+    @Test
+    public void skal_mappe_ikkje_mappe_refusjonsdatoer_når_siste_inntektsmelding_ikkje_har_refusjonskrav() {
+        // Arrange
+        Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
+        KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
+        AktørId aktørId = new AktørId("1234123412341");
+        YtelseType foreldrepenger = YtelseType.FORELDREPENGER;
+        Kobling kobling1 = new Kobling(saksnummer, koblingReferanse, aktørId);
+        kobling1.setYtelseType(foreldrepenger);
+        koblingTjeneste.lagre(kobling1);
+        LocalDateTime innsendingstidspunkt = LocalDateTime.now();
+        LocalDate startPermisjon = LocalDate.now().minusDays(10);
+        Arbeidsgiver virksomhet = Arbeidsgiver.virksomhet(new OrgNummer("910909088"));
+        Inntektsmelding im = InntektsmeldingBuilder.builder()
+            .medArbeidsgiver(virksomhet)
+            .medBeløp(BigDecimal.TEN)
+            .medRefusjon(BigDecimal.TEN)
+            .medStartDatoPermisjon(startPermisjon)
+            .medInnsendingstidspunkt(innsendingstidspunkt)
+            .medMottattDato(LocalDate.now())
+            .medJournalpostId("journalpost_id")
+            .build();
+        Inntektsmelding im2 = InntektsmeldingBuilder.builder()
+            .medArbeidsgiver(virksomhet)
+            .medBeløp(BigDecimal.ZERO)
+            .medRefusjon(BigDecimal.ZERO)
+            .medStartDatoPermisjon(startPermisjon)
+            .medInnsendingstidspunkt(innsendingstidspunkt.plusDays(10))
+            .medMottattDato(LocalDate.now())
+            .medJournalpostId("journalpost_id")
+            .build();
+        iayRepository.lagre(koblingReferanse, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(im));
+        iayRepository.lagre(koblingReferanse, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(im2));
+
+        // Act
+        Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, foreldrepenger);
+        Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, foreldrepenger).orElseThrow();
+        RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm, iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
+
+        // Assert
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().size()).isEqualTo(0);
+    }
+
+    @Test
+    public void skal_mappe_til_refusjonskravdatoer_for_flere_inntektsmeldinger_med_refusjonskrav() {
+        // Arrange
+        Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
+        KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
+        AktørId aktørId = new AktørId("1234123412341");
+        YtelseType foreldrepenger = YtelseType.FORELDREPENGER;
+        Kobling kobling1 = new Kobling(saksnummer, koblingReferanse, aktørId);
+        kobling1.setYtelseType(foreldrepenger);
+        koblingTjeneste.lagre(kobling1);
+        LocalDateTime innsendingstidspunkt = LocalDateTime.now();
+        LocalDate startPermisjon = LocalDate.now().minusDays(10);
+        Arbeidsgiver virksomhet = Arbeidsgiver.virksomhet(new OrgNummer("910909088"));
+        Inntektsmelding im = InntektsmeldingBuilder.builder()
+            .medArbeidsgiver(virksomhet)
+            .medBeløp(BigDecimal.TEN)
+            .medRefusjon(BigDecimal.TEN)
+            .medStartDatoPermisjon(startPermisjon)
+            .medInnsendingstidspunkt(innsendingstidspunkt)
+            .medMottattDato(LocalDate.now())
+            .medJournalpostId("journalpost_id")
+            .build();
+        Inntektsmelding im2 = InntektsmeldingBuilder.builder()
+            .medArbeidsgiver(virksomhet)
+            .medBeløp(BigDecimal.ZERO)
+            .medRefusjon(BigDecimal.TEN)
+            .medStartDatoPermisjon(startPermisjon)
+            .medInnsendingstidspunkt(innsendingstidspunkt.plusDays(10))
+            .medMottattDato(LocalDate.now())
+            .medJournalpostId("journalpost_id")
+            .build();
+        iayRepository.lagre(koblingReferanse, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(im));
+        iayRepository.lagre(koblingReferanse, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(im2));
+
+        // Act
+        Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, foreldrepenger);
+        Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, foreldrepenger).orElseThrow();
+        RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm, iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
+
+        // Assert
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().size()).isEqualTo(1);
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getArbeidsgiver().getIdent()).isEqualTo(virksomhet.getIdentifikator());
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteDagMedRefusjonskrav()).isEqualTo(startPermisjon);
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(innsendingstidspunkt.toLocalDate());
+    }
+
+    @Test
+    public void skal_mappe_til_refusjonskravdatoer_for_flere_arbeidsgivere_med_refusjonskrav() {
+        // Arrange
+        Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
+        KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
+        AktørId aktørId = new AktørId("1234123412341");
+        YtelseType foreldrepenger = YtelseType.FORELDREPENGER;
+        Kobling kobling1 = new Kobling(saksnummer, koblingReferanse, aktørId);
+        kobling1.setYtelseType(foreldrepenger);
+        koblingTjeneste.lagre(kobling1);
+        LocalDateTime innsendingstidspunkt = LocalDateTime.now();
+        LocalDate startPermisjon = LocalDate.now().minusDays(10);
+        Arbeidsgiver virksomhet = Arbeidsgiver.virksomhet(new OrgNummer("910909088"));
+        Arbeidsgiver virksomhet2 = Arbeidsgiver.virksomhet(new OrgNummer("995428563"));
+        Inntektsmelding im = InntektsmeldingBuilder.builder()
+            .medArbeidsgiver(virksomhet)
+            .medBeløp(BigDecimal.TEN)
+            .medRefusjon(BigDecimal.TEN)
+            .medStartDatoPermisjon(startPermisjon)
+            .medInnsendingstidspunkt(innsendingstidspunkt)
+            .medMottattDato(LocalDate.now())
+            .medJournalpostId("journalpost_id")
+            .build();
+        LocalDateTime innsendingstidspunkt2 = innsendingstidspunkt.plusDays(10);
+        Inntektsmelding im2 = InntektsmeldingBuilder.builder()
+            .medArbeidsgiver(virksomhet2)
+            .medBeløp(BigDecimal.ZERO)
+            .medRefusjon(BigDecimal.TEN)
+            .medStartDatoPermisjon(startPermisjon)
+            .medInnsendingstidspunkt(innsendingstidspunkt2)
+            .medMottattDato(innsendingstidspunkt2.toLocalDate())
+            .medJournalpostId("journalpost_id")
+            .build();
+        iayRepository.lagre(koblingReferanse, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(im, im2));
+
+        // Act
+        Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, foreldrepenger);
+        Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, foreldrepenger).orElseThrow();
+        RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm, iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
+
+        // Assert
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().size()).isEqualTo(2);
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getArbeidsgiver().getIdent()).isEqualTo(virksomhet2.getIdentifikator());
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteDagMedRefusjonskrav()).isEqualTo(startPermisjon);
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(innsendingstidspunkt2.toLocalDate());
+
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(1).getArbeidsgiver().getIdent()).isEqualTo(virksomhet.getIdentifikator());
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(1).getFørsteDagMedRefusjonskrav()).isEqualTo(startPermisjon);
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(1).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(innsendingstidspunkt.toLocalDate());
     }
 
 }
