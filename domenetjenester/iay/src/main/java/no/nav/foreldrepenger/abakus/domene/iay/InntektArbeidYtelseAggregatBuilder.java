@@ -21,6 +21,8 @@ import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Builder for å håndtere en gitt versjon {@link VersjonType} av grunnlaget.
@@ -31,6 +33,7 @@ import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
  * NB! Viktig at denne builderen hentes fra repository for å sikre at den er rett tilstand ved oppdatering. Hvis ikke kan data gå tapt.
  */
 public class InntektArbeidYtelseAggregatBuilder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(InntektArbeidYtelseAggregatBuilder.class);
 
     private final InntektArbeidYtelseAggregat kladd;
     private final VersjonType versjon;
@@ -374,8 +377,15 @@ public class InntektArbeidYtelseAggregatBuilder {
         public void tilbakestillYtelserFraKildeMedFeil(Fagsystem kilde, YtelseType ytelseType, TemaUnderkategori underkategori) {
             this.kladd.getAlleYtelser().stream()
                 .filter(yt -> kilde.equals(yt.getKilde()) && ytelseType.equals(yt.getRelatertYtelseType()) && underkategori.equals(yt.getBehandlingsTema()))
-                .forEach(this.kladd::fjernYtelse);
+                .forEach(this::fjernYtelse);
         }
+
+        private void fjernYtelse(Ytelse yt) {
+            LOGGER.info("Fjerner ytelse {} fra kladd {}", yt, this.kladd);
+            boolean bleYtelseFjernet = this.kladd.fjernYtelse(yt);
+            LOGGER.info("Ytelse ble fjernet {}", bleYtelseFjernet);
+        }
+
 
         public AktørYtelseBuilder leggTilYtelse(YtelseBuilder ytelse) {
             YtelseEntitet ytelseEntitet = (YtelseEntitet) ytelse.build();
@@ -395,6 +405,15 @@ public class InntektArbeidYtelseAggregatBuilder {
             }
             throw new IllegalStateException("Har ikke innhold");
         }
+
+        @Override
+        public String toString() {
+            return "AktørYtelseBuilder{" +
+                "kladd=" + kladd +
+                ", oppdatering=" + oppdatering +
+                '}';
+        }
+
     }
 
 }

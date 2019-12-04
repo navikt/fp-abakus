@@ -144,10 +144,10 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
         ytelseEntitet.setAktørYtelse(this);
     }
 
-    void fjernYtelse(Ytelse ytelse) {
+    boolean fjernYtelse(Ytelse ytelse) {
         YtelseEntitet ytelseEntitet = (YtelseEntitet) ytelse;
         ytelseEntitet.setAktørYtelse(null);
-        this.ytelser.remove(ytelseEntitet);
+        return this.ytelser.remove(ytelseEntitet);
     }
 
     @Override
