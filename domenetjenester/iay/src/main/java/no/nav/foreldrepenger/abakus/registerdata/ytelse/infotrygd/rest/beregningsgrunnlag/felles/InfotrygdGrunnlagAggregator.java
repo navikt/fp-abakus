@@ -42,7 +42,6 @@ public class InfotrygdGrunnlagAggregator {
 
     public List<Grunnlag> hentGrunnlag(String fnr, LocalDate fom, LocalDate tom) {
         return tjenester.stream()
-                .parallel()
                 .map(t -> t.hentGrunnlag(fnr, fom, tom))
                 .flatMap(List::stream)
                 .collect(toList());
@@ -56,7 +55,6 @@ public class InfotrygdGrunnlagAggregator {
 
     public List<Grunnlag> hentGrunnlag(AktørId aktørId, LocalDate fom, LocalDate tom) {
         return tjenester.stream()
-                .parallel()
                 .map(t -> t.hentGrunnlag(aktørId, fom, tom))
                 .flatMap(List::stream)
                 .collect(toList());

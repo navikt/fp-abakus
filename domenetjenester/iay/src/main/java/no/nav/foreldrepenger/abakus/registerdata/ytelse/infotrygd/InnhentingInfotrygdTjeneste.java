@@ -100,7 +100,7 @@ public class InnhentingInfotrygdTjeneste {
             .medIdentdato(brukIdentdato)
             .medVedtaksPeriodeFom(brukPeriode.getFom())
             .medVedtaksPeriodeTom(brukPeriode.getTom())
-            .medArbeidskategori(ArbeidskategoriReverse.reverseMap(grunnlag.getKategori().getKode().getKode(), LOG))
+            .medArbeidskategori(grunnlag.getKategori() != null ? ArbeidskategoriReverse.reverseMap(grunnlag.getKategori().getKode().getKode(), LOG) : Arbeidskategori.UGYLDIG)
             .medDekningsgrad(grunnlag.getDekningsgrad().getProsent())
             .medGradering(grunnlag.getGradering())
             .medFødselsdatoBarn(grunnlag.getFødselsdatoBarn())

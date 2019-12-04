@@ -32,7 +32,6 @@ public class InfotrygdSakAggregator  {
 
     public List<InfotrygdSak> saker(String fnr, LocalDate fom) {
         return tjenester.stream()
-                .parallel()
                 .map(t -> t.saker(fnr, fom))
                 .flatMap(List::stream)
                 .collect(toList());
