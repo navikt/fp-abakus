@@ -208,7 +208,7 @@ public class InfotrygdYtelseGrunnlag {
         }
 
         public Builder medOpprinneligIdentdato(LocalDate opprinneligIdentdato) {
-            grunnlag.identdato = opprinneligIdentdato;
+            grunnlag.opprinneligIdentdato = opprinneligIdentdato;
             return this;
         }
 
