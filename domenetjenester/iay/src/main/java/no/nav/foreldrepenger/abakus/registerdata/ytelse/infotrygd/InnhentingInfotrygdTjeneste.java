@@ -92,6 +92,9 @@ public class InnhentingInfotrygdTjeneste {
         }
         Periode brukPeriode = grunnlag.getPeriode() != null ? grunnlag.getPeriode() : fraSaksdata;
         TemaUnderkategori tuk = TemaUnderkategoriReverse.reverseMap(grunnlag.getBehandlingsTema().getKode().name());
+        Integer dekningsgrad = grunnlag.getDekningsgrad() != null ? grunnlag.getDekningsgrad().getProsent() : null;
+        Arbeidskategori arbeidskategori = grunnlag.getKategori() == null ? Arbeidskategori.UGYLDIG :
+            ArbeidskategoriReverse.reverseMap(grunnlag.getKategori().getKode().getKode(), LOG);
 
         var grunnlagBuilder = InfotrygdYtelseGrunnlag.getBuilder()
             .medYtelseType(YtelseTypeReverse.reverseMap(tuk, LOG))
@@ -100,8 +103,8 @@ public class InnhentingInfotrygdTjeneste {
             .medIdentdato(brukIdentdato)
             .medVedtaksPeriodeFom(brukPeriode.getFom())
             .medVedtaksPeriodeTom(brukPeriode.getTom())
-            .medArbeidskategori(grunnlag.getKategori() != null ? ArbeidskategoriReverse.reverseMap(grunnlag.getKategori().getKode().getKode(), LOG) : Arbeidskategori.UGYLDIG)
-            .medDekningsgrad(grunnlag.getDekningsgrad().getProsent())
+            .medArbeidskategori(arbeidskategori)
+            .medDekningsgrad(dekningsgrad)
             .medGradering(grunnlag.getGradering())
             .medFødselsdatoBarn(grunnlag.getFødselsdatoBarn())
             .medOpprinneligIdentdato(grunnlag.getOpprinneligIdentdato());
