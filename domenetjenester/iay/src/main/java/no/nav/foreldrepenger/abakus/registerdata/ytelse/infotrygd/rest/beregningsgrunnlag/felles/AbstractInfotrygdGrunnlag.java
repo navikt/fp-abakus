@@ -22,10 +22,12 @@ public abstract class AbstractInfotrygdGrunnlag implements InfotrygdGrunnlag {
 
     private OidcRestClient restClient;
     private URI uri;
+    private String uriString;
 
     public AbstractInfotrygdGrunnlag(OidcRestClient restClient, URI uri) {
         this.restClient = restClient;
         this.uri = uri;
+        this.uriString = uri.toString();
     }
 
     public AbstractInfotrygdGrunnlag() {
@@ -45,10 +47,10 @@ public abstract class AbstractInfotrygdGrunnlag implements InfotrygdGrunnlag {
                     .addParameter("tom", konverter(tom)).build();
             LOG.trace("Slår opp grunnlag SVP fra {}", request);
             var grunnlag = restClient.get(request, Grunnlag[].class);
-            LOG.info("fpabacus infotrygd REST SVP fikk grunnlag {}", Arrays.toString(grunnlag));
+            LOG.info("fpabacus infotrygd REST {} fikk grunnlag {}", uriString, Arrays.toString(grunnlag));
             return Arrays.asList(grunnlag);
         } catch (Exception e) {
-            LOG.info("Feil ved oppslag mot {}, returnerer ingen grunnlag", uri, e);
+            LOG.info("Feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
             return emptyList();
         }
     }
