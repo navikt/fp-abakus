@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.threeten.extra.Interval;
 
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
@@ -32,6 +34,7 @@ import no.nav.foreldrepenger.abakus.vedtak.domene.VedtattYtelse;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class YtelseRegisterInnhenting {
+    private static final Logger LOGGER = LoggerFactory.getLogger(YtelseRegisterInnhenting.class);
     private final InnhentingSamletTjeneste innhentingSamletTjeneste;
     private final VedtakYtelseRepository vedtakYtelseRepository;
 
@@ -51,7 +54,9 @@ public class YtelseRegisterInnhenting {
 
         InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder = inntektArbeidYtelseAggregatBuilder.getAktørYtelseBuilder(aktørId);
         ryddBortFeilaktigeInnhentedeYtelser(aktørYtelseBuilder);
+        LOGGER.info("Ytelseaggregat før ytelser er lagt til : {}", aktørYtelseBuilder);
         for (InfotrygdSakOgGrunnlag ytelse : sammenstilt) {
+            LOGGER.info("Sammenstilt sak : {}", ytelse);
             YtelseType type = ytelse.getGrunnlag().map(YtelseBeregningsgrunnlag::getType).orElse(ytelse.getSak().getYtelseType());
             if (skalKopiereTilYtelse(behandling, aktørId, type)) {
                 oversettSakGrunnlagTilYtelse(aktørYtelseBuilder, ytelse);
@@ -67,6 +72,8 @@ public class YtelseRegisterInnhenting {
         }
 
         innhentFraYtelsesRegister(aktørId, behandling, aktørYtelseBuilder);
+
+        LOGGER.info("Ytelseaggregat etter at ytelser er lagt til : {}", aktørYtelseBuilder);
 
         inntektArbeidYtelseAggregatBuilder.leggTilAktørYtelse(aktørYtelseBuilder);
     }
