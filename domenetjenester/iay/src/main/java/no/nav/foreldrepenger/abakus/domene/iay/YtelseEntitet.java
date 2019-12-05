@@ -101,15 +101,15 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
     @Version
     @Column(name = "versjon", nullable = false)
     private long versjon;
-    
+
     /**
      * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
      */
     @Deprecated
     @Transient
     private LocalDate skjæringstidspunkt;
-    
-    
+
+
     /**
      * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
      */
@@ -252,7 +252,7 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
 
     @Override
     public int hashCode() {
-        return Objects.hash(relatertYtelseType, periode, saksnummer);
+        return Objects.hash(relatertYtelseType, temaUnderkategori, periode, saksnummer);
     }
 
     @Override
