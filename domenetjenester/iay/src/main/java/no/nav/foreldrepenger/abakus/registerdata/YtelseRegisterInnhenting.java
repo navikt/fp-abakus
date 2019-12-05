@@ -47,10 +47,7 @@ public class YtelseRegisterInnhenting {
                      InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder, boolean medGrunnlag) {
         List<InfotrygdSakOgGrunnlag> sammenstilt = innhentingSamletTjeneste.getSammenstiltSakOgGrunnlag(aktørId, opplysningsPeriode, medGrunnlag);
         var rest = innhentingSamletTjeneste.innhentRest(aktørId, opplysningsPeriode);
-        // TODO reenable disse når vi får svar. kommentert ut for å hindre logspam
-        //var mappedSammenstilt = InnhentingInfotrygdTjeneste.mapISoG(sammenstilt);
-        //InnhentingInfotrygdTjeneste.sammenlignGrunnlagKilder(mappedSammenstilt, rest);
-
+        innhentingSamletTjeneste.sammenlignWsRest(sammenstilt, rest);
 
         InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder = inntektArbeidYtelseAggregatBuilder.getAktørYtelseBuilder(aktørId);
         ryddBortFeilaktigeInnhentedeYtelser(aktørYtelseBuilder);
