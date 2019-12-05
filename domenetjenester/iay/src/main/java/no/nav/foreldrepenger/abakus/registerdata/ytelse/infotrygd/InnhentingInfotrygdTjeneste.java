@@ -190,11 +190,11 @@ public class InnhentingInfotrygdTjeneste {
             .medArbeidskategori(grunnlag.getGrunnlag().map(YtelseBeregningsgrunnlag::getArbeidskategori).orElse(Arbeidskategori.UDEFINERT));
 
         grunnlag.getGrunnlag().ifPresent(grunnlagO -> grunnlagO.getArbeidsforhold().stream()
-            .map(a -> new InfotrygdYtelseArbeid(a.getOrgnr(), a.getInntektForPerioden(), a.getInntektPeriodeType(), null))
+            .map(a -> new InfotrygdYtelseArbeid(a.getOrgnr(), a.getInntektForPerioden().intValue(), a.getInntektPeriodeType(), null))
             .forEach(grunnlagBuilder::leggTilArbeidsforhold));
 
         grunnlag.getGrunnlag().ifPresent(grunnlagO -> grunnlagO.getVedtak().stream()
-            .map(v -> new InfotrygdYtelseAnvist(v.getFom(), v.getTom(), v.getUtbetalingsgrad() != null ? new BigDecimal(v.getUtbetalingsgrad()) : null))
+            .map(v -> new InfotrygdYtelseAnvist(v.getFom(), v.getTom(), v.getUtbetalingsgrad() != null ? v.getUtbetalingsgrad() : 0))
             .forEach(grunnlagBuilder::leggTillAnvistPerioder));
 
         return grunnlagBuilder.build();
@@ -212,11 +212,11 @@ public class InnhentingInfotrygdTjeneste {
                 .medArbeidskategori(grunnlag.getKategori());
 
             grunnlag.getArbeidsforhold().stream()
-                .map(a -> new InfotrygdYtelseArbeid(a.getOrgnr(), a.getInntekt(), a.getInntektperiode(), null))
+                .map(a -> new InfotrygdYtelseArbeid(a.getOrgnr(), a.getInntekt().intValue(), a.getInntektperiode(), null))
                 .forEach(grunnlagBuilder::leggTilArbeidsforhold);
 
             grunnlag.getUtbetaltePerioder().stream()
-                .map(v -> new InfotrygdYtelseAnvist(v.getUtbetaltFom(), v.getUtbetaltTom(), v.getUtbetalingsgrad()))
+                .map(v -> new InfotrygdYtelseAnvist(v.getUtbetaltFom(), v.getUtbetaltTom(), v.getUtbetalingsgrad().intValue()))
                 .forEach(grunnlagBuilder::leggTillAnvistPerioder);
 
             return grunnlagBuilder.build();

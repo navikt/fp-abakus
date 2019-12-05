@@ -16,6 +16,12 @@ public class InfotrygdYtelseAnvist {
         this.utbetalingsgrad = utbetalingsgrad;
     }
 
+    public InfotrygdYtelseAnvist(LocalDate utbetaltFom, LocalDate utbetaltTom, int utbetalingsgrad) {
+        this.utbetaltFom = utbetaltFom;
+        this.utbetaltTom = utbetaltTom;
+        this.utbetalingsgrad = new BigDecimal(utbetalingsgrad);
+    }
+
     public LocalDate getUtbetaltFom() {
         return utbetaltFom;
     }
