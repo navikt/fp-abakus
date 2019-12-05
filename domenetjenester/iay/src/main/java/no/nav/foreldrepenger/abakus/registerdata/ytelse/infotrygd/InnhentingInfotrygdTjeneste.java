@@ -80,9 +80,6 @@ public class InnhentingInfotrygdTjeneste {
     private InfotrygdYtelseGrunnlag restTilInfotrygdYtelseGrunnlag(Grunnlag grunnlag) {
         YtelseStatus brukStatus = grunnlag.getOpphørFom() != null ? AVSLUTTET : (grunnlag.getIdentdato() != null ? LØPENDE : YtelseStatus.UDEFINERT);
         Periode fraSaksdata = utledPeriode(grunnlag.getIverksatt(), grunnlag.getOpphørFom(), grunnlag.getRegistrert());
-        if (grunnlag.getOpphørFom() != null && !fraSaksdata.equals(grunnlag.getPeriode())) {
-            LOG.info("Infotrygd ny mapper ulike perioder utledet: opphørFom {} vs periode {}", fraSaksdata, grunnlag.getPeriode());
-        }
         if (grunnlag.getIverksatt() == null || grunnlag.getIdentdato() == null || !grunnlag.getIverksatt().equals(grunnlag.getIdentdato())) {
             LOG.info("Infotrygd ny mapper avvik iverksatt {} vs identdato {}", grunnlag.getIverksatt(), grunnlag.getIdentdato());
         }
@@ -149,17 +146,25 @@ public class InnhentingInfotrygdTjeneste {
         return dato;
     }
 
-    public static boolean sammenlignGrunnlagKilder(List<InfotrygdYtelseGrunnlag> ws, List<InfotrygdYtelseGrunnlag> rest) {
+    public boolean sammenlignGrunnlagKilder(List<InfotrygdSakOgGrunnlag> ws, List<InfotrygdYtelseGrunnlag> rest) {
         // Likt innhold så equals ikke går bananas
-        var mappedRest = rest.stream().map(InnhentingInfotrygdTjeneste::nyttGrunnlagTilNyttMedRedusertInnhold).filter(Objects::nonNull).collect(Collectors.toList());
-        boolean sammenligning = mappedRest.equals(ws);
-        if (!sammenligning) {
-            LOG.info("Infotrygd mapper avvik mellom ws {} og rest {}", ws, mappedRest);
+        try {
+            var mappedWs = InnhentingInfotrygdTjeneste.mapISoG(ws);
+            var mappedRest = rest.stream().map(InnhentingInfotrygdTjeneste::nyttGrunnlagTilNyttMedRedusertInnhold).filter(Objects::nonNull).collect(Collectors.toList());
+            boolean sammenligning = mappedRest.containsAll(mappedWs);
+            if (!sammenligning) {
+                LOG.info("Infotrygd mapper avvik mellom ws {} og rest {}", mappedWs, mappedRest);
+            } else {
+                LOG.info("Infotrygd mapper lik respons fra ws {} og rest {}", mappedWs, mappedRest);
+            }
+            return sammenligning;
+        } catch (Exception e) {
+            LOG.info("Infotrygd sammenligning noe gikk galt ws {} og rest {}", ws, rest);
+            return false;
         }
-        return sammenligning;
     }
 
-    public static List<InfotrygdYtelseGrunnlag> mapISoG(List<InfotrygdSakOgGrunnlag> sog) {
+    private static List<InfotrygdYtelseGrunnlag> mapISoG(List<InfotrygdSakOgGrunnlag> sog) {
         try {
             return sog.stream()
                 .filter(g -> YTELSER_STØTTET.contains(g.getSak().getYtelseType()))
