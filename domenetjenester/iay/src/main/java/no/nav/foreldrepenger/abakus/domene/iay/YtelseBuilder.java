@@ -61,7 +61,7 @@ public class YtelseBuilder {
         return this;
     }
 
-    public YtelseBuilder medYtelseAnvist(YtelseAnvist ytelseAnvist) {
+    public YtelseBuilder leggtilYtelseAnvist(YtelseAnvist ytelseAnvist) {
         ytelseEntitet.leggTilYtelseAnvist(ytelseAnvist);
         return this;
     }
