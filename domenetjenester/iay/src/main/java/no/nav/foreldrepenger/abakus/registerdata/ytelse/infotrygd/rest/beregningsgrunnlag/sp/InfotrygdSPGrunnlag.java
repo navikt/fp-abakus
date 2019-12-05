@@ -14,7 +14,7 @@ import no.nav.vedtak.konfig.KonfigVerdi;
 @SP
 public class InfotrygdSPGrunnlag extends AbstractInfotrygdGrunnlag {
 
-    private static final String DEFAULT_URI = "http://infotrygd-grunnlag-sykepenger.default/sykepenger";
+    private static final String DEFAULT_URI = "http://infotrygd-sykepenger-fp.default/grunnlag";
 
     @Inject
     public InfotrygdSPGrunnlag(OidcRestClient restClient,

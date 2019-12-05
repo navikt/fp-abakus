@@ -13,7 +13,7 @@ public class YtelseAnvistBuilder {
         this.ytelseAnvistEntitet = ytelseAnvistEntitet;
     }
 
-    static YtelseAnvistBuilder ny() {
+    public static YtelseAnvistBuilder ny() {
         return new YtelseAnvistBuilder(new YtelseAnvistEntitet());
     }
 

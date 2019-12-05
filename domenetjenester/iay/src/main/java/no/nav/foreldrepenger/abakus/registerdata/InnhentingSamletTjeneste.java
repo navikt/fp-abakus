@@ -112,6 +112,10 @@ public class InnhentingSamletTjeneste {
         return Collections.emptyList();
     }
 
+    public boolean sammenlignWsRest(List<InfotrygdSakOgGrunnlag> ws, List<InfotrygdYtelseGrunnlag> rest) {
+        return innhentingInfotrygdTjeneste.sammenlignGrunnlagKilder(ws, rest);
+    }
+
 
     public List<InfotrygdSakOgGrunnlag> getSammenstiltSakOgGrunnlag(AktørId aktørId, Interval opplysningsPeriode, boolean medGrunnlag) {
         final List<InfotrygdSak> infotrygdSakList = filtrerSaker(getInfotrygdSaker(aktørId, opplysningsPeriode), medGrunnlag);

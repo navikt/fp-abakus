@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.threeten.extra.Interval;
 
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
@@ -32,6 +34,7 @@ import no.nav.foreldrepenger.abakus.vedtak.domene.VedtattYtelse;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class YtelseRegisterInnhenting {
+    private static final Logger LOGGER = LoggerFactory.getLogger(YtelseRegisterInnhenting.class);
     private final InnhentingSamletTjeneste innhentingSamletTjeneste;
     private final VedtakYtelseRepository vedtakYtelseRepository;
 
@@ -44,14 +47,13 @@ public class YtelseRegisterInnhenting {
                      InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder, boolean medGrunnlag) {
         List<InfotrygdSakOgGrunnlag> sammenstilt = innhentingSamletTjeneste.getSammenstiltSakOgGrunnlag(aktørId, opplysningsPeriode, medGrunnlag);
         var rest = innhentingSamletTjeneste.innhentRest(aktørId, opplysningsPeriode);
-        // TODO reenable disse når vi får svar. kommentert ut for å hindre logspam
-        //var mappedSammenstilt = InnhentingInfotrygdTjeneste.mapISoG(sammenstilt);
-        //InnhentingInfotrygdTjeneste.sammenlignGrunnlagKilder(mappedSammenstilt, rest);
-
+        innhentingSamletTjeneste.sammenlignWsRest(sammenstilt, rest);
 
         InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder = inntektArbeidYtelseAggregatBuilder.getAktørYtelseBuilder(aktørId);
         ryddBortFeilaktigeInnhentedeYtelser(aktørYtelseBuilder);
+        LOGGER.info("Ytelseaggregat før ytelser er lagt til : {}", aktørYtelseBuilder);
         for (InfotrygdSakOgGrunnlag ytelse : sammenstilt) {
+            LOGGER.info("Sammenstilt sak : {}", ytelse);
             YtelseType type = ytelse.getGrunnlag().map(YtelseBeregningsgrunnlag::getType).orElse(ytelse.getSak().getYtelseType());
             if (skalKopiereTilYtelse(behandling, aktørId, type)) {
                 oversettSakGrunnlagTilYtelse(aktørYtelseBuilder, ytelse);
@@ -67,6 +69,8 @@ public class YtelseRegisterInnhenting {
         }
 
         innhentFraYtelsesRegister(aktørId, behandling, aktørYtelseBuilder);
+
+        LOGGER.info("Ytelseaggregat etter at ytelser er lagt til : {}", aktørYtelseBuilder);
 
         inntektArbeidYtelseAggregatBuilder.leggTilAktørYtelse(aktørYtelseBuilder);
     }
@@ -94,6 +98,7 @@ public class YtelseRegisterInnhenting {
                 .medBeløp(anvisning.getBeløp().map(Beløp::getVerdi).orElse(null))
                 .medDagsats(anvisning.getDagsats().map(Beløp::getVerdi).orElse(null))
                 .medUtbetalingsgradProsent(anvisning.getUtbetalingsgradProsent().map(Stillingsprosent::getVerdi).orElse(null));
+            ytelseBuilder.leggtilYtelseAnvist(anvistBuilder.build());
         });
     }
 
@@ -117,7 +122,7 @@ public class YtelseRegisterInnhenting {
             for (YtelseBeregningsgrunnlagVedtak vedtak : grunnlag.getVedtak()) {
                 final DatoIntervallEntitet intervall = vedtak.getTom() == null ? DatoIntervallEntitet.fraOgMed(vedtak.getFom()) :
                     DatoIntervallEntitet.fraOgMedTilOgMed(vedtak.getFom(), vedtak.getTom());
-                ytelseBuilder.medYtelseAnvist(ytelseBuilder.getAnvistBuilder()
+                ytelseBuilder.leggtilYtelseAnvist(ytelseBuilder.getAnvistBuilder()
                     .medAnvistPeriode(intervall)
                     .medUtbetalingsgradProsent(vedtak.getUtbetalingsgrad() != null ? new BigDecimal(vedtak.getUtbetalingsgrad()) : null)
                     .build());
@@ -156,7 +161,7 @@ public class YtelseRegisterInnhenting {
                 .build())
             .tilbakestillAnvisninger();
         for (MeldekortUtbetalingsgrunnlagMeldekort meldekort : ytelse.getMeldekortene()) {
-            ytelseBuilder.medYtelseAnvist(ytelseBuilder.getAnvistBuilder()
+            ytelseBuilder.leggtilYtelseAnvist(ytelseBuilder.getAnvistBuilder()
                 .medAnvistPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(meldekort.getMeldekortFom(), meldekort.getMeldekortTom()))
                 .medBeløp(meldekort.getBeløp())
                 .medDagsats(meldekort.getDagsats())
