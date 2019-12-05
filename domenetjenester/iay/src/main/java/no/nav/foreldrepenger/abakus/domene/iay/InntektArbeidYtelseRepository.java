@@ -341,8 +341,11 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
         if (tidligereAggregat.isPresent()) {
             InntektArbeidYtelseGrunnlag aggregat = tidligereAggregat.get();
             if (diffResultat(aggregat, nyttGrunnlag, false).isEmpty()) {
+                log.info("Ingen diff mellom nytt og gammelt grunnlag. Nytt grunnlag: {}, Gammelt grunnlag: {}", nyttGrunnlag, aggregat);
                 return;
             }
+            log.info("Lagrer nytt grunnlag: {}", nyttGrunnlag);
+
             aggregat.setAktivt(false);
             entityManager.persist(aggregat);
             entityManager.flush();
@@ -727,6 +730,7 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
 
     private void lagreAktørYtelse(AktørYtelse aktørYtelse) {
         for (Ytelse ytelse : aktørYtelse.getAlleYtelser()) {
+            log.info("Lagrer ytelse {}", ytelse);
             entityManager.persist(ytelse);
             for (YtelseAnvist ytelseAnvist : ytelse.getYtelseAnvist()) {
                 entityManager.persist(ytelseAnvist);
