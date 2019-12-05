@@ -101,6 +101,7 @@ public class YtelseRegisterInnhenting {
                 .medBeløp(anvisning.getBeløp().map(Beløp::getVerdi).orElse(null))
                 .medDagsats(anvisning.getDagsats().map(Beløp::getVerdi).orElse(null))
                 .medUtbetalingsgradProsent(anvisning.getUtbetalingsgradProsent().map(Stillingsprosent::getVerdi).orElse(null));
+            ytelseBuilder.leggtilYtelseAnvist(anvistBuilder.build());
         });
     }
 
@@ -124,7 +125,7 @@ public class YtelseRegisterInnhenting {
             for (YtelseBeregningsgrunnlagVedtak vedtak : grunnlag.getVedtak()) {
                 final DatoIntervallEntitet intervall = vedtak.getTom() == null ? DatoIntervallEntitet.fraOgMed(vedtak.getFom()) :
                     DatoIntervallEntitet.fraOgMedTilOgMed(vedtak.getFom(), vedtak.getTom());
-                ytelseBuilder.medYtelseAnvist(ytelseBuilder.getAnvistBuilder()
+                ytelseBuilder.leggtilYtelseAnvist(ytelseBuilder.getAnvistBuilder()
                     .medAnvistPeriode(intervall)
                     .medUtbetalingsgradProsent(vedtak.getUtbetalingsgrad() != null ? new BigDecimal(vedtak.getUtbetalingsgrad()) : null)
                     .build());
@@ -163,7 +164,7 @@ public class YtelseRegisterInnhenting {
                 .build())
             .tilbakestillAnvisninger();
         for (MeldekortUtbetalingsgrunnlagMeldekort meldekort : ytelse.getMeldekortene()) {
-            ytelseBuilder.medYtelseAnvist(ytelseBuilder.getAnvistBuilder()
+            ytelseBuilder.leggtilYtelseAnvist(ytelseBuilder.getAnvistBuilder()
                 .medAnvistPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(meldekort.getMeldekortFom(), meldekort.getMeldekortTom()))
                 .medBeløp(meldekort.getBeløp())
                 .medDagsats(meldekort.getDagsats())

@@ -96,7 +96,7 @@ public class MapAktørYtelse {
                 .medSaksnummer(ytelseDto.getSaksnummer() == null ? null : new Saksnummer(ytelseDto.getSaksnummer()))
                 .medStatus(KodeverkMapper.mapYtelseStatusFraDto(ytelseDto.getStatus()));
             ytelseDto.getAnvisninger()
-                .forEach(anvisning -> ytelseBuilder.medYtelseAnvist(mapYtelseAnvist(anvisning, ytelseBuilder.getAnvistBuilder())));
+                .forEach(anvisning -> ytelseBuilder.leggtilYtelseAnvist(mapYtelseAnvist(anvisning, ytelseBuilder.getAnvistBuilder())));
             return ytelseBuilder;
         }
 
