@@ -19,6 +19,13 @@ public class InfotrygdYtelseArbeid {
         this.refusjon = refusjon;
     }
 
+    public InfotrygdYtelseArbeid(String orgnr, int inntekt, InntektPeriodeType inntektperiode, Boolean refusjon) {
+        this.orgnr = orgnr;
+        this.inntekt = new BigDecimal(inntekt);
+        this.inntektperiode = inntektperiode;
+        this.refusjon = refusjon;
+    }
+
     public String getOrgnr() {
         return orgnr;
     }
