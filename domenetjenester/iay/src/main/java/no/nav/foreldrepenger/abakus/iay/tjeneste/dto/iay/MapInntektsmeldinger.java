@@ -101,7 +101,7 @@ public class MapInntektsmeldinger {
             .getAlleInntektsmeldinger()
             .stream()
             .filter(MapInntektsmeldinger::harRefusjonskrav)
-            .collect(Collectors.toMap(Inntektsmelding::getArbeidsgiver, MapInntektsmeldinger::finnFørsteDatoMedRefusjon));
+            .collect(Collectors.toMap(Inntektsmelding::getArbeidsgiver, MapInntektsmeldinger::finnFørsteDatoMedRefusjon, (d1, d2) -> d1.isAfter(d2) ? d2 : d1));
     }
 
     private static Optional<LocalDateTime> finnFørsteDatoForInnsendelseAvRefusjonskrav(Set<Inntektsmelding> inntektsmeldinger, Arbeidsgiver arbeidsgiver) {
@@ -135,7 +135,7 @@ public class MapInntektsmeldinger {
     }
 
     private static boolean harRefusjonFraStart(Inntektsmelding im) {
-        return !im.getRefusjonBeløpPerMnd().erNulltall();
+        return im.getRefusjonBeløpPerMnd() != null && !im.getRefusjonBeløpPerMnd().erNulltall();
     }
 
 
