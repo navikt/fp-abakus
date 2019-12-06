@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.jetty;
 
+import static no.nav.vedtak.util.env.Cluster.LOCAL;
 import static no.nav.vedtak.util.env.Cluster.NAIS_CLUSTER_NAME;
 
 import java.io.IOException;
@@ -22,7 +23,6 @@ import no.nav.foreldrepenger.abakus.app.konfig.ApplicationConfig;
 import no.nav.foreldrepenger.abakus.jetty.db.DatabaseScript;
 import no.nav.foreldrepenger.abakus.jetty.db.DatasourceRole;
 import no.nav.foreldrepenger.abakus.jetty.db.DatasourceUtil;
-import no.nav.foreldrepenger.abakus.jetty.db.EnvironmentClass;
 import no.nav.vedtak.isso.IssoApplication;
 import no.nav.vedtak.util.env.Environment;
 
@@ -95,20 +95,19 @@ public class JettyServer extends AbstractJettyServer {
     @Override
     protected void konfigurerJndi() throws Exception {
         new EnvEntry("jdbc/defaultDS",
-                DatasourceUtil.createDatasource("defaultDS", DatasourceRole.USER, getEnvironmentClass(), 4));
+                DatasourceUtil.createDatasource("defaultDS", DatasourceRole.USER, ENV.getCluster(), 4));
     }
 
     @Override
     protected void migrerDatabaser() {
-        EnvironmentClass environmentClass = getEnvironmentClass();
         String initSql = String.format("SET ROLE \"%s\"", DatasourceUtil.getDbRole("defaultDS", DatasourceRole.ADMIN));
-        if (EnvironmentClass.LOCALHOST.equals(environmentClass)) {
+        if (LOCAL.equals(ENV.getCluster())) {
             // TODO: Ønsker egentlig ikke dette, men har ikke satt opp skjema lokalt
             // til å ha en admin bruker som gjør migrering og en annen som gjør CRUD
             // operasjoner
             initSql = null;
         }
-        DataSource migreringDs = DatasourceUtil.createDatasource("defaultDS", DatasourceRole.ADMIN, environmentClass,
+        DataSource migreringDs = DatasourceUtil.createDatasource("defaultDS", DatasourceRole.ADMIN, ENV.getCluster(),
                 1);
         try {
             DatabaseScript.migrate(migreringDs, initSql);
@@ -116,10 +115,6 @@ public class JettyServer extends AbstractJettyServer {
         } catch (SQLException e) {
             log.warn("Klarte ikke stenge connection etter migrering", e);
         }
-    }
-
-    protected EnvironmentClass getEnvironmentClass() {
-        return EnvironmentUtil.getEnvironmentClass();
     }
 
     @Override
