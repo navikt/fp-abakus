@@ -16,17 +16,22 @@ import no.nav.vedtak.util.env.Cluster;
 
 public class DatasourceUtil {
 
+    private static final String VAULT_PREPROD_NAVN = "preprod-fss";
+
     public static DataSource createDatasource(String datasourceName, DatasourceRole role, Cluster cluster,
             int maxPoolSize) {
         String rolePrefix = getRolePrefix(datasourceName);
         HikariConfig config = initConnectionPoolConfig(datasourceName, maxPoolSize);
         if (LOCAL.equals(cluster)) {
-            String password = PropertyUtil.getProperty(datasourceName + ".password");
-            return createLocalDatasource(config, "public", rolePrefix, password);
-        } else {
-            String dbRole = getRole(rolePrefix, role);
-            return createVaultDatasource(config, "postgresql/" + cluster.clusterName(), dbRole);
+            return createLocalDatasource(config, "public", rolePrefix,
+                    PropertyUtil.getProperty(datasourceName + ".password"));
         }
+        return createVaultDatasource(config, mountPath(cluster), getRole(rolePrefix, role));
+
+    }
+
+    private static String mountPath(Cluster cluster) {
+        return "postgresql/" + (cluster.isProd() ? cluster.clusterName() : VAULT_PREPROD_NAVN);
     }
 
     private static String getRole(String rolePrefix, DatasourceRole role) {
