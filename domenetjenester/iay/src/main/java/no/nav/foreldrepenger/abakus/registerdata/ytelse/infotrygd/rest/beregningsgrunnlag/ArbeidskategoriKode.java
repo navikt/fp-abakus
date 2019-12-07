@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag;
 
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ArbeidskategoriKode {
@@ -32,6 +33,7 @@ public enum ArbeidskategoriKode {
     K26("26"),
     K27("27"),
     K30("30"),
+    @JsonEnumDefaultValue
     K99("99");
 
     private final String kode;
