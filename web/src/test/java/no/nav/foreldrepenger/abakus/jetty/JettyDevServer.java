@@ -22,7 +22,6 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
-import no.nav.foreldrepenger.abakus.jetty.db.EnvironmentClass;
 
 public class JettyDevServer extends JettyServer {
     private static final String VTP_ARGUMENT = "--vtp";
@@ -48,19 +47,21 @@ public class JettyDevServer extends JettyServer {
         devServer.bootStrap();
     }
 
-    private static String initCryptoStoreConfig(String storeName, String storeProperty, String storePasswordProperty, String defaultPassword) {
+    private static String initCryptoStoreConfig(String storeName, String storeProperty, String storePasswordProperty,
+            String defaultPassword) {
         String defaultLocation = getProperty("user.home", ".") + "/.modig/" + storeName + ".jks";
 
         String storePath = getProperty(storeProperty, defaultLocation);
         File storeFile = new File(storePath);
         if (!storeFile.exists()) {
             throw new IllegalStateException("Finner ikke " + storeName + " i " + storePath
-                + "\n\tKonfigurer enten som System property '" + storeProperty + "' eller environment variabel '"
-                + storeProperty.toUpperCase().replace('.', '_') + "'");
+                    + "\n\tKonfigurer enten som System property '" + storeProperty + "' eller environment variabel '"
+                    + storeProperty.toUpperCase().replace('.', '_') + "'");
         }
         String password = getProperty(storePasswordProperty, defaultPassword);
         if (password == null) {
-            throw new IllegalStateException("Passord for å aksessere store " + storeName + " i " + storePath + " er null");
+            throw new IllegalStateException(
+                    "Passord for å aksessere store " + storeName + " i " + storePath + " er null");
         }
 
         System.setProperty(storeProperty, storeFile.getAbsolutePath());
@@ -110,9 +111,9 @@ public class JettyDevServer extends JettyServer {
         PropertiesUtils.initProperties(JettyDevServer.vtp);
 
         List<JettyDevDbKonfigurasjon> konfigs = PropertiesUtils.getDBConnectionProperties()
-            .stream()
-            .filter(jettyDevDbKonfigurasjon -> jettyDevDbKonfigurasjon.getDatasource().equals("defaultDS"))
-            .collect(Collectors.toList());
+                .stream()
+                .filter(jettyDevDbKonfigurasjon -> jettyDevDbKonfigurasjon.getDatasource().equals("defaultDS"))
+                .collect(Collectors.toList());
         if (konfigs.size() == 1) {
             final JettyDevDbKonfigurasjon konfig = konfigs.get(0);
             System.setProperty("defaultDS.url", konfig.getUrl());
@@ -128,12 +129,17 @@ public class JettyDevServer extends JettyServer {
         System.setProperty("conf", "src/main/resources/jetty/");
         super.konfigurerSikkerhet();
 
-        // truststore avgjør hva vi stoler på av sertifikater når vi gjør utadgående TLS kall
+        // truststore avgjør hva vi stoler på av sertifikater når vi gjør utadgående TLS
+        // kall
         initCryptoStoreConfig("truststore", TRUSTSTORE_PATH_PROP, TRUSTSTORE_PASSW_PROP, "changeit");
 
-        // keystore genererer sertifikat og TLS for innkommende kall. Bruker standard prop hvis definert, ellers faller tilbake på modig props
-        var keystoreProp = System.getProperty("javax.net.ssl.keyStore") != null ? "javax.net.ssl.keyStore" : KEYSTORE_PATH_PROP;
-        var keystorePasswProp = System.getProperty("javax.net.ssl.keyStorePassword") != null ? "javax.net.ssl.keyStorePassword" : KEYSTORE_PASSW_PROP;
+        // keystore genererer sertifikat og TLS for innkommende kall. Bruker standard
+        // prop hvis definert, ellers faller tilbake på modig props
+        var keystoreProp = System.getProperty("javax.net.ssl.keyStore") != null ? "javax.net.ssl.keyStore"
+                : KEYSTORE_PATH_PROP;
+        var keystorePasswProp = System.getProperty("javax.net.ssl.keyStorePassword") != null
+                ? "javax.net.ssl.keyStorePassword"
+                : KEYSTORE_PASSW_PROP;
         initCryptoStoreConfig("keystore", keystoreProp, keystorePasswProp, "changeit");
     }
 
@@ -151,17 +157,12 @@ public class JettyDevServer extends JettyServer {
         https.addCustomizer(new SecureRequestCustomizer());
 
         ServerConnector sslConnector = new ServerConnector(server,
-            new SslConnectionFactory(sslContextFactory, "http/1.1"),
-            new HttpConnectionFactory(https));
+                new SslConnectionFactory(sslContextFactory, "http/1.1"),
+                new HttpConnectionFactory(https));
         sslConnector.setPort(appKonfigurasjon.getSslPort());
         connectors.add(sslConnector);
 
         return connectors;
-    }
-
-    @Override
-    protected EnvironmentClass getEnvironmentClass() {
-        return EnvironmentClass.LOCALHOST;
     }
 
     @Override
@@ -175,8 +176,7 @@ public class JettyDevServer extends JettyServer {
     @Override
     protected ResourceCollection createResourceCollection() throws IOException {
         return new ResourceCollection(
-            Resource.newClassPathResource("META-INF/resources/webjars/"),
-            Resource.newClassPathResource("/web")
-        );
+                Resource.newClassPathResource("META-INF/resources/webjars/"),
+                Resource.newClassPathResource("/web"));
     }
 }

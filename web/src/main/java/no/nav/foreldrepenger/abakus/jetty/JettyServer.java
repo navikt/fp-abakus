@@ -1,5 +1,8 @@
 package no.nav.foreldrepenger.abakus.jetty;
 
+import static no.nav.vedtak.util.env.Cluster.LOCAL;
+import static no.nav.vedtak.util.env.Cluster.NAIS_CLUSTER_NAME;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -20,10 +23,12 @@ import no.nav.foreldrepenger.abakus.app.konfig.ApplicationConfig;
 import no.nav.foreldrepenger.abakus.jetty.db.DatabaseScript;
 import no.nav.foreldrepenger.abakus.jetty.db.DatasourceRole;
 import no.nav.foreldrepenger.abakus.jetty.db.DatasourceUtil;
-import no.nav.foreldrepenger.abakus.jetty.db.EnvironmentClass;
 import no.nav.vedtak.isso.IssoApplication;
+import no.nav.vedtak.util.env.Environment;
 
 public class JettyServer extends AbstractJettyServer {
+
+    private static final Environment ENV = Environment.current();
 
     private static final Logger log = LoggerFactory.getLogger(JettyServer.class);
 
@@ -40,6 +45,7 @@ public class JettyServer extends AbstractJettyServer {
     }
 
     public static void main(String[] args) throws Exception {
+        System.setProperty(NAIS_CLUSTER_NAME, ENV.clusterName());
         JettyServer jettyServer;
         if (args.length > 0) {
             int serverPort = Integer.parseUnsignedInt(args[0]);
@@ -69,15 +75,18 @@ public class JettyServer extends AbstractJettyServer {
     }
 
     private void temporært() {
-        // FIXME (u139158): PFP-1176 Skriv om i OpenAmIssoHealthCheck og AuthorizationRequestBuilder når Jboss dør
+        // FIXME (u139158): PFP-1176 Skriv om i OpenAmIssoHealthCheck og
+        // AuthorizationRequestBuilder når Jboss dør
         if (System.getenv("OIDC_OPENAM_HOSTURL") != null) {
             System.setProperty("OpenIdConnect.issoHost", System.getenv("OIDC_OPENAM_HOSTURL"));
         }
-        // FIXME (u139158): PFP-1176 Skriv om i AuthorizationRequestBuilder og IdTokenAndRefreshTokenProvider når Jboss dør
+        // FIXME (u139158): PFP-1176 Skriv om i AuthorizationRequestBuilder og
+        // IdTokenAndRefreshTokenProvider når Jboss dør
         if (System.getenv("OIDC_OPENAM_AGENTNAME") != null) {
             System.setProperty("OpenIdConnect.username", System.getenv("OIDC_OPENAM_AGENTNAME"));
         }
-        // FIXME (u139158): PFP-1176 Skriv om i IdTokenAndRefreshTokenProvider når Jboss dør
+        // FIXME (u139158): PFP-1176 Skriv om i IdTokenAndRefreshTokenProvider når Jboss
+        // dør
         if (System.getenv("OIDC_OPENAM_PASSWORD") != null) {
             System.setProperty("OpenIdConnect.password", System.getenv("OIDC_OPENAM_PASSWORD"));
         }
@@ -85,29 +94,27 @@ public class JettyServer extends AbstractJettyServer {
 
     @Override
     protected void konfigurerJndi() throws Exception {
-        new EnvEntry("jdbc/defaultDS", DatasourceUtil.createDatasource("defaultDS", DatasourceRole.USER, getEnvironmentClass(), 4));
+        new EnvEntry("jdbc/defaultDS",
+                DatasourceUtil.createDatasource("defaultDS", DatasourceRole.USER, ENV.getCluster(), 4));
     }
 
     @Override
     protected void migrerDatabaser() {
-        EnvironmentClass environmentClass = getEnvironmentClass();
         String initSql = String.format("SET ROLE \"%s\"", DatasourceUtil.getDbRole("defaultDS", DatasourceRole.ADMIN));
-        if (EnvironmentClass.LOCALHOST.equals(environmentClass)) {
-            //  TODO: Ønsker egentlig ikke dette, men har ikke satt opp skjema lokalt
-            // til å ha en admin bruker som gjør migrering og en annen som gjør CRUD operasjoner
+        if (LOCAL.equals(ENV.getCluster())) {
+            // TODO: Ønsker egentlig ikke dette, men har ikke satt opp skjema lokalt
+            // til å ha en admin bruker som gjør migrering og en annen som gjør CRUD
+            // operasjoner
             initSql = null;
         }
-        DataSource migreringDs = DatasourceUtil.createDatasource("defaultDS", DatasourceRole.ADMIN, environmentClass, 1);
+        DataSource migreringDs = DatasourceUtil.createDatasource("defaultDS", DatasourceRole.ADMIN, ENV.getCluster(),
+                1);
         try {
             DatabaseScript.migrate(migreringDs, initSql);
             migreringDs.getConnection().close();
         } catch (SQLException e) {
             log.warn("Klarte ikke stenge connection etter migrering", e);
         }
-    }
-
-    protected EnvironmentClass getEnvironmentClass() {
-        return EnvironmentUtil.getEnvironmentClass();
     }
 
     @Override
@@ -122,7 +129,9 @@ public class JettyServer extends AbstractJettyServer {
         // Find path to class-files while starting jetty from development environment.
         List<Class<?>> appClasses = getApplicationClasses();
 
-        List<Resource> resources = appClasses.stream().map(c -> Resource.newResource(c.getProtectionDomain().getCodeSource().getLocation())).collect(Collectors.toList());
+        List<Resource> resources = appClasses.stream()
+                .map(c -> Resource.newResource(c.getProtectionDomain().getCodeSource().getLocation()))
+                .collect(Collectors.toList());
 
         metaData.setWebInfClassesDirs(resources);
     }
@@ -134,9 +143,8 @@ public class JettyServer extends AbstractJettyServer {
     @Override
     protected ResourceCollection createResourceCollection() throws IOException {
         return new ResourceCollection(
-            Resource.newClassPathResource("META-INF/resources/webjars/"),
-            Resource.newClassPathResource("/web")
-        );
+                Resource.newClassPathResource("META-INF/resources/webjars/"),
+                Resource.newClassPathResource("/web"));
     }
 
 }
