@@ -79,7 +79,7 @@ public class InntektFilter {
         return filter((inntekt, inntektspost) -> typer.contains(inntektspost.getInntektspostType()));
     }
 
-    public InntektFilter filter(YtelseType ytelseType) {
+    public InntektFilter filter(YtelseInntektspostType ytelseType) {
         return filter((inntekt, inntektspost) -> ytelseType.equals(inntektspost.getYtelseType()));
     }
 

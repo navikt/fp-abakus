@@ -4,6 +4,7 @@ import java.time.ZoneId;
 import java.util.Optional;
 import java.util.UUID;
 
+import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat;
@@ -14,7 +15,6 @@ import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 
 public class IAYFraDtoMapper {
 

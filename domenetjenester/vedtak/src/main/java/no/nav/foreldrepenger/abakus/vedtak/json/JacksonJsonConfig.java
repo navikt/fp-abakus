@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.ser.std.StringSerializer;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.KodeValidator;
+import no.nav.abakus.iaygrunnlag.kodeverk.KodeValidator;
 
 public final class JacksonJsonConfig {
 

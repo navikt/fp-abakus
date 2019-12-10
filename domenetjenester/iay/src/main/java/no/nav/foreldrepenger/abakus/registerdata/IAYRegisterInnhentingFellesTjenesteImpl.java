@@ -27,7 +27,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.OffentligYtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.Opptjeningsnøkkel;
 import no.nav.foreldrepenger.abakus.domene.iay.PensjonTrygdType;
 import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.YtelseType;
+import no.nav.foreldrepenger.abakus.domene.iay.YtelseInntektspostType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
@@ -399,7 +399,7 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
         inntektBuilder.leggTilInntektspost(inntektspostBuilder);
     }
 
-    private YtelseType mapTilKodeliste(Månedsinntekt månedsinntekt) {
+    private YtelseInntektspostType mapTilKodeliste(Månedsinntekt månedsinntekt) {
         if (månedsinntekt.getPensjonKode() != null) {
             return kodeverkRepository.finnForKodeverkEiersKode(PensjonTrygdType.class, månedsinntekt.getPensjonKode());
         } else if (månedsinntekt.getYtelseKode() != null) {

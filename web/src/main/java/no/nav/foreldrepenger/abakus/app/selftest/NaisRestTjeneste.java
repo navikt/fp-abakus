@@ -12,9 +12,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.foreldrepenger.abakus.app.konfig.ApplicationServiceStarter;
 import no.nav.foreldrepenger.abakus.app.konfig.InternalApplication;
 

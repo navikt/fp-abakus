@@ -19,10 +19,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseStatus;
-import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.TemaUnderkategoriReverse;
+import no.nav.foreldrepenger.abakus.vedtak.domene.TemaUnderkategori;
 import no.nav.tjeneste.virksomhet.infotrygdsak.v1.binding.FinnSakListePersonIkkeFunnet;
 import no.nav.tjeneste.virksomhet.infotrygdsak.v1.binding.FinnSakListeSikkerhetsbegrensning;
 import no.nav.tjeneste.virksomhet.infotrygdsak.v1.binding.FinnSakListeUgyldigInput;
@@ -122,7 +122,7 @@ public class InfotrygdTjeneste {
             relatertYtelseTilstand = getYtelseTilstand(erVedtak, sak.getStatus().getValue());
         }
         YtelseType ytelseType = utledYtelseType(sak.getTema().getValue(), temaUnderkategori);
-        if (YtelseType.ENGANGSSTØNAD.equals(ytelseType)) {
+        if (YtelseType.ENGANGSTØNAD.equals(ytelseType)) {
             opphoerFomDato = iverksatt != null ? iverksatt : registrert;
         }
 
@@ -144,7 +144,7 @@ public class InfotrygdTjeneste {
             } else if (TemaUnderkategori.erGjelderForeldrepenger(behandlingsTema.getKode())) {
                 return YtelseType.FORELDREPENGER;
             } else if (TemaUnderkategori.erGjelderEngangsstonad(behandlingsTema.getKode())) {
-                return YtelseType.ENGANGSSTØNAD;
+                return YtelseType.ENGANGSTØNAD;
             } else {
                 throw new IllegalStateException("Mangler mapping for RelatertYtelseTema(FA), TemaUnderkategori: " + behandlingsTema.getKode());
             }

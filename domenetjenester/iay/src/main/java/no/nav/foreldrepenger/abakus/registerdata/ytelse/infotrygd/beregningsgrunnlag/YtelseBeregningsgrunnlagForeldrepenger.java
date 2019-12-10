@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
-import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.vedtak.domene.TemaUnderkategori;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.Foreldrepenger;
 import no.nav.vedtak.felles.integrasjon.felles.ws.DateUtil;
 

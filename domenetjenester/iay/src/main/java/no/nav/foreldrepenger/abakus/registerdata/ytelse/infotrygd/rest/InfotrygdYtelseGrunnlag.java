@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Objects;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.Arbeidskategori;
-import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.vedtak.domene.TemaUnderkategori;
 
 public class InfotrygdYtelseGrunnlag {
 

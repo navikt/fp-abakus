@@ -40,6 +40,14 @@
 			<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
 
+		<dependency>
+			<!-- avhengighet må deklareres av bruker dersom ønsker å benytte kafka topics fra abakus  -->
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-clients</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+
 		<!-- for Bean validation -->
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>

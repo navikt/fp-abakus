@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 
 import org.junit.Test;
 
+import no.nav.abakus.callback.registerdata.ReferanseDto;
+
 public class ReferanseDtoTest {
 
     @Test

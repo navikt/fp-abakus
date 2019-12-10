@@ -7,8 +7,8 @@ import java.util.List;
 
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.Arbeidskategori;
-import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.vedtak.domene.TemaUnderkategori;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.Grunnlag;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.Vedtak;
 import no.nav.vedtak.felles.integrasjon.felles.ws.DateUtil;

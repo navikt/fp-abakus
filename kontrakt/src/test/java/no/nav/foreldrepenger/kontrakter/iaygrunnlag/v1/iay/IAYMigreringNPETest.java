@@ -14,8 +14,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.IayGrunnlagJsonMapper;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
+import no.nav.abakus.iaygrunnlag.IayGrunnlagJsonMapper;
+import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 
 @RunWith(Parameterized.class)
 public class IAYMigreringNPETest {

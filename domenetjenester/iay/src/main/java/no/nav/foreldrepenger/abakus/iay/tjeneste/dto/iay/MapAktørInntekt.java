@@ -7,6 +7,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import no.nav.abakus.iaygrunnlag.Aktør;
+import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
+import no.nav.abakus.iaygrunnlag.Organisasjon;
+import no.nav.abakus.iaygrunnlag.Periode;
+import no.nav.abakus.iaygrunnlag.PersonIdent;
+import no.nav.abakus.iaygrunnlag.inntekt.v1.InntekterDto;
+import no.nav.abakus.iaygrunnlag.inntekt.v1.UtbetalingDto;
+import no.nav.abakus.iaygrunnlag.inntekt.v1.UtbetalingsPostDto;
 import no.nav.foreldrepenger.abakus.domene.iay.AktørInntekt;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.Inntekt;
@@ -17,14 +25,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.Inntektspost;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektspostBuilder;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Aktør;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Organisasjon;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.PersonIdent;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntekt.v1.InntekterDto;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntekt.v1.UtbetalingDto;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntekt.v1.UtbetalingsPostDto;
 
 public class MapAktørInntekt {
 

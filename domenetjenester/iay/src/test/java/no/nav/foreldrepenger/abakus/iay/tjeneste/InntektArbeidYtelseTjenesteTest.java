@@ -11,7 +11,6 @@ import java.util.UUID;
 
 import javax.persistence.EntityManager;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;

@@ -9,8 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.Arbeidskategori;
-import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.vedtak.domene.TemaUnderkategori;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.Arbeidsforhold;
 import no.nav.tjeneste.virksomhet.infotrygdberegningsgrunnlag.v1.informasjon.PeriodeYtelse;
 

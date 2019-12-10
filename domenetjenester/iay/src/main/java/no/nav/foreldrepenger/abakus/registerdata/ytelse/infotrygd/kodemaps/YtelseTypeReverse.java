@@ -4,8 +4,8 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 
-import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.vedtak.domene.TemaUnderkategori;
 
 public class YtelseTypeReverse {
 

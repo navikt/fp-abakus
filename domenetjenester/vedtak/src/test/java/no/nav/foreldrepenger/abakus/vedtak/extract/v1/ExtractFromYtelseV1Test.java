@@ -10,19 +10,19 @@ import java.util.UUID;
 import org.junit.Rule;
 import org.junit.Test;
 
+import no.nav.abakus.vedtak.ytelse.Aktør;
+import no.nav.abakus.vedtak.ytelse.Periode;
+import no.nav.abakus.vedtak.ytelse.v1.Fagsystem;
+import no.nav.abakus.vedtak.ytelse.v1.YtelseStatus;
+import no.nav.abakus.vedtak.ytelse.v1.YtelseType;
+import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
+import no.nav.abakus.vedtak.ytelse.v1.anvisning.Anvisning;
 import no.nav.foreldrepenger.abakus.dbstoette.UnittestRepositoryRule;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepositoryImpl;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtattYtelse;
-import no.nav.vedtak.ytelse.Aktør;
-import no.nav.vedtak.ytelse.Periode;
-import no.nav.vedtak.ytelse.v1.Fagsystem;
-import no.nav.vedtak.ytelse.v1.YtelseStatus;
-import no.nav.vedtak.ytelse.v1.YtelseType;
-import no.nav.vedtak.ytelse.v1.YtelseV1;
-import no.nav.vedtak.ytelse.v1.anvisning.Anvisning;
 
 public class ExtractFromYtelseV1Test {
 
@@ -31,7 +31,7 @@ public class ExtractFromYtelseV1Test {
 
     private KodeverkRepository kodeverkRepository = new KodeverkRepositoryImpl(repositoryRule.getEntityManager());
     private VedtakYtelseRepository repository = new VedtakYtelseRepository(repositoryRule.getEntityManager());
-    private ExtractFromYtelseV1 extractor = new ExtractFromYtelseV1(repository, kodeverkRepository);
+    private ExtractFromYtelseV1 extractor = new ExtractFromYtelseV1(repository);
 
     @Test
     public void skal_lagre_informasjon() {

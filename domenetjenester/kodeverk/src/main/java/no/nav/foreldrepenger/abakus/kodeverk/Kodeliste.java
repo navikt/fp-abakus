@@ -35,7 +35,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.vedtak.util.StringUtils;
 
 /**
@@ -70,7 +69,7 @@ import no.nav.vedtak.util.StringUtils;
         )
     }
 )
-public abstract class Kodeliste extends KodeverkBaseEntitet implements Comparable<Kodeliste>, IndexKey {
+public abstract class Kodeliste extends KodeverkBaseEntitet implements Comparable<Kodeliste>, Kodeverdi {
     public static final Comparator<Kodeliste> NULLSAFE_KODELISTE_COMPARATOR = Comparator.nullsFirst(Kodeliste::compareTo);
     private static final Logger LOG = LoggerFactory.getLogger(Kodeliste.class);
 

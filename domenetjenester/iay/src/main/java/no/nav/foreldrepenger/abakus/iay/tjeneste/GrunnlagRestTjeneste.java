@@ -36,6 +36,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import no.nav.abakus.iaygrunnlag.Aktør;
+import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
+import no.nav.abakus.iaygrunnlag.FnrPersonident;
+import no.nav.abakus.iaygrunnlag.Periode;
+import no.nav.abakus.iaygrunnlag.PersonIdent;
+import no.nav.abakus.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest;
+import no.nav.abakus.iaygrunnlag.request.KopierGrunnlagRequest;
+import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
+import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagSakSnapshotDto;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
@@ -49,15 +58,6 @@ import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Aktør;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.FnrPersonident;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.PersonIdent;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.KopierGrunnlagRequest;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagSakSnapshotDto;
 import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
@@ -197,7 +197,7 @@ public class GrunnlagRestTjeneste {
 
         var grunnlagEtterspurt = iayTjeneste.hentGrunnlagEtterspurtFor(aktørId,
             new Saksnummer(saksnummer),
-            new YtelseType(ytelseType.getKode()),
+            YtelseType.fraKode(ytelseType.getKode()),
             spesifikasjon.getGrunnlagVersjon());
 
         grunnlagEtterspurt.forEach(g -> {
@@ -244,7 +244,7 @@ public class GrunnlagRestTjeneste {
         }
 
         if (YtelseType.UDEFINERT.equals(kobling.getYtelseType())) {
-            var ytelseType = kodeverkRepository.finn(YtelseType.class, dto.getYtelseType().getKode());
+            var ytelseType = YtelseType.fraKode(dto.getYtelseType().getKode());
             if (ytelseType != null) {
                 kobling.setYtelseType(ytelseType);
             }
@@ -372,7 +372,7 @@ public class GrunnlagRestTjeneste {
         public KopierGrunnlagRequestAbac(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
                                          @JsonProperty(value = "nyReferanse", required = true) @Valid @NotNull UUID nyReferanse,
                                          @JsonProperty(value = "gammelReferanse", required = true) @Valid @NotNull UUID gammelReferanse,
-                                         @JsonProperty(value = "ytelseType", required = true) @Valid @NotNull no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.YtelseType ytelseType,
+                                         @JsonProperty(value = "ytelseType", required = true) @Valid @NotNull no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType,
                                          @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør) {
             super(saksnummer, nyReferanse, gammelReferanse, ytelseType, aktør);
         }

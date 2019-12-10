@@ -5,7 +5,6 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -31,6 +30,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
+import no.nav.abakus.iaygrunnlag.FnrPersonident;
+import no.nav.abakus.iaygrunnlag.PersonIdent;
+import no.nav.abakus.iaygrunnlag.UuidDto;
+import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
+import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.RefusjonskravDatoerDto;
+import no.nav.abakus.iaygrunnlag.request.InntektsmeldingerMottattRequest;
+import no.nav.abakus.iaygrunnlag.request.InntektsmeldingerRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
@@ -41,14 +48,6 @@ import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.FnrPersonident;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.PersonIdent;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.UuidDto;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.inntektsmelding.v1.RefusjonskravDatoerDto;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InntektsmeldingerMottattRequest;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InntektsmeldingerRequest;
 import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
@@ -88,8 +87,8 @@ public class InntektsmeldingerRestTjeneste {
     public Response hentInntektsmeldingerForSak(@NotNull @Valid InntektsmeldingerRequestAbacDto spesifikasjon) {
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
-        var ytelseType = new YtelseType(spesifikasjon.getYtelseType().getKode());
-        var inntektsmeldingerMap = iayTjeneste.hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, new YtelseType(ytelseType.getKode()));
+        var ytelseType = YtelseType.fraKode(spesifikasjon.getYtelseType().getKode());
+        var inntektsmeldingerMap = iayTjeneste.hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, YtelseType.fraKode(ytelseType.getKode()));
         InntektsmeldingerDto inntektsmeldingerDto = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(inntektsmeldingerMap);
         return Response.ok(inntektsmeldingerDto).build();
     }
@@ -104,8 +103,8 @@ public class InntektsmeldingerRestTjeneste {
     public Response hentRefusjonskravDatoForSak(@NotNull @Valid InntektsmeldingerRequestAbacDto spesifikasjon) {
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
-        var ytelseType = new YtelseType(spesifikasjon.getYtelseType().getKode());
-        var inntektsmeldinger = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, new YtelseType(ytelseType.getKode()));
+        var ytelseType = YtelseType.fraKode(spesifikasjon.getYtelseType().getKode());
+        var inntektsmeldinger = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, YtelseType.fraKode(ytelseType.getKode()));
         var kobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType);
         if (kobling.isEmpty()) {
             return Response.ok(new InntektsmeldingerDto().medInntektsmeldinger(Collections.emptyList())).build();
