@@ -15,7 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
@@ -62,10 +61,8 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
     @ChangeTracked
     private ArbeidType arbeidType;
 
-    @ManyToOne(optional=false)
-    @JoinColumnsOrFormulas({
-        @JoinColumnOrFormula(column = @JoinColumn(name = "land", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + Landkoder.DISCRIMINATOR + "'"))})
+    @Convert(converter = Landkoder.KodeverdiConverter.class)
+    @Column(name="land", nullable = false)
     private Landkoder landkode;
 
     @Column(name = "utenlandsk_virksomhet_navn")

@@ -38,7 +38,7 @@ public class InntektspostBuilder {
         return this;
     }
 
-    public InntektspostBuilder medYtelse(YtelseType offentligYtelseType) {
+    public InntektspostBuilder medYtelse(YtelseInntektspostType offentligYtelseType) {
         this.inntektspostEntitet.setYtelse(offentligYtelseType);
         return this;
     }

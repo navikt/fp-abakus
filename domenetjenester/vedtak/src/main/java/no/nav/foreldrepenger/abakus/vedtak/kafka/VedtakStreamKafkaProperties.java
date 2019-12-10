@@ -3,8 +3,8 @@ package no.nav.foreldrepenger.abakus.vedtak.kafka;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import no.nav.familie.topic.Topic;
-import no.nav.familie.topic.TopicManifest;
+import no.nav.abakus.topic.Topic;
+import no.nav.abakus.topic.TopicManifest;
 import no.nav.vedtak.konfig.KonfigVerdi;
 
 @Dependent

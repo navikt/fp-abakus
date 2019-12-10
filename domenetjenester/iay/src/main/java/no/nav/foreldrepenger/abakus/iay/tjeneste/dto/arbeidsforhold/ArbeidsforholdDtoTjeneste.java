@@ -8,6 +8,13 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import no.nav.abakus.iaygrunnlag.Aktør;
+import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
+import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
+import no.nav.abakus.iaygrunnlag.Periode;
+import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdDto;
+import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdReferanseDto;
+import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdTjeneste;
@@ -18,13 +25,6 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.foreldrepenger.abakus.util.IntervallUtil;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Aktør;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.ArbeidsforholdRefDto;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdDto;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdReferanseDto;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.ArbeidType;
 
 @ApplicationScoped
 public class ArbeidsforholdDtoTjeneste {
@@ -73,7 +73,7 @@ public class ArbeidsforholdDtoTjeneste {
         if (arbeidsgiver instanceof Person) {
             return new AktørIdPersonident(((Person) arbeidsgiver).getAktørId());
         } else if (arbeidsgiver instanceof Organisasjon) {
-            return new no.nav.foreldrepenger.kontrakter.iaygrunnlag.Organisasjon(((Organisasjon) arbeidsgiver).getOrgNummer());
+            return new no.nav.abakus.iaygrunnlag.Organisasjon(((Organisasjon) arbeidsgiver).getOrgNummer());
         }
         throw new IllegalArgumentException("Utvikler feil: ArbeidsgiverEntitet av ukjent type.");
     }
