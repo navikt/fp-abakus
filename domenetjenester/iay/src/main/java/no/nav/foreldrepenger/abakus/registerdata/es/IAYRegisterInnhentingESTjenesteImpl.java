@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.registerdata;
+package no.nav.foreldrepenger.abakus.registerdata.es;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -7,26 +7,27 @@ import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
+import no.nav.foreldrepenger.abakus.registerdata.IAYRegisterInnhentingFellesTjenesteImpl;
+import no.nav.foreldrepenger.abakus.registerdata.InnhentingSamletTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.SigrunTjeneste;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
 
 @ApplicationScoped
-@YtelseTypeRef("FP")
-@YtelseTypeRef("SVP")
-public class IAYRegisterInnhentingSVPOgFPTjenesteImpl extends IAYRegisterInnhentingFellesTjenesteImpl {
+@YtelseTypeRef("ES")
+public class IAYRegisterInnhentingESTjenesteImpl extends IAYRegisterInnhentingFellesTjenesteImpl {
 
-    IAYRegisterInnhentingSVPOgFPTjenesteImpl() {
-        // CDI
+    protected IAYRegisterInnhentingESTjenesteImpl() {
+        super();
     }
 
     @Inject
-    public IAYRegisterInnhentingSVPOgFPTjenesteImpl(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
-                                                    KodeverkRepository kodeverkRepository,
-                                                    VirksomhetTjeneste virksomhetTjeneste,
-                                                    InnhentingSamletTjeneste innhentingSamletTjeneste,
-                                                    AktørConsumer aktørConsumer, SigrunTjeneste sigrunTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
+    public IAYRegisterInnhentingESTjenesteImpl(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
+                                               KodeverkRepository kodeverkRepository,
+                                               VirksomhetTjeneste virksomhetTjeneste,
+                                               InnhentingSamletTjeneste innhentingSamletTjeneste,
+                                               AktørConsumer aktørConsumer, SigrunTjeneste sigrunTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
         super(inntektArbeidYtelseTjeneste,
             kodeverkRepository,
             virksomhetTjeneste,
@@ -36,12 +37,12 @@ public class IAYRegisterInnhentingSVPOgFPTjenesteImpl extends IAYRegisterInnhent
 
     @Override
     public boolean skalInnhenteNæringsInntekterFor(Kobling behandling) {
-        return true;
+        return false;
     }
 
     @Override
     public boolean skalInnhenteYtelseGrunnlag(Kobling kobling) {
-        return true;
+        return false;
     }
 
 }

@@ -57,7 +57,7 @@ import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 import no.nav.vedtak.util.FPDateUtil;
 
-abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInnhentingTjeneste {
+public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInnhentingTjeneste {
 
     public static final Map<RegisterdataElement, InntektsKilde> ELEMENT_TIL_INNTEKTS_KILDE_MAP = Map.of(RegisterdataElement.INNTEKT_PENSJONSGIVENDE, InntektsKilde.INNTEKT_OPPTJENING, RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG, InntektsKilde.INNTEKT_BEREGNING, RegisterdataElement.INNTEKT_SAMMENLIGNINGSGRUNNLAG, InntektsKilde.INNTEKT_SAMMENLIGNING);
     private static final Logger LOGGER = LoggerFactory.getLogger(IAYRegisterInnhentingFellesTjenesteImpl.class);
@@ -69,8 +69,11 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
     private ByggYrkesaktiviteterTjeneste byggYrkesaktiviteterTjeneste;
     private AktørConsumer aktørConsumer;
     private SigrunTjeneste sigrunTjeneste;
+    
+    protected IAYRegisterInnhentingFellesTjenesteImpl() {
+    }
 
-    IAYRegisterInnhentingFellesTjenesteImpl(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
+    protected IAYRegisterInnhentingFellesTjenesteImpl(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
                                             KodeverkRepository kodeverkRepository,
                                             VirksomhetTjeneste virksomhetTjeneste,
                                             InnhentingSamletTjeneste innhentingSamletTjeneste,
@@ -83,9 +86,6 @@ abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInn
         this.sigrunTjeneste = sigrunTjeneste;
         this.ytelseRegisterInnhenting = new YtelseRegisterInnhenting(innhentingSamletTjeneste, vedtakYtelseRepository);
         this.byggYrkesaktiviteterTjeneste = new ByggYrkesaktiviteterTjeneste(kodeverkRepository);
-    }
-
-    IAYRegisterInnhentingFellesTjenesteImpl() {
     }
 
     private void innhentNæringsOpplysninger(Kobling kobling, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder) {

@@ -12,20 +12,21 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.SigrunTjeneste;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
 
+/** Standard IAY register innhenter. */
 @ApplicationScoped
-@YtelseTypeRef("ES")
-public class IAYRegisterInnhentingESTjenesteImpl extends IAYRegisterInnhentingFellesTjenesteImpl {
+@YtelseTypeRef()
+public class DefaultIAYRegisterInnhentingTjenesteImpl extends IAYRegisterInnhentingFellesTjenesteImpl {
 
-    IAYRegisterInnhentingESTjenesteImpl() {
+    DefaultIAYRegisterInnhentingTjenesteImpl() {
         // CDI
     }
 
     @Inject
-    public IAYRegisterInnhentingESTjenesteImpl(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
-                                               KodeverkRepository kodeverkRepository,
-                                               VirksomhetTjeneste virksomhetTjeneste,
-                                               InnhentingSamletTjeneste innhentingSamletTjeneste,
-                                               AktørConsumer aktørConsumer, SigrunTjeneste sigrunTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
+    public DefaultIAYRegisterInnhentingTjenesteImpl(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
+                                                    KodeverkRepository kodeverkRepository,
+                                                    VirksomhetTjeneste virksomhetTjeneste,
+                                                    InnhentingSamletTjeneste innhentingSamletTjeneste,
+                                                    AktørConsumer aktørConsumer, SigrunTjeneste sigrunTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
         super(inntektArbeidYtelseTjeneste,
             kodeverkRepository,
             virksomhetTjeneste,
@@ -35,12 +36,12 @@ public class IAYRegisterInnhentingESTjenesteImpl extends IAYRegisterInnhentingFe
 
     @Override
     public boolean skalInnhenteNæringsInntekterFor(Kobling behandling) {
-        return false;
+        return true;
     }
 
     @Override
     public boolean skalInnhenteYtelseGrunnlag(Kobling kobling) {
-        return false;
+        return true;
     }
 
 }
