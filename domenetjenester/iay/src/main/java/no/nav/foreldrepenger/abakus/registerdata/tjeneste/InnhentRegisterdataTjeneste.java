@@ -96,11 +96,7 @@ public class InnhentRegisterdataTjeneste {
     }
 
     private IAYRegisterInnhentingTjeneste finnInnhenter(YtelseType ytelseType) {
-        final var tjenester = innhentTjenester.select(new YtelseTypeRef.YtelseTypeRefLiteral(ytelseType.getKode()));
-        if (tjenester.isAmbiguous() || tjenester.isUnsatisfied()) {
-            throw new IllegalArgumentException("Finner ikke IAYRegisterInnhenter. Støtter ikke ytelsetype " + ytelseType);
-        }
-        return tjenester.get();
+        return YtelseTypeRef.Lookup.find(innhentTjenester, ytelseType).get();
     }
 
     private Kobling oppdaterKobling(InnhentRegisterdataRequest dto) {
