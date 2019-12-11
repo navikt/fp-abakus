@@ -87,20 +87,30 @@ public class MapInntektsmeldinger {
             return new RefusjonskravDatoerDto(Collections.emptyList());
         }
         List<RefusjonskravDatoDto> refusjonskravDatoList = new ArrayList<>();
-        Map<Arbeidsgiver, LocalDate> førsteRefusjonsdatoMap = lagFørsteRefusjonsdatoMap(nyesteGrunnlag.getInntektsmeldinger().get());
+        Map<Arbeidsgiver, Optional<LocalDate>> førsteRefusjonsdatoMap = lagFørsteRefusjonsdatoMap(nyesteGrunnlag.getInntektsmeldinger().get());
         førsteRefusjonsdatoMap.forEach((arbeidsgiver, førsteDatoMedRefusjon) -> finnFørsteDatoForInnsendelseAvRefusjonskrav(inntektsmeldinger, arbeidsgiver)
             .ifPresent(innsendingDato ->
-                refusjonskravDatoList.add(new RefusjonskravDatoDto(mapTilAktør(arbeidsgiver), innsendingDato.toLocalDate(), førsteDatoMedRefusjon))
+                refusjonskravDatoList.add(new RefusjonskravDatoDto(mapTilAktør(arbeidsgiver), innsendingDato.toLocalDate(), førsteDatoMedRefusjon.orElse(null)))
             ));
         return new RefusjonskravDatoerDto(refusjonskravDatoList);
     }
 
-    private static Map<Arbeidsgiver, LocalDate> lagFørsteRefusjonsdatoMap(InntektsmeldingAggregat inntektsmeldingAggregat) {
+    private static Map<Arbeidsgiver, Optional<LocalDate>> lagFørsteRefusjonsdatoMap(InntektsmeldingAggregat inntektsmeldingAggregat) {
         return inntektsmeldingAggregat
             .getAlleInntektsmeldinger()
             .stream()
             .filter(MapInntektsmeldinger::harRefusjonskrav)
-            .collect(Collectors.toMap(Inntektsmelding::getArbeidsgiver, MapInntektsmeldinger::finnFørsteDatoMedRefusjon, (d1, d2) -> d1.isAfter(d2) ? d2 : d1));
+            .collect(Collectors.toMap(Inntektsmelding::getArbeidsgiver, MapInntektsmeldinger::finnFørsteDatoMedRefusjon,
+                (d1, d2) -> mergeDatoer(d1, d2)));
+    }
+
+    private static Optional<LocalDate> mergeDatoer(Optional<LocalDate> d1, Optional<LocalDate> d2) {
+        if (d1.isEmpty() || d2.isEmpty()) {
+            return Optional.empty();
+        }
+        LocalDate dato1 = d1.get();
+        LocalDate dato2 = d2.get();
+        return dato1.isAfter(dato2) ? d2 : d1;
     }
 
     private static Optional<LocalDateTime> finnFørsteDatoForInnsendelseAvRefusjonskrav(Set<Inntektsmelding> inntektsmeldinger, Arbeidsgiver arbeidsgiver) {
@@ -118,11 +128,11 @@ public class MapInntektsmeldinger {
         }
     }
 
-    private static LocalDate finnFørsteDatoMedRefusjon(Inntektsmelding im) {
-        return harRefusjonFraStart(im) ? im.getStartDatoPermisjon() :
+    private static Optional<LocalDate> finnFørsteDatoMedRefusjon(Inntektsmelding im) {
+        return harRefusjonFraStart(im) ? Optional.ofNullable(im.getStartDatoPermisjon()) :
             im.getEndringerRefusjon().stream()
                 .map(Refusjon::getFom)
-                .min(Comparator.naturalOrder()).orElse(null);
+                .min(Comparator.naturalOrder());
     }
 
     private static boolean harRefusjonskrav(Inntektsmelding im) {
