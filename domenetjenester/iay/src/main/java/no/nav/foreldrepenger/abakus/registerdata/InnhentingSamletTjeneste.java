@@ -24,7 +24,6 @@ import org.threeten.extra.Interval;
 
 import no.finn.unleash.Unleash;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
-import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
@@ -44,6 +43,7 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdS
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import no.nav.foreldrepenger.abakus.vedtak.domene.TemaUnderkategori;
 import no.nav.vedtak.feil.Feil;
 import no.nav.vedtak.feil.FeilFactory;
 import no.nav.vedtak.feil.deklarasjon.DeklarerteFeil;
@@ -152,10 +152,10 @@ public class InnhentingSamletTjeneste {
             return false;
         }
         if (YtelseStatus.LØPENDE.equals(infotrygdSak.getYtelseStatus()) || YtelseStatus.AVSLUTTET.equals(infotrygdSak.getYtelseStatus())) {
-            return infotrygdSak.erAvRelatertYtelseType(YtelseType.ENGANGSSTØNAD, YtelseType.SYKEPENGER,
+            return infotrygdSak.erAvRelatertYtelseType(YtelseType.ENGANGSTØNAD, YtelseType.SYKEPENGER,
                 YtelseType.SVANGERSKAPSPENGER, YtelseType.FORELDREPENGER, YtelseType.PÅRØRENDESYKDOM);
         } else if (infotrygdSak.erVedtak()) {
-            if (infotrygdSak.erAvRelatertYtelseType(YtelseType.ENGANGSSTØNAD, YtelseType.FORELDREPENGER)) {
+            if (infotrygdSak.erAvRelatertYtelseType(YtelseType.ENGANGSTØNAD, YtelseType.FORELDREPENGER)) {
                 return true;
             }
             return medGrunnlag && infotrygdSak.erAvRelatertYtelseType(YtelseType.SYKEPENGER,
@@ -246,7 +246,7 @@ public class InnhentingSamletTjeneste {
 
     private boolean skalTypeLagresUansett(InfotrygdSakOgGrunnlag infotrygdSakOgGrunnlag) {
         YtelseType type = infotrygdSakOgGrunnlag.getSak().getYtelseType();
-        return List.of(YtelseType.ENGANGSSTØNAD, YtelseType.FORELDREPENGER).contains(type);
+        return List.of(YtelseType.ENGANGSTØNAD, YtelseType.FORELDREPENGER).contains(type);
     }
 
     public List<MeldekortUtbetalingsgrunnlagSak> hentYtelserTjenester(AktørId aktørId, Interval opplysningsPeriode) {

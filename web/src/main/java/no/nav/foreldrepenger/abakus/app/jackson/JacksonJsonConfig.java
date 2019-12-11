@@ -17,8 +17,8 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.KodeValidator;
 import no.nav.foreldrepenger.abakus.app.IndexClasses;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.KodeValidator;
 
 @Provider
 public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {

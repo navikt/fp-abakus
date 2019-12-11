@@ -8,11 +8,4 @@
 
     <entity class="no.nav.foreldrepenger.abakus.kobling.Kobling"/>
 
-    <!-- Kodeverk -->
-    <entity class="no.nav.foreldrepenger.abakus.kodeverk.YtelseType"/>
-    <entity class="no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori"/>
-    <entity class="no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseStatus"/>
-    <entity class="no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus"/>
-    <entity class="no.nav.foreldrepenger.abakus.typer.Fagsystem"/>
-    <entity class="no.nav.foreldrepenger.abakus.kodeverk.Landkoder"/>
 </entity-mappings>

@@ -1,6 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -12,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,21 +22,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
-
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinColumnsOrFormulas;
-import org.hibernate.annotations.JoinFormula;
 
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+import no.nav.foreldrepenger.abakus.vedtak.domene.TemaUnderkategori;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "YtelseEntitet")
@@ -50,21 +45,17 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
     @OneToOne(mappedBy = "ytelse")
     private YtelseGrunnlagEntitet ytelseGrunnlag;
 
-    @ManyToOne
-    @JoinColumnsOrFormulas({
-        @JoinColumnOrFormula(column = @JoinColumn(name = "ytelse_type", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + YtelseType.DISCRIMINATOR + "'"))})
+    @Convert(converter = YtelseType.KodeverdiConverter.class)
+    @Column(name="ytelse_type", nullable = false)
     private YtelseType relatertYtelseType;
 
     @Embedded
     @ChangeTracked
     private DatoIntervallEntitet periode;
 
-    @ManyToOne
-    @JoinColumnsOrFormulas({
-        @JoinColumnOrFormula(column = @JoinColumn(name = "status", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + YtelseStatus.DISCRIMINATOR + "'"))})
     @ChangeTracked
+    @Convert(converter = YtelseStatus.KodeverdiConverter.class)
+    @Column(name="status", nullable = false)
     private YtelseStatus status;
 
     /**
@@ -74,19 +65,13 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
     @AttributeOverrides(@AttributeOverride(name = "saksnummer", column = @Column(name = "saksnummer")))
     private Saksnummer saksnummer;
 
-    @ManyToOne
-    @JoinColumnsOrFormulas({
-        @JoinColumnOrFormula(column = @JoinColumn(name = "kilde", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + Fagsystem.DISCRIMINATOR + "'"))})
     @ChangeTracked
+    @Convert(converter= Fagsystem.KodeverdiConverter.class)
+    @Column(name="kilde", nullable = false)
     private Fagsystem kilde;
 
-    @ManyToOne
-    @JoinColumnsOrFormulas({
-        @JoinColumnOrFormula(column = @JoinColumn(name = "temaUnderkategori", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'"
-            + TemaUnderkategori.DISCRIMINATOR
-            + "'"))})
+    @Convert(converter = TemaUnderkategori.KodeverdiConverter.class)
+    @Column(name="temaUnderkategori", nullable = false)
     @ChangeTracked
     private TemaUnderkategori temaUnderkategori = TemaUnderkategori.UDEFINERT;
 
@@ -101,21 +86,6 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
     @Version
     @Column(name = "versjon", nullable = false)
     private long versjon;
-
-    /**
-     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
-     */
-    @Deprecated
-    @Transient
-    private LocalDate skjæringstidspunkt;
-
-
-    /**
-     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
-     */
-    @Deprecated
-    @Transient
-    private boolean ventreSideAvSkjæringstidspunkt;
 
     YtelseEntitet() {
         // hibernate
@@ -264,30 +234,5 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
             ", relatertYtelseStatus=" + status + //$NON-NLS-1$
             ", saksNummer='" + saksnummer + '\'' + //$NON-NLS-1$
             '}';
-    }
-
-    /**
-     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
-     */
-    @Deprecated
-    void setSkjæringstidspunkt(LocalDate skjæringstidspunkt, boolean ventreSide) {
-        this.skjæringstidspunkt = skjæringstidspunkt;
-        this.ventreSideAvSkjæringstidspunkt = ventreSide;
-    }
-
-    /**
-     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient skjæringstidspunkt.  Legg heller til egen Decorator klasse som filtrerer output fra entitet
-     */
-    @Deprecated
-    boolean skalMedEtterSkjæringstidspunktVurdering() {
-        if (skjæringstidspunkt != null) {
-            if (ventreSideAvSkjæringstidspunkt) {
-                return periode.getFomDato().isBefore(skjæringstidspunkt.plusDays(1));
-            } else {
-                return periode.getFomDato().isAfter(skjæringstidspunkt) ||
-                    periode.getFomDato().isBefore(skjæringstidspunkt.plusDays(1)) && periode.getTomDato().isAfter(skjæringstidspunkt);
-            }
-        }
-        return true;
     }
 }

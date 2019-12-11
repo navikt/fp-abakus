@@ -1,9 +1,9 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.svp;
 
-import static no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori.FORELDREPENGER_SVANGERSKAPSPENGER;
 import static no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus.AVSLUTTET;
 import static no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus.LØPENDE;
 import static no.nav.foreldrepenger.abakus.kodeverk.YtelseType.SVANGERSKAPSPENGER;
+import static no.nav.foreldrepenger.abakus.vedtak.domene.TemaUnderkategori.FORELDREPENGER_SVANGERSKAPSPENGER;
 
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.AvsluttetSak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.LøpendeSak;

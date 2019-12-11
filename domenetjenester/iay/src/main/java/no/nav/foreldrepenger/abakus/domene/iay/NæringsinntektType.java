@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 
 @Entity(name = "NæringsinntektType")
 @DiscriminatorValue(NæringsinntektType.DISCRIMINATOR)
-public class NæringsinntektType extends YtelseType {
+public class NæringsinntektType extends YtelseInntektspostType {
 
     public static final String DISCRIMINATOR = "NÆRINGSINNTEKT_TYPE"; //$NON-NLS-1$
     public static final NæringsinntektType UDEFINERT = new NæringsinntektType("-"); //$NON-NLS-1$

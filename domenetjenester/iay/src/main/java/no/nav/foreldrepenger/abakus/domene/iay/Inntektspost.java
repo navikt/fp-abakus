@@ -36,7 +36,7 @@ public interface Inntektspost {
      */
     Beløp getBeløp();
 
-    YtelseType getYtelseType();
+    YtelseInntektspostType getYtelseType();
     
     /** Periode inntektsposten gjelder. */
     DatoIntervallEntitet getPeriode();

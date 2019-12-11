@@ -18,22 +18,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinColumnsOrFormulas;
-import org.hibernate.annotations.JoinFormula;
 import org.hibernate.annotations.NaturalId;
 
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -54,10 +48,8 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
     @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id", nullable = false, updatable = false)))
     private AktørId aktørId;
 
-    @ManyToOne
-    @JoinColumnsOrFormulas({
-        @JoinColumnOrFormula(column = @JoinColumn(name = "ytelse_type", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + YtelseType.DISCRIMINATOR + "'"))})
+    @Convert(converter = YtelseType.KodeverdiConverter.class)
+    @Column(name="ytelse_type", nullable = false)
     private YtelseType ytelseType;
 
     @DiffIgnore
@@ -72,12 +64,10 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
     @ChangeTracked
     private DatoIntervallEntitet periode;
 
-    @ManyToOne
-    @JoinColumnsOrFormulas({
-        @JoinColumnOrFormula(column = @JoinColumn(name = "status", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + YtelseStatus.DISCRIMINATOR + "'"))})
     @ChangeTracked
-    private YtelseStatus status;
+    @Convert(converter = YtelseStatus.KodeverdiConverter.class)
+    @Column(name="status", nullable = false)
+    private YtelseStatus status = YtelseStatus.UDEFINERT;
 
     /**
      * Saksnummer (fra Arena, Infotrygd, ..).
@@ -86,19 +76,13 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
     @AttributeOverrides(@AttributeOverride(name = "saksnummer", column = @Column(name = "saksnummer")))
     private Saksnummer saksnummer;
 
-    @ManyToOne
-    @JoinColumnsOrFormulas({
-        @JoinColumnOrFormula(column = @JoinColumn(name = "kilde", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + Fagsystem.DISCRIMINATOR + "'"))})
     @ChangeTracked
+    @Convert(converter= Fagsystem.KodeverdiConverter.class)
+    @Column(name="kilde", nullable = false)
     private Fagsystem kilde;
 
-    @ManyToOne
-    @JoinColumnsOrFormulas({
-        @JoinColumnOrFormula(column = @JoinColumn(name = "temaUnderkategori", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'"
-            + TemaUnderkategori.DISCRIMINATOR
-            + "'"))})
+    @Convert(converter = TemaUnderkategori.KodeverdiConverter.class)
+    @Column(name="temaUnderkategori", nullable = false)
     @ChangeTracked
     private TemaUnderkategori temaUnderkategori = TemaUnderkategori.UDEFINERT;
 

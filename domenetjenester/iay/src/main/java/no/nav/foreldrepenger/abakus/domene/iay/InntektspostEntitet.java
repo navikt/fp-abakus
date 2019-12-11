@@ -61,7 +61,7 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
         @JoinColumnOrFormula(formula = @JoinFormula(value = "kl_ytelse_type" /* bruker kolonnenavn, da discriminator kan variere*/, referencedColumnName = "kodeverk")),
         @JoinColumnOrFormula(column = @JoinColumn(name = "ytelse_type", referencedColumnName = "kode")),
     })
-    private YtelseType ytelse = OffentligYtelseType.UDEFINERT;
+    private YtelseInntektspostType ytelse = OffentligYtelseType.UDEFINERT;
 
     @Embedded
     private DatoIntervallEntitet periode;
@@ -133,7 +133,7 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
     }
 
     @Override
-    public YtelseType getYtelseType() {
+    public YtelseInntektspostType getYtelseType() {
         return ytelse;
     }
 
@@ -145,7 +145,7 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
         this.inntekt = inntekt;
     }
 
-    void setYtelse(YtelseType ytelse) {
+    void setYtelse(YtelseInntektspostType ytelse) {
         this.ytelseType = ytelse.getKodeverk();
         this.ytelse = ytelse;
     }

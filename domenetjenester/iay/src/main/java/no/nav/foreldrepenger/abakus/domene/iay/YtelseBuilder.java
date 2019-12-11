@@ -2,11 +2,11 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.util.Optional;
 
-import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+import no.nav.foreldrepenger.abakus.vedtak.domene.TemaUnderkategori;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class YtelseBuilder {

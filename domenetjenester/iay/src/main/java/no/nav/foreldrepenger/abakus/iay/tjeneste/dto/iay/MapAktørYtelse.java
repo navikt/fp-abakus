@@ -7,6 +7,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
+import no.nav.abakus.iaygrunnlag.Organisasjon;
+import no.nav.abakus.iaygrunnlag.Periode;
+import no.nav.abakus.iaygrunnlag.PersonIdent;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.abakus.iaygrunnlag.ytelse.v1.AnvisningDto;
+import no.nav.abakus.iaygrunnlag.ytelse.v1.FordelingDto;
+import no.nav.abakus.iaygrunnlag.ytelse.v1.YtelseDto;
+import no.nav.abakus.iaygrunnlag.ytelse.v1.YtelseGrunnlagDto;
+import no.nav.abakus.iaygrunnlag.ytelse.v1.YtelserDto;
 import no.nav.foreldrepenger.abakus.domene.iay.AktørYtelse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder;
@@ -23,17 +34,6 @@ import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.AktørIdPersonident;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Organisasjon;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.PersonIdent;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.YtelseStatus;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.YtelseType;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.ytelse.v1.AnvisningDto;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.ytelse.v1.FordelingDto;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.ytelse.v1.YtelseDto;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.ytelse.v1.YtelseGrunnlagDto;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.ytelse.v1.YtelserDto;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class MapAktørYtelse {

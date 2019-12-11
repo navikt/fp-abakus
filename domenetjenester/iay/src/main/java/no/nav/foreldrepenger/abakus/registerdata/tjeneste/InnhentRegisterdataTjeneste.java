@@ -12,6 +12,10 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import no.nav.abakus.iaygrunnlag.Aktør;
+import no.nav.abakus.iaygrunnlag.Periode;
+import no.nav.abakus.iaygrunnlag.kodeverk.RegisterdataType;
+import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.abakus.prosesstask.batch.BatchProsessTaskRepository;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
@@ -22,17 +26,12 @@ import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.TaskConstants;
 import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.IAYRegisterInnhentingTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.RegisterdataInnhentingTask;
 import no.nav.foreldrepenger.abakus.registerdata.callback.CallbackTask;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Aktør;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.Periode;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.kodeverk.RegisterdataType;
-import no.nav.foreldrepenger.kontrakter.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskGruppe;
@@ -46,7 +45,6 @@ public class InnhentRegisterdataTjeneste {
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private KoblingTjeneste koblingTjeneste;
     private BatchProsessTaskRepository prosessTaskRepository;
-    private KodeverkRepository kodeverkRepository;
 
     InnhentRegisterdataTjeneste() {
         // CDI
@@ -56,13 +54,11 @@ public class InnhentRegisterdataTjeneste {
     public InnhentRegisterdataTjeneste(@Any Instance<IAYRegisterInnhentingTjeneste> innhentingTjeneste,
                                        InntektArbeidYtelseTjeneste iayTjeneste,
                                        KoblingTjeneste koblingTjeneste,
-                                       BatchProsessTaskRepository prosessTaskRepository,
-                                       KodeverkRepository kodeverkRepository) {
+                                       BatchProsessTaskRepository prosessTaskRepository) {
         this.innhentTjenester = innhentingTjeneste;
         this.iayTjeneste = iayTjeneste;
         this.koblingTjeneste = koblingTjeneste;
         this.prosessTaskRepository = prosessTaskRepository;
-        this.kodeverkRepository = kodeverkRepository;
     }
 
     private static Map<RegisterdataType, RegisterdataElement> initMapping() {
@@ -146,7 +142,7 @@ public class InnhentRegisterdataTjeneste {
     }
 
     private YtelseType mapTilYtelseType(InnhentRegisterdataRequest dto) {
-        return kodeverkRepository.finn(YtelseType.class, dto.getYtelseType().getKode());
+        return YtelseType.fraKode(dto.getYtelseType().getKode());
     }
 
     public String triggAsyncInnhent(InnhentRegisterdataRequest dto) {

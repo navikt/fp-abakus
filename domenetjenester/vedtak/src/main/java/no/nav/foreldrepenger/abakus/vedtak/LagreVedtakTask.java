@@ -12,6 +12,8 @@ import javax.validation.ValidatorFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import no.nav.abakus.vedtak.ytelse.Ytelse;
+import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
@@ -19,8 +21,6 @@ import no.nav.foreldrepenger.abakus.vedtak.json.JacksonJsonConfig;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
-import no.nav.vedtak.ytelse.Ytelse;
-import no.nav.vedtak.ytelse.v1.YtelseV1;
 
 @ProsessTask(LagreVedtakTask.TASKTYPE)
 public class LagreVedtakTask implements ProsessTaskHandler {

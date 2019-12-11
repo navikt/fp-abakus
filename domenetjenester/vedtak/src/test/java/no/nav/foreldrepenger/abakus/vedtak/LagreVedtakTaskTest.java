@@ -16,7 +16,7 @@ public class LagreVedtakTaskTest {
 
     private VedtakYtelseRepository repository = mock(VedtakYtelseRepository.class);
     private final KodeverkRepository kodeverkRepository = mock(KodeverkRepository.class);
-    private ExtractFromYtelseV1 extractor = new ExtractFromYtelseV1(repository, kodeverkRepository);
+    private ExtractFromYtelseV1 extractor = new ExtractFromYtelseV1(repository);
     private LagreVedtakTask task = new LagreVedtakTask(repository, extractor);
 
     @Test(expected = IllegalArgumentException.class)

@@ -91,10 +91,10 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
 
         // NB! skal ikke lage ny versjon av oppgitt opptjening! Lenker bare inn
         grunnlag.getOppgittOpptjening().ifPresent(kopiAvOppgittOpptjening -> this.setOppgittOpptjening((OppgittOpptjeningEntitet) kopiAvOppgittOpptjening));
-        grunnlag.getRegisterVersjon().ifPresent(nyRegisterVerson -> this.setRegister((InntektArbeidYtelseAggregat) nyRegisterVerson));
+        grunnlag.getRegisterVersjon().ifPresent(nyRegisterVerson -> this.setRegister(nyRegisterVerson));
 
         grunnlag.getSaksbehandletVersjon()
-            .ifPresent(nySaksbehandletFørVersjon -> this.setSaksbehandlet((InntektArbeidYtelseAggregat) nySaksbehandletFørVersjon));
+            .ifPresent(nySaksbehandletFørVersjon -> this.setSaksbehandlet(nySaksbehandletFørVersjon));
 
         grunnlag.getInntektsmeldinger().ifPresent(this::setInntektsmeldinger);
 

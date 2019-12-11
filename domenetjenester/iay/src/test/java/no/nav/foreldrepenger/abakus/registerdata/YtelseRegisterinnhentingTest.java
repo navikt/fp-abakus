@@ -18,12 +18,12 @@ import org.junit.Test;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Ytelse;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
-import no.nav.foreldrepenger.abakus.kodeverk.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+import no.nav.foreldrepenger.abakus.vedtak.domene.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseEntitet;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
@@ -31,8 +31,6 @@ import no.nav.foreldrepenger.abakus.vedtak.domene.YtelseAnvistBuilder;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class YtelseRegisterinnhentingTest {
-    private static final String FNR = "01234567890";
-    private static final LocalDate KONFIG_FOM = LocalDate.of(2018,7,1);
 
     private InnhentingSamletTjeneste samletTjeneste = mock(InnhentingSamletTjeneste.class);
 
@@ -54,7 +52,7 @@ public class YtelseRegisterinnhentingTest {
             .medStatus(YtelseStatus.AVSLUTTET)
             .medSaksnummer(new Saksnummer("123"))
             .medKilde(Fagsystem.FPSAK)
-            .medYtelseType(YtelseType.ENGANGSSTØNAD)
+            .medYtelseType(YtelseType.ENGANGSTØNAD)
             .medBehandlingsTema(TemaUnderkategori.ENGANGSSTONAD_FODSEL)
             .leggTil(YtelseAnvistBuilder.ny().medAnvistPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusMonths(4), LocalDate.now().minusMonths(2))))
             .build();

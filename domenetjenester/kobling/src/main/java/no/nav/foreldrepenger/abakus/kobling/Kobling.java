@@ -7,18 +7,15 @@ import java.util.Optional;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinFormula;
 import org.hibernate.annotations.NaturalId;
 
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
@@ -55,9 +52,8 @@ public class Kobling extends no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet
     })
     private KoblingReferanse koblingReferanse;
 
-    @ManyToOne(optional = false)
-    @JoinColumnOrFormula(column = @JoinColumn(name = "ytelse_type", referencedColumnName = "kode", nullable = false))
-    @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + YtelseType.DISCRIMINATOR + "'"))
+    @Convert(converter = YtelseType.KodeverdiConverter.class)
+    @Column(name="ytelse_type", nullable = false)
     private YtelseType ytelseType = YtelseType.UDEFINERT;
 
     @Embedded
