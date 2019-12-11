@@ -162,6 +162,40 @@ public class MapInntektsmeldingerTest {
     }
 
     @Test
+    public void skal_mappe_en_inntektsmelding_til_første_refusjonsdato_og_første_innsendelsesdato_når_startdato_permisjon_er_null() {
+        // Arrange
+        Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
+        KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
+        AktørId aktørId = new AktørId("1234123412341");
+        YtelseType foreldrepenger = YtelseType.FORELDREPENGER;
+        Kobling kobling1 = new Kobling(saksnummer, koblingReferanse, aktørId);
+        kobling1.setYtelseType(foreldrepenger);
+        koblingTjeneste.lagre(kobling1);
+        LocalDateTime innsendingstidspunkt = LocalDateTime.now();
+        Arbeidsgiver virksomhet = Arbeidsgiver.virksomhet(new OrgNummer("910909088"));
+        Inntektsmelding im = InntektsmeldingBuilder.builder()
+            .medArbeidsgiver(virksomhet)
+            .medBeløp(BigDecimal.TEN)
+            .medRefusjon(BigDecimal.TEN)
+            .medInnsendingstidspunkt(innsendingstidspunkt)
+            .medMottattDato(LocalDate.now())
+            .medJournalpostId("journalpost_id")
+            .build();
+        iayRepository.lagre(koblingReferanse, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(im));
+
+        // Act
+        Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, foreldrepenger);
+        Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, foreldrepenger).orElseThrow();
+        RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm, iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
+
+        // Assert
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().size()).isEqualTo(1);
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getArbeidsgiver().getIdent()).isEqualTo(virksomhet.getIdentifikator());
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteDagMedRefusjonskrav()).isNull();
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(innsendingstidspunkt.toLocalDate());
+    }
+
+    @Test
     public void skal_mappe_ikkje_mappe_refusjonsdatoer_når_siste_inntektsmelding_ikkje_har_refusjonskrav() {
         // Arrange
         Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
