@@ -1,16 +1,22 @@
 package no.nav.foreldrepenger.abakus.felles.diff;
 
+import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraph.TraverseResult;
+
 public class DiffEntity {
 
-    private TraverseEntityGraph traverser;
+    private TraverseGraph traverser;
 
-    public DiffEntity(TraverseEntityGraph traverser) {
+    public DiffEntity(TraverseGraphConfig config) {
+        this(new TraverseGraph(config));
+    }
+    
+    public DiffEntity(TraverseGraph traverser) {
         this.traverser = traverser;
     }
 
     public <V> DiffResult diff(V entity1, V entity2) {
-        TraverseEntityGraph.TraverseResult entity1Result = traverser.traverse(entity1);
-        TraverseEntityGraph.TraverseResult entity2Result = traverser.traverse(entity2);
+        TraverseResult entity1Result = traverser.traverse(entity1);
+        TraverseResult entity2Result = traverser.traverse(entity2);
 
         return new DiffResult(this.traverser, entity1Result, entity2Result);
     }

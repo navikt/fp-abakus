@@ -9,18 +9,20 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 
+import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraph.TraverseResult;
+
 /**
  * Henter ut resultat fra å diffe to entitet objekter.
  * Det forventes at begge objektene har samme rot.
  */
 public class DiffResult {
 
-    private TraverseEntityGraph.TraverseResult result1;
-    private TraverseEntityGraph.TraverseResult result2;
+    private TraverseResult result1;
+    private TraverseResult result2;
     @SuppressWarnings("unused")
-    private TraverseEntityGraph traverser;
+    private TraverseGraph traverser;
 
-    public DiffResult(TraverseEntityGraph traverser, TraverseEntityGraph.TraverseResult result1, TraverseEntityGraph.TraverseResult result2) {
+    public DiffResult(TraverseGraph traverser, TraverseResult result1, TraverseResult result2) {
         this.traverser = traverser;
         this.result1 = result1;
         this.result2 = result2;
@@ -51,7 +53,7 @@ public class DiffResult {
         });
     }
 
-    @SuppressWarnings({"rawtypes"})
+    @SuppressWarnings({ "rawtypes" })
     private boolean areEqual(Node key, Object left, Object right) {
         if (Objects.equals(left, right)) {
             return true;
@@ -67,7 +69,7 @@ public class DiffResult {
         return false;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private boolean areEqualListsOutOfOrder(Node key, List lhsList, List rhsList) {
         Set lhsSet = new HashSet<>(lhsList);
         Set rhsSet = new HashSet<>(rhsList);
@@ -87,5 +89,11 @@ public class DiffResult {
         Map<Node, Pair> diffs = new HashMap<>();
         calcLeafDiffs(diffs, true);
         return diffs.isEmpty();
+    }
+
+    public boolean areDifferent() {
+        Map<Node, Pair> diffs = new HashMap<>();
+        calcLeafDiffs(diffs, true);
+        return !diffs.isEmpty();
     }
 }
