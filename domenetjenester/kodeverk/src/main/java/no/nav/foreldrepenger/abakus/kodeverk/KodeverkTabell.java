@@ -19,7 +19,7 @@ import javax.persistence.MappedSuperclass;
  * Bruk: Subklass denne med en en klasse som mapper til en spesifikk tabell.
  */
 @MappedSuperclass
-public abstract class KodeverkTabell extends KodeverkBaseEntitet {
+public abstract class KodeverkTabell extends KodeverkBaseEntitet implements Kodeverdi {
 
     @Id
     @Column(name = "kode", updatable = false, insertable = false, nullable = false)
@@ -43,12 +43,24 @@ public abstract class KodeverkTabell extends KodeverkBaseEntitet {
         this.kode = kode;
     }
 
+    @Override
     public String getKode() {
         return kode;
     }
 
+    @Override
     public String getNavn() {
         return navn;
+    }
+    
+    @Override
+    public String getKodeverk() {
+        return "KODEVERK";
+    }
+    
+    @Override
+    public String getOffisiellKode() {
+        return kode;
     }
 
     public String getBeskrivelse() {
