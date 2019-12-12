@@ -7,6 +7,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Desimaltall {
 
+    public Desimaltall() {
+    }
+
     @JsonProperty("verdi")
     private BigDecimal verdi;
 
