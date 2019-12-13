@@ -17,11 +17,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Spesifikasjon for å hente opp et InntektArbeidYtelseGrunnlag.
@@ -165,13 +164,6 @@ public class InntektArbeidYtelseGrunnlagRequest {
         return grunnlagVersjon;
     }
 
-    public enum Dataset {
-        REGISTER,
-        OVERSTYRT,
-        INNTEKTSMELDING,
-        OPPGITT_OPPTJENING
-    }
-
     /** Setter scope for hvilke grunnlag som hentes per behandling. */
     public enum GrunnlagVersjon {
 
@@ -192,7 +184,7 @@ public class InntektArbeidYtelseGrunnlagRequest {
          * for å håndtere Revurdering (om det har vært endringer i behandlingen).
          */
         FØRSTE_OG_SISTE,;
-        
+
 
     }
 }

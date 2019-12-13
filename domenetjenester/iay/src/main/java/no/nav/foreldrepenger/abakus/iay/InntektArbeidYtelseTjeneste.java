@@ -15,10 +15,11 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import no.nav.abakus.iaygrunnlag.request.Dataset;
 import no.nav.abakus.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest.GrunnlagVersjon;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
@@ -85,7 +86,7 @@ public class InntektArbeidYtelseTjeneste {
      * Hent alle grunnlag for angitt saksnummer
      *
      * @param saksnummer
-     * @param boolean kunAktive - hvis true henter kun aktive grunnlag (ikke historiske versjoner)
+     * @param boolean    kunAktive - hvis true henter kun aktive grunnlag (ikke historiske versjoner)
      * @return henter optional aggregat
      */
     public List<InntektArbeidYtelseGrunnlag> hentAlleGrunnlagFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType, boolean kunAktive) {
@@ -96,7 +97,7 @@ public class InntektArbeidYtelseTjeneste {
      * Hent alle grunnlag for angitt koblingsreferanse (behandling)
      *
      * @param koblingReferanse
-     * @param boolean kunAktive - hvis true henter kun aktive grunnlag (ikke historiske versjoner)
+     * @param boolean          kunAktive - hvis true henter kun aktive grunnlag (ikke historiske versjoner)
      * @return henter optional aggregat
      */
     public List<InntektArbeidYtelseGrunnlag> hentAlleGrunnlagFor(AktørId aktørId, KoblingReferanse koblingReferanse, boolean kunAktive) {
@@ -108,10 +109,11 @@ public class InntektArbeidYtelseTjeneste {
     }
 
 
-
     public Map<Inntektsmelding, ArbeidsforholdInformasjon> hentArbeidsforholdinfoInntektsmeldingerMapFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
         return repository.hentArbeidsforholdInfoInntektsmeldingerMapFor(aktørId, saksnummer, ytelseType);
-    };
+    }
+
+    ;
 
     /**
      * Hent grunnlag etterspurt (tar hensyn til GrunnlagVersjon) for angitt aktørId, saksnummer, ytelsetype.
@@ -196,12 +198,13 @@ public class InntektArbeidYtelseTjeneste {
      * Kopier grunnlag fra en behandling til en annen.
      *
      * @param ytelseType
+     * @param dataset
      */
     public void kopierGrunnlagFraEksisterendeBehandling(YtelseType ytelseType, AktørId aktørId, Saksnummer saksnummer, KoblingReferanse fraKobling,
-                                                        KoblingReferanse tilKobling) {
+                                                        KoblingReferanse tilKobling, Set<Dataset> dataset) {
         var origAggregat = hentGrunnlagFor(fraKobling);
-        if(origAggregat.isPresent()) {
-            var builder = kopierGrunnlagPlussNyereInntektsmeldingerForFagsak(ytelseType, aktørId, saksnummer, origAggregat.get());
+        if (origAggregat.isPresent()) {
+            var builder = kopierGrunnlagPlussNyereInntektsmeldingerForFagsak(ytelseType, aktørId, saksnummer, origAggregat.get(), dataset);
             lagre(tilKobling, builder);
         }
     }
@@ -213,29 +216,33 @@ public class InntektArbeidYtelseTjeneste {
      * som ikke inkluderer en eller flere inntektsmeldinger som er mottatt etter vedtaket, men før revurderingen.
      *
      * @param arbeidsforholdInformasjon
+     * @param dataset
      * @return
      */
     private InntektArbeidYtelseGrunnlagBuilder kopierGrunnlagPlussNyereInntektsmeldingerForFagsak(YtelseType ytelseType,
-                                                                                                          AktørId aktørId,
-                                                                                                          Saksnummer saksnummer,
-                                                                                                          InntektArbeidYtelseGrunnlag original) {
+                                                                                                  AktørId aktørId,
+                                                                                                  Saksnummer saksnummer,
+                                                                                                  InntektArbeidYtelseGrunnlag original,
+                                                                                                  Set<Dataset> dataset) {
 
-        var builder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(original);
-        var gjeldendeInntektsmeldinger = original.getInntektsmeldinger().map(InntektsmeldingAggregat::getInntektsmeldinger).orElse(List.of());
+        var builder = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(original, dataset);
+        if(dataset.contains(Dataset.INNTEKTSMELDING)) {
+            var gjeldendeInntektsmeldinger = original.getInntektsmeldinger().map(InntektsmeldingAggregat::getInntektsmeldinger).orElse(List.of());
 
-        var innsendingstidspunkt = finnInnsendingstidspunktForNyesteEksisterendeIm(gjeldendeInntektsmeldinger);
-        var arbeidsforholdInformasjon = original.getArbeidsforholdInformasjon().orElseGet(ArbeidsforholdInformasjon::new);
+            var innsendingstidspunkt = finnInnsendingstidspunktForNyesteEksisterendeIm(gjeldendeInntektsmeldinger);
+            var arbeidsforholdInformasjon = original.getArbeidsforholdInformasjon().orElseGet(ArbeidsforholdInformasjon::new);
 
-        var inntektsmeldinger = hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
-        var kopi = inntektsmeldinger.stream()
-            .filter(im -> im.getInnsendingstidspunkt().isAfter(innsendingstidspunkt))
-            .sorted(Comparator.comparing(Inntektsmelding::getInnsendingstidspunkt))
-            .map(InntektsmeldingBuilder::kopi)
-            .map(InntektsmeldingBuilder::build)
-            .collect(Collectors.toList());
+            var inntektsmeldinger = hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
+            var kopi = inntektsmeldinger.stream()
+                .filter(im -> im.getInnsendingstidspunkt().isAfter(innsendingstidspunkt))
+                .sorted(Comparator.comparing(Inntektsmelding::getInnsendingstidspunkt))
+                .map(InntektsmeldingBuilder::kopi)
+                .map(InntektsmeldingBuilder::build)
+                .collect(Collectors.toList());
 
-        var informasjonBuilder = ArbeidsforholdInformasjonBuilder.oppdatere(arbeidsforholdInformasjon);
-        repository.oppdaterBuilderMedNyeInntektsmeldinger(informasjonBuilder, kopi, builder);
+            var informasjonBuilder = ArbeidsforholdInformasjonBuilder.oppdatere(arbeidsforholdInformasjon);
+            repository.oppdaterBuilderMedNyeInntektsmeldinger(informasjonBuilder, kopi, builder);
+        }
 
         return builder;
 

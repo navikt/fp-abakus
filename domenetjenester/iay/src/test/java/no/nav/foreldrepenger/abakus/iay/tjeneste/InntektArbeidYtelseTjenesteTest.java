@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.time.LocalDateTime;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -15,6 +16,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import no.nav.abakus.iaygrunnlag.request.Dataset;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
@@ -28,7 +30,7 @@ import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 public class InntektArbeidYtelseTjenesteTest {
 
     private Arbeidsgiver arbeidsgiver = Arbeidsgiver.virksomhet(new OrgNummer(OrgNummer.KUNSTIG_ORG));
-    
+
     @Test
     public void skal_kopiere_iay_grunnlag() throws Exception {
 
@@ -46,13 +48,14 @@ public class InntektArbeidYtelseTjenesteTest {
 
         Mockito.doAnswer(i -> Optional.of(iaygBuilder.build())).when(iayr).hentInntektArbeidYtelseGrunnlagForBehandling(any());
         Mockito.doReturn(Set.of(gammel, nå, ny)).when(iayr).hentAlleInntektsmeldingerFor(any(), any(), any());
-        
+
         // Act
         var iayt = new InntektArbeidYtelseTjeneste(iayr);
-        iayt.kopierGrunnlagFraEksisterendeBehandling(null, null, null, new KoblingReferanse(UUID.randomUUID()), new KoblingReferanse(UUID.randomUUID()));
+        iayt.kopierGrunnlagFraEksisterendeBehandling(null, null, null, new KoblingReferanse(UUID.randomUUID()), new KoblingReferanse(UUID.randomUUID()),
+            EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.INNTEKTSMELDING, Dataset.REGISTER, Dataset.OVERSTYRT));
 
         // Assert
-        ArgumentCaptor<InntektArbeidYtelseGrunnlagBuilder> iaygBuilderCaptor = ArgumentCaptor.forClass(InntektArbeidYtelseGrunnlagBuilder.class); 
+        ArgumentCaptor<InntektArbeidYtelseGrunnlagBuilder> iaygBuilderCaptor = ArgumentCaptor.forClass(InntektArbeidYtelseGrunnlagBuilder.class);
         Mockito.verify(iayr).lagre(any(KoblingReferanse.class), iaygBuilderCaptor.capture());
         var lagret = iaygBuilderCaptor.getValue();
         var nyIay = lagret.build(); // denne skal aldri ha vært kalt siden vi stubbet ut
@@ -61,12 +64,12 @@ public class InntektArbeidYtelseTjenesteTest {
         var sisteInntektsmeldinger = nyIay.getInntektsmeldinger().get().getAlleInntektsmeldinger();
         assertThat(sisteInntektsmeldinger).hasSize(1);
         var sisteIms = sisteInntektsmeldinger.get(0);
-        
+
         //Assert skal kun ha siste inntektsmelding siden alle 3 hadde samme arbeidsgiver
         assertThat(sisteIms.getInnsendingstidspunkt()).isEqualTo(ny.getInnsendingstidspunkt());
-        
-        
-        
+
+
+
 
     }
 
