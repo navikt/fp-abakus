@@ -3,8 +3,8 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 import java.time.ZoneId;
 
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
+import no.nav.abakus.iaygrunnlag.request.Dataset;
 import no.nav.abakus.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest;
-import no.nav.abakus.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest.Dataset;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseAggregatOverstyrtDto;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseAggregatRegisterDto;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;

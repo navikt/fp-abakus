@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -41,6 +42,7 @@ import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.FnrPersonident;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
+import no.nav.abakus.iaygrunnlag.request.Dataset;
 import no.nav.abakus.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest;
 import no.nav.abakus.iaygrunnlag.request.KopierGrunnlagRequest;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
@@ -223,9 +225,13 @@ public class GrunnlagRestTjeneste {
     public Response kopierGrunnlag(@NotNull @Valid KopierGrunnlagRequestAbac request) {
         var ref = new KoblingReferanse(request.getNyReferanse());
         var koblingLås = koblingTjeneste.taSkrivesLås(ref); // alltid ta lås før skrive operasjoner
-        
+
         var kobling = oppdaterKobling(request);
-        iayTjeneste.kopierGrunnlagFraEksisterendeBehandling(kobling.getYtelseType(), kobling.getAktørId(), new Saksnummer(request.getSaksnummer()), new KoblingReferanse(request.getGammelReferanse()), new KoblingReferanse(request.getNyReferanse()));
+        iayTjeneste.kopierGrunnlagFraEksisterendeBehandling(kobling.getYtelseType(), kobling.getAktørId(),
+            new Saksnummer(request.getSaksnummer()),
+            new KoblingReferanse(request.getGammelReferanse()),
+            new KoblingReferanse(request.getNyReferanse()),
+            request.getDataset());
 
         koblingTjeneste.oppdaterLåsVersjon(koblingLås);
         return Response.ok().build();
@@ -373,8 +379,9 @@ public class GrunnlagRestTjeneste {
                                          @JsonProperty(value = "nyReferanse", required = true) @Valid @NotNull UUID nyReferanse,
                                          @JsonProperty(value = "gammelReferanse", required = true) @Valid @NotNull UUID gammelReferanse,
                                          @JsonProperty(value = "ytelseType", required = true) @Valid @NotNull no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType,
-                                         @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør) {
-            super(saksnummer, nyReferanse, gammelReferanse, ytelseType, aktør);
+                                         @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
+                                         @JsonProperty(value = "dataset", required = true) @NotNull @Valid Set<Dataset> dataset) {
+            super(saksnummer, nyReferanse, gammelReferanse, ytelseType, aktør, dataset);
         }
 
         @Override
