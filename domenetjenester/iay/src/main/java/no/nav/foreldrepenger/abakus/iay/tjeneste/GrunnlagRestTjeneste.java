@@ -5,6 +5,7 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAG
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -380,8 +381,9 @@ public class GrunnlagRestTjeneste {
                                          @JsonProperty(value = "gammelReferanse", required = true) @Valid @NotNull UUID gammelReferanse,
                                          @JsonProperty(value = "ytelseType", required = true) @Valid @NotNull no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType,
                                          @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
-                                         @JsonProperty(value = "dataset", required = true) @NotNull @Valid Set<Dataset> dataset) {
-            super(saksnummer, nyReferanse, gammelReferanse, ytelseType, aktør, dataset);
+                                         @JsonProperty(value = "dataset", required = false) @NotNull @Valid Set<Dataset> dataset) {
+
+            super(saksnummer, nyReferanse, gammelReferanse, ytelseType, aktør, dataset == null ? EnumSet.allOf(Dataset.class) : dataset);
         }
 
         @Override
