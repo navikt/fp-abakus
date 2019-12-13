@@ -59,12 +59,12 @@ jobs:
           docker push $(cat .docker_image):$(cat .docker_tag)
           docker tag $(cat .docker_image):$(cat .docker_tag) $(cat .docker_image):latest
           docker push $(cat .docker_image):latest
+          echo ::set-env name=IMAGE::$(cat .docker_image):$(cat .docker_tag)
         env:
           GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
       - name: Deploye til dev
         uses: nais/deploy/actions/deploy@v1
         env:
-          IMAGE: $(cat .docker_image):$(cat .docker_tag)
           APIKEY: ${{ secrets.DEPLOY_KEY }}
           CLUSTER: dev-fss
           RESOURCE: .deploy/t4.yaml
