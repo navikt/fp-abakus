@@ -62,10 +62,9 @@ jobs:
         env:
           GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
       - name: Deploye til dev
-        uses: navikt/deployment-cli/action@0.4.1
+        uses: nais/deploy/actions/deploy@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          cluster: dev-fss
-          team: teamforeldrepenger
-          resources: .deploy/t4.yaml
+          IMAGE: $(cat .docker_image):$(cat .docker_tag)
+          APIKEY: ${{ secrets.DEPLOY_KEY }}
+          CLUSTER: dev-fss
+          RESOURCE: .deploy/t4.yaml
