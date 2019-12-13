@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.NaturalId;
 
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittAnnenAktivitet;
@@ -28,6 +29,7 @@ import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 
+@Immutable
 @Entity(name = "OppgittOpptjening")
 @Table(name = "IAY_OPPGITT_OPPTJENING")
 public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOpptjening {
@@ -109,7 +111,7 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
     public Optional<OppgittFrilans> getFrilans() {
         return Optional.ofNullable(frilans);
     }
-    
+
     void leggTilFrilans(OppgittFrilans frilans) {
         if (frilans != null) {
             OppgittFrilansEntitet frilansEntitet = (OppgittFrilansEntitet) frilans;
