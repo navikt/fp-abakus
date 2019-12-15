@@ -61,7 +61,7 @@ public abstract class AbstractInfotrygdSakMapper implements SakMapper {
                 .orElseGet(() -> empty());
     }
 
-    private static <T> List<T> infotrygdSakerFra(Stream<T> s1, Stream<T> s2, Stream<T> s3, Stream<T> t4) {
+    private static <T> List<T> infotrygdSakerFra(Stream<T> s1, Stream<T> s2, Stream<T> s3, Stream<T> s4) {
         return concat(s1, concat(s2, concat(s3, s4)))
                 .collect(toList());
     }
