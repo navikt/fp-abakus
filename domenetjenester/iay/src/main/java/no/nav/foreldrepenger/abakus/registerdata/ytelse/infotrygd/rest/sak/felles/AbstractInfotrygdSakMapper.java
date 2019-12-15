@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.AvsluttedeSaker;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.AvsluttetSak;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.IkkeStartetSak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.LøpendeSak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.Sak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.Saker;
@@ -21,14 +22,22 @@ public abstract class AbstractInfotrygdSakMapper implements SakMapper {
 
     protected abstract InfotrygdSak fraSak(Sak sak);
 
+    protected abstract InfotrygdSak fraIkkeStartetSak(IkkeStartetSak sak);
+
     protected abstract InfotrygdSak fraLøpendeSak(LøpendeSak sak);
 
     @Override
     public List<InfotrygdSak> map(Saker saker) {
         return infotrygdSakerFra(
+                infotrygdSakerFraIkkeStartedeSaker(saker.getIkkeStartedeSaker()),
                 infotrygdSakerFraLøpendeSaker(saker.getLøpendeSaker()),
                 infotrygdSakerFraAvsluttedeSaker(saker.getAvsluttedeSaker()),
                 infotrygdSakerFraSaker(saker.getSaker()));
+    }
+
+    private Stream<InfotrygdSak> infotrygdSakerFraIkkeStartedeSaker(List<IkkeStartetSak> ikkeStartedeSaker) {
+        return stream(ikkeStartedeSaker)
+                .map(this::fraIkkeStartetSak);
     }
 
     private Stream<InfotrygdSak> infotrygdSakerFraSaker(List<Sak> saker) {
@@ -52,7 +61,7 @@ public abstract class AbstractInfotrygdSakMapper implements SakMapper {
                 .orElseGet(() -> empty());
     }
 
-    private static <T> List<T> infotrygdSakerFra(Stream<T> s1, Stream<T> s2, Stream<T> s3) {
+    private static <T> List<T> infotrygdSakerFra(Stream<T> s1, Stream<T> s2, Stream<T> s3, Stream<T> t4) {
         return concat(s1, concat(s2, s3))
                 .collect(toList());
     }

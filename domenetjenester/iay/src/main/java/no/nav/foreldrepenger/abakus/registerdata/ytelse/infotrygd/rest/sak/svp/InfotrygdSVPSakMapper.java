@@ -6,6 +6,7 @@ import static no.nav.foreldrepenger.abakus.kodeverk.YtelseType.SVANGERSKAPSPENGE
 import static no.nav.foreldrepenger.abakus.vedtak.domene.TemaUnderkategori.FORELDREPENGER_SVANGERSKAPSPENGER;
 
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.AvsluttetSak;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.IkkeStartetSak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.LøpendeSak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.Sak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.felles.AbstractInfotrygdSakMapper;
@@ -35,7 +36,7 @@ public class InfotrygdSVPSakMapper extends AbstractInfotrygdSakMapper {
                 .medTemaUnderkategori(FORELDREPENGER_SVANGERSKAPSPENGER)
                 .medRelatertYtelseTilstand(null) // TODO ??
                 .medPeriode(null) // TODO ??
-                .medRegistrert(null) // ikke satt foreløpig
+                .medRegistrert(null)
                 .build();
     }
 
@@ -47,7 +48,18 @@ public class InfotrygdSVPSakMapper extends AbstractInfotrygdSakMapper {
                 .medTemaUnderkategori(FORELDREPENGER_SVANGERSKAPSPENGER)
                 .medRelatertYtelseTilstand(LØPENDE)
                 .medPeriode(null) // TODO ??
-                .medRegistrert(null) // ikke satt foreløpig
+                .medRegistrert(null)
+                .build();
+    }
+
+    @Override
+    protected InfotrygdSak fraIkkeStartetSak(IkkeStartetSak sak) {
+        return InfotrygdSak.InfotrygdSakBuilder.ny()
+                .medIverksatt(sak.getIverksatt())
+                .medYtelseType(SVANGERSKAPSPENGER)
+                .medTemaUnderkategori(FORELDREPENGER_SVANGERSKAPSPENGER)
+                .medPeriode(null) // TODO ??
+                .medRegistrert(sak.getIverksatt()),
                 .build();
     }
 

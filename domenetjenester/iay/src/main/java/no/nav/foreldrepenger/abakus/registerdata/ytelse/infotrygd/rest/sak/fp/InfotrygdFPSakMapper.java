@@ -6,6 +6,7 @@ import static no.nav.foreldrepenger.abakus.kodeverk.YtelseType.FORELDREPENGER;
 import static no.nav.foreldrepenger.abakus.vedtak.domene.TemaUnderkategori.FORELDREPENGER_FODSEL;
 
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.AvsluttetSak;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.IkkeStartetSak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.LøpendeSak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.Sak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sak.felles.AbstractInfotrygdSakMapper;
@@ -48,6 +49,17 @@ public class InfotrygdFPSakMapper extends AbstractInfotrygdSakMapper {
                 .medRelatertYtelseTilstand(LØPENDE)
                 .medPeriode(null) // TODO ??
                 .medRegistrert(null) // ikke satt foreløpig
+                .build();
+    }
+
+    @Override
+    protected InfotrygdSak fraIkkeStartetSak(IkkeStartetSak sak) {
+        return InfotrygdSak.InfotrygdSakBuilder.ny()
+                .medIverksatt(sak.getIverksatt())
+                .medYtelseType(FORELDREPENGER)
+                .medTemaUnderkategori(FORELDREPENGER_FODSEL) // TODO
+                .medPeriode(null) // TODO ??
+                .medRegistrert(sak.getRegistrert())
                 .build();
     }
 
