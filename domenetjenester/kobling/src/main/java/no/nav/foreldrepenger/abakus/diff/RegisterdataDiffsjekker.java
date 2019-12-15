@@ -1,11 +1,11 @@
 package no.nav.foreldrepenger.abakus.diff;
 
 import no.nav.foreldrepenger.abakus.felles.diff.DiffEntity;
-import no.nav.foreldrepenger.abakus.felles.diff.TraverseEntityGraph;
+import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraph;
 
 public class RegisterdataDiffsjekker {
     private DiffEntity diffEntity;
-    private TraverseEntityGraph traverseEntityGraph;
+    private TraverseGraph traverseEntityGraph;
 
     public RegisterdataDiffsjekker() {
         this(true);

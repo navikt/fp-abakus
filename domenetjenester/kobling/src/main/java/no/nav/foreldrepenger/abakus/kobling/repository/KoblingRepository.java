@@ -14,7 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.abakus.felles.diff.DiffEntity;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
-import no.nav.foreldrepenger.abakus.felles.diff.TraverseEntityGraph;
+import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraph;
+import no.nav.foreldrepenger.abakus.felles.diff.TraverseJpaEntityGraphConfig;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kodeverk.Kodeliste;
@@ -80,13 +81,13 @@ public class KoblingRepository {
     }
 
     private DiffResult getDiff(Kobling eksisterendeKobling, Kobling nyKobling) {
-        TraverseEntityGraph traverseEntityGraph = new TraverseEntityGraph(); // NOSONAR
-        traverseEntityGraph.setIgnoreNulls(true);
-        traverseEntityGraph.setOnlyCheckTrackedFields(false);
-        traverseEntityGraph.addLeafClasses(KodeverkTabell.class);
-        traverseEntityGraph.addLeafClasses(Kodeliste.class);
-        traverseEntityGraph.addLeafClasses(DatoIntervallEntitet.class, ÅpenDatoIntervallEntitet.class);
-        DiffEntity diffEntity = new DiffEntity(traverseEntityGraph);
+        var config = new TraverseJpaEntityGraphConfig(); // NOSONAR
+        config.setIgnoreNulls(true);
+        config.setOnlyCheckTrackedFields(false);
+        config.addLeafClasses(KodeverkTabell.class);
+        config.addLeafClasses(Kodeliste.class);
+        config.addLeafClasses(DatoIntervallEntitet.class, ÅpenDatoIntervallEntitet.class);
+        var diffEntity = new DiffEntity(new TraverseGraph(config));
 
         return diffEntity.diff(eksisterendeKobling, nyKobling);
     }

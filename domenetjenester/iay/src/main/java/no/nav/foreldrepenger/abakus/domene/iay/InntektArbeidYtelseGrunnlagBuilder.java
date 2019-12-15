@@ -3,9 +3,12 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
+import no.nav.abakus.iaygrunnlag.request.Dataset;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -24,7 +27,9 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         return ny(UUID.randomUUID(), LocalDateTime.now());
     }
 
-    /** Brukes ved migrering. */
+    /**
+     * Brukes ved migrering.
+     */
     public static InntektArbeidYtelseGrunnlagBuilder ny(UUID grunnlagReferanse, LocalDateTime opprettetTidspunkt) {
         return new InntektArbeidYtelseGrunnlagBuilder(new InntektArbeidYtelseGrunnlag(grunnlagReferanse, opprettetTidspunkt));
     }
@@ -35,6 +40,32 @@ public class InntektArbeidYtelseGrunnlagBuilder {
 
     public static InntektArbeidYtelseGrunnlagBuilder oppdatere(Optional<InntektArbeidYtelseGrunnlag> kladd) {
         return kladd.map(InntektArbeidYtelseGrunnlagBuilder::oppdatere).orElseGet(InntektArbeidYtelseGrunnlagBuilder::nytt);
+    }
+
+    public static InntektArbeidYtelseGrunnlagBuilder kopierDeler(InntektArbeidYtelseGrunnlag original, Set<Dataset> dataset) {
+        final var kladd = new InntektArbeidYtelseGrunnlag(original);
+
+        if (skalIkkeKopierMed(dataset, Dataset.OPPGITT_OPPTJENING)) {
+            kladd.setOppgittOpptjening(null);
+        }
+        if (skalIkkeKopierMed(dataset, Dataset.INNTEKTSMELDING)) {
+            kladd.setInntektsmeldinger(null);
+        }
+        if (skalIkkeKopierMed(dataset, Dataset.REGISTER)) {
+            kladd.setRegister(null);
+        }
+        if (skalIkkeKopierMed(dataset, Dataset.OVERSTYRT)) {
+            kladd.getArbeidsforholdInformasjon().ifPresent(it -> {
+                final var informasjonBuilder = ArbeidsforholdInformasjonBuilder.oppdatere(it).tilbakestillOverstyringer();
+                kladd.setInformasjon(informasjonBuilder.build());
+            });
+            kladd.setSaksbehandlet(null);
+        }
+        return new InntektArbeidYtelseGrunnlagBuilder(kladd);
+    }
+
+    private static boolean skalIkkeKopierMed(Set<Dataset> dataset, Dataset oppgittOpptjening) {
+        return !dataset.contains(oppgittOpptjening);
     }
 
     protected InntektArbeidYtelseGrunnlag getKladd() {
@@ -96,7 +127,7 @@ public class InntektArbeidYtelseGrunnlagBuilder {
 
     public InntektArbeidYtelseGrunnlagBuilder medOppgittOpptjening(OppgittOpptjeningBuilder builder) {
         if (builder != null) {
-            if (kladd.getOppgittOpptjening().isPresent() && erIkkeSammeSomSist(builder)) {
+            if (kladd.getOppgittOpptjening().isPresent()) {
                 throw new IllegalStateException("Utviklerfeil: Er ikke lov å endre oppgitt opptjening!");
             }
             kladd.setOppgittOpptjening((OppgittOpptjeningEntitet) builder.build());

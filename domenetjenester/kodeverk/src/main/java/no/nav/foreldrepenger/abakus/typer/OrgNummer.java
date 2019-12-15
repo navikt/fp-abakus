@@ -34,7 +34,7 @@ public class OrgNummer implements Serializable, Comparable<OrgNummer>, IndexKey,
         Objects.requireNonNull(orgNummer, "orgNummer");
         if (!erKunstig(orgNummer) && !OrganisasjonsNummerValidator.erGyldig(orgNummer)) {
             // skal ikke skje, funksjonelle feilmeldinger håndteres ikke her.
-            throw new IllegalArgumentException("Ikke gyldig orgnummer..");
+            throw new IllegalArgumentException("Ikke gyldig orgnummer: " + orgNummer);
         }
         this.orgNummer = orgNummer;
     }

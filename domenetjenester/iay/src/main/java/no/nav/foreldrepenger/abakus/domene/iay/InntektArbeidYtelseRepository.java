@@ -44,7 +44,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilansop
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffEntity;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
-import no.nav.foreldrepenger.abakus.felles.diff.TraverseEntityGraph;
+import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraph;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
@@ -308,13 +308,13 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
 
     public boolean erEndring(InntektArbeidYtelseGrunnlag aggregat, InntektArbeidYtelseGrunnlag nyttAggregat) {
 
-        TraverseEntityGraph traverseEntityGraph = TraverseEntityGraphFactory.build(true);
+        TraverseGraph traverser = TraverseEntityGraphFactory.build(true);
 
         if (aggregat == null) {
             return true;
         }
 
-        DiffResult diff = new DiffEntity(traverseEntityGraph)
+        DiffResult diff = new DiffEntity(traverser)
             .diff(aggregat, nyttAggregat);
         return !diff.isEmpty();
     }
