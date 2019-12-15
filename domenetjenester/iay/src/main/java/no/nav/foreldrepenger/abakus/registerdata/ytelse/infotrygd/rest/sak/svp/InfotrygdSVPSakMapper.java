@@ -59,7 +59,7 @@ public class InfotrygdSVPSakMapper extends AbstractInfotrygdSakMapper {
                 .medYtelseType(SVANGERSKAPSPENGER)
                 .medTemaUnderkategori(FORELDREPENGER_SVANGERSKAPSPENGER)
                 .medPeriode(null) // TODO ??
-                .medRegistrert(sak.getIverksatt()),
+                .medRegistrert(sak.getIverksatt())
                 .build();
     }
 
