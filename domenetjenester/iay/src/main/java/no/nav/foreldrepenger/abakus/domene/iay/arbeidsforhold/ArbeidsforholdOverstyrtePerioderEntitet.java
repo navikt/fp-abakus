@@ -75,7 +75,7 @@ public class ArbeidsforholdOverstyrtePerioderEntitet extends BaseEntitet impleme
 
     @Override
     public String toString() {
-        return "ArbeidsforholdInformasjonEntitet{" +
+        return "ArbeidsforholdOverstyrtePerioderEntitet{" +
             "periode=" + periode +
             ", arbeidsforholdOverstyring=" + arbeidsforholdOverstyring +
             '}';
