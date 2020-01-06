@@ -42,7 +42,7 @@ public class InfotrygdTjeneste {
     private static final Map<String, YtelseStatus> STATUS_VERDI_MAP = Map.ofEntries(
         Map.entry(RelatertYtelseStatus.LØPENDE_VEDTAK.getKode(), YtelseStatus.LØPENDE),
         Map.entry(RelatertYtelseStatus.AVSLUTTET_IT.getKode(), YtelseStatus.AVSLUTTET),
-        Map.entry(RelatertYtelseStatus.IKKE_STARTET.getKode(), YtelseStatus.OPPRETTET),
+        Map.entry(RelatertYtelseStatus.IKKE_STARTET.getKode(), YtelseStatus.UNDER_BEHANDLING),
         Map.entry("xx", YtelseStatus.UDEFINERT),
         Map.entry("??", YtelseStatus.UDEFINERT)
     );
@@ -119,7 +119,7 @@ public class InfotrygdTjeneste {
             temaUnderkategori = TemaUnderkategoriReverse.reverseMap(sak.getBehandlingstema().getValue());
         }
         if (sak.getStatus() != null && sak.getStatus().getValue() != null) {
-            relatertYtelseTilstand = getYtelseTilstand(erVedtak, sak.getStatus().getValue());
+            relatertYtelseTilstand = getYtelseTilstand(sak.getStatus().getValue());
         }
         YtelseType ytelseType = utledYtelseType(sak.getTema().getValue(), temaUnderkategori);
         if (YtelseType.ENGANGSTØNAD.equals(ytelseType)) {
@@ -159,8 +159,8 @@ public class InfotrygdTjeneste {
         }
     }
 
-    private YtelseStatus getYtelseTilstand(boolean erVedtak, String status) {
-        return STATUS_VERDI_MAP.getOrDefault(status, erVedtak ? YtelseStatus.AVSLUTTET : YtelseStatus.UNDER_BEHANDLING);
+    private YtelseStatus getYtelseTilstand(String status) {
+        return STATUS_VERDI_MAP.getOrDefault(status, YtelseStatus.UNDER_BEHANDLING);
     }
 
 }
