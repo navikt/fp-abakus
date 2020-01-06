@@ -1,8 +1,5 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd;
 
-import static no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus.AVSLUTTET;
-import static no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus.LØPENDE;
-
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.Instant;
@@ -27,6 +24,7 @@ import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.ArbeidskategoriReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.InntektPeriodeReverse;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.RelatertYtelseStatusReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.TemaReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.TemaUnderkategoriReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.YtelseTypeReverse;
@@ -83,7 +81,7 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     private InfotrygdYtelseGrunnlag restTilInfotrygdYtelseGrunnlag(Grunnlag grunnlag) {
-        YtelseStatus brukStatus = grunnlag.getOpphørFom() != null ? AVSLUTTET : (grunnlag.getIdentdato() != null ? LØPENDE : YtelseStatus.UDEFINERT);
+        YtelseStatus brukStatus = RelatertYtelseStatusReverse.reverseMap(grunnlag.getStatus().getKode().name(), LOG);
         Periode fraSaksdata = utledPeriode(grunnlag.getIverksatt(), grunnlag.getOpphørFom(), grunnlag.getRegistrert());
         if (grunnlag.getIverksatt() == null || grunnlag.getIdentdato() == null || !grunnlag.getIverksatt().equals(grunnlag.getIdentdato())) {
             LOG.info("Infotrygd ny mapper avvik iverksatt {} vs identdato {}", grunnlag.getIverksatt(), grunnlag.getIdentdato());
