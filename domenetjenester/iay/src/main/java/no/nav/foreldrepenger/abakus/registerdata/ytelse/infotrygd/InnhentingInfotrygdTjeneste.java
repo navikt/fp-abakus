@@ -46,6 +46,11 @@ public class InnhentingInfotrygdTjeneste {
 
     private static final Logger LOG = LoggerFactory.getLogger(InnhentingInfotrygdTjeneste.class);
     private static final Set<YtelseType> YTELSER_STØTTET = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER, YtelseType.SYKEPENGER, YtelseType.PÅRØRENDESYKDOM);
+    private static final Set<YtelseType> YTELSER_SAMMENLIGN_WS_RS = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER, YtelseType.PÅRØRENDESYKDOM,
+        YtelseType.PLEIEPENGER_SYKT_BARN,
+        YtelseType.PLEIEPENGER_NÆRSTÅENDE,
+        YtelseType.OMSORGSPENGER,
+        YtelseType.OPPLÆRINGSPENGER);
 
     private InfotrygdGrunnlagAggregator grunnlag;
 
@@ -147,11 +152,15 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     public boolean sammenlignGrunnlagKilder(List<InfotrygdSakOgGrunnlag> ws, List<InfotrygdYtelseGrunnlag> rest) {
-        // Likt innhold så equals ikke går bananas
+        // Likt innhold så equals ikke går bananas - foreløpig uten sykepenger pga arb.giver.periode - avvik OK
         try {
             var mappedWs = InnhentingInfotrygdTjeneste.mapISoG(ws);
-            var mappedRest = rest.stream().map(InnhentingInfotrygdTjeneste::nyttGrunnlagTilNyttMedRedusertInnhold).filter(Objects::nonNull).collect(Collectors.toList());
-            boolean sammenligning = mappedRest.containsAll(mappedWs);
+            var mappedRest = rest.stream()
+                .filter(r -> YTELSER_SAMMENLIGN_WS_RS.contains(r.getYtelseType()))
+                .map(InnhentingInfotrygdTjeneste::nyttGrunnlagTilNyttMedRedusertInnhold)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+            boolean sammenligning = mappedRest.containsAll(mappedWs) && mappedWs.containsAll(mappedRest);
             if (!sammenligning) {
                 LOG.info("Infotrygd mapper avvik mellom ws {} og rest {}", mappedWs, mappedRest);
             } else {
@@ -164,10 +173,11 @@ public class InnhentingInfotrygdTjeneste {
         }
     }
 
+    // Kun for sammenligning
     private static List<InfotrygdYtelseGrunnlag> mapISoG(List<InfotrygdSakOgGrunnlag> sog) {
         try {
             return sog.stream()
-                .filter(g -> YTELSER_STØTTET.contains(g.getSak().getYtelseType()))
+                .filter(g -> YTELSER_SAMMENLIGN_WS_RS.contains(g.getSak().getYtelseType()))
                 .filter(g -> g.getGrunnlag().isPresent())
                 .map(InnhentingInfotrygdTjeneste::isogTilNyttGrunnlag)
                 .filter(Objects::nonNull)
