@@ -2,11 +2,11 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: fpabakus
-  namespace: q0
+  namespace: q1
   labels:
     team: teamforeldrepenger
 spec:
-  image: docker.pkg.github.com/navikt/fp-abakus/fpabakus:RELEASE_VERSION # Required. Docker image.
+  image: {{ image }} # Required. Docker image.
   port: 8080 # Required. The port number which is exposed by the container and should receive HTTP traffic.
   liveness: # HTTP endpoint that signals 200 OK when the application is running.
     path: /fpabakus/internal/isAlive
@@ -43,7 +43,7 @@ spec:
       cpu: "600m"
       memory: "1024Mi"
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
-    - "https://fpabakus-q0.nais.preprod.local/"
+    - "https://fpabakus-q1.nais.preprod.local/"
   logformat: accesslog # Optional. The format of the logs from the container if the logs should be handled differently than plain text or json
   logtransform: dns_loglevel # Optional. The transformation of the logs, if they should be handled differently than plain text or json
   webproxy: false # Optional. Expose web proxy configuration to the application using the HTTP_PROXY, HTTPS_PROXY and NO_PROXY environment variables.
@@ -52,11 +52,11 @@ spec:
   sidecar: true # refresh token
   env:
     - name: LOADBALANCER_FQDN
-      value: fpabakus-q0.nais.preprod.local
+      value: fpabakus-q1.nais.preprod.local
     - name: ABAC_PDP_ENDPOINT_URL
-      value: https://wasapp-q0.adeo.no/asm-pdp/authorize
+      value: https://wasapp-q1.adeo.no/asm-pdp/authorize
     - name: SECURITYTOKENSERVICE_URL
-      value: https://sts-q0.preprod.local/SecurityTokenServiceProvider/
+      value: https://sts-q1.preprod.local/SecurityTokenServiceProvider/
       #Systembruker
     - name: SYSTEMBRUKER_USERNAME
       value: srvfp-abakus
@@ -68,7 +68,7 @@ spec:
     - name: OPENIDCONNECT_ISSOJWKS
       value: https://isso-q.adeo.no:443/isso/oauth2/connect/jwk_uri
     - name: OPENIDCONNECT_USERNAME
-      value: fpabakus-q0
+      value: fpabakus-q1
       #OIDC
     - name: OIDC_STS_ISSUERURL
       value: https://security-token-service.nais.preprod.local
@@ -81,25 +81,25 @@ spec:
       value: https://kafka-test-schema-registry.nais.preprod.local
     #Database
     - name: DEFAULTDS_USERNAME
-      value: fpabakus-q0
+      value: fpabakus-q1
     - name: DEFAULTDS_URL
-      value: jdbc:postgresql://B27DBVL007.preprod.local:5432/fpabakus-q0
+      value: jdbc:postgresql://B27DBVL007.preprod.local:5432/fpabakus-q1
     # Eksterne systemer
     - name: HENTINNTEKTLISTEBOLK_URL
-      value: https://app-q0.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk
+      value: https://app-q1.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk
     - name: ARBEIDSFORHOLD_V3_URL
-      value: https://modapp-q0.adeo.no/aareg-core/ArbeidsforholdService/v3
+      value: https://modapp-q1.adeo.no/aareg-core/ArbeidsforholdService/v3
     - name: INFOTRYGDSAK_V1_URL
-      value: https://modapp-q0.adeo.no/infotrygd-ws/InfotrygdSak/v1
+      value: https://modapp-q1.adeo.no/infotrygd-ws/InfotrygdSak/v1
     - name: INFOTRYGDBEREGNINGSGRUNNLAG_V1_URL
-      value: https://modapp-q0.adeo.no/infotrygd-ws/InfotrygdBeregningsgrunnlag/v1
+      value: https://modapp-q1.adeo.no/infotrygd-ws/InfotrygdBeregningsgrunnlag/v1
     - name: MELDEKORTUTBETALINGSGRUNNLAG_V1_URL
-      value: https://arena-q0.adeo.no/ail_ws/MeldekortUtbetalingsgrunnlag_v1
+      value: https://arena-q1.adeo.no/ail_ws/MeldekortUtbetalingsgrunnlag_v1
     - name: AKTOER_V2_URL
-      value: https://app-q0.adeo.no/aktoerregister/ws/Aktoer/v2
+      value: https://app-q1.adeo.no/aktoerregister/ws/Aktoer/v2
     - name: PERSON_V3_URL
-      value: https://wasapp-q0.adeo.no/tpsws/ws/Person/v3
+      value: https://wasapp-q1.adeo.no/tpsws/ws/Person/v3
     - name: SIGRUNRESTBEREGNETSKATT_URL
-      value: https://sigrun-q0.nais.preprod.local
+      value: https://sigrun-q1.nais.preprod.local
     - name: ORGANISASJON_V4_URL
-      value: https://modapp-q0.adeo.no/ereg/ws/OrganisasjonService/v4
+      value: https://modapp-q1.adeo.no/ereg/ws/OrganisasjonService/v4
