@@ -86,15 +86,15 @@ public class InfotrygdYtelseGrunnlag {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         InfotrygdYtelseGrunnlag that = (InfotrygdYtelseGrunnlag) o;
-        return identdato.equals(that.identdato) &&
-            ytelseType.equals(that.ytelseType) &&
-            temaUnderkategori.equals(that.temaUnderkategori) &&
-            ytelseStatus.equals(that.ytelseStatus) &&
-            utbetaltePerioder.equals(that.utbetaltePerioder) &&
-            vedtaksPeriodeFom.equals(that.vedtaksPeriodeFom) &&
+        return Objects.equals(identdato, that.identdato) &&
+            Objects.equals(ytelseType, that.ytelseType) &&
+            Objects.equals(temaUnderkategori, that.temaUnderkategori) &&
+            Objects.equals(ytelseStatus, that.ytelseStatus) &&
+            Objects.equals(utbetaltePerioder, that.utbetaltePerioder) &&
+            Objects.equals(vedtaksPeriodeFom, that.vedtaksPeriodeFom) &&
             Objects.equals(vedtaksPeriodeTom, that.vedtaksPeriodeTom) &&
             Objects.equals(kategori, that.kategori) &&
-            arbeidsforhold.equals(that.arbeidsforhold) &&
+            Objects.equals(arbeidsforhold, that.arbeidsforhold) &&
             Objects.equals(dekningsgrad, that.dekningsgrad) &&
             Objects.equals(gradering, that.gradering) &&
             Objects.equals(fødselsdatoBarn, that.fødselsdatoBarn) &&
