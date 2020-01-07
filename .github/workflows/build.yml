@@ -59,16 +59,15 @@ jobs:
           docker push $IMAGE
 
     - name: Opprett deployment issue
-      uses: maxkomarychev/oction-create-issue@v0.7.1
       if: success()
-      id: create-deploy-issue
+      uses: maxkomarychev/oction-create-issue@v0.7.1
+      id: createdeployissue
       with:
         token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
         title: Deploy av ${{ env.TAG }}
         labels: deployment
         body: |
           Kommenter med <b>/promote ${{ env.TAG }} env namespace</b>, hvor <b>env</b> er et gyldig clusternavn og <b>namespace</b> et eksisterende namespace i det clusteret.
-
           Gyldige kombinasjoner:
           | Cluster | Namespace |
           | --- | --- |
@@ -80,5 +79,5 @@ jobs:
       uses: peter-evans/create-or-update-comment@v1
       with:
         token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-        issue-number: ${{ steps.step.create-deploy-issue.outputs.number }}
+        issue-number: ${{ steps.step.createdeployissue.outputs.number }}
         body: /promote ${{ env.TAG }} dev-fss t4
