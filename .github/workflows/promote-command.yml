@@ -31,25 +31,25 @@ jobs:
           CLUSTER: ${{ env.CLUSTER }}
           RESOURCE: .deploy/${{ env.CLUSTER }}-${{ env.NAMESPACE }}.yaml
 
-      - name: Oppdater kommentar med deployment status ved feil
+      - name: Kommentar med deployment status ved feil
         if: failure()
         uses: peter-evans/create-or-update-comment@v1
         with:
-          token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
-          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           body: |
-            >promote ${{ env.IMAGE }} til ${{ env.CLUSTER }}-${{ env.NAMESPACE }} feilet
+            promote ${{ env.IMAGE }} til ${{ env.CLUSTER }}-${{ env.NAMESPACE }} feilet
           reaction-type: -1
 
-      - name: Oppdater kommentar med deployment status
+      - name: Kommentar med deployment status
         if: success()
         uses: peter-evans/create-or-update-comment@v1
         with:
-          token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
-          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           body: |
-            >promote ${{ env.IMAGE }} til ${{ env.CLUSTER }}-${{ env.NAMESPACE }} var OK
+            promote ${{ env.IMAGE }} til ${{ env.CLUSTER }}-${{ env.NAMESPACE }} var OK
           reaction-type: rocket
 
