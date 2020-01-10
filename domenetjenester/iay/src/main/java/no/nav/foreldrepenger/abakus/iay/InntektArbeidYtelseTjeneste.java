@@ -226,20 +226,27 @@ public class InntektArbeidYtelseTjeneste {
         var builder = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(original, dataset);
         if(dataset.contains(Dataset.INNTEKTSMELDING)) {
             var gjeldendeInntektsmeldinger = original.getInntektsmeldinger().map(InntektsmeldingAggregat::getInntektsmeldinger).orElse(List.of());
-
             var innsendingstidspunkt = finnInnsendingstidspunktForNyesteEksisterendeIm(gjeldendeInntektsmeldinger);
-            var arbeidsforholdInformasjon = original.getArbeidsforholdInformasjon().orElseGet(ArbeidsforholdInformasjon::new);
 
-            var inntektsmeldinger = hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, ytelseType);
-            var kopi = inntektsmeldinger.entrySet().stream()
+            var arbeidsforholdInformasjon = original.getArbeidsforholdInformasjon().orElseGet(ArbeidsforholdInformasjon::new);
+            var informasjonBuilder = ArbeidsforholdInformasjonBuilder.oppdatere(arbeidsforholdInformasjon);
+
+            var alleInntektsmeldingerForSaksummer = hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, ytelseType);
+
+            var kopiInntektsmeldingerEtterInnsendingstidspunkt = alleInntektsmeldingerForSaksummer.entrySet().stream()
                 .filter(im -> im.getKey().getInnsendingstidspunkt().isAfter(innsendingstidspunkt))
-                .map(entry -> InntektsmeldingBuilder.kopi(entry.getKey()).medArbeidsforholdId(entry.getValue().finnEkstern(entry.getKey().getArbeidsgiver(), entry.getKey().getArbeidsforholdRef())).medArbeidsforholdId(InternArbeidsforholdRef.nullRef()))
+                .map(entry -> InntektsmeldingBuilder.kopi(entry.getKey())
+                    .medArbeidsforholdId(entry.getValue().finnEkstern(entry.getKey().getArbeidsgiver(), entry.getKey().getArbeidsforholdRef()))
+                    .medArbeidsforholdId(InternArbeidsforholdRef.nullRef()))
                 .map(InntektsmeldingBuilder::build)
                 .sorted(Comparator.comparing(Inntektsmelding::getInnsendingstidspunkt))
                 .collect(Collectors.toList());
 
-            var informasjonBuilder = ArbeidsforholdInformasjonBuilder.oppdatere(arbeidsforholdInformasjon);
-            repository.oppdaterBuilderMedNyeInntektsmeldinger(informasjonBuilder, kopi, builder);
+            alleInntektsmeldingerForSaksummer.entrySet().stream()
+                .filter(im -> im.getKey().getInnsendingstidspunkt().isAfter(innsendingstidspunkt))
+                .forEach(entry -> informasjonBuilder.finnEllerOpprett(entry.getKey().getArbeidsgiver(), entry.getValue().finnEkstern(entry.getKey().getArbeidsgiver(), entry.getKey().getArbeidsforholdRef())));
+
+            repository.oppdaterBuilderMedNyeInntektsmeldinger(informasjonBuilder, kopiInntektsmeldingerEtterInnsendingstidspunkt, builder);
         }
 
         return builder;

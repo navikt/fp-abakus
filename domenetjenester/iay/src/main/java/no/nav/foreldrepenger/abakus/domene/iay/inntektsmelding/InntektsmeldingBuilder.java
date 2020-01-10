@@ -60,11 +60,7 @@ public class InntektsmeldingBuilder {
     public InntektsmeldingBuilder medArbeidsforholdId(InternArbeidsforholdRef arbeidsforholdId) {
         precondition();
         if (arbeidsforholdId != null) {
-            // magic - hvis har ekstern referanse må også intern referanse være spesifikk
-            if (arbeidsforholdId.getReferanse() == null && eksternArbeidsforholdId != null && eksternArbeidsforholdId.gjelderForSpesifiktArbeidsforhold()) {
-                throw new IllegalArgumentException(
-                    "Begge referanser gjelde spesifikke arbeidsforhold. " + " Ekstern: " + eksternArbeidsforholdId + ", Intern: " + arbeidsforholdId);
-            }
+            sjekkArbeidsforholdKonsistens(arbeidsforholdId);
             kladd.setArbeidsforholdId(arbeidsforholdId);
         }
         return this;
@@ -168,15 +164,17 @@ public class InntektsmeldingBuilder {
         Objects.requireNonNull(kladd.getJournalpostId(), "journalpostId");
 
         var internRef = getInternArbeidsforholdRef();
-        if (internRef.isPresent()) {
-            // magic - hvis har ekstern referanse må også intern referanse være spesifikk
-            if ((eksternArbeidsforholdId != null && eksternArbeidsforholdId.gjelderForSpesifiktArbeidsforhold()) && internRef.get().getReferanse() == null) {
-                throw new IllegalArgumentException(
-                    "Begge referanser må gjelde spesifikke arbeidsforhold. " + " Ekstern: " + eksternArbeidsforholdId + ", Intern: " + internRef);
-            }
-        }
+        internRef.ifPresent(this::sjekkArbeidsforholdKonsistens);
         erBygget = true;
         return kladd;
+    }
+
+    private void sjekkArbeidsforholdKonsistens(InternArbeidsforholdRef internRef) {
+        // magic - hvis har ekstern referanse må også intern referanse være spesifikk
+        if ((eksternArbeidsforholdId != null && eksternArbeidsforholdId.gjelderForSpesifiktArbeidsforhold()) && internRef.getReferanse() == null) {
+            throw new IllegalArgumentException(
+                "Begge referanser må gjelde spesifikke arbeidsforhold. " + " Ekstern: " + eksternArbeidsforholdId + ", Intern: " + internRef);
+        }
     }
 
     private void precondition() {

@@ -72,10 +72,6 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         return kladd;
     }
 
-    protected void fjernSaksbehandlet() {
-        kladd.fjernSaksbehandlet();
-    }
-
     protected InntektsmeldingAggregat getInntektsmeldinger() {
         final Optional<InntektsmeldingAggregat> inntektsmeldinger = kladd.getInntektsmeldinger();
         return inntektsmeldinger.map(InntektsmeldingAggregat::new).orElseGet(InntektsmeldingAggregat::new);
@@ -135,10 +131,6 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         return this;
     }
 
-    private boolean erIkkeSammeSomSist(OppgittOpptjeningBuilder builder) {
-        return !kladd.getOppgittOpptjening().get().getEksternReferanse().equals(builder.getEksternReferanse());
-    }
-
     public InntektArbeidYtelseGrunnlag build() {
         var k = kladd;
         kladd = null; // må ikke finne på å gjenbruke buildere her, tar heller straffen i en NPE ved første feilkall
@@ -154,18 +146,6 @@ public class InntektArbeidYtelseGrunnlagBuilder {
             medSaksbehandlet(builder);
         }
         return this;
-    }
-
-    void ryddOppErstattedeArbeidsforhold(AktørId søker, List<Tuple<Arbeidsgiver, Tuple<InternArbeidsforholdRef, InternArbeidsforholdRef>>> erstattArbeidsforhold) {
-        final Optional<InntektArbeidYtelseAggregat> registerFørVersjon = kladd.getRegisterVersjon();
-        for (Tuple<Arbeidsgiver, Tuple<InternArbeidsforholdRef, InternArbeidsforholdRef>> tuple : erstattArbeidsforhold) {
-            if (registerFørVersjon.isPresent()) {
-                final InntektArbeidYtelseAggregatBuilder builder = InntektArbeidYtelseAggregatBuilder.oppdatere(registerFørVersjon, VersjonType.REGISTER);
-                builder.oppdaterArbeidsforholdReferanseEtterErstatting(søker, tuple.getElement1(), tuple.getElement2().getElement1(),
-                    tuple.getElement2().getElement2());
-                medData(builder);
-            }
-        }
     }
 
     public Optional<ArbeidsforholdInformasjon> getArbeidsforholdInformasjon() {
