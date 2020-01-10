@@ -97,7 +97,7 @@ public class MapInntektsmeldinger {
 
     private static Map<Arbeidsgiver, Optional<LocalDate>> lagFørsteRefusjonsdatoMap(InntektsmeldingAggregat inntektsmeldingAggregat) {
         return inntektsmeldingAggregat
-            .getAlleInntektsmeldinger()
+            .getInntektsmeldinger()
             .stream()
             .filter(MapInntektsmeldinger::harRefusjonskrav)
             .collect(Collectors.toMap(Inntektsmelding::getArbeidsgiver, MapInntektsmeldinger::finnFørsteDatoMedRefusjon,
@@ -171,7 +171,7 @@ public class MapInntektsmeldinger {
                 return null;
             } else if (arbeidsforholdInformasjon != null && inntektsmeldingAggregat != null) {
                 var dto = new InntektsmeldingerDto();
-                var inntektsmeldinger = inntektsmeldingAggregat.getAlleInntektsmeldinger().stream()
+                var inntektsmeldinger = inntektsmeldingAggregat.getInntektsmeldinger().stream()
                     .map(im -> this.mapInntektsmelding(im)).sorted(COMP_INNTEKTSMELDING).collect(Collectors.toList());
                 dto.medInntektsmeldinger(inntektsmeldinger);
 

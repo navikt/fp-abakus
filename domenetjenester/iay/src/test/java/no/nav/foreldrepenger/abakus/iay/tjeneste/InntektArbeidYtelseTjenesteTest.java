@@ -6,8 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.EntityManager;
@@ -21,6 +21,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingBuilder;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
@@ -47,7 +48,7 @@ public class InntektArbeidYtelseTjenesteTest {
         Mockito.doNothing().when(iayr).lagre(any(KoblingReferanse.class), any(InntektArbeidYtelseGrunnlagBuilder.class));
 
         Mockito.doAnswer(i -> Optional.of(iaygBuilder.build())).when(iayr).hentInntektArbeidYtelseGrunnlagForBehandling(any());
-        Mockito.doReturn(Set.of(gammel, nå, ny)).when(iayr).hentAlleInntektsmeldingerFor(any(), any(), any());
+        Mockito.doReturn(Map.of(gammel, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()).build(), ny, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()).build())).when(iayr).hentArbeidsforholdInfoInntektsmeldingerMapFor(any(), any(), any());
 
         // Act
         var iayt = new InntektArbeidYtelseTjeneste(iayr);
@@ -61,16 +62,12 @@ public class InntektArbeidYtelseTjenesteTest {
         var nyIay = lagret.build(); // denne skal aldri ha vært kalt siden vi stubbet ut
         assertThat(nyIay).isNotNull();
         assertThat(nyIay.getInntektsmeldinger()).isPresent();
-        var sisteInntektsmeldinger = nyIay.getInntektsmeldinger().get().getAlleInntektsmeldinger();
+        var sisteInntektsmeldinger = nyIay.getInntektsmeldinger().get().getInntektsmeldinger();
         assertThat(sisteInntektsmeldinger).hasSize(1);
         var sisteIms = sisteInntektsmeldinger.get(0);
 
         //Assert skal kun ha siste inntektsmelding siden alle 3 hadde samme arbeidsgiver
         assertThat(sisteIms.getInnsendingstidspunkt()).isEqualTo(ny.getInnsendingstidspunkt());
-
-
-
-
     }
 
     private Inntektsmelding nyInntektsmelding(LocalDateTime innsendingstidspunkt, String journalpostId) {

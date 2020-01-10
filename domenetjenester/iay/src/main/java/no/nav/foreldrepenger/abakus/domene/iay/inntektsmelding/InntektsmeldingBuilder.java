@@ -28,7 +28,7 @@ public class InntektsmeldingBuilder {
     public static InntektsmeldingBuilder builder() {
         return new InntektsmeldingBuilder(new Inntektsmelding());
     }
-    
+
     public static InntektsmeldingBuilder kopi(Inntektsmelding inntektsmelding) {
         return new InntektsmeldingBuilder(new Inntektsmelding(inntektsmelding));
     }
@@ -162,16 +162,11 @@ public class InntektsmeldingBuilder {
         return this;
     }
 
-    public InntektsmeldingBuilder medInntektsmeldingaarsak(String inntektsmeldingInnsendingsårsak) {
-        precondition();
-        return medInntektsmeldingaarsak(inntektsmeldingInnsendingsårsak == null ? null : new InntektsmeldingInnsendingsårsak(inntektsmeldingInnsendingsårsak));
-    }
-
     public Inntektsmelding build() {
         Objects.requireNonNull(kladd.getArbeidsgiver(), "arbeidsgiver mangler");
         Objects.requireNonNull(kladd.getInnsendingstidspunkt(), "innsendingstidspunkt mangler");
         Objects.requireNonNull(kladd.getJournalpostId(), "journalpostId");
-        
+
         var internRef = getInternArbeidsforholdRef();
         if (internRef.isPresent()) {
             // magic - hvis har ekstern referanse må også intern referanse være spesifikk

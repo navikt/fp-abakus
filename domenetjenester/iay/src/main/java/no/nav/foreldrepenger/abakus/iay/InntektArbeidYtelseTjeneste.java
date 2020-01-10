@@ -33,6 +33,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 
 @ApplicationScoped
@@ -108,12 +109,9 @@ public class InntektArbeidYtelseTjeneste {
         return repository.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
     }
 
-
     public Map<Inntektsmelding, ArbeidsforholdInformasjon> hentArbeidsforholdinfoInntektsmeldingerMapFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
         return repository.hentArbeidsforholdInfoInntektsmeldingerMapFor(aktørId, saksnummer, ytelseType);
     }
-
-    ;
 
     /**
      * Hent grunnlag etterspurt (tar hensyn til GrunnlagVersjon) for angitt aktørId, saksnummer, ytelsetype.
@@ -232,12 +230,12 @@ public class InntektArbeidYtelseTjeneste {
             var innsendingstidspunkt = finnInnsendingstidspunktForNyesteEksisterendeIm(gjeldendeInntektsmeldinger);
             var arbeidsforholdInformasjon = original.getArbeidsforholdInformasjon().orElseGet(ArbeidsforholdInformasjon::new);
 
-            var inntektsmeldinger = hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
-            var kopi = inntektsmeldinger.stream()
-                .filter(im -> im.getInnsendingstidspunkt().isAfter(innsendingstidspunkt))
-                .sorted(Comparator.comparing(Inntektsmelding::getInnsendingstidspunkt))
-                .map(InntektsmeldingBuilder::kopi)
+            var inntektsmeldinger = hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, ytelseType);
+            var kopi = inntektsmeldinger.entrySet().stream()
+                .filter(im -> im.getKey().getInnsendingstidspunkt().isAfter(innsendingstidspunkt))
+                .map(entry -> InntektsmeldingBuilder.kopi(entry.getKey()).medArbeidsforholdId(entry.getValue().finnEkstern(entry.getKey().getArbeidsgiver(), entry.getKey().getArbeidsforholdRef())).medArbeidsforholdId(InternArbeidsforholdRef.nullRef()))
                 .map(InntektsmeldingBuilder::build)
+                .sorted(Comparator.comparing(Inntektsmelding::getInnsendingstidspunkt))
                 .collect(Collectors.toList());
 
             var informasjonBuilder = ArbeidsforholdInformasjonBuilder.oppdatere(arbeidsforholdInformasjon);
