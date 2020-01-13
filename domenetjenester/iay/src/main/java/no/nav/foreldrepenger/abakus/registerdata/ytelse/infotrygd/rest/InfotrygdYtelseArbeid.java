@@ -47,10 +47,10 @@ public class InfotrygdYtelseArbeid {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         InfotrygdYtelseArbeid that = (InfotrygdYtelseArbeid) o;
-        return orgnr.equals(that.orgnr) &&
-            inntekt.equals(that.inntekt) &&
-            inntektperiode.equals(that.inntektperiode) &&
-            refusjon.equals(that.refusjon);
+        return Objects.equals(orgnr, that.orgnr) &&
+            Objects.equals(inntekt, that.inntekt) &&
+            Objects.equals(inntektperiode, that.inntektperiode) &&
+            Objects.equals(refusjon, that.refusjon);
     }
 
     @Override

@@ -16,7 +16,6 @@ es.properties.backup
 *.zip
 *.versionsBackup
 *.log
-es-local.properties
 *.db
 mqjms.log*
 maven-eclipse.xml
@@ -33,8 +32,6 @@ dep.txt
 .temp*.txt
 /logs/
 .env
-
 app.properties
 app-local.properties
-
 .DS_Store

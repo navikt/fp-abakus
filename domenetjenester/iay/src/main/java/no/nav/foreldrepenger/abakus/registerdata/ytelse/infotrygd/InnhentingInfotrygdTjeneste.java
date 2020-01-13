@@ -1,8 +1,5 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd;
 
-import static no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus.AVSLUTTET;
-import static no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus.LØPENDE;
-
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.Instant;
@@ -27,6 +24,7 @@ import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.ArbeidskategoriReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.InntektPeriodeReverse;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.RelatertYtelseStatusReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.TemaReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.TemaUnderkategoriReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.YtelseTypeReverse;
@@ -83,7 +81,7 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     private InfotrygdYtelseGrunnlag restTilInfotrygdYtelseGrunnlag(Grunnlag grunnlag) {
-        YtelseStatus brukStatus = grunnlag.getOpphørFom() != null ? AVSLUTTET : (grunnlag.getIdentdato() != null ? LØPENDE : YtelseStatus.UDEFINERT);
+        YtelseStatus brukStatus = RelatertYtelseStatusReverse.reverseMap(grunnlag.getStatus().getKode().name(), LOG);
         Periode fraSaksdata = utledPeriode(grunnlag.getIverksatt(), grunnlag.getOpphørFom(), grunnlag.getRegistrert());
         if (grunnlag.getIverksatt() == null || grunnlag.getIdentdato() == null || !grunnlag.getIverksatt().equals(grunnlag.getIdentdato())) {
             LOG.info("Infotrygd ny mapper avvik iverksatt {} vs identdato {}", grunnlag.getIverksatt(), grunnlag.getIdentdato());
@@ -156,7 +154,7 @@ public class InnhentingInfotrygdTjeneste {
         try {
             var mappedWs = InnhentingInfotrygdTjeneste.mapISoG(ws);
             var mappedRest = rest.stream()
-                .filter(r -> YTELSER_SAMMENLIGN_WS_RS.contains(r.getYtelseType()))
+                .filter(r -> r.getYtelseType() != null && YTELSER_SAMMENLIGN_WS_RS.contains(r.getYtelseType()))
                 .map(InnhentingInfotrygdTjeneste::nyttGrunnlagTilNyttMedRedusertInnhold)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -168,7 +166,7 @@ public class InnhentingInfotrygdTjeneste {
             }
             return sammenligning;
         } catch (Exception e) {
-            LOG.info("Infotrygd sammenligning noe gikk galt ws {} og rest {}", ws, rest);
+            LOG.info("Infotrygd sammenligning noe gikk galt ws {} og rest {}", ws, rest, e);
             return false;
         }
     }
@@ -199,12 +197,14 @@ public class InnhentingInfotrygdTjeneste {
             .medVedtaksPeriodeTom(grunnlag.getPeriode().getTomDato())
             .medArbeidskategori(grunnlag.getGrunnlag().map(YtelseBeregningsgrunnlag::getArbeidskategori).orElse(Arbeidskategori.UDEFINERT));
 
-        grunnlag.getGrunnlag().ifPresent(grunnlagO -> grunnlagO.getArbeidsforhold().stream()
-            .map(a -> new InfotrygdYtelseArbeid(a.getOrgnr(), a.getInntektForPerioden().intValue(), a.getInntektPeriodeType(), null))
-            .forEach(grunnlagBuilder::leggTilArbeidsforhold));
+        if (grunnlag.getGrunnlag().map(YtelseBeregningsgrunnlag::harArbeidsForhold).orElse(Boolean.FALSE)) {
+            grunnlag.getGrunnlag().ifPresent(grunnlagO -> grunnlagO.getArbeidsforhold().stream()
+                .map(a -> new InfotrygdYtelseArbeid(a.getOrgnr(), a.getInntektForPerioden().intValue(), a.getInntektPeriodeType(), null))
+                .forEach(grunnlagBuilder::leggTilArbeidsforhold));
+        }
 
         grunnlag.getGrunnlag().ifPresent(grunnlagO -> grunnlagO.getVedtak().stream()
-            .map(v -> new InfotrygdYtelseAnvist(v.getFom(), v.getTom(), v.getUtbetalingsgrad() != null ? v.getUtbetalingsgrad() : 0))
+            .map(v -> new InfotrygdYtelseAnvist(v.getFom(), v.getTom(), v.getUtbetalingsgrad() != null ? (v.getUtbetalingsgrad() == 0 ? 100 : v.getUtbetalingsgrad()) : 100))
             .forEach(grunnlagBuilder::leggTillAnvistPerioder));
 
         return grunnlagBuilder.build();
