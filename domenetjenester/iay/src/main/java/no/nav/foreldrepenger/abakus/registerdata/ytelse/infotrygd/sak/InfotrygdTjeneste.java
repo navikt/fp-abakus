@@ -32,6 +32,7 @@ import no.nav.tjeneste.virksomhet.infotrygdsak.v1.meldinger.FinnSakListeResponse
 import no.nav.vedtak.exception.IntegrasjonException;
 import no.nav.vedtak.felles.integrasjon.felles.ws.DateUtil;
 import no.nav.vedtak.felles.integrasjon.infotrygdsak.InfotrygdSakConsumer;
+import no.nav.vedtak.util.FPDateUtil;
 
 @ApplicationScoped
 public class InfotrygdTjeneste {
@@ -42,7 +43,7 @@ public class InfotrygdTjeneste {
     private static final Map<String, YtelseStatus> STATUS_VERDI_MAP = Map.ofEntries(
         Map.entry(RelatertYtelseStatus.LØPENDE_VEDTAK.getKode(), YtelseStatus.LØPENDE),
         Map.entry(RelatertYtelseStatus.AVSLUTTET_IT.getKode(), YtelseStatus.AVSLUTTET),
-        Map.entry(RelatertYtelseStatus.IKKE_STARTET.getKode(), YtelseStatus.OPPRETTET),
+        Map.entry(RelatertYtelseStatus.IKKE_STARTET.getKode(), YtelseStatus.UNDER_BEHANDLING),
         Map.entry("xx", YtelseStatus.UDEFINERT),
         Map.entry("??", YtelseStatus.UDEFINERT)
     );
@@ -118,14 +119,13 @@ public class InfotrygdTjeneste {
         if (sak.getBehandlingstema() != null && sak.getBehandlingstema().getValue() != null) {
             temaUnderkategori = TemaUnderkategoriReverse.reverseMap(sak.getBehandlingstema().getValue());
         }
-        if (sak.getStatus() != null && sak.getStatus().getValue() != null) {
-            relatertYtelseTilstand = getYtelseTilstand(erVedtak, sak.getStatus().getValue());
-        }
         YtelseType ytelseType = utledYtelseType(sak.getTema().getValue(), temaUnderkategori);
         if (YtelseType.ENGANGSTØNAD.equals(ytelseType)) {
             opphoerFomDato = iverksatt != null ? iverksatt : registrert;
         }
-
+        if (sak.getStatus() != null && sak.getStatus().getValue() != null) {
+            relatertYtelseTilstand = getYtelseTilstand(sak.getStatus().getValue(), opphoerFomDato);
+        }
         return InfotrygdSak.InfotrygdSakBuilder.ny()
             .medIverksatt(iverksatt)
             .medRegistrert(registrert)
@@ -159,8 +159,11 @@ public class InfotrygdTjeneste {
         }
     }
 
-    private YtelseStatus getYtelseTilstand(boolean erVedtak, String status) {
-        return STATUS_VERDI_MAP.getOrDefault(status, erVedtak ? YtelseStatus.AVSLUTTET : YtelseStatus.UNDER_BEHANDLING);
+    private YtelseStatus getYtelseTilstand(String status, LocalDate opphorFomDato) {
+        if (opphorFomDato != null) {
+            return opphorFomDato.isAfter(FPDateUtil.iDag()) ? YtelseStatus.LØPENDE : YtelseStatus.AVSLUTTET;
+        }
+        return STATUS_VERDI_MAP.getOrDefault(status, YtelseStatus.UNDER_BEHANDLING);
     }
 
 }

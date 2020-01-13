@@ -43,7 +43,7 @@ public class InfotrygdYtelseAnvist {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         InfotrygdYtelseAnvist that = (InfotrygdYtelseAnvist) o;
-        return utbetaltFom.equals(that.utbetaltFom) &&
+        return Objects.equals(utbetaltFom, that.utbetaltFom) &&
             Objects.equals(utbetaltTom, that.utbetaltTom) &&
             Objects.equals(utbetalingsgrad, that.utbetalingsgrad);
     }

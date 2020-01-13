@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master         # Push events on master branch
+env:
+  IMAGE_BASE: docker.pkg.github.com/${{ github.repository }}/fpabakus
 
 jobs:
   build:
@@ -37,34 +39,48 @@ jobs:
         shell: bash
         run: |
           echo "Building artifacts $(echo $GITHUB_SHA | cut -c1-7)"
-          mvn clean deploy --batch-mode --settings ./.m2/settings.xml -Dmaven.wagon.http.pool=false --file pom.xml -Dchangelist= -Dsha1=-$(git log -1 --pretty='%ad' --date=format:'%Y%m%d%H%M%S')-$(echo $GITHUB_SHA | cut -c1-7) -Dfile.encoding=UTF-8 -DinstallAtEnd=true -DdeployAtEnd=true
+          mvn jacoco:prepare-agent deploy -e --batch-mode --settings ./.m2/settings.xml -Dmaven.wagon.http.pool=false --file pom.xml -Dchangelist= -Dsha1=-$(git log -1 --pretty='%ad' --date=format:'%Y%m%d%H%M%S')-$(echo $GITHUB_SHA | cut -c1-7) -Dfile.encoding=UTF-8 -DinstallAtEnd=true -DdeployAtEnd=true  -Djacoco.destFile=$(pwd)/target/jacoco.exec
+          mvn jacoco:report sonar:sonar -e --batch-mode --settings ./.m2/settings.xml --file pom.xml -Djacoco.dataFile=$(pwd)/target/jacoco.exec -Dsonar.projectKey="navikt_fp-abakus" -Dsonar.host.url='https://sonarcloud.io' -Dsonar.organization=navit -Dsonar.login=${SONAR_TOKEN}
           echo "Deployed artifacts"
+          echo ::set-env name=TAG::$(git log -1 --pretty='%ad' --date=format:'%Y%m%d%H%M%S')-$(echo $GITHUB_SHA | cut -c1-7)
+          echo ::set-env name=IMAGE::$IMAGE_BASE:$(git log -1 --pretty='%ad' --date=format:'%Y%m%d%H%M%S')-$(echo $GITHUB_SHA | cut -c1-7)
         env:
           GITHUB_USERNAME: x-access-token
           GITHUB_PASSWORD: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           DATASOURCE_HOST: localhost
           DATASOURCE_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
 
-      - name: Sette Docker- navn og tag
-        env:
-          DOCKER_IMAGE: docker.pkg.github.com/${{ github.repository }}/fpabakus
-        run: |
-          echo $DOCKER_IMAGE > .docker_image
-          echo "$(git log -1 --pretty='%ad' --date=format:'%Y%m%d%H%M%S')-$(echo $GITHUB_SHA | cut -c1-7)" > .docker_tag
-      - name: Bygge Docker image
-        run: docker build . --pull -t $(cat .docker_image):$(cat .docker_tag)
-      - name: Laste opp Docker image
-        run: |
-          echo "$GITHUB_ACCESS_TOKEN" | docker login --username "x-access-token" --password-stdin https://docker.pkg.github.com
-          docker push $(cat .docker_image):$(cat .docker_tag)
-          docker tag $(cat .docker_image):$(cat .docker_tag) $(cat .docker_image):latest
-          docker push $(cat .docker_image):latest
-          echo ::set-env name=IMAGE::$(cat .docker_image):$(cat .docker_tag)
+      - name: Bygg og push docker-image
         env:
           GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-      - name: Deploye til dev
-        uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.DEPLOY_KEY }}
-          CLUSTER: dev-fss
-          RESOURCE: .deploy/t4.yaml
+        run: |
+          docker build --pull --tag ${IMAGE} --tag ${IMAGE_BASE}:latest .
+          echo "$GITHUB_ACCESS_TOKEN" | docker login --username "x-access-token" --password-stdin https://docker.pkg.github.com
+          docker push ${IMAGE_BASE}:latest
+          docker push $IMAGE
+
+      - name: Opprett deployment issue
+        if: success()
+        uses: maxkomarychev/oction-create-issue@v0.7.1
+        id: createdeployissue
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: Deploy av ${{ env.TAG }}
+          labels: deployment
+          body: |
+            Kommenter med <b>/promote ${{ env.TAG }} env namespace</b>, hvor <b>env</b> er et gyldig clusternavn og <b>namespace</b> et eksisterende namespace i det clusteret.
+
+            <table>
+            <tr><th>Cluster</th><th>Namespace</th></tr>
+            <tr><td>dev-fss</td><td>t4, q0, q1</td></tr>
+            <tr><td>prod-fss</td><td>default</td></tr>
+            </table>
+      - name: Trigg deploy til dev
+        if: success()
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+          issue-number: ${{ steps.createdeployissue.outputs.number }}
+          body: /promote ${{ env.TAG }} dev-fss t4
