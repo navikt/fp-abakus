@@ -31,7 +31,7 @@
 
 		<prometheus.version>0.8.0</prometheus.version>
 
-        <felles.version>1.3.1-20191206111422-3a1aed3</felles.version>
+        <felles.version>1.4.2-20200113113007-04ca61b</felles.version>
 
 		<kontrakter.version>5.1_20191223122121_321af1f</kontrakter.version>
 	</properties>
