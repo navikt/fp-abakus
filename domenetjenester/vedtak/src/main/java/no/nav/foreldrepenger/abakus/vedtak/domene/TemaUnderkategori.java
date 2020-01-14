@@ -49,7 +49,7 @@ public enum TemaUnderkategori implements Kodeverdi {
     BT("BT", "Stønad til barnetilsyn", "BT"),
     FL("FL", "Tilskudd til flytting", "FL"),
     UT("UT", "Skolepenger", "UT"),
-    
+
     UDEFINERT("-", "Udefinert", null),
     ;
 
@@ -135,7 +135,7 @@ public enum TemaUnderkategori implements Kodeverdi {
     }
 
     private static final List<TemaUnderkategori> FORELDREPENGER_BEHANDLINGSTEMAER = Arrays.asList(
-        FORELDREPENGER_FODSEL, FORELDREPENGER_ADOPSJON, FORELDREPENGER_FODSEL_UTLAND);
+        FORELDREPENGER, FORELDREPENGER_FODSEL, FORELDREPENGER_ADOPSJON, FORELDREPENGER_FODSEL_UTLAND);
 
     private static final List<TemaUnderkategori> ENGANGSSTONAD_BEHANDLINGSTEMAER = Arrays.asList(ENGANGSSTONAD_ADOPSJON,
         ENGANGSSTONAD_FODSEL);

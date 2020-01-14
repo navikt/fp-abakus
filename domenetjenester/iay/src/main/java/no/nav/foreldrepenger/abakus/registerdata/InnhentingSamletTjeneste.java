@@ -108,14 +108,14 @@ public class InnhentingSamletTjeneste {
         if (unleash != null && unleash.isEnabled(REST_GJELDER, false)) {
             var ident = getFnrFraAktørId(aktørId);
             var rest = innhentingInfotrygdTjeneste.getInfotrygdYtelser(ident, periode);
-            sammenlignWsRest(ws, rest);
+            sammenlignWsRest(ws, rest, periode);
             return rest;
         }
         return Collections.emptyList();
     }
 
-    boolean sammenlignWsRest(List<InfotrygdSakOgGrunnlag> ws, List<InfotrygdYtelseGrunnlag> rest) {
-        return innhentingInfotrygdTjeneste.sammenlignGrunnlagKilder(ws, rest);
+    boolean sammenlignWsRest(List<InfotrygdSakOgGrunnlag> ws, List<InfotrygdYtelseGrunnlag> rest, Interval periode) {
+        return innhentingInfotrygdTjeneste.sammenlignGrunnlagKilder(ws, rest, periode);
     }
 
 
