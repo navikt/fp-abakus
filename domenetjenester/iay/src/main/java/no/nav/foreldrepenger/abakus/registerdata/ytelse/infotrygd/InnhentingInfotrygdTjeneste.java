@@ -6,8 +6,10 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,6 +24,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.Arbeidskategori;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlag;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlagVedtak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.ArbeidskategoriReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.InntektPeriodeReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.RelatertYtelseStatusReverse;
@@ -33,6 +36,7 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.Infotrygd
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.InfotrygdYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.Grunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.Periode;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.Vedtak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.felles.InfotrygdGrunnlagAggregator;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdSakOgGrunnlag;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
@@ -149,14 +153,16 @@ public class InnhentingInfotrygdTjeneste {
         return dato;
     }
 
-    public boolean sammenlignGrunnlagKilder(List<InfotrygdSakOgGrunnlag> ws, List<InfotrygdYtelseGrunnlag> rest) {
+    public boolean sammenlignGrunnlagKilder(List<InfotrygdSakOgGrunnlag> ws, List<InfotrygdYtelseGrunnlag> rest, Interval periode) {
         // Likt innhold så equals ikke går bananas - foreløpig uten sykepenger pga arb.giver.periode - avvik OK
         try {
-            var mappedWs = InnhentingInfotrygdTjeneste.mapISoG(ws);
+            LocalDate startdato = dato(periode.getStart());
+            var mappedWs = InnhentingInfotrygdTjeneste.mapISoG(ws, startdato);
             var mappedRest = rest.stream()
                 .filter(r -> r.getYtelseType() != null && YTELSER_SAMMENLIGN_WS_RS.contains(r.getYtelseType()))
                 .map(InnhentingInfotrygdTjeneste::nyttGrunnlagTilNyttMedRedusertInnhold)
                 .filter(Objects::nonNull)
+                .filter(g -> g.getVedtaksPeriodeTom().isAfter(startdato))
                 .collect(Collectors.toList());
             boolean sammenligning = mappedRest.containsAll(mappedWs) && mappedWs.containsAll(mappedRest);
             if (!sammenligning) {
@@ -172,13 +178,14 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     // Kun for sammenligning
-    private static List<InfotrygdYtelseGrunnlag> mapISoG(List<InfotrygdSakOgGrunnlag> sog) {
+    private static List<InfotrygdYtelseGrunnlag> mapISoG(List<InfotrygdSakOgGrunnlag> sog, LocalDate startDato) {
         try {
             return sog.stream()
                 .filter(g -> YTELSER_SAMMENLIGN_WS_RS.contains(g.getSak().getYtelseType()))
                 .filter(g -> g.getGrunnlag().isPresent())
                 .map(InnhentingInfotrygdTjeneste::isogTilNyttGrunnlag)
                 .filter(Objects::nonNull)
+                .filter(g -> g.getVedtaksPeriodeTom().isAfter(startDato))
                 .collect(Collectors.toList());
         } catch (Exception e) {
             LOG.info("Infotrygd ny mapper fra ISoG ukjent feil", e);
@@ -188,6 +195,7 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     private static InfotrygdYtelseGrunnlag isogTilNyttGrunnlag(InfotrygdSakOgGrunnlag grunnlag) {
+
         var grunnlagBuilder = InfotrygdYtelseGrunnlag.getBuilder()
             .medYtelseType(grunnlag.getSak().getYtelseType())
             .medTemaUnderkategori(grunnlag.getSak().getTemaUnderkategori())
@@ -206,6 +214,12 @@ public class InnhentingInfotrygdTjeneste {
         grunnlag.getGrunnlag().ifPresent(grunnlagO -> grunnlagO.getVedtak().stream()
             .map(v -> new InfotrygdYtelseAnvist(v.getFom(), v.getTom(), v.getUtbetalingsgrad() != null ? (v.getUtbetalingsgrad() == 0 ? 100 : v.getUtbetalingsgrad()) : 100))
             .forEach(grunnlagBuilder::leggTillAnvistPerioder));
+        grunnlag.getGrunnlag().map(YtelseBeregningsgrunnlag::getVedtak).orElse(Collections.emptyList()).stream()
+            .map(YtelseBeregningsgrunnlagVedtak::getFom)
+            .min(Comparator.naturalOrder()).ifPresent(grunnlagBuilder::medVedtaksPeriodeFom);
+        grunnlag.getGrunnlag().map(YtelseBeregningsgrunnlag::getVedtak).orElse(Collections.emptyList()).stream()
+            .map(YtelseBeregningsgrunnlagVedtak::getTom)
+            .max(Comparator.naturalOrder()).ifPresent(grunnlagBuilder::medVedtaksPeriodeTom);
 
         return grunnlagBuilder.build();
     }

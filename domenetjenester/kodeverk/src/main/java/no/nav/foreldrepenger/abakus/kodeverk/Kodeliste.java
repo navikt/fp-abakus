@@ -279,11 +279,6 @@ public abstract class Kodeliste extends KodeverkBaseEntitet implements Comparabl
         return getClass().getSimpleName()
             + "<" //$NON-NLS-1$
             + "kode=" + getKode() //$NON-NLS-1$
-            + ", kodeverk=" + getKodeverk() //$NON-NLS-1$
-            + ", språk=" + språk //$NON-NLS-1$
-            + ", offisiellKode=" + offisiellKode //$NON-NLS-1$
-            + ", gyldigFom=" + gyldigFraOgMed //$NON-NLS-1$
-            + ", gyldigTom=" + gyldigTilOgMed //$NON-NLS-1$
             + ">"; //$NON-NLS-1$
     }
 
