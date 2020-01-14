@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.typer;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -54,7 +55,7 @@ public class InternArbeidsforholdRef implements IndexKey, Serializable {
      * Genererer en UUID type 3 basert på angitt seed. Gir konsekvente UUIDer
      */
     public static InternArbeidsforholdRef namedRef(String seed) {
-        return ref(UUID.nameUUIDFromBytes(seed.getBytes(Charset.forName("UTF8"))).toString());
+        return ref(UUID.nameUUIDFromBytes(seed.getBytes(StandardCharsets.UTF_8)).toString());
     }
 
     public String getReferanse() {

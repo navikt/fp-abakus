@@ -20,9 +20,7 @@ import javax.persistence.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyring;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -42,9 +40,6 @@ public class InntektsmeldingAggregat extends BaseEntitet {
     @ChangeTracked
     private Set<Inntektsmelding> inntektsmeldinger = new HashSet<>();
 
-    @Transient
-    private ArbeidsforholdInformasjon arbeidsforholdInformasjon;
-
     @Version
     @Column(name = "versjon", nullable = false)
     private long versjon;
@@ -53,7 +48,7 @@ public class InntektsmeldingAggregat extends BaseEntitet {
     }
 
     InntektsmeldingAggregat(InntektsmeldingAggregat inntektsmeldingAggregat) {
-        this(inntektsmeldingAggregat.getAlleInntektsmeldinger());
+        this(inntektsmeldingAggregat.getInntektsmeldinger());
     }
 
     public InntektsmeldingAggregat(Collection<Inntektsmelding> inntektsmeldinger) {
@@ -64,47 +59,13 @@ public class InntektsmeldingAggregat extends BaseEntitet {
         }).collect(Collectors.toList()));
     }
 
-    /**
-     * Gjeldende inntektsmeldinger i behandlingen (de som skal brukes).
-     *
-     * @return Liste med {@link Inntektsmelding}
-     */
-    public List<Inntektsmelding> getInntektsmeldinger() {
-        return inntektsmeldinger.stream().filter(this::skalBrukes).collect(Collectors.toUnmodifiableList());
-    }
-
     /** Get alle inntektsmeldinger (både de som skal brukes og ikke brukes). */
-    public List<Inntektsmelding> getAlleInntektsmeldinger() {
+    public List<Inntektsmelding> getInntektsmeldinger() {
         return inntektsmeldinger.stream().collect(Collectors.toUnmodifiableList());
     }
 
     public Long getId() {
         return id;
-    }
-
-    private boolean skalBrukes(Inntektsmelding im) {
-        return arbeidsforholdInformasjon == null || arbeidsforholdInformasjon.getOverstyringer()
-            .stream()
-            .noneMatch(ov -> erFjernet(im, ov));
-    }
-
-    private boolean erFjernet(Inntektsmelding im, ArbeidsforholdOverstyring ov) {
-        return (ov.getArbeidsforholdRef().gjelderFor(im.getArbeidsforholdRef()))
-            && ov.getArbeidsgiver().equals(im.getArbeidsgiver())
-            && (Objects.equals(ArbeidsforholdHandlingType.IKKE_BRUK, ov.getHandling())
-            || Objects.equals(ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING, ov.getHandling())
-            || Objects.equals(ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE, ov.getHandling())
-            || Objects.equals(ArbeidsforholdHandlingType.SLÅTT_SAMMEN_MED_ANNET, ov.getHandling()));
-    }
-
-
-    /**
-     * Alle gjeldende inntektsmeldinger for en virksomhet i behandlingen.
-     *
-     * @return Liste med {@link Inntektsmelding}
-     */
-    public List<Inntektsmelding> getInntektsmeldingerFor(Arbeidsgiver arbeidsgiver) {
-        return getInntektsmeldinger().stream().filter(i -> i.getArbeidsgiver().equals(arbeidsgiver)).collect(Collectors.toList());
     }
 
     /**

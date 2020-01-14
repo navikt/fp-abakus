@@ -118,7 +118,7 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
         query.setParameter("aktørId", aktørId);
         query.setParameter("ref", saksnummer);
         query.setParameter("ytelse", ytelseType);
-        var inntektsmeldingSet = query.getResultList().stream().map(im -> im).collect(Collectors.toSet());
+        var inntektsmeldingSet = Set.copyOf(query.getResultList());
         return inntektsmeldingSet;
     }
 
@@ -374,7 +374,7 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
                 }
             }));
 
-        grunnlag.getInntektsmeldinger().ifPresent(aggregat -> aggregat.getAlleInntektsmeldinger()
+        grunnlag.getInntektsmeldinger().ifPresent(aggregat -> aggregat.getInntektsmeldinger()
             .forEach(it -> {
                 if (it.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold()) {
                     arbeidsforholdInformasjon.finnEkstern(it.getArbeidsgiver(), it.getArbeidsforholdRef()); // Validerer om det finnes ekstern for intern ref
@@ -664,7 +664,7 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
 
     private void lagreInntektsMeldinger(InntektsmeldingAggregat inntektsmeldingAggregat) {
         entityManager.persist(inntektsmeldingAggregat);
-        var inntektsmeldinger = inntektsmeldingAggregat.getAlleInntektsmeldinger();
+        var inntektsmeldinger = inntektsmeldingAggregat.getInntektsmeldinger();
         for (Inntektsmelding entitet : inntektsmeldinger) {
             entityManager.persist(entitet);
             for (Gradering gradering : entitet.getGraderinger()) {

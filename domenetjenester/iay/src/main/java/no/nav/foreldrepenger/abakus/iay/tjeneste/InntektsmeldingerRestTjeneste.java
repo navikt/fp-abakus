@@ -136,7 +136,7 @@ public class InntektsmeldingerRestTjeneste {
 
         var inntektsmeldingerAggregat = new MapInntektsmeldinger.MapFraDto().map(informasjonBuilder, mottattRequest.getInntektsmeldinger());
 
-        var grunnlagReferanse = imTjeneste.lagre(koblingReferanse, informasjonBuilder, inntektsmeldingerAggregat.getAlleInntektsmeldinger());
+        var grunnlagReferanse = imTjeneste.lagre(koblingReferanse, informasjonBuilder, inntektsmeldingerAggregat.getInntektsmeldinger());
 
         koblingTjeneste.lagre(kobling);
         koblingTjeneste.oppdaterLåsVersjon(koblingLås);

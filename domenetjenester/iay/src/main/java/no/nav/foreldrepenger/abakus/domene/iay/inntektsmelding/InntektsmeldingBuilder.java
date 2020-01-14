@@ -28,7 +28,7 @@ public class InntektsmeldingBuilder {
     public static InntektsmeldingBuilder builder() {
         return new InntektsmeldingBuilder(new Inntektsmelding());
     }
-    
+
     public static InntektsmeldingBuilder kopi(Inntektsmelding inntektsmelding) {
         return new InntektsmeldingBuilder(new Inntektsmelding(inntektsmelding));
     }
@@ -60,11 +60,7 @@ public class InntektsmeldingBuilder {
     public InntektsmeldingBuilder medArbeidsforholdId(InternArbeidsforholdRef arbeidsforholdId) {
         precondition();
         if (arbeidsforholdId != null) {
-            // magic - hvis har ekstern referanse må også intern referanse være spesifikk
-            if (arbeidsforholdId.getReferanse() == null && eksternArbeidsforholdId != null && eksternArbeidsforholdId.gjelderForSpesifiktArbeidsforhold()) {
-                throw new IllegalArgumentException(
-                    "Begge referanser gjelde spesifikke arbeidsforhold. " + " Ekstern: " + eksternArbeidsforholdId + ", Intern: " + arbeidsforholdId);
-            }
+            sjekkArbeidsforholdKonsistens(arbeidsforholdId);
             kladd.setArbeidsforholdId(arbeidsforholdId);
         }
         return this;
@@ -162,26 +158,23 @@ public class InntektsmeldingBuilder {
         return this;
     }
 
-    public InntektsmeldingBuilder medInntektsmeldingaarsak(String inntektsmeldingInnsendingsårsak) {
-        precondition();
-        return medInntektsmeldingaarsak(inntektsmeldingInnsendingsårsak == null ? null : new InntektsmeldingInnsendingsårsak(inntektsmeldingInnsendingsårsak));
-    }
-
     public Inntektsmelding build() {
         Objects.requireNonNull(kladd.getArbeidsgiver(), "arbeidsgiver mangler");
         Objects.requireNonNull(kladd.getInnsendingstidspunkt(), "innsendingstidspunkt mangler");
         Objects.requireNonNull(kladd.getJournalpostId(), "journalpostId");
-        
+
         var internRef = getInternArbeidsforholdRef();
-        if (internRef.isPresent()) {
-            // magic - hvis har ekstern referanse må også intern referanse være spesifikk
-            if ((eksternArbeidsforholdId != null && eksternArbeidsforholdId.gjelderForSpesifiktArbeidsforhold()) && internRef.get().getReferanse() == null) {
-                throw new IllegalArgumentException(
-                    "Begge referanser må gjelde spesifikke arbeidsforhold. " + " Ekstern: " + eksternArbeidsforholdId + ", Intern: " + internRef);
-            }
-        }
+        internRef.ifPresent(this::sjekkArbeidsforholdKonsistens);
         erBygget = true;
         return kladd;
+    }
+
+    private void sjekkArbeidsforholdKonsistens(InternArbeidsforholdRef internRef) {
+        // magic - hvis har ekstern referanse må også intern referanse være spesifikk
+        if ((eksternArbeidsforholdId != null && eksternArbeidsforholdId.gjelderForSpesifiktArbeidsforhold()) && internRef.getReferanse() == null) {
+            throw new IllegalArgumentException(
+                "Begge referanser må gjelde spesifikke arbeidsforhold. " + " Ekstern: " + eksternArbeidsforholdId + ", Intern: " + internRef);
+        }
     }
 
     private void precondition() {

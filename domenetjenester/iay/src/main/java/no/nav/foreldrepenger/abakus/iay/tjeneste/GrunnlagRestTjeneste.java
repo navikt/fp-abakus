@@ -228,6 +228,7 @@ public class GrunnlagRestTjeneste {
         var koblingLås = koblingTjeneste.taSkrivesLås(ref); // alltid ta lås før skrive operasjoner
 
         var kobling = oppdaterKobling(request);
+
         iayTjeneste.kopierGrunnlagFraEksisterendeBehandling(kobling.getYtelseType(), kobling.getAktørId(),
             new Saksnummer(request.getSaksnummer()),
             new KoblingReferanse(request.getGammelReferanse()),
