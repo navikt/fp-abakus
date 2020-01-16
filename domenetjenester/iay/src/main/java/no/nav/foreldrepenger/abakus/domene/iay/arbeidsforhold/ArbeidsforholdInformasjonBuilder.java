@@ -16,7 +16,6 @@ import no.nav.vedtak.util.Tuple;
 public class ArbeidsforholdInformasjonBuilder {
 
     private final ArbeidsforholdInformasjon kladd;
-    private final List<Tuple<Arbeidsgiver, Tuple<InternArbeidsforholdRef, InternArbeidsforholdRef>>> erstattArbeidsforhold = new ArrayList<>();
     private final List<Tuple<Arbeidsgiver, Tuple<InternArbeidsforholdRef, InternArbeidsforholdRef>>> reverserteErstattninger = new ArrayList<>();
 
     private ArbeidsforholdInformasjonBuilder(ArbeidsforholdInformasjon kladd) {
@@ -28,12 +27,8 @@ public class ArbeidsforholdInformasjonBuilder {
     }
 
     public static ArbeidsforholdInformasjonBuilder builder(Optional<ArbeidsforholdInformasjon> arbeidsforholdInformasjon) {
-        var arbeidInfo = arbeidsforholdInformasjon.map(ai -> new ArbeidsforholdInformasjon(ai)).orElseGet(() -> new ArbeidsforholdInformasjon());
+        var arbeidInfo = arbeidsforholdInformasjon.map(ai -> new ArbeidsforholdInformasjon(ai)).orElseGet(ArbeidsforholdInformasjon::new);
         return new ArbeidsforholdInformasjonBuilder(arbeidInfo);
-    }
-
-    public ArbeidsforholdOverstyringBuilder getOverstyringBuilderFor(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef ref) {
-        return kladd.getOverstyringBuilderFor(arbeidsgiver, ref);
     }
 
     public ArbeidsforholdInformasjonBuilder tilbakestillOverstyringer() {
@@ -43,30 +38,10 @@ public class ArbeidsforholdInformasjonBuilder {
             .collect(Collectors.toList());
         collect.forEach(it -> {
             Optional<InternArbeidsforholdRef> arbeidsforholdRef = kladd.finnForEksternBeholdHistoriskReferanse(it.getArbeidsgiver(), it.getEksternReferanse());
-            if (arbeidsforholdRef.isPresent()) {
-                reverserteErstattninger.add(new Tuple<>(it.getArbeidsgiver(), new Tuple<>(it.getInternReferanse(), arbeidsforholdRef.get())));
-            }
+            arbeidsforholdRef.ifPresent(internArbeidsforholdRef -> reverserteErstattninger.add(new Tuple<>(it.getArbeidsgiver(), new Tuple<>(it.getInternReferanse(), internArbeidsforholdRef))));
         });
         kladd.tilbakestillOverstyringer();
         return this;
-    }
-
-    /**
-     * Benyttes for å vite hvilke inntektsmeldinger som skal tas ut av grunnlaget ved erstatting av ny id.
-     *
-     * @return Liste over ArbeidsgiverEntitet / ArbeidsforholdReferanser
-     */
-    public List<Tuple<Arbeidsgiver, Tuple<InternArbeidsforholdRef, InternArbeidsforholdRef>>> getErstattArbeidsforhold() {
-        return Collections.unmodifiableList(erstattArbeidsforhold);
-    }
-
-    /**
-     * Benyttes for å vite hvilke inntektsmeldinger som skal tas ut av grunnlaget ved erstatting av ny id.
-     *
-     * @return Liste over ArbeidsgiverEntitet / ArbeidsforholdReferanser
-     */
-    public List<Tuple<Arbeidsgiver, Tuple<InternArbeidsforholdRef, InternArbeidsforholdRef>>> getReverserteErstattArbeidsforhold() {
-        return Collections.unmodifiableList(reverserteErstattninger);
     }
 
     public InternArbeidsforholdRef finnEllerOpprett(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef eksternArbeidsforholdRef) {
@@ -79,14 +54,6 @@ public class ArbeidsforholdInformasjonBuilder {
 
     public boolean erUkjentReferanse(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef internArbeidsforholdRef) {
         return kladd.getArbeidsforholdReferanser().stream().noneMatch(referanse -> referanse.getArbeidsgiver().equals(arbeidsgiver) && referanse.getInternReferanse().equals(internArbeidsforholdRef));
-    }
-
-    public ArbeidsforholdInformasjonBuilder erstattArbeidsforhold(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef gammelRef, InternArbeidsforholdRef ref) {
-        // TODO: Sjekke om revertert allerede
-        // Hvis eksisterer så reverter revertering og ikke legg inn erstattning og kall på erstatt
-        erstattArbeidsforhold.add(new Tuple<>(arbeidsgiver, new Tuple<>(gammelRef, ref)));
-        kladd.erstattArbeidsforhold(arbeidsgiver, gammelRef, ref);
-        return this;
     }
 
     public ArbeidsforholdInformasjonBuilder leggTil(ArbeidsforholdOverstyringBuilder overstyringBuilder) {

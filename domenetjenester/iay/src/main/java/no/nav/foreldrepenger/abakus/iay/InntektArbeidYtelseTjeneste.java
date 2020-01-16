@@ -17,6 +17,7 @@ import javax.inject.Inject;
 
 import no.nav.abakus.iaygrunnlag.request.Dataset;
 import no.nav.abakus.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest.GrunnlagVersjon;
+import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
@@ -27,12 +28,14 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.VersjonType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 
@@ -213,7 +216,6 @@ public class InntektArbeidYtelseTjeneste {
      * inntektsmelding, blitt henlagt, og en revurdering er opprettet basert på en tidligere behandling med vedtak
      * som ikke inkluderer en eller flere inntektsmeldinger som er mottatt etter vedtaket, men før revurderingen.
      *
-     * @param arbeidsforholdInformasjon
      * @param dataset
      * @return
      */
@@ -235,16 +237,29 @@ public class InntektArbeidYtelseTjeneste {
 
             var kopiInntektsmeldingerEtterInnsendingstidspunkt = alleInntektsmeldingerForSaksummer.entrySet().stream()
                 .filter(im -> im.getKey().getInnsendingstidspunkt().isAfter(innsendingstidspunkt))
-                .map(entry -> InntektsmeldingBuilder.kopi(entry.getKey())
-                    .medArbeidsforholdId(entry.getValue().finnEkstern(entry.getKey().getArbeidsgiver(), entry.getKey().getArbeidsforholdRef()))
-                    .medArbeidsforholdId(InternArbeidsforholdRef.nullRef()))
+                .map(entry -> {
+                    Inntektsmelding nyInntektsmelding = entry.getKey();
+                    ArbeidsforholdInformasjon arbForholdInformasjon = entry.getValue();
+
+                    var arbeidsgiver = nyInntektsmelding.getArbeidsgiver();
+                    var internRef = nyInntektsmelding.getArbeidsforholdRef();
+                    var eksternRef = arbForholdInformasjon.finnEkstern(arbeidsgiver, nyInntektsmelding.getArbeidsforholdRef());
+
+                    InntektsmeldingBuilder inntektsmeldingBuilder = InntektsmeldingBuilder.kopi(nyInntektsmelding);
+
+                    if (eksternRef.gjelderForSpesifiktArbeidsforhold() && !internRef.gjelderForSpesifiktArbeidsforhold()) {
+                        internRef = informasjonBuilder.finnEllerOpprett(arbeidsgiver, eksternRef);
+                    } else {
+                        if (eksternRef.gjelderForSpesifiktArbeidsforhold() && internRef.gjelderForSpesifiktArbeidsforhold()
+                            && informasjonBuilder.erUkjentReferanse(arbeidsgiver, internRef)) {
+                            informasjonBuilder.leggTilNyReferanse(new ArbeidsforholdReferanse(arbeidsgiver, internRef, eksternRef));
+                        }
+                    }
+                    return inntektsmeldingBuilder.medArbeidsforholdId(internRef).medArbeidsforholdId(eksternRef);
+                })
                 .map(InntektsmeldingBuilder::build)
                 .sorted(Comparator.comparing(Inntektsmelding::getInnsendingstidspunkt))
                 .collect(Collectors.toList());
-
-            alleInntektsmeldingerForSaksummer.entrySet().stream()
-                .filter(im -> im.getKey().getInnsendingstidspunkt().isAfter(innsendingstidspunkt))
-                .forEach(entry -> informasjonBuilder.finnEllerOpprett(entry.getKey().getArbeidsgiver(), entry.getValue().finnEkstern(entry.getKey().getArbeidsgiver(), entry.getKey().getArbeidsforholdRef())));
 
             repository.oppdaterBuilderMedNyeInntektsmeldinger(informasjonBuilder, kopiInntektsmeldingerEtterInnsendingstidspunkt, builder);
         }
