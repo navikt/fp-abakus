@@ -88,7 +88,7 @@ spec:
     - name: HENTINNTEKTLISTEBOLK_URL
       value: https://app-q0.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk
     - name: ARBEIDSFORHOLD_V3_URL
-      value: https://modapp-q0.adeo.no/aareg-core/ArbeidsforholdService/v3
+      value: https://modapp-q0.adeo.no/aareg-services/ArbeidsforholdService/v3
     - name: INFOTRYGDSAK_V1_URL
       value: https://modapp-q0.adeo.no/infotrygd-ws/InfotrygdSak/v1
     - name: INFOTRYGDBEREGNINGSGRUNNLAG_V1_URL
