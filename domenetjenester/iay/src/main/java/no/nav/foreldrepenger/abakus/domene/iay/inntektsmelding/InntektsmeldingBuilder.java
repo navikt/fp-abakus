@@ -43,10 +43,6 @@ public class InntektsmeldingBuilder {
         return kladd.getArbeidsgiver();
     }
 
-    public Optional<EksternArbeidsforholdRef> getEksternArbeidsforholdRef() {
-        return Optional.ofNullable(eksternArbeidsforholdId);
-    }
-
     public Optional<InternArbeidsforholdRef> getInternArbeidsforholdRef() {
         return Optional.ofNullable(kladd.getArbeidsforholdRef());
     }
