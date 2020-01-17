@@ -77,7 +77,7 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
         return Collections.unmodifiableSet(this.overstyringer);
     }
 
-    public Optional<InternArbeidsforholdRef> finnForEkstern(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef ref) {
+    private Optional<InternArbeidsforholdRef> finnForEkstern(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef ref) {
         var arbeidsforholdReferanser = this.referanser.stream()
             .filter(this::erIkkeMerget)
             .collect(Collectors.toList());
@@ -92,13 +92,6 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
             && ov.getArbeidsforholdRef().equals(arbeidsforholdReferanseEntitet.getInternReferanse()));
     }
 
-    private Optional<ArbeidsforholdReferanse> referanseEksistererIkke(Arbeidsgiver arbeidsgiverEntitet, InternArbeidsforholdRef ref) {
-        return this.referanser.stream()
-            .filter(this::erIkkeMerget)
-            .filter(it -> it.getArbeidsgiver().equals(arbeidsgiverEntitet) && it.getInternReferanse().equals(ref))
-            .findAny();
-    }
-
     private ArbeidsforholdReferanse finnEksisterendeInternReferanseEllerOpprettNy(Arbeidsgiver arbeidsgiverEntitet, EksternArbeidsforholdRef ref) {
         return finnEksisterendeReferanse(arbeidsgiverEntitet, ref)
             .orElseGet(() -> opprettNyReferanse(arbeidsgiverEntitet, InternArbeidsforholdRef.nyRef(), ref));
@@ -110,7 +103,6 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
             .filter(it -> it.getArbeidsgiver().equals(arbeidsgiverEntitet) && it.getEksternReferanse().equals(ref))
             .findAny();
     }
-
 
     /**
      * @deprecated Bruk {@link ArbeidsforholdInformasjonBuilder} i stedet.
@@ -124,17 +116,6 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
         return arbeidsforholdReferanseEntitet;
     }
 
-    ArbeidsforholdOverstyringBuilder getOverstyringBuilderFor(Arbeidsgiver arbeidsgiverEntitet, InternArbeidsforholdRef ref) {
-        return ArbeidsforholdOverstyringBuilder.oppdatere(this.overstyringer
-            .stream()
-            .filter(ov -> ov.getArbeidsgiver().equals(arbeidsgiverEntitet)
-                && ov.getArbeidsforholdRef().equals(ref))
-            .findFirst())
-            .medInformasjon(this)
-            .medArbeidsforholdRef(ref)
-            .medArbeidsgiver(arbeidsgiverEntitet);
-    }
-
     void leggTilOverstyring(ArbeidsforholdOverstyring build) {
         build.setInformasjon(this);
         this.overstyringer.add(build);
@@ -142,11 +123,6 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
 
     void tilbakestillOverstyringer() {
         this.overstyringer.clear();
-    }
-
-    void erstattArbeidsforhold(Arbeidsgiver arbeidsgiverEntitet, InternArbeidsforholdRef gammelRef, InternArbeidsforholdRef ref) {
-        final Optional<ArbeidsforholdReferanse> referanseEntitet = referanseEksistererIkke(arbeidsgiverEntitet, gammelRef);
-        referanseEntitet.ifPresent(it -> opprettNyReferanse(arbeidsgiverEntitet, ref, it.getEksternReferanse()));
     }
 
     @Override
@@ -207,7 +183,7 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
         }
     }
 
-    public InternArbeidsforholdRef finnEllerOpprett(Arbeidsgiver arbeidsgiver, final EksternArbeidsforholdRef ref) {
+    InternArbeidsforholdRef finnEllerOpprett(Arbeidsgiver arbeidsgiver, final EksternArbeidsforholdRef ref) {
         final Optional<ArbeidsforholdOverstyring> erstattning = overstyringer.stream()
             .filter(ov -> {
                 var historiskReferanse = finnForEksternBeholdHistoriskReferanse(arbeidsgiver, ref);
