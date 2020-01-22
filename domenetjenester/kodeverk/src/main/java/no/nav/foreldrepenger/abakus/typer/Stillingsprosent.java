@@ -28,7 +28,7 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
 
     private static final BigDecimal MAX_VERDI = new BigDecimal(500);
 
-    public static final Stillingsprosent NULL_PROSENT = new Stillingsprosent(BigDecimal.ZERO);
+    private static final Stillingsprosent NULL_PROSENT = new Stillingsprosent(null);
 
     @Column(name = "verdi", scale = 2, nullable = false)
     @ChangeTracked
@@ -41,7 +41,7 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
     public static Stillingsprosent nullProsent() { return NULL_PROSENT; }
 
     public Stillingsprosent(BigDecimal verdi) {
-        this.verdi = verdi == null ? fiksNullMedZero() : fiksNegativOgMax(verdi);
+        this.verdi = verdi == null ? null : fiksNegativOgMax(verdi);
         validerRange(this.verdi);
     }
 
@@ -54,7 +54,7 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
     }
 
     private BigDecimal skalertVerdi() {
-        return verdi.setScale(2, AVRUNDINGSMODUS);
+        return verdi == null ? null : verdi.setScale(2, AVRUNDINGSMODUS);
     }
 
     private static void validerRange(BigDecimal verdi) {
@@ -76,14 +76,9 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
         return verdi;
     }
 
-    private BigDecimal fiksNullMedZero() {
-        log.info("Prosent (yrkesaktivitet, permisjon) kan ikke være null. Erstatter med 0.");
-        return this.verdi = BigDecimal.ZERO;
-    }
-
     @Override
     public String getIndexKey() {
-        return skalertVerdi().toString();
+        return IndexKey.createKey(skalertVerdi());
     }
 
     @Override

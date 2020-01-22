@@ -38,11 +38,11 @@ public class StillingsprosentTest {
     }
 
     @Test
-    public void skalReturnere0VerdiHvisNull() {
+    public void skalReturnereNullVerdiHvisNullValue() {
         BigDecimal value = null;
         Stillingsprosent nullValue = new Stillingsprosent(value);
 
-        assertThat(nullValue.getVerdi()).isEqualTo(BigDecimal.ZERO);
+        assertThat(nullValue.getVerdi()).isNull();
     }
 
     @Test
@@ -59,6 +59,14 @@ public class StillingsprosentTest {
     public void skalReturnereTrueHvisEqualsMedLikeObjekter() {
         Stillingsprosent sp = new Stillingsprosent(BigDecimal.TEN);
         Stillingsprosent sp2 = new Stillingsprosent(BigDecimal.TEN);
+
+        assertThat(sp.equals(sp2)).isTrue();
+    }
+
+    @Test
+    public void skalReturnereTrueHvisEqualsToNullObjekter() {
+        Stillingsprosent sp = Stillingsprosent.nullProsent();
+        Stillingsprosent sp2 = Stillingsprosent.nullProsent();
 
         assertThat(sp.equals(sp2)).isTrue();
     }
@@ -104,13 +112,13 @@ public class StillingsprosentTest {
         BigDecimal value = null;
         Stillingsprosent sp = new Stillingsprosent(value);
 
-        assertThat(sp.getIndexKey()).isEqualTo("0.00");
+        assertThat(sp.getIndexKey()).isEqualTo("-");
     }
 
     @Test
-    public void skalReturnereZeroVerdiForNullStillingsprosent() {
+    public void skalReturnereNullVerdiForNullStillingsprosent() {
         Stillingsprosent sp = Stillingsprosent.nullProsent();
 
-        assertThat(sp.getVerdi()).isEqualTo(BigDecimal.ZERO);
+        assertThat(sp.getVerdi()).isNull();
     }
 }
