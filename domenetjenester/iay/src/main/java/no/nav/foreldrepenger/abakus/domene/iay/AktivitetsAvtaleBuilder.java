@@ -30,7 +30,7 @@ public class AktivitetsAvtaleBuilder {
     }
 
     public AktivitetsAvtaleBuilder medProsentsats(BigDecimal prosentsats) {
-        this.aktivitetsAvtaleEntitet.setProsentsats(prosentsats == null ? null : new Stillingsprosent(prosentsats));
+        this.aktivitetsAvtaleEntitet.setProsentsats(prosentsats == null ? Stillingsprosent.nullProsent() : new Stillingsprosent(prosentsats));
         return this;
     }
 
