@@ -68,7 +68,7 @@ public class InternArbeidsforholdRef implements IndexKey, Serializable {
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(referanse);
+        return IndexKey.createKey(referanse == null ? null : referanse.toString());
     }
 
     public boolean gjelderForSpesifiktArbeidsforhold() {
