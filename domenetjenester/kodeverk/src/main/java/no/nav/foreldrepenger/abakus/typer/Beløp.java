@@ -32,24 +32,13 @@ public class Beløp implements Serializable, IndexKey, TraverseValue {
         this.verdi = verdi;
     }
 
-
-    // Beleilig å kunne opprette gjennom int
-    public Beløp(Integer verdi) {
-        this.verdi = verdi == null ? null : new BigDecimal(verdi);
-    }
-
-    // Beleilig å kunne opprette gjennom string
-    public Beløp(String verdi) {
-        this.verdi = verdi == null ? null : new BigDecimal(verdi);
-    }
-
     private BigDecimal skalertVerdi() {
         return verdi == null ? null : verdi.setScale(2, AVRUNDINGSMODUS);
     }
 
     @Override
     public String getIndexKey() {
-        return skalertVerdi().toString();
+        return IndexKey.createKey(skalertVerdi());
     }
 
     public BigDecimal getVerdi() {
@@ -84,23 +73,7 @@ public class Beløp implements Serializable, IndexKey, TraverseValue {
         return verdi.compareTo(annetBeløp.getVerdi());
     }
 
-    public boolean erNullEllerNulltall() {
-        return verdi == null || erNulltall();
-    }
-
     public boolean erNulltall() {
         return verdi != null && compareTo(Beløp.ZERO) == 0;
-    }
-
-    public Beløp multipliser(int multiplicand) {
-        return new Beløp(this.verdi.multiply(BigDecimal.valueOf(multiplicand)));
-    }
-
-    public Beløp multipliser(double multiplicand) {
-        return new Beløp(this.verdi.multiply(BigDecimal.valueOf(multiplicand)));
-    }
-
-    public Beløp adder(Beløp augend) {
-        return new Beløp(this.verdi.add(augend.getVerdi()));
     }
 }

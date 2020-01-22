@@ -126,7 +126,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
 
     /**
      * For timelønnede så vil antallet timer i arbeidsavtalen være satt her
-     * 
+     *
      * @return antall timer
      *
      */
@@ -140,7 +140,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
 
     /**
      * Antall timer som tilsvarer fulltid (f.eks 40 timer)
-     * 
+     *
      * @return antall timer
      */
     public AntallTimer getAntallTimerFulltid() {
@@ -268,8 +268,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
     public boolean erAnsettelsesPeriode() {
         return (antallTimer == null || antallTimer.getVerdi() == null)
             && (antallTimerFulltid == null || antallTimerFulltid.getVerdi() == null)
-            && (prosentsats == null || prosentsats.erNulltall())
+            && (prosentsats == null || prosentsats.getVerdi() == null || prosentsats.erNulltall())
             && sisteLønnsendringsdato == null;
     }
-
 }

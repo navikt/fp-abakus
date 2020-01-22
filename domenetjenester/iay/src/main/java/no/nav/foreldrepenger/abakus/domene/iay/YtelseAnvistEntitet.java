@@ -145,8 +145,4 @@ public class YtelseAnvistEntitet extends BaseEntitet implements YtelseAnvist, In
             ", utbetalingsgradProsent=" + utbetalingsgradProsent +
             '}';
     }
-
-    boolean hasValues() {
-        return beløp != null || anvistPeriode != null || dagsats != null || utbetalingsgradProsent != null;
-    }
 }
