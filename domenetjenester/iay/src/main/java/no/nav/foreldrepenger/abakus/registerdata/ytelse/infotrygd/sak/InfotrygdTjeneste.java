@@ -32,7 +32,6 @@ import no.nav.tjeneste.virksomhet.infotrygdsak.v1.meldinger.FinnSakListeResponse
 import no.nav.vedtak.exception.IntegrasjonException;
 import no.nav.vedtak.felles.integrasjon.felles.ws.DateUtil;
 import no.nav.vedtak.felles.integrasjon.infotrygdsak.InfotrygdSakConsumer;
-import no.nav.vedtak.util.FPDateUtil;
 
 @ApplicationScoped
 public class InfotrygdTjeneste {
@@ -161,7 +160,7 @@ public class InfotrygdTjeneste {
 
     private YtelseStatus getYtelseTilstand(String status, LocalDate opphorFomDato) {
         if (opphorFomDato != null) {
-            return opphorFomDato.isAfter(FPDateUtil.iDag()) ? YtelseStatus.LØPENDE : YtelseStatus.AVSLUTTET;
+            return opphorFomDato.isAfter(LocalDate.now()) ? YtelseStatus.LØPENDE : YtelseStatus.AVSLUTTET;
         }
         return STATUS_VERDI_MAP.getOrDefault(status, YtelseStatus.UNDER_BEHANDLING);
     }

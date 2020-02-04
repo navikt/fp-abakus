@@ -55,7 +55,6 @@ import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
-import no.nav.vedtak.util.FPDateUtil;
 
 public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInnhentingTjeneste {
 
@@ -69,7 +68,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
     private ByggYrkesaktiviteterTjeneste byggYrkesaktiviteterTjeneste;
     private AktørConsumer aktørConsumer;
     private SigrunTjeneste sigrunTjeneste;
-    
+
     protected IAYRegisterInnhentingFellesTjenesteImpl() {
     }
 
@@ -235,7 +234,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
     private LocalDate finnHentedatoForJuridisk(Set<YearMonth> inntekterForMåneder) {
         return inntekterForMåneder.stream()
             .map(m -> LocalDate.of(m.getYear(), m.getMonth(), 1))
-            .max(Comparator.naturalOrder()).orElse(FPDateUtil.iDag());
+            .max(Comparator.naturalOrder()).orElse(LocalDate.now());
     }
 
     private void byggOpptjeningOpplysningene(Kobling kobling, AktørId aktørId, Interval opplysningsPeriode,

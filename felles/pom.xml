@@ -20,6 +20,10 @@
             <artifactId>felles-db</artifactId>
         </dependency>
         <dependency>
+            <groupId>no.nav.vedtak.prosesstask</groupId>
+            <artifactId>prosesstask-legacy</artifactId>
+        </dependency>
+        <dependency>
             <groupId>no.nav.foreldrepenger.felles</groupId>
             <artifactId>felles-util</artifactId>
         </dependency>

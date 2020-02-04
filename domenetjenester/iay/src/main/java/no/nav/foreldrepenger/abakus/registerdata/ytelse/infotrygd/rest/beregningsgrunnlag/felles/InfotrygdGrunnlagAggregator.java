@@ -11,9 +11,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.Grunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.InfotrygdGrunnlag;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
 
 @ApplicationScoped
 public class InfotrygdGrunnlagAggregator {
@@ -25,37 +24,17 @@ public class InfotrygdGrunnlagAggregator {
 
     @Inject
     public InfotrygdGrunnlagAggregator(@Any Instance<InfotrygdGrunnlag> tjenester) {
-        this.tjenester = tjenesterFra(tjenester);
+        this.tjenester = tjenester.stream().collect(toList());
     }
 
-    private static List<InfotrygdGrunnlag> tjenesterFra(Instance<InfotrygdGrunnlag> tjenester) {
-        return tjenester
-                .stream()
-                .collect(toList());
-    }
-
-
-    public List<Grunnlag> hentGrunnlag(String fnr, LocalDate fom) {
-        return hentGrunnlag(fnr, fom, now());
+    public List<Grunnlag> hentAggregertGrunnlag(String fnr, LocalDate fom) {
+        return hentAggregertGrunnlag(fnr, fom, now());
     }
 
 
-    public List<Grunnlag> hentGrunnlag(String fnr, LocalDate fom, LocalDate tom) {
+    public List<Grunnlag> hentAggregertGrunnlag(String fnr, LocalDate fom, LocalDate tom) {
         return tjenester.stream()
                 .map(t -> t.hentGrunnlag(fnr, fom, tom))
-                .flatMap(List::stream)
-                .collect(toList());
-    }
-
-
-    public List<Grunnlag> hentGrunnlag(AktørId aktørId, LocalDate fom) {
-        return hentGrunnlag(aktørId, fom, now());
-    }
-
-
-    public List<Grunnlag> hentGrunnlag(AktørId aktørId, LocalDate fom, LocalDate tom) {
-        return tjenester.stream()
-                .map(t -> t.hentGrunnlag(aktørId, fom, tom))
                 .flatMap(List::stream)
                 .collect(toList());
     }
