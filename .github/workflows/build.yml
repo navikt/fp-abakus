@@ -61,14 +61,6 @@ jobs:
           docker push ${IMAGE_BASE}:latest
           docker push $IMAGE
 
-      - name: Trigger verdikjedetester K9
-        uses: peter-evans/repository-dispatch@v1
-        with:
-          token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-          repository: navikt/k9-verdikjede
-          event-type: saksbehandling-verdikjede
-          client-payload: '{ "trigger": "${{ github.repository }}", "version": "${{ env.TAG }}", "image": ${{ env.IMAGE }}}'
-
       - name: Opprett deployment issue
         if: success()
         uses: maxkomarychev/oction-create-issue@v0.7.1
