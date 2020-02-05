@@ -2,14 +2,11 @@ package no.nav.foreldrepenger.abakus.registerdata;
 
 import static no.nav.vedtak.feil.LogLevel.INFO;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -50,7 +47,6 @@ import no.nav.vedtak.feil.deklarasjon.DeklarerteFeil;
 import no.nav.vedtak.feil.deklarasjon.TekniskFeil;
 import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
-import no.nav.vedtak.util.FPDateUtil;
 
 @ApplicationScoped
 public class InnhentingSamletTjeneste {
@@ -104,20 +100,15 @@ public class InnhentingSamletTjeneste {
         return aktørConsumer.hentPersonIdentForAktørId(aktørId.getId()).map(PersonIdent::new).orElseThrow();
     }
 
-    public List<InfotrygdYtelseGrunnlag> innhentRestSammenlignWS(AktørId aktørId, Interval periode, List<InfotrygdSakOgGrunnlag> ws) {
-        if (unleash != null && unleash.isEnabled(REST_GJELDER, false)) {
-            var ident = getFnrFraAktørId(aktørId);
-            var rest = innhentingInfotrygdTjeneste.getInfotrygdYtelser(ident, periode);
-            sammenlignWsRest(ws, rest, periode);
-            return rest;
-        }
-        return Collections.emptyList();
+    public boolean brukInfotrygdRest() {
+        return true;
+        //return unleash != null && unleash.isEnabled(REST_GJELDER, false);
     }
 
-    boolean sammenlignWsRest(List<InfotrygdSakOgGrunnlag> ws, List<InfotrygdYtelseGrunnlag> rest, Interval periode) {
-        return innhentingInfotrygdTjeneste.sammenlignGrunnlagKilder(ws, rest, periode);
+    public List<InfotrygdYtelseGrunnlag> innhentInfotrygdGrunnlag(AktørId aktørId, Interval periode) {
+        var ident = getFnrFraAktørId(aktørId);
+        return innhentingInfotrygdTjeneste.getInfotrygdYtelser(ident, periode);
     }
-
 
     public List<InfotrygdSakOgGrunnlag> getSammenstiltSakOgGrunnlag(AktørId aktørId, Interval opplysningsPeriode, boolean medGrunnlag) {
         final List<InfotrygdSak> infotrygdSakList = filtrerSaker(getInfotrygdSaker(aktørId, opplysningsPeriode), medGrunnlag);
@@ -209,7 +200,7 @@ public class InnhentingSamletTjeneste {
 
     /* Faker sak fra Infotrygd når saken mangler i saksbasen, men finnes i vedtak */
     private InfotrygdSak lagSakForYtelseUtenomSaksbasen(YtelseType type, TemaUnderkategori temaUnderkategori, LocalDate identdato, DatoIntervallEntitet periode) {
-        YtelseStatus tilstand = FPDateUtil.iDag().isBefore(periode.getTomDato()) ? YtelseStatus.LØPENDE : YtelseStatus.AVSLUTTET;
+        YtelseStatus tilstand = LocalDate.now().isBefore(periode.getTomDato()) ? YtelseStatus.LØPENDE : YtelseStatus.AVSLUTTET;
         return InfotrygdSak.InfotrygdSakBuilder.ny()
             .medIverksatt(identdato)
             .medRegistrert(identdato)
@@ -288,23 +279,4 @@ public class InnhentingSamletTjeneste {
         Feil manglerInfotrygdSak(String type, String dato);
     }
 
-    private <T> List<T> sammenlign(List<T> rest, List<T> ws) {
-        if (!rest.containsAll(ws)) {
-            warn(rest, ws);
-        }
-        return unleash.isEnabled(REST_GJELDER) ? rest : ws;
-    }
-
-    private static <T> void warn(List<T> restSaker, List<T> wsSaker) {
-        var rest = new HashSet<>(restSaker);
-        var ws = new HashSet<>(wsSaker);
-        LOGGER.warn("Forskjellig respons fra WS og REST. Fikk {} fra REST og {} fra WS", restSaker, wsSaker);
-        //LOGGER.warn("Elementer som ikke er tilstede i begge responser er {}", Sets.symmetricDifference(rest, ws));
-        //LOGGER.warn("Elementer fra REST men ikke fra WS {}", Sets.difference(rest, ws));
-        //LOGGER.warn("Elementer fra WS men ikke fra REST {}", Sets.difference(ws, rest));
-    }
-
-    private static LocalDate dato(Instant instant) {
-        return LocalDate.ofInstant(instant, ZoneId.systemDefault());
-    }
 }

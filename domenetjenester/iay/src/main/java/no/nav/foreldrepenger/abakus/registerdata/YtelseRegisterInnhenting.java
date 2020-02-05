@@ -22,11 +22,13 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalin
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlagArbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.beregningsgrunnlag.YtelseBeregningsgrunnlagVedtak;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.InfotrygdYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.sak.InfotrygdSakOgGrunnlag;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
+import no.nav.foreldrepenger.abakus.typer.OrganisasjonsNummerValidator;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.foreldrepenger.abakus.vedtak.domene.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
@@ -45,33 +47,41 @@ public class YtelseRegisterInnhenting {
 
     void byggYtelser(Kobling behandling, AktørId aktørId, Interval opplysningsPeriode,
                      InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder, boolean medGrunnlag) {
-        List<InfotrygdSakOgGrunnlag> sammenstilt = innhentingSamletTjeneste.getSammenstiltSakOgGrunnlag(aktørId, opplysningsPeriode, medGrunnlag);
-
-        innhentingSamletTjeneste.innhentRestSammenlignWS(aktørId, opplysningsPeriode, sammenstilt);
 
         InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder = inntektArbeidYtelseAggregatBuilder.getAktørYtelseBuilder(aktørId);
         ryddBortFeilaktigeInnhentedeYtelser(aktørYtelseBuilder);
         LOGGER.info("Ytelseaggregat før ytelser er lagt til : {}", aktørYtelseBuilder);
-        for (InfotrygdSakOgGrunnlag ytelse : sammenstilt) {
-            LOGGER.info("Sammenstilt sak : {}", ytelse);
-            YtelseType type = ytelse.getGrunnlag().map(YtelseBeregningsgrunnlag::getType).orElse(ytelse.getSak().getYtelseType());
-            if (skalKopiereTilYtelse(behandling, aktørId, type)) {
-                oversettSakGrunnlagTilYtelse(aktørYtelseBuilder, ytelse);
-            }
-        }
-
-        if (medGrunnlag) {
-            List<MeldekortUtbetalingsgrunnlagSak> arena = innhentingSamletTjeneste.hentYtelserTjenester(aktørId, opplysningsPeriode);
-            aktørYtelseBuilder.tilbakestillYtelserFraKildeBeholdAvsluttede(Fagsystem.ARENA);
-            for (MeldekortUtbetalingsgrunnlagSak sak : arena) {
-                oversettMeldekortUtbetalingsgrunnlagTilYtelse(aktørYtelseBuilder, sak);
-            }
-        }
 
         innhentFraYtelsesRegister(aktørId, behandling, aktørYtelseBuilder);
 
-        LOGGER.info("Ytelseaggregat etter at ytelser er lagt til : {}", aktørYtelseBuilder);
+        if (!medGrunnlag) {
+            // Ikke lenger relevant å hente eksternt for 2part eller engangsstønad
+            LOGGER.info("Ytelseaggregat etter at ytelser er lagt til : {}", aktørYtelseBuilder);
+            inntektArbeidYtelseAggregatBuilder.leggTilAktørYtelse(aktørYtelseBuilder);
+            return;
+        }
 
+        if (innhentingSamletTjeneste.brukInfotrygdRest()) {
+            List<InfotrygdYtelseGrunnlag> alleGrunnlag = innhentingSamletTjeneste.innhentInfotrygdGrunnlag(aktørId, opplysningsPeriode);
+            alleGrunnlag.forEach(grunnlag -> oversettInfotrygdYtelseGrunnlagTilYtelse(aktørYtelseBuilder, grunnlag));
+        } else {
+            List<InfotrygdSakOgGrunnlag> sammenstilt = innhentingSamletTjeneste.getSammenstiltSakOgGrunnlag(aktørId, opplysningsPeriode, medGrunnlag);
+            for (InfotrygdSakOgGrunnlag ytelse : sammenstilt) {
+                LOGGER.info("Sammenstilt sak : {}", ytelse);
+                YtelseType type = ytelse.getGrunnlag().map(YtelseBeregningsgrunnlag::getType).orElse(ytelse.getSak().getYtelseType());
+                if (skalKopiereTilYtelse(behandling, aktørId, type)) {
+                    oversettSakGrunnlagTilYtelse(aktørYtelseBuilder, ytelse);
+                }
+            }
+        }
+
+        List<MeldekortUtbetalingsgrunnlagSak> arena = innhentingSamletTjeneste.hentYtelserTjenester(aktørId, opplysningsPeriode);
+        aktørYtelseBuilder.tilbakestillYtelserFraKildeBeholdAvsluttede(Fagsystem.ARENA);
+        for (MeldekortUtbetalingsgrunnlagSak sak : arena) {
+            oversettMeldekortUtbetalingsgrunnlagTilYtelse(aktørYtelseBuilder, sak);
+        }
+
+        LOGGER.info("Ytelseaggregat etter at ytelser er lagt til : {}", aktørYtelseBuilder);
         inntektArbeidYtelseAggregatBuilder.leggTilAktørYtelse(aktørYtelseBuilder);
     }
 
@@ -112,6 +122,27 @@ public class YtelseRegisterInnhenting {
         return !aktørId.equals(behandling.getAktørId()) && List.of(YtelseType.FORELDREPENGER, YtelseType.ENGANGSTØNAD).contains(relatertYtelseType);
     }
 
+    private void oversettInfotrygdYtelseGrunnlagTilYtelse(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder, InfotrygdYtelseGrunnlag grunnlag) {
+        DatoIntervallEntitet periode = grunnlag.getVedtaksPeriodeTom() == null ? DatoIntervallEntitet.fraOgMed(grunnlag.getVedtaksPeriodeFom()) :
+            DatoIntervallEntitet.fraOgMedTilOgMed(grunnlag.getVedtaksPeriodeFom(), grunnlag.getVedtaksPeriodeTom());
+        YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.INFOTRYGD, grunnlag.getYtelseType(),
+            grunnlag.getTemaUnderkategori(), periode)
+            .medBehandlingsTema(grunnlag.getTemaUnderkategori())
+            .medStatus(grunnlag.getYtelseStatus());
+        ytelseBuilder.tilbakestillAnvisninger();
+        grunnlag.getUtbetaltePerioder().forEach(vedtak -> {
+            final DatoIntervallEntitet intervall = vedtak.getUtbetaltTom() == null ? DatoIntervallEntitet.fraOgMed(vedtak.getUtbetaltFom()) :
+                DatoIntervallEntitet.fraOgMedTilOgMed(vedtak.getUtbetaltFom(), vedtak.getUtbetaltTom());
+            ytelseBuilder.leggtilYtelseAnvist(ytelseBuilder.getAnvistBuilder()
+                .medAnvistPeriode(intervall)
+                .medUtbetalingsgradProsent(vedtak.getUtbetalingsgrad())
+                .build());
+        });
+        ytelseBuilder.medYtelseGrunnlag(oversettYtelseArbeid(grunnlag, ytelseBuilder.getGrunnlagBuilder()));
+        aktørYtelseBuilder.leggTilYtelse(ytelseBuilder);
+    }
+
+
     private void oversettSakGrunnlagTilYtelse(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder, InfotrygdSakOgGrunnlag ytelse) {
         YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.INFOTRYGD, ytelse.getSak().getYtelseType(),
             ytelse.getSak().getTemaUnderkategori(), ytelse.getPeriode())
@@ -135,6 +166,25 @@ public class YtelseRegisterInnhenting {
     @Deprecated(forRemoval = true)
     private void ryddBortFeilaktigeInnhentedeYtelser(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder) {
         aktørYtelseBuilder.tilbakestillYtelserFraKildeMedFeil(Fagsystem.INFOTRYGD, YtelseType.PÅRØRENDESYKDOM, TemaUnderkategori.UDEFINERT);
+    }
+
+    private YtelseGrunnlag oversettYtelseArbeid(InfotrygdYtelseGrunnlag grunnlag, YtelseGrunnlagBuilder grunnlagBuilder) {
+        grunnlagBuilder.medDekningsgradProsent(grunnlag.getDekningsgrad());
+        grunnlagBuilder.medGraderingProsent(grunnlag.getGradering());
+        grunnlagBuilder.medOpprinneligIdentdato(grunnlag.getOpprinneligIdentdato());
+        grunnlagBuilder.medArbeidskategori(grunnlag.getKategori());
+        grunnlagBuilder.tilbakestillStørrelse();
+        grunnlag.getArbeidsforhold().forEach(arbeid -> {
+            final YtelseStørrelseBuilder ysBuilder = grunnlagBuilder.getStørrelseBuilder();
+            ysBuilder.medBeløp(arbeid.getInntekt())
+                .medHyppighet(arbeid.getInntektperiode());
+            if (OrganisasjonsNummerValidator.erGyldig(arbeid.getOrgnr())) {
+                ysBuilder.medVirksomhet(new OrgNummer(arbeid.getOrgnr()));
+            }
+            // Her er plass til bool refusjon
+            grunnlagBuilder.medYtelseStørrelse(ysBuilder.build());
+        });
+        return grunnlagBuilder.build();
     }
 
     private YtelseGrunnlag oversettYtelseGrunnlag(YtelseBeregningsgrunnlag grunnlag, YtelseGrunnlagBuilder grunnlagBuilder) {

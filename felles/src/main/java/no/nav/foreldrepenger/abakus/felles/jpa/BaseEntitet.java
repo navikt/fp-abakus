@@ -10,7 +10,6 @@ import javax.persistence.PreUpdate;
 
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.vedtak.sikkerhet.context.SubjectHandler;
-import no.nav.vedtak.util.FPDateUtil;
 
 /**
  * En basis {@link Entity} klasse som håndtere felles standarder for utformign av tabeller (eks. sporing av hvem som har
@@ -45,13 +44,13 @@ public class BaseEntitet implements Serializable {
     @PrePersist
     protected void onCreate() {
         this.opprettetAv = opprettetAv != null ? opprettetAv : finnBrukernavn();
-        this.opprettetTidspunkt = opprettetTidspunkt != null ? opprettetTidspunkt : FPDateUtil.nå();
+        this.opprettetTidspunkt = opprettetTidspunkt != null ? opprettetTidspunkt : LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
         endretAv = finnBrukernavn();
-        endretTidspunkt = FPDateUtil.nå();
+        endretTidspunkt = LocalDateTime.now();
     }
 
     public String getOpprettetAv() {

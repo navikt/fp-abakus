@@ -21,7 +21,6 @@ import org.hibernate.annotations.JoinFormula;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
-import no.nav.vedtak.util.FPDateUtil;
 
 @Entity(name = "Virksomhet")
 @Table(name = "VIRKSOMHET", uniqueConstraints = @UniqueConstraint(columnNames = {"orgnr"}))
@@ -100,7 +99,7 @@ public class VirksomhetEntitet extends BaseEntitet implements Virksomhet, IndexK
 
     @Override
     public boolean skalRehentes() {
-        return opplysningerOppdatertTidspunkt.isBefore(FPDateUtil.nå().minusDays(1));
+        return opplysningerOppdatertTidspunkt.isBefore(LocalDateTime.now().minusDays(1));
     }
 
     @Override
@@ -189,7 +188,7 @@ public class VirksomhetEntitet extends BaseEntitet implements Virksomhet, IndexK
         }
 
         public Builder oppdatertOpplysningerNå() {
-            this.mal.opplysningerOppdatertTidspunkt = FPDateUtil.nå();
+            this.mal.opplysningerOppdatertTidspunkt = LocalDateTime.now();
             return this;
         }
 

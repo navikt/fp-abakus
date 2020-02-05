@@ -1,7 +1,5 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.felles;
 
-import static java.util.Collections.emptyList;
-
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -12,9 +10,9 @@ import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.Grunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.InfotrygdGrunnlag;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.InfotrygdRestFeil;
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
 import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
 
 public abstract class AbstractInfotrygdGrunnlag implements InfotrygdGrunnlag {
@@ -50,19 +48,9 @@ public abstract class AbstractInfotrygdGrunnlag implements InfotrygdGrunnlag {
             LOG.info("fpabacus infotrygd REST {} fikk grunnlag {}", uriString, Arrays.toString(grunnlag));
             return Arrays.asList(grunnlag);
         } catch (Exception e) {
-            LOG.info("Feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
-            return emptyList();
+            LOG.error("Feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
+            throw InfotrygdRestFeil.FACTORY.feilfratjeneste(uriString).toException();
         }
-    }
-
-    @Override
-    public List<Grunnlag> hentGrunnlag(AktørId aktørId, LocalDate fom) {
-        return hentGrunnlag(aktørId, fom, LocalDate.now());
-    }
-
-    @Override
-    public List<Grunnlag> hentGrunnlag(AktørId aktørId, LocalDate fom, LocalDate tom) {
-        return null;
     }
 
     private static String konverter(LocalDate dato) {
