@@ -104,10 +104,10 @@ spec:
     - name: ORGANISASJON_V4_URL
       value: https://modapp-t4.adeo.no/ereg/ws/OrganisasjonService/v4
     - name: FPABAKUS_IT_FP_GRUNNLAG_URL
-      value: http://infotrygd-foreldrepenger.t4/grunnlag
+      value: http://infotrygd-foreldrepenger.default/grunnlag
     - name: FPABAKUS_IT_SVP_GRUNNLAG_URL
-      value: http://infotrygd-svangerskapspenger.t4/grunnlag
+      value: http://infotrygd-svangerskapspenger.default/grunnlag
     - name: FPABAKUS_IT_PS_GRUNNLAG_URL
-      value: http://infotrygd-grunnlag-paaroerende-sykdom.t4/paaroerendeSykdom/grunnlag
+      value: http://infotrygd-grunnlag-paaroerende-sykdom.default/paaroerendeSykdom/grunnlag
     - name: FPABAKUS_IT_SP_GRUNNLAG_URL
-      value: http://infotrygd-sykepenger-fp.t4/grunnlag
+      value: http://infotrygd-sykepenger-fp.default/grunnlag
