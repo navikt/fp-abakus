@@ -47,6 +47,8 @@ import no.nav.vedtak.feil.deklarasjon.DeklarerteFeil;
 import no.nav.vedtak.feil.deklarasjon.TekniskFeil;
 import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
 import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
+import no.nav.vedtak.util.env.Cluster;
+import no.nav.vedtak.util.env.Environment;
 
 @ApplicationScoped
 public class InnhentingSamletTjeneste {
@@ -101,7 +103,7 @@ public class InnhentingSamletTjeneste {
     }
 
     public boolean brukInfotrygdRest() {
-        return true;
+        return !Cluster.DEV_FSS.equals(Environment.current().getCluster());
         //return unleash != null && unleash.isEnabled(REST_GJELDER, false);
     }
 
