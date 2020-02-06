@@ -103,7 +103,7 @@ public class InnhentingSamletTjeneste {
     }
 
     public boolean brukInfotrygdRest() {
-        return !Cluster.DEV_FSS.equals(Environment.current().getCluster());
+        return true;
         //return unleash != null && unleash.isEnabled(REST_GJELDER, false);
     }
 
