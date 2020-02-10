@@ -60,7 +60,6 @@ public class YtelseRegisterinnhentingTest {
         k.setOpplysningsperiode(DatoIntervallEntitet.fraOgMed(LocalDate.now().minusMonths(17)));
         when(samletTjeneste.getSammenstiltSakOgGrunnlag(any(), any(), anyBoolean())).thenReturn(Collections.emptyList());
         when(samletTjeneste.hentYtelserTjenester(any(), any())).thenReturn(Collections.emptyList());
-        when(samletTjeneste.brukInfotrygdRest()).thenReturn(Boolean.TRUE);
         when(samletTjeneste.innhentInfotrygdGrunnlag(any(), any())).thenReturn(Collections.emptyList());
         when(vedtakYtelseRepository.hentYtelserForIPeriode(any(), any(), any())).thenReturn(List.of(vy));
         InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder builder = InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder.oppdatere(Optional.empty());
