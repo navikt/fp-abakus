@@ -16,9 +16,14 @@ public class RelatertYtelseStatusReverse {
         Map.entry(RelatertYtelseStatus.IKKE_STARTET.getKode(), YtelseStatus.UNDER_BEHANDLING),
         Map.entry(RelatertYtelseStatus.AVSLU.getKode(), YtelseStatus.AVSLUTTET),
         Map.entry("INAKT", YtelseStatus.AVSLUTTET),
-        Map.entry(RelatertYtelseStatus.IVERK.getKode(), YtelseStatus.LØPENDE)
+        Map.entry(RelatertYtelseStatus.IVERK.getKode(), YtelseStatus.LØPENDE),
+        // Resterende koder Arena
+        Map.entry(RelatertYtelseStatus.GODKJ.getKode(), YtelseStatus.UNDER_BEHANDLING),
+        Map.entry(RelatertYtelseStatus.INNST.getKode(), YtelseStatus.UNDER_BEHANDLING),
+        Map.entry(RelatertYtelseStatus.MOTAT.getKode(), YtelseStatus.UNDER_BEHANDLING),
+        Map.entry(RelatertYtelseStatus.OPPRE.getKode(), YtelseStatus.UNDER_BEHANDLING),
+        Map.entry(RelatertYtelseStatus.REGIS.getKode(), YtelseStatus.UNDER_BEHANDLING)
     );
-
 
     public static YtelseStatus reverseMap(String kode, Logger logger) {
         if (YTELSE_STATUS_MAP.get(kode) == null) {
