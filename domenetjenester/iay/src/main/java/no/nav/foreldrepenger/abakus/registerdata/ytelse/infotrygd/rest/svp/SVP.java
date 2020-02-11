@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.ps;
+package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.svp;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,6 +10,6 @@ import javax.inject.Qualifier;
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.PARAMETER, ElementType.TYPE })
-public @interface PS {
+public @interface SVP {
 
 }

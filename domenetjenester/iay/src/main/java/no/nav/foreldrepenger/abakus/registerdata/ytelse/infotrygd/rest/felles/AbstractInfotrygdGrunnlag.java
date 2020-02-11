@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.felles;
+package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.felles;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -11,8 +11,8 @@ import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.InfotrygdGrunnlag;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.InfotrygdRestFeil;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.InfotrygdGrunnlag;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.InfotrygdRestFeil;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
 import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
 
@@ -39,7 +39,6 @@ public abstract class AbstractInfotrygdGrunnlag implements InfotrygdGrunnlag {
                     .addParameter("fnr", fnr)
                     .addParameter("fom", konverter(fom))
                     .addParameter("tom", konverter(tom)).build();
-            LOG.trace("Slår opp grunnlag SVP fra {}", request);
             var grunnlag = restClient.get(request, Grunnlag[].class);
             LOG.info("fpabacus infotrygd REST {} fikk grunnlag {}", uriString, Arrays.toString(grunnlag));
             return Arrays.asList(grunnlag);
@@ -56,7 +55,6 @@ public abstract class AbstractInfotrygdGrunnlag implements InfotrygdGrunnlag {
                 .addParameter("fnr", fnr)
                 .addParameter("fom", konverter(fom))
                 .addParameter("tom", konverter(tom)).build();
-            LOG.trace("Slår opp grunnlag SVP fra {}", request);
             var grunnlag = restClient.get(request, Grunnlag[].class);
             LOG.info("fpabacus infotrygd REST {} fikk grunnlag {}", uriString, Arrays.toString(grunnlag));
             return Arrays.asList(grunnlag);

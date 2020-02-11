@@ -65,14 +65,6 @@
         </dependency>
         <dependency>
 			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-			<artifactId>infotrygdsak-klient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-			<artifactId>infotrygdberegningsgrunnlag-klient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
 			<artifactId>meldekortutbetalingsgrunnlag-klient</artifactId>
 		</dependency>
 		<dependency>

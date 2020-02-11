@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag;
+package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest;
 
 import java.time.LocalDate;
 import java.util.List;

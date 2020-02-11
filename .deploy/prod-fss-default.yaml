@@ -89,10 +89,6 @@ spec:
       value: https://app.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk
     - name: ARBEIDSFORHOLD_V3_URL
       value: https://modapp.adeo.no/aareg-services/ArbeidsforholdService/v3
-    - name: INFOTRYGDSAK_V1_URL
-      value: https://modapp.adeo.no/infotrygd-ws/InfotrygdSak/v1
-    - name: INFOTRYGDBEREGNINGSGRUNNLAG_V1_URL
-      value: https://modapp.adeo.no/infotrygd-ws/InfotrygdBeregningsgrunnlag/v1
     - name: MELDEKORTUTBETALINGSGRUNNLAG_V1_URL
       value: https://arena.adeo.no/ail_ws/MeldekortUtbetalingsgrunnlag_v1
     - name: AKTOER_V2_URL

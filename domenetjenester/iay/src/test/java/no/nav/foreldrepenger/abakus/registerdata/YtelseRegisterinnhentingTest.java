@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.registerdata;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -58,7 +57,6 @@ public class YtelseRegisterinnhentingTest {
             .build();
         Kobling k = new Kobling();
         k.setOpplysningsperiode(DatoIntervallEntitet.fraOgMed(LocalDate.now().minusMonths(17)));
-        when(samletTjeneste.getSammenstiltSakOgGrunnlag(any(), any(), anyBoolean())).thenReturn(Collections.emptyList());
         when(samletTjeneste.hentYtelserTjenester(any(), any())).thenReturn(Collections.emptyList());
         when(samletTjeneste.innhentInfotrygdGrunnlag(any(), any())).thenReturn(Collections.emptyList());
         when(vedtakYtelseRepository.hentYtelserForIPeriode(any(), any(), any())).thenReturn(List.of(vy));
