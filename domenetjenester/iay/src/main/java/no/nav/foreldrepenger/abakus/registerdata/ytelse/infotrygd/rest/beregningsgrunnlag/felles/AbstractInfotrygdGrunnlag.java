@@ -4,6 +4,7 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.http.client.utils.URIBuilder;
@@ -32,11 +33,6 @@ public abstract class AbstractInfotrygdGrunnlag implements InfotrygdGrunnlag {
     }
 
     @Override
-    public List<Grunnlag> hentGrunnlag(String fnr, LocalDate fom) {
-        return hentGrunnlag(fnr, fom, LocalDate.now());
-    }
-
-    @Override
     public List<Grunnlag> hentGrunnlag(String fnr, LocalDate fom, LocalDate tom) {
         try {
             var request = new URIBuilder(uri)
@@ -53,7 +49,26 @@ public abstract class AbstractInfotrygdGrunnlag implements InfotrygdGrunnlag {
         }
     }
 
+    @Override
+    public List<Grunnlag> hentGrunnlagFailSoft(String fnr, LocalDate fom, LocalDate tom) {
+        try {
+            var request = new URIBuilder(uri)
+                .addParameter("fnr", fnr)
+                .addParameter("fom", konverter(fom))
+                .addParameter("tom", konverter(tom)).build();
+            LOG.trace("Slår opp grunnlag SVP fra {}", request);
+            var grunnlag = restClient.get(request, Grunnlag[].class);
+            LOG.info("fpabacus infotrygd REST {} fikk grunnlag {}", uriString, Arrays.toString(grunnlag));
+            return Arrays.asList(grunnlag);
+        } catch (Exception e) {
+            LOG.error("Feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
+            return Collections.emptyList();
+        }
+    }
+
+
     private static String konverter(LocalDate dato) {
-        return dato.format(DateTimeFormatter.ISO_LOCAL_DATE);
+        var brukDato = dato == null ? LocalDate.now() : dato;
+        return brukDato.format(DateTimeFormatter.ISO_LOCAL_DATE);
     }
 }

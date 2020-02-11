@@ -79,6 +79,16 @@ public class InnhentingInfotrygdTjeneste {
     public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelser(PersonIdent ident, Interval periode) {
         List<Grunnlag> rest = grunnlag.hentAggregertGrunnlag(ident.getIdent(), dato(periode.getStart()), dato(periode.getEnd()));
 
+        return mapTilInfotrygdYtelseGrunnlag(rest);
+    }
+
+    public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelserFailSoft(PersonIdent ident, Interval periode) {
+        List<Grunnlag> rest = grunnlag.hentAggregertGrunnlagFailSoft(ident.getIdent(), dato(periode.getStart()), dato(periode.getEnd()));
+
+        return mapTilInfotrygdYtelseGrunnlag(rest);
+    }
+
+    private List<InfotrygdYtelseGrunnlag> mapTilInfotrygdYtelseGrunnlag(List<Grunnlag> rest) {
         var mappedGrunnlag = rest.stream()
             .filter(g -> !YtelseType.UDEFINERT.equals(TemaReverse.reverseMap(g.getTema().getKode().name(), LOG)))
             .map(this::restTilInfotrygdYtelseGrunnlag)

@@ -102,14 +102,15 @@ public class InnhentingSamletTjeneste {
         return aktørConsumer.hentPersonIdentForAktørId(aktørId.getId()).map(PersonIdent::new).orElseThrow();
     }
 
-    public boolean brukInfotrygdRest() {
-        return !Cluster.DEV_FSS.equals(Environment.current().getCluster());
-        //return true;
-        //return unleash != null && unleash.isEnabled(REST_GJELDER, false);
+    private boolean envUnstable() {
+        return Cluster.DEV_FSS.equals(Environment.current().getCluster());
     }
 
     public List<InfotrygdYtelseGrunnlag> innhentInfotrygdGrunnlag(AktørId aktørId, Interval periode) {
         var ident = getFnrFraAktørId(aktørId);
+        if (envUnstable()) {
+            return innhentingInfotrygdTjeneste.getInfotrygdYtelserFailSoft(ident, periode);
+        }
         return innhentingInfotrygdTjeneste.getInfotrygdYtelser(ident, periode);
     }
 

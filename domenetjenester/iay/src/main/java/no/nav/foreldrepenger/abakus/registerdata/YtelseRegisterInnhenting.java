@@ -61,10 +61,9 @@ public class YtelseRegisterInnhenting {
             return;
         }
 
-        if (innhentingSamletTjeneste.brukInfotrygdRest()) {
-            List<InfotrygdYtelseGrunnlag> alleGrunnlag = innhentingSamletTjeneste.innhentInfotrygdGrunnlag(aktørId, opplysningsPeriode);
-            alleGrunnlag.forEach(grunnlag -> oversettInfotrygdYtelseGrunnlagTilYtelse(aktørYtelseBuilder, grunnlag));
-        } else {
+        List<InfotrygdYtelseGrunnlag> alleGrunnlag = innhentingSamletTjeneste.innhentInfotrygdGrunnlag(aktørId, opplysningsPeriode);
+        alleGrunnlag.forEach(grunnlag -> oversettInfotrygdYtelseGrunnlagTilYtelse(aktørYtelseBuilder, grunnlag));
+        /* TODO (JOL): Delete etter validering i P/Q
             List<InfotrygdSakOgGrunnlag> sammenstilt = innhentingSamletTjeneste.getSammenstiltSakOgGrunnlag(aktørId, opplysningsPeriode, medGrunnlag);
             for (InfotrygdSakOgGrunnlag ytelse : sammenstilt) {
                 LOGGER.info("Sammenstilt sak : {}", ytelse);
@@ -74,7 +73,7 @@ public class YtelseRegisterInnhenting {
                 }
             }
         }
-
+        */
         List<MeldekortUtbetalingsgrunnlagSak> arena = innhentingSamletTjeneste.hentYtelserTjenester(aktørId, opplysningsPeriode);
         aktørYtelseBuilder.tilbakestillYtelserFraKildeBeholdAvsluttede(Fagsystem.ARENA);
         for (MeldekortUtbetalingsgrunnlagSak sak : arena) {
