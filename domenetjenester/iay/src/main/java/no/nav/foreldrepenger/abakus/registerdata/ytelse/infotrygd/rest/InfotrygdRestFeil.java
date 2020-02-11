@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag;
+package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest;
 
 import no.nav.vedtak.feil.Feil;
 import no.nav.vedtak.feil.FeilFactory;

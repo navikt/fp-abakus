@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.beregningsgrunnlag.sp;
+package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sp;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

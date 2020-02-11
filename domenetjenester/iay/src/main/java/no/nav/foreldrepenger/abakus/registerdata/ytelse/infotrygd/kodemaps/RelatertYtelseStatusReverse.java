@@ -15,9 +15,10 @@ public class RelatertYtelseStatusReverse {
         Map.entry(RelatertYtelseStatus.LØPENDE_VEDTAK.getKode(), YtelseStatus.LØPENDE),
         Map.entry(RelatertYtelseStatus.IKKE_STARTET.getKode(), YtelseStatus.UNDER_BEHANDLING),
         Map.entry(RelatertYtelseStatus.AVSLU.getKode(), YtelseStatus.AVSLUTTET),
-        Map.entry("INAKT", YtelseStatus.AVSLUTTET),
+        Map.entry("INAKT", YtelseStatus.AVSLUTTET), // Sak, ingen vedtak
         Map.entry(RelatertYtelseStatus.IVERK.getKode(), YtelseStatus.LØPENDE),
         // Resterende koder Arena
+        Map.entry("AKTIV", YtelseStatus.UNDER_BEHANDLING), // Sak, ingen vedtak
         Map.entry(RelatertYtelseStatus.GODKJ.getKode(), YtelseStatus.UNDER_BEHANDLING),
         Map.entry(RelatertYtelseStatus.INNST.getKode(), YtelseStatus.UNDER_BEHANDLING),
         Map.entry(RelatertYtelseStatus.MOTAT.getKode(), YtelseStatus.UNDER_BEHANDLING),
