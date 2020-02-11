@@ -115,8 +115,7 @@ public class InnhentingInfotrygdTjeneste {
             ArbeidskategoriReverse.reverseMap(grunnlag.getKategori().getKode().getKode(), LOG);
         TemaUnderkategori tuk = grunnlag.getBehandlingsTema() == null ? TemaUnderkategori.UDEFINERT :
             TemaUnderkategoriReverse.reverseMap(grunnlag.getBehandlingsTema().getKode().name());
-        YtelseStatus brukStatus = grunnlag.getStatus() == null ? YtelseStatus.UDEFINERT :
-            RelatertYtelseStatusReverse.reverseMap(grunnlag.getStatus().getKode().name(), LOG);
+        YtelseStatus brukStatus = mapYtelseStatus(grunnlag);
 
         var grunnlagBuilder = InfotrygdYtelseGrunnlag.getBuilder()
             .medYtelseType(bestemYtelseType(grunnlag))
@@ -140,6 +139,17 @@ public class InnhentingInfotrygdTjeneste {
             .forEach(grunnlagBuilder::leggTillAnvistPerioder);
 
         return grunnlagBuilder.build();
+    }
+
+    private YtelseStatus mapYtelseStatus(Grunnlag grunnlag) {
+        if (grunnlag.getStatus() == null) {
+            if (grunnlag.getOpphørFom() != null)
+                return YtelseStatus.AVSLUTTET;
+            if (grunnlag.getIverksatt() != null || grunnlag.getIdentdato() != null)
+                return YtelseStatus.LØPENDE;
+            return YtelseStatus.UNDER_BEHANDLING;
+        }
+        return RelatertYtelseStatusReverse.reverseMap(grunnlag.getStatus().getKode().name(), LOG);
     }
 
     private InfotrygdYtelseArbeid arbeidsforholdTilInfotrygdYtelseArbeid(Arbeidsforhold arbeidsforhold) {
