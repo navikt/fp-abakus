@@ -86,14 +86,28 @@ public class MapInntektsmeldinger {
         if (nyesteGrunnlag.getInntektsmeldinger().isEmpty()) {
             return new RefusjonskravDatoerDto(Collections.emptyList());
         }
+        List<RefusjonskravDatoDto> refusjonskravDatoList = lagRefusjonskravdatoPerArbeidsgiver(inntektsmeldinger, nyesteGrunnlag);
+
+        return new RefusjonskravDatoerDto(refusjonskravDatoList);
+    }
+
+    private static List<RefusjonskravDatoDto> lagRefusjonskravdatoPerArbeidsgiver(Set<Inntektsmelding> inntektsmeldinger, InntektArbeidYtelseGrunnlag nyesteGrunnlag) {
         List<RefusjonskravDatoDto> refusjonskravDatoList = new ArrayList<>();
         Map<Arbeidsgiver, Optional<LocalDate>> førsteRefusjonsdatoMap = lagFørsteRefusjonsdatoMap(nyesteGrunnlag.getInntektsmeldinger().get());
         førsteRefusjonsdatoMap.forEach((arbeidsgiver, førsteDatoMedRefusjon) -> finnFørsteDatoForInnsendelseAvRefusjonskrav(inntektsmeldinger, arbeidsgiver)
             .ifPresent(innsendingDato ->
-                refusjonskravDatoList.add(new RefusjonskravDatoDto(mapTilAktør(arbeidsgiver), innsendingDato.toLocalDate(), førsteDatoMedRefusjon.orElse(null)))
-            ));
-        return new RefusjonskravDatoerDto(refusjonskravDatoList);
+                refusjonskravDatoList.add(new RefusjonskravDatoDto(mapTilAktør(arbeidsgiver), innsendingDato.toLocalDate(), førsteDatoMedRefusjon.orElse(null), harRefusjonFraStart(arbeidsgiver, nyesteGrunnlag))
+            )));
+        return refusjonskravDatoList;
     }
+
+    private static boolean harRefusjonFraStart(Arbeidsgiver arbeidsgiver, InntektArbeidYtelseGrunnlag nyesteGrunnlag) {
+        return nyesteGrunnlag.getInntektsmeldinger().stream()
+            .flatMap(ims -> ims.getInntektsmeldinger().stream())
+            .filter(im -> im.getArbeidsgiver().equals(arbeidsgiver))
+            .anyMatch(MapInntektsmeldinger::harRefusjonFraStart);
+    }
+
 
     private static Map<Arbeidsgiver, Optional<LocalDate>> lagFørsteRefusjonsdatoMap(InntektsmeldingAggregat inntektsmeldingAggregat) {
         return inntektsmeldingAggregat
@@ -101,7 +115,7 @@ public class MapInntektsmeldinger {
             .stream()
             .filter(MapInntektsmeldinger::harRefusjonskrav)
             .collect(Collectors.toMap(Inntektsmelding::getArbeidsgiver, MapInntektsmeldinger::finnFørsteDatoMedRefusjon,
-                (d1, d2) -> mergeDatoer(d1, d2)));
+                MapInntektsmeldinger::mergeDatoer));
     }
 
     private static Optional<LocalDate> mergeDatoer(Optional<LocalDate> d1, Optional<LocalDate> d2) {
