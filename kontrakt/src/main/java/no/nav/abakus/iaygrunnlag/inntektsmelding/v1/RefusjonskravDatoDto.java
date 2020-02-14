@@ -70,4 +70,13 @@ public class RefusjonskravDatoDto {
         return harRefusjonFraStart;
     }
 
+    @Override
+    public String toString() {
+        return "RefusjonskravDatoDto{" +
+            "arbeidsgiver=" + arbeidsgiver +
+            ", førsteDagMedRefusjonskrav=" + førsteDagMedRefusjonskrav +
+            ", harRefusjonFraStart=" + harRefusjonFraStart +
+            ", førsteInnsendingAvRefusjonskrav=" + førsteInnsendingAvRefusjonskrav +
+            '}';
+    }
 }
