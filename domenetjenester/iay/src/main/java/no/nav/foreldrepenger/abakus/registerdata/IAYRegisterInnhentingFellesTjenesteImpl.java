@@ -136,6 +136,8 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         // Fjerner overstyringer for bortfalte arbeidsforhold (f.eks. grunnet endringer i aareg)
         ArbeidsforholdInformasjonBuilder informasjonBuilder = FjernOverstyringerForBortfalteArbeidsforhold.fjern(grunnlagBuilder, innhentetArbeidsforhold);
 
+        builder.getNyeInternArbeidsforholdReferanser().forEach(informasjonBuilder::leggTilNyReferanse);
+
         grunnlagBuilder
             .medData(builder)
             .medInformasjon(informasjonBuilder.build());

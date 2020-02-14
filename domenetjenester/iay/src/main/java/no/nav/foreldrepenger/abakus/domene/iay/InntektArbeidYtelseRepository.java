@@ -418,17 +418,7 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
     }
 
     public void lagre(KoblingReferanse koblingReferanse, InntektArbeidYtelseGrunnlagBuilder builder) {
-        InntektArbeidYtelseGrunnlag entitet = builder.build();
-
-        Optional<InntektArbeidYtelseGrunnlag> tidligereAggregat = getAktivtInntektArbeidGrunnlag(koblingReferanse);
-        if (tidligereAggregat.isPresent()) {
-            InntektArbeidYtelseGrunnlag aggregat = tidligereAggregat.get();
-            aggregat.setAktivt(false);
-            entityManager.persist(aggregat);
-            entityManager.flush();
-        }
-        lagreGrunnlag(entitet, koblingReferanse);
-        entityManager.flush();
+        lagreOgFlush(koblingReferanse, builder.build());
     }
 
     @Deprecated(forRemoval = true)
