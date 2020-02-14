@@ -2,14 +2,14 @@ package no.nav.foreldrepenger.abakus.registerdata;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -20,6 +20,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtaleBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektspostBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.NæringsinntektType;
@@ -29,6 +30,8 @@ import no.nav.foreldrepenger.abakus.domene.iay.PensjonTrygdType;
 import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseInntektspostType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyring;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
@@ -73,10 +76,10 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
     }
 
     protected IAYRegisterInnhentingFellesTjenesteImpl(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
-                                            KodeverkRepository kodeverkRepository,
-                                            VirksomhetTjeneste virksomhetTjeneste,
-                                            InnhentingSamletTjeneste innhentingSamletTjeneste,
-                                            AktørConsumer aktørConsumer, SigrunTjeneste sigrunTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
+                                                      KodeverkRepository kodeverkRepository,
+                                                      VirksomhetTjeneste virksomhetTjeneste,
+                                                      InnhentingSamletTjeneste innhentingSamletTjeneste,
+                                                      AktørConsumer aktørConsumer, SigrunTjeneste sigrunTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
         this.inntektArbeidYtelseTjeneste = inntektArbeidYtelseTjeneste;
         this.kodeverkRepository = kodeverkRepository;
         this.virksomhetTjeneste = virksomhetTjeneste;
@@ -109,11 +112,12 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
     }
 
     @Override
-    public InntektArbeidYtelseAggregatBuilder innhentRegisterdata(Kobling kobling, Set<RegisterdataElement> informasjonsElementer) {
-        final InntektArbeidYtelseAggregatBuilder builder = inntektArbeidYtelseTjeneste.opprettBuilderForRegister(kobling.getKoblingReferanse(),
-            UUID.randomUUID(), LocalDateTime.now());
+    public InntektArbeidYtelseGrunnlagBuilder innhentRegisterdata(Kobling kobling, Set<RegisterdataElement> informasjonsElementer) {
+        InntektArbeidYtelseGrunnlagBuilder grunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(inntektArbeidYtelseTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse()));
+        final InntektArbeidYtelseAggregatBuilder builder = grunnlagBuilder.getRegisterBuilder();
+
         // Arbeidsforhold & inntekter
-        innhentArbeidsforhold(kobling, builder, informasjonsElementer);
+        Set<ArbeidsforholdIdentifikator> innhentetArbeidsforhold = innhentArbeidsforhold(kobling, builder, informasjonsElementer);
 
         if (skalInnhenteNæringsInntekterFor(kobling) && informasjonsElementer.contains(RegisterdataElement.LIGNET_NÆRING)) {
             boolean søkerHarOppgittEgenNæring = inntektArbeidYtelseTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse())
@@ -128,7 +132,23 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         if (informasjonsElementer.contains(RegisterdataElement.YTELSE)) {
             innhentYtelser(kobling, builder);
         }
-        return builder;
+
+        // Fjerner overstyringer for bortfalte arbeidsforhold (f.eks. grunnet endringer i aareg)
+        ArbeidsforholdInformasjonBuilder informasjonBuilder = FjernOverstyringerForBortfalteArbeidsforhold.fjern(grunnlagBuilder, innhentetArbeidsforhold);
+
+        grunnlagBuilder
+            .medData(builder)
+            .medInformasjon(informasjonBuilder.build());
+
+        return grunnlagBuilder;
+    }
+
+    private List<ArbeidsforholdOverstyring> finnOverstyringerForBortfalteArbeidsforhold(Set<ArbeidsforholdIdentifikator> innhentetArbeidsforhold, ArbeidsforholdInformasjon informasjon) {
+        return informasjon.getOverstyringer().stream()
+            .filter(ov -> innhentetArbeidsforhold.stream()
+                .noneMatch(arbeid -> arbeid.getArbeidsgiver().getIdentifikator().equals(ov.getArbeidsgiver().getIdentifikator())
+                    && (arbeid.harArbeidsforholdRef() && arbeid.getArbeidsforholdId().gjelderFor(informasjon.finnEkstern(ov.getArbeidsgiver(), ov.getArbeidsforholdRef())))))
+            .collect(Collectors.toList());
     }
 
     private void innhentYtelser(Kobling kobling, InntektArbeidYtelseAggregatBuilder builder) {
@@ -138,8 +158,8 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
             skalInnhenteYtelseGrunnlag(kobling));
     }
 
-    private void innhentArbeidsforhold(Kobling kobling, InntektArbeidYtelseAggregatBuilder builder, Set<RegisterdataElement> informasjonsElementer) {
-        byggOpptjeningOpplysningene(kobling, kobling.getAktørId(), kobling.getOpplysningsperiode().tilIntervall(), builder, informasjonsElementer);
+    private Set<ArbeidsforholdIdentifikator> innhentArbeidsforhold(Kobling kobling, InntektArbeidYtelseAggregatBuilder builder, Set<RegisterdataElement> informasjonsElementer) {
+        return byggOpptjeningOpplysningene(kobling, kobling.getAktørId(), kobling.getOpplysningsperiode().tilIntervall(), builder, informasjonsElementer);
     }
 
     private void leggTilInntekter(AktørId aktørId, InntektArbeidYtelseAggregatBuilder builder, InntektsInformasjon inntektsInformasjon) {
@@ -237,21 +257,24 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
             .max(Comparator.naturalOrder()).orElse(LocalDate.now());
     }
 
-    private void byggOpptjeningOpplysningene(Kobling kobling, AktørId aktørId, Interval opplysningsPeriode,
-                                             InntektArbeidYtelseAggregatBuilder builder, Set<RegisterdataElement> informasjonsElementer) {
+    private Set<ArbeidsforholdIdentifikator> byggOpptjeningOpplysningene(Kobling kobling, AktørId aktørId, Interval opplysningsPeriode,
+                                                                         InntektArbeidYtelseAggregatBuilder builder, Set<RegisterdataElement> informasjonsElementer) {
         var inntektselementer = Set.of(RegisterdataElement.INNTEKT_PENSJONSGIVENDE,
             RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG,
             RegisterdataElement.INNTEKT_SAMMENLIGNINGSGRUNNLAG);
 
         if (informasjonsElementer.stream().noneMatch(inntektselementer::contains) && !informasjonsElementer.contains(RegisterdataElement.ARBEIDSFORHOLD)) {
-            return; // Skal ikke innhentes noe
+            return Collections.emptySet();
         }
+
+        Set<ArbeidsforholdIdentifikator> arbeidsforholdList = new HashSet<>();
 
         if (informasjonsElementer.contains(RegisterdataElement.ARBEIDSFORHOLD)) {
             InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder aktørArbeidBuilder = builder.getAktørArbeidBuilder(aktørId);
             aktørArbeidBuilder.tilbakestillYrkesaktiviteter();
             Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = innhentingSamletTjeneste.getArbeidsforhold(aktørId, opplysningsPeriode);
             arbeidsforhold.entrySet().forEach(forholdet -> oversettArbeidsforholdTilYrkesaktivitet(kobling, builder, forholdet, aktørArbeidBuilder));
+            arbeidsforholdList = arbeidsforhold.keySet();
         }
 
         if (informasjonsElementer.stream().anyMatch(inntektselementer::contains)) {
@@ -262,6 +285,8 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
             Set.of(RegisterdataElement.INNTEKT_PENSJONSGIVENDE)
                 .forEach(registerdataElement -> innhentInntektsopplysningFor(kobling, aktørId, builder, informasjonsElementer, registerdataElement));
         }
+
+        return arbeidsforholdList;
     }
 
     private void innhentInntektsopplysningFor(Kobling kobling, AktørId aktørId, InntektArbeidYtelseAggregatBuilder builder, Set<RegisterdataElement> informasjonsElementer, RegisterdataElement registerdataElement) {
@@ -311,6 +336,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
             .leggTilYrkesaktivitet(yrkesaktivitetBuilder);
 
         builder.leggTilAktørArbeid(aktørArbeid);
+
     }
 
     private Arbeidsgiver mapArbeidsgiver(ArbeidsforholdIdentifikator arbeidsforhold) {
