@@ -69,6 +69,7 @@ public class ArbeidsforholdInformasjonBuilder {
 
     public ArbeidsforholdInformasjonBuilder fjernOverstyringVedrørende(List<ArbeidsforholdOverstyring> overstyringer) {
         overstyringer.forEach(ov -> kladd.fjernOverstyringVedrørende(ov.getArbeidsgiver(), ov.getArbeidsforholdRef()));
+
         return this;
     }
 

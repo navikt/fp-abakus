@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyring;
@@ -34,10 +35,15 @@ final class FjernOverstyringerForBortfalteArbeidsforhold {
 
     private static List<ArbeidsforholdOverstyring> finnOverstyringerForBortfalteArbeidsforhold(Set<ArbeidsforholdIdentifikator> innhentetArbeidsforhold, ArbeidsforholdInformasjon informasjon) {
         return informasjon.getOverstyringer().stream()
-            .filter(ov -> !ov.getArbeidsgiver().getIdentifikator().equals(OrgNummer.KUNSTIG_ORG))
+            .filter(FjernOverstyringerForBortfalteArbeidsforhold::erIkkeLagtTilFraInntektsmeldingEllerFiktivt)
             .filter(ov -> innhentetArbeidsforhold.stream()
                 .noneMatch(arbeid -> arbeid.getArbeidsgiver().getIdentifikator().equals(ov.getArbeidsgiver().getIdentifikator())
                     && (arbeid.harArbeidsforholdRef() && arbeid.getArbeidsforholdId().gjelderFor(informasjon.finnEkstern(ov.getArbeidsgiver(), ov.getArbeidsforholdRef())))))
             .collect(Collectors.toList());
+    }
+
+    private static boolean erIkkeLagtTilFraInntektsmeldingEllerFiktivt(ArbeidsforholdOverstyring ov) {
+        return !ArbeidsforholdHandlingType.BASERT_PÅ_INNTEKTSMELDING.equals(ov.getHandling())
+            && !ArbeidsforholdHandlingType.LAGT_TIL_AV_SAKSBEHANDLER.equals(ov.getHandling());
     }
 }

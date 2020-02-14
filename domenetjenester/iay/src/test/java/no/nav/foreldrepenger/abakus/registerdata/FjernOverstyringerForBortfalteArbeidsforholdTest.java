@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyring;
@@ -76,6 +77,7 @@ public class FjernOverstyringerForBortfalteArbeidsforholdTest {
             .medArbeidsgiver(virksomhet)
             .medArbeidsforholdRef(ref);
         ArbeidsforholdOverstyringBuilder overstyringBuilder2 = ArbeidsforholdOverstyringBuilder.oppdatere(Optional.empty())
+            .medHandling(ArbeidsforholdHandlingType.LAGT_TIL_AV_SAKSBEHANDLER)
             .medArbeidsgiver(Arbeidsgiver.virksomhet(new OrgNummer(OrgNummer.KUNSTIG_ORG)));
         builder.leggTil(overstyringBuilder)
             .leggTil(overstyringBuilder2)
