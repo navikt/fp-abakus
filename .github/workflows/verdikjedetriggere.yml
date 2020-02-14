@@ -1,14 +1,13 @@
 name: Trigger verdikjedetest
 
-on: [registry_package]
+on:
+  registry_package:
+    types: [published]
 
 jobs:
   verdikjedetriggere:
     runs-on: ubuntu-latest
     steps:
-      - name: debug event
-        run: |
-          echo ${{ github.event.client_payload.github.payload }}
       - name: Trigger verdikjedetester K9
         if: ${{ github.event.client_payload.github.payload.action }} == "published" && ${{ github.event.client_payload.github.payload.package.package_type }} == "docker" && ${{ github.event.client_payload.github.payload.package.package_version.version }} != "latest"
         uses: peter-evans/repository-dispatch@v1
