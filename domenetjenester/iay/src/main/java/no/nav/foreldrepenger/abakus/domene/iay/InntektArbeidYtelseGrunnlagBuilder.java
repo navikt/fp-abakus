@@ -81,6 +81,15 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         kladd.setInntektsmeldinger(inntektsmeldinger);
     }
 
+    public InntektArbeidYtelseAggregatBuilder getRegisterBuilder() {
+        return InntektArbeidYtelseAggregatBuilder.oppdatere(kladd.getRegisterVersjon(), VersjonType.REGISTER);
+    }
+
+
+    public ArbeidsforholdInformasjonBuilder getInformasjonBuilder() {
+        return ArbeidsforholdInformasjonBuilder.builder(kladd.getArbeidsforholdInformasjon());
+    }
+
     public ArbeidsforholdInformasjon getInformasjon() {
         var informasjon = kladd.getArbeidsforholdInformasjon();
 

@@ -8,6 +8,7 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTask;
@@ -57,7 +58,7 @@ public class RegisterdataInnhentingTask extends KoblingTask {
             RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG,
             RegisterdataElement.INNTEKT_SAMMENLIGNINGSGRUNNLAG);
 
-        InntektArbeidYtelseAggregatBuilder builder = finnInnhenter(kobling.getYtelseType()).innhentRegisterdata(kobling, informasjonsElementer);
+        InntektArbeidYtelseGrunnlagBuilder builder = finnInnhenter(kobling.getYtelseType()).innhentRegisterdata(kobling, informasjonsElementer);
         iayTjeneste.lagre(kobling.getKoblingReferanse(), builder);
     }
 }
