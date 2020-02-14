@@ -33,4 +33,10 @@ public class RefusjonskravDatoerDto {
         return refusjonskravDatoer;
     }
 
+    @Override
+    public String toString() {
+        return "RefusjonskravDatoerDto{" +
+            "refusjonskravDatoer=" + refusjonskravDatoer +
+            '}';
+    }
 }
