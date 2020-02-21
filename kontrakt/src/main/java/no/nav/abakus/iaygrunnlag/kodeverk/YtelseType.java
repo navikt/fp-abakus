@@ -12,8 +12,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Definerer ytelse typer brukt i IAY.
  * 
- * <h3>Bruk av konstanter</h3>
- * onstanter representerer definerte eksempler på kjente konstanter. Nye kan - men må ikke - legges her - såfremt
+ * <h3>Bruk av konstanter</h3> onstanter representerer definerte eksempler på
+ * kjente konstanter. Nye kan - men må ikke - legges her - såfremt
  * avsender/mottager er kjent med de og kan håndtere de.
  */
 public class YtelseType extends Kodeverk {
@@ -44,6 +44,7 @@ public class YtelseType extends Kodeverk {
 
     /**
      * Må tolkes i forhold til TemaUnderkategori for å matche nye typer
+     * 
      * @deprecated Gammel Infotrygd K9 type.
      */
     @Deprecated
@@ -69,5 +70,10 @@ public class YtelseType extends Kodeverk {
     @Override
     public String getKodeverk() {
         return KODEVERK;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[kode=" + kode + "]";
     }
 }

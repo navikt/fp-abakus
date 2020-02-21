@@ -22,4 +22,9 @@ public class Aktør {
     public void setVerdi(String verdi) {
         this.verdi = verdi;
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[verdi=" + verdi + "]";
+    }
 }
