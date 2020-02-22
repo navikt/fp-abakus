@@ -23,10 +23,13 @@ public class YtelseStatus extends Kodeverk {
     /** Eksempel konstant - Avsluttet ytelse. */
     public static final YtelseStatus AVSLUTTET = new YtelseStatus("AVSLU");
 
-    /** Status koder. Tolererer ikke unicode her (sikrer at ingen overfører gamle koder på grensesnittet). */
+    /**
+     * Status koder. Tolererer ikke unicode her (sikrer at ingen overfører gamle
+     * koder på grensesnittet).
+     */
     @JsonProperty(value = "kode", required = true, index = 1)
-    @Pattern(regexp = "^[A-Z0-9\\.\\-]+$", message="Kode '${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
-    @Size(min=3, max=5)
+    @Pattern(regexp = "^[A-Z0-9\\.\\-]+$", message = "Kode '${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
+    @Size(min = 3, max = 5)
     @NotNull
     private String kode;
 
@@ -44,5 +47,10 @@ public class YtelseStatus extends Kodeverk {
     @Override
     public String getKodeverk() {
         return KODEVERK;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[kode=" + kode + "]";
     }
 }
