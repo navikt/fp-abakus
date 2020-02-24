@@ -163,7 +163,7 @@ public class InnhentRegisterdataTjeneste {
         taskGruppe.addNesteSekvensiell(innhentingTask);
         taskGruppe.addNesteSekvensiell(callbackTask);
 
-        return prosessTaskRepository.lagre(innhentingTask);
+        return prosessTaskRepository.lagre(taskGruppe);
     }
 
     public boolean innhentingFerdig(String taskReferanse) {

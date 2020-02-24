@@ -13,6 +13,7 @@ import javax.persistence.Query;
 
 import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
+import no.nav.vedtak.felles.prosesstask.api.ProsessTaskGruppe;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskRepository;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskStatus;
 import no.nav.vedtak.felles.prosesstask.api.TaskStatus;
@@ -86,5 +87,9 @@ public class BatchProsessTaskRepository {
 
     public String lagre(ProsessTaskData taskData) {
         return prosessTaskRepository.lagre(taskData);
+    }
+
+    public String lagre(ProsessTaskGruppe gruppe) {
+        return prosessTaskRepository.lagre(gruppe);
     }
 }
