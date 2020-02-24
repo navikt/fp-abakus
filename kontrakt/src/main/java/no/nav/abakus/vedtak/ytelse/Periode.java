@@ -33,4 +33,9 @@ public class Periode {
     public void setTom(LocalDate tom) {
         this.tom = tom;
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[fom=" + fom + ", tom=" + tom + "]";
+    }
 }
