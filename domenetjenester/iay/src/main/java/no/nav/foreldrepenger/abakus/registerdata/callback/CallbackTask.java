@@ -78,7 +78,7 @@ public class CallbackTask implements ProsessTaskHandler {
     private void setInformasjonOmAvsenderRef(Kobling kobling, CallbackDto callbackDto) {
         UUID koblingReferanse = kobling.getKoblingReferanse().getReferanse();
         ReferanseDto avsenderRef = new ReferanseDto();
-        avsenderRef.setReferanse(koblingReferanse.toString());
+        avsenderRef.setReferanse(koblingReferanse);
         callbackDto.setAvsenderRef(avsenderRef);
     }
 
@@ -86,7 +86,7 @@ public class CallbackTask implements ProsessTaskHandler {
         String eksisterendeGrunnlagRef = data.getPropertyValue(EKSISTERENDE_GRUNNLAG_REF);
         if (eksisterendeGrunnlagRef != null && !eksisterendeGrunnlagRef.isEmpty()) {
             ReferanseDto eksisterendeRef = new ReferanseDto();
-            eksisterendeRef.setReferanse(eksisterendeGrunnlagRef);
+            eksisterendeRef.setReferanse(UUID.fromString(eksisterendeGrunnlagRef));
             callbackDto.setOpprinneligGrunnlagRef(eksisterendeRef);
         }
     }
@@ -95,9 +95,9 @@ public class CallbackTask implements ProsessTaskHandler {
         Optional<InntektArbeidYtelseGrunnlag> grunnlag = inntektArbeidYtelseTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse());
         grunnlag.ifPresent(gr -> {
             ReferanseDto grunnlagRef = new ReferanseDto();
-            grunnlagRef.setReferanse(gr.getGrunnlagReferanse().toString());
+            grunnlagRef.setReferanse(gr.getGrunnlagReferanse().getReferanse());
             callbackDto.setOppdatertGrunnlagRef(grunnlagRef);
-            callbackDto.setOpprettetTidspunkt(((BaseEntitet) gr).getOpprettetTidspunkt());
+            callbackDto.setOpprettetTidspunkt(gr.getOpprettetTidspunkt());
         });
         if (grunnlag.isEmpty()) {
             callbackDto.setOpprettetTidspunkt(data.getSistKjørt());
