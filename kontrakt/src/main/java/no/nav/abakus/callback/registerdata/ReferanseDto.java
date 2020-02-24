@@ -1,5 +1,8 @@
 package no.nav.abakus.callback.registerdata;
 
+import java.util.UUID;
+
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -11,14 +14,14 @@ public class ReferanseDto {
     public static final String UUID_REGEX = "\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b";
 
     @NotNull
-    @Pattern(regexp = UUID_REGEX)
-    private String referanse;
+    @Valid
+    private UUID referanse;
 
-    public String getReferanse() {
+    public UUID getReferanse() {
         return referanse;
     }
 
-    public void setReferanse(String referanse) {
+    public void setReferanse(UUID referanse) {
         this.referanse = referanse;
     }
 }
