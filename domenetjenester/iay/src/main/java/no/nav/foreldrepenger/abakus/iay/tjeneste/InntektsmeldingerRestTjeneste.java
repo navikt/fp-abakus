@@ -18,6 +18,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -46,6 +49,7 @@ import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapInntektsmeldinger;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.Transaction;
@@ -64,6 +68,7 @@ public class InntektsmeldingerRestTjeneste {
     private InntektsmeldingerTjeneste imTjeneste;
     private KoblingTjeneste koblingTjeneste;
     private InntektArbeidYtelseTjeneste iayTjeneste;
+    private static final Logger LOGGER = LoggerFactory.getLogger(InntektsmeldingerRestTjeneste.class);
 
     public InntektsmeldingerRestTjeneste() {
         // for CDI
@@ -111,6 +116,7 @@ public class InntektsmeldingerRestTjeneste {
         }
         InntektArbeidYtelseGrunnlag nyesteGrunnlag = iayTjeneste.hentAggregat(kobling.get().getKoblingReferanse());
         RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(inntektsmeldinger, nyesteGrunnlag);
+        LOGGER.info("RefusjonskravDtoer for saksnummer ({}) er ({})", spesifikasjon.getSaksnummer(), refusjonskravDatoerDto);
         return Response.ok(refusjonskravDatoerDto).build();
     }
 

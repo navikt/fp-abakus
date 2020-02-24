@@ -29,16 +29,22 @@ public class RefusjonskravDatoDto {
     @Valid
     private LocalDate førsteDagMedRefusjonskrav;
 
+    @JsonProperty(value = "harRefusjonFraStart", required = true)
+    @NotNull
+    @Valid
+    private Boolean harRefusjonFraStart;
+
     @JsonProperty(value = "førsteInnsendingAvRefusjonskrav", required = true)
     @NotNull
     @Valid
     private LocalDate førsteInnsendingAvRefusjonskrav;
 
 
-    public RefusjonskravDatoDto(Aktør arbeidsgiver, LocalDate førsteInnsendingAvRefusjonskrav, LocalDate førsteDagMedRefusjonskrav) {
+    public RefusjonskravDatoDto(Aktør arbeidsgiver, LocalDate førsteInnsendingAvRefusjonskrav, LocalDate førsteDagMedRefusjonskrav, boolean harRefusjonFraStart) {
         Objects.requireNonNull(arbeidsgiver, "arbeidsgiver");
         Objects.requireNonNull(arbeidsgiver, "førsteInnsendingAvRefusjonskrav");
         Objects.requireNonNull(arbeidsgiver, "førsteDagMedRefusjonskrav");
+        this.harRefusjonFraStart = harRefusjonFraStart;
         this.arbeidsgiver = arbeidsgiver;
         this.førsteDagMedRefusjonskrav = førsteDagMedRefusjonskrav;
         this.førsteInnsendingAvRefusjonskrav = førsteInnsendingAvRefusjonskrav;
@@ -58,5 +64,19 @@ public class RefusjonskravDatoDto {
 
     public LocalDate getFørsteInnsendingAvRefusjonskrav() {
         return førsteInnsendingAvRefusjonskrav;
+    }
+
+    public boolean harRefusjonFraStart() {
+        return harRefusjonFraStart;
+    }
+
+    @Override
+    public String toString() {
+        return "RefusjonskravDatoDto{" +
+            "arbeidsgiver=" + arbeidsgiver +
+            ", førsteDagMedRefusjonskrav=" + førsteDagMedRefusjonskrav +
+            ", harRefusjonFraStart=" + harRefusjonFraStart +
+            ", førsteInnsendingAvRefusjonskrav=" + førsteInnsendingAvRefusjonskrav +
+            '}';
     }
 }

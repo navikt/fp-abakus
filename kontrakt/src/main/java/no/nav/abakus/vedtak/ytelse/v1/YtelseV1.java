@@ -32,7 +32,7 @@ public class YtelseV1 extends Ytelse {
     @JsonProperty("type")
     private YtelseType type;
 
-    @Pattern(regexp = "^(-?[1-9]|[a-z0])[a-z0-9_:-]*$", flags = {Pattern.Flag.CASE_INSENSITIVE})
+    @Pattern(regexp = "^(-?[1-9]|[a-z0])[a-z0-9_:-]*$", flags = { Pattern.Flag.CASE_INSENSITIVE })
     @JsonProperty("saksnummer")
     private String saksnummer;
 
@@ -137,5 +137,12 @@ public class YtelseV1 extends Ytelse {
 
     public void setVedtakReferanse(String vedtakReferanse) {
         this.vedtakReferanse = vedtakReferanse;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[aktør=" + aktør + ", vedtattTidspunkt=" + vedtattTidspunkt + ", type="
+                + type + ", saksnummer=" + saksnummer + ", vedtakReferanse=" + vedtakReferanse + ", status=" + status
+                + ", fagsystem=" + fagsystem + ", periode=" + periode + ", anvist=" + anvist + "]";
     }
 }

@@ -20,6 +20,7 @@ import no.nav.abakus.prosesstask.batch.BatchProsessTaskRepository;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
@@ -88,7 +89,7 @@ public class InnhentRegisterdataTjeneste {
         // Trigg innhenting
         final var innhentingTjeneste = finnInnhenter(mapTilYtelseType(dto));
         var informasjonsElementer = hentUtInformasjonsElementer(dto);
-        InntektArbeidYtelseAggregatBuilder builder = innhentingTjeneste.innhentRegisterdata(kobling, informasjonsElementer);
+        InntektArbeidYtelseGrunnlagBuilder builder = innhentingTjeneste.innhentRegisterdata(kobling, informasjonsElementer);
         iayTjeneste.lagre(kobling.getKoblingReferanse(), builder);
 
         Optional<InntektArbeidYtelseGrunnlag> grunnlag = iayTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse());

@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
-      - name: Set cache key  
+      - name: Set cache key
         run: |
           echo "::set-env name=CACHE_KEY::$(date +%U)"
       - uses: actions/cache@v1.1.0
@@ -71,7 +71,7 @@ jobs:
           title: Deploy av ${{ env.TAG }}
           labels: deployment
           body: |
-            Kommenter med <b>/promote ${{ env.TAG }} env namespace</b>, hvor <b>env</b> er et gyldig clusternavn og <b>namespace</b> et eksisterende namespace i det clusteret.
+            Kommenter med <b>/promote env namespace</b>, hvor <b>env</b> er et gyldig clusternavn og <b>namespace</b> et eksisterende namespace i det clusteret.
 
             <table>
             <tr><th>Cluster</th><th>Namespace</th></tr>
@@ -84,4 +84,4 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
           issue-number: ${{ steps.createdeployissue.outputs.number }}
-          body: /promote ${{ env.TAG }} dev-fss t4
+          body: /promote dev-fss t4

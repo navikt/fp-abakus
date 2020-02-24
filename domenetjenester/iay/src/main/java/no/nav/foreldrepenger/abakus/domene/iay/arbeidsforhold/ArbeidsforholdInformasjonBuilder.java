@@ -67,6 +67,12 @@ public class ArbeidsforholdInformasjonBuilder {
         return kladd;
     }
 
+    public ArbeidsforholdInformasjonBuilder fjernOverstyringVedrørende(List<ArbeidsforholdOverstyring> overstyringer) {
+        overstyringer.forEach(ov -> kladd.fjernOverstyringVedrørende(ov.getArbeidsgiver(), ov.getArbeidsforholdRef()));
+
+        return this;
+    }
+
     public ArbeidsforholdInformasjonBuilder fjernOverstyringVedrørende(Arbeidsgiver arbeidsgiver,
                                                                        InternArbeidsforholdRef arbeidsforholdRef) {
         kladd.fjernOverstyringVedrørende(arbeidsgiver, arbeidsforholdRef);
