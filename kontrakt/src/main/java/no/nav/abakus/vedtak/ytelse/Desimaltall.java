@@ -22,8 +22,14 @@ public class Desimaltall {
     }
 
     public void setVerdi(BigDecimal verdi) {
+
         if (verdi != null) {
             this.verdi = verdi.setScale(2, RoundingMode.HALF_UP);
         }
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[verdi=" + verdi + "]";
     }
 }

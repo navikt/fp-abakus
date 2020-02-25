@@ -24,4 +24,9 @@ public class YtelseStatus extends Kodeverk {
             super.setKodeverk(kodeverk);
         }
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[kode=" + getKode() + "]";
+    }
 }

@@ -58,4 +58,10 @@ public class Anvisning {
     public void setUtbetalingsgrad(Desimaltall utbetalingsgrad) {
         this.utbetalingsgrad = utbetalingsgrad;
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[periode=" + periode + ", beløp=" + beløp + ", dagsats=" + dagsats
+                + ", utbetalingsgrad=" + utbetalingsgrad + "]";
+    }
 }
