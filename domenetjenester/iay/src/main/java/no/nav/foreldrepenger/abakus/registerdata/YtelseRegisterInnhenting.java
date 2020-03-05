@@ -87,7 +87,7 @@ public class YtelseRegisterInnhenting {
     private void mapAnvisninger(VedtattYtelse vedtattYtelse, YtelseBuilder ytelseBuilder) {
         vedtattYtelse.getYtelseAnvist().forEach(anvisning -> {
             YtelseAnvistBuilder anvistBuilder = ytelseBuilder.getAnvistBuilder();
-            DatoIntervallEntitet periode = DatoIntervallEntitet.fraOgMedTilOgMed(anvisning.getAnvistFom(), anvisning.getAnvistTom());
+            DatoIntervallEntitet periode = utledPeriodeNårTomMuligFørFom(anvisning.getAnvistFom(), anvisning.getAnvistTom());
             anvistBuilder.medAnvistPeriode(periode)
                 .medBeløp(anvisning.getBeløp().map(Beløp::getVerdi).orElse(null))
                 .medDagsats(anvisning.getDagsats().map(Beløp::getVerdi).orElse(null))
@@ -97,16 +97,14 @@ public class YtelseRegisterInnhenting {
     }
 
     private void oversettInfotrygdYtelseGrunnlagTilYtelse(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder, YtelseTypeReverse.InfotrygdYtelseGrunnlag grunnlag) {
-        DatoIntervallEntitet periode = grunnlag.getVedtaksPeriodeTom() == null ? DatoIntervallEntitet.fraOgMed(grunnlag.getVedtaksPeriodeFom()) :
-            DatoIntervallEntitet.fraOgMedTilOgMed(grunnlag.getVedtaksPeriodeFom(), grunnlag.getVedtaksPeriodeTom());
+        DatoIntervallEntitet periode = utledPeriodeNårTomMuligFørFom(grunnlag.getVedtaksPeriodeFom(), grunnlag.getVedtaksPeriodeTom());
         YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.INFOTRYGD, grunnlag.getYtelseType(),
             grunnlag.getTemaUnderkategori(), periode)
             .medBehandlingsTema(grunnlag.getTemaUnderkategori())
             .medStatus(grunnlag.getYtelseStatus());
         ytelseBuilder.tilbakestillAnvisninger();
         grunnlag.getUtbetaltePerioder().forEach(vedtak -> {
-            final DatoIntervallEntitet intervall = vedtak.getUtbetaltTom() == null ? DatoIntervallEntitet.fraOgMed(vedtak.getUtbetaltFom()) :
-                DatoIntervallEntitet.fraOgMedTilOgMed(vedtak.getUtbetaltFom(), vedtak.getUtbetaltTom());
+            final DatoIntervallEntitet intervall = utledPeriodeNårTomMuligFørFom(vedtak.getUtbetaltFom(), vedtak.getUtbetaltTom());
             ytelseBuilder.leggtilYtelseAnvist(ytelseBuilder.getAnvistBuilder()
                 .medAnvistPeriode(intervall)
                 .medUtbetalingsgradProsent(vedtak.getUtbetalingsgrad())
@@ -155,7 +153,7 @@ public class YtelseRegisterInnhenting {
             .tilbakestillAnvisninger();
         for (MeldekortUtbetalingsgrunnlagMeldekort meldekort : ytelse.getMeldekortene()) {
             ytelseBuilder.leggtilYtelseAnvist(ytelseBuilder.getAnvistBuilder()
-                .medAnvistPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(meldekort.getMeldekortFom(), meldekort.getMeldekortTom()))
+                .medAnvistPeriode(utledPeriodeNårTomMuligFørFom(meldekort.getMeldekortFom(), meldekort.getMeldekortTom()))
                 .medBeløp(meldekort.getBeløp())
                 .medDagsats(meldekort.getDagsats())
                 .medUtbetalingsgradProsent(meldekort.getUtbetalingsgrad())
@@ -166,13 +164,7 @@ public class YtelseRegisterInnhenting {
 
     private DatoIntervallEntitet utledMeldekortVedtaksPeriode(MeldekortUtbetalingsgrunnlagSak sak, Optional<LocalDate> førsteMeldekortFom) {
         LocalDate fomFraSakMK = utledFomFraSakEllerMeldekortene(sak, førsteMeldekortFom);
-        if (sak.getVedtaksPeriodeTom() == null) {
-            return DatoIntervallEntitet.fraOgMed(fomFraSakMK);
-        }
-        if (sak.getVedtaksPeriodeTom().isBefore(fomFraSakMK)) {
-            return DatoIntervallEntitet.fraOgMedTilOgMed(fomFraSakMK, fomFraSakMK);
-        }
-        return DatoIntervallEntitet.fraOgMedTilOgMed(fomFraSakMK, sak.getVedtaksPeriodeTom());
+        return utledPeriodeNårTomMuligFørFom(fomFraSakMK, sak.getVedtaksPeriodeTom());
     }
 
     private LocalDate utledFomFraSakEllerMeldekortene(MeldekortUtbetalingsgrunnlagSak sak, Optional<LocalDate> førsteMeldekortFom) {
@@ -180,6 +172,16 @@ public class YtelseRegisterInnhenting {
             return sak.getVedtaksPeriodeFom();
         }
         return førsteMeldekortFom.orElseGet(() -> sak.getVedtattDato() != null ? sak.getVedtattDato() : sak.getKravMottattDato());
+    }
+
+    private DatoIntervallEntitet utledPeriodeNårTomMuligFørFom(LocalDate fom, LocalDate tom) {
+        if (tom == null) {
+            return DatoIntervallEntitet.fraOgMed(fom);
+        }
+        if (tom.isBefore(fom)) {
+            return DatoIntervallEntitet.fraOgMedTilOgMed(fom, fom);
+        }
+        return DatoIntervallEntitet.fraOgMedTilOgMed(fom, tom);
     }
 
     private Optional<LocalDate> finnFørsteMeldekortFom(MeldekortUtbetalingsgrunnlagSak sak) {
