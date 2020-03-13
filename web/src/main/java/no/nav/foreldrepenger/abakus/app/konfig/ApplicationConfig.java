@@ -49,9 +49,7 @@ public class ApplicationConfig extends Application {
             .openAPI(oas)
             .prettyPrint(true)
             .scannerClass("io.swagger.v3.jaxrs2.integration.JaxrsAnnotationScanner")
-            .resourcePackages(Stream.of("no.nav.vedtak", "no.nav.foreldrepenger")
-                .collect(Collectors.toSet()));
-
+            .resourcePackages(Set.of("no.nav.vedtak", "no.nav.foreldrepenger"));
         try {
             new JaxrsOpenApiContextBuilder<>()
                 .openApiConfiguration(oasConfig)
