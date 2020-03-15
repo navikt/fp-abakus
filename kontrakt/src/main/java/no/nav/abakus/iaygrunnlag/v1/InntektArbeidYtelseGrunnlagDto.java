@@ -207,7 +207,6 @@ public class InntektArbeidYtelseGrunnlagDto {
     }
 
     public void setOverstyrt(InntektArbeidYtelseAggregatOverstyrtDto overstyrt) {
-        Objects.requireNonNull(register, "Kan ikke sette overstyrt om register ikke er satt");
         this.overstyrt = overstyrt;
     }
 
