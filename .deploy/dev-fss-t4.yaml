@@ -40,6 +40,11 @@ spec:
   vault:
     enabled: true
     sidecar: false
+    paths:
+      - mountPath: /var/run/secrets/nais.io/serviceuser
+        kvPath: serviceuser/data/test/srvfpabakus
+      - mountPath: /var/run/secrets/nais.io/vault
+        kvPath: /kv/preprod/fss/fpabakus/t4
   env:
     - name: LOADBALANCER_FQDN
       value: fpabakus-t4.nais.preprod.local
@@ -47,9 +52,6 @@ spec:
       value: https://wasapp-t4.adeo.no/asm-pdp/authorize
     - name: SECURITYTOKENSERVICE_URL
       value: https://sts-t4.test.local/SecurityTokenServiceProvider/
-    #Systembruker
-    - name: SYSTEMBRUKER_USERNAME
-      value: srvfp-abakus
     #OpenID
     - name: OPENIDCONNECT_ISSOHOST
       value: https://isso-t.adeo.no:443/isso/oauth2
@@ -59,7 +61,7 @@ spec:
       value: https://isso-t.adeo.no:443/isso/oauth2/connect/jwk_uri
     - name: OPENIDCONNECT_USERNAME
       value: fpabakus-t4
-      #OIDC
+    #OIDC
     - name: OIDC_STS_ISSUERURL
       value: https://security-token-service.nais.preprod.local
     - name: OIDC_STS_JWKSURL
@@ -74,6 +76,9 @@ spec:
       value: fpabakus-t4
     - name: DEFAULTDS_URL
       value: jdbc:postgresql://b27dbvl007.preprod.local:5432/fpabakus-t4
+    #Appdynamics (mer i Dockerfile)
+    - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
+      value: NON-PROD
     # Eksterne systemer
     - name: HENTINNTEKTLISTEBOLK_URL
       value: https://app-t4.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk

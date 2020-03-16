@@ -40,6 +40,11 @@ spec:
   vault:
     enabled: true
     sidecar: false
+    paths:
+      - mountPath: /var/run/secrets/nais.io/serviceuser
+        kvPath: serviceuser/data/dev/srvfpabakus
+      - mountPath: /var/run/secrets/nais.io/vault
+        kvPath: /kv/preprod/fss/fpabakus/q1
   env:
     - name: LOADBALANCER_FQDN
       value: fpabakus-q1.nais.preprod.local
@@ -47,9 +52,6 @@ spec:
       value: https://wasapp-q1.adeo.no/asm-pdp/authorize
     - name: SECURITYTOKENSERVICE_URL
       value: https://sts-q1.preprod.local/SecurityTokenServiceProvider/
-      #Systembruker
-    - name: SYSTEMBRUKER_USERNAME
-      value: srvfp-abakus
     #OpenID
     - name: OPENIDCONNECT_ISSOHOST
       value: https://isso-q.adeo.no:443/isso/oauth2
@@ -59,7 +61,7 @@ spec:
       value: https://isso-q.adeo.no:443/isso/oauth2/connect/jwk_uri
     - name: OPENIDCONNECT_USERNAME
       value: fpabakus-q1
-      #OIDC
+    #OIDC
     - name: OIDC_STS_ISSUERURL
       value: https://security-token-service.nais.preprod.local
     - name: OIDC_STS_JWKSURL
@@ -74,7 +76,10 @@ spec:
       value: fpabakus-q1
     - name: DEFAULTDS_URL
       value: jdbc:postgresql://B27DBVL007.preprod.local:5432/fpabakus-q1
-    # Eksterne systemer
+    #Appdynamics (mer i Dockerfile)
+    - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
+      value: NON-PROD
+    #Eksterne systemer
     - name: HENTINNTEKTLISTEBOLK_URL
       value: https://app-q1.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk
     - name: ARBEIDSFORHOLD_V3_URL
