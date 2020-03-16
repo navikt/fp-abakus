@@ -59,8 +59,6 @@ spec:
       value: https://isso-q.adeo.no:443/isso/oauth2
     - name: OPENIDCONNECT_ISSOJWKS
       value: https://isso-q.adeo.no:443/isso/oauth2/connect/jwk_uri
-    - name: OPENIDCONNECT_USERNAME
-      value: fpabakus-q1
     #OIDC
     - name: OIDC_STS_ISSUERURL
       value: https://security-token-service.nais.preprod.local
