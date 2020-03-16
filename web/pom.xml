@@ -16,6 +16,10 @@
     <properties>
         <geronimo.jaspi.version>2.0.0</geronimo.jaspi.version>
         <geronimo.osgi.version>1.1</geronimo.osgi.version>
+        <swagger-ui.version>3.25.0</swagger-ui.version>
+
+        <replacer.version>1.5.3</replacer.version>
+        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -41,10 +45,22 @@
                 <artifactId>flyway-core</artifactId>
                 <version>6.3.1</version>
             </dependency>
+
             <dependency>
                 <groupId>javax.validation</groupId>
                 <artifactId>validation-api</artifactId>
                 <version>2.0.1.Final</version>
+            </dependency>
+            <!-- Swagger og Swagger-UI -->
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-jaxrs2</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-core</artifactId>
+                <version>${swagger.version}</version>
             </dependency>
 
             <!-- importeres av ulike tjenestespesifikasjoner som bruker WS* (PersonV3, AktoerV2, JournalV3, DokumentproduksjonV3) -->
@@ -61,7 +77,7 @@
             <dependency>
                 <groupId>org.webjars</groupId>
                 <artifactId>swagger-ui</artifactId>
-                <version>3.25.0</version>
+                <version>${swagger-ui.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -322,10 +338,6 @@
             <artifactId>javax.el</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>swagger-ui</artifactId>
-        </dependency>
-        <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
         </dependency>
@@ -348,7 +360,6 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -383,6 +394,7 @@
                     <timestampFormat>dd.MM.yyyy HH.mm.ss</timestampFormat>
                 </configuration>
             </plugin>
+
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -397,8 +409,77 @@
                             <includeScope>runtime</includeScope>
                         </configuration>
                     </execution>
+                    <!-- Download Swagger-UI webjar og pack den ut. -->
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.webjars</groupId>
+                                    <artifactId>swagger-ui</artifactId>
+                                    <version>${swagger-ui.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.directory}/swagger-ui</outputDirectory>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <!-- Replace the OpenAPI specification example URL with the local one. -->
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>${replacer.version}</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <file>${project.build.directory}/swagger-ui/META-INF/resources/webjars/swagger-ui/${swagger-ui.version}/index.html</file>
+                    <replacements>
+                        <replacement>
+                            <token>https://petstore.swagger.io/v2/swagger.json</token>
+                            <value>/${project.parent.artifactId}/api/openapi.yaml</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}/swagger-ui/META-INF/resources/webjars/swagger-ui/${swagger-ui.version}</directory>
+                                    <includes>
+                                        <include>*.js</include>
+                                        <include>*.css</include>
+                                        <include>*.png</include>
+                                        <include>index.html</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                            <encoding>UTF-8</encoding>
+                            <outputDirectory>${project.build.directory}/classes/web/swagger/</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 </project>

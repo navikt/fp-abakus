@@ -172,11 +172,4 @@ public class JettyDevServer extends JettyServer {
         webAppContext.setInitParameter("org.eclipse.jetty.servlet.Default.useFileMappedBuffer", "false");
         return webAppContext;
     }
-
-    @Override
-    protected ResourceCollection createResourceCollection() throws IOException {
-        return new ResourceCollection(
-                Resource.newClassPathResource("META-INF/resources/webjars/"),
-                Resource.newClassPathResource("/web"));
-    }
 }
