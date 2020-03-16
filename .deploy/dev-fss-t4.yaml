@@ -69,11 +69,6 @@ spec:
       value: 26apvl00159.test.local:8443,d26apvl00160.test.local:8443,d26apvl00161.test.local:8443
     - name: KAFKA_SCHEMA_REGISTRY_URL
       value: https://kafka-test-schema-registry.nais.preprod.local
-    #Database
-    - name: DEFAULTDS_USERNAME
-      value: fpabakus-t4
-    - name: DEFAULTDS_URL
-      value: jdbc:postgresql://b27dbvl007.preprod.local:5432/fpabakus-t4
     #Appdynamics (mer i Dockerfile)
     - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
       value: NON-PROD
