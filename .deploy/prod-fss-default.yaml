@@ -22,14 +22,14 @@ spec:
     timeout: 5
     periodSeconds: 10
     failureThreshold: 27
+  prometheus:
+    enabled: true
+    path: "/fpabakus/internal/metrics/prometheus"
   replicas:
     min: 2
     max: 3
     cpuThresholdPercentage: 80
   preStopHookPath: "/fpabakus/internal/preStop"
-  prometheus:
-    enabled: true
-    path: "/fpabakus/internal/metrics/prometheus"
   resources:
     limits:
       cpu: "2000m"
