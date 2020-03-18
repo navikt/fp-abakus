@@ -76,8 +76,6 @@ class SigrunTilInternMapper {
                     } else {
                         typeTilVerdiMap.replace(type, beløp.add(new BigDecimal(beregnetSkatteobjekt.getVerdi())));
                     }
-                } else {
-                    LOGGER.info("Inntektposttype er null for skatteobjekt med kode {} og inntekt {} ", beregnetSkatteobjekt.getTekniskNavn(), beregnetSkatteobjekt.getVerdi());
                 }
             }
             årTilInntektMap.put(intervallEntitet, typeTilVerdiMap);
