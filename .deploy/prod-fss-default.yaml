@@ -45,7 +45,7 @@ spec:
         kvPath: serviceuser/data/prod/srvfpabakus
       - mountPath: /var/run/secrets/nais.io/vault
         kvPath: /kv/prod/fss/fpabakus/default
-      - mountPath: /var/run/secrets/nais.io/vault
+      - mountPath: /var/run/secrets/nais.io/appdynamics
         kvPath: /apikey/appdynamics/prod
   env:
     - name: LOADBALANCER_FQDN
