@@ -46,8 +46,8 @@ spec:
       - mountPath: /var/run/secrets/nais.io/vault
         kvPath: /kv/prod/fss/fpabakus/default
   env:
-    - name: LOADBALANCER_FQDN
-      value: fpabakus.nais.adeo.no
+    - name: LOADBALANCER_URL
+      value: https://fpabakus.nais.adeo.no
     - name: ABAC_PDP_ENDPOINT_URL
       value: https://wasapp.adeo.no/asm-pdp/authorize
     - name: SECURITYTOKENSERVICE_URL
