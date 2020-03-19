@@ -45,6 +45,8 @@ spec:
         kvPath: serviceuser/data/dev/srvfpabakus
       - mountPath: /var/run/secrets/nais.io/vault
         kvPath: /kv/preprod/fss/fpabakus/q1
+      - mountPath: /var/run/secrets/nais.io/vault
+        kvPath: /apikey/appdynamics/dev
   env:
     - name: LOADBALANCER_FQDN
       value: fpabakus-q1.nais.preprod.local
@@ -69,9 +71,6 @@ spec:
       value: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
     - name: KAFKA_SCHEMA_REGISTRY_URL
       value: https://kafka-test-schema-registry.nais.preprod.local
-    #Appdynamics (mer i Dockerfile)
-    - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
-      value: NON-PROD
     #Eksterne systemer
     - name: HENTINNTEKTLISTEBOLK_URL
       value: https://app-q1.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk
