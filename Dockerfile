@@ -17,4 +17,5 @@ ENV JAVA_OPTS="-Xmx1024m -Xms128m \
     -Dlogback.configurationFile=conf/logback.xml"
 
 # Export vault properties
-COPY export-vault.sh /init-scripts/export-vault.sh
+COPY .scripts/03-import-appdynamics.sh /init-scripts/03-import-appdynamics.sh
+COPY .scripts/05-import-users.sh /init-scripts/05-import-users.sh
