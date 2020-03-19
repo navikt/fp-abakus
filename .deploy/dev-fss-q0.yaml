@@ -22,14 +22,14 @@ spec:
     timeout: 5
     periodSeconds: 10
     failureThreshold: 27
+  prometheus:
+    enabled: true
+    path: "/fpabakus/internal/metrics/prometheus"
   replicas:
     min: 1
     max: 2
     cpuThresholdPercentage: 80
   preStopHookPath: "/fpabakus/internal/preStop"
-  prometheus:
-    enabled: true
-    path: "/fpabakus/internal/metrics/prometheus"
   resources:
     limits:
       cpu: "2000m"
@@ -40,6 +40,11 @@ spec:
   vault:
     enabled: true
     sidecar: false
+    paths:
+      - mountPath: /var/run/secrets/nais.io/serviceuser
+        kvPath: serviceuser/data/dev/srvfpabakus
+      - mountPath: /var/run/secrets/nais.io/vault
+        kvPath: /kv/preprod/fss/fpabakus/q0
   env:
     - name: LOADBALANCER_FQDN
       value: fpabakus-q0.nais.preprod.local
@@ -47,9 +52,6 @@ spec:
       value: https://wasapp-q0.adeo.no/asm-pdp/authorize
     - name: SECURITYTOKENSERVICE_URL
       value: https://sts-q0.preprod.local/SecurityTokenServiceProvider/
-      #Systembruker
-    - name: SYSTEMBRUKER_USERNAME
-      value: srvfp-abakus
     #OpenID
     - name: OPENIDCONNECT_ISSOHOST
       value: https://isso-q.adeo.no:443/isso/oauth2
@@ -57,9 +59,7 @@ spec:
       value: https://isso-q.adeo.no:443/isso/oauth2
     - name: OPENIDCONNECT_ISSOJWKS
       value: https://isso-q.adeo.no:443/isso/oauth2/connect/jwk_uri
-    - name: OPENIDCONNECT_USERNAME
-      value: fpabakus-q0
-      #OIDC
+    #OIDC
     - name: OIDC_STS_ISSUERURL
       value: https://security-token-service.nais.preprod.local
     - name: OIDC_STS_JWKSURL
@@ -69,11 +69,9 @@ spec:
       value: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
     - name: KAFKA_SCHEMA_REGISTRY_URL
       value: https://kafka-test-schema-registry.nais.preprod.local
-    #Database
-    - name: DEFAULTDS_USERNAME
-      value: fpabakus-q0
-    - name: DEFAULTDS_URL
-      value: jdbc:postgresql://B27DBVL007.preprod.local:5432/fpabakus-q0
+    #Appdynamics (mer i Dockerfile)
+    - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
+      value: NON-PROD
     # Eksterne systemer
     - name: HENTINNTEKTLISTEBOLK_URL
       value: https://app-q0.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk

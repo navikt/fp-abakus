@@ -8,6 +8,8 @@ metadata:
 spec:
   image: {{ image }}
   port: 8080
+  ingresses:
+    - "https://fpabakus.nais.adeo.no/"
   liveness:
     path: "/fpabakus/internal/isAlive"
     initialDelay: 30
@@ -20,14 +22,14 @@ spec:
     timeout: 5
     periodSeconds: 10
     failureThreshold: 27
+  prometheus:
+    enabled: true
+    path: "/fpabakus/internal/metrics/prometheus"
   replicas:
     min: 2
     max: 3
     cpuThresholdPercentage: 80
   preStopHookPath: "/fpabakus/internal/preStop"
-  prometheus:
-    enabled: true
-    path: "/fpabakus/internal/metrics/prometheus"
   resources:
     limits:
       cpu: "2000m"
@@ -35,14 +37,14 @@ spec:
     requests:
       cpu: "600m"
       memory: "1024Mi"
-  ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
-    - "https://fpabakus.nais.adeo.no/"
-  logformat: accesslog # Optional. The format of the logs from the container if the logs should be handled differently than plain text or json
-  logtransform: dns_loglevel # Optional. The transformation of the logs, if they should be handled differently than plain text or json
-  webproxy: false # Optional. Expose web proxy configuration to the application using the HTTP_PROXY, HTTPS_PROXY and NO_PROXY environment variables.
   vault:
     enabled: true
-  sidecar: true # refresh token
+    sidecar: false
+    paths:
+      - mountPath: /var/run/secrets/nais.io/serviceuser
+        kvPath: serviceuser/data/prod/srvfpabakus
+      - mountPath: /var/run/secrets/nais.io/vault
+        kvPath: /kv/prod/fss/fpabakus/default
   env:
     - name: LOADBALANCER_FQDN
       value: fpabakus.nais.adeo.no
@@ -50,9 +52,6 @@ spec:
       value: https://wasapp.adeo.no/asm-pdp/authorize
     - name: SECURITYTOKENSERVICE_URL
       value: https://sts.adeo.no/SecurityTokenServiceProvider/
-      #Systembruker
-    - name: SYSTEMBRUKER_USERNAME
-      value: srvfp-abakus
     #OpenID
     - name: OPENIDCONNECT_ISSOHOST
       value: https://isso.adeo.no:443/isso/oauth2
@@ -60,9 +59,7 @@ spec:
       value: https://isso.adeo.no:443/isso/oauth2
     - name: OPENIDCONNECT_ISSOJWKS
       value: https://isso.adeo.no:443/isso/oauth2/connect/jwk_uri
-    - name: OPENIDCONNECT_USERNAME
-      value: fpabakus-p
-      #OIDC
+    #OIDC
     - name: OIDC_STS_ISSUERURL
       value: https://security-token-service.nais.adeo.no
     - name: OIDC_STS_JWKSURL
@@ -72,11 +69,9 @@ spec:
       value: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443
     - name: KAFKA_SCHEMA_REGISTRY_URL
       value: http://kafka-schema-registry.tpa:8081
-    #Database
-    - name: DEFAULTDS_USERNAME
-      value: fpabakus
-    - name: DEFAULTDS_URL
-      value: jdbc:postgresql://a01dbfl039.adeo.no:5432/fpabakus
+    #Appdynamics (mer i Dockerfile)
+    - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
+      value: PROD
     # Eksterne systemer
     - name: HENTINNTEKTLISTEBOLK_URL
       value: https://app.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk
