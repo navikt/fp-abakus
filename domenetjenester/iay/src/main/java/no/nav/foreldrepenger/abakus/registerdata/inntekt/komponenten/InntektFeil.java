@@ -20,7 +20,7 @@ public interface InntektFeil extends DeklarerteFeil {
     @TekniskFeil(feilkode = "FP-263743", feilmelding = "Feil ved opprettelse av request mot inntektstjenesten.", logLevel = LogLevel.ERROR)
     Feil feilVedOpprettelseAvInntektRequest(DatatypeConfigurationException e);
 
-    @IntegrasjonFeil(feilkode = "FP-824246", feilmelding = "Feil ved kall til inntektstjenesten.", logLevel = LogLevel.ERROR)
+    @IntegrasjonFeil(feilkode = "FP-824246", feilmelding = "Feil ved kall til inntektstjenesten. Meld til #di_team_registre.", logLevel = LogLevel.ERROR)
     Feil feilVedKallTilInntekt(Exception e);
 
     @TekniskFeil(feilkode = "FP-722674", feilmelding = "Kunne ikke serialisere response fra Inntektskomponenten.", logLevel = LogLevel.ERROR)
