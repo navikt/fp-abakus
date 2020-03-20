@@ -39,7 +39,7 @@ spec:
       memory: "1024Mi"
   vault:
     enabled: true
-    sidecar: false
+    sidecar: true
     paths:
       - mountPath: /var/run/secrets/nais.io/serviceuser
         kvPath: serviceuser/data/dev/srvfpabakus
