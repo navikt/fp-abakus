@@ -18,6 +18,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingBu
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittAnnenAktivitetEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.repository.KoblingRepository;
@@ -25,7 +26,6 @@ import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 import no.nav.vedtak.felles.testutilities.db.RepositoryRule;
 
 public class InntektArbeidYtelseRepositoryTest {
@@ -40,11 +40,11 @@ public class InntektArbeidYtelseRepositoryTest {
     public void skal_svare_om_er_siste() {
         final var ko = new Kobling(new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()), new AktørId("1231231231223"));
         ko.setYtelseType(YtelseType.PÅRØRENDESYKDOM);
-        ko.setOpplysningsperiode(DatoIntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(2), LocalDate.now()));
+        ko.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(2), LocalDate.now()));
         koblingRepository.lagre(ko);
 
         final var builder = OppgittOpptjeningBuilder.ny();
-        builder.leggTilAnnenAktivitet(new OppgittAnnenAktivitetEntitet(DatoIntervallEntitet.fraOgMed(LocalDate.now()), ArbeidType.VENTELØNN_VARTPENGER));
+        builder.leggTilAnnenAktivitet(new OppgittAnnenAktivitetEntitet(IntervallEntitet.fraOgMed(LocalDate.now()), ArbeidType.VENTELØNN_VARTPENGER));
 
         final var grunnlagReferanse = repository.lagre(ko.getKoblingReferanse(), builder);
 

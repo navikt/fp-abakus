@@ -20,8 +20,8 @@ import javax.persistence.Version;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "Gradering")
 @Table(name = "IAY_GRADERING")
@@ -37,7 +37,7 @@ public class GraderingEntitet extends BaseEntitet implements Gradering, IndexKey
 
     @Embedded
     @ChangeTracked
-    private DatoIntervallEntitet periode;
+    private IntervallEntitet periode;
 
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "arbeidstid_prosent", updatable = false, nullable = false)))
@@ -51,13 +51,13 @@ public class GraderingEntitet extends BaseEntitet implements Gradering, IndexKey
     GraderingEntitet() {
     }
 
-    private GraderingEntitet(DatoIntervallEntitet periode, Stillingsprosent arbeidstidProsent) {
+    private GraderingEntitet(IntervallEntitet periode, Stillingsprosent arbeidstidProsent) {
         this.arbeidstidProsent = arbeidstidProsent;
         this.periode = periode;
     }
 
     public GraderingEntitet(LocalDate fom, LocalDate tom, BigDecimal arbeidstidProsent) {
-        this(tom == null ? DatoIntervallEntitet.fraOgMed(fom) : DatoIntervallEntitet.fraOgMedTilOgMed(fom, tom), new Stillingsprosent(arbeidstidProsent));
+        this(tom == null ? IntervallEntitet.fraOgMed(fom) : IntervallEntitet.fraOgMedTilOgMed(fom, tom), new Stillingsprosent(arbeidstidProsent));
     }
 
     GraderingEntitet(Gradering gradering) {
@@ -74,7 +74,7 @@ public class GraderingEntitet extends BaseEntitet implements Gradering, IndexKey
     }
 
     @Override
-    public DatoIntervallEntitet getPeriode() {
+    public IntervallEntitet getPeriode() {
         return periode;
     }
 

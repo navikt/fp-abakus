@@ -2,8 +2,8 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.SkatteOgAvgiftsregelType;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public interface Inntektspost {
 
@@ -38,7 +38,9 @@ public interface Inntektspost {
 
     YtelseInntektspostType getYtelseType();
     
-    /** Periode inntektsposten gjelder. */
-    DatoIntervallEntitet getPeriode();
+    /** Periode inntektsposten gjelder.
+     * @return
+     */
+    IntervallEntitet getPeriode();
 
 }

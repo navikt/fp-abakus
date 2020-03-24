@@ -22,9 +22,9 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsfo
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 /**
  * Entitetsklasse for oppgitte arbeidsforhold.
@@ -49,7 +49,7 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
 
     @Embedded
     @ChangeTracked
-    private DatoIntervallEntitet periode;
+    private IntervallEntitet periode;
 
     @Convert(converter = BooleanToStringConverter.class)
     @Column(name = "utenlandsk_inntekt", nullable = false)
@@ -88,11 +88,11 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
     }
 
     @Override
-    public DatoIntervallEntitet getPeriode() {
+    public IntervallEntitet getPeriode() {
         return periode;
     }
 
-    void setPeriode(DatoIntervallEntitet periode) {
+    void setPeriode(IntervallEntitet periode) {
         this.periode = periode;
     }
 

@@ -10,12 +10,12 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import no.nav.foreldrepenger.abakus.dbstoette.UnittestRepositoryRule;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 import no.nav.vedtak.felles.testutilities.db.RepositoryRule;
 
 public class VedtakYtelseRepositoryTest {
@@ -31,7 +31,7 @@ public class VedtakYtelseRepositoryTest {
         final var saksnummer = new Saksnummer("1234");
         final var builder = repository.opprettBuilderFor(aktørId, saksnummer, Fagsystem.FPSAK, YtelseType.FORELDREPENGER);
 
-        builder.medPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(1), LocalDate.now()))
+        builder.medPeriode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(1), LocalDate.now()))
             .medStatus(YtelseStatus.LØPENDE)
             .medVedtakReferanse(UUID.randomUUID())
             .medVedtattTidspunkt(LocalDateTime.now());
@@ -42,7 +42,7 @@ public class VedtakYtelseRepositoryTest {
         assertThat(vedtattYtelser).hasSize(1);
 
         final var nyBuilder = repository.opprettBuilderFor(aktørId, saksnummer, Fagsystem.FPSAK, YtelseType.FORELDREPENGER);
-        final var intervallEntitet = DatoIntervallEntitet.fraOgMedTilOgMed(LocalDate.now(), LocalDate.now().plusMonths(3));
+        final var intervallEntitet = IntervallEntitet.fraOgMedTilOgMed(LocalDate.now(), LocalDate.now().plusMonths(3));
         nyBuilder.medVedtakReferanse(UUID.randomUUID())
             .medVedtattTidspunkt(LocalDateTime.now())
             .medPeriode(intervallEntitet);
@@ -62,7 +62,7 @@ public class VedtakYtelseRepositoryTest {
         final var saksnummer = new Saksnummer("1234");
         final var builder = repository.opprettBuilderFor(aktørId, saksnummer, Fagsystem.FPSAK, YtelseType.FORELDREPENGER);
 
-        builder.medPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(1), LocalDate.now()))
+        builder.medPeriode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(1), LocalDate.now()))
             .medStatus(YtelseStatus.LØPENDE)
             .medVedtakReferanse(UUID.randomUUID())
             .medVedtattTidspunkt(LocalDateTime.now());
@@ -73,7 +73,7 @@ public class VedtakYtelseRepositoryTest {
         assertThat(vedtattYtelser).hasSize(1);
 
         final var nyBuilder = repository.opprettBuilderFor(aktørId, saksnummer, Fagsystem.FPSAK, YtelseType.FORELDREPENGER);
-        final var intervallEntitet = DatoIntervallEntitet.fraOgMedTilOgMed(LocalDate.now(), LocalDate.now().plusMonths(3));
+        final var intervallEntitet = IntervallEntitet.fraOgMedTilOgMed(LocalDate.now(), LocalDate.now().plusMonths(3));
         nyBuilder.medVedtakReferanse(UUID.randomUUID())
             .medVedtattTidspunkt(LocalDateTime.now().minusMinutes(10))
             .medStatus(YtelseStatus.LØPENDE)

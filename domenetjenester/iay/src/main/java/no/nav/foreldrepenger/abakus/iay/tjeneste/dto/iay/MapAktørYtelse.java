@@ -29,12 +29,12 @@ import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelse;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelseBuilder;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class MapAktørYtelse {
     private static final Comparator<YtelseDto> COMP_YTELSE = Comparator
@@ -80,8 +80,8 @@ public class MapAktørYtelse {
             return new AktørId(person.getIdent());
         }
 
-        private DatoIntervallEntitet mapPeriode(Periode periode) {
-            return DatoIntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom());
+        private IntervallEntitet mapPeriode(Periode periode) {
+            return IntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom());
         }
 
         private YtelseBuilder mapYtelse(YtelseDto ytelseDto) {

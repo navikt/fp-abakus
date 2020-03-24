@@ -1,9 +1,9 @@
 package no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold;
 
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 public interface ArbeidsforholdOverstyrtePerioder {
 
-    DatoIntervallEntitet getOverstyrtePeriode();
+    IntervallEntitet getOverstyrtePeriode();
 
 }

@@ -5,12 +5,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class VedtakYtelseBuilder {
 
@@ -59,7 +59,7 @@ public class VedtakYtelseBuilder {
         return this;
     }
 
-    public VedtakYtelseBuilder medPeriode(DatoIntervallEntitet intervallEntitet) {
+    public VedtakYtelseBuilder medPeriode(IntervallEntitet intervallEntitet) {
         ytelse.setPeriode(intervallEntitet);
         return this;
     }

@@ -30,10 +30,10 @@ import no.nav.foreldrepenger.abakus.domene.iay.PermisjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet;
 import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class MapAktørArbeid {
 
@@ -118,8 +118,8 @@ public class MapAktørArbeid {
                 .medSisteLønnsendringsdato(dto.getSistLønnsendring());
         }
 
-        private DatoIntervallEntitet mapPeriode(Periode periode) {
-            return DatoIntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom());
+        private IntervallEntitet mapPeriode(Periode periode) {
+            return IntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom());
         }
 
         private InternArbeidsforholdRef mapArbeidsforholdRef(@SuppressWarnings("unused") Arbeidsgiver arbeidsgiver, ArbeidsforholdRefDto arbeidsforholdId) {

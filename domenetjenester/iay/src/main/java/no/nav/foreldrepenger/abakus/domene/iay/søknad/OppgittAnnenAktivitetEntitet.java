@@ -20,7 +20,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittAnnenAkti
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 
 @Table(name = "IAY_ANNEN_AKTIVITET")
@@ -33,7 +33,7 @@ public class OppgittAnnenAktivitetEntitet extends BaseEntitet implements Oppgitt
 
     @Embedded
     @ChangeTracked
-    private DatoIntervallEntitet periode;
+    private IntervallEntitet periode;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "oppgitt_opptjening_id", nullable = false, updatable = false)
@@ -46,7 +46,7 @@ public class OppgittAnnenAktivitetEntitet extends BaseEntitet implements Oppgitt
     @ChangeTracked
     private ArbeidType arbeidType;
 
-    public OppgittAnnenAktivitetEntitet(DatoIntervallEntitet periode, ArbeidType arbeidType) {
+    public OppgittAnnenAktivitetEntitet(IntervallEntitet periode, ArbeidType arbeidType) {
         this.periode = periode;
         this.arbeidType = arbeidType;
     }
@@ -66,7 +66,7 @@ public class OppgittAnnenAktivitetEntitet extends BaseEntitet implements Oppgitt
     }
 
     @Override
-    public DatoIntervallEntitet getPeriode() {
+    public IntervallEntitet getPeriode() {
         return periode;
     }
 

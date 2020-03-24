@@ -2,9 +2,9 @@ package no.nav.foreldrepenger.abakus.vedtak.domene;
 
 import java.math.BigDecimal;
 
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class YtelseAnvistBuilder {
     private final YtelseAnvistEntitet ytelseAnvistEntitet;
@@ -31,7 +31,7 @@ public class YtelseAnvistBuilder {
         return this;
     }
 
-    public YtelseAnvistBuilder medAnvistPeriode(DatoIntervallEntitet intervallEntitet) {
+    public YtelseAnvistBuilder medAnvistPeriode(IntervallEntitet intervallEntitet) {
         this.ytelseAnvistEntitet.setAnvistPeriode(intervallEntitet);
         return this;
     }

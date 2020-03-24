@@ -15,7 +15,7 @@ import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinFormula;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.BekreftetPermisjonStatus;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 @Embeddable
 public class BekreftetPermisjon {
@@ -30,13 +30,13 @@ public class BekreftetPermisjon {
         @AttributeOverride(name = "fomDato", column = @Column(name = "bekreftet_permisjon_fom")),
         @AttributeOverride(name = "tomDato", column = @Column(name = "bekreftet_permisjon_tom"))
     })
-    private DatoIntervallEntitet periode;
+    private IntervallEntitet periode;
 
     public BekreftetPermisjon() {
     }
 
     public BekreftetPermisjon(LocalDate permisjonFom, LocalDate permisjonTom, BekreftetPermisjonStatus status) {
-        this.periode = DatoIntervallEntitet.fraOgMedTilOgMed(permisjonFom, permisjonTom);
+        this.periode = IntervallEntitet.fraOgMedTilOgMed(permisjonFom, permisjonTom);
         this.status = status;
     }
 
@@ -49,7 +49,7 @@ public class BekreftetPermisjon {
         return status;
     }
 
-    public DatoIntervallEntitet getPeriode() {
+    public IntervallEntitet getPeriode() {
         return periode;
     }
 

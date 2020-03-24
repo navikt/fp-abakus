@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 /**
  * Filter for å hente inntekter og inntektsposter fra grunnlag. Tilbyr håndtering av skjæringstidspunkt og filtereing på inntektskilder slik
@@ -209,7 +209,7 @@ public class InntektFilter {
             return false;
         }
         if (skjæringstidspunkt != null) {
-            DatoIntervallEntitet periode = inntektspost.getPeriode();
+            IntervallEntitet periode = inntektspost.getPeriode();
             if (venstreSideASkjæringstidspunkt) {
                 return periode.getFomDato().isBefore(skjæringstidspunkt.plusDays(1));
             } else {

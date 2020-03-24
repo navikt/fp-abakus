@@ -21,7 +21,7 @@ import org.hibernate.annotations.JoinFormula;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 @Entity(name = "UtsettelsePeriode")
 @Table(name = "IAY_UTSETTELSE_PERIODE")
@@ -37,7 +37,7 @@ public class UtsettelsePeriodeEntitet extends BaseEntitet implements UtsettelseP
 
     @Embedded
     @ChangeTracked
-    private DatoIntervallEntitet periode;
+    private IntervallEntitet periode;
 
     @ManyToOne
     @JoinColumnsOrFormulas(value = {
@@ -52,13 +52,13 @@ public class UtsettelsePeriodeEntitet extends BaseEntitet implements UtsettelseP
     private long versjon;
 
     private UtsettelsePeriodeEntitet(LocalDate fom, LocalDate tom) {
-        this.periode = DatoIntervallEntitet.fraOgMedTilOgMed(fom, tom);
+        this.periode = IntervallEntitet.fraOgMedTilOgMed(fom, tom);
         this.årsak = UtsettelseÅrsak.FERIE;
     }
 
     private UtsettelsePeriodeEntitet(LocalDate fom, LocalDate tom, UtsettelseÅrsak årsak) {
         this.årsak = årsak;
-        this.periode = DatoIntervallEntitet.fraOgMedTilOgMed(fom, tom);
+        this.periode = IntervallEntitet.fraOgMedTilOgMed(fom, tom);
     }
 
     UtsettelsePeriodeEntitet() {
@@ -83,7 +83,7 @@ public class UtsettelsePeriodeEntitet extends BaseEntitet implements UtsettelseP
     }
 
     @Override
-    public DatoIntervallEntitet getPeriode() {
+    public IntervallEntitet getPeriode() {
         return periode;
     }
 

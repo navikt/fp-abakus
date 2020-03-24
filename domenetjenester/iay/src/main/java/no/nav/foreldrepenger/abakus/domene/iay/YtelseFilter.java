@@ -11,7 +11,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 /**
  * Filter for å hente ytelser fra grunnlag. Tilbyr håndtering av skjæringstidspunkt og filtereing på ytelser slik
@@ -92,7 +92,7 @@ public class YtelseFilter {
 
     private boolean skalMedEtterSkjæringstidspunktVurdering(Ytelse ytelse) {
         if (skjæringstidspunkt != null) {
-            DatoIntervallEntitet periode = ytelse.getPeriode();
+            IntervallEntitet periode = ytelse.getPeriode();
             if (venstreSideASkjæringstidspunkt) {
                 return periode.getFomDato().isBefore(skjæringstidspunkt.plusDays(1));
             } else {

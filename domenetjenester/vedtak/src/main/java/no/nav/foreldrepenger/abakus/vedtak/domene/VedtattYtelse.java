@@ -4,12 +4,12 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.UUID;
 
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public interface VedtattYtelse {
 
@@ -21,7 +21,7 @@ public interface VedtattYtelse {
 
     YtelseStatus getStatus();
 
-    DatoIntervallEntitet getPeriode();
+    IntervallEntitet getPeriode();
 
     Saksnummer getSaksnummer();
 

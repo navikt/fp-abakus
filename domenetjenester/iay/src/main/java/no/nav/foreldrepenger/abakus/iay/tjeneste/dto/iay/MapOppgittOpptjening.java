@@ -31,11 +31,11 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæri
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilansoppdrag;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class MapOppgittOpptjening {
 
@@ -119,7 +119,7 @@ public class MapOppgittOpptjening {
             if (arbeidsforhold == null)
                 return null;
 
-            DatoIntervallEntitet periode1 = arbeidsforhold.getPeriode();
+            IntervallEntitet periode1 = arbeidsforhold.getPeriode();
             var periode = new Periode(periode1.getFomDato(), periode1.getTomDato());
             var arbeidType = KodeverkMapper.mapArbeidTypeTilDto(arbeidsforhold.getArbeidType());
 
@@ -143,7 +143,7 @@ public class MapOppgittOpptjening {
             if (egenNæring == null)
                 return null;
 
-            DatoIntervallEntitet periode1 = egenNæring.getPeriode();
+            IntervallEntitet periode1 = egenNæring.getPeriode();
             var periode = new Periode(periode1.getFomDato(), periode1.getTomDato());
 
             var org = egenNæring.getOrgnummer() == null ? null : new Organisasjon(egenNæring.getOrgnummer().getId());
@@ -246,7 +246,7 @@ public class MapOppgittOpptjening {
 
             var frilansoppdrag = mapEach(dto.getFrilansoppdrag(),
                 f -> new OppgittFrilansoppdragEntitet(f.getOppdragsgiver(),
-                    DatoIntervallEntitet.fraOgMedTilOgMed(f.getPeriode().getFom(), f.getPeriode().getTom())));
+                    IntervallEntitet.fraOgMedTilOgMed(f.getPeriode().getFom(), f.getPeriode().getTom())));
             frilans.setFrilansoppdrag(frilansoppdrag);
             return frilans;
         }
@@ -271,7 +271,7 @@ public class MapOppgittOpptjening {
                 .medNyoppstartet(dto.isNyoppstartet())
                 .medNærRelasjon(dto.isNærRelasjon())
                 .medVarigEndring(dto.isVarigEndring())
-                .medPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom()));
+                .medPeriode(IntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom()));
 
             Landkoder landkode = mapLandkoder(dto.getLandkode());
             builder.medUtenlandskVirksomhet(landkode, dto.getVirksomhetNavn());
@@ -287,7 +287,7 @@ public class MapOppgittOpptjening {
             var builder = OppgittArbeidsforholdBuilder.ny()
                 .medArbeidType(KodeverkMapper.mapArbeidType(dto.getArbeidTypeDto()))
                 .medErUtenlandskInntekt(dto.isErUtenlandskInntekt())
-                .medPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(dto1.getFom(), dto1.getTom()));
+                .medPeriode(IntervallEntitet.fraOgMedTilOgMed(dto1.getFom(), dto1.getTom()));
 
             Landkoder landkode = mapLandkoder(dto.getLandkode());
             builder.medUtenlandskVirksomhet(landkode, dto.getVirksomhetNavn());
@@ -300,7 +300,7 @@ public class MapOppgittOpptjening {
                 return null;
 
             Periode dto1 = dto.getPeriode();
-            var periode = DatoIntervallEntitet.fraOgMedTilOgMed(dto1.getFom(), dto1.getTom());
+            var periode = IntervallEntitet.fraOgMedTilOgMed(dto1.getFom(), dto1.getTom());
             var arbeidType = KodeverkMapper.mapArbeidType(dto.getArbeidTypeDto());
             return new OppgittAnnenAktivitetEntitet(periode, arbeidType);
         }

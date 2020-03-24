@@ -27,8 +27,8 @@ import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "Yrkesaktivitet")
 @Table(name = "IAY_YRKESAKTIVITET")
@@ -218,7 +218,7 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
             '}';
     }
 
-    void fjernPeriode(DatoIntervallEntitet aktivitetsPeriode) {
+    void fjernPeriode(IntervallEntitet aktivitetsPeriode) {
         aktivitetsAvtale.removeIf(aa -> aa.matcherPeriode(aktivitetsPeriode));
     }
 

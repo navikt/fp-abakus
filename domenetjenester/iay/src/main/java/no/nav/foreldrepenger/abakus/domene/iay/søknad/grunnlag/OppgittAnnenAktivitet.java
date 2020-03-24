@@ -1,11 +1,11 @@
 package no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 public interface OppgittAnnenAktivitet {
 
     ArbeidType getArbeidType();
 
-    DatoIntervallEntitet getPeriode();
+    IntervallEntitet getPeriode();
 }

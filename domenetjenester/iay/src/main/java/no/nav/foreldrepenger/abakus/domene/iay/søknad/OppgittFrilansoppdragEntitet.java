@@ -15,7 +15,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilansop
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 
 @Table(name = "IAY_OPPGITT_FRILANSOPPDRAG")
@@ -35,13 +35,13 @@ public class OppgittFrilansoppdragEntitet extends BaseEntitet implements Oppgitt
 
     @Embedded
     @ChangeTracked
-    private DatoIntervallEntitet periode;
+    private IntervallEntitet periode;
 
 
     OppgittFrilansoppdragEntitet() {
     }
 
-    public OppgittFrilansoppdragEntitet(String oppdragsgiver, DatoIntervallEntitet periode) {
+    public OppgittFrilansoppdragEntitet(String oppdragsgiver, IntervallEntitet periode) {
         this.oppdragsgiver = oppdragsgiver;
         this.periode = periode;
     }
@@ -55,7 +55,7 @@ public class OppgittFrilansoppdragEntitet extends BaseEntitet implements Oppgitt
         this.frilans = frilans;
     }
 
-    void setPeriode(DatoIntervallEntitet periode) {
+    void setPeriode(IntervallEntitet periode) {
         this.periode = periode;
     }
 
@@ -85,7 +85,7 @@ public class OppgittFrilansoppdragEntitet extends BaseEntitet implements Oppgitt
     }
 
     @Override
-    public DatoIntervallEntitet getPeriode() {
+    public IntervallEntitet getPeriode() {
         return periode;
     }
 

@@ -9,16 +9,17 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import no.finn.unleash.Unleash;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.vedtak.felles.integrasjon.sigrun.BeregnetSkatt;
 import no.nav.vedtak.felles.integrasjon.sigrun.SigrunConsumer;
 import no.nav.vedtak.felles.integrasjon.sigrun.SigrunResponse;
 import no.nav.vedtak.felles.integrasjon.sigrun.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 @ApplicationScoped
@@ -38,7 +39,7 @@ public class SigrunTjeneste {
         this.unleash = unleash;
     }
 
-    public Map<DatoIntervallEntitet, Map<InntektspostType, BigDecimal>> beregnetSkatt(AktørId aktørId) {
+    public Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> beregnetSkatt(AktørId aktørId) {
         SigrunResponse beregnetskatt;
         if (unleash.isEnabled("fpsak.sigrun.logg.respons", false)) {
             beregnetskatt = sigrunConsumer.beregnetskattMedLogging(Long.valueOf(aktørId.getId()));

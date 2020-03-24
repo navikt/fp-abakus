@@ -1,10 +1,10 @@
 package no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag;
 
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 public interface OppgittFrilansoppdrag {
 
-    DatoIntervallEntitet getPeriode();
+    IntervallEntitet getPeriode();
 
     String getOppdragsgiver();
 }

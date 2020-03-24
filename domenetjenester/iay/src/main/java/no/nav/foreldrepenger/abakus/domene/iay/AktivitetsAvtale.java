@@ -22,9 +22,9 @@ import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AntallTimer;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 import no.nav.vedtak.konfig.Tid;
 
 @Table(name = "IAY_AKTIVITETS_AVTALE")
@@ -65,7 +65,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
 
     @Embedded
     @ChangeTracked
-    private DatoIntervallEntitet periode;
+    private IntervallEntitet periode;
 
     @ChangeTracked
     @Column(name = "siste_loennsendringsdato")
@@ -80,7 +80,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
      * filtrering av modellen)
      */
     @Transient
-    private DatoIntervallEntitet overstyrtPeriode;
+    private IntervallEntitet overstyrtPeriode;
 
     AktivitetsAvtale() {
         // hibernate
@@ -96,7 +96,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
         this.periode = aktivitetsAvtale.getPeriodeUtenOverstyring();
     }
 
-    public AktivitetsAvtale(AktivitetsAvtale avtale, DatoIntervallEntitet overstyrtPeriode) {
+    public AktivitetsAvtale(AktivitetsAvtale avtale, IntervallEntitet overstyrtPeriode) {
         this(avtale);
         this.overstyrtPeriode = overstyrtPeriode;
     }
@@ -156,11 +156,11 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
      *
      * @return hele perioden
      */
-    public DatoIntervallEntitet getPeriode() {
+    public IntervallEntitet getPeriode() {
         return erOverstyrtPeriode() ? overstyrtPeriode : periode;
     }
 
-    void setPeriode(DatoIntervallEntitet periode) {
+    void setPeriode(IntervallEntitet periode) {
         this.periode = periode;
     }
 
@@ -173,7 +173,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
      *
      * @return Hele den originale perioden, uten overstyringer.
      */
-    public DatoIntervallEntitet getPeriodeUtenOverstyring() {
+    public IntervallEntitet getPeriodeUtenOverstyring() {
         return periode;
     }
 
@@ -198,7 +198,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
         return sisteLønnsendringsdato;
     }
 
-    public boolean matcherPeriode(DatoIntervallEntitet aktivitetsAvtale) {
+    public boolean matcherPeriode(IntervallEntitet aktivitetsAvtale) {
         return getPeriode().equals(aktivitetsAvtale);
     }
 

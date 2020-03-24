@@ -13,23 +13,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.vedtak.felles.integrasjon.sigrun.BeregnetSkatt;
 import no.nav.vedtak.felles.integrasjon.sigrun.summertskattegrunnlag.SSGGrunnlag;
 import no.nav.vedtak.felles.integrasjon.sigrun.summertskattegrunnlag.SSGResponse;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 class SigrunTilInternMapper {
     private static final Logger LOGGER = LoggerFactory.getLogger(SigrunTilInternMapper.class);
 
-    static Map<DatoIntervallEntitet, Map<InntektspostType, BigDecimal>> mapFraSigrunTilIntern(Map<Year, List<BeregnetSkatt>> beregnetSkatt, Map<Year, Optional<SSGResponse>> summertskattegrunnlagMap) {
-        Map<DatoIntervallEntitet, Map<InntektspostType, BigDecimal>> årTilInntektMap = new HashMap<>();
+    static Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> mapFraSigrunTilIntern(Map<Year, List<BeregnetSkatt>> beregnetSkatt, Map<Year, Optional<SSGResponse>> summertskattegrunnlagMap) {
+        Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> årTilInntektMap = new HashMap<>();
 
         mapBeregnetSkatt(beregnetSkatt, årTilInntektMap);
         mapSummertskattegrunnlag(summertskattegrunnlagMap, årTilInntektMap);
         return årTilInntektMap;
     }
 
-    private static void mapSummertskattegrunnlag(Map<Year, Optional<SSGResponse>> summertskattegrunnlagMap, Map<DatoIntervallEntitet, Map<InntektspostType, BigDecimal>> årTilInntektMap) {
+    private static void mapSummertskattegrunnlag(Map<Year, Optional<SSGResponse>> summertskattegrunnlagMap, Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> årTilInntektMap) {
         if (!summertskattegrunnlagMap.isEmpty()) {
             Set<Map.Entry<Year, Optional<SSGResponse>>> entrySet = summertskattegrunnlagMap.entrySet();
             for (Map.Entry<Year, Optional<SSGResponse>> entry : entrySet) {
@@ -41,7 +41,7 @@ class SigrunTilInternMapper {
                         .filter(f -> TekniskNavn.fraKode(f.getTekniskNavn()) != null)
                         .findFirst();
                     ssggrunnlag.ifPresent(grunnlag -> {
-                        DatoIntervallEntitet datoIntervallEntitet = lagDatoIntervall(entry.getKey());
+                        IntervallEntitet datoIntervallEntitet = lagDatoIntervall(entry.getKey());
                         InntektspostType inntektspostType = TekniskNavn.fraKode(grunnlag.getTekniskNavn()).getInntektspostType();
                         Map<InntektspostType, BigDecimal> inntektspost = årTilInntektMap.get(datoIntervallEntitet);
                         if (inntektspost == null) {
@@ -63,9 +63,9 @@ class SigrunTilInternMapper {
         }
     }
 
-    private static void mapBeregnetSkatt(Map<Year, List<BeregnetSkatt>> beregnetSkatt, Map<DatoIntervallEntitet, Map<InntektspostType, BigDecimal>> årTilInntektMap) {
+    private static void mapBeregnetSkatt(Map<Year, List<BeregnetSkatt>> beregnetSkatt, Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> årTilInntektMap) {
         for (Map.Entry<Year, List<BeregnetSkatt>> entry : beregnetSkatt.entrySet()) {
-            DatoIntervallEntitet intervallEntitet = lagDatoIntervall(entry.getKey());
+            IntervallEntitet intervallEntitet = lagDatoIntervall(entry.getKey());
             Map<InntektspostType, BigDecimal> typeTilVerdiMap = new HashMap<>();
             for (BeregnetSkatt beregnetSkatteobjekt : entry.getValue()) {
                 InntektspostType type = TekniskNavn.fraKode(beregnetSkatteobjekt.getTekniskNavn()).getInntektspostType();
@@ -82,9 +82,9 @@ class SigrunTilInternMapper {
         }
     }
 
-    private static DatoIntervallEntitet lagDatoIntervall(Year år) {
+    private static IntervallEntitet lagDatoIntervall(Year år) {
         LocalDateTime førsteDagIÅret = LocalDateTime.now().withYear(år.getValue()).withDayOfYear(1);
         LocalDateTime sisteDagIÅret = LocalDateTime.now().withYear(år.getValue()).withDayOfYear(år.length());
-        return DatoIntervallEntitet.fraOgMedTilOgMed(førsteDagIÅret.toLocalDate(), sisteDagIÅret.toLocalDate());
+        return IntervallEntitet.fraOgMedTilOgMed(førsteDagIÅret.toLocalDate(), sisteDagIÅret.toLocalDate());
     }
 }

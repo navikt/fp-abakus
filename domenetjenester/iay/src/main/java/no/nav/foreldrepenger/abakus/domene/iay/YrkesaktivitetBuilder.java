@@ -3,8 +3,8 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 import java.util.Optional;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class YrkesaktivitetBuilder {
     private final YrkesaktivitetEntitet kladd;
@@ -104,7 +104,7 @@ public class YrkesaktivitetBuilder {
         return kladd;
     }
 
-    public AktivitetsAvtaleBuilder getAktivitetsAvtaleBuilder(DatoIntervallEntitet aktivitetsPeriode, boolean erAnsettelsesperioden) {
+    public AktivitetsAvtaleBuilder getAktivitetsAvtaleBuilder(IntervallEntitet aktivitetsPeriode, boolean erAnsettelsesperioden) {
         AktivitetsAvtaleBuilder oppdater = AktivitetsAvtaleBuilder.oppdater(kladd.getAlleAktivitetsAvtaler()
             .stream()
             .filter(aa -> aa.matcherPeriode(aktivitetsPeriode)
@@ -114,7 +114,7 @@ public class YrkesaktivitetBuilder {
         return oppdater;
     }
 
-    public void fjernPeriode(DatoIntervallEntitet aktivitetsPeriode) {
+    public void fjernPeriode(IntervallEntitet aktivitetsPeriode) {
         kladd.fjernPeriode(aktivitetsPeriode);
     }
 

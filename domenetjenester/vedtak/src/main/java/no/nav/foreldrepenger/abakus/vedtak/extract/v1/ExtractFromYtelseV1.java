@@ -9,6 +9,7 @@ import no.nav.abakus.vedtak.ytelse.Periode;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseType;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
 import no.nav.abakus.vedtak.ytelse.v1.anvisning.Anvisning;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
@@ -17,7 +18,6 @@ import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.domene.YtelseAnvistBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.extract.ExtractFromYtelse;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @ApplicationScoped
 public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
@@ -68,8 +68,8 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
         builder.leggTil(anvistBuilder);
     }
 
-    private DatoIntervallEntitet mapTilEntitet(Periode periode) {
-        return DatoIntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom());
+    private IntervallEntitet mapTilEntitet(Periode periode) {
+        return IntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom());
     }
 
     private no.nav.foreldrepenger.abakus.kodeverk.YtelseType getYtelseType(YtelseType kodeverk) {
