@@ -39,11 +39,14 @@ public class SigrunTjeneste {
     }
 
     public Map<DatoIntervallEntitet, Map<InntektspostType, BigDecimal>> beregnetSkatt(AktørId aktørId) {
-        SigrunResponse beregnetskatt = sigrunConsumer.beregnetskatt(Long.valueOf(aktørId.getId()));
+        SigrunResponse beregnetskatt;
         if (unleash.isEnabled("fpsak.sigrun.logg.respons", false)) {
+            beregnetskatt = sigrunConsumer.beregnetskattMedLogging(Long.valueOf(aktørId.getId()));
             for (Map.Entry<Year, List<BeregnetSkatt>> entry : beregnetskatt.getBeregnetSkatt().entrySet()) {
                 LOGGER.info("Beregnet skatt for " + entry.getKey() + " var: " + lagTekstAvRespons(entry.getValue()));
             }
+        } else {
+            beregnetskatt = sigrunConsumer.beregnetskatt(Long.valueOf(aktørId.getId()));
         }
         if (unleash.isEnabled("fpsak.sigrun.summertskattegrunnlag")) {
             SigrunSummertSkattegrunnlagResponse summertSkattegrunnlag = sigrunConsumer.summertSkattegrunnlag(Long.valueOf(aktørId.getId()));
