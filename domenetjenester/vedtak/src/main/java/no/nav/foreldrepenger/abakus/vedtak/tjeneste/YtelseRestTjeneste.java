@@ -7,6 +7,7 @@ import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -32,7 +33,7 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 @OpenAPIDefinition(tags = @Tag(name = "ytelse"))
 @Path("/ytelse/v1")
 @ApplicationScoped
-@Transaction
+@Transactional
 public class YtelseRestTjeneste {
 
     private VedtakYtelseRepository ytelseRepository;

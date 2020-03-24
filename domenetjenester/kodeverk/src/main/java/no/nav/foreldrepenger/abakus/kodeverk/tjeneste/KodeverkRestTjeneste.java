@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
@@ -16,14 +17,13 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
-import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 
 
 @OpenAPIDefinition(tags = {@Tag(name = "kodeverk")})
 @Path("/kodeverk/v1")
 @ApplicationScoped
-@Transaction
+@Transactional
 public class KodeverkRestTjeneste {
 
     private KodeverkRepository kodeverkRepository;
