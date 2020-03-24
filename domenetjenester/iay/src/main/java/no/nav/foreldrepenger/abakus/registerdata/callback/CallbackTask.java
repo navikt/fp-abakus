@@ -37,8 +37,7 @@ public class CallbackTask implements ProsessTaskHandler {
     private KoblingTjeneste koblingTjeneste;
     private InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste;
 
-    CallbackTask() {
-    }
+    CallbackTask() {}
 
     @Inject
     public CallbackTask(OidcRestClient oidcRestClient,
@@ -52,7 +51,7 @@ public class CallbackTask implements ProsessTaskHandler {
     @Override
     public void doTask(ProsessTaskData data) {
         String callbackUrl = data.getPropertyValue(TaskConstants.CALLBACK_URL);
-        Kobling kobling = koblingTjeneste.hent(data.getBehandlingId());
+        Kobling kobling = koblingTjeneste.hent(Long.valueOf(data.getBehandlingId()));
         if (callbackUrl == null || callbackUrl.isEmpty()) {
             log.info("Prøver callback uten url for kobling: {} ... Ignorerer", kobling);
             return;
