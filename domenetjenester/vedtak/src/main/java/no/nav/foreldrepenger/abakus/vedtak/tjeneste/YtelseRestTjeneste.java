@@ -7,6 +7,7 @@ import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -23,7 +24,6 @@ import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
-import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
@@ -32,7 +32,7 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 @OpenAPIDefinition(tags = @Tag(name = "ytelse"))
 @Path("/ytelse/v1")
 @ApplicationScoped
-@Transaction
+@Transactional
 public class YtelseRestTjeneste {
 
     private VedtakYtelseRepository ytelseRepository;

@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -40,7 +41,6 @@ import no.nav.abakus.iaygrunnlag.request.SjekkStatusRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.TaskResponsDto;
-import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
@@ -49,7 +49,7 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 @OpenAPIDefinition(tags = @Tag(name = "registerinnhenting"))
 @Path("/registerdata/v1")
 @ApplicationScoped
-@Transaction
+@Transactional
 public class RegisterdataRestTjeneste {
 
     private InnhentRegisterdataTjeneste innhentTjeneste;
