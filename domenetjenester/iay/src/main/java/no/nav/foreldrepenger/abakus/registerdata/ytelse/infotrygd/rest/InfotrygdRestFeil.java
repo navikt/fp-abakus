@@ -10,7 +10,7 @@ public interface InfotrygdRestFeil extends DeklarerteFeil {
 
     InfotrygdRestFeil FACTORY = FeilFactory.create(InfotrygdRestFeil.class);
 
-    @TekniskFeil(feilkode = "FP-180125", feilmelding = "Tjeneste %s gir feil, meld til #infotrygd_replikering", logLevel = LogLevel.ERROR)
+    @TekniskFeil(feilkode = "FP-180125", feilmelding = "Tjeneste %s gir feil, meld til #infotrygd_replikering hvis dette skjer gjennom lengre tidsperiode.", logLevel = LogLevel.ERROR)
     Feil feilfratjeneste(String tjeneste);
 
 }

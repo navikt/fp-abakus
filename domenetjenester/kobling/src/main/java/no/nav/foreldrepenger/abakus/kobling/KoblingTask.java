@@ -17,7 +17,7 @@ public abstract class KoblingTask implements ProsessTaskHandler {
 
     @Override
     public void doTask(ProsessTaskData prosessTaskData) {
-        Long koblingId = prosessTaskData.getBehandlingId(); // koblingId
+        Long koblingId = Long.valueOf(prosessTaskData.getBehandlingId()); // koblingId
         KoblingLås koblingLås = låsRepository.taLås(koblingId);
 
         prosesser(prosessTaskData);

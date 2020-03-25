@@ -10,6 +10,7 @@ import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -35,7 +36,6 @@ import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
-import no.nav.vedtak.felles.jpa.Transaction;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
@@ -44,7 +44,7 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 @OpenAPIDefinition(tags = @Tag(name = "arbeidsforhold"))
 @Path("/arbeidsforhold/v1")
 @ApplicationScoped
-@Transaction
+@Transactional
 public class ArbeidsforholdRestTjeneste {
 
     private KoblingTjeneste koblingTjeneste;
