@@ -154,7 +154,7 @@ public class InnhentRegisterdataTjeneste {
         callbackTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
 
         Optional<GrunnlagReferanse> eksisterendeGrunnlagRef = hentSisteReferanseFor(kobling.getKoblingReferanse());
-        eksisterendeGrunnlagRef.ifPresent(ref -> callbackTask.setProperty(EKSISTERENDE_GRUNNLAG_REF, ref.toString()));
+        eksisterendeGrunnlagRef.map(GrunnlagReferanse::getReferanse).ifPresent(ref -> callbackTask.setProperty(EKSISTERENDE_GRUNNLAG_REF, ref.toString()));
 
         if (dto.getCallbackUrl() != null) {
             innhentingTask.setProperty(TaskConstants.CALLBACK_URL, dto.getCallbackUrl());
