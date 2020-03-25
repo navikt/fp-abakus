@@ -23,8 +23,8 @@ import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.PermisjonsbeskrivelseTyp
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "Permisjon")
 @Table(name = "IAY_PERMISJON")
@@ -44,7 +44,7 @@ public class PermisjonEntitet extends BaseEntitet implements Permisjon, IndexKey
     private PermisjonsbeskrivelseType permisjonsbeskrivelseType;
 
     @Embedded
-    private DatoIntervallEntitet periode;
+    private IntervallEntitet periode;
 
     @ChangeTracked
     @Embedded
@@ -64,7 +64,7 @@ public class PermisjonEntitet extends BaseEntitet implements Permisjon, IndexKey
      */
     PermisjonEntitet(Permisjon permisjon) {
         this.permisjonsbeskrivelseType = permisjon.getPermisjonsbeskrivelseType();
-        this.periode = DatoIntervallEntitet.fraOgMedTilOgMed(permisjon.getFraOgMed(), permisjon.getTilOgMed());
+        this.periode = IntervallEntitet.fraOgMedTilOgMed(permisjon.getFraOgMed(), permisjon.getTilOgMed());
         this.prosentsats = permisjon.getProsentsats();
     }
 
@@ -84,9 +84,9 @@ public class PermisjonEntitet extends BaseEntitet implements Permisjon, IndexKey
 
     public void setPeriode(LocalDate fraOgMed, LocalDate tilOgMed) {
         if (tilOgMed != null) {
-            this.periode = DatoIntervallEntitet.fraOgMedTilOgMed(fraOgMed, tilOgMed);
+            this.periode = IntervallEntitet.fraOgMedTilOgMed(fraOgMed, tilOgMed);
         } else {
-            this.periode = DatoIntervallEntitet.fraOgMed(fraOgMed);
+            this.periode = IntervallEntitet.fraOgMed(fraOgMed);
         }
     }
 

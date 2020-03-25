@@ -19,10 +19,10 @@ import javax.persistence.Version;
 import org.hibernate.annotations.NaturalId;
 
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "Kobling")
 @Table(name = "KOBLING")
@@ -69,14 +69,14 @@ public class Kobling extends no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet
         @AttributeOverride(name = "fomDato", column = @Column(name = "opplysning_periode_fom")),
         @AttributeOverride(name = "tomDato", column = @Column(name = "opplysning_periode_tom"))
     })
-    private DatoIntervallEntitet opplysningsperiode;
+    private IntervallEntitet opplysningsperiode;
 
     @Embedded
     @AttributeOverrides({
         @AttributeOverride(name = "fomDato", column = @Column(name = "opptjening_periode_fom")),
         @AttributeOverride(name = "tomDato", column = @Column(name = "opptjening_periode_tom"))
     })
-    private DatoIntervallEntitet opptjeningsperiode;
+    private IntervallEntitet opptjeningsperiode;
 
     @Version
     @Column(name = "versjon", nullable = false)
@@ -123,19 +123,19 @@ public class Kobling extends no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet
         return opplysningsperiode.getFomDato().plusDays(1);
     }
 
-    public DatoIntervallEntitet getOpplysningsperiode() {
+    public IntervallEntitet getOpplysningsperiode() {
         return opplysningsperiode;
     }
 
-    public void setOpplysningsperiode(DatoIntervallEntitet opplysningsperiode) {
+    public void setOpplysningsperiode(IntervallEntitet opplysningsperiode) {
         this.opplysningsperiode = opplysningsperiode;
     }
 
-    public DatoIntervallEntitet getOpptjeningsperiode() {
+    public IntervallEntitet getOpptjeningsperiode() {
         return opptjeningsperiode;
     }
 
-    public void setOpptjeningsperiode(DatoIntervallEntitet opptjeningsperiode) {
+    public void setOpptjeningsperiode(IntervallEntitet opptjeningsperiode) {
         this.opptjeningsperiode = opptjeningsperiode;
     }
 

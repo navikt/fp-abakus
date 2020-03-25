@@ -15,9 +15,9 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæri
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class OppgittOpptjeningBuilder {
 
@@ -91,7 +91,7 @@ public class OppgittOpptjeningBuilder {
             return new EgenNæringBuilder(new OppgittEgenNæringEntitet());
         }
 
-        public EgenNæringBuilder medPeriode(DatoIntervallEntitet periode) {
+        public EgenNæringBuilder medPeriode(IntervallEntitet periode) {
             this.entitet.setPeriode(periode);
             return this;
         }
@@ -179,7 +179,7 @@ public class OppgittOpptjeningBuilder {
             return new OppgittArbeidsforholdBuilder(new OppgittArbeidsforholdEntitet());
         }
 
-        public OppgittArbeidsforholdBuilder medPeriode(DatoIntervallEntitet periode) {
+        public OppgittArbeidsforholdBuilder medPeriode(IntervallEntitet periode) {
             this.entitet.setPeriode(periode);
             return this;
         }

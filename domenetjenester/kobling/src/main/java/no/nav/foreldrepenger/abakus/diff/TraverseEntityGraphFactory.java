@@ -5,10 +5,9 @@ import java.util.function.Function;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraph;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraphConfig;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseJpaEntityGraphConfig;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kodeverk.Kodeverdi;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
-import no.nav.vedtak.felles.jpa.tid.ÅpenDatoIntervallEntitet;
 
 /*
  * Legger denne sammen med RootClass
@@ -28,7 +27,7 @@ public final class TraverseEntityGraphFactory {
         config.setOnlyCheckTrackedFields(medChangedTrackedOnly);
         
         config.addLeafClasses(Kodeverdi.class);
-        config.addLeafClasses(DatoIntervallEntitet.class, ÅpenDatoIntervallEntitet.class);
+        config.addLeafClasses(IntervallEntitet.class);
         
         config.addRootClasses(Kobling.class);
         config.setInclusionFilter(inclusionFilter);

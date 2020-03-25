@@ -28,13 +28,13 @@ import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "VedtakYtelseEntitet")
 @Table(name = "VEDTAK_YTELSE")
@@ -62,7 +62,7 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
 
     @Embedded
     @ChangeTracked
-    private DatoIntervallEntitet periode;
+    private IntervallEntitet periode;
 
     @ChangeTracked
     @Convert(converter = YtelseStatus.KodeverdiConverter.class)
@@ -160,11 +160,11 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
     }
 
     @Override
-    public DatoIntervallEntitet getPeriode() {
+    public IntervallEntitet getPeriode() {
         return periode;
     }
 
-    void setPeriode(DatoIntervallEntitet periode) {
+    void setPeriode(IntervallEntitet periode) {
         this.periode = periode;
     }
 

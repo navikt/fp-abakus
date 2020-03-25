@@ -25,8 +25,8 @@ import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.SkatteOgAvgiftsregelType
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "Inntektspost")
 @Table(name = "IAY_INNTEKTSPOST")
@@ -64,7 +64,7 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
     private YtelseInntektspostType ytelse = OffentligYtelseType.UDEFINERT;
 
     @Embedded
-    private DatoIntervallEntitet periode;
+    private IntervallEntitet periode;
 
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "beloep", nullable = false)))
@@ -115,7 +115,7 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
     }
 
     public void setPeriode(LocalDate fom, LocalDate tom) {
-        this.periode = DatoIntervallEntitet.fraOgMedTilOgMed(fom, tom);
+        this.periode = IntervallEntitet.fraOgMedTilOgMed(fom, tom);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
     }
     
     @Override
-    public DatoIntervallEntitet getPeriode() {
+    public IntervallEntitet getPeriode() {
         return periode;
     }
     

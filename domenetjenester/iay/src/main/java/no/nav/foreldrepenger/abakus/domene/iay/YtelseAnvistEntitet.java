@@ -20,9 +20,9 @@ import javax.persistence.Version;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "YtelseAnvistEntitet")
 @Table(name = "IAY_YTELSE_ANVIST")
@@ -38,7 +38,7 @@ public class YtelseAnvistEntitet extends BaseEntitet implements YtelseAnvist, In
 
     @Embedded
     @ChangeTracked
-    private DatoIntervallEntitet anvistPeriode;
+    private IntervallEntitet anvistPeriode;
 
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "beloep")))
@@ -64,7 +64,7 @@ public class YtelseAnvistEntitet extends BaseEntitet implements YtelseAnvist, In
     }
 
     public YtelseAnvistEntitet(YtelseAnvist ytelseAnvist) {
-        this.anvistPeriode = DatoIntervallEntitet.fraOgMedTilOgMed(ytelseAnvist.getAnvistFOM(), ytelseAnvist.getAnvistTOM());
+        this.anvistPeriode = IntervallEntitet.fraOgMedTilOgMed(ytelseAnvist.getAnvistFOM(), ytelseAnvist.getAnvistTOM());
         this.beløp = ytelseAnvist.getBeløp().orElse(null);
         this.dagsats = ytelseAnvist.getDagsats().orElse(null);
         this.utbetalingsgradProsent = ytelseAnvist.getUtbetalingsgradProsent().orElse(null);
@@ -108,7 +108,7 @@ public class YtelseAnvistEntitet extends BaseEntitet implements YtelseAnvist, In
         this.dagsats = dagsats;
     }
 
-    void setAnvistPeriode(DatoIntervallEntitet periode) {
+    void setAnvistPeriode(IntervallEntitet periode) {
         this.anvistPeriode = periode;
     }
 

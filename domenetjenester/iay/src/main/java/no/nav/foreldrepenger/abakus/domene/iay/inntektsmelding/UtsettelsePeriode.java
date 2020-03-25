@@ -1,6 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding;
 
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 public interface UtsettelsePeriode {
     /**
@@ -8,7 +8,7 @@ public interface UtsettelsePeriode {
      *
      * @return perioden
      */
-    DatoIntervallEntitet getPeriode();
+    IntervallEntitet getPeriode();
 
     /**
      * Årsaken til utsettelsen

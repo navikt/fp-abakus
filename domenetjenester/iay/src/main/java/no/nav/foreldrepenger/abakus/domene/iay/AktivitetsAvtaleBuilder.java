@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class AktivitetsAvtaleBuilder {
     private final AktivitetsAvtale aktivitetsAvtaleEntitet;
@@ -34,7 +34,7 @@ public class AktivitetsAvtaleBuilder {
         return this;
     }
 
-    public AktivitetsAvtaleBuilder medPeriode(DatoIntervallEntitet periode) {
+    public AktivitetsAvtaleBuilder medPeriode(IntervallEntitet periode) {
         this.aktivitetsAvtaleEntitet.setPeriode(periode);
         return this;
     }

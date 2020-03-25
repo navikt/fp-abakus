@@ -36,6 +36,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.SkatteOgAvgiftsregelType;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
@@ -57,7 +58,6 @@ import no.nav.foreldrepenger.abakus.typer.OrganisasjonsNummerValidator;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInnhentingTjeneste {
 
@@ -91,13 +91,13 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
     }
 
     private void innhentNæringsOpplysninger(Kobling kobling, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder) {
-        Map<DatoIntervallEntitet, Map<InntektspostType, BigDecimal>> map = sigrunTjeneste.beregnetSkatt(kobling.getAktørId());
+        Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> map = sigrunTjeneste.beregnetSkatt(kobling.getAktørId());
         InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder = inntektArbeidYtelseAggregatBuilder
             .getAktørInntektBuilder(kobling.getAktørId());
 
         InntektBuilder inntektBuilder = aktørInntektBuilder.getInntektBuilder(InntektsKilde.SIGRUN, null);
 
-        for (Map.Entry<DatoIntervallEntitet, Map<InntektspostType, BigDecimal>> entry : map.entrySet()) {
+        for (Map.Entry<IntervallEntitet, Map<InntektspostType, BigDecimal>> entry : map.entrySet()) {
             for (Map.Entry<InntektspostType, BigDecimal> type : entry.getValue().entrySet()) {
                 InntektspostBuilder inntektspostBuilder = inntektBuilder.getInntektspostBuilder();
                 inntektspostBuilder
@@ -353,11 +353,11 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
 
     private AktivitetsAvtaleBuilder opprettAktivitetsAvtaleFrilans(FrilansArbeidsforhold frilansArbeidsforhold,
                                                                    YrkesaktivitetBuilder yrkesaktivitetBuilder) {
-        DatoIntervallEntitet periode;
+        IntervallEntitet periode;
         if (frilansArbeidsforhold.getTom() == null || frilansArbeidsforhold.getTom().isBefore(frilansArbeidsforhold.getFom())) {
-            periode = DatoIntervallEntitet.fraOgMed(frilansArbeidsforhold.getFom());
+            periode = IntervallEntitet.fraOgMed(frilansArbeidsforhold.getFom());
         } else {
-            periode = DatoIntervallEntitet.fraOgMedTilOgMed(frilansArbeidsforhold.getFom(), frilansArbeidsforhold.getTom());
+            periode = IntervallEntitet.fraOgMedTilOgMed(frilansArbeidsforhold.getFom(), frilansArbeidsforhold.getTom());
         }
         return yrkesaktivitetBuilder.getAktivitetsAvtaleBuilder(periode, true);
     }

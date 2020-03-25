@@ -33,9 +33,9 @@ import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.BekreftetPermisjonStatus
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 /**
  * Overstyring av arbeidsforhold angitt av saksbehandler.
@@ -166,7 +166,7 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
 
     public void leggTilOverstyrtPeriode(LocalDate fom, LocalDate tom) {
         ArbeidsforholdOverstyrtePerioderEntitet overstyrtPeriode = new ArbeidsforholdOverstyrtePerioderEntitet();
-        overstyrtPeriode.setPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(fom, tom));
+        overstyrtPeriode.setPeriode(IntervallEntitet.fraOgMedTilOgMed(fom, tom));
         overstyrtPeriode.setArbeidsforholdOverstyring(this);
         arbeidsforholdOverstyrtePerioder.add(overstyrtPeriode);
     }

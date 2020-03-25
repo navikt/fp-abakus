@@ -24,8 +24,8 @@ import org.hibernate.annotations.JoinFormula;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 @Entity(name = "NaturalYtelse")
 @Table(name = "IAY_NATURAL_YTELSE")
@@ -41,7 +41,7 @@ public class NaturalYtelseEntitet extends BaseEntitet implements NaturalYtelse, 
 
     @Embedded
     @ChangeTracked
-    private DatoIntervallEntitet periode;
+    private IntervallEntitet periode;
 
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "beloep_mnd", nullable = false)))
@@ -65,7 +65,7 @@ public class NaturalYtelseEntitet extends BaseEntitet implements NaturalYtelse, 
     public NaturalYtelseEntitet(LocalDate fom, LocalDate tom, BigDecimal beloepPerMnd, NaturalYtelseType type) {
         this.beloepPerMnd = new Beløp(beloepPerMnd);
         this.type = type;
-        this.periode = DatoIntervallEntitet.fraOgMedTilOgMed(fom, tom);
+        this.periode = IntervallEntitet.fraOgMedTilOgMed(fom, tom);
     }
 
     NaturalYtelseEntitet(NaturalYtelse naturalYtelse) {
@@ -74,7 +74,7 @@ public class NaturalYtelseEntitet extends BaseEntitet implements NaturalYtelse, 
         this.type = naturalYtelse.getType();
     }
 
-    public NaturalYtelseEntitet(DatoIntervallEntitet datoIntervall, BigDecimal beløpPerMnd, NaturalYtelseType naturalYtelseType) {
+    public NaturalYtelseEntitet(IntervallEntitet datoIntervall, BigDecimal beløpPerMnd, NaturalYtelseType naturalYtelseType) {
         this(datoIntervall.getFomDato(), datoIntervall.getTomDato(), beløpPerMnd, naturalYtelseType);
     }
 
@@ -88,7 +88,7 @@ public class NaturalYtelseEntitet extends BaseEntitet implements NaturalYtelse, 
     }
 
     @Override
-    public DatoIntervallEntitet getPeriode() {
+    public IntervallEntitet getPeriode() {
         return periode;
     }
 

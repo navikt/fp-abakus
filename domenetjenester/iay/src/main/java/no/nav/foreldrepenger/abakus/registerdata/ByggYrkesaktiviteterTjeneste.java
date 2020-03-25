@@ -18,12 +18,12 @@ import no.nav.foreldrepenger.abakus.domene.iay.PermisjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.PermisjonsbeskrivelseType;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsavtale;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 class ByggYrkesaktiviteterTjeneste {
 
@@ -74,7 +74,7 @@ class ByggYrkesaktiviteterTjeneste {
             .getAktivitetsAvtaleBuilder()
             .medProsentsats(arbeidsavtale.getStillingsprosent())
             .medSisteLønnsendringsdato(arbeidsavtale.getSisteLønnsendringsdato() != null ? arbeidsavtale.getSisteLønnsendringsdato() : fom)
-            .medPeriode(DatoIntervallEntitet.fraOgMed(fom));
+            .medPeriode(IntervallEntitet.fraOgMed(fom));
     }
 
     private Optional<Arbeidsavtale> finnSisteArbeidsavtale(List<Arbeidsforhold> arbeidsforhold) {
@@ -94,7 +94,7 @@ class ByggYrkesaktiviteterTjeneste {
     private AktivitetsAvtaleBuilder byggAnsettelsesPeriode(YrkesaktivitetBuilder builder, LocalDate fom) {
         return builder
             .getAktivitetsAvtaleBuilder()
-            .medPeriode(DatoIntervallEntitet.fraOgMed(fom));
+            .medPeriode(IntervallEntitet.fraOgMed(fom));
     }
 
     private void byggPermisjoner(YrkesaktivitetBuilder builder, Arbeidsforhold arbeidsforhold1) {
@@ -142,11 +142,11 @@ class ByggYrkesaktiviteterTjeneste {
 
     private AktivitetsAvtaleBuilder opprettAktivitetsAvtaler(Arbeidsavtale arbeidsavtale,
                                                              YrkesaktivitetBuilder yrkesaktivitetBuilder) {
-        DatoIntervallEntitet periode;
+        IntervallEntitet periode;
         if (arbeidsavtale.getArbeidsavtaleTom() == null) {
-            periode = DatoIntervallEntitet.fraOgMed(arbeidsavtale.getArbeidsavtaleFom());
+            periode = IntervallEntitet.fraOgMed(arbeidsavtale.getArbeidsavtaleFom());
         } else {
-            periode = DatoIntervallEntitet.fraOgMedTilOgMed(arbeidsavtale.getArbeidsavtaleFom(), arbeidsavtale.getArbeidsavtaleTom());
+            periode = IntervallEntitet.fraOgMedTilOgMed(arbeidsavtale.getArbeidsavtaleFom(), arbeidsavtale.getArbeidsavtaleTom());
         }
         AktivitetsAvtaleBuilder aktivitetsAvtaleBuilder = yrkesaktivitetBuilder.getAktivitetsAvtaleBuilder(periode, arbeidsavtale.getErAnsettelsesPerioden());
         aktivitetsAvtaleBuilder

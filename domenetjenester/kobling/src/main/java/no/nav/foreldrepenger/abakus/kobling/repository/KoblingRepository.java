@@ -16,6 +16,7 @@ import no.nav.foreldrepenger.abakus.felles.diff.DiffEntity;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraph;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseJpaEntityGraphConfig;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kodeverk.Kodeliste;
@@ -25,8 +26,6 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
-import no.nav.vedtak.felles.jpa.tid.ÅpenDatoIntervallEntitet;
 
 @ApplicationScoped
 public class KoblingRepository {
@@ -86,7 +85,7 @@ public class KoblingRepository {
         config.setOnlyCheckTrackedFields(false);
         config.addLeafClasses(KodeverkTabell.class);
         config.addLeafClasses(Kodeliste.class);
-        config.addLeafClasses(DatoIntervallEntitet.class, ÅpenDatoIntervallEntitet.class);
+        config.addLeafClasses(IntervallEntitet.class);
         var diffEntity = new DiffEntity(new TraverseGraph(config));
 
         return diffEntity.diff(eksisterendeKobling, nyKobling);

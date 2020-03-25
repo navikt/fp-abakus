@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public interface OppgittEgenNæring {
 
@@ -14,7 +14,7 @@ public interface OppgittEgenNæring {
 
     LocalDate getTilOgMed();
 
-    DatoIntervallEntitet getPeriode();
+    IntervallEntitet getPeriode();
 
     VirksomhetType getVirksomhetType();
 

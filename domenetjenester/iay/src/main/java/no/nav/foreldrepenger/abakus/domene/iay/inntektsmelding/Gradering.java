@@ -1,7 +1,7 @@
 package no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding;
 
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public interface Gradering {
     /**
@@ -9,7 +9,7 @@ public interface Gradering {
      *
      * @return perioden
      */
-    DatoIntervallEntitet getPeriode();
+    IntervallEntitet getPeriode();
 
     /**
      * En arbeidstaker kan kombinere foreldrepenger med deltidsarbeid.

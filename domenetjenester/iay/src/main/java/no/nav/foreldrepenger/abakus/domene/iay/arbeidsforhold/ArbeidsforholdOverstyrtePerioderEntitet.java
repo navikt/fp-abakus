@@ -18,7 +18,7 @@ import javax.persistence.Version;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 @Table(name = "IAY_OVERSTYRTE_PERIODER")
 @Entity(name = "ArbeidsforholdOverstyrtePerioder")
@@ -33,7 +33,7 @@ public class ArbeidsforholdOverstyrtePerioderEntitet extends BaseEntitet impleme
         @AttributeOverride(name = "fomDato", column = @Column(name = "FOM")),
         @AttributeOverride(name = "tomDato", column = @Column(name = "TOM"))
     })
-    private DatoIntervallEntitet periode;
+    private IntervallEntitet periode;
 
     @JsonBackReference
     @ManyToOne(optional = false)
@@ -52,7 +52,7 @@ public class ArbeidsforholdOverstyrtePerioderEntitet extends BaseEntitet impleme
         this.periode = arbeidsforholdOverstyrtePerioderEntitet.getOverstyrtePeriode();
     }
 
-    void setPeriode(DatoIntervallEntitet periode) {
+    void setPeriode(IntervallEntitet periode) {
         this.periode = periode;
     }
 
@@ -82,7 +82,7 @@ public class ArbeidsforholdOverstyrtePerioderEntitet extends BaseEntitet impleme
     }
 
     @Override
-    public DatoIntervallEntitet getOverstyrtePeriode() {
+    public IntervallEntitet getOverstyrtePeriode() {
         return periode;
     }
 }

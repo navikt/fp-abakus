@@ -23,10 +23,10 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 
 @Table(name = "IAY_EGEN_NAERING")
@@ -43,7 +43,7 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
 
     @Embedded
     @ChangeTracked
-    private DatoIntervallEntitet periode;
+    private IntervallEntitet periode;
 
     @ChangeTracked
     @Embedded
@@ -112,11 +112,11 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
     }
 
     @Override
-    public DatoIntervallEntitet getPeriode() {
+    public IntervallEntitet getPeriode() {
         return periode;
     }
 
-    void setPeriode(DatoIntervallEntitet periode) {
+    void setPeriode(IntervallEntitet periode) {
         this.periode = periode;
     }
 

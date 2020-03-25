@@ -2,12 +2,12 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.util.Optional;
 
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.abakus.vedtak.domene.TemaUnderkategori;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class YtelseBuilder {
 
@@ -41,7 +41,7 @@ public class YtelseBuilder {
         return this;
     }
 
-    public YtelseBuilder medPeriode(DatoIntervallEntitet intervallEntitet) {
+    public YtelseBuilder medPeriode(IntervallEntitet intervallEntitet) {
         ytelseEntitet.setPeriode(intervallEntitet);
         return this;
     }
@@ -71,7 +71,7 @@ public class YtelseBuilder {
         return this;
     }
 
-    public DatoIntervallEntitet getPeriode() {
+    public IntervallEntitet getPeriode() {
         return ytelseEntitet.getPeriode();
     }
 

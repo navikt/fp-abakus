@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Ytelse;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
@@ -27,7 +28,6 @@ import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseEntitet;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.domene.YtelseAnvistBuilder;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
 
 public class YtelseRegisterinnhentingTest {
 
@@ -46,17 +46,17 @@ public class YtelseRegisterinnhentingTest {
     public void skal_gjenskape_feil() throws Exception {
         // Arrange
         VedtakYtelseEntitet vy = (VedtakYtelseEntitet)VedtakYtelseBuilder.oppdatere(Optional.empty())
-            .medPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusMonths(4), LocalDate.now().minusMonths(2)))
+            .medPeriode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusMonths(4), LocalDate.now().minusMonths(2)))
             .medAktør(AktørId.dummy())
             .medStatus(YtelseStatus.AVSLUTTET)
             .medSaksnummer(new Saksnummer("123"))
             .medKilde(Fagsystem.FPSAK)
             .medYtelseType(YtelseType.ENGANGSTØNAD)
             .medBehandlingsTema(TemaUnderkategori.ENGANGSSTONAD_FODSEL)
-            .leggTil(YtelseAnvistBuilder.ny().medAnvistPeriode(DatoIntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusMonths(4), LocalDate.now().minusMonths(2))))
+            .leggTil(YtelseAnvistBuilder.ny().medAnvistPeriode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusMonths(4), LocalDate.now().minusMonths(2))))
             .build();
         Kobling k = new Kobling();
-        k.setOpplysningsperiode(DatoIntervallEntitet.fraOgMed(LocalDate.now().minusMonths(17)));
+        k.setOpplysningsperiode(IntervallEntitet.fraOgMed(LocalDate.now().minusMonths(17)));
         when(samletTjeneste.hentYtelserTjenester(any(), any())).thenReturn(Collections.emptyList());
         when(samletTjeneste.innhentInfotrygdGrunnlag(any(), any())).thenReturn(Collections.emptyList());
         when(vedtakYtelseRepository.hentYtelserForIPeriode(any(), any(), any())).thenReturn(List.of(vy));

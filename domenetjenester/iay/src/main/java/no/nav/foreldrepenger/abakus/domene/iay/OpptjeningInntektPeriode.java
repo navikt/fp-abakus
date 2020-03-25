@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
-import no.nav.vedtak.felles.jpa.tid.DatoIntervallEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 public class OpptjeningInntektPeriode {
 
-    private DatoIntervallEntitet periode;
+    private IntervallEntitet periode;
     private BigDecimal beløp;
     private Opptjeningsnøkkel opptjeningsnøkkel;
     private InntektspostType type;
