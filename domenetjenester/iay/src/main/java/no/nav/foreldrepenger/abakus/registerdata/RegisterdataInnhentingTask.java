@@ -49,7 +49,7 @@ public class RegisterdataInnhentingTask extends KoblingTask {
 
     @Override
     protected void prosesser(ProsessTaskData prosessTaskData) {
-        Kobling kobling = koblingTjeneste.hent(prosessTaskData.getBehandlingId());
+        Kobling kobling = koblingTjeneste.hent(Long.valueOf(prosessTaskData.getBehandlingId()));
         prosessTaskData.getPayloadAsString();
 
         var informasjonsElementer = Set.of(RegisterdataElement.ARBEIDSFORHOLD,
