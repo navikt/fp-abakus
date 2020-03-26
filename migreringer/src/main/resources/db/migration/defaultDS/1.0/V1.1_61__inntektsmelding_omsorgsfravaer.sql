@@ -22,4 +22,7 @@ create index idx_iay_fravaer_01 on iay_fravaer(inntektsmelding_id);
 
 alter table iay_fravaer add constraint iay_fravaer_valider_periode check (fom <= tom);
 
+create sequence SEQ_IAY_FRAVAER
+    increment by 50
+    START WITH 1000000 NO CYCLE;
 
