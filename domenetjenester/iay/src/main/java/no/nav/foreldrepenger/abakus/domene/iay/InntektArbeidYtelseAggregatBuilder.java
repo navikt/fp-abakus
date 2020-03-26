@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
  * NB! Viktig at denne builderen hentes fra repository for å sikre at den er rett tilstand ved oppdatering. Hvis ikke kan data gå tapt.
  */
 public class InntektArbeidYtelseAggregatBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InntektArbeidYtelseAggregatBuilder.class);
 
     private final InntektArbeidYtelseAggregat kladd;
     private final VersjonType versjon;
@@ -382,9 +381,7 @@ public class InntektArbeidYtelseAggregatBuilder {
         }
 
         private void fjernYtelse(Ytelse yt) {
-            LOGGER.info("Fjerner ytelse {} fra kladd {}", yt, this.kladd);
-            boolean bleYtelseFjernet = this.kladd.fjernYtelse(yt);
-            LOGGER.info("Ytelse ble fjernet {}", bleYtelseFjernet);
+            this.kladd.fjernYtelse(yt);
         }
 
 
