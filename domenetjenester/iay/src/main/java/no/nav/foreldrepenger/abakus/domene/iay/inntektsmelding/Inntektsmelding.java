@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -52,15 +53,19 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
 
     @OneToMany(mappedBy = "inntektsmelding")
     @ChangeTracked
-    private List<GraderingEntitet> graderinger = new ArrayList<>();
+    private List<Gradering> graderinger = new ArrayList<>();
 
     @OneToMany(mappedBy = "inntektsmelding")
     @ChangeTracked
-    private List<NaturalYtelseEntitet> naturalYtelser = new ArrayList<>();
+    private List<NaturalYtelse> naturalYtelser = new ArrayList<>();
 
     @OneToMany(mappedBy = "inntektsmelding")
     @ChangeTracked
-    private List<UtsettelsePeriodeEntitet> utsettelsePerioder = new ArrayList<>();
+    private List<Fravær> oppgittFravær = new ArrayList<>();
+
+    @OneToMany(mappedBy = "inntektsmelding")
+    @ChangeTracked
+    private List<UtsettelsePeriode> utsettelsePerioder = new ArrayList<>();
 
     @Embedded
     @ChangeTracked
@@ -109,7 +114,7 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
 
     @OneToMany(mappedBy = "inntektsmelding")
     @ChangeTracked
-    private List<RefusjonEntitet> endringerRefusjon = new ArrayList<>();
+    private List<Refusjon> endringerRefusjon = new ArrayList<>();
 
     @ManyToOne(optional = false)
     @JoinColumnsOrFormulas({
@@ -126,6 +131,7 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
     Inntektsmelding() {
     }
 
+    /** copy ctor. */
     public Inntektsmelding(Inntektsmelding inntektsmelding) {
         this.arbeidsgiver = inntektsmelding.getArbeidsgiver();
         this.arbeidsforholdRef = inntektsmelding.getArbeidsforholdRef();
@@ -142,24 +148,29 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
         this.mottattDato = inntektsmelding.getMottattDato();
 
         this.graderinger = inntektsmelding.getGraderinger().stream().map(g -> {
-            final GraderingEntitet graderingEntitet = new GraderingEntitet(g);
-            graderingEntitet.setInntektsmelding(this);
-            return graderingEntitet;
+            var data = new Gradering(g);
+            data.setInntektsmelding(this);
+            return data;
         }).collect(Collectors.toList());
         this.naturalYtelser = inntektsmelding.getNaturalYtelser().stream().map(n -> {
-            final NaturalYtelseEntitet naturalYtelseEntitet = new NaturalYtelseEntitet(n);
-            naturalYtelseEntitet.setInntektsmelding(this);
-            return naturalYtelseEntitet;
+            var data = new NaturalYtelse(n);
+            data.setInntektsmelding(this);
+            return data;
         }).collect(Collectors.toList());
         this.utsettelsePerioder = inntektsmelding.getUtsettelsePerioder().stream().map(u -> {
-            final UtsettelsePeriodeEntitet utsettelsePeriodeEntitet = new UtsettelsePeriodeEntitet(u);
-            utsettelsePeriodeEntitet.setInntektsmelding(this);
-            return utsettelsePeriodeEntitet;
+            var data = new UtsettelsePeriode(u);
+            data.setInntektsmelding(this);
+            return data;
         }).collect(Collectors.toList());
         this.endringerRefusjon = inntektsmelding.getEndringerRefusjon().stream().map(r -> {
-            final RefusjonEntitet refusjonEntitet = new RefusjonEntitet(r);
-            refusjonEntitet.setInntektsmelding(this);
-            return refusjonEntitet;
+            var data = new Refusjon(r);
+            data.setInntektsmelding(this);
+            return data;
+        }).collect(Collectors.toList());
+        this.oppgittFravær = inntektsmelding.getOppgittFravær().stream().map(f -> {
+            var data = new Fravær(f);
+            data.setInntektsmelding(this);
+            return data;
         }).collect(Collectors.toList());
     }
 
@@ -226,6 +237,10 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
         this.kildesystem = kildesystem;
     }
 
+    public List<Fravær> getOppgittFravær() {
+        return Collections.unmodifiableList(oppgittFravær);
+    }
+
     /**
      * Liste over perioder med graderinger
      *
@@ -270,12 +285,11 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
     public boolean gjelderForEtSpesifiktArbeidsforhold() {
         return getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold();
     }
-    
+
     public boolean gjelderSammeArbeidsforhold(Inntektsmelding annen) {
         return getArbeidsgiver().equals(annen.getArbeidsgiver())
             && getArbeidsforholdRef().gjelderFor(annen.getArbeidsforholdRef());
     }
-
 
     /**
      * Setter intern arbeidsdforhold Id for inntektsmelding
@@ -376,23 +390,28 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
     }
 
     void leggTil(Gradering gradering) {
-        this.graderinger.add((GraderingEntitet) gradering);
-        ((GraderingEntitet) gradering).setInntektsmelding(this);
+        this.graderinger.add(gradering);
+        gradering.setInntektsmelding(this);
     }
 
     void leggTil(NaturalYtelse naturalYtelse) {
-        this.naturalYtelser.add((NaturalYtelseEntitet) naturalYtelse);
-        ((NaturalYtelseEntitet) naturalYtelse).setInntektsmelding(this);
+        this.naturalYtelser.add(naturalYtelse);
+        naturalYtelse.setInntektsmelding(this);
     }
 
     void leggTil(UtsettelsePeriode utsettelsePeriode) {
-        this.utsettelsePerioder.add((UtsettelsePeriodeEntitet) utsettelsePeriode);
-        ((UtsettelsePeriodeEntitet) utsettelsePeriode).setInntektsmelding(this);
+        this.utsettelsePerioder.add(utsettelsePeriode);
+        utsettelsePeriode.setInntektsmelding(this);
     }
 
     void leggTil(Refusjon refusjon) {
-        this.endringerRefusjon.add((RefusjonEntitet) refusjon);
-        ((RefusjonEntitet) refusjon).setInntektsmelding(this);
+        this.endringerRefusjon.add(refusjon);
+        refusjon.setInntektsmelding(this);
+    }
+
+    void leggTil(Fravær fravær) {
+        this.oppgittFravær.add(fravær);
+        fravær.setInntektsmelding(this);
     }
 
     @Override

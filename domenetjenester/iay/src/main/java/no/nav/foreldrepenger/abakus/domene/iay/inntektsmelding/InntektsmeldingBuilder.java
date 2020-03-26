@@ -130,6 +130,12 @@ public class InntektsmeldingBuilder {
         return this;
     }
 
+    public InntektsmeldingBuilder leggTil(Fravær fravær) {
+        precondition();
+        kladd.leggTil(fravær);
+        return this;
+    }
+    
     public InntektsmeldingBuilder leggTil(UtsettelsePeriode utsettelsePeriode) {
         precondition();
         kladd.leggTil(utsettelsePeriode);

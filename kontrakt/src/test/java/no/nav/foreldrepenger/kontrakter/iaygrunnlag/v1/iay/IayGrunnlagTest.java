@@ -33,6 +33,7 @@ import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdReferanseDto;
 import no.nav.abakus.iaygrunnlag.inntekt.v1.InntekterDto;
 import no.nav.abakus.iaygrunnlag.inntekt.v1.UtbetalingDto;
 import no.nav.abakus.iaygrunnlag.inntekt.v1.UtbetalingsPostDto;
+import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.FraværDto;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.GraderingDto;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingDto;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
@@ -216,6 +217,7 @@ public class IayGrunnlagTest {
                     .medEndringerRefusjon(List.of(new RefusjonDto(fom, 100)))
                     .medGraderinger(List.of(new GraderingDto(periode, 50)))
                     .medNaturalytelser(List.of(new NaturalytelseDto(periode, NaturalytelseType.ELEKTRISK_KOMMUNIKASJON, 100)))
+                    .medOppgittFravær(List.of(new FraværDto(periode)))
                     .medUtsettelsePerioder(List.of(new UtsettelsePeriodeDto(periode, UtsettelseÅrsakType.LOVBESTEMT_FERIE))))));
 
         grunnlag.medOppgittOpptjening(

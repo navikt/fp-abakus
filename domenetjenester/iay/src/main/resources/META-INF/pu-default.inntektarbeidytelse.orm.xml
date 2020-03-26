@@ -8,6 +8,7 @@
     <sequence-generator name="SEQ_GRADERING" allocation-size="50" sequence-name="SEQ_GRADERING" />
     <sequence-generator name="SEQ_UTSETTELSE_PERIODE" allocation-size="50" sequence-name="SEQ_UTSETTELSE_PERIODE" />
     <sequence-generator name="SEQ_NATURAL_YTELSE" allocation-size="50" sequence-name="SEQ_NATURAL_YTELSE" />
+    <sequence-generator name="SEQ_IAY_FRAVAER" allocation-size="50" sequence-name="SEQ_IAY_FRAVAER" />
     <sequence-generator name="SEQ_INNTEKTSMELDING" allocation-size="50" sequence-name="SEQ_INNTEKTSMELDING" />
     <sequence-generator name="SEQ_INNTEKTSMELDINGER" allocation-size="50" sequence-name="SEQ_INNTEKTSMELDINGER" />
     <sequence-generator name="SEQ_REFUSJON" allocation-size="50" sequence-name="SEQ_REFUSJON" />
@@ -69,12 +70,13 @@
     <!-- Inntektsmelding -->
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.GraderingEntitet" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelseEntitet" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Fravær" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Gradering" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelse" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelseType" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriodeEntitet" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriode" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelseÅrsak" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.RefusjonEntitet" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Refusjon" />
 
     <!-- Kodeverk for InntektArbeidYtelser -->
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.SkatteOgAvgiftsregelType" />
