@@ -18,6 +18,7 @@ import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
 import no.nav.abakus.iaygrunnlag.JournalpostId;
 import no.nav.abakus.iaygrunnlag.Organisasjon;
 import no.nav.abakus.iaygrunnlag.Periode;
+import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.FraværDto;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.GraderingDto;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingDto;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
@@ -32,16 +33,13 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanse;
+import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Fravær;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Gradering;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.GraderingEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelse;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelseEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Refusjon;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.RefusjonEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriode;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriodeEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
@@ -67,6 +65,10 @@ public class MapInntektsmeldinger {
         .comparing((UtsettelsePeriodeDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getUtsettelseÅrsakDto() == null ? null : dto.getUtsettelseÅrsakDto().getKode(), Comparator.nullsLast(Comparator.naturalOrder()));
+
+    private static final Comparator<FraværDto> COMP_FRAVÆR = Comparator
+            .comparing((FraværDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+            .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
 
     private static final Comparator<InntektsmeldingDto> COMP_INNTEKTSMELDING = Comparator
         .comparing((InntektsmeldingDto im) -> im.getArbeidsgiver().getIdent())
@@ -220,12 +222,18 @@ public class MapInntektsmeldinger {
             inntektsmeldingDto.medEndringerRefusjon(
                 im.getEndringerRefusjon().stream().map(this::mapEndringRefusjon).sorted(COMP_ENDRINGER_REFUSJON).collect(Collectors.toList()));
 
-            inntektsmeldingDto.medGraderinger(im.getGraderinger().stream().map(this::mapGradering).sorted(COMP_GRADERING).collect(Collectors.toList()));
+            inntektsmeldingDto.medGraderinger(
+                im.getGraderinger().stream().map(this::mapGradering).sorted(COMP_GRADERING).collect(Collectors.toList()));
 
-            inntektsmeldingDto.medNaturalytelser(im.getNaturalYtelser().stream().map(this::mapNaturalytelse).sorted(COMP_NATURALYTELSE).collect(Collectors.toList()));
+            inntektsmeldingDto.medNaturalytelser(
+                im.getNaturalYtelser().stream().map(this::mapNaturalytelse).sorted(COMP_NATURALYTELSE).collect(Collectors.toList()));
 
-            inntektsmeldingDto.medUtsettelsePerioder(im.getUtsettelsePerioder().stream().map(this::mapUtsettelsePeriode).sorted(COMP_UTSETTELSE).collect(Collectors.toList()));
+            inntektsmeldingDto.medUtsettelsePerioder(
+                im.getUtsettelsePerioder().stream().map(this::mapUtsettelsePeriode).sorted(COMP_UTSETTELSE).collect(Collectors.toList()));
 
+            inntektsmeldingDto.medOppgittFravær(
+                im.getOppgittFravær().stream().map(this::mapOppgittFravær).sorted(COMP_FRAVÆR).collect(Collectors.toList()));
+            
             return inntektsmeldingDto;
         }
 
@@ -244,6 +252,11 @@ public class MapInntektsmeldinger {
             var type = KodeverkMapper.mapNaturalYtelseTilDto(naturalYtelse.getType());
             var beløpPerMnd = naturalYtelse.getBeloepPerMnd().getVerdi();
             return new NaturalytelseDto(new Periode(periode.getFomDato(), periode.getTomDato()), type, beløpPerMnd);
+        }
+        
+        private FraværDto mapOppgittFravær(Fravær fravær) {
+            var periode = fravær.getPeriode();
+            return new FraværDto(new Periode(periode.getFomDato(), periode.getTomDato()), fravær.getVarighetPerDag());
         }
 
         private UtsettelsePeriodeDto mapUtsettelsePeriode(UtsettelsePeriode utsettelsePeriode) {
@@ -317,13 +330,13 @@ public class MapInntektsmeldinger {
                 .medMottattDato(dto.getMottattDato());
 
             dto.getEndringerRefusjon().stream()
-                .map(eir -> new RefusjonEntitet(eir.getRefusjonsbeløpMnd(), eir.getFom()))
+                .map(eir -> new Refusjon(eir.getRefusjonsbeløpMnd(), eir.getFom()))
                 .forEach(builder::leggTil);
 
             dto.getGraderinger().stream()
                 .map(gr -> {
                     var periode = gr.getPeriode();
-                    return new GraderingEntitet(periode.getFom(), periode.getTom(), gr.getArbeidstidProsent());
+                    return new Gradering(periode.getFom(), periode.getTom(), gr.getArbeidstidProsent());
                 })
                 .forEach(builder::leggTil);
 
@@ -331,7 +344,7 @@ public class MapInntektsmeldinger {
                 .map(ny -> {
                     var periode = ny.getPeriode();
                     var naturalYtelseType = KodeverkMapper.mapNaturalYtelseFraDto(ny.getType());
-                    return new NaturalYtelseEntitet(periode.getFom(), periode.getTom(), ny.getBeløpPerMnd(), naturalYtelseType);
+                    return new NaturalYtelse(periode.getFom(), periode.getTom(), ny.getBeløpPerMnd(), naturalYtelseType);
                 })
                 .forEach(builder::leggTil);
 
@@ -339,9 +352,16 @@ public class MapInntektsmeldinger {
                 .map(up -> {
                     var periode = up.getPeriode();
                     var utsettelseÅrsak = KodeverkMapper.mapUtsettelseÅrsakFraDto(up.getUtsettelseÅrsakDto());
-                    return UtsettelsePeriodeEntitet.utsettelse(periode.getFom(), periode.getTom(), utsettelseÅrsak);
+                    return UtsettelsePeriode.utsettelse(periode.getFom(), periode.getTom(), utsettelseÅrsak);
                 })
                 .forEach(builder::leggTil);
+            
+            dto.getOppgittFravær().stream()
+            .map(ny -> {
+                var periode = ny.getPeriode();
+                return new Fravær(periode.getFom(), periode.getTom(), ny.getVarighetPerDag());
+            })
+            .forEach(builder::leggTil);
 
             return builder.build();
         }

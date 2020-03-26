@@ -657,20 +657,24 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
         var inntektsmeldinger = inntektsmeldingAggregat.getInntektsmeldinger();
         for (Inntektsmelding entitet : inntektsmeldinger) {
             entityManager.persist(entitet);
-            for (Gradering gradering : entitet.getGraderinger()) {
+            for (var gradering : entitet.getGraderinger()) {
                 entityManager.persist(gradering);
             }
 
-            for (NaturalYtelse naturalYtelse : entitet.getNaturalYtelser()) {
+            for (var naturalYtelse : entitet.getNaturalYtelser()) {
                 entityManager.persist(naturalYtelse);
             }
 
-            for (UtsettelsePeriode utsettelsePeriode : entitet.getUtsettelsePerioder()) {
+            for (var utsettelsePeriode : entitet.getUtsettelsePerioder()) {
                 entityManager.persist(utsettelsePeriode);
             }
 
-            for (Refusjon refusjon : entitet.getEndringerRefusjon()) {
+            for (var refusjon : entitet.getEndringerRefusjon()) {
                 entityManager.persist(refusjon);
+            }
+            
+            for(var fravær : entitet.getOppgittFravær()) {
+                entityManager.persist(fravær);
             }
         }
     }

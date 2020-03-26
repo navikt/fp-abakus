@@ -19,13 +19,12 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
 import no.nav.abakus.iaygrunnlag.JournalpostId;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -59,6 +58,10 @@ public class InntektsmeldingDto {
     @JsonProperty(value = "naturalytelser")
     @Valid
     private List<NaturalytelseDto> naturalytelser;
+
+    @JsonProperty(value = "oppgittFravær")
+    @Valid
+    private List<FraværDto> oppgittFravær;
 
     @JsonProperty(value = "utsettelsePerioder")
     @Valid
@@ -163,6 +166,10 @@ public class InntektsmeldingDto {
         return mottattDato;
     }
 
+    public List<FraværDto> getOppgittFravær() {
+        return oppgittFravær == null ? Collections.emptyList(): List.copyOf(oppgittFravær);
+    }
+
     public List<NaturalytelseDto> getNaturalytelser() {
         return naturalytelser == null ? Collections.emptyList(): List.copyOf(naturalytelser);
     }
@@ -242,6 +249,11 @@ public class InntektsmeldingDto {
         return this;
     }
 
+    public InntektsmeldingDto medOppgittFravær(List<FraværDto> fravær) {
+        setOppgittFravær(fravær);
+        return this;
+    }
+
     public InntektsmeldingDto medRefusjonOpphører(LocalDate refusjonOpphører) {
         setRefusjonOpphører(refusjonOpphører);
         return this;
@@ -301,6 +313,10 @@ public class InntektsmeldingDto {
 
     public void setNaturalytelser(List<NaturalytelseDto> naturalytelser) {
         this.naturalytelser = naturalytelser;
+    }
+    
+    public void setOppgittFravær(List<FraværDto> fravær) {
+        this.oppgittFravær = fravær;
     }
 
     public void setNærRelasjon(boolean naerRelasjon) {
