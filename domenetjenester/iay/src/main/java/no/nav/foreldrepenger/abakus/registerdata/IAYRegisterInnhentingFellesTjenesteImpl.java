@@ -246,6 +246,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
                 }
                 arbeidsgiver = Arbeidsgiver.person(new AktørId(arbeidsgiverOpt.get()));
             } else {
+                LOGGER.info("Arbeidsgiveridentifikator: {}", arbeidsgiverIdentifikator);
                 arbeidsgiver = Arbeidsgiver.person(new AktørId(arbeidsgiverIdentifikator));
             }
             aktørInntektBuilder.leggTilInntekt(byggInntekt(månedsinntekterGruppertPåArbeidsgiver, arbeidsgiver, aktørInntektBuilder, inntektOpptjening));
