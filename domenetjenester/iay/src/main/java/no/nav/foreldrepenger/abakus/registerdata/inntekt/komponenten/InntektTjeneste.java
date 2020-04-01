@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import no.finn.unleash.Unleash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +53,7 @@ public class InntektTjeneste {
     private KodeverkRepository kodeverkRepository;
     private AktørConsumer aktørConsumer;
     private Map<InntektsKilde, InntektsFilter> kildeTilFilter;
+    private Unleash unleash;
 
     InntektTjeneste() {
         // For CDI proxy
@@ -61,11 +63,13 @@ public class InntektTjeneste {
     public InntektTjeneste(@KonfigVerdi(ENDPOINT_KEY) URI endpoint,
                            OidcRestClient oidcRestClient,
                            KodeverkRepository kodeverkRepository,
-                           AktørConsumer aktørConsumer) {
+                           AktørConsumer aktørConsumer,
+                           Unleash unleash) {
         this.endpoint = endpoint;
         this.oidcRestClient = oidcRestClient;
         this.kodeverkRepository = kodeverkRepository;
         this.aktørConsumer = aktørConsumer;
+        this.unleash = unleash;
         this.kildeTilFilter = Map.of(InntektsKilde.INNTEKT_OPPTJENING, InntektsFilter.OPPTJENINGSGRUNNLAG,
             InntektsKilde.INNTEKT_BEREGNING, InntektsFilter.BEREGNINGSGRUNNLAG,
             InntektsKilde.INNTEKT_SAMMENLIGNING, InntektsFilter.SAMMENLIGNINGSGRUNNLAG);
@@ -76,7 +80,12 @@ public class InntektTjeneste {
 
         HentInntektListeBolkResponse response;
         try {
-            response = oidcRestClient.post(endpoint, request, HentInntektListeBolkResponse.class);
+            if (unleash.isEnabled("fpsak.inntektskomponent.logg", false)) {
+                logger.info("Inntektskilde for spørring er " + kilde);
+                response = oidcRestClient.postAndLogRespons(endpoint, request, HentInntektListeBolkResponse.class);
+            } else {
+                response = oidcRestClient.post(endpoint, request, HentInntektListeBolkResponse.class);
+            }
         } catch (RuntimeException e) {
             throw InntektFeil.FACTORY.feilVedKallTilInntekt(e).toException();
         }
