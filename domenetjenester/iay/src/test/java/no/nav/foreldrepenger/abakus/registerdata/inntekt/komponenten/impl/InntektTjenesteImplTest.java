@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import no.finn.unleash.FakeUnleash;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -57,7 +58,7 @@ public class InntektTjenesteImplTest {
 
     @Before
     public void before() {
-        inntektTjeneste = new InntektTjeneste(uri, restKlient, kodeverkRepository, null);
+        inntektTjeneste = new InntektTjeneste(uri, restKlient, kodeverkRepository, null, new FakeUnleash());
     }
 
     @Test
