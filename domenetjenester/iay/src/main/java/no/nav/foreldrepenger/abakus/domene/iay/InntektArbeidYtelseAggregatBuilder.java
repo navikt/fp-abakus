@@ -13,7 +13,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdRefe
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
@@ -21,9 +20,6 @@ import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.abakus.vedtak.domene.TemaUnderkategori;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Builder for å håndtere en gitt versjon {@link VersjonType} av grunnlaget.
@@ -363,27 +359,14 @@ public class InntektArbeidYtelseAggregatBuilder {
             return kladd.getYtelseBuilderForType(fagsystem, type, sakId, periode, tidligsteAnvistFom);
         }
 
-        public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, YtelseType type, TemaUnderkategori typeKategori, IntervallEntitet periode) {
-            return kladd.getYtelseBuilderForType(fagsystem, type, typeKategori, periode);
+        public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, YtelseType type, TemaUnderkategori typeKategori, IntervallEntitet periode,
+                                                        Optional<LocalDate> tidligsteAnvistFom) {
+            return kladd.getYtelseBuilderForType(fagsystem, type, typeKategori, periode, tidligsteAnvistFom);
         }
 
-        public void tilbakestillYtelserFraKildeBeholdAvsluttede(Fagsystem kilde) {
-            this.kladd.getAlleYtelser().stream()
-                .filter(yt -> kilde.equals(yt.getKilde()))
-                .filter(yt -> !YtelseStatus.AVSLUTTET.equals(yt.getStatus()))
-                .forEach(this.kladd::fjernYtelse);
+        public void tilbakestillYtelser() {
+            kladd.tilbakestillYtelser();
         }
-
-        public void tilbakestillYtelserFraKildeMedFeil(Fagsystem kilde, YtelseType ytelseType, TemaUnderkategori underkategori) {
-            this.kladd.getAlleYtelser().stream()
-                .filter(yt -> kilde.equals(yt.getKilde()) && ytelseType.equals(yt.getRelatertYtelseType()) && underkategori.equals(yt.getBehandlingsTema()))
-                .forEach(this::fjernYtelse);
-        }
-
-        private void fjernYtelse(Ytelse yt) {
-            this.kladd.fjernYtelse(yt);
-        }
-
 
         public AktørYtelseBuilder leggTilYtelse(YtelseBuilder ytelse) {
             YtelseEntitet ytelseEntitet = (YtelseEntitet) ytelse.build();

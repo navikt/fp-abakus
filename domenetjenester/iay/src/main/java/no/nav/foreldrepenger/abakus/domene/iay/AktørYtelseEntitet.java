@@ -130,11 +130,26 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
         return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medSaksnummer(saksnummer);
     }
 
-    YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, YtelseType type, TemaUnderkategori typeKategori, IntervallEntitet periode) {
-        Optional<Ytelse> ytelse = getAlleYtelser().stream()
+    YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, YtelseType type, TemaUnderkategori typeKategori, IntervallEntitet periode, Optional<LocalDate> tidligsteAnvistFom) {
+        // OBS kan være flere med samme Tema/TUK+FOM: Konvensjon ifm rammevedtak BS
+        List<Ytelse> aktuelleYtelser = getAlleYtelser().stream()
             .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type)
                 && ya.getBehandlingsTema().equals(typeKategori) && (periode.getFomDato().equals(ya.getPeriode().getFomDato())))
+            .collect(Collectors.toList());
+        Optional<Ytelse> ytelse = aktuelleYtelser.stream()
+            .filter(ya -> periode.equals(ya.getPeriode()))
             .findFirst();
+        if (ytelse.isEmpty() && !aktuelleYtelser.isEmpty()) {
+            // Håndtere endret TOM-dato som regel ifm at ytelsen er opphørt. Hvis flere med samme FOM-dato sjekk anvist-fom
+            if (tidligsteAnvistFom.isPresent()) {
+                ytelse = aktuelleYtelser.stream()
+                    .filter(yt -> yt.getYtelseAnvist().stream().anyMatch(ya -> tidligsteAnvistFom.get().equals(ya.getAnvistFOM())))
+                    .findFirst();
+            }
+            if (ytelse.isEmpty()) {
+                ytelse = aktuelleYtelser.stream().filter(yt -> yt.getYtelseAnvist().isEmpty()).findFirst();
+            }
+        }
         return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medPeriode(periode).medBehandlingsTema(typeKategori);
     }
 
@@ -144,10 +159,8 @@ public class AktørYtelseEntitet extends BaseEntitet implements AktørYtelse, In
         ytelseEntitet.setAktørYtelse(this);
     }
 
-    boolean fjernYtelse(Ytelse ytelse) {
-        YtelseEntitet ytelseEntitet = (YtelseEntitet) ytelse;
-        ytelseEntitet.setAktørYtelse(null);
-        return this.ytelser.remove(ytelseEntitet);
+    void tilbakestillYtelser() {
+        this.ytelser.clear();
     }
 
     @Override

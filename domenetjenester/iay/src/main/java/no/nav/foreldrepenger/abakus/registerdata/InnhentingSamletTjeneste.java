@@ -25,7 +25,7 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInf
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.InnhentingInfotrygdTjeneste;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.YtelseTypeReverse;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
@@ -80,7 +80,7 @@ public class InnhentingSamletTjeneste {
         return Cluster.DEV_FSS.equals(Environment.current().getCluster());
     }
 
-    public List<YtelseTypeReverse.InfotrygdYtelseGrunnlag> innhentInfotrygdGrunnlag(AktørId aktørId, Interval periode) {
+    public List<InfotrygdYtelseGrunnlag> innhentInfotrygdGrunnlag(AktørId aktørId, Interval periode) {
         var ident = getFnrFraAktørId(aktørId);
         if (envUnstable()) {
             return innhentingInfotrygdTjeneste.getInfotrygdYtelserFailSoft(ident, periode);

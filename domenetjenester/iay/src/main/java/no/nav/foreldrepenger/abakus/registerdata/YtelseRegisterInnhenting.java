@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,17 +17,16 @@ import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelseBuilder;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
-import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagMeldekort;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.YtelseTypeReverse;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseAnvist;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.typer.OrganisasjonsNummerValidator;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-import no.nav.foreldrepenger.abakus.vedtak.domene.TemaUnderkategori;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtattYtelse;
 
@@ -44,7 +44,7 @@ public class YtelseRegisterInnhenting {
                      InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder, boolean medGrunnlag) {
 
         InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder = inntektArbeidYtelseAggregatBuilder.getAktørYtelseBuilder(aktørId);
-        ryddBortFeilaktigeInnhentedeYtelser(aktørYtelseBuilder);
+        aktørYtelseBuilder.tilbakestillYtelser();
         LOGGER.info("Ytelseaggregat før ytelser er lagt til : {}", aktørYtelseBuilder);
 
         innhentFraYtelsesRegister(aktørId, behandling, aktørYtelseBuilder);
@@ -56,11 +56,10 @@ public class YtelseRegisterInnhenting {
             return;
         }
 
-        List<YtelseTypeReverse.InfotrygdYtelseGrunnlag> alleGrunnlag = innhentingSamletTjeneste.innhentInfotrygdGrunnlag(aktørId, opplysningsPeriode);
+        List<InfotrygdYtelseGrunnlag> alleGrunnlag = innhentingSamletTjeneste.innhentInfotrygdGrunnlag(aktørId, opplysningsPeriode);
         alleGrunnlag.forEach(grunnlag -> oversettInfotrygdYtelseGrunnlagTilYtelse(aktørYtelseBuilder, grunnlag));
 
         List<MeldekortUtbetalingsgrunnlagSak> arena = innhentingSamletTjeneste.hentYtelserTjenester(aktørId, opplysningsPeriode);
-        aktørYtelseBuilder.tilbakestillYtelserFraKildeBeholdAvsluttede(Fagsystem.ARENA);
         for (MeldekortUtbetalingsgrunnlagSak sak : arena) {
             oversettMeldekortUtbetalingsgrunnlagTilYtelse(aktørYtelseBuilder, sak);
         }
@@ -75,7 +74,6 @@ public class YtelseRegisterInnhenting {
 
         for (VedtattYtelse vedtattYtelse : vedtatteYtelser) {
             YtelseBuilder ytelseBuilder = builder.getYtelselseBuilderForType(vedtattYtelse.getKilde(), vedtattYtelse.getYtelseType(), vedtattYtelse.getSaksnummer());
-            ytelseBuilder.tilbakestillAnvisninger();
             ytelseBuilder.medPeriode(vedtattYtelse.getPeriode())
                 .medStatus(vedtattYtelse.getStatus());
 
@@ -96,13 +94,13 @@ public class YtelseRegisterInnhenting {
         });
     }
 
-    private void oversettInfotrygdYtelseGrunnlagTilYtelse(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder, YtelseTypeReverse.InfotrygdYtelseGrunnlag grunnlag) {
+    private void oversettInfotrygdYtelseGrunnlagTilYtelse(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder, InfotrygdYtelseGrunnlag grunnlag) {
         IntervallEntitet periode = utledPeriodeNårTomMuligFørFom(grunnlag.getVedtaksPeriodeFom(), grunnlag.getVedtaksPeriodeTom());
+        var tidligsteAnvist = grunnlag.getUtbetaltePerioder().stream().map(InfotrygdYtelseAnvist::getUtbetaltFom).min(Comparator.naturalOrder());
         YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.INFOTRYGD, grunnlag.getYtelseType(),
-            grunnlag.getTemaUnderkategori(), periode)
+            grunnlag.getTemaUnderkategori(), periode, tidligsteAnvist)
             .medBehandlingsTema(grunnlag.getTemaUnderkategori())
             .medStatus(grunnlag.getYtelseStatus());
-        ytelseBuilder.tilbakestillAnvisninger();
         grunnlag.getUtbetaltePerioder().forEach(vedtak -> {
             final IntervallEntitet intervall = utledPeriodeNårTomMuligFørFom(vedtak.getUtbetaltFom(), vedtak.getUtbetaltTom());
             ytelseBuilder.leggtilYtelseAnvist(ytelseBuilder.getAnvistBuilder()
@@ -114,7 +112,7 @@ public class YtelseRegisterInnhenting {
         aktørYtelseBuilder.leggTilYtelse(ytelseBuilder);
     }
 
-    private YtelseGrunnlag oversettYtelseArbeid(YtelseTypeReverse.InfotrygdYtelseGrunnlag grunnlag, YtelseGrunnlagBuilder grunnlagBuilder) {
+    private YtelseGrunnlag oversettYtelseArbeid(InfotrygdYtelseGrunnlag grunnlag, YtelseGrunnlagBuilder grunnlagBuilder) {
         grunnlagBuilder.medDekningsgradProsent(grunnlag.getDekningsgrad());
         grunnlagBuilder.medGraderingProsent(grunnlag.getGradering());
         grunnlagBuilder.medOpprinneligIdentdato(grunnlag.getOpprinneligIdentdato());
@@ -133,11 +131,6 @@ public class YtelseRegisterInnhenting {
         return grunnlagBuilder.build();
     }
 
-    @Deprecated(forRemoval = true)
-    private void ryddBortFeilaktigeInnhentedeYtelser(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder) {
-        aktørYtelseBuilder.tilbakestillYtelserFraKildeMedFeil(Fagsystem.INFOTRYGD, YtelseType.PÅRØRENDESYKDOM, TemaUnderkategori.UDEFINERT);
-    }
-
     private void oversettMeldekortUtbetalingsgrunnlagTilYtelse(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder,
                                                                MeldekortUtbetalingsgrunnlagSak ytelse) {
         Optional<LocalDate> førsteMeldekortFom = finnFørsteMeldekortFom(ytelse);
@@ -149,8 +142,7 @@ public class YtelseRegisterInnhenting {
             .medYtelseGrunnlag(ytelseBuilder.getGrunnlagBuilder()
                 .medOpprinneligIdentdato(ytelse.getKravMottattDato())
                 .medVedtaksDagsats(ytelse.getVedtaksDagsats())
-                .build())
-            .tilbakestillAnvisninger();
+                .build());
         for (MeldekortUtbetalingsgrunnlagMeldekort meldekort : ytelse.getMeldekortene()) {
             ytelseBuilder.leggtilYtelseAnvist(ytelseBuilder.getAnvistBuilder()
                 .medAnvistPeriode(utledPeriodeNårTomMuligFørFom(meldekort.getMeldekortFom(), meldekort.getMeldekortTom()))
