@@ -6,8 +6,10 @@ import javax.inject.Inject;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
+import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.registerdata.IAYRegisterInnhentingFellesTjenesteImpl;
 import no.nav.foreldrepenger.abakus.registerdata.InnhentingSamletTjeneste;
+import no.nav.foreldrepenger.abakus.registerdata.InntektMapper;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.SigrunTjeneste;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
@@ -23,15 +25,18 @@ public class IAYRegisterInnhentingESTjenesteImpl extends IAYRegisterInnhentingFe
 
     @Inject
     public IAYRegisterInnhentingESTjenesteImpl(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
+                                               KodeverkRepository kodeverkRepository,
                                                VirksomhetTjeneste virksomhetTjeneste,
                                                InnhentingSamletTjeneste innhentingSamletTjeneste,
                                                AktørConsumer aktørConsumer,
-                                               SigrunTjeneste sigrunTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
+                                               SigrunTjeneste sigrunTjeneste,
+                                               VedtakYtelseRepository vedtakYtelseRepository,
+                                               InntektMapper inntektMapper) {
         super(inntektArbeidYtelseTjeneste,
+            kodeverkRepository,
             virksomhetTjeneste,
             innhentingSamletTjeneste,
-            aktørConsumer,
-            sigrunTjeneste, vedtakYtelseRepository);
+            sigrunTjeneste, vedtakYtelseRepository, inntektMapper);
     }
 
     @Override
