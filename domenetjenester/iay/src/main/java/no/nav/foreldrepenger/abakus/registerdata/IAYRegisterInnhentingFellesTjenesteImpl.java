@@ -1,19 +1,13 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.threeten.extra.Interval;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
@@ -34,6 +28,11 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektspostBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Opptjeningsnøkkel;
 import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyring;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
@@ -45,16 +44,12 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Person;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FrilansArbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.SigrunTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataElement;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.typer.OrganisasjonsNummerValidator;
-import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
-import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
 
 public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInnhentingTjeneste {
 
@@ -66,7 +61,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
     private InnhentingSamletTjeneste innhentingSamletTjeneste;
     private ByggYrkesaktiviteterTjeneste byggYrkesaktiviteterTjeneste;
     private SigrunTjeneste sigrunTjeneste;
-    private InntektMapper inntektMapper;
+    private MapInntektFraDtoTilDomene mapInntektFraDtoTilDomene;
 
     protected IAYRegisterInnhentingFellesTjenesteImpl() {
     }
@@ -76,35 +71,14 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
                                                       InnhentingSamletTjeneste innhentingSamletTjeneste,
                                                       SigrunTjeneste sigrunTjeneste,
                                                       VedtakYtelseRepository vedtakYtelseRepository,
-                                                      InntektMapper inntektMapper) {
+                                                      MapInntektFraDtoTilDomene mapInntektFraDtoTilDomene) {
         this.inntektArbeidYtelseTjeneste = inntektArbeidYtelseTjeneste;
         this.virksomhetTjeneste = virksomhetTjeneste;
         this.innhentingSamletTjeneste = innhentingSamletTjeneste;
         this.sigrunTjeneste = sigrunTjeneste;
         this.ytelseRegisterInnhenting = new YtelseRegisterInnhenting(innhentingSamletTjeneste, vedtakYtelseRepository);
         this.byggYrkesaktiviteterTjeneste = new ByggYrkesaktiviteterTjeneste(kodeverkRepository);
-        this.inntektMapper = inntektMapper;
-        this.byggYrkesaktiviteterTjeneste = new ByggYrkesaktiviteterTjeneste();
-    }
-
-    private void innhentNæringsOpplysninger(Kobling kobling, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder) {
-        var map = sigrunTjeneste.beregnetSkatt(kobling.getAktørId());
-        var aktørInntektBuilder = inntektArbeidYtelseAggregatBuilder.getAktørInntektBuilder(kobling.getAktørId());
-
-        var inntektBuilder = aktørInntektBuilder.getInntektBuilder(InntektskildeType.SIGRUN, null);
-
-        for (var entry : map.entrySet()) {
-            for (Map.Entry<InntektspostType, BigDecimal> type : entry.getValue().entrySet()) {
-                InntektspostBuilder inntektspostBuilder = inntektBuilder.getInntektspostBuilder();
-                inntektspostBuilder
-                    .medInntektspostType(type.getKey())
-                    .medBeløp(type.getValue())
-                    .medPeriode(entry.getKey().getFomDato(), entry.getKey().getTomDato());
-                inntektBuilder.leggTilInntektspost(inntektspostBuilder);
-            }
-        }
-        aktørInntektBuilder.leggTilInntekt(inntektBuilder);
-        inntektArbeidYtelseAggregatBuilder.leggTilAktørInntekt(aktørInntektBuilder);
+        this.mapInntektFraDtoTilDomene = mapInntektFraDtoTilDomene;
     }
 
     @Override
@@ -137,7 +111,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
 
     private void innhentNæringsOpplysninger(Kobling kobling, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder) {
         Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> map = sigrunTjeneste.beregnetSkatt(kobling.getAktørId());
-        inntektMapper.mapFraSigrun(kobling.getAktørId(), map, inntektArbeidYtelseAggregatBuilder);
+        mapInntektFraDtoTilDomene.mapFraSigrun(kobling.getAktørId(), map, inntektArbeidYtelseAggregatBuilder);
     }
 
     private void innhentYtelser(Kobling kobling, InntektArbeidYtelseAggregatBuilder builder) {
@@ -221,7 +195,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         var inntektsInformasjon = innhentingSamletTjeneste.getInntektsInformasjon(aktørId, kobling.getOpplysningsperiode().tilIntervall(), inntektsKilde);
 
         if (informasjonsElementer.contains(registerdataElement)) {
-            inntektMapper.mapFraInntektskomponent(aktørId, builder, inntektsInformasjon);
+            mapInntektFraDtoTilDomene.mapFraInntektskomponent(aktørId, builder, inntektsInformasjon);
         }
 
         if (inntektsKilde.equals(InntektskildeType.INNTEKT_OPPTJENING) && informasjonsElementer.contains(RegisterdataElement.ARBEIDSFORHOLD)) {

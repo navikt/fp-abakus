@@ -37,20 +37,20 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
-public class InntektMapper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InntektMapper.class);
+public class MapInntektFraDtoTilDomene {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MapInntektFraDtoTilDomene.class);
     private VirksomhetTjeneste virksomhetTjeneste;
     private KodeverkRepository kodeverkRepository;
     private AktørConsumer aktørConsumer;
 
-    public InntektMapper() {
+    public MapInntektFraDtoTilDomene() {
         // For CDI
     }
 
     @Inject
-    protected InntektMapper(KodeverkRepository kodeverkRepository,
-                            VirksomhetTjeneste virksomhetTjeneste,
-                            AktørConsumer aktørConsumer) {
+    protected MapInntektFraDtoTilDomene(KodeverkRepository kodeverkRepository,
+                                        VirksomhetTjeneste virksomhetTjeneste,
+                                        AktørConsumer aktørConsumer) {
         this.kodeverkRepository = kodeverkRepository;
         this.virksomhetTjeneste = virksomhetTjeneste;
         this.aktørConsumer = aktørConsumer;
@@ -111,8 +111,8 @@ public class InntektMapper {
             boolean orgledd = virksomhetTjeneste.sjekkOmVirksomhetErOrgledd(arbeidsgiverIdentifikator);
             if (!orgledd) {
                 LocalDate hentedato = finnHentedatoForJuridisk(månedsinntekterGruppertPåArbeidsgiver.keySet());
-                arbeidsgiver = Arbeidsgiver.virksomhet(virksomhetTjeneste.hentOgLagreOrganisasjonMedHensynTilJuridisk(arbeidsgiverIdentifikator, hentedato)); // Orgnr som har 650 inntekt vil returnere et annet orgnr her
-                if (!arbeidsgiver.getOrgnr().equals(arbeidsgiverIdentifikator)) {
+                arbeidsgiver = Arbeidsgiver.virksomhet(virksomhetTjeneste.hentOgLagreOrganisasjonMedHensynTilJuridisk(arbeidsgiverIdentifikator, hentedato));
+                if (arbeidsgiver.getOrgnr() != null && !arbeidsgiver.getOrgnr().getId().equals(arbeidsgiverIdentifikator)) {
                     aktørInntektBuilder.leggTilInntekt(byggInntekt(månedsinntekterGruppertPåArbeidsgiver, arbeidsgiver, aktørInntektBuilder, inntektOpptjening, arbeidsgiverIdentifikator));
                 } else {
                     aktørInntektBuilder.leggTilInntekt(byggInntekt(månedsinntekterGruppertPåArbeidsgiver, arbeidsgiver, aktørInntektBuilder, inntektOpptjening));
@@ -204,8 +204,8 @@ public class InntektMapper {
             .medBeløp(sumInntektsbeløp)
             .medPeriode(måned.atDay(1), måned.atEndOfMonth())
             .medInntektspostType(InntektspostType.LØNN);
-        if (originalUtbetalerId != null) {
-            inntektspostBuilder.medOriginalUtbetalerId(originalUtbetalerId);
+        if (OrganisasjonsNummerValidator.erGyldig(originalUtbetalerId)) {
+            inntektspostBuilder.medOpprinneligUtbetaler(originalUtbetalerId);
         }
 
         if (valgtSkatteOgAvgiftsregel.isPresent()) {

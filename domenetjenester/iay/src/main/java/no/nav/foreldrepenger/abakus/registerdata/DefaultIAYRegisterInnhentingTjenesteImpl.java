@@ -11,7 +11,6 @@ import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.SigrunTjeneste;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
-import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
 
 /**
  * Standard IAY register innhenter.
@@ -29,15 +28,14 @@ public class DefaultIAYRegisterInnhentingTjenesteImpl extends IAYRegisterInnhent
                                                     KodeverkRepository kodeverkRepository,
                                                     VirksomhetTjeneste virksomhetTjeneste,
                                                     InnhentingSamletTjeneste innhentingSamletTjeneste,
-                                                    AktørConsumer aktørConsumer,
                                                     SigrunTjeneste sigrunTjeneste,
                                                     VedtakYtelseRepository vedtakYtelseRepository,
-                                                    InntektMapper inntektMapper) {
+                                                    MapInntektFraDtoTilDomene mapInntektFraDtoTilDomene) {
         super(inntektArbeidYtelseTjeneste,
             kodeverkRepository,
             virksomhetTjeneste,
             innhentingSamletTjeneste,
-            sigrunTjeneste, vedtakYtelseRepository, inntektMapper);
+            sigrunTjeneste, vedtakYtelseRepository, mapInntektFraDtoTilDomene);
     }
 
     @Override
