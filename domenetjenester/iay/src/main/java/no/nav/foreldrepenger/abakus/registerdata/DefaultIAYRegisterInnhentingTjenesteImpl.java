@@ -26,12 +26,15 @@ public class DefaultIAYRegisterInnhentingTjenesteImpl extends IAYRegisterInnhent
                                                     KodeverkRepository kodeverkRepository,
                                                     VirksomhetTjeneste virksomhetTjeneste,
                                                     InnhentingSamletTjeneste innhentingSamletTjeneste,
-                                                    AktørConsumer aktørConsumer, SigrunTjeneste sigrunTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
+                                                    AktørConsumer aktørConsumer,
+                                                    SigrunTjeneste sigrunTjeneste,
+                                                    VedtakYtelseRepository vedtakYtelseRepository,
+                                                    InntektMapper inntektMapper) {
         super(inntektArbeidYtelseTjeneste,
             kodeverkRepository,
             virksomhetTjeneste,
             innhentingSamletTjeneste,
-            aktørConsumer, sigrunTjeneste, vedtakYtelseRepository);
+            sigrunTjeneste, vedtakYtelseRepository, inntektMapper);
     }
 
     @Override

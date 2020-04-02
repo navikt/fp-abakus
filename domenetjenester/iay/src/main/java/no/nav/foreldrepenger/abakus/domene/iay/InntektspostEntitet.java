@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -75,6 +76,10 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
+    @Column(name = "opprinnelig_utbetaler_id", nullable = false)
+    private String opprinneligUtbetalerId;
+
+
     public InntektspostEntitet() {
         //hibernate
     }
@@ -89,6 +94,7 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
         this.periode = inntektspost.getPeriode();
         this.beløp = inntektspost.getBeløp();
         this.ytelseType = inntektspost.getYtelseType().getKodeverk();
+        this.opprinneligUtbetalerId = inntektspost.getOpprinneligUtbetalerId().orElse(null);
     }
 
     @Override
@@ -122,14 +128,18 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
     public Beløp getBeløp() {
         return beløp;
     }
-    
+
     @Override
     public IntervallEntitet getPeriode() {
         return periode;
     }
-    
+
     void setBeløp(Beløp beløp) {
         this.beløp = beløp;
+    }
+
+    void setOpprinneligUtbetalerId(String opprinneligUtbetalerId) {
+        this.opprinneligUtbetalerId = opprinneligUtbetalerId;
     }
 
     @Override
@@ -139,6 +149,10 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
 
     public InntektEntitet getInntekt() {
         return inntekt;
+    }
+
+    public Optional<String> getOpprinneligUtbetalerId() {
+        return Optional.ofNullable(opprinneligUtbetalerId);
     }
 
     void setInntekt(InntektEntitet inntekt) {
@@ -161,6 +175,7 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
         return Objects.equals(this.getInntektspostType(), other.getInntektspostType())
             && Objects.equals(this.getYtelseType(), other.getYtelseType())
             && Objects.equals(this.getSkatteOgAvgiftsregelType(), other.getSkatteOgAvgiftsregelType())
+            && Objects.equals(this.getOpprinneligUtbetalerId().orElse(null), other.getOpprinneligUtbetalerId().orElse(null))
             && Objects.equals(this.getPeriode(), other.getPeriode());
     }
 

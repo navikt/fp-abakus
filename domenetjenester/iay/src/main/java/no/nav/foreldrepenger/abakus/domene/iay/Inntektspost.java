@@ -5,6 +5,8 @@ import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.SkatteOgAvgiftsregelType
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 
+import java.util.Optional;
+
 public interface Inntektspost {
 
     /**
@@ -37,10 +39,16 @@ public interface Inntektspost {
     Beløp getBeløp();
 
     YtelseInntektspostType getYtelseType();
-    
+
     /** Periode inntektsposten gjelder.
      * @return
      */
     IntervallEntitet getPeriode();
+
+    /** Den opprinnelige enheten posten var lagret på hvis relevant.
+     * @return
+     */
+    Optional<String> getOpprinneligUtbetalerId();
+
 
 }

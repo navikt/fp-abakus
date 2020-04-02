@@ -38,6 +38,11 @@ public class InntektspostBuilder {
         return this;
     }
 
+    public InntektspostBuilder medOriginalUtbetalerId(String opprinneligEnhetId) {
+        this.inntektspostEntitet.setOpprinneligUtbetalerId(opprinneligEnhetId);
+        return this;
+    }
+
     public InntektspostBuilder medYtelse(YtelseInntektspostType offentligYtelseType) {
         this.inntektspostEntitet.setYtelse(offentligYtelseType);
         return this;
