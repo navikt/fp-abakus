@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Definerer ytelse typer brukt i IAY.
- * 
+ *
  * <h3>Bruk av konstanter</h3> onstanter representerer definerte eksempler på
  * kjente konstanter. Nye kan - men må ikke - legges her - såfremt
  * avsender/mottager er kjent med de og kan håndtere de.
@@ -24,6 +24,9 @@ public class YtelseType extends Kodeverk {
 
     /** Folketrygdloven K8 ytelser. */
     public static final YtelseType SYKEPENGER = new YtelseType("SP");//$NON-NLS-1$
+
+    /** Ny ytelse for kompenasasjon for koronatiltak for Selvstendig næringsdrivende og Frilansere (Anmodning 10). */
+    public static final YtelseType FRISINN = new YtelseType("FRISINN");
 
     /** Folketrygdloven K9 ytelser. */
     public static final YtelseType PLEIEPENGER_SYKT_BARN = new YtelseType("PSB");
@@ -44,15 +47,15 @@ public class YtelseType extends Kodeverk {
 
     /**
      * Må tolkes i forhold til TemaUnderkategori for å matche nye typer
-     * 
+     *
      * @deprecated Gammel Infotrygd K9 type.
      */
     @Deprecated
     public static final YtelseType PÅRØRENDESYKDOM = new YtelseType("PS");//$NON-NLS-1$
 
     @JsonProperty(value = "kode", required = true, index = 1)
-    @Pattern(regexp = "^[\\p{L}\\p{N}_\\.\\-]{2,5}$", message = "Kode '${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
-    @Size(min = 2, max = 5)
+    @Pattern(regexp = "^[\\p{L}\\p{N}_\\.\\-]{2,7}$", message = "Kode '${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
+    @Size(min = 2, max = 7)
     @NotNull
     private String kode;
 

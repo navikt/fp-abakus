@@ -22,6 +22,9 @@ public enum YtelseType implements Kodeverdi {
     /** Folketrygdloven K4 ytelser. */
     DAGPENGER("DAG", "Dagpenger"),
 
+    /** Ny ytelse for kompenasasjon for koronatiltak for Selvstendig næringsdrivende og Frilansere (Anmodning 10). */
+    FRISINN("FRISINN", "FRISINN"),
+
     /** Folketrygdloven K8 ytelser. */
     SYKEPENGER("SP", "Sykepenger"),
 
@@ -33,7 +36,7 @@ public enum YtelseType implements Kodeverdi {
 
     /** @deprecated Legacy infotrygd K9 ytelse type (må tolkes sammen med TemaUnderkategori). */
     PÅRØRENDESYKDOM("PS", "Pårørende sykdom"),
-    
+
     /** Folketrygdloven K11 ytelser. */
     ARBEIDSAVKLARINGSPENGER("AAP"),
 
