@@ -10,6 +10,9 @@ public class YtelseType extends Kodeverk {
     /** Folketrygdloven K4 ytelser. */
     public static final YtelseType DAGPENGER = new YtelseType("DAG");//$NON-NLS-1$
 
+    /** Ny ytelse for kompenasasjon for koronatiltak for Selvstendig næringsdrivende og Frilansere (Anmodning 10). */
+    FRISINN("FRISINN", "FRIlansere og Selstendig næringsdrivendes INNtektskompensasjon"),
+
     /** Folketrygdloven K8 ytelser. */
     public static final YtelseType SYKEPENGER = new YtelseType("SP");//$NON-NLS-1$
 
