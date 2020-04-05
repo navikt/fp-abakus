@@ -30,11 +30,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInfo
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyring;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanse;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Gradering;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelse;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Refusjon;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriode;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittAnnenAktivitet;
@@ -123,6 +119,26 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
     }
 
     public Map<Inntektsmelding, ArbeidsforholdInformasjon> hentArbeidsforholdInfoInntektsmeldingerMapFor(AktørId aktørId,
+                                                                                                         Saksnummer saksnummer,
+                                                                                                         KoblingReferanse ref,
+                                                                                                         no.nav.foreldrepenger.abakus.kodeverk.YtelseType ytelseType) {
+        final TypedQuery<Object[]> query = entityManager.createQuery("SELECT im, arbInf" +
+                " FROM InntektArbeidGrunnlag gr" + // NOSONAR
+                " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
+                " JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id" + // NOSONAR
+                " JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id" + // NOSONAR
+                " JOIN ArbeidsforholdInformasjon arbInf on arbInf.id = gr.arbeidsforholdInformasjon.id" + // NOSONAR
+                " WHERE k.saksnummer = :ref AND k.koblingReferanse = :eksternRef AND k.ytelseType = :ytelse and k.aktørId = :aktørId "
+            ,Object[].class);
+        query.setParameter("aktørId", aktørId);
+        query.setParameter("ref", saksnummer);
+        query.setParameter("ytelse", ytelseType);
+        query.setParameter("eksternRef", ref);
+
+        return queryTilMap(query.getResultList());
+    }
+
+    public Map<Inntektsmelding, ArbeidsforholdInformasjon> hentArbeidsforholdInfoInntektsmeldingerMapFor(AktørId aktørId,
                                                              Saksnummer saksnummer,
                                                              no.nav.foreldrepenger.abakus.kodeverk.YtelseType ytelseType) {
 
@@ -138,8 +154,12 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
         query.setParameter("ref", saksnummer);
         query.setParameter("ytelse", ytelseType);
 
+        return queryTilMap(query.getResultList());
+    }
+
+    private Map<Inntektsmelding, ArbeidsforholdInformasjon> queryTilMap(List<Object[]> list) {
         Map<Inntektsmelding, ArbeidsforholdInformasjon> inntektsmeldingArbinfoMap = new HashMap<>();
-        query.getResultList()
+        list
             .forEach(res -> {
                 Inntektsmelding im = (Inntektsmelding) res[0];
                 ArbeidsforholdInformasjon arbInf = (ArbeidsforholdInformasjon) res[1];
@@ -672,7 +692,7 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
             for (var refusjon : entitet.getEndringerRefusjon()) {
                 entityManager.persist(refusjon);
             }
-            
+
             for(var fravær : entitet.getOppgittFravær()) {
                 entityManager.persist(fravær);
             }
