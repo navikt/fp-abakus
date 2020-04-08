@@ -16,8 +16,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilansoppdrag;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
@@ -25,7 +23,7 @@ import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
 @Table(name = "IAY_OPPGITT_FRILANS")
 @Entity(name = "Frilans")
-public class OppgittFrilansEntitet extends BaseEntitet implements OppgittFrilans {
+public class OppgittFrilans extends BaseEntitet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SO_OPPGITT_FRILANS")
@@ -33,7 +31,7 @@ public class OppgittFrilansEntitet extends BaseEntitet implements OppgittFrilans
 
     @OneToOne(optional = false)
     @JoinColumn(name = "oppgitt_opptjening_id", nullable = false, updatable = false)
-    private OppgittOpptjeningEntitet oppgittOpptjening;
+    private OppgittOpptjening oppgittOpptjening;
 
     @Convert(converter = BooleanToStringConverter.class)
     @Column(name = "inntekt_fra_fosterhjem", nullable = false)
@@ -49,17 +47,17 @@ public class OppgittFrilansEntitet extends BaseEntitet implements OppgittFrilans
 
     @OneToMany(mappedBy = "frilans")
     @ChangeTracked
-    private List<OppgittFrilansoppdragEntitet> frilansoppdrag;
+    private List<OppgittFrilansoppdrag> frilansoppdrag;
 
 
-    public OppgittFrilansEntitet() {
+    public OppgittFrilans() {
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || !(o instanceof OppgittFrilansEntitet)) return false;
-        var that = (OppgittFrilansEntitet) o;
+        if (o == null || !(o instanceof OppgittFrilans)) return false;
+        var that = (OppgittFrilans) o;
         return harInntektFraFosterhjem == that.harInntektFraFosterhjem &&
             erNyoppstartet == that.erNyoppstartet &&
             harNærRelasjon == that.harNærRelasjon &&
@@ -83,11 +81,10 @@ public class OppgittFrilansEntitet extends BaseEntitet implements OppgittFrilans
             '}';
     }
 
-    public void setOppgittOpptjening(OppgittOpptjeningEntitet oppgittOpptjening) {
+    public void setOppgittOpptjening(OppgittOpptjening oppgittOpptjening) {
         this.oppgittOpptjening = oppgittOpptjening;
     }
 
-    @Override
     public boolean getHarInntektFraFosterhjem() {
         return harInntektFraFosterhjem;
     }
@@ -96,7 +93,6 @@ public class OppgittFrilansEntitet extends BaseEntitet implements OppgittFrilans
         this.harInntektFraFosterhjem = harInntektFraFosterhjem;
     }
 
-    @Override
     public boolean getErNyoppstartet() {
         return erNyoppstartet;
     }
@@ -105,7 +101,6 @@ public class OppgittFrilansEntitet extends BaseEntitet implements OppgittFrilans
         this.erNyoppstartet = erNyoppstartet;
     }
 
-    @Override
     public boolean getHarNærRelasjon() {
         return harNærRelasjon;
     }
@@ -114,7 +109,6 @@ public class OppgittFrilansEntitet extends BaseEntitet implements OppgittFrilans
         this.harNærRelasjon = harNærRelasjon;
     }
 
-    @Override
     public List<OppgittFrilansoppdrag> getFrilansoppdrag() {
         if (frilansoppdrag != null) {
             return Collections.unmodifiableList(frilansoppdrag);
@@ -122,7 +116,7 @@ public class OppgittFrilansEntitet extends BaseEntitet implements OppgittFrilans
         return Collections.emptyList();
     }
 
-    public void setFrilansoppdrag(List<OppgittFrilansoppdragEntitet> frilansoppdrag) {
+    public void setFrilansoppdrag(List<OppgittFrilansoppdrag> frilansoppdrag) {
         this.frilansoppdrag = frilansoppdrag.stream()
             .peek(it -> it.setFrilans(this))
             .collect(Collectors.toList());

@@ -30,7 +30,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInfo
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.iay.impl.InntektsmeldingDiffTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
@@ -189,7 +189,7 @@ public class InntektArbeidYtelseTjeneste {
         return repository.hentArbeidsforholdInformasjonForBehandling(koblingReferanse).orElseGet(ArbeidsforholdInformasjon::new);
     }
 
-    public Optional<OppgittOpptjeningEntitet> hentOppgittOpptjeningFor(UUID oppgittOpptjeningEksternReferanse) {
+    public Optional<OppgittOpptjening> hentOppgittOpptjeningFor(UUID oppgittOpptjeningEksternReferanse) {
         return repository.hentOppgittOpptjeningFor(oppgittOpptjeningEksternReferanse);
     }
 

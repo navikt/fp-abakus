@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -10,10 +9,7 @@ import no.nav.abakus.iaygrunnlag.request.Dataset;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
-import no.nav.vedtak.util.Tuple;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
 
 public class InntektArbeidYtelseGrunnlagBuilder {
 
@@ -135,7 +131,7 @@ public class InntektArbeidYtelseGrunnlagBuilder {
             if (kladd.getOppgittOpptjening().isPresent()) {
                 throw new IllegalStateException("Utviklerfeil: Er ikke lov å endre oppgitt opptjening!");
             }
-            kladd.setOppgittOpptjening((OppgittOpptjeningEntitet) builder.build());
+            kladd.setOppgittOpptjening((OppgittOpptjening) builder.build());
         }
         return this;
     }

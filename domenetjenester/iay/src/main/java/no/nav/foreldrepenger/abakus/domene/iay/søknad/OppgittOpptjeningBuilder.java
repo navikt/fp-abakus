@@ -9,11 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittAnnenAktivitet;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
@@ -21,9 +16,9 @@ import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
 public class OppgittOpptjeningBuilder {
 
-    private final OppgittOpptjeningEntitet kladd;
+    private final OppgittOpptjening kladd;
 
-    private OppgittOpptjeningBuilder(OppgittOpptjeningEntitet kladd) {
+    private OppgittOpptjeningBuilder(OppgittOpptjening kladd) {
         this.kladd = kladd;
     }
 
@@ -32,24 +27,12 @@ public class OppgittOpptjeningBuilder {
     }
 
     public static OppgittOpptjeningBuilder ny(UUID eksternReferanse, LocalDateTime opprettetTidspunktOriginalt) {
-        return new OppgittOpptjeningBuilder(new OppgittOpptjeningEntitet(eksternReferanse, opprettetTidspunktOriginalt));
+        return new OppgittOpptjeningBuilder(new OppgittOpptjening(eksternReferanse, opprettetTidspunktOriginalt));
     }
 
     public static OppgittOpptjeningBuilder ny(UUID eksternReferanse, OffsetDateTime opprettetTidspunktOriginalt) {
         return new OppgittOpptjeningBuilder(
-            new OppgittOpptjeningEntitet(eksternReferanse, opprettetTidspunktOriginalt.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()));
-    }
-
-    /**
-     * For migreringen
-     *
-     * @param oppgittOpptjeningEntitet entitet
-     * @return builder
-     * @deprecated Kun for migreringen?
-     */
-    @Deprecated(forRemoval = true)
-    public static OppgittOpptjeningBuilder eksisterende(OppgittOpptjeningEntitet oppgittOpptjeningEntitet) {
-        return new OppgittOpptjeningBuilder(oppgittOpptjeningEntitet);
+            new OppgittOpptjening(eksternReferanse, opprettetTidspunktOriginalt.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()));
     }
 
     public OppgittOpptjeningBuilder leggTilAnnenAktivitet(OppgittAnnenAktivitet annenAktivitet) {
@@ -81,14 +64,14 @@ public class OppgittOpptjeningBuilder {
     }
 
     public static class EgenNæringBuilder {
-        private final OppgittEgenNæringEntitet entitet;
+        private final OppgittEgenNæring entitet;
 
-        private EgenNæringBuilder(OppgittEgenNæringEntitet entitet) {
+        private EgenNæringBuilder(OppgittEgenNæring entitet) {
             this.entitet = entitet;
         }
 
         public static EgenNæringBuilder ny() {
-            return new EgenNæringBuilder(new OppgittEgenNæringEntitet());
+            return new EgenNæringBuilder(new OppgittEgenNæring());
         }
 
         public EgenNæringBuilder medPeriode(IntervallEntitet periode) {
@@ -169,14 +152,14 @@ public class OppgittOpptjeningBuilder {
     }
 
     public static class OppgittArbeidsforholdBuilder {
-        private OppgittArbeidsforholdEntitet entitet;
+        private OppgittArbeidsforhold entitet;
 
-        private OppgittArbeidsforholdBuilder(OppgittArbeidsforholdEntitet entitet) {
+        private OppgittArbeidsforholdBuilder(OppgittArbeidsforhold entitet) {
             this.entitet = entitet;
         }
 
         public static OppgittArbeidsforholdBuilder ny() {
-            return new OppgittArbeidsforholdBuilder(new OppgittArbeidsforholdEntitet());
+            return new OppgittArbeidsforholdBuilder(new OppgittArbeidsforhold());
         }
 
         public OppgittArbeidsforholdBuilder medPeriode(IntervallEntitet periode) {

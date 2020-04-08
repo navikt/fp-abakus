@@ -18,7 +18,6 @@ import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinFormula;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -37,7 +36,7 @@ import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
  */
 @Table(name = "IAY_OPPGITT_ARBEIDSFORHOLD")
 @Entity(name = "OppgittArbeidsforhold")
-public class OppgittArbeidsforholdEntitet extends BaseEntitet implements OppgittArbeidsforhold, IndexKey {
+public class OppgittArbeidsforhold extends BaseEntitet implements IndexKey {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_OPPGITT_ARBEIDSFORHOLD")
@@ -45,7 +44,7 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "oppgitt_opptjening_id", nullable = false, updatable = false)
-    private OppgittOpptjeningEntitet oppgittOpptjening;
+    private OppgittOpptjening oppgittOpptjening;
 
     @Embedded
     @ChangeTracked
@@ -68,7 +67,7 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
     @Column(name = "utenlandsk_virksomhet_navn")
     private String utenlandskVirksomhetNavn;
 
-    public OppgittArbeidsforholdEntitet() {
+    public OppgittArbeidsforhold() {
         // hibernate
     }
 
@@ -77,17 +76,14 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
         return IndexKey.createKey(periode, landkode, utenlandskVirksomhetNavn, arbeidType);
     }
 
-    @Override
     public LocalDate getFraOgMed() {
         return periode.getFomDato();
     }
 
-    @Override
     public LocalDate getTilOgMed() {
         return periode.getTomDato();
     }
 
-    @Override
     public IntervallEntitet getPeriode() {
         return periode;
     }
@@ -96,12 +92,10 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
         this.periode = periode;
     }
 
-    @Override
     public Boolean erUtenlandskInntekt() {
         return erUtenlandskInntekt;
     }
 
-    @Override
     public ArbeidType getArbeidType() {
         return arbeidType;
     }
@@ -110,7 +104,6 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
         this.arbeidType = arbeidType;
     }
 
-    @Override
     public Landkoder getLandkode() {
         return landkode;
     }
@@ -119,7 +112,6 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
         this.landkode = Objects.requireNonNull(landkode, "landkode");
     }
 
-    @Override
     public String getUtenlandskVirksomhetNavn() {
         return utenlandskVirksomhetNavn;
     }
@@ -131,9 +123,9 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || !(o instanceof OppgittArbeidsforholdEntitet)) return false;
+        if (o == null || !(o instanceof OppgittArbeidsforhold)) return false;
 
-        var that = (OppgittArbeidsforholdEntitet) o;
+        var that = (OppgittArbeidsforhold) o;
 
         return Objects.equals(periode, that.periode) &&
             Objects.equals(arbeidType, that.arbeidType) &&
@@ -158,7 +150,7 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
             '}';
     }
 
-    void setOppgittOpptjening(OppgittOpptjeningEntitet oppgittOpptjening) {
+    void setOppgittOpptjening(OppgittOpptjening oppgittOpptjening) {
         this.oppgittOpptjening = oppgittOpptjening;
     }
 

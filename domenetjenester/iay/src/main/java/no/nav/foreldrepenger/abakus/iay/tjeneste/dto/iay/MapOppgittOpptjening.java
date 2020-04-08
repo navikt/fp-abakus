@@ -18,19 +18,15 @@ import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittEgenNæringDto;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittFrilansDto;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittFrilansoppdragDto;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningDto;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittAnnenAktivitetEntitet;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittFrilansEntitet;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittFrilansoppdragEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittAnnenAktivitet;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittArbeidsforhold;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittEgenNæring;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittFrilans;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittFrilansoppdrag;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder.EgenNæringBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder.OppgittArbeidsforholdBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittAnnenAktivitet;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilansoppdrag;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
@@ -206,10 +202,7 @@ public class MapOppgittOpptjening {
                 return null;
 
             var oppgittOpptjeningEksternReferanse = UUID.fromString(dto.getEksternReferanse().getReferanse());
-            Optional<OppgittOpptjeningEntitet> oppgittOpptjening = iayTjeneste.hentOppgittOpptjeningFor(oppgittOpptjeningEksternReferanse);
-            if (oppgittOpptjening.isPresent()) {
-                return OppgittOpptjeningBuilder.eksisterende(oppgittOpptjening.get());
-            }
+            Optional<OppgittOpptjening> oppgittOpptjening = iayTjeneste.hentOppgittOpptjeningFor(oppgittOpptjeningEksternReferanse);
             var builder = OppgittOpptjeningBuilder.ny(oppgittOpptjeningEksternReferanse, dto.getOpprettetTidspunkt());
 
             var annenAktivitet = mapEach(dto.getAnnenAktivitet(), this::mapAnnenAktivitet);
@@ -238,14 +231,14 @@ public class MapOppgittOpptjening {
             if (dto == null)
                 return null;
 
-            var frilans = new OppgittFrilansEntitet();
+            var frilans = new OppgittFrilans();
 
             frilans.setErNyoppstartet(dto.isErNyoppstartet());
             frilans.setHarNærRelasjon(dto.isHarNærRelasjon());
             frilans.setHarInntektFraFosterhjem(dto.isHarInntektFraFosterhjem());
 
             var frilansoppdrag = mapEach(dto.getFrilansoppdrag(),
-                f -> new OppgittFrilansoppdragEntitet(f.getOppdragsgiver(),
+                f -> new OppgittFrilansoppdrag(f.getOppdragsgiver(),
                     IntervallEntitet.fraOgMedTilOgMed(f.getPeriode().getFom(), f.getPeriode().getTom())));
             frilans.setFrilansoppdrag(frilansoppdrag);
             return frilans;
@@ -295,14 +288,14 @@ public class MapOppgittOpptjening {
             return builder;
         }
 
-        private OppgittAnnenAktivitetEntitet mapAnnenAktivitet(OppgittAnnenAktivitetDto dto) {
+        private OppgittAnnenAktivitet mapAnnenAktivitet(OppgittAnnenAktivitetDto dto) {
             if (dto == null)
                 return null;
 
             Periode dto1 = dto.getPeriode();
             var periode = IntervallEntitet.fraOgMedTilOgMed(dto1.getFom(), dto1.getTom());
             var arbeidType = KodeverkMapper.mapArbeidType(dto.getArbeidTypeDto());
-            return new OppgittAnnenAktivitetEntitet(periode, arbeidType);
+            return new OppgittAnnenAktivitet(periode, arbeidType);
         }
 
         private Landkoder mapLandkoder(Landkode landkode) {

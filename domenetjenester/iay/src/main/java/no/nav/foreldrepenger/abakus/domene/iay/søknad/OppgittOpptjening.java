@@ -20,11 +20,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.NaturalId;
 
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittAnnenAktivitet;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -32,7 +27,7 @@ import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 @Immutable
 @Entity(name = "OppgittOpptjening")
 @Table(name = "IAY_OPPGITT_OPPTJENING")
-public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOpptjening {
+public class OppgittOpptjening extends BaseEntitet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SO_OPPGITT_OPPTJENING")
@@ -45,35 +40,34 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
 
     @OneToMany(mappedBy = "oppgittOpptjening")
     @ChangeTracked
-    private List<OppgittArbeidsforholdEntitet> oppgittArbeidsforhold;
+    private List<OppgittArbeidsforhold> oppgittArbeidsforhold;
 
     @OneToMany(mappedBy = "oppgittOpptjening")
     @ChangeTracked
-    private List<OppgittEgenNæringEntitet> egenNæring;
+    private List<OppgittEgenNæring> egenNæring;
 
     @OneToMany(mappedBy = "oppgittOpptjening")
     @ChangeTracked
-    private List<OppgittAnnenAktivitetEntitet> annenAktivitet;
+    private List<OppgittAnnenAktivitet> annenAktivitet;
 
     @ChangeTracked
     @OneToOne(mappedBy = "oppgittOpptjening")
-    private OppgittFrilansEntitet frilans;
+    private OppgittFrilans frilans;
 
     @SuppressWarnings("unused")
-    private OppgittOpptjeningEntitet() {
+    private OppgittOpptjening() {
         // hibernate
     }
 
-    OppgittOpptjeningEntitet(UUID eksternReferanse) {
+    OppgittOpptjening(UUID eksternReferanse) {
         this.eksternReferanse = eksternReferanse;
     }
 
-    OppgittOpptjeningEntitet(UUID eksternReferanse, LocalDateTime opprettetTidspunktOriginalt) {
+    OppgittOpptjening(UUID eksternReferanse, LocalDateTime opprettetTidspunktOriginalt) {
         this(eksternReferanse);
         super.setOpprettetTidspunkt(opprettetTidspunktOriginalt);
     }
 
-    @Override
     public List<OppgittArbeidsforhold> getOppgittArbeidsforhold() {
         if (this.oppgittArbeidsforhold == null) {
             return Collections.emptyList();
@@ -81,17 +75,14 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
         return Collections.unmodifiableList(oppgittArbeidsforhold);
     }
 
-    @Override
     public UUID getEksternReferanse() {
         return eksternReferanse;
     }
 
-    @Override
     public Long getId() {
         return id;
     }
 
-    @Override
     public List<OppgittEgenNæring> getEgenNæring() {
         if (this.egenNæring == null) {
             return Collections.emptyList();
@@ -99,7 +90,6 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
         return Collections.unmodifiableList(egenNæring);
     }
 
-    @Override
     public List<OppgittAnnenAktivitet> getAnnenAktivitet() {
         if (this.annenAktivitet == null) {
             return Collections.emptyList();
@@ -107,16 +97,14 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
         return Collections.unmodifiableList(annenAktivitet);
     }
 
-    @Override
     public Optional<OppgittFrilans> getFrilans() {
         return Optional.ofNullable(frilans);
     }
 
     void leggTilFrilans(OppgittFrilans frilans) {
         if (frilans != null) {
-            OppgittFrilansEntitet frilansEntitet = (OppgittFrilansEntitet) frilans;
-            frilansEntitet.setOppgittOpptjening(this);
-            this.frilans = frilansEntitet;
+            frilans.setOppgittOpptjening(this);
+            this.frilans = frilans;
         } else {
             this.frilans = null;
         }
@@ -127,9 +115,8 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
             this.annenAktivitet = new ArrayList<>();
         }
         if (annenAktivitet != null) {
-            OppgittAnnenAktivitetEntitet annenAktivitetEntitet = (OppgittAnnenAktivitetEntitet) annenAktivitet;
-            annenAktivitetEntitet.setOppgittOpptjening(this);
-            this.annenAktivitet.add(annenAktivitetEntitet);
+            annenAktivitet.setOppgittOpptjening(this);
+            this.annenAktivitet.add(annenAktivitet);
         }
     }
 
@@ -138,9 +125,8 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
             this.egenNæring = new ArrayList<>();
         }
         if (egenNæring != null) {
-            OppgittEgenNæringEntitet egenNæringEntitet = (OppgittEgenNæringEntitet) egenNæring;
-            egenNæringEntitet.setOppgittOpptjening(this);
-            this.egenNæring.add(egenNæringEntitet);
+            egenNæring.setOppgittOpptjening(this);
+            this.egenNæring.add(egenNæring);
         }
     }
 
@@ -149,9 +135,8 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
             this.oppgittArbeidsforhold = new ArrayList<>();
         }
         if (oppgittArbeidsforhold != null) {
-            OppgittArbeidsforholdEntitet oppgittArbeidsforholdEntitet = (OppgittArbeidsforholdEntitet) oppgittArbeidsforhold;
-            oppgittArbeidsforholdEntitet.setOppgittOpptjening(this);
-            this.oppgittArbeidsforhold.add(oppgittArbeidsforholdEntitet);
+            oppgittArbeidsforhold.setOppgittOpptjening(this);
+            this.oppgittArbeidsforhold.add(oppgittArbeidsforhold);
         }
     }
 
@@ -159,9 +144,9 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || !(o instanceof OppgittOpptjeningEntitet))
+        if (o == null || !(o instanceof OppgittOpptjening))
             return false;
-        var that = (OppgittOpptjeningEntitet) o;
+        var that = (OppgittOpptjening) o;
         return Objects.equals(oppgittArbeidsforhold, that.oppgittArbeidsforhold) &&
             Objects.equals(egenNæring, that.egenNæring) &&
             Objects.equals(annenAktivitet, that.annenAktivitet);
