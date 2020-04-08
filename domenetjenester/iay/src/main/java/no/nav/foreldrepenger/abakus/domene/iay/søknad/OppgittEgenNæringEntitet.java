@@ -39,7 +39,7 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "oppgitt_opptjening_id", nullable = false, updatable = false)
-    private OppgittOpptjeningEntitet oppgittOpptjening;
+    private OppgittOpptjening oppgittOpptjening;
 
     @Embedded
     @ChangeTracked
@@ -237,7 +237,7 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
         this.utenlandskVirksomhetNavn = utenlandskVirksomhetNavn;
     }
 
-    void setOppgittOpptjening(OppgittOpptjeningEntitet oppgittOpptjening) {
+    void setOppgittOpptjening(OppgittOpptjening oppgittOpptjening) {
         this.oppgittOpptjening = oppgittOpptjening;
     }
 

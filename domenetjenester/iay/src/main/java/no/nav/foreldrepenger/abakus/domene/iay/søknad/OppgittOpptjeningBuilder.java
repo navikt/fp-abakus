@@ -13,7 +13,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittAnnenAkti
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
@@ -21,9 +20,9 @@ import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
 public class OppgittOpptjeningBuilder {
 
-    private final OppgittOpptjeningEntitet kladd;
+    private final OppgittOpptjening kladd;
 
-    private OppgittOpptjeningBuilder(OppgittOpptjeningEntitet kladd) {
+    private OppgittOpptjeningBuilder(OppgittOpptjening kladd) {
         this.kladd = kladd;
     }
 
@@ -32,12 +31,12 @@ public class OppgittOpptjeningBuilder {
     }
 
     public static OppgittOpptjeningBuilder ny(UUID eksternReferanse, LocalDateTime opprettetTidspunktOriginalt) {
-        return new OppgittOpptjeningBuilder(new OppgittOpptjeningEntitet(eksternReferanse, opprettetTidspunktOriginalt));
+        return new OppgittOpptjeningBuilder(new OppgittOpptjening(eksternReferanse, opprettetTidspunktOriginalt));
     }
 
     public static OppgittOpptjeningBuilder ny(UUID eksternReferanse, OffsetDateTime opprettetTidspunktOriginalt) {
         return new OppgittOpptjeningBuilder(
-            new OppgittOpptjeningEntitet(eksternReferanse, opprettetTidspunktOriginalt.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()));
+            new OppgittOpptjening(eksternReferanse, opprettetTidspunktOriginalt.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()));
     }
 
     /**
@@ -48,7 +47,7 @@ public class OppgittOpptjeningBuilder {
      * @deprecated Kun for migreringen?
      */
     @Deprecated(forRemoval = true)
-    public static OppgittOpptjeningBuilder eksisterende(OppgittOpptjeningEntitet oppgittOpptjeningEntitet) {
+    public static OppgittOpptjeningBuilder eksisterende(OppgittOpptjening oppgittOpptjeningEntitet) {
         return new OppgittOpptjeningBuilder(oppgittOpptjeningEntitet);
     }
 

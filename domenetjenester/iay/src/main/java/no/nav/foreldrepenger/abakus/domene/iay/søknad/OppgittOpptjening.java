@@ -24,7 +24,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittAnnenAkti
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -32,7 +31,7 @@ import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 @Immutable
 @Entity(name = "OppgittOpptjening")
 @Table(name = "IAY_OPPGITT_OPPTJENING")
-public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOpptjening {
+public class OppgittOpptjening extends BaseEntitet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SO_OPPGITT_OPPTJENING")
@@ -60,20 +59,19 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
     private OppgittFrilansEntitet frilans;
 
     @SuppressWarnings("unused")
-    private OppgittOpptjeningEntitet() {
+    private OppgittOpptjening() {
         // hibernate
     }
 
-    OppgittOpptjeningEntitet(UUID eksternReferanse) {
+    OppgittOpptjening(UUID eksternReferanse) {
         this.eksternReferanse = eksternReferanse;
     }
 
-    OppgittOpptjeningEntitet(UUID eksternReferanse, LocalDateTime opprettetTidspunktOriginalt) {
+    OppgittOpptjening(UUID eksternReferanse, LocalDateTime opprettetTidspunktOriginalt) {
         this(eksternReferanse);
         super.setOpprettetTidspunkt(opprettetTidspunktOriginalt);
     }
 
-    @Override
     public List<OppgittArbeidsforhold> getOppgittArbeidsforhold() {
         if (this.oppgittArbeidsforhold == null) {
             return Collections.emptyList();
@@ -81,17 +79,14 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
         return Collections.unmodifiableList(oppgittArbeidsforhold);
     }
 
-    @Override
     public UUID getEksternReferanse() {
         return eksternReferanse;
     }
 
-    @Override
     public Long getId() {
         return id;
     }
 
-    @Override
     public List<OppgittEgenNæring> getEgenNæring() {
         if (this.egenNæring == null) {
             return Collections.emptyList();
@@ -99,7 +94,6 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
         return Collections.unmodifiableList(egenNæring);
     }
 
-    @Override
     public List<OppgittAnnenAktivitet> getAnnenAktivitet() {
         if (this.annenAktivitet == null) {
             return Collections.emptyList();
@@ -107,7 +101,6 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
         return Collections.unmodifiableList(annenAktivitet);
     }
 
-    @Override
     public Optional<OppgittFrilans> getFrilans() {
         return Optional.ofNullable(frilans);
     }
@@ -159,9 +152,9 @@ public class OppgittOpptjeningEntitet extends BaseEntitet implements OppgittOppt
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || !(o instanceof OppgittOpptjeningEntitet))
+        if (o == null || !(o instanceof OppgittOpptjening))
             return false;
-        var that = (OppgittOpptjeningEntitet) o;
+        var that = (OppgittOpptjening) o;
         return Objects.equals(oppgittArbeidsforhold, that.oppgittArbeidsforhold) &&
             Objects.equals(egenNæring, that.egenNæring) &&
             Objects.equals(annenAktivitet, that.annenAktivitet);

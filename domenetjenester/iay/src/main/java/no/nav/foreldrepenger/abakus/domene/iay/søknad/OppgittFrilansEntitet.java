@@ -33,7 +33,7 @@ public class OppgittFrilansEntitet extends BaseEntitet implements OppgittFrilans
 
     @OneToOne(optional = false)
     @JoinColumn(name = "oppgitt_opptjening_id", nullable = false, updatable = false)
-    private OppgittOpptjeningEntitet oppgittOpptjening;
+    private OppgittOpptjening oppgittOpptjening;
 
     @Convert(converter = BooleanToStringConverter.class)
     @Column(name = "inntekt_fra_fosterhjem", nullable = false)
@@ -83,7 +83,7 @@ public class OppgittFrilansEntitet extends BaseEntitet implements OppgittFrilans
             '}';
     }
 
-    public void setOppgittOpptjening(OppgittOpptjeningEntitet oppgittOpptjening) {
+    public void setOppgittOpptjening(OppgittOpptjening oppgittOpptjening) {
         this.oppgittOpptjening = oppgittOpptjening;
     }
 

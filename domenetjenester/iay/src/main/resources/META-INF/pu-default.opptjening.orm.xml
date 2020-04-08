@@ -13,7 +13,7 @@
     <sequence-generator name="SEQ_ANNEN_AKTIVITET" allocation-size="50" sequence-name="SEQ_ANNEN_AKTIVITET" />
     
     <!-- Oppgitt opptjening fra søknad-->
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet"/>
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittArbeidsforholdEntitet"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittEgenNæringEntitet"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittAnnenAktivitetEntitet"/>

@@ -37,7 +37,7 @@ public class OppgittAnnenAktivitetEntitet extends BaseEntitet implements Oppgitt
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "oppgitt_opptjening_id", nullable = false, updatable = false)
-    private OppgittOpptjeningEntitet oppgittOpptjening;
+    private OppgittOpptjening oppgittOpptjening;
 
     @ManyToOne
     @JoinColumnsOrFormulas({
@@ -70,7 +70,7 @@ public class OppgittAnnenAktivitetEntitet extends BaseEntitet implements Oppgitt
         return periode;
     }
 
-    public void setOppgittOpptjening(OppgittOpptjeningEntitet oppgittOpptjening) {
+    public void setOppgittOpptjening(OppgittOpptjening oppgittOpptjening) {
         this.oppgittOpptjening = oppgittOpptjening;
     }
 

@@ -45,7 +45,7 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "oppgitt_opptjening_id", nullable = false, updatable = false)
-    private OppgittOpptjeningEntitet oppgittOpptjening;
+    private OppgittOpptjening oppgittOpptjening;
 
     @Embedded
     @ChangeTracked
@@ -158,7 +158,7 @@ public class OppgittArbeidsforholdEntitet extends BaseEntitet implements Oppgitt
             '}';
     }
 
-    void setOppgittOpptjening(OppgittOpptjeningEntitet oppgittOpptjening) {
+    void setOppgittOpptjening(OppgittOpptjening oppgittOpptjening) {
         this.oppgittOpptjening = oppgittOpptjening;
     }
 

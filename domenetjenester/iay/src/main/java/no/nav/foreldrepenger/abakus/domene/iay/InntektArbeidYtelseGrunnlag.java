@@ -22,8 +22,7 @@ import javax.persistence.Version;
 import org.hibernate.annotations.NaturalId;
 
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningEntitet;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittOpptjening;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -62,7 +61,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     @OneToOne
     @JoinColumn(name = "oppgitt_opptjening_id", updatable = false, unique = true)
     @ChangeTracked
-    private OppgittOpptjeningEntitet oppgittOpptjening;
+    private OppgittOpptjening oppgittOpptjening;
 
     @OneToOne
     @ChangeTracked
@@ -90,7 +89,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
         this(UUID.randomUUID(), grunnlag.getOpprettetTidspunkt());
 
         // NB! skal ikke lage ny versjon av oppgitt opptjening! Lenker bare inn
-        grunnlag.getOppgittOpptjening().ifPresent(kopiAvOppgittOpptjening -> this.setOppgittOpptjening((OppgittOpptjeningEntitet) kopiAvOppgittOpptjening));
+        grunnlag.getOppgittOpptjening().ifPresent(kopiAvOppgittOpptjening -> this.setOppgittOpptjening((OppgittOpptjening) kopiAvOppgittOpptjening));
         grunnlag.getRegisterVersjon().ifPresent(nyRegisterVerson -> this.setRegister(nyRegisterVerson));
 
         grunnlag.getSaksbehandletVersjon()
@@ -162,7 +161,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
         return Optional.ofNullable(oppgittOpptjening);
     }
 
-    void setOppgittOpptjening(OppgittOpptjeningEntitet oppgittOpptjening) {
+    void setOppgittOpptjening(OppgittOpptjening oppgittOpptjening) {
         this.oppgittOpptjening = oppgittOpptjening;
     }
 
