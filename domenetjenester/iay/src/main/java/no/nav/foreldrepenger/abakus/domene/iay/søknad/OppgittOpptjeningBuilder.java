@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
@@ -66,14 +65,14 @@ public class OppgittOpptjeningBuilder {
     }
 
     public static class EgenNæringBuilder {
-        private final OppgittEgenNæringEntitet entitet;
+        private final OppgittEgenNæring entitet;
 
-        private EgenNæringBuilder(OppgittEgenNæringEntitet entitet) {
+        private EgenNæringBuilder(OppgittEgenNæring entitet) {
             this.entitet = entitet;
         }
 
         public static EgenNæringBuilder ny() {
-            return new EgenNæringBuilder(new OppgittEgenNæringEntitet());
+            return new EgenNæringBuilder(new OppgittEgenNæring());
         }
 
         public EgenNæringBuilder medPeriode(IntervallEntitet periode) {

@@ -20,7 +20,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.NaturalId;
 
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
@@ -46,7 +45,7 @@ public class OppgittOpptjening extends BaseEntitet {
 
     @OneToMany(mappedBy = "oppgittOpptjening")
     @ChangeTracked
-    private List<OppgittEgenNæringEntitet> egenNæring;
+    private List<OppgittEgenNæring> egenNæring;
 
     @OneToMany(mappedBy = "oppgittOpptjening")
     @ChangeTracked
@@ -128,9 +127,8 @@ public class OppgittOpptjening extends BaseEntitet {
             this.egenNæring = new ArrayList<>();
         }
         if (egenNæring != null) {
-            OppgittEgenNæringEntitet egenNæringEntitet = (OppgittEgenNæringEntitet) egenNæring;
-            egenNæringEntitet.setOppgittOpptjening(this);
-            this.egenNæring.add(egenNæringEntitet);
+            egenNæring.setOppgittOpptjening(this);
+            this.egenNæring.add(egenNæring);
         }
     }
 

@@ -18,7 +18,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinFormula;
 
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
@@ -31,7 +30,7 @@ import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
 @Table(name = "IAY_EGEN_NAERING")
 @Entity(name = "EgenNæring")
-public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEgenNæring, IndexKey {
+public class OppgittEgenNæring extends BaseEntitet implements IndexKey {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_EGEN_NAERING")
@@ -92,7 +91,7 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
     @Column(name = "utenlandsk_virksomhet_navn")
     private String utenlandskVirksomhetNavn;
 
-    OppgittEgenNæringEntitet() {
+    OppgittEgenNæring() {
         // for hibernate
     }
 
@@ -101,17 +100,14 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
         return IndexKey.createKey(periode, orgNummer, landkode, utenlandskVirksomhetNavn);
     }
 
-    @Override
     public LocalDate getFraOgMed() {
         return periode.getFomDato();
     }
 
-    @Override
     public LocalDate getTilOgMed() {
         return periode.getTomDato();
     }
 
-    @Override
     public IntervallEntitet getPeriode() {
         return periode;
     }
@@ -120,7 +116,6 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
         this.periode = periode;
     }
 
-    @Override
     public VirksomhetType getVirksomhetType() {
         return virksomhetType;
     }
@@ -129,7 +124,6 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
         this.virksomhetType = virksomhetType;
     }
 
-    @Override
     public OrgNummer getOrgnummer() {
         return orgNummer;
     }
@@ -138,7 +132,6 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
         this.orgNummer = orgNummer;
     }
 
-    @Override
     public String getRegnskapsførerNavn() {
         return regnskapsførerNavn;
     }
@@ -147,7 +140,6 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
         this.regnskapsførerNavn = regnskapsførerNavn;
     }
 
-    @Override
     public String getRegnskapsførerTlf() {
         return regnskapsførerTlf;
     }
@@ -156,7 +148,6 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
         this.regnskapsførerTlf = regnskapsførerTlf;
     }
 
-    @Override
     public LocalDate getEndringDato() {
         return endringDato;
     }
@@ -165,7 +156,6 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
         this.endringDato = endringDato;
     }
 
-    @Override
     public BigDecimal getBruttoInntekt() {
         return bruttoInntekt;
     }
@@ -174,7 +164,6 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
         this.bruttoInntekt = bruttoInntekt;
     }
 
-    @Override
     public String getBegrunnelse() {
         return begrunnelse;
     }
@@ -183,7 +172,6 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
         this.begrunnelse = begrunnelse;
     }
 
-    @Override
     public boolean getNyoppstartet() {
         return nyoppstartet;
     }
@@ -192,7 +180,6 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
         this.nyoppstartet = nyoppstartet;
     }
 
-    @Override
     public boolean getNyIArbeidslivet() {
         return nyIArbeidslivet;
     }
@@ -201,7 +188,6 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
         this.nyIArbeidslivet = nyIArbeidslivet;
     }
 
-    @Override
     public boolean getVarigEndring() {
         return varigEndring;
     }
@@ -210,7 +196,6 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
         this.varigEndring = varigEndring;
     }
 
-    @Override
     public boolean getNærRelasjon() {
         return nærRelasjon;
     }
@@ -219,7 +204,6 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
         this.nærRelasjon = nærRelasjon;
     }
 
-    @Override
     public Landkoder getLandkode() {
         return landkode;
     }
@@ -228,7 +212,6 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
         this.landkode = Objects.requireNonNull(landkode, "landkode");
     }
 
-    @Override
     public String getUtenlandskVirksomhetNavn() {
         return utenlandskVirksomhetNavn;
     }
@@ -244,8 +227,8 @@ public class OppgittEgenNæringEntitet extends BaseEntitet implements OppgittEge
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || !(o instanceof OppgittEgenNæringEntitet)) return false;
-        var that = (OppgittEgenNæringEntitet) o;
+        if (o == null || !(o instanceof OppgittEgenNæring)) return false;
+        var that = (OppgittEgenNæring) o;
         return Objects.equals(periode, that.periode) &&
             Objects.equals(orgNummer, that.orgNummer) &&
             Objects.equals(nyoppstartet, that.nyoppstartet) &&

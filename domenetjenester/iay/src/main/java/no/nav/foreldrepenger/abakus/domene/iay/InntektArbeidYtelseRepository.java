@@ -33,9 +33,9 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdRefe
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittAnnenAktivitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittArbeidsforhold;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittEgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilansoppdrag;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffEntity;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
