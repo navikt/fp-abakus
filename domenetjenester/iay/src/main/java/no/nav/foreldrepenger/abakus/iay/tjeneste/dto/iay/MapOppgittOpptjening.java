@@ -206,9 +206,6 @@ public class MapOppgittOpptjening {
 
             var oppgittOpptjeningEksternReferanse = UUID.fromString(dto.getEksternReferanse().getReferanse());
             Optional<OppgittOpptjening> oppgittOpptjening = iayTjeneste.hentOppgittOpptjeningFor(oppgittOpptjeningEksternReferanse);
-            if (oppgittOpptjening.isPresent()) {
-                return OppgittOpptjeningBuilder.eksisterende(oppgittOpptjening.get());
-            }
             var builder = OppgittOpptjeningBuilder.ny(oppgittOpptjeningEksternReferanse, dto.getOpprettetTidspunkt());
 
             var annenAktivitet = mapEach(dto.getAnnenAktivitet(), this::mapAnnenAktivitet);

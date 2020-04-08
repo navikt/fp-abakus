@@ -39,18 +39,6 @@ public class OppgittOpptjeningBuilder {
             new OppgittOpptjening(eksternReferanse, opprettetTidspunktOriginalt.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()));
     }
 
-    /**
-     * For migreringen
-     *
-     * @param oppgittOpptjeningEntitet entitet
-     * @return builder
-     * @deprecated Kun for migreringen?
-     */
-    @Deprecated(forRemoval = true)
-    public static OppgittOpptjeningBuilder eksisterende(OppgittOpptjening oppgittOpptjeningEntitet) {
-        return new OppgittOpptjeningBuilder(oppgittOpptjeningEntitet);
-    }
-
     public OppgittOpptjeningBuilder leggTilAnnenAktivitet(OppgittAnnenAktivitet annenAktivitet) {
         this.kladd.leggTilAnnenAktivitet(annenAktivitet);
         return this;
