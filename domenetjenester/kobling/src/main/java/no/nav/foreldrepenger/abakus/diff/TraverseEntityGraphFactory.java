@@ -2,12 +2,12 @@ package no.nav.foreldrepenger.abakus.diff;
 
 import java.util.function.Function;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraph;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraphConfig;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseJpaEntityGraphConfig;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
-import no.nav.foreldrepenger.abakus.kodeverk.Kodeverdi;
 
 /*
  * Legger denne sammen med RootClass

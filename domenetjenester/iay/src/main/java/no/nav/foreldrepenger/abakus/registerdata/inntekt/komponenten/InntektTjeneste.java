@@ -12,13 +12,12 @@ import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import no.finn.unleash.Unleash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
+import no.finn.unleash.Unleash;
+import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.tjenester.aordningen.inntektsinformasjon.Aktoer;
 import no.nav.tjenester.aordningen.inntektsinformasjon.AktoerType;
@@ -50,7 +49,6 @@ public class InntektTjeneste {
 
     private OidcRestClient oidcRestClient;
     private URI endpoint;
-    private KodeverkRepository kodeverkRepository;
     private AktørConsumer aktørConsumer;
     private Map<InntektsKilde, InntektsFilter> kildeTilFilter;
     private Unleash unleash;
@@ -62,12 +60,10 @@ public class InntektTjeneste {
     @Inject
     public InntektTjeneste(@KonfigVerdi(ENDPOINT_KEY) URI endpoint,
                            OidcRestClient oidcRestClient,
-                           KodeverkRepository kodeverkRepository,
                            AktørConsumer aktørConsumer,
                            Unleash unleash) {
         this.endpoint = endpoint;
         this.oidcRestClient = oidcRestClient;
-        this.kodeverkRepository = kodeverkRepository;
         this.aktørConsumer = aktørConsumer;
         this.unleash = unleash;
         this.kildeTilFilter = Map.of(InntektsKilde.INNTEKT_OPPTJENING, InntektsFilter.OPPTJENINGSGRUNNLAG,
@@ -183,7 +179,7 @@ public class InntektTjeneste {
         }
         for (var arbeidsforholdFrilanser : arbeidsInntektInformasjon.getArbeidsforholdListe()) {
             var builder = FrilansArbeidsforhold.builder();
-            var arbeidType = kodeverkRepository.finnForKodeverkEiersKode(ArbeidType.class, arbeidsforholdFrilanser.getArbeidsforholdstype());
+            var arbeidType = ArbeidType.finnForKodeverkEiersKode(arbeidsforholdFrilanser.getArbeidsforholdstype());
             builder.medArbeidsforholdId(arbeidsforholdFrilanser.getArbeidsforholdID())
                 .medType(arbeidType) // OK med NPE
                 .medSisteEndringIStillingsprosent(arbeidsforholdFrilanser.getSisteDatoForStillingsprosentendring())

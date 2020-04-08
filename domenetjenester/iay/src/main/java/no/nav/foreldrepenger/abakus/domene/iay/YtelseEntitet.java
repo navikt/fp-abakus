@@ -24,8 +24,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
@@ -112,7 +113,8 @@ public class YtelseEntitet extends BaseEntitet implements Ytelse, IndexKey {
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(periode, relatertYtelseType, saksnummer);
+        Object[] keyParts = { periode, relatertYtelseType, saksnummer };
+        return IndexKeyComposer.createKey(keyParts);
     }
 
     void setAktørYtelse(AktørYtelseEntitet aktørYtelse) {

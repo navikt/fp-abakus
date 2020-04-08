@@ -2,31 +2,24 @@ package no.nav.foreldrepenger.abakus.kodeverk;
 
 import static no.nav.foreldrepenger.abakus.kodeverk.KodeverkFeil.FEILFACTORY;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.jpa.QueryHints;
 
-import no.nav.foreldrepenger.abakus.kodeverk.tjeneste.Kodeverk;
 import no.nav.vedtak.exception.TekniskException;
-import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
 import no.nav.vedtak.util.LRUCache;
 
 @ApplicationScoped
@@ -41,7 +34,7 @@ public class KodeverkRepositoryImpl implements KodeverkRepository {
     }
 
     @Inject
-    public KodeverkRepositoryImpl(@VLPersistenceUnit EntityManager entityManager) {
+    public KodeverkRepositoryImpl(EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager"); //$NON-NLS-1$
         this.entityManager = entityManager;
     }
@@ -57,22 +50,6 @@ public class KodeverkRepositoryImpl implements KodeverkRepository {
         } else {
             return Optional.of(list.get(0)); // NOSONAR
         }
-    }
-
-    @Override
-    public Map<String, Set<String>> hentAlle() {
-        Query query = entityManager.createNativeQuery("SELECT k.kodeverk, k.kode from Kodeliste k");
-        @SuppressWarnings("unchecked")
-        List<Object[]> resultList = query.getResultList();
-        List<Kodeverk> kodeverk = new ArrayList<>();
-        for (Object[] objects : resultList) {
-            kodeverk.add(new Kodeverk((String) objects[0], (String) objects[1]));
-        }
-        return kodeverk.stream().collect(Collectors.groupingBy(
-            Kodeverk::getKodeverk,
-            Collectors.mapping(
-                Kodeverk::getKode,
-                Collectors.toSet())));
     }
 
     @Override

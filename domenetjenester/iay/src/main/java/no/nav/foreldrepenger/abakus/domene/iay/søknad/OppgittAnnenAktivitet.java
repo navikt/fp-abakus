@@ -2,6 +2,8 @@ package no.nav.foreldrepenger.abakus.domene.iay.søknad;
 
 import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,13 +13,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinColumnsOrFormulas;
-import org.hibernate.annotations.JoinFormula;
-
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
@@ -38,11 +38,9 @@ public class OppgittAnnenAktivitet extends BaseEntitet implements IndexKey {
     @JoinColumn(name = "oppgitt_opptjening_id", nullable = false, updatable = false)
     private OppgittOpptjening oppgittOpptjening;
 
-    @ManyToOne
-    @JoinColumnsOrFormulas({
-        @JoinColumnOrFormula(column = @JoinColumn(name = "arbeid_type", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + ArbeidType.DISCRIMINATOR + "'"))})
     @ChangeTracked
+    @Convert(converter = ArbeidTypeKodeverdiConverter.class)
+    @Column(name = "arbeid_type", nullable = false, updatable = false)
     private ArbeidType arbeidType;
 
     public OppgittAnnenAktivitet(IntervallEntitet periode, ArbeidType arbeidType) {
@@ -56,7 +54,8 @@ public class OppgittAnnenAktivitet extends BaseEntitet implements IndexKey {
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(periode, arbeidType);
+        Object[] keyParts = { periode, arbeidType };
+        return IndexKeyComposer.createKey(keyParts);
     }
 
     public ArbeidType getArbeidType() {

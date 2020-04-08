@@ -142,7 +142,7 @@ public class IAYFraDtoMapper {
 
     private void mapTilGrunnlagBuilder(InntektArbeidYtelseGrunnlagDto dto, InntektArbeidYtelseGrunnlagBuilder builder) {
 
-        var arbeidsforholdInformasjonBuilder = new MapArbeidsforholdInformasjon.MapFraDto(kodeverkRepository, builder).map(dto.getArbeidsforholdInformasjon());
+        var arbeidsforholdInformasjonBuilder = new MapArbeidsforholdInformasjon.MapFraDto(builder).map(dto.getArbeidsforholdInformasjon());
         var mapInntektsmeldinger = new MapInntektsmeldinger.MapFraDto();
         var inntektsmeldinger = mapInntektsmeldinger.map(arbeidsforholdInformasjonBuilder, dto.getInntektsmeldinger());
         var arbeidsforholdInformasjon = arbeidsforholdInformasjonBuilder.build();
@@ -156,7 +156,7 @@ public class IAYFraDtoMapper {
 
     private void mapOverstyringer(InntektArbeidYtelseGrunnlagDto dto, InntektArbeidYtelseGrunnlagBuilder builder) {
 
-        var arbeidsforholdInformasjonBuilder = new MapArbeidsforholdInformasjon.MapFraDto(kodeverkRepository, builder).map(dto.getArbeidsforholdInformasjon());
+        var arbeidsforholdInformasjonBuilder = new MapArbeidsforholdInformasjon.MapFraDto(builder).map(dto.getArbeidsforholdInformasjon());
         var arbeidsforholdInformasjon = arbeidsforholdInformasjonBuilder.build();
 
         builder.medInformasjon(arbeidsforholdInformasjon);

@@ -3,7 +3,7 @@ package no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Organisasjon;

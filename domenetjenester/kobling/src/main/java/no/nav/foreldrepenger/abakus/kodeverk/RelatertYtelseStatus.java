@@ -2,6 +2,8 @@ package no.nav.foreldrepenger.abakus.kodeverk;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
+
 public enum RelatertYtelseStatus implements Kodeverdi {
 
     // Statuser fra Arena

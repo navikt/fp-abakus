@@ -16,6 +16,8 @@ import javax.persistence.Version;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+
 /**
  * Denne klassen kan traverse en Entity graph og trekk ut verdier som key/value.
  * <p>

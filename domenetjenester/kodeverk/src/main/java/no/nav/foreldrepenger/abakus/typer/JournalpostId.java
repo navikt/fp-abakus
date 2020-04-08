@@ -9,7 +9,7 @@ import javax.persistence.Embeddable;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 
 /**
  * Journalpostid refererer til journalpost registret i Joark.

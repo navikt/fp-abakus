@@ -3,8 +3,8 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.SkatteOgAvgiftsregelType;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 
 public class InntektspostBuilder {
@@ -55,6 +55,6 @@ public class InntektspostBuilder {
     }
 
     public InntektspostBuilder medSkatteOgAvgiftsregelType(String kode) {
-        return medSkatteOgAvgiftsregelType(new SkatteOgAvgiftsregelType(kode));
+        return medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.fraKode(kode));
     }
 }

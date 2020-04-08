@@ -41,6 +41,7 @@ public class InfotrygdGrunnlagAggregator {
     }
 
 
+    @Override
     public String toString() {
         return getClass().getSimpleName() + "[tjenester=" + tjenester + "]";
     }

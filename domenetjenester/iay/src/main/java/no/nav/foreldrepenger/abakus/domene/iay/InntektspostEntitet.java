@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,10 +21,12 @@ import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.SkatteOgAvgiftsregelType;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.SkatteOgAvgiftsregelTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
@@ -43,10 +46,8 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
         @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + InntektspostType.DISCRIMINATOR + "'"))})
     private InntektspostType inntektspostType;
 
-    @ManyToOne
-    @JoinColumnsOrFormulas({
-        @JoinColumnOrFormula(column = @JoinColumn(name = "skatte_og_avgiftsregel_type", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + SkatteOgAvgiftsregelType.DISCRIMINATOR + "'"))})
+    @Convert(converter = SkatteOgAvgiftsregelTypeKodeverdiConverter.class)
+    @Column(name = "skatte_og_avgiftsregel_type", nullable = false, updatable = false)
     private SkatteOgAvgiftsregelType skatteOgAvgiftsregelType = SkatteOgAvgiftsregelType.UDEFINERT;
 
     @ManyToOne(optional = false)
@@ -93,7 +94,8 @@ public class InntektspostEntitet extends BaseEntitet implements Inntektspost, In
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(inntektspostType, ytelse, periode);
+        Object[] keyParts = { inntektspostType, ytelse, periode };
+        return IndexKeyComposer.createKey(keyParts);
     }
 
     @Override

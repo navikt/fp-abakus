@@ -23,10 +23,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 
@@ -74,7 +75,8 @@ public class AktørInntektEntitet extends BaseEntitet implements AktørInntekt, 
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(getAktørId());
+        Object[] keyParts = { getAktørId() };
+        return IndexKeyComposer.createKey(keyParts);
     }
 
     void setInntektArbeidYtelser(InntektArbeidYtelseAggregat inntektArbeidYtelser) {

@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.inject.spi.CDI;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
 import no.nav.foreldrepenger.abakus.domene.iay.NæringsinntektType;
 import no.nav.foreldrepenger.abakus.domene.iay.OffentligYtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.PensjonTrygdType;
@@ -12,16 +13,12 @@ import no.nav.foreldrepenger.abakus.domene.iay.YtelseInntektspostType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelseÅrsak;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.Arbeidskategori;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.BekreftetPermisjonStatus;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektPeriodeType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.PermisjonsbeskrivelseType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.SkatteOgAvgiftsregelType;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
@@ -107,18 +104,6 @@ final class KodeverkMapper {
             : new no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori(kode.getKode());
     }
 
-    public static BekreftetPermisjonStatus getBekreftetPermisjonStatus(no.nav.abakus.iaygrunnlag.kodeverk.BekreftetPermisjonStatus kode) {
-        return kode == null || kode.getKode().equals("-")
-            ? BekreftetPermisjonStatus.UDEFINERT
-            : repository().finn(BekreftetPermisjonStatus.class, kode.getKode());
-    }
-
-    public static no.nav.abakus.iaygrunnlag.kodeverk.BekreftetPermisjonStatus mapBekreftetPermisjonStatus(BekreftetPermisjonStatus status) {
-        return status == null || BekreftetPermisjonStatus.UDEFINERT.equals(status)
-            ? null
-            : new no.nav.abakus.iaygrunnlag.kodeverk.BekreftetPermisjonStatus(status.getKode());
-    }
-
     public static Fagsystem mapFagsystemFraDto(no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem dto) {
         return dto == null
             ? Fagsystem.UDEFINERT
@@ -143,12 +128,6 @@ final class KodeverkMapper {
             : new no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori(kode.getKode());
     }
 
-    public static no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType mapArbeidTypeTilDto(ArbeidType arbeidType) {
-        return arbeidType == null || ArbeidType.UDEFINERT.equals(arbeidType)
-            ? null
-            : new no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType(arbeidType.getKode());
-    }
-
     public static no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType mapPermisjonbeskrivelseTypeTilDto(PermisjonsbeskrivelseType kode) {
         return kode == null || PermisjonsbeskrivelseType.UDEFINERT.equals(kode)
             ? null
@@ -167,22 +146,10 @@ final class KodeverkMapper {
             : new no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType(kode.getKode());
     }
 
-    public static no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType mapSkatteOgAvgiftsregelTilDto(SkatteOgAvgiftsregelType kode) {
-        return kode == null || SkatteOgAvgiftsregelType.UDEFINERT.equals(kode)
-            ? null
-            : new no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType(kode.getKode());
-    }
-
     public static no.nav.abakus.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType mapArbeidsforholdHandlingTypeTilDto(ArbeidsforholdHandlingType kode) {
         return kode == null || ArbeidsforholdHandlingType.UDEFINERT.equals(kode)
             ? null
             : new no.nav.abakus.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType(kode.getKode());
-    }
-
-    public static ArbeidType mapArbeidType(no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType dto) {
-        return dto == null
-            ? ArbeidType.UDEFINERT
-            : repository().finn(ArbeidType.class, dto.getKode());
     }
 
     public static no.nav.abakus.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType mapInntektsmeldingInnsendingsårsak(InntektsmeldingInnsendingsårsak kode) {
@@ -221,12 +188,6 @@ final class KodeverkMapper {
             : repository().finn(NaturalYtelseType.class, dto.getKode());
     }
 
-    public static VirksomhetType mapVirksomhetTypeFraDto(no.nav.abakus.iaygrunnlag.kodeverk.VirksomhetType dto) {
-        return dto == null
-            ? VirksomhetType.UDEFINERT
-            : repository().finn(VirksomhetType.class, dto.getKode());
-    }
-
     public static no.nav.foreldrepenger.abakus.kodeverk.YtelseType mapYtelseTypeFraDto(no.nav.abakus.iaygrunnlag.kodeverk.YtelseType dto) {
         return dto == null
             ? no.nav.foreldrepenger.abakus.kodeverk.YtelseType.UDEFINERT
@@ -237,12 +198,6 @@ final class KodeverkMapper {
         return dto == null
             ? YtelseStatus.UDEFINERT
             : YtelseStatus.fraKode(dto.getKode());
-    }
-
-    public static SkatteOgAvgiftsregelType mapSkatteOgAvgiftsregelFraDto(no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType dto) {
-        return dto == null
-            ? SkatteOgAvgiftsregelType.UDEFINERT
-            : repository().finn(SkatteOgAvgiftsregelType.class, dto.getKode());
     }
 
     public static InntektspostType mapInntektspostTypeFraDto(no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType dto) {
@@ -279,12 +234,6 @@ final class KodeverkMapper {
         return dto == null
             ? UtsettelseÅrsak.UDEFINERT
             : repository().finn(UtsettelseÅrsak.class, dto.getKode());
-    }
-
-    public static no.nav.abakus.iaygrunnlag.kodeverk.VirksomhetType mapVirksomhetTypeTilDto(VirksomhetType kode) {
-        return kode == null || VirksomhetType.UDEFINERT.equals(kode)
-            ? null
-            : new no.nav.abakus.iaygrunnlag.kodeverk.VirksomhetType(kode.getKode());
     }
 
 }

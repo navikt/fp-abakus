@@ -13,6 +13,7 @@ import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon;
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdOverstyringDto;
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdReferanseDto;
+import no.nav.abakus.iaygrunnlag.kodeverk.BekreftetPermisjonStatus;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.BekreftetPermisjon;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
@@ -20,9 +21,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInfo
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyringBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyrtePerioderEntitet;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanse;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.BekreftetPermisjonStatus;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
@@ -46,11 +45,9 @@ class MapArbeidsforholdInformasjon {
         .thenComparing(Periode::getTom, Comparator.nullsLast(Comparator.naturalOrder()));
 
     static class MapFraDto {
-        private KodeverkRepository kodeverkRepository;
         private InntektArbeidYtelseGrunnlagBuilder grunnlagBuilder;
 
-        public MapFraDto(KodeverkRepository kodeverkRepository, InntektArbeidYtelseGrunnlagBuilder builder) {
-            this.kodeverkRepository = kodeverkRepository;
+        public MapFraDto(InntektArbeidYtelseGrunnlagBuilder builder) {
             this.grunnlagBuilder = builder;
         }
 
@@ -88,9 +85,8 @@ class MapArbeidsforholdInformasjon {
                 .medAngittStillingsprosent(new Stillingsprosent(ov.getStillingsprosent()));
 
             ov.getBekreftetPermisjon().ifPresent(bp -> {
-                BekreftetPermisjonStatus bekreftetPermisjonStatus = KodeverkMapper.getBekreftetPermisjonStatus(bp.getBekreftetPermisjonStatus());
-                BekreftetPermisjonStatus status = kodeverkRepository.finn(BekreftetPermisjonStatus.class, bekreftetPermisjonStatus.getKode());
-                var bekreftetPermisjon = new BekreftetPermisjon(bp.getPeriode().getFom(), bp.getPeriode().getTom(), status);
+                BekreftetPermisjonStatus bekreftetPermisjonStatus = bp.getBekreftetPermisjonStatus();
+                var bekreftetPermisjon = new BekreftetPermisjon(bp.getPeriode().getFom(), bp.getPeriode().getTom(), bekreftetPermisjonStatus);
                 overstyringBuilder.medBekreftetPermisjon(bekreftetPermisjon);
             });
 
@@ -165,7 +161,7 @@ class MapArbeidsforholdInformasjon {
             }
             var bekreftetPermisjon = entitet.get();
             var periode = mapPeriode(bekreftetPermisjon.getPeriode());
-            var bekreftetPermisjonStatus = KodeverkMapper.mapBekreftetPermisjonStatus(bekreftetPermisjon.getStatus());
+            var bekreftetPermisjonStatus = bekreftetPermisjon.getStatus();
             return new no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.BekreftetPermisjon(periode, bekreftetPermisjonStatus);
         }
 

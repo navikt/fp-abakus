@@ -117,7 +117,7 @@ public class MapOppgittOpptjening {
 
             IntervallEntitet periode1 = arbeidsforhold.getPeriode();
             var periode = new Periode(periode1.getFomDato(), periode1.getTomDato());
-            var arbeidType = KodeverkMapper.mapArbeidTypeTilDto(arbeidsforhold.getArbeidType());
+            var arbeidType = arbeidsforhold.getArbeidType();
 
             var dto = new OppgittArbeidsforholdDto(periode, arbeidType)
                 .medErUtenlandskInntekt(arbeidsforhold.erUtenlandskInntekt());
@@ -184,7 +184,7 @@ public class MapOppgittOpptjening {
                 return null;
 
             var periode = new Periode(annenAktivitet.getPeriode().getFomDato(), annenAktivitet.getPeriode().getTomDato());
-            var arbeidType = KodeverkMapper.mapArbeidTypeTilDto(annenAktivitet.getArbeidType());
+            var arbeidType = annenAktivitet.getArbeidType();
             return new OppgittAnnenAktivitetDto(periode, arbeidType);
         }
 
@@ -257,7 +257,7 @@ public class MapOppgittOpptjening {
                 .medBruttoInntekt(dto.getBruttoInntekt())
                 .medEndringDato(dto.getEndringDato())
                 .medVirksomhet(org)
-                .medVirksomhetType(KodeverkMapper.mapVirksomhetTypeFraDto(dto.getVirksomhetTypeDto()))
+                .medVirksomhetType(dto.getVirksomhetTypeDto())
                 .medRegnskapsførerNavn(dto.getRegnskapsførerNavn())
                 .medRegnskapsførerTlf(dto.getRegnskapsførerTlf())
                 .medNyIArbeidslivet(dto.isNyIArbeidslivet())
@@ -278,7 +278,7 @@ public class MapOppgittOpptjening {
 
             Periode dto1 = dto.getPeriode();
             var builder = OppgittArbeidsforholdBuilder.ny()
-                .medArbeidType(KodeverkMapper.mapArbeidType(dto.getArbeidTypeDto()))
+                .medArbeidType(dto.getArbeidTypeDto())
                 .medErUtenlandskInntekt(dto.isErUtenlandskInntekt())
                 .medPeriode(IntervallEntitet.fraOgMedTilOgMed(dto1.getFom(), dto1.getTom()));
 
@@ -294,7 +294,7 @@ public class MapOppgittOpptjening {
 
             Periode dto1 = dto.getPeriode();
             var periode = IntervallEntitet.fraOgMedTilOgMed(dto1.getFom(), dto1.getTom());
-            var arbeidType = KodeverkMapper.mapArbeidType(dto.getArbeidTypeDto());
+            var arbeidType = dto.getArbeidTypeDto();
             return new OppgittAnnenAktivitet(periode, arbeidType);
         }
 

@@ -9,9 +9,10 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseValue;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
@@ -56,9 +57,11 @@ public class Arbeidsgiver implements IndexKey, TraverseValue, Serializable {
 
     @Override
     public String getIndexKey() {
+        Object[] keyParts = { "arbeidsgiverAktørId", arbeidsgiverAktørId };
+        Object[] keyParts1 = { "virksomhet", arbeidsgiverOrgnr };
         return arbeidsgiverOrgnr == null
-            ? IndexKey.createKey("arbeidsgiverAktørId", arbeidsgiverAktørId)
-            : IndexKey.createKey("virksomhet", arbeidsgiverOrgnr);
+            ? IndexKeyComposer.createKey(keyParts)
+            : IndexKeyComposer.createKey(keyParts1);
     }
 
     public OrgNummer getOrgnr() {

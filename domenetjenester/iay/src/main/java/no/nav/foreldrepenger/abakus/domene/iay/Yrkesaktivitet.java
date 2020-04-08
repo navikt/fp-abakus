@@ -1,7 +1,8 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.util.Collection;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
+
+import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
 public interface Yrkesaktivitet {

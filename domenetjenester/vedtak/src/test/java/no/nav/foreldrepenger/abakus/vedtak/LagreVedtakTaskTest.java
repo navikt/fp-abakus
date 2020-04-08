@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import org.junit.Test;
 
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
@@ -15,7 +14,6 @@ public class LagreVedtakTaskTest {
 
 
     private VedtakYtelseRepository repository = mock(VedtakYtelseRepository.class);
-    private final KodeverkRepository kodeverkRepository = mock(KodeverkRepository.class);
     private ExtractFromYtelseV1 extractor = new ExtractFromYtelseV1(repository);
     private LagreVedtakTask task = new LagreVedtakTask(repository, extractor);
 

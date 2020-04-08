@@ -25,7 +25,6 @@ import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
-import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
 
 @ApplicationScoped
 public class KoblingRepository {
@@ -37,7 +36,7 @@ public class KoblingRepository {
     }
 
     @Inject
-    public KoblingRepository(@VLPersistenceUnit EntityManager entityManager) {
+    public KoblingRepository(EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager"); //$NON-NLS-1$
         this.entityManager = entityManager;
     }

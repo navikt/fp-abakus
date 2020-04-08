@@ -17,8 +17,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
@@ -72,7 +73,8 @@ public class YtelseAnvistEntitet extends BaseEntitet implements YtelseAnvist, In
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(this.anvistPeriode);
+        Object[] keyParts = { this.anvistPeriode };
+        return IndexKeyComposer.createKey(keyParts);
     }
 
     @Override

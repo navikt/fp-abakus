@@ -79,16 +79,11 @@
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Refusjon" />
 
     <!-- Kodeverk for InntektArbeidYtelser -->
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.SkatteOgAvgiftsregelType" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.Arbeidskategori" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektPeriodeType" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.PermisjonsbeskrivelseType" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseResultat" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.RelatertYtelseSakstype" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.BekreftetPermisjonStatus"/>
 
 </entity-mappings>

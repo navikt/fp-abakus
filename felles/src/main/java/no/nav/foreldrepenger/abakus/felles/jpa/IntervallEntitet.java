@@ -40,10 +40,12 @@ public class IntervallEntitet extends AbstractIntervall {
         return new IntervallEntitet(fomDato, TIDENES_ENDE);
     }
 
+    @Override
     public LocalDate getFomDato() {
         return this.fomDato;
     }
 
+    @Override
     public LocalDate getTomDato() {
         return this.tomDato;
     }

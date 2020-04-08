@@ -85,7 +85,7 @@ public class MapAktørInntekt {
                 .medBeløp(post.getBeløp())
                 .medInntektspostType(KodeverkMapper.mapInntektspostTypeFraDto(post.getInntektspostType()))
                 .medPeriode(post.getPeriode().getFom(), post.getPeriode().getTom())
-                .medSkatteOgAvgiftsregelType(KodeverkMapper.mapSkatteOgAvgiftsregelFraDto(post.getSkattAvgiftType()))
+                .medSkatteOgAvgiftsregelType(post.getSkattAvgiftType())
                 .medYtelse(KodeverkMapper.mapUtbetaltYtelseTypeTilGrunnlag(post.getYtelseType()));
         }
 
@@ -146,7 +146,7 @@ public class MapAktørInntekt {
             var periode = new Periode(inntektspost.getPeriode().getFomDato(), inntektspost.getPeriode().getTomDato());
             var inntektspostType = KodeverkMapper.mapInntektspostTypeTilDto(inntektspost.getInntektspostType());
             var ytelseType = KodeverkMapper.mapYtelseTypeTilDto(inntektspost.getYtelseType());
-            var skattOgAvgiftType = KodeverkMapper.mapSkatteOgAvgiftsregelTilDto(inntektspost.getSkatteOgAvgiftsregelType());
+            var skattOgAvgiftType = inntektspost.getSkatteOgAvgiftsregelType();
 
             UtbetalingsPostDto dto = new UtbetalingsPostDto(periode, inntektspostType)
                 .medUtbetaltYtelseType(ytelseType)
