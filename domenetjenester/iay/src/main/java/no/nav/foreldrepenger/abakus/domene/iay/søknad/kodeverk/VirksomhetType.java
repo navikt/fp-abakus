@@ -15,6 +15,7 @@ public class VirksomhetType extends Kodeliste {
     public static final VirksomhetType DAGMAMMA = new VirksomhetType("DAGMAMMA"); //$NON-NLS-1$
     public static final VirksomhetType FRILANSER = new VirksomhetType("FRILANSER"); //$NON-NLS-1$
     public static final VirksomhetType JORDBRUK_SKOGBRUK = new VirksomhetType("JORDBRUK_SKOGBRUK"); //$NON-NLS-1$
+    public static final VirksomhetType ENKELTPERSONFORETAK = new VirksomhetType("ENK"); //$NON-NLS-1$
     public static final VirksomhetType ANNEN = new VirksomhetType("ANNEN"); //$NON-NLS-1$
 
     public VirksomhetType(String kode) {
