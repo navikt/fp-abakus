@@ -24,9 +24,10 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.NaturalId;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
@@ -120,7 +121,8 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(periode, aktørId, ytelseType, saksnummer, kilde);
+        Object[] keyParts = { periode, aktørId, ytelseType, saksnummer, kilde };
+        return IndexKeyComposer.createKey(keyParts);
     }
 
     @Override

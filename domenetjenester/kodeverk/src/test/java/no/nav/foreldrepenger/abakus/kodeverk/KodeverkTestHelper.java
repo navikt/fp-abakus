@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.enterprise.inject.Alternative;
 import javax.persistence.NoResultException;
@@ -99,11 +98,6 @@ public class KodeverkTestHelper {
         @Override
         public <V extends Kodeliste> Optional<V> finnOptional(Class<V> cls, String kode) {
             return Optional.of(finn(cls, kode));
-        }
-
-        @Override
-        public Map<String, Set<String>> hentAlle() {
-            return Map.of();
         }
 
         public synchronized Map<String, Kodeliste> getKodelistePrOffisiellKodePrKlasse(Class<? extends Kodeliste> cls) {

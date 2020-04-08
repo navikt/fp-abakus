@@ -19,13 +19,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import no.finn.unleash.FakeUnleash;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import no.finn.unleash.FakeUnleash;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FinnInntektRequest;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
@@ -53,14 +52,14 @@ public class InntektTjenesteImplTest {
     private URI uri = null;
 
     private OidcRestClient restKlient = mock(OidcRestClient.class);
-    private KodeverkRepository kodeverkRepository = mock(KodeverkRepository.class);
     private InntektTjeneste inntektTjeneste;
 
     @Before
     public void before() {
-        inntektTjeneste = new InntektTjeneste(uri, restKlient, kodeverkRepository, null, new FakeUnleash());
+        inntektTjeneste = new InntektTjeneste(uri, restKlient, null, new FakeUnleash());
     }
 
+    @SuppressWarnings("resource")
     @Test
     public void skal_kalle_consumer_og_oversette_response() throws Exception {
         // Arrange
@@ -136,6 +135,7 @@ public class InntektTjenesteImplTest {
         assertThat(månedsinntekter.get(2).isYtelse()).isFalse();
     }
 
+    @SuppressWarnings("resource")
     @Test
     public void skal_avkorte_periode_gi_tom_response() throws Exception {
         // Arrange

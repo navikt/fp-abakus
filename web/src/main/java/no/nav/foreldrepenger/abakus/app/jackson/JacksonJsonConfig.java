@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.InjectableValues;
-import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -23,10 +22,15 @@ import no.nav.foreldrepenger.abakus.app.IndexClasses;
 @Provider
 public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {
 
-    private static final SimpleModule SER_DESER = createModule();
     private final ObjectMapper objectMapper;
 
+
+    /** Default instance for Jax-rs application. Genererer ikke navn som del av output for kodeverk. */
     public JacksonJsonConfig() {
+        this(false);
+    }
+
+    public JacksonJsonConfig(boolean serialiserKodelisteNavn) {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new Jdk8Module());
         objectMapper.registerModule(new JavaTimeModule());
@@ -35,7 +39,7 @@ public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {
         // TODO (u139158): PK-44270 Diskutere med Front-end, ønsker i utgangpunktet å fjerne null, men hva med Javascript
         // KodelisteSerializer og KodeverkSerializer bør i tilfelle også støtte JsonInclude.Include.*
         // objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-        objectMapper.registerModule(SER_DESER);
+        objectMapper.registerModule(createModule(serialiserKodelisteNavn));
         InjectableValues.Std std = new InjectableValues.Std();
         std.addValue(KodeValidator.class, KodeValidator.HAPPY_VALIDATOR);
         objectMapper.setInjectableValues(std);
@@ -43,21 +47,16 @@ public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {
         objectMapper.registerSubtypes(getJsonTypeNameClasses());
     }
 
-    public static Module defaultModule() {
-        return SER_DESER;
-    }
-
-    private static SimpleModule createModule() {
+    private static SimpleModule createModule(boolean serialiserKodelisteNavn) {
         SimpleModule module = new SimpleModule("VL-REST", new Version(1, 0, 0, null, null, null));
 
-        addSerializers(module);
+        addSerializers(module, serialiserKodelisteNavn);
 
         return module;
     }
 
-    private static void addSerializers(SimpleModule module) {
-        module.addSerializer(new KodeverkSerializer());
-        module.addSerializer(new KodelisteSerializer());
+    private static void addSerializers(SimpleModule module, boolean serialiserKodelisteNavn) {
+        module.addSerializer(new KodelisteSerializer(serialiserKodelisteNavn));
         module.addSerializer(new StringSerializer());
     }
 

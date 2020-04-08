@@ -8,8 +8,8 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
+import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.VirksomhetType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;

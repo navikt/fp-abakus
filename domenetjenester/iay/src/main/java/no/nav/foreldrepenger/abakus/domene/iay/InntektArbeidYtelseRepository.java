@@ -44,7 +44,6 @@ import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
-import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
 
 @ApplicationScoped
 public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRepository {
@@ -56,7 +55,7 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
     }
 
     @Inject
-    public InntektArbeidYtelseRepository(@VLPersistenceUnit EntityManager entityManager) {
+    public InntektArbeidYtelseRepository(EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager"); //$NON-NLS-1$
         this.entityManager = entityManager;
     }

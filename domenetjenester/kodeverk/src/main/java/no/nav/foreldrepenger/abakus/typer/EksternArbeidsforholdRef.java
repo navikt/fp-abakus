@@ -6,7 +6,8 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 
 /**
  * Ekstern arbeidsforhold referanse.
@@ -44,7 +45,8 @@ public class EksternArbeidsforholdRef implements IndexKey, Serializable {
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(referanse);
+        Object[] keyParts = { referanse };
+        return IndexKeyComposer.createKey(keyParts);
     }
 
     public boolean gjelderForSpesifiktArbeidsforhold() {

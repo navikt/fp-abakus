@@ -23,9 +23,10 @@ import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 
 @Entity(name = "Inntekt")
@@ -77,7 +78,8 @@ public class InntektEntitet extends BaseEntitet implements Inntekt, IndexKey {
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(getArbeidsgiver(), getInntektsKilde());
+        Object[] keyParts = { getArbeidsgiver(), getInntektsKilde() };
+        return IndexKeyComposer.createKey(keyParts);
     }
 
     @Override

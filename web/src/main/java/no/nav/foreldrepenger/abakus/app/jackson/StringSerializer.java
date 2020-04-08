@@ -27,9 +27,10 @@ public class StringSerializer extends StdScalarSerializer<Object> {
     }
 
     /**
-     * @deprecated
+     * @deprecated fjernes når mulig
      */
-    @Deprecated
+    @SuppressWarnings("deprecation")
+    @Deprecated(forRemoval = true)
     @Override
     public boolean isEmpty(Object value) {
         String str = (String) value;

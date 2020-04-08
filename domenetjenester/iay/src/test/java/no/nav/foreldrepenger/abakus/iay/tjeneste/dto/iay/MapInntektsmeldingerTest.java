@@ -15,7 +15,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
-import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.RefusjonskravDatoDto;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.RefusjonskravDatoerDto;
 import no.nav.foreldrepenger.abakus.dbstoette.UnittestRepositoryRule;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;

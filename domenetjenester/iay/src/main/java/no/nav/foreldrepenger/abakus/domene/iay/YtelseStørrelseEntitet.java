@@ -19,9 +19,10 @@ import javax.persistence.Version;
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.hibernate.annotations.JoinFormula;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektPeriodeType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
@@ -71,7 +72,8 @@ public class YtelseStørrelseEntitet extends BaseEntitet implements YtelseStørr
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(orgNummer);
+        Object[] keyParts = { orgNummer };
+        return IndexKeyComposer.createKey(keyParts);
     }
 
     @Override

@@ -34,6 +34,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.vedtak.util.StringUtils;
 
@@ -171,10 +172,12 @@ public abstract class Kodeliste extends KodeverkBaseEntitet implements Comparabl
         return beskrivelse;
     }
 
+    @Override
     public String getKode() {
         return kode;
     }
 
+    @Override
     public String getOffisiellKode() {
         return offisiellKode;
     }
@@ -198,6 +201,7 @@ public abstract class Kodeliste extends KodeverkBaseEntitet implements Comparabl
         return språk;
     }
 
+    @Override
     public String getNavn() {
         String navn = null;
         if (displayNavn == null) {
@@ -282,6 +286,7 @@ public abstract class Kodeliste extends KodeverkBaseEntitet implements Comparabl
             + ">"; //$NON-NLS-1$
     }
 
+    @Override
     public String getKodeverk() {
         if (kodeverk == null) {
             DiscriminatorValue dc = getClass().getDeclaredAnnotation(DiscriminatorValue.class);

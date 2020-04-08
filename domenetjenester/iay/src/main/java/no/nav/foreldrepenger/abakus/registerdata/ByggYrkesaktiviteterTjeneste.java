@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtaleBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
@@ -16,7 +17,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.Opptjeningsnøkkel;
 import no.nav.foreldrepenger.abakus.domene.iay.Permisjon;
 import no.nav.foreldrepenger.abakus.domene.iay.PermisjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.PermisjonsbeskrivelseType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
@@ -40,7 +40,7 @@ class ByggYrkesaktiviteterTjeneste {
 
         var opptjeningsNøkkel = new Opptjeningsnøkkel(internReferanse, arbeidsgiver);
         final ArbeidsforholdIdentifikator arbeidsgiverIdent = arbeidsforhold.getKey();
-        final ArbeidType arbeidsforholdType = kodeverkRepository.finnForKodeverkEiersKode(ArbeidType.class, arbeidsgiverIdent.getType());
+        final ArbeidType arbeidsforholdType = ArbeidType.finnForKodeverkEiersKode(arbeidsgiverIdent.getType());
         YrkesaktivitetBuilder builder = aktørArbeidBuilder.getYrkesaktivitetBuilderForNøkkelAvType(opptjeningsNøkkel, arbeidsforholdType);
         opprettMinimalYrkesaktivitet(arbeidsforhold.getKey(), arbeidsgiver, internReferanse, builder);
         builder.tilbakestillAvtaler();
@@ -134,7 +134,7 @@ class ByggYrkesaktiviteterTjeneste {
                                               InternArbeidsforholdRef internReferanse,
                                               YrkesaktivitetBuilder yrkesaktivitetBuilder) {
         yrkesaktivitetBuilder
-            .medArbeidType(kodeverkRepository.finnForKodeverkEiersKode(ArbeidType.class, arbeidsforhold.getType()))
+            .medArbeidType(ArbeidType.finnForKodeverkEiersKode(arbeidsforhold.getType()))
             .medArbeidsforholdId(internReferanse)
             .medArbeidsgiver(arbeidsgiver);
     }

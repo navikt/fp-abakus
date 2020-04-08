@@ -14,12 +14,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinFormula;
-
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
@@ -54,9 +53,8 @@ public class OppgittArbeidsforhold extends BaseEntitet implements IndexKey {
     @Column(name = "utenlandsk_inntekt", nullable = false)
     private boolean erUtenlandskInntekt;
 
-    @ManyToOne
-    @JoinColumnOrFormula(column = @JoinColumn(name = "arbeid_type", referencedColumnName = "kode", nullable = false))
-    @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + ArbeidType.DISCRIMINATOR + "'"))
+    @Convert(converter = ArbeidTypeKodeverdiConverter.class)
+    @Column(name = "arbeid_type", nullable = false, updatable = false)
     @ChangeTracked
     private ArbeidType arbeidType;
 
@@ -73,7 +71,8 @@ public class OppgittArbeidsforhold extends BaseEntitet implements IndexKey {
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(periode, landkode, utenlandskVirksomhetNavn, arbeidType);
+        Object[] keyParts = { periode, landkode, utenlandskVirksomhetNavn, arbeidType };
+        return IndexKeyComposer.createKey(keyParts);
     }
 
     public LocalDate getFraOgMed() {

@@ -19,6 +19,5 @@
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittAnnenAktivitet"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittFrilans"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittFrilansoppdrag"/>
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType"/>
 
 </entity-mappings>

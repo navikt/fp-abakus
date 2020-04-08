@@ -20,7 +20,6 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
-import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
 
 @ApplicationScoped
 public class VedtakYtelseRepository {
@@ -33,7 +32,7 @@ public class VedtakYtelseRepository {
     }
 
     @Inject
-    public VedtakYtelseRepository(@VLPersistenceUnit EntityManager entityManager) {
+    public VedtakYtelseRepository(EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager"); //$NON-NLS-1$
         this.entityManager = entityManager;
     }

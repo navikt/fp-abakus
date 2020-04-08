@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import no.nav.vedtak.felles.jpa.VLPersistenceUnit;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskGruppe;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskRepository;
@@ -32,7 +31,7 @@ public class BatchProsessTaskRepository {
     }
 
     @Inject
-    public BatchProsessTaskRepository(@VLPersistenceUnit EntityManager entityManager,
+    public BatchProsessTaskRepository(EntityManager entityManager,
                                       ProsessTaskRepository prosessTaskRepository) {
         Objects.requireNonNull(entityManager, "entityManager");
         this.entityManager = entityManager;

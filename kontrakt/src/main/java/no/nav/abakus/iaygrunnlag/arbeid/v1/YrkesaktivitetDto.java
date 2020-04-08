@@ -60,7 +60,7 @@ public class YrkesaktivitetDto {
     }
 
     public YrkesaktivitetDto(String arbeidType) {
-        this(new ArbeidType(Objects.requireNonNull(arbeidType, "arbeidType")));
+        this(ArbeidType.fraKode(Objects.requireNonNull(arbeidType, "arbeidType")));
     }
 
     @AssertTrue(message = "Må ha minst en av aktivitetsAvtaler eller permisjoner")

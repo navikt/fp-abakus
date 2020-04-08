@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.felles.diff;
+package no.nav.abakus.iaygrunnlag.kodeverk;
 
 /**
  * Bruk for å hente et key for et innslag i en collection (hvis ikke vil key ved diff være basert på index, noe
@@ -13,10 +13,5 @@ public interface IndexKey {
      * Må være en stabil string key
      */
     String getIndexKey();
-
-    /** Hjelpe metode for å effektivt generere keys. */
-    static String createKey(Object... keyParts) {
-        return IndexKeyComposer.createKey(keyParts);
-    }
 
 }

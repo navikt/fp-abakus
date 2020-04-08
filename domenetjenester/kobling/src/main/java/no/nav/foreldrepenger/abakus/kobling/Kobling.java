@@ -18,7 +18,7 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.NaturalId;
 
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;

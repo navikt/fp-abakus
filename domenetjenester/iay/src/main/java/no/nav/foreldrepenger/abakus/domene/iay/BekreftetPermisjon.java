@@ -6,23 +6,19 @@ import java.util.Objects;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinFormula;
-
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.BekreftetPermisjonStatus;
+import no.nav.abakus.iaygrunnlag.kodeverk.BekreftetPermisjonStatus;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.BekreftetPermisjonStatusKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 @Embeddable
 public class BekreftetPermisjon {
 
-    @ManyToOne(optional = false)
-    @JoinColumnOrFormula(column = @JoinColumn(name = "BEKREFTET_PERMISJON_STATUS", referencedColumnName = "kode", nullable = false))
-    @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + BekreftetPermisjonStatus.DISCRIMINATOR + "'"))
+    @Convert(converter = BekreftetPermisjonStatusKodeverdiConverter.class)
+    @Column(name = "BEKREFTET_PERMISJON_STATUS", nullable = false, updatable = false)
     private BekreftetPermisjonStatus status = BekreftetPermisjonStatus.UDEFINERT;
 
     @Embedded

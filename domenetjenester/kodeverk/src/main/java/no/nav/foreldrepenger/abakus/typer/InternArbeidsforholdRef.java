@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.typer;
 
 import java.io.Serializable;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.UUID;
@@ -9,7 +8,8 @@ import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 
 /**
  * Intern arbeidsforhold referanse.
@@ -68,7 +68,8 @@ public class InternArbeidsforholdRef implements IndexKey, Serializable {
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(referanse == null ? null : referanse.toString());
+        Object[] keyParts = { referanse == null ? null : referanse.toString() };
+        return IndexKeyComposer.createKey(keyParts);
     }
 
     public boolean gjelderForSpesifiktArbeidsforhold() {

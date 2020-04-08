@@ -18,7 +18,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = ArbeidsforholdHandlingType.class, name = ArbeidsforholdHandlingType.KODEVERK),
         @JsonSubTypes.Type(value = Arbeidskategori.class, name = Arbeidskategori.KODEVERK),
-        @JsonSubTypes.Type(value = ArbeidType.class, name = ArbeidType.KODEVERK),
         @JsonSubTypes.Type(value = Fagsystem.class, name = Fagsystem.KODEVERK),
         @JsonSubTypes.Type(value = InntektPeriodeType.class, name = InntektPeriodeType.KODEVERK),
         @JsonSubTypes.Type(value = InntektskildeType.class, name = InntektskildeType.KODEVERK),
@@ -29,9 +28,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = OrganisasjonType.class, name = OrganisasjonType.KODEVERK),
         @JsonSubTypes.Type(value = PermisjonsbeskrivelseType.class, name = PermisjonsbeskrivelseType.KODEVERK),
         @JsonSubTypes.Type(value = YtelseStatus.class, name = YtelseStatus.KODEVERK),
-        @JsonSubTypes.Type(value = SkatteOgAvgiftsregelType.class, name = SkatteOgAvgiftsregelType.KODEVERK),
         @JsonSubTypes.Type(value = UtsettelseÅrsakType.class, name = TemaUnderkategori.KODEVERK),
-        @JsonSubTypes.Type(value = VirksomhetType.class, name = VirksomhetType.KODEVERK),
         @JsonSubTypes.Type(value = YtelseType.class, name = YtelseType.KODEVERK),
         @JsonSubTypes.Type(value = UtbetaltYtelseFraOffentligeType.class, name = UtbetaltYtelseFraOffentligeType.KODEVERK),
         @JsonSubTypes.Type(value = UtbetaltPensjonTrygdType.class, name = UtbetaltPensjonTrygdType.KODEVERK),

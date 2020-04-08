@@ -13,8 +13,9 @@ import javax.persistence.Embeddable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseValue;
 
 /**
@@ -78,7 +79,8 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(skalertVerdi());
+        Object[] keyParts = { skalertVerdi() };
+        return IndexKeyComposer.createKey(keyParts);
     }
 
     @Override

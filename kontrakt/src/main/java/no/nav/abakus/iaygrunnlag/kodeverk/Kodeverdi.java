@@ -1,6 +1,4 @@
-package no.nav.foreldrepenger.abakus.kodeverk;
-
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+package no.nav.abakus.iaygrunnlag.kodeverk;
 
 /** Kodeverk som er portet til java. */
 public interface Kodeverdi extends IndexKey {

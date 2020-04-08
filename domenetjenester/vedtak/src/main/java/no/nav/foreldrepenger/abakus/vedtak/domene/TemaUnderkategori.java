@@ -14,10 +14,11 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+
+import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import no.nav.foreldrepenger.abakus.kodeverk.Kodeverdi;
 
 /**
  * Gammelt kodeverk fra infotrygd. Burde ikke lekke fra Abakus (bør fjernes fra iay kontrakt og der heller benytte FagsakYtelseType).

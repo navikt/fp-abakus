@@ -51,7 +51,7 @@ public class ArbeidsforholdDtoTjeneste {
     private ArbeidsforholdDto mapTilArbeidsforhold(Map.Entry<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforholdEntry) {
         ArbeidsforholdIdentifikator key = arbeidsforholdEntry.getKey();
         Aktør arbeidsgiver = mapArbeidsgiver(key.getArbeidsgiver());
-        ArbeidType arbeidType = new ArbeidType(key.getType());
+        ArbeidType arbeidType = ArbeidType.fraKode(key.getType());
         ArbeidsforholdDto dto = new ArbeidsforholdDto(arbeidsgiver, arbeidType);
         dto.setArbeidsforholdId(mapArbeidsforholdId(key.getArbeidsforholdId()));
         dto.setAnsettelsesperiode(mapAnsettelsesPerioder(arbeidsforholdEntry.getValue()));

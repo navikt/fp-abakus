@@ -1,8 +1,6 @@
 package no.nav.foreldrepenger.abakus.kodeverk;
 
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Få tilgang til kodeverk.
@@ -35,5 +33,4 @@ public interface KodeverkRepository {
      */
     <V extends Kodeliste> Optional<V> finnOptional(Class<V> cls, String kode);
 
-    Map<String, Set<String>> hentAlle();
 }

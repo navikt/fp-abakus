@@ -12,10 +12,10 @@ import java.util.UUID;
 import org.junit.Rule;
 import org.junit.Test;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.dbstoette.UnittestRepositoryRule;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittAnnenAktivitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
@@ -39,7 +39,7 @@ public class InntektArbeidYtelseRepositoryTest {
     @Test
     public void skal_svare_om_er_siste() {
         final var ko = new Kobling(new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()), new AktørId("1231231231223"));
-        ko.setYtelseType(YtelseType.PÅRØRENDESYKDOM);
+        ko.setYtelseType(YtelseType.OMSORGSPENGER);
         ko.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(2), LocalDate.now()));
         koblingRepository.lagre(ko);
 

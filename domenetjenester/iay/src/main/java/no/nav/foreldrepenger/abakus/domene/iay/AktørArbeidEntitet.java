@@ -21,9 +21,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 
@@ -71,7 +72,8 @@ public class AktørArbeidEntitet extends BaseEntitet implements AktørArbeid, In
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(getAktørId());
+        Object[] keyParts = { getAktørId() };
+        return IndexKeyComposer.createKey(keyParts);
     }
 
     @Override

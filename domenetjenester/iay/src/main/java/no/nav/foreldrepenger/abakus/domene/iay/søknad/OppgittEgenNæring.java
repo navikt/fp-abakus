@@ -15,12 +15,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinFormula;
-
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+import no.nav.abakus.iaygrunnlag.kodeverk.VirksomhetType;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.VirksomhetTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
@@ -48,9 +47,8 @@ public class OppgittEgenNæring extends BaseEntitet implements IndexKey {
     @Embedded
     private OrgNummer orgNummer;
 
-    @ManyToOne
-    @JoinColumnOrFormula(column = @JoinColumn(name = "virksomhet_type", referencedColumnName = "kode", nullable = false))
-    @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + VirksomhetType.DISCRIMINATOR + "'"))
+    @Convert(converter = VirksomhetTypeKodeverdiConverter.class)
+    @Column(name = "virksomhet_type", nullable = false, updatable = false)
     private VirksomhetType virksomhetType;
 
     @Column(name = "regnskapsfoerer_navn")
@@ -97,7 +95,8 @@ public class OppgittEgenNæring extends BaseEntitet implements IndexKey {
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(periode, orgNummer, landkode, utenlandskVirksomhetNavn);
+        Object[] keyParts = { periode, orgNummer, landkode, utenlandskVirksomhetNavn };
+        return IndexKeyComposer.createKey(keyParts);
     }
 
     public LocalDate getFraOgMed() {

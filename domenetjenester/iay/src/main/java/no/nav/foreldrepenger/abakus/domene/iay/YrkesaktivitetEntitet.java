@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,13 +20,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinColumnsOrFormulas;
-import org.hibernate.annotations.JoinFormula;
-
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
@@ -64,11 +63,9 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
     @JoinColumn(name = "aktoer_arbeid_id", nullable = false, updatable = false)
     private AktørArbeidEntitet aktørArbeid;
 
-    @ManyToOne
-    @JoinColumnsOrFormulas({
-        @JoinColumnOrFormula(column = @JoinColumn(name = "arbeid_type", referencedColumnName = "kode", nullable = false)),
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + ArbeidType.DISCRIMINATOR + "'"))})
     @ChangeTracked
+    @Convert(converter = ArbeidTypeKodeverdiConverter.class)
+    @Column(name = "arbeid_type", nullable = false, updatable = false)
     private ArbeidType arbeidType;
 
     @Version
@@ -100,7 +97,8 @@ public class YrkesaktivitetEntitet extends BaseEntitet implements Yrkesaktivitet
 
     @Override
     public String getIndexKey() {
-        return IndexKey.createKey(arbeidsgiver, arbeidsforholdRef, arbeidType);
+        Object[] keyParts = { arbeidsgiver, arbeidsforholdRef, arbeidType };
+        return IndexKeyComposer.createKey(keyParts);
     }
 
     void setAktørArbeid(AktørArbeidEntitet aktørArbeid) {

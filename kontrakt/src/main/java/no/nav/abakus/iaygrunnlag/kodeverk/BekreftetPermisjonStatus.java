@@ -1,42 +1,93 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
-import java.util.Objects;
+/**
+ * <p>
+ * Definerer statuser for bekreftet permisjoner
+ * </p>
+ */
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonFormat(shape = Shape.OBJECT)
+@JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
+public enum BekreftetPermisjonStatus implements Kodeverdi {
 
-public class BekreftetPermisjonStatus extends Kodeverk {
-    static final String KODEVERK = "BEKREFTET_PERMISJON_STATUS";
+    UDEFINERT("-", "UDEFINERT"),
+    BRUK_PERMISJON("BRUK_PERMISJON", "Bruk permisjonen til arbeidsforholdet"),
+    IKKE_BRUK_PERMISJON("IKKE_BRUK_PERMISJON", "Ikke bruk permisjonen til arbeidsforholdet"),
+    UGYLDIGE_PERIODER("UGYLDIGE_PERIODER", "Arbeidsforholdet inneholder permisjoner med ugyldige perioder"),
+    ;
 
-    /** Eksempelkonstanter BekreftetPermisjonStatus*/
-    public static final BekreftetPermisjonStatus BRUK_PERMISJON = new BekreftetPermisjonStatus("BRUK_PERMISJON");
-    public static final BekreftetPermisjonStatus IKKE_BRUK_PERMISJON = new BekreftetPermisjonStatus("IKKE_BRUK_PERMISJON");
-    public static final BekreftetPermisjonStatus UGYLDIGE_PERIODER = new BekreftetPermisjonStatus("UGYLDIGE_PERIODER");
+    private static final Map<String, BekreftetPermisjonStatus> KODER = new LinkedHashMap<>();
 
-    @JsonProperty(value = "kode", required = true, index = 1)
-    @Pattern(regexp = "^[\\p{L}\\p{N}_\\.\\-]+$", message="Kode '${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
-    @Size(min=5, max=20)
-    @NotNull
+    public static final String KODEVERK = "BEKREFTET_PERMISJON_STATUS";
+
+    static {
+        for (var v : values()) {
+            if (KODER.putIfAbsent(v.kode, v) != null) {
+                throw new IllegalArgumentException("Duplikat : " + v.kode);
+            }
+        }
+    }
+
+    @JsonIgnore
+    private String navn;
+
+    @JsonProperty(value="kode")
     private String kode;
 
-    @JsonCreator
-    public BekreftetPermisjonStatus(@JsonProperty(value = "kode", required = true) String kode) {
-        Objects.requireNonNull(kode, "kode");
+    private BekreftetPermisjonStatus(String kode) {
         this.kode = kode;
+    }
+
+    private BekreftetPermisjonStatus(String kode, String navn) {
+        this.kode = kode;
+        this.navn = navn;
+    }
+
+    @JsonCreator
+    public static BekreftetPermisjonStatus fraKode(@JsonProperty("kode") String kode) {
+        if (kode == null) {
+            return null;
+        }
+        var ad = KODER.get(kode);
+        if (ad == null) {
+            throw new IllegalArgumentException("Ukjent BekreftetPermisjonStatus: " + kode);
+        }
+        return ad;
+    }
+
+    public static Map<String, BekreftetPermisjonStatus> kodeMap() {
+        return Collections.unmodifiableMap(KODER);
+    }
+
+    @Override
+    public String getNavn() {
+        return navn;
+    }
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Override
+    public String getKodeverk() {
+        return KODEVERK;
     }
 
     @Override
     public String getKode() {
         return kode;
     }
-
+    
     @Override
-    public String getKodeverk() {
-        return KODEVERK;
+    public String getOffisiellKode() {
+        return getKode();
     }
 }

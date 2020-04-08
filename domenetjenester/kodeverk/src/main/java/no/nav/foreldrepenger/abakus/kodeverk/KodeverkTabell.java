@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
+
 
 /**
  * Superklasse-entitet for tabeller som fungerer som internt kodeverk/ oppslag/ referansedata.

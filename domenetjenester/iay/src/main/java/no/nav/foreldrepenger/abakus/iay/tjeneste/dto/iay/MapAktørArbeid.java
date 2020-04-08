@@ -91,7 +91,7 @@ public class MapAktørArbeid {
                 .medArbeidsforholdId(internArbeidsforholdRef)
                 .medArbeidsgiver(arbeidsgiver)
                 .medArbeidsgiverNavn(dto.getNavnArbeidsgiverUtland())
-                .medArbeidType(KodeverkMapper.mapArbeidType(dto.getType()));
+                .medArbeidType(dto.getType());
 
             dto.getAktivitetsAvtaler()
                 .forEach(aktivitetsAvtaleDto -> yrkesaktivitetBuilder.leggTilAktivitetsAvtale(mapAktivitetsAvtale(aktivitetsAvtaleDto)));
@@ -194,7 +194,7 @@ public class MapAktørArbeid {
 
             var arbeidsforholdId = mapArbeidsforholdsId(a.getArbeidsgiver(), a);
 
-            var arbeidType = KodeverkMapper.mapArbeidTypeTilDto(a.getArbeidType());
+            var arbeidType = a.getArbeidType();
             var dto = new YrkesaktivitetDto(arbeidType)
                 .medArbeidsgiver(mapAktør(a.getArbeidsgiver()))
                 .medAktivitetsAvtaler(aktivitetsAvtaler)

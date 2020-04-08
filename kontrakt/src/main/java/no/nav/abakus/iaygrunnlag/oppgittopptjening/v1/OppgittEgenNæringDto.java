@@ -14,13 +14,12 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Organisasjon;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
 import no.nav.abakus.iaygrunnlag.kodeverk.VirksomhetType;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.ALWAYS, content = Include.NON_EMPTY)
@@ -119,9 +118,9 @@ public class OppgittEgenNæringDto {
         return this;
     }
 
-    public OppgittEgenNæringDto medVirksomhetType(String virksomhetType) {
-        if (virksomhetType != null) {
-            setVirksomhetTypeDto(new VirksomhetType(virksomhetType));
+    public OppgittEgenNæringDto medVirksomhetType(String kode) {
+        if (kode != null) {
+            setVirksomhetTypeDto(VirksomhetType.fraKode(kode));
         }
         return this;
     }
