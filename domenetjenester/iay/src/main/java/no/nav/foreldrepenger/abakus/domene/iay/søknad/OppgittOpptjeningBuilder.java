@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType;
@@ -155,14 +154,14 @@ public class OppgittOpptjeningBuilder {
     }
 
     public static class OppgittArbeidsforholdBuilder {
-        private OppgittArbeidsforholdEntitet entitet;
+        private OppgittArbeidsforhold entitet;
 
-        private OppgittArbeidsforholdBuilder(OppgittArbeidsforholdEntitet entitet) {
+        private OppgittArbeidsforholdBuilder(OppgittArbeidsforhold entitet) {
             this.entitet = entitet;
         }
 
         public static OppgittArbeidsforholdBuilder ny() {
-            return new OppgittArbeidsforholdBuilder(new OppgittArbeidsforholdEntitet());
+            return new OppgittArbeidsforholdBuilder(new OppgittArbeidsforhold());
         }
 
         public OppgittArbeidsforholdBuilder medPeriode(IntervallEntitet periode) {

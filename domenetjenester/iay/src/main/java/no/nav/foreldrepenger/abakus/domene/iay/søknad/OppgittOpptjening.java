@@ -20,7 +20,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.NaturalId;
 
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittEgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -43,7 +42,7 @@ public class OppgittOpptjening extends BaseEntitet {
 
     @OneToMany(mappedBy = "oppgittOpptjening")
     @ChangeTracked
-    private List<OppgittArbeidsforholdEntitet> oppgittArbeidsforhold;
+    private List<OppgittArbeidsforhold> oppgittArbeidsforhold;
 
     @OneToMany(mappedBy = "oppgittOpptjening")
     @ChangeTracked
@@ -140,9 +139,8 @@ public class OppgittOpptjening extends BaseEntitet {
             this.oppgittArbeidsforhold = new ArrayList<>();
         }
         if (oppgittArbeidsforhold != null) {
-            OppgittArbeidsforholdEntitet oppgittArbeidsforholdEntitet = (OppgittArbeidsforholdEntitet) oppgittArbeidsforhold;
-            oppgittArbeidsforholdEntitet.setOppgittOpptjening(this);
-            this.oppgittArbeidsforhold.add(oppgittArbeidsforholdEntitet);
+            oppgittArbeidsforhold.setOppgittOpptjening(this);
+            this.oppgittArbeidsforhold.add(oppgittArbeidsforhold);
         }
     }
 

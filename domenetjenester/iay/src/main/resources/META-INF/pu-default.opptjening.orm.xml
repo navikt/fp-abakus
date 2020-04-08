@@ -14,7 +14,7 @@
     
     <!-- Oppgitt opptjening fra søknad-->
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening"/>
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittArbeidsforholdEntitet"/>
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittArbeidsforhold"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittEgenNæringEntitet"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittAnnenAktivitet"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittFrilansEntitet"/>
