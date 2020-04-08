@@ -16,7 +16,6 @@ import org.hibernate.annotations.JoinColumnsOrFormulas;
 import org.hibernate.annotations.JoinFormula;
 
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidType;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittAnnenAktivitet;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -25,7 +24,7 @@ import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 @Table(name = "IAY_ANNEN_AKTIVITET")
 @Entity(name = "AnnenAktivitet")
-public class OppgittAnnenAktivitetEntitet extends BaseEntitet implements OppgittAnnenAktivitet, IndexKey {
+public class OppgittAnnenAktivitet extends BaseEntitet implements IndexKey {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_ANNEN_AKTIVITET")
@@ -46,12 +45,12 @@ public class OppgittAnnenAktivitetEntitet extends BaseEntitet implements Oppgitt
     @ChangeTracked
     private ArbeidType arbeidType;
 
-    public OppgittAnnenAktivitetEntitet(IntervallEntitet periode, ArbeidType arbeidType) {
+    public OppgittAnnenAktivitet(IntervallEntitet periode, ArbeidType arbeidType) {
         this.periode = periode;
         this.arbeidType = arbeidType;
     }
 
-    public OppgittAnnenAktivitetEntitet() {
+    public OppgittAnnenAktivitet() {
         // hibernate
     }
 
@@ -60,12 +59,10 @@ public class OppgittAnnenAktivitetEntitet extends BaseEntitet implements Oppgitt
         return IndexKey.createKey(periode, arbeidType);
     }
 
-    @Override
     public ArbeidType getArbeidType() {
         return arbeidType;
     }
 
-    @Override
     public IntervallEntitet getPeriode() {
         return periode;
     }
@@ -77,8 +74,8 @@ public class OppgittAnnenAktivitetEntitet extends BaseEntitet implements Oppgitt
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || !(o instanceof OppgittAnnenAktivitetEntitet)) return false;
-        var that = (OppgittAnnenAktivitetEntitet) o;
+        if (o == null || !(o instanceof OppgittAnnenAktivitet)) return false;
+        var that = (OppgittAnnenAktivitet) o;
         return Objects.equals(periode, that.periode) &&
             Objects.equals(arbeidType, that.arbeidType);
     }

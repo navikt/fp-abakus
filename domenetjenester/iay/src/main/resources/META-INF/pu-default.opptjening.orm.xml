@@ -16,7 +16,7 @@
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittArbeidsforholdEntitet"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittEgenNæringEntitet"/>
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittAnnenAktivitetEntitet"/>
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittAnnenAktivitet"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittFrilansEntitet"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittFrilansoppdragEntitet"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.kodeverk.VirksomhetType"/>
