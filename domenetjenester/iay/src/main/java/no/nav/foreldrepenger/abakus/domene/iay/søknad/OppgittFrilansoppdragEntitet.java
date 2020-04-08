@@ -28,7 +28,7 @@ public class OppgittFrilansoppdragEntitet extends BaseEntitet implements Oppgitt
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "frilans_id", nullable = false, updatable = false)
-    private OppgittFrilansEntitet frilans;
+    private OppgittFrilans frilans;
 
     @ChangeTracked
     private String oppdragsgiver;
@@ -51,7 +51,7 @@ public class OppgittFrilansoppdragEntitet extends BaseEntitet implements Oppgitt
         return IndexKey.createKey(periode, oppdragsgiver);
     }
 
-    public void setOppgittOpptjening(OppgittFrilansEntitet frilans) {
+    public void setOppgittOpptjening(OppgittFrilans frilans) {
         this.frilans = frilans;
     }
 
@@ -94,7 +94,7 @@ public class OppgittFrilansoppdragEntitet extends BaseEntitet implements Oppgitt
         return oppdragsgiver;
     }
 
-    public void setFrilans(OppgittFrilansEntitet frilans) {
+    public void setFrilans(OppgittFrilans frilans) {
         this.frilans = frilans;
     }
 }

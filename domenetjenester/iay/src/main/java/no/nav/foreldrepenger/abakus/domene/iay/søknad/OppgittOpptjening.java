@@ -20,7 +20,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.NaturalId;
 
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilans;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -53,7 +52,7 @@ public class OppgittOpptjening extends BaseEntitet {
 
     @ChangeTracked
     @OneToOne(mappedBy = "oppgittOpptjening")
-    private OppgittFrilansEntitet frilans;
+    private OppgittFrilans frilans;
 
     @SuppressWarnings("unused")
     private OppgittOpptjening() {
@@ -104,9 +103,8 @@ public class OppgittOpptjening extends BaseEntitet {
 
     void leggTilFrilans(OppgittFrilans frilans) {
         if (frilans != null) {
-            OppgittFrilansEntitet frilansEntitet = (OppgittFrilansEntitet) frilans;
-            frilansEntitet.setOppgittOpptjening(this);
-            this.frilans = frilansEntitet;
+            frilans.setOppgittOpptjening(this);
+            this.frilans = frilans;
         } else {
             this.frilans = null;
         }
