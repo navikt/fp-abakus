@@ -11,7 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilansoppdrag;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -20,7 +19,7 @@ import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 @Table(name = "IAY_OPPGITT_FRILANSOPPDRAG")
 @Entity(name = "Frilansoppdrag")
-public class OppgittFrilansoppdragEntitet extends BaseEntitet implements OppgittFrilansoppdrag, IndexKey {
+public class OppgittFrilansoppdrag extends BaseEntitet implements IndexKey {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SO_OPPGITT_FRILANSOPPDRAG")
@@ -37,11 +36,10 @@ public class OppgittFrilansoppdragEntitet extends BaseEntitet implements Oppgitt
     @ChangeTracked
     private IntervallEntitet periode;
 
-
-    OppgittFrilansoppdragEntitet() {
+    OppgittFrilansoppdrag() {
     }
 
-    public OppgittFrilansoppdragEntitet(String oppdragsgiver, IntervallEntitet periode) {
+    public OppgittFrilansoppdrag(String oppdragsgiver, IntervallEntitet periode) {
         this.oppdragsgiver = oppdragsgiver;
         this.periode = periode;
     }
@@ -62,8 +60,8 @@ public class OppgittFrilansoppdragEntitet extends BaseEntitet implements Oppgitt
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || !(o instanceof OppgittFrilansoppdragEntitet)) return false;
-        OppgittFrilansoppdragEntitet that = (OppgittFrilansoppdragEntitet) o;
+        if (o == null || !(o instanceof OppgittFrilansoppdrag)) return false;
+        OppgittFrilansoppdrag that = (OppgittFrilansoppdrag) o;
         return Objects.equals(frilans, that.frilans) &&
             Objects.equals(oppdragsgiver, that.oppdragsgiver) &&
             Objects.equals(periode, that.periode);
@@ -84,12 +82,10 @@ public class OppgittFrilansoppdragEntitet extends BaseEntitet implements Oppgitt
             '}';
     }
 
-    @Override
     public IntervallEntitet getPeriode() {
         return periode;
     }
 
-    @Override
     public String getOppdragsgiver() {
         return oppdragsgiver;
     }

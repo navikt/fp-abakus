@@ -16,7 +16,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.grunnlag.OppgittFrilansoppdrag;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
@@ -48,7 +47,7 @@ public class OppgittFrilans extends BaseEntitet {
 
     @OneToMany(mappedBy = "frilans")
     @ChangeTracked
-    private List<OppgittFrilansoppdragEntitet> frilansoppdrag;
+    private List<OppgittFrilansoppdrag> frilansoppdrag;
 
 
     public OppgittFrilans() {
@@ -117,7 +116,7 @@ public class OppgittFrilans extends BaseEntitet {
         return Collections.emptyList();
     }
 
-    public void setFrilansoppdrag(List<OppgittFrilansoppdragEntitet> frilansoppdrag) {
+    public void setFrilansoppdrag(List<OppgittFrilansoppdrag> frilansoppdrag) {
         this.frilansoppdrag = frilansoppdrag.stream()
             .peek(it -> it.setFrilans(this))
             .collect(Collectors.toList());
