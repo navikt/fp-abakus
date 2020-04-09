@@ -3,7 +3,7 @@ package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektPeriodeType;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
 
 public class InfotrygdYtelseArbeid {
 

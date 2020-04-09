@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt.YtelseNøkkel;
 
@@ -17,9 +17,9 @@ public class InntektsInformasjon {
     private List<Månedsinntekt> månedsinntekter;
     private List<FrilansArbeidsforhold> frilansArbeidsforhold;
     private Map<String, Map<YearMonth, List<MånedsbeløpOgSkatteOgAvgiftsregel>>> inntekterPerArbeidsgiver;
-    private InntektsKilde kilde;
+    private InntektskildeType kilde;
 
-    public InntektsInformasjon(List<Månedsinntekt> månedsinntekter, List<FrilansArbeidsforhold> frilansArbeidsforhold, InntektsKilde kilde) {
+    public InntektsInformasjon(List<Månedsinntekt> månedsinntekter, List<FrilansArbeidsforhold> frilansArbeidsforhold, InntektskildeType kilde) {
         this.månedsinntekter = månedsinntekter;
         this.frilansArbeidsforhold = frilansArbeidsforhold;
         this.kilde = kilde;
@@ -65,7 +65,7 @@ public class InntektsInformasjon {
         return summert;
     }
 
-    public InntektsKilde getKilde() {
+    public InntektskildeType getKilde() {
         return kilde;
     }
 

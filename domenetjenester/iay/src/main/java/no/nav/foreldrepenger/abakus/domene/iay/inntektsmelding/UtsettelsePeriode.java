@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,11 +15,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinColumnsOrFormulas;
-import org.hibernate.annotations.JoinFormula;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+import no.nav.abakus.iaygrunnlag.kodeverk.UtsettelseÅrsakType;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.UtsettelseÅrsakTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -40,13 +39,10 @@ public class UtsettelsePeriode extends BaseEntitet implements IndexKey {
     @ChangeTracked
     private IntervallEntitet periode;
 
-    @ManyToOne
-    @JoinColumnsOrFormulas(value = {
-            @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + UtsettelseÅrsak.DISCRIMINATOR + "'")),
-            @JoinColumnOrFormula(column = @JoinColumn(name = "utsettelse_aarsak_type", referencedColumnName = "kode")),
-    })
     @ChangeTracked
-    private UtsettelseÅrsak årsak = UtsettelseÅrsak.UDEFINERT;
+    @Convert(converter = UtsettelseÅrsakTypeKodeverdiConverter.class)
+    @Column(name = "utsettelse_aarsak_type", nullable = false, updatable = false)
+    private UtsettelseÅrsakType årsak = UtsettelseÅrsakType.UDEFINERT;
 
     @Version
     @Column(name = "versjon", nullable = false)
@@ -54,10 +50,10 @@ public class UtsettelsePeriode extends BaseEntitet implements IndexKey {
 
     private UtsettelsePeriode(LocalDate fom, LocalDate tom) {
         this.periode = IntervallEntitet.fraOgMedTilOgMed(fom, tom);
-        this.årsak = UtsettelseÅrsak.FERIE;
+        this.årsak = UtsettelseÅrsakType.FERIE;
     }
 
-    private UtsettelsePeriode(LocalDate fom, LocalDate tom, UtsettelseÅrsak årsak) {
+    private UtsettelsePeriode(LocalDate fom, LocalDate tom, UtsettelseÅrsakType årsak) {
         this.årsak = årsak;
         this.periode = IntervallEntitet.fraOgMedTilOgMed(fom, tom);
     }
@@ -74,7 +70,7 @@ public class UtsettelsePeriode extends BaseEntitet implements IndexKey {
         return new UtsettelsePeriode(fom, tom);
     }
 
-    public static UtsettelsePeriode utsettelse(LocalDate fom, LocalDate tom, UtsettelseÅrsak årsak) {
+    public static UtsettelsePeriode utsettelse(LocalDate fom, LocalDate tom, UtsettelseÅrsakType årsak) {
         return new UtsettelsePeriode(fom, tom, årsak);
     }
 
@@ -98,7 +94,7 @@ public class UtsettelsePeriode extends BaseEntitet implements IndexKey {
      *
      * @return utsettelseårsaken
      */
-    public UtsettelseÅrsak getÅrsak() {
+    public UtsettelseÅrsakType getÅrsak() {
         return årsak;
     }
 

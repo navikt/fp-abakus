@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.UUID;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
 import no.nav.abakus.iaygrunnlag.kodeverk.VirksomhetType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
 public class OppgittOpptjeningBuilder {
@@ -129,7 +129,7 @@ public class OppgittOpptjeningBuilder {
             return this;
         }
 
-        public EgenNæringBuilder medUtenlandskVirksomhet(Landkoder landkode, String utenlandskVirksomhetNavn) {
+        public EgenNæringBuilder medUtenlandskVirksomhet(Landkode landkode, String utenlandskVirksomhetNavn) {
             this.entitet.setLandkode(landkode);
             this.entitet.setUtenlandskVirksomhetNavn(utenlandskVirksomhetNavn);
             return this;
@@ -145,7 +145,7 @@ public class OppgittOpptjeningBuilder {
 
         }
 
-        public EgenNæringBuilder medLandkode(Landkoder landkode) {
+        public EgenNæringBuilder medLandkode(Landkode landkode) {
             this.entitet.setLandkode(landkode);
             return this;
         }
@@ -177,7 +177,7 @@ public class OppgittOpptjeningBuilder {
             return this;
         }
 
-        public OppgittArbeidsforholdBuilder medUtenlandskVirksomhet(Landkoder landkode, String utenlandskVirksomhetNavn) {
+        public OppgittArbeidsforholdBuilder medUtenlandskVirksomhet(Landkode landkode, String utenlandskVirksomhetNavn) {
             this.entitet.setLandkode(landkode);
             if (utenlandskVirksomhetNavn != null) {
                 this.entitet.setUtenlandskVirksomhetNavn(utenlandskVirksomhetNavn);
@@ -189,7 +189,7 @@ public class OppgittOpptjeningBuilder {
             return entitet;
         }
 
-        public OppgittArbeidsforholdBuilder medLandkode(Landkoder landkode) {
+        public OppgittArbeidsforholdBuilder medLandkode(Landkode landkode) {
             this.entitet.setLandkode(landkode);
             return this;
         }

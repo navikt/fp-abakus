@@ -11,8 +11,6 @@ import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.Organisasjon;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.ytelse.v1.AnvisningDto;
 import no.nav.abakus.iaygrunnlag.ytelse.v1.FordelingDto;
 import no.nav.abakus.iaygrunnlag.ytelse.v1.YtelseDto;
@@ -86,15 +84,15 @@ public class MapAktørYtelse {
 
         private YtelseBuilder mapYtelse(YtelseDto ytelseDto) {
             var ytelseBuilder = YtelseBuilder.oppdatere(Optional.empty());
-            var behandlingsTema = KodeverkMapper.getTemaUnderkategori(ytelseDto.getTemaUnderkategori());
+            var behandlingsTema = ytelseDto.getTemaUnderkategori();
             ytelseBuilder
                 .medYtelseGrunnlag(mapYtelseGrunnlag(ytelseDto.getGrunnlag(), ytelseBuilder.getGrunnlagBuilder()))
-                .medYtelseType(KodeverkMapper.mapYtelseTypeFraDto(ytelseDto.getYtelseType()))
+                .medYtelseType(ytelseDto.getYtelseType())
                 .medBehandlingsTema(behandlingsTema)
-                .medKilde(KodeverkMapper.mapFagsystemFraDto(ytelseDto.getFagsystemDto()))
+                .medKilde(ytelseDto.getFagsystemDto())
                 .medPeriode(mapPeriode(ytelseDto.getPeriode()))
                 .medSaksnummer(ytelseDto.getSaksnummer() == null ? null : new Saksnummer(ytelseDto.getSaksnummer()))
-                .medStatus(KodeverkMapper.mapYtelseStatusFraDto(ytelseDto.getStatus()));
+                .medStatus(ytelseDto.getStatus());
             ytelseDto.getAnvisninger()
                 .forEach(anvisning -> ytelseBuilder.leggtilYtelseAnvist(mapYtelseAnvist(anvisning, ytelseBuilder.getAnvistBuilder())));
             return ytelseBuilder;
@@ -115,7 +113,7 @@ public class MapAktørYtelse {
             if (grunnlag == null)
                 return null;
             grunnlagBuilder
-                .medArbeidskategori(KodeverkMapper.mapArbeidskategoriFraDto(grunnlag.getArbeidskategoriDto()))
+                .medArbeidskategori(grunnlag.getArbeidskategoriDto())
                 .medDekningsgradProsent(grunnlag.getDekningsgradProsent())
                 .medGraderingProsent(grunnlag.getGraderingProsent())
                 .medInntektsgrunnlagProsent(grunnlag.getInntektsgrunnlagProsent())
@@ -133,7 +131,7 @@ public class MapAktørYtelse {
             var arbeidsgiver = fordeling.getArbeidsgiver();
             return YtelseStørrelseBuilder.ny()
                 .medBeløp(fordeling.getBeløp())
-                .medHyppighet(KodeverkMapper.mapInntektPeriodeTypeFraDto(fordeling.getHyppighet()))
+                .medHyppighet(fordeling.getHyppighet())
                 .medVirksomhet(arbeidsgiver == null ? null : new OrgNummer(arbeidsgiver.getIdent()))
                 .build();
         }
@@ -162,7 +160,7 @@ public class MapAktørYtelse {
         private YtelseGrunnlagDto mapYtelseGrunnlag(YtelseGrunnlag gr) {
 
             YtelseGrunnlagDto dto = new YtelseGrunnlagDto();
-            gr.getArbeidskategori().ifPresent(ak -> dto.setArbeidskategoriDto(KodeverkMapper.mapArbeidskategoriTilDto(ak)));
+            gr.getArbeidskategori().ifPresent(ak -> dto.setArbeidskategoriDto(ak));
             gr.getOpprinneligIdentdato().ifPresent(dto::setOpprinneligIdentDato);
             gr.getDekningsgradProsent().map(Stillingsprosent::getVerdi).ifPresent(dto::setDekningsgradProsent);
             gr.getGraderingProsent().map(Stillingsprosent::getVerdi).ifPresent(dto::setGraderingProsent);
@@ -174,18 +172,18 @@ public class MapAktørYtelse {
 
         private FordelingDto tilFordeling(YtelseStørrelse ytelseStørrelse) {
             var organisasjon = ytelseStørrelse.getVirksomhet().map(o -> new Organisasjon(o.getId())).orElse(null);
-            var inntektPeriodeType = KodeverkMapper.mapInntektPeriodeTypeTilDto(ytelseStørrelse.getHyppighet());
+            var inntektPeriodeType = ytelseStørrelse.getHyppighet();
             var beløp = ytelseStørrelse.getBeløp().getVerdi();
             return new FordelingDto(organisasjon, inntektPeriodeType, beløp);
         }
 
         private YtelseDto tilYtelse(Ytelse ytelse) {
 
-            var fagsystem = KodeverkMapper.mapFagsystemTilDto(ytelse.getKilde());
+            var fagsystem = ytelse.getKilde();
             var periode = new Periode(ytelse.getPeriode().getFomDato(), ytelse.getPeriode().getTomDato());
-            var ytelseType = new YtelseType(ytelse.getRelatertYtelseType().getKode());
-            var ytelseStatus = new YtelseStatus(ytelse.getStatus().getKode());
-            var temaUnderkategori = KodeverkMapper.getBehandlingsTemaUnderkategori(ytelse.getBehandlingsTema());
+            var ytelseType = ytelse.getRelatertYtelseType();
+            var ytelseStatus = ytelse.getStatus();
+            var temaUnderkategori = ytelse.getBehandlingsTema();
             var dto = new YtelseDto(fagsystem, ytelseType, periode, ytelseStatus)
                 .medSaksnummer(ytelse.getSaksnummer() == null ? null : ytelse.getSaksnummer().getVerdi());
 

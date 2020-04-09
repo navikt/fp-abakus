@@ -10,9 +10,9 @@ import java.util.UUID;
 import org.junit.Rule;
 import org.junit.Test;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.vedtak.ytelse.Aktør;
 import no.nav.abakus.vedtak.ytelse.Periode;
-import no.nav.abakus.vedtak.ytelse.v1.Fagsystem;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseStatus;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseType;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
@@ -20,7 +20,6 @@ import no.nav.abakus.vedtak.ytelse.v1.anvisning.Anvisning;
 import no.nav.foreldrepenger.abakus.dbstoette.UnittestRepositoryRule;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
-import no.nav.foreldrepenger.abakus.vedtak.domene.VedtattYtelse;
 
 public class ExtractFromYtelseV1Test {
 
@@ -55,8 +54,7 @@ public class ExtractFromYtelseV1Test {
 
         VedtakYtelseBuilder builder = extractor.extractFrom(ytelseV1);
         repository.lagre(builder);
-        VedtattYtelse entitet = builder.build();
-
+        var entitet = builder.build();
 
         assertThat(entitet).isNotNull();
         assertThat(entitet.getSaksnummer()).isNotNull();

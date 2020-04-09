@@ -74,7 +74,7 @@ public class MapAktørInntekt {
         private InntektBuilder mapUtbetaling(UtbetalingDto dto) {
             InntektBuilder inntektBuilder = InntektBuilder.oppdatere(Optional.empty())
                 .medArbeidsgiver(mapArbeidsgiver(dto.getUtbetaler()))
-                .medInntektsKilde(KodeverkMapper.mapInntektsKildeFraDto(dto.getKilde()));
+                .medInntektsKilde(dto.getKilde());
             dto.getPoster()
                 .forEach(post -> inntektBuilder.leggTilInntektspost(mapInntektspost(post)));
             return inntektBuilder;
@@ -83,7 +83,7 @@ public class MapAktørInntekt {
         private InntektspostBuilder mapInntektspost(UtbetalingsPostDto post) {
             return InntektspostBuilder.ny()
                 .medBeløp(post.getBeløp())
-                .medInntektspostType(KodeverkMapper.mapInntektspostTypeFraDto(post.getInntektspostType()))
+                .medInntektspostType(post.getInntektspostType())
                 .medPeriode(post.getPeriode().getFom(), post.getPeriode().getTom())
                 .medSkatteOgAvgiftsregelType(post.getSkattAvgiftType())
                 .medYtelse(KodeverkMapper.mapUtbetaltYtelseTypeTilGrunnlag(post.getYtelseType()));
@@ -121,7 +121,7 @@ public class MapAktørInntekt {
 
         private UtbetalingDto tilUtbetaling(Inntekt inntekt) {
             Arbeidsgiver arbeidsgiver = inntekt.getArbeidsgiver();
-            UtbetalingDto dto = new UtbetalingDto(KodeverkMapper.mapInntektsKildeTilDto(inntekt.getInntektsKilde()));
+            UtbetalingDto dto = new UtbetalingDto(inntekt.getInntektsKilde());
             dto.medArbeidsgiver(mapArbeidsgiver(arbeidsgiver));
             dto.setPoster(tilPoster(inntekt.getAlleInntektsposter()));
             return dto;
@@ -144,7 +144,7 @@ public class MapAktørInntekt {
 
         private UtbetalingsPostDto tilPost(Inntektspost inntektspost) {
             var periode = new Periode(inntektspost.getPeriode().getFomDato(), inntektspost.getPeriode().getTomDato());
-            var inntektspostType = KodeverkMapper.mapInntektspostTypeTilDto(inntektspost.getInntektspostType());
+            var inntektspostType = inntektspost.getInntektspostType();
             var ytelseType = KodeverkMapper.mapYtelseTypeTilDto(inntektspost.getYtelseType());
             var skattOgAvgiftType = inntektspost.getSkatteOgAvgiftsregelType();
 

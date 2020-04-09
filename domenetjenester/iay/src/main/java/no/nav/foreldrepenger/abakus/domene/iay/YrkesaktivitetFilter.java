@@ -12,10 +12,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType;
+import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyring;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyrtePerioderEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyrtePerioder;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 /**
@@ -238,7 +238,7 @@ public class YrkesaktivitetFilter {
     Collection<AktivitetsAvtale> overstyrYrkesaktivitet(ArbeidsforholdOverstyring overstyring, Collection<AktivitetsAvtale> yaAvtaler) {
         ArbeidsforholdHandlingType handling = overstyring.getHandling();
 
-        List<ArbeidsforholdOverstyrtePerioderEntitet> overstyrtePerioder = overstyring.getArbeidsforholdOverstyrtePerioder();
+        List<ArbeidsforholdOverstyrtePerioder> overstyrtePerioder = overstyring.getArbeidsforholdOverstyrtePerioder();
         if (ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE.equals(handling) && !overstyrtePerioder.isEmpty()) {
             Set<AktivitetsAvtale> avtaler = new LinkedHashSet<>();
             overstyrtePerioder.forEach(overstyrtPeriode -> yaAvtaler.stream()

@@ -6,15 +6,17 @@ import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.OrganisasjonType;
+import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.util.LRUCache;
 
 @ApplicationScoped
 public class VirksomhetRepositoryImpl implements VirksomhetRepository {
 
-    private final Virksomhet KUNSTIG_VIRKSOMHET = new VirksomhetEntitet.Builder()
+    private final Virksomhet KUNSTIG_VIRKSOMHET = new Virksomhet.Builder()
         .medNavn("Kunstig virksomhet")
-        .medOrganisasjonstype(Organisasjonstype.KUNSTIG)
-        .medOrgnr(Organisasjonstype.KUNSTIG_ORG)
+        .medOrganisasjonstype(OrganisasjonType.KUNSTIG)
+        .medOrgnr(OrgNummer.KUNSTIG_ORG)
         .medRegistrert(LocalDate.of(1978, 01, 01))
         .medOppstart(LocalDate.of(1978, 01, 01))
         .build();

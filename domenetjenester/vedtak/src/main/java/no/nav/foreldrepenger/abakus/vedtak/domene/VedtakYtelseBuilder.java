@@ -5,32 +5,33 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
+import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
-import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 
 public class VedtakYtelseBuilder {
 
-    private final VedtakYtelseEntitet ytelse;
+    private final VedtakYtelse ytelse;
     private final LocalDateTime originalVedtattTidspunkt;
 
-    private VedtakYtelseBuilder(VedtakYtelseEntitet ytelseEntitet) {
+    private VedtakYtelseBuilder(VedtakYtelse ytelseEntitet) {
         this.ytelse = ytelseEntitet;
         this.originalVedtattTidspunkt = ytelseEntitet.getVedtattTidspunkt() != null ? ytelseEntitet.getVedtattTidspunkt() : LocalDateTime.MIN;
     }
 
     private static VedtakYtelseBuilder ny() {
-        return new VedtakYtelseBuilder(new VedtakYtelseEntitet());
+        return new VedtakYtelseBuilder(new VedtakYtelse());
     }
 
-    private static VedtakYtelseBuilder oppdatere(VedtattYtelse oppdatere) {
-        return new VedtakYtelseBuilder(new VedtakYtelseEntitet(oppdatere));
+    private static VedtakYtelseBuilder oppdatere(VedtakYtelse oppdatere) {
+        return new VedtakYtelseBuilder(new VedtakYtelse(oppdatere));
     }
 
-    public static VedtakYtelseBuilder oppdatere(Optional<VedtakYtelseEntitet> oppdatere) {
+    public static VedtakYtelseBuilder oppdatere(Optional<VedtakYtelse> oppdatere) {
         return oppdatere.map(VedtakYtelseBuilder::oppdatere).orElseGet(VedtakYtelseBuilder::ny);
     }
 
@@ -86,7 +87,7 @@ public class VedtakYtelseBuilder {
     }
 
     // public for å kunne testes
-    public VedtattYtelse build() {
+    public VedtakYtelse build() {
         return ytelse;
     }
 

@@ -105,7 +105,7 @@ public class MapAktørArbeid {
         private Permisjon mapPermisjon(PermisjonDto dto, PermisjonBuilder permisjonBuilder) {
             return permisjonBuilder
                 .medPeriode(dto.getPeriode().getFom(), dto.getPeriode().getTom())
-                .medPermisjonsbeskrivelseType(KodeverkMapper.mapPermisjonbeskrivelseTypeFraDto(dto.getType()).getKode())
+                .medPermisjonsbeskrivelseType(dto.getType())
                 .medProsentsats(dto.getProsentsats())
                 .build();
         }
@@ -182,7 +182,7 @@ public class MapAktørArbeid {
         }
 
         private PermisjonDto map(Permisjon p) {
-            var permisjonsbeskrivelseType = KodeverkMapper.mapPermisjonbeskrivelseTypeTilDto(p.getPermisjonsbeskrivelseType());
+            var permisjonsbeskrivelseType = p.getPermisjonsbeskrivelseType();
             var permisjon = new PermisjonDto(new Periode(p.getFraOgMed(), p.getTilOgMed()), permisjonsbeskrivelseType)
                 .medProsentsats(p.getProsentsats() == null ? null : p.getProsentsats().getVerdi());
             return permisjon;

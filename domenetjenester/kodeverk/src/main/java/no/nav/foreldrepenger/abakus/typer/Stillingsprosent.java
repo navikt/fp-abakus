@@ -1,7 +1,5 @@
 package no.nav.foreldrepenger.abakus.typer;
 
-import static no.nav.vedtak.util.Objects.check;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -39,7 +37,9 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
         // for hibernate
     }
 
-    public static Stillingsprosent nullProsent() { return NULL_PROSENT; }
+    public static Stillingsprosent nullProsent() {
+        return NULL_PROSENT;
+    }
 
     public Stillingsprosent(BigDecimal verdi) {
         this.verdi = verdi == null ? null : fiksNegativOgMax(verdi);
@@ -62,7 +62,9 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
         if (verdi == null) {
             return;
         }
-        check(verdi.compareTo(BigDecimal.ZERO) >= 0, "Prosent må være >= 0"); //$NON-NLS-1$
+        if (BigDecimal.ZERO.compareTo(verdi) > 0) {
+            throw new IllegalArgumentException("Prosent må være >= 0"); //$NON-NLS-1$
+        }
     }
 
     private BigDecimal fiksNegativOgMax(BigDecimal verdi) {

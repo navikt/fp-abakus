@@ -17,5 +17,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = UtbetaltNæringsYtelseType.class, name = UtbetaltNæringsYtelseType.KODEVERK),
 })
 public interface UtbetaltYtelseType {
+    
+    String getKode();
+    
+    String getKodeverk();
 
 }

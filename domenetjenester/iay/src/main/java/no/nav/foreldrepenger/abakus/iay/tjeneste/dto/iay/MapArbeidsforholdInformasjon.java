@@ -19,7 +19,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.BekreftetPermisjon;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyringBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyrtePerioderEntitet;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyrtePerioder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanse;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -80,7 +80,7 @@ class MapArbeidsforholdInformasjon {
                 .medArbeidsgiver(arbeidsgiver)
                 .medArbeidsforholdRef(arbeidsgiverRef)
                 .medNyArbeidsforholdRef(nyArbeidsgiverRef)
-                .medHandling(KodeverkMapper.mapArbeidsforholdHandlingTypeFraDto(ov.getHandling()))
+                .medHandling(ov.getHandling())
                 .medAngittArbeidsgiverNavn(ov.getAngittArbeidsgiverNavn())
                 .medAngittStillingsprosent(new Stillingsprosent(ov.getStillingsprosent()));
 
@@ -125,7 +125,7 @@ class MapArbeidsforholdInformasjon {
                         mapArbeidsforholdsId(entitet, ao.getArbeidsgiver(), ao.getArbeidsforholdRef()))
                         .medBegrunnelse(ao.getBegrunnelse())
                         .medBekreftetPermisjon(mapBekreftetPermisjon(ao.getBekreftetPermisjon()))
-                        .medHandling(KodeverkMapper.mapArbeidsforholdHandlingTypeTilDto(ao.getHandling()))
+                        .medHandling(ao.getHandling())
                         .medNavn(ao.getArbeidsgiverNavn())
                         .medStillingsprosent(ao.getStillingsprosent() == null ? null : ao.getStillingsprosent().getVerdi())
                         .medNyArbeidsforholdRef(
@@ -146,10 +146,10 @@ class MapArbeidsforholdInformasjon {
                 .medReferanser(referanser);
         }
 
-        private List<Periode> map(List<ArbeidsforholdOverstyrtePerioderEntitet> perioder) {
+        private List<Periode> map(List<ArbeidsforholdOverstyrtePerioder> perioder) {
             return perioder == null ? null
                 : perioder.stream()
-                .map(ArbeidsforholdOverstyrtePerioderEntitet::getOverstyrtePeriode)
+                .map(ArbeidsforholdOverstyrtePerioder::getOverstyrtePeriode)
                 .map(this::mapPeriode)
                 .sorted(COMP_PERIODE)
                 .collect(Collectors.toList());

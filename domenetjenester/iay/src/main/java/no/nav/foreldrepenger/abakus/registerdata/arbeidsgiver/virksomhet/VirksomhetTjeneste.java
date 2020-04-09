@@ -10,10 +10,9 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Organisasjonstype;
+import no.nav.abakus.iaygrunnlag.kodeverk.OrganisasjonType;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.VirksomhetAlleredeLagretException;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.VirksomhetEntitet;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.VirksomhetRepository;
 import no.nav.tjeneste.virksomhet.organisasjon.v4.binding.HentOrganisasjonOrganisasjonIkkeFunnet;
 import no.nav.tjeneste.virksomhet.organisasjon.v4.binding.HentOrganisasjonUgyldigInput;
@@ -156,7 +155,7 @@ public class VirksomhetTjeneste {
     }
 
     private Virksomhet mapOrganisasjonResponseToOrganisasjon(Organisasjon responsOrganisasjon, Optional<Virksomhet> virksomhetOptional) {
-        final VirksomhetEntitet.Builder builder = getBuilder(virksomhetOptional)
+        final Virksomhet.Builder builder = getBuilder(virksomhetOptional)
             .medNavn(((UstrukturertNavn) responsOrganisasjon.getNavn()).getNavnelinje().stream().filter(it -> !it.isEmpty())
                 .reduce("", (a, b) -> a + " " + b).trim())
             .medRegistrert(DateUtil.convertToLocalDate(responsOrganisasjon.getOrganisasjonDetaljer().getRegistreringsDato()));
@@ -172,14 +171,14 @@ public class VirksomhetTjeneste {
             if (virksomhet.getVirksomhetDetaljer().getNedleggelsesdato() != null) {
                 builder.medAvsluttet(DateUtil.convertToLocalDate(virksomhet.getVirksomhetDetaljer().getNedleggelsesdato()));
             }
-            builder.medOrganisasjonstype(Organisasjonstype.VIRKSOMHET);
+            builder.medOrganisasjonstype(OrganisasjonType.VIRKSOMHET);
         } else if (responsOrganisasjon instanceof JuridiskEnhet) {
-            builder.medOrganisasjonstype(Organisasjonstype.JURIDISK_ENHET);
+            builder.medOrganisasjonstype(OrganisasjonType.JURIDISK_ENHET);
         }
         return builder.oppdatertOpplysningerNå().build();
     }
 
-    private VirksomhetEntitet.Builder getBuilder(Optional<Virksomhet> virksomhetOptional) {
-        return virksomhetOptional.map(VirksomhetEntitet.Builder::new).orElseGet(VirksomhetEntitet.Builder::new);
+    private Virksomhet.Builder getBuilder(Optional<Virksomhet> virksomhetOptional) {
+        return virksomhetOptional.map(Virksomhet.Builder::new).orElseGet(Virksomhet.Builder::new);
     }
 }

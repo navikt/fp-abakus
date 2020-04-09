@@ -10,16 +10,16 @@ import java.util.Set;
 import java.util.UUID;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
+import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanse;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.foreldrepenger.abakus.vedtak.domene.TemaUnderkategori;
 
 /**
  * Builder for å håndtere en gitt versjon {@link VersjonType} av grunnlaget.
@@ -184,20 +184,20 @@ public class InntektArbeidYtelseAggregatBuilder {
     }
 
     public static class AktørArbeidBuilder {
-        private final AktørArbeidEntitet kladd;
+        private final AktørArbeid kladd;
         private final boolean oppdatering;
 
-        private AktørArbeidBuilder(AktørArbeidEntitet aktørArbeid, boolean oppdatering) {
+        private AktørArbeidBuilder(AktørArbeid aktørArbeid, boolean oppdatering) {
             this.kladd = aktørArbeid;
             this.oppdatering = oppdatering;
         }
 
         static AktørArbeidBuilder ny() {
-            return new AktørArbeidBuilder(new AktørArbeidEntitet(), false);
+            return new AktørArbeidBuilder(new AktørArbeid(), false);
         }
 
         static AktørArbeidBuilder oppdatere(AktørArbeid oppdatere) {
-            return new AktørArbeidBuilder((AktørArbeidEntitet) oppdatere, true);
+            return new AktørArbeidBuilder(oppdatere, true);
         }
 
         public static AktørArbeidBuilder oppdatere(Optional<AktørArbeid> oppdatere) {
@@ -222,9 +222,8 @@ public class InntektArbeidYtelseAggregatBuilder {
         }
 
         public AktørArbeidBuilder leggTilYrkesaktivitet(YrkesaktivitetBuilder yrkesaktivitet) {
-            YrkesaktivitetEntitet yrkesaktivitetEntitet = (YrkesaktivitetEntitet) yrkesaktivitet.build();
             if (!yrkesaktivitet.getErOppdatering()) {
-                kladd.leggTilYrkesaktivitet(yrkesaktivitetEntitet);
+                kladd.leggTilYrkesaktivitet(yrkesaktivitet.build());
             }
             return this;
         }
@@ -259,20 +258,20 @@ public class InntektArbeidYtelseAggregatBuilder {
     }
 
     public static class AktørInntektBuilder {
-        private final AktørInntektEntitet aktørInntektEntitet;
+        private final AktørInntekt aktørInntekt;
         private final boolean oppdatering;
 
-        private AktørInntektBuilder(AktørInntektEntitet aktørInntektEntitet, boolean oppdatering) {
-            this.aktørInntektEntitet = aktørInntektEntitet;
+        private AktørInntektBuilder(AktørInntekt aktørInntekt, boolean oppdatering) {
+            this.aktørInntekt = aktørInntekt;
             this.oppdatering = oppdatering;
         }
 
         static AktørInntektBuilder ny() {
-            return new AktørInntektBuilder(new AktørInntektEntitet(), false);
+            return new AktørInntektBuilder(new AktørInntekt(), false);
         }
 
         static AktørInntektBuilder oppdatere(AktørInntekt oppdatere) {
-            return new AktørInntektBuilder((AktørInntektEntitet) oppdatere, true);
+            return new AktørInntektBuilder(oppdatere, true);
         }
 
         public static AktørInntektBuilder oppdatere(Optional<AktørInntekt> oppdatere) {
@@ -280,61 +279,61 @@ public class InntektArbeidYtelseAggregatBuilder {
         }
 
         private void medAktørId(AktørId aktørId) {
-            this.aktørInntektEntitet.setAktørId(aktørId);
+            this.aktørInntekt.setAktørId(aktørId);
         }
 
-        public InntektBuilder getInntektBuilder(InntektsKilde inntektsKilde, Opptjeningsnøkkel opptjeningsnøkkel) {
-            return aktørInntektEntitet.getInntektBuilder(inntektsKilde, opptjeningsnøkkel);
+        public InntektBuilder getInntektBuilder(InntektskildeType inntektskildeType, Opptjeningsnøkkel opptjeningsnøkkel) {
+            return aktørInntekt.getInntektBuilder(inntektskildeType, opptjeningsnøkkel);
         }
 
-        public InntektBuilder getInntektBuilderForYtelser(InntektsKilde inntektsKilde) {
-            return aktørInntektEntitet.getInntektBuilderForYtelser(inntektsKilde);
+        public InntektBuilder getInntektBuilderForYtelser(InntektskildeType inntektskildeType) {
+            return aktørInntekt.getInntektBuilderForYtelser(inntektskildeType);
         }
 
         public AktørInntektBuilder leggTilInntekt(InntektBuilder inntektBuilder) {
             if (!inntektBuilder.getErOppdatering()) {
-                InntektEntitet inntektTmpEntitet = (InntektEntitet) inntektBuilder.build();
-                aktørInntektEntitet.leggTilInntekt(inntektTmpEntitet);
+                Inntekt inntektTmpEntitet = inntektBuilder.build();
+                aktørInntekt.leggTilInntekt(inntektTmpEntitet);
             }
             return this;
         }
 
         public AktørInntekt build() {
-            if (aktørInntektEntitet.hasValues()) {
-                return aktørInntektEntitet;
+            if (aktørInntekt.hasValues()) {
+                return aktørInntekt;
             }
             throw new IllegalStateException();
         }
 
         AktørInntekt getKladd() {
-            return aktørInntektEntitet;
+            return aktørInntekt;
         }
 
         boolean getErOppdatering() {
             return oppdatering;
         }
 
-        public AktørInntektBuilder fjernInntekterFraKilde(InntektsKilde inntektsKilde) {
-            aktørInntektEntitet.fjernInntekterFraKilde(inntektsKilde);
+        public AktørInntektBuilder fjernInntekterFraKilde(InntektskildeType inntektskildeType) {
+            aktørInntekt.fjernInntekterFraKilde(inntektskildeType);
             return this;
         }
     }
 
     public static class AktørYtelseBuilder {
-        private final AktørYtelseEntitet kladd;
+        private final AktørYtelse kladd;
         private final boolean oppdatering;
 
-        private AktørYtelseBuilder(AktørYtelseEntitet aktørYtelseEntitet, boolean oppdatering) {
-            this.kladd = aktørYtelseEntitet;
+        private AktørYtelseBuilder(AktørYtelse aktørYtelse, boolean oppdatering) {
+            this.kladd = aktørYtelse;
             this.oppdatering = oppdatering;
         }
 
         static AktørYtelseBuilder ny() {
-            return new AktørYtelseBuilder(new AktørYtelseEntitet(), false);
+            return new AktørYtelseBuilder(new AktørYtelse(), false);
         }
 
         static AktørYtelseBuilder oppdatere(AktørYtelse oppdatere) {
-            return new AktørYtelseBuilder((AktørYtelseEntitet) oppdatere, true);
+            return new AktørYtelseBuilder(oppdatere, true);
         }
 
         public static AktørYtelseBuilder oppdatere(Optional<AktørYtelse> oppdatere) {
@@ -368,10 +367,10 @@ public class InntektArbeidYtelseAggregatBuilder {
             kladd.tilbakestillYtelser();
         }
 
-        public AktørYtelseBuilder leggTilYtelse(YtelseBuilder ytelse) {
-            YtelseEntitet ytelseEntitet = (YtelseEntitet) ytelse.build();
-            if (!ytelse.getErOppdatering()) {
-                this.kladd.leggTilYtelse(ytelseEntitet);
+        public AktørYtelseBuilder leggTilYtelse(YtelseBuilder ytelseBuilder) {
+            if (!ytelseBuilder.getErOppdatering()) {
+                Ytelse ytelse = ytelseBuilder.build();
+                this.kladd.leggTilYtelse(ytelse);
             }
             return this;
         }

@@ -21,7 +21,7 @@ import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Qualifier;
 
-import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
 /**
  * For å skille på implementasjoner av forskjellige
@@ -40,7 +40,7 @@ public @interface YtelseTypeRef {
      * <p>
      * Må matche ett innslag i <code>FAGSAK_YTELSE_TYPE</code> tabell for å kunne kjøres.
      *
-     * @see no.nav.foreldrepenger.abakus.kodeverk.YtelseType
+     * @see no.nav.abakus.iaygrunnlag.kodeverk.YtelseType
      */
     String value() default "*";
 

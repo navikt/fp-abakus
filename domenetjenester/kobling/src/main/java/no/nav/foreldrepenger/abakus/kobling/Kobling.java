@@ -19,8 +19,9 @@ import javax.persistence.Version;
 import org.hibernate.annotations.NaturalId;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 
@@ -52,7 +53,7 @@ public class Kobling extends no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet
     })
     private KoblingReferanse koblingReferanse;
 
-    @Convert(converter = YtelseType.KodeverdiConverter.class)
+    @Convert(converter = YtelseTypeKodeverdiConverter.class)
     @Column(name="ytelse_type", nullable = false)
     private YtelseType ytelseType = YtelseType.UDEFINERT;
 

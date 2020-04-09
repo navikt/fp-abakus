@@ -15,9 +15,9 @@ import org.hibernate.jpa.QueryHints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
+import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 
@@ -46,40 +46,40 @@ public class VedtakYtelseRepository {
     }
 
     public void lagre(VedtakYtelseBuilder builder) {
-        VedtattYtelse ytelse = builder.build();
-        Optional<VedtakYtelseEntitet> vedtakYtelseEntitet = hentYtelseFor(ytelse.getAktør(), ytelse.getSaksnummer(), ytelse.getKilde(), ytelse.getYtelseType());
-        if (builder.erOppdatering() && vedtakYtelseEntitet.isPresent()) {
+        var ytelse = builder.build();
+        Optional<VedtakYtelse> vedtakYtelse = hentYtelseFor(ytelse.getAktør(), ytelse.getSaksnummer(), ytelse.getKilde(), ytelse.getYtelseType());
+        if (builder.erOppdatering() && vedtakYtelse.isPresent()) {
             // Deaktiver eksisterende innslag
-            VedtakYtelseEntitet ytelseEntitet = vedtakYtelseEntitet.get();
+            VedtakYtelse ytelseEntitet = vedtakYtelse.get();
             ytelseEntitet.setAktiv(false);
             entityManager.persist(ytelseEntitet);
             entityManager.flush();
         } else if (!builder.erOppdatering()) {
-            ((VedtakYtelseEntitet) ytelse).setAktiv(false);
+            ytelse.setAktiv(false);
         }
-        if (((VedtakYtelseEntitet) ytelse).getAktiv()) {
+        if (ytelse.getAktiv()) {
             entityManager.persist(ytelse);
             for (YtelseAnvist ytelseAnvist : ytelse.getYtelseAnvist()) {
                 entityManager.persist(ytelseAnvist);
             }
             entityManager.flush();
         } else {
-            log.info("Forkaster vedtak siden en sitter på nyere vedtak. {} er eldre enn {}", ytelse, vedtakYtelseEntitet);
+            log.info("Forkaster vedtak siden en sitter på nyere vedtak. {} er eldre enn {}", ytelse, vedtakYtelse);
         }
     }
 
-    private Optional<VedtakYtelseEntitet> hentYtelseFor(AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, YtelseType ytelseType) {
+    private Optional<VedtakYtelse> hentYtelseFor(AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, YtelseType ytelseType) {
         Objects.requireNonNull(aktørId, "aktørId");
         Objects.requireNonNull(saksnummer, "saksnummer");
         Objects.requireNonNull(fagsystem, "fagsystem");
         Objects.requireNonNull(ytelseType, "ytelseType");
 
-        TypedQuery<VedtakYtelseEntitet> query = entityManager.createQuery("SELECT v FROM VedtakYtelseEntitet v " +
+        TypedQuery<VedtakYtelse> query = entityManager.createQuery("SELECT v FROM VedtakYtelseEntitet v " +
             "WHERE v.aktørId = :aktørId " +
             "AND v.saksnummer = :saksnummer " +
             "AND v.kilde = :fagsystem " +
             "AND v.ytelseType = :ytelse " +
-            "AND v.aktiv = true ", VedtakYtelseEntitet.class);
+            "AND v.aktiv = true ", VedtakYtelse.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("saksnummer", saksnummer);
         query.setParameter("fagsystem", fagsystem);
@@ -88,11 +88,11 @@ public class VedtakYtelseRepository {
         return HibernateVerktøy.hentUniktResultat(query);
     }
 
-    public List<VedtattYtelse> hentYtelserForIPeriode(AktørId aktørId, LocalDate fom, LocalDate tom) {
-        TypedQuery<VedtakYtelseEntitet> query = entityManager.createQuery("FROM VedtakYtelseEntitet " +
+    public List<VedtakYtelse> hentYtelserForIPeriode(AktørId aktørId, LocalDate fom, LocalDate tom) {
+        TypedQuery<VedtakYtelse> query = entityManager.createQuery("FROM VedtakYtelseEntitet " +
             "WHERE aktørId = :aktørId " +
             "AND periode.fomDato <= :tom AND periode.tomDato >= :fom " +
-            "AND aktiv = true", VedtakYtelseEntitet.class);
+            "AND aktiv = true", VedtakYtelse.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("fom", fom);
         query.setParameter("tom", tom);

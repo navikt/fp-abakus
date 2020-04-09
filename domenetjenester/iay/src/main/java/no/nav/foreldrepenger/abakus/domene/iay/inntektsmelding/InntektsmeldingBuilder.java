@@ -8,8 +8,8 @@ import java.util.Optional;
 
 import org.jboss.weld.exceptions.IllegalArgumentException;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
@@ -154,9 +154,9 @@ public class InntektsmeldingBuilder {
         return this;
     }
 
-    public InntektsmeldingBuilder medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsak inntektsmeldingInnsendingsårsak) {
+    public InntektsmeldingBuilder medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType inntektsmeldingInnsendingsårsakType) {
         precondition();
-        kladd.setInntektsmeldingInnsendingsårsak(inntektsmeldingInnsendingsårsak);
+        kladd.setInntektsmeldingInnsendingsårsak(inntektsmeldingInnsendingsårsakType);
         return this;
     }
 

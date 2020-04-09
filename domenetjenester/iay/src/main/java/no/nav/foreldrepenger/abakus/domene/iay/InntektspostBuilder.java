@@ -3,58 +3,51 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 
 public class InntektspostBuilder {
-    private InntektspostEntitet inntektspostEntitet;
+    private Inntektspost inntektspost;
 
-    InntektspostBuilder(InntektspostEntitet inntektspostEntitet) {
-        this.inntektspostEntitet = inntektspostEntitet;
+    InntektspostBuilder(Inntektspost inntektspost) {
+        this.inntektspost = inntektspost;
     }
 
     public static InntektspostBuilder ny() {
-        return new InntektspostBuilder(new InntektspostEntitet());
+        return new InntektspostBuilder(new Inntektspost());
     }
 
     public InntektspostBuilder medInntektspostType(InntektspostType inntektspostType) {
-        this.inntektspostEntitet.setInntektspostType(inntektspostType);
+        this.inntektspost.setInntektspostType(inntektspostType);
         return this;
     }
 
     public InntektspostBuilder medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType skatteOgAvgiftsregelType) {
-        this.inntektspostEntitet.setSkatteOgAvgiftsregelType(skatteOgAvgiftsregelType);
+        this.inntektspost.setSkatteOgAvgiftsregelType(skatteOgAvgiftsregelType);
         return this;
     }
 
     public InntektspostBuilder medPeriode(LocalDate fraOgMed, LocalDate tilOgMed) {
-        this.inntektspostEntitet.setPeriode(fraOgMed, tilOgMed);
+        this.inntektspost.setPeriode(fraOgMed, tilOgMed);
         return this;
     }
 
     public InntektspostBuilder medBeløp(BigDecimal verdi) {
-        this.inntektspostEntitet.setBeløp(new Beløp(verdi));
+        this.inntektspost.setBeløp(new Beløp(verdi));
         return this;
     }
 
     public InntektspostBuilder medYtelse(YtelseInntektspostType offentligYtelseType) {
-        this.inntektspostEntitet.setYtelse(offentligYtelseType);
+        this.inntektspost.setYtelse(offentligYtelseType);
         return this;
     }
 
     public Inntektspost build() {
-        if (inntektspostEntitet.hasValues()) {
-            return inntektspostEntitet;
+        if (inntektspost.hasValues()) {
+            return inntektspost;
         }
         throw new IllegalStateException();
     }
 
-    public InntektspostBuilder medInntektspostType(String kode) {
-        return medInntektspostType(new InntektspostType(kode));
-    }
-
-    public InntektspostBuilder medSkatteOgAvgiftsregelType(String kode) {
-        return medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.fraKode(kode));
-    }
 }

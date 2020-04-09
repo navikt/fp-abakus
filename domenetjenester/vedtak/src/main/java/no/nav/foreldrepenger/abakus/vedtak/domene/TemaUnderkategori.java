@@ -1,24 +1,19 @@
 package no.nav.foreldrepenger.abakus.vedtak.domene;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
-
-import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
+import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
 
 /**
  * Gammelt kodeverk fra infotrygd. Burde ikke lekke fra Abakus (bør fjernes fra iay kontrakt og der heller benytte FagsakYtelseType).
@@ -70,6 +65,7 @@ public enum TemaUnderkategori implements Kodeverdi {
     private String navn;
 
     private String kode;
+    
     @JsonIgnore
     private String offisiellKode;
 
@@ -104,13 +100,13 @@ public enum TemaUnderkategori implements Kodeverdi {
         return navn;
     }
 
-    @JsonProperty
+    @JsonProperty(value="kodeverk", access = Access.READ_ONLY)
     @Override
     public String getKodeverk() {
         return KODEVERK;
     }
 
-    @JsonProperty
+    @JsonProperty(value="kode")
     @Override
     public String getKode() {
         return kode;
@@ -121,38 +117,4 @@ public enum TemaUnderkategori implements Kodeverdi {
         return offisiellKode;
     }
 
-
-    @Converter(autoApply = true)
-    public static class KodeverdiConverter implements AttributeConverter<TemaUnderkategori, String> {
-        @Override
-        public String convertToDatabaseColumn(TemaUnderkategori attribute) {
-            return attribute == null ? null : attribute.getKode();
-        }
-
-        @Override
-        public TemaUnderkategori convertToEntityAttribute(String dbData) {
-            return dbData == null ? null : fraKode(dbData);
-        }
-    }
-
-    private static final List<TemaUnderkategori> FORELDREPENGER_BEHANDLINGSTEMAER = Arrays.asList(
-        FORELDREPENGER, FORELDREPENGER_FODSEL, FORELDREPENGER_ADOPSJON, FORELDREPENGER_FODSEL_UTLAND);
-
-    private static final List<TemaUnderkategori> ENGANGSSTONAD_BEHANDLINGSTEMAER = Arrays.asList(ENGANGSSTONAD_ADOPSJON,
-        ENGANGSSTONAD_FODSEL);
-
-
-    public static boolean erGjelderEngangsstonad(String underkategori) {
-        return ENGANGSSTONAD_BEHANDLINGSTEMAER.stream()
-            .anyMatch(temaUnderkategori -> temaUnderkategori.getKode().equals(underkategori));
-    }
-
-    public static boolean erGjelderSvangerskapspenger(String underkategori) {
-        return FORELDREPENGER_SVANGERSKAPSPENGER.getKode().equals(underkategori);
-    }
-
-    public static boolean erGjelderForeldrepenger(String underkategori) {
-        return FORELDREPENGER_BEHANDLINGSTEMAER.stream()
-            .anyMatch(temaUnderkategori -> temaUnderkategori.getKode().equals(underkategori));
-    }
 }

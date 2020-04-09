@@ -5,14 +5,14 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.vedtak.ytelse.Periode;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseType;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
 import no.nav.abakus.vedtak.ytelse.v1.anvisning.Anvisning;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
@@ -34,8 +34,8 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
 
     @Override
     public VedtakYtelseBuilder extractFrom(YtelseV1 ytelse) {
-        Fagsystem fagsystem = getFagsystem(ytelse.getFagsystem());
-        no.nav.foreldrepenger.abakus.kodeverk.YtelseType ytelseType = getYtelseType(ytelse.getType());
+        Fagsystem fagsystem = ytelse.getFagsystem();
+        no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType = getYtelseType(ytelse.getType());
         Saksnummer saksnummer = new Saksnummer(ytelse.getSaksnummer());
         AktørId aktørId = new AktørId(ytelse.getAktør().getVerdi());
 
@@ -72,11 +72,8 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
         return IntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom());
     }
 
-    private no.nav.foreldrepenger.abakus.kodeverk.YtelseType getYtelseType(YtelseType kodeverk) {
-        return no.nav.foreldrepenger.abakus.kodeverk.YtelseType.fraKode(kodeverk.getKode());
+    private no.nav.abakus.iaygrunnlag.kodeverk.YtelseType getYtelseType(YtelseType kodeverk) {
+        return no.nav.abakus.iaygrunnlag.kodeverk.YtelseType.fraKode(kodeverk.getKode());
     }
 
-    private Fagsystem getFagsystem(no.nav.abakus.vedtak.ytelse.v1.Fagsystem kodeverk) {
-        return Fagsystem.fraKode(kodeverk.getKode());
-    }
 }

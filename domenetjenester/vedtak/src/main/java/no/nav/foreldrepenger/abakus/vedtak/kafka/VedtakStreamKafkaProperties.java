@@ -60,10 +60,12 @@ class VedtakStreamKafkaProperties {
         return topic.getTopic();
     }
 
+    @SuppressWarnings("resource")
     Class<?> getKeyClass() {
         return topic.getSerdeKey().getClass();
     }
 
+    @SuppressWarnings("resource")
     Class<?> getValueClass() {
         return topic.getSerdeValue().getClass();
     }

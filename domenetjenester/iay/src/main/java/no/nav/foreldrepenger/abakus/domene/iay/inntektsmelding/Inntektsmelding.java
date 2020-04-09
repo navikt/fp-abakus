@@ -24,14 +24,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinColumnsOrFormulas;
-import org.hibernate.annotations.JoinFormula;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsakKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -117,13 +114,10 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
     @ChangeTracked
     private List<Refusjon> endringerRefusjon = new ArrayList<>();
 
-    @ManyToOne(optional = false)
-    @JoinColumnsOrFormulas({
-            @JoinColumnOrFormula(column = @JoinColumn(name = "innsendingsaarsak", referencedColumnName = "kode", nullable = false)),
-            @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + InntektsmeldingInnsendingsårsak.DISCRIMINATOR
-                + "'")) })
+    @Convert(converter = InntektsmeldingInnsendingsårsakKodeverdiConverter.class)
+    @Column(name = "innsendingsaarsak", nullable = false, updatable = false)
     @ChangeTracked
-    private InntektsmeldingInnsendingsårsak innsendingsårsak = InntektsmeldingInnsendingsårsak.UDEFINERT;
+    private InntektsmeldingInnsendingsårsakType innsendingsårsak = InntektsmeldingInnsendingsårsakType.UDEFINERT;
 
     @Version
     @Column(name = "versjon", nullable = false)
@@ -198,11 +192,11 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
         this.arbeidsgiver = virksomhet;
     }
 
-    public InntektsmeldingInnsendingsårsak getInntektsmeldingInnsendingsårsak() {
+    public InntektsmeldingInnsendingsårsakType getInntektsmeldingInnsendingsårsak() {
         return innsendingsårsak;
     }
 
-    void setInntektsmeldingInnsendingsårsak(InntektsmeldingInnsendingsårsak innsendingsårsak) {
+    void setInntektsmeldingInnsendingsårsak(InntektsmeldingInnsendingsårsakType innsendingsårsak) {
         this.innsendingsårsak = innsendingsårsak;
     }
 

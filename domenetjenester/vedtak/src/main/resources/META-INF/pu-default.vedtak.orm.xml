@@ -7,7 +7,7 @@
     <sequence-generator name="SEQ_VEDTAK_YTELSE_ANVIST" allocation-size="50" sequence-name="SEQ_VEDTAK_YTELSE_ANVIST" />
 
     <!-- InntektArbeidYtelser aggregat og grunnlag -->
-    <entity class="no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseEntitet" />
-    <entity class="no.nav.foreldrepenger.abakus.vedtak.domene.YtelseAnvistEntitet" />
+    <entity class="no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelse" />
+    <entity class="no.nav.foreldrepenger.abakus.vedtak.domene.YtelseAnvist" />
 
 </entity-mappings>

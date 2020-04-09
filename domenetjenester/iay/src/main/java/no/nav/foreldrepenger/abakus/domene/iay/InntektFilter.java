@@ -15,8 +15,8 @@ import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 /**
@@ -63,7 +63,7 @@ public class InntektFilter {
         return copyWith(innt, skjæringstidspunkt, venstreSideASkjæringstidspunkt);
     }
 
-    public InntektFilter filter(InntektsKilde kilde) {
+    public InntektFilter filter(InntektskildeType kilde) {
         return copyWith(getAlleInntekter(kilde), skjæringstidspunkt, venstreSideASkjæringstidspunkt);
     }
 
@@ -112,14 +112,14 @@ public class InntektFilter {
     }
 
     public List<Inntekt> getAlleInntektBeregnetSkatt() {
-        return getAlleInntekter(InntektsKilde.SIGRUN);
+        return getAlleInntekter(InntektskildeType.SIGRUN);
     }
 
     public List<Inntekt> getAlleInntektBeregningsgrunnlag() {
-        return getAlleInntekter(InntektsKilde.INNTEKT_BEREGNING);
+        return getAlleInntekter(InntektskildeType.INNTEKT_BEREGNING);
     }
 
-    public List<Inntekt> getAlleInntekter(InntektsKilde kilde) {
+    public List<Inntekt> getAlleInntekter(InntektskildeType kilde) {
         return inntekter.stream()
             .filter(it -> kilde == null || kilde.equals(it.getInntektsKilde()))
             .collect(Collectors.toUnmodifiableList());
@@ -130,11 +130,11 @@ public class InntektFilter {
     }
 
     public List<Inntekt> getAlleInntektPensjonsgivende() {
-        return getAlleInntekter(InntektsKilde.INNTEKT_OPPTJENING);
+        return getAlleInntekter(InntektskildeType.INNTEKT_OPPTJENING);
     }
 
     public List<Inntekt> getAlleInntektSammenligningsgrunnlag() {
-        return getAlleInntekter(InntektsKilde.INNTEKT_SAMMENLIGNING);
+        return getAlleInntekter(InntektskildeType.INNTEKT_SAMMENLIGNING);
     }
 
     /**
@@ -149,13 +149,13 @@ public class InntektFilter {
      * Get inntektsposter - filtrert for skjæringstidspunkt hvis satt på filter.
      */
     public Collection<Inntektspost> getFiltrertInntektsposter() {
-        return getInntektsposter((InntektsKilde) null);
+        return getInntektsposter((InntektskildeType) null);
     }
 
     /**
      * Get inntektsposter - filtrert for skjæringstidspunkt, inntektsposttype, etc hvis satt på filter.
      */
-    public Collection<Inntektspost> getInntektsposter(InntektsKilde kilde) {
+    public Collection<Inntektspost> getInntektsposter(InntektskildeType kilde) {
         Collection<Inntektspost> inntektsposter = getAlleInntekter(null).stream().filter(i -> kilde == null || kilde.equals(i.getInntektsKilde()))
             .flatMap(i -> i.getAlleInntektsposter().stream().filter(ip -> filtrerInntektspost(i, ip)))
             .collect(Collectors.toList());

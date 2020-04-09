@@ -112,6 +112,7 @@ abstract class AbstractJettyServer {
         return connectors;
     }
 
+    @SuppressWarnings("resource")
     protected WebAppContext createContext(AppKonfigurasjon appKonfigurasjon) throws IOException {
         WebAppContext webAppContext = new WebAppContext();
         webAppContext.setParentLoaderPriority(true);

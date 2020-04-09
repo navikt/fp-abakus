@@ -40,7 +40,7 @@ public class RestApiAbacTest {
     /**
      * IKKE ignorer denne testen, sikrer at REST-endepunkter får tilgangskontroll
      * <p>
-     * Kontakt Team Humle hvis du trenger hjelp til å endre koden din slik at den går igjennom her     *
+     * Kontakt Team Humle hvis du trenger hjelp til å endre koden din slik at den går igjennom her *
      */
     @Test
     public void test_at_alle_restmetoder_er_annotert_med_BeskyttetRessurs() throws Exception {
@@ -61,7 +61,7 @@ public class RestApiAbacTest {
     /**
      * IKKE ignorer denne testen, helper til med at input til tilgangskontroll blir riktig
      * <p>
-     * Kontakt Team Humle hvis du trenger hjelp til å endre koden din slik at den går igjennom her     *
+     * Kontakt Team Humle hvis du trenger hjelp til å endre koden din slik at den går igjennom her *
      */
     @Test
     public void test_at_alle_input_parametre_til_restmetoder_implementer_AbacDto() throws Exception {
@@ -77,13 +77,15 @@ public class RestApiAbacTest {
                     if (!AbacDto.class.isAssignableFrom(aClass)
                         && !parameter.isAnnotationPresent(TilpassetAbacAttributt.class)
                         && !IgnorerteInputTyper.ignore(aClass)) {
-                        feilmeldinger.append(String.format(feilmelding, restMethode.getDeclaringClass().getSimpleName(), restMethode.getName(), aClass.getSimpleName()));
+                        feilmeldinger
+                            .append(String.format(feilmelding, restMethode.getDeclaringClass().getSimpleName(), restMethode.getName(), aClass.getSimpleName()));
                     }
                 } else {
                     if (!AbacDto.class.isAssignableFrom(parameter.getType())
                         && !parameter.isAnnotationPresent(TilpassetAbacAttributt.class)
                         && !IgnorerteInputTyper.ignore(parameter.getType())) {
-                        feilmeldinger.append(String.format(feilmelding, restMethode.getDeclaringClass().getSimpleName(), restMethode.getName(), parameter.getType().getSimpleName()));
+                        feilmeldinger.append(String.format(feilmelding, restMethode.getDeclaringClass().getSimpleName(), restMethode.getName(),
+                            parameter.getType().getSimpleName()));
                     }
                 }
             }
@@ -99,7 +101,7 @@ public class RestApiAbacTest {
         if (annotation != null && annotation.action() == BeskyttetRessursActionAttributt.DUMMY) {
             fail(klasse.getSimpleName() + "." + metode.getName() + " Ikke bruk DUMMY-verdi for "
                 + BeskyttetRessursActionAttributt.class.getSimpleName());
-        } else if (annotation != null && annotation.ressurs() == BeskyttetRessursResourceAttributt.DUMMY) {
+        } else if (annotation != null && annotation.resource() == null) {
             fail(klasse.getSimpleName() + "." + metode.getName() + " Ikke bruk DUMMY-verdi for "
                 + BeskyttetRessursResourceAttributt.class.getSimpleName());
         }

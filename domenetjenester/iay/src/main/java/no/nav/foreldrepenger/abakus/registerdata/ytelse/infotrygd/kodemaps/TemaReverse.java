@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 
-import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
 public class TemaReverse {
 

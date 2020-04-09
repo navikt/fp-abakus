@@ -46,7 +46,7 @@ import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 
 @ApplicationScoped
-public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRepository {
+public class InntektArbeidYtelseRepository {
     private static final Logger log = LoggerFactory.getLogger(InntektArbeidYtelseRepository.class);
     private EntityManager entityManager;
 
@@ -100,7 +100,7 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
 
     public Set<Inntektsmelding> hentAlleInntektsmeldingerFor(AktørId aktørId,
                                                              Saksnummer saksnummer,
-                                                             no.nav.foreldrepenger.abakus.kodeverk.YtelseType ytelseType) {
+                                                             no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType) {
 
         final TypedQuery<Inntektsmelding> query = entityManager.createQuery("SELECT DISTINCT(im)" +
             " FROM InntektArbeidGrunnlag gr" +
@@ -119,7 +119,7 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
     public Map<Inntektsmelding, ArbeidsforholdInformasjon> hentArbeidsforholdInfoInntektsmeldingerMapFor(AktørId aktørId,
                                                                                                          Saksnummer saksnummer,
                                                                                                          KoblingReferanse ref,
-                                                                                                         no.nav.foreldrepenger.abakus.kodeverk.YtelseType ytelseType) {
+                                                                                                         no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType) {
         final TypedQuery<Object[]> query = entityManager.createQuery("SELECT im, arbInf" +
                 " FROM InntektArbeidGrunnlag gr" + // NOSONAR
                 " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
@@ -138,7 +138,7 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
 
     public Map<Inntektsmelding, ArbeidsforholdInformasjon> hentArbeidsforholdInfoInntektsmeldingerMapFor(AktørId aktørId,
                                                              Saksnummer saksnummer,
-                                                             no.nav.foreldrepenger.abakus.kodeverk.YtelseType ytelseType) {
+                                                             no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType) {
 
         final TypedQuery<Object[]> query = entityManager.createQuery("SELECT im, arbInf" +
                 " FROM InntektArbeidGrunnlag gr" + // NOSONAR
@@ -170,7 +170,7 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
 
     public List<InntektArbeidYtelseGrunnlag> hentAlleInntektArbeidYtelseGrunnlagFor(AktørId aktørId,
                                                                                     Saksnummer saksnummer,
-                                                                                    no.nav.foreldrepenger.abakus.kodeverk.YtelseType ytelseType,
+                                                                                    no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType,
                                                                                     boolean kunAktive) {
 
         final TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery("SELECT gr" +
@@ -255,7 +255,6 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
         throw InntektArbeidYtelseFeil.FACTORY.aggregatKanIkkeVæreNull().toException();
     }
 
-    @Override
     public void lagre(KoblingReferanse koblingReferanse, InntektArbeidYtelseAggregatBuilder builder) {
         InntektArbeidYtelseGrunnlagBuilder opptjeningAggregatBuilder = getGrunnlagBuilder(koblingReferanse, builder);
         final ArbeidsforholdInformasjon informasjon = opptjeningAggregatBuilder.getInformasjon();
@@ -266,7 +265,6 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
         lagreOgFlush(koblingReferanse, opptjeningAggregatBuilder.build());
     }
 
-    @Override
     public GrunnlagReferanse lagre(KoblingReferanse koblingReferanse, OppgittOpptjeningBuilder oppgittOpptjening) {
         if (oppgittOpptjening == null) {
             return null;
@@ -522,7 +520,7 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
     }
 
     private void lagreInntekt(AktørInntekt aktørInntekt) {
-        for (Inntekt inntekt : ((AktørInntektEntitet) aktørInntekt).getInntekt()) {
+        for (Inntekt inntekt : aktørInntekt.getInntekt()) {
             entityManager.persist(inntekt);
             for (Inntektspost inntektspost : inntekt.getAlleInntektsposter()) {
                 entityManager.persist(inntektspost);
@@ -531,7 +529,7 @@ public class InntektArbeidYtelseRepository implements ByggInntektArbeidYtelseRep
     }
 
     private void lagreAktørArbeid(AktørArbeid aktørArbeid) {
-        for (Yrkesaktivitet yrkesaktivitet : ((AktørArbeidEntitet) aktørArbeid).hentAlleYrkesaktiviteter()) {
+        for (Yrkesaktivitet yrkesaktivitet : aktørArbeid.hentAlleYrkesaktiviteter()) {
             entityManager.persist(yrkesaktivitet);
             for (AktivitetsAvtale aktivitetsAvtale : yrkesaktivitet.getAlleAktivitetsAvtaler()) {
                 entityManager.persist(aktivitetsAvtale);

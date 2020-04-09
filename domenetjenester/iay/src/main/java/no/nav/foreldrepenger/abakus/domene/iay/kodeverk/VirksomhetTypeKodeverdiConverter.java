@@ -3,18 +3,18 @@ package no.nav.foreldrepenger.abakus.domene.iay.kodeverk;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.VirksomhetType;
 
 
 @Converter(autoApply = true)
-public class VirksomhetTypeKodeverdiConverter implements AttributeConverter<ArbeidType, String> {
+public class VirksomhetTypeKodeverdiConverter implements AttributeConverter<VirksomhetType, String> {
     @Override
-    public String convertToDatabaseColumn(ArbeidType attribute) {
+    public String convertToDatabaseColumn(VirksomhetType attribute) {
         return attribute == null ? null : attribute.getKode();
     }
 
     @Override
-    public ArbeidType convertToEntityAttribute(String dbData) {
-        return dbData == null ? null : ArbeidType.fraKode(dbData);
+    public VirksomhetType convertToEntityAttribute(String dbData) {
+        return dbData == null ? null : VirksomhetType.fraKode(dbData);
     }
 }

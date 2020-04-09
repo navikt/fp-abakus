@@ -12,14 +12,13 @@ import org.junit.Test;
 import no.nav.abakus.iaygrunnlag.request.Dataset;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
 
 public class InntektArbeidYtelseGrunnlagBuilderTest {
 
     @Test
     public void kopier_deler_test() {
         final var gr = new InntektArbeidYtelseGrunnlag(UUID.randomUUID(), LocalDateTime.now());
-        gr.setOppgittOpptjening((OppgittOpptjening) OppgittOpptjeningBuilder.ny().build());
+        gr.setOppgittOpptjening(OppgittOpptjeningBuilder.ny().build());
         gr.setRegister(new InntektArbeidYtelseAggregat());
         gr.setSaksbehandlet(new InntektArbeidYtelseAggregat());
         gr.setInformasjon(new ArbeidsforholdInformasjon());

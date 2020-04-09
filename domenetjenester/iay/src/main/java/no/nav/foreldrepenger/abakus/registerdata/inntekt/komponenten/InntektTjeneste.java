@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import no.finn.unleash.Unleash;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.tjenester.aordningen.inntektsinformasjon.Aktoer;
 import no.nav.tjenester.aordningen.inntektsinformasjon.AktoerType;
@@ -41,7 +41,7 @@ public class InntektTjeneste {
 
     // Dato for eldste request til inntk - det er av og til noen ES saker som spør lenger tilbake i tid
     private static final YearMonth INNTK_TIDLIGSTE_DATO = YearMonth.of(2015, 7);
-    private static final Set<InntektsKilde> SKAL_PERIODISERE_INNTEKTSKILDE = Set.of(InntektsKilde.INNTEKT_SAMMENLIGNING, InntektsKilde.INNTEKT_BEREGNING);
+    private static final Set<InntektskildeType> SKAL_PERIODISERE_INNTEKTSKILDE = Set.of(InntektskildeType.INNTEKT_SAMMENLIGNING, InntektskildeType.INNTEKT_BEREGNING);
 
     private static final String ENDPOINT_KEY = "hentinntektlistebolk.url";
 
@@ -50,7 +50,7 @@ public class InntektTjeneste {
     private OidcRestClient oidcRestClient;
     private URI endpoint;
     private AktørConsumer aktørConsumer;
-    private Map<InntektsKilde, InntektsFilter> kildeTilFilter;
+    private Map<InntektskildeType, InntektsFilter> kildeTilFilter;
     private Unleash unleash;
 
     InntektTjeneste() {
@@ -66,12 +66,12 @@ public class InntektTjeneste {
         this.oidcRestClient = oidcRestClient;
         this.aktørConsumer = aktørConsumer;
         this.unleash = unleash;
-        this.kildeTilFilter = Map.of(InntektsKilde.INNTEKT_OPPTJENING, InntektsFilter.OPPTJENINGSGRUNNLAG,
-            InntektsKilde.INNTEKT_BEREGNING, InntektsFilter.BEREGNINGSGRUNNLAG,
-            InntektsKilde.INNTEKT_SAMMENLIGNING, InntektsFilter.SAMMENLIGNINGSGRUNNLAG);
+        this.kildeTilFilter = Map.of(InntektskildeType.INNTEKT_OPPTJENING, InntektsFilter.OPPTJENINGSGRUNNLAG,
+            InntektskildeType.INNTEKT_BEREGNING, InntektsFilter.BEREGNINGSGRUNNLAG,
+            InntektskildeType.INNTEKT_SAMMENLIGNING, InntektsFilter.SAMMENLIGNINGSGRUNNLAG);
     }
 
-    public InntektsInformasjon finnInntekt(FinnInntektRequest finnInntektRequest, InntektsKilde kilde) {
+    public InntektsInformasjon finnInntekt(FinnInntektRequest finnInntektRequest, InntektskildeType kilde) {
         var request = lagRequest(finnInntektRequest, kilde);
 
         HentInntektListeBolkResponse response;
@@ -89,7 +89,7 @@ public class InntektTjeneste {
 
     }
 
-    private HentInntektListeBolkRequest lagRequest(FinnInntektRequest finnInntektRequest, InntektsKilde kilde) {
+    private HentInntektListeBolkRequest lagRequest(FinnInntektRequest finnInntektRequest, InntektskildeType kilde) {
         var request = new HentInntektListeBolkRequest();
 
         if (finnInntektRequest.getFnr() != null) {
@@ -108,12 +108,12 @@ public class InntektTjeneste {
         return request;
     }
 
-    private InntektsFilter getFilter(InntektsKilde kilde) {
+    private InntektsFilter getFilter(InntektskildeType kilde) {
         // Skal bare få en verdi.
         return kildeTilFilter.getOrDefault(kilde, null);
     }
 
-    private InntektsInformasjon oversettResponse(HentInntektListeBolkResponse response, InntektsKilde kilde) {
+    private InntektsInformasjon oversettResponse(HentInntektListeBolkResponse response, InntektskildeType kilde) {
         if (response.getSikkerhetsavvikListe() != null && !response.getSikkerhetsavvikListe().isEmpty()) {
             throw InntektFeil.FACTORY.fikkSikkerhetsavvikFraInntekt(byggSikkerhetsavvikString(response)).toException();
         }
@@ -135,7 +135,7 @@ public class InntektTjeneste {
         return new InntektsInformasjon(månedsinntekter, arbeidsforhold, kilde);
     }
 
-    private ArbeidsInntektInformasjon oversettInntekter(List<Månedsinntekt> månedsinntekter, ArbeidsInntektMaaned arbeidsInntektMaaned, InntektsKilde kilde) {
+    private ArbeidsInntektInformasjon oversettInntekter(List<Månedsinntekt> månedsinntekter, ArbeidsInntektMaaned arbeidsInntektMaaned, InntektskildeType kilde) {
         var arbeidsInntektInformasjon = arbeidsInntektMaaned.getArbeidsInntektInformasjon();
 
         if (arbeidsInntektInformasjon != null && arbeidsInntektInformasjon.getInntektListe() != null) {
@@ -163,7 +163,7 @@ public class InntektTjeneste {
         return arbeidsInntektInformasjon;
     }
 
-    private boolean skalPeriodisereInntektsKilde(InntektsKilde kilde) {
+    private boolean skalPeriodisereInntektsKilde(InntektskildeType kilde) {
         return SKAL_PERIODISERE_INNTEKTSKILDE.contains(kilde);
     }
 
