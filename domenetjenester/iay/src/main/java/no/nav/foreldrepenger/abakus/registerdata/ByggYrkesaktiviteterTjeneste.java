@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtaleBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
@@ -17,21 +18,13 @@ import no.nav.foreldrepenger.abakus.domene.iay.Opptjeningsnøkkel;
 import no.nav.foreldrepenger.abakus.domene.iay.Permisjon;
 import no.nav.foreldrepenger.abakus.domene.iay.PermisjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.PermisjonsbeskrivelseType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsavtale;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
 class ByggYrkesaktiviteterTjeneste {
-
-    private KodeverkRepository kodeverkRepository;
-
-    ByggYrkesaktiviteterTjeneste(KodeverkRepository kodeverkRepository) {
-        this.kodeverkRepository = kodeverkRepository;
-    }
 
     YrkesaktivitetBuilder byggYrkesaktivitetForSøker(Map.Entry<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold,
                                                      Arbeidsgiver arbeidsgiver,
@@ -125,7 +118,7 @@ class ByggYrkesaktiviteterTjeneste {
         return permisjonBuilder
             .medProsentsats(permisjon.getPermisjonsprosent())
             .medPeriode(permisjon.getPermisjonFom(), permisjonTom)
-            .medPermisjonsbeskrivelseType(kodeverkRepository.finnForKodeverkEiersKode(PermisjonsbeskrivelseType.class, permisjon.getPermisjonsÅrsak(), PermisjonsbeskrivelseType.UDEFINERT))
+            .medPermisjonsbeskrivelseType(PermisjonsbeskrivelseType.finnForKodeverkEiersKode(permisjon.getPermisjonsÅrsak()))
             .build();
     }
 

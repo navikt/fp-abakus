@@ -43,29 +43,26 @@
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyring" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanse" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdHandlingType" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtale" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.OffentligYtelseType" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.PensjonTrygdType" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.NæringsinntektType" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.AktørArbeidEntitet" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.AktørInntektEntitet" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.AktørYtelseEntitet" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.AktørInntekt" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.AktørYtelse" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.InntektspostEntitet" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.PermisjonEntitet" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.InntektEntitet" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.YtelseEntitet" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.YtelseAnvistEntitet" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagEntitet" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelseEntitet" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetEntitet" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyrtePerioderEntitet" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.TypeFiske" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.Inntektspost" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.Permisjon" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.Inntekt" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.Ytelse" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.YtelseAnvist" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlag" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelse" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyrtePerioder" />
 
-    <entity class="no.nav.foreldrepenger.abakus.domene.virksomhet.VirksomhetEntitet" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.virksomhet.Organisasjonstype" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet" />
 
     <!-- Inntektsmelding -->
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat" />
@@ -73,17 +70,7 @@
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Fravær" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Gradering" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelse" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelseType" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriode" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelseÅrsak" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Refusjon" />
-
-    <!-- Kodeverk for InntektArbeidYtelser -->
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.Arbeidskategori" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsmeldingInnsendingsårsak" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektPeriodeType" />
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.kodeverk.PermisjonsbeskrivelseType" />
 
 </entity-mappings>

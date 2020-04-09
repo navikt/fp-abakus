@@ -39,7 +39,7 @@ public class OppgittArbeidsforholdDto {
     @JsonProperty(value = "landkode", required = true)
     @Valid
     @NotNull
-    private Landkode landkode = Landkode.NORGE;
+    private Landkode landkode = Landkode.NOR;
 
     /** Oppgis normalt dersom ikke orgnr kan gis. F.eks for utlandske virsomheter, eller noen tilfeller Fiskere med Lott. */
     @JsonProperty(value = "virksomhetNavn", required = false)

@@ -46,6 +46,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.BekreftetPermisjonStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
@@ -150,10 +151,10 @@ public class IayGrunnlagTest {
                 .medInntekt(List.of(
                     new InntekterDto(fnr)
                         .medUtbetalinger(List.of(
-                            new UtbetalingDto("ARBEID")
+                            new UtbetalingDto(InntektskildeType.INNTEKT_SAMMENLIGNING)
                                 .medArbeidsgiver(org)
                                 .medPoster(List.of(
-                                    new UtbetalingsPostDto(periode, new InntektspostType("LØNN"))
+                                    new UtbetalingsPostDto(periode, InntektspostType.LØNN)
                                         .medUtbetaltYtelseType(utbetaltYtelse)
                                         .medBeløp(100)
                                         .medSkattAvgiftType(SkatteOgAvgiftsregelType.NETTOLØNN)))))))
@@ -171,7 +172,7 @@ public class IayGrunnlagTest {
                                         .medInntektsgrunnlagProsent(100)
                                         .medGraderingProsent(100)
                                         .medVedtaksDagsats(255)
-                                        .medFordeling(List.of(new FordelingDto(org, InntektPeriodeType.PER_DAG, 100))))
+                                        .medFordeling(List.of(new FordelingDto(org, InntektPeriodeType.DAGLIG, 100))))
                                 .medAnvisninger(List.of(
                                     new AnvisningDto(periode)
                                         .medBeløp(100)
@@ -218,14 +219,14 @@ public class IayGrunnlagTest {
                     .medGraderinger(List.of(new GraderingDto(periode, 50)))
                     .medNaturalytelser(List.of(new NaturalytelseDto(periode, NaturalytelseType.ELEKTRISK_KOMMUNIKASJON, 100)))
                     .medOppgittFravær(List.of(new FraværDto(periode)))
-                    .medUtsettelsePerioder(List.of(new UtsettelsePeriodeDto(periode, UtsettelseÅrsakType.LOVBESTEMT_FERIE))))));
+                    .medUtsettelsePerioder(List.of(new UtsettelsePeriodeDto(periode, UtsettelseÅrsakType.FERIE))))));
 
         grunnlag.medOppgittOpptjening(
             new OppgittOpptjeningDto(uuid, offTidspunkt)
                 .medArbeidsforhold(List.of(
                     new OppgittArbeidsforholdDto(periode, ArbeidType.ORDINÆRT_ARBEIDSFORHOLD)
                         .medErUtenlandskInntekt(true)
-                        .medOppgittVirksomhetNavn("GammelDansk", Landkode.DANMARK)))
+                        .medOppgittVirksomhetNavn("GammelDansk", Landkode.DNK)))
                 .medEgenNæring(List.of(
                     new OppgittEgenNæringDto(periode)
                         .medBegrunnelse("MinBegrunnelse")
@@ -234,7 +235,7 @@ public class IayGrunnlagTest {
                         .medNyIArbeidslivet(false)
                         .medNyoppstartet(false)
                         .medNærRelasjon(false)
-                        .medOppgittVirksomhetNavn("Argonne National Laboratory (9700 S. Cass Avenue, Lemont, IL 60439, USA [https://www.anl.gov/])", Landkode.SVERIGE)
+                        .medOppgittVirksomhetNavn("Argonne National Laboratory (9700 S. Cass Avenue, Lemont, IL 60439, USA [https://www.anl.gov/])", Landkode.SWE)
                         .medRegnskapsførerNavn("Regnskapsfører")
                         .medRegnskapsførerTlf("Sentralbord:      71 44 33 00  Direktenummer:  468 41 333  Mail: adf@ladf.no")
                         .medVarigEndring(true)

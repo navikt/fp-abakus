@@ -1,56 +1,93 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
-import java.util.Objects;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
-/** Status på ytelse. tilsvarer FagsakStatus, RelatertYtelseTilstand. */
-public class YtelseStatus extends Kodeverk {
+@JsonFormat(shape = Shape.OBJECT)
+@JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
+public enum YtelseStatus implements Kodeverdi {
 
-    static final String KODEVERK = "YTELSE_STATUS";
+    OPPRETTET("OPPR", "Opprettet"),
+    UNDER_BEHANDLING("UBEH", "Under behandling"),
+    LØPENDE("LOP", "Løpende"),
+    AVSLUTTET("AVSLU", "Avsluttet"),
+    
+    UDEFINERT("-", "Ikke definert"),
+    ;
 
-    /** Eksempel konstant - Ikke startet ytelse. */
-    public static final YtelseStatus OPPRETTET = new YtelseStatus("OPPR");
-    /** Eksempel konstant - Åpen ytelse. */
-    public static final YtelseStatus UNDER_BEHANDLING = new YtelseStatus("UBEH");
-    /** Eksempel konstant - Løpende ytelse. */
-    public static final YtelseStatus LØPENDE = new YtelseStatus("LOP");
-    /** Eksempel konstant - Avsluttet ytelse. */
-    public static final YtelseStatus AVSLUTTET = new YtelseStatus("AVSLU");
+    public static final YtelseStatus DEFAULT = OPPRETTET;
+    private static final Map<String, YtelseStatus> KODER = new LinkedHashMap<>();
 
-    /**
-     * Status koder. Tolererer ikke unicode her (sikrer at ingen overfører gamle
-     * koder på grensesnittet).
-     */
-    @JsonProperty(value = "kode", required = true, index = 1)
-    @Pattern(regexp = "^[A-Z0-9\\.\\-]+$", message = "Kode '${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
-    @Size(min = 3, max = 5)
-    @NotNull
+    public static final String KODEVERK = "YTELSE_STATUS";
+
+    static {
+        for (var v : values()) {
+            if (KODER.putIfAbsent(v.kode, v) != null) {
+                throw new IllegalArgumentException("Duplikat : " + v.kode);
+            }
+        }
+    }
+    
+    @JsonIgnore
+    private String navn;
+
     private String kode;
 
-    @JsonCreator
-    public YtelseStatus(@JsonProperty(value = "kode", required = true) String kode) {
-        Objects.requireNonNull(kode, "kode");
+    private YtelseStatus(String kode) {
         this.kode = kode;
     }
 
+    private YtelseStatus(String kode, String navn) {
+        this.kode = kode;
+        this.navn = navn;
+    }
+
+    @JsonCreator
+    public static YtelseStatus fraKode(@JsonProperty("kode") String kode) {
+        if (kode == null) {
+            return null;
+        }
+        var ad = KODER.get(kode);
+        if (ad == null) {
+            throw new IllegalArgumentException("Ukjent YtelseStatus: " + kode);
+        }
+        return ad;
+    }
+
+    public static Map<String, YtelseStatus> kodeMap() {
+        return Collections.unmodifiableMap(KODER);
+    }
+
+    @Override
+    public String getNavn() {
+        return navn;
+    }
+
+    @JsonProperty(value="kode")
     @Override
     public String getKode() {
         return kode;
     }
 
     @Override
+    public String getOffisiellKode() {
+        return getKode();
+    }
+    
+    @JsonProperty(value="kodeverk", access = Access.READ_ONLY)
+    @Override
     public String getKodeverk() {
         return KODEVERK;
     }
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "[kode=" + kode + "]";
-    }
 }

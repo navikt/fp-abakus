@@ -5,7 +5,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.vedtak.domene.TemaUnderkategori;
+import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
 
 public class TemaUnderkategoriReverse {
 

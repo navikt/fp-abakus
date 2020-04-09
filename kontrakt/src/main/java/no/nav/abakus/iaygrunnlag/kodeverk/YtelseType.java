@@ -1,82 +1,116 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
-import java.util.Objects;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
-/**
- * Definerer ytelse typer brukt i IAY.
- *
- * <h3>Bruk av konstanter</h3> onstanter representerer definerte eksempler på
- * kjente konstanter. Nye kan - men må ikke - legges her - såfremt
- * avsender/mottager er kjent med de og kan håndtere de.
- */
-public class YtelseType extends Kodeverk {
-    static final String KODEVERK = "YTELSE_TYPE";
+@JsonFormat(shape = Shape.OBJECT)
+@JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
+public enum YtelseType implements Kodeverdi {
 
     /** Folketrygdloven K4 ytelser. */
-    public static final YtelseType DAGPENGER = new YtelseType("DAG");//$NON-NLS-1$
-
-    /** Folketrygdloven K8 ytelser. */
-    public static final YtelseType SYKEPENGER = new YtelseType("SP");//$NON-NLS-1$
+    DAGPENGER("DAG", "Dagpenger"),
 
     /** Ny ytelse for kompenasasjon for koronatiltak for Selvstendig næringsdrivende og Frilansere (Anmodning 10). */
-    public static final YtelseType FRISINN = new YtelseType("FRISINN");
+    FRISINN("FRISINN", "FRISINN"),
+
+    /** Folketrygdloven K8 ytelser. */
+    SYKEPENGER("SP", "Sykepenger"),
 
     /** Folketrygdloven K9 ytelser. */
-    public static final YtelseType PLEIEPENGER_SYKT_BARN = new YtelseType("PSB");
-    public static final YtelseType PLEIEPENGER_NÆRSTÅENDE = new YtelseType("PPN");
-    public static final YtelseType OMSORGSPENGER = new YtelseType("OMP");
-    public static final YtelseType OPPLÆRINGSPENGER = new YtelseType("OLP");
+    PLEIEPENGER_SYKT_BARN("PSB", "Pleiepenger sykt barn"),
+    PLEIEPENGER_NÆRSTÅENDE("PPN", "Pleiepenger nærstående"),
+    OMSORGSPENGER("OMP", "Omsorgspenger"),
+    OPPLÆRINGSPENGER("OLP", "Opplæringspenger"),
+
+    /** @deprecated Legacy infotrygd K9 ytelse type (må tolkes sammen med TemaUnderkategori). */
+    PÅRØRENDESYKDOM("PS", "Pårørende sykdom"),
 
     /** Folketrygdloven K11 ytelser. */
-    public static final YtelseType ARBEIDSAVKLARINGSPENGER = new YtelseType("AAP");//$NON-NLS-1$
+    ARBEIDSAVKLARINGSPENGER("AAP"),
 
     /** Folketrygdloven K14 ytelser. */
-    public static final YtelseType ENGANGSSTØNAD = new YtelseType("ES"); //$NON-NLS-1$
-    public static final YtelseType FORELDREPENGER = new YtelseType("FP"); //$NON-NLS-1$
-    public static final YtelseType SVANGERSKAPSPENGER = new YtelseType("SVP"); //$NON-NLS-1$
+    ENGANGSTØNAD("ES", "Engangsstønad"),
+    FORELDREPENGER("FP", "Foreldrepenger"),
+    SVANGERSKAPSPENGER("SVP", "Svangerskapspenger"),
 
     /** Folketrygdloven K15 ytelser. */
-    public static final YtelseType ENSLIG_FORSØRGER = new YtelseType("EF");//$NON-NLS-1$
+    ENSLIG_FORSØRGER("EF", "Enslig forsørger"),
 
-    /**
-     * Må tolkes i forhold til TemaUnderkategori for å matche nye typer
-     *
-     * @deprecated Gammel Infotrygd K9 type.
-     */
-    @Deprecated
-    public static final YtelseType PÅRØRENDESYKDOM = new YtelseType("PS");//$NON-NLS-1$
+    UDEFINERT("-", "Ikke definert"),
+    ;
 
-    @JsonProperty(value = "kode", required = true, index = 1)
-    @Pattern(regexp = "^[\\p{L}\\p{N}_\\.\\-]{2,7}$", message = "Kode '${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
-    @Size(min = 2, max = 7)
-    @NotNull
+    public static final String KODEVERK = "FAGSAK_YTELSE_TYPE"; //$NON-NLS-1$
+
+    private static final Map<String, YtelseType> KODER = new LinkedHashMap<>();
+
+    static {
+        for (var v : values()) {
+            if (KODER.putIfAbsent(v.kode, v) != null) {
+                throw new IllegalArgumentException("Duplikat : " + v.kode);
+            }
+        }
+    }
+
+    @JsonIgnore
+    private String navn;
+
     private String kode;
 
-    @JsonCreator
-    public YtelseType(@JsonProperty(value = "kode", required = true) String kode) {
-        Objects.requireNonNull(kode, "kode");
+    private YtelseType(String kode) {
         this.kode = kode;
     }
 
+    private YtelseType(String kode, String navn) {
+        this.kode = kode;
+        this.navn = navn;
+    }
+
+    @JsonCreator
+    public static YtelseType fraKode(@JsonProperty("kode") String kode) {
+        if (kode == null) {
+            return null;
+        }
+        var ad = KODER.get(kode);
+        if (ad == null) {
+            throw new IllegalArgumentException("Ukjent YtelseType: " + kode);
+        }
+        return ad;
+    }
+
+    public static Map<String, YtelseType> kodeMap() {
+        return Collections.unmodifiableMap(KODER);
+    }
+
+    @JsonProperty(value="kode")
     @Override
     public String getKode() {
         return kode;
     }
 
+    @JsonProperty(value="kodeverk", access = Access.READ_ONLY)
     @Override
     public String getKodeverk() {
         return KODEVERK;
     }
 
     @Override
-    public String toString() {
-        return getClass().getSimpleName() + "[kode=" + kode + "]";
+    public String getNavn() {
+        return navn;
     }
+
+    @Override
+    public String getOffisiellKode() {
+        return getKode();
+    }
+
 }

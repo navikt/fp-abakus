@@ -2,47 +2,47 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.util.Optional;
 
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 
 public class InntektBuilder {
     private final boolean oppdaterer;
-    private InntektEntitet inntektEntitet;
+    private Inntekt inntekt;
 
-    private InntektBuilder(InntektEntitet inntektEntitet, boolean oppdaterer) {
-        this.inntektEntitet = inntektEntitet;
+    private InntektBuilder(Inntekt inntekt, boolean oppdaterer) {
+        this.inntekt = inntekt;
         this.oppdaterer = oppdaterer;
     }
 
     static InntektBuilder ny() {
-        return new InntektBuilder(new InntektEntitet(), false);
+        return new InntektBuilder(new Inntekt(), false);
     }
 
     static InntektBuilder oppdatere(Inntekt oppdatere) {
-        return new InntektBuilder((InntektEntitet) oppdatere, true);
+        return new InntektBuilder(oppdatere, true);
     }
 
     public static InntektBuilder oppdatere(Optional<Inntekt> oppdatere) {
         return oppdatere.map(InntektBuilder::oppdatere).orElseGet(InntektBuilder::ny);
     }
 
-    public InntektBuilder medInntektsKilde(InntektsKilde inntektsKilde) {
-        this.inntektEntitet.setInntektsKilde(inntektsKilde);
+    public InntektBuilder medInntektsKilde(InntektskildeType inntektskildeType) {
+        this.inntekt.setInntektsKilde(inntektskildeType);
         return this;
     }
 
-    public InntektBuilder leggTilInntektspost(InntektspostBuilder inntektspost) {
-        InntektspostEntitet inntektspostEntitet = (InntektspostEntitet) inntektspost.build();
-        inntektEntitet.leggTilInntektspost(inntektspostEntitet);
+    public InntektBuilder leggTilInntektspost(InntektspostBuilder builder) {
+        Inntektspost inntektspost = builder.build();
+        inntekt.leggTilInntektspost(inntektspost);
         return this;
     }
 
     public InntektBuilder medArbeidsgiver(Arbeidsgiver arbeidsgiver) {
-        this.inntektEntitet.setArbeidsgiver(arbeidsgiver);
+        this.inntekt.setArbeidsgiver(arbeidsgiver);
         return this;
     }
 
     public InntektspostBuilder getInntektspostBuilder() {
-        return inntektEntitet.getInntektspostBuilder();
+        return inntekt.getInntektspostBuilder();
     }
 
     boolean getErOppdatering() {
@@ -50,8 +50,8 @@ public class InntektBuilder {
     }
 
     public Inntekt build() {
-        if (inntektEntitet.hasValues()) {
-            return inntektEntitet;
+        if (inntekt.hasValues()) {
+            return inntekt;
         }
         throw new IllegalStateException();
     }

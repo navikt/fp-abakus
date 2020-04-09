@@ -55,7 +55,7 @@ public class OppgittEgenNæringDto {
     @JsonProperty(value = "landkode", required = true)
     @Valid
     @NotNull
-    private Landkode landkode = Landkode.NORGE;
+    private Landkode landkode = Landkode.NOR;
 
     @JsonProperty(value = "endringDato")
     private LocalDate endringDato;

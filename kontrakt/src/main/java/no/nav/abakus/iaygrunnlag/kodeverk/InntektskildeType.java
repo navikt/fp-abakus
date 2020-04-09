@@ -1,43 +1,95 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
-import java.util.Objects;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class InntektskildeType extends Kodeverk {
-    static final String KODEVERK = "INNTEKTS_KILDE";
+@JsonFormat(shape = Shape.OBJECT)
+@JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
+public enum InntektskildeType implements Kodeverdi {
 
-    /** Eksempel konstant- INNTEKT_BEREGNING. */
-    public static final InntektskildeType INNTEKT_BEREGNING = new InntektskildeType("INNTEKT_BEREGNING");
-    public static final InntektskildeType INNTEKT_OPPTJENING = new InntektskildeType("INNTEKT_OPPTJENING");
-    public static final InntektskildeType INNTEKT_SAMMENLIGNING = new InntektskildeType("INNTEKT_SAMMENLIGNING");
-    public static final InntektskildeType SIGRUN = new InntektskildeType("SIGRUN");
-    public static final InntektskildeType VANLIG = new InntektskildeType("VANLIG");
+    UDEFINERT("-", "Ikke definert", null),
+    INNTEKT_OPPTJENING("INNTEKT_OPPTJENING", "INNTEKT_OPPTJENING", "INNTEKT"),
+    INNTEKT_BEREGNING("INNTEKT_BEREGNING", "INNTEKT_BEREGNING", null),
+    INNTEKT_SAMMENLIGNING("INNTEKT_SAMMENLIGNING", "INNTEKT_SAMMENLIGNING", null),
+    SIGRUN("SIGRUN", "Sigrun", "SIGRUN"),
+    VANLIG("VANLIG", "Vanlig", "VANLIG"),
+    ;
 
-    @JsonProperty(value = "kode", required = true, index = 1)
-    @Pattern(regexp = "^[\\p{L}\\p{N}_\\.\\-]+$", message="Kode '${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
-    @Size(min = 3, max = 50)
-    @NotNull
+    private static final Map<String, InntektskildeType> KODER = new LinkedHashMap<>();
+
+    public static final String KODEVERK = "INNTEKTS_KILDE";
+
+    static {
+        for (var v : values()) {
+            if (KODER.putIfAbsent(v.kode, v) != null) {
+                throw new IllegalArgumentException("Duplikat : " + v.kode);
+            }
+        }
+    }
+
+    @JsonIgnore
+    private String navn;
+
     private String kode;
+    @JsonIgnore
+    private String offisiellKode;
 
-    @JsonCreator
-    public InntektskildeType(@JsonProperty(value = "kode", required = true) String kode) {
-        Objects.requireNonNull(kode, "kode");
+    private InntektskildeType(String kode) {
         this.kode = kode;
     }
 
+    private InntektskildeType(String kode, String navn, String offisiellKode) {
+        this.kode = kode;
+        this.navn = navn;
+        this.offisiellKode = offisiellKode;
+    }
+
+    @JsonCreator
+    public static InntektskildeType fraKode(@JsonProperty("kode") String kode) {
+        if (kode == null) {
+            return null;
+        }
+        var ad = KODER.get(kode);
+        if (ad == null) {
+            throw new IllegalArgumentException("Ukjent InntektsKilde: " + kode);
+        }
+        return ad;
+    }
+
+    public static Map<String, InntektskildeType> kodeMap() {
+        return Collections.unmodifiableMap(KODER);
+    }
+
+    @Override
+    public String getNavn() {
+        return navn;
+    }
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Override
+    public String getKodeverk() {
+        return KODEVERK;
+    }
+
+    @JsonProperty
     @Override
     public String getKode() {
         return kode;
     }
 
     @Override
-    public String getKodeverk() {
-        return KODEVERK;
+    public String getOffisiellKode() {
+        return offisiellKode;
     }
+
 }

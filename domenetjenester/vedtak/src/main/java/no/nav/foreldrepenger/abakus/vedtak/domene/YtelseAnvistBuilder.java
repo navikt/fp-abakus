@@ -7,44 +7,44 @@ import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
 public class YtelseAnvistBuilder {
-    private final YtelseAnvistEntitet ytelseAnvistEntitet;
+    private final YtelseAnvist ytelseAnvist;
 
-    YtelseAnvistBuilder(YtelseAnvistEntitet ytelseAnvistEntitet) {
-        this.ytelseAnvistEntitet = ytelseAnvistEntitet;
+    YtelseAnvistBuilder(YtelseAnvist ytelseAnvist) {
+        this.ytelseAnvist = ytelseAnvist;
     }
 
     public static YtelseAnvistBuilder ny() {
-        return new YtelseAnvistBuilder(new YtelseAnvistEntitet());
+        return new YtelseAnvistBuilder(new YtelseAnvist());
     }
 
     public YtelseAnvistBuilder medBeløp(BigDecimal beløp) {
         if (beløp != null) {
-            this.ytelseAnvistEntitet.setBeløp(new Beløp(beløp));
+            this.ytelseAnvist.setBeløp(new Beløp(beløp));
         }
         return this;
     }
 
     public YtelseAnvistBuilder medDagsats(BigDecimal dagsats) {
         if (dagsats != null) {
-            this.ytelseAnvistEntitet.setDagsats(new Beløp(dagsats));
+            this.ytelseAnvist.setDagsats(new Beløp(dagsats));
         }
         return this;
     }
 
     public YtelseAnvistBuilder medAnvistPeriode(IntervallEntitet intervallEntitet) {
-        this.ytelseAnvistEntitet.setAnvistPeriode(intervallEntitet);
+        this.ytelseAnvist.setAnvistPeriode(intervallEntitet);
         return this;
     }
 
     public YtelseAnvistBuilder medUtbetalingsgradProsent(BigDecimal utbetalingsgradProsent) {
         if (utbetalingsgradProsent != null) {
-            this.ytelseAnvistEntitet.setUtbetalingsgradProsent(new Stillingsprosent(utbetalingsgradProsent));
+            this.ytelseAnvist.setUtbetalingsgradProsent(new Stillingsprosent(utbetalingsgradProsent));
         }
         return this;
     }
 
     public YtelseAnvist build() {
-        return ytelseAnvistEntitet;
+        return ytelseAnvist;
     }
 
 }

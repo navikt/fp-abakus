@@ -39,15 +39,15 @@ public class InntektArbeidYtelseAggregat extends BaseEntitet {
 
     @ChangeTracked
     @OneToMany(mappedBy = "inntektArbeidYtelser")
-    private Set<AktørInntektEntitet> aktørInntekt = new LinkedHashSet<>();
+    private Set<AktørInntekt> aktørInntekt = new LinkedHashSet<>();
 
     @ChangeTracked
     @OneToMany(mappedBy = "inntektArbeidYtelser")
-    private Set<AktørArbeidEntitet> aktørArbeid = new LinkedHashSet<>();
+    private Set<AktørArbeid> aktørArbeid = new LinkedHashSet<>();
 
     @ChangeTracked
     @OneToMany(mappedBy = "inntektArbeidYtelser")
-    private Set<AktørYtelseEntitet> aktørYtelse = new LinkedHashSet<>();
+    private Set<AktørYtelse> aktørYtelse = new LinkedHashSet<>();
 
     @Version
     @Column(name = "versjon", nullable = false)
@@ -65,19 +65,19 @@ public class InntektArbeidYtelseAggregat extends BaseEntitet {
     InntektArbeidYtelseAggregat(UUID eksternReferanse, LocalDateTime opprettetTidspunkt, InntektArbeidYtelseAggregat kopierFra) {
         Objects.requireNonNull(eksternReferanse, "eksternReferanse");
         this.setAktørInntekt(kopierFra.getAktørInntekt().stream().map(ai -> {
-            AktørInntektEntitet aktørInntektEntitet = new AktørInntektEntitet(ai);
+            AktørInntekt aktørInntektEntitet = new AktørInntekt(ai);
             aktørInntektEntitet.setInntektArbeidYtelser(this);
             return aktørInntektEntitet;
         }).collect(Collectors.toList()));
 
         this.setAktørArbeid(kopierFra.getAktørArbeid().stream().map(aktørArbied -> {
-            AktørArbeidEntitet aktørArbeidEntitet = new AktørArbeidEntitet(aktørArbied);
+            AktørArbeid aktørArbeidEntitet = new AktørArbeid(aktørArbied);
             aktørArbeidEntitet.setInntektArbeidYtelser(this);
             return aktørArbeidEntitet;
         }).collect(Collectors.toList()));
 
         this.setAktørYtelse(kopierFra.getAktørYtelse().stream().map(ay -> {
-            AktørYtelseEntitet aktørYtelseEntitet = new AktørYtelseEntitet(ay);
+            AktørYtelse aktørYtelseEntitet = new AktørYtelse(ay);
             aktørYtelseEntitet.setInntektArbeidYtelser(this);
             return aktørYtelseEntitet;
         }).collect(Collectors.toList()));
@@ -103,33 +103,30 @@ public class InntektArbeidYtelseAggregat extends BaseEntitet {
         return Collections.unmodifiableSet(aktørInntekt);
     }
 
-    void setAktørInntekt(Collection<AktørInntektEntitet> aktørInntekt) {
+    void setAktørInntekt(Collection<AktørInntekt> aktørInntekt) {
         this.aktørInntekt = new LinkedHashSet<>(aktørInntekt);
     }
 
     void leggTilAktørInntekt(AktørInntekt aktørInntekt) {
-        AktørInntektEntitet aktørInntektEntitet = (AktørInntektEntitet) aktørInntekt;
-        this.aktørInntekt.add(aktørInntektEntitet);
-        aktørInntektEntitet.setInntektArbeidYtelser(this);
+        this.aktørInntekt.add(aktørInntekt);
+        aktørInntekt.setInntektArbeidYtelser(this);
     }
 
     void leggTilAktørArbeid(AktørArbeid aktørArbeid) {
-        AktørArbeidEntitet aktørArbeidEntitet = (AktørArbeidEntitet) aktørArbeid;
-        this.aktørArbeid.add(aktørArbeidEntitet);
-        aktørArbeidEntitet.setInntektArbeidYtelser(this);
+        this.aktørArbeid.add(aktørArbeid);
+        aktørArbeid.setInntektArbeidYtelser(this);
     }
 
     void leggTilAktørYtelse(AktørYtelse aktørYtelse) {
-        AktørYtelseEntitet aktørYtelseEntitet = (AktørYtelseEntitet) aktørYtelse;
-        this.aktørYtelse.add(aktørYtelseEntitet);
-        aktørYtelseEntitet.setInntektArbeidYtelser(this);
+        this.aktørYtelse.add(aktørYtelse);
+        aktørYtelse.setInntektArbeidYtelser(this);
     }
 
     public Collection<AktørArbeid> getAktørArbeid() {
         return Collections.unmodifiableSet(aktørArbeid);
     }
 
-    void setAktørArbeid(Collection<AktørArbeidEntitet> aktørArbeid) {
+    void setAktørArbeid(Collection<AktørArbeid> aktørArbeid) {
         this.aktørArbeid = new LinkedHashSet<>(aktørArbeid);
     }
 
@@ -137,7 +134,7 @@ public class InntektArbeidYtelseAggregat extends BaseEntitet {
         return Collections.unmodifiableSet(aktørYtelse);
     }
 
-    void setAktørYtelse(Collection<AktørYtelseEntitet> aktørYtelse) {
+    void setAktørYtelse(Collection<AktørYtelse> aktørYtelse) {
         this.aktørYtelse = new LinkedHashSet<>(aktørYtelse);
     }
 

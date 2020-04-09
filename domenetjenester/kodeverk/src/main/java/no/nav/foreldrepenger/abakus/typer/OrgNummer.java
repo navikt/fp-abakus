@@ -46,6 +46,10 @@ public class OrgNummer implements Serializable, Comparable<OrgNummer>, IndexKey,
     public static boolean erKunstig(String orgNr) {
         return KUNSTIG_ORG.equals(orgNr);
     }
+    
+    public static boolean erKunstig(OrgNummer orgNr) {
+        return erKunstig(orgNr==null?null:orgNr.getId());
+    }
 
     @Override
     public int compareTo(OrgNummer o) {

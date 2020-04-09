@@ -12,6 +12,7 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,13 +25,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinFormula;
-
+import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType;
 import no.nav.abakus.iaygrunnlag.kodeverk.BekreftetPermisjonStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.BekreftetPermisjon;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidsforholdHandlingTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -60,9 +60,8 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
     private InternArbeidsforholdRef nyArbeidsforholdRef;
 
     @ChangeTracked
-    @ManyToOne(optional = false)
-    @JoinColumnOrFormula(column = @JoinColumn(name = "handling_type", referencedColumnName = "kode", nullable = false))
-    @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + ArbeidsforholdHandlingType.DISCRIMINATOR + "'"))
+    @Convert(converter = ArbeidsforholdHandlingTypeKodeverdiConverter.class)
+    @Column(name = "handling_type", nullable = false, updatable = false)
     private ArbeidsforholdHandlingType handling = ArbeidsforholdHandlingType.UDEFINERT;
 
     @Column(name = "begrunnelse")
@@ -92,7 +91,7 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
     private ArbeidsforholdInformasjon informasjon;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "arbeidsforholdOverstyring", cascade = CascadeType.PERSIST)
-    private List<ArbeidsforholdOverstyrtePerioderEntitet> arbeidsforholdOverstyrtePerioder = new ArrayList<>();
+    private List<ArbeidsforholdOverstyrtePerioder> arbeidsforholdOverstyrtePerioder = new ArrayList<>();
 
     /**
      * Settes kun dersom saksbehandler har tatt stilling til permisjon. (om det skal brukes eller ikke). Bruk ellers
@@ -118,7 +117,7 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
         this.begrunnelse = kopierFra.getBegrunnelse();
         this.arbeidsforholdOverstyrtePerioder = kopierFra.getArbeidsforholdOverstyrtePerioder()
             .stream()
-            .map(ArbeidsforholdOverstyrtePerioderEntitet::new)
+            .map(ArbeidsforholdOverstyrtePerioder::new)
             .peek(it -> it.setArbeidsforholdOverstyring(this))
             .collect(Collectors.toList());
         this.bekreftetPermisjon = kopierFra.bekreftetPermisjon;
@@ -167,13 +166,13 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
     }
 
     public void leggTilOverstyrtPeriode(LocalDate fom, LocalDate tom) {
-        ArbeidsforholdOverstyrtePerioderEntitet overstyrtPeriode = new ArbeidsforholdOverstyrtePerioderEntitet();
+        ArbeidsforholdOverstyrtePerioder overstyrtPeriode = new ArbeidsforholdOverstyrtePerioder();
         overstyrtPeriode.setPeriode(IntervallEntitet.fraOgMedTilOgMed(fom, tom));
         overstyrtPeriode.setArbeidsforholdOverstyring(this);
         arbeidsforholdOverstyrtePerioder.add(overstyrtPeriode);
     }
 
-    public List<ArbeidsforholdOverstyrtePerioderEntitet> getArbeidsforholdOverstyrtePerioder() {
+    public List<ArbeidsforholdOverstyrtePerioder> getArbeidsforholdOverstyrtePerioder() {
         return arbeidsforholdOverstyrtePerioder;
     }
 
@@ -210,7 +209,6 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
             !Objects.equals(bekreftetPermisjon.getStatus(), BekreftetPermisjonStatus.UDEFINERT) );
     }
 
-    @SuppressWarnings("deprecation")
     public boolean kreverIkkeInntektsmelding() {
         return Set.of(ArbeidsforholdHandlingType.LAGT_TIL_AV_SAKSBEHANDLER,
             ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING,

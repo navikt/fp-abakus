@@ -13,7 +13,7 @@ import java.util.Optional;
 
 import org.junit.Test;
 
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.vedtak.felles.integrasjon.sigrun.BeregnetSkatt;
 import no.nav.vedtak.felles.integrasjon.sigrun.summertskattegrunnlag.SSGGrunnlag;

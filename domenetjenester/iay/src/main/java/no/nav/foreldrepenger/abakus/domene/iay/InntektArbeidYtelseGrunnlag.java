@@ -89,7 +89,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
         this(UUID.randomUUID(), grunnlag.getOpprettetTidspunkt());
 
         // NB! skal ikke lage ny versjon av oppgitt opptjening! Lenker bare inn
-        grunnlag.getOppgittOpptjening().ifPresent(kopiAvOppgittOpptjening -> this.setOppgittOpptjening((OppgittOpptjening) kopiAvOppgittOpptjening));
+        grunnlag.getOppgittOpptjening().ifPresent(kopiAvOppgittOpptjening -> this.setOppgittOpptjening(kopiAvOppgittOpptjening));
         grunnlag.getRegisterVersjon().ifPresent(nyRegisterVerson -> this.setRegister(nyRegisterVerson));
 
         grunnlag.getSaksbehandletVersjon()

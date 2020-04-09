@@ -12,17 +12,20 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
-
-import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
 
 @JsonFormat(shape = Shape.OBJECT)
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum Fagsystem implements Kodeverdi {
 
+    BISYS("BISYS", "Bisys", "BID"),
+    BIDRAGINNKREVING("BIDRAGINNKREVING", "Bidraginnkreving", "BII"),
     FPSAK("FPSAK", "Vedtaksløsning Foreldrepenger", "FS36"),
+    FPABAKUS("FPABAKUS", "ABAKUS", "ABAKUS"),
+    K9SAK("K9SAK", "Vedtaksløsning Folketrygdloven Kapittel 9", "K9SAK"),
     TPS("TPS", "TPS", "FS03"),
     JOARK("JOARK", "Joark", "AS36"),
     INFOTRYGD("INFOTRYGD", "Infotrygd", "IT01"),
@@ -30,9 +33,19 @@ public enum Fagsystem implements Kodeverdi {
     INNTEKT("INNTEKT", "INNTEKT", "FS28"),
     MEDL("MEDL", "MEDL", "FS18"),
     GOSYS("GOSYS", "Gosys", "FS22"),
+    GRISEN("GRISEN", "Grisen", "AO11"),
+    GSAK("GSAK", "Gsak", "FS19"),
+    HJE_HEL_ORT("HJE_HEL_ORT" ,"Hjelpemidler, Helsetjenester og Ort. Hjelpemidler", "OEBS"),
     ENHETSREGISTERET("ENHETSREGISTERET", "Enhetsregisteret", "ER01"),
     AAREGISTERET("AAREGISTERET", "AAregisteret", "AR01"),
-   
+    PESYS("PESYS", "Pesys", "PP01"),
+    SKANNING("SKANNING", "Skanning", "MOT"),
+    VENTELONN("VENTELONN", "Ventelønn", "V2"),
+    UNNTAK("UNNTAK", "Unntak", "UFM"),
+    ØKONOMI("ØKONOMI", "Økonomi", "OKO"),
+    ØVRIG("ØVRIG", "ØVRIG", "OVR"),
+    
+    
     /**
      * Alle kodeverk må ha en verdi, det kan ikke være null i databasen. Denne koden gjør samme nytten.
      */
@@ -91,11 +104,7 @@ public enum Fagsystem implements Kodeverdi {
         return offisiellKode;
     }
     
-    public static void main(String[] args) {
-        System.out.println(KODER.keySet());
-    }
-
-    @JsonProperty
+    @JsonProperty(value="kode")
     @Override
     public String getKodeverk() {
         return KODEVERK;

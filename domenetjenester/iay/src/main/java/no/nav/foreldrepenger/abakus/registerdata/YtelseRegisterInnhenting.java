@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.threeten.extra.Interval;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseAnvistBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseBuilder;
@@ -23,12 +24,11 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdY
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
-import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.typer.OrganisasjonsNummerValidator;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
+import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelse;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
-import no.nav.foreldrepenger.abakus.vedtak.domene.VedtattYtelse;
 
 public class YtelseRegisterInnhenting {
     private static final Logger LOGGER = LoggerFactory.getLogger(YtelseRegisterInnhenting.class);
@@ -70,9 +70,9 @@ public class YtelseRegisterInnhenting {
 
     void innhentFraYtelsesRegister(AktørId aktørId, Kobling kobling, InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder builder) {
         IntervallEntitet opplysningsperiode = kobling.getOpplysningsperiode();
-        List<VedtattYtelse> vedtatteYtelser = vedtakYtelseRepository.hentYtelserForIPeriode(aktørId, opplysningsperiode.getFomDato(), opplysningsperiode.getTomDato());
+        List<VedtakYtelse> vedtatteYtelser = vedtakYtelseRepository.hentYtelserForIPeriode(aktørId, opplysningsperiode.getFomDato(), opplysningsperiode.getTomDato());
 
-        for (VedtattYtelse vedtattYtelse : vedtatteYtelser) {
+        for (var vedtattYtelse : vedtatteYtelser) {
             YtelseBuilder ytelseBuilder = builder.getYtelselseBuilderForType(vedtattYtelse.getKilde(), vedtattYtelse.getYtelseType(), vedtattYtelse.getSaksnummer());
             ytelseBuilder.medPeriode(vedtattYtelse.getPeriode())
                 .medStatus(vedtattYtelse.getStatus());
@@ -82,7 +82,7 @@ public class YtelseRegisterInnhenting {
         }
     }
 
-    private void mapAnvisninger(VedtattYtelse vedtattYtelse, YtelseBuilder ytelseBuilder) {
+    private void mapAnvisninger(VedtakYtelse vedtattYtelse, YtelseBuilder ytelseBuilder) {
         vedtattYtelse.getYtelseAnvist().forEach(anvisning -> {
             YtelseAnvistBuilder anvistBuilder = ytelseBuilder.getAnvistBuilder();
             IntervallEntitet periode = utledPeriodeNårTomMuligFørFom(anvisning.getAnvistFom(), anvisning.getAnvistTom());

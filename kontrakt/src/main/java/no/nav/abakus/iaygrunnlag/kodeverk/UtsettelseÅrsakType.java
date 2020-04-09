@@ -1,43 +1,85 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
-import java.util.Objects;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 
-@JsonTypeName(UtsettelseÅrsakType.KODEVERK)
-public class UtsettelseÅrsakType extends Kodeverk {
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
+public enum UtsettelseÅrsakType implements Kodeverdi {
 
-    static final String KODEVERK = "UTSETTELSE_AARSAK_TYPE";
-    
-    public static final UtsettelseÅrsakType ARBEID = new UtsettelseÅrsakType("ARBEID");
-    public static final UtsettelseÅrsakType SYKDOM = new UtsettelseÅrsakType("SYKDOM");
-    public static final UtsettelseÅrsakType LOVBESTEMT_FERIE = new UtsettelseÅrsakType("LOVBESTEMT_FERIE");
-    
-    @JsonProperty(value = "kode", required = true, index = 1)
-    @Pattern(regexp = "^[\\p{L}\\p{N}_\\.\\-]+$", message="Kode '${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
-    @Size(min = 5, max = 50)
-    @NotNull
-    private String kode;
+    ARBEID("ARBEID", "Arbeid"),
+    FERIE("LOVBESTEMT_FERIE", "Lovbestemt ferie"),
+    SYKDOM("SYKDOM", "Avhengig av hjelp grunnet sykdom"),
+    INSTITUSJON_SØKER("INSTITUSJONSOPPHOLD_SØKER", "Søker er innlagt i helseinstitusjon"),
+    INSTITUSJON_BARN("INSTITUSJONSOPPHOLD_BARNET", "Barn er innlagt i helseinstitusjon"),
+    UDEFINERT("-", "Ikke satt eller valgt kode"),
+    ;
 
-    @JsonCreator
-    public UtsettelseÅrsakType(@JsonProperty(value = "kode", required = true) String kode) {
-        Objects.requireNonNull(kode, "kode");
-        this.kode = kode;
+    private static final Map<String, UtsettelseÅrsakType> KODER = new LinkedHashMap<>();
+
+    public static final String KODEVERK = "UTSETTELSE_AARSAK_TYPE";
+
+    static {
+        for (var v : values()) {
+            if (KODER.putIfAbsent(v.kode, v) != null) {
+                throw new IllegalArgumentException("Duplikat : " + v.kode);
+            }
+        }
     }
 
+    @JsonIgnore
+    private String navn;
+
+    private String kode;
+
+    UtsettelseÅrsakType(String kode, String navn) {
+        this.kode = kode;
+        this.navn = navn;
+    }
+
+    @JsonCreator
+    public static UtsettelseÅrsakType fraKode(@JsonProperty("kode") String kode) {
+        if (kode == null) {
+            return null;
+        }
+        var ad = KODER.get(kode);
+        if (ad == null) {
+            throw new IllegalArgumentException("Ukjent UtsettelseÅrsak: " + kode);
+        }
+        return ad;
+    }
+
+    public static Map<String, UtsettelseÅrsakType> kodeMap() {
+        return Collections.unmodifiableMap(KODER);
+    }
+
+    @Override
+    public String getNavn() {
+        return navn;
+    }
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Override
+    public String getKodeverk() {
+        return KODEVERK;
+    }
+
+    @JsonProperty(value="kode")
     @Override
     public String getKode() {
         return kode;
     }
 
     @Override
-    public String getKodeverk() {
-        return KODEVERK;
+    public String getOffisiellKode() {
+        return this.getKode();
     }
 }

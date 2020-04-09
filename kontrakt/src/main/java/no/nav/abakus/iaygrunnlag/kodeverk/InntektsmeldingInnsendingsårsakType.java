@@ -1,41 +1,83 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
-import java.util.Objects;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 
-@JsonTypeName(InntektsmeldingInnsendingsårsakType.KODEVERK)
-public class InntektsmeldingInnsendingsårsakType extends Kodeverk {
-    static final String KODEVERK = "INNTEKTSMELDING_INNSENDINGSAARSAK";
+@JsonFormat(shape = Shape.OBJECT)
+@JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
+public enum InntektsmeldingInnsendingsårsakType implements Kodeverdi {
 
-    public static final InntektsmeldingInnsendingsårsakType NY = new InntektsmeldingInnsendingsårsakType("NY");
-    public static final InntektsmeldingInnsendingsårsakType ENDRING = new InntektsmeldingInnsendingsårsakType("ENDRING");
-    
-    @JsonProperty(value = "kode", required = true, index = 1)
-    @Pattern(regexp = "^[\\p{L}\\p{N}_\\.\\-]+$", message="Kode '${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
-    @Size(min = 2, max = 50)
-    @NotNull
-    private String kode;
+    NY("NY", "NY"),
+    ENDRING("ENDRING", "ENDRING"),
+    UDEFINERT("-", "UDEFINERT"),
+    ;
 
-    @JsonCreator
-    public InntektsmeldingInnsendingsårsakType(@JsonProperty(value = "kode", required = true) String kode) {
-        Objects.requireNonNull(kode, "kode");
-        this.kode = kode;
+    private static final Map<String, InntektsmeldingInnsendingsårsakType> KODER = new LinkedHashMap<>();
+
+    public static final String KODEVERK = "INNTEKTSMELDING_INNSENDINGSAARSAK";
+
+    static {
+        for (var v : values()) {
+            if (KODER.putIfAbsent(v.kode, v) != null) {
+                throw new IllegalArgumentException("Duplikat : " + v.kode);
+            }
+        }
     }
 
+    @JsonIgnore
+    private String navn;
+
+    private String kode;
+
+    private InntektsmeldingInnsendingsårsakType(String kode, String navn) {
+        this.kode = kode;
+        this.navn = navn;
+    }
+
+    @JsonCreator
+    public static InntektsmeldingInnsendingsårsakType fraKode(@JsonProperty("kode") String kode) {
+        if (kode == null) {
+            return null;
+        }
+        var ad = KODER.get(kode);
+        if (ad == null) {
+            throw new IllegalArgumentException("Ukjent InntektsmeldingInnsendingsårsak: " + kode);
+        }
+        return ad;
+    }
+
+    public static Map<String, InntektsmeldingInnsendingsårsakType> kodeMap() {
+        return Collections.unmodifiableMap(KODER);
+    }
+
+    @Override
+    public String getNavn() {
+        return navn;
+    }
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Override
+    public String getKodeverk() {
+        return KODEVERK;
+    }
+
+    @JsonProperty
     @Override
     public String getKode() {
         return kode;
     }
-
+    
     @Override
-    public String getKodeverk() {
-        return KODEVERK;
+    public String getOffisiellKode() {
+        return getKode();
     }
 }

@@ -8,10 +8,10 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Organisasjonstype;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.person.TpsTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.person.domene.Personinfo;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
+import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.exception.VLException;
 import no.nav.vedtak.util.LRUCache;
 
@@ -47,14 +47,14 @@ public class ArbeidsgiverTjeneste {
         if (arbeidsgiverOpplysninger != null) {
             return arbeidsgiverOpplysninger;
         }
-        if (arbeidsgiver.getErVirksomhet() && !Organisasjonstype.erKunstig(arbeidsgiver.getOrgnr())) {
+        if (arbeidsgiver.getErVirksomhet() && !OrgNummer.erKunstig(arbeidsgiver.getOrgnr())) {
             String orgnr = arbeidsgiver.getOrgnr().getId();
             var virksomhet = virksomhetTjeneste.hentOgLagreOrganisasjon(orgnr);
             ArbeidsgiverOpplysninger nyOpplysninger = new ArbeidsgiverOpplysninger(orgnr, virksomhet.getNavn());
             cache.put(arbeidsgiver.getIdentifikator(), nyOpplysninger);
             return nyOpplysninger;
-        } else if (arbeidsgiver.getErVirksomhet() && Organisasjonstype.erKunstig(arbeidsgiver.getOrgnr())) {
-            return new ArbeidsgiverOpplysninger(Organisasjonstype.KUNSTIG_ORG, "Kunstig(Lagt til av saksbehandling)");
+        } else if (arbeidsgiver.getErVirksomhet() && OrgNummer.erKunstig(arbeidsgiver.getOrgnr())) {
+            return new ArbeidsgiverOpplysninger(OrgNummer.KUNSTIG_ORG, "Kunstig(Lagt til av saksbehandling)");
         } else if (arbeidsgiver.erAktørId()) {
             Optional<Personinfo> personinfo = hentInformasjonFraTps(arbeidsgiver);
             if (personinfo.isPresent()) {

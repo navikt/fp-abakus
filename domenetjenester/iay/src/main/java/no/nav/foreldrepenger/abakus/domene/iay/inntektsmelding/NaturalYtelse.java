@@ -7,6 +7,7 @@ import java.util.Objects;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,11 +18,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinColumnsOrFormulas;
-import org.hibernate.annotations.JoinFormula;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+import no.nav.abakus.iaygrunnlag.kodeverk.NaturalytelseType;
+import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.NaturalytelseTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -49,12 +48,9 @@ public class NaturalYtelse extends BaseEntitet implements IndexKey {
     @ChangeTracked
     private Beløp beloepPerMnd;
 
-    @ManyToOne
-    @JoinColumnsOrFormulas(value = {
-        @JoinColumnOrFormula(formula = @JoinFormula(referencedColumnName = "kodeverk", value = "'" + NaturalYtelseType.DISCRIMINATOR + "'")),
-        @JoinColumnOrFormula(column = @JoinColumn(name = "natural_ytelse_type", referencedColumnName = "kode")),
-    })
-    private NaturalYtelseType type = NaturalYtelseType.UDEFINERT;
+    @Convert(converter = NaturalytelseTypeKodeverdiConverter.class)
+    @Column(name = "natural_ytelse_type", nullable = false, updatable = false)
+    private NaturalytelseType type = NaturalytelseType.UDEFINERT;
 
     @Version
     @Column(name = "versjon", nullable = false)
@@ -63,7 +59,7 @@ public class NaturalYtelse extends BaseEntitet implements IndexKey {
     NaturalYtelse() {
     }
 
-    public NaturalYtelse(LocalDate fom, LocalDate tom, BigDecimal beloepPerMnd, NaturalYtelseType type) {
+    public NaturalYtelse(LocalDate fom, LocalDate tom, BigDecimal beloepPerMnd, NaturalytelseType type) {
         this.beloepPerMnd = new Beløp(beloepPerMnd);
         this.type = type;
         this.periode = IntervallEntitet.fraOgMedTilOgMed(fom, tom);
@@ -75,8 +71,8 @@ public class NaturalYtelse extends BaseEntitet implements IndexKey {
         this.type = naturalYtelse.getType();
     }
 
-    public NaturalYtelse(IntervallEntitet datoIntervall, BigDecimal beløpPerMnd, NaturalYtelseType naturalYtelseType) {
-        this(datoIntervall.getFomDato(), datoIntervall.getTomDato(), beløpPerMnd, naturalYtelseType);
+    public NaturalYtelse(IntervallEntitet datoIntervall, BigDecimal beløpPerMnd, NaturalytelseType naturalytelseType) {
+        this(datoIntervall.getFomDato(), datoIntervall.getTomDato(), beløpPerMnd, naturalytelseType);
     }
 
     @Override
@@ -97,7 +93,7 @@ public class NaturalYtelse extends BaseEntitet implements IndexKey {
         return beloepPerMnd;
     }
 
-    public NaturalYtelseType getType() {
+    public NaturalytelseType getType() {
         return type;
     }
 

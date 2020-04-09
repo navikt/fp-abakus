@@ -7,23 +7,23 @@ import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
 public class YrkesaktivitetBuilder {
-    private final YrkesaktivitetEntitet kladd;
+    private final Yrkesaktivitet kladd;
     private boolean oppdaterer;
 
-    private YrkesaktivitetBuilder(YrkesaktivitetEntitet kladd, boolean oppdaterer) {
+    private YrkesaktivitetBuilder(Yrkesaktivitet kladd, boolean oppdaterer) {
         this.kladd = kladd;
         this.oppdaterer = oppdaterer;
     }
 
     static YrkesaktivitetBuilder ny() {
-        return new YrkesaktivitetBuilder(new YrkesaktivitetEntitet(), false);
+        return new YrkesaktivitetBuilder(new Yrkesaktivitet(), false);
     }
 
     static YrkesaktivitetBuilder oppdatere(Yrkesaktivitet oppdatere) {
-        return new YrkesaktivitetBuilder((YrkesaktivitetEntitet) oppdatere, true);
+        return new YrkesaktivitetBuilder(oppdatere, true);
     }
 
-    public static YrkesaktivitetBuilder oppdatere(Optional<YrkesaktivitetEntitet> oppdatere) {
+    public static YrkesaktivitetBuilder oppdatere(Optional<Yrkesaktivitet> oppdatere) {
         return oppdatere.map(YrkesaktivitetBuilder::oppdatere).orElseGet(YrkesaktivitetBuilder::ny);
     }
 
@@ -55,7 +55,7 @@ public class YrkesaktivitetBuilder {
         return this;
     }
 
-    YrkesaktivitetEntitet getKladd() {
+    Yrkesaktivitet getKladd() {
         return kladd;
     }
 
@@ -64,8 +64,7 @@ public class YrkesaktivitetBuilder {
     }
 
     public YrkesaktivitetBuilder leggTilPermisjon(Permisjon permisjon) {
-        PermisjonEntitet permisjonEntitet = (PermisjonEntitet) permisjon;
-        kladd.leggTilPermisjon(permisjonEntitet);
+        kladd.leggTilPermisjon(permisjon);
         return this;
     }
 

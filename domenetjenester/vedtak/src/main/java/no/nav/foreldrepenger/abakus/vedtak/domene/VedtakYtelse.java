@@ -24,22 +24,25 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.NaturalId;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatus;
-import no.nav.foreldrepenger.abakus.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatusKodeverdiConverter;
+import no.nav.foreldrepenger.abakus.kodeverk.YtelseTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
 @Entity(name = "VedtakYtelseEntitet")
 @Table(name = "VEDTAK_YTELSE")
-public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, IndexKey {
+public class VedtakYtelse extends BaseEntitet implements IndexKey {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_VEDTAK_YTELSE")
@@ -49,7 +52,7 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
     @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id", nullable = false, updatable = false)))
     private AktørId aktørId;
 
-    @Convert(converter = YtelseType.KodeverdiConverter.class)
+    @Convert(converter = YtelseTypeKodeverdiConverter.class)
     @Column(name="ytelse_type", nullable = false)
     private YtelseType ytelseType;
 
@@ -66,7 +69,7 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
     private IntervallEntitet periode;
 
     @ChangeTracked
-    @Convert(converter = YtelseStatus.KodeverdiConverter.class)
+    @Convert(converter = YtelseStatusKodeverdiConverter.class)
     @Column(name="status", nullable = false)
     private YtelseStatus status = YtelseStatus.UDEFINERT;
 
@@ -78,18 +81,18 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
     private Saksnummer saksnummer;
 
     @ChangeTracked
-    @Convert(converter= Fagsystem.KodeverdiConverter.class)
+    @Convert(converter= FagsystemKodeverdiConverter.class)
     @Column(name="kilde", nullable = false)
     private Fagsystem kilde;
 
-    @Convert(converter = TemaUnderkategori.KodeverdiConverter.class)
+    @Convert(converter = TemaUnderkategoriKodeverdiConverter.class)
     @Column(name="temaUnderkategori", nullable = false)
     @ChangeTracked
     private TemaUnderkategori temaUnderkategori = TemaUnderkategori.UDEFINERT;
 
     @OneToMany(mappedBy = "ytelse")
     @ChangeTracked
-    private Set<YtelseAnvistEntitet> ytelseAnvist = new LinkedHashSet<>();
+    private Set<YtelseAnvist> ytelseAnvist = new LinkedHashSet<>();
 
     @Convert(converter = BooleanToStringConverter.class)
     @Column(name = "aktiv", nullable = false)
@@ -99,11 +102,11 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-    public VedtakYtelseEntitet() {
+    public VedtakYtelse() {
         // hibernate
     }
 
-    public VedtakYtelseEntitet(VedtattYtelse ytelse) {
+    public VedtakYtelse(VedtakYtelse ytelse) {
         this.ytelseType = ytelse.getYtelseType();
         this.vedtattTidspunkt = ytelse.getVedtattTidspunkt();
         this.vedtakReferanse = ytelse.getVedtakReferanse();
@@ -114,7 +117,7 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
         this.kilde = ytelse.getKilde();
         this.ytelseAnvist = ytelse.getYtelseAnvist()
             .stream()
-            .map(YtelseAnvistEntitet::new)
+            .map(YtelseAnvist::new)
             .peek(it -> it.setYtelse(this))
             .collect(Collectors.toCollection(LinkedHashSet::new));
     }
@@ -125,7 +128,6 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
         return IndexKeyComposer.createKey(keyParts);
     }
 
-    @Override
     public AktørId getAktør() {
         return aktørId;
     }
@@ -134,7 +136,6 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
         this.aktørId = aktørId;
     }
 
-    @Override
     public YtelseType getYtelseType() {
         return ytelseType;
     }
@@ -143,7 +144,6 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
         this.ytelseType = ytelseType;
     }
 
-    @Override
     public TemaUnderkategori getBehandlingsTema() {
         return temaUnderkategori;
     }
@@ -152,7 +152,6 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
         this.temaUnderkategori = behandlingsTema;
     }
 
-    @Override
     public YtelseStatus getStatus() {
         return status;
     }
@@ -161,7 +160,6 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
         this.status = status;
     }
 
-    @Override
     public IntervallEntitet getPeriode() {
         return periode;
     }
@@ -170,7 +168,6 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
         this.periode = periode;
     }
 
-    @Override
     public Saksnummer getSaksnummer() {
         return saksnummer;
     }
@@ -179,7 +176,6 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
         this.saksnummer = saksnummer;
     }
 
-    @Override
     public UUID getVedtakReferanse() {
         return vedtakReferanse;
     }
@@ -188,7 +184,6 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
         this.vedtakReferanse = vedtakReferanse;
     }
 
-    @Override
     public Fagsystem getKilde() {
         return kilde;
     }
@@ -197,19 +192,16 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
         this.kilde = kilde;
     }
 
-    @Override
     public Collection<YtelseAnvist> getYtelseAnvist() {
         return Collections.unmodifiableCollection(ytelseAnvist);
     }
 
     void leggTilYtelseAnvist(YtelseAnvist ytelseAnvist) {
-        YtelseAnvistEntitet ytelseAnvistEntitet = (YtelseAnvistEntitet) ytelseAnvist;
-        ytelseAnvistEntitet.setYtelse(this);
-        this.ytelseAnvist.add(ytelseAnvistEntitet);
+        ytelseAnvist.setYtelse(this);
+        this.ytelseAnvist.add(ytelseAnvist);
 
     }
 
-    @Override
     public LocalDateTime getVedtattTidspunkt() {
         return vedtattTidspunkt;
     }
@@ -234,9 +226,9 @@ public class VedtakYtelseEntitet extends BaseEntitet implements VedtattYtelse, I
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || !(o instanceof VedtakYtelseEntitet))
+        if (o == null || !(o instanceof VedtakYtelse))
             return false;
-        var that = (VedtakYtelseEntitet) o;
+        var that = (VedtakYtelse) o;
         return Objects.equals(ytelseType, that.ytelseType) &&
             Objects.equals(kilde, that.kilde) &&
             Objects.equals(aktørId, that.aktørId) &&

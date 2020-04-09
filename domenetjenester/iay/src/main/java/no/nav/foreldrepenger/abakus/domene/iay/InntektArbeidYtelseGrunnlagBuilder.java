@@ -9,7 +9,6 @@ import no.nav.abakus.iaygrunnlag.request.Dataset;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
 
 public class InntektArbeidYtelseGrunnlagBuilder {
 
@@ -131,7 +130,7 @@ public class InntektArbeidYtelseGrunnlagBuilder {
             if (kladd.getOppgittOpptjening().isPresent()) {
                 throw new IllegalStateException("Utviklerfeil: Er ikke lov å endre oppgitt opptjening!");
             }
-            kladd.setOppgittOpptjening((OppgittOpptjening) builder.build());
+            kladd.setOppgittOpptjening(builder.build());
         }
         return this;
     }

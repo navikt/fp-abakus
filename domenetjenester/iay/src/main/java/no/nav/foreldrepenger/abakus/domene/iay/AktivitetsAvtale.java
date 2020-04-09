@@ -38,7 +38,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "yrkesaktivitet_id", nullable = false, updatable = false, unique = true)
-    private YrkesaktivitetEntitet yrkesaktivitet;
+    private Yrkesaktivitet yrkesaktivitet;
 
     /**
      * TODO (FC): Se om vi kan bli kvitt antallTimer. Brukes bare til å sjekke om det finnes verdi i {@link #erAnsettelsesPeriode()}.
@@ -221,7 +221,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
         this.beskrivelse = beskrivelse;
     }
 
-    void setYrkesaktivitet(YrkesaktivitetEntitet yrkesaktivitet) {
+    void setYrkesaktivitet(Yrkesaktivitet yrkesaktivitet) {
         this.yrkesaktivitet = yrkesaktivitet;
     }
 

@@ -1,13 +1,6 @@
 package no.nav.foreldrepenger.abakus.iay.impl;
 
-import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingBuilder;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.VirksomhetEntitet;
-import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,13 +9,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
+
+import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
+import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
+import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingBuilder;
+import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
 public class InntektsmeldingDiffTjenesteTest {
     private static final Arbeidsgiver AG1 = Arbeidsgiver.virksomhet(lagVirksomhet("910909088"));
 
     private static Virksomhet lagVirksomhet(String orgnr) {
-        VirksomhetEntitet.Builder builder = new VirksomhetEntitet.Builder();
+        Virksomhet.Builder builder = new Virksomhet.Builder();
         return builder.medOrgnr(orgnr)
             .medNavn("Test")
             .medOppstart(LocalDate.of(2010,1,1))

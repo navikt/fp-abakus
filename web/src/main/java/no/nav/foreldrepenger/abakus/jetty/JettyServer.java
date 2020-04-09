@@ -107,6 +107,7 @@ public class JettyServer extends AbstractJettyServer {
         return Arrays.asList(ApplicationConfig.class, IssoApplication.class);
     }
 
+    @SuppressWarnings("resource")
     @Override
     protected ResourceCollection createResourceCollection() throws IOException {
         return new ResourceCollection(

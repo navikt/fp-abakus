@@ -16,12 +16,13 @@ import javax.persistence.Table;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
+import no.nav.foreldrepenger.abakus.kodeverk.LandKodeKodeverdiConverter;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
 /**
@@ -58,9 +59,9 @@ public class OppgittArbeidsforhold extends BaseEntitet implements IndexKey {
     @ChangeTracked
     private ArbeidType arbeidType;
 
-    @Convert(converter = Landkoder.KodeverdiConverter.class)
+    @Convert(converter = LandKodeKodeverdiConverter.class)
     @Column(name="land", nullable = false)
-    private Landkoder landkode;
+    private Landkode landkode;
 
     @Column(name = "utenlandsk_virksomhet_navn")
     private String utenlandskVirksomhetNavn;
@@ -103,11 +104,11 @@ public class OppgittArbeidsforhold extends BaseEntitet implements IndexKey {
         this.arbeidType = arbeidType;
     }
 
-    public Landkoder getLandkode() {
+    public Landkode getLandkode() {
         return landkode;
     }
 
-    void setLandkode(Landkoder landkode) {
+    void setLandkode(Landkode landkode) {
         this.landkode = Objects.requireNonNull(landkode, "landkode");
     }
 

@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektPeriodeType;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
 
 public class InntektPeriodeReverse {
 

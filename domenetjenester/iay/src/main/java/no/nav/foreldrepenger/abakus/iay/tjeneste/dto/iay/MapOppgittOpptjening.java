@@ -30,7 +30,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder.
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
-import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
 public class MapOppgittOpptjening {
@@ -122,8 +121,8 @@ public class MapOppgittOpptjening {
             var dto = new OppgittArbeidsforholdDto(periode, arbeidType)
                 .medErUtenlandskInntekt(arbeidsforhold.erUtenlandskInntekt());
 
-            Landkoder landkode = arbeidsforhold.getLandkode();
-            var land = landkode == null || landkode.getKode() == null ? Landkode.NORGE : new Landkode(landkode.getKode());
+            Landkode landkode = arbeidsforhold.getLandkode();
+            var land = landkode == null || landkode.getKode() == null ? Landkode.NOR : landkode;
 
             var virksomhet = arbeidsforhold.getUtenlandskVirksomhetNavn();
             if (virksomhet != null) {
@@ -159,9 +158,9 @@ public class MapOppgittOpptjening {
                 .medVirksomhetType(virksomhetType);
 
             var virksomhet = egenNæring.getUtenlandskVirksomhetNavn();
-            Landkoder landkode = egenNæring.getLandkode();
+            Landkode landkode = egenNæring.getLandkode();
 
-            var land = landkode == null || landkode.getKode() == null ? Landkode.NORGE : new Landkode(landkode.getKode());
+            var land = landkode == null || landkode.getKode() == null ? Landkode.NOR :  landkode;
             if (virksomhet != null) {
                 dto.medOppgittVirksomhetNavn(virksomhet, land);
             } else {
@@ -266,7 +265,7 @@ public class MapOppgittOpptjening {
                 .medVarigEndring(dto.isVarigEndring())
                 .medPeriode(IntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom()));
 
-            Landkoder landkode = mapLandkoder(dto.getLandkode());
+            Landkode landkode = mapLandkoder(dto.getLandkode());
             builder.medUtenlandskVirksomhet(landkode, dto.getVirksomhetNavn());
 
             return builder;
@@ -282,7 +281,7 @@ public class MapOppgittOpptjening {
                 .medErUtenlandskInntekt(dto.isErUtenlandskInntekt())
                 .medPeriode(IntervallEntitet.fraOgMedTilOgMed(dto1.getFom(), dto1.getTom()));
 
-            Landkoder landkode = mapLandkoder(dto.getLandkode());
+            Landkode landkode = mapLandkoder(dto.getLandkode());
             builder.medUtenlandskVirksomhet(landkode, dto.getVirksomhetNavn());
 
             return builder;
@@ -298,8 +297,8 @@ public class MapOppgittOpptjening {
             return new OppgittAnnenAktivitet(periode, arbeidType);
         }
 
-        private Landkoder mapLandkoder(Landkode landkode) {
-            return Landkoder.fraKode(landkode == null || landkode.getKode() == null ? Landkode.NORGE.getKode() : landkode.getKode());
+        private Landkode mapLandkoder(Landkode landkode) {
+            return landkode == null || landkode.getKode() == null ? Landkode.NOR : landkode;
         }
 
     }

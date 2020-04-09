@@ -16,13 +16,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
 import no.nav.abakus.iaygrunnlag.kodeverk.VirksomhetType;
 import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.VirksomhetTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.Landkoder;
+import no.nav.foreldrepenger.abakus.kodeverk.LandKodeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
@@ -82,9 +83,9 @@ public class OppgittEgenNæring extends BaseEntitet implements IndexKey {
     @Column(name = "ny_i_arbeidslivet", nullable = false)
     private boolean nyIArbeidslivet;
 
-    @Convert(converter = Landkoder.KodeverdiConverter.class)
+    @Convert(converter = LandKodeKodeverdiConverter.class)
     @Column(name="land", nullable = false)
-    private Landkoder landkode;
+    private Landkode landkode;
 
     @Column(name = "utenlandsk_virksomhet_navn")
     private String utenlandskVirksomhetNavn;
@@ -203,11 +204,11 @@ public class OppgittEgenNæring extends BaseEntitet implements IndexKey {
         this.nærRelasjon = nærRelasjon;
     }
 
-    public Landkoder getLandkode() {
+    public Landkode getLandkode() {
         return landkode;
     }
 
-    void setLandkode(Landkoder landkode) {
+    void setLandkode(Landkode landkode) {
         this.landkode = Objects.requireNonNull(landkode, "landkode");
     }
 

@@ -45,7 +45,7 @@ public class UtbetalingDto {
     }
 
     public UtbetalingDto(String kilde) {
-        this(new InntektskildeType(Objects.requireNonNull(kilde, "kilde")));
+        this(InntektskildeType.fraKode(Objects.requireNonNull(kilde, "kilde")));
     }
 
     public Aktør getUtbetaler() {
