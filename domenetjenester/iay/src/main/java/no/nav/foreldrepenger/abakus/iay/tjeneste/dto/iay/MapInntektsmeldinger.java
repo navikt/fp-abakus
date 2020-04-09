@@ -40,6 +40,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingBu
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.NaturalYtelse;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Refusjon;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.UtsettelsePeriode;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
@@ -67,8 +68,8 @@ public class MapInntektsmeldinger {
         .thenComparing(dto -> dto.getUtsettelseÅrsakDto() == null ? null : dto.getUtsettelseÅrsakDto().getKode(), Comparator.nullsLast(Comparator.naturalOrder()));
 
     private static final Comparator<FraværDto> COMP_FRAVÆR = Comparator
-            .comparing((FraværDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
-            .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
+        .comparing((FraværDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
 
     private static final Comparator<InntektsmeldingDto> COMP_INNTEKTSMELDING = Comparator
         .comparing((InntektsmeldingDto im) -> im.getArbeidsgiver().getIdent())
@@ -99,7 +100,7 @@ public class MapInntektsmeldinger {
         førsteRefusjonsdatoMap.forEach((arbeidsgiver, førsteDatoMedRefusjon) -> finnFørsteDatoForInnsendelseAvRefusjonskrav(inntektsmeldinger, arbeidsgiver)
             .ifPresent(innsendingDato ->
                 refusjonskravDatoList.add(new RefusjonskravDatoDto(mapTilAktør(arbeidsgiver), innsendingDato.toLocalDate(), førsteDatoMedRefusjon.orElse(null), harRefusjonFraStart(arbeidsgiver, nyesteGrunnlag))
-            )));
+                )));
         return refusjonskravDatoList;
     }
 
@@ -145,10 +146,23 @@ public class MapInntektsmeldinger {
     }
 
     private static Optional<LocalDate> finnFørsteDatoMedRefusjon(Inntektsmelding im) {
-        return harRefusjonFraStart(im) ? Optional.ofNullable(im.getStartDatoPermisjon()) :
+        return harRefusjonFraStart(im) ? Optional.ofNullable(utledStartDato(im)) :
             im.getEndringerRefusjon().stream()
                 .map(Refusjon::getFom)
                 .min(Comparator.naturalOrder());
+    }
+
+    private static LocalDate utledStartDato(Inntektsmelding im) {
+        if (im.getStartDatoPermisjon() != null) {
+            return im.getStartDatoPermisjon();
+        } else {
+            return im.getOppgittFravær()
+                .stream()
+                .map(Fravær::getPeriode)
+                .map(IntervallEntitet::getFomDato)
+                .min(LocalDate::compareTo)
+                .orElse(null);
+        }
     }
 
     private static boolean harRefusjonskrav(Inntektsmelding im) {
@@ -233,7 +247,7 @@ public class MapInntektsmeldinger {
 
             inntektsmeldingDto.medOppgittFravær(
                 im.getOppgittFravær().stream().map(this::mapOppgittFravær).sorted(COMP_FRAVÆR).collect(Collectors.toList()));
-            
+
             return inntektsmeldingDto;
         }
 
@@ -253,7 +267,7 @@ public class MapInntektsmeldinger {
             var beløpPerMnd = naturalYtelse.getBeloepPerMnd().getVerdi();
             return new NaturalytelseDto(new Periode(periode.getFomDato(), periode.getTomDato()), type, beløpPerMnd);
         }
-        
+
         private FraværDto mapOppgittFravær(Fravær fravær) {
             var periode = fravær.getPeriode();
             return new FraværDto(new Periode(periode.getFomDato(), periode.getTomDato()), fravær.getVarighetPerDag());
@@ -355,13 +369,13 @@ public class MapInntektsmeldinger {
                     return UtsettelsePeriode.utsettelse(periode.getFom(), periode.getTom(), utsettelseÅrsak);
                 })
                 .forEach(builder::leggTil);
-            
+
             dto.getOppgittFravær().stream()
-            .map(ny -> {
-                var periode = ny.getPeriode();
-                return new Fravær(periode.getFom(), periode.getTom(), ny.getVarighetPerDag());
-            })
-            .forEach(builder::leggTil);
+                .map(ny -> {
+                    var periode = ny.getPeriode();
+                    return new Fravær(periode.getFom(), periode.getTom(), ny.getVarighetPerDag());
+                })
+                .forEach(builder::leggTil);
 
             return builder.build();
         }
