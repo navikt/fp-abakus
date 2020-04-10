@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
+import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseType;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 
 public class InntektspostBuilder {
@@ -38,7 +39,7 @@ public class InntektspostBuilder {
         return this;
     }
 
-    public InntektspostBuilder medYtelse(YtelseInntektspostType offentligYtelseType) {
+    public InntektspostBuilder medYtelse(UtbetaltYtelseType offentligYtelseType) {
         this.inntektspost.setYtelse(offentligYtelseType);
         return this;
     }

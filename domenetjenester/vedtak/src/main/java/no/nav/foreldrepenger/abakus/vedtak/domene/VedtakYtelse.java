@@ -34,8 +34,6 @@ import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.YtelseStatusKodeverdiConverter;
-import no.nav.foreldrepenger.abakus.kodeverk.YtelseTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;

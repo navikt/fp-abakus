@@ -6,26 +6,23 @@ import java.util.UUID;
 
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.VersjonType;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 
 public class IAYFraDtoMapper {
 
     private InntektArbeidYtelseTjeneste iayTjeneste;
-    private KodeverkRepository kodeverkRepository;
     private AktørId aktørId;
     private KoblingReferanse koblingReferanse;
 
-    public IAYFraDtoMapper(InntektArbeidYtelseTjeneste tjeneste, KodeverkRepository kodeverkRepository, AktørId aktørId, KoblingReferanse koblingReferanse) {
+    public IAYFraDtoMapper(InntektArbeidYtelseTjeneste tjeneste, AktørId aktørId, KoblingReferanse koblingReferanse) {
         this.iayTjeneste = tjeneste;
-        this.kodeverkRepository = kodeverkRepository;
         this.aktørId = aktørId;
         this.koblingReferanse = koblingReferanse;
     }
@@ -150,7 +147,7 @@ public class IAYFraDtoMapper {
         builder.setInntektsmeldinger(inntektsmeldinger);
         builder.medInformasjon(arbeidsforholdInformasjon);
 
-        var oppgittOpptjening = new MapOppgittOpptjening(iayTjeneste, kodeverkRepository).mapFraDto(dto.getOppgittOpptjening());
+        var oppgittOpptjening = new MapOppgittOpptjening(iayTjeneste).mapFraDto(dto.getOppgittOpptjening());
         builder.medOppgittOpptjening(oppgittOpptjening);
     }
 

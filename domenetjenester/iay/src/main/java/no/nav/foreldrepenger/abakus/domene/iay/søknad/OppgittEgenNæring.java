@@ -18,12 +18,12 @@ import javax.persistence.Table;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
 import no.nav.abakus.iaygrunnlag.kodeverk.VirksomhetType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.VirksomhetTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.LandKodeKodeverdiConverter;
+import no.nav.foreldrepenger.abakus.iay.jpa.LandKodeKodeverdiConverter;
+import no.nav.foreldrepenger.abakus.iay.jpa.VirksomhetTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 

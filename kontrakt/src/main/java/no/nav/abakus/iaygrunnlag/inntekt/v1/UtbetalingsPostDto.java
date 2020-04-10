@@ -8,16 +8,16 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseType;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -33,7 +33,7 @@ public class UtbetalingsPostDto {
     @NotNull
     @Valid
     private Periode periode;
-    
+
     @JsonProperty("skattAvgiftType")
     @Valid
     private SkatteOgAvgiftsregelType skattAvgiftType;
@@ -47,7 +47,7 @@ public class UtbetalingsPostDto {
     /** Satt dersom dette gjelder en ytelse, ellers ikke (henger sammen med {@link UtbetalingDto#getKilde()}) */
     @JsonProperty(value = "ytelseType")
     @Valid
-    private UtbetaltYtelseType ytelseType;
+    private WrapUtbetaltYtelse ytelseType;
 
     protected UtbetalingsPostDto() {
     }
@@ -70,16 +70,16 @@ public class UtbetalingsPostDto {
     public void setSkattAvgiftType(SkatteOgAvgiftsregelType skattAvgiftType) {
         this.skattAvgiftType = skattAvgiftType;
     }
-    
+
     public void setUtbetaltYtelseType(UtbetaltYtelseType ytelseType) {
-        this.ytelseType = ytelseType;
+        this.ytelseType = new WrapUtbetaltYtelse(ytelseType.getKode(), ytelseType.getKodeverk());
     }
 
     public UtbetalingsPostDto medUtbetaltYtelseType(UtbetaltYtelseType ytelseType) {
         setUtbetaltYtelseType(ytelseType);
         return this;
     }
-    
+
     public UtbetalingsPostDto medSkattAvgiftType(SkatteOgAvgiftsregelType skattAvgiftType) {
         setSkattAvgiftType(skattAvgiftType);
         return this;
@@ -113,9 +113,9 @@ public class UtbetalingsPostDto {
     }
 
     public UtbetaltYtelseType getYtelseType() {
-        return ytelseType;
+        return ytelseType == null ? null : ytelseType.getUtbetaltYtelseType();
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this)
@@ -126,13 +126,38 @@ public class UtbetalingsPostDto {
 
         return Objects.equals(inntektspostType, other.inntektspostType)
             && Objects.equals(periode, other.periode)
-            && Objects.equals(ytelseType, other.ytelseType)
-            ;
+            && Objects.equals(ytelseType, other.ytelseType);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(inntektspostType, periode, ytelseType);
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+    static class WrapUtbetaltYtelse {
+
+        @JsonProperty(value = "kode", required = true)
+        @NotNull
+        private String kode;
+
+        @JsonProperty(value = "kodeverk", required = true)
+        @NotNull
+        private String kodeverk;
+
+        @JsonCreator
+        WrapUtbetaltYtelse(@JsonProperty(value = "kode", required = true) @NotNull String kode,
+                           @JsonProperty(value = "kodeverk", required = true) @NotNull String kodeverk) {
+            this.kode = kode;
+            this.kodeverk = kodeverk;
+        }
+
+        UtbetaltYtelseType getUtbetaltYtelseType() {
+            return UtbetaltYtelseType.getUtbetaltYtelseType(kode, kodeverk);
+        }
+
     }
 
 }

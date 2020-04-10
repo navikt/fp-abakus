@@ -14,13 +14,13 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallUtil;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Organisasjon;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.person.TpsTjeneste;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-import no.nav.foreldrepenger.abakus.util.IntervallUtil;
 import no.nav.tjeneste.virksomhet.arbeidsforhold.v3.binding.FinnArbeidsforholdPrArbeidstakerUgyldigInput;
 import no.nav.tjeneste.virksomhet.arbeidsforhold.v3.feil.UgyldigInput;
 import no.nav.tjeneste.virksomhet.arbeidsforhold.v3.informasjon.arbeidsforhold.AnsettelsesPeriode;

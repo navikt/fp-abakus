@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
+import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 /**
@@ -79,7 +80,7 @@ public class InntektFilter {
         return filter((inntekt, inntektspost) -> typer.contains(inntektspost.getInntektspostType()));
     }
 
-    public InntektFilter filter(YtelseInntektspostType ytelseType) {
+    public InntektFilter filter(UtbetaltYtelseType ytelseType) {
         return filter((inntekt, inntektspost) -> ytelseType.equals(inntektspost.getYtelseType()));
     }
 

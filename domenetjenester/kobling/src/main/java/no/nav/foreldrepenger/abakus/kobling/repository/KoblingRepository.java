@@ -12,6 +12,7 @@ import javax.persistence.TypedQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffEntity;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
@@ -20,8 +21,6 @@ import no.nav.foreldrepenger.abakus.felles.diff.TraverseJpaEntityGraphConfig;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
-import no.nav.foreldrepenger.abakus.kodeverk.Kodeliste;
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkTabell;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
@@ -82,8 +81,7 @@ public class KoblingRepository {
         var config = new TraverseJpaEntityGraphConfig(); // NOSONAR
         config.setIgnoreNulls(true);
         config.setOnlyCheckTrackedFields(false);
-        config.addLeafClasses(KodeverkTabell.class);
-        config.addLeafClasses(Kodeliste.class);
+        config.addLeafClasses(Kodeverdi.class);
         config.addLeafClasses(IntervallEntitet.class);
         var diffEntity = new DiffEntity(new TraverseGraph(config));
 

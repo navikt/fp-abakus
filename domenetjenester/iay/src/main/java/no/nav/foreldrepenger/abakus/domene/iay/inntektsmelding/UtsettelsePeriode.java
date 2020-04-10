@@ -17,11 +17,11 @@ import javax.persistence.Version;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtsettelseÅrsakType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.UtsettelseÅrsakTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.iay.jpa.UtsettelseÅrsakTypeKodeverdiConverter;
 
 @Entity(name = "UtsettelsePeriode")
 @Table(name = "IAY_UTSETTELSE_PERIODE")

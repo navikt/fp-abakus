@@ -17,7 +17,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
-import no.nav.abakus.iaygrunnlag.kodeverk.RegisterdataType;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
 @JsonIgnoreProperties(ignoreUnknown = true)

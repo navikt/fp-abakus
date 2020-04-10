@@ -20,7 +20,6 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.kafka.KafkaIntegration;
 import no.nav.vedtak.apptjeneste.AppServiceHandler;
 
 @ApplicationScoped

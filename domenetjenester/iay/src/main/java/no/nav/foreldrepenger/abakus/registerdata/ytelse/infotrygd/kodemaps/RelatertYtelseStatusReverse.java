@@ -5,7 +5,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
-import no.nav.foreldrepenger.abakus.kodeverk.RelatertYtelseStatus;
 
 public class RelatertYtelseStatusReverse {
 

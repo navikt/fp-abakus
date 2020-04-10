@@ -17,19 +17,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.JoinColumnOrFormula;
-import org.hibernate.annotations.JoinColumnsOrFormulas;
-import org.hibernate.annotations.JoinFormula;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostTypeKodeverdiConverter;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.SkatteOgAvgiftsregelTypeKodeverdiConverter;
+import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseFraOffentligeType;
+import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.iay.jpa.InntektspostTypeKodeverdiConverter;
+import no.nav.foreldrepenger.abakus.iay.jpa.SkatteOgAvgiftsregelTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 
 @Entity(name = "Inntektspost")
@@ -52,16 +50,15 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
     @JoinColumn(name = "inntekt_id", nullable = false, updatable = false, unique = true)
     private Inntekt inntekt;
 
-    /* TODO: splitt denne entiteten ? Kan ikke ha både inntektspostType og ytelseType satt samtidig (ene må være 'UDEFINERT'). Felter varier noe avh av hva som er satt*/
+    /*
+     * TODO: splitt denne entiteten ? Kan ikke ha både inntektspostType og ytelseType satt samtidig (ene må være 'UDEFINERT'). Felter varier noe
+     * avh av hva som er satt
+     */
     @Column(name = "kl_ytelse_type")
-    private String ytelseType = OffentligYtelseType.DISCRIMINATOR;
+    private String ytelseType = UtbetaltYtelseFraOffentligeType.KODEVERK;
 
-    @ManyToOne
-    @JoinColumnsOrFormulas(value = {
-        @JoinColumnOrFormula(formula = @JoinFormula(value = "kl_ytelse_type" /* bruker kolonnenavn, da discriminator kan variere*/, referencedColumnName = "kodeverk")),
-        @JoinColumnOrFormula(column = @JoinColumn(name = "ytelse_type", referencedColumnName = "kode")),
-    })
-    private YtelseInntektspostType ytelse = OffentligYtelseType.UDEFINERT;
+    @Column(name = "ytelse_type", updatable = false, nullable = false)
+    private String ytelse = UtbetaltYtelseFraOffentligeType.UDEFINERT.getKode();
 
     @Embedded
     private IntervallEntitet periode;
@@ -76,7 +73,7 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
     private long versjon;
 
     public Inntektspost() {
-        //hibernate
+        // hibernate
     }
 
     /**
@@ -85,9 +82,9 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
     Inntektspost(Inntektspost inntektspost) {
         this.inntektspostType = inntektspost.getInntektspostType();
         this.skatteOgAvgiftsregelType = inntektspost.getSkatteOgAvgiftsregelType();
-        this.ytelse = inntektspost.getYtelseType();
         this.periode = inntektspost.getPeriode();
         this.beløp = inntektspost.getBeløp();
+        this.ytelse = inntektspost.getYtelseType().getKode();
         this.ytelseType = inntektspost.getYtelseType().getKodeverk();
     }
 
@@ -143,20 +140,22 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
     public Beløp getBeløp() {
         return beløp;
     }
-    
-    /** Periode inntektsposten gjelder.
+
+    /**
+     * Periode inntektsposten gjelder.
+     * 
      * @return
      */
     public IntervallEntitet getPeriode() {
         return periode;
     }
-    
+
     void setBeløp(Beløp beløp) {
         this.beløp = beløp;
     }
 
-    public YtelseInntektspostType getYtelseType() {
-        return ytelse;
+    public UtbetaltYtelseType getYtelseType() {
+        return UtbetaltYtelseType.getUtbetaltYtelseType(ytelse, ytelseType);
     }
 
     public Inntekt getInntekt() {
@@ -167,9 +166,9 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
         this.inntekt = inntekt;
     }
 
-    void setYtelse(YtelseInntektspostType ytelse) {
+    void setYtelse(UtbetaltYtelseType ytelse) {
         this.ytelseType = ytelse.getKodeverk();
-        this.ytelse = ytelse;
+        this.ytelse = ytelse.getKode();
     }
 
     @Override
@@ -180,23 +179,25 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
             return false;
         }
         Inntektspost other = (Inntektspost) obj;
-        return Objects.equals(this.getInntektspostType(), other.getInntektspostType())
-            && Objects.equals(this.getYtelseType(), other.getYtelseType())
-            && Objects.equals(this.getSkatteOgAvgiftsregelType(), other.getSkatteOgAvgiftsregelType())
-            && Objects.equals(this.getPeriode(), other.getPeriode());
+        return Objects.equals(this.inntektspostType, other.inntektspostType)
+            && Objects.equals(this.ytelseType, other.ytelseType)
+            && Objects.equals(this.ytelse, other.ytelse)
+            && Objects.equals(this.skatteOgAvgiftsregelType, other.skatteOgAvgiftsregelType)
+            && Objects.equals(this.periode, other.periode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ytelseType, inntektspostType, periode, skatteOgAvgiftsregelType);
+        return Objects.hash(inntektspostType, ytelseType, ytelse, skatteOgAvgiftsregelType, periode);
     }
 
     @Override
     public String toString() {
         return getClass().getSimpleName() + "<" +
             "ytelseType=" + ytelseType +
-            "inntektspostType=" + inntektspostType +
-            "skatteOgAvgiftsregelType=" + skatteOgAvgiftsregelType +
+            ", ytelse=" + ytelse +
+            ", inntektspostType=" + inntektspostType +
+            ", skatteOgAvgiftsregelType=" + skatteOgAvgiftsregelType +
             ", fraOgMed=" + periode.getFomDato() +
             ", tilOgMed=" + periode.getTomDato() +
             ", beløp=" + beløp +
@@ -204,7 +205,10 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
     }
 
     public boolean hasValues() {
-        return inntektspostType != null || periode.getFomDato() != null || periode.getTomDato() != null || beløp != null;
+        return (ytelse != null || !Objects.equals(ytelse, "-"))
+            || inntektspostType != null
+            || periode.getFomDato() != null || periode.getTomDato() != null
+            || beløp != null;
     }
 
 }

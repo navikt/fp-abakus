@@ -19,11 +19,11 @@ import javax.persistence.Version;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.PermisjonsbeskrivelseTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.iay.jpa.PermisjonsbeskrivelseTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
 @Entity(name = "Permisjon")

@@ -60,7 +60,6 @@ import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYTilDtoMapper;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
@@ -76,7 +75,6 @@ public class GrunnlagRestTjeneste {
 
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private KoblingTjeneste koblingTjeneste;
-    private KodeverkRepository kodeverkRepository;
 
     public GrunnlagRestTjeneste() {
         // for CDI
@@ -84,11 +82,9 @@ public class GrunnlagRestTjeneste {
 
     @Inject
     public GrunnlagRestTjeneste(InntektArbeidYtelseTjeneste iayTjeneste,
-                                KoblingTjeneste koblingTjeneste,
-                                KodeverkRepository kodeverkRepository) {
+                                KoblingTjeneste koblingTjeneste) {
         this.iayTjeneste = iayTjeneste;
         this.koblingTjeneste = koblingTjeneste;
-        this.kodeverkRepository = kodeverkRepository;
     }
 
     private static Periode mapPeriode(IntervallEntitet datoIntervall) {
@@ -169,7 +165,7 @@ public class GrunnlagRestTjeneste {
 
         var koblingReferanse = getKoblingReferanse(aktørId, dto);
 
-        var dtoMapper = new IAYFraDtoMapper(iayTjeneste, kodeverkRepository, aktørId, koblingReferanse);
+        var dtoMapper = new IAYFraDtoMapper(iayTjeneste, aktørId, koblingReferanse);
         final var builder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayTjeneste.hentGrunnlagFor(koblingReferanse));
         iayTjeneste.lagre(koblingReferanse, InntektArbeidYtelseGrunnlagBuilder.oppdatere(dtoMapper.mapOverstyringerTilGrunnlag(dto, builder)));
 

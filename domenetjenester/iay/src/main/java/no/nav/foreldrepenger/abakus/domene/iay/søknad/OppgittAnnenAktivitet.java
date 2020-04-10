@@ -15,11 +15,11 @@ import javax.persistence.Table;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.iay.jpa.ArbeidTypeKodeverdiConverter;
 
 
 @Table(name = "IAY_ANNEN_AKTIVITET")

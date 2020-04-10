@@ -29,7 +29,6 @@ import no.nav.foreldrepenger.abakus.iay.OppgittOpptjeningTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapOppgittOpptjening;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
@@ -46,7 +45,6 @@ public class OppgittOpptjeningRestTjeneste {
     private KoblingTjeneste koblingTjeneste;
     private OppgittOpptjeningTjeneste oppgittOpptjeningTjeneste;
     private InntektArbeidYtelseTjeneste iayTjeneste;
-    private KodeverkRepository kodeverkRepository;
 
     public OppgittOpptjeningRestTjeneste() {
     }
@@ -54,12 +52,10 @@ public class OppgittOpptjeningRestTjeneste {
     @Inject
     public OppgittOpptjeningRestTjeneste(KoblingTjeneste koblingTjeneste,
                                          OppgittOpptjeningTjeneste oppgittOpptjeningTjeneste,
-                                         InntektArbeidYtelseTjeneste iayTjeneste,
-                                         KodeverkRepository kodeverkRepository) {
+                                         InntektArbeidYtelseTjeneste iayTjeneste) {
         this.koblingTjeneste = koblingTjeneste;
         this.oppgittOpptjeningTjeneste = oppgittOpptjeningTjeneste;
         this.iayTjeneste = iayTjeneste;
-        this.kodeverkRepository = kodeverkRepository;
     }
 
     @POST
@@ -78,7 +74,7 @@ public class OppgittOpptjeningRestTjeneste {
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
         var kobling = koblingTjeneste.finnEllerOpprett(koblingReferanse, aktørId, new Saksnummer(mottattRequest.getSaksnummer()));
 
-        OppgittOpptjeningBuilder builder = new MapOppgittOpptjening(iayTjeneste, kodeverkRepository).mapFraDto(mottattRequest.getOppgittOpptjening());
+        OppgittOpptjeningBuilder builder = new MapOppgittOpptjening(iayTjeneste).mapFraDto(mottattRequest.getOppgittOpptjening());
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagre(koblingReferanse, builder);
 
         koblingTjeneste.lagre(kobling);
