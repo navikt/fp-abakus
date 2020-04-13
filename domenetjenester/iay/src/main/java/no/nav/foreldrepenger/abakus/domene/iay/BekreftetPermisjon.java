@@ -11,8 +11,8 @@ import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.BekreftetPermisjonStatus;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.BekreftetPermisjonStatusKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.iay.jpa.BekreftetPermisjonStatusKodeverdiConverter;
 
 @Embeddable
 public class BekreftetPermisjon {

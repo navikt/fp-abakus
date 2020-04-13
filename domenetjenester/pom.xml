@@ -17,7 +17,6 @@
     <modules>
         <module>kobling</module>
         <module>iay</module>
-        <module>kodeverk</module>
         <module>vedtak</module>
     </modules>
 

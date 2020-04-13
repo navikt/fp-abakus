@@ -6,7 +6,6 @@ import javax.inject.Inject;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.registerdata.IAYRegisterInnhentingFellesTjenesteImpl;
 import no.nav.foreldrepenger.abakus.registerdata.InnhentingSamletTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
@@ -24,15 +23,15 @@ public class IAYRegisterInnhentingESTjenesteImpl extends IAYRegisterInnhentingFe
 
     @Inject
     public IAYRegisterInnhentingESTjenesteImpl(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
-                                               KodeverkRepository kodeverkRepository,
                                                VirksomhetTjeneste virksomhetTjeneste,
                                                InnhentingSamletTjeneste innhentingSamletTjeneste,
-                                               AktørConsumer aktørConsumer, SigrunTjeneste sigrunTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
+                                               AktørConsumer aktørConsumer,
+                                               SigrunTjeneste sigrunTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
         super(inntektArbeidYtelseTjeneste,
-            kodeverkRepository,
             virksomhetTjeneste,
             innhentingSamletTjeneste,
-            aktørConsumer, sigrunTjeneste, vedtakYtelseRepository);
+            aktørConsumer,
+            sigrunTjeneste, vedtakYtelseRepository);
     }
 
     @Override

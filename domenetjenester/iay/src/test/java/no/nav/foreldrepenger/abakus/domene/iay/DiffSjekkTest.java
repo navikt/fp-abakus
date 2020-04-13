@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
-import no.nav.foreldrepenger.abakus.diff.TraverseEntityGraphFactory;
+import no.nav.foreldrepenger.abakus.domene.iay.diff.TraverseEntityGraphFactory;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder.EgenNæringBuilder;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffEntity;
 

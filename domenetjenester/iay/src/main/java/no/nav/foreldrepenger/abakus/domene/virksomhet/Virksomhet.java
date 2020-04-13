@@ -16,10 +16,10 @@ import javax.persistence.Version;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.OrganisasjonType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.OrganisasjonstypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.iay.jpa.OrganisasjonstypeKodeverdiConverter;
 
 @Entity(name = "Virksomhet")
 @Table(name = "VIRKSOMHET", uniqueConstraints = @UniqueConstraint(columnNames = {"orgnr"}))

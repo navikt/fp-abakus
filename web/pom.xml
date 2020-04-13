@@ -109,10 +109,6 @@
         </dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.abakus</groupId>
-            <artifactId>kodeverk</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.foreldrepenger.abakus</groupId>
             <artifactId>migreringer</artifactId>
         </dependency>
 

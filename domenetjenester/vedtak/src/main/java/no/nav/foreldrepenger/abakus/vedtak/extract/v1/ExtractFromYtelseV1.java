@@ -7,8 +7,8 @@ import javax.inject.Inject;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.vedtak.ytelse.Periode;
-import no.nav.abakus.vedtak.ytelse.v1.YtelseType;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
 import no.nav.abakus.vedtak.ytelse.v1.anvisning.Anvisning;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
@@ -47,16 +47,12 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
             .medKilde(fagsystem)
             .medYtelseType(ytelseType)
             .medPeriode(mapTilEntitet(ytelse.getPeriode()))
-            .medStatus(getStatus(ytelse.getStatus()))
+            .medStatus(YtelseStatus.fraKode(ytelse.getStatus().getKode()))
             .tilbakestillAnvisteYtelser();
 
         ytelse.getAnvist().forEach(anv -> mapAnvisning(builder, anv));
 
         return builder;
-    }
-
-    private YtelseStatus getStatus(no.nav.abakus.vedtak.ytelse.v1.YtelseStatus kodeverk) {
-        return YtelseStatus.fraKode(kodeverk.getKode());
     }
 
     private void mapAnvisning(VedtakYtelseBuilder builder, Anvisning anv) {

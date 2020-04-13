@@ -22,10 +22,10 @@ import javax.persistence.Version;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKildeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.iay.jpa.InntektsKildeKodeverdiConverter;
 
 @Entity(name = "Inntekt")
 @Table(name = "IAY_INNTEKT")

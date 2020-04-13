@@ -24,9 +24,9 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.ArbeidskategoriKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.iay.jpa.ArbeidskategoriKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 

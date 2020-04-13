@@ -29,7 +29,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder.
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder.OppgittArbeidsforholdBuilder;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
 public class MapOppgittOpptjening {
@@ -63,11 +62,9 @@ public class MapOppgittOpptjening {
         .thenComparing(dto -> dto.getVirksomhetNavn(), Comparator.nullsLast(Comparator.naturalOrder()));
 
     private InntektArbeidYtelseTjeneste iayTjeneste;
-    private KodeverkRepository kodeverkRepository;
 
-    public MapOppgittOpptjening(InntektArbeidYtelseTjeneste iayTjeneste, KodeverkRepository kodeverkRepository) {
+    public MapOppgittOpptjening(InntektArbeidYtelseTjeneste iayTjeneste) {
         this.iayTjeneste = iayTjeneste;
-        this.kodeverkRepository = kodeverkRepository;
     }
 
     public OppgittOpptjeningDto mapTilDto(OppgittOpptjening oppgittOpptjening) {
@@ -193,7 +190,6 @@ public class MapOppgittOpptjening {
 
         MapFraDto() {
             Objects.requireNonNull(iayTjeneste, "iayTjeneste");
-            Objects.requireNonNull(kodeverkRepository, "kodeverkRepository");
         }
 
         public OppgittOpptjeningBuilder map(OppgittOpptjeningDto dto) {

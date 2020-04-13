@@ -3,7 +3,7 @@ package no.nav.abakus.vedtak.ytelse;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import no.nav.abakus.vedtak.ytelse.v1.YtelseType;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
 
 @JsonTypeInfo(

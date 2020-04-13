@@ -14,6 +14,7 @@
 		<module>felles</module>
 		<module>prosesstask</module>
 		<module>migreringer</module>
+		<module>kodeverk</module>
 		<module>kontrakt</module>
 		<module>web</module>
 		<module>domenetjenester</module>
@@ -107,12 +108,12 @@
             </dependency>
 			<dependency>
 				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>abakus-kontrakt</artifactId>
+				<artifactId>abakus-kodeverk</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>kodeverk</artifactId>
+				<artifactId>abakus-kontrakt</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

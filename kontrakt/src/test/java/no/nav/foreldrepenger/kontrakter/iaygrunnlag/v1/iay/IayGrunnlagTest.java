@@ -89,7 +89,7 @@ public class IayGrunnlagTest {
     private final ArbeidType arbeidType = ArbeidType.ORDINÆRT_ARBEIDSFORHOLD;
     private final Periode periode = new Periode(fom, tom);
     private final YtelseType ytelseType = YtelseType.FORELDREPENGER;
-    private final UtbetaltYtelseFraOffentligeType utbetaltYtelse = new UtbetaltYtelseFraOffentligeType("FORELDREPENGER");
+    private final UtbetaltYtelseFraOffentligeType utbetaltYtelse = UtbetaltYtelseFraOffentligeType.FORELDREPENGER;
     private final LocalDateTime tidspunkt = LocalDateTime.now();
     private final JournalpostId journalpostId = new JournalpostId("ImajournalpostId");
 

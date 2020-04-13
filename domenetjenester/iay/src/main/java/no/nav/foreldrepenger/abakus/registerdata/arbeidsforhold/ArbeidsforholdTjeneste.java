@@ -1,6 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold;
 
-import static no.nav.foreldrepenger.abakus.util.IntervallUtil.byggIntervall;
+import static no.nav.foreldrepenger.abakus.felles.jpa.IntervallUtil.byggIntervall;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
