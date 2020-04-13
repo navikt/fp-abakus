@@ -29,7 +29,6 @@ public class NaturalytelseDto {
     private Periode periode;
 
     @JsonProperty(value = "naturalytelseType", required = true, index = 1)
-    @Valid
     @NotNull
     private NaturalytelseType type;
 

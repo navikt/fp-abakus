@@ -27,13 +27,12 @@ public class OppgittAnnenAktivitetDto {
     private Periode periode;
 
     @JsonProperty(value = "arbeidType", required = true)
-    @Valid
     @NotNull
     private ArbeidType arbeidTypeDto;
 
     @JsonCreator
     public OppgittAnnenAktivitetDto(@JsonProperty(value = "periode", required = true) @Valid @NotNull Periode periode,
-                                    @JsonProperty(value = "arbeidType", required = true) @Valid @NotNull ArbeidType arbeidType) {
+                                    @JsonProperty(value = "arbeidType", required = true) @NotNull ArbeidType arbeidType) {
         Objects.requireNonNull(periode, "periode");
         Objects.requireNonNull(arbeidType, "arbeidType");
         this.periode = periode;

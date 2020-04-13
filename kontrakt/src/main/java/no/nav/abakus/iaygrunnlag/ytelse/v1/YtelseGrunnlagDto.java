@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class YtelseGrunnlagDto {
 
     @JsonProperty(value = "arbeidskategori")
-    @Valid
     private Arbeidskategori arbeidskategoriDto;
 
     @JsonProperty(value = "opprinneligIdentDato")

@@ -167,6 +167,9 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
     }
 
     void setYtelse(UtbetaltYtelseType ytelse) {
+        if (ytelse == null) {
+            ytelse = UtbetaltYtelseFraOffentligeType.UDEFINERT;
+        }
         this.ytelseType = ytelse.getKodeverk();
         this.ytelse = ytelse.getKode();
     }

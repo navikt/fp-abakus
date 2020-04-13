@@ -24,7 +24,6 @@ public class BekreftetPermisjon {
     
     @JsonProperty(value = "status")
     @NotNull
-    @Valid
     private BekreftetPermisjonStatus status;
 
     @JsonProperty("periode")
@@ -34,7 +33,7 @@ public class BekreftetPermisjon {
 
     @JsonCreator
     public BekreftetPermisjon(@JsonProperty("periode") @Valid @NotNull Periode periode, 
-                              @JsonProperty(value = "status") @Valid @NotNull BekreftetPermisjonStatus status) {
+                              @JsonProperty(value = "status") @NotNull BekreftetPermisjonStatus status) {
         Objects.requireNonNull(periode, "periode");
         this.periode = periode;
         this.status = status;

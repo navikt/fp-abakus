@@ -41,7 +41,6 @@ public class InnhentRegisterdataRequest {
     private UUID referanse;
 
     @JsonProperty(value = "ytelseType", required = true)
-    @Valid
     @NotNull
     private YtelseType ytelseType;
 
@@ -75,7 +74,7 @@ public class InnhentRegisterdataRequest {
     @JsonCreator
     public InnhentRegisterdataRequest(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
                                       @JsonProperty(value = "referanse", required = true) @Valid @NotNull UUID referanse,
-                                      @JsonProperty(value = "ytelseType", required = true) @Valid @NotNull YtelseType ytelseType,
+                                      @JsonProperty(value = "ytelseType", required = true) @NotNull YtelseType ytelseType,
                                       @JsonProperty(value = "opplysningsperiode", required = true) @NotNull @Valid Periode opplysningsperiode,
                                       @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør) {
         this.saksnummer = saksnummer;
@@ -88,7 +87,7 @@ public class InnhentRegisterdataRequest {
     @JsonCreator
     public InnhentRegisterdataRequest(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
                                       @JsonProperty(value = "referanse", required = true) @Valid @NotNull UUID referanse,
-                                      @JsonProperty(value = "ytelseType", required = true) @Valid @NotNull YtelseType ytelseType,
+                                      @JsonProperty(value = "ytelseType", required = true) @NotNull YtelseType ytelseType,
                                       @JsonProperty(value = "opplysningsperiode", required = true) @NotNull @Valid Periode opplysningsperiode,
                                       @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
                                       @JsonProperty(value = "elementer", required = true) @NotNull @Valid Set<RegisterdataType> elementer) {

@@ -48,7 +48,6 @@ public class ArbeidsforholdOverstyringDto {
     private ArbeidsforholdRefDto nyArbeidsforholdRef;
 
     @JsonProperty(value = "arbeidsforholdHandlingType", required = true)
-    @Valid
     @NotNull
     private ArbeidsforholdHandlingType handling;
 

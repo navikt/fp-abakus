@@ -41,7 +41,6 @@ public class InntektArbeidYtelseGrunnlagSakSnapshotDto {
     private String saksnummer;
 
     @JsonProperty(value = "ytelseType", required = true)
-    @Valid
     @NotNull
     private YtelseType ytelseType;
 

@@ -26,7 +26,6 @@ public class UtsettelsePeriodeDto {
     private Periode periode;
 
     @JsonProperty(value = "utsettelseÅrsak")
-    @Valid
     private UtsettelseÅrsakType utsettelseÅrsak;
 
     protected UtsettelsePeriodeDto() {

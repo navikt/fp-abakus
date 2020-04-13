@@ -30,7 +30,6 @@ public class FordelingDto {
 
     /** Angir hvilken periode beløp gjelder for. */
     @JsonProperty(value = "inntektPeriodeType", required = true)
-    @Valid
     @NotNull
     private InntektPeriodeType inntektPeriodeType;
 

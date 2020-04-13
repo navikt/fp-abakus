@@ -6,6 +6,8 @@ import java.util.Objects;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -25,7 +27,6 @@ import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseType;
 public class UtbetalingsPostDto {
 
     @JsonProperty(value = "inntektspostType", required = true)
-    @Valid
     @NotNull
     private InntektspostType inntektspostType;
 
@@ -35,7 +36,6 @@ public class UtbetalingsPostDto {
     private Periode periode;
 
     @JsonProperty("skattAvgiftType")
-    @Valid
     private SkatteOgAvgiftsregelType skattAvgiftType;
 
     /** Tillater her både positive og negative beløp (korreksjoner). Min/max verdi håndteres av mottager og avsender. */
@@ -72,7 +72,7 @@ public class UtbetalingsPostDto {
     }
 
     public void setUtbetaltYtelseType(UtbetaltYtelseType ytelseType) {
-        this.ytelseType = new WrapUtbetaltYtelse(ytelseType.getKode(), ytelseType.getKodeverk());
+        this.ytelseType = ytelseType == null ? null : new WrapUtbetaltYtelse(ytelseType.getKode(), ytelseType.getKodeverk());
     }
 
     public UtbetalingsPostDto medUtbetaltYtelseType(UtbetaltYtelseType ytelseType) {
@@ -141,10 +141,14 @@ public class UtbetalingsPostDto {
 
         @JsonProperty(value = "kode", required = true)
         @NotNull
+        @Size(max = 50)
+        @Pattern(regexp = "^[\\p{Alnum}ÆØÅæøå_\\.\\-]+$", message = "'${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
         private String kode;
 
         @JsonProperty(value = "kodeverk", required = true)
         @NotNull
+        @Size(max = 50)
+        @Pattern(regexp = "^[\\p{Alnum}ÆØÅæøå_\\\\.\\\\-]+$", message = "'${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
         private String kodeverk;
 
         @JsonCreator
@@ -156,6 +160,28 @@ public class UtbetalingsPostDto {
 
         UtbetaltYtelseType getUtbetaltYtelseType() {
             return UtbetaltYtelseType.getUtbetaltYtelseType(kode, kodeverk);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this)
+                return true;
+            if (obj == null || obj.getClass() != this.getClass())
+                return false;
+            var other = (WrapUtbetaltYtelse) obj;
+
+            return Objects.equals(kode, other.kode)
+                && Objects.equals(kodeverk, other.kodeverk);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(kode, kodeverk);
+        }
+
+        @Override
+        public String toString() {
+            return "ytelseType<" + kode + ", " + kodeverk + ">";
         }
 
     }
