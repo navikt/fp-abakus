@@ -72,7 +72,7 @@ public class UtbetalingsPostDto {
     }
 
     public void setUtbetaltYtelseType(UtbetaltYtelseType ytelseType) {
-        this.ytelseType = new WrapUtbetaltYtelse(ytelseType.getKode(), ytelseType.getKodeverk());
+        this.ytelseType = ytelseType == null ? null : new WrapUtbetaltYtelse(ytelseType.getKode(), ytelseType.getKodeverk());
     }
 
     public UtbetalingsPostDto medUtbetaltYtelseType(UtbetaltYtelseType ytelseType) {
@@ -156,6 +156,28 @@ public class UtbetalingsPostDto {
 
         UtbetaltYtelseType getUtbetaltYtelseType() {
             return UtbetaltYtelseType.getUtbetaltYtelseType(kode, kodeverk);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this)
+                return true;
+            if (obj == null || obj.getClass() != this.getClass())
+                return false;
+            var other = (WrapUtbetaltYtelse) obj;
+
+            return Objects.equals(kode, other.kode)
+                && Objects.equals(kodeverk, other.kodeverk);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(kode, kodeverk);
+        }
+
+        @Override
+        public String toString() {
+            return "ytelseType<" + kode + ", " + kodeverk + ">";
         }
 
     }
