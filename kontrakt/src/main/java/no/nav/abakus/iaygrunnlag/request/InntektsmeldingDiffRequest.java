@@ -32,7 +32,6 @@ public class InntektsmeldingDiffRequest {
     private PersonIdent person;
 
     @JsonProperty(value = "ytelseType")
-    @Valid
     private YtelseType ytelseType;
 
     /** Angi hvilken sak det gjelder. */

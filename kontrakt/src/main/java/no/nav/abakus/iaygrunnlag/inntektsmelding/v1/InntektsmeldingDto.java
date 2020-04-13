@@ -103,7 +103,6 @@ public class InntektsmeldingDto {
     private List<RefusjonDto> refusjonEndringer;
 
     @JsonProperty(value = "innsendingsårsak", required = true)
-    @Valid
     @NotNull
     private InntektsmeldingInnsendingsårsakType innsendingsårsak;
 

@@ -28,7 +28,6 @@ public class ArbeidsforholdDto {
     private Aktør arbeidsgiver;
 
     @JsonProperty(value = "arbeidType", required = true)
-    @Valid
     @NotNull
     private ArbeidType type;
 

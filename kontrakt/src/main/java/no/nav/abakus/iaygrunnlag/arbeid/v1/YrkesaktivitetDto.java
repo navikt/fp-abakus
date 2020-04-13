@@ -34,7 +34,6 @@ public class YrkesaktivitetDto {
     private ArbeidsforholdRefDto arbeidsforholdId;
 
     @JsonProperty("arbeidType")
-    @Valid
     @NotNull
     private ArbeidType arbeidType;
 

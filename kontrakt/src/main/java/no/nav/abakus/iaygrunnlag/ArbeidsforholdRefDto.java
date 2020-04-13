@@ -2,7 +2,6 @@ package no.nav.abakus.iaygrunnlag;
 
 import java.util.Objects;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -25,7 +24,6 @@ public class ArbeidsforholdRefDto {
 
     @JsonProperty(value = "eksternReferanseSystem", index = 1)
     @NotNull
-    @Valid
     private Fagsystem eksternReferanseSystem;
     
     @JsonProperty(value = "abakusReferanse", index = 2)

@@ -36,8 +36,7 @@ public class OppgittEgenNæringDto {
     private Organisasjon virksomhet;
 
     @JsonProperty(value = "virksomhetType")
-    @Valid
-    private VirksomhetType virksomhetTypeDto;
+    private VirksomhetType virksomhetType;
 
     @JsonProperty(value = "regnskapsførerNavn")
     @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message="'${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
@@ -106,11 +105,11 @@ public class OppgittEgenNæringDto {
     }
 
     public VirksomhetType getVirksomhetTypeDto() {
-        return virksomhetTypeDto;
+        return virksomhetType;
     }
 
     public void setVirksomhetTypeDto(VirksomhetType virksomhetTypeDto) {
-        this.virksomhetTypeDto = virksomhetTypeDto;
+        this.virksomhetType = virksomhetTypeDto;
     }
 
     public OppgittEgenNæringDto medVirksomhetType(VirksomhetType virksomhetType) {

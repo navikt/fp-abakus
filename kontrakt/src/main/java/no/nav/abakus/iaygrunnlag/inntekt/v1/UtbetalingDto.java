@@ -28,7 +28,6 @@ public class UtbetalingDto {
 
     @JsonProperty(value = "inntektsKilde", required = true)
     @NotNull
-    @Valid
     private InntektskildeType kilde;
 
     @JsonProperty(value = "utbetalingsPoster", required = true)

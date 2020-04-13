@@ -29,9 +29,8 @@ public class OppgittArbeidsforholdDto {
     private Periode periode;
 
     @JsonProperty(value = "arbeidType", required = true)
-    @Valid
     @NotNull
-    private ArbeidType arbeidTypeDto;
+    private ArbeidType arbeidType;
 
     @JsonProperty(value = "erUtenlandskInntekt")
     private Boolean erUtenlandskInntekt;
@@ -53,7 +52,7 @@ public class OppgittArbeidsforholdDto {
         Objects.requireNonNull(periode, "periode");
         Objects.requireNonNull(arbeidType, "arbeidType");
         this.periode = periode;
-        this.arbeidTypeDto = arbeidType;
+        this.arbeidType = arbeidType;
     }
 
     protected OppgittArbeidsforholdDto() {
@@ -78,7 +77,7 @@ public class OppgittArbeidsforholdDto {
     }
 
     public ArbeidType getArbeidTypeDto() {
-        return arbeidTypeDto;
+        return arbeidType;
     }
 
     public Boolean getErUtenlandskInntekt() {

@@ -31,7 +31,6 @@ public class YtelseV1 extends Ytelse {
     private LocalDateTime vedtattTidspunkt;
 
     @NotNull
-    @Valid
     @JsonProperty("type")
     private YtelseType type;
 
@@ -45,13 +44,11 @@ public class YtelseV1 extends Ytelse {
     private String vedtakReferanse;
 
     @NotNull
-    @Valid
     @JsonProperty("status")
     private YtelseStatus status;
 
-    @NotNull
-    @Valid
     @JsonProperty("fagsystem")
+    @NotNull
     private Fagsystem fagsystem;
 
     @NotNull

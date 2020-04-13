@@ -25,12 +25,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class YtelseDto {
 
     @JsonProperty(value = "fagsystem", required = true)
-    @Valid
     @NotNull
     private Fagsystem fagsystem;
 
     @JsonProperty(value = "ytelseType", required = true)
-    @Valid
     @NotNull
     private YtelseType ytelseType;
 
@@ -41,7 +39,6 @@ public class YtelseDto {
     private Periode periode;
 
     @JsonProperty(value = "status", required = true)
-    @Valid
     @NotNull
     private YtelseStatus status;
     
@@ -51,7 +48,6 @@ public class YtelseDto {
     private String saksnummer;
 
     @JsonProperty(value = "temaUnderkategori")
-    @Valid
     private TemaUnderkategori temaUnderkategori;
 
     @JsonProperty(value = "anvisninger")
@@ -63,10 +59,10 @@ public class YtelseDto {
     private YtelseGrunnlagDto grunnlag;
 
     @JsonCreator
-    public YtelseDto(@JsonProperty(value = "fagsystem", required = true) @Valid @NotNull Fagsystem fagsystem,
-                     @JsonProperty(value = "ytelseType", required = true) @Valid @NotNull YtelseType ytelseType,
+    public YtelseDto(@JsonProperty(value = "fagsystem", required = true) @NotNull Fagsystem fagsystem,
+                     @JsonProperty(value = "ytelseType", required = true) @NotNull YtelseType ytelseType,
                      @JsonProperty(value = "periode", required = true) @Valid @NotNull Periode periode,
-                     @JsonProperty(value = "status", required = true) @Valid @NotNull YtelseStatus status) {
+                     @JsonProperty(value = "status", required = true) @NotNull YtelseStatus status) {
         Objects.requireNonNull(fagsystem, "fagsystem");
         Objects.requireNonNull(ytelseType, "ytelseType");
         Objects.requireNonNull(periode, "periode");
