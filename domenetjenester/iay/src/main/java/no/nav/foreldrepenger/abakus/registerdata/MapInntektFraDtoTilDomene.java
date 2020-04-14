@@ -1,19 +1,18 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
+import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
+import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltNæringsYtelseType;
+import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltPensjonTrygdType;
+import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseFraOffentligeType;
+import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektspostBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.NæringsinntektType;
-import no.nav.foreldrepenger.abakus.domene.iay.OffentligYtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.Opptjeningsnøkkel;
-import no.nav.foreldrepenger.abakus.domene.iay.PensjonTrygdType;
-import no.nav.foreldrepenger.abakus.domene.iay.YtelseInntektspostType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.SkatteOgAvgiftsregelType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
@@ -40,7 +39,6 @@ import java.util.stream.Collectors;
 public class MapInntektFraDtoTilDomene {
     private static final Logger LOGGER = LoggerFactory.getLogger(MapInntektFraDtoTilDomene.class);
     private VirksomhetTjeneste virksomhetTjeneste;
-    private KodeverkRepository kodeverkRepository;
     private AktørConsumer aktørConsumer;
 
     public MapInntektFraDtoTilDomene() {
@@ -48,10 +46,8 @@ public class MapInntektFraDtoTilDomene {
     }
 
     @Inject
-    protected MapInntektFraDtoTilDomene(KodeverkRepository kodeverkRepository,
-                                        VirksomhetTjeneste virksomhetTjeneste,
+    protected MapInntektFraDtoTilDomene(VirksomhetTjeneste virksomhetTjeneste,
                                         AktørConsumer aktørConsumer) {
-        this.kodeverkRepository = kodeverkRepository;
         this.virksomhetTjeneste = virksomhetTjeneste;
         this.aktørConsumer = aktørConsumer;
     }
@@ -60,7 +56,7 @@ public class MapInntektFraDtoTilDomene {
         InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder = inntektArbeidYtelseAggregatBuilder
             .getAktørInntektBuilder(aktørId);
 
-        InntektBuilder inntektBuilder = aktørInntektBuilder.getInntektBuilder(InntektsKilde.SIGRUN, null);
+        InntektBuilder inntektBuilder = aktørInntektBuilder.getInntektBuilder(InntektskildeType.SIGRUN, null);
 
         for (Map.Entry<IntervallEntitet, Map<InntektspostType, BigDecimal>> entry : map.entrySet()) {
             for (Map.Entry<InntektspostType, BigDecimal> type : entry.getValue().entrySet()) {
@@ -78,7 +74,7 @@ public class MapInntektFraDtoTilDomene {
 
     public void mapFraInntektskomponent(AktørId aktørId, InntektArbeidYtelseAggregatBuilder builder, InntektsInformasjon inntektsInformasjon) {
         InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder = builder.getAktørInntektBuilder(aktørId);
-        InntektsKilde kilde = inntektsInformasjon.getKilde();
+        InntektskildeType kilde = inntektsInformasjon.getKilde();
         aktørInntektBuilder.fjernInntekterFraKilde(kilde);
 
         inntektsInformasjon.getMånedsinntekterGruppertPåArbeidsgiver()
@@ -92,7 +88,7 @@ public class MapInntektFraDtoTilDomene {
     }
 
     private void leggTilYtelseInntekter(List<Månedsinntekt> ytelsesTrygdEllerPensjonInntekt, InntektArbeidYtelseAggregatBuilder builder, AktørId aktørId,
-                                        InntektsKilde inntektOpptjening) {
+                                        InntektskildeType inntektOpptjening) {
         final InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder = builder.getAktørInntektBuilder(aktørId);
         final InntektBuilder inntektBuilderForYtelser = aktørInntektBuilder.getInntektBuilderForYtelser(inntektOpptjening);
         ytelsesTrygdEllerPensjonInntekt.forEach(mi -> lagInntektsposterYtelse(mi, inntektBuilderForYtelser));
@@ -104,7 +100,7 @@ public class MapInntektFraDtoTilDomene {
     private void leggTilInntekterPåArbeidsforhold(InntektArbeidYtelseAggregatBuilder builder,
                                                   InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder,
                                                   Map<YearMonth, List<InntektsInformasjon.MånedsbeløpOgSkatteOgAvgiftsregel>> månedsinntekterGruppertPåArbeidsgiver,
-                                                  String arbeidsgiverIdentifikator, InntektsKilde inntektOpptjening) {
+                                                  String arbeidsgiverIdentifikator, InntektskildeType inntektOpptjening) {
 
         Arbeidsgiver arbeidsgiver;
         if (OrganisasjonsNummerValidator.erGyldig(arbeidsgiverIdentifikator)) {
@@ -146,7 +142,7 @@ public class MapInntektFraDtoTilDomene {
     private InntektBuilder byggInntekt(Map<YearMonth, List<InntektsInformasjon.MånedsbeløpOgSkatteOgAvgiftsregel>> inntekter,
                                        Arbeidsgiver arbeidsgiver,
                                        InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder,
-                                       InntektsKilde inntektOpptjening) {
+                                       InntektskildeType inntektOpptjening) {
         return byggInntekt(inntekter, arbeidsgiver, aktørInntektBuilder, inntektOpptjening, null);
     }
 
@@ -154,7 +150,7 @@ public class MapInntektFraDtoTilDomene {
     private InntektBuilder byggInntekt(Map<YearMonth, List<InntektsInformasjon.MånedsbeløpOgSkatteOgAvgiftsregel>> inntekter,
                                        Arbeidsgiver arbeidsgiver,
                                        InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder,
-                                       InntektsKilde inntektOpptjening, String opprineligUtbetalerId) {
+                                       InntektskildeType inntektOpptjening, String opprineligUtbetalerId) {
         InntektBuilder inntektBuilder = aktørInntektBuilder.getInntektBuilder(inntektOpptjening, new Opptjeningsnøkkel(arbeidsgiver));
 
         for (YearMonth måned : inntekter.keySet()) {
@@ -205,24 +201,23 @@ public class MapInntektFraDtoTilDomene {
             .medPeriode(måned.atDay(1), måned.atEndOfMonth())
             .medInntektspostType(InntektspostType.LØNN);
         if (OrganisasjonsNummerValidator.erGyldig(originalUtbetalerId)) {
-            inntektspostBuilder.medOpprinneligUtbetaler(originalUtbetalerId);
+            inntektspostBuilder.medOpprinneligUtbetalerOrgnr(originalUtbetalerId);
         }
 
         if (valgtSkatteOgAvgiftsregel.isPresent()) {
-            SkatteOgAvgiftsregelType skatteOgAvgiftsregelType = kodeverkRepository.finnForKodeverkEiersKode(SkatteOgAvgiftsregelType.class,
-                valgtSkatteOgAvgiftsregel.get());
+            SkatteOgAvgiftsregelType skatteOgAvgiftsregelType = SkatteOgAvgiftsregelType.finnForKodeverkEiersKode(valgtSkatteOgAvgiftsregel.get());
             inntektspostBuilder.medSkatteOgAvgiftsregelType(skatteOgAvgiftsregelType);
         }
 
         inntektBuilder.leggTilInntektspost(inntektspostBuilder);
     }
 
-    private YtelseInntektspostType mapTilKodeliste(Månedsinntekt månedsinntekt) {
+    private UtbetaltYtelseType mapTilKodeliste(Månedsinntekt månedsinntekt) {
         if (månedsinntekt.getPensjonKode() != null) {
-            return kodeverkRepository.finnForKodeverkEiersKode(PensjonTrygdType.class, månedsinntekt.getPensjonKode());
+            return UtbetaltPensjonTrygdType.finnForKodeverkEiersKode(månedsinntekt.getPensjonKode());
         } else if (månedsinntekt.getYtelseKode() != null) {
-            return kodeverkRepository.finnForKodeverkEiersKode(OffentligYtelseType.class, månedsinntekt.getYtelseKode());
+            return UtbetaltYtelseFraOffentligeType.finnForKodeverkEiersKode(månedsinntekt.getYtelseKode());
         }
-        return kodeverkRepository.finnForKodeverkEiersKode(NæringsinntektType.class, månedsinntekt.getNæringsinntektKode());
+        return UtbetaltNæringsYtelseType.finnForKodeverkEiersKode(månedsinntekt.getNæringsinntektKode());
     }
 }

@@ -1,18 +1,16 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
+import no.nav.abakus.iaygrunnlag.kodeverk.OrganisasjonType;
+import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseFraOffentligeType;
 import no.nav.foreldrepenger.abakus.domene.iay.AktørInntekt;
 import no.nav.foreldrepenger.abakus.domene.iay.Inntekt;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Inntektspost;
-import no.nav.foreldrepenger.abakus.domene.iay.OffentligYtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.VersjonType;
-import no.nav.foreldrepenger.abakus.domene.iay.YtelseInntektspostType;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektsKilde;
-import no.nav.foreldrepenger.abakus.domene.iay.kodeverk.InntektspostType;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.Organisasjonstype;
-import no.nav.foreldrepenger.abakus.domene.virksomhet.VirksomhetEntitet;
-import no.nav.foreldrepenger.abakus.kodeverk.KodeverkRepository;
+import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FrilansArbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
@@ -38,20 +36,18 @@ import static org.mockito.Mockito.when;
 public class MapInntektFraDtoTilDomeneTest {
 
     private VirksomhetTjeneste virksomhetTjeneste = mock(VirksomhetTjeneste.class);
-    private KodeverkRepository kodeverkRepository = mock(KodeverkRepository.class);;
     private AktørConsumer aktørConsumer = mock(AktørConsumer.class);;
     private MapInntektFraDtoTilDomene mapper;
 
     private static final AktørId FIKTIV_SØKER = AktørId.dummy();
     private static final String AG1 = "974625881";
     private static final String AG2 = "974625903";
-    private static final String AG3 = "974625911";
     private static final String FIKTIVT_FNR = "26089435241";
     private static final String FIKTIV_PRIVAT_AG = AktørId.dummy().getId();
 
     @Before
     public void setup() {
-        mapper = new MapInntektFraDtoTilDomene(kodeverkRepository, virksomhetTjeneste, aktørConsumer);
+        mapper = new MapInntektFraDtoTilDomene(virksomhetTjeneste, aktørConsumer);
     }
 
     @Test
@@ -61,7 +57,7 @@ public class MapInntektFraDtoTilDomeneTest {
         int beløp = 35_000;
         List<Månedsinntekt> månedsinntekter = new ArrayList<>();
         List<FrilansArbeidsforhold> arbeidsforhold = new ArrayList<>();
-        InntektsKilde kilde = InntektsKilde.INNTEKT_SAMMENLIGNING;
+        InntektskildeType kilde = InntektskildeType.INNTEKT_SAMMENLIGNING;
 
         månedsinntekter.addAll(lagInntekterForPeriode(YearMonth.of(2019,1), YearMonth.of(2019,5), beløp, AG1, ref));
 
@@ -95,7 +91,7 @@ public class MapInntektFraDtoTilDomeneTest {
         // Arrange
         List<Månedsinntekt> månedsinntekter = new ArrayList<>();
         List<FrilansArbeidsforhold> arbeidsforhold = new ArrayList<>();
-        InntektsKilde kilde = InntektsKilde.INNTEKT_SAMMENLIGNING;
+        InntektskildeType kilde = InntektskildeType.INNTEKT_SAMMENLIGNING;
 
         String ref1 = "REF-1";
         int beløp1 = 35_000;
@@ -138,7 +134,7 @@ public class MapInntektFraDtoTilDomeneTest {
         // Arrange
         List<Månedsinntekt> månedsinntekter = new ArrayList<>();
         List<FrilansArbeidsforhold> arbeidsforhold = new ArrayList<>();
-        InntektsKilde kilde = InntektsKilde.INNTEKT_SAMMENLIGNING;
+        InntektskildeType kilde = InntektskildeType.INNTEKT_SAMMENLIGNING;
 
         String ref1 = "REF-1";
         int beløp1 = 35_000;
@@ -154,7 +150,7 @@ public class MapInntektFraDtoTilDomeneTest {
         InntektsInformasjon inntektsInformasjon = new InntektsInformasjon(månedsinntekter, arbeidsforhold, kilde);
         InntektArbeidYtelseAggregatBuilder builder = InntektArbeidYtelseAggregatBuilder.oppdatere(Optional.empty(), VersjonType.REGISTER);
 
-        VirksomhetEntitet virksomhet = lagVirksomhet(AG1);
+        Virksomhet virksomhet = lagVirksomhet(AG1);
         when(virksomhetTjeneste.hentOgLagreOrganisasjonMedHensynTilJuridisk(AG1, LocalDate.of(2019,5,1))).thenReturn(virksomhet);
         when(virksomhetTjeneste.hentOgLagreOrganisasjonMedHensynTilJuridisk(AG2, LocalDate.of(2019,10,1))).thenReturn(virksomhet);
         when(virksomhetTjeneste.sjekkOmVirksomhetErOrgledd(any(String.class))).thenReturn(false);
@@ -181,7 +177,7 @@ public class MapInntektFraDtoTilDomeneTest {
         int beløp = 33_333;
         List<Månedsinntekt> månedsinntekter = new ArrayList<>();
         List<FrilansArbeidsforhold> arbeidsforhold = new ArrayList<>();
-        InntektsKilde kilde = InntektsKilde.INNTEKT_BEREGNING;
+        InntektskildeType kilde = InntektskildeType.INNTEKT_BEREGNING;
 
         månedsinntekter.addAll(lagInntekterForPeriode(YearMonth.of(2019,1), YearMonth.of(2019,5), beløp, FIKTIVT_FNR, ref));
 
@@ -216,7 +212,7 @@ public class MapInntektFraDtoTilDomeneTest {
         int beløp = 33_333;
         List<Månedsinntekt> månedsinntekter = new ArrayList<>();
         List<FrilansArbeidsforhold> arbeidsforhold = new ArrayList<>();
-        InntektsKilde kilde = InntektsKilde.INNTEKT_BEREGNING;
+        InntektskildeType kilde = InntektskildeType.INNTEKT_BEREGNING;
 
         månedsinntekter.addAll(lagInntekterForPeriodeForYtelse(YearMonth.of(2019,1), YearMonth.of(2019,5), beløp, AG1, ref, "foreldrepenger"));
 
@@ -225,7 +221,6 @@ public class MapInntektFraDtoTilDomeneTest {
 
         when(virksomhetTjeneste.hentOgLagreOrganisasjonMedHensynTilJuridisk(AG1, LocalDate.of(2019,5,1))).thenReturn(lagVirksomhet(AG1));
         when(virksomhetTjeneste.sjekkOmVirksomhetErOrgledd(any(String.class))).thenReturn(false);
-        when(kodeverkRepository.finnForKodeverkEiersKode(any(), any())).thenReturn(OffentligYtelseType.FORELDREPENGER);
 
         // Act
         mapper.mapFraInntektskomponent(FIKTIV_SØKER, builder, inntektsInformasjon);
@@ -243,10 +238,10 @@ public class MapInntektFraDtoTilDomeneTest {
         assertThat(inntekt.getInntektsKilde()).isEqualTo(kilde);
 
         assertThat(inntekt.getAlleInntektsposter()).hasSize(5);
-        verifiserInntektsposterForYtelse(månedsinntekter, inntekt.getAlleInntektsposter(), OffentligYtelseType.FORELDREPENGER);
+        verifiserInntektsposterForYtelse(månedsinntekter, inntekt.getAlleInntektsposter(), UtbetaltYtelseFraOffentligeType.FORELDREPENGER);
     }
 
-    private Inntekt verifiserInntekter(Collection<Inntekt> alleInntekter, String ag, InntektsKilde kilde) {
+    private Inntekt verifiserInntekter(Collection<Inntekt> alleInntekter, String ag, InntektskildeType kilde) {
         Inntekt inntekt = alleInntekter.stream().filter(i -> i.getArbeidsgiver().getIdentifikator().equals(ag)).findFirst().orElse(null);
         assertThat(inntekt).isNotNull();
         assertThat(inntekt.getInntektsKilde()).isEqualTo(kilde);
@@ -263,7 +258,7 @@ public class MapInntektFraDtoTilDomeneTest {
         });
     }
 
-    private void verifiserInntektsposterForYtelse(List<Månedsinntekt> månedsinntekter, Collection<Inntektspost> alleInntektsposter, YtelseInntektspostType ytelseType) {
+    private void verifiserInntektsposterForYtelse(List<Månedsinntekt> månedsinntekter, Collection<Inntektspost> alleInntektsposter, UtbetaltYtelseFraOffentligeType ytelseType) {
         månedsinntekter.forEach(inntekt -> {
             Inntektspost matchendeInntekt = alleInntektsposter.stream().filter(ip -> ip.getPeriode().inkluderer(inntekt.getMåned().atDay(1))).findFirst().orElse(null);
             assertThat(matchendeInntekt).isNotNull();
@@ -350,9 +345,9 @@ public class MapInntektFraDtoTilDomeneTest {
             .build();
     }
 
-    private VirksomhetEntitet lagVirksomhet(String orgnr) {
-        VirksomhetEntitet.Builder virk = new VirksomhetEntitet.Builder();
-        return virk.medNavn("test").medOrganisasjonstype(Organisasjonstype.VIRKSOMHET).medOrgnr(orgnr).build();
+    private Virksomhet lagVirksomhet(String orgnr) {
+        Virksomhet.Builder virk = new Virksomhet.Builder();
+        return virk.medNavn("test").medOrganisasjonstype(OrganisasjonType.VIRKSOMHET).medOrgnr(orgnr).build();
     }
 
 }
