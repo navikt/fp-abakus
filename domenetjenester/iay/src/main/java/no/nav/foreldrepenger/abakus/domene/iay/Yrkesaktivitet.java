@@ -80,6 +80,7 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
         this.arbeidType = yrkesaktivitet.getArbeidType();
         this.arbeidsgiver = yrkesaktivitet.getArbeidsgiver();
         this.arbeidsforholdRef = yrkesaktivitet.getArbeidsforholdRef();
+        this.navnArbeidsgiverUtland = yrkesaktivitet.getNavnArbeidsgiverUtland();
 
         this.aktivitetsAvtale = yrkesaktivitet.aktivitetsAvtale.stream().map(aa -> {
             AktivitetsAvtale aktivitetsAvtaleEntitet = new AktivitetsAvtale(aa);
@@ -92,6 +93,7 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
             permisjon.setYrkesaktivitet(this);
             return permisjon;
         }).collect(Collectors.toCollection(LinkedHashSet::new));
+        
     }
 
     @Override
