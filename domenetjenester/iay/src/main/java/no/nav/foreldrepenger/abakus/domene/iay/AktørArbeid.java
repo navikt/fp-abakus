@@ -64,15 +64,15 @@ public class AktørArbeid extends BaseEntitet implements IndexKey {
         this.aktørId = aktørArbeid1.getAktørId();
 
         this.yrkesaktiviter = aktørArbeid1.yrkesaktiviter.stream().map(yrkesaktivitet -> {
-            yrkesaktivitet.setAktørArbeid(this);
-            return yrkesaktivitet;
+            Yrkesaktivitet yrkes = new Yrkesaktivitet(yrkesaktivitet);
+            yrkes.setAktørArbeid(this);
+            return yrkes;
         }).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { getAktørId() };
-        return IndexKeyComposer.createKey(keyParts);
+        return IndexKeyComposer.createKey(getAktørId());
     }
 
     /**
