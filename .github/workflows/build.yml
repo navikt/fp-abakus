@@ -95,12 +95,12 @@ jobs:
             <tr><td>prod-fss</td><td>default</td></tr>
             </table>
       - name: Trigg deploy til t4
-          if: success()
-          uses: peter-evans/create-or-update-comment@v1
-          with:
-            token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-            issue-number: ${{ steps.createdeployissue.outputs.number }}
-            body: /promote dev-fss t4
+        if: success()
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+          issue-number: ${{ steps.createdeployissue.outputs.number }}
+          body: /promote dev-fss t4
       - name: Trigg deploy til preprod
         if: success()
         uses: peter-evans/create-or-update-comment@v1
@@ -109,18 +109,18 @@ jobs:
           issue-number: ${{ steps.createdeployissue.outputs.number }}
           body: /promote dev-fss q1
       - name: Trigger fpsak-autotest
-          if: success()
-          uses: peter-evans/repository-dispatch@v1
-          with:
-            token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-            repository: navikt/fpsak-autotest
-            event-type: fpsak-autotest
-            client-payload: '{ "trigger": "${{ github.repository }}", "version": "${{ env.TAG }}", "issue-number": "${{ steps.createdeployissue.outputs.number }}" }'
+        if: success()
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+          repository: navikt/fpsak-autotest
+          event-type: fpsak-autotest
+          client-payload: '{ "trigger": "${{ github.repository }}", "version": "${{ env.TAG }}", "issue-number": "${{ steps.createdeployissue.outputs.number }}" }'
       - name: Trigger verdikjedetester K9
-          if: success()
-          uses: peter-evans/repository-dispatch@v1
-          with:
-            token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-            repository: navikt/k9-verdikjede
-            event-type: saksbehandling-verdikjede
-            client-payload: '{ "trigger": "${{ github.repository }}", "version": "${{ env.TAG }}", "image": "${{ github.event.client_payload.github.payload.package.package_version.release.url }}"}'
+        if: success()
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+          repository: navikt/k9-verdikjede
+          event-type: saksbehandling-verdikjede
+          client-payload: '{ "trigger": "${{ github.repository }}", "version": "${{ env.TAG }}", "image": "${{ github.event.client_payload.github.payload.package.package_version.release.url }}"}'
