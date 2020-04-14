@@ -1,4 +1,4 @@
-package no.nav.abakus.topic;
+package no.nav.foreldrepenger.abakus.vedtak.kafka;
 
 import java.util.Objects;
 
@@ -23,11 +23,6 @@ public class Topic {
 
     public String getTopic() {
         return topic;
-    }
-
-    public String getTopicWithEnv(String env) {
-        Environment environment = Environment.valueOf(env);
-        return topic + "-" + environment.name();
     }
 
     public Serde getSerdeKey() {

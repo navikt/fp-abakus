@@ -70,6 +70,8 @@ spec:
       value: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443
     - name: KAFKA_SCHEMA_REGISTRY_URL
       value: http://kafka-schema-registry.tpa:8081
+    - name: KAFKA_FATTEVEDTAK_TOPIC
+      value: privat-familie-vedtakFattet-v1
     # Eksterne systemer
     - name: HENTINNTEKTLISTEBOLK_URL
       value: https://app.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk

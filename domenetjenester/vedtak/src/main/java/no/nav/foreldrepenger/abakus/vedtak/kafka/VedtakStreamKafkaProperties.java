@@ -3,9 +3,10 @@ package no.nav.foreldrepenger.abakus.vedtak.kafka;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import no.nav.abakus.topic.Topic;
-import no.nav.abakus.topic.TopicManifest;
+import org.apache.kafka.common.serialization.Serdes;
+
 import no.nav.vedtak.konfig.KonfigVerdi;
+import no.nav.vedtak.util.env.Namespace;
 
 @Dependent
 class VedtakStreamKafkaProperties {
@@ -22,13 +23,14 @@ class VedtakStreamKafkaProperties {
     @Inject
     VedtakStreamKafkaProperties(@KonfigVerdi("kafka.bootstrap.servers") String bootstrapServers,
                                 @KonfigVerdi("kafka.schema.registry.url") String schemaRegistryUrl,
+                                @KonfigVerdi("kafka.fattevedtak.topic") String topicName,
                                 @KonfigVerdi("systembruker.username") String username,
                                 @KonfigVerdi("systembruker.password") String password,
                                 @KonfigVerdi(value = "javax.net.ssl.trustStore", required = false) String trustStorePath,
                                 @KonfigVerdi(value = "javax.net.ssl.trustStorePassword", required = false) String trustStorePassword) {
         this.trustStorePath = trustStorePath;
         this.trustStorePassword = trustStorePassword;
-        this.topic = TopicManifest.FATTET_VEDTAK;
+        this.topic = new Topic(topicName, Serdes.String(), Serdes.String());
         this.applicationId = ApplicationIdUtil.get();
         this.bootstrapServers = bootstrapServers;
         this.schemaRegistryUrl = schemaRegistryUrl;

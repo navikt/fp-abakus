@@ -70,6 +70,8 @@ spec:
       value: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
     - name: KAFKA_SCHEMA_REGISTRY_URL
       value: https://kafka-test-schema-registry.nais.preprod.local
+    - name: KAFKA_FATTEVEDTAK_TOPIC
+      value: privat-familie-vedtakFattet-v1-q1
     #Eksterne systemer
     - name: HENTINNTEKTLISTEBOLK_URL
       value: https://app-q1.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk

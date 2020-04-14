@@ -67,10 +67,12 @@ spec:
       value: https://security-token-service.nais.preprod.local/rest/v1/sts/jwks
     #Generell Kafka
     - name: KAFKA_BOOTSTRAP_SERVERS
-      value: 26apvl00159.test.local:8443,d26apvl00160.test.local:8443,d26apvl00161.test.local:8443
+      value: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
     - name: KAFKA_SCHEMA_REGISTRY_URL
       value: https://kafka-test-schema-registry.nais.preprod.local
-    # Eksterne systemer
+    - name: KAFKA_FATTEVEDTAK_TOPIC
+      value: privat-familie-vedtakFattet-v1-t4
+    #Eksterne systemer
     - name: HENTINNTEKTLISTEBOLK_URL
       value: https://app-t4.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk
     - name: ARBEIDSFORHOLD_V3_URL
