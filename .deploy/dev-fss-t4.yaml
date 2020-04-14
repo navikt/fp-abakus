@@ -41,7 +41,7 @@ spec:
     enabled: true
     paths:
       - mountPath: /var/run/secrets/nais.io/serviceuser
-        kvPath: serviceuser/data/test/srvfpabakus
+        kvPath: serviceuser/data/dev/srvfpabakus
       - mountPath: /var/run/secrets/nais.io/vault
         kvPath: /kv/preprod/fss/fpabakus/t4
       - mountPath: /var/run/secrets/nais.io/appdynamics
