@@ -60,10 +60,8 @@ public class AktørArbeid extends BaseEntitet implements IndexKey {
      * Deep copy ctor
      */
     AktørArbeid(AktørArbeid aktørArbeid) {
-        final AktørArbeid aktørArbeid1 = aktørArbeid; // NOSONAR
-        this.aktørId = aktørArbeid1.getAktørId();
-
-        this.yrkesaktiviter = aktørArbeid1.yrkesaktiviter.stream().map(yrkesaktivitet -> {
+        this.aktørId = aktørArbeid.getAktørId();
+        this.yrkesaktiviter = aktørArbeid.yrkesaktiviter.stream().map(yrkesaktivitet -> {
             Yrkesaktivitet yrkes = new Yrkesaktivitet(yrkesaktivitet);
             yrkes.setAktørArbeid(this);
             return yrkes;

@@ -25,14 +25,17 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Set cache key
         run: |
-          echo "::set-env name=CACHE_KEY::$(date +%U)"
-      - uses: actions/cache@v1.1.0
+          echo "::set-env name=CACHE_KEY::$(expr $(date +%V) - 1 + 1)"
+          echo "::set-env name=PREVIOUS_CACHE_KEY::$(expr $(date +%V) - 1)"
+      - uses: actions/cache@v1.1.2
         with:
           path: ~/.m2
           key: ${{ runner.os }}-maven-${{ env.CACHE_KEY }}
+          restore-keys: |
+            ${{ runner.os }}-maven-${{ env.PREVIOUS_CACHE_KEY }}
       - uses: actions/setup-java@v1
         with:
           java-version: 1.11
@@ -40,13 +43,14 @@ jobs:
         shell: bash
         run: |
           echo "Building artifacts $(echo $GITHUB_SHA | cut -c1-7)"
-          mvn jacoco:prepare-agent deploy -e --batch-mode --settings ./.m2/settings.xml -Dmaven.wagon.http.pool=false --file pom.xml -Dchangelist= -Dsha1=-$(git log -1 --pretty='%ad' --date=format:'%Y%m%d%H%M%S')-$(echo $GITHUB_SHA | cut -c1-7) -Dfile.encoding=UTF-8 -DinstallAtEnd=true -DdeployAtEnd=true  -Djacoco.destFile=$(pwd)/target/jacoco.exec
-          mvn jacoco:report sonar:sonar -e --batch-mode --settings ./.m2/settings.xml --file pom.xml -Djacoco.dataFile=$(pwd)/target/jacoco.exec -Dsonar.projectKey="navikt_fp-abakus" -Dsonar.host.url='https://sonarcloud.io' -Dsonar.organization=navit -Dsonar.login=${SONAR_TOKEN}
+          mvn jacoco:prepare-agent deploy -e --quiet --batch-mode --settings ./.m2/settings.xml -Dmaven.wagon.http.pool=false --file pom.xml -Dchangelist= -Dsha1=-$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7) -Dfile.encoding=UTF-8 -DinstallAtEnd=true -DdeployAtEnd=true  -Djacoco.destFile=$(pwd)/target/jacoco.exec
+          mvn jacoco:report sonar:sonar -e --quiet --batch-mode --settings ./.m2/settings.xml --file pom.xml -Djacoco.dataFile=$(pwd)/target/jacoco.exec -Dsonar.projectKey="navikt_fp-abakus" -Dsonar.host.url='https://sonarcloud.io' -Dsonar.organization=navit -Dsonar.login=${SONAR_TOKEN}
           echo "::set-env name=MVN_VERSION::$(mvn help:evaluate --batch-mode --settings ./.m2/settings.xml --file .flattened -Dexpression=project.version -q -DforceStdout)"
           echo "Deployed artifacts"
-          echo ::set-env name=TAG::$(git log -1 --pretty='%ad' --date=format:'%Y%m%d%H%M%S')-$(echo $GITHUB_SHA | cut -c1-7)
-          echo ::set-env name=IMAGE::$IMAGE_BASE:$(git log -1 --pretty='%ad' --date=format:'%Y%m%d%H%M%S')-$(echo $GITHUB_SHA | cut -c1-7)
+          echo ::set-env name=TAG::$(mvn help:evaluate --batch-mode --settings ./.m2/settings.xml --file .flattened -Dexpression=project.version -q -DforceStdout)
+          echo ::set-env name=IMAGE::$IMAGE_BASE:$(mvn help:evaluate --batch-mode --settings ./.m2/settings.xml --file .flattened -Dexpression=project.version -q -DforceStdout)
         env:
+          TZ: "Europe/Oslo"
           GITHUB_USERNAME: x-access-token
           GITHUB_PASSWORD: ${{ secrets.GITHUB_ACCESS_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -90,10 +94,33 @@ jobs:
             <tr><td>dev-fss</td><td>q1, q0</td></tr>
             <tr><td>prod-fss</td><td>default</td></tr>
             </table>
-      - name: Trigg deploy til dev
+      - name: Trigg deploy til t4
+        if: success()
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+          issue-number: ${{ steps.createdeployissue.outputs.number }}
+          body: /promote dev-fss t4
+      - name: Trigg deploy til preprod
         if: success()
         uses: peter-evans/create-or-update-comment@v1
         with:
           token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
           issue-number: ${{ steps.createdeployissue.outputs.number }}
           body: /promote dev-fss q1
+      - name: Trigger fpsak-autotest
+        if: success()
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+          repository: navikt/fpsak-autotest
+          event-type: fpsak-autotest
+          client-payload: '{ "trigger": "${{ github.repository }}", "version": "${{ env.TAG }}", "issue-number": "${{ steps.createdeployissue.outputs.number }}" }'
+      - name: Trigger verdikjedetester K9
+        if: success()
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+          repository: navikt/k9-verdikjede
+          event-type: saksbehandling-verdikjede
+          client-payload: '{ "trigger": "${{ github.repository }}", "version": "${{ env.TAG }}", "image": "${{ github.event.client_payload.github.payload.package.package_version.release.url }}"}'
