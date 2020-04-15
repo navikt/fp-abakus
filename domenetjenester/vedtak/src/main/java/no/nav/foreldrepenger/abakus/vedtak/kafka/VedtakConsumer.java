@@ -119,7 +119,7 @@ public class VedtakConsumer implements KafkaIntegration, AppServiceHandler {
 
     @Override
     public boolean isAlive() {
-        return stream != null && stream.state().isRunning();
+        return stream != null && stream.state().isRunningOrRebalancing();
     }
 
     public String getTopic() {

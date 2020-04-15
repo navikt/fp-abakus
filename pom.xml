@@ -35,7 +35,7 @@
         <prosesstask.version>2.1.0-20200210093848-e657dd0</prosesstask.version>
 		<kontrakter.version>5.1_20200117132228_47cdf2f</kontrakter.version>
 		<swagger.version>2.1.2</swagger.version>
-		<kafka.version>2.4.1</kafka.version>
+		<kafka.version>2.5.0</kafka.version>
 	</properties>
 
 	<prerequisites>
@@ -88,13 +88,6 @@
 				<groupId>org.jboss.spec.javax.annotation</groupId>
 				<artifactId>jboss-annotations-api_1.3_spec</artifactId>
 				<version>2.0.1.Final</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.kontrakter.topics</groupId>
-				<artifactId>fp-topics</artifactId>
-				<version>${kontrakter.version}</version>
-				<scope>import</scope>
-				<type>pom</type>
 			</dependency>
 			<dependency>
 				<groupId>no.nav.foreldrepenger.abakus</groupId>
@@ -174,12 +167,6 @@
 				<groupId>org.apache.kafka</groupId>
 				<artifactId>kafka-clients</artifactId>
 				<version>${kafka.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>no.nav.foreldrepenger.kontrakter.topics</groupId>
-				<artifactId>fp-topics-manifest</artifactId>
-				<version>${kontrakter.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>no.nav</groupId>
