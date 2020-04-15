@@ -38,5 +38,4 @@ public class InntektsmeldingerDto {
         setInntektsmeldinger(inntektsmeldinger);
         return this;
     }
-
 }
