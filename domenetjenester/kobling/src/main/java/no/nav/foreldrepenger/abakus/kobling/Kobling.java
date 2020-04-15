@@ -20,13 +20,14 @@ import org.hibernate.annotations.NaturalId;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 
 @Entity(name = "Kobling")
 @Table(name = "KOBLING")
-public class Kobling extends no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet implements IndexKey {
+public class Kobling extends BaseEntitet implements IndexKey {
 
     /**
      * Abakus intern kobling_id.
@@ -111,12 +112,10 @@ public class Kobling extends no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet
         return aktørId;
     }
 
+    /** Skal ikke brukes lenger og fjernes i en senere release. */
+    @Deprecated(forRemoval = true)
     public Optional<AktørId> getAnnenPartAktørId() {
         return Optional.ofNullable(annenPartAktørId);
-    }
-
-    public void setAnnenPartAktørId(AktørId annenPartAktørId) {
-        this.annenPartAktørId = annenPartAktørId;
     }
 
     public LocalDate getSkjæringstidspunkt() {

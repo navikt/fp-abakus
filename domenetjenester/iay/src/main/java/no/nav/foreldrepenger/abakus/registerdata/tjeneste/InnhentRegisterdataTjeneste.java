@@ -119,10 +119,6 @@ public class InnhentRegisterdataTjeneste {
             }
         }
         // Oppdater kobling
-        Aktør annenPartAktør = dto.getAnnenPartAktør();
-        if (annenPartAktør != null) {
-            kobling.setAnnenPartAktørId(new AktørId(annenPartAktør.getIdent()));
-        }
         Periode opplysningsperiode = dto.getOpplysningsperiode();
         if (opplysningsperiode != null) {
             kobling.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(opplysningsperiode.getFom(), opplysningsperiode.getTom()));
