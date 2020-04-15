@@ -50,16 +50,16 @@ spec:
     - name: LOADBALANCER_URL
       value: https://fpabakus-t4.nais.preprod.local
     - name: ABAC_PDP_ENDPOINT_URL
-      value: https://wasapp-t4.adeo.no/asm-pdp/authorize
+      value: https://wasapp-q1.adeo.no/asm-pdp/authorize
     - name: SECURITYTOKENSERVICE_URL
-      value: https://sts-t4.test.local/SecurityTokenServiceProvider/
+      value: https://sts-q1.preprod.local/SecurityTokenServiceProvider/
     #OpenID
     - name: OPENIDCONNECT_ISSOHOST
-      value: https://isso-t.adeo.no:443/isso/oauth2
+      value: https://isso-q.adeo.no:443/isso/oauth2
     - name: OPENIDCONNECT_ISSOISSUER
-      value: https://isso-t.adeo.no:443/isso/oauth2
+      value: https://isso-q.adeo.no:443/isso/oauth2
     - name: OPENIDCONNECT_ISSOJWKS
-      value: https://isso-t.adeo.no:443/isso/oauth2/connect/jwk_uri
+      value: https://isso-q.adeo.no:443/isso/oauth2/connect/jwk_uri
     #OIDC
     - name: OIDC_STS_ISSUERURL
       value: https://security-token-service.nais.preprod.local
