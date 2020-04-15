@@ -27,9 +27,8 @@ public class OppgittFrilansoppdragDto {
     @Valid
     private Periode periode;
 
-    @JsonProperty(value="oppdragsgiver", required = true)
+    @JsonProperty(value="oppdragsgiver")
     @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message="'${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
-    @NotNull
     private String oppdragsgiver;
 
     /** Tillater kun positive verdier.  Max verdi håndteres av mottager. */
