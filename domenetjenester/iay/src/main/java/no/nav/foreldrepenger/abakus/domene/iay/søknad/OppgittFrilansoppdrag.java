@@ -1,7 +1,9 @@
 package no.nav.foreldrepenger.abakus.domene.iay.søknad;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,12 +39,16 @@ public class OppgittFrilansoppdrag extends BaseEntitet implements IndexKey {
     @ChangeTracked
     private IntervallEntitet periode;
 
+    @Column(name = "inntekt")
+    private BigDecimal inntekt;
+
     OppgittFrilansoppdrag() {
     }
 
-    public OppgittFrilansoppdrag(String oppdragsgiver, IntervallEntitet periode) {
+    public OppgittFrilansoppdrag(String oppdragsgiver, IntervallEntitet periode, BigDecimal inntekt) {
         this.oppdragsgiver = oppdragsgiver;
         this.periode = periode;
+        this.inntekt = inntekt;
     }
 
     @Override
@@ -68,7 +74,7 @@ public class OppgittFrilansoppdrag extends BaseEntitet implements IndexKey {
             Objects.equals(oppdragsgiver, that.oppdragsgiver) &&
             Objects.equals(periode, that.periode);
     }
-    
+
 
     @Override
     public int hashCode() {
@@ -94,5 +100,9 @@ public class OppgittFrilansoppdrag extends BaseEntitet implements IndexKey {
 
     public void setFrilans(OppgittFrilans frilans) {
         this.frilans = frilans;
+    }
+
+    public BigDecimal getInntekt() {
+        return inntekt;
     }
 }

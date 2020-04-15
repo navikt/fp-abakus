@@ -172,7 +172,11 @@ public class MapOppgittOpptjening {
 
             var periode = new Periode(frilansoppdrag.getPeriode().getFomDato(), frilansoppdrag.getPeriode().getTomDato());
             var oppdragsgiver = frilansoppdrag.getOppdragsgiver();
-            return new OppgittFrilansoppdragDto(periode, oppdragsgiver);
+            OppgittFrilansoppdragDto oppgittFrilansoppdragDto = new OppgittFrilansoppdragDto(periode, oppdragsgiver);
+            if (frilansoppdrag.getInntekt() != null) {
+                return oppgittFrilansoppdragDto.medInntekt(frilansoppdrag.getInntekt());
+            }
+            return oppgittFrilansoppdragDto;
         }
 
         private OppgittAnnenAktivitetDto mapAnnenAktivitet(OppgittAnnenAktivitet annenAktivitet) {
@@ -183,7 +187,6 @@ public class MapOppgittOpptjening {
             var arbeidType = annenAktivitet.getArbeidType();
             return new OppgittAnnenAktivitetDto(periode, arbeidType);
         }
-
     }
 
     private class MapFraDto {
@@ -234,7 +237,7 @@ public class MapOppgittOpptjening {
 
             var frilansoppdrag = mapEach(dto.getFrilansoppdrag(),
                 f -> new OppgittFrilansoppdrag(f.getOppdragsgiver(),
-                    IntervallEntitet.fraOgMedTilOgMed(f.getPeriode().getFom(), f.getPeriode().getTom())));
+                    IntervallEntitet.fraOgMedTilOgMed(f.getPeriode().getFom(), f.getPeriode().getTom()), f.getInntekt()));
             frilans.setFrilansoppdrag(frilansoppdrag);
             return frilans;
         }
