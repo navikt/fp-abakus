@@ -41,7 +41,7 @@ spec:
     enabled: true
     paths:
       - mountPath: /var/run/secrets/nais.io/serviceuser
-        kvPath: serviceuser/data/dev/srvfpabakus
+        kvPath: serviceuser/data/test/srvfpabakus
       - mountPath: /var/run/secrets/nais.io/vault
         kvPath: /kv/preprod/fss/fpabakus/t4
       - mountPath: /var/run/secrets/nais.io/appdynamics
@@ -67,7 +67,7 @@ spec:
       value: https://security-token-service.nais.preprod.local/rest/v1/sts/jwks
     #Generell Kafka
     - name: KAFKA_BOOTSTRAP_SERVERS
-      value: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
+      value: 26apvl00159.test.local:8443,d26apvl00160.test.local:8443,d26apvl00161.test.local:8443
     - name: KAFKA_SCHEMA_REGISTRY_URL
       value: https://kafka-test-schema-registry.nais.preprod.local
     - name: KAFKA_FATTEVEDTAK_TOPIC
