@@ -32,7 +32,7 @@
 
 		<prometheus.version>0.8.1</prometheus.version>
         <felles.version>1.6-20200401094715-c18d662</felles.version>
-        <prosesstask.version>2.1.0-20200210093848-e657dd0</prosesstask.version>
+        <prosesstask.version>2.3-20200416081441-06b31dc</prosesstask.version>
 		<kontrakter.version>5.1_20200117132228_47cdf2f</kontrakter.version>
 		<swagger.version>2.1.2</swagger.version>
 		<kafka.version>2.5.0</kafka.version>
