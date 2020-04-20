@@ -1,6 +1,8 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste;
 
+import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
+import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.UPDATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
 import java.time.LocalDate;
@@ -157,9 +159,9 @@ public class GrunnlagRestTjeneste {
         responses = {
             @ApiResponse(responseCode = "200", description = "Mottatt grunnlaget")
         })
-    @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = UPDATE, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response oppdaterGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagAbacDto dto) {
+    public Response oppdaterOgLagreGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagAbacDto dto) {
 
         var aktørId = new AktørId(dto.getPerson().getIdent());
 
@@ -217,9 +219,9 @@ public class GrunnlagRestTjeneste {
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Kopier grunnlag",
         tags = "iay-grunnlag")
-    @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = CREATE, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response kopierGrunnlag(@NotNull @Valid KopierGrunnlagRequestAbac request) {
+    public Response kopierOgLagreGrunnlag(@NotNull @Valid KopierGrunnlagRequestAbac request) {
         var ref = new KoblingReferanse(request.getNyReferanse());
         var koblingLås = koblingTjeneste.taSkrivesLås(ref); // alltid ta lås før skrive operasjoner
 
