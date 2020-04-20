@@ -14,6 +14,7 @@ COPY web/target/lib/*.jar ./
 
 ENV JAVA_OPTS="-Xmx1024m -Xms128m \
     -Djava.security.egd=file:/dev/urandom \
+    -Duser.timezone=Europe/Oslo \
     -Dlogback.configurationFile=conf/logback.xml"
 
 # Export vault properties

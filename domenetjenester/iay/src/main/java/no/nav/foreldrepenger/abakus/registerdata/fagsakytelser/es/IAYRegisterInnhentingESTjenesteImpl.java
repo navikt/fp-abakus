@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.registerdata.es;
+package no.nav.foreldrepenger.abakus.registerdata.fagsakytelser.es;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
