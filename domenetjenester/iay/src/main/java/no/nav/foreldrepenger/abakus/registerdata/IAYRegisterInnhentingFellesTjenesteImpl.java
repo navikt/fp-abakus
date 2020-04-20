@@ -34,7 +34,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektspostBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Opptjeningsnøkkel;
 import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyring;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
@@ -61,9 +60,9 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
 
     public static final Map<RegisterdataElement, InntektskildeType> ELEMENT_TIL_INNTEKTS_KILDE_MAP = Map.of(RegisterdataElement.INNTEKT_PENSJONSGIVENDE, InntektskildeType.INNTEKT_OPPTJENING, RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG, InntektskildeType.INNTEKT_BEREGNING, RegisterdataElement.INNTEKT_SAMMENLIGNINGSGRUNNLAG, InntektskildeType.INNTEKT_SAMMENLIGNING);
     private static final Logger LOGGER = LoggerFactory.getLogger(IAYRegisterInnhentingFellesTjenesteImpl.class);
+    protected InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste;
     private VirksomhetTjeneste virksomhetTjeneste;
     private YtelseRegisterInnhenting ytelseRegisterInnhenting;
-    private InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste;
     private InnhentingSamletTjeneste innhentingSamletTjeneste;
     private ByggYrkesaktiviteterTjeneste byggYrkesaktiviteterTjeneste;
     private AktørConsumer aktørConsumer;
@@ -114,14 +113,8 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         // Arbeidsforhold & inntekter
         Set<ArbeidsforholdIdentifikator> innhentetArbeidsforhold = innhentArbeidsforhold(kobling, builder, informasjonsElementer);
 
-        if (skalInnhenteNæringsInntekterFor(kobling) && informasjonsElementer.contains(RegisterdataElement.LIGNET_NÆRING)) {
-            boolean søkerHarOppgittEgenNæring = inntektArbeidYtelseTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse())
-                .flatMap(InntektArbeidYtelseGrunnlag::getOppgittOpptjening)
-                .map(oppgittOpptjening -> !oppgittOpptjening.getEgenNæring().isEmpty())
-                .orElse(false);
-            if (søkerHarOppgittEgenNæring) {
-                innhentNæringsOpplysninger(kobling, builder);
-            }
+        if (informasjonsElementer.contains(RegisterdataElement.LIGNET_NÆRING) && skalInnhenteNæringsInntekterFor(kobling)) {
+            innhentNæringsOpplysninger(kobling, builder);
         }
         // Ytelser
         if (informasjonsElementer.contains(RegisterdataElement.YTELSE)) {
@@ -138,14 +131,6 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
             .medInformasjon(informasjonBuilder.build());
 
         return grunnlagBuilder;
-    }
-
-    private List<ArbeidsforholdOverstyring> finnOverstyringerForBortfalteArbeidsforhold(Set<ArbeidsforholdIdentifikator> innhentetArbeidsforhold, ArbeidsforholdInformasjon informasjon) {
-        return informasjon.getOverstyringer().stream()
-            .filter(ov -> innhentetArbeidsforhold.stream()
-                .noneMatch(arbeid -> arbeid.getArbeidsgiver().getIdentifikator().equals(ov.getArbeidsgiver().getIdentifikator())
-                    && (arbeid.harArbeidsforholdRef() && arbeid.getArbeidsforholdId().gjelderFor(informasjon.finnEkstern(ov.getArbeidsgiver(), ov.getArbeidsforholdRef())))))
-            .collect(Collectors.toList());
     }
 
     private void innhentYtelser(Kobling kobling, InntektArbeidYtelseAggregatBuilder builder) {
