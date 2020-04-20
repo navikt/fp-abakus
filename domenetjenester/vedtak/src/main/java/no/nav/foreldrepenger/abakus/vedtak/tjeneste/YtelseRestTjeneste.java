@@ -53,7 +53,7 @@ public class YtelseRestTjeneste {
     @Operation(description = "Lagrer ytelse vedtak", tags = "ytelse")
     @BeskyttetRessurs(action = CREATE, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response arbeidsforholdForReferanse(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid Ytelse request) {
+    public Response lagreVedtakk(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid Ytelse request) {
 
         VedtakYtelseBuilder builder = extractor.extractFrom((YtelseV1) request);
 
