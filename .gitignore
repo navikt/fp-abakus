@@ -35,3 +35,4 @@ dep.txt
 app.properties
 app-local.properties
 .DS_Store
+/lsp/
