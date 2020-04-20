@@ -12,13 +12,13 @@ spec:
     - "https://fpabakus.nais.adeo.no/"
   liveness:
     path: "/fpabakus/internal/isAlive"
-    initialDelay: 30
+    initialDelay: 25
     timeout: 5
     periodSeconds: 10
     failureThreshold: 27
   readiness:
     path: "/fpabakus/internal/isReady"
-    initialDelay: 30
+    initialDelay: 25
     timeout: 5
     periodSeconds: 10
     failureThreshold: 27
@@ -26,8 +26,8 @@ spec:
     enabled: true
     path: "/fpabakus/internal/metrics/prometheus"
   replicas:
-    min: 2
-    max: 3
+    min: 4
+    max: 6
     cpuThresholdPercentage: 80
   preStopHookPath: "/fpabakus/internal/preStop"
   resources:
@@ -42,8 +42,6 @@ spec:
     paths:
       - mountPath: /var/run/secrets/nais.io/serviceuser
         kvPath: serviceuser/data/prod/srvfpabakus
-      - mountPath: /var/run/secrets/nais.io/vault
-        kvPath: /kv/prod/fss/fpabakus/default
       - mountPath: /var/run/secrets/nais.io/appdynamics
         kvPath: /apikey/appdynamics/prod
   env:
