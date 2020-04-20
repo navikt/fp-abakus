@@ -65,7 +65,7 @@ public class InntektsmeldingerRestTjenesteTest {
                 .medKildesystem("Altinn")));
         InntektsmeldingerMottattRequest request = new InntektsmeldingerMottattRequest(SAKSNUMMER, UUID.randomUUID(), new AktørIdPersonident("1234123412341"), im);
 
-        UuidDto uuidDto = tjeneste.mottaInntektsmeldinger(request);
+        UuidDto uuidDto = tjeneste.lagreInntektsmeldinger(request);
 
         assertThat(uuidDto).isNotNull();
 
