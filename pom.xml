@@ -16,8 +16,8 @@
 		<module>migreringer</module>
 		<module>kodeverk</module>
 		<module>kontrakt</module>
-		<module>web</module>
 		<module>domenetjenester</module>
+		<module>web</module>
 	</modules>
 
 	<properties>
@@ -31,7 +31,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<prometheus.version>0.8.1</prometheus.version>
-        <felles.version>1.6-20200401094715-c18d662</felles.version>
+        <felles.version>1.6-20200413054738-70a4093</felles.version>
         <prosesstask.version>2.1.0-20200210093848-e657dd0</prosesstask.version>
 		<kontrakter.version>5.1_20200117132228_47cdf2f</kontrakter.version>
 		<swagger.version>2.1.2</swagger.version>

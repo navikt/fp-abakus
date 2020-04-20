@@ -12,15 +12,15 @@ spec:
     - "https://fpabakus-q1.nais.preprod.local/"
   liveness:
     path: "/fpabakus/internal/isAlive"
-    initialDelay: 30
+    initialDelay: 25
     timeout: 5
-    periodSeconds: 10
+    periodSeconds: 7
     failureThreshold: 27
   readiness:
     path: "/fpabakus/internal/isReady"
-    initialDelay: 30
+    initialDelay: 25
     timeout: 5
-    periodSeconds: 10
+    periodSeconds: 7
     failureThreshold: 27
   prometheus:
     enabled: true
@@ -42,8 +42,6 @@ spec:
     paths:
       - mountPath: /var/run/secrets/nais.io/serviceuser
         kvPath: serviceuser/data/dev/srvfpabakus
-      - mountPath: /var/run/secrets/nais.io/vault
-        kvPath: /kv/preprod/fss/fpabakus/q1
       - mountPath: /var/run/secrets/nais.io/appdynamics
         kvPath: /apikey/appdynamics/dev
   env:
