@@ -105,7 +105,7 @@ public class InntektsmeldingerRestTjeneste {
     @Path("/hentRefusjonskravDatoer")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Hent inntektsmeldinger for angitt søke spesifikasjon", tags = "inntektsmelding")
+    @Operation(description = "Hent refusjonskrav fra inntektsmeldinger for angitt søke spesifikasjon", tags = "inntektsmelding")
     @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentRefusjonskravDatoForSak(@NotNull @Valid InntektsmeldingerRequestAbacDto spesifikasjon) {
@@ -125,7 +125,7 @@ public class InntektsmeldingerRestTjeneste {
 
     @POST
     @Path("/motta")
-    @Operation(description = "Motta inntektsmelding(er)", tags = "inntektsmelding",
+    @Operation(description = "Motta og lagre inntektsmelding(er)", tags = "inntektsmelding",
         responses = {
             @ApiResponse(description = "Oppdatert grunnlagreferanse",
                 content = @Content(mediaType = "application/json",
