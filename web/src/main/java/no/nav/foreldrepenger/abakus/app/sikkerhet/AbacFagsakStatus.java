@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.jetty.sikkerhet;
+package no.nav.foreldrepenger.abakus.app.sikkerhet;
 
 public enum AbacFagsakStatus {
     OPPRETTET("Opprettet"),

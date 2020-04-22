@@ -1,6 +1,6 @@
-package no.nav.foreldrepenger.abakus.sikkerhet;
+package no.nav.foreldrepenger.abakus.app.sikkerhet;
 
-import static no.nav.foreldrepenger.abakus.sikkerhet.FileUtils.putInTempFile;
+import static no.nav.foreldrepenger.abakus.app.sikkerhet.FileUtils.putInTempFile;
 
 import java.io.InputStream;
 

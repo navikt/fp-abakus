@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.jetty.sikkerhet;
+package no.nav.foreldrepenger.abakus.app.sikkerhet;
 
 import javax.annotation.Priority;
 import javax.enterprise.context.ApplicationScoped;
@@ -19,7 +19,8 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 // HACK - FORDI DENNE KOLLIDERER MED DUMMYREQUESTBUILDER FRA FELLES-SIKKERHET-TESTUTILITIES NÅR VI KJØRER JETTY
 public class PdpRequestBuilderImpl implements PdpRequestBuilder {
 
-    public static final String ABAC_DOMAIN = "foreldrepenger";
+    public static final String ABAC_DOMAIN = "duplo";
+    public static final String PEP_ID = "abakus";
 
     @Override
     public PdpRequest lagPdpRequest(AbacAttributtSamling attributter) {
@@ -27,6 +28,7 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
         pdpRequest.put(PdpKlient.ENVIRONMENT_AUTH_TOKEN, attributter.getIdToken());
         pdpRequest.put(AbacAttributter.XACML_1_0_ACTION_ACTION_ID, attributter.getActionType().getEksternKode());
         pdpRequest.put(AbacAttributter.RESOURCE_FELLES_DOMENE, ABAC_DOMAIN);
+        pdpRequest.put(AbacAttributter.RESOURCE_FELLES_PEP_ID, PEP_ID);
         pdpRequest.put(AbacAttributter.RESOURCE_FELLES_RESOURCE_TYPE, attributter.getResource());
         pdpRequest.put(AbacAttributter.RESOURCE_FELLES_PERSON_AKTOERID_RESOURCE, attributter.getVerdier(StandardAbacAttributtType.AKTØR_ID));
         pdpRequest.put(AbacAttributter.RESOURCE_FELLES_PERSON_FNR, attributter.getVerdier(StandardAbacAttributtType.FNR));

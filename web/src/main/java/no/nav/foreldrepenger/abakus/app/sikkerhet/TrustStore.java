@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.sikkerhet;
+package no.nav.foreldrepenger.abakus.app.sikkerhet;
 
 import java.util.Properties;
 

@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.sikkerhet;
+package no.nav.foreldrepenger.abakus.app.sikkerhet;
 
 import static java.io.File.createTempFile;
 import static java.lang.System.currentTimeMillis;
