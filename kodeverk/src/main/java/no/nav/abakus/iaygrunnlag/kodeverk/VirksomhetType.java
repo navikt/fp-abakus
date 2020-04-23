@@ -16,9 +16,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public enum VirksomhetType implements Kodeverdi {
 
     DAGMAMMA("DAGMAMMA", "Dagmamma i eget hjem/familiebarnehage"),
-    ENKELTPERSONFORETAK("ENK", "Enkeltpersonforetak"),
     FISKE("FISKE", "Fiske"),
-    FRILANSER("FRILANSER", "Frilanser"),
     JORDBRUK_SKOGBRUK("JORDBRUK_SKOGBRUK", "Jordbruk"),
     ANNEN("ANNEN", "Annen næringsvirksomhet"),
     UDEFINERT("-", "Ikke definert"),
