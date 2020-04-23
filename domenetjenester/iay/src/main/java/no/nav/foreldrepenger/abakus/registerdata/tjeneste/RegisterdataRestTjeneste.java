@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata.tjeneste;
 
+import static no.nav.foreldrepenger.abakus.iay.sikkerhet.AbakusBeskyttetRessursAttributt.REGISTERDATA;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
@@ -67,7 +68,7 @@ public class RegisterdataRestTjeneste {
     @Path("/innhent/sync")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(description = "Trigger registerinnhenting for en gitt id", tags = "registerinnhenting")
-    @BeskyttetRessurs(action = CREATE, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = CREATE, resource = REGISTERDATA, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentOgLagreRegisterdataSync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
         Optional<GrunnlagReferanse> innhent = innhentTjeneste.innhent(dto);
@@ -81,7 +82,7 @@ public class RegisterdataRestTjeneste {
     @Path("/innhent/async")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(description = "Trigger registerinnhenting for en gitt id", tags = "registerinnhenting")
-    @BeskyttetRessurs(action = CREATE, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = CREATE, resource = REGISTERDATA, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentOgLagreRegisterdataAsync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
         String taskGruppe = innhentTjeneste.triggAsyncInnhent(dto);
@@ -96,7 +97,7 @@ public class RegisterdataRestTjeneste {
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(description = "Sjekker innhentingFerdig på async innhenting og gir siste referanseid på grunnlaget når tasken er ferdig. " +
         "Hvis ikke innhentingFerdig", tags = "registerinnhenting")
-    @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = READ, resource = REGISTERDATA, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentAsyncStatus(@Parameter(name = "status") @Valid SjekkStatusAbacDto dto) {
         if (innhentTjeneste.innhentingFerdig(dto.getTaskReferanse())) {

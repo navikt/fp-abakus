@@ -1,7 +1,7 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste;
 
+import static no.nav.foreldrepenger.abakus.iay.sikkerhet.AbakusBeskyttetRessursAttributt.SØKNAD;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
 import java.util.function.Function;
@@ -66,7 +66,7 @@ public class OppgittOpptjeningRestTjeneste {
             content = @Content(mediaType = "application/json",
                 schema = @Schema(implementation = UuidDto.class)))
     })
-    @BeskyttetRessurs(action = CREATE, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = CREATE, resource = SØKNAD, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response lagreOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
 
