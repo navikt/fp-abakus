@@ -21,11 +21,11 @@ public class JsonMappingExceptionMapper implements ExceptionMapper<JsonMappingEx
 
     @Override
     public Response toResponse(JsonMappingException exception) {
-        Feil feil = JsonMappingFeil.FACTORY.jsonMappingFeil(exception);
+        Feil feil = JsonMappingFeil.FACTORY.jsonMappingFeil(exception.getMessage(), exception);
         feil.log(log);
         return Response
                 .status(Response.Status.BAD_REQUEST)
-                .entity(new FeilDto(feil.getFeilmelding()))
+                .entity(new FeilDto(FeilType.GENERELL_FEIL, feil.getFeilmelding()))
                 .type(MediaType.APPLICATION_JSON)
                 .build();
     }
@@ -35,8 +35,8 @@ public class JsonMappingExceptionMapper implements ExceptionMapper<JsonMappingEx
 
         JsonMappingFeil FACTORY = FeilFactory.create(JsonMappingFeil.class);
 
-        @TekniskFeil(feilkode = "FP-252294", feilmelding = "JSON-mapping feil", logLevel = LogLevel.WARN)
-        Feil jsonMappingFeil(JsonMappingException cause);
+        @TekniskFeil(feilkode = "FP-252294", feilmelding = "JSON-mapping feil: %s", logLevel = LogLevel.WARN)
+        Feil jsonMappingFeil(String message, JsonMappingException cause);
     }
 
 }
