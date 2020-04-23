@@ -31,7 +31,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<prometheus.version>0.8.1</prometheus.version>
-    <felles.version>1.6-20200413054738-70a4093</felles.version>
+    <felles.version>1.6-20200423091725-226a77e</felles.version>
     <prosesstask.version>2.3-20200418104242-e97b13c</prosesstask.version>
 		<kontrakter.version>5.1_20200117132228_47cdf2f</kontrakter.version>
 		<swagger.version>2.1.2</swagger.version>
