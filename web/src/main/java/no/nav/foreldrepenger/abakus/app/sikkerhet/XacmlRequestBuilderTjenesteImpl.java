@@ -52,7 +52,6 @@ public class XacmlRequestBuilderTjenesteImpl implements XacmlRequestBuilderTjene
     private XacmlAttributeSet byggRessursAttributter(PdpRequest pdpRequest, Tuple<String, String> ident) {
         XacmlAttributeSet resourceAttributeSet = new XacmlAttributeSet();
         resourceAttributeSet.addAttribute(AbacAttributter.RESOURCE_FELLES_DOMENE, pdpRequest.getString(AbacAttributter.RESOURCE_FELLES_DOMENE));
-        resourceAttributeSet.addAttribute(AbacAttributter.RESOURCE_FELLES_PEP_ID, pdpRequest.getString(AbacAttributter.RESOURCE_FELLES_PEP_ID));
         resourceAttributeSet.addAttribute(AbacAttributter.RESOURCE_FELLES_RESOURCE_TYPE, pdpRequest.getString(AbacAttributter.RESOURCE_FELLES_RESOURCE_TYPE));
         resourceAttributeSet.addAttribute(AbacAttributter.RESOURCE_FORELDREPENGER_SAK_SAKSSTATUS, pdpRequest.getString(AbacAttributter.RESOURCE_FORELDREPENGER_SAK_SAKSSTATUS));
         resourceAttributeSet.addAttribute(AbacAttributter.RESOURCE_FORELDREPENGER_SAK_BEHANDLINGSSTATUS, pdpRequest.getString(AbacAttributter.RESOURCE_FORELDREPENGER_SAK_BEHANDLINGSSTATUS));

@@ -7,7 +7,6 @@ public class AbacAttributter {
     public static final String RESOURCE_FELLES_PERSON_FNR = "no.nav.abac.attributter.resource.felles.person.fnr";
     public static final String RESOURCE_FELLES_DOMENE = "no.nav.abac.attributter.resource.felles.domene";
     public static final String RESOURCE_FELLES_RESOURCE_TYPE = "no.nav.abac.attributter.resource.felles.resource_type";
-    public static final String RESOURCE_FELLES_PEP_ID = "no.nav.abac.attributter.environment.felles.pep_id";
 
     public static final String RESOURCE_FORELDREPENGER_SAK_SAKSSTATUS = "no.nav.abac.attributter.resource.foreldrepenger.sak.saksstatus";
     public static final String RESOURCE_FORELDREPENGER_SAK_BEHANDLINGSSTATUS = "no.nav.abac.attributter.resource.foreldrepenger.sak.behandlingsstatus";
