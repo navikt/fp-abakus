@@ -48,7 +48,7 @@ spec:
     - name: LOADBALANCER_URL
       value: https://fpabakus-t4.nais.preprod.local
     - name: ABAC_PDP_ENDPOINT_URL
-      value: http://abac-duplo/application/authorize
+      value: http://abac-duplo.q1/application/authorize
     - name: SECURITYTOKENSERVICE_URL
       value: https://sts-t4.test.local/SecurityTokenServiceProvider/
     #OpenID
