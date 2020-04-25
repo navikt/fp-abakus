@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.vedtak.tjeneste;
 
+import static no.nav.foreldrepenger.abakus.vedtak.sikkerhet.VedtakBeskyttetRessursAttributt.VEDTAK;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
@@ -51,7 +52,7 @@ public class YtelseRestTjeneste {
     @Path("/vedtatt")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(description = "Lagrer ytelse vedtak", tags = "ytelse")
-    @BeskyttetRessurs(action = CREATE, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = CREATE, resource = VEDTAK, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response lagreVedtakk(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid Ytelse request) {
 

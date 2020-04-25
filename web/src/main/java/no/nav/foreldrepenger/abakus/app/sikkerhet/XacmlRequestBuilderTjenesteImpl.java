@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.jetty.sikkerhet;
+package no.nav.foreldrepenger.abakus.app.sikkerhet;
 
 import java.util.HashSet;
 import java.util.Set;

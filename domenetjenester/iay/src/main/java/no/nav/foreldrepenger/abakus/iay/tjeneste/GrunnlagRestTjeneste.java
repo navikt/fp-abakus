@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste;
 
+import static no.nav.foreldrepenger.abakus.iay.sikkerhet.AbakusBeskyttetRessursAttributt.GRUNNLAG;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.UPDATE;
@@ -41,7 +42,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.FnrPersonident;
 import no.nav.abakus.iaygrunnlag.Periode;
@@ -109,7 +109,7 @@ public class GrunnlagRestTjeneste {
             @ApiResponse(responseCode = "204", description = "Det finnes ikke et grunnlag for forespørselen"),
             @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")
         })
-    @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = READ, resource = GRUNNLAG, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
 
@@ -159,7 +159,7 @@ public class GrunnlagRestTjeneste {
         responses = {
             @ApiResponse(responseCode = "200", description = "Mottatt grunnlaget")
         })
-    @BeskyttetRessurs(action = UPDATE, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response oppdaterOgLagreGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagAbacDto dto) {
 
@@ -185,7 +185,7 @@ public class GrunnlagRestTjeneste {
                 content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = InntektArbeidYtelseGrunnlagSakSnapshotDto.class)))
         })
-    @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = READ, resource = GRUNNLAG, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentSnapshotIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
 
@@ -219,7 +219,7 @@ public class GrunnlagRestTjeneste {
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Kopier grunnlag",
         tags = "iay-grunnlag")
-    @BeskyttetRessurs(action = CREATE, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = CREATE, resource = GRUNNLAG, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response kopierOgLagreGrunnlag(@NotNull @Valid KopierGrunnlagRequestAbac request) {
         var ref = new KoblingReferanse(request.getNyReferanse());

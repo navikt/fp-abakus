@@ -114,9 +114,9 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
           repository: navikt/fpsak-autotest
-          event-type: fpsak-autotest
+          event-type: fpsak-verdikjede
           client-payload: '{ "trigger": "${{ github.repository }}", "version": "${{ env.TAG }}", "issue-number": "${{ steps.createdeployissue.outputs.number }}" }'
-      - name: Trigger verdikjedetester K9
+      - name: Trigger k9-verdikjede
         if: success()
         uses: peter-evans/repository-dispatch@v1
         with:

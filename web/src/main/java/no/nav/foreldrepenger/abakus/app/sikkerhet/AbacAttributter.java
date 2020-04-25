@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.jetty.sikkerhet;
+package no.nav.foreldrepenger.abakus.app.sikkerhet;
 
 public class AbacAttributter {
     public static final String XACML_1_0_ACTION_ACTION_ID = "urn:oasis:names:tc:xacml:1.0:action:action-id";

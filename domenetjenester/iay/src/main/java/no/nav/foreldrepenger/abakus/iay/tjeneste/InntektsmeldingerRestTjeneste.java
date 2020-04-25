@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste;
 
+import static no.nav.foreldrepenger.abakus.iay.sikkerhet.AbakusBeskyttetRessursAttributt.INNTEKSTMELDING;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
@@ -20,9 +21,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import no.nav.abakus.iaygrunnlag.request.InntektsmeldingDiffRequest;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,10 +43,13 @@ import no.nav.abakus.iaygrunnlag.UuidDto;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.RefusjonskravDatoerDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.abakus.iaygrunnlag.request.InntektsmeldingDiffRequest;
 import no.nav.abakus.iaygrunnlag.request.InntektsmeldingerMottattRequest;
 import no.nav.abakus.iaygrunnlag.request.InntektsmeldingerRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.InntektsmeldingerTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapInntektsmeldinger;
@@ -90,7 +91,7 @@ public class InntektsmeldingerRestTjeneste {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Hent inntektsmeldinger for angitt søke spesifikasjon", tags = "inntektsmelding")
-    @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = READ, resource = INNTEKSTMELDING, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentInntektsmeldingerForSak(@NotNull @Valid InntektsmeldingerRequestAbacDto spesifikasjon) {
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
@@ -105,8 +106,8 @@ public class InntektsmeldingerRestTjeneste {
     @Path("/hentRefusjonskravDatoer")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Hent inntektsmeldinger for angitt søke spesifikasjon", tags = "inntektsmelding")
-    @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
+    @Operation(description = "Hent refusjonskrav fra inntektsmeldinger for angitt søke spesifikasjon", tags = "inntektsmelding")
+    @BeskyttetRessurs(action = READ, resource = INNTEKSTMELDING, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentRefusjonskravDatoForSak(@NotNull @Valid InntektsmeldingerRequestAbacDto spesifikasjon) {
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
@@ -125,13 +126,13 @@ public class InntektsmeldingerRestTjeneste {
 
     @POST
     @Path("/motta")
-    @Operation(description = "Motta inntektsmelding(er)", tags = "inntektsmelding",
+    @Operation(description = "Motta og lagre inntektsmelding(er)", tags = "inntektsmelding",
         responses = {
             @ApiResponse(description = "Oppdatert grunnlagreferanse",
                 content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = UuidDto.class)))
         })
-    @BeskyttetRessurs(action = CREATE, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = CREATE, resource = INNTEKSTMELDING, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public UuidDto lagreInntektsmeldinger(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid InntektsmeldingerMottattRequest mottattRequest) {
 
@@ -161,7 +162,7 @@ public class InntektsmeldingerRestTjeneste {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Hent inntektsmeldinger for angitt søke spesifikasjon", tags = "inntektsmelding")
-    @BeskyttetRessurs(action = READ, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = READ, resource = INNTEKSTMELDING, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentDifferanseMellomToReferanserPåSak(@NotNull @Valid InntektsmeldingDiffRequestAbacDto spesifikasjon) {
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());

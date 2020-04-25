@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.jetty.sikkerhet;
+package no.nav.foreldrepenger.abakus.app.sikkerhet;
 
 import javax.annotation.Priority;
 import javax.enterprise.context.ApplicationScoped;
@@ -19,7 +19,7 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 // HACK - FORDI DENNE KOLLIDERER MED DUMMYREQUESTBUILDER FRA FELLES-SIKKERHET-TESTUTILITIES NÅR VI KJØRER JETTY
 public class PdpRequestBuilderImpl implements PdpRequestBuilder {
 
-    public static final String ABAC_DOMAIN = "foreldrepenger";
+    public static final String ABAC_DOMAIN = "duplo";
 
     @Override
     public PdpRequest lagPdpRequest(AbacAttributtSamling attributter) {
