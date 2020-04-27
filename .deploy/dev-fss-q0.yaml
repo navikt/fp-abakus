@@ -59,9 +59,9 @@ spec:
     - name: OPENIDCONNECT_ISSOJWKS
       value: https://isso-q.adeo.no:443/isso/oauth2/connect/jwk_uri
     #OIDC
-    - name: OIDC_STS_ISSUERURL
+    - name: OIDC_STS_ISSUER_URL
       value: https://security-token-service.nais.preprod.local
-    - name: OIDC_STS_JWKSURL
+    - name: OIDC_STS_JWKS_URL
       value: https://security-token-service.nais.preprod.local/rest/v1/sts/jwks
     #Generell Kafka
     - name: KAFKA_BOOTSTRAP_SERVERS
