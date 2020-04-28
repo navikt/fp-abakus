@@ -48,7 +48,7 @@ spec:
     - name: LOADBALANCER_URL
       value: https://fpabakus.nais.adeo.no
     - name: ABAC_PDP_ENDPOINT_URL
-      value: https://wasapp.adeo.no/asm-pdp/authorize
+      value: http://abac-duplo/application/authorize
     - name: SECURITYTOKENSERVICE_URL
       value: https://sts.adeo.no/SecurityTokenServiceProvider/
     #OpenID
