@@ -31,8 +31,8 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<prometheus.version>0.8.1</prometheus.version>
-    <felles.version>1.6-20200423091725-226a77e</felles.version>
-    <prosesstask.version>2.3-20200421064631-ce9889f</prosesstask.version>
+    <felles.version>1.6-20200428190214-d59d308</felles.version>
+    <prosesstask.version>2.3-20200428191932-0e8e268</prosesstask.version>
 		<kontrakter.version>5.1_20200117132228_47cdf2f</kontrakter.version>
 		<swagger.version>2.1.2</swagger.version>
 		<kafka.version>2.5.0</kafka.version>
