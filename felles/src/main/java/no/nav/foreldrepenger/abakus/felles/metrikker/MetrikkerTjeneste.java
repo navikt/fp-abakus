@@ -24,6 +24,23 @@ public class MetrikkerTjeneste {
         this.sensuKlient = sensuKlient;
     }
 
+    public void logVedtakMottatRest(String vedtakType, String ytelseStatus, String fagsystem) {
+        send(opprettVedtakEvent("antall_vedtakk_mottatt", "REST", vedtakType, ytelseStatus,fagsystem));
+    }
+
+    public void logVedtakMottatKafka(String vedtakType, String ytelseStatus, String fagsystem) {
+        send(opprettVedtakEvent("antall_vedtakk_mottatt", "Kafka", vedtakType, ytelseStatus,fagsystem));
+    }
+
+    private SensuEvent opprettVedtakEvent(String metrikkNavn, String inputKilde, String vedtakType, String ytelseStatus, String fagsystem) {
+        return SensuEvent.createSensuEvent(metrikkNavn,
+                Map.of("input_kilde", inputKilde,
+                        "vedtak_type", vedtakType,
+                        "ytelse_status", ytelseStatus,
+                        "fagsystem", fagsystem),
+                Map.of("antall", 1));
+    }
+
     public void logFeilProsessTask(String prosessTaskType, int antall) {
         send(opprettProsessTaskEvent("antall_feilende_prosesstask", prosessTaskType, antall));
     }

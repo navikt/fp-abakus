@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.abakus.vedtak.ytelse.Ytelse;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
+import no.nav.foreldrepenger.abakus.felles.metrikker.MetrikkerTjeneste;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
@@ -38,14 +39,18 @@ public class YtelseRestTjeneste {
 
     private VedtakYtelseRepository ytelseRepository;
     private ExtractFromYtelseV1 extractor;
+    private MetrikkerTjeneste metrikkerTjeneste;
 
     public YtelseRestTjeneste() {
     }
 
     @Inject
-    public YtelseRestTjeneste(VedtakYtelseRepository ytelseRepository, ExtractFromYtelseV1 extractor) {
+    public YtelseRestTjeneste(VedtakYtelseRepository ytelseRepository,
+                              ExtractFromYtelseV1 extractor,
+                              MetrikkerTjeneste metrikkerTjeneste) {
         this.ytelseRepository = ytelseRepository;
         this.extractor = extractor;
+        this.metrikkerTjeneste = metrikkerTjeneste;
     }
 
     @POST
@@ -56,9 +61,15 @@ public class YtelseRestTjeneste {
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response lagreVedtakk(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid Ytelse request) {
 
-        VedtakYtelseBuilder builder = extractor.extractFrom((YtelseV1) request);
+        final YtelseV1 ytelseVedtak = (YtelseV1) request;
+        VedtakYtelseBuilder builder = extractor.extractFrom(ytelseVedtak);
 
         ytelseRepository.lagre(builder);
+
+        metrikkerTjeneste.logVedtakMottatRest(
+                ytelseVedtak.getType().getKode(),
+                ytelseVedtak.getStatus().getKode(),
+                ytelseVedtak.getFagsystem().getKode());
 
         return Response.accepted().build();
     }
