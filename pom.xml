@@ -287,6 +287,12 @@
 				<artifactId>swagger-annotations</artifactId>
 				<version>${swagger.version}</version>
 			</dependency>
+
+			<dependency>
+				<groupId>no.nav.foreldrepenger.felles.integrasjoner</groupId>
+				<artifactId>sensu-klient</artifactId>
+				<version>${felles.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
