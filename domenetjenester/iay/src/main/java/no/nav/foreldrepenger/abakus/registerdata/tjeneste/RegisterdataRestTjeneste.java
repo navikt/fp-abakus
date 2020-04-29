@@ -5,6 +5,8 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREAT
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,6 +43,8 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.abakus.iaygrunnlag.request.SjekkStatusRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
+import no.nav.foreldrepenger.abakus.felles.FellesRestTjeneste;
+import no.nav.foreldrepenger.abakus.felles.metrikker.MetrikkerTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.TaskResponsDto;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
@@ -52,15 +56,15 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 @Path("/registerdata/v1")
 @ApplicationScoped
 @Transactional
-public class RegisterdataRestTjeneste {
+public class RegisterdataRestTjeneste extends FellesRestTjeneste {
 
     private InnhentRegisterdataTjeneste innhentTjeneste;
 
-    public RegisterdataRestTjeneste() {
-    }
+    public RegisterdataRestTjeneste() {} // RESTEASY ctor
 
     @Inject
-    public RegisterdataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste) {
+    public RegisterdataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste, MetrikkerTjeneste metrikkTjeneste) {
+        super(metrikkTjeneste);
         this.innhentTjeneste = innhentTjeneste;
     }
 
@@ -71,11 +75,18 @@ public class RegisterdataRestTjeneste {
     @BeskyttetRessurs(action = CREATE, resource = REGISTERDATA, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentOgLagreRegisterdataSync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
+        var startTx = Instant.now();
+
+        Response response;
         Optional<GrunnlagReferanse> innhent = innhentTjeneste.innhent(dto);
         if (innhent.isPresent()) {
-            return Response.ok(new UuidDto(innhent.get().getReferanse().toString())).build();
+            response = Response.ok(new UuidDto(innhent.get().getReferanse().toString())).build();
+        } else {
+            response = Response.noContent().build();
         }
-        return Response.noContent().build();
+
+        logMetrikk("/registerdata/v1/innhent/sync", Duration.between(startTx, Instant.now()));
+        return response;
     }
 
     @POST
@@ -85,11 +96,18 @@ public class RegisterdataRestTjeneste {
     @BeskyttetRessurs(action = CREATE, resource = REGISTERDATA, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentOgLagreRegisterdataAsync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
+        var startTx = Instant.now();
+
+        Response response;
         String taskGruppe = innhentTjeneste.triggAsyncInnhent(dto);
         if (taskGruppe != null) {
             return Response.accepted(new TaskResponsDto(taskGruppe)).build();
+        } else {
+            response = Response.noContent().build();
         }
-        return Response.noContent().build();
+
+        logMetrikk("/registerdata/v1/innhent/async", Duration.between(startTx, Instant.now()));
+        return response;
     }
 
     @POST
@@ -100,14 +118,21 @@ public class RegisterdataRestTjeneste {
     @BeskyttetRessurs(action = READ, resource = REGISTERDATA, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentAsyncStatus(@Parameter(name = "status") @Valid SjekkStatusAbacDto dto) {
+        var startTx = Instant.now();
+        Response response;
         if (innhentTjeneste.innhentingFerdig(dto.getTaskReferanse())) {
             Optional<GrunnlagReferanse> grunnlagReferanse = innhentTjeneste.hentSisteReferanseFor(new KoblingReferanse(dto.getReferanse().getReferanse()));
-            if (grunnlagReferanse.isEmpty()) {
-                return Response.noContent().build();
+            if (grunnlagReferanse.isPresent()) {
+                response = Response.ok(new UuidDto(grunnlagReferanse.get().toString())).build();
+            } else {
+                response = Response.noContent().build();
             }
-            return Response.ok(new UuidDto(grunnlagReferanse.get().toString())).build();
+        } else {
+            response = Response.status(425).build();
         }
-        return Response.status(425).build();
+        
+        logMetrikk("/registerdata/v1/innhent/status", Duration.between(startTx, Instant.now()));
+        return response;
     }
 
     /**
@@ -168,6 +193,4 @@ public class RegisterdataRestTjeneste {
             return AbacDataAttributter.opprett();
         }
     }
-
-
 }

@@ -6,6 +6,8 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.UPDATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.EnumSet;
@@ -55,7 +57,9 @@ import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagSakSnapshotDto;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
+import no.nav.foreldrepenger.abakus.felles.FellesRestTjeneste;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.felles.metrikker.MetrikkerTjeneste;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYFraDtoMapper;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYTilDtoMapper;
@@ -73,18 +77,18 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 @Path("/iay/grunnlag/v1")
 @ApplicationScoped
 @Transactional
-public class GrunnlagRestTjeneste {
+public class GrunnlagRestTjeneste extends FellesRestTjeneste {
 
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private KoblingTjeneste koblingTjeneste;
 
-    public GrunnlagRestTjeneste() {
-        // for CDI
-    }
+    public GrunnlagRestTjeneste() {} // RESTEASY ctor
 
     @Inject
     public GrunnlagRestTjeneste(InntektArbeidYtelseTjeneste iayTjeneste,
-                                KoblingTjeneste koblingTjeneste) {
+                                KoblingTjeneste koblingTjeneste,
+                                MetrikkerTjeneste metrikkerTjeneste) {
+        super(metrikkerTjeneste);
         this.iayTjeneste = iayTjeneste;
         this.koblingTjeneste = koblingTjeneste;
     }
@@ -112,6 +116,8 @@ public class GrunnlagRestTjeneste {
     @BeskyttetRessurs(action = READ, resource = GRUNNLAG, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
+        var startTx = Instant.now();
+        Response response;
 
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
 
@@ -123,17 +129,20 @@ public class GrunnlagRestTjeneste {
         final var sistKjenteErAktivt = sisteKjenteGrunnlagReferanse != null && iayTjeneste.erGrunnlagAktivt(sisteKjenteGrunnlagReferanse);
 
         if (sisteKjenteGrunnlagReferanse != null && sistKjenteErAktivt) {
-            return Response.notModified().build();
-        }
-
-        var grunnlag = getGrunnlag(spesifikasjon, grunnlagReferanse, koblingReferanse);
-        if (grunnlag != null) {
-            var dtoMapper = new IAYTilDtoMapper(aktørId, grunnlagReferanse, koblingReferanse);
-
-            return Response.ok(dtoMapper.mapTilDto(grunnlag, spesifikasjon)).build();
+            response = Response.notModified().build();
         } else {
-            return Response.noContent().build();
+            var grunnlag = getGrunnlag(spesifikasjon, grunnlagReferanse, koblingReferanse);
+            if (grunnlag != null) {
+                var dtoMapper = new IAYTilDtoMapper(aktørId, grunnlagReferanse, koblingReferanse);
+
+                response = Response.ok(dtoMapper.mapTilDto(grunnlag, spesifikasjon)).build();
+            } else {
+                response = Response.noContent().build();
+            }
         }
+
+        logMetrikk("/iay/grunnlag/v1/hent", Duration.between(startTx, Instant.now()));
+        return response;
     }
 
     private UUID utledSisteKjenteGrunnlagReferanse(InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
@@ -162,6 +171,7 @@ public class GrunnlagRestTjeneste {
     @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response oppdaterOgLagreGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagAbacDto dto) {
+        var startTx = Instant.now();
 
         var aktørId = new AktørId(dto.getPerson().getIdent());
 
@@ -170,8 +180,10 @@ public class GrunnlagRestTjeneste {
         var dtoMapper = new IAYFraDtoMapper(iayTjeneste, aktørId, koblingReferanse);
         final var builder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayTjeneste.hentGrunnlagFor(koblingReferanse));
         iayTjeneste.lagre(koblingReferanse, InntektArbeidYtelseGrunnlagBuilder.oppdatere(dtoMapper.mapOverstyringerTilGrunnlag(dto, builder)));
+        final Response response = Response.ok().build();
 
-        return Response.ok().build();
+        logMetrikk("/iay/grunnlag/v1/oppdater", Duration.between(startTx, Instant.now()));
+        return response;
     }
 
     @POST
@@ -188,6 +200,7 @@ public class GrunnlagRestTjeneste {
     @BeskyttetRessurs(action = READ, resource = GRUNNLAG, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentSnapshotIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
+        var startTx = Instant.now();
 
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
 
@@ -209,8 +222,10 @@ public class GrunnlagRestTjeneste {
 
             snapshot.leggTil(dto, g.isAktiv(), mapPeriode(kobling.getOpplysningsperiode()), mapPeriode(kobling.getOpptjeningsperiode()));
         });
+        final Response response = Response.ok(snapshot).build();
 
-        return Response.ok(snapshot).build();
+        logMetrikk("/iay/grunnlag/v1/snapshot", Duration.between(startTx, Instant.now()));
+        return response;
     }
 
     @POST
@@ -222,6 +237,8 @@ public class GrunnlagRestTjeneste {
     @BeskyttetRessurs(action = CREATE, resource = GRUNNLAG, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response kopierOgLagreGrunnlag(@NotNull @Valid KopierGrunnlagRequestAbac request) {
+        var startTx = Instant.now();
+
         var ref = new KoblingReferanse(request.getNyReferanse());
         var koblingLås = koblingTjeneste.taSkrivesLås(ref); // alltid ta lås før skrive operasjoner
 
@@ -232,8 +249,9 @@ public class GrunnlagRestTjeneste {
             new KoblingReferanse(request.getGammelReferanse()),
             new KoblingReferanse(request.getNyReferanse()),
             request.getDataset());
-
         koblingTjeneste.oppdaterLåsVersjon(koblingLås);
+
+        logMetrikk("/iay/grunnlag/v1/kopier", Duration.between(startTx, Instant.now()));
         return Response.ok().build();
     }
 

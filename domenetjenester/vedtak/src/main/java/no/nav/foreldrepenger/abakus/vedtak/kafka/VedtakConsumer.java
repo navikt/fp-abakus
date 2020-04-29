@@ -105,14 +105,6 @@ public class VedtakConsumer implements KafkaIntegration, AppServiceHandler {
         return props;
     }
 
-    @Override
-    public void start() {
-        addShutdownHooks();
-
-        stream.start();
-        log.info("Starter konsumering av topic={}, tilstand={}", topic, stream.state());
-    }
-
     public KafkaStreams.State getTilstand() {
         return stream.state();
     }
@@ -124,6 +116,13 @@ public class VedtakConsumer implements KafkaIntegration, AppServiceHandler {
 
     public String getTopic() {
         return topic;
+    }
+
+    @Override
+    public void start() {
+        addShutdownHooks();
+        stream.start();
+        log.info("Starter konsumering av topic={}, tilstand={}", topic, stream.state());
     }
 
     @Override

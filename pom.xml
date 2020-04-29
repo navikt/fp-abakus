@@ -30,10 +30,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<prometheus.version>0.8.1</prometheus.version>
-    <felles.version>1.6-20200428190214-d59d308</felles.version>
-    <prosesstask.version>2.3-20200428191932-0e8e268</prosesstask.version>
+		<felles.version>1.6-20200428190214-d59d308</felles.version>
+
+		<prosesstask.version>2.3-20200428191932-0e8e268</prosesstask.version>
+
 		<kontrakter.version>5.1_20200117132228_47cdf2f</kontrakter.version>
+
+		<prometheus.version>0.8.1</prometheus.version>
 		<swagger.version>2.1.2</swagger.version>
 		<kafka.version>2.5.0</kafka.version>
 	</properties>
@@ -283,6 +286,12 @@
 				<groupId>io.swagger.core.v3</groupId>
 				<artifactId>swagger-annotations</artifactId>
 				<version>${swagger.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+				<artifactId>sensu-klient</artifactId>
+				<version>${felles.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

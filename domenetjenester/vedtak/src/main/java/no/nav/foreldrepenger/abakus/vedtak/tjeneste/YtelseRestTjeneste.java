@@ -4,6 +4,8 @@ import static no.nav.foreldrepenger.abakus.vedtak.sikkerhet.VedtakBeskyttetRessu
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -22,6 +24,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.abakus.vedtak.ytelse.Ytelse;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
+import no.nav.foreldrepenger.abakus.felles.FellesRestTjeneste;
+import no.nav.foreldrepenger.abakus.felles.metrikker.MetrikkerTjeneste;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
@@ -34,16 +38,18 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 @Path("/ytelse/v1")
 @ApplicationScoped
 @Transactional
-public class YtelseRestTjeneste {
+public class YtelseRestTjeneste extends FellesRestTjeneste {
 
     private VedtakYtelseRepository ytelseRepository;
     private ExtractFromYtelseV1 extractor;
 
-    public YtelseRestTjeneste() {
-    }
+    public YtelseRestTjeneste() {} // RESTEASY ctor
 
     @Inject
-    public YtelseRestTjeneste(VedtakYtelseRepository ytelseRepository, ExtractFromYtelseV1 extractor) {
+    public YtelseRestTjeneste(VedtakYtelseRepository ytelseRepository,
+                              ExtractFromYtelseV1 extractor,
+                              MetrikkerTjeneste metrikkerTjeneste) {
+        super(metrikkerTjeneste);
         this.ytelseRepository = ytelseRepository;
         this.extractor = extractor;
     }
@@ -55,10 +61,19 @@ public class YtelseRestTjeneste {
     @BeskyttetRessurs(action = CREATE, resource = VEDTAK, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response lagreVedtakk(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid Ytelse request) {
+        var startTx = Instant.now();
 
-        VedtakYtelseBuilder builder = extractor.extractFrom((YtelseV1) request);
+        final YtelseV1 ytelseVedtak = (YtelseV1) request;
+        VedtakYtelseBuilder builder = extractor.extractFrom(ytelseVedtak);
 
         ytelseRepository.lagre(builder);
+
+        logMetrikk("/ytelse/v1/vedtatt", Duration.between(startTx, Instant.now()));
+
+        getMetrikkTjeneste().logVedtakMottatRest(
+                ytelseVedtak.getType().getKode(),
+                ytelseVedtak.getStatus().getKode(),
+                ytelseVedtak.getFagsystem().getKode());
 
         return Response.accepted().build();
     }
