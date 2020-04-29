@@ -41,6 +41,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.abakus.iaygrunnlag.request.SjekkStatusRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
+import no.nav.foreldrepenger.abakus.felles.metrikker.MetrikkerTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.TaskResponsDto;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
@@ -55,13 +56,15 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 public class RegisterdataRestTjeneste {
 
     private InnhentRegisterdataTjeneste innhentTjeneste;
+    private MetrikkerTjeneste metrikkTjeneste;
 
     public RegisterdataRestTjeneste() {
     }
 
     @Inject
-    public RegisterdataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste) {
+    public RegisterdataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste, MetrikkerTjeneste metrikkTjeneste) {
         this.innhentTjeneste = innhentTjeneste;
+        this.metrikkTjeneste = metrikkTjeneste;
     }
 
     @POST
@@ -71,6 +74,7 @@ public class RegisterdataRestTjeneste {
     @BeskyttetRessurs(action = CREATE, resource = REGISTERDATA, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentOgLagreRegisterdataSync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
+        logMetrikk("/innhent/sync");
         Optional<GrunnlagReferanse> innhent = innhentTjeneste.innhent(dto);
         if (innhent.isPresent()) {
             return Response.ok(new UuidDto(innhent.get().getReferanse().toString())).build();
@@ -85,6 +89,7 @@ public class RegisterdataRestTjeneste {
     @BeskyttetRessurs(action = CREATE, resource = REGISTERDATA, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentOgLagreRegisterdataAsync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
+        logMetrikk("/innhent/async");
         String taskGruppe = innhentTjeneste.triggAsyncInnhent(dto);
         if (taskGruppe != null) {
             return Response.accepted(new TaskResponsDto(taskGruppe)).build();
@@ -100,6 +105,7 @@ public class RegisterdataRestTjeneste {
     @BeskyttetRessurs(action = READ, resource = REGISTERDATA, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentAsyncStatus(@Parameter(name = "status") @Valid SjekkStatusAbacDto dto) {
+        logMetrikk("/innhent/status");
         if (innhentTjeneste.innhentingFerdig(dto.getTaskReferanse())) {
             Optional<GrunnlagReferanse> grunnlagReferanse = innhentTjeneste.hentSisteReferanseFor(new KoblingReferanse(dto.getReferanse().getReferanse()));
             if (grunnlagReferanse.isEmpty()) {
@@ -169,5 +175,7 @@ public class RegisterdataRestTjeneste {
         }
     }
 
-
+    private void logMetrikk(String ressurs) {
+        metrikkTjeneste.logRestKall(ressurs);
+    }
 }
