@@ -67,7 +67,7 @@ spec:
     - name: SENSU_HOST
       value: sensu.nais
     - name: SENSU_PORT
-      value: 3030
+      value: "3030"
     #Generell Kafka
     - name: KAFKA_BOOTSTRAP_SERVERS
       value: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
