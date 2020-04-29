@@ -1,6 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata.tjeneste;
 
-import static no.nav.foreldrepenger.abakus.iay.sikkerhet.AbakusBeskyttetRessursAttributt.REGISTERDATA;
+import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.REGISTERDATA;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;

@@ -43,6 +43,10 @@
 			<groupId>no.nav.foreldrepenger.abakus</groupId>
 			<artifactId>abakus-kontrakt</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.abakus</groupId>
+            <artifactId>felles</artifactId>
+        </dependency>
 
         <!-- TEST -->
         <dependency>
