@@ -5,6 +5,8 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREAT
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
@@ -50,6 +52,8 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
+import no.nav.foreldrepenger.abakus.felles.FellesRestTjeneste;
+import no.nav.foreldrepenger.abakus.felles.metrikker.MetrikkerTjeneste;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.InntektsmeldingerTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapInntektsmeldinger;
@@ -67,20 +71,19 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 @Path("/iay/inntektsmeldinger/v1")
 @ApplicationScoped
 @Transactional
-public class InntektsmeldingerRestTjeneste {
+public class InntektsmeldingerRestTjeneste extends FellesRestTjeneste {
 
     private InntektsmeldingerTjeneste imTjeneste;
     private KoblingTjeneste koblingTjeneste;
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private static final Logger LOGGER = LoggerFactory.getLogger(InntektsmeldingerRestTjeneste.class);
 
-    public InntektsmeldingerRestTjeneste() {
-        // for CDI
-    }
+    public InntektsmeldingerRestTjeneste() {} // RESTEASY ctor
 
     @Inject
     public InntektsmeldingerRestTjeneste(InntektsmeldingerTjeneste imTjeneste,
-                                         KoblingTjeneste koblingTjeneste, InntektArbeidYtelseTjeneste iayTjeneste) {
+                                         KoblingTjeneste koblingTjeneste, InntektArbeidYtelseTjeneste iayTjeneste, MetrikkerTjeneste metrikkerTjeneste) {
+        super(metrikkerTjeneste);
         this.imTjeneste = imTjeneste;
         this.koblingTjeneste = koblingTjeneste;
         this.iayTjeneste = iayTjeneste;
@@ -94,12 +97,17 @@ public class InntektsmeldingerRestTjeneste {
     @BeskyttetRessurs(action = READ, resource = INNTEKSTMELDING, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentInntektsmeldingerForSak(@NotNull @Valid InntektsmeldingerRequestAbacDto spesifikasjon) {
+        var startTx = Instant.now();
+
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
         var ytelseType = YtelseType.fraKode(spesifikasjon.getYtelseType().getKode());
         var inntektsmeldingerMap = iayTjeneste.hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, YtelseType.fraKode(ytelseType.getKode()));
         InntektsmeldingerDto inntektsmeldingerDto = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(inntektsmeldingerMap);
-        return Response.ok(inntektsmeldingerDto).build();
+        final Response build = Response.ok(inntektsmeldingerDto).build();
+
+        logMetrikk("/iay/inntektsmeldinger/v1/hentAlle", Duration.between(startTx, Instant.now()));
+        return build;
     }
 
     @POST
@@ -110,18 +118,24 @@ public class InntektsmeldingerRestTjeneste {
     @BeskyttetRessurs(action = READ, resource = INNTEKSTMELDING, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentRefusjonskravDatoForSak(@NotNull @Valid InntektsmeldingerRequestAbacDto spesifikasjon) {
+        var startTx = Instant.now();
+        Response response;
+
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
         var ytelseType = YtelseType.fraKode(spesifikasjon.getYtelseType().getKode());
         var inntektsmeldinger = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, YtelseType.fraKode(ytelseType.getKode()));
         var kobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType);
         if (kobling.isEmpty()) {
-            return Response.ok(new InntektsmeldingerDto().medInntektsmeldinger(Collections.emptyList())).build();
+            response = Response.ok(new InntektsmeldingerDto().medInntektsmeldinger(Collections.emptyList())).build();
+        } else {
+            InntektArbeidYtelseGrunnlag nyesteGrunnlag = iayTjeneste.hentAggregat(kobling.get().getKoblingReferanse());
+            RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(inntektsmeldinger, nyesteGrunnlag);
+            LOGGER.info("RefusjonskravDtoer for saksnummer ({}) er ({})", spesifikasjon.getSaksnummer(), refusjonskravDatoerDto);
+            response = Response.ok(refusjonskravDatoerDto).build();
         }
-        InntektArbeidYtelseGrunnlag nyesteGrunnlag = iayTjeneste.hentAggregat(kobling.get().getKoblingReferanse());
-        RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(inntektsmeldinger, nyesteGrunnlag);
-        LOGGER.info("RefusjonskravDtoer for saksnummer ({}) er ({})", spesifikasjon.getSaksnummer(), refusjonskravDatoerDto);
-        return Response.ok(refusjonskravDatoerDto).build();
+        logMetrikk("/iay/inntektsmeldinger/v1/hentRefusjonskravDatoer", Duration.between(startTx, Instant.now()));
+        return response;
     }
 
     @POST
@@ -135,6 +149,8 @@ public class InntektsmeldingerRestTjeneste {
     @BeskyttetRessurs(action = CREATE, resource = INNTEKSTMELDING, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public UuidDto lagreInntektsmeldinger(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid InntektsmeldingerMottattRequest mottattRequest) {
+        var startTx = Instant.now();
+        UuidDto resultat = null;
 
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
 
@@ -152,9 +168,11 @@ public class InntektsmeldingerRestTjeneste {
         koblingTjeneste.oppdaterLåsVersjon(koblingLås);
 
         if (grunnlagReferanse != null) {
-            return new UuidDto(grunnlagReferanse.getReferanse());
+            resultat = new UuidDto(grunnlagReferanse.getReferanse());
         }
-        return null;
+
+        logMetrikk("/iay/inntektsmeldinger/v1/motta", Duration.between(startTx, Instant.now()));
+        return resultat;
     }
 
     @POST
@@ -165,6 +183,8 @@ public class InntektsmeldingerRestTjeneste {
     @BeskyttetRessurs(action = READ, resource = INNTEKSTMELDING, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentDifferanseMellomToReferanserPåSak(@NotNull @Valid InntektsmeldingDiffRequestAbacDto spesifikasjon) {
+        var startTx = Instant.now();
+
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
         var ytelseType = YtelseType.fraKode(spesifikasjon.getYtelseType().getKode());
@@ -173,8 +193,10 @@ public class InntektsmeldingerRestTjeneste {
 
         var diffMap = iayTjeneste.utledInntektsmeldingDiff(førsteMap, andreMap);
         InntektsmeldingerDto imDiffListe = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(diffMap);
+        final Response response = Response.ok(imDiffListe).build();
 
-        return Response.ok(imDiffListe).build();
+        logMetrikk("/iay/inntektsmeldinger/v1/hentDiff", Duration.between(startTx, Instant.now()));
+        return response;
     }
 
     public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {

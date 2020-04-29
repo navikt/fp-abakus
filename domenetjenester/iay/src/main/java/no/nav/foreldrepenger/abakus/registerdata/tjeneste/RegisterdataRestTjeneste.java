@@ -5,6 +5,8 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREAT
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -73,12 +75,18 @@ public class RegisterdataRestTjeneste extends FellesRestTjeneste {
     @BeskyttetRessurs(action = CREATE, resource = REGISTERDATA, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentOgLagreRegisterdataSync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
-        logMetrikk("/innhent/sync");
+        var startTx = Instant.now();
+
+        Response response;
         Optional<GrunnlagReferanse> innhent = innhentTjeneste.innhent(dto);
         if (innhent.isPresent()) {
-            return Response.ok(new UuidDto(innhent.get().getReferanse().toString())).build();
+            response = Response.ok(new UuidDto(innhent.get().getReferanse().toString())).build();
+        } else {
+            response = Response.noContent().build();
         }
-        return Response.noContent().build();
+
+        logMetrikk("/registerdata/v1/innhent/sync", Duration.between(startTx, Instant.now()));
+        return response;
     }
 
     @POST
@@ -88,12 +96,18 @@ public class RegisterdataRestTjeneste extends FellesRestTjeneste {
     @BeskyttetRessurs(action = CREATE, resource = REGISTERDATA, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentOgLagreRegisterdataAsync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
-        logMetrikk("/innhent/async");
+        var startTx = Instant.now();
+
+        Response response;
         String taskGruppe = innhentTjeneste.triggAsyncInnhent(dto);
         if (taskGruppe != null) {
             return Response.accepted(new TaskResponsDto(taskGruppe)).build();
+        } else {
+            response = Response.noContent().build();
         }
-        return Response.noContent().build();
+
+        logMetrikk("/registerdata/v1/innhent/async", Duration.between(startTx, Instant.now()));
+        return response;
     }
 
     @POST
@@ -104,15 +118,21 @@ public class RegisterdataRestTjeneste extends FellesRestTjeneste {
     @BeskyttetRessurs(action = READ, resource = REGISTERDATA, ressurs = FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentAsyncStatus(@Parameter(name = "status") @Valid SjekkStatusAbacDto dto) {
-        logMetrikk("/innhent/status");
+        var startTx = Instant.now();
+        Response response;
         if (innhentTjeneste.innhentingFerdig(dto.getTaskReferanse())) {
             Optional<GrunnlagReferanse> grunnlagReferanse = innhentTjeneste.hentSisteReferanseFor(new KoblingReferanse(dto.getReferanse().getReferanse()));
-            if (grunnlagReferanse.isEmpty()) {
-                return Response.noContent().build();
+            if (grunnlagReferanse.isPresent()) {
+                response = Response.ok(new UuidDto(grunnlagReferanse.get().toString())).build();
+            } else {
+                response = Response.noContent().build();
             }
-            return Response.ok(new UuidDto(grunnlagReferanse.get().toString())).build();
+        } else {
+            response = Response.status(425).build();
         }
-        return Response.status(425).build();
+        
+        logMetrikk("/registerdata/v1/innhent/status", Duration.between(startTx, Instant.now()));
+        return response;
     }
 
     /**

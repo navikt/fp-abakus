@@ -16,6 +16,11 @@ import no.nav.vedtak.felles.integrasjon.sensu.SensuKlient;
 @ApplicationScoped
 public class MetrikkerTjeneste {
     private static final Logger LOG = LoggerFactory.getLogger(MetrikkerTjeneste.class);
+    private static final String ANTALL_VEDTAKK_MOTTATT_METRIKK = "antall_vedtakk_mottatt";
+    private static final String ANTALL_FEILENDE_PROSESSTASK_METRIKK = "antall_feilende_prosesstask";
+    private static final String ANTALL_REST_KALL_METRIKK = "antall_rest_kall";
+    private static final String ANTALL_FIELD = "antall";
+    private static final String VARIGHET_FIELD = "varighet";
 
     private SensuKlient sensuKlient;
 
@@ -26,24 +31,26 @@ public class MetrikkerTjeneste {
         this.sensuKlient = sensuKlient;
     }
 
-    public void logRestKall(String ressurs) {
-        send(opprettRestEvent("antall_rest_kall", ressurs));
+    public void logRestKall(String ressurs, long executionTime) {
+        send(opprettRestEvent(ANTALL_REST_KALL_METRIKK, ressurs, executionTime));
     }
 
     public void logVedtakMottatRest(String vedtakType, String ytelseStatus, String fagsystem) {
-        send(opprettVedtakEvent("antall_vedtakk_mottatt", "REST", vedtakType, ytelseStatus,fagsystem));
+        send(opprettVedtakEvent(ANTALL_VEDTAKK_MOTTATT_METRIKK, "REST", vedtakType, ytelseStatus,fagsystem));
     }
 
     public void logVedtakMottatKafka(String vedtakType, String ytelseStatus, String fagsystem) {
-        send(opprettVedtakEvent("antall_vedtakk_mottatt", "Kafka", vedtakType, ytelseStatus,fagsystem));
+        send(opprettVedtakEvent(ANTALL_VEDTAKK_MOTTATT_METRIKK, "Kafka", vedtakType, ytelseStatus,fagsystem));
     }
 
     public void logFeilProsessTask(String prosessTaskType, int antall) {
-        send(opprettProsessTaskEvent("antall_feilende_prosesstask", prosessTaskType, antall));
+        send(opprettProsessTaskEvent(ANTALL_FEILENDE_PROSESSTASK_METRIKK, prosessTaskType, antall));
     }
 
-    private static SensuEvent opprettRestEvent(String antall_rest_kall, String ressurs) {
-        return createSensuEvent(antall_rest_kall, Map.of("ressurs", ressurs), Map.of("antall", 1));
+    private static SensuEvent opprettRestEvent(String antall_rest_kall, String ressurs, long executionTime) {
+        return createSensuEvent(antall_rest_kall,
+                Map.of("ressurs", ressurs),
+                Map.of(ANTALL_FIELD, 1, VARIGHET_FIELD, executionTime));
     }
 
     private SensuEvent opprettVedtakEvent(String metrikkNavn, String inputKilde, String vedtakType, String ytelseStatus, String fagsystem) {
@@ -52,13 +59,13 @@ public class MetrikkerTjeneste {
                         "vedtak_type", vedtakType,
                         "ytelse_status", ytelseStatus,
                         "fagsystem", fagsystem),
-                Map.of("antall", 1));
+                Map.of(ANTALL_FIELD, 1));
     }
 
     private static SensuEvent opprettProsessTaskEvent(String metrikkNavn, String prosessTaskType, int antall) {
         return createSensuEvent(metrikkNavn,
                 Map.of("prosesstask_type", prosessTaskType),
-                Map.of("antall", antall));
+                Map.of(ANTALL_FIELD, antall));
     }
 
     private void send(SensuEvent event) {

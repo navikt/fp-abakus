@@ -18,6 +18,7 @@ import org.junit.Test;
 
 import no.nav.foreldrepenger.abakus.app.selftest.SelftestRestTjeneste;
 import no.nav.foreldrepenger.abakus.app.selftest.SelftestService;
+import no.nav.foreldrepenger.abakus.felles.metrikker.MetrikkerTjeneste;
 
 @SuppressWarnings("resource")
 public class SelftestRestTjenesteTest {
@@ -30,7 +31,7 @@ public class SelftestRestTjenesteTest {
 
     @Before
     public void setup() {
-        restTjeneste = new SelftestRestTjeneste(selftestServiceMock);
+        restTjeneste = new SelftestRestTjeneste(selftestServiceMock, mock(MetrikkerTjeneste.class));
     }
 
     @Test

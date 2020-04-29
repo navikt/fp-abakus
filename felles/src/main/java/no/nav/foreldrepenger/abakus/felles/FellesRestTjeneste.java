@@ -1,5 +1,8 @@
 package no.nav.foreldrepenger.abakus.felles;
 
+import java.time.Duration;
+import java.util.Objects;
+
 import no.nav.foreldrepenger.abakus.felles.metrikker.MetrikkerTjeneste;
 
 public class FellesRestTjeneste {
@@ -9,10 +12,14 @@ public class FellesRestTjeneste {
     public FellesRestTjeneste() {} // RESTEASY ctor
 
     public FellesRestTjeneste(MetrikkerTjeneste metrikkTjeneste) {
-        this.metrikkTjeneste = metrikkTjeneste;
+        this.metrikkTjeneste = Objects.requireNonNull(metrikkTjeneste, "MetrikkerTjeneste forventes.");
     }
 
-    protected void logMetrikk(String ressurs) {
-        metrikkTjeneste.logRestKall(ressurs);
+    protected void logMetrikk(String ressurs, Duration executionTime) {
+        metrikkTjeneste.logRestKall(ressurs, executionTime.toNanos());
+    }
+
+    protected MetrikkerTjeneste getMetrikkTjeneste() {
+        return metrikkTjeneste;
     }
 }
