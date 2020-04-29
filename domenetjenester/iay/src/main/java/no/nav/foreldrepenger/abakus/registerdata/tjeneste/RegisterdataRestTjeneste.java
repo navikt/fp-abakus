@@ -41,6 +41,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.abakus.iaygrunnlag.request.SjekkStatusRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
+import no.nav.foreldrepenger.abakus.felles.FellesRestTjeneste;
 import no.nav.foreldrepenger.abakus.felles.metrikker.MetrikkerTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.TaskResponsDto;
@@ -53,18 +54,16 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 @Path("/registerdata/v1")
 @ApplicationScoped
 @Transactional
-public class RegisterdataRestTjeneste {
+public class RegisterdataRestTjeneste extends FellesRestTjeneste {
 
     private InnhentRegisterdataTjeneste innhentTjeneste;
-    private MetrikkerTjeneste metrikkTjeneste;
 
-    public RegisterdataRestTjeneste() {
-    }
+    public RegisterdataRestTjeneste() {} // RESTEASY ctor
 
     @Inject
     public RegisterdataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste, MetrikkerTjeneste metrikkTjeneste) {
+        super(metrikkTjeneste);
         this.innhentTjeneste = innhentTjeneste;
-        this.metrikkTjeneste = metrikkTjeneste;
     }
 
     @POST
@@ -173,9 +172,5 @@ public class RegisterdataRestTjeneste {
         public AbacDataAttributter abacAttributter() {
             return AbacDataAttributter.opprett();
         }
-    }
-
-    private void logMetrikk(String ressurs) {
-        metrikkTjeneste.logRestKall(ressurs);
     }
 }
