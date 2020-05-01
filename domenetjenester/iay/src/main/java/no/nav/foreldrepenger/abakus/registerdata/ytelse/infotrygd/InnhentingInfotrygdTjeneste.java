@@ -5,6 +5,7 @@ import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -31,6 +32,9 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.Relat
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.TemaReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.TemaUnderkategoriReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.felles.InfotrygdGrunnlagAggregator;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.spokelse.SpokelseKlient;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.spokelse.SykepengeUtbetaling;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.spokelse.SykepengeVedtak;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Arbeidsforhold;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
@@ -65,25 +69,30 @@ public class InnhentingInfotrygdTjeneste {
         Map.entry(no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.BehandlingstemaKode.PN, YtelseType.PLEIEPENGER_SYKT_BARN)
     );
 
-    private InfotrygdGrunnlagAggregator grunnlag;
+    private InfotrygdGrunnlagAggregator infotrygdGrunnlag;
+    private SpokelseKlient spokelseKlient;
 
     InnhentingInfotrygdTjeneste() {
         // CDI
     }
 
     @Inject
-    public InnhentingInfotrygdTjeneste(InfotrygdGrunnlagAggregator grunnlag) {
-        this.grunnlag = grunnlag;
+    public InnhentingInfotrygdTjeneste(InfotrygdGrunnlagAggregator infotrygdGrunnlag,
+                                       SpokelseKlient spokelseKlient) {
+        this.infotrygdGrunnlag = infotrygdGrunnlag;
+        this.spokelseKlient = spokelseKlient;
     }
 
     public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelser(PersonIdent ident, Interval periode) {
-        List<Grunnlag> rest = grunnlag.hentAggregertGrunnlag(ident.getIdent(), dato(periode.getStart()), dato(periode.getEnd()));
+        List<Grunnlag> rest = infotrygdGrunnlag.hentAggregertGrunnlag(ident.getIdent(), dato(periode.getStart()), dato(periode.getEnd()));
+        getSPøkelseYtelserFailSoft(ident);
 
         return mapTilInfotrygdYtelseGrunnlag(rest);
     }
 
     public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelserFailSoft(PersonIdent ident, Interval periode) {
-        List<Grunnlag> rest = grunnlag.hentAggregertGrunnlagFailSoft(ident.getIdent(), dato(periode.getStart()), dato(periode.getEnd()));
+        List<Grunnlag> rest = infotrygdGrunnlag.hentAggregertGrunnlagFailSoft(ident.getIdent(), dato(periode.getStart()), dato(periode.getEnd()));
+        getSPøkelseYtelserFailSoft(ident);
 
         return mapTilInfotrygdYtelseGrunnlag(rest);
     }
@@ -202,5 +211,50 @@ public class InnhentingInfotrygdTjeneste {
         return YtelseType.UDEFINERT;
     }
 
+    private List<InfotrygdYtelseGrunnlag> getSPøkelseYtelser(PersonIdent ident) {
+        List<SykepengeVedtak> rest = spokelseKlient.hentGrunnlag(ident.getIdent());
+
+        return mapSpøkelseTilInfotrygdYtelseGrunnlag(rest);
+    }
+
+    private List<InfotrygdYtelseGrunnlag> getSPøkelseYtelserFailSoft(PersonIdent ident) {
+        List<SykepengeVedtak> rest = spokelseKlient.hentGrunnlag(ident.getIdent());
+
+        return mapSpøkelseTilInfotrygdYtelseGrunnlag(rest);
+    }
+
+    private List<InfotrygdYtelseGrunnlag> mapSpøkelseTilInfotrygdYtelseGrunnlag(List<SykepengeVedtak> rest) {
+        var mappedGrunnlag = rest.stream()
+            .map(this::spokelseTilInfotrygdYtelseGrunnlag)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+        if (!mappedGrunnlag.isEmpty()) {
+            LOG.info("abakus spokelse mapped grunnlag {}", mappedGrunnlag);
+        }
+        return mappedGrunnlag;
+    }
+
+    private InfotrygdYtelseGrunnlag spokelseTilInfotrygdYtelseGrunnlag(SykepengeVedtak grunnlag) {
+        LocalDate min = grunnlag.getUtbetalinger().stream().map(SykepengeUtbetaling::getFom).min(Comparator.naturalOrder()).orElse(null);
+        LocalDate max = grunnlag.getUtbetalinger().stream().map(SykepengeUtbetaling::getTom).max(Comparator.naturalOrder()).orElse(null);
+        if (min == null)
+            return null;
+
+        Periode brukPeriode = new Periode(min, max == null ? min : max);
+
+        var grunnlagBuilder = InfotrygdYtelseGrunnlag.getBuilder()
+            .medYtelseType(YtelseType.SYKEPENGER)
+            .medTemaUnderkategori(TemaUnderkategori.SYKEPENGER_SYKEPENGER)
+            .medYtelseStatus(YtelseStatus.AVSLUTTET)
+            .medIdentdato(grunnlag.getVedtaksreferanse())
+            .medVedtaksPeriodeFom(brukPeriode.getFom())
+            .medVedtaksPeriodeTom(brukPeriode.getTom());
+
+        grunnlag.getUtbetalinger().stream()
+            .map(v -> new InfotrygdYtelseAnvist(v.getFom(), v.getTom(), v.getGrad()))
+            .forEach(grunnlagBuilder::leggTillAnvistPerioder);
+
+        return grunnlagBuilder.build();
+    }
 
 }
