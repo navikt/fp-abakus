@@ -85,14 +85,14 @@ public class InnhentingInfotrygdTjeneste {
 
     public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelser(PersonIdent ident, Interval periode) {
         List<Grunnlag> rest = infotrygdGrunnlag.hentAggregertGrunnlag(ident.getIdent(), dato(periode.getStart()), dato(periode.getEnd()));
-        getSPøkelseYtelserFailSoft(ident);
+        //getSPøkelseYtelserFailSoft(ident);
 
         return mapTilInfotrygdYtelseGrunnlag(rest);
     }
 
     public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelserFailSoft(PersonIdent ident, Interval periode) {
         List<Grunnlag> rest = infotrygdGrunnlag.hentAggregertGrunnlagFailSoft(ident.getIdent(), dato(periode.getStart()), dato(periode.getEnd()));
-        getSPøkelseYtelserFailSoft(ident);
+        //getSPøkelseYtelserFailSoft(ident);
 
         return mapTilInfotrygdYtelseGrunnlag(rest);
     }
