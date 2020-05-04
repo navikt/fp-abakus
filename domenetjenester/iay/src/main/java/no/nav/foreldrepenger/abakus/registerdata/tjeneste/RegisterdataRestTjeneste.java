@@ -3,7 +3,6 @@ package no.nav.foreldrepenger.abakus.registerdata.tjeneste;
 import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.REGISTERDATA;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -72,7 +71,7 @@ public class RegisterdataRestTjeneste extends FellesRestTjeneste {
     @Path("/innhent/sync")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(description = "Trigger registerinnhenting for en gitt id", tags = "registerinnhenting")
-    @BeskyttetRessurs(action = CREATE, resource = REGISTERDATA, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = CREATE, resource = REGISTERDATA)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentOgLagreRegisterdataSync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
         var startTx = Instant.now();
@@ -93,7 +92,7 @@ public class RegisterdataRestTjeneste extends FellesRestTjeneste {
     @Path("/innhent/async")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(description = "Trigger registerinnhenting for en gitt id", tags = "registerinnhenting")
-    @BeskyttetRessurs(action = CREATE, resource = REGISTERDATA, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = CREATE, resource = REGISTERDATA)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentOgLagreRegisterdataAsync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
         var startTx = Instant.now();
@@ -115,7 +114,7 @@ public class RegisterdataRestTjeneste extends FellesRestTjeneste {
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(description = "Sjekker innhentingFerdig på async innhenting og gir siste referanseid på grunnlaget når tasken er ferdig. " +
         "Hvis ikke innhentingFerdig", tags = "registerinnhenting")
-    @BeskyttetRessurs(action = READ, resource = REGISTERDATA, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = READ, resource = REGISTERDATA)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentAsyncStatus(@Parameter(name = "status") @Valid SjekkStatusAbacDto dto) {
         var startTx = Instant.now();

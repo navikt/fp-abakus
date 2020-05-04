@@ -4,7 +4,6 @@ import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessu
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.UPDATE;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -113,7 +112,7 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
             @ApiResponse(responseCode = "204", description = "Det finnes ikke et grunnlag for forespørselen"),
             @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")
         })
-    @BeskyttetRessurs(action = READ, resource = GRUNNLAG, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = READ, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
         var startTx = Instant.now();
@@ -168,7 +167,7 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
         responses = {
             @ApiResponse(responseCode = "200", description = "Mottatt grunnlaget")
         })
-    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response oppdaterOgLagreGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagAbacDto dto) {
         var startTx = Instant.now();
@@ -197,7 +196,7 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
                 content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = InntektArbeidYtelseGrunnlagSakSnapshotDto.class)))
         })
-    @BeskyttetRessurs(action = READ, resource = GRUNNLAG, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = READ, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentSnapshotIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
         var startTx = Instant.now();
@@ -234,7 +233,7 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Kopier grunnlag",
         tags = "iay-grunnlag")
-    @BeskyttetRessurs(action = CREATE, resource = GRUNNLAG, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = CREATE, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response kopierOgLagreGrunnlag(@NotNull @Valid KopierGrunnlagRequestAbac request) {
         var startTx = Instant.now();

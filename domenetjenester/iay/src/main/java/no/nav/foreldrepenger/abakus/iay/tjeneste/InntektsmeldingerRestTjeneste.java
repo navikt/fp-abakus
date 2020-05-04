@@ -3,7 +3,6 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste;
 import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.INNTEKSTMELDING;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -94,7 +93,7 @@ public class InntektsmeldingerRestTjeneste extends FellesRestTjeneste {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Hent inntektsmeldinger for angitt søke spesifikasjon", tags = "inntektsmelding")
-    @BeskyttetRessurs(action = READ, resource = INNTEKSTMELDING, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = READ, resource = INNTEKSTMELDING)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentInntektsmeldingerForSak(@NotNull @Valid InntektsmeldingerRequestAbacDto spesifikasjon) {
         var startTx = Instant.now();
@@ -115,7 +114,7 @@ public class InntektsmeldingerRestTjeneste extends FellesRestTjeneste {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Hent refusjonskrav fra inntektsmeldinger for angitt søke spesifikasjon", tags = "inntektsmelding")
-    @BeskyttetRessurs(action = READ, resource = INNTEKSTMELDING, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = READ, resource = INNTEKSTMELDING)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentRefusjonskravDatoForSak(@NotNull @Valid InntektsmeldingerRequestAbacDto spesifikasjon) {
         var startTx = Instant.now();
@@ -146,7 +145,7 @@ public class InntektsmeldingerRestTjeneste extends FellesRestTjeneste {
                 content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = UuidDto.class)))
         })
-    @BeskyttetRessurs(action = CREATE, resource = INNTEKSTMELDING, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = CREATE, resource = INNTEKSTMELDING)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public UuidDto lagreInntektsmeldinger(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid InntektsmeldingerMottattRequest mottattRequest) {
         var startTx = Instant.now();
@@ -180,7 +179,7 @@ public class InntektsmeldingerRestTjeneste extends FellesRestTjeneste {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Hent inntektsmeldinger for angitt søke spesifikasjon", tags = "inntektsmelding")
-    @BeskyttetRessurs(action = READ, resource = INNTEKSTMELDING, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = READ, resource = INNTEKSTMELDING)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentDifferanseMellomToReferanserPåSak(@NotNull @Valid InntektsmeldingDiffRequestAbacDto spesifikasjon) {
         var startTx = Instant.now();
