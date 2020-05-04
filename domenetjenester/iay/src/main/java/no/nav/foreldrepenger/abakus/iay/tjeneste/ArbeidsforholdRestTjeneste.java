@@ -3,7 +3,6 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste;
 import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.ARBEIDSFORHOLD;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursResourceAttributt.FAGSAK;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -76,7 +75,7 @@ public class ArbeidsforholdRestTjeneste extends FellesRestTjeneste {
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Gir ut alle arbeidsforhold i en gitt periode/dato for en gitt aktør. NB! Kaller direkte til aa-registeret",
         tags = "arbeidsforhold")
-    @BeskyttetRessurs(action = READ, resource = ARBEIDSFORHOLD, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = READ, resource = ARBEIDSFORHOLD)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentArbeidsforhold(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
         var startTx = Instant.now();
@@ -100,7 +99,7 @@ public class ArbeidsforholdRestTjeneste extends FellesRestTjeneste {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Finner eksisterende intern referanse for arbeidsforholdId eller lager en ny", tags = "arbeidsforhold")
-    @BeskyttetRessurs(action = CREATE, resource = ARBEIDSFORHOLD, ressurs = FAGSAK)
+    @BeskyttetRessurs(action = CREATE, resource = ARBEIDSFORHOLD)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response finnEllerOpprettArbeidsforholdReferanse(@NotNull @TilpassetAbacAttributt(supplierClass = ArbeidsforholdReferanseAbacDataSupplier.class) @Valid ArbeidsforholdReferanse request) {
         var startTx = Instant.now();
