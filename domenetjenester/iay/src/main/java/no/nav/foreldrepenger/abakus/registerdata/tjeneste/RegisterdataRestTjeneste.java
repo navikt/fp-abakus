@@ -97,11 +97,11 @@ public class RegisterdataRestTjeneste extends FellesRestTjeneste {
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response innhentOgLagreRegisterdataAsync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
         var startTx = Instant.now();
-
         Response response;
+
         String taskGruppe = innhentTjeneste.triggAsyncInnhent(dto);
         if (taskGruppe != null) {
-            return Response.accepted(new TaskResponsDto(taskGruppe)).build();
+            response = Response.accepted(new TaskResponsDto(taskGruppe)).build();
         } else {
             response = Response.noContent().build();
         }
