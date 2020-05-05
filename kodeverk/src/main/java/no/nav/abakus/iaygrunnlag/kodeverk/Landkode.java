@@ -126,6 +126,7 @@ public class Landkode implements Kodeverdi {
         map.put("-", new Landkode("-"));
         map.put("???", new Landkode("???"));
         map.put("XXX", new Landkode("XXX"));
+        map.put("XXK", new Landkode("XXK"));
 
         return Collections.unmodifiableMap(map);
     }
