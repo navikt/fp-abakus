@@ -150,8 +150,7 @@ public class Kobling extends BaseEntitet implements IndexKey {
     public String toString() {
         return "Kobling{" +
             "KoblingReferanse=" + koblingReferanse +
-            ", aktørId=" + aktørId +
-            ", saksnummer = " + saksnummer + 
+            ", saksnummer = " + saksnummer +
             ", annenPartAktørId=" + annenPartAktørId +
             ", opplysningsperiode=" + opplysningsperiode +
             ", opptjeningsperiode=" + opptjeningsperiode +
