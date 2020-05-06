@@ -138,6 +138,10 @@ public class Kobling extends BaseEntitet implements IndexKey {
         this.opptjeningsperiode = opptjeningsperiode;
     }
 
+    public Saksnummer getSaksnummer() {
+        return saksnummer;
+    }
+
     public YtelseType getYtelseType() {
         return ytelseType;
     }
