@@ -71,7 +71,6 @@ public class InnhentRegisterdataRequest {
     @Pattern(regexp = URL_PATTERN, message = "callbackUrl '${validatedValue}' matcher ikke tillatt url pattern '{regexp}'")
     private String callbackUrl;
 
-    @JsonCreator
     public InnhentRegisterdataRequest(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
                                       @JsonProperty(value = "referanse", required = true) @Valid @NotNull UUID referanse,
                                       @JsonProperty(value = "ytelseType", required = true) @NotNull YtelseType ytelseType,

@@ -7,6 +7,7 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -40,6 +41,7 @@ import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.UuidDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
+import no.nav.abakus.iaygrunnlag.request.RegisterdataType;
 import no.nav.abakus.iaygrunnlag.request.SjekkStatusRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.felles.FellesRestTjeneste;
@@ -129,7 +131,7 @@ public class RegisterdataRestTjeneste extends FellesRestTjeneste {
         } else {
             response = Response.status(425).build();
         }
-        
+
         logMetrikk("/registerdata/v1/innhent/status", Duration.between(startTx, Instant.now()));
         return response;
     }
@@ -147,8 +149,9 @@ public class RegisterdataRestTjeneste extends FellesRestTjeneste {
                                           @JsonProperty(value = "referanse", required = true) @Valid @NotNull UUID referanse,
                                           @JsonProperty(value = "ytelseType", required = true) @Valid @NotNull YtelseType ytelseType,
                                           @JsonProperty(value = "opplysningsperiode", required = true) @NotNull @Valid Periode opplysningsperiode,
-                                          @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør) {
-            super(saksnummer, referanse, ytelseType, opplysningsperiode, aktør);
+                                          @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
+                                          @JsonProperty(value = "elementer", required = true) @NotNull @Valid Set<RegisterdataType> elementer) {
+            super(saksnummer, referanse, ytelseType, opplysningsperiode, aktør, elementer);
         }
 
         @Override
