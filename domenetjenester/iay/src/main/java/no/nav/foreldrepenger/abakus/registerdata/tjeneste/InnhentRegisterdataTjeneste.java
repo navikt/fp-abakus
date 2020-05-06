@@ -12,6 +12,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
@@ -33,6 +35,7 @@ import no.nav.foreldrepenger.abakus.registerdata.RegisterdataInnhentingTask;
 import no.nav.foreldrepenger.abakus.registerdata.callback.CallbackTask;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+import no.nav.foreldrepenger.abakus.vedtak.json.JacksonJsonConfig;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskGruppe;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskStatus;
@@ -145,6 +148,11 @@ public class InnhentRegisterdataTjeneste {
         ProsessTaskData callbackTask = new ProsessTaskData(CallbackTask.TASKTYPE);
         innhentingTask.setAktørId(kobling.getAktørId().getId());
         innhentingTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
+        try {
+            innhentingTask.setPayload(JacksonJsonConfig.getMapper().writeValueAsString(dto));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Feil i serialisering av innhentingrequest", e);
+        }
         callbackTask.setAktørId(kobling.getAktørId().getId());
         callbackTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
 
@@ -157,6 +165,7 @@ public class InnhentRegisterdataTjeneste {
         }
         taskGruppe.addNesteSekvensiell(innhentingTask);
         taskGruppe.addNesteSekvensiell(callbackTask);
+        taskGruppe.setCallIdFraEksisterende();
 
         return prosessTaskRepository.lagre(taskGruppe);
     }
