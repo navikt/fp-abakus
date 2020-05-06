@@ -58,14 +58,19 @@ public class RegisterdataInnhentingTask extends KoblingTask {
     @Override
     protected void prosesser(ProsessTaskData prosessTaskData) {
         Kobling kobling = koblingTjeneste.hent(Long.valueOf(prosessTaskData.getBehandlingId()));
+        log.info("Starter registerinnhenting for sak=[{}, {}] med behandling='{}'", kobling.getSaksnummer(), kobling.getYtelseType(), kobling.getKoblingReferanse());
 
         Set<RegisterdataElement> informasjonsElementer;
-        log.info("Starter registerinnhenting for sak=[{}, {}] med behandling='{}'", kobling.getSaksnummer(), kobling.getYtelseType(), kobling.getKoblingReferanse());
-        try {
-            var request = JacksonJsonConfig.getMapper().readValue(prosessTaskData.getPayloadAsString(), InnhentRegisterdataRequest.class);
-            informasjonsElementer = InnhentRegisterdataTjeneste.hentUtInformasjonsElementer(request);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Feilet i deserialisering av innhent request", e);
+        var payloadAsString = prosessTaskData.getPayloadAsString();
+        if (payloadAsString != null && !payloadAsString.isEmpty()) {
+            try {
+                var request = JacksonJsonConfig.getMapper().readValue(payloadAsString, InnhentRegisterdataRequest.class);
+                informasjonsElementer = InnhentRegisterdataTjeneste.hentUtInformasjonsElementer(request);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("Feilet i deserialisering av innhent request", e);
+            }
+        } else {
+            informasjonsElementer = Set.of(RegisterdataElement.values());
         }
 
         InntektArbeidYtelseGrunnlagBuilder builder = finnInnhenter(kobling.getYtelseType()).innhentRegisterdata(kobling, informasjonsElementer);
