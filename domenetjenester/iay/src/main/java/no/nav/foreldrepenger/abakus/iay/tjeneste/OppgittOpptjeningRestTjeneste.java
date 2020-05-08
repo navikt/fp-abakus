@@ -1,7 +1,9 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste;
 
+import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.GRUNNLAG;
 import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.SØKNAD;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
+import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.UPDATE;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -103,7 +105,7 @@ public class OppgittOpptjeningRestTjeneste extends FellesRestTjeneste {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = UuidDto.class)))
     })
-    @BeskyttetRessurs(action = CREATE, resource = SØKNAD)
+    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response lagreOverstrytOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
         var startTx = Instant.now();
