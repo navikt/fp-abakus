@@ -149,6 +149,9 @@ public class IAYFraDtoMapper {
 
         var oppgittOpptjening = new MapOppgittOpptjening(iayTjeneste).mapFraDto(dto.getOppgittOpptjening());
         builder.medOppgittOpptjening(oppgittOpptjening);
+
+        var overstyrtOppgittOpptjening = new MapOppgittOpptjening(iayTjeneste).mapFraDto(dto.getOverstyrtOppgittOpptjening());
+        builder.medOverstyrtOppgittOpptjening(overstyrtOppgittOpptjening);
     }
 
     private void mapOverstyringer(InntektArbeidYtelseGrunnlagDto dto, InntektArbeidYtelseGrunnlagBuilder builder) {

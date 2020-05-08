@@ -67,6 +67,12 @@ public class IAYTilDtoMapper {
             });
         }
 
+        if (dataset.contains(Dataset.OVERSTYRT_OPPGITT_OPPTJENING)) {
+            grunnlag.getOverstyrtOppgittOpptjening().ifPresent(oo -> {
+                var mapper = new MapOppgittOpptjening(null).mapTilDto(oo);
+                dto.medOverstyrtOppgittOpptjening(mapper);
+            });
+        }
         return dto;
     }
 

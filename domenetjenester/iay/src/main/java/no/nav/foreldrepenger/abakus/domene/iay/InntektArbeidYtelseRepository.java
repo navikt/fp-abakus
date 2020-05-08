@@ -75,7 +75,8 @@ public class InntektArbeidYtelseRepository {
 
         if (kunAktiv) {
             final Optional<InntektArbeidYtelseGrunnlag> grunnlag = HibernateVerktøy.hentUniktResultat(query);
-            return grunnlag.isPresent() ? List.of(grunnlag.get()) : Collections.emptyList();
+            List<InntektArbeidYtelseGrunnlag> inntektArbeidYtelseGrunnlags = grunnlag.isPresent() ? List.of(grunnlag.get()) : Collections.emptyList();
+            return inntektArbeidYtelseGrunnlags;
         } else {
             return query.getResultStream().map(g -> g).collect(Collectors.toList());
         }
@@ -279,6 +280,20 @@ public class InntektArbeidYtelseRepository {
         return build.getGrunnlagReferanse();
     }
 
+    public GrunnlagReferanse lagreOverstyring(KoblingReferanse koblingReferanse, OppgittOpptjeningBuilder overstyrOppgittOpptjening) {
+        if (overstyrOppgittOpptjening == null) {
+            return null;
+        }
+        Optional<InntektArbeidYtelseGrunnlag> iayGrunnlag = hentInntektArbeidYtelseGrunnlagForBehandling(koblingReferanse);
+
+        InntektArbeidYtelseGrunnlagBuilder grunnlag = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayGrunnlag);
+        grunnlag.medOverstyrtOppgittOpptjening(overstyrOppgittOpptjening);
+
+        InntektArbeidYtelseGrunnlag build = grunnlag.build();
+        lagreOgFlush(koblingReferanse, build);
+        return build.getGrunnlagReferanse();
+    }
+
     public GrunnlagReferanse lagre(KoblingReferanse koblingReferanse, ArbeidsforholdInformasjonBuilder informasjonBuilder,
                                    List<Inntektsmelding> inntektsmeldingerList) {
         Objects.requireNonNull(inntektsmeldingerList, "inntektsmelding"); // NOSONAR
@@ -425,6 +440,7 @@ public class InntektArbeidYtelseRepository {
         }
 
         nyttGrunnlag.getOppgittOpptjening().ifPresent(this::lagreOppgittOpptjening);
+        nyttGrunnlag.getOverstyrtOppgittOpptjening().ifPresent(this::lagreOppgittOpptjening);
 
         final Optional<InntektArbeidYtelseAggregat> registerVersjon = entitet.getRegisterVersjon();
         registerVersjon.ifPresent(this::lagreInntektArbeid);

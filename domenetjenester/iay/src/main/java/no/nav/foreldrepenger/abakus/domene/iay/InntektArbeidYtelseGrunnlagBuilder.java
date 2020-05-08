@@ -43,6 +43,10 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         if (skalIkkeKopierMed(dataset, Dataset.OPPGITT_OPPTJENING)) {
             kladd.setOppgittOpptjening(null);
         }
+
+        if (skalIkkeKopierMed(dataset, Dataset.OVERSTYRT_OPPGITT_OPPTJENING)) {
+            kladd.setOverstyrtOppgittOpptjening(null);
+        }
         if (skalIkkeKopierMed(dataset, Dataset.INNTEKTSMELDING)) {
             kladd.setInntektsmeldinger(null);
         }
@@ -131,6 +135,13 @@ public class InntektArbeidYtelseGrunnlagBuilder {
                 throw new IllegalStateException("Utviklerfeil: Er ikke lov å endre oppgitt opptjening!");
             }
             kladd.setOppgittOpptjening(builder.build());
+        }
+        return this;
+    }
+
+    public InntektArbeidYtelseGrunnlagBuilder medOverstyrtOppgittOpptjening(OppgittOpptjeningBuilder builder) {
+        if (builder != null) {
+            kladd.setOverstyrtOppgittOpptjening(builder.build());
         }
         return this;
     }

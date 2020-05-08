@@ -81,6 +81,10 @@ public class InntektArbeidYtelseGrunnlagDto {
     @Valid
     private OppgittOpptjeningDto oppgittOpptjening;
 
+    @JsonProperty(value = "overstyrtOppgittOpptjening")
+    @Valid
+    private OppgittOpptjeningDto overstyrtOppgittOpptjening;
+
     @JsonProperty(value = "arbeidsforholdInformasjon")
     @Valid
     private ArbeidsforholdInformasjon arbeidsforholdInformasjon;
@@ -155,6 +159,10 @@ public class InntektArbeidYtelseGrunnlagDto {
         return oppgittOpptjening;
     }
 
+    public OppgittOpptjeningDto getOverstyrtOppgittOpptjening() {
+        return overstyrtOppgittOpptjening;
+    }
+
     public InntektArbeidYtelseAggregatOverstyrtDto getOverstyrt() {
         return overstyrt;
     }
@@ -187,6 +195,11 @@ public class InntektArbeidYtelseGrunnlagDto {
         return this;
     }
 
+    public InntektArbeidYtelseGrunnlagDto medOverstyrtOppgittOpptjening(OppgittOpptjeningDto overstyrtOppgittOpptjening) {
+        setOverstyrtOppgittOpptjening(overstyrtOppgittOpptjening);
+        return this;
+    }
+
     public InntektArbeidYtelseGrunnlagDto medOverstyrt(InntektArbeidYtelseAggregatOverstyrtDto overstyrt) {
         setOverstyrt(overstyrt);
         return this;
@@ -206,6 +219,10 @@ public class InntektArbeidYtelseGrunnlagDto {
 
     }
 
+    public void setOverstyrtOppgittOpptjening(OppgittOpptjeningDto overstyrtOppgittOpptjening) {
+        this.overstyrtOppgittOpptjening = overstyrtOppgittOpptjening;
+    }
+
     public void setOverstyrt(InntektArbeidYtelseAggregatOverstyrtDto overstyrt) {
         this.overstyrt = overstyrt;
     }
@@ -213,4 +230,6 @@ public class InntektArbeidYtelseGrunnlagDto {
     public void setRegister(InntektArbeidYtelseAggregatRegisterDto register) {
         this.register = register;
     }
+
+
 }
