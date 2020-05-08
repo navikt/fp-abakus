@@ -110,4 +110,37 @@ public class InntektArbeidYtelseRepositoryTest {
         assertThat(overstyrtOppgittOpptjening.get().getAnnenAktivitet()).containsExactly(overstrytAnnenAktivitet);
         assertThat(oppgittOpptjening.get().getAnnenAktivitet()).containsExactly(annenAktivitet);
     }
+
+    @Test
+    public void skal_kunne_lagre_overstyring_av_oppgitt_opptjening_flere_ganger() {
+        final var ko = new Kobling(new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()), new AktørId("1231231231223"));
+        ko.setYtelseType(YtelseType.OMSORGSPENGER);
+        ko.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(2), LocalDate.now()));
+        koblingRepository.lagre(ko);
+
+        final var overstyring1 = OppgittOpptjeningBuilder.ny();
+        OppgittAnnenAktivitet annenAktivitetoverstyring1 = new OppgittAnnenAktivitet(IntervallEntitet.fraOgMed(LocalDate.now()), ArbeidType.ETTERLØNN_SLUTTPAKKE);
+        overstyring1.leggTilAnnenAktivitet(annenAktivitetoverstyring1);
+
+
+        repository.lagreOverstyring(ko.getKoblingReferanse(), overstyring1);
+
+        Optional<InntektArbeidYtelseGrunnlag> inntektArbeidYtelseGrunnlag = repository.hentInntektArbeidYtelseGrunnlagForBehandling(ko.getKoblingReferanse());
+        assertThat(inntektArbeidYtelseGrunnlag).isPresent();
+        Optional<OppgittOpptjening> overstyrtOppgittOpptjening = inntektArbeidYtelseGrunnlag.get().getOverstyrtOppgittOpptjening();
+        assertThat(overstyrtOppgittOpptjening).isPresent();
+        assertThat(overstyrtOppgittOpptjening.get().getAnnenAktivitet()).containsExactly(annenAktivitetoverstyring1);
+
+        final var overstyring2 = OppgittOpptjeningBuilder.ny();
+        OppgittAnnenAktivitet annenAktivitetoverstyring2 = new OppgittAnnenAktivitet(IntervallEntitet.fraOgMed(LocalDate.now()), ArbeidType.VENTELØNN_VARTPENGER);
+        overstyring2.leggTilAnnenAktivitet(annenAktivitetoverstyring2);
+        repository.lagreOverstyring(ko.getKoblingReferanse(), overstyring2);
+
+        Optional<InntektArbeidYtelseGrunnlag> inntektArbeidYtelseGrunnlag2 = repository.hentInntektArbeidYtelseGrunnlagForBehandling(ko.getKoblingReferanse());
+
+        assertThat(inntektArbeidYtelseGrunnlag2).isPresent();
+        Optional<OppgittOpptjening> overstyrtOppgittOpptjening2 = inntektArbeidYtelseGrunnlag2.get().getOverstyrtOppgittOpptjening();
+        assertThat(overstyrtOppgittOpptjening2).isPresent();
+        assertThat(overstyrtOppgittOpptjening2.get().getAnnenAktivitet()).containsExactly(annenAktivitetoverstyring2);
+    }
 }
