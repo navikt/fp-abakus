@@ -1,7 +1,9 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste;
 
+import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.GRUNNLAG;
 import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.SØKNAD;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
+import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.UPDATE;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -93,6 +95,40 @@ public class OppgittOpptjeningRestTjeneste extends FellesRestTjeneste {
         }
 
         logMetrikk("/iay/oppgitt/v1/motta", Duration.between(startTx, Instant.now()));
+        return response;
+    }
+
+    @POST
+    @Path("/overstyr")
+    @Operation(description = "Lagrer ned mottatt oppgitt opptjening", tags = "oppgitt opptjening", responses = {
+            @ApiResponse(description = "Oppdatert grunnlagreferanse",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UuidDto.class)))
+    })
+    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
+    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    public Response lagreOverstrytOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
+        var startTx = Instant.now();
+        Response response;
+
+        var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
+        var koblingLås = koblingTjeneste.taSkrivesLås(koblingReferanse);
+        var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
+        var kobling = koblingTjeneste.finnEllerOpprett(koblingReferanse, aktørId, new Saksnummer(mottattRequest.getSaksnummer()));
+
+        OppgittOpptjeningBuilder builder = new MapOppgittOpptjening(iayTjeneste).mapFraDto(mottattRequest.getOppgittOpptjening());
+        GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagreOverstyring(koblingReferanse, builder);
+
+        koblingTjeneste.lagre(kobling);
+        koblingTjeneste.oppdaterLåsVersjon(koblingLås);
+
+        if (grunnlagReferanse != null) {
+            response = Response.ok(new UuidDto(grunnlagReferanse.getReferanse())).build();
+        } else {
+            response = Response.noContent().build();
+        }
+
+        logMetrikk("/iay/oppgitt/v1/overstyr", Duration.between(startTx, Instant.now()));
         return response;
     }
 

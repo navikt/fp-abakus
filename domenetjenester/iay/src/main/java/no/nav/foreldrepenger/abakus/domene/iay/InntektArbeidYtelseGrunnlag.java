@@ -73,6 +73,11 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     @JoinColumn(name = "informasjon_id", updatable = false, unique = true)
     private ArbeidsforholdInformasjon arbeidsforholdInformasjon;
 
+    @OneToOne
+    @JoinColumn(name = "overstyrt_oppgitt_opptjening_id", updatable = false, unique = true)
+    @ChangeTracked
+    private OppgittOpptjening overstyrtOppgittOpptjening;
+
     @Convert(converter = BooleanToStringConverter.class)
     @Column(name = "aktiv", nullable = false)
     private boolean aktiv = true;
@@ -90,6 +95,8 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
 
         // NB! skal ikke lage ny versjon av oppgitt opptjening! Lenker bare inn
         grunnlag.getOppgittOpptjening().ifPresent(kopiAvOppgittOpptjening -> this.setOppgittOpptjening(kopiAvOppgittOpptjening));
+
+        grunnlag.getOverstyrtOppgittOpptjening().ifPresent(this::setOverstyrtOppgittOpptjening);
         grunnlag.getRegisterVersjon().ifPresent(nyRegisterVerson -> this.setRegister(nyRegisterVerson));
 
         grunnlag.getSaksbehandletVersjon()
@@ -161,8 +168,20 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
         return Optional.ofNullable(oppgittOpptjening);
     }
 
+
     void setOppgittOpptjening(OppgittOpptjening oppgittOpptjening) {
         this.oppgittOpptjening = oppgittOpptjening;
+    }
+
+    /**
+     * Returnerer overstyrt oppgitt opptjening hvis det finnes. (Inneholder opplysninger søker opplyser om i søknaden)
+     */
+    public Optional<OppgittOpptjening> getOverstyrtOppgittOpptjening() {
+        return Optional.ofNullable(overstyrtOppgittOpptjening);
+    }
+
+    void setOverstyrtOppgittOpptjening(OppgittOpptjening overstyrtOppgittOpptjening) {
+        this.overstyrtOppgittOpptjening = overstyrtOppgittOpptjening;
     }
 
     void setKobling(Long koblingId) {
