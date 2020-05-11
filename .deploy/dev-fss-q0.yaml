@@ -98,10 +98,3 @@ spec:
       value: http://infotrygd-grunnlag-paaroerende-sykdom.default/paaroerendeSykdom/grunnlag
     - name: FPABAKUS_IT_SP_GRUNNLAG_URL
       value: http://infotrygd-sykepenger-fp.default/grunnlag
-    #Auditlogger
-    - name: AUDITLOGGER_ENABLED
-      value: "true"
-    - name: AUDITLOGGER_VENDOR
-      value: "fp"
-    - name: AUDITLOGGER_PRODUCT
-      value: "fp-abakus"
