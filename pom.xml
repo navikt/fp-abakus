@@ -36,7 +36,7 @@
 
 		<kontrakter.version>5.1_20200117132228_47cdf2f</kontrakter.version>
 
-		<prometheus.version>0.8.1</prometheus.version>
+		<prometheus.version>0.9.0</prometheus.version>
 		<swagger.version>2.1.2</swagger.version>
 		<kafka.version>2.5.0</kafka.version>
 	</properties>
