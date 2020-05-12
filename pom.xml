@@ -30,13 +30,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<felles.version>1.6-20200511093255-6a7e310</felles.version>
+		<felles.version>1.7-20200512130031-e002787</felles.version>
 
 		<prosesstask.version>2.3-20200428191932-0e8e268</prosesstask.version>
 
 		<kontrakter.version>5.1_20200117132228_47cdf2f</kontrakter.version>
 
-		<prometheus.version>0.8.1</prometheus.version>
+		<prometheus.version>0.9.0</prometheus.version>
 		<swagger.version>2.1.2</swagger.version>
 		<kafka.version>2.5.0</kafka.version>
 	</properties>
@@ -180,7 +180,7 @@
 			<dependency>
 				<groupId>org.assertj</groupId>
 				<artifactId>assertj-core</artifactId>
-				<version>3.16.0</version>
+				<version>3.16.1</version>
 			</dependency>
 
 			<dependency>
