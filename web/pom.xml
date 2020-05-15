@@ -16,7 +16,7 @@
     <properties>
         <geronimo.jaspi.version>2.0.0</geronimo.jaspi.version>
         <geronimo.osgi.version>1.1</geronimo.osgi.version>
-        <swagger-ui.version>3.25.2</swagger-ui.version>
+        <swagger-ui.version>3.25.3</swagger-ui.version>
 
         <replacer.version>1.5.3</replacer.version>
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
