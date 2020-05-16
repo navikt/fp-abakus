@@ -36,6 +36,8 @@
 
 		<kontrakter.version>5.1_20200117132228_47cdf2f</kontrakter.version>
 
+        <tjenestespesifikasjoner.version>1.2020.01.27-14.53-7065a2d75840</tjenestespesifikasjoner.version>
+
 		<prometheus.version>0.9.0</prometheus.version>
 		<swagger.version>2.1.2</swagger.version>
 		<kafka.version>2.5.0</kafka.version>
@@ -46,9 +48,9 @@
 		<maven>3.6.1</maven>
 	</prerequisites>
 
-	<!-- NB: Unngå å put scope (test, provided) i dependency management. Det
-		har uheldige virkninger ved bruk av import og dependency (bruk composition
-		over arv) da de overstyrer andre scope definisjoner. Sett det heller der
+	<!-- NB: Unngå å put scope (test, provided) i dependency management. Det 
+		har uheldige virkninger ved bruk av import og dependency (bruk composition 
+		over arv) da de overstyrer andre scope definisjoner. Sett det heller der 
 		det brukes. -->
 	<dependencyManagement>
 		<dependencies>
@@ -73,14 +75,14 @@
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
-            <dependency>
-                <groupId>no.nav.vedtak.prosesstask</groupId>
-                <artifactId>prosesstask-root</artifactId>
-                <version>${prosesstask.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-            <dependency>
+			<dependency>
+				<groupId>no.nav.vedtak.prosesstask</groupId>
+				<artifactId>prosesstask-root</artifactId>
+				<version>${prosesstask.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+			<dependency>
 				<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
 				<artifactId>felles-integrasjon-pom</artifactId>
 				<version>${felles.version}</version>
@@ -92,16 +94,17 @@
 				<artifactId>jboss-annotations-api_1.3_spec</artifactId>
 				<version>2.0.1.Final</version>
 			</dependency>
+			
 			<dependency>
 				<groupId>no.nav.foreldrepenger.abakus</groupId>
 				<artifactId>felles</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-            <dependency>
-                <groupId>no.nav.vedtak.prosesstask</groupId>
-                <artifactId>prosesstask-legacy</artifactId>
-                <version>${prosesstask.version}</version>
-            </dependency>
+			<dependency>
+				<groupId>no.nav.vedtak.prosesstask</groupId>
+				<artifactId>prosesstask-legacy</artifactId>
+				<version>${prosesstask.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>no.nav.foreldrepenger.abakus</groupId>
 				<artifactId>abakus-kodeverk</artifactId>
@@ -155,7 +158,38 @@
 				<artifactId>aordningen-inntektsinformasjon-v1</artifactId>
 				<version>1.7</version>
 			</dependency>
+			<dependency>
+				<groupId>no.nav.tjenestespesifikasjoner</groupId>
+				<artifactId>nav-infotrygdSak-v1-tjenestespesifikasjon</artifactId>
+				<version>${tjenestespesifikasjoner.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.tjenestespesifikasjoner</groupId>
+				<artifactId>nav-infotrygdBeregningsgrunnlag-v1-tjenestespesifikasjon</artifactId>
+				<version>${tjenestespesifikasjoner.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.tjenestespesifikasjoner</groupId>
+				<artifactId>nav-meldekortUtbetalingsgrunnlag-v1-tjenestespesifikasjon</artifactId>
+				<version>${tjenestespesifikasjoner.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.tjenestespesifikasjoner</groupId>
+				<artifactId>nav-arbeidsforhold-v3-tjenestespesifikasjon</artifactId>
+				<version>${tjenestespesifikasjoner.version}</version>
+			</dependency>
+			<dependency>
+                <groupId>no.nav.tjenestespesifikasjoner</groupId>
+                <artifactId>nav-fim-organisasjon-v5-tjenestespesifikasjon</artifactId>
+                <version>${tjenestespesifikasjoner.version}</version>
+            </dependency>
+			<dependency>
+				<groupId>no.nav.tjenestespesifikasjoner</groupId>
+				<artifactId>nav-fim-organisasjon-v4-tjenestespesifikasjon</artifactId>
+				<version>${tjenestespesifikasjoner.version}</version>
+			</dependency>
 
+			<!--  Infrastruktur biblioteker -->
 			<dependency>
 				<groupId>org.postgresql</groupId>
 				<artifactId>postgresql</artifactId>
@@ -263,7 +297,7 @@
 				<version>6.1.5.Final</version>
 			</dependency>
 
-			<!-- Følgende kan fjernes når fpfelles får jaxws-rt istd håndkodede versjoner
+			<!-- Følgende kan fjernes når fpfelles får jaxws-rt istd håndkodede versjoner 
 				av disse bibliotekene. Men må overstyres nå pga kompatibilitet. -->
 			<dependency>
 				<groupId>org.glassfish.jaxb</groupId>
@@ -281,7 +315,7 @@
 				<version>4.2.1</version>
 			</dependency>
 
-			<!--Swagger-->
+			<!--Swagger -->
 			<dependency>
 				<groupId>io.swagger.core.v3</groupId>
 				<artifactId>swagger-annotations</artifactId>
@@ -315,18 +349,18 @@
 						</execution>
 					</executions>
 				</plugin>
-                <plugin>
+				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
 					<version>0.8.5</version>
 					<executions>
 						<execution>
-						    <goals>
-						      <goal>prepare-agent</goal>
-						    </goals>
+							<goals>
+								<goal>prepare-agent</goal>
+							</goals>
 						</execution>
 					</executions>
-			    </plugin>
+				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
@@ -384,7 +418,7 @@
 					<artifactId>flatten-maven-plugin</artifactId>
 					<version>1.2.2</version>
 				</plugin>
-                <plugin>
+				<plugin>
 					<groupId>org.sonarsource.scanner.maven</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
 					<version>3.7.0.1746</version>
@@ -445,7 +479,7 @@
 					</execution>
 				</executions>
 			</plugin>
-            <plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
 				<configuration>
@@ -463,12 +497,12 @@
 		<tag>HEAD</tag>
 	</scm>
 
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>Github navikt Maven Packages</name>
-            <url>https://maven.pkg.github.com/navikt/fp-abakus</url>
-        </repository>
-    </distributionManagement>
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>Github navikt Maven Packages</name>
+			<url>https://maven.pkg.github.com/navikt/fp-abakus</url>
+		</repository>
+	</distributionManagement>
 
 </project>
