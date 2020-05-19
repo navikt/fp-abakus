@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -13,7 +14,6 @@
 	<packaging>jar</packaging>
 	<name>Abakus :: Domenetjeneste :: IAY</name>
 
-
 	<dependencies>
 		<dependency>
 			<!-- for Bean validation -->
@@ -21,11 +21,11 @@
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
 
-        <dependency>
-            <groupId>no.nav.vedtak.prosesstask</groupId>
-            <artifactId>prosesstask-legacy</artifactId>
-        </dependency>
-        <dependency>
+		<dependency>
+			<groupId>no.nav.vedtak.prosesstask</groupId>
+			<artifactId>prosesstask-legacy</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>no.nav.foreldrepenger.abakus</groupId>
 			<artifactId>prosesstask</artifactId>
 		</dependency>
@@ -33,10 +33,10 @@
 			<groupId>no.nav.foreldrepenger.abakus</groupId>
 			<artifactId>kobling</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>no.nav.foreldrepenger.felles</groupId>
-            <artifactId>felles-db</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>no.nav.foreldrepenger.felles</groupId>
+			<artifactId>felles-db</artifactId>
+		</dependency>
 
 		<!-- integrasjoner -->
 		<dependency>
@@ -55,22 +55,18 @@
 			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
 			<artifactId>arbeidsforhold-klient</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-            <artifactId>infotrygd-grunnlag-klient</artifactId>
-        </dependency>
-        <dependency>
+		<dependency>
 			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-			<artifactId>meldekortutbetalingsgrunnlag-klient</artifactId>
+			<artifactId>infotrygd-grunnlag-klient</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
 			<artifactId>sigrun-klient</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-            <artifactId>unleash-klient</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+			<artifactId>unleash-klient</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>no.nav.foreldrepenger.kontrakter</groupId>
 			<artifactId>fp-feed-vedtak-tjenestespesifikasjon</artifactId>
@@ -89,15 +85,23 @@
 			<artifactId>sensu-klient</artifactId>
 		</dependency>
 
-        <!-- Andre NAV tjenestespesifikasjoner -->
+		<!-- Andre NAV tjenestespesifikasjoner -->
 		<dependency>
 			<groupId>no.nav.tjenester</groupId>
 			<artifactId>aordningen-inntektsinformasjon-v1</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>no.nav.tjenestespesifikasjoner</groupId>
+			<artifactId>nav-meldekortUtbetalingsgrunnlag-v1-tjenestespesifikasjon</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+			<artifactId>felles-integrasjon-webservice</artifactId>
+		</dependency>
 
 		<dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations</artifactId>
 		</dependency>
 
 		<!-- TEST -->

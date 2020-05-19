@@ -3,7 +3,7 @@ package no.nav.foreldrepenger.abakus.app.selftest.checks;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import no.nav.vedtak.felles.integrasjon.meldekortutbetalingsgrunnlag.MeldekortUtbetalingsgrunnlagSelftestConsumer;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.ws.MeldekortUtbetalingsgrunnlagSelftestConsumer;
 
 @ApplicationScoped
 public class MeldekortUtbetalingsgrunnlagWebServiceHealthCheck extends WebServiceHealthCheck {
