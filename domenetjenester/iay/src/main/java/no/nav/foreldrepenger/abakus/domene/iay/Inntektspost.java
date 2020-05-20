@@ -66,18 +66,17 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
     private IntervallEntitet periode;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "beloep", nullable = false)))
     @ChangeTracked
+    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "beloep", nullable = false)))
     private Beløp beløp;
 
     @Version
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "opprinneligUtbetalerOrgnr", column = @Column(name = "opprinelig_utbetaler_orgnr")))
     @ChangeTracked
+    @AttributeOverrides(@AttributeOverride(name = "orgNummer", column = @Column(name = "opprinelig_utbetaler_orgnr", updatable = false, length = 50)))
     private OrgNummer opprinneligUtbetalerOrgnr;
 
     public Inntektspost() {
