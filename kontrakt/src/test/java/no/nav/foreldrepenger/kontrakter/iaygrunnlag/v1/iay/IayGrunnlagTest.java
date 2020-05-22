@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.iay;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -226,6 +227,7 @@ public class IayGrunnlagTest {
                 .medArbeidsforhold(List.of(
                     new OppgittArbeidsforholdDto(periode, ArbeidType.ORDINÆRT_ARBEIDSFORHOLD)
                         .medErUtenlandskInntekt(true)
+                        .medInntekt(BigDecimal.valueOf(10000))
                         .medOppgittVirksomhetNavn("GammelDansk", Landkode.DNK)))
                 .medEgenNæring(List.of(
                     new OppgittEgenNæringDto(periode)

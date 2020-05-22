@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay.søknad;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -66,6 +67,9 @@ public class OppgittArbeidsforhold extends BaseEntitet implements IndexKey {
     @Column(name = "utenlandsk_virksomhet_navn")
     private String utenlandskVirksomhetNavn;
 
+    @Column(name = "inntekt")
+    private BigDecimal inntekt;
+
     public OppgittArbeidsforhold() {
         // hibernate
     }
@@ -120,6 +124,22 @@ public class OppgittArbeidsforhold extends BaseEntitet implements IndexKey {
         this.utenlandskVirksomhetNavn = utenlandskVirksomhetNavn;
     }
 
+    void setOppgittOpptjening(OppgittOpptjening oppgittOpptjening) {
+        this.oppgittOpptjening = oppgittOpptjening;
+    }
+
+    void setErUtenlandskInntekt(Boolean erUtenlandskInntekt) {
+        this.erUtenlandskInntekt = erUtenlandskInntekt;
+    }
+
+    public BigDecimal getInntekt() {
+        return inntekt;
+    }
+
+    void setInntekt(BigDecimal inntekt) {
+        this.inntekt = inntekt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -148,13 +168,5 @@ public class OppgittArbeidsforhold extends BaseEntitet implements IndexKey {
             ", landkode=" + landkode +
             ", utenlandskVirksomhetNavn=" + utenlandskVirksomhetNavn +
             '}';
-    }
-
-    void setOppgittOpptjening(OppgittOpptjening oppgittOpptjening) {
-        this.oppgittOpptjening = oppgittOpptjening;
-    }
-
-    void setErUtenlandskInntekt(Boolean erUtenlandskInntekt) {
-        this.erUtenlandskInntekt = erUtenlandskInntekt;
     }
 }
