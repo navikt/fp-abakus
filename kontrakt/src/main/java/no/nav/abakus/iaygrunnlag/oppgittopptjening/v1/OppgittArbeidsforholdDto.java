@@ -1,8 +1,12 @@
 package no.nav.abakus.iaygrunnlag.oppgittopptjening.v1;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 import javax.validation.Valid;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -11,12 +15,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.ALWAYS)
@@ -40,10 +43,21 @@ public class OppgittArbeidsforholdDto {
     @NotNull
     private Landkode landkode = Landkode.NOR;
 
-    /** Oppgis normalt dersom ikke orgnr kan gis. F.eks for utlandske virsomheter, eller noen tilfeller Fiskere med Lott. */
+    /**
+     * Tillater kun positive verdier.
+     */
+    @JsonProperty("inntekt")
+    @DecimalMin(value = "0.00", message = "beløp '${validatedValue}' må være >= {value}")
+    @DecimalMax(value = "9999999999.00", message = "beløp '${validatedValue}' må være >= {value}")
+    @Digits(integer = 10, fraction = 2)
+    private BigDecimal inntekt;
+
+    /**
+     * Oppgis normalt dersom ikke orgnr kan gis. F.eks for utlandske virsomheter, eller noen tilfeller Fiskere med Lott.
+     */
     @JsonProperty(value = "virksomhetNavn", required = false)
     @NotNull
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message="Oppgitt Arbeidsforhold - Virksomhet navn '${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
+    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Oppgitt Arbeidsforhold - Virksomhet navn '${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
     private String virksomhetNavn;
 
     @JsonCreator
@@ -67,12 +81,13 @@ public class OppgittArbeidsforholdDto {
         return erUtenlandskInntekt;
     }
 
-    public void setErUtenlandskInntekt(boolean erUtenlandskInntekt) {
-        this.erUtenlandskInntekt = erUtenlandskInntekt;
-    }
-
     public OppgittArbeidsforholdDto medErUtenlandskInntekt(boolean erUtenlandskInntekt) {
         setErUtenlandskInntekt(erUtenlandskInntekt);
+        return this;
+    }
+
+    public OppgittArbeidsforholdDto medInntekt(BigDecimal inntekt) {
+        setInntekt(inntekt);
         return this;
     }
 
@@ -82,6 +97,10 @@ public class OppgittArbeidsforholdDto {
 
     public Boolean getErUtenlandskInntekt() {
         return erUtenlandskInntekt;
+    }
+
+    public void setErUtenlandskInntekt(boolean erUtenlandskInntekt) {
+        this.erUtenlandskInntekt = erUtenlandskInntekt;
     }
 
     public void setErUtenlandskInntekt(Boolean erUtenlandskInntekt) {
@@ -103,11 +122,18 @@ public class OppgittArbeidsforholdDto {
     public void setVirksomhetNavn(String virksomhetNavn) {
         this.virksomhetNavn = virksomhetNavn;
     }
-    
+
     public OppgittArbeidsforholdDto medOppgittVirksomhetNavn(String virksomhetNavn, Landkode landkode) {
         setLandkode(landkode);
         setVirksomhetNavn(virksomhetNavn);
         return this;
     }
 
+    public BigDecimal getInntekt() {
+        return inntekt;
+    }
+
+    public void setInntekt(BigDecimal inntekt) {
+        this.inntekt = inntekt;
+    }
 }

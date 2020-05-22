@@ -50,6 +50,7 @@ public class MapOppgittOpptjening {
         .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getLandkode() == null ? null : dto.getLandkode().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
+        .thenComparing(OppgittArbeidsforholdDto::getInntekt, Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(OppgittArbeidsforholdDto::getVirksomhetNavn, Comparator.nullsLast(Comparator.naturalOrder()));
 
     private static final Comparator<OppgittEgenNæringDto> COMP_OPPGITT_EGEN_NÆRING = Comparator
@@ -126,6 +127,10 @@ public class MapOppgittOpptjening {
                 dto.medOppgittVirksomhetNavn(virksomhet, land);
             } else {
                 dto.setLandkode(land);
+            }
+
+            if (arbeidsforhold.getInntekt() != null) {
+                dto.setInntekt(arbeidsforhold.getInntekt());
             }
 
             return dto;
@@ -278,6 +283,7 @@ public class MapOppgittOpptjening {
             var builder = OppgittArbeidsforholdBuilder.ny()
                 .medArbeidType(dto.getArbeidTypeDto())
                 .medErUtenlandskInntekt(dto.isErUtenlandskInntekt())
+                .medInnteket(dto.getInntekt())
                 .medPeriode(IntervallEntitet.fraOgMedTilOgMed(dto1.getFom(), dto1.getTom()));
 
             Landkode landkode = mapLandkoder(dto.getLandkode());

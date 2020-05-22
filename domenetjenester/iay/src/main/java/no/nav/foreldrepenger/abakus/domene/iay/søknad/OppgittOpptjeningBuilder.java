@@ -177,6 +177,11 @@ public class OppgittOpptjeningBuilder {
             return this;
         }
 
+        public OppgittArbeidsforholdBuilder medInnteket(BigDecimal inntekt) {
+            this.entitet.setInntekt(inntekt);
+            return this;
+        }
+
         public OppgittArbeidsforholdBuilder medUtenlandskVirksomhet(Landkode landkode, String utenlandskVirksomhetNavn) {
             this.entitet.setLandkode(landkode);
             if (utenlandskVirksomhetNavn != null) {
