@@ -51,7 +51,6 @@ public class InntektTjeneste {
     private URI endpoint;
     private AktørConsumer aktørConsumer;
     private Map<InntektskildeType, InntektsFilter> kildeTilFilter;
-    private Unleash unleash;
 
     InntektTjeneste() {
         // For CDI proxy
@@ -60,12 +59,10 @@ public class InntektTjeneste {
     @Inject
     public InntektTjeneste(@KonfigVerdi(ENDPOINT_KEY) URI endpoint,
                            OidcRestClient oidcRestClient,
-                           AktørConsumer aktørConsumer,
-                           Unleash unleash) {
+                           AktørConsumer aktørConsumer) {
         this.endpoint = endpoint;
         this.oidcRestClient = oidcRestClient;
         this.aktørConsumer = aktørConsumer;
-        this.unleash = unleash;
         this.kildeTilFilter = Map.of(InntektskildeType.INNTEKT_OPPTJENING, InntektsFilter.OPPTJENINGSGRUNNLAG,
             InntektskildeType.INNTEKT_BEREGNING, InntektsFilter.BEREGNINGSGRUNNLAG,
             InntektskildeType.INNTEKT_SAMMENLIGNING, InntektsFilter.SAMMENLIGNINGSGRUNNLAG);
@@ -76,12 +73,7 @@ public class InntektTjeneste {
 
         HentInntektListeBolkResponse response;
         try {
-            if (unleash.isEnabled("fpsak.inntektskomponent.logg", false)) {
-                logger.info("Inntektskilde for spørring er " + kilde);
-                response = oidcRestClient.postAndLogRespons(endpoint, request, HentInntektListeBolkResponse.class);
-            } else {
-                response = oidcRestClient.post(endpoint, request, HentInntektListeBolkResponse.class);
-            }
+            response = oidcRestClient.post(endpoint, request, HentInntektListeBolkResponse.class);
         } catch (RuntimeException e) {
             throw InntektFeil.FACTORY.feilVedKallTilInntekt(e).toException();
         }

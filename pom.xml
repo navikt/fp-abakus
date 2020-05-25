@@ -30,7 +30,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<felles.version>1.8-20200518125722-44b086c</felles.version>
+		<felles.version>1.8-20200525084955-08da9b4</felles.version>
 
 		<prosesstask.version>2.3-20200428191932-0e8e268</prosesstask.version>
 
