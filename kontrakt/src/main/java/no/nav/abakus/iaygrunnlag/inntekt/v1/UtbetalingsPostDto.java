@@ -81,12 +81,7 @@ public class UtbetalingsPostDto {
     }
 
     public UtbetalingsPostDto medSkattAvgiftType(SkatteOgAvgiftsregelType skattAvgiftType) {
-        setSkattAvgiftType(skattAvgiftType);
-        return this;
-    }
-
-    public UtbetalingsPostDto medSkattAvgiftType(String kode) {
-        setSkattAvgiftType(SkatteOgAvgiftsregelType.fraKode(kode));
+        setSkattAvgiftType(SkatteOgAvgiftsregelType.UDEFINERT.equals(skattAvgiftType) ? null : skattAvgiftType);
         return this;
     }
 
@@ -113,7 +108,11 @@ public class UtbetalingsPostDto {
     }
 
     public UtbetaltYtelseType getYtelseType() {
-        return ytelseType == null ? null : ytelseType.getUtbetaltYtelseType();
+        if (ytelseType == null) {
+            return null;
+        }
+        UtbetaltYtelseType utbetaltYtelseType = ytelseType.getUtbetaltYtelseType();
+        return utbetaltYtelseType == null || utbetaltYtelseType.erUdefinert() ? null : ytelseType.getUtbetaltYtelseType();
     }
 
     @Override

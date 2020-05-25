@@ -104,4 +104,8 @@ public enum UtbetaltNæringsYtelseType implements UtbetaltYtelseType {
         return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
+    @Override
+    public boolean erUdefinert() {
+        return UDEFINERT.equals(this);
+    }
 }

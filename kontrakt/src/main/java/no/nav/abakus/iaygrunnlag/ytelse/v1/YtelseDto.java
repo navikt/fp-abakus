@@ -41,7 +41,7 @@ public class YtelseDto {
     @JsonProperty(value = "status", required = true)
     @NotNull
     private YtelseStatus status;
-    
+
     @JsonProperty(value = "saksnummer")
     @Valid
     @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message="Saksnummer [${validatedValue}] matcher ikke tillatt pattern '{value}'")
@@ -93,7 +93,7 @@ public class YtelseDto {
     public void setSaksnummer(String saksnummer) {
         this.saksnummer = saksnummer;
     }
-    
+
     public void setGrunnlag(YtelseGrunnlagDto grunnlag) {
         this.grunnlag = grunnlag;
     }
@@ -128,10 +128,10 @@ public class YtelseDto {
     }
 
     public YtelseDto medTemaUnderkategori(TemaUnderkategori temaUnderkategori) {
-        this.temaUnderkategori = temaUnderkategori;
+        this.temaUnderkategori = temaUnderkategori == null || TemaUnderkategori.UDEFINERT.equals(temaUnderkategori) ? null : temaUnderkategori;
         return this;
     }
-    
+
     public YtelseDto medSaksnummer(String saksnummer) {
         setSaksnummer(saksnummer);
         return this;
