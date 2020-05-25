@@ -131,9 +131,6 @@ public class InntektArbeidYtelseGrunnlagBuilder {
 
     public InntektArbeidYtelseGrunnlagBuilder medOppgittOpptjening(OppgittOpptjeningBuilder builder) {
         if (builder != null) {
-            if (kladd.getOppgittOpptjening().isPresent()) {
-                throw new IllegalStateException("Utviklerfeil: Er ikke lov å endre oppgitt opptjening!");
-            }
             kladd.setOppgittOpptjening(builder.build());
         }
         return this;
