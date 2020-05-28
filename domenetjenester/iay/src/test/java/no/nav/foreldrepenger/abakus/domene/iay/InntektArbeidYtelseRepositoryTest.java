@@ -5,9 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,7 +17,9 @@ import org.junit.Test;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.dbstoette.UnittestRepositoryRule;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Fravær;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittAnnenAktivitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
@@ -25,6 +29,8 @@ import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.repository.KoblingRepository;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.testutilities.db.RepositoryRule;
@@ -142,5 +148,81 @@ public class InntektArbeidYtelseRepositoryTest {
         Optional<OppgittOpptjening> overstyrtOppgittOpptjening2 = inntektArbeidYtelseGrunnlag2.get().getOverstyrtOppgittOpptjening();
         assertThat(overstyrtOppgittOpptjening2).isPresent();
         assertThat(overstyrtOppgittOpptjening2.get().getAnnenAktivitet()).containsExactly(annenAktivitetoverstyring2);
+    }
+
+    @Test
+    public void skal_ta_vare_på_utdatert_inntektsmeldinger() {
+        var aktørId = new AktørId("1231231231223");
+        var koblingReferanse = new KoblingReferanse(UUID.randomUUID());
+        var saksnummer = new Saksnummer("12341234");
+        final var ko = new Kobling(saksnummer, koblingReferanse, aktørId);
+        ko.setYtelseType(YtelseType.OMSORGSPENGER);
+        ko.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(2), LocalDate.now()));
+        koblingRepository.lagre(ko);
+
+        var inntektsmelding1 = InntektsmeldingBuilder.builder()
+            .medArbeidsgiver(Arbeidsgiver.virksomhet(new OrgNummer("000000000")))
+            .medArbeidsforholdId(InternArbeidsforholdRef.nullRef())
+            .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
+            .medJournalpostId("1")
+            .medInnsendingstidspunkt(LocalDateTime.now().minusDays(10))
+            .medBeløp(BigDecimal.TEN)
+            .medKanalreferanse("AR123")
+            .leggTil(new Fravær(LocalDate.now().minusDays(30), LocalDate.now().minusDays(25), null))
+            .medRefusjon(BigDecimal.TEN)
+            .build();
+        var inntektsmelding2 = InntektsmeldingBuilder.builder()
+            .medArbeidsgiver(Arbeidsgiver.virksomhet(new OrgNummer("000000000")))
+            .medArbeidsforholdId(InternArbeidsforholdRef.nullRef())
+            .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
+            .medInnsendingstidspunkt(LocalDateTime.now().minusDays(9))
+            .medJournalpostId("2")
+            .medBeløp(BigDecimal.ONE)
+            .medKanalreferanse("AR124")
+            .leggTil(new Fravær(LocalDate.now().minusDays(26), LocalDate.now().minusDays(25), null))
+            .medRefusjon(BigDecimal.ONE)
+            .build();
+        var inntektsmelding3 = InntektsmeldingBuilder.builder()
+            .medArbeidsgiver(Arbeidsgiver.virksomhet(new OrgNummer("000000000")))
+            .medArbeidsforholdId(InternArbeidsforholdRef.nullRef())
+            .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
+            .medInnsendingstidspunkt(LocalDateTime.now().minusDays(9))
+            .medJournalpostId("3")
+            .medBeløp(BigDecimal.ONE)
+            .medKanalreferanse("AR125")
+            .leggTil(new Fravær(LocalDate.now().minusDays(30), LocalDate.now().minusDays(25), null))
+            .medRefusjon(BigDecimal.ONE)
+            .build();
+        var inntektsmelding4 = InntektsmeldingBuilder.builder()
+            .medArbeidsgiver(Arbeidsgiver.virksomhet(new OrgNummer("000000000")))
+            .medArbeidsforholdId(InternArbeidsforholdRef.nullRef())
+            .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
+            .medInnsendingstidspunkt(LocalDateTime.now().minusDays(10))
+            .medJournalpostId("4")
+            .medBeløp(BigDecimal.ONE)
+            .medKanalreferanse("AR126")
+            .leggTil(new Fravær(LocalDate.now(), LocalDate.now().plusDays(5), null))
+            .medRefusjon(BigDecimal.ONE)
+            .build();
+
+        repository.lagre(ko.getKoblingReferanse(), ArbeidsforholdInformasjonBuilder.oppdatere(new ArbeidsforholdInformasjon()), List.of(inntektsmelding1, inntektsmelding2, inntektsmelding3, inntektsmelding4));
+
+        var grunnlag = repository.hentAlleInntektArbeidYtelseGrunnlagFor(aktørId, saksnummer, YtelseType.OMSORGSPENGER, false);
+
+        assertThat(grunnlag).hasSize(4);
+
+        var inntektsmeldings = grunnlag.stream()
+            .map(InntektArbeidYtelseGrunnlag::getInntektsmeldinger)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .map(InntektsmeldingAggregat::getInntektsmeldinger).flatMap(Collection::stream).collect(Collectors.toList());
+        assertThat(inntektsmeldings).hasSize(4);
+
+        var aktivtGrunnlag = repository.hentInntektArbeidYtelseForBehandling(koblingReferanse);
+
+        assertThat(aktivtGrunnlag.getInntektsmeldinger()).isPresent();
+        assertThat(aktivtGrunnlag.getInntektsmeldinger().get().getInntektsmeldinger()).hasSize(1);
+        assertThat(aktivtGrunnlag.getInntektsmeldinger().get().getInntektsmeldinger()).contains(inntektsmelding3);
+
     }
 }

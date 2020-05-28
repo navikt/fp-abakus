@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 
 @Entity(name = "Inntektsmeldinger")
 @Table(name = "IAY_INNTEKTSMELDINGER")
@@ -57,7 +58,9 @@ public class InntektsmeldingAggregat extends BaseEntitet {
         }).collect(Collectors.toList()));
     }
 
-    /** Get alle inntektsmeldinger (både de som skal brukes og ikke brukes). */
+    /**
+     * Get alle inntektsmeldinger (både de som skal brukes og ikke brukes).
+     */
     public List<Inntektsmelding> getInntektsmeldinger() {
         return inntektsmeldinger.stream().collect(Collectors.toUnmodifiableList());
     }
@@ -69,24 +72,37 @@ public class InntektsmeldingAggregat extends BaseEntitet {
     /**
      * Den persisterte inntektsmeldingen kan være av nyere dato, bestemmes av
      * innsendingstidspunkt på inntektsmeldingen.
+     *
      * @return lagtTilEllerIkke
      */
-    public void leggTilEllerErstattMedUtdatertForHistorikk(Inntektsmelding inntektsmelding) {
+    public Set<JournalpostId> leggTilEllerErstattMedUtdatertForHistorikk(Inntektsmelding inntektsmelding) {
+        var collect = inntektsmeldinger.stream()
+            .filter(it -> it.gjelderSammeArbeidsforhold(inntektsmelding))
+            .map(Inntektsmelding::getJournalpostId)
+            .collect(Collectors.toCollection(HashSet::new));
         boolean fjernet = inntektsmeldinger.removeIf(it -> it.gjelderSammeArbeidsforhold(inntektsmelding));
 
         if (fjernet || inntektsmeldinger.stream().noneMatch(it -> it.gjelderSammeArbeidsforhold(inntektsmelding))) {
             final Inntektsmelding entitet = inntektsmelding;
             entitet.setInntektsmeldinger(this);
             inntektsmeldinger.add(entitet);
+        } else {
+            collect.add(inntektsmelding.getJournalpostId());
         }
+        return collect;
     }
 
     /**
      * Den persisterte inntektsmeldingen kan være av nyere dato, bestemmes av
      * innsendingstidspunkt på inntektsmeldingen.
+     *
      * @return lagtTilEllerIkke
      */
-    public boolean leggTilEllerErstatt(Inntektsmelding inntektsmelding) {
+    public Set<JournalpostId> leggTilEllerErstatt(Inntektsmelding inntektsmelding) {
+        var collect = inntektsmeldinger.stream()
+            .filter(it -> skalFjerneInntektsmelding(it, inntektsmelding))
+            .map(Inntektsmelding::getJournalpostId)
+            .collect(Collectors.toCollection(HashSet::new));
         boolean fjernet = inntektsmeldinger.removeIf(it -> skalFjerneInntektsmelding(it, inntektsmelding));
         inntektsmeldinger.stream().filter(it -> it.gjelderSammeArbeidsforhold(inntektsmelding) && !fjernet).findFirst().ifPresent(e -> {
             logger.info("Persistert inntektsmelding med journalpostid {} er nyere enn den mottatte med journalpostid {}. Ignoreres", e.getJournalpostId(),
@@ -97,10 +113,11 @@ public class InntektsmeldingAggregat extends BaseEntitet {
             final Inntektsmelding entitet = inntektsmelding;
             entitet.setInntektsmeldinger(this);
             inntektsmeldinger.add(entitet);
-            return true;
+        } else {
+            collect.add(inntektsmelding.getJournalpostId());
         }
 
-        return false;
+        return collect;
     }
 
     private boolean skalFjerneInntektsmelding(Inntektsmelding gammel, Inntektsmelding ny) {

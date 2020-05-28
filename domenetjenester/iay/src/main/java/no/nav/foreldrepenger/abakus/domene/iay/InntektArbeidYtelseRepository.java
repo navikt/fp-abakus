@@ -1,6 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -288,9 +287,10 @@ public class InntektArbeidYtelseRepository {
         return build.getGrunnlagReferanse();
     }
 
-    public void lagreDeaktivertGrunnlagMedUtdaterteInntektsmeldinger(KoblingReferanse koblingReferanse, ArbeidsforholdInformasjonBuilder informasjonBuilder,
+    private void lagreDeaktivertGrunnlagMedUtdaterteInntektsmeldinger(KoblingReferanse koblingReferanse, ArbeidsforholdInformasjonBuilder informasjonBuilder,
                                                                       List<Inntektsmelding> utdaterteInntektsmeldinger,
                                                                       InntektArbeidYtelseGrunnlagBuilder utdatertBuilder) {
+        Set<JournalpostId> utdaterteInntektsmeldingerJournalposter = new HashSet<>();
         utdatertBuilder.medDeaktivert();
 
         if (utdaterteInntektsmeldinger.isEmpty()) {
@@ -306,13 +306,19 @@ public class InntektArbeidYtelseRepository {
             // Gjelder tilfeller der det først har kommet inn inntektsmelding uten id, også kommer det inn en inntektsmelding med spesifik id
             // nullstiller da valg gjort i 5080 slik at saksbehandler må ta stilling til aksjonspunktet på nytt.
             informasjonBuilder.utledeArbeidsgiverSomMåTilbakestilles(inntektsmelding).ifPresent(informasjonBuilder::fjernOverstyringerSomGjelder);
-            inntektsmeldinger.leggTilEllerErstattMedUtdatertForHistorikk(inntektsmelding);
+            utdaterteInntektsmeldingerJournalposter.addAll(inntektsmeldinger.leggTilEllerErstattMedUtdatertForHistorikk(inntektsmelding));
         }
         utdatertBuilder.setInntektsmeldinger(inntektsmeldinger);
         utdatertBuilder.medInformasjon(informasjonBuilder.build());
 
         InntektArbeidYtelseGrunnlag build = utdatertBuilder.build();
         lagreOgFlush(koblingReferanse, build);
+
+        if (!utdaterteInntektsmeldingerJournalposter.isEmpty()) {
+            var collect = utdaterteInntektsmeldinger.stream().filter(it -> utdaterteInntektsmeldingerJournalposter.contains(it.getJournalpostId())).collect(Collectors.toList());
+            var builder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(build);
+            lagreDeaktivertGrunnlagMedUtdaterteInntektsmeldinger(koblingReferanse, informasjonBuilder, collect, builder);
+        }
     }
 
     /**
@@ -339,10 +345,7 @@ public class InntektArbeidYtelseRepository {
             // Gjelder tilfeller der det først har kommet inn inntektsmelding uten id, også kommer det inn en inntektsmelding med spesifik id
             // nullstiller da valg gjort i 5080 slik at saksbehandler må ta stilling til aksjonspunktet på nytt.
             informasjonBuilder.utledeArbeidsgiverSomMåTilbakestilles(inntektsmelding).ifPresent(informasjonBuilder::fjernOverstyringerSomGjelder);
-            var lagtTil = inntektsmeldinger.leggTilEllerErstatt(inntektsmelding);
-            if (!lagtTil) {
-                utdaterteInntektsmeldinger.add(inntektsmelding.getJournalpostId());
-            }
+            utdaterteInntektsmeldinger.addAll(inntektsmeldinger.leggTilEllerErstatt(inntektsmelding));
         }
         targetBuilder.setInntektsmeldinger(inntektsmeldinger);
         targetBuilder.medInformasjon(informasjonBuilder.build());

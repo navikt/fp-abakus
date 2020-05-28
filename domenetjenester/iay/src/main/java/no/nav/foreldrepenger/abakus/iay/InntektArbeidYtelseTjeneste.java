@@ -267,10 +267,7 @@ public class InntektArbeidYtelseTjeneste {
                 .sorted(Comparator.comparing(Inntektsmelding::getInnsendingstidspunkt))
                 .collect(Collectors.toList());
 
-            var utdatertJournalpostIder = repository.oppdaterBuilderMedNyeInntektsmeldinger(informasjonBuilder, kopiInntektsmeldingerEtterInnsendingstidspunkt, builder);
-            var utdaterteInntektsmeldinger = kopiInntektsmeldingerEtterInnsendingstidspunkt.stream().filter(it -> utdatertJournalpostIder.contains(it.getJournalpostId())).collect(Collectors.toList());
-
-            repository.lagreDeaktivertGrunnlagMedUtdaterteInntektsmeldinger(tilKobling, informasjonBuilder, utdaterteInntektsmeldinger, InntektArbeidYtelseGrunnlagBuilder.klone(builder));
+            repository.oppdaterBuilderMedNyeInntektsmeldinger(informasjonBuilder, kopiInntektsmeldingerEtterInnsendingstidspunkt, builder);
         }
         lagre(tilKobling, builder);
         return builder;
