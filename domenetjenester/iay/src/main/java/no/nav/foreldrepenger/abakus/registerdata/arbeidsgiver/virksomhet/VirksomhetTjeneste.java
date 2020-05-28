@@ -186,7 +186,7 @@ public class VirksomhetTjeneste {
             }
             builder.medOrganisasjonstype(OrganisasjonType.VIRKSOMHET);
         } else if (responsOrganisasjon instanceof JuridiskEnhet) {
-            builder.medOrganisasjonstype(OrganisasjonType.VIRKSOMHET);
+            builder.medOrganisasjonstype(OrganisasjonType.JURIDISK_ENHET);
         }
         return builder.oppdatertOpplysningerNå().build();
     }
