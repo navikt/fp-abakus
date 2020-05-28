@@ -307,13 +307,6 @@ public class InntektArbeidYtelseRepository {
 
         final InntektsmeldingAggregat inntektsmeldinger = utdatertBuilder.getInntektsmeldinger();
         for (Inntektsmelding inntektsmelding : utdaterteInntektsmeldinger) {
-            // Kommet inn inntektsmelding på arbeidsforhold som vi har gått videre med uten inntektsmelding?
-            if (informasjonBuilder.kommetInntektsmeldingPåArbeidsforholdHvorViTidligereBehandletUtenInntektsmelding(inntektsmelding)) {
-                informasjonBuilder.fjernOverstyringVedrørende(inntektsmelding.getArbeidsgiver(), inntektsmelding.getArbeidsforholdRef());
-            }
-            // Gjelder tilfeller der det først har kommet inn inntektsmelding uten id, også kommer det inn en inntektsmelding med spesifik id
-            // nullstiller da valg gjort i 5080 slik at saksbehandler må ta stilling til aksjonspunktet på nytt.
-            informasjonBuilder.utledeArbeidsgiverSomMåTilbakestilles(inntektsmelding).ifPresent(informasjonBuilder::fjernOverstyringerSomGjelder);
             utdaterteInntektsmeldingerJournalposter.addAll(inntektsmeldinger.leggTilEllerErstattMedUtdatertForHistorikk(inntektsmelding));
         }
         utdatertBuilder.setInntektsmeldinger(inntektsmeldinger);
