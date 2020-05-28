@@ -146,6 +146,11 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         return this;
     }
 
+    public InntektArbeidYtelseGrunnlagBuilder medDeaktivert() {
+        kladd.setAktivt(false);
+        return this;
+    }
+
     public InntektArbeidYtelseGrunnlag build() {
         var k = kladd;
         kladd = null; // må ikke finne på å gjenbruke buildere her, tar heller straffen i en NPE ved første feilkall

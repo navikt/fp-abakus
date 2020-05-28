@@ -211,8 +211,7 @@ public class InntektArbeidYtelseTjeneste {
                                                         KoblingReferanse tilKobling, Set<Dataset> dataset) {
         var origAggregat = hentGrunnlagFor(fraKobling);
         if (origAggregat.isPresent()) {
-            var builder = kopierGrunnlagPlussNyereInntektsmeldingerForFagsak(ytelseType, aktørId, saksnummer, origAggregat.get(), dataset);
-            lagre(tilKobling, builder);
+            kopierGrunnlagPlussNyereInntektsmeldingerForFagsak(tilKobling, ytelseType, aktørId, saksnummer, origAggregat.get(), dataset);
         }
     }
 
@@ -222,17 +221,18 @@ public class InntektArbeidYtelseTjeneste {
      * inntektsmelding, blitt henlagt, og en revurdering er opprettet basert på en tidligere behandling med vedtak
      * som ikke inkluderer en eller flere inntektsmeldinger som er mottatt etter vedtaket, men før revurderingen.
      *
+     * @param tilKobling
      * @param dataset
      * @return
      */
-    private InntektArbeidYtelseGrunnlagBuilder kopierGrunnlagPlussNyereInntektsmeldingerForFagsak(YtelseType ytelseType,
+    private InntektArbeidYtelseGrunnlagBuilder kopierGrunnlagPlussNyereInntektsmeldingerForFagsak(KoblingReferanse tilKobling, YtelseType ytelseType,
                                                                                                   AktørId aktørId,
                                                                                                   Saksnummer saksnummer,
                                                                                                   InntektArbeidYtelseGrunnlag original,
                                                                                                   Set<Dataset> dataset) {
 
         var builder = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(original, dataset);
-        if(dataset.contains(Dataset.INNTEKTSMELDING)) {
+        if (dataset.contains(Dataset.INNTEKTSMELDING)) {
             var gjeldendeInntektsmeldinger = original.getInntektsmeldinger().map(InntektsmeldingAggregat::getInntektsmeldinger).orElse(List.of());
             var innsendingstidspunkt = finnInnsendingstidspunktForNyesteEksisterendeIm(gjeldendeInntektsmeldinger);
 
@@ -269,7 +269,7 @@ public class InntektArbeidYtelseTjeneste {
 
             repository.oppdaterBuilderMedNyeInntektsmeldinger(informasjonBuilder, kopiInntektsmeldingerEtterInnsendingstidspunkt, builder);
         }
-
+        lagre(tilKobling, builder);
         return builder;
 
     }
