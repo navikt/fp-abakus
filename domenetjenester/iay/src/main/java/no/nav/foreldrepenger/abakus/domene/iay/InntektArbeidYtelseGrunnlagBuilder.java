@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -35,6 +36,11 @@ public class InntektArbeidYtelseGrunnlagBuilder {
 
     public static InntektArbeidYtelseGrunnlagBuilder oppdatere(Optional<InntektArbeidYtelseGrunnlag> kladd) {
         return kladd.map(InntektArbeidYtelseGrunnlagBuilder::oppdatere).orElseGet(InntektArbeidYtelseGrunnlagBuilder::nytt);
+    }
+
+    public static InntektArbeidYtelseGrunnlagBuilder klone(InntektArbeidYtelseGrunnlagBuilder builder) {
+        Objects.requireNonNull(builder);
+        return oppdatere(builder.kladd);
     }
 
     public static InntektArbeidYtelseGrunnlagBuilder kopierDeler(InntektArbeidYtelseGrunnlag original, Set<Dataset> dataset) {
@@ -143,6 +149,11 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         if (builder != null) {
             kladd.setOverstyrtOppgittOpptjening(builder.build());
         }
+        return this;
+    }
+
+    public InntektArbeidYtelseGrunnlagBuilder medDeaktivert() {
+        kladd.setAktivt(false);
         return this;
     }
 
