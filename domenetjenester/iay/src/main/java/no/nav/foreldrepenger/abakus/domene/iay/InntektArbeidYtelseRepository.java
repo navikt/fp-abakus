@@ -277,14 +277,22 @@ public class InntektArbeidYtelseRepository {
 
         var utdaterteInntektsmeldingerJournalposter = oppdaterBuilderMedNyeInntektsmeldinger(informasjonBuilder, inntektsmeldingerList, builder);
 
-        var utdaterteInntektsmeldinger = inntektsmeldingerList.stream().filter(it -> utdaterteInntektsmeldingerJournalposter.contains(it.getJournalpostId())).collect(Collectors.toList());
-
         InntektArbeidYtelseGrunnlag build = builder.build();
+        var utdaterteInntektsmeldinger = inntektsmeldingerList.stream()
+            .filter(it -> utdaterteInntektsmeldingerJournalposter.contains(it.getJournalpostId())
+                && harIkkeAltHåndtertJournalpost(build, it.getJournalpostId()))
+            .collect(Collectors.toList());
+
         var utdatertBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(build);
         lagreDeaktivertGrunnlagMedUtdaterteInntektsmeldinger(koblingReferanse, informasjonBuilder, utdaterteInntektsmeldinger, utdatertBuilder);
         lagreOgFlush(koblingReferanse, build);
 
         return build.getGrunnlagReferanse();
+    }
+
+    private boolean harIkkeAltHåndtertJournalpost(InntektArbeidYtelseGrunnlag build, JournalpostId journalpostId) {
+        var imaggregat = build.getInntektsmeldinger();
+        return imaggregat.map(inntektsmeldingAggregat -> inntektsmeldingAggregat.getInntektsmeldinger().stream().noneMatch(it -> it.getJournalpostId().equals(journalpostId))).orElse(true);
     }
 
     private void lagreDeaktivertGrunnlagMedUtdaterteInntektsmeldinger(KoblingReferanse koblingReferanse, ArbeidsforholdInformasjonBuilder informasjonBuilder,
@@ -315,7 +323,10 @@ public class InntektArbeidYtelseRepository {
         lagreOgFlush(koblingReferanse, build);
 
         if (!utdaterteInntektsmeldingerJournalposter.isEmpty()) {
-            var collect = utdaterteInntektsmeldinger.stream().filter(it -> utdaterteInntektsmeldingerJournalposter.contains(it.getJournalpostId())).collect(Collectors.toList());
+            var collect = utdaterteInntektsmeldinger.stream()
+                .filter(it -> utdaterteInntektsmeldingerJournalposter.contains(it.getJournalpostId())
+                    && harIkkeAltHåndtertJournalpost(build, it.getJournalpostId()))
+                .collect(Collectors.toList());
             var builder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(build);
             lagreDeaktivertGrunnlagMedUtdaterteInntektsmeldinger(koblingReferanse, informasjonBuilder, collect, builder);
         }

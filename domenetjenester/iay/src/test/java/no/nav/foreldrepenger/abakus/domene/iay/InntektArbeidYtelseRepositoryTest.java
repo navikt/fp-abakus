@@ -205,7 +205,7 @@ public class InntektArbeidYtelseRepositoryTest {
             .medRefusjon(BigDecimal.ONE)
             .build();
 
-        repository.lagre(ko.getKoblingReferanse(), ArbeidsforholdInformasjonBuilder.oppdatere(new ArbeidsforholdInformasjon()), List.of(inntektsmelding1, inntektsmelding2, inntektsmelding3, inntektsmelding4));
+        repository.lagre(ko.getKoblingReferanse(), ArbeidsforholdInformasjonBuilder.oppdatere(new ArbeidsforholdInformasjon()), List.of(inntektsmelding1, inntektsmelding2, inntektsmelding3, inntektsmelding4, inntektsmelding1));
 
         var grunnlag = repository.hentAlleInntektArbeidYtelseGrunnlagFor(aktørId, saksnummer, YtelseType.OMSORGSPENGER, false);
 
