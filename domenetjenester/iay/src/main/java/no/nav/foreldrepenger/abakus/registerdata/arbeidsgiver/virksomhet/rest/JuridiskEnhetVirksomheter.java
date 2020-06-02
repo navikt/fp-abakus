@@ -42,11 +42,10 @@ public class JuridiskEnhetVirksomheter {
         if (!OrganisasjonstypeEReg.JURIDISK_ENHET.equals(type) || getOpphørsdatoNonNull().isBefore(hentedato))
             return Collections.emptyList();
         List<DriverVirksomhet> virksomheter = driverVirksomheter != null ? driverVirksomheter : Collections.emptyList();
-        var aktive = virksomheter.stream()
+        return virksomheter.stream()
             .filter(v -> v.getGyldighetsperiode().getFom().isBefore(hentedato) && v.getGyldighetsperiode().getTomNonNull().isAfter(hentedato))
             .map(DriverVirksomhet::getOrganisasjonsnummer)
             .collect(Collectors.toList());
-        return aktive;
     }
 
     public LocalDate getRegistreringsdato() {
@@ -58,7 +57,7 @@ public class JuridiskEnhetVirksomheter {
     }
 
     private LocalDate getOpphørsdatoNonNull() {
-        return organisasjonDetaljer != null ? organisasjonDetaljer.getOpphørsdato() : Tid.TIDENES_ENDE;
+        return organisasjonDetaljer != null && organisasjonDetaljer.getOpphørsdato() != null ? organisasjonDetaljer.getOpphørsdato() : Tid.TIDENES_ENDE;
     }
 
     public List<DriverVirksomhet> getDriverVirksomheter() {

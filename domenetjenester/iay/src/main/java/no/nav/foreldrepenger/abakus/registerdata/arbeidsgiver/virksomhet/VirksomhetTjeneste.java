@@ -208,7 +208,7 @@ public class VirksomhetTjeneste {
                     .medOppstart(org.getOppstartsdato())
                     .medAvsluttet(org.getNedleggelsesdato());
             } else if (OrganisasjonstypeEReg.JURIDISK_ENHET.equals(org.getType())) {
-                builder.medOrganisasjonstype(OrganisasjonType.VIRKSOMHET);
+                builder.medOrganisasjonstype(OrganisasjonType.JURIDISK_ENHET);
             }
             var rest = builder.build();
             if (erLik(virksomhet, rest)) {
