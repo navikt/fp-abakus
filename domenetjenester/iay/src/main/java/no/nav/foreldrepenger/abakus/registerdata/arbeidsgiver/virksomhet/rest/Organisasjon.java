@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.rest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -17,7 +18,7 @@ public class Organisasjon {
     @JsonProperty("organisasjonsnummer")
     private String organisasjonsnummer;
     @JsonProperty("type")
-    private String type;
+    private OrganisasjonstypeEReg type;
     @JsonProperty("navn")
     private Navn navn;
     @JsonProperty("organisasjonDetaljer")
@@ -32,7 +33,7 @@ public class Organisasjon {
         return organisasjonsnummer;
     }
 
-    public String getType() {
+    public OrganisasjonstypeEReg getType() {
         return type;
     }
 
@@ -82,8 +83,9 @@ public class Organisasjon {
 
         public String getNavn() {
             return Stream.of(navnelinje1, navnelinje2, navnelinje3, navnelinje4, navnelinje5)
-                .filter(n -> n != null && !n.isEmpty())
+                .filter(Objects::nonNull)
                 .map(String::trim)
+                .filter(n -> !n.isEmpty())
                 .reduce("", (a, b) -> a + " " + b).trim();
         }
 

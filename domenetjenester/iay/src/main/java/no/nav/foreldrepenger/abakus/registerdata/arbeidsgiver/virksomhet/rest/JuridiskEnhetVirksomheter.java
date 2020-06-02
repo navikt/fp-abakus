@@ -2,7 +2,9 @@ package no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.rest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -19,7 +21,7 @@ public class JuridiskEnhetVirksomheter {
     @JsonProperty("organisasjonsnummer")
     private String organisasjonsnummer;
     @JsonProperty("type")
-    private String type;
+    private OrganisasjonstypeEReg type;
     @JsonProperty("organisasjonDetaljer")
     private OrganisasjonDetaljer organisasjonDetaljer;
     @JsonProperty("driverVirksomheter")
@@ -32,8 +34,19 @@ public class JuridiskEnhetVirksomheter {
         return organisasjonsnummer;
     }
 
-    public String getType() {
+    public OrganisasjonstypeEReg getType() {
         return type;
+    }
+
+    public List<String> getEksaktVirksomhetForDato(LocalDate hentedato) {
+        if (!OrganisasjonstypeEReg.JURIDISK_ENHET.equals(type) || getOpphørsdatoNonNull().isBefore(hentedato))
+            return Collections.emptyList();
+        List<DriverVirksomhet> virksomheter = driverVirksomheter != null ? driverVirksomheter : Collections.emptyList();
+        var aktive = virksomheter.stream()
+            .filter(v -> v.getGyldighetsperiode().getFom().isBefore(hentedato) && v.getGyldighetsperiode().getTomNonNull().isAfter(hentedato))
+            .map(DriverVirksomhet::getOrganisasjonsnummer)
+            .collect(Collectors.toList());
+        return aktive;
     }
 
     public LocalDate getRegistreringsdato() {
@@ -42,6 +55,10 @@ public class JuridiskEnhetVirksomheter {
 
     public LocalDate getOpphørsdato() {
         return organisasjonDetaljer != null ? organisasjonDetaljer.getOpphørsdato() : null;
+    }
+
+    private LocalDate getOpphørsdatoNonNull() {
+        return organisasjonDetaljer != null ? organisasjonDetaljer.getOpphørsdato() : Tid.TIDENES_ENDE;
     }
 
     public List<DriverVirksomhet> getDriverVirksomheter() {
@@ -125,6 +142,10 @@ public class JuridiskEnhetVirksomheter {
         }
 
         public LocalDate getTom() {
+            return tom;
+        }
+
+        public LocalDate getTomNonNull() {
             return tom != null ? tom : Tid.TIDENES_ENDE;
         }
 

@@ -130,6 +130,17 @@ public class Virksomhet extends BaseEntitet implements IndexKey {
             '}';
     }
 
+    public String tilLoggString() {
+        return "Virksomhet{" +
+            "orgnr='" + orgnr + '\'' +
+            ", navn='" + navn + '\'' +
+            ", registrert=" + registrert +
+            ", avsluttet=" + avsluttet +
+            ", oppstart=" + oppstart +
+            ", organisasjonsType=" + organisasjonType +
+            '}';
+    }
+
     public static class Builder {
         private Virksomhet mal;
 
