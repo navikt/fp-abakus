@@ -39,6 +39,7 @@ import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Arbeidsforhold;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Periode;
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Vedtak;
 import no.nav.vedtak.konfig.Tid;
 
 @ApplicationScoped
@@ -84,23 +85,25 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelser(PersonIdent ident, Interval periode) {
-        List<Grunnlag> rest = infotrygdGrunnlag.hentAggregertGrunnlag(ident.getIdent(), dato(periode.getStart()), dato(periode.getEnd()));
+        LocalDate innhentFom =  dato(periode.getStart());
+        List<Grunnlag> rest = infotrygdGrunnlag.hentAggregertGrunnlag(ident.getIdent(), innhentFom, dato(periode.getEnd()));
         //getSPøkelseYtelserFailSoft(ident);
 
-        return mapTilInfotrygdYtelseGrunnlag(rest);
+        return mapTilInfotrygdYtelseGrunnlag(rest, innhentFom);
     }
 
     public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelserFailSoft(PersonIdent ident, Interval periode) {
-        List<Grunnlag> rest = infotrygdGrunnlag.hentAggregertGrunnlagFailSoft(ident.getIdent(), dato(periode.getStart()), dato(periode.getEnd()));
+        LocalDate innhentFom =  dato(periode.getStart());
+        List<Grunnlag> rest = infotrygdGrunnlag.hentAggregertGrunnlagFailSoft(ident.getIdent(), innhentFom, dato(periode.getEnd()));
         //getSPøkelseYtelserFailSoft(ident);
 
-        return mapTilInfotrygdYtelseGrunnlag(rest);
+        return mapTilInfotrygdYtelseGrunnlag(rest, innhentFom);
     }
 
-    private List<InfotrygdYtelseGrunnlag> mapTilInfotrygdYtelseGrunnlag(List<Grunnlag> rest) {
+    private List<InfotrygdYtelseGrunnlag> mapTilInfotrygdYtelseGrunnlag(List<Grunnlag> rest, LocalDate innhentFom) {
         var mappedGrunnlag = rest.stream()
             .filter(g -> !YtelseType.UDEFINERT.equals(TemaReverse.reverseMap(g.getTema().getKode().name(), LOG)))
-            .map(this::restTilInfotrygdYtelseGrunnlag)
+            .map(g -> restTilInfotrygdYtelseGrunnlag(g, innhentFom))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
         if (!mappedGrunnlag.isEmpty()) {
@@ -109,7 +112,7 @@ public class InnhentingInfotrygdTjeneste {
         return mappedGrunnlag;
     }
 
-    private InfotrygdYtelseGrunnlag restTilInfotrygdYtelseGrunnlag(Grunnlag grunnlag) {
+    private InfotrygdYtelseGrunnlag restTilInfotrygdYtelseGrunnlag(Grunnlag grunnlag, LocalDate innhentFom) {
         if (grunnlag.getIverksatt() == null || grunnlag.getIdentdato() == null || !grunnlag.getIverksatt().equals(grunnlag.getIdentdato())) {
             LOG.info("Infotrygd ny mapper avvik iverksatt {} vs identdato {}", grunnlag.getIverksatt(), grunnlag.getIdentdato());
         }
@@ -125,6 +128,10 @@ public class InnhentingInfotrygdTjeneste {
         TemaUnderkategori tuk = grunnlag.getBehandlingsTema() == null ? TemaUnderkategori.UDEFINERT :
             TemaUnderkategoriReverse.reverseMap(grunnlag.getBehandlingsTema().getKode().name());
         YtelseStatus brukStatus = mapYtelseStatus(grunnlag);
+        // Ignorer gamle vedtak
+        if (brukPeriode.getTom().isBefore(innhentFom) &&
+            grunnlag.getVedtak().stream().map(Vedtak::getPeriode).map(Periode::getTom).noneMatch(innhentFom::isBefore))
+            return null;
 
         var grunnlagBuilder = InfotrygdYtelseGrunnlag.getBuilder()
             .medYtelseType(bestemYtelseType(grunnlag))
