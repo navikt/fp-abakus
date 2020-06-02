@@ -30,20 +30,20 @@ public class YtelseGrunnlagDto {
 
     @JsonProperty(value = "dekningsgradProsent")
     @Valid
-    @DecimalMin(value = "0.00", message = "dekningsgradprosent ${validatedValue} må være >= {value}")
-    @DecimalMax(value = "100.00", message = "dekningsgradprosent ${validatedValue} må være <= {value}")
+    @DecimalMin(value = "0.00", message = "dekningsgradprosent [${validatedValue}] må være >= {value}")
+    @DecimalMax(value = "100.00", message = "dekningsgradprosent [${validatedValue}] må være <= {value}")
     private BigDecimal dekningsgradProsent;
 
     @JsonProperty(value = "graderingProsent")
     @Valid
-    @DecimalMin(value = "0.00", message = "graderingprosent ${validatedValue} må være >= {value}")
-    @DecimalMax(value = "100.00", message = "graderingprosent ${validatedValue} må være <= {value}")
+    @DecimalMin(value = "0.00", message = "graderingprosent [${validatedValue}] må være >= {value}")
+    @DecimalMax(value = "100.00", message = "graderingprosent [${validatedValue}] må være <= {value}")
     private BigDecimal graderingProsent;
 
     @JsonProperty(value = "inntektsgrunnlagProsent")
     @Valid
-    @DecimalMin(value = "0.00", message = "inntektsgrunnlagProsent ${validatedValue} må være >= {value}")
-    @DecimalMax(value = "100.00", message = "inntektsgrunnlagProsent ${validatedValue} må være <= {value}") 
+    @DecimalMin(value = "0.00", message = "inntektsgrunnlagProsent [${validatedValue}] må være >= {value}")
+    @DecimalMax(value = "100.00", message = "inntektsgrunnlagProsent [${validatedValue}] må være <= {value}") 
     private BigDecimal inntektsgrunnlagProsent;
 
     @JsonProperty(value = "fordeling")
@@ -53,7 +53,7 @@ public class YtelseGrunnlagDto {
     /** Beløp i hele kroner (currency major unit). Tillater kun positive verdier.  Max verdi håndteres av mottager. */
     @JsonProperty(value = "dagsats")
     @Valid
-    @DecimalMin(value = "0.00", message = "'${validatedValue}' må være >= {value}")
+    @DecimalMin(value = "0.00", message = "[${validatedValue}] må være >= {value}")
     private BigDecimal vedtaksDagsats;
 
     public YtelseGrunnlagDto() {

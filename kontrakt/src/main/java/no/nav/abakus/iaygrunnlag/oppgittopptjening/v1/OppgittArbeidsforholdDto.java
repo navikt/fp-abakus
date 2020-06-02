@@ -47,8 +47,8 @@ public class OppgittArbeidsforholdDto {
      * Tillater kun positive verdier.
      */
     @JsonProperty("inntekt")
-    @DecimalMin(value = "0.00", message = "beløp '${validatedValue}' må være >= {value}")
-    @DecimalMax(value = "9999999999.00", message = "beløp '${validatedValue}' må være >= {value}")
+    @DecimalMin(value = "0.00", message = "beløp [${validatedValue}] må være >= {value}")
+    @DecimalMax(value = "9999999999.00", message = "beløp [${validatedValue}] må være >= {value}")
     @Digits(integer = 10, fraction = 2)
     private BigDecimal inntekt;
 
@@ -56,7 +56,7 @@ public class OppgittArbeidsforholdDto {
      * Oppgis normalt dersom ikke orgnr kan gis. F.eks for utlandske virsomheter, eller noen tilfeller Fiskere med Lott.
      */
     @JsonProperty(value = "virksomhetNavn")
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Oppgitt Arbeidsforhold - Virksomhet navn '${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
+    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Oppgitt Arbeidsforhold - Virksomhet navn [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String virksomhetNavn;
 
     @JsonCreator

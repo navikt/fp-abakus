@@ -28,12 +28,12 @@ public class OppgittFrilansoppdragDto {
     private Periode periode;
 
     @JsonProperty(value="oppdragsgiver")
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message="'${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
+    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message="[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String oppdragsgiver;
 
     /** Tillater kun positive verdier.  Max verdi håndteres av mottager. */
     @JsonProperty("inntekt")
-    @DecimalMin(value = "0.00", message = "beløp '${validatedValue}' må være >= {value}")
+    @DecimalMin(value = "0.00", message = "beløp [${validatedValue}] må være >= {value}")
     private BigDecimal inntekt;
 
     protected OppgittFrilansoppdragDto() {

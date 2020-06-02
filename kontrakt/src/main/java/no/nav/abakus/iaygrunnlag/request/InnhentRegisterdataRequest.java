@@ -31,7 +31,7 @@ public class InnhentRegisterdataRequest {
      */
     @JsonProperty(value = "saksnummer", required = true)
     @NotNull
-    @Pattern(regexp = "^[A-Za-z0-9_\\.\\-]+$", message = "'${validatedValue}' matcher ikke tillatt pattern '{value}'")
+    @Pattern(regexp = "^[A-Za-z0-9_\\.\\-]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'")
     @Valid
     private String saksnummer;
 
@@ -68,7 +68,7 @@ public class InnhentRegisterdataRequest {
 
     @JsonProperty(value = "callbackUrl")
     @Valid
-    @Pattern(regexp = URL_PATTERN, message = "callbackUrl '${validatedValue}' matcher ikke tillatt url pattern '{regexp}'")
+    @Pattern(regexp = URL_PATTERN, message = "callbackUrl [${validatedValue}] matcher ikke tillatt url pattern [{regexp}]")
     private String callbackUrl;
 
     public InnhentRegisterdataRequest(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,

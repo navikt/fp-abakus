@@ -50,7 +50,7 @@ public class Landkode implements Kodeverdi {
     /** ISO 3166 alpha 3-letter code. */
     @JsonProperty(value = "kode")
     @Size(max = 3)
-    @Pattern(regexp = "^[\\p{Alnum}]+$", message = "'${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
+    @Pattern(regexp = "^[\\p{Alnum}]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String kode;
 
     Landkode() {

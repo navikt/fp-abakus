@@ -79,21 +79,21 @@ public class InntektsmeldingDto {
 
     /** Tillater kun positive verdier.  Max verdi håndteres av mottager. */
     @JsonProperty("inntektBeløp")
-    @DecimalMin(value = "0.00", message = "beløp '${validatedValue}' må være >= {value}")
+    @DecimalMin(value = "0.00", message = "beløp [${validatedValue}] må være >= {value}")
     private BigDecimal inntektBeløp;
 
     /** Tillater kun positive verdier.  Max verdi håndteres av mottager. */
     @JsonProperty("refusjonsBeløpPerMnd")
-    @DecimalMin(value = "0.00", message = "beløp '${validatedValue}' må være >= {value}")
+    @DecimalMin(value = "0.00", message = "beløp [${validatedValue}] må være >= {value}")
     private BigDecimal refusjonsBeløpPerMnd;
 
     @JsonProperty(value = "kanalreferanse")
-    @Pattern(regexp = "^[\\p{Graph}\\s\\t\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message="Inntektsmelding kanalreferanse '${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
+    @Pattern(regexp = "^[\\p{Graph}\\s\\t\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message="Inntektsmelding kanalreferanse [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String kanalreferanse;
 
     /** NB: tilsvarer avsendersystem i Inntektsmelding skjema. */
     @JsonProperty(value = "kildesystem")
-    @Pattern(regexp = "^[\\p{Graph}\\s\\t\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message="Inntektsmelding kildeSystem '${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
+    @Pattern(regexp = "^[\\p{Graph}\\s\\t\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message="Inntektsmelding kildeSystem [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String kildesystem;
 
     @JsonProperty(value = "refusjonOpphører")

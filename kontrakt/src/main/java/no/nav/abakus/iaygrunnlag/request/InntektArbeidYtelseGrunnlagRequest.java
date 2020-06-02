@@ -69,7 +69,7 @@ public class InntektArbeidYtelseGrunnlagRequest {
      */
     @JsonProperty(value = "saksnummer")
     @Valid
-    @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "'${validatedValue}' matcher ikke tillatt pattern '{value}'")
+    @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'")
     private String saksnummer;
     /**
      * Hvis satt til true hentes første opprettete versjon av grunnlaget, hvis false eller ikke satt hentes den siste aktive grunnlaget.
