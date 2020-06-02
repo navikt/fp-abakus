@@ -42,6 +42,7 @@ public class InnhentingSamletTjeneste {
     private InntektTjeneste inntektTjeneste;
     private MeldekortTjeneste meldekortTjeneste;
     private InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste;
+    private boolean isDev;
 
     InnhentingSamletTjeneste() {
         //CDI
@@ -57,6 +58,7 @@ public class InnhentingSamletTjeneste {
         this.inntektTjeneste = inntektTjeneste;
         this.meldekortTjeneste = meldekortTjeneste;
         this.innhentingInfotrygdTjeneste = innhentingInfotrygdTjeneste;
+        this.isDev = Cluster.DEV_FSS.equals(Environment.current().getCluster());
     }
 
     public InntektsInformasjon getInntektsInformasjon(AktørId aktørId, Interval periode, InntektskildeType kilde) {
@@ -77,7 +79,7 @@ public class InnhentingSamletTjeneste {
     }
 
     private boolean envUnstable() {
-        return Cluster.DEV_FSS.equals(Environment.current().getCluster());
+        return isDev;
     }
 
     public List<InfotrygdYtelseGrunnlag> innhentInfotrygdGrunnlag(AktørId aktørId, Interval periode) {
