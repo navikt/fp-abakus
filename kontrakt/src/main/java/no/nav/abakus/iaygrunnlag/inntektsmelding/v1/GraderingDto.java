@@ -29,8 +29,8 @@ public class GraderingDto {
     private Periode periode;
 
     @JsonProperty(value = "arbeidstidProsent", required = true)
-    @DecimalMin(value = "0.00", message = "prosentsats ${validatedValue} må være >= {value}")
-    @DecimalMax(value = "100.00", message = "prosentsats ${validatedValue} må være <= {value}")
+    @DecimalMin(value = "0.00", message = "prosentsats [${validatedValue}] må være >= {value}")
+    @DecimalMax(value = "100.00", message = "prosentsats [${validatedValue}] må være <= {value}")
     private BigDecimal arbeidstidProsent;
 
     protected GraderingDto() {

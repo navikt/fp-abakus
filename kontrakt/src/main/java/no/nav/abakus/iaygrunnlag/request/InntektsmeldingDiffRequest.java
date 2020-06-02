@@ -37,7 +37,7 @@ public class InntektsmeldingDiffRequest {
     /** Angi hvilken sak det gjelder. */
     @JsonProperty(value = "saksnummer")
     @Valid
-    @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "'${validatedValue}' matcher ikke tillatt pattern '{value}'")
+    @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'")
     private String saksnummer;
 
     /** Referanse én som skal brukes til sammenligning. */

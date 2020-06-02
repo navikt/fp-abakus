@@ -35,8 +35,8 @@ public class AktivitetsAvtaleDto {
      */
     @JsonProperty("stillingsprosent")
     @Valid
-    @DecimalMin(value = "0.00", message = "stillingsprosent ${validatedValue} må være >= {value}")
-    @DecimalMax(value = "1000.00", message = "stillingsprosent ${validatedValue} må være <= {value}")
+    @DecimalMin(value = "0.00", message = "stillingsprosent [${validatedValue}] må være >= {value}")
+    @DecimalMax(value = "1000.00", message = "stillingsprosent [${validatedValue}] må være <= {value}")
     private BigDecimal stillingsprosent;
 
     /**
@@ -45,8 +45,8 @@ public class AktivitetsAvtaleDto {
      * timer per år (men skal være per uke)
      */
     @JsonProperty("antallTimer")
-    @DecimalMin(value = "0.00", message = "antallTimer ${validatedValue} må være >= {value}")
-    @DecimalMax(value = "2000.00", message = "antallTimer ${validatedValue} må være <= {value}")
+    @DecimalMin(value = "0.00", message = "antallTimer [${validatedValue}] må være >= {value}")
+    @DecimalMax(value = "2000.00", message = "antallTimer [${validatedValue}] må være <= {value}")
     private BigDecimal antallTimer;
 
     /**
@@ -56,8 +56,8 @@ public class AktivitetsAvtaleDto {
      * arbeidsuker).
      */
     @JsonProperty("antallTimerFulltid")
-    @DecimalMin(value = "0.00", message = "antallTimerFulltid ${validatedValue} må være >= {value}")
-    @DecimalMax(value = "2000.00", message = "antallTimerFulltid ${validatedValue} må være <= {value}")
+    @DecimalMin(value = "0.00", message = "antallTimerFulltid [${validatedValue}] må være >= {value}")
+    @DecimalMax(value = "2000.00", message = "antallTimerFulltid [${validatedValue}] må være <= {value}")
     private BigDecimal antallTimerFulltid;
 
     @JsonProperty("sistLønnsendring")

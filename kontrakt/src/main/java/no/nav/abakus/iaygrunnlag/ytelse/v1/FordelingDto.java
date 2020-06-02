@@ -25,7 +25,7 @@ public class FordelingDto {
     @JsonProperty(value = "beløp", required = true)
     @Valid
     @NotNull
-    @DecimalMin(value = "0.00", message = "'${validatedValue}' må være >= {value}")
+    @DecimalMin(value = "0.00", message = "[${validatedValue}] må være >= {value}")
     private BigDecimal beløp;
 
     /** Angir hvilken periode beløp gjelder for. */

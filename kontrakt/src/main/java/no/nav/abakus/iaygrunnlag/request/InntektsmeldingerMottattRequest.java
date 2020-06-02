@@ -21,7 +21,7 @@ import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
 public class InntektsmeldingerMottattRequest {
     @JsonProperty(value = "saksnummer", required = true)
     @NotNull
-    @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "'${validatedValue}' matcher ikke tillatt pattern '{value}'")
+    @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'")
     @Valid
     private String saksnummer;
 

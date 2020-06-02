@@ -142,13 +142,13 @@ public class UtbetalingsPostDto {
         @JsonProperty(value = "kode", required = true)
         @NotNull
         @Size(max = 50)
-        @Pattern(regexp = "^[\\p{Alnum}ÆØÅæøå_\\.\\-]+$", message = "'${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
+        @Pattern(regexp = "^[\\p{Alnum}ÆØÅæøå_\\.\\-]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
         private String kode;
 
         @JsonProperty(value = "kodeverk", required = true)
         @NotNull
         @Size(max = 50)
-        @Pattern(regexp = "^[\\p{Alnum}ÆØÅæøå_\\\\.\\\\-]+$", message = "'${validatedValue}' matcher ikke tillatt pattern '{regexp}'")
+        @Pattern(regexp = "^[\\p{Alnum}ÆØÅæøå_\\\\.\\\\-]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
         private String kodeverk;
 
         @JsonCreator
