@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -17,7 +16,7 @@ import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.VirksomhetAlleredeLagretException;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.VirksomhetRepository;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.rest.EregOrganisasjonRestKlient;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.rest.JuridiskEnhetVirksomheter;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.rest.OrganisasjonstypeEReg;
 import no.nav.tjeneste.virksomhet.organisasjon.v4.binding.HentOrganisasjonOrganisasjonIkkeFunnet;
 import no.nav.tjeneste.virksomhet.organisasjon.v4.binding.HentOrganisasjonUgyldigInput;
 import no.nav.tjeneste.virksomhet.organisasjon.v4.informasjon.JuridiskEnhet;
@@ -204,18 +203,18 @@ public class VirksomhetTjeneste {
                 .medNavn(org.getNavn())
                 .medRegistrert(org.getRegistreringsdato())
                 .medOrgnr(org.getOrganisasjonsnummer());
-            if ("Virksomhet".equalsIgnoreCase(org.getType())) {
+            if (OrganisasjonstypeEReg.VIRKSOMHET.equals(org.getType())) {
                 builder.medOrganisasjonstype(OrganisasjonType.VIRKSOMHET)
                     .medOppstart(org.getOppstartsdato())
                     .medAvsluttet(org.getNedleggelsesdato());
-            } else if ("JuridiskEnhet".equalsIgnoreCase(org.getType())) {
+            } else if (OrganisasjonstypeEReg.JURIDISK_ENHET.equals(org.getType())) {
                 builder.medOrganisasjonstype(OrganisasjonType.VIRKSOMHET);
             }
             var rest = builder.build();
             if (erLik(virksomhet, rest)) {
-                LOGGER.info("FPSAK EREG REST likt svar");
+                LOGGER.info("ABAKUS EREG REST likt svar");
             } else {
-                LOGGER.info("FPSAK EREG REST avvik WS {} RS {}", virksomhet.getOrgnr(), rest.getOrgnr());
+                LOGGER.info("ABAKUS EREG REST avvik WS {} RS {}", virksomhet.tilLoggString(), rest.tilLoggString());
             }
         } catch (Exception e) {
             LOGGER.info("FPSAK EREG REST noe gikk feil", e);
@@ -227,20 +226,22 @@ public class VirksomhetTjeneste {
             return;
         try {
             var jenhet = eregRestKlient.hentJurdiskEnhetVirksomheter(orgNummer);
-            List<String> aktiveOrgnr = jenhet.getDriverVirksomheter().stream()
-                .filter(v -> v.getGyldighetsperiode().getFom().isBefore(hentedato) && v.getGyldighetsperiode().getTom().isAfter(hentedato))
-                .map(JuridiskEnhetVirksomheter.DriverVirksomhet::getOrganisasjonsnummer)
-                .collect(Collectors.toList());
+            List<String> aktiveOrgnr = jenhet.getEksaktVirksomhetForDato(hentedato);
+            var aktivtOrgnr = aktiveOrgnr.stream()
+                .map(o -> eregRestKlient.hentOrganisasjon(o))
+                .filter(o -> o.getOpphørsdato() == null || hentedato.isBefore(o.getOpphørsdato()))
+                .map(o -> o.getOrganisasjonsnummer())
+                .findFirst();
             int antallUnntak = ws.getUnntakForOrgnrListe().size();
             int antallVirksomhet = ws.getOrgnrForOrganisasjonListe().size();
             Optional<String> wsOrgnummer = ws.getOrgnrForOrganisasjonListe().stream().map(OrgnrForOrganisasjon::getOrganisasjonsnummer).findFirst();
-            if (aktiveOrgnr.size() == 1) {
-                if (antallVirksomhet == 1 && antallUnntak == 0 && wsOrgnummer.map(aktiveOrgnr.get(0)::equals).orElse(false))
-                    LOGGER.info("ABAKUS EREG JENHET samme virksomhet {} for juridisk {}", aktiveOrgnr.get(0), orgNummer);
+            if (aktivtOrgnr.isPresent()) {
+                if (antallVirksomhet == 1 && antallUnntak == 0 && wsOrgnummer.map(aktivtOrgnr.get()::equals).orElse(false))
+                    LOGGER.info("ABAKUS EREG JENHET samme virksomhet {} for juridisk {}", aktivtOrgnr.get(), orgNummer);
                 else
-                    LOGGER.info("ABAKUS EREG JENHET avvik virksomhet WS {} RS {} for juridisk {}", wsOrgnummer, aktiveOrgnr.get(0), orgNummer);
+                    LOGGER.info("ABAKUS EREG JENHET avvik virksomhet WS {} RS {} for juridisk {}", wsOrgnummer, aktivtOrgnr.get(), orgNummer);
             } else {
-                if (antallUnntak > 0)
+                if (antallUnntak > 0 && antallVirksomhet == 0)
                     LOGGER.info("ABAKUS EREG JENHET samme unntak for juridisk {}", orgNummer);
                 else
                     LOGGER.info("ABAKUS EREG JENHET avvik unntak for juridisk {}", orgNummer);
