@@ -18,7 +18,7 @@ public class ArbeidsforholdRefDto {
 
 
     @JsonProperty(value = "eksternReferanse", required = true, index = 0)
-    @Pattern(regexp = "^[\\p{Graph}\\s\\t\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Eksternreferanse ${validatedValue} matcher ikke tillatt pattern '{regexp}'")
+    @Pattern(regexp = "^[\\p{Graph}\\s\\t\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Eksternreferanse [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     @NotNull
     private String eksternReferanse;
 
@@ -27,7 +27,7 @@ public class ArbeidsforholdRefDto {
     private Fagsystem eksternReferanseSystem;
     
     @JsonProperty(value = "abakusReferanse", index = 2)
-    @Pattern(regexp = "^[\\p{L}\\p{N}_\\.\\-]+$", message = "Abakusreferanse ${validatedValue} matcher ikke tillatt pattern '{regexp}'")
+    @Pattern(regexp = "^[\\p{L}\\p{N}_\\.\\-]+$", message = "Abakusreferanse [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String abakusReferanse;
 
     @JsonCreator
