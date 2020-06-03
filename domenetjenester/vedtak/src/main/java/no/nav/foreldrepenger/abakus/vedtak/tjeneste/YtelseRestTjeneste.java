@@ -1,6 +1,5 @@
 package no.nav.foreldrepenger.abakus.vedtak.tjeneste;
 
-import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.ARBEIDSFORHOLD;
 import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.VEDTAK;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
@@ -98,7 +97,7 @@ public class YtelseRestTjeneste extends FellesRestTjeneste {
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Henter alle vedtak for en gitt person, evt med periode etter en fom",
         tags = "ytelse")
-    @BeskyttetRessurs(action = READ, resource = ARBEIDSFORHOLD)
+    @BeskyttetRessurs(action = READ, resource = VEDTAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentVedtak(@NotNull @TilpassetAbacAttributt(supplierClass = AktørFomRequestAbacDataSupplier.class) @Valid AktørFomRequest request) {
         var startTx = Instant.now();
