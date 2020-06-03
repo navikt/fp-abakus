@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.registerdata.fagsakytelser.omp;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
@@ -39,7 +40,10 @@ public class OmsorgspengerIAYRegisterInnhentingTjenesteImpl extends IAYRegisterI
 
     @Override
     public boolean skalInnhenteNæringsInntekterFor(Kobling kobling) {
-        return true;
+        return inntektArbeidYtelseTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse())
+            .flatMap(InntektArbeidYtelseGrunnlag::getOppgittOpptjening)
+            .map(oppgittOpptjening -> !oppgittOpptjening.getEgenNæring().isEmpty())
+            .orElse(false);
     }
 
     @Override
