@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public class Organisasjon {
+public class OrganisasjonEReg {
 
     @JsonProperty("organisasjonsnummer")
     private String organisasjonsnummer;
@@ -26,7 +26,7 @@ public class Organisasjon {
     @JsonProperty("virksomhetDetaljer")
     private VirksomhetDetaljer virksomhetDetaljer;
 
-    public Organisasjon() {
+    public OrganisasjonEReg() {
     }
 
     public String getOrganisasjonsnummer() {

@@ -34,7 +34,7 @@ public class AktørFomRequest {
 
     @JsonCreator
     public AktørFomRequest(@JsonProperty(value = "aktør", required = true) @NotNull @Valid Aktør aktør,
-                           @JsonProperty(value = "periode") LocalDate fom) {
+                           @JsonProperty(value = "fom") LocalDate fom) {
         this.aktør = aktør;
         this.fom = fom;
     }

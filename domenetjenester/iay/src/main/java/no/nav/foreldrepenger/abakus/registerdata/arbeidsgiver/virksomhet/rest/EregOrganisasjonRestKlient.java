@@ -40,9 +40,9 @@ public class EregOrganisasjonRestKlient {
         this.endpoint = endpoint;
     }
 
-    public Organisasjon hentOrganisasjon(String orgnummer)  {
+    public OrganisasjonEReg hentOrganisasjon(String orgnummer)  {
         var request = URI.create(endpoint.toString() + "/" + orgnummer);
-        return oidcRestClient.get(request, lagHeader(), Organisasjon.class);
+        return oidcRestClient.get(request, lagHeader(), OrganisasjonEReg.class);
     }
 
     public JuridiskEnhetVirksomheter hentJurdiskEnhetVirksomheter(String orgnummer) throws Exception {

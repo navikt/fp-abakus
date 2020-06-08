@@ -92,7 +92,7 @@ public class YtelseRestTjeneste extends FellesRestTjeneste {
     }
 
     @POST
-    @Path("/vedtakene")
+    @Path("/hentVedtakForAktoer")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Henter alle vedtak for en gitt person, evt med periode etter en fom",
