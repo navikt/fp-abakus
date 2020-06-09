@@ -442,6 +442,8 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
             ", refusjonOpphører=" + refusjonOpphører +
             ", innsendingsårsak= " + innsendingsårsak +
             ", innsendingstidspunkt= " + innsendingstidspunkt +
+            ", graderinger= " + graderinger +
+            ", naturalytelse= " + naturalYtelser +
             '>';
     }
 
