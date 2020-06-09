@@ -432,16 +432,10 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
     public String toString() {
         return getClass().getSimpleName() + "<" +
             "id=" + id +
-            ", virksomhet=" + arbeidsgiver +
-            ", arbeidsforholdId='" + arbeidsforholdRef + '\'' +
-            ", startDatoPermisjon=" + startDatoPermisjon +
-            ", nærRelasjon=" + nærRelasjon +
-            ", journalpostId=" + journalpostId +
             ", inntektBeløp=" + inntektBeløp +
             ", refusjonBeløpPerMnd=" + refusjonBeløpPerMnd +
-            ", refusjonOpphører=" + refusjonOpphører +
-            ", innsendingsårsak= " + innsendingsårsak +
-            ", innsendingstidspunkt= " + innsendingstidspunkt +
+            ", graderinger= " + graderinger +
+            ", naturalytelse= " + naturalYtelser +
             '>';
     }
 
