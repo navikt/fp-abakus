@@ -72,10 +72,6 @@
 			<artifactId>fp-feed-vedtak-tjenestespesifikasjon</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-			<artifactId>organisasjon-klient</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>no.nav.foreldrepenger.abakus</groupId>
 			<artifactId>abakus-kontrakt</artifactId>
 		</dependency>

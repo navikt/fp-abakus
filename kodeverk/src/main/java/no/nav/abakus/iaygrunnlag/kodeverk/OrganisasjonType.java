@@ -18,6 +18,7 @@ public enum OrganisasjonType implements Kodeverdi {
 
     JURIDISK_ENHET("JURIDISK_ENHET", "Juridisk enhet"),
     VIRKSOMHET("VIRKSOMHET", "Virksomhet"),
+    ORGLEDD("ORGANISASJONSLEDD", "Organisasjonsledd"),
     KUNSTIG("KUNSTIG", "Kunstig arbeidsforhold lagt til av saksbehandler"),
     UDEFINERT("-", "Udefinert"),
     ;
@@ -80,5 +81,5 @@ public enum OrganisasjonType implements Kodeverdi {
     public String getKode() {
         return kode;
     }
-    
+
 }

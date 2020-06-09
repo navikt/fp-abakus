@@ -209,14 +209,14 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
 
         Arbeidsgiver arbeidsgiver;
         if (OrganisasjonsNummerValidator.erGyldig(arbeidsgiverIdentifikator)) {
-            boolean orgledd = virksomhetTjeneste.sjekkOmVirksomhetErOrgledd(arbeidsgiverIdentifikator);
+            boolean orgledd = virksomhetTjeneste.sjekkOmOrganisasjonErOrgledd(arbeidsgiverIdentifikator);
             if (!orgledd) {
                 LocalDate hentedato = finnHentedatoForJuridisk(månedsinntekterGruppertPåArbeidsgiver.keySet());
-                arbeidsgiver = Arbeidsgiver.virksomhet(virksomhetTjeneste.hentOgLagreOrganisasjonMedHensynTilJuridisk(arbeidsgiverIdentifikator, hentedato));
+                arbeidsgiver = Arbeidsgiver.virksomhet(virksomhetTjeneste.hentOrganisasjonMedHensynTilJuridisk(arbeidsgiverIdentifikator, hentedato));
                 aktørInntektBuilder.leggTilInntekt(byggInntekt(månedsinntekterGruppertPåArbeidsgiver, arbeidsgiver, aktørInntektBuilder, inntektOpptjening));
                 builder.leggTilAktørInntekt(aktørInntektBuilder);
             } else {
-                LOGGER.info("Inntekter rapportert på orglegg({}), blir IKKE lagret", arbeidsgiverIdentifikator);
+                LOGGER.info("Inntekter rapportert på orgledd({}), blir IKKE lagret", arbeidsgiverIdentifikator);
             }
         } else {
             if (PersonIdent.erGyldigFnr(arbeidsgiverIdentifikator)) {
@@ -326,7 +326,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
             return Arbeidsgiver.person(new AktørId(((Person) arbeidsforhold.getArbeidsgiver()).getAktørId()));
         } else if (arbeidsforhold.getArbeidsgiver() instanceof Organisasjon) {
             String orgnr = ((Organisasjon) arbeidsforhold.getArbeidsgiver()).getOrgNummer();
-            return Arbeidsgiver.virksomhet(virksomhetTjeneste.hentOgLagreOrganisasjon(orgnr));
+            return Arbeidsgiver.virksomhet(virksomhetTjeneste.hentOrganisasjon(orgnr));
         }
         throw new IllegalArgumentException("Utvikler feil: ArbeidsgiverEntitet av ukjent type.");
     }

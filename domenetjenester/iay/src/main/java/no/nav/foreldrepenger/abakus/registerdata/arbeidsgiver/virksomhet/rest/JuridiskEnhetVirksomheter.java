@@ -27,9 +27,6 @@ public class JuridiskEnhetVirksomheter {
     @JsonProperty("driverVirksomheter")
     private List<DriverVirksomhet> driverVirksomheter;
 
-    public JuridiskEnhetVirksomheter() {
-    }
-
     public String getOrganisasjonsnummer() {
         return organisasjonsnummer;
     }
@@ -49,7 +46,8 @@ public class JuridiskEnhetVirksomheter {
     }
 
     public LocalDate getRegistreringsdato() {
-        return organisasjonDetaljer != null ? organisasjonDetaljer.getRegistreringsdato().toLocalDate() : null;
+        return organisasjonDetaljer != null && organisasjonDetaljer.getRegistreringsdato() != null
+            ? organisasjonDetaljer.getRegistreringsdato().toLocalDate() : null;
     }
 
     public LocalDate getOpphørsdato() {
@@ -57,7 +55,8 @@ public class JuridiskEnhetVirksomheter {
     }
 
     private LocalDate getOpphørsdatoNonNull() {
-        return organisasjonDetaljer != null && organisasjonDetaljer.getOpphørsdato() != null ? organisasjonDetaljer.getOpphørsdato() : Tid.TIDENES_ENDE;
+        return organisasjonDetaljer != null && organisasjonDetaljer.getOpphørsdato() != null
+            ? organisasjonDetaljer.getOpphørsdato() : Tid.TIDENES_ENDE;
     }
 
     public List<DriverVirksomhet> getDriverVirksomheter() {
@@ -79,9 +78,6 @@ public class JuridiskEnhetVirksomheter {
         private LocalDateTime registreringsdato;
         @JsonProperty("opphoersdato")
         private LocalDate opphoersdato;
-
-        public OrganisasjonDetaljer() {
-        }
 
         public LocalDateTime getRegistreringsdato() {
             return registreringsdato;
@@ -107,9 +103,6 @@ public class JuridiskEnhetVirksomheter {
         @JsonProperty("gyldighetsperiode")
         private Periode gyldighetsperiode;
 
-        public DriverVirksomhet() {
-        }
-
         public String getOrganisasjonsnummer() {
             return organisasjonsnummer;
         }
@@ -132,9 +125,6 @@ public class JuridiskEnhetVirksomheter {
         private LocalDate fom;
         @JsonProperty("tom")
         private LocalDate tom;
-
-        public Periode() {
-        }
 
         public LocalDate getFom() {
             return fom;
