@@ -35,7 +35,6 @@
     <sequence-generator name="SEQ_TMP_INNTEKT" allocation-size="50" sequence-name="SEQ_TMP_INNTEKT" />
     <sequence-generator name="SEQ_AKTOER_ARBEID" allocation-size="50" sequence-name="SEQ_AKTOER_ARBEID" />
     <sequence-generator name="SEQ_YRKESAKTIVITET" allocation-size="50" sequence-name="SEQ_YRKESAKTIVITET" />
-    <sequence-generator name="SEQ_VIRKSOMHET" allocation-size="50" sequence-name="SEQ_VIRKSOMHET" />
     <sequence-generator name="SEQ_PERMISJON" allocation-size="50" sequence-name="SEQ_PERMISJON" />
     <sequence-generator name="SEQ_AKTIVITETS_AVTALE" allocation-size="50" sequence-name="SEQ_AKTIVITETS_AVTALE" />
 
@@ -58,8 +57,6 @@
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelse" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyrtePerioder" />
-
-    <entity class="no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet" />
 
     <!-- Inntektsmelding -->
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat" />

@@ -49,7 +49,7 @@ public class ArbeidsgiverTjeneste {
         }
         if (arbeidsgiver.getErVirksomhet() && !OrgNummer.erKunstig(arbeidsgiver.getOrgnr())) {
             String orgnr = arbeidsgiver.getOrgnr().getId();
-            var virksomhet = virksomhetTjeneste.hentOgLagreOrganisasjon(orgnr);
+            var virksomhet = virksomhetTjeneste.hentOrganisasjon(orgnr);
             ArbeidsgiverOpplysninger nyOpplysninger = new ArbeidsgiverOpplysninger(orgnr, virksomhet.getNavn());
             cache.put(arbeidsgiver.getIdentifikator(), nyOpplysninger);
             return nyOpplysninger;

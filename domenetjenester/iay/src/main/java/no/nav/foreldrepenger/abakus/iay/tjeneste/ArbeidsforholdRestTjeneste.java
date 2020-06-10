@@ -124,7 +124,7 @@ public class ArbeidsforholdRestTjeneste extends FellesRestTjeneste {
     private Arbeidsgiver tilArbeidsgiver(@Valid @NotNull ArbeidsforholdReferanse request) {
         var arbeidsgiver = request.getArbeidsgiver();
         if (arbeidsgiver.getErOrganisasjon()) {
-            return Arbeidsgiver.virksomhet(virksomhetTjeneste.hentOgLagreOrganisasjon(arbeidsgiver.getIdent()));
+            return Arbeidsgiver.virksomhet(virksomhetTjeneste.hentOrganisasjon(arbeidsgiver.getIdent()));
         }
         return Arbeidsgiver.person(new AktørId(arbeidsgiver.getIdent()));
     }

@@ -26,9 +26,6 @@ public class OrganisasjonEReg {
     @JsonProperty("virksomhetDetaljer")
     private VirksomhetDetaljer virksomhetDetaljer;
 
-    public OrganisasjonEReg() {
-    }
-
     public String getOrganisasjonsnummer() {
         return organisasjonsnummer;
     }
@@ -42,7 +39,8 @@ public class OrganisasjonEReg {
     }
 
     public LocalDate getRegistreringsdato() {
-        return organisasjonDetaljer != null ? organisasjonDetaljer.getRegistreringsdato().toLocalDate() : null;
+        return organisasjonDetaljer != null && organisasjonDetaljer.getRegistreringsdato() != null
+            ? organisasjonDetaljer.getRegistreringsdato().toLocalDate() : null;
     }
 
     public LocalDate getOpphørsdato() {
@@ -62,7 +60,7 @@ public class OrganisasjonEReg {
         return "Organisasjon{" +
             "organisasjonsnummer='" + organisasjonsnummer + '\'' +
             ", type='" + type + '\'' +
-            ", navn=" + navn +
+            ", navn=" + getNavn() +
             ", organisasjonDetaljer=" + organisasjonDetaljer +
             ", virksomhetDetaljer=" + virksomhetDetaljer +
             '}';
@@ -105,9 +103,6 @@ public class OrganisasjonEReg {
         private LocalDate opphoersdato;
 
 
-        public OrganisasjonDetaljer() {
-        }
-
         public LocalDateTime getRegistreringsdato() {
             return registreringsdato;
         }
@@ -131,9 +126,6 @@ public class OrganisasjonEReg {
         private LocalDate oppstartsdato;
         @JsonProperty("nedleggelsesdato")
         private LocalDate nedleggelsesdato;
-
-        public VirksomhetDetaljer() {
-        }
 
         public LocalDate getOppstartsdato() {
             return oppstartsdato;
