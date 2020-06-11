@@ -380,10 +380,6 @@ public class InntektArbeidYtelseRepository {
 
         Optional<InntektArbeidYtelseGrunnlag> tidligereAggregat = getAktivtInntektArbeidGrunnlag(koblingReferanse);
 
-        // Legger til midlertidig logging relatert til TSF-738
-        if(nyttGrunnlag.getInntektsmeldinger().isPresent()){
-            log.info("Fra inntektsmelding: {}", nyttGrunnlag.getInntektsmeldinger().get().getInntektsmeldinger());
-        }
         if (tidligereAggregat.isPresent()) {
             InntektArbeidYtelseGrunnlag aggregat = tidligereAggregat.get();
             if (diffResultat(aggregat, nyttGrunnlag, false).isEmpty()) {
