@@ -39,7 +39,7 @@ public class AktørFomRequest {
         this.fom = fom;
     }
 
-    private AktørFomRequest() {
+    public AktørFomRequest() {
     }
 
     public Aktør getAktør() {
