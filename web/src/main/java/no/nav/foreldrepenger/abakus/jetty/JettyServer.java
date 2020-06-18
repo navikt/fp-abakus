@@ -62,7 +62,7 @@ public class JettyServer extends AbstractJettyServer {
     @Override
     protected void konfigurerJndi() throws Exception {
         new EnvEntry("jdbc/defaultDS",
-                DatasourceUtil.createDatasource("defaultDS", DatasourceRole.USER, ENV.getCluster(), 4));
+                DatasourceUtil.createDatasource("defaultDS", DatasourceRole.USER, ENV.getCluster(), 7));
     }
 
     @Override
