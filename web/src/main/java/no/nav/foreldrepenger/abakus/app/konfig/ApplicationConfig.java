@@ -19,6 +19,7 @@ import no.nav.foreldrepenger.abakus.app.exceptions.GeneralRestExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.JsonMappingExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.JsonParseExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.jackson.JacksonJsonConfig;
+import no.nav.foreldrepenger.abakus.app.vedlikehold.ForvaltningRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.ArbeidsforholdRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.GrunnlagRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.InntektsmeldingerRestTjeneste;
@@ -68,6 +69,7 @@ public class ApplicationConfig extends Application {
         classes.add(GrunnlagRestTjeneste.class);
         classes.add(ArbeidsforholdRestTjeneste.class);
         classes.add(YtelseRestTjeneste.class);
+        classes.add(ForvaltningRestTjeneste.class);
         classes.add(OpenApiResource.class);
 
         classes.add(ConstraintViolationMapper.class);
