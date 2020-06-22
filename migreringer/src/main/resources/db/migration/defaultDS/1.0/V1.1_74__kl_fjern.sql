@@ -5,7 +5,6 @@ alter table iay_egen_naering drop column kl_virksomhet_type;
 alter table iay_egen_naering drop column kl_landkoder;
 alter table iay_inntekt drop column kl_kilde;
 alter table iay_inntektsmelding drop column kl_innsendingsaarsak;
-alter table iay_inntektspost drop column kl_ytelse_type;
 alter table iay_inntektspost drop column kl_inntektspost_type;
 alter table iay_inntektspost drop column kl_skatte_og_avgiftsregel_type;
 alter table iay_natural_ytelse drop column kl_natural_ytelse_type;
