@@ -261,7 +261,7 @@ public class MapOppgittOpptjening {
                 .medEndringDato(dto.getEndringDato())
                 .medVirksomhet(org)
                 .medVirksomhetType(dto.getVirksomhetTypeDto())
-                .medRegnskapsførerNavn(dto.getRegnskapsførerNavn())
+                .medRegnskapsførerNavn(trimVedBehov(dto.getRegnskapsførerNavn()))
                 .medRegnskapsførerTlf(dto.getRegnskapsførerTlf())
                 .medNyIArbeidslivet(dto.isNyIArbeidslivet())
                 .medNyoppstartet(dto.isNyoppstartet())
@@ -273,6 +273,15 @@ public class MapOppgittOpptjening {
             builder.medUtenlandskVirksomhet(landkode, dto.getVirksomhetNavn());
 
             return builder;
+        }
+
+        //fix for TSF-798
+        // regnskapsførerNavn oppgitt med 566 tegn...
+        private String trimVedBehov(String regnskapsførerNavn) {
+            if (regnskapsførerNavn != null && regnskapsførerNavn.length() > 400) {
+                return regnskapsførerNavn.substring(0, 399);
+            }
+            return regnskapsførerNavn;
         }
 
         private OppgittArbeidsforholdBuilder mapOppgittArbeidsforhold(OppgittArbeidsforholdDto dto) {
