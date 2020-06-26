@@ -14,9 +14,11 @@ import org.slf4j.LoggerFactory;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.vedtak.felles.integrasjon.sigrun.BeregnetSkatt;
-import no.nav.vedtak.felles.integrasjon.sigrun.summertskattegrunnlag.SSGGrunnlag;
-import no.nav.vedtak.felles.integrasjon.sigrun.summertskattegrunnlag.SSGResponse;
+
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.BeregnetSkatt;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGGrunnlag;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
+
 
 class SigrunTilInternMapper {
     private static final Logger LOGGER = LoggerFactory.getLogger(SigrunTilInternMapper.class);

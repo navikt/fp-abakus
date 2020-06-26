@@ -3,11 +3,10 @@ package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun;
 import no.finn.unleash.Unleash;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunConsumer;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunResponse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.vedtak.felles.integrasjon.sigrun.SigrunConsumer;
-import no.nav.vedtak.felles.integrasjon.sigrun.SigrunResponse;
-import no.nav.vedtak.felles.integrasjon.sigrun.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
-
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.math.BigDecimal;
