@@ -19,7 +19,8 @@ import no.nav.vedtak.konfig.KonfigVerdi;
 @ApplicationScoped
 public class SpokelseKlient {
 
-    private static final String DEFAULT_URI = "http://spokelse.default/grunnlag";
+    private static final String AZURE_V2_TOKEN_ENDPOINT_PROD = "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/oauth2/v2.0/token";
+    private static final String SPOKELSE_GRUNNLAG_DEFAULT_URL = "http://spokelse.default/grunnlag";
 
     private static final Logger LOG = LoggerFactory.getLogger(SpokelseKlient.class);
 
@@ -29,11 +30,11 @@ public class SpokelseKlient {
 
     @Inject
     public SpokelseKlient(
-        @KonfigVerdi(value = "SPOKELSE_GRUNNLAG_URL", defaultVerdi = DEFAULT_URI) URI uri,
-        @KonfigVerdi(value = "SPOKELSE_GRUNNLAG_SCOPES") String scopesCsv,
-        @KonfigVerdi(value = "AZURE_CLIENT_ID") String clientId,
-        @KonfigVerdi(value = "AZURE_CLIENT_SECRET") String clientSecret,
-        @KonfigVerdi(value = "AZURE_V2_TOKEN_ENDPOINT") URI tokenEndpoint,
+        @KonfigVerdi(value = "SPOKELSE_GRUNNLAG_URL", defaultVerdi = SPOKELSE_GRUNNLAG_DEFAULT_URL) URI uri,
+        @KonfigVerdi(value = "SPOKELSE_GRUNNLAG_SCOPES", defaultVerdi = "spokelse/.default") String scopesCsv,
+        @KonfigVerdi(value = "AZURE_CLIENT_ID", defaultVerdi = "fp-abakus") String clientId,
+        @KonfigVerdi(value = "AZURE_CLIENT_SECRET", defaultVerdi = "fp-abakus") String clientSecret,
+        @KonfigVerdi(value = "AZURE_V2_TOKEN_ENDPOINT", defaultVerdi = AZURE_V2_TOKEN_ENDPOINT_PROD) URI tokenEndpoint,
         @KonfigVerdi(value = "AZURE_HTTP_PROXY", required = false) URI httpProxy) {
         this.restClient = OAuth2RestClient.builder()
             .clientId(clientId)
