@@ -61,10 +61,6 @@
 		</dependency>
 		<dependency>
 			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-			<artifactId>sigrun-klient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
 			<artifactId>unleash-klient</artifactId>
 		</dependency>
 		<dependency>
@@ -94,6 +90,11 @@
 			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
 			<artifactId>felles-integrasjon-webservice</artifactId>
 		</dependency>
+
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+            <artifactId>felles-integrasjon-rest-klient</artifactId>
+        </dependency>
 
 		<dependency>
 			<groupId>io.swagger.core.v3</groupId>

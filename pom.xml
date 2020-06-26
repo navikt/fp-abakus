@@ -88,6 +88,12 @@
 				<version>${felles.version}</version>
 				<scope>import</scope>
 				<type>pom</type>
+                <exclusions>
+                    <exclusion>
+                        <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+                        <artifactId>sigrun-klient</artifactId>
+                    </exclusion>
+                </exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.spec.javax.annotation</groupId>
