@@ -44,6 +44,8 @@ spec:
         kvPath: serviceuser/data/prod/srvfpabakus
       - mountPath: /var/run/secrets/nais.io/appdynamics
         kvPath: /apikey/appdynamics/prod
+      - mountPath: /var/run/secrets/nais.io/azuread
+        kvPath: /azuread/data/prod/creds/fp-abakus
   env:
     - name: LOADBALANCER_URL
       value: https://fpabakus.nais.adeo.no
@@ -98,3 +100,11 @@ spec:
       value: http://infotrygd-grunnlag-paaroerende-sykdom.default/paaroerendeSykdom/grunnlag
     - name: FPABAKUS_IT_SP_GRUNNLAG_URL
       value: http://infotrygd-sykepenger-fp.default/grunnlag
+    #AZURE
+    - name: AZURE_V2_TOKEN_ENDPOINT
+      value: https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/oauth2/v2.0/token
+    - name: AZURE_HTTP_PROXY
+      value: http://webproxy.nais:8088
+    #SPOKELSE
+    - name: SPOKELSE_GRUNNLAG_SCOPES
+      value: 2cfc9652-f3c7-4b23-a43b-e8844f49aeca/.default

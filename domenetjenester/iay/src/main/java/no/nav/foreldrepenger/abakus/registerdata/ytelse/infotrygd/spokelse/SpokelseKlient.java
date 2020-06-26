@@ -4,31 +4,45 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import no.nav.vedtak.felles.integrasjon.rest.OAuth2RestClient;
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
 import no.nav.vedtak.konfig.KonfigVerdi;
 
 @ApplicationScoped
 public class SpokelseKlient {
 
-    private static final String DEFAULT_URI = "http://spokelse.default/grunnlag";
+    private static final String AZURE_V2_TOKEN_ENDPOINT_PROD = "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/oauth2/v2.0/token";
+    private static final String SPOKELSE_GRUNNLAG_DEFAULT_URL = "http://spokelse.default/grunnlag";
 
     private static final Logger LOG = LoggerFactory.getLogger(SpokelseKlient.class);
 
-    private OidcRestClient restClient;
     private URI uri;
     private String uriString;
+    private OAuth2RestClient restClient;
 
     @Inject
-    public SpokelseKlient(OidcRestClient restClient, @KonfigVerdi(value = "spokelse.grunnlag.url", defaultVerdi = DEFAULT_URI) URI uri) {
-        this.restClient = restClient;
+    public SpokelseKlient(
+        @KonfigVerdi(value = "SPOKELSE_GRUNNLAG_URL", defaultVerdi = SPOKELSE_GRUNNLAG_DEFAULT_URL) URI uri,
+        @KonfigVerdi(value = "SPOKELSE_GRUNNLAG_SCOPES", defaultVerdi = "spokelse/.default") String scopesCsv,
+        @KonfigVerdi(value = "AZURE_CLIENT_ID", defaultVerdi = "fp-abakus") String clientId,
+        @KonfigVerdi(value = "AZURE_CLIENT_SECRET", defaultVerdi = "fp-abakus") String clientSecret,
+        @KonfigVerdi(value = "AZURE_V2_TOKEN_ENDPOINT", defaultVerdi = AZURE_V2_TOKEN_ENDPOINT_PROD) URI tokenEndpoint,
+        @KonfigVerdi(value = "AZURE_HTTP_PROXY", required = false) URI httpProxy) {
+        this.restClient = OAuth2RestClient.builder()
+            .clientId(clientId)
+            .clientSecret(clientSecret)
+            .scopes(scopesFraCsv(scopesCsv))
+            .tokenEndpoint(tokenEndpoint)
+            .tokenEndpointProxy(httpProxy)
+            .build();
         this.uri = uri;
         this.uriString = uri.toString();
     }
@@ -49,5 +63,9 @@ public class SpokelseKlient {
             LOG.info("abakus spokelse Feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
             return Collections.emptyList();
         }
+    }
+
+    private static Set<String> scopesFraCsv(String scopesCsv) {
+        return Set.of(scopesCsv.replace(" ", "").split(","));
     }
 }
