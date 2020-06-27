@@ -63,6 +63,9 @@ spec:
       value: https://security-token-service.nais.preprod.local
     - name: OIDC_STS_JWKS_URL
       value: https://security-token-service.nais.preprod.local/rest/v1/sts/jwks
+    #ABAC
+    - name: ABAC_ATTRIBUTT_DRIFT
+      value: "no.nav.abac.attributter.resource.duplo.abakus.drift"
     #Sensu
     - name: SENSU_HOST
       value: sensu.nais
