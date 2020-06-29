@@ -20,6 +20,7 @@ public class InfotrygdYtelseGrunnlag {
     private List<InfotrygdYtelseAnvist> utbetaltePerioder;
     private LocalDate vedtaksPeriodeFom;
     private LocalDate vedtaksPeriodeTom;
+    private String vedtaksreferanse;
 
     private Arbeidskategori kategori;
     private List<InfotrygdYtelseArbeid> arbeidsforhold;
@@ -79,6 +80,10 @@ public class InfotrygdYtelseGrunnlag {
 
     public LocalDate getOpprinneligIdentdato() {
         return opprinneligIdentdato;
+    }
+
+    public String getVedtaksreferanse() {
+        return vedtaksreferanse;
     }
 
     @Override
@@ -210,6 +215,11 @@ public class InfotrygdYtelseGrunnlag {
 
         public Builder medOpprinneligIdentdato(LocalDate opprinneligIdentdato) {
             grunnlag.opprinneligIdentdato = opprinneligIdentdato;
+            return this;
+        }
+
+        public Builder medVedtaksreferanse(String vedtaksreferanse) {
+            grunnlag.vedtaksreferanse = vedtaksreferanse;
             return this;
         }
 

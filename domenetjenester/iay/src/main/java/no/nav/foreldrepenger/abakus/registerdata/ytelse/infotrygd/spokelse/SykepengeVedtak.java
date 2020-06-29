@@ -1,6 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.spokelse;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -17,23 +17,32 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class SykepengeVedtak {
 
     @JsonProperty("vedtaksreferanse")
-    private LocalDate vedtaksreferanse;
+    private String vedtaksreferanse;
     @JsonProperty("utbetalinger")
     private List<SykepengeUtbetaling> utbetalinger;
+    @JsonProperty("vedtattTidspunkt")
+    private LocalDateTime vedtattTidspunkt;
+
 
     @JsonCreator
-    public SykepengeVedtak(@JsonProperty("vedtaksreferanse") LocalDate vedtaksreferanse,
-                           @JsonProperty("utbetalinger") List<SykepengeUtbetaling> utbetalinger) {
+    public SykepengeVedtak(@JsonProperty("vedtaksreferanse") String vedtaksreferanse,
+                           @JsonProperty("utbetalinger") List<SykepengeUtbetaling> utbetalinger,
+                           @JsonProperty("vedtattTidspunkt") LocalDateTime vedtattTidspunkt) {
         this.vedtaksreferanse = vedtaksreferanse;
         this.utbetalinger = utbetalinger;
+        this.vedtattTidspunkt = vedtattTidspunkt;
     }
 
-    public LocalDate getVedtaksreferanse() {
+    public String getVedtaksreferanse() {
         return vedtaksreferanse;
     }
 
     public List<SykepengeUtbetaling> getUtbetalinger() {
         return utbetalinger != null ? utbetalinger : Collections.emptyList();
+    }
+
+    public LocalDateTime getVedtattTidspunkt() {
+        return vedtattTidspunkt;
     }
 
     @Override
@@ -42,19 +51,22 @@ public class SykepengeVedtak {
         if (o == null || getClass() != o.getClass()) return false;
         SykepengeVedtak that = (SykepengeVedtak) o;
         return Objects.equals(vedtaksreferanse, that.vedtaksreferanse) &&
-                Objects.equals(utbetalinger, that.utbetalinger);
+            Objects.equals(utbetalinger, that.utbetalinger) &&
+            Objects.equals(vedtattTidspunkt, that.vedtattTidspunkt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(vedtaksreferanse, utbetalinger);
+        return Objects.hash(vedtaksreferanse, utbetalinger, vedtattTidspunkt);
     }
 
     @Override
     public String toString() {
         return "SykepengeVedtak{" +
-                "vedtaksreferanse=" + vedtaksreferanse +
-                ", utbetalinger=" + utbetalinger +
-                '}';
+            "vedtaksreferanse='" + vedtaksreferanse + '\'' +
+            ", utbetalinger=" + utbetalinger +
+            ", vedtattTidspunkt=" + vedtattTidspunkt +
+            '}';
     }
+
 }
