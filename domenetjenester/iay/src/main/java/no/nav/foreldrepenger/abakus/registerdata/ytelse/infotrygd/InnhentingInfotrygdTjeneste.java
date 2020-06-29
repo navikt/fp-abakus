@@ -5,6 +5,7 @@ import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -87,7 +88,7 @@ public class InnhentingInfotrygdTjeneste {
     public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelser(PersonIdent ident, Interval periode) {
         LocalDate innhentFom =  dato(periode.getStart());
         List<Grunnlag> rest = infotrygdGrunnlag.hentAggregertGrunnlag(ident.getIdent(), innhentFom, dato(periode.getEnd()));
-        //getSPøkelseYtelserFailSoft(ident);
+        getSPøkelseYtelserFailSoft(ident);
 
         return mapTilInfotrygdYtelseGrunnlag(rest, innhentFom);
     }
@@ -225,20 +226,25 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     private List<InfotrygdYtelseGrunnlag> getSPøkelseYtelserFailSoft(PersonIdent ident) {
-        List<SykepengeVedtak> rest = spokelseKlient.hentGrunnlag(ident.getIdent());
+        try {
+            List<SykepengeVedtak> rest = spokelseKlient.hentGrunnlag(ident.getIdent());
 
-        return mapSpøkelseTilInfotrygdYtelseGrunnlag(rest);
+            var mappedGrunnlag = mapSpøkelseTilInfotrygdYtelseGrunnlag(rest);
+            if (!mappedGrunnlag.isEmpty()) {
+                LOG.info("abakus spokelse mapped grunnlag {}", mappedGrunnlag);
+            }
+            return mappedGrunnlag;
+        } catch (Exception e) {
+            LOG.info("abakus spokelse noe gikk feil", e);
+            return Collections.emptyList();
+        }
     }
 
     private List<InfotrygdYtelseGrunnlag> mapSpøkelseTilInfotrygdYtelseGrunnlag(List<SykepengeVedtak> rest) {
-        var mappedGrunnlag = rest.stream()
+        return rest.stream()
             .map(this::spokelseTilInfotrygdYtelseGrunnlag)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
-        if (!mappedGrunnlag.isEmpty()) {
-            LOG.info("abakus spokelse mapped grunnlag {}", mappedGrunnlag);
-        }
-        return mappedGrunnlag;
     }
 
     private InfotrygdYtelseGrunnlag spokelseTilInfotrygdYtelseGrunnlag(SykepengeVedtak grunnlag) {
