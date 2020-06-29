@@ -228,7 +228,6 @@ public class InnhentingInfotrygdTjeneste {
     private List<InfotrygdYtelseGrunnlag> getSPøkelseYtelserFailSoft(PersonIdent ident) {
         try {
             List<SykepengeVedtak> rest = spokelseKlient.hentGrunnlag(ident.getIdent());
-
             var mappedGrunnlag = mapSpøkelseTilInfotrygdYtelseGrunnlag(rest);
             if (!mappedGrunnlag.isEmpty()) {
                 LOG.info("abakus spokelse mapped grunnlag {}", mappedGrunnlag);
