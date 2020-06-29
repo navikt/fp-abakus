@@ -108,3 +108,5 @@ spec:
     #SPOKELSE
     - name: SPOKELSE_GRUNNLAG_SCOPES
       value: 2cfc9652-f3c7-4b23-a43b-e8844f49aeca/.default
+    - name: SPOKELSE_GRUNNLAG_URL
+      value: http://spokelse.tbd/grunnlag
