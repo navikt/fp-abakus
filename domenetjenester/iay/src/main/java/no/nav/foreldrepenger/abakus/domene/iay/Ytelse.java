@@ -71,6 +71,10 @@ public class Ytelse extends BaseEntitet implements IndexKey {
     private Saksnummer saksnummer;
 
     @ChangeTracked
+    @Column(name = "saksreferanse")
+    private String saksreferanse;
+
+    @ChangeTracked
     @Convert(converter= FagsystemKodeverdiConverter.class)
     @Column(name="kilde", nullable = false)
     private Fagsystem kilde;
@@ -101,6 +105,7 @@ public class Ytelse extends BaseEntitet implements IndexKey {
         this.status = ytelse.getStatus();
         this.periode = ytelse.getPeriode();
         this.saksnummer = ytelse.getSaksnummer();
+        this.saksreferanse = ytelse.getSaksreferanse();
         this.temaUnderkategori = ytelse.getBehandlingsTema();
         this.kilde = ytelse.getKilde();
         ytelse.getYtelseGrunnlag().ifPresent(yg -> {
@@ -163,6 +168,14 @@ public class Ytelse extends BaseEntitet implements IndexKey {
 
     void medSakId(Saksnummer saksnummer) {
         this.saksnummer = saksnummer;
+    }
+
+    public String getSaksreferanse() {
+        return saksreferanse;
+    }
+
+    void setSaksreferanse(String saksnummer) {
+        this.saksreferanse = saksnummer;
     }
 
     public Fagsystem getKilde() {

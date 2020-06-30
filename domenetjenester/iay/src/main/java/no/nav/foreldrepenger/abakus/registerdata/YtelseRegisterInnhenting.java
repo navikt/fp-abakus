@@ -26,6 +26,7 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.typer.OrganisasjonsNummerValidator;
+import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelse;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
@@ -58,6 +59,9 @@ public class YtelseRegisterInnhenting {
 
         List<InfotrygdYtelseGrunnlag> alleGrunnlag = innhentingSamletTjeneste.innhentInfotrygdGrunnlag(aktørId, opplysningsPeriode);
         alleGrunnlag.forEach(grunnlag -> oversettInfotrygdYtelseGrunnlagTilYtelse(aktørYtelseBuilder, grunnlag));
+
+        List<InfotrygdYtelseGrunnlag> ghosts = innhentingSamletTjeneste.innhentSpokelseGrunnlag(aktørId, opplysningsPeriode);
+        ghosts.forEach(grunnlag -> oversettSpokelseYtelseGrunnlagTilYtelse(aktørYtelseBuilder, grunnlag));
 
         List<MeldekortUtbetalingsgrunnlagSak> arena = innhentingSamletTjeneste.hentYtelserTjenester(aktørId, opplysningsPeriode);
         for (MeldekortUtbetalingsgrunnlagSak sak : arena) {
@@ -109,6 +113,25 @@ public class YtelseRegisterInnhenting {
                 .build());
         });
         ytelseBuilder.medYtelseGrunnlag(oversettYtelseArbeid(grunnlag, ytelseBuilder.getGrunnlagBuilder()));
+        aktørYtelseBuilder.leggTilYtelse(ytelseBuilder);
+    }
+
+    private void oversettSpokelseYtelseGrunnlagTilYtelse(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder, InfotrygdYtelseGrunnlag grunnlag) {
+        IntervallEntitet periode = utledPeriodeNårTomMuligFørFom(grunnlag.getVedtaksPeriodeFom(), grunnlag.getVedtaksPeriodeTom());
+        var saksnummer = new Saksnummer(grunnlag.getVedtaksreferanse());
+        YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.VLSP, grunnlag.getYtelseType(),
+            grunnlag.getTemaUnderkategori(), saksnummer)
+            .medBehandlingsTema(grunnlag.getTemaUnderkategori())
+            .medPeriode(periode)
+            .medSaksreferanse(saksnummer)
+            .medStatus(grunnlag.getYtelseStatus());
+        grunnlag.getUtbetaltePerioder().forEach(vedtak -> {
+            final IntervallEntitet intervall = utledPeriodeNårTomMuligFørFom(vedtak.getUtbetaltFom(), vedtak.getUtbetaltTom());
+            ytelseBuilder.leggtilYtelseAnvist(ytelseBuilder.getAnvistBuilder()
+                .medAnvistPeriode(intervall)
+                .medUtbetalingsgradProsent(vedtak.getUtbetalingsgrad())
+                .build());
+        });
         aktørYtelseBuilder.leggTilYtelse(ytelseBuilder);
     }
 
