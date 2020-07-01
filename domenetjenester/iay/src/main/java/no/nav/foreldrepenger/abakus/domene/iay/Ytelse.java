@@ -64,15 +64,12 @@ public class Ytelse extends BaseEntitet implements IndexKey {
     private YtelseStatus status;
 
     /**
-     * Saksnummer (fra Arena, Infotrygd, ..).
+     * Saksnummer (fra Arena, Infotrygd, VLFP, K9, VLSP..).
      */
-    @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "saksnummer", column = @Column(name = "saksnummer")))
-    private Saksnummer saksnummer;
-
     @ChangeTracked
-    @Column(name = "saksreferanse")
-    private String saksreferanse;
+    @Embedded
+    @AttributeOverrides(@AttributeOverride(name = "saksnummer", column = @Column(name = "saksreferanse")))
+    private Saksnummer saksreferanse;
 
     @ChangeTracked
     @Convert(converter= FagsystemKodeverdiConverter.class)
@@ -104,7 +101,6 @@ public class Ytelse extends BaseEntitet implements IndexKey {
         this.relatertYtelseType = ytelse.getRelatertYtelseType();
         this.status = ytelse.getStatus();
         this.periode = ytelse.getPeriode();
-        this.saksnummer = ytelse.getSaksnummer();
         this.saksreferanse = ytelse.getSaksreferanse();
         this.temaUnderkategori = ytelse.getBehandlingsTema();
         this.kilde = ytelse.getKilde();
@@ -122,7 +118,7 @@ public class Ytelse extends BaseEntitet implements IndexKey {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { periode, relatertYtelseType, saksnummer };
+        Object[] keyParts = { periode, relatertYtelseType, saksreferanse };
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -162,19 +158,11 @@ public class Ytelse extends BaseEntitet implements IndexKey {
         this.periode = periode;
     }
 
-    public Saksnummer getSaksnummer() {
-        return saksnummer;
-    }
-
-    void medSakId(Saksnummer saksnummer) {
-        this.saksnummer = saksnummer;
-    }
-
-    public String getSaksreferanse() {
+    public Saksnummer getSaksreferanse() {
         return saksreferanse;
     }
 
-    void setSaksreferanse(String saksnummer) {
+    void setSaksreferanse(Saksnummer saksnummer) {
         this.saksreferanse = saksnummer;
     }
 
@@ -221,12 +209,12 @@ public class Ytelse extends BaseEntitet implements IndexKey {
         return Objects.equals(relatertYtelseType, that.relatertYtelseType) &&
             Objects.equals(temaUnderkategori, that.temaUnderkategori) &&
             (Objects.equals(periode, that.periode) || Objects.equals(periode.getFomDato(), that.periode.getFomDato())) &&
-            Objects.equals(saksnummer, that.saksnummer);
+            Objects.equals(saksreferanse, that.saksreferanse);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(relatertYtelseType, temaUnderkategori, periode, saksnummer);
+        return Objects.hash(relatertYtelseType, temaUnderkategori, periode, saksreferanse);
     }
 
     @Override
@@ -236,7 +224,7 @@ public class Ytelse extends BaseEntitet implements IndexKey {
             ", typeUnderkategori=" + temaUnderkategori + //$NON-NLS-1$
             ", periode=" + periode + //$NON-NLS-1$
             ", relatertYtelseStatus=" + status + //$NON-NLS-1$
-            ", saksNummer='" + saksnummer + '\'' + //$NON-NLS-1$
+            ", saksReferanse='" + saksreferanse + '\'' + //$NON-NLS-1$
             '}';
     }
 }

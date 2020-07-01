@@ -91,7 +91,7 @@ public class MapAktørYtelse {
                 .medBehandlingsTema(behandlingsTema)
                 .medKilde(ytelseDto.getFagsystemDto())
                 .medPeriode(mapPeriode(ytelseDto.getPeriode()))
-                .medSaksnummer(ytelseDto.getSaksnummer() == null ? null : new Saksnummer(ytelseDto.getSaksnummer()))
+                .medSaksreferanse(ytelseDto.getSaksnummer() == null ? null : new Saksnummer(ytelseDto.getSaksnummer()))
                 .medStatus(ytelseDto.getStatus());
             ytelseDto.getAnvisninger()
                 .forEach(anvisning -> ytelseBuilder.leggtilYtelseAnvist(mapYtelseAnvist(anvisning, ytelseBuilder.getAnvistBuilder())));
@@ -185,7 +185,7 @@ public class MapAktørYtelse {
             var ytelseStatus = ytelse.getStatus();
             var temaUnderkategori = ytelse.getBehandlingsTema();
             var dto = new YtelseDto(fagsystem, ytelseType, periode, ytelseStatus)
-                .medSaksnummer(ytelse.getSaksnummer() == null ? null : ytelse.getSaksnummer().getVerdi());
+                .medSaksnummer(ytelse.getSaksreferanse() == null ? null : ytelse.getSaksreferanse().getVerdi());
 
             dto.medTemaUnderkategori(temaUnderkategori);
 
