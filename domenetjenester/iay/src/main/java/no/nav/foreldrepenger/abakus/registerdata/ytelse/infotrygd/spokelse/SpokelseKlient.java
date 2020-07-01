@@ -9,18 +9,18 @@ import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import no.nav.vedtak.felles.integrasjon.rest.OAuth2RestClient;
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import no.nav.vedtak.felles.integrasjon.rest.OAuth2RestClient;
 import no.nav.vedtak.konfig.KonfigVerdi;
 
 @ApplicationScoped
 public class SpokelseKlient {
 
     private static final String AZURE_V2_TOKEN_ENDPOINT_PROD = "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/oauth2/v2.0/token";
-    private static final String SPOKELSE_GRUNNLAG_DEFAULT_URL = "http://spokelse.default/grunnlag";
+    private static final String SPOKELSE_GRUNNLAG_DEFAULT_URL = "http://spokelse.tbd/grunnlag";
 
     private static final Logger LOG = LoggerFactory.getLogger(SpokelseKlient.class);
 

@@ -108,9 +108,16 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
 
     YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer saksnummer) {
         Optional<Ytelse> ytelse = getAlleYtelser().stream()
-            .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type) && (saksnummer.equals(ya.getSaksnummer())))
+            .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type) && ya.getSaksnummer().equals(saksnummer))
             .findFirst();
         return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medSaksnummer(saksnummer);
+    }
+
+    YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, YtelseType type, TemaUnderkategori typeKategori, Saksnummer saksnummer) {
+        Optional<Ytelse> ytelse = getAlleYtelser().stream()
+            .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type) && saksnummer.getVerdi().equals(ya.getSaksreferanse()))
+            .findFirst();
+        return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medSaksreferanse(saksnummer);
     }
 
     YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer saksnummer, IntervallEntitet periode, Optional<LocalDate> tidligsteAnvistFom) {

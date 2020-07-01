@@ -48,6 +48,12 @@ public class YtelseBuilder {
 
     public YtelseBuilder medSaksnummer(Saksnummer sakId) {
         ytelse.medSakId(sakId);
+        ytelse.setSaksreferanse(sakId.getVerdi());
+        return this;
+    }
+
+    public YtelseBuilder medSaksreferanse(Saksnummer sakId) {
+        ytelse.setSaksreferanse(sakId.getVerdi());
         return this;
     }
 

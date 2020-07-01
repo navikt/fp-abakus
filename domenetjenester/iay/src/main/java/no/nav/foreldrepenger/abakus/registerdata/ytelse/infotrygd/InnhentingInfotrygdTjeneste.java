@@ -88,7 +88,6 @@ public class InnhentingInfotrygdTjeneste {
     public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelser(PersonIdent ident, Interval periode) {
         LocalDate innhentFom =  dato(periode.getStart());
         List<Grunnlag> rest = infotrygdGrunnlag.hentAggregertGrunnlag(ident.getIdent(), innhentFom, dato(periode.getEnd()));
-        getSPøkelseYtelserFailSoft(ident);
 
         return mapTilInfotrygdYtelseGrunnlag(rest, innhentFom);
     }
@@ -96,7 +95,6 @@ public class InnhentingInfotrygdTjeneste {
     public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelserFailSoft(PersonIdent ident, Interval periode) {
         LocalDate innhentFom =  dato(periode.getStart());
         List<Grunnlag> rest = infotrygdGrunnlag.hentAggregertGrunnlagFailSoft(ident.getIdent(), innhentFom, dato(periode.getEnd()));
-        //getSPøkelseYtelserFailSoft(ident);
 
         return mapTilInfotrygdYtelseGrunnlag(rest, innhentFom);
     }
@@ -219,13 +217,13 @@ public class InnhentingInfotrygdTjeneste {
         return YtelseType.UDEFINERT;
     }
 
-    private List<InfotrygdYtelseGrunnlag> getSPøkelseYtelser(PersonIdent ident) {
+    public List<InfotrygdYtelseGrunnlag> getSPøkelseYtelser(PersonIdent ident) {
         List<SykepengeVedtak> rest = spokelseKlient.hentGrunnlag(ident.getIdent());
 
         return mapSpøkelseTilInfotrygdYtelseGrunnlag(rest);
     }
 
-    private List<InfotrygdYtelseGrunnlag> getSPøkelseYtelserFailSoft(PersonIdent ident) {
+    public List<InfotrygdYtelseGrunnlag> getSPøkelseYtelserFailSoft(PersonIdent ident) {
         try {
             List<SykepengeVedtak> rest = spokelseKlient.hentGrunnlag(ident.getIdent());
 

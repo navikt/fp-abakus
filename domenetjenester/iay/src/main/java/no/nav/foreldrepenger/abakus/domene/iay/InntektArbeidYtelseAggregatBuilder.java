@@ -353,6 +353,10 @@ public class InntektArbeidYtelseAggregatBuilder {
             return kladd.getYtelseBuilderForType(fagsystem, type, sakId);
         }
 
+        public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, YtelseType type, TemaUnderkategori typeKategori, Saksnummer sakId) {
+            return kladd.getYtelseBuilderForType(fagsystem, type, typeKategori, sakId);
+        }
+
         public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer sakId, IntervallEntitet periode,
                                                         Optional<LocalDate> tidligsteAnvistFom) {
             return kladd.getYtelseBuilderForType(fagsystem, type, sakId, periode, tidligsteAnvistFom);

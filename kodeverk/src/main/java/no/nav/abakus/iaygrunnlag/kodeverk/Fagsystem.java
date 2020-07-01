@@ -22,6 +22,7 @@ public enum Fagsystem implements Kodeverdi {
     FPSAK("FPSAK", "Vedtaksløsning Foreldrepenger", "FS36"),
     FPABAKUS("FPABAKUS", "ABAKUS", "ABAKUS"),
     K9SAK("K9SAK", "Vedtaksløsning Folketrygdloven Kapittel 9", "K9SAK"),
+    VLSP("VLSP", "Vedtaksløsning Sykepenger", "VLSP"),
     TPS("TPS", "TPS", "FS03"),
     JOARK("JOARK", "Joark", "AS36"),
     INFOTRYGD("INFOTRYGD", "Infotrygd", "IT01"),

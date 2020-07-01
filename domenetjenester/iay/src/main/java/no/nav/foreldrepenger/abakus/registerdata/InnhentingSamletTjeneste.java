@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +44,7 @@ public class InnhentingSamletTjeneste {
     private MeldekortTjeneste meldekortTjeneste;
     private InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste;
     private boolean isDev;
+    private boolean isProd;
 
     InnhentingSamletTjeneste() {
         //CDI
@@ -59,6 +61,7 @@ public class InnhentingSamletTjeneste {
         this.meldekortTjeneste = meldekortTjeneste;
         this.innhentingInfotrygdTjeneste = innhentingInfotrygdTjeneste;
         this.isDev = Cluster.DEV_FSS.equals(Environment.current().getCluster());
+        this.isProd = Cluster.PROD_FSS.equals(Environment.current().getCluster());
     }
 
     public InntektsInformasjon getInntektsInformasjon(AktørId aktørId, Interval periode, InntektskildeType kilde) {
@@ -88,6 +91,14 @@ public class InnhentingSamletTjeneste {
             return innhentingInfotrygdTjeneste.getInfotrygdYtelserFailSoft(ident, periode);
         }
         return innhentingInfotrygdTjeneste.getInfotrygdYtelser(ident, periode);
+    }
+
+    public List<InfotrygdYtelseGrunnlag> innhentSpokelseGrunnlag(AktørId aktørId, @SuppressWarnings("unused") Interval periode) {
+        var ident = getFnrFraAktørId(aktørId);
+        if (!isProd) {
+            return Collections.emptyList();
+        }
+        return innhentingInfotrygdTjeneste.getSPøkelseYtelserFailSoft(ident);
     }
 
     public List<MeldekortUtbetalingsgrunnlagSak> hentYtelserTjenester(AktørId aktørId, Interval opplysningsPeriode) {
