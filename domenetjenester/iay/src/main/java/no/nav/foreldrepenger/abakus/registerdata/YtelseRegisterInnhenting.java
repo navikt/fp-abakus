@@ -119,11 +119,9 @@ public class YtelseRegisterInnhenting {
     private void oversettSpokelseYtelseGrunnlagTilYtelse(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder, InfotrygdYtelseGrunnlag grunnlag) {
         IntervallEntitet periode = utledPeriodeNårTomMuligFørFom(grunnlag.getVedtaksPeriodeFom(), grunnlag.getVedtaksPeriodeTom());
         var saksnummer = new Saksnummer(grunnlag.getVedtaksreferanse());
-        YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.VLSP, grunnlag.getYtelseType(),
-            grunnlag.getTemaUnderkategori(), saksnummer)
+        YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.VLSP, grunnlag.getYtelseType(), saksnummer)
             .medBehandlingsTema(grunnlag.getTemaUnderkategori())
             .medPeriode(periode)
-            .medSaksreferanse(saksnummer)
             .medStatus(grunnlag.getYtelseStatus());
         grunnlag.getUtbetaltePerioder().forEach(vedtak -> {
             final IntervallEntitet intervall = utledPeriodeNårTomMuligFørFom(vedtak.getUtbetaltFom(), vedtak.getUtbetaltTom());
