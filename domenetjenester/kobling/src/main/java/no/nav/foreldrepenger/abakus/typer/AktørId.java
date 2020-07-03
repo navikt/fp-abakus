@@ -48,7 +48,7 @@ public class AktørId implements Serializable, Comparable<AktørId>, IndexKey, T
         Objects.requireNonNull(aktørId, "aktørId");
         if (!VALID.matcher(aktørId).matches()) {
             // skal ikke skje, funksjonelle feilmeldinger håndteres ikke her.
-            throw new IllegalArgumentException("Ugyldig aktørId" + aktørId +", tillatt pattern: "+ VALID_REGEXP);
+            throw new IllegalArgumentException("Ugyldig aktørId: " + aktørId +", tillatt pattern: " + VALID_REGEXP);
         }
         return aktørId;
     }
@@ -96,8 +96,6 @@ public class AktørId implements Serializable, Comparable<AktørId>, IndexKey, T
         // TODO: Burde ikke finnes
         return aktørId.compareTo(o.aktørId);
     }
-
-
     private static AtomicLong DUMMY_AKTØRID = new AtomicLong(1000000000000L);
 
     /** Genererer dummy aktørid unikt for test. */

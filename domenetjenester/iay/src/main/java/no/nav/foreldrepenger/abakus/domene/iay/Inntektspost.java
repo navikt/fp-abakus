@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -29,6 +30,7 @@ import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.jpa.InntektspostTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.iay.jpa.SkatteOgAvgiftsregelTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
+import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
 @Entity(name = "Inntektspost")
 @Table(name = "IAY_INNTEKTSPOST")
@@ -63,14 +65,19 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
     @Embedded
     private IntervallEntitet periode;
 
+    @ChangeTracked
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "beloep", nullable = false)))
-    @ChangeTracked
     private Beløp beløp;
 
     @Version
     @Column(name = "versjon", nullable = false)
     private long versjon;
+
+    @Embedded
+    @ChangeTracked
+    @AttributeOverrides(@AttributeOverride(name = "orgNummer", column = @Column(name = "opprinelig_utbetaler_orgnr", updatable = false, length = 50)))
+    private OrgNummer opprinneligUtbetalerOrgnr;
 
     public Inntektspost() {
         // hibernate
@@ -86,6 +93,7 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
         this.beløp = inntektspost.getBeløp();
         this.ytelse = inntektspost.getYtelseType().getKode();
         this.ytelseType = inntektspost.getYtelseType().getKodeverk();
+        this.opprinneligUtbetalerOrgnr = inntektspost.getOpprinneligUtbetalerOrgnr().orElse(null);
     }
 
     @Override
@@ -143,7 +151,7 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
 
     /**
      * Periode inntektsposten gjelder.
-     * 
+     *
      * @return
      */
     public IntervallEntitet getPeriode() {
@@ -174,6 +182,14 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
         this.ytelse = ytelse.getKode();
     }
 
+    public Optional<OrgNummer> getOpprinneligUtbetalerOrgnr() {
+        return Optional.ofNullable(opprinneligUtbetalerOrgnr);
+    }
+
+    public void setOpprinneligUtbetalerOrgnr(OrgNummer opprinneligUtbetalerOrgnr) {
+        this.opprinneligUtbetalerOrgnr = opprinneligUtbetalerOrgnr;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {
@@ -191,7 +207,7 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
 
     @Override
     public int hashCode() {
-        return Objects.hash(inntektspostType, ytelseType, ytelse, skatteOgAvgiftsregelType, periode);
+        return Objects.hash(inntektspostType, ytelseType, ytelse, skatteOgAvgiftsregelType, periode, opprinneligUtbetalerOrgnr);
     }
 
     @Override
@@ -203,6 +219,7 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
             ", skatteOgAvgiftsregelType=" + skatteOgAvgiftsregelType +
             ", fraOgMed=" + periode.getFomDato() +
             ", tilOgMed=" + periode.getTomDato() +
+            ", opprinneligUtbetalerOrgnr=" + opprinneligUtbetalerOrgnr +
             ", beløp=" + beløp +
             '>';
     }

@@ -27,13 +27,17 @@ public class DefaultIAYRegisterInnhentingTjenesteImpl extends IAYRegisterInnhent
     public DefaultIAYRegisterInnhentingTjenesteImpl(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
                                                     VirksomhetTjeneste virksomhetTjeneste,
                                                     InnhentingSamletTjeneste innhentingSamletTjeneste,
-                                                    AktørTjeneste aktørConsumer,
-                                                    SigrunTjeneste sigrunTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
+                                                    SigrunTjeneste sigrunTjeneste,
+                                                    VedtakYtelseRepository vedtakYtelseRepository,
+                                                    MapInntektFraDtoTilDomene mapInntektFraDtoTilDomene,
+                                                    AktørTjeneste aktørTjeneste) {
         super(inntektArbeidYtelseTjeneste,
             virksomhetTjeneste,
             innhentingSamletTjeneste,
-            aktørConsumer,
-            sigrunTjeneste, vedtakYtelseRepository);
+            sigrunTjeneste,
+            vedtakYtelseRepository,
+            mapInntektFraDtoTilDomene,
+            aktørTjeneste);
     }
 
     @Override
