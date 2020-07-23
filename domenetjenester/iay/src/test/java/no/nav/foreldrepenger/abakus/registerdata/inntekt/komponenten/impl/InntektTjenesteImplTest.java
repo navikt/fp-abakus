@@ -56,7 +56,7 @@ public class InntektTjenesteImplTest {
 
     @Before
     public void before() {
-        inntektTjeneste = new InntektTjeneste(uri, restKlient, null);
+        inntektTjeneste = new InntektTjeneste(uri, restKlient, null, new FakeUnleash());
     }
 
     @SuppressWarnings("resource")
