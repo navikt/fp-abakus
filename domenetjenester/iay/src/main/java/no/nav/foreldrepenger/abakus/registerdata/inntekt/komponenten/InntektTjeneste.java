@@ -50,6 +50,7 @@ public class InntektTjeneste {
     private OidcRestClient oidcRestClient;
     private URI endpoint;
     private AktørConsumer aktørConsumer;
+    private Unleash unleash;
     private Map<InntektskildeType, InntektsFilter> kildeTilFilter;
 
     InntektTjeneste() {
@@ -59,10 +60,12 @@ public class InntektTjeneste {
     @Inject
     public InntektTjeneste(@KonfigVerdi(ENDPOINT_KEY) URI endpoint,
                            OidcRestClient oidcRestClient,
-                           AktørConsumer aktørConsumer) {
+                           AktørConsumer aktørConsumer,
+                           Unleash unleash) {
         this.endpoint = endpoint;
         this.oidcRestClient = oidcRestClient;
         this.aktørConsumer = aktørConsumer;
+        this.unleash = unleash;
         this.kildeTilFilter = Map.of(InntektskildeType.INNTEKT_OPPTJENING, InntektsFilter.OPPTJENINGSGRUNNLAG,
             InntektskildeType.INNTEKT_BEREGNING, InntektsFilter.BEREGNINGSGRUNNLAG,
             InntektskildeType.INNTEKT_SAMMENLIGNING, InntektsFilter.SAMMENLIGNINGSGRUNNLAG);
@@ -70,6 +73,10 @@ public class InntektTjeneste {
 
     public InntektsInformasjon finnInntekt(FinnInntektRequest finnInntektRequest, InntektskildeType kilde) {
         var request = lagRequest(finnInntektRequest, kilde);
+
+        if (unleash.isEnabled("fpabakus.disable.kall.inntektskomponenten", false)) {
+            throw InntektFeil.FACTORY.skruddAvKallTilInntekt().toException();
+        }
 
         HentInntektListeBolkResponse response;
         try {
@@ -116,7 +123,7 @@ public class InntektTjeneste {
         List<ArbeidsInntektIdent> arbeidsInntektIdentListe = response.getArbeidsInntektIdentListe();
         if (response.getArbeidsInntektIdentListe() != null) {
             for (var arbeidsInntektIdent : arbeidsInntektIdentListe) {
-                if(arbeidsInntektIdent.getArbeidsInntektMaaned() != null) {
+                if (arbeidsInntektIdent.getArbeidsInntektMaaned() != null) {
                     for (ArbeidsInntektMaaned arbeidsInntektMaaned : arbeidsInntektIdent.getArbeidsInntektMaaned()) {
                         ArbeidsInntektInformasjon arbeidsInntektInformasjon = oversettInntekter(månedsinntekter, arbeidsInntektMaaned, kilde);
                         oversettArbeidsforhold(arbeidsforhold, arbeidsInntektInformasjon);
