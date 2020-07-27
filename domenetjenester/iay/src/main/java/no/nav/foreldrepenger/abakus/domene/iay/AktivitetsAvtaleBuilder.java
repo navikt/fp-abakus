@@ -21,7 +21,7 @@ public class AktivitetsAvtaleBuilder {
     }
 
     static AktivitetsAvtaleBuilder oppdater(Optional<AktivitetsAvtale> aktivitetsAvtale) {
-        return new AktivitetsAvtaleBuilder(aktivitetsAvtale.orElse(new AktivitetsAvtale()), aktivitetsAvtale.isPresent());
+        return new AktivitetsAvtaleBuilder(aktivitetsAvtale.orElseGet(AktivitetsAvtale::new), aktivitetsAvtale.isPresent());
     }
 
     public AktivitetsAvtaleBuilder medProsentsats(Stillingsprosent prosentsats) {

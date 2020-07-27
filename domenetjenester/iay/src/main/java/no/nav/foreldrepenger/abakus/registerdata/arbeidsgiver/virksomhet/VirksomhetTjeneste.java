@@ -125,13 +125,13 @@ public class VirksomhetTjeneste {
     }
 
     private OrganisasjonEReg hentResponseOrganisasjon(String orgnr) {
-        var response = Optional.ofNullable(cacheEREG.get(orgnr)).orElse(eregRestKlient.hentOrganisasjon(orgnr));
+        var response = Optional.ofNullable(cacheEREG.get(orgnr)).orElseGet(() -> eregRestKlient.hentOrganisasjon(orgnr));
         cacheEREG.put(orgnr, response);
         return response;
     }
 
     private JuridiskEnhetVirksomheter hentResponseJuridisk(String orgnr) {
-        var response = Optional.ofNullable(cacheJuridiskEREG.get(orgnr)).orElse(eregRestKlient.hentJurdiskEnhetVirksomheter(orgnr));
+        var response = Optional.ofNullable(cacheJuridiskEREG.get(orgnr)).orElseGet(() -> eregRestKlient.hentJurdiskEnhetVirksomheter(orgnr));
         cacheJuridiskEREG.put(orgnr, response);
         return response;
     }

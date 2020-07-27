@@ -28,7 +28,7 @@ public class KoblingTjeneste {
     }
 
     public Kobling finnEllerOpprett(KoblingReferanse referanse, AktørId aktørId, Saksnummer saksnummer) {
-        Kobling kobling = hentFor(referanse).orElse(new Kobling(saksnummer, referanse, aktørId));
+        Kobling kobling = hentFor(referanse).orElseGet(() -> new Kobling(saksnummer, referanse, aktørId));
         repository.lagre(kobling);
         return kobling;
     }
