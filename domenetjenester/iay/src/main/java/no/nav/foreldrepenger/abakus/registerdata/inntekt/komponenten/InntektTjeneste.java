@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.finn.unleash.Unleash;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -50,7 +49,6 @@ public class InntektTjeneste {
     private OidcRestClient oidcRestClient;
     private URI endpoint;
     private AktørConsumer aktørConsumer;
-    private Unleash unleash;
     private Map<InntektskildeType, InntektsFilter> kildeTilFilter;
 
     InntektTjeneste() {
@@ -60,12 +58,10 @@ public class InntektTjeneste {
     @Inject
     public InntektTjeneste(@KonfigVerdi(ENDPOINT_KEY) URI endpoint,
                            OidcRestClient oidcRestClient,
-                           AktørConsumer aktørConsumer,
-                           Unleash unleash) {
+                           AktørConsumer aktørConsumer) {
         this.endpoint = endpoint;
         this.oidcRestClient = oidcRestClient;
         this.aktørConsumer = aktørConsumer;
-        this.unleash = unleash;
         this.kildeTilFilter = Map.of(InntektskildeType.INNTEKT_OPPTJENING, InntektsFilter.OPPTJENINGSGRUNNLAG,
             InntektskildeType.INNTEKT_BEREGNING, InntektsFilter.BEREGNINGSGRUNNLAG,
             InntektskildeType.INNTEKT_SAMMENLIGNING, InntektsFilter.SAMMENLIGNINGSGRUNNLAG);
@@ -73,10 +69,6 @@ public class InntektTjeneste {
 
     public InntektsInformasjon finnInntekt(FinnInntektRequest finnInntektRequest, InntektskildeType kilde) {
         var request = lagRequest(finnInntektRequest, kilde);
-
-        if (unleash.isEnabled("fpabakus.disable.kall.inntektskomponenten", false)) {
-            throw InntektFeil.FACTORY.skruddAvKallTilInntekt().toException();
-        }
 
         HentInntektListeBolkResponse response;
         try {

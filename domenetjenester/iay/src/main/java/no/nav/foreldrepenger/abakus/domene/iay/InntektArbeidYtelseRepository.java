@@ -407,7 +407,7 @@ public class InntektArbeidYtelseRepository {
      */
     private void sjekkKonsistens(InntektArbeidYtelseGrunnlag grunnlag) {
         final var arbeidsforholdInformasjon = grunnlag.getArbeidsforholdInformasjon()
-            .orElse(ArbeidsforholdInformasjonBuilder.builder(Optional.empty()).build());
+            .orElseGet(() -> ArbeidsforholdInformasjonBuilder.builder(Optional.empty()).build());
 
         grunnlag.getRegisterVersjon().ifPresent(aggregat -> aggregat.getAktørArbeid()
             .stream()
