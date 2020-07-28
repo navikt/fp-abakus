@@ -2,7 +2,9 @@ package no.nav.foreldrepenger.abakus.app.vedlikehold;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.DRIFT;
+import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.GRUNNLAG;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
+import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.UPDATE;
 
 import java.util.function.Function;
 
@@ -21,6 +23,9 @@ import javax.ws.rs.core.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
+import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
+import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskRepository;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskStatus;
@@ -38,6 +43,8 @@ public class ForvaltningRestTjeneste {
     private static final String GAMMEL = "gammel";
     private static final String GJELDENDE = "gjeldende";
 
+    private InntektArbeidYtelseTjeneste iayTjeneste;
+
     private ProsessTaskRepository prosessTaskRepository;
     private EntityManager entityManager;
 
@@ -47,9 +54,11 @@ public class ForvaltningRestTjeneste {
 
     @Inject
     public ForvaltningRestTjeneste(EntityManager entityManager,
-                                   ProsessTaskRepository prosessTaskRepository) {
+                                   ProsessTaskRepository prosessTaskRepository,
+                                   InntektArbeidYtelseTjeneste iayTjeneste) {
         this.prosessTaskRepository = prosessTaskRepository;
         this.entityManager = entityManager;
+        this.iayTjeneste = iayTjeneste;
     }
 
     @POST
@@ -78,6 +87,34 @@ public class ForvaltningRestTjeneste {
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
+
+    @POST
+    @Path("/settVarigEndring")
+    @Consumes(APPLICATION_JSON)
+    @Produces(APPLICATION_JSON)
+    @Operation(description = "Setter oppgitt opptjening til å være varig endring",
+        tags = "FORVALTNING",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Forekomster av utgått aktørid erstattet.")
+        })
+    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
+    public Response setVarigEndring(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AbacDataSupplier.class) @NotNull @Valid VarigEndringRequest request) {
+        var oppgittOpptjeningEksternReferanse = request.getEksternReferanse().toUuidReferanse();
+        var org = new OrgNummer(request.getOrgnummer());
+        OppgittOpptjening oppgittOpptjening = iayTjeneste.hentOppgittOpptjeningFor(oppgittOpptjeningEksternReferanse).orElseThrow();
+        var næring = oppgittOpptjening.getEgenNæring().stream().filter(n -> n.getOrgnummer().equals(org)).findFirst().orElseThrow();
+        if (næring.getVarigEndring()) {
+            throw new IllegalArgumentException("Allerede varig endring");
+        }
+        int antall = entityManager.createNativeQuery(
+            "UPDATE iay_egen_naering SET varig_endring = 'J', endring_dato = :edato , brutto_inntekt = :belop, endret_av = :begr WHERE id = :enid")
+            .setParameter("edato", request.getEndringDato())
+            .setParameter("belop", request.getBruttoInntekt())
+            .setParameter("begr", request.getEndringBegrunnelse())
+            .setParameter("enid", næring.getId())
+            .executeUpdate();
+        return Response.ok(antall).build();
+    }
 
 
     @POST

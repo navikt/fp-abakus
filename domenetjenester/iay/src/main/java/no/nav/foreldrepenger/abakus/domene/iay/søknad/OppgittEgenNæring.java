@@ -100,6 +100,10 @@ public class OppgittEgenNæring extends BaseEntitet implements IndexKey {
         return IndexKeyComposer.createKey(keyParts);
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public LocalDate getFraOgMed() {
         return periode.getFomDato();
     }
