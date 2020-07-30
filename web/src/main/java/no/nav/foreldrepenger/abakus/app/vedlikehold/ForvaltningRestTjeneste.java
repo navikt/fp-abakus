@@ -98,7 +98,7 @@ public class ForvaltningRestTjeneste {
             @ApiResponse(responseCode = "200", description = "Oppdatert."),
             @ApiResponse(responseCode = "500", description = "Feilet pga ukjent feil.")
         })
-    @BeskyttetRessurs(action = CREATE, resource = DRIFT)
+    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response fiksVirksomhetTypeEgenN() {
         int antall = entityManager.createNativeQuery("UPDATE iay_egen_naering SET virksomhet_type = 'ANNEN' WHERE virksomhet_type is null")
