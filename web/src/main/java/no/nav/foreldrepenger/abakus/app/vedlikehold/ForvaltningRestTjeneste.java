@@ -87,6 +87,24 @@ public class ForvaltningRestTjeneste {
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
+    // TODO: FJERNE denne hvis behovet ikke reoppstår
+    @POST
+    @Path("/sett-egenn-virksomhet-type")
+    @Consumes(APPLICATION_JSON)
+    @Produces(APPLICATION_JSON)
+    @Operation(description = "Oppdaterer manglende data i egen næring",
+        tags = "FORVALTNING",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Oppdatert."),
+            @ApiResponse(responseCode = "500", description = "Feilet pga ukjent feil.")
+        })
+    @BeskyttetRessurs(action = CREATE, resource = DRIFT)
+    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    public Response fiksVirksomhetTypeEgenN() {
+        int antall = entityManager.createNativeQuery("UPDATE iay_egen_naering SET virksomhet_type = 'ANNEN' WHERE virksomhet_type is null")
+            .executeUpdate();
+        return Response.ok(antall).build();
+    }
 
     @POST
     @Path("/settVarigEndring")
