@@ -48,7 +48,8 @@ public class ForvaltningOppdaterKanalReferanseTask implements ProsessTaskHandler
         var journalpostIder = stream.limit(max).collect(Collectors.toList());
 
         if (journalpostIder.isEmpty()) {
-            throw new IllegalStateException("Ingen journalpost ider uten kanalreferanse funnet. Forvaltningsoppgaven kan avsluttes.");
+            log.warn("Ingen journalpost ider uten kanalreferanse funnet. Forvaltningsoppgaven kan avsluttes.");
+            return;
         }
 
         for (var jourId : journalpostIder) {
