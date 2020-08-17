@@ -1,79 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>no.nav.foreldrepenger.abakus</groupId>
-        <artifactId>domenetjenester</artifactId>
-        <version>${revision}${sha1}${changelist}</version>
-    </parent>
+	<parent>
+		<groupId>no.nav.foreldrepenger.abakus</groupId>
+		<artifactId>domenetjenester</artifactId>
+		<version>${revision}${sha1}${changelist}</version>
+	</parent>
 
-    <artifactId>vedtak</artifactId>
-    <packaging>jar</packaging>
-    <name>Abakus :: Domenetjeneste :: Vedtak</name>
+	<artifactId>vedtak</artifactId>
+	<packaging>jar</packaging>
+	<name>Abakus :: Domenetjeneste :: Vedtak</name>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.foreldrepenger.abakus</groupId>
-            <artifactId>prosesstask</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.foreldrepenger.abakus</groupId>
-            <artifactId>kobling</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-streams</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.el</artifactId>
-        </dependency>
-   		<dependency>
+	<dependencies>
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.foreldrepenger.abakus</groupId>
+			<artifactId>prosesstask</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.foreldrepenger.abakus</groupId>
+			<artifactId>kobling</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-streams</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.el</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>no.nav.foreldrepenger.abakus</groupId>
 			<artifactId>abakus-kontrakt</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>no.nav.foreldrepenger.abakus</groupId>
-            <artifactId>felles</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>no.nav.foreldrepenger.abakus</groupId>
+			<artifactId>felles</artifactId>
+		</dependency>
 
-        <!-- TEST -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.foreldrepenger.felles</groupId>
-            <artifactId>felles-testutilities</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.foreldrepenger.abakus</groupId>
-            <artifactId>migreringer</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+		<!-- TEST -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.foreldrepenger.felles</groupId>
+			<artifactId>felles-testutilities</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.foreldrepenger.abakus</groupId>
+			<artifactId>migreringer</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 </project>
