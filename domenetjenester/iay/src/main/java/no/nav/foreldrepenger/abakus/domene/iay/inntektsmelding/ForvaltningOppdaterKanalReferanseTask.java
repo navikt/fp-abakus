@@ -58,7 +58,9 @@ public class ForvaltningOppdaterKanalReferanseTask implements ProsessTaskHandler
 
             String kanalreferanse = journalpostInfo.getEksternReferanseId();
 
-            if (kanalreferanse != null) {
+            if ("INGEN".equals(kanalreferanse)) {
+                log.warn("Fant dodgy kanalreferanse {} for journalpost: {}", kanalreferanse, jourId);
+            } else if (kanalreferanse != null) {
                 log.info("Fant kanalreferanse {} for journalpost {}", kanalreferanse, jourId);
                 entityManager.createNativeQuery("update IAY_INNTEKTSMELDING set kanalreferanse=:kanalreferanse where journalpost_id=:journalpostId AND kanalreferanse IS NULL")
                     .setParameter("kanalreferanse", kanalreferanse)
