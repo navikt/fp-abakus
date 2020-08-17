@@ -111,3 +111,6 @@ spec:
     #SPOKELSE
     - name: SPOKELSE_GRUNNLAG_SCOPES
       value: 60c763a5-2b52-4d0f-b080-0effbf75de2e/.default
+    # Graphql services
+    - name: SAF_BASE_URL
+      value: http://saf.t4
