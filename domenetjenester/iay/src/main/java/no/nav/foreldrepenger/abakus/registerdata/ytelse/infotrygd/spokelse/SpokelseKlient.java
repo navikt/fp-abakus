@@ -60,6 +60,20 @@ public class SpokelseKlient {
             LOG.info("abakus spokelse REST {} fikk grunnlag {}", uriString, Arrays.toString(grunnlag));
             return Arrays.asList(grunnlag);
         } catch (Exception e) {
+            LOG.error("abakus spokelse feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
+            throw SpokelseFeil.FACTORY.feilfratjeneste(uriString).toException();
+        }
+    }
+
+    public List<SykepengeVedtak> hentGrunnlagFailSoft(String fnr) {
+        try {
+            var request = new URIBuilder(uri)
+                .addParameter("fodselsnummer", fnr)
+                .build();
+            var grunnlag = restClient.get(request, SykepengeVedtak[].class);
+            LOG.info("abakus spokelse REST {} fikk grunnlag {}", uriString, Arrays.toString(grunnlag));
+            return Arrays.asList(grunnlag);
+        } catch (Exception e) {
             LOG.info("abakus spokelse Feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
             return Collections.emptyList();
         }
