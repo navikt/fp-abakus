@@ -113,7 +113,7 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
             @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")
         })
     @BeskyttetRessurs(action = READ, resource = GRUNNLAG)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
     public Response hentIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
         var startTx = Instant.now();
         Response response;

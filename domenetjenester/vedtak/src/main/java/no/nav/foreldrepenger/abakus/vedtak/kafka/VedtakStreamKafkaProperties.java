@@ -6,7 +6,6 @@ import javax.inject.Inject;
 import org.apache.kafka.common.serialization.Serdes;
 
 import no.nav.vedtak.konfig.KonfigVerdi;
-import no.nav.vedtak.util.env.Namespace;
 
 @Dependent
 class VedtakStreamKafkaProperties {
@@ -20,6 +19,7 @@ class VedtakStreamKafkaProperties {
     private final String trustStorePath;
     private final String trustStorePassword;
 
+    @SuppressWarnings("resource")
     @Inject
     VedtakStreamKafkaProperties(@KonfigVerdi("kafka.bootstrap.servers") String bootstrapServers,
                                 @KonfigVerdi("kafka.schema.registry.url") String schemaRegistryUrl,

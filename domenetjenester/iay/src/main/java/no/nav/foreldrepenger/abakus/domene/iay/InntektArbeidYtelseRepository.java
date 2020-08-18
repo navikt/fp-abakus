@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -102,11 +103,11 @@ public class InntektArbeidYtelseRepository {
                                                              no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType) {
 
         final TypedQuery<Inntektsmelding> query = entityManager.createQuery("SELECT DISTINCT(im)" +
-                " FROM InntektArbeidGrunnlag gr" +
-                " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
-                " JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id" + // NOSONAR
-                " JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id" + // NOSONAR
-                " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId "// NOSONAR
+            " FROM InntektArbeidGrunnlag gr" +
+            " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
+            " JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id" + // NOSONAR
+            " JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id" + // NOSONAR
+            " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId "// NOSONAR
             , Inntektsmelding.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("ref", saksnummer);
@@ -120,13 +121,12 @@ public class InntektArbeidYtelseRepository {
                                                                                                          KoblingReferanse ref,
                                                                                                          no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType) {
         final TypedQuery<Object[]> query = entityManager.createQuery("SELECT im, arbInf" +
-                " FROM InntektArbeidGrunnlag gr" + // NOSONAR
-                " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
-                " JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id" + // NOSONAR
-                " JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id" + // NOSONAR
-                " JOIN ArbeidsforholdInformasjon arbInf on arbInf.id = gr.arbeidsforholdInformasjon.id" + // NOSONAR
-                " WHERE k.saksnummer = :ref AND k.koblingReferanse = :eksternRef AND k.ytelseType = :ytelse and k.aktørId = :aktørId "
-            , Object[].class);
+            " FROM InntektArbeidGrunnlag gr" + // NOSONAR
+            " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
+            " JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id" + // NOSONAR
+            " JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id" + // NOSONAR
+            " JOIN ArbeidsforholdInformasjon arbInf on arbInf.id = gr.arbeidsforholdInformasjon.id" + // NOSONAR
+            " WHERE k.saksnummer = :ref AND k.koblingReferanse = :eksternRef AND k.ytelseType = :ytelse and k.aktørId = :aktørId ", Object[].class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("ref", saksnummer);
         query.setParameter("ytelse", ytelseType);
@@ -140,13 +140,12 @@ public class InntektArbeidYtelseRepository {
                                                                                                          no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType) {
 
         final TypedQuery<Object[]> query = entityManager.createQuery("SELECT im, arbInf" +
-                " FROM InntektArbeidGrunnlag gr" + // NOSONAR
-                " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
-                " JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id" + // NOSONAR
-                " JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id" + // NOSONAR
-                " JOIN ArbeidsforholdInformasjon arbInf on arbInf.id = gr.arbeidsforholdInformasjon.id" + // NOSONAR
-                " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId "
-            , Object[].class);
+            " FROM InntektArbeidGrunnlag gr" + // NOSONAR
+            " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
+            " JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id" + // NOSONAR
+            " JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id" + // NOSONAR
+            " JOIN ArbeidsforholdInformasjon arbInf on arbInf.id = gr.arbeidsforholdInformasjon.id" + // NOSONAR
+            " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId ", Object[].class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("ref", saksnummer);
         query.setParameter("ytelse", ytelseType);
@@ -164,7 +163,9 @@ public class InntektArbeidYtelseRepository {
                     inntektsmeldingArbinfoMap.put(im, arbInf);
                 }
             });
-        return inntektsmeldingArbinfoMap;
+        return inntektsmeldingArbinfoMap.entrySet().stream()
+            .sorted(Map.Entry.comparingByKey(Inntektsmelding.COMP_REKKEFØLGE))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
     }
 
     public List<InntektArbeidYtelseGrunnlag> hentAlleInntektArbeidYtelseGrunnlagFor(AktørId aktørId,
@@ -200,10 +201,10 @@ public class InntektArbeidYtelseRepository {
 
     /**
      * @param koblingReferanse
-     * @param versjonType      (REGISTER, SAKSBEHANDLET)
+     * @param versjonType (REGISTER, SAKSBEHANDLET)
      * @return InntektArbeidYtelseAggregatBuilder
-     * <p>
-     * NB! bør benytte via InntektArbeidYtelseTjeneste og ikke direkte
+     *         <p>
+     *         NB! bør benytte via InntektArbeidYtelseTjeneste og ikke direkte
      */
     public InntektArbeidYtelseAggregatBuilder opprettBuilderFor(KoblingReferanse koblingReferanse, UUID angittAggregatReferanse,
                                                                 LocalDateTime angittOpprettetTidspunkt, VersjonType versjonType) {
@@ -274,20 +275,19 @@ public class InntektArbeidYtelseRepository {
                                    List<Inntektsmelding> inntektsmeldingerList) {
         Objects.requireNonNull(inntektsmeldingerList, "inntektsmelding"); // NOSONAR
         InntektArbeidYtelseGrunnlagBuilder builder = opprettGrunnlagBuilderFor(koblingReferanse);
-
+        
         var utdaterteInntektsmeldingerJournalposter = oppdaterBuilderMedNyeInntektsmeldinger(informasjonBuilder, inntektsmeldingerList, builder);
 
-        InntektArbeidYtelseGrunnlag build = builder.build();
+        InntektArbeidYtelseGrunnlag grunnlag = builder.build();
         var utdaterteInntektsmeldinger = inntektsmeldingerList.stream()
             .filter(it -> utdaterteInntektsmeldingerJournalposter.contains(it.getJournalpostId())
-                && harIkkeAltHåndtertJournalpost(build, it.getJournalpostId()))
+                && harIkkeAltHåndtertJournalpost(grunnlag, it.getJournalpostId()))
             .collect(Collectors.toList());
-
-        var utdatertBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(build);
+        var utdatertBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(grunnlag);
         lagreDeaktivertGrunnlagMedUtdaterteInntektsmeldinger(koblingReferanse, informasjonBuilder, utdaterteInntektsmeldinger, utdatertBuilder);
-        lagreOgFlush(koblingReferanse, build);
+        lagreOgFlush(koblingReferanse, grunnlag);
 
-        return build.getGrunnlagReferanse();
+        return grunnlag.getGrunnlagReferanse();
     }
 
     private boolean harIkkeAltHåndtertJournalpost(InntektArbeidYtelseGrunnlag build, JournalpostId journalpostId) {
