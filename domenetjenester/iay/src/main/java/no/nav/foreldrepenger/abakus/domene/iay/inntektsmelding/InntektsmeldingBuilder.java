@@ -25,11 +25,8 @@ public class InntektsmeldingBuilder {
         }
         if (a.getKanalreferanse() != null && b.getKanalreferanse() != null) {
             return a.getKanalreferanse().compareTo(b.getKanalreferanse());
-        } else if (a.getKanalreferanse() != null) {
-            return 1;
-        } else if (b.getKanalreferanse() != null) {
-            return -1;
         } else {
+            // crazy fallback når mangler kanalreferanse.
             return a.getInnsendingstidspunkt().compareTo(b.getInnsendingstidspunkt());
         }
 

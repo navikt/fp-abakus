@@ -48,14 +48,10 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
         }
         if (a.getKanalreferanse() != null && b.getKanalreferanse() != null) {
             return a.getKanalreferanse().compareTo(b.getKanalreferanse());
-        } else if (a.getKanalreferanse() != null) {
-            return 1;
-        } else if (b.getKanalreferanse() != null) {
-            return -1;
         } else {
+            // crazy fallback for manglende kanalreferanser
             return a.getInnsendingstidspunkt().compareTo(b.getInnsendingstidspunkt());
         }
-
     };
 
     @Id
