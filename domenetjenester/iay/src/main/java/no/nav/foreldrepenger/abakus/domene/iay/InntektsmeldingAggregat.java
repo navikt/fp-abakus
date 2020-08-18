@@ -29,7 +29,6 @@ import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 public class InntektsmeldingAggregat extends BaseEntitet {
 
     private static final Logger logger = LoggerFactory.getLogger(InntektsmeldingAggregat.class);
-    private static final String ALTINN_SYSTEM_NAVN = "AltinnPortal";
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_INNTEKTSMELDINGER")
@@ -51,18 +50,23 @@ public class InntektsmeldingAggregat extends BaseEntitet {
     }
 
     public InntektsmeldingAggregat(Collection<Inntektsmelding> inntektsmeldinger) {
-        this.inntektsmeldinger.addAll(inntektsmeldinger.stream().map(i -> {
-            final Inntektsmelding inntektsmeldingEntitet = new Inntektsmelding(i);
-            inntektsmeldingEntitet.setInntektsmeldinger(this);
-            return inntektsmeldingEntitet;
-        }).collect(Collectors.toList()));
+        this.inntektsmeldinger.addAll(inntektsmeldinger.stream()
+            .sorted(Inntektsmelding.COMP_REKKEFØLGE)
+            .map(i -> {
+                var inntektsmeldingEntitet = new Inntektsmelding(i);
+                inntektsmeldingEntitet.setInntektsmeldinger(this);
+                return inntektsmeldingEntitet;
+            })
+            .collect(Collectors.toList()));
     }
 
     /**
      * Get alle inntektsmeldinger (både de som skal brukes og ikke brukes).
      */
     public List<Inntektsmelding> getInntektsmeldinger() {
-        return inntektsmeldinger.stream().collect(Collectors.toUnmodifiableList());
+        return inntektsmeldinger.stream()
+            .sorted(Inntektsmelding.COMP_REKKEFØLGE)
+            .collect(Collectors.toUnmodifiableList());
     }
 
     public Long getId() {
@@ -122,20 +126,12 @@ public class InntektsmeldingAggregat extends BaseEntitet {
 
     private boolean skalFjerneInntektsmelding(Inntektsmelding gammel, Inntektsmelding ny) {
         if (gammel.gjelderSammeArbeidsforhold(ny)) {
-            if (ALTINN_SYSTEM_NAVN.equals(gammel.getKildesystem()) || ALTINN_SYSTEM_NAVN.equals(ny.getKildesystem())) {
-                // WTF?  Hvorfor trengs ALTINN å spesialbehandles?
-                if (gammel.getKanalreferanse() != null && ny.getKanalreferanse() != null) {
-                    // skummelt å stole på stigende arkivreferanser fra Altinn. :-(
-                    return ny.getKanalreferanse().compareTo(gammel.getKanalreferanse()) > 0;
-                }
+            if (gammel.getKanalreferanse() != null && ny.getKanalreferanse() != null) {
+                return ny.getKanalreferanse().compareTo(gammel.getKanalreferanse()) > 0;
             }
-            if (gammel.getInnsendingstidspunkt().isBefore(ny.getInnsendingstidspunkt())) {
-                return true;
-            }
-            if (gammel.getInnsendingstidspunkt().equals(ny.getInnsendingstidspunkt()) && ny.getKanalreferanse() != null) {
-                if (gammel.getKanalreferanse() != null) {
-                    return ny.getKanalreferanse().compareTo(gammel.getKanalreferanse()) > 0;
-                }
+            if (gammel.getInnsendingstidspunkt().compareTo(ny.getInnsendingstidspunkt()) <= 0) {
+                // crazy fallback - enkelte inntektsmeldinger har ikke blitt journalført med kanalreferanse.
+                // Oppstår når SBH journalfører IM på annen sak i Gosys. Skal fikses der.
                 return true;
             }
         }

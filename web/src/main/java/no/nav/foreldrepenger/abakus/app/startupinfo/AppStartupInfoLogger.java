@@ -2,9 +2,6 @@ package no.nav.foreldrepenger.abakus.app.startupinfo;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.SortedMap;
-
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
@@ -21,7 +18,6 @@ import no.nav.foreldrepenger.abakus.app.selftest.Selftests;
 import no.nav.foreldrepenger.abakus.app.selftest.checks.ExtHealthCheck;
 import no.nav.vedtak.feil.Feil;
 import no.nav.vedtak.log.mdc.MDCOperations;
-import no.nav.vedtak.log.util.LoggerUtils;
 
 /**
  * Dependent scope siden vi lukker denne når vi er ferdig.
@@ -37,7 +33,6 @@ class AppStartupInfoLogger {
     private static final String APPLIKASJONENS_STATUS = "Applikasjonens status";
     private static final String START = "start:";
     private static final String SLUTT = "slutt.";
-    private static final String TRUE = "true";
     private Selftests selftests;
     /**
      * Samler opp all logging og outputter til slutt.

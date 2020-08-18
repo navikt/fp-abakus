@@ -88,7 +88,7 @@ public class InntektArbeidYtelseTjeneste {
      * Hent alle grunnlag for angitt saksnummer
      *
      * @param saksnummer
-     * @param boolean    kunAktive - hvis true henter kun aktive grunnlag (ikke historiske versjoner)
+     * @param boolean kunAktive - hvis true henter kun aktive grunnlag (ikke historiske versjoner)
      * @return henter optional aggregat
      */
     public List<InntektArbeidYtelseGrunnlag> hentAlleGrunnlagFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType, boolean kunAktive) {
@@ -99,7 +99,7 @@ public class InntektArbeidYtelseTjeneste {
      * Hent alle grunnlag for angitt koblingsreferanse (behandling)
      *
      * @param koblingReferanse
-     * @param boolean          kunAktive - hvis true henter kun aktive grunnlag (ikke historiske versjoner)
+     * @param boolean kunAktive - hvis true henter kun aktive grunnlag (ikke historiske versjoner)
      * @return henter optional aggregat
      */
     public List<InntektArbeidYtelseGrunnlag> hentAlleGrunnlagFor(AktørId aktørId, KoblingReferanse koblingReferanse, boolean kunAktive) {
@@ -234,15 +234,15 @@ public class InntektArbeidYtelseTjeneste {
         var builder = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(original, dataset);
         if (dataset.contains(Dataset.INNTEKTSMELDING)) {
             var gjeldendeInntektsmeldinger = original.getInntektsmeldinger().map(InntektsmeldingAggregat::getInntektsmeldinger).orElse(List.of());
-            var innsendingstidspunkt = finnInnsendingstidspunktForNyesteEksisterendeIm(gjeldendeInntektsmeldinger);
+            var sisteEksisterendeInntektsmelding = finnSisteEksisterendeInntektsmelding(gjeldendeInntektsmeldinger);
 
             var arbeidsforholdInformasjon = original.getArbeidsforholdInformasjon().orElseGet(ArbeidsforholdInformasjon::new);
             var informasjonBuilder = ArbeidsforholdInformasjonBuilder.oppdatere(arbeidsforholdInformasjon);
 
             var alleInntektsmeldingerForSaksummer = hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, ytelseType);
 
-            var kopiInntektsmeldingerEtterInnsendingstidspunkt = alleInntektsmeldingerForSaksummer.entrySet().stream()
-                .filter(im -> im.getKey().getInnsendingstidspunkt().isAfter(innsendingstidspunkt))
+            var kopierInntektsmeldingerEtterNyeste = alleInntektsmeldingerForSaksummer.entrySet().stream()
+                .filter(im -> (Inntektsmelding.COMP_REKKEFØLGE.compare(im.getKey(), sisteEksisterendeInntektsmelding) > 0))
                 .map(entry -> {
                     Inntektsmelding nyInntektsmelding = entry.getKey();
                     ArbeidsforholdInformasjon arbForholdInformasjon = entry.getValue();
@@ -264,20 +264,20 @@ public class InntektArbeidYtelseTjeneste {
                     return inntektsmeldingBuilder.medArbeidsforholdId(internRef).medArbeidsforholdId(eksternRef);
                 })
                 .map(InntektsmeldingBuilder::build)
-                .sorted(Comparator.comparing(Inntektsmelding::getInnsendingstidspunkt))
+                .sorted(Inntektsmelding.COMP_REKKEFØLGE)
                 .collect(Collectors.toList());
 
-            repository.oppdaterBuilderMedNyeInntektsmeldinger(informasjonBuilder, kopiInntektsmeldingerEtterInnsendingstidspunkt, builder);
+            repository.oppdaterBuilderMedNyeInntektsmeldinger(informasjonBuilder, kopierInntektsmeldingerEtterNyeste, builder);
         }
         lagre(tilKobling, builder);
         return builder;
 
     }
 
-    private LocalDateTime finnInnsendingstidspunktForNyesteEksisterendeIm(Collection<Inntektsmelding> inntektsmeldinger) {
+    private Inntektsmelding finnSisteEksisterendeInntektsmelding(Collection<Inntektsmelding> inntektsmeldinger) {
         return inntektsmeldinger.stream()
-            .max(Comparator.comparing(Inntektsmelding::getInnsendingstidspunkt))
-            .map(Inntektsmelding::getInnsendingstidspunkt).orElse(LocalDateTime.MIN);
+            .max(Inntektsmelding.COMP_REKKEFØLGE)
+            .orElse(null);
     }
 
     public KoblingReferanse hentKoblingReferanse(GrunnlagReferanse grunnlagReferanse) {

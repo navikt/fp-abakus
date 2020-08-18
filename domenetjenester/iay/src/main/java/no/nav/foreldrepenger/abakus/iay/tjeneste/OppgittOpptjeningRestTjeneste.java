@@ -72,7 +72,7 @@ public class OppgittOpptjeningRestTjeneste extends FellesRestTjeneste {
                 schema = @Schema(implementation = UuidDto.class)))
     })
     @BeskyttetRessurs(action = CREATE, resource = SØKNAD)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
     public Response lagreOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
         var startTx = Instant.now();
         Response response;
@@ -106,7 +106,7 @@ public class OppgittOpptjeningRestTjeneste extends FellesRestTjeneste {
                             schema = @Schema(implementation = UuidDto.class)))
     })
     @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
     public Response lagreOverstrytOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
         var startTx = Instant.now();
         Response response;

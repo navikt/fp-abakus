@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -40,6 +41,18 @@ import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 @Entity(name = "Inntektsmelding")
 @Table(name = "IAY_INNTEKTSMELDING")
 public class Inntektsmelding extends BaseEntitet implements IndexKey {
+
+    public static final Comparator<? super Inntektsmelding> COMP_REKKEFØLGE = (Inntektsmelding a, Inntektsmelding b) -> {
+        if (a == b) {
+            return 0;
+        }
+        if (a.getKanalreferanse() != null && b.getKanalreferanse() != null) {
+            return a.getKanalreferanse().compareTo(b.getKanalreferanse());
+        } else {
+            // crazy fallback for manglende kanalreferanser
+            return a.getInnsendingstidspunkt().compareTo(b.getInnsendingstidspunkt());
+        }
+    };
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_INNTEKTSMELDING")
@@ -442,6 +455,9 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
             ", refusjonOpphører=" + refusjonOpphører +
             ", innsendingsårsak= " + innsendingsårsak +
             ", innsendingstidspunkt= " + innsendingstidspunkt +
+            ", kanalreferanse=" + kanalreferanse +
+            ", kildesystem=" + kildesystem +
+            ", mottattDato=" + mottattDato +
             '>';
     }
 

@@ -7,6 +7,7 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -77,7 +78,8 @@ public class InntektsmeldingerRestTjeneste extends FellesRestTjeneste {
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private static final Logger LOGGER = LoggerFactory.getLogger(InntektsmeldingerRestTjeneste.class);
 
-    public InntektsmeldingerRestTjeneste() {} // RESTEASY ctor
+    public InntektsmeldingerRestTjeneste() {
+    } // RESTEASY ctor
 
     @Inject
     public InntektsmeldingerRestTjeneste(InntektsmeldingerTjeneste imTjeneste,
@@ -115,7 +117,7 @@ public class InntektsmeldingerRestTjeneste extends FellesRestTjeneste {
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Hent refusjonskrav fra inntektsmeldinger for angitt søke spesifikasjon", tags = "inntektsmelding")
     @BeskyttetRessurs(action = READ, resource = INNTEKSTMELDING)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
     public Response hentRefusjonskravDatoForSak(@NotNull @Valid InntektsmeldingerRequestAbacDto spesifikasjon) {
         var startTx = Instant.now();
         Response response;
@@ -139,12 +141,9 @@ public class InntektsmeldingerRestTjeneste extends FellesRestTjeneste {
 
     @POST
     @Path("/motta")
-    @Operation(description = "Motta og lagre inntektsmelding(er)", tags = "inntektsmelding",
-        responses = {
-            @ApiResponse(description = "Oppdatert grunnlagreferanse",
-                content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = UuidDto.class)))
-        })
+    @Operation(description = "Motta og lagre inntektsmelding(er)", tags = "inntektsmelding", responses = {
+            @ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))
+    })
     @BeskyttetRessurs(action = CREATE, resource = INNTEKSTMELDING)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public UuidDto lagreInntektsmeldinger(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid InntektsmeldingerMottattRequest mottattRequest) {
@@ -161,7 +160,9 @@ public class InntektsmeldingerRestTjeneste extends FellesRestTjeneste {
 
         var inntektsmeldingerAggregat = new MapInntektsmeldinger.MapFraDto().map(informasjonBuilder, mottattRequest.getInntektsmeldinger());
 
-        var grunnlagReferanse = imTjeneste.lagre(koblingReferanse, informasjonBuilder, inntektsmeldingerAggregat.getInntektsmeldinger());
+        List<Inntektsmelding> inntektsmeldinger = inntektsmeldingerAggregat.getInntektsmeldinger();
+        valider(kobling.getYtelseType(), inntektsmeldinger);
+        var grunnlagReferanse = imTjeneste.lagre(koblingReferanse, informasjonBuilder, inntektsmeldinger);
 
         koblingTjeneste.lagre(kobling);
         koblingTjeneste.oppdaterLåsVersjon(koblingLås);
@@ -172,6 +173,20 @@ public class InntektsmeldingerRestTjeneste extends FellesRestTjeneste {
 
         logMetrikk("/iay/inntektsmeldinger/v1/motta", Duration.between(startTx, Instant.now()));
         return resultat;
+    }
+
+    private void valider(YtelseType ytelseType, List<Inntektsmelding> inntektsmeldinger) {
+        switch (ytelseType) {
+            case FORELDREPENGER:
+            case SVANGERSKAPSPENGER:
+                // har ikke validering på Kapittel 14 ytelser her ennå pga feil i Gosys kopiering ved journalføring på annen sak.
+                return;
+            default:
+                var feil = inntektsmeldinger.stream().filter(im -> im.getKanalreferanse() == null).findFirst();
+                if (feil.isPresent()) {
+                    throw new IllegalArgumentException("Inntektsmelding mangler kanalreferanse: " + feil);
+                }
+        }
     }
 
     @POST
@@ -229,7 +244,7 @@ public class InntektsmeldingerRestTjeneste extends FellesRestTjeneste {
             final var abacDataAttributter = AbacDataAttributter.opprett();
             if (FnrPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
                 return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, getPerson().getIdent());
-            } else if(AktørIdPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
+            } else if (AktørIdPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
                 return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, getPerson().getIdent());
             }
             throw new java.lang.IllegalArgumentException("Ukjent identtype: " + getPerson().getIdentType());
@@ -255,13 +270,12 @@ public class InntektsmeldingerRestTjeneste extends FellesRestTjeneste {
             final var abacDataAttributter = AbacDataAttributter.opprett();
             if (FnrPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
                 return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, getPerson().getIdent());
-            } else if(AktørIdPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
+            } else if (AktørIdPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
                 return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, getPerson().getIdent());
             }
             throw new java.lang.IllegalArgumentException("Ukjent identtype: " + getPerson().getIdentType());
         }
 
     }
-
 
 }

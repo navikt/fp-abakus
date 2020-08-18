@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -17,6 +18,21 @@ import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 import no.nav.vedtak.konfig.Tid;
 
 public class InntektsmeldingBuilder {
+
+    public static final Comparator<? super InntektsmeldingBuilder> COMP_REKKEFØLGE =  (InntektsmeldingBuilder a, InntektsmeldingBuilder b) -> {
+        if (a == b) {
+            return 0;
+        }
+        if (a.getKanalreferanse() != null && b.getKanalreferanse() != null) {
+            return a.getKanalreferanse().compareTo(b.getKanalreferanse());
+        } else {
+            // crazy fallback når mangler kanalreferanse.
+            return a.getInnsendingstidspunkt().compareTo(b.getInnsendingstidspunkt());
+        }
+
+    };
+
+
     private final Inntektsmelding kladd;
     private boolean erBygget;
     private EksternArbeidsforholdRef eksternArbeidsforholdId;
@@ -61,6 +77,7 @@ public class InntektsmeldingBuilder {
         }
         return this;
     }
+
     public InntektsmeldingBuilder medBeløp(BigDecimal verdi) {
         precondition();
         kladd.setInntektBeløp(verdi == null ? null : new Beløp(verdi));
@@ -135,7 +152,7 @@ public class InntektsmeldingBuilder {
         kladd.leggTil(fravær);
         return this;
     }
-    
+
     public InntektsmeldingBuilder leggTil(UtsettelsePeriode utsettelsePeriode) {
         precondition();
         kladd.leggTil(utsettelsePeriode);
@@ -160,6 +177,14 @@ public class InntektsmeldingBuilder {
         return this;
     }
 
+    public LocalDateTime getInnsendingstidspunkt() {
+        return kladd.getInnsendingstidspunkt();
+    }
+
+    public String getKanalreferanse() {
+        return kladd.getKanalreferanse();
+    }
+
     public Inntektsmelding build() {
         Objects.requireNonNull(kladd.getArbeidsgiver(), "arbeidsgiver mangler");
         Objects.requireNonNull(kladd.getInnsendingstidspunkt(), "innsendingstidspunkt mangler");
@@ -180,7 +205,7 @@ public class InntektsmeldingBuilder {
     }
 
     private void precondition() {
-        if(erBygget) {
+        if (erBygget) {
             throw new IllegalStateException("Inntektsmelding objekt er allerede bygget, kan ikke modifisere nå. Returnerer kun : " + kladd);
         }
     }

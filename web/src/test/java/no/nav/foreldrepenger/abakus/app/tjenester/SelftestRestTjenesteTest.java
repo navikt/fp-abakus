@@ -77,7 +77,7 @@ public class SelftestRestTjenesteTest {
                 .build();
     }
 
-    private Response lagHtmlTypeResponse(boolean jsonFormat) {
+    private Response lagHtmlTypeResponse(@SuppressWarnings("unused") boolean jsonFormat) {
         byte[] s = {'a', 'b'};
         return Response.ok()
                 .encoding(RESPONSE_ENCODING)

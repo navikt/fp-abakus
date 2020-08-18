@@ -74,7 +74,7 @@ public class RegisterdataRestTjeneste extends FellesRestTjeneste {
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(description = "Trigger registerinnhenting for en gitt id", tags = "registerinnhenting")
     @BeskyttetRessurs(action = CREATE, resource = REGISTERDATA)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
     public Response innhentOgLagreRegisterdataSync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
         var startTx = Instant.now();
 
@@ -95,7 +95,7 @@ public class RegisterdataRestTjeneste extends FellesRestTjeneste {
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(description = "Trigger registerinnhenting for en gitt id", tags = "registerinnhenting")
     @BeskyttetRessurs(action = CREATE, resource = REGISTERDATA)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
     public Response innhentOgLagreRegisterdataAsync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
         var startTx = Instant.now();
         Response response;
@@ -117,7 +117,7 @@ public class RegisterdataRestTjeneste extends FellesRestTjeneste {
     @Operation(description = "Sjekker innhentingFerdig på async innhenting og gir siste referanseid på grunnlaget når tasken er ferdig. " +
         "Hvis ikke innhentingFerdig", tags = "registerinnhenting")
     @BeskyttetRessurs(action = READ, resource = REGISTERDATA)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
     public Response innhentAsyncStatus(@Parameter(name = "status") @Valid SjekkStatusAbacDto dto) {
         var startTx = Instant.now();
         Response response;
