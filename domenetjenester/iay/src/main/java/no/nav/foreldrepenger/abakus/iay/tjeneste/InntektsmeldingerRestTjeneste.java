@@ -179,6 +179,7 @@ public class InntektsmeldingerRestTjeneste extends FellesRestTjeneste {
         switch (ytelseType) {
             case FORELDREPENGER:
             case SVANGERSKAPSPENGER:
+            case UDEFINERT:
                 // har ikke validering på Kapittel 14 ytelser her ennå pga feil i Gosys kopiering ved journalføring på annen sak.
                 return;
             default:
