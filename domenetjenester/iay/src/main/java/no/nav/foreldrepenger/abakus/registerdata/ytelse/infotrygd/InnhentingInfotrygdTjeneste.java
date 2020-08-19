@@ -225,13 +225,9 @@ public class InnhentingInfotrygdTjeneste {
 
     public List<InfotrygdYtelseGrunnlag> getSPøkelseYtelserFailSoft(PersonIdent ident) {
         try {
-            List<SykepengeVedtak> rest = spokelseKlient.hentGrunnlag(ident.getIdent());
+            List<SykepengeVedtak> rest = spokelseKlient.hentGrunnlagFailSoft(ident.getIdent());
 
-            var mappedGrunnlag = mapSpøkelseTilInfotrygdYtelseGrunnlag(rest);
-            if (!mappedGrunnlag.isEmpty()) {
-                LOG.info("abakus spokelse mapped grunnlag {}", mappedGrunnlag);
-            }
-            return mappedGrunnlag;
+            return mapSpøkelseTilInfotrygdYtelseGrunnlag(rest);
         } catch (Exception e) {
             LOG.info("abakus spokelse noe gikk feil", e);
             return Collections.emptyList();

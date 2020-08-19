@@ -98,7 +98,7 @@ public class InnhentingSamletTjeneste {
         if (!isProd) {
             return Collections.emptyList();
         }
-        return innhentingInfotrygdTjeneste.getSPøkelseYtelserFailSoft(ident);
+        return innhentingInfotrygdTjeneste.getSPøkelseYtelser(ident);
     }
 
     public List<MeldekortUtbetalingsgrunnlagSak> hentYtelserTjenester(AktørId aktørId, Interval opplysningsPeriode) {
