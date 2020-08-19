@@ -72,7 +72,7 @@ import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 
-@OpenAPIDefinition(tags = {@Tag(name = "iay-grunnlag")})
+@OpenAPIDefinition(tags = { @Tag(name = "iay-grunnlag") })
 @Path("/iay/grunnlag/v1")
 @ApplicationScoped
 @Transactional
@@ -81,7 +81,8 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private KoblingTjeneste koblingTjeneste;
 
-    public GrunnlagRestTjeneste() {} // RESTEASY ctor
+    public GrunnlagRestTjeneste() {
+    } // RESTEASY ctor
 
     @Inject
     public GrunnlagRestTjeneste(InntektArbeidYtelseTjeneste iayTjeneste,
@@ -103,15 +104,11 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Hent ett enkelt IAY Grunnlag for angitt spesifikasjon. Spesifikasjonen kan angit hvilke data som ønskes",
-        tags = "iay-grunnlag",
-        responses = {
-            @ApiResponse(description = "Grunnlaget",
-                content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = InntektArbeidYtelseGrunnlagDto.class))),
+    @Operation(description = "Hent ett enkelt IAY Grunnlag for angitt spesifikasjon. Spesifikasjonen kan angit hvilke data som ønskes", tags = "iay-grunnlag", responses = {
+            @ApiResponse(description = "Grunnlaget", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InntektArbeidYtelseGrunnlagDto.class))),
             @ApiResponse(responseCode = "204", description = "Det finnes ikke et grunnlag for forespørselen"),
             @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")
-        })
+    })
     @BeskyttetRessurs(action = READ, resource = GRUNNLAG)
     @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
     public Response hentIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
@@ -162,11 +159,9 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Lagrer siste versjon",
-        tags = "iay-grunnlag",
-        responses = {
+    @Operation(description = "Lagrer siste versjon", tags = "iay-grunnlag", responses = {
             @ApiResponse(responseCode = "200", description = "Mottatt grunnlaget")
-        })
+    })
     @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response oppdaterOgLagreGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagAbacDto dto) {
@@ -189,13 +184,9 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
     @Path("/snapshot")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Hent IAY Grunnlag for angitt søke spesifikasjon",
-        tags = "iay-grunnlag",
-        responses = {
-            @ApiResponse(description = "Grunnlaget for saken",
-                content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = InntektArbeidYtelseGrunnlagSakSnapshotDto.class)))
-        })
+    @Operation(description = "Hent IAY Grunnlag for angitt søke spesifikasjon", tags = "iay-grunnlag", responses = {
+            @ApiResponse(description = "Grunnlaget for saken", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InntektArbeidYtelseGrunnlagSakSnapshotDto.class)))
+    })
     @BeskyttetRessurs(action = READ, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentSnapshotIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
@@ -231,8 +222,7 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
     @Path("/kopier")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Kopier grunnlag",
-        tags = "iay-grunnlag")
+    @Operation(description = "Kopier grunnlag", tags = "iay-grunnlag")
     @BeskyttetRessurs(action = CREATE, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response kopierOgLagreGrunnlag(@NotNull @Valid KopierGrunnlagRequestAbac request) {
@@ -261,15 +251,14 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
         if (koblingOpt.isEmpty()) {
             // Lagre kobling
             AktørId aktørId = new AktørId(dto.getAktør().getIdent());
-            kobling = new Kobling(new Saksnummer(dto.getSaksnummer()), referanse, aktørId);
+            kobling = new Kobling(dto.getYtelseType(), new Saksnummer(dto.getSaksnummer()), referanse, aktørId);
         } else {
             kobling = koblingOpt.get();
-        }
-
-        if (YtelseType.UDEFINERT.equals(kobling.getYtelseType())) {
-            var ytelseType = YtelseType.fraKode(dto.getYtelseType().getKode());
-            if (ytelseType != null) {
-                kobling.setYtelseType(ytelseType);
+            if (YtelseType.UDEFINERT.equals(kobling.getYtelseType())) {
+                var ytelseType = dto.getYtelseType();
+                if (ytelseType != null) {
+                    kobling.setYtelseType(ytelseType);
+                }
             }
         }
         // Oppdater kobling

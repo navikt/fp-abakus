@@ -22,6 +22,7 @@ import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingDto;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.InntektsmeldingerMottattRequest;
 import no.nav.foreldrepenger.abakus.dbstoette.UnittestRepositoryRule;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
@@ -65,7 +66,7 @@ public class InntektsmeldingerRestTjenesteTest {
                 .medArbeidsforholdRef(new ArbeidsforholdRefDto(UUID.randomUUID().toString(), "ALTINN-01", Fagsystem.AAREGISTERET))
                 .medKanalreferanse("KANAL")
                 .medKildesystem("Altinn")));
-        InntektsmeldingerMottattRequest request = new InntektsmeldingerMottattRequest(SAKSNUMMER, UUID.randomUUID(), new AktørIdPersonident("1234123412341"), im);
+        InntektsmeldingerMottattRequest request = new InntektsmeldingerMottattRequest(SAKSNUMMER, UUID.randomUUID(), new AktørIdPersonident("1234123412341"), YtelseType.FORELDREPENGER, im);
 
         UuidDto uuidDto = tjeneste.lagreInntektsmeldinger(request);
 
