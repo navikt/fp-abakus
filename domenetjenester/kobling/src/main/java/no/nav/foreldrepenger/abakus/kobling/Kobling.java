@@ -85,7 +85,7 @@ public class Kobling extends BaseEntitet implements IndexKey {
         this.saksnummer = Objects.requireNonNull(saksnummer, "saksnummer");
         this.koblingReferanse = Objects.requireNonNull(koblingReferanse, "koblingReferanse");
         this.aktørId = Objects.requireNonNull(aktørId, "aktørId");
-        this.ytelseType = Objects.requireNonNull(ytelseType, "ytelseType");
+        this.ytelseType = ytelseType == null ? YtelseType.UDEFINERT : ytelseType;
     }
 
     @Override

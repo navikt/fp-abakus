@@ -102,8 +102,8 @@ public class InntektsmeldingerRestTjeneste extends FellesRestTjeneste {
 
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
-        var ytelseType = YtelseType.fraKode(spesifikasjon.getYtelseType().getKode());
-        var inntektsmeldingerMap = iayTjeneste.hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, YtelseType.fraKode(ytelseType.getKode()));
+        var ytelseType = spesifikasjon.getYtelseType();
+        var inntektsmeldingerMap = iayTjeneste.hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, ytelseType);
         InntektsmeldingerDto inntektsmeldingerDto = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(inntektsmeldingerMap);
         final Response build = Response.ok(inntektsmeldingerDto).build();
 
