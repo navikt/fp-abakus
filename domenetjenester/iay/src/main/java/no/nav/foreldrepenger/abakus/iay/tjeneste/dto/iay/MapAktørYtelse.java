@@ -36,7 +36,7 @@ import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
 public class MapAktørYtelse {
     private static final Comparator<YtelseDto> COMP_YTELSE = Comparator
-        .comparing((YtelseDto dto) -> dto.getSaksnummer(), Comparator.nullsLast(Comparator.naturalOrder()))
+        .comparing(YtelseDto::getSaksnummer, Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getYtelseType() == null ? null : dto.getYtelseType().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getTemaUnderkategori() == null ? null : dto.getTemaUnderkategori().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
@@ -46,97 +46,6 @@ public class MapAktørYtelse {
             .comparing((FordelingDto dto) -> dto.getArbeidsgiver() == null ? null : dto.getArbeidsgiver().getIdent(), Comparator.nullsLast(Comparator.naturalOrder()))
             .thenComparing(dto -> dto.getHyppighet() == null ? null : dto.getHyppighet().getKode(), Comparator.nullsLast(Comparator.naturalOrder()));
 
-    static class MapFraDto {
-        private InntektArbeidYtelseAggregatBuilder aggregatBuilder;
-
-        @SuppressWarnings("unused")
-        private AktørId søkerAktørId;
-
-        MapFraDto(AktørId søkerAktørId, InntektArbeidYtelseAggregatBuilder aggregatBuilder) {
-            this.søkerAktørId = søkerAktørId;
-            this.aggregatBuilder = aggregatBuilder;
-        }
-
-        public List<AktørYtelseBuilder> map(Collection<YtelserDto> dtos) {
-            if (dtos == null || dtos.isEmpty()) {
-                return Collections.emptyList();
-            }
-            return dtos.stream().map(this::mapAktørYtelse).collect(Collectors.toUnmodifiableList());
-        }
-
-        private AktørYtelseBuilder mapAktørYtelse(YtelserDto dto) {
-            var builder = aggregatBuilder.getAktørYtelseBuilder(tilAktørId(dto.getPerson()));
-            dto.getYtelser().forEach(ytelseDto -> builder.leggTilYtelse(mapYtelse(ytelseDto)));
-            return builder;
-        }
-
-        /** Returnerer person sin aktørId. Denne trenger ikke være samme som søkers aktørid men kan f.eks. være annen part i en sak. */
-        private AktørId tilAktørId(PersonIdent person) {
-            if (!(person instanceof AktørIdPersonident)) {
-                throw new IllegalArgumentException("Støtter kun " + AktørIdPersonident.class.getSimpleName() + " her");
-            }
-            return new AktørId(person.getIdent());
-        }
-
-        private IntervallEntitet mapPeriode(Periode periode) {
-            return IntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom());
-        }
-
-        private YtelseBuilder mapYtelse(YtelseDto ytelseDto) {
-            var ytelseBuilder = YtelseBuilder.oppdatere(Optional.empty());
-            var behandlingsTema = ytelseDto.getTemaUnderkategori();
-            ytelseBuilder
-                .medYtelseGrunnlag(mapYtelseGrunnlag(ytelseDto.getGrunnlag(), ytelseBuilder.getGrunnlagBuilder()))
-                .medYtelseType(ytelseDto.getYtelseType())
-                .medBehandlingsTema(behandlingsTema)
-                .medKilde(ytelseDto.getFagsystemDto())
-                .medPeriode(mapPeriode(ytelseDto.getPeriode()))
-                .medSaksreferanse(ytelseDto.getSaksnummer() == null ? null : new Saksnummer(ytelseDto.getSaksnummer()))
-                .medStatus(ytelseDto.getStatus());
-            ytelseDto.getAnvisninger()
-                .forEach(anvisning -> ytelseBuilder.leggtilYtelseAnvist(mapYtelseAnvist(anvisning, ytelseBuilder.getAnvistBuilder())));
-            return ytelseBuilder;
-        }
-
-        private YtelseAnvist mapYtelseAnvist(AnvisningDto anvisning, YtelseAnvistBuilder anvistBuilder) {
-            if (anvisning == null)
-                return null;
-            return anvistBuilder
-                .medAnvistPeriode(mapPeriode(anvisning.getPeriode()))
-                .medBeløp(anvisning.getBeløp())
-                .medDagsats(anvisning.getDagsats())
-                .medUtbetalingsgradProsent(anvisning.getUtbetalingsgrad())
-                .build();
-        }
-
-        private YtelseGrunnlag mapYtelseGrunnlag(YtelseGrunnlagDto grunnlag, YtelseGrunnlagBuilder grunnlagBuilder) {
-            if (grunnlag == null)
-                return null;
-            grunnlagBuilder
-                .medArbeidskategori(grunnlag.getArbeidskategoriDto())
-                .medDekningsgradProsent(grunnlag.getDekningsgradProsent())
-                .medGraderingProsent(grunnlag.getGraderingProsent())
-                .medInntektsgrunnlagProsent(grunnlag.getInntektsgrunnlagProsent())
-                .medOpprinneligIdentdato(grunnlag.getOpprinneligIdentDato())
-                .medVedtaksDagsats(grunnlag.getVedtaksDagsats());
-            grunnlag.getFordeling()
-                .forEach(fordeling -> grunnlagBuilder.medYtelseStørrelse(mapYtelseStørrelse(fordeling)));
-            return grunnlagBuilder.build();
-        }
-
-        private YtelseStørrelse mapYtelseStørrelse(FordelingDto fordeling) {
-            if (fordeling == null) {
-                return null;
-            }
-            var arbeidsgiver = fordeling.getArbeidsgiver();
-            return YtelseStørrelseBuilder.ny()
-                .medBeløp(fordeling.getBeløp())
-                .medHyppighet(fordeling.getHyppighet())
-                .medVirksomhet(arbeidsgiver == null ? null : new OrgNummer(arbeidsgiver.getIdent()))
-                .build();
-        }
-
-    }
 
     static class MapTilDto {
 
@@ -160,7 +69,7 @@ public class MapAktørYtelse {
         private YtelseGrunnlagDto mapYtelseGrunnlag(YtelseGrunnlag gr) {
 
             YtelseGrunnlagDto dto = new YtelseGrunnlagDto();
-            gr.getArbeidskategori().ifPresent(ak -> dto.setArbeidskategoriDto(ak));
+            gr.getArbeidskategori().ifPresent(dto::setArbeidskategoriDto);
             gr.getOpprinneligIdentdato().ifPresent(dto::setOpprinneligIdentDato);
             gr.getDekningsgradProsent().map(Stillingsprosent::getVerdi).ifPresent(dto::setDekningsgradProsent);
             gr.getGraderingProsent().map(Stillingsprosent::getVerdi).ifPresent(dto::setGraderingProsent);

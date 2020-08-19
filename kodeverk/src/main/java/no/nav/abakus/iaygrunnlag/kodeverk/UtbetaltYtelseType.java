@@ -15,4 +15,8 @@ public interface UtbetaltYtelseType extends Kodeverdi {
 
         }
     }
+
+    public boolean erUdefinert();
+
+
 }
