@@ -43,6 +43,8 @@ import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 public class MapInntektsmeldingerTest {
 
     public static final String SAKSNUMMER = "1234123412345";
+    private static final YtelseType ytelseType = YtelseType.FORELDREPENGER;
+    
     @Rule
     public UnittestRepositoryRule repositoryRule = new UnittestRepositoryRule();
     private final KoblingRepository repository = new KoblingRepository(repositoryRule.getEntityManager());
@@ -58,10 +60,8 @@ public class MapInntektsmeldingerTest {
         KoblingReferanse koblingReferanse2 = new KoblingReferanse(UUID.randomUUID());
         AktørId aktørId = new AktørId("1234123412341");
         YtelseType foreldrepenger = YtelseType.FORELDREPENGER;
-        Kobling kobling1 = new Kobling(saksnummer, koblingReferanse, aktørId);
-        kobling1.setYtelseType(foreldrepenger);
-        Kobling kobling2 = new Kobling(saksnummer, koblingReferanse2, aktørId);
-        kobling2.setYtelseType(foreldrepenger);
+        Kobling kobling1 = new Kobling(foreldrepenger, saksnummer, koblingReferanse, aktørId);
+        Kobling kobling2 = new Kobling(foreldrepenger, saksnummer, koblingReferanse2, aktørId);
         koblingTjeneste.lagre(kobling1);
         koblingTjeneste.lagre(kobling2);
         Inntektsmelding im = InntektsmeldingBuilder.builder()
@@ -90,8 +90,7 @@ public class MapInntektsmeldingerTest {
         KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
         AktørId aktørId = new AktørId("1234123412341");
         YtelseType foreldrepenger = YtelseType.FORELDREPENGER;
-        Kobling kobling1 = new Kobling(saksnummer, koblingReferanse, aktørId);
-        kobling1.setYtelseType(foreldrepenger);
+        Kobling kobling1 = new Kobling(foreldrepenger, saksnummer, koblingReferanse, aktørId);
         koblingTjeneste.lagre(kobling1);
         UUID internArbeidsforholdRef = UUID.randomUUID();
         Arbeidsgiver virksomhet = Arbeidsgiver.virksomhet(new OrgNummer("910909088"));
@@ -133,8 +132,7 @@ public class MapInntektsmeldingerTest {
         KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
         AktørId aktørId = new AktørId("1234123412341");
         YtelseType foreldrepenger = YtelseType.FORELDREPENGER;
-        Kobling kobling1 = new Kobling(saksnummer, koblingReferanse, aktørId);
-        kobling1.setYtelseType(foreldrepenger);
+        Kobling kobling1 = new Kobling(foreldrepenger, saksnummer, koblingReferanse, aktørId);
         koblingTjeneste.lagre(kobling1);
         LocalDateTime innsendingstidspunkt = LocalDateTime.now();
         LocalDate startPermisjon = LocalDate.now().minusDays(10);
@@ -168,9 +166,8 @@ public class MapInntektsmeldingerTest {
         Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
         KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
         AktørId aktørId = new AktørId("1234123412341");
-        YtelseType foreldrepenger = YtelseType.FORELDREPENGER;
-        Kobling kobling1 = new Kobling(saksnummer, koblingReferanse, aktørId);
-        kobling1.setYtelseType(foreldrepenger);
+        
+        Kobling kobling1 = new Kobling(ytelseType, saksnummer, koblingReferanse, aktørId);
         koblingTjeneste.lagre(kobling1);
         LocalDateTime innsendingstidspunkt = LocalDateTime.now();
         Arbeidsgiver virksomhet = Arbeidsgiver.virksomhet(new OrgNummer("910909088"));
@@ -185,8 +182,8 @@ public class MapInntektsmeldingerTest {
         iayRepository.lagre(koblingReferanse, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(im));
 
         // Act
-        Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, foreldrepenger);
-        Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, foreldrepenger).orElseThrow();
+        Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
+        Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType).orElseThrow();
         RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm, iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
 
         // Assert
@@ -202,9 +199,7 @@ public class MapInntektsmeldingerTest {
         Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
         KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
         AktørId aktørId = new AktørId("1234123412341");
-        YtelseType foreldrepenger = YtelseType.FORELDREPENGER;
-        Kobling kobling1 = new Kobling(saksnummer, koblingReferanse, aktørId);
-        kobling1.setYtelseType(foreldrepenger);
+        Kobling kobling1 = new Kobling(ytelseType, saksnummer, koblingReferanse, aktørId);
         koblingTjeneste.lagre(kobling1);
         LocalDateTime innsendingstidspunkt = LocalDateTime.now();
         LocalDate startPermisjon = LocalDate.now().minusDays(10);
@@ -231,8 +226,8 @@ public class MapInntektsmeldingerTest {
         iayRepository.lagre(koblingReferanse, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(im2));
 
         // Act
-        Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, foreldrepenger);
-        Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, foreldrepenger).orElseThrow();
+        Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
+        Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType).orElseThrow();
         RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm, iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
 
         // Assert
@@ -245,9 +240,7 @@ public class MapInntektsmeldingerTest {
         Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
         KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
         AktørId aktørId = new AktørId("1234123412341");
-        YtelseType foreldrepenger = YtelseType.FORELDREPENGER;
-        Kobling kobling1 = new Kobling(saksnummer, koblingReferanse, aktørId);
-        kobling1.setYtelseType(foreldrepenger);
+        Kobling kobling1 = new Kobling(ytelseType, saksnummer, koblingReferanse, aktørId);
         koblingTjeneste.lagre(kobling1);
         LocalDateTime innsendingstidspunkt = LocalDateTime.now();
         LocalDate startPermisjon = LocalDate.now().minusDays(10);
@@ -274,8 +267,8 @@ public class MapInntektsmeldingerTest {
         iayRepository.lagre(koblingReferanse, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(im2));
 
         // Act
-        Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, foreldrepenger);
-        Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, foreldrepenger).orElseThrow();
+        Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
+        Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType).orElseThrow();
         RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm, iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
 
         // Assert
@@ -292,9 +285,7 @@ public class MapInntektsmeldingerTest {
         Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
         KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
         AktørId aktørId = new AktørId("1234123412341");
-        YtelseType foreldrepenger = YtelseType.FORELDREPENGER;
-        Kobling kobling1 = new Kobling(saksnummer, koblingReferanse, aktørId);
-        kobling1.setYtelseType(foreldrepenger);
+        Kobling kobling1 = new Kobling(ytelseType, saksnummer, koblingReferanse, aktørId);
         koblingTjeneste.lagre(kobling1);
         LocalDateTime innsendingstidspunkt = LocalDateTime.now();
         LocalDate startPermisjon = LocalDate.now().minusDays(10);
@@ -322,8 +313,8 @@ public class MapInntektsmeldingerTest {
         iayRepository.lagre(koblingReferanse, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(im, im2));
 
         // Act
-        Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, foreldrepenger);
-        Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, foreldrepenger).orElseThrow();
+        Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
+        Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType).orElseThrow();
         RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm, iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
 
         // Assert
@@ -345,9 +336,7 @@ public class MapInntektsmeldingerTest {
         Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
         KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
         AktørId aktørId = new AktørId("1234123412341");
-        YtelseType foreldrepenger = YtelseType.FORELDREPENGER;
-        Kobling kobling1 = new Kobling(saksnummer, koblingReferanse, aktørId);
-        kobling1.setYtelseType(foreldrepenger);
+        Kobling kobling1 = new Kobling(ytelseType, saksnummer, koblingReferanse, aktørId);
         koblingTjeneste.lagre(kobling1);
         LocalDateTime innsendingstidspunkt = LocalDateTime.now();
         LocalDate startPermisjon = LocalDate.now().minusDays(10);
@@ -379,8 +368,8 @@ public class MapInntektsmeldingerTest {
         iayRepository.lagre(koblingReferanse, builder, List.of(im, im2));
 
         // Act
-        Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, foreldrepenger);
-        Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, foreldrepenger).orElseThrow();
+        Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
+        Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType).orElseThrow();
         RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm, iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
 
         // Assert

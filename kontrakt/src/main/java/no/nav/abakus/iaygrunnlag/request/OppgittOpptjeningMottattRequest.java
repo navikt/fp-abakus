@@ -1,5 +1,6 @@
 package no.nav.abakus.iaygrunnlag.request;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -13,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.PersonIdent;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningDto;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -41,14 +43,20 @@ public class OppgittOpptjeningMottattRequest {
     @Valid
     private OppgittOpptjeningDto oppgittOpptjening;
 
+    /** Optional - for now, gjør required når K9, FP sender. */
+    @JsonProperty(value = "ytelseType")
+    private YtelseType ytelseType = YtelseType.UDEFINERT;
+
     @JsonCreator
     public OppgittOpptjeningMottattRequest(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
                                            @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UUID koblingReferanse,
                                            @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
+                                           @JsonProperty(value = "ytelseType") YtelseType ytelseType,
                                            @JsonProperty(value = "oppgittOpptjening", required = true) @NotNull @Valid OppgittOpptjeningDto oppgittOpptjening) {
         this.saksnummer = saksnummer;
         this.koblingReferanse = koblingReferanse;
         this.aktør = aktør;
+        this.ytelseType = ytelseType;
         this.oppgittOpptjening = oppgittOpptjening;
     }
 
@@ -66,5 +74,36 @@ public class OppgittOpptjeningMottattRequest {
 
     public OppgittOpptjeningDto getOppgittOpptjening() {
         return oppgittOpptjening;
+    }
+
+    public YtelseType getYtelseType() {
+        return this.ytelseType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(saksnummer, koblingReferanse, aktør, ytelseType);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+        if (!(obj instanceof OppgittOpptjeningMottattRequest))
+            return false;
+        var other = (OppgittOpptjeningMottattRequest) obj;
+        return Objects.equals(saksnummer, other.saksnummer)
+            && Objects.equals(koblingReferanse, other.koblingReferanse)
+            && Objects.equals(aktør, other.aktør)
+            && Objects.equals(ytelseType, other.ytelseType);
+
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "<saksnummer=" + saksnummer
+            + ", koblingRef=" + koblingReferanse
+            + ", ytelseType=" + ytelseType
+            + ">";
     }
 }

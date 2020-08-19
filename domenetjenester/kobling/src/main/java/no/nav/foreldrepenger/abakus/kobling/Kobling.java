@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.kobling;
 
 import java.time.LocalDate;
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -49,12 +48,12 @@ public class Kobling extends BaseEntitet implements IndexKey {
     @NaturalId
     @Embedded
     @AttributeOverrides({
-        @AttributeOverride(name = "referanse", column = @Column(name = "kobling_referanse", updatable = false, unique = true))
+            @AttributeOverride(name = "referanse", column = @Column(name = "kobling_referanse", updatable = false, unique = true))
     })
     private KoblingReferanse koblingReferanse;
 
     @Convert(converter = YtelseTypeKodeverdiConverter.class)
-    @Column(name="ytelse_type", nullable = false)
+    @Column(name = "ytelse_type", nullable = false)
     private YtelseType ytelseType = YtelseType.UDEFINERT;
 
     @Embedded
@@ -62,20 +61,16 @@ public class Kobling extends BaseEntitet implements IndexKey {
     private AktørId aktørId;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "annen_part_aktoer_id")))
-    private AktørId annenPartAktørId;
-
-    @Embedded
     @AttributeOverrides({
-        @AttributeOverride(name = "fomDato", column = @Column(name = "opplysning_periode_fom")),
-        @AttributeOverride(name = "tomDato", column = @Column(name = "opplysning_periode_tom"))
+            @AttributeOverride(name = "fomDato", column = @Column(name = "opplysning_periode_fom")),
+            @AttributeOverride(name = "tomDato", column = @Column(name = "opplysning_periode_tom"))
     })
     private IntervallEntitet opplysningsperiode;
 
     @Embedded
     @AttributeOverrides({
-        @AttributeOverride(name = "fomDato", column = @Column(name = "opptjening_periode_fom")),
-        @AttributeOverride(name = "tomDato", column = @Column(name = "opptjening_periode_tom"))
+            @AttributeOverride(name = "fomDato", column = @Column(name = "opptjening_periode_fom")),
+            @AttributeOverride(name = "tomDato", column = @Column(name = "opptjening_periode_tom"))
     })
     private IntervallEntitet opptjeningsperiode;
 
@@ -86,13 +81,11 @@ public class Kobling extends BaseEntitet implements IndexKey {
     public Kobling() {
     }
 
-    public Kobling(Saksnummer saksnummer, KoblingReferanse koblingReferanse, AktørId aktørId) {
-        Objects.requireNonNull(saksnummer, "saksnummer");
-        Objects.requireNonNull(koblingReferanse, "koblingReferanse");
-        Objects.requireNonNull(aktørId, "aktørId");
-        this.saksnummer = saksnummer;
-        this.koblingReferanse = koblingReferanse;
-        this.aktørId = aktørId;
+    public Kobling(YtelseType ytelseType, Saksnummer saksnummer, KoblingReferanse koblingReferanse, AktørId aktørId) {
+        this.saksnummer = Objects.requireNonNull(saksnummer, "saksnummer");
+        this.koblingReferanse = Objects.requireNonNull(koblingReferanse, "koblingReferanse");
+        this.aktørId = Objects.requireNonNull(aktørId, "aktørId");
+        this.ytelseType = Objects.requireNonNull(ytelseType, "ytelseType");
     }
 
     @Override
@@ -110,12 +103,6 @@ public class Kobling extends BaseEntitet implements IndexKey {
 
     public AktørId getAktørId() {
         return aktørId;
-    }
-
-    /** Skal ikke brukes lenger og fjernes i en senere release. */
-    @Deprecated(forRemoval = true)
-    public Optional<AktørId> getAnnenPartAktørId() {
-        return Optional.ofNullable(annenPartAktørId);
     }
 
     public LocalDate getSkjæringstidspunkt() {
@@ -155,7 +142,6 @@ public class Kobling extends BaseEntitet implements IndexKey {
         return "Kobling{" +
             "KoblingReferanse=" + koblingReferanse +
             ", saksnummer = " + saksnummer +
-            ", annenPartAktørId=" + annenPartAktørId +
             ", opplysningsperiode=" + opplysningsperiode +
             ", opptjeningsperiode=" + opptjeningsperiode +
             '}';

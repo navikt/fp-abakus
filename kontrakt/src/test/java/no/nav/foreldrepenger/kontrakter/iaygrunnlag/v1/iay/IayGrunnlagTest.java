@@ -130,7 +130,7 @@ public class IayGrunnlagTest {
     private InntektArbeidYtelseGrunnlagDto byggInntektArbeidYtelseGrunnlag() {
         OffsetDateTime offTidspunkt = tidspunkt.atZone(ZoneOffset.systemDefault()).toOffsetDateTime();
 
-        var grunnlag = new InntektArbeidYtelseGrunnlagDto(aktørId, offTidspunkt, uuid, uuid);
+        var grunnlag = new InntektArbeidYtelseGrunnlagDto(aktørId, offTidspunkt, uuid, uuid, ytelseType);
 
         var arbeidsforholdId = new ArbeidsforholdRefDto(UUID.randomUUID().toString(), "aaregRef");
 

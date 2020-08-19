@@ -33,10 +33,10 @@ public class IAYTilDtoMapper {
             return null;
         }
         var dataset = spec.getDataset();
-
+        
         var grunnlagTidspunkt = grunnlag.getOpprettetTidspunkt().atZone(ZoneId.systemDefault()).toOffsetDateTime();
         var dto = new InntektArbeidYtelseGrunnlagDto(new AktørIdPersonident(aktørId.getId()),
-            grunnlagTidspunkt, grunnlagReferanse != null ? grunnlagReferanse.getReferanse() : grunnlag.getGrunnlagReferanse().getReferanse(), koblingReferanse.getReferanse());
+            grunnlagTidspunkt, grunnlagReferanse != null ? grunnlagReferanse.getReferanse() : grunnlag.getGrunnlagReferanse().getReferanse(), koblingReferanse.getReferanse(), spec.getYtelseType());
 
         // Selektiv mapping avhengig av hva som er forspurt av data
 

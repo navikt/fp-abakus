@@ -45,26 +45,25 @@ public class InntektArbeidYtelseRepositoryTest {
 
     @Test
     public void skal_svare_om_er_siste() {
-        final var ko = new Kobling(new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()), new AktørId("1231231231223"));
-        ko.setYtelseType(YtelseType.OMSORGSPENGER);
+        var ko = new Kobling(YtelseType.OMSORGSPENGER, new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()), new AktørId("1231231231223"));
         ko.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(2), LocalDate.now()));
         koblingRepository.lagre(ko);
 
-        final var builder = OppgittOpptjeningBuilder.ny();
+        var builder = OppgittOpptjeningBuilder.ny();
         builder.leggTilAnnenAktivitet(new OppgittAnnenAktivitet(IntervallEntitet.fraOgMed(LocalDate.now()), ArbeidType.VENTELØNN_VARTPENGER));
 
-        final var grunnlagReferanse = repository.lagre(ko.getKoblingReferanse(), builder);
+        var grunnlagReferanse = repository.lagre(ko.getKoblingReferanse(), builder);
 
         assertThat(repository.erGrunnlagAktivt(grunnlagReferanse.getReferanse())).isTrue();
 
-        final var inntektsmeldingBuilder = InntektsmeldingBuilder.builder()
+        var inntektsmeldingBuilder = InntektsmeldingBuilder.builder()
             .medArbeidsgiver(Arbeidsgiver.virksomhet(new OrgNummer("000000000")))
             .medBeløp(BigDecimal.TEN)
             .medJournalpostId("123123123")
             .medMottattDato(LocalDate.now())
             .medInnsendingstidspunkt(LocalDateTime.now());
 
-        final var nyGrunnlagReferanse = repository.lagre(ko.getKoblingReferanse(), ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(inntektsmeldingBuilder.build()));
+        var nyGrunnlagReferanse = repository.lagre(ko.getKoblingReferanse(), ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(inntektsmeldingBuilder.build()));
 
         assertThat(repository.erGrunnlagAktivt(grunnlagReferanse.getReferanse())).isFalse();
         assertThat(repository.erGrunnlagAktivt(nyGrunnlagReferanse.getReferanse())).isTrue();
@@ -72,12 +71,11 @@ public class InntektArbeidYtelseRepositoryTest {
 
     @Test
     public void skal_kunne_lagre_overstyring_av_oppgitt_opptjening() {
-        final var ko = new Kobling(new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()), new AktørId("1231231231223"));
-        ko.setYtelseType(YtelseType.OMSORGSPENGER);
+        var ko = new Kobling(YtelseType.OMSORGSPENGER, new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()), new AktørId("1231231231223"));
         ko.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(2), LocalDate.now()));
         koblingRepository.lagre(ko);
 
-        final var builder = OppgittOpptjeningBuilder.ny();
+        var builder = OppgittOpptjeningBuilder.ny();
         builder.leggTilAnnenAktivitet(new OppgittAnnenAktivitet(IntervallEntitet.fraOgMed(LocalDate.now()), ArbeidType.VENTELØNN_VARTPENGER));
 
         repository.lagreOverstyring(ko.getKoblingReferanse(), builder);
@@ -90,16 +88,15 @@ public class InntektArbeidYtelseRepositoryTest {
 
     @Test
     public void skal_kunne_lagre_både_vanlig_og_overstyring_av_oppgitt_opptjening() {
-        final var ko = new Kobling(new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()), new AktørId("1231231231223"));
-        ko.setYtelseType(YtelseType.OMSORGSPENGER);
+        var ko = new Kobling(YtelseType.OMSORGSPENGER, new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()), new AktørId("1231231231223"));
         ko.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(2), LocalDate.now()));
         koblingRepository.lagre(ko);
 
-        final var vanlig = OppgittOpptjeningBuilder.ny();
+        var vanlig = OppgittOpptjeningBuilder.ny();
         OppgittAnnenAktivitet annenAktivitet = new OppgittAnnenAktivitet(IntervallEntitet.fraOgMed(LocalDate.now()), ArbeidType.ETTERLØNN_SLUTTPAKKE);
         vanlig.leggTilAnnenAktivitet(annenAktivitet);
 
-        final var overstyring = OppgittOpptjeningBuilder.ny();
+        var overstyring = OppgittOpptjeningBuilder.ny();
         OppgittAnnenAktivitet overstrytAnnenAktivitet = new OppgittAnnenAktivitet(IntervallEntitet.fraOgMed(LocalDate.now()), ArbeidType.VENTELØNN_VARTPENGER);
         overstyring.leggTilAnnenAktivitet(overstrytAnnenAktivitet);
 
@@ -119,12 +116,11 @@ public class InntektArbeidYtelseRepositoryTest {
 
     @Test
     public void skal_kunne_lagre_overstyring_av_oppgitt_opptjening_flere_ganger() {
-        final var ko = new Kobling(new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()), new AktørId("1231231231223"));
-        ko.setYtelseType(YtelseType.OMSORGSPENGER);
+        var ko = new Kobling(YtelseType.OMSORGSPENGER, new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()), new AktørId("1231231231223"));
         ko.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(2), LocalDate.now()));
         koblingRepository.lagre(ko);
 
-        final var overstyring1 = OppgittOpptjeningBuilder.ny();
+        var overstyring1 = OppgittOpptjeningBuilder.ny();
         OppgittAnnenAktivitet annenAktivitetoverstyring1 = new OppgittAnnenAktivitet(IntervallEntitet.fraOgMed(LocalDate.now()), ArbeidType.ETTERLØNN_SLUTTPAKKE);
         overstyring1.leggTilAnnenAktivitet(annenAktivitetoverstyring1);
 
@@ -137,7 +133,7 @@ public class InntektArbeidYtelseRepositoryTest {
         assertThat(overstyrtOppgittOpptjening).isPresent();
         assertThat(overstyrtOppgittOpptjening.get().getAnnenAktivitet()).containsExactly(annenAktivitetoverstyring1);
 
-        final var overstyring2 = OppgittOpptjeningBuilder.ny();
+        var overstyring2 = OppgittOpptjeningBuilder.ny();
         OppgittAnnenAktivitet annenAktivitetoverstyring2 = new OppgittAnnenAktivitet(IntervallEntitet.fraOgMed(LocalDate.now()), ArbeidType.VENTELØNN_VARTPENGER);
         overstyring2.leggTilAnnenAktivitet(annenAktivitetoverstyring2);
         repository.lagreOverstyring(ko.getKoblingReferanse(), overstyring2);
@@ -155,8 +151,7 @@ public class InntektArbeidYtelseRepositoryTest {
         var aktørId = new AktørId("1231231231223");
         var koblingReferanse = new KoblingReferanse(UUID.randomUUID());
         var saksnummer = new Saksnummer("12341234");
-        final var ko = new Kobling(saksnummer, koblingReferanse, aktørId);
-        ko.setYtelseType(YtelseType.OMSORGSPENGER);
+        var ko = new Kobling(YtelseType.OMSORGSPENGER, saksnummer, koblingReferanse, aktørId);
         LocalDateTime now = LocalDateTime.now();
         LocalDate idag = now.toLocalDate();
         ko.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(idag.minusYears(2), idag));
@@ -233,8 +228,7 @@ public class InntektArbeidYtelseRepositoryTest {
         var aktørId = new AktørId("1231231231223");
         var koblingReferanse = new KoblingReferanse(UUID.randomUUID());
         var saksnummer = new Saksnummer("12341234");
-        final var ko = new Kobling(saksnummer, koblingReferanse, aktørId);
-        ko.setYtelseType(YtelseType.OMSORGSPENGER);
+        var ko = new Kobling(YtelseType.OMSORGSPENGER, saksnummer, koblingReferanse, aktørId);
         LocalDateTime now = LocalDateTime.now();
         LocalDate idag = now.toLocalDate();
         ko.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(idag.minusYears(2), idag));

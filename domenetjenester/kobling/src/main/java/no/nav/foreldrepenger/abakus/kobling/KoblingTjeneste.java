@@ -27,8 +27,8 @@ public class KoblingTjeneste {
         this.låsRepository = låsRepository;
     }
 
-    public Kobling finnEllerOpprett(KoblingReferanse referanse, AktørId aktørId, Saksnummer saksnummer) {
-        Kobling kobling = hentFor(referanse).orElseGet(() -> new Kobling(saksnummer, referanse, aktørId));
+    public Kobling finnEllerOpprett(YtelseType ytelseType, KoblingReferanse referanse, AktørId aktørId, Saksnummer saksnummer) {
+        Kobling kobling = hentFor(referanse).orElseGet(() -> new Kobling(ytelseType, saksnummer, referanse, aktørId));
         repository.lagre(kobling);
         return kobling;
     }

@@ -109,17 +109,17 @@ public class InnhentRegisterdataTjeneste {
         if (koblingOpt.isEmpty()) {
             // Lagre kobling
             AktørId aktørId = new AktørId(dto.getAktør().getIdent());
-            kobling = new Kobling(new Saksnummer(dto.getSaksnummer()), referanse, aktørId);
+            kobling = new Kobling(dto.getYtelseType(), new Saksnummer(dto.getSaksnummer()), referanse, aktørId);
         } else {
             kobling = koblingOpt.get();
-        }
-
-        if (YtelseType.UDEFINERT.equals(kobling.getYtelseType())) {
-            var ytelseType = mapTilYtelseType(dto);
-            if (ytelseType != null) {
-                kobling.setYtelseType(ytelseType);
+            if (YtelseType.UDEFINERT.equals(kobling.getYtelseType())) {
+                var ytelseType = mapTilYtelseType(dto);
+                if (ytelseType != null) {
+                    kobling.setYtelseType(ytelseType);
+                }
             }
         }
+
         // Oppdater kobling
         Periode opplysningsperiode = dto.getOpplysningsperiode();
         if (opplysningsperiode != null) {

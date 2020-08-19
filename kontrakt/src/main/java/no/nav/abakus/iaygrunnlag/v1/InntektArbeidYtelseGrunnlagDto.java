@@ -14,14 +14,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.UuidDto;
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningDto;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -62,6 +62,9 @@ public class InntektArbeidYtelseGrunnlagDto {
     @NotNull
     private PersonIdent person;
 
+    @JsonProperty(value = "ytelseType")
+    private YtelseType ytelseType = YtelseType.UDEFINERT;
+
     @JsonProperty(value = "registerGrunnlag")
     @Valid
     private InntektArbeidYtelseAggregatRegisterDto register;
@@ -93,7 +96,8 @@ public class InntektArbeidYtelseGrunnlagDto {
     public InntektArbeidYtelseGrunnlagDto(@JsonProperty(value = "person", required = true) @Valid @NotNull PersonIdent person,
                                           @JsonProperty(value = "grunnlagTidspunkt", required = true) @Valid @NotNull OffsetDateTime grunnlagTidspunkt,
                                           @JsonProperty(value = "grunnlagReferanse", required = true) @Valid @NotNull UUID grunnlagReferanse,
-                                          @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UUID koblingReferanse) {
+                                          @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UUID koblingReferanse,
+                                          @JsonProperty(value = "ytelseType") YtelseType ytelseType) {
         Objects.requireNonNull(person, "person");
         Objects.requireNonNull(grunnlagTidspunkt, "grunnlagTidspunkt");
         Objects.requireNonNull(grunnlagReferanse, "grunnlagReferanse");
@@ -102,12 +106,14 @@ public class InntektArbeidYtelseGrunnlagDto {
         this.grunnlagReferanse = new UuidDto(grunnlagReferanse);
         this.koblingReferanse = new UuidDto(koblingReferanse);
         this.grunnlagTidspunkt = grunnlagTidspunkt;
+        this.ytelseType = ytelseType;
     }
 
     public InntektArbeidYtelseGrunnlagDto(@JsonProperty(value = "person", required = true) @Valid @NotNull PersonIdent person,
                                           @JsonProperty(value = "grunnlagTidspunkt", required = true) @Valid @NotNull LocalDateTime grunnlagTidspunkt,
                                           @JsonProperty(value = "grunnlagReferanse", required = true) @Valid @NotNull UuidDto grunnlagReferanse,
-                                          @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UuidDto koblingReferanse) {
+                                          @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UuidDto koblingReferanse,
+                                          @JsonProperty(value = "ytelseType") YtelseType ytelseType) {
         Objects.requireNonNull(person, "person");
         Objects.requireNonNull(grunnlagTidspunkt, "grunnlagTidspunkt");
         Objects.requireNonNull(grunnlagReferanse, "grunnlagReferanse");
@@ -116,6 +122,7 @@ public class InntektArbeidYtelseGrunnlagDto {
         this.person = person;
         this.grunnlagReferanse = grunnlagReferanse;
         this.grunnlagTidspunkt = grunnlagTidspunkt.atZone(DEFAULT_ZONE).toOffsetDateTime();
+        this.ytelseType= ytelseType;
     }
 
     protected InntektArbeidYtelseGrunnlagDto() {
@@ -169,6 +176,10 @@ public class InntektArbeidYtelseGrunnlagDto {
 
     public PersonIdent getPerson() {
         return person;
+    }
+    
+    public YtelseType getYtelseType() {
+        return this.ytelseType;
     }
 
     public InntektArbeidYtelseAggregatRegisterDto getRegister() {
@@ -230,6 +241,5 @@ public class InntektArbeidYtelseGrunnlagDto {
     public void setRegister(InntektArbeidYtelseAggregatRegisterDto register) {
         this.register = register;
     }
-
 
 }
