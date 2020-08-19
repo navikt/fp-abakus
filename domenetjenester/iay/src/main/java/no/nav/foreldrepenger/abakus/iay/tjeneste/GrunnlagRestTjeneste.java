@@ -411,8 +411,9 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
         public InntektArbeidYtelseGrunnlagAbacDto(@JsonProperty(value = "person", required = true) @Valid @NotNull PersonIdent person,
                                                   @JsonProperty(value = "grunnlagTidspunkt", required = true) @Valid @NotNull OffsetDateTime grunnlagTidspunkt,
                                                   @JsonProperty(value = "grunnlagReferanse", required = true) @Valid @NotNull UUID grunnlagReferanse,
-                                                  @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UUID koblingReferanse) {
-            super(person, grunnlagTidspunkt, grunnlagReferanse, koblingReferanse);
+                                                  @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UUID koblingReferanse,
+                                                  @JsonProperty(value="ytelseType") YtelseType ytelseType) {
+            super(person, grunnlagTidspunkt, grunnlagReferanse, koblingReferanse, ytelseType);
         }
 
         @Override
