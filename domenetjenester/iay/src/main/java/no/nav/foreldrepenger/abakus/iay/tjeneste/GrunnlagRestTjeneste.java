@@ -147,7 +147,7 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
             var grunnlag = getGrunnlag(spesifikasjon, grunnlagReferanse, koblingReferanse);
             if (grunnlag != null) {
                 var dtoMapper = new IAYTilDtoMapper(aktørId, grunnlagReferanse, koblingReferanse);
-                var etag = new EntityTag(grunnlagReferanse.getReferanse().toString());
+                var etag = new EntityTag(grunnlag.getGrunnlagReferanse().getReferanse().toString());
                 CacheControl cc = new CacheControl();
                 var dto = dtoMapper.mapTilDto(grunnlag, spesifikasjon.getYtelseType(), spesifikasjon.getDataset());
                 cc.setMaxAge((int) TimeUnit.DAYS.toSeconds(1));
@@ -542,7 +542,7 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
             throw new java.lang.IllegalStateException("Ukjent identtype");
         }
     }
-    
+
     public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         @Override
