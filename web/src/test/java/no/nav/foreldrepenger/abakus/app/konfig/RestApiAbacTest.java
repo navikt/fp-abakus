@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Request;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -115,6 +116,7 @@ public class RestApiAbacTest {
         SERVLET(HttpServletRequest.class),
         ENUM(Enum.class),
         UUID(UUID.class),
+        REQUEST(Request.class),
         ;
 
         private Class<?> clazz;
