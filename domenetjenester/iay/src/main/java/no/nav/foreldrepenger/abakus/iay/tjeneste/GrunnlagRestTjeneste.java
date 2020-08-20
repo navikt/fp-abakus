@@ -169,9 +169,9 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
     })
     @BeskyttetRessurs(action = READ, resource = GRUNNLAG)
     @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT" })
-    public Response hentArbeidsforholdInformasjon(@NotNull @QueryParam("ytelseType") YtelseType ytelseType,
+    public Response hentArbeidsforholdInformasjon(@NotNull @Valid @QueryParam("ytelseType") YtelseType ytelseType,
                                                   @NotNull @Valid @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'") String saksnummer,
-                                                  @NotNull @QueryParam("kobling") UUID koblingReferanse,
+                                                  @NotNull @Valid @QueryParam("kobling") UUID koblingReferanse,
                                                   @Context Request req) {
 
         CacheControl cc = new CacheControl();
@@ -216,10 +216,10 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
     })
     @BeskyttetRessurs(action = READ, resource = GRUNNLAG)
     @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT" })
-    public Response hentSisteIayGrunnlag(@NotNull @QueryParam("ytelseType") YtelseType ytelseType,
-                                                  @NotNull @Valid @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'") String saksnummer,
-                                                  @NotNull @QueryParam("kobling") UUID koblingReferanse,
-                                                  @Context Request req) {
+    public Response hentSisteIayGrunnlag(@NotNull @Valid @QueryParam("ytelseType") YtelseType ytelseType,
+                                         @NotNull @Valid @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'") String saksnummer,
+                                         @NotNull @Valid @QueryParam("kobling") UUID koblingReferanse,
+                                         @Context Request req) {
 
         CacheControl cc = new CacheControl();
         cc.setMaxAge((int) TimeUnit.DAYS.toSeconds(1));
@@ -248,7 +248,6 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
 
     }
 
-    
     private Date getSistOppdatert(LocalDateTime... tidspunkt) {
         var tid = new ArrayList<>(Arrays.asList(tidspunkt));
         Collections.sort(tid);
