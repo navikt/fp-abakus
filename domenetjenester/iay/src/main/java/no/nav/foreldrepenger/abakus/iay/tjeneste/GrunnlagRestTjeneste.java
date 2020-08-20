@@ -8,7 +8,13 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.UPDAT
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Optional;
@@ -20,12 +26,19 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 import org.jboss.weld.exceptions.IllegalStateException;
@@ -47,6 +60,7 @@ import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.FnrPersonident;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
+import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.Dataset;
 import no.nav.abakus.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest;
@@ -121,7 +135,7 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
         var grunnlagReferanse = forespurtGrunnlagReferanse != null ? new GrunnlagReferanse(forespurtGrunnlagReferanse) : null;
         var koblingReferanse = getKoblingReferanse(aktørId, spesifikasjon);
 
-        final var sisteKjenteGrunnlagReferanse = utledSisteKjenteGrunnlagReferanse(spesifikasjon);
+        final var sisteKjenteGrunnlagReferanse = utledSisteKjenteGrunnlagReferanseFraSpesifikasjon(spesifikasjon);
         final var sistKjenteErAktivt = sisteKjenteGrunnlagReferanse != null && iayTjeneste.erGrunnlagAktivt(sisteKjenteGrunnlagReferanse);
 
         if (sisteKjenteGrunnlagReferanse != null && sistKjenteErAktivt) {
@@ -141,7 +155,60 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
         return response;
     }
 
-    private UUID utledSisteKjenteGrunnlagReferanse(InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
+    @GET
+    @Path("/arbeidsforhold-referanser")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Hent aktivt arbeidsforholdinformasjon grunnlag for angitt kobling", tags = "iay-grunnlag", responses = {
+            @ApiResponse(description = "ArbeidsforholdInformasjon", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArbeidsforholdInformasjon.class))),
+            @ApiResponse(responseCode = "204", description = "Det finnes ikke et arbeidsforhold grunnlag for forespørselen"),
+            @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")
+    })
+    @BeskyttetRessurs(action = READ, resource = GRUNNLAG)
+    @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT" })
+    public Response hentArbeidsforholdInformasjon(@NotNull @QueryParam("ytelseType") YtelseType ytelseType,
+                                                  @NotNull @Valid @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'") String saksnummer,
+                                                  @NotNull @QueryParam("kobling") UUID koblingReferanse,
+                                                  @Context Request req) {
+
+        CacheControl cc = new CacheControl();
+        cc.setMaxAge(86400); // Set max age to one day
+
+        var ref = new KoblingReferanse(koblingReferanse);
+        var aktivtGrunnlag = iayTjeneste.hentAggregat(ref);
+
+        var ai = aktivtGrunnlag.getArbeidsforholdInformasjon().orElse(null);
+        if (ai == null) {
+            return Response.noContent().build();
+        }
+
+        var etag = new EntityTag(aktivtGrunnlag.getGrunnlagReferanse().getReferanse().toString());
+
+        var rb = req.evaluatePreconditions(etag);
+
+        if (rb == null) {
+            Kobling kobling = koblingTjeneste.hentFor(ref).orElseThrow(() -> new IllegalArgumentException("Har ikke kobling for " + ref));
+            if (!Objects.equals(kobling.getYtelseType(), ytelseType) || kobling.getSaksnummer() == null || !Objects.equals(kobling.getSaksnummer().getVerdi(), saksnummer)) {
+                throw new IllegalArgumentException("Har ikke kobling for " + ref + ", for ytelse=" + ytelseType + ", saksnummer=" + saksnummer);
+            }
+            var dtoMapper = new IAYTilDtoMapper(kobling.getAktørId(), aktivtGrunnlag.getGrunnlagReferanse(), ref);
+            var aiDto = dtoMapper.mapArbeidsforholdInformasjon(aktivtGrunnlag.getGrunnlagReferanse().getReferanse(), ai);
+            return Response.ok(aiDto)
+                .tag(etag)
+                .lastModified(getSistOppdatert(aktivtGrunnlag.getOpprettetTidspunkt(), aktivtGrunnlag.getEndretTidspunkt()))
+                .cacheControl(cc).build();
+        } else {
+            return rb.cacheControl(cc).tag(etag).build();
+        }
+
+    }
+
+    private Date getSistOppdatert(LocalDateTime... tidspunkt) {
+        var tid = new ArrayList<>(Arrays.asList(tidspunkt));
+        Collections.sort(tid);
+        return Date.from(tid.get(tid.size() - 1).atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    private UUID utledSisteKjenteGrunnlagReferanseFraSpesifikasjon(InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
         final var sisteKjenteGrunnlagReferanse = spesifikasjon.getSisteKjenteGrunnlagReferanse();
         final var forespurtGrunnlagReferanse = spesifikasjon.getGrunnlagReferanse();
 
@@ -412,7 +479,7 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
                                                   @JsonProperty(value = "grunnlagTidspunkt", required = true) @Valid @NotNull OffsetDateTime grunnlagTidspunkt,
                                                   @JsonProperty(value = "grunnlagReferanse", required = true) @Valid @NotNull UUID grunnlagReferanse,
                                                   @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UUID koblingReferanse,
-                                                  @JsonProperty(value="ytelseType") YtelseType ytelseType) {
+                                                  @JsonProperty(value = "ytelseType") YtelseType ytelseType) {
             super(person, grunnlagTidspunkt, grunnlagReferanse, koblingReferanse, ytelseType);
         }
 

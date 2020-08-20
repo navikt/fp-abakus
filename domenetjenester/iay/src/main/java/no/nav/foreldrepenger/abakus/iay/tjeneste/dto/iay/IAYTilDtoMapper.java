@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
 import java.time.ZoneId;
+import java.util.UUID;
 
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.request.Dataset;
@@ -35,8 +36,8 @@ public class IAYTilDtoMapper {
         var dataset = spec.getDataset();
         
         var grunnlagTidspunkt = grunnlag.getOpprettetTidspunkt().atZone(ZoneId.systemDefault()).toOffsetDateTime();
-        var dto = new InntektArbeidYtelseGrunnlagDto(new AktørIdPersonident(aktørId.getId()),
-            grunnlagTidspunkt, grunnlagReferanse != null ? grunnlagReferanse.getReferanse() : grunnlag.getGrunnlagReferanse().getReferanse(), koblingReferanse.getReferanse(), spec.getYtelseType());
+        UUID denneGrunnlagRef = grunnlagReferanse != null ? grunnlagReferanse.getReferanse() : grunnlag.getGrunnlagReferanse().getReferanse();
+        var dto = new InntektArbeidYtelseGrunnlagDto(new AktørIdPersonident(aktørId.getId()), grunnlagTidspunkt, denneGrunnlagRef, koblingReferanse.getReferanse(), spec.getYtelseType());
 
         // Selektiv mapping avhengig av hva som er forspurt av data
 
@@ -46,7 +47,7 @@ public class IAYTilDtoMapper {
 
         if (dataset.contains(Dataset.OVERSTYRT)) {
             grunnlag.getArbeidsforholdInformasjon().ifPresent(ai -> {
-                var arbeidsforholdInformasjon = new MapArbeidsforholdInformasjon.MapTilDto().map(ai);
+                var arbeidsforholdInformasjon = mapArbeidsforholdInformasjon(denneGrunnlagRef, ai);
                 dto.medArbeidsforholdInformasjon(arbeidsforholdInformasjon);
             });
             grunnlag.getSaksbehandletVersjon().ifPresent(a -> mapSaksbehandlerOverstyrteOpplysninger(a, getArbeidsforholdInformasjon(grunnlag), dto));
@@ -74,6 +75,10 @@ public class IAYTilDtoMapper {
             });
         }
         return dto;
+    }
+
+    public no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon mapArbeidsforholdInformasjon(UUID grunnlagRef, ArbeidsforholdInformasjon ai) {
+        return new MapArbeidsforholdInformasjon.MapTilDto().map(grunnlagRef, ai);
     }
 
     private ArbeidsforholdInformasjon getArbeidsforholdInformasjon(InntektArbeidYtelseGrunnlag grunnlag) {

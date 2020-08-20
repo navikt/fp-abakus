@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import no.nav.abakus.iaygrunnlag.Aktør;
@@ -114,11 +115,11 @@ class MapArbeidsforholdInformasjon {
 
     static class MapTilDto {
 
-        ArbeidsforholdInformasjon map(no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon entitet) {
+        ArbeidsforholdInformasjon map(UUID grunnlagRef, no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon entitet) {
             if (entitet == null)
                 return null;
 
-            var arbeidsforholdInformasjon = new ArbeidsforholdInformasjon();
+            var arbeidsforholdInformasjon = new ArbeidsforholdInformasjon(grunnlagRef);
             var overstyringer = entitet.getOverstyringer().stream()
                 .map(ao -> {
                     var dto = new ArbeidsforholdOverstyringDto(mapAktør(ao.getArbeidsgiver()),
