@@ -7,6 +7,7 @@ import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -63,12 +64,13 @@ public class RestApiAbacTest {
      * Kontakt Team Humle hvis du trenger hjelp til å endre koden din slik at den går igjennom her *
      */
     @Test
-    public void test_at_alle_input_parametre_til_restmetoder_implementer_AbacDto() throws Exception {
+    public void test_at_minst_en_input_parametre_til_restmetoder_implementer_AbacDto() throws Exception {
         String feilmelding = "Parameter på %s.%s av type %s må implementere " + AbacDto.class.getSimpleName() + ".\n";
         StringBuilder feilmeldinger = new StringBuilder();
 
         for (Method restMethode : RestApiTester.finnAlleRestMetoder()) {
             for (Parameter parameter : restMethode.getParameters()) {
+                
                 if (Collection.class.isAssignableFrom(parameter.getType())) {
                     ParameterizedType type = (ParameterizedType) parameter.getParameterizedType();
                     @SuppressWarnings("rawtypes")
@@ -109,17 +111,20 @@ public class RestApiAbacTest {
      * Disse typene slipper naturligvis krav om impl av {@link AbacDto}
      */
     enum IgnorerteInputTyper {
-        BOOLEAN(Boolean.class.getName()),
-        SERVLET(HttpServletRequest.class.getName());
+        BOOLEAN(Boolean.class),
+        SERVLET(HttpServletRequest.class),
+        ENUM(Enum.class),
+        UUID(UUID.class),
+        ;
 
-        private String className;
+        private Class<?> clazz;
 
-        IgnorerteInputTyper(String className) {
-            this.className = className;
+        IgnorerteInputTyper(Class<?> clazz) {
+            this.clazz = clazz;
         }
 
         static boolean ignore(Class<?> klasse) {
-            return Arrays.stream(IgnorerteInputTyper.values()).anyMatch(e -> e.className.equals(klasse.getName()));
+            return Arrays.stream(IgnorerteInputTyper.values()).anyMatch(e -> e.clazz.isAssignableFrom(klasse));
         }
     }
 }
