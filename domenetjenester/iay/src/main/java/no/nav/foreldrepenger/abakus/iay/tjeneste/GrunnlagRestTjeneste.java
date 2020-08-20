@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -86,6 +87,7 @@ import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
+import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 
 @OpenAPIDefinition(tags = { @Tag(name = "iay-grunnlag") })
 @Path("/iay/grunnlag/v1")
@@ -170,7 +172,7 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
     @BeskyttetRessurs(action = READ, resource = GRUNNLAG)
     @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT" })
     public Response hentArbeidsforholdInformasjon(@NotNull @Valid @QueryParam("ytelseType") YtelseType ytelseType,
-                                                  @NotNull @Valid @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'") String saksnummer,
+                                                  @NotNull @Valid @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'") String saksnummer,
                                                   @NotNull @Valid @QueryParam("kobling") UUID koblingReferanse,
                                                   @Context Request req) {
 
@@ -217,7 +219,7 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
     @BeskyttetRessurs(action = READ, resource = GRUNNLAG)
     @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT" })
     public Response hentSisteIayGrunnlag(@NotNull @Valid @QueryParam("ytelseType") YtelseType ytelseType,
-                                         @NotNull @Valid @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'") String saksnummer,
+                                         @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @NotNull @Valid @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'") String saksnummer,
                                          @NotNull @Valid @QueryParam("kobling") UUID koblingReferanse,
                                          @Context Request req) {
 
@@ -538,6 +540,14 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
                 return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, getPerson().getIdent());
             }
             throw new java.lang.IllegalStateException("Ukjent identtype");
+        }
+    }
+    
+    public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
+
+        @Override
+        public AbacDataAttributter apply(Object o) {
+            return AbacDataAttributter.opprett();
         }
     }
 }
