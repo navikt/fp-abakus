@@ -180,7 +180,7 @@ public class IayGrunnlagTest {
                                         .medDagsats(100)
                                         .medUtbetalingsgrad(100))))))));
 
-        grunnlag.medArbeidsforholdInformasjon(new ArbeidsforholdInformasjon()
+        grunnlag.medArbeidsforholdInformasjon(new ArbeidsforholdInformasjon(UUID.randomUUID())
             .medReferanser(List.of(new ArbeidsforholdReferanseDto(org, arbeidsforholdId)))
             .medOverstyringer(List.of(new ArbeidsforholdOverstyringDto(org, arbeidsforholdId)
                 .medBegrunnelse("en begrunnelse")
