@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -144,8 +145,11 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
             var grunnlag = getGrunnlag(spesifikasjon, grunnlagReferanse, koblingReferanse);
             if (grunnlag != null) {
                 var dtoMapper = new IAYTilDtoMapper(aktørId, grunnlagReferanse, koblingReferanse);
-
-                response = Response.ok(dtoMapper.mapTilDto(grunnlag, spesifikasjon)).build();
+                var etag = new EntityTag(grunnlagReferanse.getReferanse().toString());
+                CacheControl cc = new CacheControl();
+                var dto = dtoMapper.mapTilDto(grunnlag, spesifikasjon.getYtelseType(), spesifikasjon.getDataset());
+                cc.setMaxAge((int) TimeUnit.DAYS.toSeconds(1));
+                response = Response.ok(dto).tag(etag).cacheControl(cc).build();
             } else {
                 response = Response.noContent().build();
             }
@@ -171,7 +175,7 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
                                                   @Context Request req) {
 
         CacheControl cc = new CacheControl();
-        cc.setMaxAge(86400); // Set max age to one day
+        cc.setMaxAge((int) TimeUnit.DAYS.toSeconds(1));
 
         var ref = new KoblingReferanse(koblingReferanse);
         var aktivtGrunnlag = iayTjeneste.hentAggregat(ref);
@@ -202,6 +206,49 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
 
     }
 
+    @GET
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Hent aktivt arbeidsforholdinformasjon grunnlag for angitt kobling", tags = "iay-grunnlag", responses = {
+            @ApiResponse(description = "ArbeidsforholdInformasjon", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArbeidsforholdInformasjon.class))),
+            @ApiResponse(responseCode = "204", description = "Det finnes ikke et arbeidsforhold grunnlag for forespørselen"),
+            @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")
+    })
+    @BeskyttetRessurs(action = READ, resource = GRUNNLAG)
+    @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT" })
+    public Response hentSisteIayGrunnlag(@NotNull @QueryParam("ytelseType") YtelseType ytelseType,
+                                                  @NotNull @Valid @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'") String saksnummer,
+                                                  @NotNull @QueryParam("kobling") UUID koblingReferanse,
+                                                  @Context Request req) {
+
+        CacheControl cc = new CacheControl();
+        cc.setMaxAge((int) TimeUnit.DAYS.toSeconds(1));
+
+        var ref = new KoblingReferanse(koblingReferanse);
+        var aktivtGrunnlag = iayTjeneste.hentAggregat(ref);
+
+        var etag = new EntityTag(aktivtGrunnlag.getGrunnlagReferanse().getReferanse().toString());
+
+        var rb = req.evaluatePreconditions(etag);
+
+        if (rb == null) {
+            Kobling kobling = koblingTjeneste.hentFor(ref).orElseThrow(() -> new IllegalArgumentException("Har ikke kobling for " + ref));
+            if (!Objects.equals(kobling.getYtelseType(), ytelseType) || kobling.getSaksnummer() == null || !Objects.equals(kobling.getSaksnummer().getVerdi(), saksnummer)) {
+                throw new IllegalArgumentException("Har ikke kobling for " + ref + ", for ytelse=" + ytelseType + ", saksnummer=" + saksnummer);
+            }
+            var dtoMapper = new IAYTilDtoMapper(kobling.getAktørId(), aktivtGrunnlag.getGrunnlagReferanse(), ref);
+            var dto = dtoMapper.mapTilDto(aktivtGrunnlag, ytelseType, Set.of(Dataset.values()));
+            return Response.ok(dto)
+                .tag(etag)
+                .lastModified(getSistOppdatert(aktivtGrunnlag.getOpprettetTidspunkt(), aktivtGrunnlag.getEndretTidspunkt()))
+                .cacheControl(cc).build();
+        } else {
+            return rb.cacheControl(cc).tag(etag).build();
+        }
+
+    }
+
+    
     private Date getSistOppdatert(LocalDateTime... tidspunkt) {
         var tid = new ArrayList<>(Arrays.asList(tidspunkt));
         Collections.sort(tid);
@@ -275,7 +322,7 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
             var kobling = koblingTjeneste.hent(g.getKoblingId());
 
             var dtoMapper = new IAYTilDtoMapper(aktørId, g.getGrunnlagReferanse(), kobling.getKoblingReferanse());
-            var dto = dtoMapper.mapTilDto(g, spesifikasjon);
+            var dto = dtoMapper.mapTilDto(g, spesifikasjon.getYtelseType(), spesifikasjon.getDataset());
 
             snapshot.leggTil(dto, g.isAktiv(), mapPeriode(kobling.getOpplysningsperiode()), mapPeriode(kobling.getOpptjeningsperiode()));
         });
