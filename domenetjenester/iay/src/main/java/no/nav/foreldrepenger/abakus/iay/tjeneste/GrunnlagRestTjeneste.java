@@ -174,6 +174,7 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
                                                   @Context Request req) {
 
         CacheControl cc = new CacheControl();
+        cc.setMaxAge(0);
         cc.setProxyRevalidate(true);
         cc.setMustRevalidate(true);
         
@@ -222,6 +223,7 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
                                          @Context Request req) {
 
         CacheControl cc = new CacheControl();
+        cc.setMaxAge(0);
         cc.setProxyRevalidate(true);
         cc.setMustRevalidate(true);
         
