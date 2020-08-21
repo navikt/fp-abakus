@@ -174,7 +174,8 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
                                                   @Context Request req) {
 
         CacheControl cc = new CacheControl();
-        cc.setMaxAge((int) TimeUnit.DAYS.toSeconds(1));
+        cc.setMaxAge(0);
+        cc.setProxyRevalidate(true);
         cc.setMustRevalidate(true);
         
         var ref = new KoblingReferanse(koblingReferanse);
@@ -222,9 +223,10 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
                                          @Context Request req) {
 
         CacheControl cc = new CacheControl();
-        cc.setMaxAge((int) TimeUnit.DAYS.toSeconds(1));
+        cc.setMaxAge(0);
+        cc.setProxyRevalidate(true);
         cc.setMustRevalidate(true);
-
+        
         var ref = new KoblingReferanse(koblingReferanse);
         var aktivtGrunnlag = iayTjeneste.hentAggregat(ref);
 
