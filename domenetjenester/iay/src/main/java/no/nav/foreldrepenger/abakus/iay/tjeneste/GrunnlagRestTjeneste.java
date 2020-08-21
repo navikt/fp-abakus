@@ -147,11 +147,8 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
             var grunnlag = getGrunnlag(spesifikasjon, grunnlagReferanse, koblingReferanse);
             if (grunnlag != null) {
                 var dtoMapper = new IAYTilDtoMapper(aktørId, grunnlagReferanse, koblingReferanse);
-                var etag = new EntityTag(grunnlag.getGrunnlagReferanse().getReferanse().toString());
-                CacheControl cc = new CacheControl();
                 var dto = dtoMapper.mapTilDto(grunnlag, spesifikasjon.getYtelseType(), spesifikasjon.getDataset());
-                cc.setMaxAge((int) TimeUnit.DAYS.toSeconds(1));
-                response = Response.ok(dto).tag(etag).cacheControl(cc).build();
+                response = Response.ok(dto).build();
             } else {
                 response = Response.noContent().build();
             }
@@ -178,7 +175,8 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
 
         CacheControl cc = new CacheControl();
         cc.setMaxAge((int) TimeUnit.DAYS.toSeconds(1));
-
+        cc.setMustRevalidate(true);
+        
         var ref = new KoblingReferanse(koblingReferanse);
         var aktivtGrunnlag = iayTjeneste.hentAggregat(ref);
 
@@ -225,6 +223,7 @@ public class GrunnlagRestTjeneste extends FellesRestTjeneste {
 
         CacheControl cc = new CacheControl();
         cc.setMaxAge((int) TimeUnit.DAYS.toSeconds(1));
+        cc.setMustRevalidate(true);
 
         var ref = new KoblingReferanse(koblingReferanse);
         var aktivtGrunnlag = iayTjeneste.hentAggregat(ref);
