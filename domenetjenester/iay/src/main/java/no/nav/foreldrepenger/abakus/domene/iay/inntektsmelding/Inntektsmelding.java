@@ -43,8 +43,12 @@ import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 public class Inntektsmelding extends BaseEntitet implements IndexKey {
 
     public static final Comparator<? super Inntektsmelding> COMP_REKKEFØLGE = (Inntektsmelding a, Inntektsmelding b) -> {
-        if (a == b) {
+        if (a == b || (a == null && b == null)) {
             return 0;
+        } else if (a == null) {
+            return -1;
+        } else if (b == null) {
+            return 1;
         }
         if (a.getKanalreferanse() != null && b.getKanalreferanse() != null) {
             return a.getKanalreferanse().compareTo(b.getKanalreferanse());
