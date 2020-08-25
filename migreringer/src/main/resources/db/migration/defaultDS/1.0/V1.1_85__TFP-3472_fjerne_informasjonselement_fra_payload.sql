@@ -1,0 +1,3 @@
+update prosess_task
+set task_payload = '{"saksnummer":"79Qoo","referanse":"98819018-54d2-4c59-b945-160b3b20d960","ytelseType":{"kode":"FRISINN","kodeverk":"FAGSAK_YTELSE_TYPE"},"opplysningsperiode":{"fom":"2017-03-01","tom":"2021-02-02"},"aktør":{"identType":"AKTØRID","ident":"1000031239872"},"elementer":[{"kode":"INNTEKT_SAMMENLIGNINGSGRUNNLAG","kodeverk":"REGISTERDATA_TYPE"},{"kode":"INNTEKT_BEREGNINGSGRUNNLAG","kodeverk":"REGISTERDATA_TYPE"},{"kode":"INNTEKT_PENSJONSGIVENDE","kodeverk":"REGISTERDATA_TYPE"},{"kode":"YTELSE","kodeverk":"REGISTERDATA_TYPE"},{"kode":"ARBEIDSFORHOLD","kodeverk":"REGISTERDATA_TYPE"}],"callbackUrl":"http://k9-sak.default/k9/sak/api/registerdata/iay/callback"}'
+where id = 1453866;
