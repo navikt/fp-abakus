@@ -25,8 +25,6 @@ public class ArbeidsforholdRS {
     private List<ArbeidsavtaleRS> arbeidsavtaler;
     @JsonProperty("permisjonPermitteringer")
     private List<PermisjonPermitteringRS> permisjonPermitteringer;
-    @JsonProperty("registrert")
-    private LocalDate registrert;
     @JsonProperty("type")
     private String type; // (kodeverk: Arbeidsforholdtyper)
 
@@ -54,10 +52,6 @@ public class ArbeidsforholdRS {
         return permisjonPermitteringer;
     }
 
-    public LocalDate getRegistrert() {
-        return registrert;
-    }
-
     public String getType() {
         return type;
     }
@@ -71,7 +65,6 @@ public class ArbeidsforholdRS {
                 ", ansettelsesperiode=" + ansettelsesperiode +
                 ", arbeidsavtaler=" + arbeidsavtaler +
                 ", permisjonPermitteringer=" + permisjonPermitteringer +
-                ", registrert=" + registrert +
                 ", type='" + type + '\'' +
                 '}';
     }
