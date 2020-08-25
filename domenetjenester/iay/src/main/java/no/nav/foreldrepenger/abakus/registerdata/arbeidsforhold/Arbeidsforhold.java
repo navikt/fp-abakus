@@ -70,7 +70,7 @@ public class Arbeidsforhold {
             Objects.equals(arbeidTom, that.arbeidTom) &&
             Objects.equals(arbeidsavtaler, that.arbeidsavtaler) &&
             Objects.equals(permisjoner, that.permisjoner) &&
-            (arbeidsgiver instanceof Organisasjon && Objects.equals(arbeidsforholdId, that.arbeidsforholdId));
+            ((arbeidsgiver instanceof Organisasjon && Objects.equals(arbeidsforholdId, that.arbeidsforholdId)) || arbeidsgiver instanceof Person);
     }
 
     @Override
