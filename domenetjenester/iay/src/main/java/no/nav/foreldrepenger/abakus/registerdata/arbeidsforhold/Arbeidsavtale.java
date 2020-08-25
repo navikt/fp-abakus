@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Arbeidsavtale {
     private LocalDate arbeidsavtaleFom;
@@ -48,6 +49,38 @@ public class Arbeidsavtale {
 
     public boolean getErAnsettelsesPerioden() {
         return erAnsettelsesPerioden;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Arbeidsavtale that = (Arbeidsavtale) o;
+        return erAnsettelsesPerioden == that.erAnsettelsesPerioden &&
+            Objects.equals(arbeidsavtaleFom, that.arbeidsavtaleFom) &&
+            Objects.equals(arbeidsavtaleTom, that.arbeidsavtaleTom) &&
+            Objects.equals(stillingsprosent, that.stillingsprosent) &&
+            Objects.equals(beregnetAntallTimerPrUke, that.beregnetAntallTimerPrUke) &&
+            Objects.equals(avtaltArbeidstimerPerUke, that.avtaltArbeidstimerPerUke) &&
+            Objects.equals(sisteLønnsendringsdato, that.sisteLønnsendringsdato);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(arbeidsavtaleFom, arbeidsavtaleTom, stillingsprosent, beregnetAntallTimerPrUke, avtaltArbeidstimerPerUke, sisteLønnsendringsdato, erAnsettelsesPerioden);
+    }
+
+    @Override
+    public String toString() {
+        return "Arbeidsavtale{" +
+            "arbeidsavtaleFom=" + arbeidsavtaleFom +
+            ", arbeidsavtaleTom=" + arbeidsavtaleTom +
+            ", stillingsprosent=" + stillingsprosent +
+            ", beregnetAntallTimerPrUke=" + beregnetAntallTimerPrUke +
+            ", avtaltArbeidstimerPerUke=" + avtaltArbeidstimerPerUke +
+            ", sisteLønnsendringsdato=" + sisteLønnsendringsdato +
+            ", erAnsettelsesPerioden=" + erAnsettelsesPerioden +
+            '}';
     }
 
     public static class Builder {

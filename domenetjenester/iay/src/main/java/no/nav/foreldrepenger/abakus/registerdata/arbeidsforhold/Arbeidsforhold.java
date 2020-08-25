@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 
@@ -56,6 +57,38 @@ public class Arbeidsforhold {
 
     public ArbeidsforholdIdentifikator getIdentifikator() {
         return new ArbeidsforholdIdentifikator(arbeidsgiver, arbeidsforholdId, type);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Arbeidsforhold that = (Arbeidsforhold) o;
+        return Objects.equals(arbeidsgiver, that.arbeidsgiver) &&
+            Objects.equals(type, that.type) &&
+            Objects.equals(arbeidFom, that.arbeidFom) &&
+            Objects.equals(arbeidTom, that.arbeidTom) &&
+            Objects.equals(arbeidsavtaler, that.arbeidsavtaler) &&
+            Objects.equals(permisjoner, that.permisjoner) &&
+            (arbeidsgiver instanceof Organisasjon && Objects.equals(arbeidsforholdId, that.arbeidsforholdId));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(arbeidsgiver, type, arbeidFom, arbeidTom, arbeidsavtaler, permisjoner, arbeidsforholdId);
+    }
+
+    @Override
+    public String toString() {
+        return "Arbeidsforhold{" +
+            "arbeidsgiver=" + arbeidsgiver +
+            ", type='" + type + '\'' +
+            ", arbeidFom=" + arbeidFom +
+            ", arbeidTom=" + arbeidTom +
+            ", arbeidsavtaler=" + arbeidsavtaler +
+            ", permisjoner=" + permisjoner +
+            ", arbeidsforholdId=" + arbeidsforholdId +
+            '}';
     }
 
     public static class Builder {
