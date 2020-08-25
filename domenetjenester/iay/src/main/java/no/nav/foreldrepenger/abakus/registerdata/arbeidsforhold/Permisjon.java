@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Permisjon {
 
@@ -31,6 +32,22 @@ public class Permisjon {
 
     public String getPermisjonsÅrsak() {
         return permisjonsÅrsak;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Permisjon permisjon = (Permisjon) o;
+        return Objects.equals(permisjonFom, permisjon.permisjonFom) &&
+            Objects.equals(permisjonTom, permisjon.permisjonTom) &&
+            Objects.equals(permisjonsprosent, permisjon.permisjonsprosent) &&
+            Objects.equals(permisjonsÅrsak, permisjon.permisjonsÅrsak);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(permisjonFom, permisjonTom, permisjonsprosent, permisjonsÅrsak);
     }
 
     public static class Builder {

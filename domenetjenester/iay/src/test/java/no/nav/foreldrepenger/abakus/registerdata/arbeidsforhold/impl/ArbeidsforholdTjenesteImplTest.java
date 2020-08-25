@@ -20,6 +20,7 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdId
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Organisasjon;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.person.TpsTjeneste;
+import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.tjeneste.virksomhet.arbeidsforhold.v3.binding.FinnArbeidsforholdPrArbeidstakerUgyldigInput;
 import no.nav.tjeneste.virksomhet.arbeidsforhold.v3.feil.UgyldigInput;
@@ -38,6 +39,7 @@ public class ArbeidsforholdTjenesteImplTest {
     private static final String ORGNR = "973093681";
     private static final LocalDate PERIODE_FOM = LocalDate.now().minusYears(3L);
     private static final String KODEVERKS_REF = "A_ORDNINGEN";
+    AktørId aktørId = new AktørId("1234123412341");
 
     @Test
     public void skal_kalle_consumer_og_oversette_response() throws Exception {
@@ -50,10 +52,10 @@ public class ArbeidsforholdTjenesteImplTest {
         response1.setArbeidsforhold(response.getArbeidsforhold().get(0));
         when(arbeidsforholdConsumer.hentArbeidsforholdHistorikk(any())).thenReturn(response1);
 
-        ArbeidsforholdTjeneste arbeidsforholdTjeneste = new ArbeidsforholdTjeneste(arbeidsforholdConsumer, mock(TpsTjeneste.class));
+        ArbeidsforholdTjeneste arbeidsforholdTjeneste = new ArbeidsforholdTjeneste(arbeidsforholdConsumer, mock(TpsTjeneste.class), null);
 
         // Act
-        Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(new PersonIdent(FNR), IntervallUtil.byggIntervall(FOM, LocalDate.now()));
+        Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(new PersonIdent(FNR), aktørId, IntervallUtil.byggIntervall(FOM, LocalDate.now()));
 
         // Assert
         assertThat(((Organisasjon) arbeidsforhold.values().iterator().next().get(0).getArbeidsgiver()).getOrgNummer()).isEqualTo(ORGNR);
@@ -68,11 +70,11 @@ public class ArbeidsforholdTjenesteImplTest {
 
         doThrow(new FinnArbeidsforholdPrArbeidstakerUgyldigInput("Feil", new UgyldigInput())).when(arbeidsforholdConsumer).finnArbeidsforholdPrArbeidstaker(any());
 
-        ArbeidsforholdTjeneste arbeidsforholdTjeneste = new ArbeidsforholdTjeneste(arbeidsforholdConsumer, mock(TpsTjeneste.class));
+        ArbeidsforholdTjeneste arbeidsforholdTjeneste = new ArbeidsforholdTjeneste(arbeidsforholdConsumer, mock(TpsTjeneste.class), null);
 
         try {
             // Act
-            arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(new PersonIdent(FNR), IntervallUtil.byggIntervall(FOM, LocalDate.now()));
+            arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(new PersonIdent(FNR), aktørId, IntervallUtil.byggIntervall(FOM, LocalDate.now()));
             fail("Forventet VLException");
         } catch (VLException e) {
             // Assert
