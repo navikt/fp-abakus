@@ -57,7 +57,7 @@ public class AaregRestKlient {
         }
     }
 
-    public List<ArbeidsforholdRS> finnArbeidsforholdForArbeidstaker(String aktørId, LocalDate qfom, LocalDate qtom) {
+    public List<ArbeidsforholdRS> finnArbeidsforholdForArbeidstaker(String fnr, LocalDate qfom, LocalDate qtom) {
         try {
             var request = new URIBuilder(endpoint.toString() + "/" + "arbeidsforhold")
                     .addParameter("ansettelsesperiodeFom", String.valueOf(qfom))
@@ -66,7 +66,7 @@ public class AaregRestKlient {
                     .addParameter("historikk", "true")
                     .addParameter("sporingsinformasjon", "false")
                     .build();
-            ArbeidsforholdRS[] match = this.oidcRestClient.get(request, this.lagHeader(aktørId), ArbeidsforholdRS[].class);
+            ArbeidsforholdRS[] match = this.oidcRestClient.get(request, this.lagHeader(fnr), ArbeidsforholdRS[].class);
             return Arrays.asList(match);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Utviklerfeil syntax-exception for finnArbeidsforholdForArbeidstaker");
