@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -243,7 +244,7 @@ public class ArbeidsforholdTjeneste {
             if (like) {
                 LOGGER.info("ABAKUS AAREG RS like svar med ws");
             } else {
-                LOGGER.info("ABAKUS AAREG RS avvik ws {} rs {}", ws, rs);
+                loggAvvikendeArbeidsforhold(ws, rs);
             }
         } catch (Exception e) {
             LOGGER.info("ABAKUS AAREG RS feil", e);
@@ -256,6 +257,23 @@ public class ArbeidsforholdTjeneste {
         if (l1 == null || l2 == null)
             return false;
         return l1.containsAll(l2) && l2.containsAll(l1);
+    }
+
+    private void loggAvvikendeArbeidsforhold(Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> m1,
+                                             Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> m2) {
+        List<Arbeidsforhold> l1 = new ArrayList<>();
+        List<Arbeidsforhold> l2 = new ArrayList<>();
+        List<Arbeidsforhold> avvik1 = new ArrayList<>();
+        List<Arbeidsforhold> avvik2 = new ArrayList<>();
+        m1.forEach((key, value) -> l1.addAll(value));
+        m2.forEach((key, value) -> l2.addAll(value));
+        l1.forEach(a -> {
+            if (!l2.contains(a)) avvik1.add(a);
+        });
+        l2.forEach(a -> {
+            if (!l1.contains(a)) avvik2.add(a);
+        });
+        LOGGER.info("ABAKUS AAREG RS avvik ws {} rs {}", avvik1, avvik2);
     }
 
     private Arbeidsforhold mapArbeidsforholdRSTilDto(ArbeidsforholdRS arbeidsforhold, Interval intervall) {
