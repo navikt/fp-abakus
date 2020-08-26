@@ -39,7 +39,7 @@ public class ArbeidsforholdTjenesteImplTest {
     private static final String ORGNR = "973093681";
     private static final LocalDate PERIODE_FOM = LocalDate.now().minusYears(3L);
     private static final String KODEVERKS_REF = "A_ORDNINGEN";
-
+    private static final AktørId aktørId = new AktørId("1231231231223");
     @Test
     public void skal_kalle_consumer_og_oversette_response() throws Exception {
         // Arrange
@@ -54,7 +54,7 @@ public class ArbeidsforholdTjenesteImplTest {
         ArbeidsforholdTjeneste arbeidsforholdTjeneste = new ArbeidsforholdTjeneste(arbeidsforholdConsumer, mock(TpsTjeneste.class), null);
 
         // Act
-        Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(new PersonIdent(FNR), IntervallUtil.byggIntervall(FOM, LocalDate.now()));
+        Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(new PersonIdent(FNR), aktørId, IntervallUtil.byggIntervall(FOM, LocalDate.now()));
 
         // Assert
         assertThat(((Organisasjon) arbeidsforhold.values().iterator().next().get(0).getArbeidsgiver()).getOrgNummer()).isEqualTo(ORGNR);
@@ -73,7 +73,7 @@ public class ArbeidsforholdTjenesteImplTest {
 
         try {
             // Act
-            arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(new PersonIdent(FNR), IntervallUtil.byggIntervall(FOM, LocalDate.now()));
+            arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(new PersonIdent(FNR), aktørId, IntervallUtil.byggIntervall(FOM, LocalDate.now()));
             fail("Forventet VLException");
         } catch (VLException e) {
             // Assert
