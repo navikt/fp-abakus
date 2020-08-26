@@ -29,8 +29,9 @@ public class AaregRestKlient {
     private static final String ENDPOINT_KEY = "aareg.rs.url";
     private static final String DEFAULT_URI = "https://modapp.adeo.no/aareg-services/api/v1/arbeidstaker";
 
-    public static final String HEADER_NAV_CALL_ID = "Nav-Call-Id";
-    public static final String HEADER_NAV_PERSONIDENT = "Nav-Personident";
+    private static final String HEADER_NAV_CALL_ID = "Nav-Call-Id";
+    private static final String HEADER_NAV_PERSONIDENT = "Nav-Personident";
+    private static final String HEADER_NAV_CONSUMER_TOKEN = "Nav-Consumer-Token";
 
     private OidcRestClient oidcRestClient;
     private URI endpoint;
@@ -66,7 +67,7 @@ public class AaregRestKlient {
                     .addParameter("historikk", "true")
                     .addParameter("sporingsinformasjon", "false")
                     .build();
-            ArbeidsforholdRS[] match = this.oidcRestClient.get(request, this.lagHeader(fnr), ArbeidsforholdRS[].class);
+            ArbeidsforholdRS[] match = oidcRestClient.get(request, lagHeader(fnr), Set.of(HEADER_NAV_CONSUMER_TOKEN), ArbeidsforholdRS[].class);
             return Arrays.asList(match);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Utviklerfeil syntax-exception for finnArbeidsforholdForArbeidstaker");

@@ -33,14 +33,11 @@ import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.webapp.WebInfConfiguration;
 import org.eclipse.jetty.webapp.WebXmlConfiguration;
-
 import org.slf4j.MDC;
-
-import no.nav.vedtak.sikkerhetsfilter.SecurityFilter;
 
 abstract class AbstractJettyServer {
 
-    
+
     /** Legges først slik at alltid resetter context før prosesserer nye requests. Kjøres først så ikke risikerer andre har satt Request#setHandled(true). */
     static final class ResetLogContextHandler extends AbstractHandler {
         @Override
@@ -95,15 +92,6 @@ abstract class AbstractJettyServer {
             throw new IllegalStateException("Missing required file: " + jaspiConf.getAbsolutePath());
         }
         System.setProperty("org.apache.geronimo.jaspic.configurationFile", jaspiConf.getAbsolutePath());
-
-        konfigurerSwaggerHash();
-    }
-
-    /**
-     * @see AppKonfigurasjon#getSwaggerHash()
-     */
-    protected void konfigurerSwaggerHash() {
-        System.setProperty(SecurityFilter.SWAGGER_HASH_KEY, appKonfigurasjon.getSwaggerHash());
     }
 
     protected abstract void konfigurerJndi() throws Exception;

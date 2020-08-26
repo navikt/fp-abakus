@@ -70,13 +70,13 @@ public class ArbeidsforholdTjeneste {
         this.aaregRestKlient = aaregRestKlient;
     }
 
-    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> finnArbeidsforholdForIdentIPerioden(PersonIdent fnr, Interval interval) {
+    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> finnArbeidsforholdForIdentIPerioden(PersonIdent fnr, AktørId aktørId, Interval interval) {
         final FinnArbeidsforholdPrArbeidstakerResponse finnArbeidsforholdPrArbeidstakerResponse = finnArbeidsForhold(fnr, interval);
 
         // Tar bare de arbeidsforholdene som er løpende.
         var mapWS = mapArbeidsforholdResponseToArbeidsforhold(finnArbeidsforholdPrArbeidstakerResponse, interval);
         if (isProd) {
-            hentRsSjekkDiff(mapWS, fnr, interval);
+            hentRsSjekkDiff(mapWS, aktørId, interval);
         }
         return mapWS;
     }
@@ -231,9 +231,9 @@ public class ArbeidsforholdTjeneste {
             .build();
     }
 
-    private void hentRsSjekkDiff(Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> ws, PersonIdent fnr, Interval opplPeriode) {
+    private void hentRsSjekkDiff(Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> ws, AktørId aktørId, Interval opplPeriode) {
         try {
-            List<ArbeidsforholdRS> response = aaregRestKlient.finnArbeidsforholdForArbeidstaker(fnr.getIdent(),
+            List<ArbeidsforholdRS> response = aaregRestKlient.finnArbeidsforholdForArbeidstaker(aktørId.getId(),
                 LocalDate.ofInstant(opplPeriode.getStart(), ZoneId.systemDefault()), LocalDate.ofInstant(opplPeriode.getEnd(), ZoneId.systemDefault()));
             var rs = response.stream()
                 .map(arbeidsforhold -> mapArbeidsforholdRSTilDto(arbeidsforhold, opplPeriode))
