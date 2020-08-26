@@ -1,6 +1,5 @@
 package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -45,11 +44,11 @@ public class ArbeidsforholdRS {
     }
 
     public List<ArbeidsavtaleRS> getArbeidsavtaler() {
-        return arbeidsavtaler;
+        return arbeidsavtaler != null ? arbeidsavtaler : List.of();
     }
 
     public List<PermisjonPermitteringRS> getPermisjonPermitteringer() {
-        return permisjonPermitteringer;
+        return permisjonPermitteringer != null ? permisjonPermitteringer : List.of();
     }
 
     public String getType() {
