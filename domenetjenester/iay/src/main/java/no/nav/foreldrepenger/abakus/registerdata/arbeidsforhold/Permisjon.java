@@ -50,6 +50,16 @@ public class Permisjon {
         return Objects.hash(permisjonFom, permisjonTom, permisjonsprosent, permisjonsÅrsak);
     }
 
+    @Override
+    public String toString() {
+        return "Permisjon{" +
+            "permisjonFom=" + permisjonFom +
+            ", permisjonTom=" + permisjonTom +
+            ", permisjonsprosent=" + permisjonsprosent +
+            ", permisjonsÅrsak='" + permisjonsÅrsak + '\'' +
+            '}';
+    }
+
     public static class Builder {
         private LocalDate permisjonFom;
         private LocalDate permisjonTom;
