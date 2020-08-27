@@ -302,6 +302,11 @@ public class ArbeidsforholdTjeneste {
 
     private void utledArbeidsgiverRS(ArbeidsforholdRS arbeidsforhold, Arbeidsforhold.Builder builder) {
         if (OpplysningspliktigArbeidsgiverRS.Type.Person.equals(arbeidsforhold.getArbeidsgiver().getType())) {
+            if (arbeidsforhold.getArbeidsgiver().getAktoerId() == null) {
+                LOGGER.info("ABAKUS AAREG RS privat ag uten aktoerId {}", arbeidsforhold.getArbeidsgiver());
+            } else {
+                LOGGER.info("ABAKUS AAREG RS privat ag med aktoerId");
+            }
             no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Person person = new no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Person.Builder()
                 .medAktørId(new AktørId(arbeidsforhold.getArbeidsgiver().getAktoerId()))
                 .build();

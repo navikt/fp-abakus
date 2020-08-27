@@ -68,9 +68,25 @@ public class Arbeidsforhold {
             Objects.equals(type, that.type) &&
             Objects.equals(arbeidFom, that.arbeidFom) &&
             Objects.equals(arbeidTom, that.arbeidTom) &&
-            Objects.equals(arbeidsavtaler, that.arbeidsavtaler) &&
-            Objects.equals(permisjoner, that.permisjoner) &&
+            erLikeArbeidsavtaler(arbeidsavtaler, that.arbeidsavtaler) &&
+            erLikePermisjoner(permisjoner, that.permisjoner) &&
             ((arbeidsgiver instanceof Organisasjon && Objects.equals(arbeidsforholdId, that.arbeidsforholdId)) || arbeidsgiver instanceof Person);
+    }
+
+    private boolean erLikeArbeidsavtaler(List<Arbeidsavtale> l1, List<Arbeidsavtale> l2) {
+        if (l1 == null && l2 == null)
+            return true;
+        if (l1 == null || l2 == null)
+            return true;
+        return l1.containsAll(l2) && l2.containsAll(l1);
+    }
+
+    private boolean erLikePermisjoner(List<Permisjon> l1, List<Permisjon> l2) {
+        if (l1 == null && l2 == null)
+            return true;
+        if (l1 == null || l2 == null)
+            return true;
+        return l1.containsAll(l2) && l2.containsAll(l1);
     }
 
     @Override

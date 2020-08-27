@@ -43,9 +43,10 @@ public class OpplysningspliktigArbeidsgiverRS {
     @Override
     public String toString() {
         return "OpplysningspliktigArbeidsgiverRS{" +
-                "type=" + type +
-                ", organisasjonsnummer='" + organisasjonsnummer + '\'' +
-                ", aktoerId='" + aktoerId + '\'' +
-                '}';
+            "type=" + type +
+            ", organisasjonsnummer='" + organisasjonsnummer + '\'' +
+            ", aktoerId='" + aktoerId + '\'' +
+            ", offentligIdent='" + offentligIdent + '\'' +
+            '}';
     }
 }
