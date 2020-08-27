@@ -142,7 +142,7 @@ public class ArbeidsforholdTjeneste {
     private void utledArbeidsgiver(no.nav.tjeneste.virksomhet.arbeidsforhold.v3.informasjon.arbeidsforhold.Arbeidsforhold arbeidsforhold, Arbeidsforhold.Builder builder) {
         if (arbeidsforhold.getArbeidsgiver() instanceof Person) {
             Person arbeidsgiver = (Person) arbeidsforhold.getArbeidsgiver();
-            AktørId aktørId = hentAktørIdForIdent(arbeidsgiver).orElseThrow(() -> new IllegalStateException("Fant ikke aktørId for ident " + arbeidsgiver.getAktoerId()));
+            AktørId aktørId = hentAktørIdForIdent(PersonIdent.fra(arbeidsgiver.getIdent().getIdent())).orElseThrow(() -> new IllegalStateException("Fant ikke aktørId for ident " + arbeidsgiver.getAktoerId()));
             no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Person person = new no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Person.Builder()
                 .medAktørId(aktørId)
                 .build();
@@ -171,8 +171,8 @@ public class ArbeidsforholdTjeneste {
         return builder.build();
     }
 
-    private Optional<AktørId> hentAktørIdForIdent(Person arbeidsgiver) {
-        return tpsTjeneste.hentAktørForFnr(PersonIdent.fra(arbeidsgiver.getIdent().getIdent()));
+    private Optional<AktørId> hentAktørIdForIdent(PersonIdent arbeidsgiver) {
+        return tpsTjeneste.hentAktørForFnr(arbeidsgiver);
     }
 
     private List<Arbeidsavtale> hentHistoriskeArbeidsAvtaler(no.nav.tjeneste.virksomhet.arbeidsforhold.v3.informasjon.arbeidsforhold.Arbeidsforhold arbeidsforhold,
@@ -302,13 +302,17 @@ public class ArbeidsforholdTjeneste {
 
     private void utledArbeidsgiverRS(ArbeidsforholdRS arbeidsforhold, Arbeidsforhold.Builder builder) {
         if (OpplysningspliktigArbeidsgiverRS.Type.Person.equals(arbeidsforhold.getArbeidsgiver().getType())) {
+            AktørId arbeidsgiver;
             if (arbeidsforhold.getArbeidsgiver().getAktoerId() == null) {
-                LOGGER.info("ABAKUS AAREG RS privat ag uten aktoerId {}", arbeidsforhold.getArbeidsgiver());
+                LOGGER.info("ABAKUS AAREG RS privat ag uten aktoerId");
+                arbeidsgiver = hentAktørIdForIdent(PersonIdent.fra(arbeidsforhold.getArbeidsgiver().getOffentligIdent()))
+                    .orElseThrow(() -> new IllegalStateException("Fant ikke aktørId for ident " + arbeidsforhold.getArbeidsgiver().getOffentligIdent()));
             } else {
-                LOGGER.info("ABAKUS AAREG RS privat ag med aktoerId");
+                LOGGER.warn("ABAKUS AAREG RS privat ag med aktoerId. På tide å fikse koden i ArbeidsforholdTjeneste!");
+                arbeidsgiver = new AktørId(arbeidsforhold.getArbeidsgiver().getAktoerId());
             }
             no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Person person = new no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Person.Builder()
-                .medAktørId(new AktørId(arbeidsforhold.getArbeidsgiver().getAktoerId()))
+                .medAktørId(arbeidsgiver)
                 .build();
             builder.medArbeidsgiver(person);
             final var uuid = UUID.nameUUIDFromBytes(arbeidsforhold.getType().getBytes(StandardCharsets.UTF_8));
