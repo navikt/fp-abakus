@@ -24,7 +24,6 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Person;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.person.TpsTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 
 @ApplicationScoped
 public class ArbeidsforholdDtoTjeneste {
@@ -42,8 +41,7 @@ public class ArbeidsforholdDtoTjeneste {
     }
 
     public List<ArbeidsforholdDto> mapFor(AktørId aktørId, LocalDate fom, LocalDate tom) {
-        PersonIdent personIdent = tpsTjeneste.hentFnrForAktør(aktørId);
-        Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(personIdent, aktørId, IntervallUtil.byggIntervall(fom, tom));
+        Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(aktørId, IntervallUtil.byggIntervall(fom, tom));
 
         return arbeidsforhold.entrySet().stream().map(this::mapTilArbeidsforhold).collect(Collectors.toList());
     }

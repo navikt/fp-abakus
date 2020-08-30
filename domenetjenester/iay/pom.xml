@@ -53,10 +53,6 @@
 		</dependency>
 		<dependency>
 			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-			<artifactId>arbeidsforhold-klient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
 			<artifactId>infotrygd-grunnlag-klient</artifactId>
 		</dependency>
 		<dependency>
