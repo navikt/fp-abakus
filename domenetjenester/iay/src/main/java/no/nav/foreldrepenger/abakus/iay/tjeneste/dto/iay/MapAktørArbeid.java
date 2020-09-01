@@ -25,6 +25,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.Opptjeningsnøkkel;
 import no.nav.foreldrepenger.abakus.domene.iay.Permisjon;
 import no.nav.foreldrepenger.abakus.domene.iay.PermisjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet;
@@ -71,7 +72,7 @@ public class MapAktørArbeid {
 
         private AktørArbeidBuilder mapAktørArbeid(ArbeidDto dto) {
             var builder = registerData.getAktørArbeidBuilder(tilAktørId(dto.getPerson()));
-            dto.getYrkesaktiviteter().forEach(yrkesaktivitetDto -> builder.leggTilYrkesaktivitet(mapYrkesaktivitet(yrkesaktivitetDto)));
+            dto.getYrkesaktiviteter().forEach(yrkesaktivitetDto -> builder.leggTilYrkesaktivitet(mapYrkesaktivitet(yrkesaktivitetDto, builder)));
             return builder;
         }
 
@@ -83,19 +84,26 @@ public class MapAktørArbeid {
             return new AktørId(person.getIdent());
         }
 
-        private YrkesaktivitetBuilder mapYrkesaktivitet(YrkesaktivitetDto dto) {
+        private YrkesaktivitetBuilder mapYrkesaktivitet(YrkesaktivitetDto dto, AktørArbeidBuilder builder) {
             var arbeidsgiver = dto.getArbeidsgiver().map(this::mapArbeidsgiver).orElse(null);
             var internArbeidsforholdRef = arbeidsgiver == null ? null : mapArbeidsforholdRef(arbeidsgiver, dto.getArbeidsforholdId());
-
-            YrkesaktivitetBuilder yrkesaktivitetBuilder = YrkesaktivitetBuilder.oppdatere(Optional.empty())
-                .medArbeidsforholdId(internArbeidsforholdRef)
+            YrkesaktivitetBuilder yrkesaktivitetBuilder;
+            if (arbeidsgiver == null) {
+                yrkesaktivitetBuilder = builder.getYrkesaktivitetBuilderForType(dto.getType());
+            } else {
+                Opptjeningsnøkkel nøkkel = Opptjeningsnøkkel.forArbeidsforholdIdMedArbeidgiver(internArbeidsforholdRef, arbeidsgiver);
+                yrkesaktivitetBuilder = builder.getYrkesaktivitetBuilderForNøkkelAvType(nøkkel, dto.getType());
+            }
+            yrkesaktivitetBuilder.medArbeidsforholdId(internArbeidsforholdRef)
                 .medArbeidsgiver(arbeidsgiver)
                 .medArbeidsgiverNavn(dto.getNavnArbeidsgiverUtland())
                 .medArbeidType(dto.getType());
 
+            yrkesaktivitetBuilder.tilbakestillAvtaler();
             dto.getAktivitetsAvtaler()
                 .forEach(aktivitetsAvtaleDto -> yrkesaktivitetBuilder.leggTilAktivitetsAvtale(mapAktivitetsAvtale(aktivitetsAvtaleDto)));
 
+            yrkesaktivitetBuilder.tilbakestillPermisjon();
             dto.getPermisjoner()
                 .forEach(permisjonDto -> yrkesaktivitetBuilder.leggTilPermisjon(mapPermisjon(permisjonDto, yrkesaktivitetBuilder.getPermisjonBuilder())));
 
