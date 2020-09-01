@@ -93,7 +93,7 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
             permisjon.setYrkesaktivitet(this);
             return permisjon;
         }).collect(Collectors.toCollection(LinkedHashSet::new));
-        
+
     }
 
     @Override
