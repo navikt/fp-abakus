@@ -28,6 +28,7 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AaregRestKl
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.ArbeidsforholdRS;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.person.TpsTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 
 ;
 
@@ -35,7 +36,8 @@ public class ArbeidsforholdTjenesteMedRestTest {
 
     private static final String ORGNR = "973093681";
     private static final String ULL = "8629102";
-    private static final AktørId aktørId = new AktørId("1231231231223");
+    private static final AktørId AKTØR_ID = new AktørId("1231231231223");
+    private static final PersonIdent FNR = new PersonIdent("12312312312");
     private static final LocalDate FOM = LocalDate.now().minusYears(1L);
 
     private static ObjectMapper mapper;
@@ -92,7 +94,7 @@ public class ArbeidsforholdTjenesteMedRestTest {
         ArbeidsforholdTjeneste arbeidsforholdTjeneste = new ArbeidsforholdTjeneste(mock(TpsTjeneste.class), aaregRestKlient);
 
         // Act
-        Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(aktørId, IntervallUtil.byggIntervall(FOM, LocalDate.now()));
+        Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(FNR, AKTØR_ID, IntervallUtil.byggIntervall(FOM, LocalDate.now()));
 
         // Assert
         assertThat(((Organisasjon) arbeidsforhold.values().iterator().next().get(0).getArbeidsgiver()).getOrgNummer()).isEqualTo(ORGNR);

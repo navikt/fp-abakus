@@ -46,8 +46,9 @@ public class ArbeidsforholdTjeneste {
         this.aaregRestKlient = aaregRestKlient;
     }
 
-    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> finnArbeidsforholdForIdentIPerioden(AktørId aktørId, Interval interval) {
-        List<ArbeidsforholdRS> response = aaregRestKlient.finnArbeidsforholdForArbeidstaker(aktørId.getId(),
+    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> finnArbeidsforholdForIdentIPerioden(PersonIdent ident, AktørId aktørId, Interval interval) {
+        // TODO: kall med aktørid når register har fikset ytelsesproblemer
+        List<ArbeidsforholdRS> response = aaregRestKlient.finnArbeidsforholdForArbeidstaker(ident.getIdent(),
             LocalDate.ofInstant(interval.getStart(), ZoneId.systemDefault()), LocalDate.ofInstant(interval.getEnd(), ZoneId.systemDefault()));
         return response.stream()
             .map(arbeidsforhold -> mapArbeidsforholdRSTilDto(arbeidsforhold, interval))
