@@ -98,17 +98,26 @@ jobs:
 
             <table>
             <tr><th>Cluster</th><th>Namespace</th></tr>
-            <tr><td>dev-fss</td><td>q1</td></tr>
+            <tr><td>dev-fss</td><td>q1, default</td></tr>
             <tr><td>prod-fss</td><td>default</td></tr>
             </table>
 
-      - name: Trigg deploy til preprod
+      - name: Trigg deploy til q1
         if: success()
         uses: peter-evans/create-or-update-comment@v1
         with:
           token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
           issue-number: ${{ steps.createdeployissue.outputs.number }}
           body: /promote dev-fss q1
+
+      - name: Trigg deploy til default
+          if: success()
+          uses: peter-evans/create-or-update-comment@v1
+          with:
+            token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+            issue-number: ${{ steps.createdeployissue.outputs.number }}
+            body: /promote dev-fss default
+
       - name: Trigger fpsak-autotest
         if: success()
         uses: peter-evans/repository-dispatch@v1
