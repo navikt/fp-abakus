@@ -50,7 +50,7 @@ spec:
         kvPath: /azuread/data/dev/creds/fp-abakus
   env:
     - name: LOADBALANCER_URL
-      value: https://fpabakus-q1.dev.adeo.no
+      value: https://fpabakus-q1.nais.preprod.local
     - name: ABAC_PDP_ENDPOINT_URL
       value: http://abac-duplo.q1/application/authorize
     - name: SECURITYTOKENSERVICE_URL
