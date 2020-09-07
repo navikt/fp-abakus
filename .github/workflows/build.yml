@@ -111,12 +111,12 @@ jobs:
           body: /promote dev-fss q1
 
       - name: Trigg deploy til default
-          if: success()
-          uses: peter-evans/create-or-update-comment@v1
-          with:
-            token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-            issue-number: ${{ steps.createdeployissue.outputs.number }}
-            body: /promote dev-fss default
+        if: success()
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+          issue-number: ${{ steps.createdeployissue.outputs.number }}
+          body: /promote dev-fss default
 
       - name: Trigger fpsak-autotest
         if: success()
