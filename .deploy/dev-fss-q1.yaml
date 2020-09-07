@@ -10,7 +10,7 @@ spec:
   port: 8080
   ingresses:
     - "https://fpabakus-q1.nais.preprod.local/"
-    - "https://fpabakus-q1.nais.preprod.local/",
+    - "https://fpabakus-q1.nais.preprod.local/"
     - "https://fpabakus-q1.dev.adeo.no/"
   liveness:
     path: "/fpabakus/internal/isAlive"
