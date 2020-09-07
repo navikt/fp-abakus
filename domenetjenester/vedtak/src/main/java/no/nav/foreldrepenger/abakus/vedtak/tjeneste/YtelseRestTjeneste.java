@@ -7,6 +7,7 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,7 @@ import javax.ws.rs.core.Response;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import no.nav.abakus.iaygrunnlag.request.AktørDatoRequest;
 import no.nav.abakus.vedtak.ytelse.Aktør;
 import no.nav.abakus.vedtak.ytelse.Desimaltall;
 import no.nav.abakus.vedtak.ytelse.Periode;
@@ -95,24 +97,21 @@ public class YtelseRestTjeneste extends FellesRestTjeneste {
     @Path("/hentVedtakForAktoer")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Henter alle vedtak for en gitt person, evt med periode etter en fom",
-        tags = "ytelse")
+    @Operation(description = "Henter alle vedtak for en gitt person, evt med periode etter en fom", tags = "ytelse")
     @BeskyttetRessurs(action = READ, resource = VEDTAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response hentVedtak(@NotNull @TilpassetAbacAttributt(supplierClass = AktørFomRequestAbacDataSupplier.class) @Valid AktørFomRequest request) {
+    public List<Ytelse> hentVedtak(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
         var startTx = Instant.now();
 
-        AktørId aktørId = new AktørId(request.getAktør().getVerdi());
-        LocalDate fom = request.getFomNonNull();
+        AktørId aktørId = new AktørId(request.getAktør().getIdent());
+        LocalDate fom = request.getDato();
         LocalDate tom = Tid.TIDENES_ENDE;
         var ytelser = ytelseRepository.hentYtelserForIPeriode(aktørId, fom, tom).stream()
             .map(this::mapLagretVedtakTilYtelse)
             .collect(Collectors.toList());
 
-        final Response response = Response.ok(ytelser).build();
-
         logMetrikk("/ytelse/v1/hentVedtak", Duration.between(startTx, Instant.now()));
-        return response;
+        return ytelser;
     }
 
     private Ytelse mapLagretVedtakTilYtelse(VedtakYtelse vedtak) {
@@ -155,15 +154,17 @@ public class YtelseRestTjeneste extends FellesRestTjeneste {
         }
     }
 
-    public static class AktørFomRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
+    public static class AktørDatoRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
-        public AktørFomRequestAbacDataSupplier() {
+        public AktørDatoRequestAbacDataSupplier() {
         }
 
         @Override
         public AbacDataAttributter apply(Object obj) {
-            AktørFomRequest req = (AktørFomRequest) obj;
-            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, req.getAktør().getVerdi());
+            AktørDatoRequest req = (AktørDatoRequest) obj;
+            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, req.getAktør().getIdent());
         }
     }
+
+
 }
