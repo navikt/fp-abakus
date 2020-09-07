@@ -2,16 +2,15 @@ kind: "Application"
 apiVersion: "nais.io/v1alpha1"
 metadata:
   name: fpabakus
-  namespace: q1
+  namespace: default
   labels:
     team: teamforeldrepenger
 spec:
   image: {{ image }}
   port: 8080
   ingresses:
-    - "https://fpabakus-q1.nais.preprod.local/"
-    - "https://fpabakus-q1.nais.preprod.local/",
-    - "https://fpabakus-q1.dev.adeo.no/"
+    - "https://fpabakus.nais.preprod.local/"
+    - "https://fpabakus.dev.adeo.no/"
   liveness:
     path: "/fpabakus/internal/isAlive"
     initialDelay: 25
@@ -50,7 +49,7 @@ spec:
         kvPath: /azuread/data/dev/creds/fp-abakus
   env:
     - name: LOADBALANCER_URL
-      value: https://fpabakus-q1.nais.preprod.local
+      value: https://fpabakus.nais.preprod.local
     - name: ABAC_PDP_ENDPOINT_URL
       value: http://abac-duplo.q1/application/authorize
     - name: SECURITYTOKENSERVICE_URL
