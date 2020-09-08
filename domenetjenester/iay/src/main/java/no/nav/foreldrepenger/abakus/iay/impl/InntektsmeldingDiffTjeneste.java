@@ -6,6 +6,9 @@ import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Utleder differanse i inntektsmeldinger mellom to set
+ */
 public final class InntektsmeldingDiffTjeneste {
 
     private InntektsmeldingDiffTjeneste() {
