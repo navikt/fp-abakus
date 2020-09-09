@@ -6,7 +6,7 @@ on:
       - '**.md'
       - '**.MD'
       - '.gitignore'
-      - 'LICENCE'
+      - 'LICENSE'
       - 'CODEOWNERS'
       - 'dokumentasjon/**'
       - 'lokalutvikling/**'

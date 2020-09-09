@@ -10,7 +10,6 @@ spec:
   port: 8080
   ingresses:
     - "https://fpabakus-q1.nais.preprod.local/"
-    - "https://fpabakus-q1.nais.preprod.local/"
     - "https://fpabakus-q1.dev.adeo.no/"
   liveness:
     path: "/fpabakus/internal/isAlive"
@@ -52,7 +51,7 @@ spec:
     - name: LOADBALANCER_URL
       value: https://fpabakus-q1.nais.preprod.local
     - name: ABAC_PDP_ENDPOINT_URL
-      value: http://abac-duplo.q1/application/authorize
+      value: http://abac-duplo.default/application/authorize
     - name: SECURITYTOKENSERVICE_URL
       value: https://sts-q1.preprod.local/SecurityTokenServiceProvider/
     #OpenID
@@ -66,7 +65,7 @@ spec:
     - name: OIDC_STS_ISSUER_URL
       value: https://security-token-service.nais.preprod.local
     - name: OIDC_STS_JWKS_URL
-      value: https://security-token-service.nais.preprod.local/rest/v1/sts/jwks
+      value: http://security-token-service.default/rest/v1/sts/jwks
     #ABAC
     - name: ABAC_ATTRIBUTT_DRIFT
       value: "no.nav.abac.attributter.resource.duplo.abakus.drift"

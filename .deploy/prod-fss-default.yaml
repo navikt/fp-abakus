@@ -50,7 +50,7 @@ spec:
     - name: LOADBALANCER_URL
       value: https://fpabakus.nais.adeo.no
     - name: ABAC_PDP_ENDPOINT_URL
-      value: http://abac-duplo/application/authorize
+      value: http://abac-duplo.default/application/authorize
     - name: SECURITYTOKENSERVICE_URL
       value: https://sts.adeo.no/SecurityTokenServiceProvider/
     #OpenID
@@ -64,7 +64,7 @@ spec:
     - name: OIDC_STS_ISSUER_URL
       value: https://security-token-service.nais.adeo.no
     - name: OIDC_STS_JWKS_URL
-      value: https://security-token-service.nais.adeo.no/rest/v1/sts/jwks
+      value: http://security-token-service.default/rest/v1/sts/jwks
     #ABAC
     - name: ABAC_ATTRIBUTT_DRIFT
       value: "no.nav.abac.attributter.resource.duplo.abakus.drift"
