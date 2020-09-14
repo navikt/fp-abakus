@@ -92,31 +92,17 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           title: Deploy av ${{ env.TAG }}
-          labels: deployment
+          labels: bygg
           body: |
-            Kommenter med <b>/promote env namespace</b>, hvor <b>env</b> er et gyldig clusternavn og <b>namespace</b> et eksisterende namespace i det clusteret.
+            Kommenter med <b>/promote env</b>, hvor <b>env</b> er et gyldig clusternavn (dev-fss, prod-fss).
 
-            <table>
-            <tr><th>Cluster</th><th>Namespace</th></tr>
-            <tr><td>dev-fss</td><td>q1, default</td></tr>
-            <tr><td>prod-fss</td><td>default</td></tr>
-            </table>
-
-      - name: Trigg deploy til q1
+      - name: Trigg deploy til dev
         if: success()
         uses: peter-evans/create-or-update-comment@v1
         with:
           token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
           issue-number: ${{ steps.createdeployissue.outputs.number }}
-          body: /promote dev-fss q1
-
-      - name: Trigg deploy til default
-        if: success()
-        uses: peter-evans/create-or-update-comment@v1
-        with:
-          token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
-          issue-number: ${{ steps.createdeployissue.outputs.number }}
-          body: /promote dev-fss default
+          body: /promote dev-fss
 
       - name: Trigger fpsak-autotest
         if: success()
@@ -126,6 +112,7 @@ jobs:
           repository: navikt/fpsak-autotest
           event-type: fpabakus-autotest
           client-payload: '{ "trigger": "${{ github.repository }}", "version": "${{ env.TAG }}", "issue-number": "${{ steps.createdeployissue.outputs.number }}" }'
+
       - name: Trigger k9-verdikjede
         if: success()
         uses: peter-evans/repository-dispatch@v1
