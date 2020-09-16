@@ -23,17 +23,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class NaturalytelseDto {
 
-    @JsonProperty(value = "periode", required = true, index = 0)
+    @JsonProperty(value = "periode", required = true)
     @Valid
     @NotNull
     private Periode periode;
 
-    @JsonProperty(value = "naturalytelseType", required = true, index = 1)
+    @JsonProperty(value = "naturalytelseType", required = true)
     @NotNull
     private NaturalytelseType type;
 
     /** Tillater kun positive verdier.  Max verdi håndteres av mottager. */
-    @JsonProperty(value = "beløpPerMnd", index = 3)
+    @JsonProperty(value = "beløpPerMnd")
     @DecimalMin(value = "0.00", message = "beløp [${validatedValue}] må være >= {value}")
     private BigDecimal beløpPerMnd;
 

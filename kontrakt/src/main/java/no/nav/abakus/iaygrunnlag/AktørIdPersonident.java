@@ -16,13 +16,13 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class AktørIdPersonident extends PersonIdent {
     public static final String IDENT_TYPE = "AKTØRID";
     
-    @JsonProperty(value = "ident", required = true, index = 1)
+    @JsonProperty(value = "ident", required = true)
     @NotNull
     @Pattern(regexp = "^\\d{13}+$", message = "aktørId [${validatedValue}] har ikke gyldig verdi (13 siffer)")
     private String ident;
 
     @JsonCreator
-    public AktørIdPersonident(@JsonProperty(value = "ident", required=true, index=1) String kode) {
+    public AktørIdPersonident(@JsonProperty(value = "ident", required=true) String kode) {
         this.ident = kode;
     }
 

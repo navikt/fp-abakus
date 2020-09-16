@@ -16,13 +16,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Organisasjon extends Aktør {
     static final String IDENT_TYPE = "ORGNUMMER";
     
-    @JsonProperty(value = "ident", required = true, index = 1)
+    @JsonProperty(value = "ident", required = true)
     @NotNull
     @Pattern(regexp = "^\\d{9}+$", message = "orgnr [${validatedValue}] har ikke gyldig verdi (9 siffer)")
     private String ident;
 
     @JsonCreator
-    public Organisasjon(@JsonProperty(value = "ident", required=true, index=1) String kode) {
+    public Organisasjon(@JsonProperty(value = "ident", required=true) String kode) {
         this.ident = kode;
     }
 

@@ -20,7 +20,7 @@ import no.nav.abakus.iaygrunnlag.Periode;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class FraværDto {
 
-    @JsonProperty(value = "periode", required = true, index = 0)
+    @JsonProperty(value = "periode", required = true)
     @Valid
     @NotNull
     private Periode periode;
