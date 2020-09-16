@@ -20,13 +20,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class RefusjonDto {
     
-    @JsonProperty(value = "fom", required = true, index = 0)
+    @JsonProperty(value = "fom", required = true)
     @Valid
     @NotNull
     private LocalDate fom;
 
     /** Tillater kun positive verdier.  Max verdi håndteres av mottager. */
-    @JsonProperty(value = "refusjonBeløpPerMnd", index = 1)
+    @JsonProperty(value = "refusjonBeløpPerMnd")
     @DecimalMin(value = "0.00", message = "beløp [${validatedValue}] må være >= {value}")
     private BigDecimal refusjonBeløpPerMnd;
 
