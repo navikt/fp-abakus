@@ -51,7 +51,7 @@ public class InntektsmeldingDiffTjenesteTest {
         Inntektsmelding inntektsmelding = lagIMf(AG1, 35_000, 35_000, uuid, innsending, mottatt);
         Map<Inntektsmelding, ArbeidsforholdInformasjon> førsteMap = new HashMap<>();
         Map<Inntektsmelding, ArbeidsforholdInformasjon> andreMap = new HashMap<>();
-        andreMap.put(inntektsmelding, new ArbeidsforholdInformasjon());
+        førsteMap.put(inntektsmelding, new ArbeidsforholdInformasjon());
         Map<Inntektsmelding, ArbeidsforholdInformasjon> diff = InntektsmeldingDiffTjeneste.utledDifferanseIInntektsmeldinger(førsteMap, andreMap);
         assertThat(diff.keySet()).hasSize(1);
         assertThat(diff.keySet()).contains(inntektsmelding);
@@ -66,9 +66,9 @@ public class InntektsmeldingDiffTjenesteTest {
         Inntektsmelding inntektsmelding2 = lagIMf(AG1, 35_000, 35_000, UUID.randomUUID(), innsending.plusDays(1), mottatt.plusDays(1));
         Map<Inntektsmelding, ArbeidsforholdInformasjon> førsteMap = new HashMap<>();
         Map<Inntektsmelding, ArbeidsforholdInformasjon> andreMap = new HashMap<>();
-        førsteMap.put(inntektsmelding, new ArbeidsforholdInformasjon());
         andreMap.put(inntektsmelding, new ArbeidsforholdInformasjon());
-        andreMap.put(inntektsmelding2, new ArbeidsforholdInformasjon());
+        førsteMap.put(inntektsmelding, new ArbeidsforholdInformasjon());
+        førsteMap.put(inntektsmelding2, new ArbeidsforholdInformasjon());
         Map<Inntektsmelding, ArbeidsforholdInformasjon> diff = InntektsmeldingDiffTjeneste.utledDifferanseIInntektsmeldinger(førsteMap, andreMap);
         assertThat(diff.keySet()).hasSize(1);
         assertThat(diff.keySet()).contains(inntektsmelding2);

@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Utleder differanse i inntektsmeldinger mellom to set
+ * Utleder differanse i inntektsmeldinger mellom to set.
+ * Tar utangspunkt i "førsteSet" og legger alle inntektsmeldinger som ikke finnes i "andreSet"
+ * til i en liste og returnerer disse
  */
 public final class InntektsmeldingDiffTjeneste {
 
@@ -17,18 +19,9 @@ public final class InntektsmeldingDiffTjeneste {
 
     public static Map<Inntektsmelding, ArbeidsforholdInformasjon> utledDifferanseIInntektsmeldinger(Map<Inntektsmelding, ArbeidsforholdInformasjon> førsteSet,
                                                                                                     Map<Inntektsmelding, ArbeidsforholdInformasjon> andreSet) {
-        if (førsteSet.size() >= andreSet.size()) {
-            return utledDiffISet(førsteSet, andreSet);
-        } else {
-            return utledDiffISet(andreSet, førsteSet);
-        }
-    }
-
-    private static Map<Inntektsmelding, ArbeidsforholdInformasjon> utledDiffISet(Map<Inntektsmelding, ArbeidsforholdInformasjon> størsteSet,
-                                                                                 Map<Inntektsmelding, ArbeidsforholdInformasjon> minsteSet) {
         Map<Inntektsmelding, ArbeidsforholdInformasjon> diffMap = new HashMap<>();
-        størsteSet.forEach((im, value) -> {
-            if (!minsteSet.containsKey(im)) {
+        førsteSet.forEach((im, value) -> {
+            if (!andreSet.containsKey(im)) {
                 diffMap.put(im, value);
             }
         });
