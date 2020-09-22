@@ -135,6 +135,12 @@ public class ArbeidsforholdTjeneste {
         if (!ansettelsesIntervall.contains(arbeidsavtaleFom.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant())) {
             LOGGER.info("Arbeidsavtale fom={} ligger utenfor ansettelsesPeriode={}", arbeidsavtaleFom, ansettelsesIntervall);
         }
+
+        if (arbeidsavtaleFom.isBefore(arbeidsavtaleTom)) {
+            LOGGER.warn("Arbeidsavtale fom={} er før tom={} for orgnr={}, navArbeidsforholdId={}",
+                arbeidsavtaleFom, arbeidsavtaleTom, arbeidsforhold.getArbeidsgiver().getOrganisasjonsnummer(), arbeidsforhold.getNavArbeidsforholdId());
+        }
+
         return builder.build();
     }
 
