@@ -136,9 +136,9 @@ public class ArbeidsforholdTjeneste {
             LOGGER.info("Arbeidsavtale fom={} ligger utenfor ansettelsesPeriode={}", arbeidsavtaleFom, ansettelsesIntervall);
         }
 
-        if (arbeidsavtaleTom != null && arbeidsavtaleFom.isBefore(arbeidsavtaleTom)) {
-            LOGGER.warn("Arbeidsavtale fom={} er før tom={} for orgnr={}, navArbeidsforholdId={}",
-                arbeidsavtaleFom, arbeidsavtaleTom, arbeidsforhold.getArbeidsgiver().getOrganisasjonsnummer(), arbeidsforhold.getNavArbeidsforholdId());
+        if (arbeidsavtaleTom != null && arbeidsavtaleTom.isBefore(arbeidsavtaleFom)) {
+            LOGGER.warn("Arbeidsavtale tom={} er før fom={} for orgnr={}, navArbeidsforholdId={}",
+                arbeidsavtaleTom, arbeidsavtaleFom, arbeidsforhold.getArbeidsgiver().getOrganisasjonsnummer(), arbeidsforhold.getNavArbeidsforholdId());
         }
 
         return builder.build();
