@@ -14,7 +14,7 @@ import org.apache.http.impl.client.HttpClients;
 import no.nav.vedtak.konfig.KonfigVerdi;
 
 @ApplicationScoped
-public class InntektRestHealthCheck extends ExtHealthCheck {
+public class InntektRestHealthCheck implements SelftestHealthCheck {
 
     @Inject
     @KonfigVerdi("hentinntektlistebolk.url")
@@ -25,38 +25,35 @@ public class InntektRestHealthCheck extends ExtHealthCheck {
     }
 
     @Override
-    protected String getDescription() {
-        return "Test av inntektskomponenten ";
+    public String getDescription() {
+        return "Inntektskomponenten ";
     }
 
     @Override
-    protected String getEndpoint() {
+    public String getEndpoint() {
         return restUrl;
     }
 
     @Override
-    protected InternalResult performCheck() {
+    public boolean isCritical() {
+        return false;
+    }
 
+    @Override
+    public boolean isReady() {
 
-        InternalResult intTestRes = new InternalResult();
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpGet httpGet = new HttpGet(getEndpoint() + "/../../../../");
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
                 int responseCode = httpResponse.getStatusLine().getStatusCode();
                 if (responseCode != HttpStatus.SC_OK) { // Kaller med GET på et POST endepunkt. 405 validerer at forventet tjenste er der.
-                    intTestRes.setMessage("Fikk uventet HTTP respons-kode: " + responseCode);
-                    intTestRes.noteResponseTime();
-                    return intTestRes;
+                    return false;
                 }
             }
         } catch (IOException e) {
-            intTestRes.noteResponseTime();
-            intTestRes.setException(e);
-            return intTestRes;
+            return false;
         }
 
-        intTestRes.noteResponseTime();
-        intTestRes.setOk(true);
-        return intTestRes;
+        return true;
     }
 }

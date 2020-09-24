@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.app.startupinfo;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
@@ -11,11 +12,8 @@ import org.jboss.weld.util.reflection.Formats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.codahale.metrics.health.HealthCheck;
-
 import no.nav.foreldrepenger.abakus.app.selftest.SelftestResultat;
 import no.nav.foreldrepenger.abakus.app.selftest.Selftests;
-import no.nav.foreldrepenger.abakus.app.selftest.checks.ExtHealthCheck;
 import no.nav.vedtak.feil.Feil;
 import no.nav.vedtak.log.mdc.MDCOperations;
 
@@ -51,7 +49,7 @@ class AppStartupInfoLogger {
     void logAppStartupInfo() {
         log(HILITE_START + " " + OPPSTARTSINFO + " " + START + " " + HILITE_SLUTT);
         logVersjoner();
-     
+
         logSelftest();
         log(HILITE_START + " " + OPPSTARTSINFO + " " + SLUTT + " " + HILITE_SLUTT);
 
@@ -76,14 +74,14 @@ class AppStartupInfoLogger {
 
         // callId er påkrevd på utgående kall og må settes før selftest kjøres
         MDCOperations.putCallId();
-        SelftestResultat samletResultat = selftests.run();
+        List<SelftestResultat> samletResultat = selftests.run();
         MDCOperations.removeCallId();
 
-        for (HealthCheck.Result result : samletResultat.getAlleResultater()) {
+        for (SelftestResultat result : samletResultat) {
             log(result);
         }
 
-        log(APPLIKASJONENS_STATUS + ": {}", samletResultat.getAggregateResult());
+        log(APPLIKASJONENS_STATUS + ": {}", samletResultat.stream().allMatch(SelftestResultat::isReady) ? "OK" : "ERROR");
 
         log(SELFTEST + " " + SLUTT);
     }
@@ -97,23 +95,8 @@ class AppStartupInfoLogger {
         }
     }
 
-    private void log(HealthCheck.Result result) {
-        Feil feil;
-        if (result.getDetails() != null) {
-            feil = OppstartFeil.FACTORY.selftestStatus(
-                    getStatus(result.isHealthy()),
-                    (String) result.getDetails().get(ExtHealthCheck.DETAIL_DESCRIPTION),
-                    (String) result.getDetails().get(ExtHealthCheck.DETAIL_ENDPOINT),
-                    (String) result.getDetails().get(ExtHealthCheck.DETAIL_RESPONSE_TIME),
-                    result.getMessage());
-        } else {
-            feil = OppstartFeil.FACTORY.selftestStatus(
-                    getStatus(result.isHealthy()),
-                    null,
-                    null,
-                    null,
-                    result.getMessage());
-        }
+    private void log(SelftestResultat result) {
+        Feil feil = OppstartFeil.FACTORY.selftestStatus(getStatus(result.isReady()), result.getDescription(), result.getEndpoint());
 
         logStatements.add(() -> feil.log(logger));
     }

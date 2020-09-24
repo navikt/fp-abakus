@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import no.nav.foreldrepenger.abakus.app.konfig.ApplicationServiceStarter;
 import no.nav.foreldrepenger.abakus.app.selftest.NaisRestTjeneste;
+import no.nav.foreldrepenger.abakus.app.selftest.checks.DatabaseHealthCheck;
 
 @SuppressWarnings("resource")
 public class NaisRestTjenesteTest {
@@ -19,10 +20,11 @@ public class NaisRestTjenesteTest {
     private NaisRestTjeneste restTjeneste;
 
     private ApplicationServiceStarter serviceStarterMock = mock(ApplicationServiceStarter.class);
+    private DatabaseHealthCheck databaseHealthCheck = mock(DatabaseHealthCheck.class);
 
     @Before
     public void setup() {
-        restTjeneste = new NaisRestTjeneste(serviceStarterMock);
+        restTjeneste = new NaisRestTjeneste(serviceStarterMock, databaseHealthCheck);
     }
 
     @Test
@@ -35,17 +37,16 @@ public class NaisRestTjenesteTest {
 
     @Test
     public void test_isReady_skal_returnere_service_unavailable_når_kritiske_selftester_feiler() {
-        when(serviceStarterMock.isKafkaAlive()).thenReturn(true);
+        when(databaseHealthCheck.isReady()).thenReturn(false);
 
         Response response = restTjeneste.isReady();
 
-//        assertThat(response.getStatus()).isEqualTo(Response.Status.SERVICE_UNAVAILABLE.getStatusCode());
-        assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
+        assertThat(response.getStatus()).isEqualTo(Response.Status.SERVICE_UNAVAILABLE.getStatusCode());
     }
 
     @Test
     public void test_isReady_skal_returnere_status_ok_når_selftester_er_ok() {
-        when(serviceStarterMock.isKafkaAlive()).thenReturn(true);
+        when(databaseHealthCheck.isReady()).thenReturn(true);
 
         Response response = restTjeneste.isReady();
 

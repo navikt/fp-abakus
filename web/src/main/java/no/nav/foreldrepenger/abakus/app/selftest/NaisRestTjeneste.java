@@ -9,12 +9,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.swagger.v3.oas.annotations.Operation;
 import no.nav.foreldrepenger.abakus.app.konfig.ApplicationServiceStarter;
-import no.nav.foreldrepenger.abakus.app.konfig.InternalApplication;
+import no.nav.foreldrepenger.abakus.app.selftest.checks.DatabaseHealthCheck;
 
 @Path("/")
 @Produces(TEXT_PLAIN)
@@ -25,17 +22,18 @@ public class NaisRestTjeneste {
     private static final String RESPONSE_CACHE_VAL = "must-revalidate,no-cache,no-store";
     private static final String RESPONSE_OK = "OK";
 
-    private static Logger logger = LoggerFactory.getLogger(InternalApplication.class);
-
     private ApplicationServiceStarter starterService;
+    private DatabaseHealthCheck databaseHealthCheck;
 
     public NaisRestTjeneste() {
         // CDI
     }
 
     @Inject
-    public NaisRestTjeneste(ApplicationServiceStarter starterService) {
+    public NaisRestTjeneste(ApplicationServiceStarter starterService,
+                            DatabaseHealthCheck databaseHealthCheck) {
         this.starterService = starterService;
+        this.databaseHealthCheck = databaseHealthCheck;
     }
 
     @GET
@@ -43,7 +41,6 @@ public class NaisRestTjeneste {
     @Operation(description = "sjekker om poden lever", tags = "nais", hidden = true)
     public Response isAlive() {
         if (starterService.isKafkaAlive()) {
-            logger.debug("Application is alive.");
             return Response
                 .ok(RESPONSE_OK)
                 .header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL)
@@ -60,15 +57,14 @@ public class NaisRestTjeneste {
     @Path("isReady")
     @Operation(description = "sjekker om poden er klar", tags = "nais", hidden = true)
     public Response isReady() {
-        if (starterService.isKafkaAlive()) {
-            logger.debug("Application is alive.");
+        if (databaseHealthCheck.isReady()) {
             return Response
                 .ok(RESPONSE_OK)
                 .header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL)
                 .build();
         } else {
             return Response
-                .serverError()
+                .status(Response.Status.SERVICE_UNAVAILABLE)
                 .header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL)
                 .build();
         }
