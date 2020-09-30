@@ -12,7 +12,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 @ApplicationScoped
-public class DatabaseHealthCheck implements SelftestHealthCheck {
+public class DatabaseHealthCheck {
 
     private static final String JDBC_DEFAULT_DS = "jdbc/defaultDS";
     private static final String SQL_QUERY = "select count(1) from prosess_task_type";
@@ -28,22 +28,6 @@ public class DatabaseHealthCheck implements SelftestHealthCheck {
         this.jndiName = dsJndiName;
     }
 
-    @Override
-    public String getDescription() {
-        return "Databaseforbindelse (" + jndiName + ")";
-    }
-
-    @Override
-    public String getEndpoint() {
-        return endpoint;
-    }
-
-    @Override
-    public boolean isCritical() {
-        return true;
-    }
-
-    @Override
     public boolean isReady() {
 
         DataSource dataSource;

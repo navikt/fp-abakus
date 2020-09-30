@@ -14,7 +14,7 @@ import org.apache.http.impl.client.HttpClients;
 import no.nav.vedtak.konfig.KonfigVerdi;
 
 @ApplicationScoped
-public class InntektRestHealthCheck implements SelftestHealthCheck {
+public class InntektRestHealthCheck  {
 
     @Inject
     @KonfigVerdi("hentinntektlistebolk.url")
@@ -24,22 +24,10 @@ public class InntektRestHealthCheck implements SelftestHealthCheck {
         // for CDI proxy
     }
 
-    @Override
-    public String getDescription() {
-        return "Inntektskomponenten ";
-    }
-
-    @Override
-    public String getEndpoint() {
+    private String getEndpoint() {
         return restUrl;
     }
 
-    @Override
-    public boolean isCritical() {
-        return false;
-    }
-
-    @Override
     public boolean isReady() {
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
