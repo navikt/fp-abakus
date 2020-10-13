@@ -21,27 +21,28 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdId
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Organisasjon;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Person;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.person.TpsTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumerMedCache;
 
 @ApplicationScoped
 public class ArbeidsforholdDtoTjeneste {
 
     private ArbeidsforholdTjeneste arbeidsforholdTjeneste;
-    private TpsTjeneste tpsTjeneste;
+    private AktørConsumerMedCache aktørConsumer;
 
     ArbeidsforholdDtoTjeneste() {
     }
 
     @Inject
-    public ArbeidsforholdDtoTjeneste(ArbeidsforholdTjeneste arbeidsforholdTjeneste, TpsTjeneste tpsTjeneste) {
+    public ArbeidsforholdDtoTjeneste(ArbeidsforholdTjeneste arbeidsforholdTjeneste, AktørConsumerMedCache aktørConsumer) {
         this.arbeidsforholdTjeneste = arbeidsforholdTjeneste;
-        this.tpsTjeneste = tpsTjeneste;
+        this.aktørConsumer = aktørConsumer;
     }
 
     public List<ArbeidsforholdDto> mapFor(AktørId aktørId, LocalDate fom, LocalDate tom) {
-        var ident = tpsTjeneste.hentFnrForAktør(aktørId);
+        var ident = aktørConsumer.hentPersonIdentForAktørId(aktørId.getId()).map(PersonIdent::new).orElseThrow();
         Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident, aktørId, IntervallUtil.byggIntervall(fom, tom));
 
         return arbeidsforhold.entrySet().stream().map(this::mapTilArbeidsforhold).collect(Collectors.toList());

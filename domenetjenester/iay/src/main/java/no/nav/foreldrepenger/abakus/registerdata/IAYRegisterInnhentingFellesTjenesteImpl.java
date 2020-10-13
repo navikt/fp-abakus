@@ -54,7 +54,7 @@ import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrganisasjonsNummerValidator;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
-import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
+import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumerMedCache;
 
 public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInnhentingTjeneste {
 
@@ -65,7 +65,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
     private YtelseRegisterInnhenting ytelseRegisterInnhenting;
     private InnhentingSamletTjeneste innhentingSamletTjeneste;
     private ByggYrkesaktiviteterTjeneste byggYrkesaktiviteterTjeneste;
-    private AktørConsumer aktørConsumer;
+    private AktørConsumerMedCache aktørConsumer;
     private SigrunTjeneste sigrunTjeneste;
 
     protected IAYRegisterInnhentingFellesTjenesteImpl() {
@@ -74,7 +74,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
     protected IAYRegisterInnhentingFellesTjenesteImpl(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
                                                       VirksomhetTjeneste virksomhetTjeneste,
                                                       InnhentingSamletTjeneste innhentingSamletTjeneste,
-                                                      AktørConsumer aktørConsumer,
+                                                      AktørConsumerMedCache aktørConsumer,
                                                       SigrunTjeneste sigrunTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
         this.inntektArbeidYtelseTjeneste = inntektArbeidYtelseTjeneste;
         this.virksomhetTjeneste = virksomhetTjeneste;

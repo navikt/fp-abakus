@@ -31,7 +31,7 @@ import no.nav.tjenester.aordningen.inntektsinformasjon.request.HentInntektListeB
 import no.nav.tjenester.aordningen.inntektsinformasjon.response.HentInntektListeBolkResponse;
 import no.nav.tjenester.aordningen.inntektsinformasjon.tilleggsinformasjondetaljer.Etterbetalingsperiode;
 import no.nav.tjenester.aordningen.inntektsinformasjon.tilleggsinformasjondetaljer.TilleggsinformasjonDetaljerType;
-import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
+import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumerMedCache;
 import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
 import no.nav.vedtak.konfig.KonfigVerdi;
 
@@ -48,7 +48,7 @@ public class InntektTjeneste {
 
     private OidcRestClient oidcRestClient;
     private URI endpoint;
-    private AktørConsumer aktørConsumer;
+    private AktørConsumerMedCache aktørConsumer;
     private Map<InntektskildeType, InntektsFilter> kildeTilFilter;
 
     InntektTjeneste() {
@@ -58,7 +58,7 @@ public class InntektTjeneste {
     @Inject
     public InntektTjeneste(@KonfigVerdi(ENDPOINT_KEY) URI endpoint,
                            OidcRestClient oidcRestClient,
-                           AktørConsumer aktørConsumer) {
+                           AktørConsumerMedCache aktørConsumer) {
         this.endpoint = endpoint;
         this.oidcRestClient = oidcRestClient;
         this.aktørConsumer = aktørConsumer;
