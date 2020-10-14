@@ -24,16 +24,16 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.Arbeidsforh
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.OpplysningspliktigArbeidsgiverRS;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.PeriodeRS;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.PermisjonPermitteringRS;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.person.TpsTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumerMedCache;
 import no.nav.vedtak.konfig.Tid;
 
 @ApplicationScoped
 public class ArbeidsforholdTjeneste {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArbeidsforholdTjeneste.class);
-    private TpsTjeneste tpsTjeneste;
+    private AktørConsumerMedCache aktørConsumer;
     private AaregRestKlient aaregRestKlient;
 
     public ArbeidsforholdTjeneste() {
@@ -41,8 +41,8 @@ public class ArbeidsforholdTjeneste {
     }
 
     @Inject
-    public ArbeidsforholdTjeneste(TpsTjeneste tpsTjeneste, AaregRestKlient aaregRestKlient) {
-        this.tpsTjeneste = tpsTjeneste;
+    public ArbeidsforholdTjeneste(AktørConsumerMedCache aktørConsumer, AaregRestKlient aaregRestKlient) {
+        this.aktørConsumer = aktørConsumer;
         this.aaregRestKlient = aaregRestKlient;
     }
 
@@ -154,7 +154,7 @@ public class ArbeidsforholdTjeneste {
     }
 
     private Optional<AktørId> hentAktørIdForIdent(PersonIdent arbeidsgiver) {
-        return tpsTjeneste.hentAktørForFnr(arbeidsgiver);
+        return aktørConsumer.hentAktørIdForPersonIdent(arbeidsgiver.getIdent()).map(AktørId::new);
     }
 
     private boolean overlapperMedIntervall(Arbeidsavtale av, Interval interval) {

@@ -29,7 +29,7 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.InnhentingInfo
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumer;
+import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumerMedCache;
 import no.nav.vedtak.util.env.Cluster;
 import no.nav.vedtak.util.env.Environment;
 
@@ -39,7 +39,7 @@ public class InnhentingSamletTjeneste {
     private static final Logger LOGGER = LoggerFactory.getLogger(InnhentingSamletTjeneste.class);
 
     private ArbeidsforholdTjeneste arbeidsforholdTjeneste;
-    private AktørConsumer aktørConsumer;
+    private AktørConsumerMedCache aktørConsumer;
     private InntektTjeneste inntektTjeneste;
     private MeldekortTjeneste meldekortTjeneste;
     private InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste;
@@ -52,7 +52,7 @@ public class InnhentingSamletTjeneste {
 
     @Inject
     public InnhentingSamletTjeneste(ArbeidsforholdTjeneste arbeidsforholdTjeneste,  // NOSONAR
-                                    AktørConsumer aktørConsumer, InntektTjeneste inntektTjeneste,
+                                    AktørConsumerMedCache aktørConsumer, InntektTjeneste inntektTjeneste,
                                     InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste,
                                     MeldekortTjeneste meldekortTjeneste) {
         this.arbeidsforholdTjeneste = arbeidsforholdTjeneste;

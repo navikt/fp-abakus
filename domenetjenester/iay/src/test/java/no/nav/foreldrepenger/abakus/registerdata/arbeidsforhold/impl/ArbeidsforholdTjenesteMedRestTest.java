@@ -26,9 +26,9 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdTj
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Organisasjon;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AaregRestKlient;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.ArbeidsforholdRS;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.person.TpsTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumerMedCache;
 
 ;
 
@@ -91,7 +91,7 @@ public class ArbeidsforholdTjenesteMedRestTest {
         // Arrange
         AaregRestKlient aaregRestKlient = mock(AaregRestKlient.class);
         when(aaregRestKlient.finnArbeidsforholdForArbeidstaker(any(), any(), any())).thenReturn(List.of(fromJson(json, ArbeidsforholdRS.class)));
-        ArbeidsforholdTjeneste arbeidsforholdTjeneste = new ArbeidsforholdTjeneste(mock(TpsTjeneste.class), aaregRestKlient);
+        ArbeidsforholdTjeneste arbeidsforholdTjeneste = new ArbeidsforholdTjeneste(mock(AktørConsumerMedCache.class), aaregRestKlient);
 
         // Act
         Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(FNR, AKTØR_ID, IntervallUtil.byggIntervall(FOM, LocalDate.now()));
