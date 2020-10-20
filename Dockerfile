@@ -12,7 +12,8 @@ COPY web/target/classes/jetty/jaspi-conf.xml conf/
 COPY web/target/app.jar .
 COPY web/target/lib/*.jar ./
 
-ENV JAVA_OPTS="-Djava.security.egd=file:/dev/urandom \
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 \
+    -Djava.security.egd=file:/dev/urandom \
     -Duser.timezone=Europe/Oslo \
     -Dlogback.configurationFile=conf/logback.xml"
 
