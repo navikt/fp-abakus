@@ -165,10 +165,9 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
     }
 
     void tilbakestillYtelser() {
-        var legacy = ytelser.stream()
+        this.ytelser = ytelser.stream()
             .filter(AktørYtelse::beholdLegacyYtelseFraKilde)
             .collect(Collectors.toSet());
-        this.ytelser.retainAll(legacy);
     }
 
     // Her legger man inn ytelser/kilder som er innhentet tidligere, men som ikke blir reinnhentet etter sanering av integrasjon
