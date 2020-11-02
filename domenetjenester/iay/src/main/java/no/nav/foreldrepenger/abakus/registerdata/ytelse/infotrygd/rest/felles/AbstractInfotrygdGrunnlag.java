@@ -40,7 +40,6 @@ public abstract class AbstractInfotrygdGrunnlag implements InfotrygdGrunnlag {
                     .addParameter("fom", konverter(fom))
                     .addParameter("tom", konverter(tom)).build();
             var grunnlag = restClient.get(request, Grunnlag[].class);
-            LOG.info("fpabacus infotrygd REST {} fikk grunnlag {}", uriString, Arrays.toString(grunnlag));
             return Arrays.asList(grunnlag);
         } catch (Exception e) {
             LOG.error("Feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
@@ -56,7 +55,6 @@ public abstract class AbstractInfotrygdGrunnlag implements InfotrygdGrunnlag {
                 .addParameter("fom", konverter(fom))
                 .addParameter("tom", konverter(tom)).build();
             var grunnlag = restClient.get(request, Grunnlag[].class);
-            LOG.info("fpabacus infotrygd REST {} fikk grunnlag {}", uriString, Arrays.toString(grunnlag));
             return Arrays.asList(grunnlag);
         } catch (Exception e) {
             LOG.error("Feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);

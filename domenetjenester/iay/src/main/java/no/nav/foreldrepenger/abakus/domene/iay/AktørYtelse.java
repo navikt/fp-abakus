@@ -165,7 +165,15 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
     }
 
     void tilbakestillYtelser() {
-        this.ytelser.clear();
+        this.ytelser = ytelser.stream()
+            .filter(AktørYtelse::beholdLegacyYtelseFraKilde)
+            .collect(Collectors.toSet());
+    }
+
+    // Her legger man inn ytelser/kilder som er innhentet tidligere, men som ikke blir reinnhentet etter sanering av integrasjon
+    // Siste SVP / Infotrygd ble innvilget høst 2019 og løp ut mars 2020. Nye søknader vil ikke ha disse i opptjeningen -> saner integrasjon.
+    private static boolean beholdLegacyYtelseFraKilde(Ytelse y) {
+        return Fagsystem.INFOTRYGD.equals(y.getKilde()) && YtelseType.SVANGERSKAPSPENGER.equals(y.getRelatertYtelseType());
     }
 
     @Override
