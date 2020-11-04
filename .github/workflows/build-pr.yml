@@ -35,8 +35,9 @@ jobs:
 
       - name: Set cache key
         run: |
-          echo "::set-env name=CACHE_KEY::$(expr $(date +%V) - 1 + 1)-${{ github.event.pull_request.number }}" # unik cache key for PR
-          echo "::set-env name=PREVIOUS_CACHE_KEY::$(expr $(date +%V) - 1 + 1)" # samme som master cache key
+          echo "CACHE_KEY=$(expr $(date +%V) - 1 + 1)-${{ github.event.pull_request.number }}" >> $GITHUB_ENV # unik cache key for PR
+          echo "PREVIOUS_CACHE_KEY=$(expr $(date +%V) - 1 + 1)" >> $GITHUB_ENV # samme som master cache key
+
       - uses: actions/cache@v2
         with:
           path: ~/.m2
