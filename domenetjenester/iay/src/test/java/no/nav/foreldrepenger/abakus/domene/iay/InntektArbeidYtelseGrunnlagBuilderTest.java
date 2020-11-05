@@ -7,7 +7,7 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import no.nav.abakus.iaygrunnlag.request.Dataset;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;

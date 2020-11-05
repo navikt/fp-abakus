@@ -71,18 +71,7 @@
 			</exclusions>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<!-- Trengs for REST grensesnitt -->
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>jboss-jaxb-api_2.3_spec</artifactId>
-					<groupId>org.jboss.spec.javax.xml.bind</groupId>
-				</exclusion>
-			</exclusions>
-			<scope>provided</scope>
-		</dependency>
+
 		<dependency>
 			<!-- Trengs for REST grensesnitt -->
 			<groupId>org.jboss.resteasy</groupId>

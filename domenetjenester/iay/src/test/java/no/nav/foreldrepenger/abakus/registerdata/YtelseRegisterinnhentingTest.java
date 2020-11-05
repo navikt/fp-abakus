@@ -11,8 +11,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
@@ -24,8 +24,8 @@ import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelse;
+import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.domene.YtelseAnvistBuilder;
 
@@ -37,7 +37,7 @@ public class YtelseRegisterinnhentingTest {
 
     private YtelseRegisterInnhenting ytelseRegisterInnhenting;
 
-    @Before
+    @BeforeEach
     public void before() {
         ytelseRegisterInnhenting = new YtelseRegisterInnhenting(samletTjeneste, vedtakYtelseRepository);
     }

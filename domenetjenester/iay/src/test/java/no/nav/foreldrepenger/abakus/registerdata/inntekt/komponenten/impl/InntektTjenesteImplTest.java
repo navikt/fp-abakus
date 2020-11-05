@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -19,9 +18,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FinnInntektRequest;
@@ -41,6 +43,7 @@ import no.nav.tjenester.aordningen.inntektsinformasjon.response.HentInntektListe
 import no.nav.vedtak.exception.VLException;
 import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
 
+@ExtendWith(MockitoExtension.class)
 public class InntektTjenesteImplTest {
     private static final String FNR = "01234567890";
     private static final YearMonth GJELDENDE_MÅNED = YearMonth.now();
@@ -50,10 +53,11 @@ public class InntektTjenesteImplTest {
     private static final String SIKKERHETSAVVIK2 = "Mangler rettighet 2";
     private URI uri = null;
 
-    private OidcRestClient restKlient = mock(OidcRestClient.class);
+    @Mock
+    private OidcRestClient restKlient;
     private InntektTjeneste inntektTjeneste;
 
-    @Before
+    @BeforeEach
     public void before() {
         inntektTjeneste = new InntektTjeneste(uri, restKlient, null);
     }

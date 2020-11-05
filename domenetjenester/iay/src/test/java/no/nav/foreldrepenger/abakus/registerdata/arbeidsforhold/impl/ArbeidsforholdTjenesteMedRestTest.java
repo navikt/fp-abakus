@@ -11,8 +11,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -71,7 +71,7 @@ public class ArbeidsforholdTjenesteMedRestTest {
         "    ]\n" +
         "}";
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());

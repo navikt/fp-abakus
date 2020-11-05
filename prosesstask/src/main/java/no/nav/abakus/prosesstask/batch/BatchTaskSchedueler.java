@@ -72,12 +72,12 @@ public class BatchTaskSchedueler implements AppServiceHandler {
     }
 
     private void opprettTaskForType(Map.Entry<ProsessTaskType, ProsessTaskEntitet> entry) {
-        ProsessTaskType type = entry.getKey();
+        ProsessTaskType type = (ProsessTaskType)entry.getKey();
         ProsessTaskData data = new ProsessTaskData(type.getKode());
-        final String cron = type.getCronExpression();
-        LocalDateTime neste = new CronExpression(cron).neste(LocalDateTime.now());
+        String cron = type.getCronExpression();
+        LocalDateTime neste = (new CronExpression(cron)).nextLocalDateTimeAfter(LocalDateTime.now());
         data.setNesteKjøringEtter(neste);
-        taskRepository.lagre(data);
+        this.taskRepository.lagre(data);
     }
 
     @Override

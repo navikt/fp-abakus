@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.time.LocalDate;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +16,7 @@ public class EregRestTest {
 
     private static ObjectMapper mapper;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());

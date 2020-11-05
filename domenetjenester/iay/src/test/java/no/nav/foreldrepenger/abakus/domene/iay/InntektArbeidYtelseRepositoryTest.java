@@ -11,12 +11,14 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-import no.nav.foreldrepenger.abakus.dbstoette.UnittestRepositoryRule;
+import no.nav.foreldrepenger.abakus.dbstoette.EntityManagerAwareTest;
+import no.nav.foreldrepenger.abakus.dbstoette.FPabakusEntityManagerAwareExtension;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Fravær;
@@ -33,15 +35,18 @@ import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.vedtak.felles.testutilities.db.RepositoryRule;
 
-public class InntektArbeidYtelseRepositoryTest {
+@ExtendWith(FPabakusEntityManagerAwareExtension.class)
+public class InntektArbeidYtelseRepositoryTest extends EntityManagerAwareTest {
 
-    @Rule
-    public RepositoryRule repositoryRule = new UnittestRepositoryRule();
+    private InntektArbeidYtelseRepository repository;
+    private KoblingRepository koblingRepository;
 
-    private InntektArbeidYtelseRepository repository = new InntektArbeidYtelseRepository(repositoryRule.getEntityManager());
-    private KoblingRepository koblingRepository = new KoblingRepository(repositoryRule.getEntityManager());
+    @BeforeEach
+    public void setup() {
+        repository = new InntektArbeidYtelseRepository(getEntityManager());
+        koblingRepository = new KoblingRepository(getEntityManager());
+    }
 
     @Test
     public void skal_svare_om_er_siste() {
@@ -222,7 +227,7 @@ public class InntektArbeidYtelseRepositoryTest {
         assertThat(aktivtGrunnlag.getInntektsmeldinger().get().getInntektsmeldinger()).contains(inntektsmelding4);
 
     }
-    
+
     @Test
     public void skal_ta_vare_på_utdatert_inntektsmeldinger_basert_på_innsendingstidspunkt_mangler_kanalreferanse() {
         var aktørId = new AktørId("1231231231223");
