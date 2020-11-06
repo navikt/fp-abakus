@@ -12,7 +12,7 @@ import java.util.UUID;
 
 import javax.persistence.EntityManager;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 

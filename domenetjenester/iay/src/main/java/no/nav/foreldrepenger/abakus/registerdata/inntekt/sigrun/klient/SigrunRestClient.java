@@ -30,7 +30,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
 
 import no.nav.vedtak.feil.Feil;
 import no.nav.vedtak.feil.FeilFactory;
@@ -42,6 +41,7 @@ import no.nav.vedtak.feil.deklarasjon.TekniskFeil;
 import no.nav.vedtak.isso.OpenAMHelper;
 import no.nav.vedtak.log.mdc.MDCOperations;
 import no.nav.vedtak.sikkerhet.context.SubjectHandler;
+import no.nav.vedtak.sikkerhet.domene.SAMLAssertionCredential;
 
 public class SigrunRestClient {
     private static final Logger LOG = LoggerFactory.getLogger(SigrunRestClient.class);
@@ -127,7 +127,7 @@ public class SigrunRestClient {
             return oidcToken;
         }
 
-        Element samlToken = SubjectHandler.getSubjectHandler().getSamlToken();
+        var samlToken = SubjectHandler.getSubjectHandler().getSamlToken();
         if (samlToken != null) {
             return veksleSamlTokenTilOIDCToken(samlToken);
         }
@@ -153,7 +153,7 @@ public class SigrunRestClient {
 
     //FIXME (u139158): PK-50281 STS for SAML til OIDC
     // I mellomtiden bruker vi systemets OIDC-token, dvs vi propagerer ikke sikkerhetskonteksten
-    private String veksleSamlTokenTilOIDCToken(@SuppressWarnings("unused") Element samlToken) {
+    private String veksleSamlTokenTilOIDCToken(@SuppressWarnings("unused") SAMLAssertionCredential samlToken) {
         try {
             return new OpenAMHelper().getToken().getIdToken().getToken();
         } catch (IOException e) {

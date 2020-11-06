@@ -81,15 +81,7 @@ public class ArbeidsforholdTjeneste {
 
     private void utledArbeidsgiverRS(ArbeidsforholdRS arbeidsforhold, Arbeidsforhold.Builder builder) {
         if (OpplysningspliktigArbeidsgiverRS.Type.Person.equals(arbeidsforhold.getArbeidsgiver().getType())) {
-            AktørId arbeidsgiver;
-            if (arbeidsforhold.getArbeidsgiver().getAktoerId() == null) {
-                LOGGER.info("ABAKUS AAREG RS privat ag uten aktoerId");
-                arbeidsgiver = hentAktørIdForIdent(PersonIdent.fra(arbeidsforhold.getArbeidsgiver().getOffentligIdent()))
-                    .orElseThrow(() -> new IllegalStateException("Fant ikke aktørId for ident " + arbeidsforhold.getArbeidsgiver().getOffentligIdent()));
-            } else {
-                LOGGER.warn("ABAKUS AAREG RS privat ag med aktoerId. På tide å fikse koden i ArbeidsforholdTjeneste!");
-                arbeidsgiver = new AktørId(arbeidsforhold.getArbeidsgiver().getAktoerId());
-            }
+            AktørId arbeidsgiver = new AktørId(arbeidsforhold.getArbeidsgiver().getAktoerId());
             no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Person person = new no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Person.Builder()
                 .medAktørId(arbeidsgiver)
                 .build();
