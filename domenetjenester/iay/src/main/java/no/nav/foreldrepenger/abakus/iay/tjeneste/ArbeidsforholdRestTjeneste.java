@@ -4,8 +4,6 @@ import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessu
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
@@ -31,8 +29,6 @@ import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.request.AktørDatoRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
-import no.nav.foreldrepenger.abakus.felles.FellesRestTjeneste;
-import no.nav.foreldrepenger.abakus.felles.metrikker.MetrikkerTjeneste;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.arbeidsforhold.ArbeidsforholdDtoTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingLås;
@@ -50,7 +46,7 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 @Path("/arbeidsforhold/v1")
 @ApplicationScoped
 @Transactional
-public class ArbeidsforholdRestTjeneste extends FellesRestTjeneste {
+public class ArbeidsforholdRestTjeneste {
 
     private KoblingTjeneste koblingTjeneste;
     private InntektArbeidYtelseTjeneste iayTjeneste;
@@ -61,8 +57,7 @@ public class ArbeidsforholdRestTjeneste extends FellesRestTjeneste {
 
     @Inject
     public ArbeidsforholdRestTjeneste(KoblingTjeneste koblingTjeneste, InntektArbeidYtelseTjeneste iayTjeneste,
-                                      ArbeidsforholdDtoTjeneste dtoTjeneste, VirksomhetTjeneste virksomhetTjeneste, MetrikkerTjeneste metrikkerTjeneste) {
-        super(metrikkerTjeneste);
+                                      ArbeidsforholdDtoTjeneste dtoTjeneste, VirksomhetTjeneste virksomhetTjeneste) {
         this.koblingTjeneste = koblingTjeneste;
         this.iayTjeneste = iayTjeneste;
         this.dtoTjeneste = dtoTjeneste;
@@ -78,8 +73,6 @@ public class ArbeidsforholdRestTjeneste extends FellesRestTjeneste {
     @BeskyttetRessurs(action = READ, resource = ARBEIDSFORHOLD)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentArbeidsforhold(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
-        var startTx = Instant.now();
-
         AktørId aktørId = new AktørId(request.getAktør().getIdent());
         Periode periode = request.getPeriode();
 
@@ -89,8 +82,6 @@ public class ArbeidsforholdRestTjeneste extends FellesRestTjeneste {
             : periode.getTom(); // periode søk
         var arbeidstakersArbeidsforhold = dtoTjeneste.mapFor(aktørId, fom, tom);
         final Response response = Response.ok(arbeidstakersArbeidsforhold).build();
-
-        logMetrikk("/arbeidsforhold/v1/arbeidstaker", Duration.between(startTx, Instant.now()));
         return response;
     }
 
@@ -102,7 +93,6 @@ public class ArbeidsforholdRestTjeneste extends FellesRestTjeneste {
     @BeskyttetRessurs(action = CREATE, resource = ARBEIDSFORHOLD)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response finnEllerOpprettArbeidsforholdReferanse(@NotNull @TilpassetAbacAttributt(supplierClass = ArbeidsforholdReferanseAbacDataSupplier.class) @Valid ArbeidsforholdReferanse request) {
-        var startTx = Instant.now();
 
         KoblingReferanse referanse = new KoblingReferanse(UUID.fromString(request.getKoblingReferanse().getReferanse()));
         KoblingLås koblingLås = koblingTjeneste.taSkrivesLås(referanse);
@@ -116,8 +106,6 @@ public class ArbeidsforholdRestTjeneste extends FellesRestTjeneste {
         var dto = dtoTjeneste.mapArbeidsforhold(request.getArbeidsgiver(), abakusReferanse, arbeidsforholdRef.getReferanse());
         koblingTjeneste.oppdaterLåsVersjon(koblingLås);
         final Response response = Response.ok(dto).build();
-
-        logMetrikk("/arbeidsforhold/v1/referanse", Duration.between(startTx, Instant.now()));
         return response;
     }
 

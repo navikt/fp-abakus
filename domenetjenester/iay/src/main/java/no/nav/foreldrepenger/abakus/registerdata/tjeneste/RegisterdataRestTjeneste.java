@@ -4,8 +4,6 @@ import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessu
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -44,8 +42,6 @@ import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.abakus.iaygrunnlag.request.RegisterdataType;
 import no.nav.abakus.iaygrunnlag.request.SjekkStatusRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
-import no.nav.foreldrepenger.abakus.felles.FellesRestTjeneste;
-import no.nav.foreldrepenger.abakus.felles.metrikker.MetrikkerTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.TaskResponsDto;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
@@ -57,15 +53,14 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 @Path("/registerdata/v1")
 @ApplicationScoped
 @Transactional
-public class RegisterdataRestTjeneste extends FellesRestTjeneste {
+public class RegisterdataRestTjeneste {
 
     private InnhentRegisterdataTjeneste innhentTjeneste;
 
     public RegisterdataRestTjeneste() {} // RESTEASY ctor
 
     @Inject
-    public RegisterdataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste, MetrikkerTjeneste metrikkTjeneste) {
-        super(metrikkTjeneste);
+    public RegisterdataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste) {
         this.innhentTjeneste = innhentTjeneste;
     }
 
@@ -76,7 +71,6 @@ public class RegisterdataRestTjeneste extends FellesRestTjeneste {
     @BeskyttetRessurs(action = CREATE, resource = REGISTERDATA)
     @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
     public Response innhentOgLagreRegisterdataSync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
-        var startTx = Instant.now();
 
         Response response;
         Optional<GrunnlagReferanse> innhent = innhentTjeneste.innhent(dto);
@@ -86,7 +80,6 @@ public class RegisterdataRestTjeneste extends FellesRestTjeneste {
             response = Response.noContent().build();
         }
 
-        logMetrikk("/registerdata/v1/innhent/sync", Duration.between(startTx, Instant.now()));
         return response;
     }
 
@@ -97,7 +90,6 @@ public class RegisterdataRestTjeneste extends FellesRestTjeneste {
     @BeskyttetRessurs(action = CREATE, resource = REGISTERDATA)
     @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
     public Response innhentOgLagreRegisterdataAsync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
-        var startTx = Instant.now();
         Response response;
 
         String taskGruppe = innhentTjeneste.triggAsyncInnhent(dto);
@@ -106,8 +98,6 @@ public class RegisterdataRestTjeneste extends FellesRestTjeneste {
         } else {
             response = Response.noContent().build();
         }
-
-        logMetrikk("/registerdata/v1/innhent/async", Duration.between(startTx, Instant.now()));
         return response;
     }
 
@@ -119,7 +109,6 @@ public class RegisterdataRestTjeneste extends FellesRestTjeneste {
     @BeskyttetRessurs(action = READ, resource = REGISTERDATA)
     @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
     public Response innhentAsyncStatus(@Parameter(name = "status") @Valid SjekkStatusAbacDto dto) {
-        var startTx = Instant.now();
         Response response;
         if (innhentTjeneste.innhentingFerdig(dto.getTaskReferanse())) {
             Optional<GrunnlagReferanse> grunnlagReferanse = innhentTjeneste.hentSisteReferanseFor(new KoblingReferanse(dto.getReferanse().getReferanse()));
@@ -131,8 +120,6 @@ public class RegisterdataRestTjeneste extends FellesRestTjeneste {
         } else {
             response = Response.status(425).build();
         }
-
-        logMetrikk("/registerdata/v1/innhent/status", Duration.between(startTx, Instant.now()));
         return response;
     }
 

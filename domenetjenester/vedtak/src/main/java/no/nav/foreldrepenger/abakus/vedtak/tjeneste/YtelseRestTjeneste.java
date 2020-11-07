@@ -33,7 +33,6 @@ import no.nav.abakus.vedtak.ytelse.Periode;
 import no.nav.abakus.vedtak.ytelse.Ytelse;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
 import no.nav.abakus.vedtak.ytelse.v1.anvisning.Anvisning;
-import no.nav.foreldrepenger.abakus.felles.FellesRestTjeneste;
 import no.nav.foreldrepenger.abakus.felles.metrikker.MetrikkerTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
@@ -53,10 +52,11 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 @Path("/ytelse/v1")
 @ApplicationScoped
 @Transactional
-public class YtelseRestTjeneste extends FellesRestTjeneste {
+public class YtelseRestTjeneste {
 
     private VedtakYtelseRepository ytelseRepository;
     private ExtractFromYtelseV1 extractor;
+    private MetrikkerTjeneste metrikkerTjeneste;
 
     public YtelseRestTjeneste() {} // RESTEASY ctor
 
@@ -64,9 +64,9 @@ public class YtelseRestTjeneste extends FellesRestTjeneste {
     public YtelseRestTjeneste(VedtakYtelseRepository ytelseRepository,
                               ExtractFromYtelseV1 extractor,
                               MetrikkerTjeneste metrikkerTjeneste) {
-        super(metrikkerTjeneste);
         this.ytelseRepository = ytelseRepository;
         this.extractor = extractor;
+        this.metrikkerTjeneste = metrikkerTjeneste;
     }
 
     @POST
@@ -76,16 +76,12 @@ public class YtelseRestTjeneste extends FellesRestTjeneste {
     @BeskyttetRessurs(action = CREATE, resource = VEDTAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response lagreVedtakk(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid Ytelse request) {
-        var startTx = Instant.now();
-
         final YtelseV1 ytelseVedtak = (YtelseV1) request;
         VedtakYtelseBuilder builder = extractor.extractFrom(ytelseVedtak);
 
         ytelseRepository.lagre(builder);
 
-        logMetrikk("/ytelse/v1/vedtatt", Duration.between(startTx, Instant.now()));
-
-        getMetrikkTjeneste().logVedtakMottatRest(
+        metrikkerTjeneste.logVedtakMottatRest(
                 ytelseVedtak.getType().getKode(),
                 ytelseVedtak.getStatus().getKode(),
                 ytelseVedtak.getFagsystem().getKode());
@@ -101,8 +97,6 @@ public class YtelseRestTjeneste extends FellesRestTjeneste {
     @BeskyttetRessurs(action = READ, resource = VEDTAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public List<Ytelse> hentVedtak(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
-        var startTx = Instant.now();
-
         AktørId aktørId = new AktørId(request.getAktør().getIdent());
         LocalDate fom = request.getDato();
         LocalDate tom = Tid.TIDENES_ENDE;
@@ -110,7 +104,6 @@ public class YtelseRestTjeneste extends FellesRestTjeneste {
             .map(this::mapLagretVedtakTilYtelse)
             .collect(Collectors.toList());
 
-        logMetrikk("/ytelse/v1/hentVedtak", Duration.between(startTx, Instant.now()));
         return ytelser;
     }
 
@@ -146,6 +139,10 @@ public class YtelseRestTjeneste extends FellesRestTjeneste {
         return anvisning;
     }
 
+    private void logMetrikk(String ressurs, Duration executionTime) {
+        metrikkerTjeneste.logRestKall(ressurs, executionTime.toNanos());
+    }
+    
     public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
         @Override
         public AbacDataAttributter apply(Object obj) {
