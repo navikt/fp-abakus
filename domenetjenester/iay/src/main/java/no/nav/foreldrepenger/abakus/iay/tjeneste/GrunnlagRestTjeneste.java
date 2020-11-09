@@ -64,6 +64,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.Dataset;
 import no.nav.abakus.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest;
 import no.nav.abakus.iaygrunnlag.request.KopierGrunnlagRequest;
+import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseAggregatOverstyrtDto;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagSakSnapshotDto;
 import no.nav.abakus.iaygrunnlag.v1.OverstyrtInntektArbeidYtelseDto;
@@ -283,11 +284,11 @@ public class GrunnlagRestTjeneste {
         dtoMapper.mapOverstyringerTilGrunnlagBuilder(dto.getOverstyrt(), dto.getArbeidsforholdInformasjon(), nyttGrunnlagBuilder);
 
         iayTjeneste.lagre(koblingReferanse, nyttGrunnlagBuilder);
-        
+
         return Response.ok().build();
     }
 
-    /**@deprecated bytt til {@link #oppdaterOgLagreOverstyring(OverstyrtInntektArbeidYtelseDto)} .*/
+    /** @deprecated bytt til {@link #oppdaterOgLagreOverstyring(OverstyrtInntektArbeidYtelseDto)} . */
     @Deprecated(forRemoval = true)
     @PUT
     @Path("/")
@@ -470,6 +471,18 @@ public class GrunnlagRestTjeneste {
         throw new UnsupportedOperationException("Må ha grunnlagReferanse eller koblingReferanse");
     }
 
+    private static AbacDataAttributter lagAbacAttributter(PersonIdent person) {
+        var abacDataAttributter = AbacDataAttributter.opprett();
+        String ident = person.getIdent();
+        String identType = person.getIdentType();
+        if (FnrPersonident.IDENT_TYPE.equals(identType)) {
+            return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, ident);
+        } else if (AktørIdPersonident.IDENT_TYPE.equals(identType)) {
+            return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, ident);
+        }
+        throw new java.lang.IllegalStateException("Ukjent identtype" + identType);
+    }
+
     /**
      * Json bean med Abac.
      */
@@ -485,14 +498,9 @@ public class GrunnlagRestTjeneste {
 
         @Override
         public AbacDataAttributter abacAttributter() {
-            final var abacDataAttributter = AbacDataAttributter.opprett();
-            if (FnrPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
-                return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, getPerson().getIdent());
-            } else if (AktørIdPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
-                return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, getPerson().getIdent());
-            }
-            throw new java.lang.IllegalStateException("Ukjent identtype");
+            return lagAbacAttributter(getPerson());
         }
+
     }
 
     /**
@@ -516,13 +524,7 @@ public class GrunnlagRestTjeneste {
 
         @Override
         public AbacDataAttributter abacAttributter() {
-            final var abacDataAttributter = AbacDataAttributter.opprett();
-            if (FnrPersonident.IDENT_TYPE.equals(getAktør().getIdentType())) {
-                return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, getAktør().getIdent());
-            } else if (AktørIdPersonident.IDENT_TYPE.equals(getAktør().getIdentType())) {
-                return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, getAktør().getIdent());
-            }
-            throw new java.lang.IllegalStateException("Ukjent identtype");
+            return lagAbacAttributter(getAktør());
         }
     }
 
@@ -545,13 +547,31 @@ public class GrunnlagRestTjeneste {
 
         @Override
         public AbacDataAttributter abacAttributter() {
-            final var abacDataAttributter = AbacDataAttributter.opprett();
-            if (FnrPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
-                return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, getPerson().getIdent());
-            } else if (AktørIdPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
-                return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, getPerson().getIdent());
-            }
-            throw new java.lang.IllegalStateException("Ukjent identtype");
+            return lagAbacAttributter(getPerson());
+        }
+    }
+
+    /**
+     * Json bean med Abac.
+     */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+    public static class OverstyrtInntektArbeidYtelseAbacDto extends OverstyrtInntektArbeidYtelseDto implements AbacDto {
+
+        @JsonCreator
+        public OverstyrtInntektArbeidYtelseAbacDto(@JsonProperty(value = "personIdent", required = true) PersonIdent person,
+                                                   @JsonProperty(value = "grunnlagReferanse") @Valid @NotNull UUID grunnlagReferanse,
+                                                   @JsonProperty(value = "koblingReferanse") @Valid @NotNull UUID koblingReferanse,
+                                                   @JsonProperty(value = "ytelseType") YtelseType ytelseType,
+                                                   @JsonProperty(value = "arbeidsforholdInformasjon") ArbeidsforholdInformasjon arbeidsforholdInformasjon,
+                                                   @JsonProperty(value = "overstyrt") InntektArbeidYtelseAggregatOverstyrtDto overstyrt) {
+            super(person, grunnlagReferanse, koblingReferanse, ytelseType, arbeidsforholdInformasjon, overstyrt);
+        }
+
+        @Override
+        public AbacDataAttributter abacAttributter() {
+            return lagAbacAttributter(getPerson());
         }
     }
 
