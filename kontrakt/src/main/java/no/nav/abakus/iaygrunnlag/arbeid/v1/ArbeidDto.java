@@ -10,11 +10,9 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import no.nav.abakus.iaygrunnlag.PersonIdent;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import no.nav.abakus.iaygrunnlag.PersonIdent;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.ALWAYS)
@@ -53,10 +51,5 @@ public class ArbeidDto {
     public ArbeidDto medYrkesaktiviteter(List<YrkesaktivitetDto> yrkesaktiviteter) {
         setYrkesaktiviteter(yrkesaktiviteter);
         return this;
-    }
-    
-    @Override
-    public int hashCode() {
-        return Objects.hash(person, yrkesaktiviteter);
     }
 }

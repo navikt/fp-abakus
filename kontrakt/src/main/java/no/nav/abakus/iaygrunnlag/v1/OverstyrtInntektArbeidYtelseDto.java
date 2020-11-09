@@ -25,7 +25,7 @@ public class OverstyrtInntektArbeidYtelseDto {
     @JsonProperty(value = "ytelseType")
     @NotNull
     private YtelseType ytelseType;
-    
+
     /**
      * Angi hvem grunnlaget hentes for.
      */
@@ -41,7 +41,7 @@ public class OverstyrtInntektArbeidYtelseDto {
     @JsonProperty(value = "koblingReferanse")
     @Valid
     private UUID koblingReferanse;
-    
+
     /**
      * Unk referanse for grunnlaget. Hver versjon av grunnlaget vil få en ny grunnlagReferanse.
      * <p>
@@ -65,11 +65,11 @@ public class OverstyrtInntektArbeidYtelseDto {
 
     @JsonCreator
     public OverstyrtInntektArbeidYtelseDto(@JsonProperty(value = "personIdent", required = true) PersonIdent person,
-                              @JsonProperty(value = "grunnlagReferanse") @Valid @NotNull UUID grunnlagReferanse,
-                              @JsonProperty(value = "koblingReferanse") @Valid @NotNull UUID koblingReferanse,
-                              @JsonProperty(value = "ytelseType") YtelseType ytelseType,
-                              @JsonProperty(value = "arbeidsforholdInformasjon") ArbeidsforholdInformasjon arbeidsforholdInformasjon,
-                              @JsonProperty(value = "overstyrt") InntektArbeidYtelseAggregatOverstyrtDto overstyrt) {
+                                           @JsonProperty(value = "grunnlagReferanse") @Valid @NotNull UUID grunnlagReferanse,
+                                           @JsonProperty(value = "koblingReferanse") @Valid @NotNull UUID koblingReferanse,
+                                           @JsonProperty(value = "ytelseType") YtelseType ytelseType,
+                                           @JsonProperty(value = "arbeidsforholdInformasjon") ArbeidsforholdInformasjon arbeidsforholdInformasjon,
+                                           @JsonProperty(value = "overstyrt") InntektArbeidYtelseAggregatOverstyrtDto overstyrt) {
         this.ytelseType = Objects.requireNonNull(ytelseType, "ytelseType");
         this.person = Objects.requireNonNull(person, "person");
         if (koblingReferanse == null && grunnlagReferanse == null) {
@@ -93,7 +93,7 @@ public class OverstyrtInntektArbeidYtelseDto {
     public UUID getKoblingReferanse() {
         return koblingReferanse;
     }
-    
+
     public PersonIdent getPerson() {
         return this.person;
     }
@@ -104,25 +104,6 @@ public class OverstyrtInntektArbeidYtelseDto {
 
     public YtelseType getYtelseType() {
         return this.ytelseType;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        } else if (obj == null || !(obj.getClass().equals(this.getClass()))) {
-            return false;
-        }
-        var other = (OverstyrtInntektArbeidYtelseDto) obj;
-        return Objects.equals(ytelseType, other.ytelseType)
-            && Objects.equals(koblingReferanse, other.koblingReferanse)
-            && Objects.equals(arbeidsforholdInformasjon, other.arbeidsforholdInformasjon)
-            && Objects.equals(overstyrt, other.overstyrt);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(ytelseType, koblingReferanse, arbeidsforholdInformasjon, overstyrt);
     }
 
     @Override
