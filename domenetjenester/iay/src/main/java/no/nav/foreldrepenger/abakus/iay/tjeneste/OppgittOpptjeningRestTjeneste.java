@@ -5,8 +5,6 @@ import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessu
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.UPDATE;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -28,8 +26,6 @@ import no.nav.abakus.iaygrunnlag.UuidDto;
 import no.nav.abakus.iaygrunnlag.request.OppgittOpptjeningMottattRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
-import no.nav.foreldrepenger.abakus.felles.FellesRestTjeneste;
-import no.nav.foreldrepenger.abakus.felles.metrikker.MetrikkerTjeneste;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.OppgittOpptjeningTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapOppgittOpptjening;
@@ -46,19 +42,19 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 @Path("/iay/oppgitt/v1")
 @ApplicationScoped
 @Transactional
-public class OppgittOpptjeningRestTjeneste extends FellesRestTjeneste {
+public class OppgittOpptjeningRestTjeneste {
 
     private KoblingTjeneste koblingTjeneste;
     private OppgittOpptjeningTjeneste oppgittOpptjeningTjeneste;
     private InntektArbeidYtelseTjeneste iayTjeneste;
 
-    public OppgittOpptjeningRestTjeneste() {} // RESTEASY ctor
+    public OppgittOpptjeningRestTjeneste() {
+    } // RESTEASY ctor
 
     @Inject
     public OppgittOpptjeningRestTjeneste(KoblingTjeneste koblingTjeneste,
                                          OppgittOpptjeningTjeneste oppgittOpptjeningTjeneste,
-                                         InntektArbeidYtelseTjeneste iayTjeneste, MetrikkerTjeneste metrikkerTjeneste) {
-        super(metrikkerTjeneste);
+                                         InntektArbeidYtelseTjeneste iayTjeneste) {
         this.koblingTjeneste = koblingTjeneste;
         this.oppgittOpptjeningTjeneste = oppgittOpptjeningTjeneste;
         this.iayTjeneste = iayTjeneste;
@@ -67,14 +63,11 @@ public class OppgittOpptjeningRestTjeneste extends FellesRestTjeneste {
     @POST
     @Path("/motta")
     @Operation(description = "Lagrer ned mottatt oppgitt opptjening", tags = "oppgitt opptjening", responses = {
-        @ApiResponse(description = "Oppdatert grunnlagreferanse",
-            content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = UuidDto.class)))
+            @ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))
     })
     @BeskyttetRessurs(action = CREATE, resource = SØKNAD)
     @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
     public Response lagreOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
-        var startTx = Instant.now();
         Response response;
 
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
@@ -94,21 +87,17 @@ public class OppgittOpptjeningRestTjeneste extends FellesRestTjeneste {
             response = Response.noContent().build();
         }
 
-        logMetrikk("/iay/oppgitt/v1/motta", Duration.between(startTx, Instant.now()));
         return response;
     }
 
     @POST
     @Path("/overstyr")
     @Operation(description = "Lagrer ned mottatt oppgitt opptjening", tags = "oppgitt opptjening", responses = {
-            @ApiResponse(description = "Oppdatert grunnlagreferanse",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UuidDto.class)))
+            @ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))
     })
     @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
     @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
     public Response lagreOverstrytOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
-        var startTx = Instant.now();
         Response response;
 
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
@@ -128,7 +117,6 @@ public class OppgittOpptjeningRestTjeneste extends FellesRestTjeneste {
             response = Response.noContent().build();
         }
 
-        logMetrikk("/iay/oppgitt/v1/overstyr", Duration.between(startTx, Instant.now()));
         return response;
     }
 
