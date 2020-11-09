@@ -273,7 +273,7 @@ public class GrunnlagRestTjeneste {
     })
     @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response oppdaterOgLagreOverstyring(@NotNull @Valid OverstyrtInntektArbeidYtelseDto dto) {
+    public Response oppdaterOgLagreOverstyring(@NotNull @Valid OverstyrtInntektArbeidYtelseAbacDto dto) {
 
         var aktørId = new AktørId(dto.getPerson().getIdent());
 
