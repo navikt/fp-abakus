@@ -10,11 +10,9 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import no.nav.abakus.iaygrunnlag.PersonIdent;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import no.nav.abakus.iaygrunnlag.PersonIdent;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.ALWAYS)
