@@ -54,4 +54,9 @@ public class ArbeidDto {
         setYrkesaktiviteter(yrkesaktiviteter);
         return this;
     }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(person, yrkesaktiviteter);
+    }
 }

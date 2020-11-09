@@ -66,6 +66,7 @@ import no.nav.abakus.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest;
 import no.nav.abakus.iaygrunnlag.request.KopierGrunnlagRequest;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagSakSnapshotDto;
+import no.nav.abakus.iaygrunnlag.v1.OverstyrtInntektArbeidYtelseDto;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
@@ -115,7 +116,7 @@ public class GrunnlagRestTjeneste {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Hent ett enkelt IAY Grunnlag for angitt spesifikasjon. Spesifikasjonen kan angit hvilke data som ønskes", tags = "iay-grunnlag", responses = {
-            @ApiResponse(description = "Grunnlaget", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InntektArbeidYtelseGrunnlagDto.class))),
+            @ApiResponse(description = "InntektArbeidYtelseGrunnlagDto", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InntektArbeidYtelseGrunnlagDto.class))),
             @ApiResponse(responseCode = "204", description = "Det finnes ikke et grunnlag for forespørselen"),
             @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")
     })
@@ -128,7 +129,7 @@ public class GrunnlagRestTjeneste {
 
         final var forespurtGrunnlagReferanse = spesifikasjon.getGrunnlagReferanse();
         var grunnlagReferanse = forespurtGrunnlagReferanse != null ? new GrunnlagReferanse(forespurtGrunnlagReferanse) : null;
-        var koblingReferanse = getKoblingReferanse(aktørId, spesifikasjon);
+        var koblingReferanse = getKoblingReferanse(aktørId, spesifikasjon.getKoblingReferanse(), spesifikasjon.getGrunnlagReferanse());
 
         final var sisteKjenteGrunnlagReferanse = utledSisteKjenteGrunnlagReferanseFraSpesifikasjon(spesifikasjon);
         final var sistKjenteErAktivt = sisteKjenteGrunnlagReferanse != null && iayTjeneste.erGrunnlagAktivt(sisteKjenteGrunnlagReferanse);
@@ -168,7 +169,7 @@ public class GrunnlagRestTjeneste {
         cc.setMaxAge(0);
         cc.setProxyRevalidate(true);
         cc.setMustRevalidate(true);
-        
+
         var ref = new KoblingReferanse(koblingReferanse);
         var aktivtGrunnlag = iayTjeneste.hentAggregat(ref);
 
@@ -201,8 +202,8 @@ public class GrunnlagRestTjeneste {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Hent aktivt arbeidsforholdinformasjon grunnlag for angitt kobling", tags = "iay-grunnlag", responses = {
-            @ApiResponse(description = "ArbeidsforholdInformasjon", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArbeidsforholdInformasjon.class))),
+    @Operation(description = "Hent aktivt IAY grunnlag grunnlag for angitt kobling", tags = "iay-grunnlag", responses = {
+            @ApiResponse(description = "InntektArbeidYtelseGrunnlagDto", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArbeidsforholdInformasjon.class))),
             @ApiResponse(responseCode = "204", description = "Det finnes ikke et arbeidsforhold grunnlag for forespørselen"),
             @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")
     })
@@ -217,7 +218,7 @@ public class GrunnlagRestTjeneste {
         cc.setMaxAge(0);
         cc.setProxyRevalidate(true);
         cc.setMustRevalidate(true);
-        
+
         var ref = new KoblingReferanse(koblingReferanse);
         var aktivtGrunnlag = iayTjeneste.hentAggregat(ref);
 
@@ -263,6 +264,32 @@ public class GrunnlagRestTjeneste {
     }
 
     @PUT
+    @Path("/overstyrt")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Lagrer siste versjon", tags = "iay-grunnlag", responses = {
+            @ApiResponse(responseCode = "200", description = "Mottatt grunnlaget")
+    })
+    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
+    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    public Response oppdaterOgLagreOverstyring(@NotNull @Valid OverstyrtInntektArbeidYtelseDto dto) {
+
+        var aktørId = new AktørId(dto.getPerson().getIdent());
+
+        var koblingReferanse = getKoblingReferanse(aktørId, dto.getKoblingReferanse(), dto.getGrunnlagReferanse());
+
+        var dtoMapper = new IAYFraDtoMapper(iayTjeneste, aktørId, koblingReferanse);
+        var nyttGrunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayTjeneste.hentGrunnlagFor(koblingReferanse));
+        dtoMapper.mapOverstyringerTilGrunnlagBuilder(dto.getOverstyrt(), dto.getArbeidsforholdInformasjon(), nyttGrunnlagBuilder);
+
+        iayTjeneste.lagre(koblingReferanse, nyttGrunnlagBuilder);
+        
+        return Response.ok().build();
+    }
+
+    /**@deprecated bytt til {@link #oppdaterOgLagreOverstyring(OverstyrtInntektArbeidYtelseDto)} .*/
+    @Deprecated(forRemoval = true)
+    @PUT
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -277,9 +304,11 @@ public class GrunnlagRestTjeneste {
         var koblingReferanse = getKoblingReferanse(aktørId, dto);
 
         var dtoMapper = new IAYFraDtoMapper(iayTjeneste, aktørId, koblingReferanse);
-        final var builder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayTjeneste.hentGrunnlagFor(koblingReferanse));
-        iayTjeneste.lagre(koblingReferanse, InntektArbeidYtelseGrunnlagBuilder.oppdatere(dtoMapper.mapOverstyringerTilGrunnlag(dto, builder)));
-        final Response response = Response.ok().build();
+        var nyttGrunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayTjeneste.hentGrunnlagFor(koblingReferanse));
+        dtoMapper.mapOverstyringerTilGrunnlagBuilder(dto.getOverstyrt(), dto.getArbeidsforholdInformasjon(), nyttGrunnlagBuilder);
+
+        iayTjeneste.lagre(koblingReferanse, nyttGrunnlagBuilder);
+        Response response = Response.ok().build();
 
         return response;
     }
@@ -314,7 +343,7 @@ public class GrunnlagRestTjeneste {
 
             snapshot.leggTil(dto, g.isAktiv(), mapPeriode(kobling.getOpplysningsperiode()), mapPeriode(kobling.getOpptjeningsperiode()));
         });
-        final Response response = Response.ok(snapshot).build();
+        Response response = Response.ok(snapshot).build();
 
         return response;
     }
@@ -373,12 +402,12 @@ public class GrunnlagRestTjeneste {
         return kobling;
     }
 
-    private KoblingReferanse getKoblingReferanse(AktørId aktørId, InntektArbeidYtelseGrunnlagRequest spesifikasjon) {
+    private KoblingReferanse getKoblingReferanse(AktørId aktørId, UUID koblingRef, UUID grunnlagRef) {
         KoblingReferanse koblingReferanse;
-        if (spesifikasjon.getKoblingReferanse() != null) {
-            koblingReferanse = new KoblingReferanse(spesifikasjon.getKoblingReferanse());
+        if (koblingRef != null) {
+            koblingReferanse = new KoblingReferanse(koblingRef);
         } else {
-            var grunnlagReferanse = new GrunnlagReferanse(spesifikasjon.getGrunnlagReferanse());
+            var grunnlagReferanse = new GrunnlagReferanse(grunnlagRef);
             koblingReferanse = iayTjeneste.hentKoblingReferanse(grunnlagReferanse);
         }
 
