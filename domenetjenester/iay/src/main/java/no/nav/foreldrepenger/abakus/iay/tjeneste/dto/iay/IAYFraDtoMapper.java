@@ -37,14 +37,16 @@ public class IAYFraDtoMapper {
             Optional<InntektArbeidYtelseAggregat> aggregatEntitet = iayTjeneste.hentIAYAggregatFor(overstyrt.getEksternReferanse());
             if (aggregatEntitet.isPresent()) {
                 var aggregatBuilder = InntektArbeidYtelseAggregatBuilder.pekeTil(aggregatEntitet.get(), VersjonType.SAKSBEHANDLET);
-                builder.medData(aggregatBuilder);
+                builder.medSaksbehandlet(aggregatBuilder);
             } else {
                 var tidspunkt = overstyrt.getOpprettetTidspunkt().atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
                 var saksbehandlerOverstyringer = iayTjeneste.opprettBuilderForSaksbehandlet(koblingReferanse, overstyrt.getEksternReferanse(), tidspunkt);
                 var overstyrtAktørArbeid = new MapAktørArbeid.MapFraDto(aktørId, saksbehandlerOverstyringer).map(overstyrt.getArbeid());
                 overstyrtAktørArbeid.forEach(saksbehandlerOverstyringer::leggTilAktørArbeid);
-                builder.medData(saksbehandlerOverstyringer);
+                builder.medSaksbehandlet(saksbehandlerOverstyringer);
             }
+        } else {
+            builder.medSaksbehandlet(null);  // fjerner saksbehandlet versjon
         }
 
     }

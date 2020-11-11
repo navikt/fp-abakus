@@ -276,12 +276,12 @@ public class GrunnlagRestTjeneste {
     public Response oppdaterOgLagreOverstyring(@NotNull @Valid OverstyrtInntektArbeidYtelseAbacDto dto) {
 
         var aktørId = new AktørId(dto.getPerson().getIdent());
-
         var koblingReferanse = getKoblingReferanse(aktørId, dto.getKoblingReferanse(), dto.getGrunnlagReferanse());
 
-        var dtoMapper = new IAYFraDtoMapper(iayTjeneste, aktørId, koblingReferanse);
         var nyttGrunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayTjeneste.hentGrunnlagFor(koblingReferanse));
-        dtoMapper.mapOverstyringerTilGrunnlagBuilder(dto.getOverstyrt(), dto.getArbeidsforholdInformasjon(), nyttGrunnlagBuilder);
+
+        new IAYFraDtoMapper(iayTjeneste, aktørId, koblingReferanse)
+            .mapOverstyringerTilGrunnlagBuilder(dto.getOverstyrt(), dto.getArbeidsforholdInformasjon(), nyttGrunnlagBuilder);
 
         iayTjeneste.lagre(koblingReferanse, nyttGrunnlagBuilder);
 

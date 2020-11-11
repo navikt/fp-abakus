@@ -388,10 +388,10 @@ public class InntektArbeidYtelseAggregatBuilder {
 
         @Override
         public String toString() {
-            return "AktørYtelseBuilder{" +
+            return getClass().getSimpleName() + "<" +
                 "kladd=" + kladd +
                 ", oppdatering=" + oppdatering +
-                '}';
+                '>';
         }
 
     }

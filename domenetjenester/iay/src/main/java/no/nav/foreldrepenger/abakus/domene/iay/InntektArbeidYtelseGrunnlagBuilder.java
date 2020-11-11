@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -84,7 +85,6 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         return InntektArbeidYtelseAggregatBuilder.oppdatere(kladd.getRegisterVersjon(), VersjonType.REGISTER);
     }
 
-
     public ArbeidsforholdInformasjonBuilder getInformasjonBuilder() {
         return ArbeidsforholdInformasjonBuilder.builder(kladd.getArbeidsforholdInformasjon());
     }
@@ -117,16 +117,20 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         return this;
     }
 
-    private void medSaksbehandlet(InntektArbeidYtelseAggregatBuilder builder) {
-        if (builder != null) {
-            kladd.setSaksbehandlet(builder.build());
+    public void medSaksbehandlet(InntektArbeidYtelseAggregatBuilder builder) {
+        VersjonType forventet = VersjonType.SAKSBEHANDLET;
+        if(builder!=null && !Objects.equals(builder.getVersjon(),  forventet)) {
+            throw new IllegalArgumentException("kan kun angi " + forventet + ", fikk: " + builder.getVersjon());
         }
+        kladd.setSaksbehandlet(builder == null ? null : builder.build());
     }
-
-    private void medRegister(InntektArbeidYtelseAggregatBuilder builder) {
-        if (builder != null) {
-            kladd.setRegister(builder.build());
+    
+    public void medRegister(InntektArbeidYtelseAggregatBuilder builder) {
+        VersjonType forventet = VersjonType.REGISTER;
+        if(builder!=null && !Objects.equals(builder.getVersjon(),  forventet)) {
+            throw new IllegalArgumentException("kan kun angi " + forventet + ", fikk: " + builder.getVersjon());
         }
+        kladd.setRegister(builder == null ? null : builder.build());
     }
 
     public InntektArbeidYtelseGrunnlagBuilder medOppgittOpptjening(OppgittOpptjeningBuilder builder) {
