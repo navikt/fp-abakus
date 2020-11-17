@@ -67,8 +67,8 @@ public class InntektArbeidYtelseRepository {
 
     public Optional<InntektArbeidYtelseAggregat> hentIAYAggregatFor(KoblingReferanse koblingReferanse, UUID eksternReferanse) {
         TypedQuery<InntektArbeidYtelseAggregat> query = entityManager.createQuery("SELECT iay " +
-            "FROM InntektArbeidYtelser iay " +
-            "WHERE iay.eksternReferanse = :eksternReferanse", InntektArbeidYtelseAggregat.class);
+            " FROM InntektArbeidYtelser iay " +
+            " WHERE iay.eksternReferanse = :eksternReferanse", InntektArbeidYtelseAggregat.class);
         query.setParameter("eksternReferanse", eksternReferanse);
 
         var res = HibernateVerktøy.hentUniktResultat(query);
@@ -217,8 +217,8 @@ public class InntektArbeidYtelseRepository {
 
     public Optional<OppgittOpptjening> hentOppgittOpptjeningFor(UUID oppgittOpptjeningEksternReferanse) {
         TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery("SELECT iayg " +
-            "FROM OppgittOpptjening oo JOIN InntektArbeidYtelseGrunnlag iayg" +
-            "WHERE oo.eksternReferanse = :eksternReferanse", InntektArbeidYtelseGrunnlag.class);
+            " FROM OppgittOpptjening oo JOIN InntektArbeidYtelseGrunnlag iayg" +
+            " WHERE oo.eksternReferanse = :eksternReferanse", InntektArbeidYtelseGrunnlag.class);
         query.setParameter("eksternReferanse", oppgittOpptjeningEksternReferanse);
         var res = HibernateVerktøy.hentUniktResultat(query);
         if (res.isPresent()) {
@@ -660,7 +660,7 @@ public class InntektArbeidYtelseRepository {
     private Optional<InntektArbeidYtelseGrunnlag> getVersjonAvInntektArbeidYtelseForReferanseId(GrunnlagReferanse grunnlagReferanse) {
         Objects.requireNonNull(grunnlagReferanse, "aggregatId"); // NOSONAR
         final TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery("FROM InntektArbeidGrunnlag gr " +
-            "WHERE gr.grunnlagReferanse = :ref ", InntektArbeidYtelseGrunnlag.class);
+            " WHERE gr.grunnlagReferanse = :ref ", InntektArbeidYtelseGrunnlag.class);
         query.setParameter("ref", grunnlagReferanse);
         query.setHint(QueryHints.HINT_CACHE_MODE, "IGNORE");
         Optional<InntektArbeidYtelseGrunnlag> grunnlagOpt = query.getResultList().stream().findFirst();
@@ -687,7 +687,7 @@ public class InntektArbeidYtelseRepository {
     public boolean erGrunnlagAktivt(UUID eksternReferanse) {
         Objects.requireNonNull(eksternReferanse, "aggregatId"); // NOSONAR
         final TypedQuery<Boolean> query = entityManager.createQuery("SELECT gr.aktiv FROM InntektArbeidGrunnlag gr JOIN Kobling k ON gr.koblingId=k.id " +
-            "WHERE gr.grunnlagReferanse = :ref AND k.aktiv = true ", Boolean.class);
+            " WHERE gr.grunnlagReferanse = :ref AND k.aktiv = true ", Boolean.class);
         query.setParameter("ref", new GrunnlagReferanse(eksternReferanse));
         query.setHint(QueryHints.HINT_CACHE_MODE, "IGNORE");
         Optional<Boolean> grunnlagOpt = query.getResultList().stream().findFirst();
