@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
 import java.time.ZoneId;
+import java.util.Objects;
 import java.util.Optional;
 
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon;
@@ -20,9 +21,9 @@ public class IAYFraDtoMapper {
     private KoblingReferanse koblingReferanse;
 
     public IAYFraDtoMapper(InntektArbeidYtelseTjeneste tjeneste, AktørId aktørId, KoblingReferanse koblingReferanse) {
-        this.iayTjeneste = tjeneste;
-        this.aktørId = aktørId;
-        this.koblingReferanse = koblingReferanse;
+        this.iayTjeneste = Objects.requireNonNull(tjeneste, "tjeneste");
+        this.aktørId = Objects.requireNonNull(aktørId, "aktørId");
+        this.koblingReferanse = Objects.requireNonNull(koblingReferanse, "koblingReferanse");
     }
 
     /**
@@ -34,7 +35,7 @@ public class IAYFraDtoMapper {
         builder.medInformasjon(arbeidsforholdInformasjonBuilder.build());
         
         if (overstyrt != null) {
-            Optional<InntektArbeidYtelseAggregat> aggregatEntitet = iayTjeneste.hentIAYAggregatFor(overstyrt.getEksternReferanse());
+            Optional<InntektArbeidYtelseAggregat> aggregatEntitet = iayTjeneste.hentIAYAggregatFor(koblingReferanse, overstyrt.getEksternReferanse());
             if (aggregatEntitet.isPresent()) {
                 var aggregatBuilder = InntektArbeidYtelseAggregatBuilder.pekeTil(aggregatEntitet.get(), VersjonType.SAKSBEHANDLET);
                 builder.medSaksbehandlet(aggregatBuilder);

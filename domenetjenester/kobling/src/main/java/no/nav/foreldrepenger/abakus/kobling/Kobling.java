@@ -66,6 +66,10 @@ public class Kobling extends BaseEntitet implements IndexKey {
             @AttributeOverride(name = "tomDato", column = @Column(name = "opplysning_periode_tom"))
     })
     private IntervallEntitet opplysningsperiode;
+    
+    /** inaktive koblinger skal ikke brukes. må filtreres vekk. */
+    @Column(name = "aktiv", nullable = false)
+    private Boolean aktiv = true;
 
     @Embedded
     @AttributeOverrides({
@@ -145,5 +149,9 @@ public class Kobling extends BaseEntitet implements IndexKey {
             ", opplysningsperiode=" + opplysningsperiode +
             ", opptjeningsperiode=" + opptjeningsperiode +
             '}';
+    }
+
+    public boolean erAktiv() {
+        return aktiv;
     }
 }
