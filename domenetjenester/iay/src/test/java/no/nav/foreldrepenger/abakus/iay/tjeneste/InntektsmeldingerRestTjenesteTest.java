@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
@@ -23,7 +23,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.InntektsmeldingerMottattRequest;
-import no.nav.foreldrepenger.abakus.dbstoette.UnittestRepositoryRule;
+import no.nav.foreldrepenger.abakus.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
@@ -39,8 +39,10 @@ import no.nav.foreldrepenger.abakus.kobling.repository.LåsRepository;
 public class InntektsmeldingerRestTjenesteTest {
 
     public static final String SAKSNUMMER = "1234123412345";
-    @Rule
-    public UnittestRepositoryRule repositoryRule = new UnittestRepositoryRule();
+  
+    @RegisterExtension
+    public static JpaExtension repositoryRule = new JpaExtension();
+  
     private final KoblingRepository repository = new KoblingRepository(repositoryRule.getEntityManager());
     private final KoblingTjeneste koblingTjeneste = new KoblingTjeneste(repository, new LåsRepository(repositoryRule.getEntityManager()));
     private final InntektArbeidYtelseRepository iayRepository = new InntektArbeidYtelseRepository(repositoryRule.getEntityManager());
@@ -48,7 +50,7 @@ public class InntektsmeldingerRestTjenesteTest {
     private InntektsmeldingerTjeneste imTjenesten;
     private InntektsmeldingerRestTjeneste tjeneste;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         imTjenesten = new InntektsmeldingerTjeneste(iayRepository);
         tjeneste = new InntektsmeldingerRestTjeneste(imTjenesten, koblingTjeneste, new InntektArbeidYtelseTjeneste(iayRepository));

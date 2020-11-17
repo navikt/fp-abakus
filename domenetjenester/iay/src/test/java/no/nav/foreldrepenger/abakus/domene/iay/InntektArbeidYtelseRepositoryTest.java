@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-import no.nav.foreldrepenger.abakus.dbstoette.EntityManagerAwareTest;
-import no.nav.foreldrepenger.abakus.dbstoette.FPabakusEntityManagerAwareExtension;
+import no.nav.foreldrepenger.abakus.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Fravær;
@@ -35,17 +35,21 @@ import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+import no.nav.vedtak.felles.testutilities.cdi.CdiAwareExtension;
 
-@ExtendWith(FPabakusEntityManagerAwareExtension.class)
-public class InntektArbeidYtelseRepositoryTest extends EntityManagerAwareTest {
+@ExtendWith(CdiAwareExtension.class)
+public class InntektArbeidYtelseRepositoryTest {
 
+    @RegisterExtension
+    public static JpaExtension jpaExtension = new JpaExtension();
+  
     private InntektArbeidYtelseRepository repository;
     private KoblingRepository koblingRepository;
 
     @BeforeEach
     public void setup() {
-        repository = new InntektArbeidYtelseRepository(getEntityManager());
-        koblingRepository = new KoblingRepository(getEntityManager());
+        repository = new InntektArbeidYtelseRepository(jpaExtension.getEntityManager());
+        koblingRepository = new KoblingRepository(jpaExtension.getEntityManager());
     }
 
     @Test

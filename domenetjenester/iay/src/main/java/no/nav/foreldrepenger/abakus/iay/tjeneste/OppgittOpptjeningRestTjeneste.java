@@ -5,6 +5,7 @@ import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessu
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.UPDATE;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -71,7 +72,7 @@ public class OppgittOpptjeningRestTjeneste {
         Response response;
 
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
-        var koblingLås = koblingTjeneste.taSkrivesLås(koblingReferanse);
+        var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
         var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId, new Saksnummer(mottattRequest.getSaksnummer()));
 
@@ -79,7 +80,7 @@ public class OppgittOpptjeningRestTjeneste {
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagre(koblingReferanse, builder);
 
         koblingTjeneste.lagre(kobling);
-        koblingTjeneste.oppdaterLåsVersjon(koblingLås);
+        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
 
         if (grunnlagReferanse != null) {
             response = Response.ok(new UuidDto(grunnlagReferanse.getReferanse())).build();
@@ -101,7 +102,7 @@ public class OppgittOpptjeningRestTjeneste {
         Response response;
 
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
-        var koblingLås = koblingTjeneste.taSkrivesLås(koblingReferanse);
+        var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
         var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId, new Saksnummer(mottattRequest.getSaksnummer()));
 
@@ -109,7 +110,7 @@ public class OppgittOpptjeningRestTjeneste {
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagreOverstyring(koblingReferanse, builder);
 
         koblingTjeneste.lagre(kobling);
-        koblingTjeneste.oppdaterLåsVersjon(koblingLås);
+        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
 
         if (grunnlagReferanse != null) {
             response = Response.ok(new UuidDto(grunnlagReferanse.getReferanse())).build();
