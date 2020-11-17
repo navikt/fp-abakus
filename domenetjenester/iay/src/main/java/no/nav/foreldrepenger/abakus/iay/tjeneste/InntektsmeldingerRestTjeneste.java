@@ -142,9 +142,9 @@ public class InntektsmeldingerRestTjeneste {
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
 
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
-        var koblingLås = koblingTjeneste.taSkrivesLås(koblingReferanse);
         var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId, new Saksnummer(mottattRequest.getSaksnummer()));
-
+        var koblingLås = koblingTjeneste.taSkrivesLås(koblingReferanse);
+        
         var informasjonBuilder = ArbeidsforholdInformasjonBuilder.oppdatere(imTjeneste.hentArbeidsforholdInformasjonForKobling(koblingReferanse));
 
         var inntektsmeldingerAggregat = new MapInntektsmeldinger.MapFraDto().map(informasjonBuilder, mottattRequest.getInntektsmeldinger());

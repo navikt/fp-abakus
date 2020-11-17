@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.TypedQuery;
 
 import org.slf4j.Logger;
@@ -41,28 +42,42 @@ public class KoblingRepository {
     }
 
     public Optional<Kobling> hentForKoblingReferanse(KoblingReferanse referanse) {
+        return hentForKoblingReferanse(referanse, false);
+    }
+
+    public Optional<Kobling> hentForKoblingReferanse(KoblingReferanse referanse, boolean taSkriveLås) {
         TypedQuery<Kobling> query = entityManager.createQuery("FROM Kobling k WHERE koblingReferanse = :referanse", Kobling.class);
         query.setParameter("referanse", referanse);
-        return HibernateVerktøy.hentUniktResultat(query);
+        if (taSkriveLås) {
+            query.setLockMode(LockModeType.PESSIMISTIC_WRITE);
+        }
+        var k = HibernateVerktøy.hentUniktResultat(query);
+        validerErAktiv(k);
+        return k;
+    }
+
+    private void validerErAktiv(Optional<Kobling> k) {
+        if (k.isPresent() && !k.get().erAktiv()) {
+            throw new IllegalStateException("Etterspør kobling: " + k.get().getKoblingReferanse() + ", men denne er ikke aktiv");
+        }
     }
 
     public Optional<Kobling> hentSisteKoblingReferanseFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
         TypedQuery<Kobling> query = entityManager.createQuery("FROM Kobling k " +
-            " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId " + // NOSONAR
-            "order by k.opprettetTidspunkt desc, k.id desc"
-            , Kobling.class);
+            " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true" + // NOSONAR
+            " ORDER BY k.opprettetTidspunkt desc, k.id desc", Kobling.class);
         query.setParameter("ref", saksnummer);
         query.setParameter("ytelse", ytelseType);
         query.setParameter("aktørId", aktørId);
         query.setMaxResults(1);
-        return query.getResultList().stream().findFirst();
+        var k = query.getResultList().stream().findFirst();
+        validerErAktiv(k);
+        return k;
     }
 
-
-    public Long hentKoblingIdForKoblingReferanse(KoblingReferanse referanse) {
-        TypedQuery<Long> query = entityManager.createQuery("SELECT k.id FROM Kobling k WHERE k.koblingReferanse = :referanse", Long.class);
-        query.setParameter("referanse", referanse);
-        return HibernateVerktøy.hentUniktResultat(query).orElse(null);
+    public Optional<Long> hentKoblingIdForKoblingReferanse(KoblingReferanse referanse) {
+        var k = hentForKoblingReferanse(referanse);
+        return k.map(Kobling::getId);
     }
 
     public void lagre(Kobling nyKobling) {

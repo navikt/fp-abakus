@@ -95,17 +95,6 @@ public class InntektArbeidYtelseTjeneste {
         return repository.hentAlleInntektArbeidYtelseGrunnlagFor(aktørId, saksnummer, ytelseType, kunAktive);
     }
 
-    /**
-     * Hent alle grunnlag for angitt koblingsreferanse (behandling)
-     *
-     * @param koblingReferanse
-     * @param boolean kunAktive - hvis true henter kun aktive grunnlag (ikke historiske versjoner)
-     * @return henter optional aggregat
-     */
-    public List<InntektArbeidYtelseGrunnlag> hentAlleGrunnlagFor(AktørId aktørId, KoblingReferanse koblingReferanse, boolean kunAktive) {
-        return repository.hentAlleInntektArbeidYtelseGrunnlagFor(aktørId, koblingReferanse, kunAktive);
-    }
-
     public Set<Inntektsmelding> hentAlleInntektsmeldingerFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
         return repository.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
     }
@@ -190,11 +179,12 @@ public class InntektArbeidYtelseTjeneste {
     }
 
     public Optional<OppgittOpptjening> hentOppgittOpptjeningFor(UUID oppgittOpptjeningEksternReferanse) {
-        return repository.hentOppgittOpptjeningFor(oppgittOpptjeningEksternReferanse);
+        var oppgittOpptjening = repository.hentOppgittOpptjeningFor(oppgittOpptjeningEksternReferanse);
+        return oppgittOpptjening;
     }
 
-    public Optional<InntektArbeidYtelseAggregat> hentIAYAggregatFor(UUID eksternReferanse) {
-        return repository.hentIAYAggregatFor(eksternReferanse);
+    public Optional<InntektArbeidYtelseAggregat> hentIAYAggregatFor(KoblingReferanse koblingReferanse, UUID eksternReferanse) {
+        return repository.hentIAYAggregatFor(koblingReferanse, eksternReferanse);
     }
 
     public boolean erGrunnlagAktivt(UUID eksternReferanse) {

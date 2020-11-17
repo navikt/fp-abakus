@@ -28,7 +28,7 @@ public class KoblingTjeneste {
     }
 
     public Kobling finnEllerOpprett(YtelseType ytelseType, KoblingReferanse referanse, AktørId aktørId, Saksnummer saksnummer) {
-        Kobling kobling = hentFor(referanse).orElseGet(() -> new Kobling(ytelseType, saksnummer, referanse, aktørId));
+        Kobling kobling = repository.hentForKoblingReferanse(referanse, true).orElseGet(() -> new Kobling(ytelseType, saksnummer, referanse, aktørId));
         repository.lagre(kobling);
         return kobling;
     }
@@ -50,7 +50,8 @@ public class KoblingTjeneste {
     }
 
     public KoblingLås taSkrivesLås(KoblingReferanse referanse) {
-        return taSkrivesLås(repository.hentKoblingIdForKoblingReferanse(referanse));
+        Optional<Long> koblingId = repository.hentKoblingIdForKoblingReferanse(referanse);
+        return koblingId.isPresent() ? taSkrivesLås(koblingId.get()) : null;
     }
 
     public KoblingLås taSkrivesLås(Long koblingId) {
@@ -60,7 +61,6 @@ public class KoblingTjeneste {
     public void oppdaterLåsVersjon(KoblingLås lås) {
         låsRepository.oppdaterLåsVersjon(lås);
     }
-
 
     public List<Saksnummer> hentAlleSaksnummer() {
         return repository.hentAlleSaksnummer();

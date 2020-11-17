@@ -220,7 +220,7 @@ public class MapInntektsmeldingerTest {
             .medStartDatoPermisjon(startPermisjon)
             .medInnsendingstidspunkt(innsendingstidspunkt.plusDays(10))
             .medMottattDato(LocalDate.now())
-            .medJournalpostId("journalpost_id")
+            .medJournalpostId("journalpost_id2")
             .build();
         iayRepository.lagre(koblingReferanse, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(im));
         iayRepository.lagre(koblingReferanse, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(im2));
@@ -261,7 +261,7 @@ public class MapInntektsmeldingerTest {
             .medStartDatoPermisjon(startPermisjon)
             .medInnsendingstidspunkt(innsendingstidspunkt.plusDays(10))
             .medMottattDato(LocalDate.now())
-            .medJournalpostId("journalpost_id")
+            .medJournalpostId("journalpost_id2")
             .build();
         iayRepository.lagre(koblingReferanse, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(im));
         iayRepository.lagre(koblingReferanse, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(im2));
@@ -308,7 +308,7 @@ public class MapInntektsmeldingerTest {
             .medStartDatoPermisjon(startPermisjon)
             .medInnsendingstidspunkt(innsendingstidspunkt2)
             .medMottattDato(innsendingstidspunkt2.toLocalDate())
-            .medJournalpostId("journalpost_id")
+            .medJournalpostId("journalpost_id2")
             .build();
         iayRepository.lagre(koblingReferanse, ArbeidsforholdInformasjonBuilder.builder(Optional.empty()), List.of(im, im2));
 
@@ -328,7 +328,6 @@ public class MapInntektsmeldingerTest {
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(1).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(innsendingstidspunkt.toLocalDate());
 
     }
-
 
     @Test
     public void skal_mappe_til_refusjonskravdatoer_for_flere_arbeidsforhold_med_refusjonskrav() {
@@ -363,7 +362,7 @@ public class MapInntektsmeldingerTest {
             .medStartDatoPermisjon(startPermisjon)
             .medInnsendingstidspunkt(innsendingstidspunkt2)
             .medMottattDato(innsendingstidspunkt2.toLocalDate())
-            .medJournalpostId("journalpost_id")
+            .medJournalpostId("journalpost_id2")
             .build();
         iayRepository.lagre(koblingReferanse, builder, List.of(im, im2));
 
