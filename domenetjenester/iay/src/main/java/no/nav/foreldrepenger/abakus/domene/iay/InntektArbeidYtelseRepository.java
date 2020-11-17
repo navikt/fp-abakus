@@ -178,7 +178,7 @@ public class InntektArbeidYtelseRepository {
 
         final TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery("SELECT gr" +
             " FROM InntektArbeidGrunnlag gr" +
-            " JOIN Kobling k " + // NOSONAR
+            " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
             " WHERE k.saksnummer = :saksnummer AND k.ytelseType = :ytelse and k.aktørId = :aktørId " + // NOSONAR
             (kunAktive ? " AND (gr.aktiv = :aktivt AND k.aktiv=:aktivt)" : "") +
             " ORDER BY gr.koblingId, gr.opprettetTidspunkt", InntektArbeidYtelseGrunnlag.class);
