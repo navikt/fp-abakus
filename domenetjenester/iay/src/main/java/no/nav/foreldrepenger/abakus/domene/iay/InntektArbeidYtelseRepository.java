@@ -129,7 +129,7 @@ public class InntektArbeidYtelseRepository {
             " JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id" + // NOSONAR
             " JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id" + // NOSONAR
             " JOIN ArbeidsforholdInformasjon arbInf on arbInf.id = gr.arbeidsforholdInformasjon.id" + // NOSONAR
-            " WHERE k.saksnummer = :ref AND k.koblingReferanse = :eksternRef AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=:aktiv and gr.aktiv=:aktiv", Object[].class);
+            " WHERE k.saksnummer = :ref AND k.koblingReferanse = :eksternRef AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true and gr.aktiv=:aktiv", Object[].class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("ref", saksnummer);
         query.setParameter("ytelse", ytelseType);
@@ -182,7 +182,7 @@ public class InntektArbeidYtelseRepository {
             " FROM InntektArbeidGrunnlag gr" +
             " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
             " WHERE k.saksnummer = :saksnummer AND k.ytelseType = :ytelse and k.aktørId = :aktørId " + // NOSONAR
-            (kunAktive ? " AND (gr.aktiv = :aktivt AND k.aktiv=:aktivt)" : "") +
+            (kunAktive ? " AND (gr.aktiv = :aktivt AND k.aktiv=true)" : "") +
             " ORDER BY gr.koblingId, gr.opprettetTidspunkt", InntektArbeidYtelseGrunnlag.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("saksnummer", saksnummer);
@@ -231,7 +231,7 @@ public class InntektArbeidYtelseRepository {
             var query2 = entityManager.createNativeQuery("select 1 from kobling k"
                 + " inner join GR_ARBEID_INNTEKT gr on gr.kobling_id=k.id"
                 + " inner join oppgitt_opptjening opp on opp.id=gr.oppgitt_opptjening_id"
-                + " where k.aktiv=:aktiv and gr.aktiv=:aktiv and opp.ekstern_referanse=:ref");
+                + " where k.aktiv=true and gr.aktiv=:aktiv and opp.ekstern_referanse=:ref");
             query2.setParameter("aktiv", true);
             query2.setParameter("ref", oppgittOpptjeningEksternReferanse);
             boolean harAktivKoblingOgGrunnlag = query.getResultStream().findAny().isPresent();
@@ -631,7 +631,7 @@ public class InntektArbeidYtelseRepository {
         if (resultList.isEmpty()) {
             return Optional.empty();
         } else if (resultList.size() == 1) {
-            validerKoblingErAktiv(koblingReferanse);
+            validerKoblingErAktiv(koblingReferanse);  //validerer her istdf. spørring for å avdekke om det brukes feil
             final Optional<InntektArbeidYtelseGrunnlag> grunnlag = resultList.stream().findFirst();
             return grunnlag;
         }
