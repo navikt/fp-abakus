@@ -129,11 +129,12 @@ public class InntektArbeidYtelseRepository {
             " JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id" + // NOSONAR
             " JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id" + // NOSONAR
             " JOIN ArbeidsforholdInformasjon arbInf on arbInf.id = gr.arbeidsforholdInformasjon.id" + // NOSONAR
-            " WHERE k.saksnummer = :ref AND k.koblingReferanse = :eksternRef AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true and gr.aktiv=true", Object[].class);
+            " WHERE k.saksnummer = :ref AND k.koblingReferanse = :eksternRef AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=:aktiv and gr.aktiv=:aktiv", Object[].class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("ref", saksnummer);
         query.setParameter("ytelse", ytelseType);
         query.setParameter("eksternRef", ref);
+        query.setParameter("aktiv", true);
 
         return queryTilMap(query.getResultList());
     }
@@ -148,10 +149,11 @@ public class InntektArbeidYtelseRepository {
             " JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id" + // NOSONAR
             " JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id" + // NOSONAR
             " JOIN ArbeidsforholdInformasjon arbInf on arbInf.id = gr.arbeidsforholdInformasjon.id" + // NOSONAR
-            " WHERE k.saksnummer = :saksnummer AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true and gr.aktiv=true ", Object[].class);
+            " WHERE k.saksnummer = :saksnummer AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true and gr.aktiv=:aktiv ", Object[].class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("saksnummer", saksnummer);
         query.setParameter("ytelse", ytelseType);
+        query.setParameter("aktiv", true);
 
         return queryTilMap(query.getResultList());
     }
@@ -216,16 +218,28 @@ public class InntektArbeidYtelseRepository {
     }
 
     public Optional<OppgittOpptjening> hentOppgittOpptjeningFor(UUID oppgittOpptjeningEksternReferanse) {
-        TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery("SELECT iayg " +
-            " FROM OppgittOpptjening oo JOIN InntektArbeidGrunnlag iayg" +
-            " WHERE oo.eksternReferanse = :eksternReferanse", InntektArbeidYtelseGrunnlag.class);
+        TypedQuery<OppgittOpptjening> query = entityManager.createQuery("SELECT oo " +
+            " FROM OppgittOpptjening oo " +
+            " WHERE oo.eksternReferanse = :eksternReferanse", OppgittOpptjening.class);
         query.setParameter("eksternReferanse", oppgittOpptjeningEksternReferanse);
         var res = HibernateVerktøy.hentUniktResultat(query);
-        if (res.isPresent()) {
-            erGrunnlagAktivt(res.get().getGrunnlagReferanse().getReferanse());
-            return res.get().getOppgittOpptjening();
-        } else {
+        
+        if(res.isEmpty()) {
             return Optional.empty();
+        } else {
+            // sjekk om opptjening finnes i noen aktivt grunnlag
+            var query2 = entityManager.createNativeQuery("select 1 from kobling k"
+                + " inner join GR_ARBEID_INNTEKT gr on gr.kobling_id=k.id"
+                + " inner join oppgitt_opptjening opp on opp.id=gr.oppgitt_opptjening_id"
+                + " where k.aktiv=:aktiv and gr.aktiv=:aktiv and opp.ekstern_referanse=:ref");
+            query2.setParameter("aktiv", true);
+            query2.setParameter("ref", oppgittOpptjeningEksternReferanse);
+            boolean harAktivKoblingOgGrunnlag = query.getResultStream().findAny().isPresent();
+            if(harAktivKoblingOgGrunnlag) {
+                return res;
+            } else {
+                throw new IllegalStateException("Etterspurte OppgittOpptjening som ikke er koblet til noe aktiv kobling/grunnlag: " + oppgittOpptjeningEksternReferanse);
+            }
         }
     }
 

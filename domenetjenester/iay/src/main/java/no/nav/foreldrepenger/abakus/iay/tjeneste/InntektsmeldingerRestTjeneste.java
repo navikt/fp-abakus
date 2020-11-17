@@ -7,6 +7,7 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -142,8 +143,8 @@ public class InntektsmeldingerRestTjeneste {
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
 
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
+        var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
         var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId, new Saksnummer(mottattRequest.getSaksnummer()));
-        var koblingLås = koblingTjeneste.taSkrivesLås(koblingReferanse);
         
         var informasjonBuilder = ArbeidsforholdInformasjonBuilder.oppdatere(imTjeneste.hentArbeidsforholdInformasjonForKobling(koblingReferanse));
 
@@ -154,7 +155,8 @@ public class InntektsmeldingerRestTjeneste {
         var grunnlagReferanse = imTjeneste.lagre(koblingReferanse, informasjonBuilder, inntektsmeldinger);
 
         koblingTjeneste.lagre(kobling);
-        koblingTjeneste.oppdaterLåsVersjon(koblingLås);
+        
+        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
 
         if (grunnlagReferanse != null) {
             resultat = new UuidDto(grunnlagReferanse.getReferanse());

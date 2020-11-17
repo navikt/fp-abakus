@@ -103,7 +103,7 @@ public class InnhentRegisterdataTjeneste {
 
     private Kobling oppdaterKobling(InnhentRegisterdataRequest dto) {
         KoblingReferanse referanse = new KoblingReferanse(dto.getReferanse());
-        var koblingLås = koblingTjeneste.taSkrivesLås(referanse);
+        var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(referanse)); // kan bli null hvis gjelder ny
         Optional<Kobling> koblingOpt = koblingTjeneste.hentFor(referanse);
         Kobling kobling;
         if (koblingOpt.isEmpty()) {
@@ -131,7 +131,8 @@ public class InnhentRegisterdataTjeneste {
         }
         // Diff & log endringer
         koblingTjeneste.lagre(kobling);
-        koblingTjeneste.oppdaterLåsVersjon(koblingLås);
+        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
+        
         return kobling;
     }
 

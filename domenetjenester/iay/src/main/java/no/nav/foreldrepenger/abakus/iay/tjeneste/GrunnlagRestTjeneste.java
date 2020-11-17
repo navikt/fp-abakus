@@ -358,7 +358,7 @@ public class GrunnlagRestTjeneste {
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response kopierOgLagreGrunnlag(@NotNull @Valid KopierGrunnlagRequestAbac request) {
         var ref = new KoblingReferanse(request.getNyReferanse());
-        var koblingLås = koblingTjeneste.taSkrivesLås(ref); // alltid ta lås før skrive operasjoner
+        var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(ref)); // alltid ta lås før skrive operasjoner
 
         var kobling = oppdaterKobling(request);
 
@@ -367,7 +367,8 @@ public class GrunnlagRestTjeneste {
             new KoblingReferanse(request.getGammelReferanse()),
             new KoblingReferanse(request.getNyReferanse()),
             request.getDataset());
-        koblingTjeneste.oppdaterLåsVersjon(koblingLås);
+        
+        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
 
         return Response.ok().build();
     }

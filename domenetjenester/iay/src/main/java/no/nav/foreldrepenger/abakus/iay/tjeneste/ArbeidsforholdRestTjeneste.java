@@ -6,6 +6,7 @@ import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -95,7 +96,7 @@ public class ArbeidsforholdRestTjeneste {
     public Response finnEllerOpprettArbeidsforholdReferanse(@NotNull @TilpassetAbacAttributt(supplierClass = ArbeidsforholdReferanseAbacDataSupplier.class) @Valid ArbeidsforholdReferanse request) {
 
         KoblingReferanse referanse = new KoblingReferanse(UUID.fromString(request.getKoblingReferanse().getReferanse()));
-        KoblingLås koblingLås = koblingTjeneste.taSkrivesLås(referanse);
+        var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(referanse));
 
         ArbeidsforholdInformasjon arbeidsforholdInformasjon = iayTjeneste.hentArbeidsforholdInformasjonForKobling(referanse);
 
@@ -104,7 +105,8 @@ public class ArbeidsforholdRestTjeneste {
             InternArbeidsforholdRef.ref(abakusReferanse));
 
         var dto = dtoTjeneste.mapArbeidsforhold(request.getArbeidsgiver(), abakusReferanse, arbeidsforholdRef.getReferanse());
-        koblingTjeneste.oppdaterLåsVersjon(koblingLås);
+        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
+        
         final Response response = Response.ok(dto).build();
         return response;
     }

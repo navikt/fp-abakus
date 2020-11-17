@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
@@ -17,15 +17,15 @@ import no.nav.abakus.vedtak.ytelse.Aktør;
 import no.nav.abakus.vedtak.ytelse.Periode;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
 import no.nav.abakus.vedtak.ytelse.v1.anvisning.Anvisning;
-import no.nav.foreldrepenger.abakus.dbstoette.UnittestRepositoryRule;
+import no.nav.foreldrepenger.abakus.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 
 public class ExtractFromYtelseV1Test {
 
-    @Rule
-    public UnittestRepositoryRule repositoryRule = new UnittestRepositoryRule();
-
+    @RegisterExtension
+    public static JpaExtension repositoryRule = new JpaExtension();
+  
     private VedtakYtelseRepository repository = new VedtakYtelseRepository(repositoryRule.getEntityManager());
     private ExtractFromYtelseV1 extractor = new ExtractFromYtelseV1(repository);
 

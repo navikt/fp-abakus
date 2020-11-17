@@ -11,14 +11,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.RefusjonskravDatoerDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-import no.nav.foreldrepenger.abakus.dbstoette.UnittestRepositoryRule;
+import no.nav.foreldrepenger.abakus.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
@@ -45,11 +45,12 @@ public class MapInntektsmeldingerTest {
     public static final String SAKSNUMMER = "1234123412345";
     private static final YtelseType ytelseType = YtelseType.FORELDREPENGER;
     
-    @Rule
-    public UnittestRepositoryRule repositoryRule = new UnittestRepositoryRule();
-    private final KoblingRepository repository = new KoblingRepository(repositoryRule.getEntityManager());
-    private final KoblingTjeneste koblingTjeneste = new KoblingTjeneste(repository, new LåsRepository(repositoryRule.getEntityManager()));
-    private final InntektArbeidYtelseRepository iayRepository = new InntektArbeidYtelseRepository(repositoryRule.getEntityManager());
+    @RegisterExtension
+    public static JpaExtension jpaExtension = new JpaExtension();
+    
+    private final KoblingRepository repository = new KoblingRepository(jpaExtension.getEntityManager());
+    private final KoblingTjeneste koblingTjeneste = new KoblingTjeneste(repository, new LåsRepository(jpaExtension.getEntityManager()));
+    private final InntektArbeidYtelseRepository iayRepository = new InntektArbeidYtelseRepository(jpaExtension.getEntityManager());
     private final InntektArbeidYtelseTjeneste iayTjeneste = new InntektArbeidYtelseTjeneste(iayRepository);
 
     @Test

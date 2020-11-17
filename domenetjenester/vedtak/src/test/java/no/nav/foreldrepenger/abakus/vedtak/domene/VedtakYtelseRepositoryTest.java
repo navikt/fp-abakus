@@ -6,23 +6,22 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-import no.nav.foreldrepenger.abakus.dbstoette.UnittestRepositoryRule;
+import no.nav.foreldrepenger.abakus.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.vedtak.felles.testutilities.db.RepositoryRule;
 
 public class VedtakYtelseRepositoryTest {
 
-    @Rule
-    public RepositoryRule repositoryRule = new UnittestRepositoryRule();
-
+    @RegisterExtension
+    public static JpaExtension repositoryRule = new JpaExtension();
+  
     private VedtakYtelseRepository repository = new VedtakYtelseRepository(repositoryRule.getEntityManager());
 
     @Test
