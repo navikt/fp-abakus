@@ -256,6 +256,83 @@ public class InntektArbeidYtelseRepositoryTest {
         assertThat(aktivtGrunnlag.getInntektsmeldinger().get().getInntektsmeldinger()).contains(inntektsmelding4);
 
     }
+    
+    @Test
+    public void skal_kun_hente_aktivt_grunnlag() {
+        var aktørId = new AktørId("1231231231223");
+        var koblingReferanse = new KoblingReferanse(UUID.randomUUID());
+        var saksnummer = new Saksnummer("12341234");
+        var ko = new Kobling(YtelseType.OMSORGSPENGER, saksnummer, koblingReferanse, aktørId);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDate idag = now.toLocalDate();
+        ko.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(idag.minusYears(2), idag));
+        koblingRepository.lagre(ko);
+
+        var inntektsmelding1 = InntektsmeldingBuilder.builder()
+            .medArbeidsgiver(Arbeidsgiver.virksomhet(new OrgNummer("000000000")))
+            .medArbeidsforholdId(InternArbeidsforholdRef.nullRef())
+            .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
+            .medJournalpostId("1")
+            .medInnsendingstidspunkt(now.minusDays(10))
+            .medBeløp(BigDecimal.TEN)
+            .medKanalreferanse("AR123")
+            .leggTil(new Fravær(idag.minusDays(30), idag.minusDays(25), null))
+            .medRefusjon(BigDecimal.TEN)
+            .build();
+        var inntektsmelding2 = InntektsmeldingBuilder.builder()
+            .medArbeidsgiver(Arbeidsgiver.virksomhet(new OrgNummer("000000000")))
+            .medArbeidsforholdId(InternArbeidsforholdRef.nullRef())
+            .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
+            .medInnsendingstidspunkt(now.minusDays(9))
+            .medJournalpostId("2")
+            .medBeløp(BigDecimal.ONE)
+            .medKanalreferanse("AR124")
+            .leggTil(new Fravær(idag.minusDays(26), idag.minusDays(25), null))
+            .medRefusjon(BigDecimal.ONE)
+            .build();
+        var inntektsmelding3 = InntektsmeldingBuilder.builder()
+            .medArbeidsgiver(Arbeidsgiver.virksomhet(new OrgNummer("000000000")))
+            .medArbeidsforholdId(InternArbeidsforholdRef.nullRef())
+            .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
+            .medInnsendingstidspunkt(now.minusDays(9))
+            .medJournalpostId("3")
+            .medBeløp(BigDecimal.ONE)
+            .medKanalreferanse("AR125")
+            .leggTil(new Fravær(idag.minusDays(30), idag.minusDays(25), null))
+            .medRefusjon(BigDecimal.ONE)
+            .build();
+        var inntektsmelding4 = InntektsmeldingBuilder.builder()
+            .medArbeidsgiver(Arbeidsgiver.virksomhet(new OrgNummer("000000000")))
+            .medArbeidsforholdId(InternArbeidsforholdRef.nullRef())
+            .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
+            .medInnsendingstidspunkt(now.minusDays(10))
+            .medJournalpostId("4")
+            .medBeløp(BigDecimal.ONE)
+            .medKanalreferanse("AR126")
+            .leggTil(new Fravær(idag, idag.plusDays(5), null))
+            .medRefusjon(BigDecimal.ONE)
+            .build();
+
+        repository.lagre(ko.getKoblingReferanse(), ArbeidsforholdInformasjonBuilder.oppdatere(new ArbeidsforholdInformasjon()), List.of(inntektsmelding1, inntektsmelding2, inntektsmelding3, inntektsmelding4, inntektsmelding1));
+
+        var grunnlag = repository.hentAlleInntektArbeidYtelseGrunnlagFor(aktørId, saksnummer, YtelseType.OMSORGSPENGER, true);
+
+        assertThat(grunnlag).hasSize(1);
+
+        var inntektsmeldings = grunnlag.stream()
+            .map(InntektArbeidYtelseGrunnlag::getInntektsmeldinger)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .map(InntektsmeldingAggregat::getInntektsmeldinger).flatMap(Collection::stream).collect(Collectors.toList());
+        assertThat(inntektsmeldings).hasSize(1);
+
+        var aktivtGrunnlag = repository.hentInntektArbeidYtelseForBehandling(koblingReferanse);
+
+        assertThat(aktivtGrunnlag.getInntektsmeldinger()).isPresent();
+        assertThat(aktivtGrunnlag.getInntektsmeldinger().get().getInntektsmeldinger()).hasSize(1);
+        assertThat(aktivtGrunnlag.getInntektsmeldinger().get().getInntektsmeldinger()).contains(inntektsmelding4);
+
+    }
 
     @Test
     public void skal_ta_vare_på_utdatert_inntektsmeldinger_basert_på_innsendingstidspunkt_mangler_kanalreferanse() {
