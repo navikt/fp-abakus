@@ -217,7 +217,7 @@ public class InntektArbeidYtelseRepository {
 
     public Optional<OppgittOpptjening> hentOppgittOpptjeningFor(UUID oppgittOpptjeningEksternReferanse) {
         TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery("SELECT iayg " +
-            " FROM OppgittOpptjening oo JOIN InntektArbeidYtelseGrunnlag iayg" +
+            " FROM OppgittOpptjening oo JOIN InntektArbeidGrunnlag iayg" +
             " WHERE oo.eksternReferanse = :eksternReferanse", InntektArbeidYtelseGrunnlag.class);
         query.setParameter("eksternReferanse", oppgittOpptjeningEksternReferanse);
         var res = HibernateVerktøy.hentUniktResultat(query);

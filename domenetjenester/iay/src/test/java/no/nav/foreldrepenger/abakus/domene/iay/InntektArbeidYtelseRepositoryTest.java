@@ -118,6 +118,31 @@ public class InntektArbeidYtelseRepositoryTest extends EntityManagerAwareTest {
         assertThat(overstyrtOppgittOpptjening.get().getAnnenAktivitet()).containsExactly(overstrytAnnenAktivitet);
         assertThat(oppgittOpptjening.get().getAnnenAktivitet()).containsExactly(annenAktivitet);
     }
+    
+    @Test
+    public void skal_kunne_hente_oppgitt_opptjening() {
+        var ko = new Kobling(YtelseType.OMSORGSPENGER, new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()), new AktørId("1231231231223"));
+        ko.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(2), LocalDate.now()));
+        koblingRepository.lagre(ko);
+
+        var vanlig = OppgittOpptjeningBuilder.ny();
+        OppgittAnnenAktivitet annenAktivitet = new OppgittAnnenAktivitet(IntervallEntitet.fraOgMed(LocalDate.now()), ArbeidType.ETTERLØNN_SLUTTPAKKE);
+        vanlig.leggTilAnnenAktivitet(annenAktivitet);
+
+        var overstyring = OppgittOpptjeningBuilder.ny();
+        OppgittAnnenAktivitet overstrytAnnenAktivitet = new OppgittAnnenAktivitet(IntervallEntitet.fraOgMed(LocalDate.now()), ArbeidType.VENTELØNN_VARTPENGER);
+        overstyring.leggTilAnnenAktivitet(overstrytAnnenAktivitet);
+
+        repository.lagre(ko.getKoblingReferanse(), vanlig);
+        repository.lagreOverstyring(ko.getKoblingReferanse(), overstyring);
+
+        var oppgittOpptjeningVanlig = repository.hentOppgittOpptjeningFor(vanlig.getEksternReferanse());
+        var oppgittOpptjeningOverstyring = repository.hentOppgittOpptjeningFor(overstyring.getEksternReferanse());
+        
+        assertThat(oppgittOpptjeningVanlig).isNotEmpty();
+        assertThat(oppgittOpptjeningOverstyring).isNotEmpty();
+    }
+
 
     @Test
     public void skal_kunne_lagre_overstyring_av_oppgitt_opptjening_flere_ganger() {
