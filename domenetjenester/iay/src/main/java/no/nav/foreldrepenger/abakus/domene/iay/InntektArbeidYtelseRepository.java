@@ -107,7 +107,7 @@ public class InntektArbeidYtelseRepository {
             " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
             " JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id" + // NOSONAR
             " JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id" + // NOSONAR
-            " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId "// NOSONAR
+            " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId and gr.aktiv=true"// NOSONAR
             , Inntektsmelding.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("ref", saksnummer);
