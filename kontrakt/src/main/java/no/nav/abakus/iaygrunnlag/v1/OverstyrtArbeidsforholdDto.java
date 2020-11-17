@@ -20,7 +20,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
-public class OverstyrtInntektArbeidYtelseDto {
+public class OverstyrtArbeidsforholdDto {
 
     @JsonProperty(value = "ytelseType")
     @NotNull
@@ -43,20 +43,11 @@ public class OverstyrtInntektArbeidYtelseDto {
     private UUID koblingReferanse;
 
     /**
-     * Unk referanse for grunnlaget. Hver versjon av grunnlaget vil få en ny grunnlagReferanse.
-     * <p>
-     * <h3>Ved skriving</h3> - Hvis referanse ikke finnes fra før vil data skrives ned på nytt og få denne referanse. Hvis de finnes fra før vil
-     * det
-     * opprettes nytt grunnlag (med ny grunnlagreferanse) der data som sendes ned skrives sammen med data som henger på angitt
-     * grunnlagReferanse.
+     * Original grunnlagreferanse - refererer tidligere versjon av grunnlag hvis dette skal overstyre eksisterende data.
      */
     @JsonProperty(value = "originalGrunnlagReferanse")
     @Valid
     private UUID originalGrunnlagReferanse;
-
-    @JsonProperty(value = "overstyrt")
-    @Valid
-    private InntektArbeidYtelseAggregatOverstyrtDto overstyrt;
 
     /** Referanser til arbeidsforhold satt av saksbehandler. */
     @JsonProperty(value = "arbeidsforholdInformasjon")
@@ -64,22 +55,20 @@ public class OverstyrtInntektArbeidYtelseDto {
     private ArbeidsforholdInformasjon arbeidsforholdInformasjon;
 
     @JsonCreator
-    public OverstyrtInntektArbeidYtelseDto(@JsonProperty(value = "personIdent", required = true) PersonIdent person,
-                                           @JsonProperty(value = "grunnlagReferanse") @Valid @NotNull UUID grunnlagReferanse,
+    public OverstyrtArbeidsforholdDto(@JsonProperty(value = "personIdent", required = true) PersonIdent person,
+                                           @JsonProperty(value = "originalGrunnlagReferanse") @Valid @NotNull UUID originalGrunnlagReferanse,
                                            @JsonProperty(value = "koblingReferanse") @Valid @NotNull UUID koblingReferanse,
                                            @JsonProperty(value = "ytelseType") YtelseType ytelseType,
-                                           @JsonProperty(value = "arbeidsforholdInformasjon") ArbeidsforholdInformasjon arbeidsforholdInformasjon,
-                                           @JsonProperty(value = "overstyrt") InntektArbeidYtelseAggregatOverstyrtDto overstyrt) {
+                                           @JsonProperty(value = "arbeidsforholdInformasjon") ArbeidsforholdInformasjon arbeidsforholdInformasjon) {
         this.ytelseType = Objects.requireNonNull(ytelseType, "ytelseType");
         this.person = Objects.requireNonNull(person, "person");
-        if (koblingReferanse == null && grunnlagReferanse == null) {
-            throw new IllegalArgumentException("Må oppgi minst en av koblingReferanse, grunnlagReferanse");
+        if (koblingReferanse == null && originalGrunnlagReferanse == null) {
+            throw new IllegalArgumentException("Må oppgi minst en av koblingReferanse, originalGrunnlagReferanse");
         }
-        this.originalGrunnlagReferanse = grunnlagReferanse;
+        this.originalGrunnlagReferanse = originalGrunnlagReferanse;
         this.koblingReferanse = koblingReferanse;
 
         this.arbeidsforholdInformasjon = arbeidsforholdInformasjon;
-        this.overstyrt = overstyrt;
     }
 
     public ArbeidsforholdInformasjon getArbeidsforholdInformasjon() {
@@ -98,10 +87,6 @@ public class OverstyrtInntektArbeidYtelseDto {
         return this.person;
     }
 
-    public InntektArbeidYtelseAggregatOverstyrtDto getOverstyrt() {
-        return overstyrt;
-    }
-
     public YtelseType getYtelseType() {
         return this.ytelseType;
     }
@@ -113,7 +98,6 @@ public class OverstyrtInntektArbeidYtelseDto {
             + ", ytelseType=" + ytelseType
             + (koblingReferanse == null ? "" : ", koblingReferanse=" + koblingReferanse)
             + (originalGrunnlagReferanse == null ? "" : ", grunnlagReferanse" + originalGrunnlagReferanse)
-            + (overstyrt == null ? "" : ", overstyrtIay={...}")
             + (arbeidsforholdInformasjon == null ? "" : ", arbeidsforholdInformasjon={...}")
             + ">";
     }

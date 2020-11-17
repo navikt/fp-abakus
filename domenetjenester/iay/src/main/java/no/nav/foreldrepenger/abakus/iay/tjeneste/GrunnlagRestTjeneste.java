@@ -67,6 +67,7 @@ import no.nav.abakus.iaygrunnlag.request.KopierGrunnlagRequest;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseAggregatOverstyrtDto;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagSakSnapshotDto;
+import no.nav.abakus.iaygrunnlag.v1.OverstyrtArbeidsforholdDto;
 import no.nav.abakus.iaygrunnlag.v1.OverstyrtInntektArbeidYtelseDto;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
@@ -130,7 +131,7 @@ public class GrunnlagRestTjeneste {
 
         final var forespurtGrunnlagReferanse = spesifikasjon.getGrunnlagReferanse();
         var grunnlagReferanse = forespurtGrunnlagReferanse != null ? new GrunnlagReferanse(forespurtGrunnlagReferanse) : null;
-        var koblingReferanse = getKoblingReferanse(aktørId, spesifikasjon.getKoblingReferanse(), spesifikasjon.getGrunnlagReferanse());
+        var koblingReferanse = validerKoblingReferanse(aktørId, spesifikasjon.getKoblingReferanse(), spesifikasjon.getGrunnlagReferanse());
 
         final var sisteKjenteGrunnlagReferanse = utledSisteKjenteGrunnlagReferanseFraSpesifikasjon(spesifikasjon);
         final var sistKjenteErAktivt = sisteKjenteGrunnlagReferanse != null && iayTjeneste.erGrunnlagAktivt(sisteKjenteGrunnlagReferanse);
@@ -264,28 +265,18 @@ public class GrunnlagRestTjeneste {
         return null;
     }
 
-    @PUT
-    @Path("/overstyrt")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Lagrer siste versjon", tags = "iay-grunnlag", responses = {
-            @ApiResponse(responseCode = "200", description = "Mottatt grunnlaget")
-    })
-    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response oppdaterOgLagreOverstyring(@NotNull @Valid OverstyrtInntektArbeidYtelseAbacDto dto) {
-
-        var aktørId = new AktørId(dto.getPerson().getIdent());
-        var koblingReferanse = getKoblingReferanse(aktørId, dto.getKoblingReferanse(), dto.getGrunnlagReferanse());
-
-        var nyttGrunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayTjeneste.hentGrunnlagFor(koblingReferanse));
-
-        new IAYFraDtoMapper(iayTjeneste, aktørId, koblingReferanse)
-            .mapOverstyringerTilGrunnlagBuilder(dto.getOverstyrt(), dto.getArbeidsforholdInformasjon(), nyttGrunnlagBuilder);
-
-        iayTjeneste.lagre(koblingReferanse, nyttGrunnlagBuilder);
-
-        return Response.ok().build();
+    private Optional<InntektArbeidYtelseGrunnlag> hentMatchendeGrunnlag(KoblingReferanse koblingReferanse, UUID angittOriginalGrunnlagReferanse) {
+        Optional<InntektArbeidYtelseGrunnlag> nyesteAktiveGrunnlag = iayTjeneste.hentGrunnlagFor(koblingReferanse);
+        if (nyesteAktiveGrunnlag.isEmpty()) {
+            return Optional.empty(); // har ikke matchende grunnlag for kobling fra før
+        } else {
+            // sjekk at referanse stemmer med angitt
+            UUID eksisterendeGrunnlagReferanse = nyesteAktiveGrunnlag.get().getGrunnlagReferanse().getReferanse();
+            if (!Objects.equals(angittOriginalGrunnlagReferanse, eksisterendeGrunnlagReferanse)) {
+                throw new IllegalArgumentException("Fant grunnlag [" + eksisterendeGrunnlagReferanse + "], matcher ikke angitt grunnlag [" + angittOriginalGrunnlagReferanse + "]");
+            }
+        }
+        return nyesteAktiveGrunnlag;
     }
 
     /** @deprecated bytt til {@link #oppdaterOgLagreOverstyring(OverstyrtInntektArbeidYtelseDto)} . */
@@ -312,6 +303,83 @@ public class GrunnlagRestTjeneste {
         Response response = Response.ok().build();
 
         return response;
+    }
+
+    /** @deprecated erstattes av POST {@link #oppdaterOgLagreOverstyring(OverstyrtInntektArbeidYtelseAbacDto)} . */
+    @Deprecated(forRemoval = true)
+    @PUT
+    @Path("/overstyrt")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Lagrer siste versjon", tags = "iay-grunnlag", responses = {
+            @ApiResponse(responseCode = "200", description = "Mottatt grunnlaget")
+    })
+    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
+    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    public Response oppdaterOgLagreOverstyring(@NotNull @Valid OverstyrtInntektArbeidYtelseAbacDto dto) {
+
+        var aktørId = new AktørId(dto.getPerson().getIdent());
+        var koblingReferanse = validerKoblingReferanse(aktørId, dto.getKoblingReferanse());
+        var originalGrunnlagReferanse = dto.getOriginalGrunnlagReferanse();
+        Optional<InntektArbeidYtelseGrunnlag> grunnlag = hentMatchendeGrunnlag(koblingReferanse, originalGrunnlagReferanse);
+        var nyttGrunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(grunnlag);
+
+        new IAYFraDtoMapper(iayTjeneste, aktørId, koblingReferanse)
+            .mapOverstyringerTilGrunnlagBuilder(dto.getOverstyrt(), dto.getArbeidsforholdInformasjon(), nyttGrunnlagBuilder);
+
+        iayTjeneste.lagre(koblingReferanse, nyttGrunnlagBuilder);
+
+        return Response.ok().build();
+    }
+
+    @POST
+    @Path("/overstyrt/iay")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Lagrer overstyrt iay og arbeidsforhold", tags = { "overstyrt", "iay", "arbeidsforhold" }, responses = {
+            @ApiResponse(responseCode = "200", description = "Mottatt overstyrt iay og arbeidsforhold")
+    })
+    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
+    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    public Response oppdaterOgLagreOverstyrtIay(@NotNull @Valid OverstyrtInntektArbeidYtelseAbacDto dto) {
+
+        var aktørId = new AktørId(dto.getPerson().getIdent());
+        var koblingReferanse = validerKoblingReferanse(aktørId, dto.getKoblingReferanse());
+        var originalGrunnlagReferanse = dto.getOriginalGrunnlagReferanse();
+        Optional<InntektArbeidYtelseGrunnlag> grunnlag = hentMatchendeGrunnlag(koblingReferanse, originalGrunnlagReferanse);
+        var nyttGrunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(grunnlag);
+
+        new IAYFraDtoMapper(iayTjeneste, aktørId, koblingReferanse)
+            .mapOverstyringerTilGrunnlagBuilder(dto.getOverstyrt(), dto.getArbeidsforholdInformasjon(), nyttGrunnlagBuilder);
+
+        iayTjeneste.lagre(koblingReferanse, nyttGrunnlagBuilder);
+
+        return Response.ok().build();
+    }
+
+    @POST
+    @Path("/overstyrt/arbeidsforhold")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Lagrer overstyrt arbeidsforhold", tags = { "overstyrt", "arbeidsforhold" }, responses = {
+            @ApiResponse(responseCode = "200", description = "Mottatt overstyrte arbeidsforhold")
+    })
+    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
+    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    public Response oppdaterOgLagreOverstyrtArbeidsforhold(@NotNull @Valid OverstyrtArbeidsforholdAbacDto dto) {
+
+        var aktørId = new AktørId(dto.getPerson().getIdent());
+        var koblingReferanse = validerKoblingReferanse(aktørId, dto.getKoblingReferanse());
+        var originalGrunnlagReferanse = dto.getOriginalGrunnlagReferanse();
+        Optional<InntektArbeidYtelseGrunnlag> grunnlag = hentMatchendeGrunnlag(koblingReferanse, originalGrunnlagReferanse);
+        var nyttGrunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(grunnlag);
+
+        new IAYFraDtoMapper(iayTjeneste, aktørId, koblingReferanse)
+            .mapOverstyringerTilGrunnlagBuilder(dto.getOverstyrt(), dto.getArbeidsforholdInformasjon(), nyttGrunnlagBuilder);
+
+        iayTjeneste.lagre(koblingReferanse, nyttGrunnlagBuilder);
+
+        return Response.ok().build();
     }
 
     @POST
@@ -403,7 +471,11 @@ public class GrunnlagRestTjeneste {
         return kobling;
     }
 
-    private KoblingReferanse getKoblingReferanse(AktørId aktørId, UUID koblingRef, UUID grunnlagRef) {
+    private KoblingReferanse validerKoblingReferanse(AktørId aktørId, UUID koblingRef) {
+        return validerKoblingReferanse(aktørId, koblingRef, null);
+    }
+
+    private KoblingReferanse validerKoblingReferanse(AktørId aktørId, UUID koblingRef, UUID grunnlagRef) {
         KoblingReferanse koblingReferanse;
         if (koblingRef != null) {
             koblingReferanse = new KoblingReferanse(koblingRef);
@@ -483,9 +555,6 @@ public class GrunnlagRestTjeneste {
         throw new java.lang.IllegalStateException("Ukjent identtype" + identType);
     }
 
-    /**
-     * Json bean med Abac.
-     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
     @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
@@ -503,9 +572,6 @@ public class GrunnlagRestTjeneste {
 
     }
 
-    /**
-     * Json bean med Abac.
-     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
     @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
@@ -528,9 +594,6 @@ public class GrunnlagRestTjeneste {
         }
     }
 
-    /**
-     * Json bean med Abac.
-     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
@@ -551,9 +614,6 @@ public class GrunnlagRestTjeneste {
         }
     }
 
-    /**
-     * Json bean med Abac.
-     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
@@ -567,6 +627,26 @@ public class GrunnlagRestTjeneste {
                                                    @JsonProperty(value = "arbeidsforholdInformasjon") ArbeidsforholdInformasjon arbeidsforholdInformasjon,
                                                    @JsonProperty(value = "overstyrt") InntektArbeidYtelseAggregatOverstyrtDto overstyrt) {
             super(person, grunnlagReferanse, koblingReferanse, ytelseType, arbeidsforholdInformasjon, overstyrt);
+        }
+
+        @Override
+        public AbacDataAttributter abacAttributter() {
+            return lagAbacAttributter(getPerson());
+        }
+    }
+    
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+    public static class OverstyrtArbeidsforholdAbacDto extends OverstyrtArbeidsforholdDto implements AbacDto {
+
+        @JsonCreator
+        public OverstyrtArbeidsforholdAbacDto(@JsonProperty(value = "personIdent", required = true) PersonIdent person,
+                                                   @JsonProperty(value = "grunnlagReferanse") @Valid @NotNull UUID grunnlagReferanse,
+                                                   @JsonProperty(value = "koblingReferanse") @Valid @NotNull UUID koblingReferanse,
+                                                   @JsonProperty(value = "ytelseType") YtelseType ytelseType,
+                                                   @JsonProperty(value = "arbeidsforholdInformasjon") ArbeidsforholdInformasjon arbeidsforholdInformasjon) {
+            super(person, grunnlagReferanse, koblingReferanse, ytelseType, arbeidsforholdInformasjon);
         }
 
         @Override
