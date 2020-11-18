@@ -30,8 +30,6 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumerMedCache;
 
-;
-
 public class ArbeidsforholdTjenesteMedRestTest {
 
     private static final String ORGNR = "973093681";

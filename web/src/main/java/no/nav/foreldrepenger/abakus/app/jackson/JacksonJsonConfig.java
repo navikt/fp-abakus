@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.app.jackson;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.KodeValidator;
+import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 import no.nav.foreldrepenger.abakus.app.IndexClasses;
 
 @Provider
@@ -44,7 +46,26 @@ public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {
         std.addValue(KodeValidator.class, KodeValidator.HAPPY_VALIDATOR);
         objectMapper.setInjectableValues(std);
 
-        objectMapper.registerSubtypes(getJsonTypeNameClasses());
+        registerSubTypesDynamically();
+    }
+
+    private void registerSubTypesDynamically() {
+        // avled code location fra klassene
+        getKontraktLokasjoner()
+            .stream()
+            .map(c -> {
+                try {
+                    return c.getProtectionDomain().getCodeSource().getLocation().toURI();
+                } catch (URISyntaxException e) {
+                    throw new IllegalArgumentException("Ikke en URI for klasse: " + c, e);
+                }
+            })
+            .distinct()
+            .forEach(uri -> getObjectMapper().registerSubtypes(getJsonTypeNameClasses(uri)));
+    }
+
+    public static List<Class<?>> getKontraktLokasjoner() {
+        return List.of(JacksonJsonConfig.class, InntektArbeidYtelseGrunnlagDto.class);
     }
 
     private static SimpleModule createModule(boolean serialiserKodelisteNavn) {
@@ -61,17 +82,12 @@ public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {
     }
 
     /**
-     * Scan subtyper dynamisk fra WAR slik at superklasse slipper å deklarere @JsonSubtypes.
+     * Scan subtyper dynamisk fra utvalgte jar/war slik at superklasse slipper å deklarere @JsonSubtypes.
      */
-    public static List<Class<?>> getJsonTypeNameClasses() {
-        Class<JacksonJsonConfig> cls = JacksonJsonConfig.class;
+    private static List<Class<?>> getJsonTypeNameClasses(URI classLocation) {
         IndexClasses indexClasses;
-        try {
-            indexClasses = IndexClasses.getIndexFor(cls.getProtectionDomain().getCodeSource().getLocation().toURI());
-            return indexClasses.getClassesWithAnnotation(JsonTypeName.class);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Kunne ikke konvertere CodeSource location til URI", e);
-        }
+        indexClasses = IndexClasses.getIndexFor(classLocation);
+        return indexClasses.getClassesWithAnnotation(JsonTypeName.class);
     }
 
     public ObjectMapper getObjectMapper() {

@@ -24,13 +24,13 @@ import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 public class ExtractFromYtelseV1Test {
 
     @RegisterExtension
-    public static JpaExtension repositoryRule = new JpaExtension();
+    public static JpaExtension extension = new JpaExtension();
   
-    private VedtakYtelseRepository repository = new VedtakYtelseRepository(repositoryRule.getEntityManager());
-    private ExtractFromYtelseV1 extractor = new ExtractFromYtelseV1(repository);
-
     @Test
     public void skal_lagre_informasjon() {
+        VedtakYtelseRepository repository = new VedtakYtelseRepository(extension.getEntityManager());
+        ExtractFromYtelseV1 extractor = new ExtractFromYtelseV1(repository);
+
         YtelseV1 ytelseV1 = new YtelseV1();
         Aktør aktør = new Aktør();
         String aktørId = "1234123412312";

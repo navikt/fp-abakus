@@ -12,7 +12,7 @@ import java.util.UUID;
 
 import javax.validation.Validation;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
