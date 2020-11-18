@@ -20,7 +20,7 @@ import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 public class VedtakYtelseRepositoryTest {
 
     @RegisterExtension
-    public static JpaExtension repositoryRule = new JpaExtension();
+    public static final JpaExtension repositoryRule = new JpaExtension();
   
     private VedtakYtelseRepository repository = new VedtakYtelseRepository(repositoryRule.getEntityManager());
 

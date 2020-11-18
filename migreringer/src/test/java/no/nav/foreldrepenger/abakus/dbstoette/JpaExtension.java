@@ -18,7 +18,7 @@ public class JpaExtension extends EntityManagerAwareExtension {
             // prøver alltid migrering hvis endring, ellers funker det dårlig i IDE.
             Databaseskjemainitialisering.migrerUnittestSkjemaer();
         }
-        Databaseskjemainitialisering.settPlaceholdereOgJdniOppslag();
+        Databaseskjemainitialisering.initUnitTestDataSource();
     }
 
 }
