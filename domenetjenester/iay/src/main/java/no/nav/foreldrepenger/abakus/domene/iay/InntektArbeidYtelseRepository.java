@@ -149,11 +149,10 @@ public class InntektArbeidYtelseRepository {
             " JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id" + // NOSONAR
             " JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id" + // NOSONAR
             " JOIN ArbeidsforholdInformasjon arbInf on arbInf.id = gr.arbeidsforholdInformasjon.id" + // NOSONAR
-            " WHERE k.saksnummer = :saksnummer AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true and gr.aktiv=:aktiv ", Object[].class);
+            " WHERE k.saksnummer = :saksnummer AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true ", Object[].class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("saksnummer", saksnummer);
         query.setParameter("ytelse", ytelseType);
-        query.setParameter("aktiv", true);
 
         return queryTilMap(query.getResultList());
     }
