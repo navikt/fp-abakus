@@ -49,6 +49,12 @@ public class UtbetalingsPostDto {
     @Valid
     private WrapUtbetaltYtelse ytelseType;
 
+
+    /** Forteller om det er en etterbetaling */
+    @JsonProperty(value = "etterbetaling")
+    @Valid
+    private Boolean etterbetaling;
+
     protected UtbetalingsPostDto() {
     }
 
@@ -97,6 +103,14 @@ public class UtbetalingsPostDto {
         this.beløp = beløp == null ? null : beløp.setScale(2, RoundingMode.HALF_UP);
     }
 
+    public void setEtterbetaling(boolean etterbetaling) {
+        this.etterbetaling = etterbetaling;
+    }
+
+    public Boolean getEtterbetaling() {
+        return etterbetaling;
+    }
+
     public UtbetalingsPostDto medBeløp(BigDecimal beløp) {
         setBeløp(beløp);
         return this;
@@ -104,6 +118,11 @@ public class UtbetalingsPostDto {
 
     public UtbetalingsPostDto medBeløp(int beløp) {
         setBeløp(BigDecimal.valueOf(beløp));
+        return this;
+    }
+
+    public UtbetalingsPostDto medEtterbetaling(boolean etterbetaling) {
+        setEtterbetaling(etterbetaling);
         return this;
     }
 

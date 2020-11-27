@@ -68,6 +68,9 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
     @ChangeTracked
     private Beløp beløp;
 
+    @Column(name = "etterbetaling", updatable = false)
+    private boolean etterbetaling = false;
+
     @Version
     @Column(name = "versjon", nullable = false)
     private long versjon;
@@ -86,6 +89,7 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
         this.beløp = inntektspost.getBeløp();
         this.ytelse = inntektspost.getYtelseType().getKode();
         this.ytelseType = inntektspost.getYtelseType().getKodeverk();
+        this.etterbetaling = inntektspost.isEtterbetaling();
     }
 
     @Override
@@ -143,7 +147,7 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
 
     /**
      * Periode inntektsposten gjelder.
-     * 
+     *
      * @return
      */
     public IntervallEntitet getPeriode() {
@@ -174,6 +178,14 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
         this.ytelse = ytelse.getKode();
     }
 
+    public boolean isEtterbetaling() {
+        return etterbetaling;
+    }
+
+    void setEtterbetaling(boolean etterbetaling) {
+        this.etterbetaling = etterbetaling;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {
@@ -186,12 +198,13 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
             && Objects.equals(this.ytelseType, other.ytelseType)
             && Objects.equals(this.ytelse, other.ytelse)
             && Objects.equals(this.skatteOgAvgiftsregelType, other.skatteOgAvgiftsregelType)
-            && Objects.equals(this.periode, other.periode);
+            && Objects.equals(this.periode, other.periode)
+            && Objects.equals(this.etterbetaling, other.etterbetaling);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(inntektspostType, ytelseType, ytelse, skatteOgAvgiftsregelType, periode);
+        return Objects.hash(inntektspostType, ytelseType, ytelse, skatteOgAvgiftsregelType, periode, etterbetaling);
     }
 
     @Override
@@ -204,6 +217,7 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
             ", fraOgMed=" + periode.getFomDato() +
             ", tilOgMed=" + periode.getTomDato() +
             ", beløp=" + beløp +
+            ", etterbetaling=" + etterbetaling +
             '>';
     }
 

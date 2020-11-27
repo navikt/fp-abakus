@@ -146,6 +146,9 @@ public class InntektTjeneste {
                 if (brukYM != null) {
                     månedsinntekt.medMåned(brukYM);
                 }
+
+                månedsinntekt.medEtterbetaling(erEtterbetaling(tilleggsinformasjon));
+
                 utledOgSettUtbetalerOgYtelse(inntekt, månedsinntekt);
 
                 månedsinntekter.add(månedsinntekt.build());

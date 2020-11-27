@@ -44,6 +44,11 @@ public class InntektspostBuilder {
         return this;
     }
 
+    public InntektspostBuilder medEtterbetaling(boolean etterbetaling) {
+        this.inntektspost.setEtterbetaling(etterbetaling);
+        return this;
+    }
+
     public Inntektspost build() {
         if (inntektspost.hasValues()) {
             return inntektspost;

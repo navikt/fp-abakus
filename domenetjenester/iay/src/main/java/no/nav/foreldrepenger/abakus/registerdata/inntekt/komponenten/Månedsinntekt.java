@@ -15,6 +15,7 @@ public class Månedsinntekt {
     private String skatteOgAvgiftsregelType;
     private String næringsinntektKode;
     private boolean ytelse;
+    private boolean etterbetaling;
 
     private Månedsinntekt(BigDecimal beløp, YearMonth måned, String arbeidsgiver, String arbeidsforholdRef, String skatteOgAvgiftsregelType) {
         this.beløp = beløp;
@@ -61,6 +62,10 @@ public class Månedsinntekt {
         return ytelse;
     }
 
+    public boolean isEtterbetaling() {
+        return etterbetaling;
+    }
+
     public String getNæringsinntektKode() {
         return næringsinntektKode;
     }
@@ -74,6 +79,7 @@ public class Månedsinntekt {
         private String pensjonKode;
         private String næringsinntektKode;
         private boolean ytelse;
+        private boolean etterbetaling;
         private String skatteOgAvgiftsregelType;
 
         public Builder medBeløp(BigDecimal beløp) {
@@ -116,6 +122,12 @@ public class Månedsinntekt {
             return this;
         }
 
+        public Builder medEtterbetaling(boolean etterbetaling) {
+            this.etterbetaling = etterbetaling;
+            return this;
+        }
+
+
         public Builder medSkatteOgAvgiftsregelType(String skatteOgAvgiftsregelType) {
             this.skatteOgAvgiftsregelType = skatteOgAvgiftsregelType;
             return this;
@@ -124,6 +136,7 @@ public class Månedsinntekt {
         public Månedsinntekt build() {
             final Månedsinntekt månedsinntekt = new Månedsinntekt(beløp, måned, utbetaler, arbeidsforholdRef, skatteOgAvgiftsregelType);
             månedsinntekt.ytelse = ytelse;
+            månedsinntekt.etterbetaling = etterbetaling;
             månedsinntekt.pensjonKode = pensjonKode;
             månedsinntekt.ytelseKode = ytelseKode;
             månedsinntekt.næringsinntektKode = næringsinntektKode;

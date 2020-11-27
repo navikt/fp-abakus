@@ -385,7 +385,8 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
             .medBeløp(månedsinntekt.getBeløp())
             .medPeriode(månedsinntekt.getMåned().atDay(1), månedsinntekt.getMåned().atEndOfMonth())
             .medInntektspostType(InntektspostType.YTELSE)
-            .medYtelse(mapTilKodeliste(månedsinntekt)));
+            .medYtelse(mapTilKodeliste(månedsinntekt))
+            .medEtterbetaling(månedsinntekt.isEtterbetaling()));
     }
 
     private void lagInntektsposter(YearMonth måned, BigDecimal sumInntektsbeløp, Optional<String> valgtSkatteOgAvgiftsregel,
