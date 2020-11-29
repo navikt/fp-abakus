@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.kobling;
 
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -17,6 +18,7 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.NaturalId;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -66,7 +68,7 @@ public class Kobling extends BaseEntitet implements IndexKey {
             @AttributeOverride(name = "tomDato", column = @Column(name = "opplysning_periode_tom"))
     })
     private IntervallEntitet opplysningsperiode;
-    
+
     /** inaktive koblinger skal ikke brukes. må filtreres vekk. */
     @Column(name = "aktiv", nullable = false)
     private Boolean aktiv = true;
@@ -153,5 +155,9 @@ public class Kobling extends BaseEntitet implements IndexKey {
 
     public boolean erAktiv() {
         return aktiv;
+    }
+
+    public static Fagsystem gjelderFagsystem(Kobling k) {
+        return Set.of(YtelseType.ENGANGSTØNAD, YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER).contains(k.getYtelseType()) ? Fagsystem.FPSAK : Fagsystem.K9SAK;
     }
 }

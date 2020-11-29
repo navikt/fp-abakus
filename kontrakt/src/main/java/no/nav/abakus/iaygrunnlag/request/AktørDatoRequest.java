@@ -11,12 +11,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 
 /**
  * Input request strutkur for en Aktør for en periode (evt. dato)
@@ -36,17 +36,24 @@ public class AktørDatoRequest {
     @Valid
     private Periode periode;
 
+    @JsonProperty(value = "fagsystem")
+    private Fagsystem fagsystem;
+
     @JsonCreator
     public AktørDatoRequest(@JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
-                            @JsonProperty(value = "periode", required = true) @NotNull @Valid Periode periode) {
+                            @JsonProperty(value = "periode", required = true) @NotNull @Valid Periode periode,
+                            @JsonProperty(value = "fagsystem") Fagsystem fagsystem) {
         this.aktør = aktør;
         this.periode = periode;
+        this.fagsystem = fagsystem;
     }
 
     public AktørDatoRequest(PersonIdent aktør,
-                            LocalDate dato) {
+                            LocalDate dato,
+                            Fagsystem fagsystem) {
         this.aktør = aktør;
         this.periode = new Periode(dato, dato);
+        this.fagsystem = fagsystem;
     }
 
     public Aktør getAktør() {
@@ -56,7 +63,11 @@ public class AktørDatoRequest {
     public Periode getPeriode() {
         return periode;
     }
-    
+
+    public Fagsystem getFagsystem() {
+        return fagsystem;
+    }
+
     /** Fungerer kun dersom fom/tom er like (perioden dekker kun en dag) */
     public LocalDate getDato() {
         if(Objects.equals(periode.getFom(), periode.getTom())&& periode.getFom()!=null) {
