@@ -1,9 +1,9 @@
 package no.nav.foreldrepenger.abakus.aktor;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.pdl.HentIdenterQueryRequest;
@@ -29,11 +29,6 @@ public class AktørTjeneste {
 
     private static final Logger LOG = LoggerFactory.getLogger(AktørTjeneste.class);
 
-    private static Map<Fagsystem, Tema> PDL_TEMA = Map.ofEntries(
-        Map.entry(Fagsystem.FPSAK, Tema.FOR),
-        Map.entry(Fagsystem.K9SAK, Tema.OMS)
-    );
-
     private PdlKlient pdlKlient;
     private AktørConsumerMedCache aktørConsumer;
 
@@ -49,21 +44,21 @@ public class AktørTjeneste {
         this.aktørConsumer = aktørConsumer;
     }
 
-    public Optional<AktørId> hentAktørForIdent(PersonIdent fnr, Fagsystem innhenter) {
+    public Optional<AktørId> hentAktørForIdent(PersonIdent fnr, YtelseType ytelse) {
         var aid = aktørConsumer.hentAktørIdForPersonIdent(fnr.getIdent()).map(AktørId::new);
-        aid.ifPresent(a -> hentAktørIdFraPDL(fnr, a.getId(), innhenter));
+        aid.ifPresent(a -> hentAktørIdFraPDL(fnr, a.getId(), ytelse));
         return aid;
     }
 
-    public Optional<PersonIdent> hentIdentForAktør(AktørId aktørId, Fagsystem innhenter) {
+    public Optional<PersonIdent> hentIdentForAktør(AktørId aktørId, YtelseType ytelse) {
         var ident = aktørConsumer.hentPersonIdentForAktørId(aktørId.getId()).map(PersonIdent::new);
-        ident.ifPresent(i -> hentPersonIdentFraPDL(aktørId,i.getIdent(), innhenter));
+        ident.ifPresent(i -> hentPersonIdentFraPDL(aktørId,i.getIdent(), ytelse));
         return ident;
     }
 
-    private void hentAktørIdFraPDL(PersonIdent fnr, String aktørFraConsumer, Fagsystem innhenter) {
+    private void hentAktørIdFraPDL(PersonIdent fnr, String aktørFraConsumer, YtelseType ytelse) {
         try {
-            var tema = innhenter != null ? PDL_TEMA.get(innhenter) : null;
+            var tema = ytelse != null ? gjelderTema(ytelse) : null;
             if (tema == null)
                 throw new IllegalArgumentException("Utviklerfeil mangler fagsystem mot PDL");
 
@@ -90,9 +85,9 @@ public class AktørTjeneste {
         }
     }
 
-    private void hentPersonIdentFraPDL(AktørId aktørId, String identFraConsumer, Fagsystem innhenter) {
+    private void hentPersonIdentFraPDL(AktørId aktørId, String identFraConsumer, YtelseType ytelse) {
         try {
-            var tema = innhenter != null ? PDL_TEMA.get(innhenter) : null;
+            var tema = ytelse != null ? gjelderTema(ytelse) : null;
             if (tema == null)
                 throw new IllegalArgumentException("Utviklerfeil mangler fagsystem mot PDL");
 
@@ -117,5 +112,9 @@ public class AktørTjeneste {
         } catch (Exception e) {
             LOG.info("FPABAKUS PDL IDENT hentident error", e);
         }
+    }
+
+    private static Tema gjelderTema(YtelseType y) {
+        return Set.of(YtelseType.ENGANGSTØNAD, YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER).contains(y) ? Tema.FOR : Tema.OMS;
     }
 }

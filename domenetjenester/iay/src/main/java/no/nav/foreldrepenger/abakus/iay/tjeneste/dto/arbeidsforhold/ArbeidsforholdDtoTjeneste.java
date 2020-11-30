@@ -15,7 +15,7 @@ import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdDto;
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdReferanseDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
-import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallUtil;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
@@ -41,8 +41,8 @@ public class ArbeidsforholdDtoTjeneste {
         this.aktørConsumer = aktørConsumer;
     }
 
-    public List<ArbeidsforholdDto> mapFor(AktørId aktørId, LocalDate fom, LocalDate tom, Fagsystem innhenter) {
-        var ident = aktørConsumer.hentIdentForAktør(aktørId, innhenter).orElseThrow();
+    public List<ArbeidsforholdDto> mapFor(AktørId aktørId, LocalDate fom, LocalDate tom, YtelseType ytelse) {
+        var ident = aktørConsumer.hentIdentForAktør(aktørId, ytelse).orElseThrow();
         Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident, aktørId, IntervallUtil.byggIntervall(fom, tom));
 
         return arbeidsforhold.entrySet().stream().map(this::mapTilArbeidsforhold).collect(Collectors.toList());

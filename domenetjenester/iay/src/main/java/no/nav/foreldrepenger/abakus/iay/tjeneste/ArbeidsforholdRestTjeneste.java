@@ -27,7 +27,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdReferanse;
 import no.nav.abakus.iaygrunnlag.Periode;
-import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.AktørDatoRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
@@ -76,13 +76,13 @@ public class ArbeidsforholdRestTjeneste {
     public Response hentArbeidsforhold(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
         AktørId aktørId = new AktørId(request.getAktør().getIdent());
         Periode periode = request.getPeriode();
-        Fagsystem innhenter = request.getFagsystem() != null ? request.getFagsystem() : Fagsystem.K9SAK;
+        YtelseType ytelse = request.getYtelse() != null ? request.getYtelse() : YtelseType.UDEFINERT;
 
         LocalDate fom = periode.getFom();
         LocalDate tom = Objects.equals(fom, periode.getTom())
             ? fom.plusDays(1) // enkel dato søk
             : periode.getTom(); // periode søk
-        var arbeidstakersArbeidsforhold = dtoTjeneste.mapFor(aktørId, fom, tom, innhenter);
+        var arbeidstakersArbeidsforhold = dtoTjeneste.mapFor(aktørId, fom, tom, ytelse);
         final Response response = Response.ok(arbeidstakersArbeidsforhold).build();
         return response;
     }

@@ -16,8 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
-import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
@@ -69,7 +69,7 @@ public class InntektTjeneste {
             InntektskildeType.INNTEKT_SAMMENLIGNING, InntektsFilter.SAMMENLIGNINGSGRUNNLAG);
     }
 
-    public InntektsInformasjon finnInntekt(FinnInntektRequest finnInntektRequest, InntektskildeType kilde, Fagsystem innhenter) {
+    public InntektsInformasjon finnInntekt(FinnInntektRequest finnInntektRequest, InntektskildeType kilde, YtelseType ytelse) {
         var request = lagRequest(finnInntektRequest, kilde);
 
         HentInntektListeBolkResponse response;
@@ -78,7 +78,7 @@ public class InntektTjeneste {
         } catch (RuntimeException e) {
             throw InntektFeil.FACTORY.feilVedKallTilInntekt(e).toException();
         }
-        return oversettResponse(response, kilde, innhenter);
+        return oversettResponse(response, kilde, ytelse);
 
     }
 
@@ -106,7 +106,7 @@ public class InntektTjeneste {
         return kildeTilFilter.getOrDefault(kilde, null);
     }
 
-    private InntektsInformasjon oversettResponse(HentInntektListeBolkResponse response, InntektskildeType kilde, Fagsystem innhenter) {
+    private InntektsInformasjon oversettResponse(HentInntektListeBolkResponse response, InntektskildeType kilde, YtelseType ytelse) {
         if (response.getSikkerhetsavvikListe() != null && !response.getSikkerhetsavvikListe().isEmpty()) {
             throw InntektFeil.FACTORY.fikkSikkerhetsavvikFraInntekt(byggSikkerhetsavvikString(response)).toException();
         }
@@ -120,7 +120,7 @@ public class InntektTjeneste {
                 if (arbeidsInntektIdent.getArbeidsInntektMaaned() != null) {
                     for (ArbeidsInntektMaaned arbeidsInntektMaaned : arbeidsInntektIdent.getArbeidsInntektMaaned()) {
                         ArbeidsInntektInformasjon arbeidsInntektInformasjon = oversettInntekter(månedsinntekter, arbeidsInntektMaaned, kilde);
-                        oversettArbeidsforhold(arbeidsforhold, arbeidsInntektInformasjon, innhenter);
+                        oversettArbeidsforhold(arbeidsforhold, arbeidsInntektInformasjon, ytelse);
                     }
                 }
             }
@@ -166,7 +166,7 @@ public class InntektTjeneste {
                 .equals(tilleggsinformasjon.getTilleggsinformasjonDetaljer().getDetaljerType());
     }
 
-    private void oversettArbeidsforhold(List<FrilansArbeidsforhold> arbeidsforhold, ArbeidsInntektInformasjon arbeidsInntektInformasjon, Fagsystem innhenter) {
+    private void oversettArbeidsforhold(List<FrilansArbeidsforhold> arbeidsforhold, ArbeidsInntektInformasjon arbeidsInntektInformasjon, YtelseType ytelse) {
         if (arbeidsInntektInformasjon.getArbeidsforholdListe() == null) {
             return;
         }
@@ -184,20 +184,20 @@ public class InntektTjeneste {
             if (arbeidsforholdFrilanser.getAntallTimerPerUkeSomEnFullStillingTilsvarer() != null) {
                 builder.medBeregnetAntallTimerPerUke(BigDecimal.valueOf(arbeidsforholdFrilanser.getAntallTimerPerUkeSomEnFullStillingTilsvarer()));
             }
-            oversettArbeidsgiver(arbeidsforholdFrilanser, builder, innhenter);
+            oversettArbeidsgiver(arbeidsforholdFrilanser, builder, ytelse);
 
             arbeidsforhold.add(builder.build());
         }
     }
 
-    private void oversettArbeidsgiver(ArbeidsforholdFrilanser arbeidsforholdFrilanser, FrilansArbeidsforhold.Builder builder, Fagsystem innhenter) {
+    private void oversettArbeidsgiver(ArbeidsforholdFrilanser arbeidsforholdFrilanser, FrilansArbeidsforhold.Builder builder, YtelseType ytelse) {
         var arbeidsgiver = arbeidsforholdFrilanser.getArbeidsgiver();
         if (AktoerType.AKTOER_ID.equals(arbeidsgiver.getAktoerType())) { // OK med NPE hvis arbeidsgiver er null
             builder.medArbeidsgiverAktørId(new AktørId(arbeidsgiver.getIdentifikator()));
         } else if (AktoerType.ORGANISASJON.equals(arbeidsgiver.getAktoerType())) {
             builder.medArbeidsgiverOrgnr(arbeidsgiver.getIdentifikator());
         } else if (AktoerType.NATURLIG_IDENT.equals(arbeidsgiver.getAktoerType())) {
-            AktørId aktørId = aktørConsumer.hentAktørForIdent(new PersonIdent(arbeidsgiver.getIdentifikator()), innhenter).orElse(null);
+            AktørId aktørId = aktørConsumer.hentAktørForIdent(new PersonIdent(arbeidsgiver.getIdentifikator()), ytelse).orElse(null);
             builder.medArbeidsgiverAktørId(aktørId);
         } else {
             logger.info("Arbeidsgiver for frilanser har ukjent aktørtype: {}", arbeidsgiver.getAktoerType());

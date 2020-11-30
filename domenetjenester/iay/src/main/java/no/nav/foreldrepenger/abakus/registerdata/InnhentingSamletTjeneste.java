@@ -15,9 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.threeten.extra.Interval;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdTjeneste;
@@ -62,13 +62,13 @@ public class InnhentingSamletTjeneste {
         this.isProd = Cluster.PROD_FSS.equals(Environment.current().getCluster());
     }
 
-    public InntektsInformasjon getInntektsInformasjon(AktørId aktørId, Interval periode, InntektskildeType kilde, Fagsystem innhenter) {
+    public InntektsInformasjon getInntektsInformasjon(AktørId aktørId, Interval periode, InntektskildeType kilde, YtelseType ytelse) {
         FinnInntektRequest.FinnInntektRequestBuilder builder = FinnInntektRequest.builder(YearMonth.from(LocalDateTime.ofInstant(periode.getStart(), ZoneId.systemDefault())),
             YearMonth.from(LocalDateTime.ofInstant(periode.getEnd(), ZoneId.systemDefault())));
 
         builder.medAktørId(aktørId.getId());
 
-        return inntektTjeneste.finnInntekt(builder.build(), kilde, innhenter);
+        return inntektTjeneste.finnInntekt(builder.build(), kilde, ytelse);
     }
 
     public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> getArbeidsforhold(AktørId aktørId, PersonIdent ident, Interval opplysningsPeriode) {

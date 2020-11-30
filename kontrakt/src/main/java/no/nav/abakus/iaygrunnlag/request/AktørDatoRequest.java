@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
-import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
 /**
  * Input request strutkur for en Aktør for en periode (evt. dato)
@@ -36,24 +36,24 @@ public class AktørDatoRequest {
     @Valid
     private Periode periode;
 
-    @JsonProperty(value = "fagsystem")
-    private Fagsystem fagsystem;
+    @JsonProperty(value = "ytelse")
+    private YtelseType ytelse;
 
     @JsonCreator
     public AktørDatoRequest(@JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
                             @JsonProperty(value = "periode", required = true) @NotNull @Valid Periode periode,
-                            @JsonProperty(value = "fagsystem") Fagsystem fagsystem) {
+                            @JsonProperty(value = "fagsystem") YtelseType ytelse) {
         this.aktør = aktør;
         this.periode = periode;
-        this.fagsystem = fagsystem;
+        this.ytelse = ytelse;
     }
 
     public AktørDatoRequest(PersonIdent aktør,
                             LocalDate dato,
-                            Fagsystem fagsystem) {
+                            YtelseType ytelse) {
         this.aktør = aktør;
         this.periode = new Periode(dato, dato);
-        this.fagsystem = fagsystem;
+        this.ytelse = ytelse;
     }
 
     public Aktør getAktør() {
@@ -64,8 +64,8 @@ public class AktørDatoRequest {
         return periode;
     }
 
-    public Fagsystem getFagsystem() {
-        return fagsystem;
+    public YtelseType getYtelse() {
+        return ytelse;
     }
 
     /** Fungerer kun dersom fom/tom er like (perioden dekker kun en dag) */
