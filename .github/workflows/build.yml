@@ -89,17 +89,44 @@ jobs:
           body: |
              Release built, docker image ${{ env.IMAGE }}
       
-      - name: Opprett deployment issue
-        if: success()
-        uses: maxkomarychev/oction-create-issue@v0.7.1
-        id: createdeployissue
+      - name: Lukk gamle issues
+        uses: actions/github-script@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          title: Deploy av ${{ env.TAG }}
-          labels: bygg
-          body: |
-            Kommenter med <b>/promote env</b>, hvor <b>env</b> er et gyldig clusternavn (dev-fss, prod-fss).
-
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: ['deployment']
+            }).then(response => {
+              response.data.forEach(issue => {
+                github.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  state: 'closed'
+                });
+              });
+            });
+            
+      -  name: Opprett deployment issue
+         id: createdeployissue
+         if: success()
+         uses: actions/github-script@v3
+         with:
+           github-token: ${{secrets.GITHUB_TOKEN}}
+           script: |
+               github.issues.create( {
+                 owner: context.issue.owner,
+                 repo: context.issue.repo,
+                 labels: ['deployment'],
+                 body: 'Kommenter enten "/promote dev-fss" eller "/promote prod-fss"',
+                 title: 'Deploy av ${{ env.TAG }}'})
+               .then(response => {
+                       core.setOutput('number', response.data.number);
+                });
+                
       - name: Trigg deploy til dev
         if: success()
         uses: peter-evans/create-or-update-comment@v1
