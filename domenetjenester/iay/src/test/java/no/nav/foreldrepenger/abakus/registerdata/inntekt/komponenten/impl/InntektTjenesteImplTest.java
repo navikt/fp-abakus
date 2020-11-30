@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FinnInntektRequest;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
@@ -114,7 +115,7 @@ public class InntektTjenesteImplTest {
             .medFnr(FNR).build();
 
         // Act
-        InntektsInformasjon inntektsInformasjon = inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING);
+        InntektsInformasjon inntektsInformasjon = inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING, YtelseType.FORELDREPENGER);
 
         // Assert
         ArgumentCaptor<HentInntektListeBolkRequest> requestCaptor = ArgumentCaptor.forClass(HentInntektListeBolkRequest.class);
@@ -156,7 +157,7 @@ public class InntektTjenesteImplTest {
             .medFnr(FNR).build();
 
         // Act
-        final InntektsInformasjon inntektsInformasjon = inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING);
+        final InntektsInformasjon inntektsInformasjon = inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING, YtelseType.OMSORGSPENGER);
 
         // Assert
         ArgumentCaptor<HentInntektListeBolkRequest> requestCaptor = ArgumentCaptor.forClass(HentInntektListeBolkRequest.class);
@@ -191,7 +192,7 @@ public class InntektTjenesteImplTest {
 
         try {
             // Act
-            inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING);
+            inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING, YtelseType.SVANGERSKAPSPENGER);
             fail("Forventet VLException");
         } catch (VLException e) {
             // Assert

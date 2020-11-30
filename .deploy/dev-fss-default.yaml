@@ -86,6 +86,8 @@ spec:
       value: https://app-q1.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk
     - name: AAREG_RS_URL
       value: https://modapp-q1.adeo.no/aareg-services/api/v1/arbeidstaker
+    - name: PDL_BASE_URL
+      value: http://pdl-api.default
     - name: MELDEKORTUTBETALINGSGRUNNLAG_V1_URL
       value: https://arena-q1.adeo.no/ail_ws/MeldekortUtbetalingsgrunnlag_v1
     - name: AKTOER_V2_URL

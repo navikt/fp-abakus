@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -26,14 +25,12 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.PeriodeRS;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.PermisjonPermitteringRS;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumerMedCache;
 import no.nav.vedtak.konfig.Tid;
 
 @ApplicationScoped
 public class ArbeidsforholdTjeneste {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArbeidsforholdTjeneste.class);
-    private AktørConsumerMedCache aktørConsumer;
     private AaregRestKlient aaregRestKlient;
 
     public ArbeidsforholdTjeneste() {
@@ -41,8 +38,7 @@ public class ArbeidsforholdTjeneste {
     }
 
     @Inject
-    public ArbeidsforholdTjeneste(AktørConsumerMedCache aktørConsumer, AaregRestKlient aaregRestKlient) {
-        this.aktørConsumer = aktørConsumer;
+    public ArbeidsforholdTjeneste(AaregRestKlient aaregRestKlient) {
         this.aaregRestKlient = aaregRestKlient;
     }
 
@@ -143,10 +139,6 @@ public class ArbeidsforholdTjeneste {
             .medPermisjonsprosent(permisjonPermitteringRS.getProsent())
             .medPermisjonsÅrsak(permisjonPermitteringRS.getType())
             .build();
-    }
-
-    private Optional<AktørId> hentAktørIdForIdent(PersonIdent arbeidsgiver) {
-        return aktørConsumer.hentAktørIdForPersonIdent(arbeidsgiver.getIdent()).map(AktørId::new);
     }
 
     private boolean overlapperMedIntervall(Arbeidsavtale av, Interval interval) {

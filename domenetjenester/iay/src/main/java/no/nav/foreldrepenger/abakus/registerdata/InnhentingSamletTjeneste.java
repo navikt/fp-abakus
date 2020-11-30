@@ -17,6 +17,7 @@ import org.threeten.extra.Interval;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdTjeneste;
@@ -29,7 +30,6 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.InnhentingInfo
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-import no.nav.vedtak.felles.integrasjon.aktør.klient.AktørConsumerMedCache;
 import no.nav.vedtak.util.env.Cluster;
 import no.nav.vedtak.util.env.Environment;
 
@@ -39,7 +39,6 @@ public class InnhentingSamletTjeneste {
     private static final Logger LOGGER = LoggerFactory.getLogger(InnhentingSamletTjeneste.class);
 
     private ArbeidsforholdTjeneste arbeidsforholdTjeneste;
-    private AktørConsumerMedCache aktørConsumer;
     private InntektTjeneste inntektTjeneste;
     private MeldekortTjeneste meldekortTjeneste;
     private InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste;
@@ -52,11 +51,10 @@ public class InnhentingSamletTjeneste {
 
     @Inject
     public InnhentingSamletTjeneste(ArbeidsforholdTjeneste arbeidsforholdTjeneste,  // NOSONAR
-                                    AktørConsumerMedCache aktørConsumer, InntektTjeneste inntektTjeneste,
+                                    InntektTjeneste inntektTjeneste,
                                     InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste,
                                     MeldekortTjeneste meldekortTjeneste) {
         this.arbeidsforholdTjeneste = arbeidsforholdTjeneste;
-        this.aktørConsumer = aktørConsumer;
         this.inntektTjeneste = inntektTjeneste;
         this.meldekortTjeneste = meldekortTjeneste;
         this.innhentingInfotrygdTjeneste = innhentingInfotrygdTjeneste;
@@ -64,37 +62,31 @@ public class InnhentingSamletTjeneste {
         this.isProd = Cluster.PROD_FSS.equals(Environment.current().getCluster());
     }
 
-    public InntektsInformasjon getInntektsInformasjon(AktørId aktørId, Interval periode, InntektskildeType kilde) {
+    public InntektsInformasjon getInntektsInformasjon(AktørId aktørId, Interval periode, InntektskildeType kilde, YtelseType ytelse) {
         FinnInntektRequest.FinnInntektRequestBuilder builder = FinnInntektRequest.builder(YearMonth.from(LocalDateTime.ofInstant(periode.getStart(), ZoneId.systemDefault())),
             YearMonth.from(LocalDateTime.ofInstant(periode.getEnd(), ZoneId.systemDefault())));
 
         builder.medAktørId(aktørId.getId());
 
-        return inntektTjeneste.finnInntekt(builder.build(), kilde);
+        return inntektTjeneste.finnInntekt(builder.build(), kilde, ytelse);
     }
 
-    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> getArbeidsforhold(AktørId aktørId, Interval opplysningsPeriode) {
-        return arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(getFnrFraAktørId(aktørId), aktørId, opplysningsPeriode);
-    }
-
-    private PersonIdent getFnrFraAktørId(AktørId aktørId) {
-        return aktørConsumer.hentPersonIdentForAktørId(aktørId.getId()).map(PersonIdent::new).orElseThrow();
+    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> getArbeidsforhold(AktørId aktørId, PersonIdent ident, Interval opplysningsPeriode) {
+        return arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident, aktørId, opplysningsPeriode);
     }
 
     private boolean envUnstable() {
         return isDev;
     }
 
-    public List<InfotrygdYtelseGrunnlag> innhentInfotrygdGrunnlag(AktørId aktørId, Interval periode) {
-        var ident = getFnrFraAktørId(aktørId);
+    public List<InfotrygdYtelseGrunnlag> innhentInfotrygdGrunnlag(AktørId aktørId, PersonIdent ident, Interval periode) {
         if (envUnstable()) {
             return innhentingInfotrygdTjeneste.getInfotrygdYtelserFailSoft(ident, periode);
         }
         return innhentingInfotrygdTjeneste.getInfotrygdYtelser(ident, periode);
     }
 
-    public List<InfotrygdYtelseGrunnlag> innhentSpokelseGrunnlag(AktørId aktørId, @SuppressWarnings("unused") Interval periode) {
-        var ident = getFnrFraAktørId(aktørId);
+    public List<InfotrygdYtelseGrunnlag> innhentSpokelseGrunnlag(AktørId aktørId, PersonIdent ident, @SuppressWarnings("unused") Interval periode) {
         if (!isProd) {
             return Collections.emptyList();
         }
