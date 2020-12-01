@@ -18,7 +18,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.runners.Parameterized;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,12 +26,11 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import no.nav.foreldrepenger.abakus.app.jackson.JacksonJsonConfig;
 
 public class SjekkDtoStrukturTest {
-    
+
     private static final List<Class<?>> KONTRAKT_LOKASJONER = JacksonJsonConfig.getKontraktLokasjoner();
-    
+
     private static final List<String> SKIPPED = Arrays.asList("class", "kode");
 
-    @Parameterized.Parameters
     public static Stream<Arguments> provideArguments() throws URISyntaxException {
         List<Arguments> params = new ArrayList<>();
 
