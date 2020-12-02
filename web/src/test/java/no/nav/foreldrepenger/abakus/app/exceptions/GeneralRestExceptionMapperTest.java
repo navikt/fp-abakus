@@ -7,8 +7,8 @@ import java.util.Collections;
 import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.spi.ApplicationException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 import no.nav.vedtak.exception.VLException;
 import no.nav.vedtak.feil.Feil;
@@ -24,7 +24,7 @@ public class GeneralRestExceptionMapperTest {
 
     private GeneralRestExceptionMapper generalRestExceptionMapper;
 
-    @BeforeEach
+    @Before
     public void setUp() {
         generalRestExceptionMapper = new GeneralRestExceptionMapper();
     }

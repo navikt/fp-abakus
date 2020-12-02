@@ -90,6 +90,8 @@ spec:
       value: http://pdl-api.default
     - name: MELDEKORTUTBETALINGSGRUNNLAG_V1_URL
       value: https://arena-q1.adeo.no/ail_ws/MeldekortUtbetalingsgrunnlag_v1
+    - name: AKTOER_V2_URL
+      value: https://app-q1.adeo.no/aktoerregister/ws/Aktoer/v2
     - name: SIGRUNRESTBEREGNETSKATT_URL
       value: https://sigrun-q1.nais.preprod.local
     - name: ORGANISASJON_RS_URL
