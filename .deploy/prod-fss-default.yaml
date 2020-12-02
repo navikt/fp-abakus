@@ -89,8 +89,6 @@ spec:
       value: https://arena.adeo.no/ail_ws/MeldekortUtbetalingsgrunnlag_v1
     - name: PDL_BASE_URL
       value: http://pdl-api.default
-    - name: AKTOER_V2_URL
-      value: https://app.adeo.no/aktoerregister/ws/Aktoer/v2
     - name: SIGRUNRESTBEREGNETSKATT_URL
       value: https://sigrun.nais.adeo.no
     - name: ORGANISASJON_RS_URL
