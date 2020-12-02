@@ -7,8 +7,8 @@ import static org.mockito.Mockito.when;
 
 import javax.ws.rs.core.Response;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import no.nav.foreldrepenger.abakus.app.konfig.ApplicationServiceStarter;
 import no.nav.foreldrepenger.abakus.app.selftest.NaisRestTjeneste;
@@ -22,7 +22,7 @@ public class NaisRestTjenesteTest {
     private ApplicationServiceStarter serviceStarterMock = mock(ApplicationServiceStarter.class);
     private DatabaseHealthCheck databaseHealthCheck = mock(DatabaseHealthCheck.class);
 
-    @Before
+    @BeforeEach
     public void setup() {
         restTjeneste = new NaisRestTjeneste(serviceStarterMock, databaseHealthCheck);
     }
