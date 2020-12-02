@@ -59,7 +59,7 @@ public class AktørTjeneste {
             .identer(new IdentInformasjonResponseProjection().ident());
 
         try {
-            var identliste = pdlKlient.hentIdenter(request, projection, Tema.FOR);
+            var identliste = pdlKlient.hentIdenter(request, projection, tema);
             var aktørId = identliste.getIdenter().stream().findFirst().map(IdentInformasjon::getIdent).map(AktørId::new);
             aktørId.ifPresent(a -> cacheIdentTilAktørId.put(fnr, a));
             return aktørId;
@@ -90,7 +90,7 @@ public class AktørTjeneste {
         final Identliste identliste;
 
         try {
-            identliste = pdlKlient.hentIdenter(request, projection, Tema.FOR);
+            identliste = pdlKlient.hentIdenter(request, projection, tema);
             var ident = identliste.getIdenter().stream().findFirst().map(IdentInformasjon::getIdent).map(PersonIdent::new);
             ident.ifPresent(i -> cacheAktørIdTilIdent.put(aktørId, i));
             return ident;

@@ -15,13 +15,14 @@ import org.junit.jupiter.api.Test;
 
 import no.nav.foreldrepenger.abakus.app.konfig.ApplicationServiceStarter;
 import no.nav.vedtak.apptjeneste.AppServiceHandler;
+import no.nav.vedtak.felles.testutilities.cdi.UnitTestLookupInstanceImpl;
 
 public class ApplicationServiceStarterTest {
 
     private ApplicationServiceStarter serviceStarter;
 
     private AppServiceHandler serviceMock = mock(AppServiceHandler.class);
-    private Instance<AppServiceHandler> testInstance = new UnitTestInstanceImpl<>(serviceMock);
+    private Instance<AppServiceHandler> testInstance = new UnitTestLookupInstanceImpl<>(serviceMock);
     private Instance<AppServiceHandler> instanceSpied = spy(testInstance);
 
     @SuppressWarnings("unchecked")
