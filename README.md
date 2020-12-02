@@ -20,7 +20,6 @@ Hvert grunnlag er immutable, men består av ett eller flere 'aggregater' (DDD te
 ### Miljøoversikt
 [Miljøer](https://confluence.adeo.no/pages/viewpage.action?pageId=193202159)
 
-
 ### Linker
 [Foreldrepengeprosjektet på Confluence](http://confluence.adeo.no/display/MODNAV/Foreldrepengeprosjektet)
 
