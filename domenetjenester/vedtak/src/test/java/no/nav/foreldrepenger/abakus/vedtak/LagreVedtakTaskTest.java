@@ -1,11 +1,10 @@
 package no.nav.foreldrepenger.abakus.vedtak;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 import java.util.UUID;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import no.nav.foreldrepenger.abakus.felles.metrikker.MetrikkerTjeneste;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
@@ -20,7 +19,7 @@ public class LagreVedtakTaskTest {
     private ExtractFromYtelseV1 extractor = new ExtractFromYtelseV1(repository);
     private LagreVedtakTask task = new LagreVedtakTask(repository, extractor, metrikkerTjeneste);
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void skal_feile_ved_valideringsfeil() {
         String payload = "{\n" +
             "  \"version\": \"1.0\",\n" +
@@ -54,6 +53,6 @@ public class LagreVedtakTaskTest {
         data.setPayload(payload);
         data.setProperty(LagreVedtakTask.KEY, UUID.randomUUID().toString());
 
-        assertThrows(IllegalArgumentException.class, () ->task.doTask(data));
+        task.doTask(data);
     }
 }

@@ -9,8 +9,7 @@ import java.util.function.Function;
 import javax.validation.Valid;
 import javax.ws.rs.core.Context;
 
-import org.junit.jupiter.api.Test;
-
+import org.junit.Test;
 
 public class RestApiInputValideringAnnoteringTest extends RestApiTester {
 
