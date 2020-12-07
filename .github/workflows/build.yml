@@ -1,4 +1,4 @@
-name: Bygg og test
+name: Bygg og deploy
 
 on:
   push:
@@ -44,7 +44,6 @@ jobs:
       - name: Set cache key
         run: |
           echo "CACHE_KEY=$(expr $(date +%V) - 1 + 1)" >> $GITHUB_ENV
-
       - uses: actions/cache@v2
         with:
           path: ~/.m2
@@ -54,12 +53,11 @@ jobs:
         shell: bash
         run: |
           echo "Building artifacts $(echo $GITHUB_SHA | cut -c1-7)"
-          mvn jacoco:prepare-agent test -e --quiet --batch-mode --settings ./.m2/settings.xml  -Dchangelist= -Dsha1=-$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7) -Dfile.encoding=UTF-8 -Djacoco.destFile=$(pwd)/target/jacoco.exec
+          mvn jacoco:prepare-agent deploy -e --quiet --batch-mode --settings ./.m2/settings.xml --file pom.xml -Dchangelist= -Dsha1=-$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7) -Dfile.encoding=UTF-8 -Djacoco.destFile=$(pwd)/target/jacoco.exec
           mvn jacoco:report sonar:sonar -e --quiet --batch-mode --settings ./.m2/settings.xml --file pom.xml -Djacoco.dataFile=$(pwd)/target/jacoco.exec -Dsonar.projectKey="navikt_fp-abakus" -Dsonar.host.url='https://sonarcloud.io' -Dsonar.organization=navit -Dsonar.login=${SONAR_TOKEN}
           echo "Deployed artifacts"
           echo "TAG=$(mvn help:evaluate --batch-mode --settings ./.m2/settings.xml --file .flattened -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
           echo "IMAGE=$IMAGE_BASE:$(mvn help:evaluate --batch-mode --settings ./.m2/settings.xml --file .flattened -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
-
         env:
           TZ: "Europe/Oslo"
           GITHUB_USERNAME: x-access-token
@@ -78,6 +76,17 @@ jobs:
           docker push ${IMAGE_BASE}:latest
           docker push $IMAGE
           
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.1.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.TAG }}
+          release_name: Release ${{ env.TAG }}
+          body: |
+             Release built, docker image ${{ env.IMAGE }}
+      
       - name: Lukk gamle issues
         uses: actions/github-script@v3
         with:
@@ -151,8 +160,3 @@ jobs:
           event-type: saksbehandling-verdikjede
           client-payload: '{ "trigger": "${{ github.repository }}", "version": "${{ env.TAG }}", "image": "${{ github.event.client_payload.github.payload.package.package_version.release.url }}"}'
 
-      - name: Release Drafter
-        if: success()
-        uses: release-drafter/release-drafter@v5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
