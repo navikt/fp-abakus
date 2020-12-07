@@ -78,17 +78,6 @@ jobs:
           docker push ${IMAGE_BASE}:latest
           docker push $IMAGE
           
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1.1.4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ env.TAG }}
-          release_name: Release ${{ env.TAG }}
-          body: |
-             Release built, docker image ${{ env.IMAGE }}
-      
       - name: Lukk gamle issues
         uses: actions/github-script@v3
         with:
@@ -161,3 +150,9 @@ jobs:
           repository: navikt/k9-verdikjede
           event-type: saksbehandling-verdikjede
           client-payload: '{ "trigger": "${{ github.repository }}", "version": "${{ env.TAG }}", "image": "${{ github.event.client_payload.github.payload.package.package_version.release.url }}"}'
+
+      - name: Release Drafter
+        if: success()
+        uses: release-drafter/release-drafter@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
