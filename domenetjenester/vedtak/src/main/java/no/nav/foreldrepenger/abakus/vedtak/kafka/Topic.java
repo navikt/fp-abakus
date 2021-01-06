@@ -12,7 +12,7 @@ public class Topic {
     private final Serde serdeValue;
 
     @SuppressWarnings("resource")
-    <K, V> Topic(String topic, Serde<K> serdeKey, Serde<V> serdeValue) {
+    public <K, V> Topic(String topic, Serde<K> serdeKey, Serde<V> serdeValue) {
         Objects.requireNonNull(topic, "topic");
         Objects.requireNonNull(serdeKey, "serdeKey");
         Objects.requireNonNull(serdeValue, "serdeValue");
