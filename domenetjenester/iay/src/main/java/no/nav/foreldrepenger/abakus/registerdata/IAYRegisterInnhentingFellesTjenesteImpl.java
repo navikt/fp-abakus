@@ -221,7 +221,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
                 aktørInntektBuilder.leggTilInntekt(byggInntekt(månedsinntekterGruppertPåArbeidsgiver, arbeidsgiver, aktørInntektBuilder, inntektOpptjening));
                 builder.leggTilAktørInntekt(aktørInntektBuilder);
             } else {
-                LOGGER.info("Inntekter rapportert på orgledd({}), blir IKKE lagret", arbeidsgiverIdentifikator);
+                LOGGER.info("Inntekter rapportert på orgledd({}), blir IKKE lagret", getIdentifikatorString(arbeidsgiverIdentifikator));
             }
         } else {
             if (PersonIdent.erGyldigFnr(arbeidsgiverIdentifikator)) {
@@ -229,12 +229,23 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
                     .orElseThrow(() -> InnhentingFeil.FACTORY.finnerIkkeAktørIdForArbeidsgiverSomErPrivatperson().toException());
                 arbeidsgiver = Arbeidsgiver.person(arbeidsgiverAktørId);
             } else {
-                LOGGER.info("Arbeidsgiveridentifikator: {}", arbeidsgiverIdentifikator);
+                LOGGER.info("Arbeidsgiveridentifikator: {}", getIdentifikatorString(arbeidsgiverIdentifikator));
                 arbeidsgiver = Arbeidsgiver.person(new AktørId(arbeidsgiverIdentifikator));
             }
             aktørInntektBuilder.leggTilInntekt(byggInntekt(månedsinntekterGruppertPåArbeidsgiver, arbeidsgiver, aktørInntektBuilder, inntektOpptjening));
             builder.leggTilAktørInntekt(aktørInntektBuilder);
         }
+    }
+
+    private String getIdentifikatorString(String arbeidsgiverIdentifikator) {
+        if (arbeidsgiverIdentifikator == null) {
+            return null;
+        }
+        int length = arbeidsgiverIdentifikator.length();
+        if (length <= 4) {
+            return "*".repeat(length);
+        }
+        return "*".repeat(length - 4) + arbeidsgiverIdentifikator.substring(length - 4);
     }
 
     private LocalDate finnHentedatoForJuridisk(Set<YearMonth> inntekterForMåneder) {

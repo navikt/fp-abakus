@@ -22,9 +22,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -73,7 +70,6 @@ public class InntektsmeldingerRestTjeneste {
     private InntektsmeldingerTjeneste imTjeneste;
     private KoblingTjeneste koblingTjeneste;
     private InntektArbeidYtelseTjeneste iayTjeneste;
-    private static final Logger LOGGER = LoggerFactory.getLogger(InntektsmeldingerRestTjeneste.class);
 
     public InntektsmeldingerRestTjeneste() {
     } // RESTEASY ctor
@@ -124,7 +120,6 @@ public class InntektsmeldingerRestTjeneste {
         } else {
             InntektArbeidYtelseGrunnlag nyesteGrunnlag = iayTjeneste.hentAggregat(kobling.get().getKoblingReferanse());
             RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(inntektsmeldinger, nyesteGrunnlag);
-            LOGGER.info("RefusjonskravDtoer for saksnummer ({}) er ({})", spesifikasjon.getSaksnummer(), refusjonskravDatoerDto);
             response = Response.ok(refusjonskravDatoerDto).build();
         }
         return response;
@@ -145,7 +140,7 @@ public class InntektsmeldingerRestTjeneste {
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
         var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
         var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId, new Saksnummer(mottattRequest.getSaksnummer()));
-        
+
         var informasjonBuilder = ArbeidsforholdInformasjonBuilder.oppdatere(imTjeneste.hentArbeidsforholdInformasjonForKobling(koblingReferanse));
 
         var inntektsmeldingerAggregat = new MapInntektsmeldinger.MapFraDto().map(informasjonBuilder, mottattRequest.getInntektsmeldinger());
@@ -155,7 +150,7 @@ public class InntektsmeldingerRestTjeneste {
         var grunnlagReferanse = imTjeneste.lagre(koblingReferanse, informasjonBuilder, inntektsmeldinger);
 
         koblingTjeneste.lagre(kobling);
-        
+
         koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
 
         if (grunnlagReferanse != null) {

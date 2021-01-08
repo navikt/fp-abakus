@@ -21,8 +21,6 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.hibernate.jpa.QueryHints;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
@@ -45,7 +43,6 @@ import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 
 @ApplicationScoped
 public class InntektArbeidYtelseRepository {
-    private static final Logger log = LoggerFactory.getLogger(InntektArbeidYtelseRepository.class);
     private EntityManager entityManager;
     private KoblingRepository koblingRepository;
 
@@ -222,7 +219,7 @@ public class InntektArbeidYtelseRepository {
             " WHERE oo.eksternReferanse = :eksternReferanse", OppgittOpptjening.class);
         query.setParameter("eksternReferanse", oppgittOpptjeningEksternReferanse);
         var res = HibernateVerktøy.hentUniktResultat(query);
-        
+
         if(res.isEmpty()) {
             return Optional.empty();
         } else {
@@ -405,10 +402,8 @@ public class InntektArbeidYtelseRepository {
         if (tidligereAggregat.isPresent()) {
             InntektArbeidYtelseGrunnlag aggregat = tidligereAggregat.get();
             if (diffResultat(aggregat, nyttGrunnlag, false).isEmpty()) {
-                log.info("Ingen diff mellom nytt og gammelt grunnlag. Nytt grunnlag: {}, Gammelt grunnlag: {}", nyttGrunnlag, aggregat);
                 return;
             }
-            log.info("Lagrer nytt grunnlag: {}", nyttGrunnlag);
 
             if (nyttGrunnlag.isAktiv()) {
                 aggregat.setAktivt(false);
@@ -595,7 +590,6 @@ public class InntektArbeidYtelseRepository {
 
     private void lagreAktørYtelse(AktørYtelse aktørYtelse) {
         for (Ytelse ytelse : aktørYtelse.getAlleYtelser()) {
-            log.info("Lagrer ytelse {}", ytelse);
             entityManager.persist(ytelse);
             for (YtelseAnvist ytelseAnvist : ytelse.getYtelseAnvist()) {
                 entityManager.persist(ytelseAnvist);

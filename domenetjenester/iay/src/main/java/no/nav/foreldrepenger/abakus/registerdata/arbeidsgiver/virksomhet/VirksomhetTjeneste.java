@@ -89,12 +89,23 @@ public class VirksomhetTjeneste {
 
         if (OrganisasjonType.JURIDISK_ENHET.equals(virksomhet.getOrganisasjonstype())) {
             Optional<Virksomhet> unikVirksomhetForJuridiskEnhet = hentUnikVirksomhetForJuridiskEnhet(orgNummer, hentedato);
-            LOGGER.info("ABAKUS EREG fant {} unik virksomhet for juridisk {}", unikVirksomhetForJuridiskEnhet.isPresent() ? "en" : "ikke",  orgNummer);
+            LOGGER.info("ABAKUS EREG fant {} unik virksomhet for juridisk {}", unikVirksomhetForJuridiskEnhet.isPresent() ? "en" : "ikke",  getIdentifikatorString(orgNummer));
             return unikVirksomhetForJuridiskEnhet.orElse(virksomhet);
         }
         if (OrganisasjonType.ORGLEDD.equals(virksomhet.getOrganisasjonstype()))
             throw OrganisasjonTjenesteFeil.FACTORY.organisasjonErOrgledd(TJENESTE).toException();
         return virksomhet;
+    }
+
+    private String getIdentifikatorString(String arbeidsgiverIdentifikator) {
+        if (arbeidsgiverIdentifikator == null) {
+            return null;
+        }
+        int length = arbeidsgiverIdentifikator.length();
+        if (length <= 4) {
+            return "*".repeat(length);
+        }
+        return "*".repeat(length - 4) + arbeidsgiverIdentifikator.substring(length - 4);
     }
 
     private Optional<Virksomhet> hentUnikVirksomhetForJuridiskEnhet(String orgNummer, LocalDate hentedato) {
