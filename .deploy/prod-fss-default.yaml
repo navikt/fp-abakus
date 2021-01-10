@@ -80,6 +80,8 @@ spec:
       value: http://kafka-schema-registry.tpa:8081
     - name: KAFKA_FATTEVEDTAK_TOPIC
       value: privat-familie-vedtakFattet-v1
+    - name: KAFKA_LONNSKOMPENSASJON_TOPIC
+      value: privat-permittering-lonnskomp-vedtak
     # Eksterne systemer
     - name: HENTINNTEKTLISTEBOLK_URL
       value: https://app.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk
