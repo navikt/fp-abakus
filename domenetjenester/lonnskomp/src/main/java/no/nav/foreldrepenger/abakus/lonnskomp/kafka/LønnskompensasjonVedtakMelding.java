@@ -1,21 +1,24 @@
 package no.nav.foreldrepenger.abakus.lonnskomp.kafka;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+
 public class LønnskompensasjonVedtakMelding {
     private String fnr;
-    private String totalKompensasjon;
+    private BigDecimal totalKompensasjon;
     private String bedriftNr;
-    private String fom;
-    private String tom;
+    private LocalDate fom;
+    private LocalDate tom;
     private String sakId;
-    private boolean avslag;
-
-    private String forrigeVedtakDato;
+    private LocalDate forrigeVedtakDato;
+    private List<UtbetalingsdagMelding> dagBeregninger;
 
     public String getFnr() {
         return fnr;
     }
 
-    public String getTotalKompensasjon() {
+    public BigDecimal getTotalKompensasjon() {
         return totalKompensasjon;
     }
 
@@ -23,11 +26,11 @@ public class LønnskompensasjonVedtakMelding {
         return bedriftNr;
     }
 
-    public String getFom() {
+    public LocalDate getFom() {
         return fom;
     }
 
-    public String getTom() {
+    public LocalDate getTom() {
         return tom;
     }
 
@@ -35,12 +38,11 @@ public class LønnskompensasjonVedtakMelding {
         return sakId;
     }
 
-    public String getForrigeVedtakDato() {
+    public LocalDate getForrigeVedtakDato() {
         return forrigeVedtakDato;
     }
 
-    public boolean isAvslag() {
-        return avslag;
+    public List<UtbetalingsdagMelding> getDagBeregninger() {
+        return dagBeregninger;
     }
-
 }

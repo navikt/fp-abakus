@@ -3,7 +3,11 @@ package no.nav.foreldrepenger.abakus.lonnskomp.kafka;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonAnvist;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonRepository;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonVedtak;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
@@ -51,7 +56,7 @@ public class LonnskompHendelseHåndterer {
         this.repository = repository;
     }
 
-    void handleMessage(String key, String payload) {
+    public void handleMessage(String key, String payload) {
         log.debug("Mottatt ytelse-vedtatt hendelse med key='{}', payload={}", key, payload);
 
         LønnskompensasjonVedtakMelding mottattVedtak;
@@ -79,11 +84,23 @@ public class LonnskompHendelseHåndterer {
             .orElseThrow(() -> LønnskompensasjonFeil.FACTORY.finnerIkkeAktørIdForPermittert().toException()));
         vedtak.setSakId(melding.getSakId());
         vedtak.setOrgNummer(new OrgNummer(melding.getBedriftNr()));
-        vedtak.setPeriode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.parse(melding.getFom(), DateTimeFormatter.ISO_LOCAL_DATE), LocalDate.parse(melding.getTom(), DateTimeFormatter.ISO_LOCAL_DATE)));
-        vedtak.setForrigeVedtakDato(melding.getForrigeVedtakDato() != null ? LocalDate.parse(melding.getForrigeVedtakDato(), DateTimeFormatter.ISO_LOCAL_DATE) : null);
-        BigDecimal beløpBD = new BigDecimal(melding.getTotalKompensasjon());
+        vedtak.setPeriode(IntervallEntitet.fraOgMedTilOgMed(melding.getFom(), melding.getTom()));
+        vedtak.setForrigeVedtakDato(melding.getForrigeVedtakDato());
+        BigDecimal beløpBD = melding.getTotalKompensasjon();
         vedtak.setBeløp(new Beløp(beløpBD));
-
+        Map<YearMonth, List<UtbetalingsdagMelding>> sortert = melding.getDagBeregninger().stream()
+            .filter(b -> b.getLønnskompensasjonsbeløp() != null && !Objects.equals("-", b.getLønnskompensasjonsbeløp()))
+            .collect(Collectors.groupingBy(b -> YearMonth.from(b.getDato())));
+        sortert.forEach((k,v) -> {
+            var sumDager = v.stream().map(UtbetalingsdagMelding::getLønnskompensasjonsbeløp).map(BigDecimal::new).reduce(BigDecimal.ZERO, BigDecimal::add);
+            if (sumDager.compareTo(BigDecimal.ZERO) > 0) {
+                var anvist = LønnskompensasjonAnvist.LønnskompensasjonAnvistBuilder.ny()
+                    .medBeløp(sumDager)
+                    .medAnvistPeriode(IntervallEntitet.fraOgMedTilOgMed(k.atDay(1), k.atEndOfMonth()))
+                    .build();
+                vedtak.leggTilAnvistPeriode(anvist);
+            }
+        });
         return vedtak;
     }
 }

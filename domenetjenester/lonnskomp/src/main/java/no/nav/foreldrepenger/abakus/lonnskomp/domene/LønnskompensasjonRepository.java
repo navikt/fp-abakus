@@ -48,6 +48,9 @@ public class LønnskompensasjonRepository {
             entityManager.flush();
         }
         entityManager.persist(vedtak);
+        for (LønnskompensasjonAnvist anvist : vedtak.getAnvistePerioder()) {
+            entityManager.persist(anvist);
+        }
         entityManager.flush();
     }
 
@@ -55,7 +58,7 @@ public class LønnskompensasjonRepository {
         Objects.requireNonNull(sakId, "sakId");
 
         TypedQuery<LønnskompensasjonVedtak> query = entityManager.createQuery("SELECT v FROM LonnskompVedtakEntitet v " +
-            "WHERE v.sakId = :sakId ", LønnskompensasjonVedtak.class);
+            "WHERE aktiv = true AND v.sakId = :sakId ", LønnskompensasjonVedtak.class);
         query.setParameter("sakId", sakId);
 
         return HibernateVerktøy.hentUniktResultat(query);

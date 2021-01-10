@@ -1,17 +1,19 @@
 package no.nav.foreldrepenger.abakus.lonnskomp.domene;
 
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -24,7 +26,7 @@ import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
-import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
+import no.nav.foreldrepenger.abakus.vedtak.domene.YtelseAnvist;
 
 @Entity(name = "LonnskompVedtakEntitet")
 @Table(name = "LONNSKOMP_VEDTAK")
@@ -59,9 +61,12 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
     @ChangeTracked
     private Beløp beløp;
 
-    @Convert(converter = BooleanToStringConverter.class)
+    @OneToMany(mappedBy = "vedtak")
+    @ChangeTracked
+    private Set<LønnskompensasjonAnvist> anvistePerioder = new LinkedHashSet<>();
+
     @Column(name = "aktiv", nullable = false)
-    private boolean aktiv = true;
+    private Boolean aktiv = true;
 
     @Version
     @Column(name = "versjon", nullable = false)
@@ -140,6 +145,16 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
 
     void setAktiv(boolean aktiv) {
         this.aktiv = aktiv;
+    }
+
+    public Set<LønnskompensasjonAnvist> getAnvistePerioder() {
+        return anvistePerioder;
+    }
+
+    public void leggTilAnvistPeriode(LønnskompensasjonAnvist anvist) {
+        anvist.setVedtak(this);
+        this.anvistePerioder.add(anvist);
+
     }
 
     @Override

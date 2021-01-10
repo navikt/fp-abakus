@@ -19,9 +19,7 @@ create table LONNSKOMP_VEDTAK
     OPPRETTET_TID        TIMESTAMP(3) default localtimestamp not null,
     ENDRET_AV            VARCHAR(20),
     ENDRET_TID           TIMESTAMP(3),
-    AKTIV                VARCHAR(1)   default 'J'            not null,
-    constraint CHK_VEDTAK_YTELSE_AKTIV
-        check (aktiv IN ('J', 'N'))
+    AKTIV                BOOLEAN   default true            not null
 );
 comment on table LONNSKOMP_VEDTAK is 'En tabell med informasjon om Lønnskompensasjon / Koronapenger';
 comment on column LONNSKOMP_VEDTAK.ID is 'Primærnøkkel';
@@ -39,3 +37,33 @@ create index IDX_LONNSKOMP_VEDTAK_2
     on LONNSKOMP_VEDTAK (AKTOER_ID);
 create index IDX_LONNSKOMP_VEDTAK_10
     on LONNSKOMP_VEDTAK (AKTIV);
+
+create sequence SEQ_LONNSKOMP_ANVIST
+    increment by 50
+    START WITH 1000000 NO CYCLE;
+
+create table LONNSKOMP_ANVIST
+(
+    ID                      bigint                              not null
+        constraint PK_LONNSKOMP_ANVIST
+            primary key,
+    VEDTAK_ID               bigint                              not null
+        constraint FK_LONNSKOMP_ANVIST_1
+            references LONNSKOMP_VEDTAK,
+    BELOEP                  NUMERIC(19, 2),
+    FOM                  DATE                                not null,
+    TOM                  DATE                                not null,
+    VERSJON                 bigint       default 0              not null,
+    OPPRETTET_AV            VARCHAR(20)  default 'VL'           not null,
+    OPPRETTET_TID           TIMESTAMP(3) default localtimestamp not null,
+    ENDRET_AV               VARCHAR(20),
+    ENDRET_TID              TIMESTAMP(3)
+);
+comment on table LONNSKOMP_ANVIST is 'En tabell med informasjon om beløp pr måned';
+comment on column LONNSKOMP_ANVIST.ID is 'PK';
+comment on column LONNSKOMP_ANVIST.VEDTAK_ID is 'FK:YTELSE Fremmednøkkel til vedtakstabellen';
+comment on column LONNSKOMP_ANVIST.BELOEP is 'Beløp ifm utbetaling.';
+comment on column LONNSKOMP_ANVIST.FOM is 'Startdato for anvisning.';
+comment on column LONNSKOMP_ANVIST.TOM is 'Sluttdato for anvisning';
+create index IDX_LONNSKOMP_ANVIST_1
+    on LONNSKOMP_ANVIST (VEDTAK_ID);
