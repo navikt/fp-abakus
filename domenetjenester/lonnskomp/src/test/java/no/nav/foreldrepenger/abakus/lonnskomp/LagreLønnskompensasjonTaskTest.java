@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonAnvist;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonRepository;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonVedtak;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -47,6 +48,9 @@ public class LagreLønnskompensasjonTaskTest {
         vedtak.setBeløp(new Beløp(new BigDecimal(18000L)));
         vedtak.setOrgNummer(new OrgNummer("999999999"));
         vedtak.setPeriode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.of(2020,4,20), LocalDate.of(2020,5,15)));
+        vedtak.leggTilAnvistPeriode(LønnskompensasjonAnvist.LønnskompensasjonAnvistBuilder.ny()
+            .medAnvistPeriode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.of(2020,4,20), LocalDate.of(2020,4,20)))
+            .medBeløp(new BigDecimal(1000)).build());
         repository.lagre(vedtak);
 
         assertThat(vedtak.getAktørId()).isNull();
