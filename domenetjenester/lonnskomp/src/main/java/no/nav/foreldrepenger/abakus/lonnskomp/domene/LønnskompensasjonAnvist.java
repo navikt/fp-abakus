@@ -24,10 +24,6 @@ import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
-import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelse;
-import no.nav.foreldrepenger.abakus.vedtak.domene.YtelseAnvist;
-import no.nav.foreldrepenger.abakus.vedtak.domene.YtelseAnvistBuilder;
 
 @Entity(name = "LonnskompAnvistEntitet")
 @Table(name = "LONNSKOMP_ANVIST")

@@ -26,7 +26,6 @@ import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
-import no.nav.foreldrepenger.abakus.vedtak.domene.YtelseAnvist;
 
 @Entity(name = "LonnskompVedtakEntitet")
 @Table(name = "LONNSKOMP_VEDTAK")
@@ -41,8 +40,12 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
     private String sakId;  // Eg en ULID
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id", nullable = false, updatable = false)))
+    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id")))
     private AktørId aktørId;
+
+    @ChangeTracked
+    @Column(name = "fnr")
+    private String fnr;
 
     @ChangeTracked
     @Embedded
@@ -79,6 +82,7 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
     public LønnskompensasjonVedtak(LønnskompensasjonVedtak ytelse) {
         this.sakId = ytelse.getSakId();
         this.aktørId = ytelse.getAktørId();
+        this.fnr = ytelse.getFnr();
         this.orgNummer = ytelse.getOrgNummer();
         this.forrigeVedtakDato = ytelse.getForrigeVedtakDato();
         this.periode = ytelse.getPeriode();
@@ -105,6 +109,14 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
 
     public void setAktørId(AktørId aktørId) {
         this.aktørId = aktørId;
+    }
+
+    public String getFnr() {
+        return fnr;
+    }
+
+    public void setFnr(String fnr) {
+        this.fnr = fnr;
     }
 
     public OrgNummer getOrgNummer() {
@@ -164,6 +176,7 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
         LønnskompensasjonVedtak that = (LønnskompensasjonVedtak) o;
         return Objects.equals(sakId, that.sakId) &&
             Objects.equals(aktørId, that.aktørId) &&
+            Objects.equals(fnr, that.fnr) &&
             Objects.equals(orgNummer, that.orgNummer) &&
             Objects.equals(forrigeVedtakDato, that.forrigeVedtakDato) &&
             Objects.equals(periode, that.periode) &&
@@ -172,14 +185,13 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
 
     @Override
     public int hashCode() {
-        return Objects.hash(sakId, aktørId, orgNummer, forrigeVedtakDato, periode, beløp);
+        return Objects.hash(sakId, aktørId, fnr, orgNummer, forrigeVedtakDato, periode, beløp);
     }
 
     @Override
     public String toString() {
         return "LønnskompensasjonVedtak{" +
             "sakId='" + sakId + '\'' +
-            ", aktørId=" + aktørId +
             ", orgNummer=" + orgNummer +
             ", forrigeVedtakDato=" + forrigeVedtakDato +
             ", periode=" + periode +

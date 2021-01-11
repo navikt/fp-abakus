@@ -2,9 +2,7 @@ package no.nav.foreldrepenger.abakus.lonnskomp.kafka;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -25,16 +23,16 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.lonnskomp.LagreLønnskompensasjonTask;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonAnvist;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonRepository;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonVedtak;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
-import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.foreldrepenger.abakus.vedtak.json.JacksonJsonConfig;
+import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
+import no.nav.vedtak.felles.prosesstask.api.ProsessTaskRepository;
 
 @ApplicationScoped
 @ActivateRequestContext
@@ -43,17 +41,17 @@ public class LonnskompHendelseHåndterer {
 
     private static final Logger log = LoggerFactory.getLogger(LonnskompHendelseHåndterer.class);
     private final static ObjectMapper OBJECT_MAPPER = JacksonJsonConfig.getMapper();
-    private AktørTjeneste aktørTjeneste;
     private LønnskompensasjonRepository repository;
+    private ProsessTaskRepository prosessTaskRepository;
 
 
     public LonnskompHendelseHåndterer() {
     }
 
     @Inject
-    public LonnskompHendelseHåndterer(AktørTjeneste aktørTjeneste, LønnskompensasjonRepository repository) {
-        this.aktørTjeneste = aktørTjeneste;
+    public LonnskompHendelseHåndterer(LønnskompensasjonRepository repository, ProsessTaskRepository taskRepository) {
         this.repository = repository;
+        this.prosessTaskRepository = taskRepository;
     }
 
     public void handleMessage(String key, String payload) {
@@ -73,16 +71,22 @@ public class LonnskompHendelseHåndterer {
             throw LønnskompensasjonFeil.FACTORY.parsingFeil(key, payload, e).toException();
         }
         if (mottattVedtak != null) {
-            var vedtak = extractFrom(mottattVedtak);
-            repository.lagre(vedtak);
+            var sakId = mottattVedtak.getSakId() != null ? mottattVedtak.getSakId() : mottattVedtak.getId();
+            var vedtak = extractFrom(mottattVedtak, sakId);
+            if (skalLagreVedtak(vedtak)) {
+                repository.lagre(vedtak);
+
+                ProsessTaskData data = new ProsessTaskData(LagreLønnskompensasjonTask.TASKTYPE);
+                data.setProperty(LagreLønnskompensasjonTask.SAK, sakId);
+                prosessTaskRepository.lagre(data);
+            }
         }
     }
 
-    private LønnskompensasjonVedtak extractFrom(LønnskompensasjonVedtakMelding melding) {
+    private LønnskompensasjonVedtak extractFrom(LønnskompensasjonVedtakMelding melding, String sakId) {
         var vedtak = new LønnskompensasjonVedtak();
-        vedtak.setAktørId(aktørTjeneste.hentAktørForIdent(new PersonIdent(melding.getFnr()), YtelseType.FORELDREPENGER)
-            .orElseThrow(() -> LønnskompensasjonFeil.FACTORY.finnerIkkeAktørIdForPermittert().toException()));
-        vedtak.setSakId(melding.getSakId());
+        vedtak.setFnr(melding.getFnr());
+        vedtak.setSakId(sakId);
         vedtak.setOrgNummer(new OrgNummer(melding.getBedriftNr()));
         vedtak.setPeriode(IntervallEntitet.fraOgMedTilOgMed(melding.getFom(), melding.getTom()));
         vedtak.setForrigeVedtakDato(melding.getForrigeVedtakDato());
@@ -102,5 +106,16 @@ public class LonnskompHendelseHåndterer {
             }
         });
         return vedtak;
+    }
+
+    private boolean skalLagreVedtak(LønnskompensasjonVedtak vedtak) {
+        LønnskompensasjonVedtak eksisterende = repository.hentSak(vedtak.getSakId()).orElse(null);
+        if (eksisterende == null)
+            return true;
+        var skalLagres = (eksisterende.getForrigeVedtakDato() == null && vedtak.getForrigeVedtakDato() != null) ||
+            (eksisterende.getForrigeVedtakDato() != null && vedtak.getForrigeVedtakDato() != null && vedtak.getForrigeVedtakDato().isAfter(eksisterende.getForrigeVedtakDato()));
+        if (!skalLagres)
+            log.info("Forkaster lønnskompensasjon siden en sitter på nyere vedtak. {} er eldre enn {}", vedtak, eksisterende);
+        return skalLagres;
     }
 }

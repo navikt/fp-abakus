@@ -76,4 +76,12 @@ public class LønnskompensasjonRepository {
 
         return new ArrayList<>(query.getResultList());
     }
+
+    public void oppdaterFødselsnummer(String fnr, AktørId aktørId) {
+        Objects.requireNonNull(fnr, "fnr");
+
+        entityManager.createNativeQuery("UPDATE lonnskomp_vedtak SET aktoer_id = :aid WHERE fnr = :fnr")
+            .setParameter("aid", aktørId.getId()).setParameter("fnr", fnr).executeUpdate();
+        entityManager.flush();
+    }
 }

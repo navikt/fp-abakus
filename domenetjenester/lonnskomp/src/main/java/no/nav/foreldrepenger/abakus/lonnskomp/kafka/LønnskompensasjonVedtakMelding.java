@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class LønnskompensasjonVedtakMelding {
+    private String id;
     private String fnr;
     private BigDecimal totalKompensasjon;
     private String bedriftNr;
@@ -13,6 +14,10 @@ public class LønnskompensasjonVedtakMelding {
     private String sakId;
     private LocalDate forrigeVedtakDato;
     private List<UtbetalingsdagMelding> dagBeregninger;
+
+    public String getId() {
+        return id;
+    }
 
     public String getFnr() {
         return fnr;
