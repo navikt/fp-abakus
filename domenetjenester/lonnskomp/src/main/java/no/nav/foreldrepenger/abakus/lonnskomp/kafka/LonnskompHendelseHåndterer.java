@@ -55,7 +55,7 @@ public class LonnskompHendelseHåndterer {
     }
 
     public void handleMessage(String key, String payload) {
-        log.debug("Mottatt ytelse-vedtatt hendelse med key='{}', payload={}", key, payload);
+        log.debug("Mottatt lønnskompensasjon med key='{}', payload={}", key, payload);
 
         LønnskompensasjonVedtakMelding mottattVedtak;
         try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()){
@@ -74,6 +74,7 @@ public class LonnskompHendelseHåndterer {
             var sakId = mottattVedtak.getSakId() != null ? mottattVedtak.getSakId() : mottattVedtak.getId();
             var vedtak = extractFrom(mottattVedtak, sakId);
             if (skalLagreVedtak(vedtak)) {
+                log.info("Lagrer lønnskompensasjon med sakId {}", sakId);
                 repository.lagre(vedtak);
 
                 ProsessTaskData data = new ProsessTaskData(LagreLønnskompensasjonTask.TASKTYPE);
