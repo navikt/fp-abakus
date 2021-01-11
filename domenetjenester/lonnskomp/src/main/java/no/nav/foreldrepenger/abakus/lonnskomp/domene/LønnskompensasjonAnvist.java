@@ -30,7 +30,7 @@ import no.nav.foreldrepenger.abakus.typer.Beløp;
 public class LønnskompensasjonAnvist extends BaseEntitet implements IndexKey {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_LONNSKOMP_MANED")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_LONNSKOMP_ANVIST")
     private Long id;
 
     @ManyToOne(optional = false)
