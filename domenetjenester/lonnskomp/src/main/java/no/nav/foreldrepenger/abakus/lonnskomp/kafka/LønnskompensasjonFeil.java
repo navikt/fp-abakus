@@ -8,7 +8,7 @@ import no.nav.vedtak.feil.LogLevel;
 import no.nav.vedtak.feil.deklarasjon.DeklarerteFeil;
 import no.nav.vedtak.feil.deklarasjon.TekniskFeil;
 
-interface LønnskompensasjonFeil extends DeklarerteFeil {
+public interface LønnskompensasjonFeil extends DeklarerteFeil {
 
     LønnskompensasjonFeil FACTORY = FeilFactory.create(LønnskompensasjonFeil.class);
 
@@ -17,6 +17,6 @@ interface LønnskompensasjonFeil extends DeklarerteFeil {
         logLevel = LogLevel.WARN)
     Feil parsingFeil(String key, String payload, IOException e);
 
-    @TekniskFeil(feilkode = "FP-328775", feilmelding = "Feil ved oppslag av aktørID for mottaker av lønnskompensasjon", logLevel = LogLevel.ERROR)
-    Feil finnerIkkeAktørIdForPermittert();
+    @TekniskFeil(feilkode = "FP-328775", feilmelding = "Feil ved oppslag av aktørID for mottaker av lønnskompensasjon sak={%s}", logLevel = LogLevel.ERROR)
+    Feil finnerIkkeAktørIdForPermittert(String sak);
 }

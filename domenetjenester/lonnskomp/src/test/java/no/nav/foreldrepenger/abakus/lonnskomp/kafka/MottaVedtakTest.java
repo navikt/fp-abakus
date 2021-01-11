@@ -1,22 +1,15 @@
 package no.nav.foreldrepenger.abakus.lonnskomp.kafka;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonRepository;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonVedtak;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import no.nav.vedtak.felles.prosesstask.api.ProsessTaskRepository;
 
 public class MottaVedtakTest {
 
@@ -24,8 +17,8 @@ public class MottaVedtakTest {
     private static String AKTØR = "1957590366776";
 
     private LønnskompensasjonRepository repository = mock(LønnskompensasjonRepository.class);
-    private AktørTjeneste aktørTjeneste = mock(AktørTjeneste.class);
-    private LonnskompHendelseHåndterer håndterer = new LonnskompHendelseHåndterer(aktørTjeneste, repository);
+    private ProsessTaskRepository taskRepository = mock(ProsessTaskRepository.class);
+    private LonnskompHendelseHåndterer håndterer = new LonnskompHendelseHåndterer(repository, taskRepository);
 
     @Test
     public void skal_motta_uten_anvist() {
@@ -43,18 +36,9 @@ public class MottaVedtakTest {
             "";
 
         ArgumentCaptor<LønnskompensasjonVedtak> vedtakCaptor = ArgumentCaptor.forClass(LønnskompensasjonVedtak.class);
-        lenient().when(aktørTjeneste.hentAktørForIdent(eq(new PersonIdent(FNR)), any())).thenReturn(Optional.of(new AktørId(AKTØR)));
         håndterer.handleMessage("key", payload);
         verify(repository, atLeast(1)).lagre(vedtakCaptor.capture());
     }
-
-    //    String dato;
-    //    String dagsats;
-    //    String permitteringsgrad;
-    //    String overstiger6G;
-    //    String refusjonssbeløp;
-    //    String lønnskompensasjonsbeløp;
-    //    String dagtype;
 
     @Test
     public void skal_motta_med_anvist() {
@@ -82,11 +66,9 @@ public class MottaVedtakTest {
             "     \"lønnskompensasjonsbeløp\": \"1000\"\n" +
             "  }],\n" +
             "  \"forrigeVedtakDato\" : \"2020-08-01\"\n" +
-            "}\n" +
-            "";
+            "}\n";
 
         ArgumentCaptor<LønnskompensasjonVedtak> vedtakCaptor = ArgumentCaptor.forClass(LønnskompensasjonVedtak.class);
-        lenient().when(aktørTjeneste.hentAktørForIdent(eq(new PersonIdent(FNR)), any())).thenReturn(Optional.of(new AktørId(AKTØR)));
         håndterer.handleMessage("key", payload);
         verify(repository, atLeast(1)).lagre(vedtakCaptor.capture());
     }
