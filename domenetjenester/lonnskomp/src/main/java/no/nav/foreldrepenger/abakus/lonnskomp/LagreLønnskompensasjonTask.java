@@ -5,9 +5,6 @@ import javax.inject.Inject;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonRepository;
-import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonVedtak;
-import no.nav.foreldrepenger.abakus.lonnskomp.kafka.LønnskompensasjonFeil;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
@@ -36,11 +33,9 @@ public class LagreLønnskompensasjonTask implements ProsessTaskHandler {
     public void doTask(ProsessTaskData data) {
         String sak = data.getPropertyValue(SAK);
 
-        LønnskompensasjonVedtak vedtak = repository.hentSak(sak).orElseThrow();
-
-        AktørId aktørId = aktørTjeneste.hentAktørForIdent(new PersonIdent(vedtak.getFnr()), YtelseType.FORELDREPENGER)
-            .orElseThrow(() -> LønnskompensasjonFeil.FACTORY.finnerIkkeAktørIdForPermittert(sak).toException());
-
-        repository.oppdaterFødselsnummer(vedtak.getFnr(), aktørId);
+        repository.hentSak(sak).stream()
+            .filter(v -> v.getAktørId() == null)
+            .forEach(v -> aktørTjeneste.hentAktørForIdent(new PersonIdent(v.getFnr()), YtelseType.FORELDREPENGER)
+                .ifPresent(aktørId -> repository.oppdaterFødselsnummer(v.getFnr(), aktørId)));
     }
 }

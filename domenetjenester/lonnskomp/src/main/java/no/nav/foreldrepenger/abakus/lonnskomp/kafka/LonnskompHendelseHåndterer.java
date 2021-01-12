@@ -2,11 +2,14 @@ package no.nav.foreldrepenger.abakus.lonnskomp.kafka;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -28,6 +31,7 @@ import no.nav.foreldrepenger.abakus.lonnskomp.LagreLønnskompensasjonTask;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonAnvist;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonRepository;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonVedtak;
+import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.vedtak.json.JacksonJsonConfig;
@@ -55,7 +59,6 @@ public class LonnskompHendelseHåndterer {
     }
 
     public void handleMessage(String key, String payload) {
-        log.debug("Mottatt lønnskompensasjon med key='{}', payload={}", key, payload);
 
         LønnskompensasjonVedtakMelding mottattVedtak;
         try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()){
@@ -72,11 +75,20 @@ public class LonnskompHendelseHåndterer {
         }
         if (mottattVedtak != null) {
             var sakId = mottattVedtak.getSakId() != null ? mottattVedtak.getSakId() : mottattVedtak.getId();
-            var vedtak = extractFrom(mottattVedtak, sakId);
-            if (skalLagreVedtak(vedtak)) {
+            var eksisterende = repository.hentSak(sakId, mottattVedtak.getFnr());
+            var harAktørId = eksisterende.map(LønnskompensasjonVedtak::getAktørId);
+
+            var vedtak = extractFrom(mottattVedtak, sakId, harAktørId.orElse(null));
+            if (repository.skalLagreVedtak(eksisterende.orElse(null), vedtak)) {
                 log.info("Lagrer lønnskompensasjon med sakId {}", sakId);
                 repository.lagre(vedtak);
 
+                if (harAktørId.isEmpty()) {
+                    ProsessTaskData data = new ProsessTaskData(LagreLønnskompensasjonTask.TASKTYPE);
+                    data.setProperty(LagreLønnskompensasjonTask.SAK, sakId);
+                    prosessTaskRepository.lagre(data);
+                }
+            } else if (eksisterende.isPresent() && harAktørId.isEmpty()) {
                 ProsessTaskData data = new ProsessTaskData(LagreLønnskompensasjonTask.TASKTYPE);
                 data.setProperty(LagreLønnskompensasjonTask.SAK, sakId);
                 prosessTaskRepository.lagre(data);
@@ -84,15 +96,20 @@ public class LonnskompHendelseHåndterer {
         }
     }
 
-    private LønnskompensasjonVedtak extractFrom(LønnskompensasjonVedtakMelding melding, String sakId) {
+    private LønnskompensasjonVedtak extractFrom(LønnskompensasjonVedtakMelding melding, String sakId, AktørId aktørId) {
         var vedtak = new LønnskompensasjonVedtak();
+        var forrigedato = melding.getForrigeVedtakDato() != null ? LocalDate.ofInstant(Instant.parse(melding.getForrigeVedtakDato()), TimeZone.getDefault().toZoneId()) : null;
+        if (melding.getForrigeVedtakDato() != null) {
+            log.info("Lønnskomp forrigeVedtak kilde {} localdate {}", melding.getForrigeVedtakDato(), forrigedato);
+        }
         vedtak.setFnr(melding.getFnr());
+        vedtak.setAktørId(aktørId);
         vedtak.setSakId(sakId);
         vedtak.setOrgNummer(new OrgNummer(melding.getBedriftNr()));
         vedtak.setPeriode(IntervallEntitet.fraOgMedTilOgMed(melding.getFom(), melding.getTom()));
-        vedtak.setForrigeVedtakDato(melding.getForrigeVedtakDato());
-        BigDecimal beløpBD = melding.getTotalKompensasjon();
-        vedtak.setBeløp(new Beløp(beløpBD));
+        vedtak.setForrigeVedtakDato(forrigedato);
+        vedtak.setBeløp(new Beløp(melding.getTotalKompensasjon()));
+
         Map<YearMonth, List<UtbetalingsdagMelding>> sortert = melding.getDagBeregninger().stream()
             .filter(b -> b.getLønnskompensasjonsbeløp() != null && !Objects.equals("-", b.getLønnskompensasjonsbeløp()))
             .collect(Collectors.groupingBy(b -> YearMonth.from(b.getDato())));
@@ -109,14 +126,4 @@ public class LonnskompHendelseHåndterer {
         return vedtak;
     }
 
-    private boolean skalLagreVedtak(LønnskompensasjonVedtak vedtak) {
-        LønnskompensasjonVedtak eksisterende = repository.hentSak(vedtak.getSakId()).orElse(null);
-        if (eksisterende == null)
-            return true;
-        var skalLagres = (eksisterende.getForrigeVedtakDato() == null && vedtak.getForrigeVedtakDato() != null) ||
-            (eksisterende.getForrigeVedtakDato() != null && vedtak.getForrigeVedtakDato() != null && vedtak.getForrigeVedtakDato().isAfter(eksisterende.getForrigeVedtakDato()));
-        if (!skalLagres)
-            log.info("Forkaster lønnskompensasjon siden en sitter på nyere vedtak. {} er eldre enn {}", vedtak, eksisterende);
-        return skalLagres;
-    }
 }

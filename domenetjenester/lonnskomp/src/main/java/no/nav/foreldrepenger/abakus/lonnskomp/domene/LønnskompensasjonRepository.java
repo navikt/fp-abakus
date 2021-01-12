@@ -35,13 +35,8 @@ public class LønnskompensasjonRepository {
     }
 
     public void lagre(LønnskompensasjonVedtak vedtak) {
-        LønnskompensasjonVedtak eksisterende = hentSak(vedtak.getSakId()).orElse(null);
+        LønnskompensasjonVedtak eksisterende = hentSak(vedtak.getSakId(), vedtak.getFnr()).orElse(null);
         if (eksisterende != null) {
-            if ((eksisterende.getForrigeVedtakDato() == null && vedtak.getForrigeVedtakDato() == null) ||
-                (eksisterende.getForrigeVedtakDato() != null && (vedtak.getForrigeVedtakDato() == null || !vedtak.getForrigeVedtakDato().isAfter(eksisterende.getForrigeVedtakDato())))) {
-                log.info("Forkaster lønnskompensasjon siden en sitter på nyere vedtak. {} er eldre enn {}", vedtak, eksisterende);
-                return;
-            }
             // Deaktiver eksisterende innslag
             eksisterende.setAktiv(false);
             entityManager.persist(eksisterende);
@@ -54,12 +49,23 @@ public class LønnskompensasjonRepository {
         entityManager.flush();
     }
 
-    public Optional<LønnskompensasjonVedtak> hentSak(String sakId) {
+    public List<LønnskompensasjonVedtak> hentSak(String sakId) {
         Objects.requireNonNull(sakId, "sakId");
 
         TypedQuery<LønnskompensasjonVedtak> query = entityManager.createQuery("SELECT v FROM LonnskompVedtakEntitet v " +
             "WHERE aktiv = true AND v.sakId = :sakId ", LønnskompensasjonVedtak.class);
         query.setParameter("sakId", sakId);
+
+        return new ArrayList<>(query.getResultList());
+    }
+
+    public Optional<LønnskompensasjonVedtak> hentSak(String sakId, String fnr) {
+        Objects.requireNonNull(sakId, "sakId");
+
+        TypedQuery<LønnskompensasjonVedtak> query = entityManager.createQuery("SELECT v FROM LonnskompVedtakEntitet v " +
+            "WHERE aktiv = true AND v.sakId = :sakId and v.fnr = :fnr", LønnskompensasjonVedtak.class);
+        query.setParameter("sakId", sakId);
+        query.setParameter("fnr", fnr);
 
         return HibernateVerktøy.hentUniktResultat(query);
     }
@@ -83,5 +89,15 @@ public class LønnskompensasjonRepository {
         entityManager.createNativeQuery("UPDATE lonnskomp_vedtak SET aktoer_id = :aid WHERE fnr = :fnr")
             .setParameter("aid", aktørId.getId()).setParameter("fnr", fnr).executeUpdate();
         entityManager.flush();
+    }
+
+    public boolean skalLagreVedtak(LønnskompensasjonVedtak eksisterende, LønnskompensasjonVedtak vedtak) {
+        if (eksisterende == null)
+            return true;
+        var likeUtenomForrigeVedtak = Objects.equals(eksisterende, vedtak);
+        if (likeUtenomForrigeVedtak) {
+            log.info("Lønnskomp forkastes pga likt innhold {}", vedtak);
+        }
+        return !likeUtenomForrigeVedtak;
     }
 }

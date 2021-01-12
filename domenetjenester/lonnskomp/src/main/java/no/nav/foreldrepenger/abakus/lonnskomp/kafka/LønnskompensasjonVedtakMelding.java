@@ -12,7 +12,7 @@ public class LønnskompensasjonVedtakMelding {
     private LocalDate fom;
     private LocalDate tom;
     private String sakId;
-    private LocalDate forrigeVedtakDato;
+    private String forrigeVedtakDato;
     private List<UtbetalingsdagMelding> dagBeregninger;
 
     public String getId() {
@@ -43,7 +43,7 @@ public class LønnskompensasjonVedtakMelding {
         return sakId;
     }
 
-    public LocalDate getForrigeVedtakDato() {
+    public String getForrigeVedtakDato() {
         return forrigeVedtakDato;
     }
 
