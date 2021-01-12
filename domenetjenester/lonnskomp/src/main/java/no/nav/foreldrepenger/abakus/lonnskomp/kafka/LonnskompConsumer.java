@@ -20,11 +20,8 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.vedtak.kafka.KafkaIntegration;
-import no.nav.vedtak.apptjeneste.AppServiceHandler;
-
 @ApplicationScoped
-public class LonnskompConsumer implements KafkaIntegration, AppServiceHandler {
+public class LonnskompConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(LonnskompConsumer.class);
     private KafkaStreams stream;
@@ -110,7 +107,6 @@ public class LonnskompConsumer implements KafkaIntegration, AppServiceHandler {
         return stream.state();
     }
 
-    @Override
     public boolean isAlive() {
         return stream != null && stream.state().isRunningOrRebalancing();
     }
@@ -119,14 +115,12 @@ public class LonnskompConsumer implements KafkaIntegration, AppServiceHandler {
         return topic;
     }
 
-    @Override
     public void start() {
         addShutdownHooks();
         stream.start();
         log.info("Starter konsumering av topic={}, tilstand={}", topic, stream.state());
     }
 
-    @Override
     public void stop() {
         log.info("Starter shutdown av topic={}, tilstand={} med 10 sekunder timeout", topic, stream.state());
         stream.close(Duration.of(60, ChronoUnit.SECONDS));

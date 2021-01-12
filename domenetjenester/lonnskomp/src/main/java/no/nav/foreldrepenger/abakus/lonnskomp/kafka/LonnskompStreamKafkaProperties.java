@@ -5,12 +5,14 @@ import javax.inject.Inject;
 
 import org.apache.kafka.common.serialization.Serdes;
 
-import no.nav.foreldrepenger.abakus.vedtak.kafka.ApplicationIdUtil;
 import no.nav.foreldrepenger.abakus.vedtak.kafka.Topic;
 import no.nav.vedtak.konfig.KonfigVerdi;
+import no.nav.vedtak.util.env.Environment;
 
 @Dependent
 class LonnskompStreamKafkaProperties {
+
+    private static final Environment ENV = Environment.current();
 
     private final String bootstrapServers;
     private final String schemaRegistryUrl;
@@ -33,7 +35,7 @@ class LonnskompStreamKafkaProperties {
         this.trustStorePath = trustStorePath;
         this.trustStorePassword = trustStorePassword;
         this.topic = new Topic(topicName, Serdes.String(), Serdes.String());
-        this.applicationId = ApplicationIdUtil.get();
+        this.applicationId = "fpabakus-lk" + (ENV.isProd() ? "-default" : "-" + ENV.getNamespace());
         this.bootstrapServers = bootstrapServers;
         this.schemaRegistryUrl = schemaRegistryUrl;
         this.username = username;
