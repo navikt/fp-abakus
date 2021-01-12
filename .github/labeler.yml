@@ -7,3 +7,7 @@ migreringer:
   
 web:
   - web/src/main/java/**/*
+  
+pom:
+  - '**/*/pom.xml'
+  - pom.xml
