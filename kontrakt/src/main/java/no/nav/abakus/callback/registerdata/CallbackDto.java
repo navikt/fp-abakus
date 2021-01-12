@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 /**
  * Metadata for callback
  * Inneholder:
- * - opprettetTidspunkt: Tidspunktet hvor det oppdaterte grunnlaget ble commitet til database.
+ * - opprettetTidspunkt: Tidspunktet hvor det oppdaterte grunnlaget ble commitet til database
  * - avsenderRef: avsenderRef til behandlingen
  * - opprinneligGrunnlagRef: tilstand før registerinnhenting, referanse til opprinnelig grunnlag
  * - oppdatertGrunnlagRef: resultatet av registerinnhenting, referanse til nytt grunnlag
