@@ -35,7 +35,7 @@ class LonnskompStreamKafkaProperties {
         this.trustStorePath = trustStorePath;
         this.trustStorePassword = trustStorePassword;
         this.topic = new Topic(topicName, Serdes.String(), Serdes.String());
-        this.applicationId = "fpabakus-lk" + (ENV.isProd() ? "-default" : "-" + ENV.getNamespace());
+        this.applicationId = "fpabakus-kom" + (ENV.isProd() ? "-default" : "-" + ENV.getNamespace());
         this.bootstrapServers = bootstrapServers;
         this.schemaRegistryUrl = schemaRegistryUrl;
         this.username = username;

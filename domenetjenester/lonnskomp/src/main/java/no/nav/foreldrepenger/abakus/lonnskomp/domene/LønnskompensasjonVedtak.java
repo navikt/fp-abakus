@@ -19,7 +19,6 @@ import javax.persistence.Version;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
@@ -51,7 +50,7 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
     @Embedded
     private OrgNummer orgNummer;
 
-    @DiffIgnore
+    @ChangeTracked
     @Column(name = "forrige_vedtak_dato")
     private LocalDate forrigeVedtakDato;
 
@@ -87,12 +86,17 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
         this.forrigeVedtakDato = ytelse.getForrigeVedtakDato();
         this.periode = ytelse.getPeriode();
         this.beløp = ytelse.getBeløp();
+        ytelse.getAnvistePerioder().stream().map(LønnskompensasjonAnvist::new).forEach(this::leggTilAnvistPeriode);
     }
 
     @Override
     public String getIndexKey() {
         Object[] keyParts = { periode, aktørId, sakId, };
         return IndexKeyComposer.createKey(keyParts);
+    }
+
+    Long getId() {
+        return id;
     }
 
     public String getSakId() {
@@ -175,17 +179,16 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
         if (o == null || getClass() != o.getClass()) return false;
         LønnskompensasjonVedtak that = (LønnskompensasjonVedtak) o;
         return Objects.equals(sakId, that.sakId) &&
-            Objects.equals(aktørId, that.aktørId) &&
             Objects.equals(fnr, that.fnr) &&
             Objects.equals(orgNummer, that.orgNummer) &&
-            Objects.equals(forrigeVedtakDato, that.forrigeVedtakDato) &&
             Objects.equals(periode, that.periode) &&
-            Objects.equals(beløp, that.beløp);
+            Objects.equals(beløp, that.beløp) &&
+            anvistePerioder.size() == that.anvistePerioder.size() && anvistePerioder.containsAll(that.anvistePerioder);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sakId, aktørId, fnr, orgNummer, forrigeVedtakDato, periode, beløp);
+        return Objects.hash(sakId, fnr, orgNummer, periode, beløp, anvistePerioder);
     }
 
     @Override

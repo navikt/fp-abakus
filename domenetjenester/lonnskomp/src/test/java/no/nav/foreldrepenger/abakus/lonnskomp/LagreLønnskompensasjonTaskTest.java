@@ -63,7 +63,7 @@ public class LagreLønnskompensasjonTaskTest {
 
         repositoryRule.getEntityManager().clear();
 
-        var oppdatertVedtak = repository.hentSak(SAK);
+        var oppdatertVedtak = repository.hentSak(SAK, FNR.getIdent());
         assertThat(oppdatertVedtak.get().getAktørId()).isEqualTo(AKTØR_ID);
     }
 }
