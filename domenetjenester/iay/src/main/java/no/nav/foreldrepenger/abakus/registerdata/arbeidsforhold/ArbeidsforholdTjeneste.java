@@ -126,10 +126,21 @@ public class ArbeidsforholdTjeneste {
 
         if (arbeidsavtaleTom != null && arbeidsavtaleTom.isBefore(arbeidsavtaleFom)) {
             LOGGER.warn("Arbeidsavtale tom={} er før fom={} for orgnr={}, navArbeidsforholdId={}",
-                arbeidsavtaleTom, arbeidsavtaleFom, arbeidsforhold.getArbeidsgiver().getOrganisasjonsnummer(), arbeidsforhold.getNavArbeidsforholdId());
+                arbeidsavtaleTom, arbeidsavtaleFom, getIdentifikatorString(arbeidsforhold.getArbeidsgiver().getOrganisasjonsnummer()), arbeidsforhold.getNavArbeidsforholdId());
         }
 
         return builder.build();
+    }
+
+    private String getIdentifikatorString(String arbeidsgiverIdentifikator) {
+        if (arbeidsgiverIdentifikator == null) {
+            return null;
+        }
+        int length = arbeidsgiverIdentifikator.length();
+        if (length <= 4) {
+            return "*".repeat(length);
+        }
+        return "*".repeat(length - 4) + arbeidsgiverIdentifikator.substring(length - 4);
     }
 
     private Permisjon byggPermisjonRS(PermisjonPermitteringRS permisjonPermitteringRS) {

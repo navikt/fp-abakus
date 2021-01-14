@@ -61,11 +61,22 @@ public class InfotrygdYtelseArbeid {
     @Override
     public String toString() {
         return "InfotrygdYtelseArbeid{" +
-            "orgnr='" + orgnr + '\'' +
+            "orgnr='" + getOrgnrString() + '\'' +
             ", inntekt=" + inntekt +
             ", inntektperiode=" + inntektperiode +
             ", refusjon=" + refusjon +
             '}';
+    }
+
+    private String getOrgnrString() {
+        if (orgnr == null) {
+            return null;
+        }
+        int length = orgnr.length();
+        if (length <= 4) {
+            return "*".repeat(length);
+        }
+        return "*".repeat(length - 4) + orgnr.substring(length - 4);
     }
 }
 

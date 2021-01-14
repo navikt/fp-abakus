@@ -33,7 +33,6 @@ import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelse;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 
 public class YtelseRegisterInnhenting {
-    private static final Logger LOGGER = LoggerFactory.getLogger(YtelseRegisterInnhenting.class);
     private final InnhentingSamletTjeneste innhentingSamletTjeneste;
     private final VedtakYtelseRepository vedtakYtelseRepository;
 
@@ -47,13 +46,11 @@ public class YtelseRegisterInnhenting {
 
         InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder = inntektArbeidYtelseAggregatBuilder.getAktørYtelseBuilder(aktørId);
         aktørYtelseBuilder.tilbakestillYtelser();
-        LOGGER.info("Ytelseaggregat før ytelser er lagt til : {}", aktørYtelseBuilder);
 
         innhentFraYtelsesRegister(aktørId, behandling, aktørYtelseBuilder);
 
         if (!medGrunnlag) {
             // Ikke lenger relevant å hente eksternt for 2part eller engangsstønad
-            LOGGER.info("Ytelseaggregat etter at ytelser er lagt til : {}", aktørYtelseBuilder);
             inntektArbeidYtelseAggregatBuilder.leggTilAktørYtelse(aktørYtelseBuilder);
             return;
         }
@@ -69,7 +66,6 @@ public class YtelseRegisterInnhenting {
             oversettMeldekortUtbetalingsgrunnlagTilYtelse(aktørYtelseBuilder, sak);
         }
 
-        LOGGER.info("Ytelseaggregat etter at ytelser er lagt til : {}", aktørYtelseBuilder);
         inntektArbeidYtelseAggregatBuilder.leggTilAktørYtelse(aktørYtelseBuilder);
     }
 
