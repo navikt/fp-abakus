@@ -40,7 +40,7 @@ public class LonnskompConsumer implements AppServiceHandler {
 
         final StreamsBuilder builder = new StreamsBuilder();
 
-        Consumed<String, String> stringStringConsumed = Consumed.with(Topology.AutoOffsetReset.EARLIEST);
+        Consumed<String, String> stringStringConsumed = Consumed.with(Topology.AutoOffsetReset.LATEST);
         builder.stream(this.topic, stringStringConsumed)
             .foreach(lonnskompHendelseHåndterer::handleMessage);
 

@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
@@ -7,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -18,18 +20,24 @@ import org.threeten.extra.Interval;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonFilter;
+import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonRepository;
+import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonVedtak;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FinnInntektRequest;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.InnhentingInfotrygdTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.util.env.Cluster;
 import no.nav.vedtak.util.env.Environment;
 
@@ -42,6 +50,7 @@ public class InnhentingSamletTjeneste {
     private InntektTjeneste inntektTjeneste;
     private MeldekortTjeneste meldekortTjeneste;
     private InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste;
+    private LønnskompensasjonRepository lønnskompensasjonRepository;
     private boolean isDev;
     private boolean isProd;
 
@@ -53,11 +62,13 @@ public class InnhentingSamletTjeneste {
     public InnhentingSamletTjeneste(ArbeidsforholdTjeneste arbeidsforholdTjeneste,  // NOSONAR
                                     InntektTjeneste inntektTjeneste,
                                     InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste,
+                                    LønnskompensasjonRepository lønnskompensasjonRepository,
                                     MeldekortTjeneste meldekortTjeneste) {
         this.arbeidsforholdTjeneste = arbeidsforholdTjeneste;
         this.inntektTjeneste = inntektTjeneste;
         this.meldekortTjeneste = meldekortTjeneste;
         this.innhentingInfotrygdTjeneste = innhentingInfotrygdTjeneste;
+        this.lønnskompensasjonRepository = lønnskompensasjonRepository;
         this.isDev = Cluster.DEV_FSS.equals(Environment.current().getCluster());
         this.isProd = Cluster.PROD_FSS.equals(Environment.current().getCluster());
     }
@@ -69,6 +80,33 @@ public class InnhentingSamletTjeneste {
         builder.medAktørId(aktørId.getId());
 
         return inntektTjeneste.finnInntekt(builder.build(), kilde, ytelse);
+    }
+
+    public boolean skalInnhenteLønnskompensasjon(Saksnummer saksnummer, InntektskildeType kilde) {
+        return saksnummer != null && lønnskompensasjonRepository.hentFilterFor(saksnummer).stream()
+            .map(LønnskompensasjonFilter::getInntektskildeType)
+            .anyMatch(kilde::equals);
+    }
+
+    public List<Månedsinntekt> getLønnskompensasjon(AktørId aktørId, Interval periode) {
+        List<Månedsinntekt> resultat = new ArrayList<>();
+        lønnskompensasjonRepository.hentLønnskompensasjonForIPeriode(aktørId, LocalDateTime.ofInstant(periode.getStart(),
+            ZoneId.systemDefault()).toLocalDate(), LocalDateTime.ofInstant(periode.getEnd(), ZoneId.systemDefault()).toLocalDate()).stream()
+            .filter(lk -> lk.getBeløp().getVerdi().compareTo(BigDecimal.ZERO) > 0)
+            .forEach(lk -> resultat.addAll(periodiserLønnskompensasjon(lk)));
+        return resultat;
+    }
+
+    private List<Månedsinntekt> periodiserLønnskompensasjon(LønnskompensasjonVedtak vedtak) {
+        return vedtak.getAnvistePerioder().stream()
+            .map(a -> new Månedsinntekt.Builder()
+                .medMåned(YearMonth.from(a.getAnvistFom()))
+                .medBeløp(a.getBeløp().map(Beløp::getVerdi).orElse(BigDecimal.ZERO))
+                .medArbeidsgiver(vedtak.getOrgNummer().getId())
+                .medYtelse(false)
+                .build())
+            .filter(mi -> mi.getBeløp().compareTo(BigDecimal.ZERO) > 0)
+            .collect(Collectors.toList());
     }
 
     public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> getArbeidsforhold(AktørId aktørId, PersonIdent ident, Interval opplysningsPeriode) {

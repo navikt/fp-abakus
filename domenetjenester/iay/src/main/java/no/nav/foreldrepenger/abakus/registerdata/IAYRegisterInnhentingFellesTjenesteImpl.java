@@ -280,6 +280,10 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         var inntektsKilde = ELEMENT_TIL_INNTEKTS_KILDE_MAP.get(registerdataElement);
         var inntektsInformasjon = innhentingSamletTjeneste.getInntektsInformasjon(aktørId, kobling.getOpplysningsperiode().tilIntervall(), inntektsKilde, kobling.getYtelseType());
 
+        // En slags ytelse som er utbetalt fra NAV til bruker som LØNN ...
+        if (innhentingSamletTjeneste.skalInnhenteLønnskompensasjon(kobling.getSaksnummer(), inntektsKilde)) {
+            inntektsInformasjon.leggTilMånedsinntekter(innhentingSamletTjeneste.getLønnskompensasjon(aktørId, kobling.getOpplysningsperiode().tilIntervall()));
+        }
         if (informasjonsElementer.contains(registerdataElement)) {
             leggTilInntekter(aktørId, builder, inntektsInformasjon, kobling.getYtelseType());
         }

@@ -57,11 +57,12 @@ public class LønnskompensasjonRepositoryTest {
             repository.lagre(nyVedtak);
         }
 
-        final var oppdatertVedtattVedtak = repository.hentLønnskompensasjonForIPeriode(AKTØR_ID, LocalDate.now().minusMonths(17), LocalDate.now());
+        final var oppdatertVedtattVedtak = repository.hentLønnskompensasjonForIPeriode(AKTØR_ID, LocalDate.now().minusMonths(17), LocalDate.now())
+            .stream().findFirst().orElse(null);
 
-        assertThat(oppdatertVedtattVedtak).hasSize(1);
-        assertThat(oppdatertVedtattVedtak.get(0).getId()).isNotEqualTo(vedtak.getId());
-        assertThat(oppdatertVedtattVedtak.get(0).getBeløp().getVerdi().longValue()).isEqualTo(10001L);
+        assertThat(oppdatertVedtattVedtak).isNotNull();
+        assertThat(oppdatertVedtattVedtak.getId()).isNotEqualTo(vedtak.getId());
+        assertThat(oppdatertVedtattVedtak.getBeløp().getVerdi().longValue()).isEqualTo(10001L);
     }
 
     @Test
@@ -89,9 +90,10 @@ public class LønnskompensasjonRepositoryTest {
             repository.lagre(nyVedtak);
         }
 
-        final var oppdatertVedtattVedtak = repository.hentLønnskompensasjonForIPeriode(AKTØR_ID, LocalDate.now().minusYears(1), LocalDate.now());
+        final var oppdatertVedtattVedtak = repository.hentLønnskompensasjonForIPeriode(AKTØR_ID, LocalDate.now().minusYears(1), LocalDate.now())
+            .stream().findFirst().orElse(null);
 
-        assertThat(oppdatertVedtattVedtak).hasSize(1);
-        assertThat(oppdatertVedtattVedtak.get(0).getId()).isEqualTo(vedtak.getId());
+        assertThat(oppdatertVedtattVedtak).isNotNull();
+        assertThat(oppdatertVedtattVedtak.getId()).isEqualTo(vedtak.getId());
     }
 }

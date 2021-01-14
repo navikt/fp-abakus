@@ -43,6 +43,10 @@
 			<groupId>no.nav.foreldrepenger.abakus</groupId>
 			<artifactId>vedtak</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.abakus</groupId>
+            <artifactId>lonnskomp</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
 			<artifactId>infotrygd-grunnlag-klient</artifactId>

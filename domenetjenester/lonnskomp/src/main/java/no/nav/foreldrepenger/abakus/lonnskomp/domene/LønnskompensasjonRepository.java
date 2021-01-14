@@ -2,9 +2,11 @@ package no.nav.foreldrepenger.abakus.lonnskomp.domene;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -15,7 +17,9 @@ import org.hibernate.jpa.QueryHints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 
 @ApplicationScoped
@@ -70,7 +74,7 @@ public class LønnskompensasjonRepository {
         return HibernateVerktøy.hentUniktResultat(query);
     }
 
-    public List<LønnskompensasjonVedtak> hentLønnskompensasjonForIPeriode(AktørId aktørId, LocalDate fom, LocalDate tom) {
+    public Set<LønnskompensasjonVedtak> hentLønnskompensasjonForIPeriode(AktørId aktørId, LocalDate fom, LocalDate tom) {
         TypedQuery<LønnskompensasjonVedtak> query = entityManager.createQuery("FROM LonnskompVedtakEntitet " +
             "WHERE aktørId = :aktørId " +
             "AND periode.fomDato <= :tom AND periode.tomDato >= :fom " +
@@ -80,7 +84,13 @@ public class LønnskompensasjonRepository {
         query.setParameter("tom", tom);
         query.setHint(QueryHints.HINT_READONLY, true);
 
-        return new ArrayList<>(query.getResultList());
+        Set<LønnskompensasjonVedtak> resultat = new LinkedHashSet<>();
+        var allevedtak = query.getResultList();
+        for (LønnskompensasjonVedtak v : allevedtak) {
+            if (resultat.stream().noneMatch(e -> LønnskompensasjonVedtak.erLikForBrukerOrg(e,v)))
+                resultat.add(v);
+        }
+        return resultat;
     }
 
     public void oppdaterFødselsnummer(String fnr, AktørId aktørId) {
@@ -100,4 +110,27 @@ public class LønnskompensasjonRepository {
         }
         return !likeUtenomForrigeVedtak;
     }
+
+    public void lagreFilter(Saksnummer saksnummer, InntektskildeType kilde) {
+        LønnskompensasjonFilter eksisterende = hentFilterFor(saksnummer).stream()
+            .filter(f -> f.getInntektskildeType().equals(kilde))
+            .findFirst().orElse(null);
+        if (eksisterende != null) {
+            return;
+        }
+        var filter = new LønnskompensasjonFilter(saksnummer, kilde);
+        entityManager.persist(filter);
+        entityManager.flush();
+    }
+
+    public List<LønnskompensasjonFilter> hentFilterFor(Saksnummer saksnummer) {
+        Objects.requireNonNull(saksnummer, "saksnummer");
+
+        TypedQuery<LønnskompensasjonFilter> query = entityManager.createQuery("SELECT f FROM LonnskompFilterEntitet f " +
+            "WHERE saksnummer = :saksnummer ", LønnskompensasjonFilter.class);
+        query.setParameter("saksnummer", saksnummer);
+
+        return new ArrayList<>(query.getResultList());
+    }
+
 }

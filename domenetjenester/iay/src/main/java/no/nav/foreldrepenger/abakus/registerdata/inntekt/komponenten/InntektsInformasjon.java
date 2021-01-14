@@ -20,13 +20,18 @@ public class InntektsInformasjon {
     private InntektskildeType kilde;
 
     public InntektsInformasjon(List<Månedsinntekt> månedsinntekter, List<FrilansArbeidsforhold> frilansArbeidsforhold, InntektskildeType kilde) {
-        this.månedsinntekter = månedsinntekter;
+        this.månedsinntekter = new ArrayList<>();
+        this.månedsinntekter.addAll(månedsinntekter);
         this.frilansArbeidsforhold = frilansArbeidsforhold;
         this.kilde = kilde;
     }
 
     public List<Månedsinntekt> getMånedsinntekter() {
         return Collections.unmodifiableList(månedsinntekter);
+    }
+
+    public void leggTilMånedsinntekter(List<Månedsinntekt> inntekter) {
+        this.månedsinntekter.addAll(inntekter);
     }
 
     public Map<ArbeidsforholdIdentifikator, List<FrilansArbeidsforhold>> getFrilansArbeidsforhold() {

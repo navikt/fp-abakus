@@ -14,22 +14,27 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
+import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonRepository;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskRepository;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskStatus;
-import no.nav.vedtak.felles.prosesstask.rest.dto.ProsessTaskIdDto;
+import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
@@ -45,8 +50,8 @@ public class ForvaltningRestTjeneste {
 
     private InntektArbeidYtelseTjeneste iayTjeneste;
 
-    private ProsessTaskRepository prosessTaskRepository;
     private EntityManager entityManager;
+    private LønnskompensasjonRepository lønnskompensasjonRepository;
 
     public ForvaltningRestTjeneste() {
         // For CDI
@@ -54,37 +59,62 @@ public class ForvaltningRestTjeneste {
 
     @Inject
     public ForvaltningRestTjeneste(EntityManager entityManager,
-                                   ProsessTaskRepository prosessTaskRepository,
                                    InntektArbeidYtelseTjeneste iayTjeneste) {
-        this.prosessTaskRepository = prosessTaskRepository;
         this.entityManager = entityManager;
         this.iayTjeneste = iayTjeneste;
+        this.lønnskompensasjonRepository = new LønnskompensasjonRepository(entityManager);
     }
 
     @POST
-    @Path("/sett-task-ferdig")
+    @Path("/lonnskomp-sammenligning")
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
-    @Operation(description = "Setter prosesstask til status FERDIG",
+    @Operation(description = "Vil innhente data fra lønnskompensasjon for sak i inntekt/sammenligning",
         tags = "FORVALTNING",
         responses = {
-            @ApiResponse(responseCode = "200", description = "Task satt til ferdig."),
-            @ApiResponse(responseCode = "400", description = "Fant ikke aktuell prosessTask."),
+            @ApiResponse(responseCode = "200", description = "Oppdatert."),
             @ApiResponse(responseCode = "500", description = "Feilet pga ukjent feil.")
         })
-    @BeskyttetRessurs(action = CREATE, resource = DRIFT)
+    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response setTaskFerdig(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AbacDataSupplier.class)
-        @Parameter(description = "Task som skal settes ferdig") @NotNull @Valid ProsessTaskIdDto taskId) {
-        ProsessTaskData data = prosessTaskRepository.finn(taskId.getProsessTaskId());
-        if (data != null) {
-            data.setStatus(ProsessTaskStatus.FERDIG);
-            data.setSisteFeil(null);
-            data.setSisteFeilKode(null);
-            prosessTaskRepository.lagre(data);
-            return Response.ok().build();
-        }
-        return Response.status(Response.Status.BAD_REQUEST).build();
+    public Response enableLønnskompSammenligningFor(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.SaksnummerAbacDto.class) @NotNull @Valid SaksnummerAbacDto request) {
+        lønnskompensasjonRepository.lagreFilter(new Saksnummer(request.getSaksnummer()), InntektskildeType.INNTEKT_SAMMENLIGNING);
+        return Response.ok().build();
+    }
+
+    @POST
+    @Path("/lonnskomp-beregning")
+    @Consumes(APPLICATION_JSON)
+    @Produces(APPLICATION_JSON)
+    @Operation(description = "Vil innhente data fra lønnskompensasjon for sak i inntekt/beregning",
+        tags = "FORVALTNING",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Oppdatert."),
+            @ApiResponse(responseCode = "500", description = "Feilet pga ukjent feil.")
+        })
+    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
+    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    public Response enableLønnskompBeregningFor(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.SaksnummerAbacDto.class) @NotNull @Valid SaksnummerAbacDto request) {
+        lønnskompensasjonRepository.lagreFilter(new Saksnummer(request.getSaksnummer()), InntektskildeType.INNTEKT_BEREGNING);
+        return Response.ok().build();
+    }
+
+    @POST
+    @Path("/lonnskomp-fjern")
+    @Consumes(APPLICATION_JSON)
+    @Produces(APPLICATION_JSON)
+    @Operation(description = "Stans innhenting av data fra lønnskompensasjon for sak",
+        tags = "FORVALTNING",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Oppdatert."),
+            @ApiResponse(responseCode = "500", description = "Feilet pga ukjent feil.")
+        })
+    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
+    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    public Response disableLønnskompFor(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.SaksnummerAbacDto.class) @NotNull @Valid SaksnummerAbacDto request) {
+        int antall = entityManager.createNativeQuery("DELETE FROM lonnskomp_filter WHERE saksnummer = :saksnummer")
+            .setParameter("saksnummer", request.getSaksnummer()).executeUpdate();
+        return Response.ok(antall).build();
     }
 
     // TODO: FJERNE denne hvis behovet ikke reoppstår
@@ -188,6 +218,36 @@ public class ForvaltningRestTjeneste {
             return AbacDataAttributter.opprett()
                 .leggTil(StandardAbacAttributtType.AKTØR_ID, req.getUtgåttAktør().getVerdi())
                 .leggTil(StandardAbacAttributtType.AKTØR_ID, req.getGyldigAktør().getVerdi());
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+    public static class SaksnummerAbacDto implements Function<Object, AbacDataAttributter> {
+
+        @JsonProperty(value = "saksnummer", required = true)
+        @NotNull
+        @Pattern(regexp = "^[A-Za-z0-9_\\.\\-]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'")
+        @Valid
+        private String saksnummer;
+
+        public SaksnummerAbacDto() {
+            // NOSONAR
+        }
+
+        @JsonCreator
+        public SaksnummerAbacDto(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer) {
+            this.saksnummer = saksnummer;
+        }
+
+        public String getSaksnummer() {
+            return saksnummer;
+        }
+
+        @Override
+        public AbacDataAttributter apply(Object obj) {
+            return AbacDataAttributter.opprett();
         }
     }
 }
