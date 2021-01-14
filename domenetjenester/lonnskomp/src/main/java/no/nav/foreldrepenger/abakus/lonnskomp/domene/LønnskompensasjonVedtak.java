@@ -186,6 +186,15 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
             anvistePerioder.size() == that.anvistePerioder.size() && anvistePerioder.containsAll(that.anvistePerioder);
     }
 
+    public static boolean erLikForBrukerOrg(LønnskompensasjonVedtak v1, LønnskompensasjonVedtak v2) {
+        if (v1 == null && v2 == null) return true;
+        if (v1 == null || v2 == null) return false;
+        return Objects.equals(v1.aktørId, v2.aktørId) &&
+            Objects.equals(v1.orgNummer, v2.orgNummer) &&
+            Objects.equals(v1.periode, v2.periode) &&
+            Objects.equals(v1.beløp, v2.beløp);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(sakId, fnr, orgNummer, periode, beløp, anvistePerioder);
