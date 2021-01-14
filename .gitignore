@@ -36,3 +36,5 @@ app.properties
 app-local.properties
 .DS_Store
 /lsp/
+.factorypath
+
