@@ -16,7 +16,7 @@ jobs:
 
       - name: Set cache key
         run: |
-          echo "CACHE_KEY=$(expr $(date +%V) - 1 + 1)-${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+          echo "CACHE_KEY=$(expr $(date +%V) - 1 + 1)" >> $GITHUB_ENV
           echo "PREVIOUS_CACHE_KEY=$(expr $(date +%V) - 1 + 1)" >> $GITHUB_ENV
       - uses: actions/cache@v2
         with:
