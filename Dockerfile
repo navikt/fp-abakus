@@ -1,4 +1,6 @@
 FROM navikt/java:11-appdynamics
+
+LABEL org.opencontainers.image.source=https://github.com/navikt/fp-abakus
 ENV APPD_ENABLED=true
 
 RUN mkdir lib
