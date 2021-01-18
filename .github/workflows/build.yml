@@ -17,7 +17,7 @@ on:
       
 env:
   IMAGE_BASE: docker.pkg.github.com/${{ github.repository }}/fpabakus
-
+  IMAGE_BASE_CR: ghcr.io/${{ github.repository }}
 jobs:
   build:
 
@@ -54,7 +54,6 @@ jobs:
         shell: bash
         run: |
           echo "TAG=$TIMESTAMP-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
-          echo "IMAGE=$IMAGE_BASE:$TIMESTAMP-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
           echo "Building artifacts $(echo $GITHUB_SHA | cut -c1-7)"
           mvn jacoco:prepare-agent install -e --quiet --batch-mode --settings ./.m2/settings.xml --file pom.xml -Drevision= -Dchangelist= -Dsha1=$TIMESTAMP-$(echo $GITHUB_SHA | cut -c1-7) -Dfile.encoding=UTF-8 -Djacoco.destFile=$(pwd)/target/jacoco.exec
           mvn jacoco:report sonar:sonar -e --quiet --batch-mode --settings ./.m2/settings.xml --file pom.xml -Djacoco.dataFile=$(pwd)/target/jacoco.exec -Dsonar.projectKey="navikt_fp-abakus" -Dsonar.host.url='https://sonarcloud.io' -Dsonar.organization=navit -Dsonar.login=${SONAR_TOKEN}
@@ -78,10 +77,14 @@ jobs:
         env:
           GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
         run: |
-          docker build --pull --tag ${IMAGE} --tag ${IMAGE_BASE}:latest .
-          echo "$GH_ACCESS_TOKEN" | docker login --username "x-access-token" --password-stdin https://docker.pkg.github.com
-          docker push $IMAGE
+          docker build --pull --tag ${IMAGE_BASE}:${TAG} --tag ${IMAGE_BASE}:latest --tag ${IMAGE_BASE_CR}:${TAG} --tag ${IMAGE_BASE_CR}:latest .
+          echo "${{ secrets.GH_ACCESS_TOKEN }}" | docker login --username "x-access-token" --password-stdin https://docker.pkg.github.com
+          echo "${{ secrets.GH_ACCESS_TOKEN }}" | docker login --username "x-access-token" --password-stdin ghcr.io
+          docker push ${IMAGE_BASE}:${TAG}
           docker push ${IMAGE_BASE}:latest
+          docker push ${IMAGE_BASE_CR}:${TAG}
+          docker push ${IMAGE_BASE_CR}:latest
+
           
       - name: Lukk gamle issues
         uses: actions/github-script@v3
