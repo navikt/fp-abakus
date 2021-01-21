@@ -90,7 +90,7 @@ spec:
     - name: MELDEKORTUTBETALINGSGRUNNLAG_V1_URL
       value: https://arena.adeo.no/ail_ws/MeldekortUtbetalingsgrunnlag_v1
     - name: PDL_BASE_URL
-      value: http://pdl-api.default
+      value: http://pdl-api.default/graphql
     - name: SIGRUNRESTBEREGNETSKATT_URL
       value: https://sigrun.nais.adeo.no
     - name: ORGANISASJON_RS_URL
@@ -111,7 +111,7 @@ spec:
       value: 2cfc9652-f3c7-4b23-a43b-e8844f49aeca/.default
     - name: SPOKELSE_GRUNNLAG_URL
       value: http://spokelse.tbd/grunnlag
-      
+
     # Graphql services
     - name: SAF_BASE_URL
       value: http://saf
