@@ -42,7 +42,7 @@ public class AktørDatoRequest {
     @JsonCreator
     public AktørDatoRequest(@JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
                             @JsonProperty(value = "periode", required = true) @NotNull @Valid Periode periode,
-                            @JsonProperty(value = "fagsystem") YtelseType ytelse) {
+                            @JsonProperty(value = "ytelse") YtelseType ytelse) {
         this.aktør = aktør;
         this.periode = periode;
         this.ytelse = ytelse;
