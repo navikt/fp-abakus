@@ -33,6 +33,8 @@ public class AktørTjeneste {
     private static final int DEFAULT_CACHE_SIZE = 1000;
     private static final long DEFAULT_CACHE_TIMEOUT = TimeUnit.MILLISECONDS.convert(8, TimeUnit.HOURS);
 
+    private static final Set<YtelseType> FORELDREPENGER_YTELSER = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER, YtelseType.ENGANGSTØNAD);
+
     private LRUCache<AktørId, PersonIdent> cacheAktørIdTilIdent;
     private LRUCache<PersonIdent, AktørId> cacheIdentTilAktørId;
 
@@ -100,10 +102,6 @@ public class AktørTjeneste {
     }
 
     private Identliste hentIdenterForYtelse(HentIdenterQueryRequest request, IdentlisteResponseProjection projection, YtelseType ytelseType) {
-        return gjelderTemaForeldrepenger(ytelseType) ? pdlKlientFOR.hentIdenter(request, projection) : pdlKlientOMS.hentIdenter(request, projection);
-    }
-
-    private static boolean gjelderTemaForeldrepenger(YtelseType y) {
-        return Set.of(YtelseType.ENGANGSTØNAD, YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER).contains(y);
+        return FORELDREPENGER_YTELSER.contains(ytelseType) ? pdlKlientFOR.hentIdenter(request, projection) : pdlKlientOMS.hentIdenter(request, projection);
     }
 }
