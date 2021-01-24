@@ -44,6 +44,14 @@
 			<groupId>org.jboss.weld.se</groupId>
 			<artifactId>weld-se-core</artifactId>
 			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jboss.spec.javax.annotation</groupId>
+					<artifactId>
+						jboss-annotations-api_1.3_spec
+					</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- REST felles -->
@@ -83,6 +91,18 @@
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-cdi</artifactId>
 			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.sun.activation</groupId>
+					<artifactId>jakarta.activation</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.jboss.spec.javax.annotation</groupId>
+					<artifactId>
+						jboss-annotations-api_1.3_spec
+					</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 
