@@ -24,11 +24,6 @@
 
     <dependencyManagement>
         <dependencies>
-	        <dependency>
-	            <groupId>org.apache.cxf</groupId>
-	            <artifactId>cxf-rt-transports-http-jetty</artifactId>
-	            <version>3.4.2</version>
-	        </dependency>
             <!-- Sikkerhet: Geronimo -->
             <dependency>
                 <groupId>org.apache.geronimo.components</groupId>
@@ -272,10 +267,6 @@
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-validator-provider</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-transports-http-jetty</artifactId>
         </dependency>
         <dependency>
             <groupId>org.ow2.asm</groupId>
