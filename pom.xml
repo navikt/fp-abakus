@@ -30,7 +30,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<felles.version>3.0.64</felles.version>
+		<felles.version>3.0.66</felles.version>
 		<prosesstask.version>2.5.10</prosesstask.version>
 
 		<kontrakter.version>5.1_20200117132228_47cdf2f</kontrakter.version>
@@ -252,13 +252,6 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-
-			<dependency>
-				<groupId>org.assertj</groupId>
-				<artifactId>assertj-core</artifactId>
-				<version>3.19.0</version>
-			</dependency>
-
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter-api</artifactId>
