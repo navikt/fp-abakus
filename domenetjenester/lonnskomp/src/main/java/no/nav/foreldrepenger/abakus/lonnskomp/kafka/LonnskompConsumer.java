@@ -20,10 +20,10 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.vedtak.apptjeneste.AppServiceHandler;
+import no.nav.foreldrepenger.abakus.felles.kafka.KafkaIntegration;
 
 @ApplicationScoped
-public class LonnskompConsumer implements AppServiceHandler {
+public class LonnskompConsumer implements KafkaIntegration {
 
     private static final Logger log = LoggerFactory.getLogger(LonnskompConsumer.class);
     private KafkaStreams stream;

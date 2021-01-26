@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.vedtak.kafka;
+package no.nav.foreldrepenger.abakus.felles.kafka;
 
 import java.util.Objects;
 

@@ -15,8 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.prometheus.client.hotspot.DefaultExports;
-import no.nav.foreldrepenger.abakus.vedtak.kafka.KafkaIntegration;
-import no.nav.vedtak.apptjeneste.AppServiceHandler;
+import no.nav.foreldrepenger.abakus.felles.kafka.KafkaIntegration;
+import no.nav.vedtak.felles.integrasjon.sensu.SensuKlient;
+import no.nav.vedtak.felles.prosesstask.impl.BatchTaskScheduler;
+import no.nav.vedtak.felles.prosesstask.impl.TaskManager;
 
 /**
  * Initialiserer applikasjontjenester som implementer AppServiceHandler
@@ -25,19 +27,31 @@ import no.nav.vedtak.apptjeneste.AppServiceHandler;
 public class ApplicationServiceStarter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationServiceStarter.class);
-    private Map<AppServiceHandler, AtomicBoolean> serviceMap = new HashMap<>();
+    private Map<KafkaIntegration, AtomicBoolean> serviceMap = new HashMap<>();
+    private SensuKlient sensuKlient;
+    private TaskManager taskManager;
+    private BatchTaskScheduler batchTaskScheduler;
 
     ApplicationServiceStarter() {
         // CDI
     }
 
     @Inject
-    public ApplicationServiceStarter(@Any Instance<AppServiceHandler> serviceHandlers) {
+    public ApplicationServiceStarter(@Any Instance<KafkaIntegration> serviceHandlers,
+                                     SensuKlient sensuKlient,
+                                     TaskManager taskManager,
+                                     BatchTaskScheduler batchTaskScheduler) {
+        this.sensuKlient = sensuKlient;
+        this.taskManager = taskManager;
+        this.batchTaskScheduler = batchTaskScheduler;
         serviceHandlers.forEach(handler -> serviceMap.put(handler, new AtomicBoolean()));
     }
 
     public void startServices() {
         DefaultExports.initialize();
+        sensuKlient.start();
+        taskManager.start();
+        batchTaskScheduler.start();
         serviceMap.forEach((key, value) -> {
             if (value.compareAndSet(false, true)) {
                 LOGGER.info("starter service: {}", key.getClass().getSimpleName());
@@ -49,8 +63,8 @@ public class ApplicationServiceStarter {
     public boolean isKafkaAlive() {
         return serviceMap.entrySet()
             .stream()
-            .filter(it -> it.getKey() instanceof KafkaIntegration)
-            .allMatch(it -> ((KafkaIntegration) it.getKey()).isAlive());
+            .filter(it -> it.getKey() != null)
+            .allMatch(it -> it.getKey().isAlive());
     }
 
     public void stopServices() {
@@ -66,13 +80,17 @@ public class ApplicationServiceStarter {
         while (!threadList.isEmpty()) {
             Thread t = threadList.get(0);
             try {
-                t.join(35000);
+                t.join(31000);
                 threadList.remove(t);
             } catch (InterruptedException e) {
                 LOGGER.warn(e.getMessage());
                 t.interrupt();
             }
         }
+
+        batchTaskScheduler.stop();
+        taskManager.stop();
+        sensuKlient.stop();
     }
 
 }
