@@ -30,7 +30,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<felles.version>3.0.69</felles.version>
+		<felles.version>3.0.74</felles.version>
 		<prosesstask.version>2.5.15</prosesstask.version>
 
 		<kontrakter.version>5.1_20200117132228_47cdf2f</kontrakter.version>
@@ -49,9 +49,9 @@
 		<maven>3.6.1</maven>
 	</prerequisites>
 
-	<!-- NB: Unngå å put scope (test, provided) i dependency management. Det 
-		har uheldige virkninger ved bruk av import og dependency (bruk composition 
-		over arv) da de overstyrer andre scope definisjoner. Sett det heller der 
+	<!-- NB: Unngå å put scope (test, provided) i dependency management. Det
+		har uheldige virkninger ved bruk av import og dependency (bruk composition
+		over arv) da de overstyrer andre scope definisjoner. Sett det heller der
 		det brukes. -->
 	<dependencyManagement>
 		<dependencies>
@@ -333,7 +333,7 @@
 				<version>2.3.3</version>
 			</dependency>
 
-			<!-- Følgende kan fjernes når fpfelles får jaxws-rt istd håndkodede versjoner 
+			<!-- Følgende kan fjernes når fpfelles får jaxws-rt istd håndkodede versjoner
 				av disse bibliotekene. Men må overstyres nå pga kompatibilitet. -->
 			<dependency>
 				<groupId>org.glassfish.jaxb</groupId>
