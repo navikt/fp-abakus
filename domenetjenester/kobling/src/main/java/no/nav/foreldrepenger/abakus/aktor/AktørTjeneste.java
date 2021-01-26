@@ -9,9 +9,6 @@ import java.util.concurrent.TimeUnit;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
@@ -22,6 +19,7 @@ import no.nav.pdl.IdentInformasjonResponseProjection;
 import no.nav.pdl.Identliste;
 import no.nav.pdl.IdentlisteResponseProjection;
 import no.nav.vedtak.exception.VLException;
+import no.nav.vedtak.felles.integrasjon.pdl.JerseyPdlKlient;
 import no.nav.vedtak.felles.integrasjon.pdl.Pdl;
 import no.nav.vedtak.felles.integrasjon.pdl.PdlKlient;
 import no.nav.vedtak.felles.integrasjon.rest.StsAccessTokenConfig;
@@ -32,7 +30,6 @@ import no.nav.vedtak.util.LRUCache;
 @ApplicationScoped
 public class AktørTjeneste {
 
-    private static final Logger logger = LoggerFactory.getLogger(AktørTjeneste.class);
     private static final int DEFAULT_CACHE_SIZE = 1000;
     private static final long DEFAULT_CACHE_TIMEOUT = TimeUnit.MILLISECONDS.convert(8, TimeUnit.HOURS);
 
@@ -50,12 +47,10 @@ public class AktørTjeneste {
 
     @Inject
     public AktørTjeneste(@KonfigVerdi(value = "pdl.base.url",defaultVerdi = "http://pdl-api.default/graphql") URI endpoint, StsAccessTokenConfig config) {
-        this.pdlKlientFOR = new PdlKlient(endpoint, "FOR", config);
-        this.pdlKlientOMS = new PdlKlient(endpoint, "OMS", config);
+        this.pdlKlientFOR = new JerseyPdlKlient(endpoint, config, "FOR");
+        this.pdlKlientOMS = new JerseyPdlKlient(endpoint, config, "OMS");
         this.cacheAktørIdTilIdent = new LRUCache<>(DEFAULT_CACHE_SIZE, DEFAULT_CACHE_TIMEOUT);
         this.cacheIdentTilAktørId = new LRUCache<>(DEFAULT_CACHE_SIZE, DEFAULT_CACHE_TIMEOUT);
-
-        logger.info("Opprettet AktørTjeneste med PdlKlient");
     }
 
     public Optional<AktørId> hentAktørForIdent(PersonIdent fnr, YtelseType ytelse) {
