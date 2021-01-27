@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -20,7 +21,7 @@ import org.threeten.extra.Interval;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonFilter;
+import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonRepository;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonVedtak;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
@@ -37,7 +38,6 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdY
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.util.env.Cluster;
 import no.nav.vedtak.util.env.Environment;
 
@@ -45,6 +45,8 @@ import no.nav.vedtak.util.env.Environment;
 public class InnhentingSamletTjeneste {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InnhentingSamletTjeneste.class);
+
+    private static final Set<YtelseType> LØNNSKOMP_FOR_YTELSER = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER);
 
     private ArbeidsforholdTjeneste arbeidsforholdTjeneste;
     private InntektTjeneste inntektTjeneste;
@@ -82,10 +84,8 @@ public class InnhentingSamletTjeneste {
         return inntektTjeneste.finnInntekt(builder.build(), kilde, ytelse);
     }
 
-    public boolean skalInnhenteLønnskompensasjon(Saksnummer saksnummer, InntektskildeType kilde) {
-        return saksnummer != null && lønnskompensasjonRepository.hentFilterFor(saksnummer).stream()
-            .map(LønnskompensasjonFilter::getInntektskildeType)
-            .anyMatch(kilde::equals);
+    public boolean skalInnhenteLønnskompensasjon(Kobling kobling, @SuppressWarnings("unused") InntektskildeType kilde) {
+        return LØNNSKOMP_FOR_YTELSER.contains(kobling.getYtelseType());
     }
 
     public List<Månedsinntekt> getLønnskompensasjon(AktørId aktørId, Interval periode) {

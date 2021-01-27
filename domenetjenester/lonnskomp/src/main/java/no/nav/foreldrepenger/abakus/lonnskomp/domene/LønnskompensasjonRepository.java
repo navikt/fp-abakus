@@ -17,9 +17,7 @@ import org.hibernate.jpa.QueryHints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 
 @ApplicationScoped
@@ -109,28 +107,6 @@ public class LønnskompensasjonRepository {
             log.info("Lønnskomp forkastes pga likt innhold {}", vedtak);
         }
         return !likeUtenomForrigeVedtak;
-    }
-
-    public void lagreFilter(Saksnummer saksnummer, InntektskildeType kilde) {
-        LønnskompensasjonFilter eksisterende = hentFilterFor(saksnummer).stream()
-            .filter(f -> f.getInntektskildeType().equals(kilde))
-            .findFirst().orElse(null);
-        if (eksisterende != null) {
-            return;
-        }
-        var filter = new LønnskompensasjonFilter(saksnummer, kilde);
-        entityManager.persist(filter);
-        entityManager.flush();
-    }
-
-    public List<LønnskompensasjonFilter> hentFilterFor(Saksnummer saksnummer) {
-        Objects.requireNonNull(saksnummer, "saksnummer");
-
-        TypedQuery<LønnskompensasjonFilter> query = entityManager.createQuery("SELECT f FROM LonnskompFilterEntitet f " +
-            "WHERE saksnummer = :saksnummer ", LønnskompensasjonFilter.class);
-        query.setParameter("saksnummer", saksnummer);
-
-        return new ArrayList<>(query.getResultList());
     }
 
 }

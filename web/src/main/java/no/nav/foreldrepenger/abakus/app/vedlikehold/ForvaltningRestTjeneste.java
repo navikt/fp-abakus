@@ -29,12 +29,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
-import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonRepository;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
-import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
@@ -51,7 +48,6 @@ public class ForvaltningRestTjeneste {
     private InntektArbeidYtelseTjeneste iayTjeneste;
 
     private EntityManager entityManager;
-    private LønnskompensasjonRepository lønnskompensasjonRepository;
 
     public ForvaltningRestTjeneste() {
         // For CDI
@@ -62,59 +58,6 @@ public class ForvaltningRestTjeneste {
                                    InntektArbeidYtelseTjeneste iayTjeneste) {
         this.entityManager = entityManager;
         this.iayTjeneste = iayTjeneste;
-        this.lønnskompensasjonRepository = new LønnskompensasjonRepository(entityManager);
-    }
-
-    @POST
-    @Path("/lonnskomp-sammenligning")
-    @Consumes(APPLICATION_JSON)
-    @Produces(APPLICATION_JSON)
-    @Operation(description = "Vil innhente data fra lønnskompensasjon for sak i inntekt/sammenligning",
-        tags = "FORVALTNING",
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Oppdatert."),
-            @ApiResponse(responseCode = "500", description = "Feilet pga ukjent feil.")
-        })
-    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response enableLønnskompSammenligningFor(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.SaksnummerAbacDto.class) @NotNull @Valid SaksnummerAbacDto request) {
-        lønnskompensasjonRepository.lagreFilter(new Saksnummer(request.getSaksnummer()), InntektskildeType.INNTEKT_SAMMENLIGNING);
-        return Response.ok().build();
-    }
-
-    @POST
-    @Path("/lonnskomp-beregning")
-    @Consumes(APPLICATION_JSON)
-    @Produces(APPLICATION_JSON)
-    @Operation(description = "Vil innhente data fra lønnskompensasjon for sak i inntekt/beregning",
-        tags = "FORVALTNING",
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Oppdatert."),
-            @ApiResponse(responseCode = "500", description = "Feilet pga ukjent feil.")
-        })
-    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response enableLønnskompBeregningFor(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.SaksnummerAbacDto.class) @NotNull @Valid SaksnummerAbacDto request) {
-        lønnskompensasjonRepository.lagreFilter(new Saksnummer(request.getSaksnummer()), InntektskildeType.INNTEKT_BEREGNING);
-        return Response.ok().build();
-    }
-
-    @POST
-    @Path("/lonnskomp-fjern")
-    @Consumes(APPLICATION_JSON)
-    @Produces(APPLICATION_JSON)
-    @Operation(description = "Stans innhenting av data fra lønnskompensasjon for sak",
-        tags = "FORVALTNING",
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Oppdatert."),
-            @ApiResponse(responseCode = "500", description = "Feilet pga ukjent feil.")
-        })
-    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response disableLønnskompFor(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.SaksnummerAbacDto.class) @NotNull @Valid SaksnummerAbacDto request) {
-        int antall = entityManager.createNativeQuery("DELETE FROM lonnskomp_filter WHERE saksnummer = :saksnummer")
-            .setParameter("saksnummer", request.getSaksnummer()).executeUpdate();
-        return Response.ok(antall).build();
     }
 
     // TODO: FJERNE denne hvis behovet ikke reoppstår

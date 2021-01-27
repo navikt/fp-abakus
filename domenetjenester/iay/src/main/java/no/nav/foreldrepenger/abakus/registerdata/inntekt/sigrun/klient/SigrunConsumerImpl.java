@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.MonthDay;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,15 +24,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
 
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
 import no.nav.vedtak.feil.Feil;
 import no.nav.vedtak.feil.FeilFactory;
 import no.nav.vedtak.feil.LogLevel;
 import no.nav.vedtak.feil.deklarasjon.DeklarerteFeil;
 import no.nav.vedtak.feil.deklarasjon.TekniskFeil;
 import no.nav.vedtak.konfig.KonfigVerdi;
+import no.nav.vedtak.util.env.Environment;
 
 
 @ApplicationScoped
@@ -39,7 +41,11 @@ public class SigrunConsumerImpl implements SigrunConsumer {
 
     private static final ObjectMapper mapper = getObjectMapper();
     private static final String TEKNISK_NAVN = "skatteoppgjoersdato";
+
+    private static final MonthDay TIDLIGSTE_SJEKK_FJOR = MonthDay.of(5, 1);
+
     private SigrunRestClient sigrunRestClient;
+    private boolean isProd = Environment.current().isProd();
 
 
     SigrunConsumerImpl() {
@@ -136,6 +142,7 @@ public class SigrunConsumerImpl implements SigrunConsumer {
     }
 
     private boolean iFjorErFerdiglignetBeregnet(Long aktørId, Year iFjor) {
+        if (isProd && Year.now().minusYears(1).equals(iFjor) && MonthDay.now().isBefore(TIDLIGSTE_SJEKK_FJOR)) return false;
         String json = sigrunRestClient.hentBeregnetSkattForAktørOgÅr(aktørId, iFjor.toString());
         List<BeregnetSkatt> beregnetSkatt = json != null
             ? fromJsonList(json, new TypeReference<>() {
