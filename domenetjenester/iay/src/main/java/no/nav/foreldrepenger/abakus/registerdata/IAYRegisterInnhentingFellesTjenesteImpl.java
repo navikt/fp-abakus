@@ -292,7 +292,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         var inntektsInformasjon = innhentingSamletTjeneste.getInntektsInformasjon(aktørId, kobling.getOpplysningsperiode().tilIntervall(), inntektsKilde, kobling.getYtelseType());
 
         // En slags ytelse som er utbetalt fra NAV til bruker som LØNN ...
-        if (innhentingSamletTjeneste.skalInnhenteLønnskompensasjon(kobling.getSaksnummer(), inntektsKilde)) {
+        if (innhentingSamletTjeneste.skalInnhenteLønnskompensasjon(kobling, inntektsKilde)) {
             inntektsInformasjon.leggTilMånedsinntekter(innhentingSamletTjeneste.getLønnskompensasjon(aktørId, kobling.getOpplysningsperiode().tilIntervall()));
         }
         if (informasjonsElementer.contains(registerdataElement)) {
