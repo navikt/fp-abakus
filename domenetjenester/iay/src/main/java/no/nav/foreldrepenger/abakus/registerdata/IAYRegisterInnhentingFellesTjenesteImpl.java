@@ -312,9 +312,9 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
             try {
                 Map<ArbeidsforholdIdentifikator, List<FrilansArbeidsforhold>> frilansINNTK = new LinkedHashMap<>();
                 inntektsInformasjon.getFrilansArbeidsforhold().entrySet().stream()
-                    .filter(e -> e.getValue().stream().map(FrilansArbeidsforhold::getFom).anyMatch(CUTOFF_FRILANS_AAREG::isBefore))
+                    .filter(e -> e.getValue().stream().anyMatch(this::skalTasMedFraInntk))
                     .forEach(e -> frilansINNTK.put(new ArbeidsforholdIdentifikator(e.getKey().getArbeidsgiver(), e.getKey().getArbeidsforholdId(), ArbeidType.FRILANSER_OPPDRAGSTAKER_MED_MER.getOffisiellKode()),
-                        e.getValue().stream().filter(inf -> CUTOFF_FRILANS_AAREG.isBefore(inf.getFom())).collect(Collectors.toList())));
+                        e.getValue().stream().filter(this::skalTasMedFraInntk).collect(Collectors.toList())));
                 if (frilansINNTK.isEmpty())
                     return;
 
@@ -322,7 +322,6 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
                     getFnrFraAktørId(aktørId, kobling.getYtelseType()), kobling.getOpplysningsperiode().tilIntervall());
 
                 Set<ArbeidsforholdIdentifikator> arbeidsgivereFL = Stream.concat(frilansAAREG.keySet().stream(), frilansINNTK.keySet().stream()).collect(Collectors.toSet());
-                frilansAAREG.forEach((k, v) -> v.forEach(af -> LOGGER.info("ABAKUS AAREG FRILANS fra RS {}", af.toStringUtenAG())));
                 arbeidsgivereFL.forEach(a -> {
                     Set<FrilansSammenligner> inntk = frilansINNTK.getOrDefault(a, List.of()).stream().map(FrilansSammenligner::new).collect(Collectors.toSet());
                     Set<FrilansSammenligner> aareg = frilansAAREG.getOrDefault(a, List.of()).stream().map(FrilansSammenligner::new).collect(Collectors.toSet());
@@ -336,6 +335,10 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
                 LOGGER.info("ABAKUS AAREG FRILANS feil", e);
             }
         }
+    }
+
+    private boolean skalTasMedFraInntk(FrilansArbeidsforhold frilansArbeidsforhold) {
+        return frilansArbeidsforhold.getTom() == null || CUTOFF_FRILANS_AAREG.isBefore(frilansArbeidsforhold.getTom());
     }
 
     private static class FrilansSammenligner {
