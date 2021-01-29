@@ -51,6 +51,15 @@ public class ArbeidsforholdTjeneste {
             .collect(Collectors.groupingBy(Arbeidsforhold::getIdentifikator));
     }
 
+    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> finnArbeidsforholdFrilansForIdentIPerioden(PersonIdent ident, AktørId aktørId, Interval interval) {
+        // TODO: kall med aktørid når register har fikset ytelsesproblemer
+        List<ArbeidsforholdRS> response = aaregRestKlient.finnArbeidsforholdForFrilanser(ident.getIdent(),
+            LocalDate.ofInstant(interval.getStart(), ZoneId.systemDefault()), LocalDate.ofInstant(interval.getEnd(), ZoneId.systemDefault()));
+        return response.stream()
+            .map(arbeidsforhold -> mapArbeidsforholdRSTilDto(arbeidsforhold, interval))
+            .collect(Collectors.groupingBy(Arbeidsforhold::getIdentifikator));
+    }
+
     private Arbeidsforhold mapArbeidsforholdRSTilDto(ArbeidsforholdRS arbeidsforhold, Interval intervall) {
         Arbeidsforhold.Builder builder = new Arbeidsforhold.Builder()
             .medType(arbeidsforhold.getType());

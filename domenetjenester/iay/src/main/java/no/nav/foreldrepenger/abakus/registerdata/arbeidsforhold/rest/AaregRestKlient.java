@@ -62,6 +62,23 @@ public class AaregRestKlient {
         }
     }
 
+    public List<ArbeidsforholdRS> finnArbeidsforholdForFrilanser(String ident, LocalDate qfom, LocalDate qtom) {
+        try {
+            var request = new URIBuilder(endpoint.toString() + "/" + "arbeidsforhold")
+                .addParameter("ansettelsesperiodeFom", String.valueOf(qfom))
+                .addParameter("ansettelsesperiodeTom", String.valueOf(qtom))
+                .addParameter("arbeidsforholdtype", "frilanserOppdragstakerHonorarPersonerMm")
+                .addParameter("regelverk", "A_ORDNINGEN")
+                .addParameter("historikk", "true")
+                .addParameter("sporingsinformasjon", "false")
+                .build();
+            ArbeidsforholdRS[] match = oidcRestClient.get(request, lagHeader(ident), Set.of(HEADER_NAV_CONSUMER_TOKEN), ArbeidsforholdRS[].class);
+            return Arrays.asList(match);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Utviklerfeil syntax-exception for finnArbeidsforholdForArbeidstaker");
+        }
+    }
+
     private Set<Header> lagHeader(String ident) {
         return Set.of(new BasicHeader(HEADER_NAV_CALL_ID, MDCOperations.getCallId()),
                 new BasicHeader(HEADER_NAV_PERSONIDENT, ident));

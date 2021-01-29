@@ -113,6 +113,10 @@ public class InnhentingSamletTjeneste {
         return arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident, aktørId, opplysningsPeriode);
     }
 
+    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> getArbeidsforholdFrilans(AktørId aktørId, PersonIdent ident, Interval opplysningsPeriode) {
+        return isProd ? arbeidsforholdTjeneste.finnArbeidsforholdFrilansForIdentIPerioden(ident, aktørId, opplysningsPeriode) : Map.of();
+    }
+
     private boolean envUnstable() {
         return isDev;
     }
