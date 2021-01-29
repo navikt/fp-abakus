@@ -2,14 +2,12 @@ package no.nav.foreldrepenger.abakus.lonnskomp.kafka;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -98,7 +96,12 @@ public class LonnskompHendelseHåndterer {
 
     private LønnskompensasjonVedtak extractFrom(LønnskompensasjonVedtakMelding melding, String sakId, AktørId aktørId) {
         var vedtak = new LønnskompensasjonVedtak();
-        var forrigedato = melding.getForrigeVedtakDato() != null ? LocalDate.ofInstant(Instant.parse(melding.getForrigeVedtakDato()), TimeZone.getDefault().toZoneId()) : null;
+        LocalDate forrigedato = null;
+        try {
+            forrigedato = melding.getForrigeVedtakDato() != null ? LocalDate.parse(melding.getForrigeVedtakDato()) : null;
+        } catch (Exception e) {
+            log.warn("Lønnskomp forrigeVedtak parsing-feil kilde {} localdate {}", melding.getForrigeVedtakDato(), forrigedato);
+        }
         if (melding.getForrigeVedtakDato() != null) {
             log.info("Lønnskomp forrigeVedtak kilde {} localdate {}", melding.getForrigeVedtakDato(), forrigedato);
         }
