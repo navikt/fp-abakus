@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -307,34 +308,33 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
             inntektsInformasjon.getFrilansArbeidsforhold()
                 .entrySet()
                 .forEach(frilansArbeidsforhold -> oversettFrilanseArbeidsforhold(kobling, builder, frilansArbeidsforhold, aktørId));
+            // Midlertidig logging
             try {
                 Map<ArbeidsforholdIdentifikator, List<FrilansArbeidsforhold>> frilansINNTK = new LinkedHashMap<>();
                 inntektsInformasjon.getFrilansArbeidsforhold().entrySet().stream()
                     .filter(e -> e.getValue().stream().map(FrilansArbeidsforhold::getFom).anyMatch(CUTOFF_FRILANS_AAREG::isBefore))
-                    .forEach(e -> frilansINNTK.put(e.getKey(), e.getValue().stream().filter(inf -> CUTOFF_FRILANS_AAREG.isBefore(inf.getFom())).collect(Collectors.toList())));
+                    .forEach(e -> frilansINNTK.put(new ArbeidsforholdIdentifikator(e.getKey().getArbeidsgiver(), e.getKey().getArbeidsforholdId(), ArbeidType.FRILANSER_OPPDRAGSTAKER_MED_MER.getOffisiellKode()),
+                        e.getValue().stream().filter(inf -> CUTOFF_FRILANS_AAREG.isBefore(inf.getFom())).collect(Collectors.toList())));
                 if (frilansINNTK.isEmpty())
                     return;
+
                 var frilansAAREG = innhentingSamletTjeneste.getArbeidsforholdFrilans(aktørId,
                     getFnrFraAktørId(aktørId, kobling.getYtelseType()), kobling.getOpplysningsperiode().tilIntervall());
-                LOGGER.info("ABAKUS AAREG FRILANS {} arbforholdindikatorer",
-                    frilansINNTK.keySet().size() == frilansAAREG.keySet().size() && frilansINNTK.keySet().containsAll(frilansAAREG.keySet()) ? "samme" : "ulike");
-                frilansAAREG.forEach((k,v) -> v.forEach(af -> LOGGER.info("ABAKUS AAREG FRILANS fra RS {}", af)));
-                frilansINNTK.forEach((k,v) -> {
-                    Set<FrilansSammenligner> inntk = v.stream().map(FrilansSammenligner::new).collect(Collectors.toSet());
-                    Set<FrilansSammenligner> aareg = frilansAAREG.getOrDefault(k, List.of()).stream().map(FrilansSammenligner::new).collect(Collectors.toSet());
-                    if (inntk.size() != aareg.size() || !inntk.containsAll(aareg))
-                        LOGGER.info("ABAKUS AAREG FRILANS avvik for {} inntk {} aareg {}", k, inntk, aareg);
-                });
-                frilansAAREG.forEach((k,v) -> {
-                    Set<FrilansSammenligner> aareg = v.stream().map(FrilansSammenligner::new).collect(Collectors.toSet());
-                    Set<FrilansSammenligner> inntk = frilansINNTK.getOrDefault(k, List.of()).stream().map(FrilansSammenligner::new).collect(Collectors.toSet());
-                    if (inntk.size() != aareg.size() || !inntk.containsAll(aareg))
-                        LOGGER.info("ABAKUS AAREG FRILANS avvik for {} aareg {} inntk {}", k, aareg, inntk);
+
+                Set<ArbeidsforholdIdentifikator> arbeidsgivereFL = Stream.concat(frilansAAREG.keySet().stream(), frilansINNTK.keySet().stream()).collect(Collectors.toSet());
+                frilansAAREG.forEach((k, v) -> v.forEach(af -> LOGGER.info("ABAKUS AAREG FRILANS fra RS {}", af.toStringUtenAG())));
+                arbeidsgivereFL.forEach(a -> {
+                    Set<FrilansSammenligner> inntk = frilansINNTK.getOrDefault(a, List.of()).stream().map(FrilansSammenligner::new).collect(Collectors.toSet());
+                    Set<FrilansSammenligner> aareg = frilansAAREG.getOrDefault(a, List.of()).stream().map(FrilansSammenligner::new).collect(Collectors.toSet());
+                    if (inntk.size() != aareg.size() || !inntk.containsAll(aareg)) {
+                        LOGGER.info("ABAKUS AAREG FRILANS avvik for {} inntk {} aareg {}", a.getArbeidsforholdId(), inntk, aareg);
+                    } else {
+                        LOGGER.info("ABAKUS AAREG FRILANS like svar for {} aareg {}", a.getArbeidsforholdId(), aareg);
+                    }
                 });
             } catch (Exception e) {
                 LOGGER.info("ABAKUS AAREG FRILANS feil", e);
             }
-
         }
     }
 
