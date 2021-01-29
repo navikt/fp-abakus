@@ -107,6 +107,15 @@ public class Arbeidsforhold {
             '}';
     }
 
+    public String toStringUtenAG() {
+        return "Arbeidsforhold{" +
+            "arbeidsforholdId=" + arbeidsforholdId +
+            ", arbeidFom=" + arbeidFom +
+            ", arbeidTom=" + arbeidTom +
+            ", arbeidsavtaler=" + arbeidsavtaler +
+            '}';
+    }
+
     public static class Builder {
         private Arbeidsgiver arbeidsgiver;
         private String type;

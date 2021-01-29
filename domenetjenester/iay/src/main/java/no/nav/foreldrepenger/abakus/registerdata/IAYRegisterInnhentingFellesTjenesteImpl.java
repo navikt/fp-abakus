@@ -317,12 +317,12 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
                         e.getValue().stream().filter(inf -> CUTOFF_FRILANS_AAREG.isBefore(inf.getFom())).collect(Collectors.toList())));
                 if (frilansINNTK.isEmpty())
                     return;
+
                 var frilansAAREG = innhentingSamletTjeneste.getArbeidsforholdFrilans(aktørId,
                     getFnrFraAktørId(aktørId, kobling.getYtelseType()), kobling.getOpplysningsperiode().tilIntervall());
-                LOGGER.info("ABAKUS AAREG FRILANS {} arbforholdindikatorer",
-                    frilansINNTK.keySet().size() == frilansAAREG.keySet().size() && frilansINNTK.keySet().containsAll(frilansAAREG.keySet()) ? "samme" : "ulike");
+
                 Set<ArbeidsforholdIdentifikator> arbeidsgivereFL = Stream.concat(frilansAAREG.keySet().stream(), frilansINNTK.keySet().stream()).collect(Collectors.toSet());
-                frilansAAREG.forEach((k, v) -> v.forEach(af -> LOGGER.info("ABAKUS AAREG FRILANS fra RS {}", af)));
+                frilansAAREG.forEach((k, v) -> v.forEach(af -> LOGGER.info("ABAKUS AAREG FRILANS fra RS {}", af.toStringUtenAG())));
                 arbeidsgivereFL.forEach(a -> {
                     Set<FrilansSammenligner> inntk = frilansINNTK.getOrDefault(a, List.of()).stream().map(FrilansSammenligner::new).collect(Collectors.toSet());
                     Set<FrilansSammenligner> aareg = frilansAAREG.getOrDefault(a, List.of()).stream().map(FrilansSammenligner::new).collect(Collectors.toSet());
