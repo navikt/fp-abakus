@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
+import static java.util.stream.Collectors.joining;
 import static no.nav.vedtak.konfig.Tid.TIDENES_BEGYNNELSE;
 import static no.nav.vedtak.konfig.Tid.TIDENES_ENDE;
 
@@ -8,6 +9,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
@@ -25,6 +29,8 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdId
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
 class ByggYrkesaktiviteterTjeneste {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ByggYrkesaktiviteterTjeneste.class);
 
     YrkesaktivitetBuilder byggYrkesaktivitetForSøker(Map.Entry<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold,
                                                      Arbeidsgiver arbeidsgiver,
@@ -48,6 +54,7 @@ class ByggYrkesaktiviteterTjeneste {
 
     private void byggYrkesaktivitetForPrivatperson(List<Arbeidsforhold> arbeidsforhold, YrkesaktivitetBuilder builder) {
         for (Arbeidsforhold arbeid : arbeidsforhold) {
+            LOGGER.info("ABAKUS PRIVAT {}", arbeid.getArbeidsavtaler().stream().map(Arbeidsavtale::toStringCompact).collect(joining(",")));
             byggPermisjoner(builder, arbeid);
         }
         LocalDate fom = finnFomDatoForAnsettelsesPeriode(arbeidsforhold);

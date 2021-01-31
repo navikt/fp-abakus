@@ -377,8 +377,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         @Override
         public String toString() {
             return "FrilansSammenligner{" +
-                "arbeidsforholdId=" + arbeidsforholdId +
-                ", arbeidFom=" + arbeidFom +
+                "arbeidFom=" + arbeidFom +
                 ", arbeidTom=" + arbeidTom +
                 '}';
         }
