@@ -83,6 +83,14 @@ public class Arbeidsavtale {
             '}';
     }
 
+    public String toStringCompact() {
+        return "Avtale{" +
+            "fom=" + arbeidsavtaleFom +
+            ", tom=" + arbeidsavtaleTom +
+            ", erAnsperiode=" + erAnsettelsesPerioden +
+            '}';
+    }
+
     public static class Builder {
         private boolean erAnsettelsesPerioden = false;
         private LocalDate arbeidsavtaleFom;
