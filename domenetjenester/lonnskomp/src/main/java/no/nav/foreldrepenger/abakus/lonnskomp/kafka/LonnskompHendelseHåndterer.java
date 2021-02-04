@@ -119,10 +119,11 @@ public class LonnskompHendelseHåndterer {
                     vedtak.leggTilAnvistPeriode(anvist);
                 }
             });
+            return vedtak;
         } catch (Exception e) {
             log.warn("Lønnskomp feil i data", e);
+            return null;
         }
-        return vedtak;
     }
 
 }
