@@ -574,5 +574,4 @@
 			<url>https://maven.pkg.github.com/navikt/fp-abakus</url>
 		</repository>
 	</distributionManagement>
-
 </project>
