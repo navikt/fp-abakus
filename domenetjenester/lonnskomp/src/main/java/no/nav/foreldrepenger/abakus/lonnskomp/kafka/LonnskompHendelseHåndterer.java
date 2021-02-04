@@ -96,9 +96,8 @@ public class LonnskompHendelseHåndterer {
 
     private LønnskompensasjonVedtak extractFrom(LønnskompensasjonVedtakMelding melding, String sakId, AktørId aktørId) {
         var vedtak = new LønnskompensasjonVedtak();
-        LocalDate forrigedato = null;
         try {
-            forrigedato = melding.getForrigeVedtakDato() != null ? LocalDate.parse(melding.getForrigeVedtakDato()) : null;
+            LocalDate forrigedato = melding.getForrigeVedtakDato() != null ? LocalDate.parse(melding.getForrigeVedtakDato()) : null;
             vedtak.setFnr(melding.getFnr());
             vedtak.setAktørId(aktørId);
             vedtak.setSakId(sakId);
@@ -122,9 +121,6 @@ public class LonnskompHendelseHåndterer {
             });
         } catch (Exception e) {
             log.warn("Lønnskomp feil i data", e);
-        }
-        if (melding.getForrigeVedtakDato() != null) {
-            log.info("Lønnskomp forrigeVedtak kilde {} localdate {}", melding.getForrigeVedtakDato(), forrigedato);
         }
         return vedtak;
     }

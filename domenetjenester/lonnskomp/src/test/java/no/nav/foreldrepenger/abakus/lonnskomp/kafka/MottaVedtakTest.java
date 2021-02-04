@@ -8,7 +8,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -49,8 +48,7 @@ public class MottaVedtakTest {
 
     @Test
     public void skal_motta_med_anvist() {
-        var forrigeVedtakDato = LocalDate.of(2020,8,15)
-            .atStartOfDay().plusHours(11).atZone(ZoneId.systemDefault()).toInstant().toString();
+        var forrigeVedtakDato = LocalDate.of(2020,8,15);
         String payload = "{\n" +
             "  \"id\": \"1.0\",\n" +
             "  \"fnr\": \"" + FNR + "\",\n" +
