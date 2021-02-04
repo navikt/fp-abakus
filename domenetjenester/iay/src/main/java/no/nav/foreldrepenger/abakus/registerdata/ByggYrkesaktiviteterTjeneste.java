@@ -1,6 +1,5 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
-import static java.util.stream.Collectors.joining;
 import static no.nav.vedtak.konfig.Tid.TIDENES_BEGYNNELSE;
 import static no.nav.vedtak.konfig.Tid.TIDENES_ENDE;
 
@@ -52,9 +51,13 @@ class ByggYrkesaktiviteterTjeneste {
         return builder;
     }
 
+    /*
+     * Arbeidsforhold rapportert med privat arbeidsgiver (både ordinært og forenklet oppgjør) har åpne akt.avtaler og ans.perioder (uten tom)
+     * Dette er gjort etter funksjonell diskusjon for å være sikrere på å kunne matche mot inntekter - dvs LA STÅ inntil videre fraOgMed for privat AG
+     * Litt logging viser at ans.perioder gjerne er 3uker - 6/12 mnd, mens det ofte er et gap mellom ansFom og avtaleFom
+     */
     private void byggYrkesaktivitetForPrivatperson(List<Arbeidsforhold> arbeidsforhold, YrkesaktivitetBuilder builder) {
         for (Arbeidsforhold arbeid : arbeidsforhold) {
-            LOGGER.info("ABAKUS PRIVAT {}", arbeid.getArbeidsavtaler().stream().map(Arbeidsavtale::toStringCompact).collect(joining(",")));
             byggPermisjoner(builder, arbeid);
         }
         LocalDate fom = finnFomDatoForAnsettelsesPeriode(arbeidsforhold);

@@ -96,37 +96,34 @@ public class LonnskompHendelseHåndterer {
 
     private LønnskompensasjonVedtak extractFrom(LønnskompensasjonVedtakMelding melding, String sakId, AktørId aktørId) {
         var vedtak = new LønnskompensasjonVedtak();
-        LocalDate forrigedato = null;
         try {
-            forrigedato = melding.getForrigeVedtakDato() != null ? LocalDate.parse(melding.getForrigeVedtakDato()) : null;
-        } catch (Exception e) {
-            log.warn("Lønnskomp forrigeVedtak parsing-feil kilde {} localdate {}", melding.getForrigeVedtakDato(), forrigedato);
-        }
-        if (melding.getForrigeVedtakDato() != null) {
-            log.info("Lønnskomp forrigeVedtak kilde {} localdate {}", melding.getForrigeVedtakDato(), forrigedato);
-        }
-        vedtak.setFnr(melding.getFnr());
-        vedtak.setAktørId(aktørId);
-        vedtak.setSakId(sakId);
-        vedtak.setOrgNummer(new OrgNummer(melding.getBedriftNr()));
-        vedtak.setPeriode(IntervallEntitet.fraOgMedTilOgMed(melding.getFom(), melding.getTom()));
-        vedtak.setForrigeVedtakDato(forrigedato);
-        vedtak.setBeløp(new Beløp(melding.getTotalKompensasjon()));
+            LocalDate forrigedato = melding.getForrigeVedtakDato() != null ? LocalDate.parse(melding.getForrigeVedtakDato()) : null;
+            vedtak.setFnr(melding.getFnr());
+            vedtak.setAktørId(aktørId);
+            vedtak.setSakId(sakId);
+            vedtak.setOrgNummer(new OrgNummer(melding.getBedriftNr()));
+            vedtak.setPeriode(IntervallEntitet.fraOgMedTilOgMed(melding.getFom(), melding.getTom()));
+            vedtak.setForrigeVedtakDato(forrigedato);
+            vedtak.setBeløp(new Beløp(melding.getTotalKompensasjon()));
 
-        Map<YearMonth, List<UtbetalingsdagMelding>> sortert = melding.getDagBeregninger().stream()
-            .filter(b -> b.getLønnskompensasjonsbeløp() != null && !Objects.equals("-", b.getLønnskompensasjonsbeløp()))
-            .collect(Collectors.groupingBy(b -> YearMonth.from(b.getDato())));
-        sortert.forEach((k,v) -> {
-            var sumDager = v.stream().map(UtbetalingsdagMelding::getLønnskompensasjonsbeløp).map(BigDecimal::new).reduce(BigDecimal.ZERO, BigDecimal::add);
-            if (sumDager.compareTo(BigDecimal.ZERO) > 0) {
-                var anvist = LønnskompensasjonAnvist.LønnskompensasjonAnvistBuilder.ny()
-                    .medBeløp(sumDager)
-                    .medAnvistPeriode(IntervallEntitet.fraOgMedTilOgMed(k.atDay(1), k.atEndOfMonth()))
-                    .build();
-                vedtak.leggTilAnvistPeriode(anvist);
-            }
-        });
-        return vedtak;
+            Map<YearMonth, List<UtbetalingsdagMelding>> sortert = melding.getDagBeregninger().stream()
+                .filter(b -> b.getLønnskompensasjonsbeløp() != null && !Objects.equals("-", b.getLønnskompensasjonsbeløp()))
+                .collect(Collectors.groupingBy(b -> YearMonth.from(b.getDato())));
+            sortert.forEach((k,v) -> {
+                var sumDager = v.stream().map(UtbetalingsdagMelding::getLønnskompensasjonsbeløp).map(BigDecimal::new).reduce(BigDecimal.ZERO, BigDecimal::add);
+                if (sumDager.compareTo(BigDecimal.ZERO) > 0) {
+                    var anvist = LønnskompensasjonAnvist.LønnskompensasjonAnvistBuilder.ny()
+                        .medBeløp(sumDager)
+                        .medAnvistPeriode(IntervallEntitet.fraOgMedTilOgMed(k.atDay(1), k.atEndOfMonth()))
+                        .build();
+                    vedtak.leggTilAnvistPeriode(anvist);
+                }
+            });
+            return vedtak;
+        } catch (Exception e) {
+            log.warn("Lønnskomp feil i data", e);
+            return null;
+        }
     }
 
 }

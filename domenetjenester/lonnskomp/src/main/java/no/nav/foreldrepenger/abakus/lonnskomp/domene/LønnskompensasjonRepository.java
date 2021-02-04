@@ -100,6 +100,8 @@ public class LønnskompensasjonRepository {
     }
 
     public boolean skalLagreVedtak(LønnskompensasjonVedtak eksisterende, LønnskompensasjonVedtak vedtak) {
+        if (vedtak == null)
+            return false;
         if (eksisterende == null)
             return true;
         var likeUtenomForrigeVedtak = Objects.equals(eksisterende, vedtak);

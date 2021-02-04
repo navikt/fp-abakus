@@ -326,7 +326,10 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
                     Set<FrilansSammenligner> inntk = frilansINNTK.getOrDefault(a, List.of()).stream().map(FrilansSammenligner::new).collect(Collectors.toSet());
                     Set<FrilansSammenligner> aareg = frilansAAREG.getOrDefault(a, List.of()).stream().map(FrilansSammenligner::new).collect(Collectors.toSet());
                     if (inntk.size() != aareg.size() || !inntk.containsAll(aareg)) {
-                        LOGGER.info("ABAKUS AAREG FRILANS avvik for {} inntk {} aareg {}", a.getArbeidsforholdId(), inntk, aareg);
+                        var alleinntk = inntektsInformasjon.getFrilansArbeidsforhold()
+                            .getOrDefault(new ArbeidsforholdIdentifikator(a.getArbeidsgiver(), a.getArbeidsforholdId(), ArbeidType.FRILANSER_OPPDRAGSTAKER_MED_MER.getKode()), List.of()).stream()
+                            .map(FrilansSammenligner::new).collect(Collectors.toSet());
+                        LOGGER.info("ABAKUS AAREG FRILANS avvik for {} inntk {} aareg {} alleinntk {}", a.getArbeidsforholdId(), inntk, aareg, alleinntk);
                     } else {
                         LOGGER.info("ABAKUS AAREG FRILANS like svar for {} aareg {}", a.getArbeidsforholdId(), aareg);
                     }
