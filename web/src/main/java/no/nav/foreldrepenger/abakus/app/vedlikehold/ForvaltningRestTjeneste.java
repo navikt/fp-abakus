@@ -6,7 +6,9 @@ import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessu
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.UPDATE;
 
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -14,23 +16,20 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
+import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
+import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
@@ -60,25 +59,6 @@ public class ForvaltningRestTjeneste {
         this.iayTjeneste = iayTjeneste;
     }
 
-    // TODO: FJERNE denne hvis behovet ikke reoppstår
-    @POST
-    @Path("/sett-egenn-virksomhet-type")
-    @Consumes(APPLICATION_JSON)
-    @Produces(APPLICATION_JSON)
-    @Operation(description = "Oppdaterer manglende data i egen næring",
-        tags = "FORVALTNING",
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Oppdatert."),
-            @ApiResponse(responseCode = "500", description = "Feilet pga ukjent feil.")
-        })
-    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response fiksVirksomhetTypeEgenN() {
-        int antall = entityManager.createNativeQuery("UPDATE iay_egen_naering SET virksomhet_type = 'ANNEN' WHERE virksomhet_type is null")
-            .executeUpdate();
-        return Response.ok(antall).build();
-    }
-
     @POST
     @Path("/settVarigEndring")
     @Consumes(APPLICATION_JSON)
@@ -105,6 +85,34 @@ public class ForvaltningRestTjeneste {
             .setParameter("enid", næring.getId())
             .executeUpdate();
         return Response.ok(antall).build();
+    }
+
+    @POST
+    @Path("/eliminerInntektsmelding")
+    @Consumes(APPLICATION_JSON)
+    @Produces(APPLICATION_JSON)
+    @Operation(description = "Fjerner angitt inntektsmelding/journalpost fra grunnlag",
+        tags = "FORVALTNING",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Inntektsmelding eliminert.")
+        })
+    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
+    public Response eliminerInntektsmelding(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AbacDataSupplier.class) @NotNull @Valid EliminerInntektsmeldingRequest request) {
+        var koblingReferanse = new KoblingReferanse(request.getEksternReferanse().toUuidReferanse());
+        var journalpost = new JournalpostId(request.getJournalpostId());
+        var eksisterende = iayTjeneste.hentGrunnlagFor(koblingReferanse).orElseThrow();
+        var grunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(eksisterende);
+        eksisterende.getInntektsmeldinger()
+            .map(InntektsmeldingAggregat::getInntektsmeldinger).orElse(List.of()).stream()
+            .filter(im -> journalpost.equals(im.getJournalpostId()))
+            .findFirst().orElseThrow();
+        var beholdIM = eksisterende.getInntektsmeldinger()
+            .map(InntektsmeldingAggregat::getInntektsmeldinger).orElse(List.of()).stream()
+            .filter(im -> !journalpost.equals(im.getJournalpostId()))
+            .collect(Collectors.toList());
+        grunnlagBuilder.setInntektsmeldinger(new InntektsmeldingAggregat(beholdIM));
+        iayTjeneste.lagre(koblingReferanse, grunnlagBuilder);
+        return Response.ok().build();
     }
 
 
@@ -157,40 +165,12 @@ public class ForvaltningRestTjeneste {
 
         @Override
         public AbacDataAttributter apply(Object obj) {
-            ByttAktørRequest req = (ByttAktørRequest) obj;
+            var req = (ByttAktørRequest) obj;
             return AbacDataAttributter.opprett()
                 .leggTil(StandardAbacAttributtType.AKTØR_ID, req.getUtgåttAktør().getVerdi())
                 .leggTil(StandardAbacAttributtType.AKTØR_ID, req.getGyldigAktør().getVerdi());
         }
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
-    public static class SaksnummerAbacDto implements Function<Object, AbacDataAttributter> {
 
-        @JsonProperty(value = "saksnummer", required = true)
-        @NotNull
-        @Pattern(regexp = "^[A-Za-z0-9_\\.\\-]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'")
-        @Valid
-        private String saksnummer;
-
-        public SaksnummerAbacDto() {
-            // NOSONAR
-        }
-
-        @JsonCreator
-        public SaksnummerAbacDto(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer) {
-            this.saksnummer = saksnummer;
-        }
-
-        public String getSaksnummer() {
-            return saksnummer;
-        }
-
-        @Override
-        public AbacDataAttributter apply(Object obj) {
-            return AbacDataAttributter.opprett();
-        }
-    }
 }
