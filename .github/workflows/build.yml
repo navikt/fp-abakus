@@ -16,7 +16,6 @@ on:
     - cron: '0 4 * * 1'
       
 env:
-  IMAGE_BASE: docker.pkg.github.com/${{ github.repository }}/fpabakus
   IMAGE_BASE_CR: ghcr.io/${{ github.repository }}
 jobs:
   build:
@@ -25,7 +24,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:11.5
+        image: postgres:12
         env:
           POSTGRES_USER: fpabakus_unit
           POSTGRES_PASSWORD: fpabakus_unit
@@ -77,15 +76,11 @@ jobs:
         env:
           GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
         run: |
-          docker build --pull --tag ${IMAGE_BASE}:${TAG} --tag ${IMAGE_BASE}:latest --tag ${IMAGE_BASE_CR}:${TAG} --tag ${IMAGE_BASE_CR}:latest .
-          echo "${{ secrets.GH_ACCESS_TOKEN }}" | docker login --username "x-access-token" --password-stdin https://docker.pkg.github.com
+          docker build --pull --tag ${IMAGE_BASE_CR}:${TAG} --tag ${IMAGE_BASE_CR}:latest .
           echo "${{ secrets.GH_ACCESS_TOKEN }}" | docker login --username "x-access-token" --password-stdin ghcr.io
-          docker push ${IMAGE_BASE}:${TAG}
-          docker push ${IMAGE_BASE}:latest
           docker push ${IMAGE_BASE_CR}:${TAG}
           docker push ${IMAGE_BASE_CR}:latest
 
-          
       - name: Lukk gamle issues
         uses: actions/github-script@v3
         with:
