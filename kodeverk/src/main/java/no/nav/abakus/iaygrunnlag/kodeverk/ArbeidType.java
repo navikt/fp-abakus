@@ -14,12 +14,12 @@ package no.nav.abakus.iaygrunnlag.kodeverk;
  * <li></li>
  * </ul>
  */
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -57,11 +57,15 @@ public enum ArbeidType implements Kodeverdi {
     public static final String KODEVERK = "ARBEID_TYPE";
 
     private static final Map<String, ArbeidType> KODER = new LinkedHashMap<>();
+    private static final Map<String, ArbeidType> OFFISIELLE_KODER = new LinkedHashMap<>();
 
     static {
         for (var v : values()) {
             if (KODER.putIfAbsent(v.kode, v) != null) {
                 throw new IllegalArgumentException("Duplikat : " + v.kode);
+            }
+            if (v.getOffisiellKode() != null) {
+                OFFISIELLE_KODER.put(v.getOffisiellKode(), v);
             }
         }
     }
@@ -87,9 +91,9 @@ public enum ArbeidType implements Kodeverdi {
         this.visGui = visGui;
         this.offisiellKode = offisiellKode;
     }
-    
-    public static ArbeidType finnForKodeverkEiersKode(String offisiellDokumentType) {
-        return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
+
+    public static ArbeidType finnForKodeverkEiersKode(String offisiellKode) {
+        return offisiellKode != null ? OFFISIELLE_KODER.getOrDefault(offisiellKode, UDEFINERT) : UDEFINERT;
     }
 
     @JsonCreator
