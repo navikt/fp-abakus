@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten;
 
 import java.math.BigDecimal;
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +15,6 @@ public class InntektsInformasjon {
 
     private List<Månedsinntekt> månedsinntekter;
     private List<FrilansArbeidsforhold> frilansArbeidsforhold;
-    private Map<String, Map<YearMonth, List<MånedsbeløpOgSkatteOgAvgiftsregel>>> inntekterPerArbeidsgiver;
     private InntektskildeType kilde;
 
     public InntektsInformasjon(List<Månedsinntekt> månedsinntekter, List<FrilansArbeidsforhold> frilansArbeidsforhold, InntektskildeType kilde) {
@@ -38,15 +36,10 @@ public class InntektsInformasjon {
         return frilansArbeidsforhold.stream().collect(Collectors.groupingBy(FrilansArbeidsforhold::getIdentifikator));
     }
 
-    public Map<String, Map<YearMonth, List<MånedsbeløpOgSkatteOgAvgiftsregel>>> getMånedsinntekterGruppertPåArbeidsgiver() {
-        if (inntekterPerArbeidsgiver == null) {
-            inntekterPerArbeidsgiver = getMånedsinntekter().stream()
-                .filter(it -> !it.isYtelse())
-                .collect(Collectors.groupingBy(Månedsinntekt::getArbeidsgiver,
-                    Collectors.groupingBy(Månedsinntekt::getMåned,
-                        Collectors.mapping(e -> new MånedsbeløpOgSkatteOgAvgiftsregel(e.getBeløp(), e.getSkatteOgAvgiftsregelType()), Collectors.toList()))));
-        }
-        return inntekterPerArbeidsgiver;
+    public List<Månedsinntekt> getMånedsinntekterUtenomYtelser() {
+        return getMånedsinntekter().stream()
+            .filter(it -> !it.isYtelse())
+            .collect(Collectors.toList());
     }
 
     public List<Månedsinntekt> getYtelsesTrygdEllerPensjonInntektSummert() {
@@ -74,21 +67,4 @@ public class InntektsInformasjon {
         return kilde;
     }
 
-    public static final class MånedsbeløpOgSkatteOgAvgiftsregel {
-        private BigDecimal beløp;
-        private String skatteOgAvgiftsregelType;
-
-        public MånedsbeløpOgSkatteOgAvgiftsregel(BigDecimal beløp, String skatteOgAvgiftsregelType) {
-            this.beløp = beløp;
-            this.skatteOgAvgiftsregelType = skatteOgAvgiftsregelType;
-        }
-
-        public BigDecimal getBeløp() {
-            return beløp;
-        }
-
-        public String getSkatteOgAvgiftsregelType() {
-            return skatteOgAvgiftsregelType;
-        }
-    }
 }

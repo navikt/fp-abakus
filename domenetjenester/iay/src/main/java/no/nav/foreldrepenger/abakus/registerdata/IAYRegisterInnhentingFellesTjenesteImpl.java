@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -159,14 +160,30 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         InntektskildeType kilde = inntektsInformasjon.getKilde();
         aktørInntektBuilder.fjernInntekterFraKilde(kilde);
 
-        inntektsInformasjon.getMånedsinntekterGruppertPåArbeidsgiver()
-            .forEach((identifikator, inntektOgRegelListe) -> leggTilInntekterPåArbeidsforhold(builder, aktørInntektBuilder, inntektOgRegelListe, identifikator,
-                kilde, ytelse));
+        mapTilArbeidsgiver(inntektsInformasjon, ytelse)
+            .forEach((identifikator, inntektOgRegelListe) ->
+                aktørInntektBuilder.leggTilInntekt(byggInntekt(inntektOgRegelListe, identifikator, aktørInntektBuilder, inntektsInformasjon.getKilde())));
+        builder.leggTilAktørInntekt(aktørInntektBuilder);
 
         List<Månedsinntekt> ytelsesTrygdEllerPensjonInntekt = inntektsInformasjon.getYtelsesTrygdEllerPensjonInntektSummert();
         if (!ytelsesTrygdEllerPensjonInntekt.isEmpty()) {
             leggTilYtelseInntekter(ytelsesTrygdEllerPensjonInntekt, builder, aktørId, kilde);
         }
+    }
+
+    private  Map<Arbeidsgiver, Map<YearMonth, List<MånedsbeløpOgSkatteOgAvgiftsregel>>> mapTilArbeidsgiver(InntektsInformasjon inntektsInformasjon, YtelseType ytelse) {
+        Map<String, Set<YearMonth>> alleArbeidsgivereMedMåneder = inntektsInformasjon.getMånedsinntekterUtenomYtelser().stream()
+            .collect(Collectors.groupingBy(Månedsinntekt::getArbeidsgiver, Collectors.mapping(Månedsinntekt::getMåned, Collectors.toSet())));
+        Map<String, Arbeidsgiver> arbeidsgivereLookup = new HashMap<>();
+        alleArbeidsgivereMedMåneder
+            .forEach((agString, måneder) ->
+                Optional.ofNullable(finnArbeidsgiverForInntektsData(agString, måneder, ytelse)).ifPresent(ag -> arbeidsgivereLookup.put(agString, ag)));
+
+        return inntektsInformasjon.getMånedsinntekterUtenomYtelser().stream()
+            .filter(mi -> arbeidsgivereLookup.get(mi.getArbeidsgiver()) != null)
+            .map(mi -> new MånedsbeløpOgSkatteOgAvgiftsregel(arbeidsgivereLookup.get(mi.getArbeidsgiver()), mi.getMåned(), mi.getBeløp(), mi.getSkatteOgAvgiftsregelType()))
+            .collect(Collectors.groupingBy(MånedsbeløpOgSkatteOgAvgiftsregel::getArbeidsgiver,
+                Collectors.groupingBy(MånedsbeløpOgSkatteOgAvgiftsregel::getMåned)));
     }
 
     private void leggTilYtelseInntekter(List<Månedsinntekt> ytelsesTrygdEllerPensjonInntekt, InntektArbeidYtelseAggregatBuilder builder, AktørId aktørId,
@@ -212,33 +229,25 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         builder.leggTilAktørArbeid(aktørArbeidBuilder);
     }
 
-    private void leggTilInntekterPåArbeidsforhold(InntektArbeidYtelseAggregatBuilder builder,
-                                                  InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder,
-                                                  Map<YearMonth, List<InntektsInformasjon.MånedsbeløpOgSkatteOgAvgiftsregel>> månedsinntekterGruppertPåArbeidsgiver,
-                                                  String arbeidsgiverIdentifikator, InntektskildeType inntektOpptjening, YtelseType ytelse) {
+    private Arbeidsgiver finnArbeidsgiverForInntektsData(String arbeidsgiverString, Set<YearMonth> inntekterForMåneder, YtelseType ytelse) {
 
-        Arbeidsgiver arbeidsgiver;
-        if (OrganisasjonsNummerValidator.erGyldig(arbeidsgiverIdentifikator)) {
-            boolean orgledd = virksomhetTjeneste.sjekkOmOrganisasjonErOrgledd(arbeidsgiverIdentifikator);
+        if (OrganisasjonsNummerValidator.erGyldig(arbeidsgiverString)) {
+            boolean orgledd = virksomhetTjeneste.sjekkOmOrganisasjonErOrgledd(arbeidsgiverString);
             if (!orgledd) {
-                LocalDate hentedato = finnHentedatoForJuridisk(månedsinntekterGruppertPåArbeidsgiver.keySet());
-                arbeidsgiver = Arbeidsgiver.virksomhet(virksomhetTjeneste.hentOrganisasjonMedHensynTilJuridisk(arbeidsgiverIdentifikator, hentedato));
-                aktørInntektBuilder.leggTilInntekt(byggInntekt(månedsinntekterGruppertPåArbeidsgiver, arbeidsgiver, aktørInntektBuilder, inntektOpptjening));
-                builder.leggTilAktørInntekt(aktørInntektBuilder);
+                LocalDate hentedato = finnHentedatoForJuridisk(inntekterForMåneder);
+                return Arbeidsgiver.virksomhet(virksomhetTjeneste.hentOrganisasjonMedHensynTilJuridisk(arbeidsgiverString, hentedato));
             } else {
-                LOGGER.info("Inntekter rapportert på orgledd({}), blir IKKE lagret", getIdentifikatorString(arbeidsgiverIdentifikator));
+                LOGGER.info("Inntekter rapportert på orgledd({}), blir IKKE lagret", getIdentifikatorString(arbeidsgiverString));
+                return null;
             }
         } else {
-            if (PersonIdent.erGyldigFnr(arbeidsgiverIdentifikator)) {
-                var arbeidsgiverAktørId = aktørConsumer.hentAktørForIdent(new PersonIdent(arbeidsgiverIdentifikator), ytelse)
+            if (PersonIdent.erGyldigFnr(arbeidsgiverString)) {
+                var arbeidsgiverAktørId = aktørConsumer.hentAktørForIdent(new PersonIdent(arbeidsgiverString), ytelse)
                     .orElseThrow(() -> InnhentingFeil.FACTORY.finnerIkkeAktørIdForArbeidsgiverSomErPrivatperson().toException());
-                arbeidsgiver = Arbeidsgiver.person(arbeidsgiverAktørId);
+                return Arbeidsgiver.person(arbeidsgiverAktørId);
             } else {
-                LOGGER.info("Arbeidsgiveridentifikator: {}", getIdentifikatorString(arbeidsgiverIdentifikator));
-                arbeidsgiver = Arbeidsgiver.person(new AktørId(arbeidsgiverIdentifikator));
+                return Arbeidsgiver.person(new AktørId(arbeidsgiverString));
             }
-            aktørInntektBuilder.leggTilInntekt(byggInntekt(månedsinntekterGruppertPåArbeidsgiver, arbeidsgiver, aktørInntektBuilder, inntektOpptjening));
-            builder.leggTilAktørInntekt(aktørInntektBuilder);
         }
     }
 
@@ -442,7 +451,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         return yrkesaktivitetBuilder.getAktivitetsAvtaleBuilder(periode, true);
     }
 
-    private InntektBuilder byggInntekt(Map<YearMonth, List<InntektsInformasjon.MånedsbeløpOgSkatteOgAvgiftsregel>> inntekter,
+    private InntektBuilder byggInntekt(Map<YearMonth, List<MånedsbeløpOgSkatteOgAvgiftsregel>> inntekter,
                                        Arbeidsgiver arbeidsgiver,
                                        InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder,
                                        InntektskildeType inntektOpptjening) {
@@ -455,13 +464,13 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
                 .stream()
                 .filter(e -> e.getSkatteOgAvgiftsregelType() != null)
                 .collect(Collectors.groupingBy(
-                    InntektsInformasjon.MånedsbeløpOgSkatteOgAvgiftsregel::getSkatteOgAvgiftsregelType,
+                    MånedsbeløpOgSkatteOgAvgiftsregel::getSkatteOgAvgiftsregelType,
                     Collectors.collectingAndThen(
-                        Collectors.mapping(InntektsInformasjon.MånedsbeløpOgSkatteOgAvgiftsregel::getBeløp, Collectors.toSet()),
+                        Collectors.mapping(MånedsbeløpOgSkatteOgAvgiftsregel::getBeløp, Collectors.toSet()),
                         Set::size)));
 
             Optional<String> valgtSkatteOgAvgiftsregel = Optional.empty();
-            BigDecimal beløpSum = månedsinnteker.stream().map(InntektsInformasjon.MånedsbeløpOgSkatteOgAvgiftsregel::getBeløp).reduce(BigDecimal.ZERO,
+            BigDecimal beløpSum = månedsinnteker.stream().map(MånedsbeløpOgSkatteOgAvgiftsregel::getBeløp).reduce(BigDecimal.ZERO,
                 BigDecimal::add);
             if (antalInntekterForAvgiftsregel.keySet().size() > 1) {
                 String skatteOgAvgiftsregler = antalInntekterForAvgiftsregel.keySet().stream().collect(Collectors.joining(", "));
@@ -512,5 +521,35 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
             return UtbetaltYtelseFraOffentligeType.finnForKodeverkEiersKode(månedsinntekt.getYtelseKode());
         }
         return UtbetaltNæringsYtelseType.finnForKodeverkEiersKode(månedsinntekt.getNæringsinntektKode());
+    }
+
+    public static final class MånedsbeløpOgSkatteOgAvgiftsregel {
+        private Arbeidsgiver arbeidsgiver;
+        private YearMonth måned;
+        private BigDecimal beløp;
+        private String skatteOgAvgiftsregelType;
+
+        public MånedsbeløpOgSkatteOgAvgiftsregel(Arbeidsgiver arbeidsgiver, YearMonth måned, BigDecimal beløp, String skatteOgAvgiftsregelType) {
+            this.arbeidsgiver = arbeidsgiver;
+            this.måned = måned;
+            this.beløp = beløp;
+            this.skatteOgAvgiftsregelType = skatteOgAvgiftsregelType;
+        }
+
+        public Arbeidsgiver getArbeidsgiver() {
+            return arbeidsgiver;
+        }
+
+        public YearMonth getMåned() {
+            return måned;
+        }
+
+        public BigDecimal getBeløp() {
+            return beløp;
+        }
+
+        public String getSkatteOgAvgiftsregelType() {
+            return skatteOgAvgiftsregelType;
+        }
     }
 }
