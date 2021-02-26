@@ -161,10 +161,10 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         aktørInntektBuilder.fjernInntekterFraKilde(kilde);
 
         mapTilArbeidsgiver(inntektsInformasjon, ytelse)
-            .forEach((identifikator, inntektOgRegelListe) -> {
-                aktørInntektBuilder.leggTilInntekt(byggInntekt(inntektOgRegelListe, identifikator, aktørInntektBuilder, inntektsInformasjon.getKilde()));
-                builder.leggTilAktørInntekt(aktørInntektBuilder);
-            });
+            .forEach((identifikator, inntektOgRegelListe) ->
+                aktørInntektBuilder.leggTilInntekt(byggInntekt(inntektOgRegelListe, identifikator, aktørInntektBuilder, inntektsInformasjon.getKilde())));
+        builder.leggTilAktørInntekt(aktørInntektBuilder);
+
         List<Månedsinntekt> ytelsesTrygdEllerPensjonInntekt = inntektsInformasjon.getYtelsesTrygdEllerPensjonInntektSummert();
         if (!ytelsesTrygdEllerPensjonInntekt.isEmpty()) {
             leggTilYtelseInntekter(ytelsesTrygdEllerPensjonInntekt, builder, aktørId, kilde);
