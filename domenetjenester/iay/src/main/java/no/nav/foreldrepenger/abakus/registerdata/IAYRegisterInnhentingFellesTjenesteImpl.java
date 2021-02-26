@@ -215,6 +215,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         yrkesaktivitetBuilder.medArbeidsforholdId(internReferanse)
             .medArbeidsgiver(arbeidsgiver)
             .medArbeidType(arbeidType);
+        yrkesaktivitetBuilder.tilbakestillAvtalerInklusiveInntektFrilans();
         frilansArbeidsforhold.getValue().stream()
             .filter(this::skalTasMedFraInntk)
             .forEach(avtale -> yrkesaktivitetBuilder.leggTilAktivitetsAvtale(opprettAktivitetsAvtaleFrilans(avtale, yrkesaktivitetBuilder)));

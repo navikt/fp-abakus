@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -231,6 +232,31 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
     }
 
     void tilbakestillAvtaler() {
+        if (skalBeholdeLegacyAvtaler()) {
+            this.aktivitetsAvtale = aktivitetsAvtale.stream()
+                .filter(this::erLegacyAktivitetsAvtale)
+                .collect(Collectors.toSet());
+        } else {
+            aktivitetsAvtale.clear();
+        }
+    }
+
+    /*
+     * Her legger man inn data som er innhentet tidligere, men som ikke blir reinnhentet etter sanering av integrasjon eller endring av logikk
+     * For Yrkesaktivitet gjelder dette frilansaktiviteter innhentet fra Inntektskomponenten
+     */
+    private static final LocalDate CUTOFF_FRILANS_AAREG = LocalDate.of(2020,1,1);
+
+    private boolean skalBeholdeLegacyAvtaler() {
+        return ArbeidType.FRILANSER_OPPDRAGSTAKER_MED_MER.equals(this.arbeidType);
+    }
+
+    private boolean erLegacyAktivitetsAvtale(AktivitetsAvtale avtale) {
+        return ArbeidType.FRILANSER_OPPDRAGSTAKER_MED_MER.equals(this.arbeidType)
+            && avtale.getPeriode().getTomDato() != null && avtale.getPeriode().getTomDato().isBefore(CUTOFF_FRILANS_AAREG);
+    }
+
+    void tilbakestillAvtalerInklusiveInntektFrilans() {
         aktivitetsAvtale.clear();
     }
 
