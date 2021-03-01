@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -293,7 +294,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
             Set.of(RegisterdataElement.INNTEKT_PENSJONSGIVENDE)
                 .forEach(registerdataElement -> innhentInntektsopplysningFor(kobling, aktørId, opplysningsPeriode, builder, arbeidsforholdInntektList, informasjonsElementer, registerdataElement));
         }
-        arbeidsforholdList.addAll(arbeidsforholdInntektList);
+        arbeidsforholdInntektList.stream().filter(Objects::nonNull).forEach(arbeidsforholdList::add);
         return arbeidsforholdList;
     }
 
@@ -323,7 +324,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
             if (!frilansAAREG.isEmpty()) {
                 InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder aktørArbeidBuilder = builder.getAktørArbeidBuilder(aktørId);
                 frilansAAREG.entrySet().forEach(forholdet -> oversettArbeidsforholdTilYrkesaktivitet(kobling, builder, forholdet, aktørArbeidBuilder));
-                arbeidsforholdInntektList.addAll(frilansAAREG.keySet());
+                frilansAAREG.keySet().stream().filter(Objects::nonNull).forEach(arbeidsforholdInntektList::add);
                 builder.leggTilAktørArbeid(aktørArbeidBuilder);
             }
         }
