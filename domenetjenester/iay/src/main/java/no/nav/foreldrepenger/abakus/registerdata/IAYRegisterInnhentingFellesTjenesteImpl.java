@@ -282,7 +282,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
             Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = innhentingSamletTjeneste.getArbeidsforhold(aktørId,
                 getFnrFraAktørId(aktørId, kobling.getYtelseType()), opplysningsPeriode);
             arbeidsforhold.entrySet().forEach(forholdet -> oversettArbeidsforholdTilYrkesaktivitet(kobling, builder, forholdet, aktørArbeidBuilder));
-            arbeidsforholdList = arbeidsforhold.keySet();
+            arbeidsforholdList.addAll(arbeidsforhold.keySet());
         }
 
         Set<ArbeidsforholdIdentifikator> arbeidsforholdInntektList = new HashSet<>();
