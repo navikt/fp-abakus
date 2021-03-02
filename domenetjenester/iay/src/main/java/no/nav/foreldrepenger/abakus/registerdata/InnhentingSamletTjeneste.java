@@ -75,13 +75,13 @@ public class InnhentingSamletTjeneste {
         this.isProd = Cluster.PROD_FSS.equals(Environment.current().getCluster());
     }
 
-    public InntektsInformasjon getInntektsInformasjon(AktørId aktørId, Interval periode, InntektskildeType kilde, YtelseType ytelse) {
+    public InntektsInformasjon getInntektsInformasjon(AktørId aktørId, Interval periode, InntektskildeType kilde) {
         FinnInntektRequest.FinnInntektRequestBuilder builder = FinnInntektRequest.builder(YearMonth.from(LocalDateTime.ofInstant(periode.getStart(), ZoneId.systemDefault())),
             YearMonth.from(LocalDateTime.ofInstant(periode.getEnd(), ZoneId.systemDefault())));
 
         builder.medAktørId(aktørId.getId());
 
-        return inntektTjeneste.finnInntekt(builder.build(), kilde, ytelse);
+        return inntektTjeneste.finnInntekt(builder.build(), kilde);
     }
 
     public boolean skalInnhenteLønnskompensasjon(Kobling kobling, @SuppressWarnings("unused") InntektskildeType kilde) {
@@ -114,7 +114,7 @@ public class InnhentingSamletTjeneste {
     }
 
     public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> getArbeidsforholdFrilans(AktørId aktørId, PersonIdent ident, Interval opplysningsPeriode) {
-        return isProd ? arbeidsforholdTjeneste.finnArbeidsforholdFrilansForIdentIPerioden(ident, aktørId, opplysningsPeriode) : Map.of();
+        return arbeidsforholdTjeneste.finnArbeidsforholdFrilansForIdentIPerioden(ident, aktørId, opplysningsPeriode);
     }
 
     private boolean envUnstable() {

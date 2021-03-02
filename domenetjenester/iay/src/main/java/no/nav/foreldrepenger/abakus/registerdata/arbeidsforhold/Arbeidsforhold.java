@@ -143,7 +143,7 @@ public class Arbeidsforhold {
         }
 
         public Builder medArbeidsavtaler(List<Arbeidsavtale> arbeidsavtaler) {
-            this.arbeidsavtaler = arbeidsavtaler;
+            this.arbeidsavtaler.addAll(arbeidsavtaler);
             return this;
         }
 
