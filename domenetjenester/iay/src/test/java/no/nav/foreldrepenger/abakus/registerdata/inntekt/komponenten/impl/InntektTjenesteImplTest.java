@@ -26,7 +26,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FinnInntektRequest;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
@@ -60,7 +59,7 @@ public class InntektTjenesteImplTest {
 
     @BeforeEach
     public void before() {
-        inntektTjeneste = new InntektTjeneste(uri, restKlient, null);
+        inntektTjeneste = new InntektTjeneste(uri, restKlient);
     }
 
     @SuppressWarnings("resource")
@@ -115,7 +114,7 @@ public class InntektTjenesteImplTest {
             .medFnr(FNR).build();
 
         // Act
-        InntektsInformasjon inntektsInformasjon = inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING, YtelseType.FORELDREPENGER);
+        InntektsInformasjon inntektsInformasjon = inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING);
 
         // Assert
         ArgumentCaptor<HentInntektListeBolkRequest> requestCaptor = ArgumentCaptor.forClass(HentInntektListeBolkRequest.class);
@@ -157,7 +156,7 @@ public class InntektTjenesteImplTest {
             .medFnr(FNR).build();
 
         // Act
-        final InntektsInformasjon inntektsInformasjon = inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING, YtelseType.OMSORGSPENGER);
+        final InntektsInformasjon inntektsInformasjon = inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING);
 
         // Assert
         ArgumentCaptor<HentInntektListeBolkRequest> requestCaptor = ArgumentCaptor.forClass(HentInntektListeBolkRequest.class);
@@ -192,7 +191,7 @@ public class InntektTjenesteImplTest {
 
         try {
             // Act
-            inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING, YtelseType.SVANGERSKAPSPENGER);
+            inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING);
             fail("Forventet VLException");
         } catch (VLException e) {
             // Assert
