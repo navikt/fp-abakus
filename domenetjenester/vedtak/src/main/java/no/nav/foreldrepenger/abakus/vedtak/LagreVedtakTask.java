@@ -19,6 +19,7 @@ import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
 import no.nav.foreldrepenger.abakus.vedtak.json.JacksonJsonConfig;
+import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
@@ -60,7 +61,8 @@ public class LagreVedtakTask implements ProsessTaskHandler {
                 throw new IllegalArgumentException("Vedtatt-ytelse valideringsfeil :: \n " + allErrors);
             }
         } catch (IOException e) {
-            throw YtelseFeil.FACTORY.parsingFeil(key, payload, e).toException();
+            throw new TekniskException("FP-328773",
+                String.format("Feil under parsing av vedtak. key={%s} payload={%s}", key, payload), e);
         }
         if (mottattVedtak != null) {
             // TODO: Gjør generisk

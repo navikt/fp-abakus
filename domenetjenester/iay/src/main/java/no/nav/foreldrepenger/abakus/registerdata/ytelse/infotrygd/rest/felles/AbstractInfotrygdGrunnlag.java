@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.InfotrygdGrunnlag;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.InfotrygdRestFeil;
+import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
 import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
 
@@ -43,7 +43,7 @@ public abstract class AbstractInfotrygdGrunnlag implements InfotrygdGrunnlag {
             return Arrays.asList(grunnlag);
         } catch (Exception e) {
             LOG.error("Feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
-            throw InfotrygdRestFeil.FACTORY.feilfratjeneste(uriString).toException();
+            throw new TekniskException( "FP-180125", String.format("Tjeneste %s gir feil, meld til #infotrygd_replikering hvis dette skjer gjennom lengre tidsperiode.", uriString), e);
         }
     }
 

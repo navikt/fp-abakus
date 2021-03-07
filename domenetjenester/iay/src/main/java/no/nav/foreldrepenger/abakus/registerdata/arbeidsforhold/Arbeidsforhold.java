@@ -149,9 +149,6 @@ public class Arbeidsforhold {
 
 
         public Builder medAnsettelsesPeriode(Arbeidsavtale avtale) {
-            if (this.arbeidsavtaler.isEmpty()) {
-                this.arbeidsavtaler = new ArrayList<>();
-            }
             this.arbeidsavtaler.add(avtale);
             return this;
         }

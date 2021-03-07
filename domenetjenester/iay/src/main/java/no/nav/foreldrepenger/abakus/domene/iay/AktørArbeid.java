@@ -181,4 +181,8 @@ public class AktørArbeid extends BaseEntitet implements IndexKey {
             .filter(Yrkesaktivitet::erYrkesaktivitetMedLegacyInnhold)
             .collect(Collectors.toSet());
     }
+
+    void tilbakestillYrkesaktiviteterInklusiveInntektFrilans() {
+        this.yrkesaktiviter.clear();
+    }
 }

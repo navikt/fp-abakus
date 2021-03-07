@@ -27,11 +27,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
-import no.nav.vedtak.feil.Feil;
-import no.nav.vedtak.feil.FeilFactory;
-import no.nav.vedtak.feil.LogLevel;
-import no.nav.vedtak.feil.deklarasjon.DeklarerteFeil;
-import no.nav.vedtak.feil.deklarasjon.TekniskFeil;
+import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.konfig.KonfigVerdi;
 import no.nav.vedtak.util.env.Environment;
 
@@ -72,7 +68,7 @@ public class SigrunConsumerImpl implements SigrunConsumer {
         try {
             return mapper.readValue(json, typeReference);
         } catch (IOException e) {
-            throw JsonMapperFeil.FACTORY.ioExceptionVedLesing(e).toException();
+            throw ioExceptionVedLesing(e);
         }
     }
 
@@ -80,7 +76,7 @@ public class SigrunConsumerImpl implements SigrunConsumer {
         try {
             return mapper.readValue(json, typeReference);
         } catch (IOException e) {
-            throw JsonMapperFeil.FACTORY.ioExceptionVedLesing(e).toException();
+            throw ioExceptionVedLesing(e);
         }
     }
 
@@ -152,11 +148,8 @@ public class SigrunConsumerImpl implements SigrunConsumer {
             .anyMatch(l -> l.getTekniskNavn().equals(TEKNISK_NAVN));
     }
 
-    interface JsonMapperFeil extends DeklarerteFeil {
-
-        JsonMapperFeil FACTORY = FeilFactory.create(JsonMapperFeil.class);
-
-        @TekniskFeil(feilkode = "F-918328", feilmelding = "Fikk IO exception ved parsing av JSON", logLevel = LogLevel.WARN)
-        Feil ioExceptionVedLesing(IOException cause);
+    private static TekniskException ioExceptionVedLesing(IOException cause) {
+        return new TekniskException("F-918328", "Fikk IO exception ved parsing av JSON", cause);
     }
+
 }

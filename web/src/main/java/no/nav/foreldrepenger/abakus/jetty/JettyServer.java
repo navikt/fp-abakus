@@ -40,6 +40,7 @@ import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.MetaData;
+import org.eclipse.jetty.webapp.WebAppConfiguration;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.webapp.WebInfConfiguration;
 import org.eclipse.jetty.webapp.WebXmlConfiguration;
@@ -56,7 +57,7 @@ import no.nav.vedtak.isso.IssoApplication;
 import no.nav.vedtak.util.env.Environment;
 
 public class JettyServer {
-    
+
     /** Legges først slik at alltid resetter context før prosesserer nye requests. Kjøres først så ikke risikerer andre har satt Request#setHandled(true). */
     static final class ResetLogContextHandler extends AbstractHandler {
         @Override
@@ -71,11 +72,12 @@ public class JettyServer {
      * @see ServerConnector#openAcceptChannel()
      */
     protected static final String SERVER_HOST = "0.0.0.0";
-    
+
     /**
      * nedstrippet sett med Jetty configurations for raskere startup.
      */
     protected static final Configuration[] CONFIGURATIONS = new Configuration[]{
+        new WebAppConfiguration(),
         new WebInfConfiguration(),
         new WebXmlConfiguration(),
         new AnnotationConfiguration(),
@@ -122,7 +124,7 @@ public class JettyServer {
 
     protected void konfigurer() throws Exception {
         File jaspiConf = new File(System.getProperty("conf", "./conf") + "/jaspi-conf.xml"); // NOSONAR
-        
+
         konfigurerSikkerhet(jaspiConf);
         konfigurerJndi();
     }
@@ -184,18 +186,18 @@ public class JettyServer {
 
         return connectors;
     }
-    
+
     @SuppressWarnings("resource")
     protected WebAppContext createContext(AppKonfigurasjon appKonfigurasjon) throws IOException {
         WebAppContext webAppContext = new WebAppContext();
         webAppContext.setParentLoaderPriority(true);
-        
+
         // må hoppe litt bukk for å hente web.xml fra classpath i stedet for fra filsystem.
         String descriptor;
         try (var resource = Resource.newClassPathResource("/WEB-INF/web.xml")) {
             descriptor = resource.getURI().toURL().toExternalForm();
         }
-        
+
         webAppContext.setDescriptor(descriptor);
         webAppContext.setBaseResource(createResourceCollection());
         webAppContext.setContextPath(appKonfigurasjon.getContextPath());
@@ -209,7 +211,7 @@ public class JettyServer {
 
         updateMetaData(webAppContext.getMetaData());
         webAppContext.setThrowUnavailableOnStartupException(true);
-        
+
         return webAppContext;
     }
 
@@ -237,7 +239,7 @@ public class JettyServer {
 
         return securityHandler;
     }
-    
+
     private void updateMetaData(MetaData metaData) {
         // Find path to class-files while starting jetty from development environment.
         List<Class<?>> appClasses = getApplicationClasses();
@@ -246,7 +248,7 @@ public class JettyServer {
                 .map(c -> Resource.newResource(c.getProtectionDomain().getCodeSource().getLocation()))
                 .collect(Collectors.toList());
 
-        metaData.setWebInfClassesDirs(resources);
+        metaData.setWebInfClassesResources(resources);
     }
 
     protected List<Class<?>> getApplicationClasses() {

@@ -9,6 +9,7 @@ import javax.persistence.LockModeType;
 
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingLås;
+import no.nav.vedtak.exception.TekniskException;
 
 @ApplicationScoped
 public class LåsRepository {
@@ -61,7 +62,7 @@ public class LåsRepository {
         LockModeType lockMode = LockModeType.PESSIMISTIC_FORCE_INCREMENT;
         Object entity = entityManager.find(Kobling.class, id);
         if (entity == null) {
-            throw KoblingRepositoryFeil.FACTORY.fantIkkeEntitetForLåsing(Kobling.class.getSimpleName(), id).toException();
+            throw new TekniskException( "FP-131239", String.format("Fant ikke entitet for låsing [%s], id=%s.", Kobling.class.getSimpleName(), id));
         } else {
             entityManager.lock(entity, lockMode);
         }

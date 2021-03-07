@@ -31,13 +31,9 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.vedtak.feil.Feil;
-import no.nav.vedtak.feil.FeilFactory;
-import no.nav.vedtak.feil.LogLevel;
-import no.nav.vedtak.feil.deklarasjon.DeklarerteFeil;
-import no.nav.vedtak.feil.deklarasjon.IntegrasjonFeil;
-import no.nav.vedtak.feil.deklarasjon.ManglerTilgangFeil;
-import no.nav.vedtak.feil.deklarasjon.TekniskFeil;
+import no.nav.vedtak.exception.IntegrasjonException;
+import no.nav.vedtak.exception.ManglerTilgangException;
+import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.isso.OpenAMHelper;
 import no.nav.vedtak.log.mdc.MDCOperations;
 import no.nav.vedtak.sikkerhet.context.SubjectHandler;
@@ -62,7 +58,7 @@ public class SigrunRestClient {
         try {
             response = client.execute(request, defaultResponseHandler);
         } catch (IOException e) {
-            throw SigrunRestClient.SigrunRestClientFeil.FACTORY.ioException(e).toException();
+            throw ioException(e);
         } finally {
             request.reset();
         }
@@ -76,7 +72,7 @@ public class SigrunRestClient {
         try {
             response = client.execute(request, defaultResponseHandler);
         } catch (IOException e) {
-            throw SigrunRestClient.SigrunRestClientFeil.FACTORY.ioException(e).toException();
+            throw ioException(e);
         } finally {
             request.reset();
         }
@@ -131,7 +127,7 @@ public class SigrunRestClient {
         if (samlToken != null) {
             return veksleSamlTokenTilOIDCToken(samlToken);
         }
-        throw SigrunRestClient.SigrunRestClientFeil.FACTORY.klarteIkkeSkaffeOIDCToken().toException();
+        throw new TekniskException("F-017072", "Klarte ikke å fremskaffe et OIDC token");
     }
 
     private ResponseHandler<String> createDefaultResponseHandler() {
@@ -141,12 +137,13 @@ public class SigrunRestClient {
                 HttpEntity entity = response.getEntity();
                 return entity != null ? EntityUtils.toString(entity) : null;
             } else if (status == HttpStatus.SC_FORBIDDEN) {
-                throw SigrunRestClientFeil.FACTORY.manglerTilgang().toException();
+                throw new ManglerTilgangException("F-018815", "Mangler tilgang. Fikk http-kode 403 fra server");
             } else if (status == HttpStatus.SC_NOT_FOUND) {
                 LOG.trace("Sigrun: {}", response.getStatusLine().getReasonPhrase());
                 return null;
             } else {
-                throw SigrunRestClientFeil.FACTORY.serverSvarteMedFeilkode(status, response.getStatusLine().getReasonPhrase()).toException();
+                throw new IntegrasjonException("F-016912",
+                    String.format("Server svarte med feilkode http-kode '%s' og response var '%s'", status, response.getStatusLine().getReasonPhrase()));
             }
         };
     }
@@ -157,7 +154,7 @@ public class SigrunRestClient {
         try {
             return new OpenAMHelper().getToken().getIdToken().getToken();
         } catch (IOException e) {
-            throw SigrunRestClient.SigrunRestClientFeil.FACTORY.feilVedHentingAvSystemToken(e).toException();
+            throw new TekniskException("F-011590", "IOException ved henting av systemets OIDC-token", e);
         }
     }
 
@@ -165,24 +162,7 @@ public class SigrunRestClient {
         this.endpoint = endpoint;
     }
 
-    interface SigrunRestClientFeil extends DeklarerteFeil {
-
-        SigrunRestClient.SigrunRestClientFeil FACTORY = FeilFactory.create(SigrunRestClient.SigrunRestClientFeil.class);
-
-        @ManglerTilgangFeil(feilkode = "F-018815", feilmelding = "Mangler tilgang. Fikk http-kode 403 fra server", logLevel = LogLevel.ERROR)
-        Feil manglerTilgang();
-
-        @IntegrasjonFeil(feilkode = "F-016912", feilmelding = "Server svarte med feilkode http-kode '%s' og response var '%s'", logLevel = LogLevel.WARN)
-        Feil serverSvarteMedFeilkode(int feilkode, String feilmelding);
-
-        @TekniskFeil(feilkode = "F-012937", feilmelding = "IOException ved kommunikasjon med server", logLevel = LogLevel.WARN)
-        Feil ioException(IOException cause);
-
-        @TekniskFeil(feilkode = "F-011590", feilmelding = "IOException ved henting av systemets OIDC-token", logLevel = LogLevel.ERROR)
-        Feil feilVedHentingAvSystemToken(IOException cause);
-
-        @TekniskFeil(feilkode = "F-017072", feilmelding = "Klarte ikke å fremskaffe et OIDC token", logLevel = LogLevel.ERROR)
-        Feil klarteIkkeSkaffeOIDCToken();
-
+    private static TekniskException ioException(IOException cause) {
+        return new TekniskException( "F-012937", "IOException ved kommunikasjon med server", cause);
     }
 }

@@ -33,6 +33,7 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.vedtak.json.JacksonJsonConfig;
+import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskRepository;
 
@@ -69,7 +70,7 @@ public class LonnskompHendelseHåndterer {
                 throw new IllegalArgumentException("Vedtatt-ytelse valideringsfeil :: \n " + allErrors);
             }
         } catch (IOException e) {
-            throw LønnskompensasjonFeil.FACTORY.parsingFeil(key, payload, e).toException();
+            throw new TekniskException("FP-328774", String.format("Feil under parsing av vedtak. key={%s} payload={%s}", key, payload) ,e);
         }
         if (mottattVedtak != null) {
             var sakId = mottattVedtak.getSakId() != null ? mottattVedtak.getSakId() : mottattVedtak.getId();

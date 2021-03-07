@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.slf4j.Logger;
@@ -32,12 +31,8 @@ import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.informasjon.Te
 import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.informasjon.Vedtak;
 import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.meldinger.FinnMeldekortUtbetalingsgrunnlagListeRequest;
 import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.meldinger.FinnMeldekortUtbetalingsgrunnlagListeResponse;
-import no.nav.vedtak.feil.Feil;
-import no.nav.vedtak.feil.FeilFactory;
-import no.nav.vedtak.feil.LogLevel;
-import no.nav.vedtak.feil.deklarasjon.DeklarerteFeil;
-import no.nav.vedtak.feil.deklarasjon.IntegrasjonFeil;
-import no.nav.vedtak.feil.deklarasjon.TekniskFeil;
+import no.nav.vedtak.exception.IntegrasjonException;
+import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.integrasjon.felles.ws.DateUtil;
 
 @ApplicationScoped
@@ -177,29 +172,11 @@ public class MeldekortTjeneste {
 
             return saker;
         } catch (FinnMeldekortUtbetalingsgrunnlagListeSikkerhetsbegrensning e) {
-            throw MeldekortFeil.FACTORY.tjenesteUtilgjengeligSikkerhetsbegrensning(TJENESTE, e).toException();
+            throw new TekniskException("FP-150919", "MeldekortUtbetalingsgrunnlag (Arena) ikke tilgjengelig (sikkerhetsbegrensning)", e);
         } catch (FinnMeldekortUtbetalingsgrunnlagListeUgyldigInput e) {
-            throw MeldekortFeil.FACTORY.tjenesteUgyldigInput(TJENESTE, e).toException();
+            throw new IntegrasjonException("FP-615299", "MeldekortUtbetalingsgrunnlag (Arena) ugyldig input", e);
         } catch (FinnMeldekortUtbetalingsgrunnlagListeAktoerIkkeFunnet e) {
-            throw MeldekortFeil.FACTORY.fantIkkePersonForAktorId(TJENESTE, e).toException();
+            throw new IntegrasjonException("FP-615298", "MeldekortUtbetalingsgrunnlag (Arena) fant ikke person for oppgitt aktørId", e);
         }
-    }
-
-    private interface MeldekortFeil extends DeklarerteFeil {
-
-        MeldekortFeil FACTORY = FeilFactory.create(MeldekortFeil.class);
-
-        @TekniskFeil(feilkode = "FP-150919", feilmelding = "%s ikke tilgjengelig (sikkerhetsbegrensning)", logLevel = LogLevel.WARN)
-        Feil tjenesteUtilgjengeligSikkerhetsbegrensning(String tjeneste, Exception exceptionMessage);
-
-        @IntegrasjonFeil(feilkode = "FP-615298", feilmelding = "%s fant ikke person for oppgitt aktørId", logLevel = LogLevel.WARN)
-        Feil fantIkkePersonForAktorId(String tjeneste, Exception exceptionMessage);
-
-        @IntegrasjonFeil(feilkode = "FP-615299", feilmelding = "%s ugyldig input", logLevel = LogLevel.WARN)
-        Feil tjenesteUgyldigInput(String tjeneste, Exception exceptionMessage);
-
-        @TekniskFeil(feilkode = "FP-073523", feilmelding = "Teknisk feil i grensesnitt mot %s", logLevel = LogLevel.ERROR)
-        Feil tekniskFeil(String tjeneste, DatatypeConfigurationException årsak);
-
     }
 }

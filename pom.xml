@@ -30,10 +30,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<felles.version>3.0.91</felles.version>
+		<felles.version>3.1.11</felles.version>
 		<prosesstask.version>2.5.15</prosesstask.version>
 
-		<kontrakter.version>5.1_20200117132228_47cdf2f</kontrakter.version>
+		<kontrakter.version>5.2.2</kontrakter.version>
 
 		<tjenestespesifikasjoner.version>1.2020.01.27-14.53-7065a2d75840</tjenestespesifikasjoner.version>
 
@@ -41,7 +41,6 @@
 		<swagger.version>2.1.7</swagger.version>
 		<kafka.version>2.7.0</kafka.version>
 		<resteasy.version>4.6.0.Final</resteasy.version>
-		<mockito.version>3.8.0</mockito.version>
 	</properties>
 
 	<prerequisites>
@@ -168,32 +167,7 @@
 			</dependency>
 			<dependency>
 				<groupId>no.nav.tjenestespesifikasjoner</groupId>
-				<artifactId>nav-infotrygdSak-v1-tjenestespesifikasjon</artifactId>
-				<version>${tjenestespesifikasjoner.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.tjenestespesifikasjoner</groupId>
-				<artifactId>nav-infotrygdBeregningsgrunnlag-v1-tjenestespesifikasjon</artifactId>
-				<version>${tjenestespesifikasjoner.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.tjenestespesifikasjoner</groupId>
 				<artifactId>nav-meldekortUtbetalingsgrunnlag-v1-tjenestespesifikasjon</artifactId>
-				<version>${tjenestespesifikasjoner.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.tjenestespesifikasjoner</groupId>
-				<artifactId>nav-arbeidsforhold-v3-tjenestespesifikasjon</artifactId>
-				<version>${tjenestespesifikasjoner.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.tjenestespesifikasjoner</groupId>
-				<artifactId>nav-fim-organisasjon-v5-tjenestespesifikasjon</artifactId>
-				<version>${tjenestespesifikasjoner.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.tjenestespesifikasjoner</groupId>
-				<artifactId>nav-fim-organisasjon-v4-tjenestespesifikasjon</artifactId>
 				<version>${tjenestespesifikasjoner.version}</version>
 			</dependency>
 
@@ -254,18 +228,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-api</artifactId>
-				<version>5.7.1</version>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter-params</artifactId>
 				<version>5.7.1</version>
-			</dependency>
-			<dependency>
-				<groupId>org.mockito</groupId>
-				<artifactId>mockito-junit-jupiter</artifactId>
-				<version>${mockito.version}</version>
 			</dependency>
 
 			<dependency>
@@ -286,12 +250,6 @@
 				<version>2.3.3</version>
 			</dependency>
 
-			<dependency>
-				<!-- Transitive avhengighet resolution for å sikre bestemt versjon -->
-				<groupId>joda-time</groupId>
-				<artifactId>joda-time</artifactId>
-				<version>2.10.10</version>
-			</dependency>
 			<dependency>
 				<!-- Transitive avhengighet resolution for å sikre bestemt versjon -->
 				<groupId>org.owasp.encoder</groupId>
@@ -325,12 +283,6 @@
 				<groupId>org.hibernate.validator</groupId>
 				<artifactId>hibernate-validator</artifactId>
 				<version>6.1.7.Final</version>
-			</dependency>
-			<dependency>
-				<!-- velger en transitiv avhengighet - felles ikke enig med seg selv -->
-				<groupId>jakarta.xml.bind</groupId>
-				<artifactId>jakarta.xml.bind-api</artifactId>
-				<version>2.3.3</version>
 			</dependency>
 
 			<!-- Følgende kan fjernes når fpfelles får jaxws-rt istd håndkodede versjoner

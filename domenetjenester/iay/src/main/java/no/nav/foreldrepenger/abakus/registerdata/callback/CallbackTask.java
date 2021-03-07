@@ -19,7 +19,7 @@ import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.TaskConstants;
-import no.nav.foreldrepenger.abakus.registerdata.InnhentingFeil;
+import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
@@ -66,7 +66,7 @@ public class CallbackTask implements ProsessTaskHandler {
         try {
             uri = new URI(callbackUrl);
         } catch (URISyntaxException e) {
-            throw InnhentingFeil.FACTORY.ugyldigCallbackUrl(callbackUrl).toException();
+            throw new TekniskException("FP-349977", String.format("Ugyldig callback url ved callback etter registerinnhenting: %s", callbackUrl));
         }
         String post = restClient.post(uri, callbackDto);
 

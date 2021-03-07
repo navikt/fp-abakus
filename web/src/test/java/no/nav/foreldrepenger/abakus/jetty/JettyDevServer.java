@@ -26,7 +26,7 @@ import no.nav.vedtak.util.env.Cluster;
 
 public class JettyDevServer extends JettyServer {
     private static final Logger log = LoggerFactory.getLogger(JettyDevServer.class);
-    
+
     /**
      * @see https://docs.oracle.com/en/java/javase/11/security/java-secure-socket-extension-jsse-reference-guide.html
      */
@@ -107,7 +107,7 @@ public class JettyDevServer extends JettyServer {
         System.setProperty("defaultDS.url", konfig.getUrl());
         System.setProperty("defaultDS.username", konfig.getUser()); // benyttes kun hvis vault.enable=false
         System.setProperty("defaultDS.password", konfig.getPassword()); // benyttes kun hvis vault.enable=false
-        
+
         super.bootStrap();
     }
 
@@ -131,7 +131,7 @@ public class JettyDevServer extends JettyServer {
     protected List<Connector> createConnectors(AppKonfigurasjon appKonfigurasjon, Server server) {
         List<Connector> connectors = super.createConnectors(appKonfigurasjon, server);
 
-        SslContextFactory sslContextFactory = new SslContextFactory.Server();
+        var sslContextFactory = new SslContextFactory.Server();
         sslContextFactory.setKeyStorePath(System.getProperty(KEYSTORE_PATH_PROP));
         sslContextFactory.setKeyStorePassword(System.getProperty(KEYSTORE_PASSW_PROP));
         sslContextFactory.setKeyManagerPassword(System.getProperty(KEYSTORE_PASSW_PROP));

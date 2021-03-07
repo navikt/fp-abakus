@@ -39,6 +39,7 @@ import no.nav.foreldrepenger.abakus.kobling.repository.KoblingRepository;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 
 @ApplicationScoped
@@ -59,7 +60,9 @@ public class InntektArbeidYtelseRepository {
 
     public InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForBehandling(KoblingReferanse koblingReferanse) {
         Optional<InntektArbeidYtelseGrunnlag> grunnlag = getAktivtInntektArbeidGrunnlag(koblingReferanse);
-        return grunnlag.orElseThrow(() -> InntektArbeidYtelseFeil.FACTORY.fantIkkeForventetGrunnlagPåBehandling(koblingReferanse).toException());
+        return grunnlag.orElseThrow(() ->
+            new TekniskException("FP-731232", String.format("Finner ikke InntektArbeidYtelse grunnlag for kobling %s", koblingReferanse)));
+
     }
 
     public Optional<InntektArbeidYtelseAggregat> hentIAYAggregatFor(KoblingReferanse koblingReferanse, UUID eksternReferanse) {
@@ -249,7 +252,7 @@ public class InntektArbeidYtelseRepository {
             final InntektArbeidYtelseGrunnlag aggregat1 = aggregat.get();
             return InntektArbeidYtelseAggregatBuilder.builderFor(hentRiktigVersjon(versjonType, aggregat1), angittReferanse, opprettetTidspunkt, versjonType);
         }
-        throw InntektArbeidYtelseFeil.FACTORY.aggregatKanIkkeVæreNull().toException();
+        throw new TekniskException("FP-512369", "Aggregat kan ikke være null ved opprettelse av builder");
     }
 
     public void lagre(KoblingReferanse koblingReferanse, InntektArbeidYtelseAggregatBuilder builder) {

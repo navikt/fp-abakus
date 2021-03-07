@@ -10,14 +10,10 @@ import org.jboss.resteasy.spi.ApplicationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import no.nav.vedtak.exception.FunksjonellException;
+import no.nav.vedtak.exception.ManglerTilgangException;
+import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.exception.VLException;
-import no.nav.vedtak.feil.Feil;
-import no.nav.vedtak.feil.FeilFactory;
-import no.nav.vedtak.feil.LogLevel;
-import no.nav.vedtak.feil.deklarasjon.DeklarerteFeil;
-import no.nav.vedtak.feil.deklarasjon.FunksjonellFeil;
-import no.nav.vedtak.feil.deklarasjon.ManglerTilgangFeil;
-import no.nav.vedtak.feil.deklarasjon.TekniskFeil;
 
 @SuppressWarnings("resource")
 public class GeneralRestExceptionMapperTest {
@@ -40,7 +36,7 @@ public class GeneralRestExceptionMapperTest {
         assertThat(response.getEntity()).isInstanceOf(FeilDto.class);
         FeilDto feilDto = (FeilDto) response.getEntity();
 
-        assertThat(feilDto.getFeilmelding()).isEqualTo("Det oppstod en valideringsfeil på felt [Et feltnavn]. Vennligst kontroller at alle feltverdier er korrekte.");
+        assertThat(feilDto.getFeilmelding()).contains("Det oppstod en valideringsfeil på felt [Et feltnavn]. Vennligst kontroller at alle feltverdier er korrekte.");
         assertThat(feilDto.getFeltFeil()).hasSize(1);
         assertThat(feilDto.getFeltFeil().iterator().next()).isEqualTo(feltFeilDto);
     }
@@ -56,30 +52,30 @@ public class GeneralRestExceptionMapperTest {
         assertThat(response.getEntity()).isInstanceOf(FeilDto.class);
         FeilDto feilDto = (FeilDto) response.getEntity();
 
-        assertThat(feilDto.getFeilmelding()).isEqualTo("Det oppstod en valideringsfeil på felt [feltnavn]. Vennligst kontroller at alle feltverdier er korrekte.");
+        assertThat(feilDto.getFeilmelding()).contains("Det oppstod en valideringsfeil på felt [feltnavn]. Vennligst kontroller at alle feltverdier er korrekte.");
         assertThat(feilDto.getFeltFeil()).hasSize(1);
         assertThat(feilDto.getFeltFeil().iterator().next()).isEqualTo(feltFeilDto);
     }
 
     @Test
     public void skalMappeManglerTilgangFeil() {
-        Feil manglerTilgangFeil = TestFeil.FACTORY.manglerTilgangFeil();
+        var manglerTilgangFeil = TestFeil.manglerTilgangFeil();
 
-        Response response = generalRestExceptionMapper.toResponse(new ApplicationException(manglerTilgangFeil.toException()));
+        Response response = generalRestExceptionMapper.toResponse(new ApplicationException(manglerTilgangFeil));
 
         assertThat(response.getStatus()).isEqualTo(403);
         assertThat(response.getEntity()).isInstanceOf(FeilDto.class);
         FeilDto feilDto = (FeilDto) response.getEntity();
 
         assertThat(feilDto.getType()).isEqualTo(FeilType.MANGLER_TILGANG_FEIL);
-        assertThat(feilDto.getFeilmelding()).isEqualTo("ManglerTilgangFeilmeldingKode");
+        assertThat(feilDto.getFeilmelding()).contains("ManglerTilgangFeilmeldingKode");
     }
 
     @Test
     public void skalMappeFunksjonellFeil() {
-        Feil funksjonellFeil = TestFeil.FACTORY.funksjonellFeil();
+        var funksjonellFeil = TestFeil.funksjonellFeil();
 
-        Response response = generalRestExceptionMapper.toResponse(new ApplicationException(funksjonellFeil.toException()));
+        Response response = generalRestExceptionMapper.toResponse(new ApplicationException(funksjonellFeil));
 
         assertThat(response.getEntity()).isInstanceOf(FeilDto.class);
         FeilDto feilDto = (FeilDto) response.getEntity();
@@ -91,7 +87,7 @@ public class GeneralRestExceptionMapperTest {
 
     @Test
     public void skalMappeVLException() {
-        VLException vlException = TestFeil.FACTORY.tekniskFeil().toException();
+        VLException vlException = TestFeil.tekniskFeil();
 
         Response response = generalRestExceptionMapper.toResponse(new ApplicationException(vlException));
 
@@ -116,16 +112,18 @@ public class GeneralRestExceptionMapperTest {
         assertThat(feilDto.getFeilmelding()).contains(feilmelding);
     }
 
-    interface TestFeil extends DeklarerteFeil {
-        TestFeil FACTORY = FeilFactory.create(TestFeil.class); // NOSONAR ok med konstant i interface her
+    private static class TestFeil {
 
-        @FunksjonellFeil(feilkode = "FUNK_FEIL", feilmelding = "en funksjonell feilmelding", løsningsforslag = "et løsningsforslag", logLevel = LogLevel.WARN)
-        Feil funksjonellFeil();
+        static FunksjonellException funksjonellFeil() {
+            return new FunksjonellException("FUNK_FEIL", "en funksjonell feilmelding", "et løsningsforslag");
+        }
 
-        @TekniskFeil(feilkode = "TEK_FEIL", feilmelding = "en teknisk feilmelding", logLevel = LogLevel.WARN)
-        Feil tekniskFeil();
+        static TekniskException tekniskFeil() {
+            return new TekniskException("TEK_FEIL", "en teknisk feilmelding");
+        }
 
-        @ManglerTilgangFeil(feilkode = "MANGLER_TILGANG_FEIL", feilmelding = "ManglerTilgangFeilmeldingKode", logLevel = LogLevel.WARN)
-        Feil manglerTilgangFeil();
+        static ManglerTilgangException manglerTilgangFeil() {
+            return new ManglerTilgangException("MANGLER_TILGANG_FEIL","ManglerTilgangFeilmeldingKode");
+        }
     }
 }

@@ -256,6 +256,10 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
         return avtale.getPeriode().getTomDato() != null && CUTOFF_FRILANS_AAREG.isAfter(avtale.getPeriode().getTomDato());
     }
 
+    void tilbakestillAvtalerInklusiveInntektFrilans() {
+        aktivitetsAvtale.clear();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {

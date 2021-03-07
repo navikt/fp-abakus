@@ -20,6 +20,7 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.rest.Or
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.rest.OrganisasjonRestKlient;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.rest.OrganisasjonstypeEReg;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
+import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.util.LRUCache;
 
 
@@ -92,8 +93,9 @@ public class VirksomhetTjeneste {
             LOGGER.info("ABAKUS EREG fant {} unik virksomhet for juridisk {}", unikVirksomhetForJuridiskEnhet.isPresent() ? "en" : "ikke",  getIdentifikatorString(orgNummer));
             return unikVirksomhetForJuridiskEnhet.orElse(virksomhet);
         }
-        if (OrganisasjonType.ORGLEDD.equals(virksomhet.getOrganisasjonstype()))
-            throw OrganisasjonTjenesteFeil.FACTORY.organisasjonErOrgledd(TJENESTE).toException();
+        if (OrganisasjonType.ORGLEDD.equals(virksomhet.getOrganisasjonstype())) {
+            throw new TekniskException("FP-36379", "Organisasjon er Orgledd");
+        }
         return virksomhet;
     }
 
