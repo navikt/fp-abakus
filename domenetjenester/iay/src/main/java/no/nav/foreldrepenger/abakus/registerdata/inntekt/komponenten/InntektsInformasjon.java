@@ -14,7 +14,7 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinnt
 public class InntektsInformasjon {
 
     private List<Månedsinntekt> månedsinntekter;
-    private List<FrilansArbeidsforhold> frilansArbeidsforhold;
+    private List<FrilansArbeidsforhold> frilansArbeidsforhold = new ArrayList<>();
     private InntektskildeType kilde;
 
     public InntektsInformasjon(List<Månedsinntekt> månedsinntekter, List<FrilansArbeidsforhold> frilansArbeidsforhold, InntektskildeType kilde) {

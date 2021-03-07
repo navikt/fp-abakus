@@ -17,7 +17,7 @@ import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.vedtak.feil.Feil;
+import no.nav.vedtak.exception.VLException;
 
 public class ConstraintViolationMapper implements ExceptionMapper<ConstraintViolationException> {
 
@@ -32,17 +32,17 @@ public class ConstraintViolationMapper implements ExceptionMapper<ConstraintViol
             String feltNavn = getFeltNavn(constraintViolation.getPropertyPath());
             feilene.add(new FeltFeilDto(feltNavn, constraintViolation.getMessage(), null));
         }
-        Feil feil;
+        VLException feil;
         if (feilene.isEmpty()) {
-            feil = FeltValideringFeil.FACTORY.feilUnderValideringAvContraints(exception);
+            feil = FeltValideringFeil.feilUnderValideringAvContraints(exception);
         } else {
             List<String> feltNavn = feilene.stream().map(FeltFeilDto::toString).collect(Collectors.toList());
-            feil = FeltValideringFeil.FACTORY.feltverdiKanIkkeValideres(feltNavn);
+            feil = FeltValideringFeil.feltverdiKanIkkeValideres(feltNavn);
         }
-        feil.log(log);
+        log.warn(feil.getMessage());
         return Response
             .status(Response.Status.BAD_REQUEST)
-            .entity(new FeilDto(feil.getFeilmelding(), feilene))
+            .entity(new FeilDto(feil.getMessage(), feilene))
             .type(MediaType.APPLICATION_JSON)
             .build();
     }

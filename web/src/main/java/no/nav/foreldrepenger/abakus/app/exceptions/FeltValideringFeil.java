@@ -4,28 +4,19 @@ import java.util.List;
 
 import javax.validation.ConstraintViolationException;
 
-import no.nav.vedtak.feil.Feil;
-import no.nav.vedtak.feil.FeilFactory;
-import no.nav.vedtak.feil.LogLevel;
-import no.nav.vedtak.feil.deklarasjon.DeklarerteFeil;
-import no.nav.vedtak.feil.deklarasjon.FunksjonellFeil;
-import no.nav.vedtak.feil.deklarasjon.TekniskFeil;
+import no.nav.vedtak.exception.FunksjonellException;
+import no.nav.vedtak.exception.TekniskException;
 
-interface FeltValideringFeil extends DeklarerteFeil {
+class FeltValideringFeil  {
 
-    FeltValideringFeil FACTORY = FeilFactory.create(FeltValideringFeil.class);
+    static FunksjonellException feltverdiKanIkkeValideres(List<String> feltnavn) {
+        return new FunksjonellException("FP-328673",
+            String.format("Det oppstod en valideringsfeil på felt %s. Vennligst kontroller at alle feltverdier er korrekte.", feltnavn),
+            "Kontroller at alle feltverdier er korrekte");
+    }
 
-    @FunksjonellFeil(feilkode = "FP-328673",
-            feilmelding = "Det oppstod en valideringsfeil på felt %s. Vennligst kontroller at alle feltverdier er korrekte.",
-            løsningsforslag = "Kontroller at alle feltverdier er korrekte", logLevel = LogLevel.WARN)
-    Feil feltverdiKanIkkeValideres(List<String> feltnavn);
+    static TekniskException feilUnderValideringAvContraints(ConstraintViolationException feltnavn) {
+        return new TekniskException("FP-232342", "Det oppsto en teknisk feil under validering av contraints.", feltnavn);
+    }
 
-    @TekniskFeil(feilkode = "FP-232342",
-            feilmelding = "Det oppsto en teknisk feil under validering av contraints.", logLevel = LogLevel.WARN)
-    Feil feilUnderValideringAvContraints(ConstraintViolationException feltnavn);
-
-
-    @TekniskFeil(feilkode = "FP-322345",
-            feilmelding = "Det oppstod en serverfeil: Validering er feilkonfigurert.", logLevel = LogLevel.ERROR)
-    Feil feilIOppsettAvFeltvalidering();
 }

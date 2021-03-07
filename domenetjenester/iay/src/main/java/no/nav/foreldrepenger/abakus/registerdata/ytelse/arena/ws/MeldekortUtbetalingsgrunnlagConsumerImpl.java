@@ -8,10 +8,9 @@ import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.binding.FinnMe
 import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.binding.MeldekortUtbetalingsgrunnlagV1;
 import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.meldinger.FinnMeldekortUtbetalingsgrunnlagListeRequest;
 import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.meldinger.FinnMeldekortUtbetalingsgrunnlagListeResponse;
-import no.nav.vedtak.felles.integrasjon.felles.ws.SoapWebServiceFeil;
+import no.nav.vedtak.exception.IntegrasjonException;
 
 public class MeldekortUtbetalingsgrunnlagConsumerImpl implements MeldekortUtbetalingsgrunnlagConsumer {
-    public static final String SERVICE_IDENTIFIER = "MeldekortUtbetalingsgrunnlagV1";
 
     private MeldekortUtbetalingsgrunnlagV1 port;
 
@@ -24,7 +23,7 @@ public class MeldekortUtbetalingsgrunnlagConsumerImpl implements MeldekortUtbeta
         try {
             return port.finnMeldekortUtbetalingsgrunnlagListe(request);
         } catch (SOAPFaultException e) { // NOSONAR
-            throw SoapWebServiceFeil.FACTORY.soapFaultIwebserviceKall(SERVICE_IDENTIFIER, e).toException();
+            throw new IntegrasjonException("F-942048", "SOAP tjenesten [ MeldekortUtbetalingsgrunnlagV1 ] returnerte en SOAP Fault:", e);
         }
     }
 }

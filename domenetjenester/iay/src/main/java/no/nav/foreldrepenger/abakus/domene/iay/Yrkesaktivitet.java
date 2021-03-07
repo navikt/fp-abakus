@@ -232,7 +232,7 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
     }
 
     void tilbakestillAvtaler() {
-        if (skalBeholdeLegacyAvtaler()) {
+        if (erYrkesaktivitetMedLegacyInnhold()) {
             this.aktivitetsAvtale = aktivitetsAvtale.stream()
                 .filter(this::erLegacyAktivitetsAvtale)
                 .collect(Collectors.toSet());
@@ -245,15 +245,15 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
      * Her legger man inn data som er innhentet tidligere, men som ikke blir reinnhentet etter sanering av integrasjon eller endring av logikk
      * For Yrkesaktivitet gjelder dette frilansaktiviteter innhentet fra Inntektskomponenten
      */
-    private static final LocalDate CUTOFF_FRILANS_AAREG = LocalDate.of(2020,1,1);
+    static final LocalDate CUTOFF_FRILANS_AAREG = LocalDate.of(2020,1,1);
 
-    private boolean skalBeholdeLegacyAvtaler() {
-        return ArbeidType.FRILANSER_OPPDRAGSTAKER_MED_MER.equals(this.arbeidType);
+    boolean erYrkesaktivitetMedLegacyInnhold() {
+        return ArbeidType.FRILANSER_OPPDRAGSTAKER_MED_MER.equals(arbeidType)
+            && aktivitetsAvtale.stream().anyMatch(this::erLegacyAktivitetsAvtale);
     }
 
     private boolean erLegacyAktivitetsAvtale(AktivitetsAvtale avtale) {
-        return ArbeidType.FRILANSER_OPPDRAGSTAKER_MED_MER.equals(this.arbeidType)
-            && avtale.getPeriode().getTomDato() != null && avtale.getPeriode().getTomDato().isBefore(CUTOFF_FRILANS_AAREG);
+        return avtale.getPeriode().getTomDato() != null && CUTOFF_FRILANS_AAREG.isAfter(avtale.getPeriode().getTomDato());
     }
 
     void tilbakestillAvtalerInklusiveInntektFrilans() {

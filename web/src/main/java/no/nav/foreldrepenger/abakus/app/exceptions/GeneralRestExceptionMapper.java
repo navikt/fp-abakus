@@ -15,10 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import no.nav.vedtak.exception.FunksjonellException;
 import no.nav.vedtak.exception.ManglerTilgangException;
 import no.nav.vedtak.exception.VLException;
-import no.nav.vedtak.feil.Feil;
-import no.nav.vedtak.feil.FunksjonellFeil;
 import no.nav.vedtak.felles.jpa.TomtResultatException;
 import no.nav.vedtak.log.mdc.MDCOperations;
 import no.nav.vedtak.log.util.LoggerUtils;
@@ -65,27 +64,26 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationEx
         return Response
             .status(Response.Status.BAD_REQUEST)
             .entity(new FeilDto(
-                FeltValideringFeil.FACTORY.feltverdiKanIkkeValideres(feltNavn).getFeilmelding(),
+                FeltValideringFeil.feltverdiKanIkkeValideres(feltNavn).getMessage(),
                 valideringsfeil.getFeltFeil()))
             .type(MediaType.APPLICATION_JSON)
             .build();
     }
 
     private Response handleVLException(VLException vlException, String callId) {
-        Feil feil = vlException.getFeil();
         if (vlException instanceof ManglerTilgangException) {
-            return ikkeTilgang(feil);
-        } else if (FRITEKST_TOM_FEIL.equals(feil.getKode())) {
+            return ikkeTilgang(vlException);
+        } else if (FRITEKST_TOM_FEIL.equals(vlException.getKode())) {
             return handleValideringsfeil(new Valideringsfeil(Collections.singleton(new FeltFeilDto("fritekst",
-                feil.getKode() + " " + feil.getFeilmelding()))));
-        } else if (BEHANDLING_ENDRET_FEIL.equals(feil.getKode())) {
-            return behandlingEndret(feil);
+                vlException.getMessage()))));
+        } else if (BEHANDLING_ENDRET_FEIL.equals(vlException.getKode())) {
+            return behandlingEndret(vlException);
         } else {
-            return serverError(callId, feil);
+            return serverError(callId, vlException);
         }
     }
 
-    private Response serverError(String callId, Feil feil) {
+    private Response serverError(String callId, VLException feil) {
         String feilmelding = getVLExceptionFeilmelding(callId, feil);
         FeilType feilType = FeilType.GENERELL_FEIL;
         return Response.serverError()
@@ -94,8 +92,8 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationEx
             .build();
     }
 
-    private Response ikkeTilgang(Feil feil) {
-        String feilmelding = feil.getFeilmelding();
+    private Response ikkeTilgang(VLException feil) {
+        String feilmelding = feil.getMessage();
         FeilType feilType = FeilType.MANGLER_TILGANG_FEIL;
         return Response.status(Response.Status.FORBIDDEN)
             .entity(new FeilDto(feilType, feilmelding))
@@ -103,8 +101,8 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationEx
             .build();
     }
 
-    private Response behandlingEndret(Feil feil) {
-        String feilmelding = feil.getFeilmelding();
+    private Response behandlingEndret(VLException feil) {
+        String feilmelding = feil.getMessage();
         FeilType feilType = FeilType.BEHANDLING_ENDRET_FEIL;
         return Response.status(Response.Status.CONFLICT)
             .entity(new FeilDto(feilType, feilmelding))
@@ -112,10 +110,10 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationEx
             .build();
     }
 
-    private String getVLExceptionFeilmelding(String callId, Feil feil) {
-        String feilbeskrivelse = feil.getKode() + ": " + feil.getFeilmelding(); //$NON-NLS-1$
-        if (feil instanceof FunksjonellFeil) {
-            String løsningsforslag = ((FunksjonellFeil) feil).getLøsningsforslag();
+    private String getVLExceptionFeilmelding(String callId, VLException feil) {
+        String feilbeskrivelse = feil.getMessage(); //$NON-NLS-1$
+        if (feil instanceof FunksjonellException) {
+            String løsningsforslag = ((FunksjonellException) feil).getLøsningsforslag();
             return "Det oppstod en feil: " //$NON-NLS-1$
                 + avsluttMedPunktum(feilbeskrivelse)
                 + avsluttMedPunktum(løsningsforslag)
@@ -141,7 +139,7 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationEx
 
     private void loggTilApplikasjonslogg(Throwable cause) {
         if (cause instanceof VLException) {
-            ((VLException) cause).log(LOGGER);
+            LOGGER.warn(cause.getMessage(), cause);
         } else {
             String message = cause.getMessage() != null ? LoggerUtils.removeLineBreaks(cause.getMessage()) : "";
             LOGGER.error("Fikk uventet feil:" + message, cause); //NOSONAR //$NON-NLS-1$

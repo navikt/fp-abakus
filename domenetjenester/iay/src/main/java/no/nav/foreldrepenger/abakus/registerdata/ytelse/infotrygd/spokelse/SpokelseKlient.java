@@ -13,6 +13,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.integrasjon.rest.OAuth2RestClient;
 import no.nav.vedtak.konfig.KonfigVerdi;
 
@@ -61,7 +62,7 @@ public class SpokelseKlient {
             return Arrays.asList(grunnlag);
         } catch (Exception e) {
             LOG.error("abakus spokelse feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
-            throw SpokelseFeil.FACTORY.feilfratjeneste(uriString).toException();
+            throw new TekniskException( "FP-180126", String.format("SPokelse %s gir feil, ta opp med team sykepenger.", uriString), e);
         }
     }
 

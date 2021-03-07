@@ -34,6 +34,8 @@ import no.nav.tjenester.aordningen.inntektsinformasjon.request.HentInntektListeB
 import no.nav.tjenester.aordningen.inntektsinformasjon.response.HentInntektListeBolkResponse;
 import no.nav.tjenester.aordningen.inntektsinformasjon.tilleggsinformasjondetaljer.Etterbetalingsperiode;
 import no.nav.tjenester.aordningen.inntektsinformasjon.tilleggsinformasjondetaljer.TilleggsinformasjonDetaljerType;
+import no.nav.vedtak.exception.IntegrasjonException;
+import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
 import no.nav.vedtak.konfig.KonfigVerdi;
 
@@ -76,7 +78,8 @@ public class InntektTjeneste {
         try {
             response = oidcRestClient.post(endpoint, request, HentInntektListeBolkResponse.class);
         } catch (RuntimeException e) {
-            throw InntektFeil.FACTORY.feilVedKallTilInntekt(e).toException();
+            throw new IntegrasjonException("FP-824246",
+                "Feil ved kall til inntektstjenesten. Meld til #team_registre og #produksjonshendelser hvis dette skjer over lengre tidsperiode.", e);
         }
         return oversettResponse(response, kilde, ytelse);
 
@@ -108,7 +111,8 @@ public class InntektTjeneste {
 
     private InntektsInformasjon oversettResponse(HentInntektListeBolkResponse response, InntektskildeType kilde, YtelseType ytelse) {
         if (response.getSikkerhetsavvikListe() != null && !response.getSikkerhetsavvikListe().isEmpty()) {
-            throw InntektFeil.FACTORY.fikkSikkerhetsavvikFraInntekt(byggSikkerhetsavvikString(response)).toException();
+            throw new IntegrasjonException("FP-535194",
+                String.format("Fikk følgende sikkerhetsavvik ved kall til inntektstjenesten: %s.", byggSikkerhetsavvikString(response)));
         }
 
         List<Månedsinntekt> månedsinntekter = new ArrayList<>();
@@ -120,7 +124,9 @@ public class InntektTjeneste {
                 if (arbeidsInntektIdent.getArbeidsInntektMaaned() != null) {
                     for (ArbeidsInntektMaaned arbeidsInntektMaaned : arbeidsInntektIdent.getArbeidsInntektMaaned()) {
                         ArbeidsInntektInformasjon arbeidsInntektInformasjon = oversettInntekter(månedsinntekter, arbeidsInntektMaaned, kilde);
-                        oversettArbeidsforhold(arbeidsforhold, arbeidsInntektInformasjon, ytelse);
+                        if (YtelseType.FRISINN.equals(ytelse)) {
+                            oversettArbeidsforhold(arbeidsforhold, arbeidsInntektInformasjon, ytelse);
+                        }
                     }
                 }
             }
@@ -219,8 +225,9 @@ public class InntektTjeneste {
             månedsinntekt.medArbeidsgiver(inntekt.getVirksomhet().getIdentifikator()); // OK med NPE hvis inntekt.getArbeidsgiver() er null
             månedsinntekt.medArbeidsforholdRef(inntekt.getArbeidsforholdREF());
         } else {
-            throw InntektFeil.FACTORY.kunneIkkeMappeResponse(inntekt.getVirksomhet().getIdentifikator(), String.valueOf(inntekt.getInntektType()))
-                .toException();
+            throw new TekniskException("FP-711674",
+                String.format("Kunne ikke mappe svar fra Inntektskomponenten: virksomhet=%s, inntektType=%s",
+                inntekt.getVirksomhet().getIdentifikator(), inntekt.getInntektType()));
         }
     }
 

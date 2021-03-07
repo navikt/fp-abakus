@@ -38,6 +38,7 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdY
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.util.env.Cluster;
 import no.nav.vedtak.util.env.Environment;
 
@@ -114,7 +115,7 @@ public class InnhentingSamletTjeneste {
     }
 
     public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> getArbeidsforholdFrilans(AktørId aktørId, PersonIdent ident, Interval opplysningsPeriode) {
-        return isProd ? arbeidsforholdTjeneste.finnArbeidsforholdFrilansForIdentIPerioden(ident, aktørId, opplysningsPeriode) : Map.of();
+        return arbeidsforholdTjeneste.finnArbeidsforholdFrilansForIdentIPerioden(ident, aktørId, opplysningsPeriode);
     }
 
     private boolean envUnstable() {
@@ -147,22 +148,30 @@ public class InnhentingSamletTjeneste {
         for (MeldekortUtbetalingsgrunnlagSak sak : saker) {
             if (sak.getKravMottattDato() == null) {
                 if (sak.getVedtakStatus() == null) {
-                    InnhentingFeil.FACTORY.ignorerArenaSakInfoLogg("vedtak", sak.getSaksnummer()).log(LOGGER);
+                    loggArenaIgnorert("vedtak", sak.getSaksnummer());
                 } else {
-                    InnhentingFeil.FACTORY.ignorerArenaSakInfoLogg("kravMottattDato", sak.getSaksnummer()).log(LOGGER);
+                    loggArenaIgnorert("kravMottattDato", sak.getSaksnummer());
                 }
             } else if (YtelseStatus.UNDER_BEHANDLING.equals(sak.getYtelseTilstand()) && sak.getMeldekortene().isEmpty()) {
-                InnhentingFeil.FACTORY.ignorerArenaSakInfoLogg("meldekort", sak.getSaksnummer()).log(LOGGER);
+                loggArenaIgnorert("meldekort", sak.getSaksnummer());
             } else if (sak.getVedtaksPeriodeFom() == null && sak.getMeldekortene().isEmpty()) {
-                InnhentingFeil.FACTORY.ignorerArenaSakInfoLogg("vedtaksDato", sak.getSaksnummer()).log(LOGGER);
+                loggArenaIgnorert("vedtaksDato", sak.getSaksnummer());
             } else if (sak.getVedtaksPeriodeTom() != null && sak.getVedtaksPeriodeTom().isBefore(sak.getVedtaksPeriodeFom())
                 && sak.getMeldekortene().isEmpty()) {
-                InnhentingFeil.FACTORY.ignorerArenaSakMedVedtakTomFørVedtakFom(sak.getSaksnummer()).log(LOGGER);
+                loggArenaTomFørFom(sak.getSaksnummer());
             } else {
                 filtrert.add(sak);
             }
         }
         return filtrert;
+    }
+
+    private void loggArenaIgnorert(String ignorert, Saksnummer saksnummer) {
+        LOGGER.info("FP-112843 Ignorerer Arena-sak uten {}, saksnummer: {}", ignorert, saksnummer);
+    }
+
+    private void loggArenaTomFørFom(Saksnummer saksnummer) {
+        LOGGER.info("FP-597341 Ignorerer Arena-sak med vedtakTom før vedtakFom, saksnummer: {}", saksnummer);
     }
 
 }

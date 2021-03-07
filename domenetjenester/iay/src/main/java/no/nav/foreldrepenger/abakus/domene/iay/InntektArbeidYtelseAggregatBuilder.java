@@ -255,6 +255,10 @@ public class InntektArbeidYtelseAggregatBuilder {
         public void tilbakestillYrkesaktiviteter() {
             kladd.tilbakestillYrkesaktiviteter();
         }
+
+        public void tilbakestillYrkesaktiviteterInklusiveInntektFrilans() {
+            kladd.tilbakestillYrkesaktiviteterInklusiveInntektFrilans();
+        }
     }
 
     public static class AktørInntektBuilder {
