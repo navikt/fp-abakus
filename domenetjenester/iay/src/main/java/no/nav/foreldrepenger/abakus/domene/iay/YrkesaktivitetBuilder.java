@@ -78,6 +78,11 @@ public class YrkesaktivitetBuilder {
         return this;
     }
 
+    public YrkesaktivitetBuilder tilbakestillAvtalerInklusiveInntektFrilans() {
+        kladd.tilbakestillAvtalerInklusiveInntektFrilans();
+        return this;
+    }
+
     public AktivitetsAvtaleBuilder getAktivitetsAvtaleBuilder() {
         return nyAktivitetsAvtaleBuilder();
     }

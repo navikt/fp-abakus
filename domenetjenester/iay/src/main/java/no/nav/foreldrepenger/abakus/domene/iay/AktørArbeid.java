@@ -86,7 +86,7 @@ public class AktørArbeid extends BaseEntitet implements IndexKey {
         this.aktørId = aktørId;
     }
 
-    /**
+    /** 
      * Alle yrkesaktiviteter (ufiltret ifht skjæringstidspunkt vurdering. )
      */
     public Collection<Yrkesaktivitet> hentAlleYrkesaktiviteter() {
@@ -177,8 +177,6 @@ public class AktørArbeid extends BaseEntitet implements IndexKey {
     }
 
     void tilbakestillYrkesaktiviteter() {
-        this.yrkesaktiviter = yrkesaktiviter.stream()
-            .filter(Yrkesaktivitet::erYrkesaktivitetMedLegacyInnhold)
-            .collect(Collectors.toSet());
+        this.yrkesaktiviter.clear();
     }
 }

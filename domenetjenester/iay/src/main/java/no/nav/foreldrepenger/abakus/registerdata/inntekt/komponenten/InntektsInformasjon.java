@@ -8,16 +8,19 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt.YtelseNøkkel;
 
 public class InntektsInformasjon {
 
     private List<Månedsinntekt> månedsinntekter;
+    private List<FrilansArbeidsforhold> frilansArbeidsforhold;
     private InntektskildeType kilde;
 
-    public InntektsInformasjon(List<Månedsinntekt> månedsinntekter, InntektskildeType kilde) {
+    public InntektsInformasjon(List<Månedsinntekt> månedsinntekter, List<FrilansArbeidsforhold> frilansArbeidsforhold, InntektskildeType kilde) {
         this.månedsinntekter = new ArrayList<>();
         this.månedsinntekter.addAll(månedsinntekter);
+        this.frilansArbeidsforhold = frilansArbeidsforhold;
         this.kilde = kilde;
     }
 
@@ -27,6 +30,10 @@ public class InntektsInformasjon {
 
     public void leggTilMånedsinntekter(List<Månedsinntekt> inntekter) {
         this.månedsinntekter.addAll(inntekter);
+    }
+
+    public Map<ArbeidsforholdIdentifikator, List<FrilansArbeidsforhold>> getFrilansArbeidsforhold() {
+        return frilansArbeidsforhold.stream().collect(Collectors.groupingBy(FrilansArbeidsforhold::getIdentifikator));
     }
 
     public List<Månedsinntekt> getMånedsinntekterUtenomYtelser() {
