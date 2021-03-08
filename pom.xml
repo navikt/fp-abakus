@@ -31,7 +31,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<felles.version>3.1.11</felles.version>
-		<prosesstask.version>2.5.15</prosesstask.version>
+		<prosesstask.version>2.5.16</prosesstask.version>
 
 		<kontrakter.version>5.2.2</kontrakter.version>
 
