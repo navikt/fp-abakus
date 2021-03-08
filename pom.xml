@@ -31,7 +31,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<felles.version>3.1.11</felles.version>
-		<prosesstask.version>2.5.15</prosesstask.version>
+		<prosesstask.version>2.5.16</prosesstask.version>
 
 		<kontrakter.version>5.2.2</kontrakter.version>
 
@@ -242,6 +242,11 @@
 				<artifactId>logback-syslog4j</artifactId>
 				<version>1.0.0</version>
 			</dependency>
+            <dependency>
+                <groupId>org.threeten</groupId>
+                <artifactId>threeten-extra</artifactId>
+                <version>1.5.0</version>
+            </dependency>
 
 			<!-- Java11 -->
 			<dependency>
@@ -249,6 +254,11 @@
 				<artifactId>jaxws-rt</artifactId>
 				<version>2.3.3</version>
 			</dependency>
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>jakarta.el</artifactId>
+                <version>3.0.3</version>
+            </dependency>
 
 			<dependency>
 				<!-- Transitive avhengighet resolution for å sikre bestemt versjon -->
