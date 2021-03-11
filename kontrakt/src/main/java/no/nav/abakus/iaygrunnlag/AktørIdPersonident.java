@@ -18,7 +18,7 @@ public class AktørIdPersonident extends PersonIdent {
     
     @JsonProperty(value = "ident", required = true)
     @NotNull
-    @Pattern(regexp = "^\\d{13}+$", message = "aktørId [${validatedValue}] har ikke gyldig verdi (13 siffer)")
+    @Pattern(regexp = "^\\d+$", message = "AktørId [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String ident;
 
     @JsonCreator
