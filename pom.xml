@@ -522,6 +522,15 @@
 		</plugins>
 	</build>
 
+    
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>GitHub Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/navikt/fp-abakus/</url>
+        </repository>
+    </repositories>
+    
 	<scm>
 		<connection>scm:git:https://github.com/navikt/fp-abakus.git</connection>
 		<developerConnection>scm:git:https://github.com/navikt/fp-abakus.git</developerConnection>
