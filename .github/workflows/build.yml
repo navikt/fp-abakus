@@ -67,7 +67,7 @@ jobs:
           DATASOURCE_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
       
       - name: Release Drafter
-        uses: release-drafter/release-drafter@v5.12.1
+        uses: release-drafter/release-drafter@v5.15.0
         if: success()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
