@@ -4,6 +4,6 @@ public final class TaskConstants {
     private TaskConstants() {
     }
 
-    public static String KOBLING_ID = "behandlingId";
-    public static String CALLBACK_URL = "callbackUrl";
+    public static final String KOBLING_ID = "behandlingId";
+    public static final String CALLBACK_URL = "callbackUrl";
 }
