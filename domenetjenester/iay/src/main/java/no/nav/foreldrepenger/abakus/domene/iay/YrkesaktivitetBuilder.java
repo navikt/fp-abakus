@@ -112,7 +112,7 @@ public class YrkesaktivitetBuilder {
         AktivitetsAvtaleBuilder oppdater = AktivitetsAvtaleBuilder.oppdater(kladd.getAlleAktivitetsAvtaler()
             .stream()
             .filter(aa -> aa.matcherPeriode(aktivitetsPeriode)
-                && (!kladd.erArbeidsforhold() || aa.erAnsettelsesPeriode() == erAnsettelsesperioden))
+                && (!ArbeidType.erRegisterType(kladd.getArbeidType()) || aa.erAnsettelsesPeriode() == erAnsettelsesperioden))
             .findFirst());
         oppdater.medPeriode(aktivitetsPeriode);
         return oppdater;
@@ -120,10 +120,6 @@ public class YrkesaktivitetBuilder {
 
     public void fjernPeriode(IntervallEntitet aktivitetsPeriode) {
         kladd.fjernPeriode(aktivitetsPeriode);
-    }
-
-    public YrkesaktivitetBuilder medArbeidType(String kode) {
-        return medArbeidType(ArbeidType.fraKode(kode));
     }
 
 }

@@ -2,12 +2,8 @@ package no.nav.foreldrepenger.abakus.felles.jpa;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-
-import org.threeten.extra.Interval;
 
 import no.nav.vedtak.konfig.Tid;
 
@@ -23,19 +19,10 @@ public abstract class AbstractIntervall implements Comparable<AbstractIntervall>
     public abstract LocalDate getTomDato();
 
 
-    public Interval tilIntervall() {
-        return getIntervall(getFomDato(), getTomDato());
-    }
-
-    private static Interval getIntervall(LocalDate fomDato, LocalDate tomDato) {
-        LocalDateTime døgnstart = TIDENES_ENDE.equals(tomDato) ? tomDato.atStartOfDay() : tomDato.atStartOfDay().plusDays(1);
-        return Interval.of(
-            fomDato.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant(),
-            døgnstart.atZone(ZoneId.systemDefault()).toInstant());
-    }
-
-    public boolean overlapper(AbstractIntervall periode) {
-        return tilIntervall().overlaps(getIntervall(periode.getFomDato(), periode.getTomDato()));
+    public boolean overlapper(AbstractIntervall other) {
+        boolean fomBeforeOrEqual = erEtterEllerLikPeriodestart(other.getTomDato());
+        boolean tomAfterOrEqual = erFørEllerLikPeriodeslutt(other.getFomDato());
+        return fomBeforeOrEqual && tomAfterOrEqual;
     }
 
     public boolean inkluderer(LocalDate dato) {

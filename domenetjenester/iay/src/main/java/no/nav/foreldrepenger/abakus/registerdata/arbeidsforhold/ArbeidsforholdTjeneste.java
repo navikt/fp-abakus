@@ -1,10 +1,7 @@
 package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold;
 
-import static no.nav.foreldrepenger.abakus.felles.jpa.IntervallUtil.byggIntervall;
-
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -15,8 +12,8 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.threeten.extra.Interval;
 
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AaregRestKlient;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.ArbeidsavtaleRS;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.ArbeidsforholdRS;
@@ -25,7 +22,6 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.PeriodeRS;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.PermisjonPermitteringRS;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-import no.nav.vedtak.konfig.Tid;
 
 @ApplicationScoped
 public class ArbeidsforholdTjeneste {
@@ -42,25 +38,25 @@ public class ArbeidsforholdTjeneste {
         this.aaregRestKlient = aaregRestKlient;
     }
 
-    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> finnArbeidsforholdForIdentIPerioden(PersonIdent ident, AktørId aktørId, Interval interval) {
+    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> finnArbeidsforholdForIdentIPerioden(PersonIdent ident, AktørId aktørId, IntervallEntitet interval) {
         // TODO: kall med aktørid når register har fikset ytelsesproblemer
         List<ArbeidsforholdRS> response = aaregRestKlient.finnArbeidsforholdForArbeidstaker(ident.getIdent(),
-            LocalDate.ofInstant(interval.getStart(), ZoneId.systemDefault()), LocalDate.ofInstant(interval.getEnd(), ZoneId.systemDefault()));
+            interval.getFomDato(), interval.getTomDato());
         return response.stream()
             .map(arbeidsforhold -> mapArbeidsforholdRSTilDto(arbeidsforhold, interval))
             .collect(Collectors.groupingBy(Arbeidsforhold::getIdentifikator));
     }
 
-    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> finnArbeidsforholdFrilansForIdentIPerioden(PersonIdent ident, AktørId aktørId, Interval interval) {
+    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> finnArbeidsforholdFrilansForIdentIPerioden(PersonIdent ident, AktørId aktørId, IntervallEntitet interval) {
         // TODO: kall med aktørid når register har fikset ytelsesproblemer
         List<ArbeidsforholdRS> response = aaregRestKlient.finnArbeidsforholdForFrilanser(ident.getIdent(),
-            LocalDate.ofInstant(interval.getStart(), ZoneId.systemDefault()), LocalDate.ofInstant(interval.getEnd(), ZoneId.systemDefault()));
+            interval.getFomDato(), interval.getTomDato());
         return response.stream()
             .map(arbeidsforhold -> mapArbeidsforholdRSTilDto(arbeidsforhold, interval))
             .collect(Collectors.groupingBy(Arbeidsforhold::getIdentifikator));
     }
 
-    private Arbeidsforhold mapArbeidsforholdRSTilDto(ArbeidsforholdRS arbeidsforhold, Interval intervall) {
+    private Arbeidsforhold mapArbeidsforholdRSTilDto(ArbeidsforholdRS arbeidsforhold, IntervallEntitet intervall) {
         Arbeidsforhold.Builder builder = new Arbeidsforhold.Builder()
             .medType(arbeidsforhold.getType());
 
@@ -127,10 +123,10 @@ public class ArbeidsforholdTjeneste {
         builder.medArbeidsavtaleFom(arbeidsavtaleFom);
         builder.medArbeidsavtaleTom(arbeidsavtaleTom);
 
-        Interval ansettelsesIntervall = byggIntervall(ansettelsesPeriode.getFom(), ansettelsesPeriode.getTom());
+        var ansettelseIntervall = ansettelsesPeriode.getTom() != null ? IntervallEntitet.fraOgMedTilOgMed(ansettelsesPeriode.getFom(), ansettelsesPeriode.getTom()) : IntervallEntitet.fraOgMed(ansettelsesPeriode.getFom());
 
-        if (!ansettelsesIntervall.contains(arbeidsavtaleFom.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant())) {
-            LOGGER.info("Arbeidsavtale fom={} ligger utenfor ansettelsesPeriode={}", arbeidsavtaleFom, ansettelsesIntervall);
+        if (!ansettelseIntervall.inkluderer(arbeidsavtaleFom)) {
+            LOGGER.info("Arbeidsavtale fom={} ligger utenfor ansettelsesPeriode={}", arbeidsavtaleFom, ansettelseIntervall);
         }
 
         if (arbeidsavtaleTom != null && arbeidsavtaleTom.isBefore(arbeidsavtaleFom)) {
@@ -161,9 +157,10 @@ public class ArbeidsforholdTjeneste {
             .build();
     }
 
-    private boolean overlapperMedIntervall(Arbeidsavtale av, Interval interval) {
-        final Interval interval1 = byggIntervall(av.getArbeidsavtaleFom(), av.getArbeidsavtaleTom() != null ? av.getArbeidsavtaleTom() : Tid.TIDENES_ENDE);
-        return interval.overlaps(interval1);
+    private boolean overlapperMedIntervall(Arbeidsavtale av, IntervallEntitet interval) {
+        final var interval1 = av.getArbeidsavtaleTom() == null ? IntervallEntitet.fraOgMed(av.getArbeidsavtaleFom()) :
+            IntervallEntitet.fraOgMedTilOgMed(av.getArbeidsavtaleFom(), av.getArbeidsavtaleTom());
+        return interval.overlapper(interval1);
     }
 
 

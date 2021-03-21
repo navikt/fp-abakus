@@ -1,9 +1,7 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,11 +14,11 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.threeten.extra.Interval;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonRepository;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonVedtak;
@@ -76,9 +74,9 @@ public class InnhentingSamletTjeneste {
         this.isProd = Cluster.PROD_FSS.equals(Environment.current().getCluster());
     }
 
-    public InntektsInformasjon getInntektsInformasjon(AktørId aktørId, Interval periode, InntektskildeType kilde, YtelseType ytelse) {
-        FinnInntektRequest.FinnInntektRequestBuilder builder = FinnInntektRequest.builder(YearMonth.from(LocalDateTime.ofInstant(periode.getStart(), ZoneId.systemDefault())),
-            YearMonth.from(LocalDateTime.ofInstant(periode.getEnd(), ZoneId.systemDefault())));
+    public InntektsInformasjon getInntektsInformasjon(AktørId aktørId, IntervallEntitet periode, InntektskildeType kilde, YtelseType ytelse) {
+        FinnInntektRequest.FinnInntektRequestBuilder builder = FinnInntektRequest.builder(YearMonth.from(periode.getFomDato()),
+            YearMonth.from(periode.getTomDato()));
 
         builder.medAktørId(aktørId.getId());
 
@@ -89,10 +87,9 @@ public class InnhentingSamletTjeneste {
         return LØNNSKOMP_FOR_YTELSER.contains(kobling.getYtelseType());
     }
 
-    public List<Månedsinntekt> getLønnskompensasjon(AktørId aktørId, Interval periode) {
+    public List<Månedsinntekt> getLønnskompensasjon(AktørId aktørId, IntervallEntitet periode) {
         List<Månedsinntekt> resultat = new ArrayList<>();
-        lønnskompensasjonRepository.hentLønnskompensasjonForIPeriode(aktørId, LocalDateTime.ofInstant(periode.getStart(),
-            ZoneId.systemDefault()).toLocalDate(), LocalDateTime.ofInstant(periode.getEnd(), ZoneId.systemDefault()).toLocalDate()).stream()
+        lønnskompensasjonRepository.hentLønnskompensasjonForIPeriode(aktørId, periode.getFomDato(), periode.getTomDato()).stream()
             .filter(lk -> lk.getBeløp().getVerdi().compareTo(BigDecimal.ZERO) > 0)
             .forEach(lk -> resultat.addAll(periodiserLønnskompensasjon(lk)));
         return resultat;
@@ -110,11 +107,11 @@ public class InnhentingSamletTjeneste {
             .collect(Collectors.toList());
     }
 
-    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> getArbeidsforhold(AktørId aktørId, PersonIdent ident, Interval opplysningsPeriode) {
+    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> getArbeidsforhold(AktørId aktørId, PersonIdent ident, IntervallEntitet opplysningsPeriode) {
         return arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident, aktørId, opplysningsPeriode);
     }
 
-    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> getArbeidsforholdFrilans(AktørId aktørId, PersonIdent ident, Interval opplysningsPeriode) {
+    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> getArbeidsforholdFrilans(AktørId aktørId, PersonIdent ident, IntervallEntitet opplysningsPeriode) {
         return arbeidsforholdTjeneste.finnArbeidsforholdFrilansForIdentIPerioden(ident, aktørId, opplysningsPeriode);
     }
 
@@ -122,24 +119,23 @@ public class InnhentingSamletTjeneste {
         return isDev;
     }
 
-    public List<InfotrygdYtelseGrunnlag> innhentInfotrygdGrunnlag(AktørId aktørId, PersonIdent ident, Interval periode) {
+    public List<InfotrygdYtelseGrunnlag> innhentInfotrygdGrunnlag(AktørId aktørId, PersonIdent ident, IntervallEntitet periode) {
         if (envUnstable()) {
             return innhentingInfotrygdTjeneste.getInfotrygdYtelserFailSoft(ident, periode);
         }
         return innhentingInfotrygdTjeneste.getInfotrygdYtelser(ident, periode);
     }
 
-    public List<InfotrygdYtelseGrunnlag> innhentSpokelseGrunnlag(AktørId aktørId, PersonIdent ident, @SuppressWarnings("unused") Interval periode) {
+    public List<InfotrygdYtelseGrunnlag> innhentSpokelseGrunnlag(AktørId aktørId, PersonIdent ident, @SuppressWarnings("unused") IntervallEntitet periode) {
         if (!isProd) {
             return Collections.emptyList();
         }
         return innhentingInfotrygdTjeneste.getSPøkelseYtelser(ident);
     }
 
-    public List<MeldekortUtbetalingsgrunnlagSak> hentYtelserTjenester(AktørId aktørId, Interval opplysningsPeriode) {
+    public List<MeldekortUtbetalingsgrunnlagSak> hentYtelserTjenester(AktørId aktørId, IntervallEntitet opplysningsPeriode) {
         List<MeldekortUtbetalingsgrunnlagSak> saker = meldekortTjeneste.hentMeldekortListe(aktørId,
-            LocalDateTime.ofInstant(opplysningsPeriode.getStart(), ZoneId.systemDefault()).toLocalDate(),
-            LocalDateTime.ofInstant(opplysningsPeriode.getEnd(), ZoneId.systemDefault()).toLocalDate());
+            opplysningsPeriode.getFomDato(), opplysningsPeriode.getTomDato());
         return filtrerYtelserTjenester(saker);
     }
 
