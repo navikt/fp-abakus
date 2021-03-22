@@ -55,6 +55,11 @@ public enum ArbeidType implements Kodeverdi {
         ArbeidType.FORENKLET_OPPGJØRSORDNING,
         ArbeidType.FRILANSER_OPPDRAGSTAKER_MED_MER);
 
+    private static final Set<ArbeidType> AA_REGISTER_ARBEID_TYPER = Set.of(
+        ArbeidType.ORDINÆRT_ARBEIDSFORHOLD,
+        ArbeidType.MARITIMT_ARBEIDSFORHOLD,
+        ArbeidType.FORENKLET_OPPGJØRSORDNING);
+
     public static final String KODEVERK = "ARBEID_TYPE";
 
     private static final Map<String, ArbeidType> KODER = new LinkedHashMap<>();
@@ -119,6 +124,10 @@ public enum ArbeidType implements Kodeverdi {
 
     public static boolean erRegisterType(ArbeidType type) {
         return AA_REGISTER_TYPER.contains(type);
+    }
+
+    public static boolean erRegisterArbeid(ArbeidType type) {
+        return AA_REGISTER_ARBEID_TYPER.contains(type);
     }
 
     @Override

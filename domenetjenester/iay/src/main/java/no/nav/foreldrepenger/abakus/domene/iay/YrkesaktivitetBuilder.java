@@ -118,6 +118,17 @@ public class YrkesaktivitetBuilder {
         return oppdater;
     }
 
+    // Bevarer logikken i tilfellet FRISINN
+    public AktivitetsAvtaleBuilder getAktivitetsAvtaleBuilderFrilansInntk(IntervallEntitet aktivitetsPeriode, boolean erAnsettelsesperioden) {
+        AktivitetsAvtaleBuilder oppdater = AktivitetsAvtaleBuilder.oppdater(kladd.getAlleAktivitetsAvtaler()
+            .stream()
+            .filter(aa -> aa.matcherPeriode(aktivitetsPeriode)
+                && (!ArbeidType.erRegisterArbeid(kladd.getArbeidType()) || aa.erAnsettelsesPeriode() == erAnsettelsesperioden))
+            .findFirst());
+        oppdater.medPeriode(aktivitetsPeriode);
+        return oppdater;
+    }
+
     public void fjernPeriode(IntervallEntitet aktivitetsPeriode) {
         kladd.fjernPeriode(aktivitetsPeriode);
     }

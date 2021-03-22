@@ -374,7 +374,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         } else {
             periode = IntervallEntitet.fraOgMedTilOgMed(frilansArbeidsforhold.getFom(), frilansArbeidsforhold.getTom());
         }
-        return yrkesaktivitetBuilder.getAktivitetsAvtaleBuilder(periode, true);
+        return yrkesaktivitetBuilder.getAktivitetsAvtaleBuilderFrilansInntk(periode, true);
     }
 
     private InntektBuilder byggInntekt(Map<YearMonth, List<MånedsbeløpOgSkatteOgAvgiftsregel>> inntekter,
