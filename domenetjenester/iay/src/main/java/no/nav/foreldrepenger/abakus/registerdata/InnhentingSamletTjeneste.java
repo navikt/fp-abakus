@@ -52,7 +52,6 @@ public class InnhentingSamletTjeneste {
     private InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste;
     private LønnskompensasjonRepository lønnskompensasjonRepository;
     private boolean isDev = Environment.current().isDev();
-    private boolean isProd = Environment.current().isProd();
     private boolean isLocal = Environment.current().isLocal();
 
     InnhentingSamletTjeneste() {
@@ -123,6 +122,9 @@ public class InnhentingSamletTjeneste {
     public List<InfotrygdYtelseGrunnlag> innhentSpokelseGrunnlag(AktørId aktørId, PersonIdent ident, @SuppressWarnings("unused") IntervallEntitet periode) {
         if (isLocal) {
             return Collections.emptyList();
+        }
+        if (isDev) {
+            return innhentingInfotrygdTjeneste.getSPøkelseYtelserFailSoft(ident);
         }
         return innhentingInfotrygdTjeneste.getSPøkelseYtelser(ident);
     }
