@@ -2,9 +2,7 @@ package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -17,13 +15,13 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.threeten.extra.Interval;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseAnvist;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseArbeid;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseGrunnlag;
@@ -85,16 +83,16 @@ public class InnhentingInfotrygdTjeneste {
         this.spokelseKlient = spokelseKlient;
     }
 
-    public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelser(PersonIdent ident, Interval periode) {
-        LocalDate innhentFom =  dato(periode.getStart());
-        List<Grunnlag> rest = infotrygdGrunnlag.hentAggregertGrunnlag(ident.getIdent(), innhentFom, dato(periode.getEnd()));
+    public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelser(PersonIdent ident, IntervallEntitet periode) {
+        LocalDate innhentFom =  periode.getFomDato();
+        List<Grunnlag> rest = infotrygdGrunnlag.hentAggregertGrunnlag(ident.getIdent(), innhentFom, periode.getTomDato());
 
         return mapTilInfotrygdYtelseGrunnlag(rest, innhentFom);
     }
 
-    public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelserFailSoft(PersonIdent ident, Interval periode) {
-        LocalDate innhentFom =  dato(periode.getStart());
-        List<Grunnlag> rest = infotrygdGrunnlag.hentAggregertGrunnlagFailSoft(ident.getIdent(), innhentFom, dato(periode.getEnd()));
+    public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelserFailSoft(PersonIdent ident, IntervallEntitet periode) {
+        LocalDate innhentFom =  periode.getFomDato();
+        List<Grunnlag> rest = infotrygdGrunnlag.hentAggregertGrunnlagFailSoft(ident.getIdent(), innhentFom, periode.getTomDato());
 
         return mapTilInfotrygdYtelseGrunnlag(rest, innhentFom);
     }
@@ -173,10 +171,6 @@ public class InnhentingInfotrygdTjeneste {
         BigDecimal inntekt= arbeidsforhold.getInntekt() != null ? new BigDecimal(arbeidsforhold.getInntekt()) : null;
         return new InfotrygdYtelseArbeid(arbeidsforhold.getOrgnr().getOrgnr(),
             inntekt, inntektPeriode, arbeidsforhold.getRefusjon());
-    }
-
-    private static LocalDate dato(Instant instant) {
-        return LocalDate.ofInstant(instant, ZoneId.systemDefault());
     }
 
     private Periode utledPeriode(LocalDate iverksatt, LocalDate opphoerFomDato, LocalDate registrert) {

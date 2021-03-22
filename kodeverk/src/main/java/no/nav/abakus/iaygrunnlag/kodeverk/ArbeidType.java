@@ -49,7 +49,13 @@ public enum ArbeidType implements Kodeverdi {
     UDEFINERT("-", "Ikke definert", null, false),
     ;
 
-    public static final Set<ArbeidType> AA_REGISTER_TYPER = Set.of(
+    private static final Set<ArbeidType> AA_REGISTER_TYPER = Set.of(
+        ArbeidType.ORDINÆRT_ARBEIDSFORHOLD,
+        ArbeidType.MARITIMT_ARBEIDSFORHOLD,
+        ArbeidType.FORENKLET_OPPGJØRSORDNING,
+        ArbeidType.FRILANSER_OPPDRAGSTAKER_MED_MER);
+
+    private static final Set<ArbeidType> AA_REGISTER_ARBEID_TYPER = Set.of(
         ArbeidType.ORDINÆRT_ARBEIDSFORHOLD,
         ArbeidType.MARITIMT_ARBEIDSFORHOLD,
         ArbeidType.FORENKLET_OPPGJØRSORDNING);
@@ -114,6 +120,14 @@ public enum ArbeidType implements Kodeverdi {
 
     public boolean erAnnenOpptjening() {
         return visGui;
+    }
+
+    public static boolean erRegisterType(ArbeidType type) {
+        return AA_REGISTER_TYPER.contains(type);
+    }
+
+    public static boolean erRegisterArbeid(ArbeidType type) {
+        return AA_REGISTER_ARBEID_TYPER.contains(type);
     }
 
     @Override

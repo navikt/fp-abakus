@@ -16,7 +16,7 @@
     <properties>
         <geronimo.jaspi.version>2.0.0</geronimo.jaspi.version>
         <geronimo.osgi.version>1.1</geronimo.osgi.version>
-        <swagger-ui.version>3.44.0</swagger-ui.version>
+        <swagger-ui.version>3.45.0</swagger-ui.version>
 
         <replacer.version>1.5.3</replacer.version>
         <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
@@ -43,12 +43,12 @@
             <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm</artifactId>
-                <version>9.0</version>
+                <version>9.1</version>
             </dependency>
             <dependency>
                 <groupId>com.zaxxer</groupId>
                 <artifactId>HikariCP</artifactId>
-                <version>4.0.1</version>
+                <version>4.0.3</version>
             </dependency>
 
             <!-- Swagger og Swagger-UI -->

@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.threeten.extra.Interval;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
@@ -143,13 +142,11 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
 
     private void innhentYtelser(Kobling kobling, InntektArbeidYtelseAggregatBuilder builder) {
         ytelseRegisterInnhenting.byggYtelser(kobling, kobling.getAktørId(), getFnrFraAktørId(kobling.getAktørId(), kobling.getYtelseType()),
-            kobling.getOpplysningsperiode().tilIntervall(),
-            builder,
-            skalInnhenteYtelseGrunnlag(kobling));
+            kobling.getOpplysningsperiode(), builder, skalInnhenteYtelseGrunnlag(kobling));
     }
 
     private Set<ArbeidsforholdIdentifikator> innhentArbeidsforhold(Kobling kobling, InntektArbeidYtelseAggregatBuilder builder, Set<RegisterdataElement> informasjonsElementer) {
-        return byggOpptjeningOpplysningene(kobling, kobling.getAktørId(), kobling.getOpplysningsperiode().tilIntervall(), builder, informasjonsElementer);
+        return byggOpptjeningOpplysningene(kobling, kobling.getAktørId(), kobling.getOpplysningsperiode(), builder, informasjonsElementer);
     }
 
     private void leggTilInntekter(AktørId aktørId, InntektArbeidYtelseAggregatBuilder builder, InntektsInformasjon inntektsInformasjon, YtelseType ytelse) {
@@ -262,7 +259,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
             .max(Comparator.naturalOrder()).orElse(LocalDate.now());
     }
 
-    private Set<ArbeidsforholdIdentifikator> byggOpptjeningOpplysningene(Kobling kobling, AktørId aktørId, Interval opplysningsPeriode,
+    private Set<ArbeidsforholdIdentifikator> byggOpptjeningOpplysningene(Kobling kobling, AktørId aktørId, IntervallEntitet opplysningsPeriode,
                                                                          InntektArbeidYtelseAggregatBuilder builder, Set<RegisterdataElement> informasjonsElementer) {
         var inntektselementer = Set.of(RegisterdataElement.INNTEKT_PENSJONSGIVENDE,
             RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG,
@@ -303,7 +300,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         return arbeidsforholdList;
     }
 
-    private void innhentInntektsopplysningFor(Kobling kobling, AktørId aktørId, Interval opplysningsPeriode, InntektArbeidYtelseAggregatBuilder builder,
+    private void innhentInntektsopplysningFor(Kobling kobling, AktørId aktørId, IntervallEntitet opplysningsPeriode, InntektArbeidYtelseAggregatBuilder builder,
                                               Set<RegisterdataElement> informasjonsElementer, RegisterdataElement registerdataElement) {
         var inntektsKilde = ELEMENT_TIL_INNTEKTS_KILDE_MAP.get(registerdataElement);
         var inntektsInformasjon = innhentingSamletTjeneste.getInntektsInformasjon(aktørId, opplysningsPeriode, inntektsKilde, kobling.getYtelseType());
@@ -377,7 +374,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         } else {
             periode = IntervallEntitet.fraOgMedTilOgMed(frilansArbeidsforhold.getFom(), frilansArbeidsforhold.getTom());
         }
-        return yrkesaktivitetBuilder.getAktivitetsAvtaleBuilder(periode, true);
+        return yrkesaktivitetBuilder.getAktivitetsAvtaleBuilderFrilansInntk(periode, true);
     }
 
     private InntektBuilder byggInntekt(Map<YearMonth, List<MånedsbeløpOgSkatteOgAvgiftsregel>> inntekter,

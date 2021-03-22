@@ -219,10 +219,6 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
         return gjelderFor;
     }
 
-    public boolean erArbeidsforhold() {
-        return ArbeidType.AA_REGISTER_TYPER.contains(arbeidType);
-    }
-
     public Long getId() {
         return id;
     }

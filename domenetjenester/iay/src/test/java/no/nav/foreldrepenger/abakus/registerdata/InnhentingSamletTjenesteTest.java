@@ -54,7 +54,7 @@ public class InnhentingSamletTjenesteTest {
         when(repository.hentLønnskompensasjonForIPeriode(any(), any(), any())).thenReturn(Set.of(lk));
         // Act
         var mi = samletTjeneste.getLønnskompensasjon(lk.getAktørId(),
-            IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusMonths(17), LocalDate.now()).tilIntervall());
+            IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusMonths(17), LocalDate.now()));
         assertThat(mi.size()).isEqualTo(2);
         assertThat(mi.stream().filter(i -> i.getMåned().equals(YearMonth.from(tom))).findAny().orElse(null).getBeløp()).isEqualTo(new BigDecimal(14000));
     }

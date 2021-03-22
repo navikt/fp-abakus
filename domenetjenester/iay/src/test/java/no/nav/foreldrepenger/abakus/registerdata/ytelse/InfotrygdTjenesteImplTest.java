@@ -25,7 +25,7 @@ public class InfotrygdTjenesteImplTest {
     @Test
     public void skal_kalle_consumer_og_oversette_response() throws Exception {
         // Arrange
-        var response = samletTjeneste.getInfotrygdYtelser(PersonIdent.fra(FNR), IntervallEntitet.fraOgMed(KONFIG_FOM).tilIntervall());
+        var response = samletTjeneste.getInfotrygdYtelser(PersonIdent.fra(FNR), IntervallEntitet.fraOgMed(KONFIG_FOM));
         assertThat(response).isEmpty();
     }
 

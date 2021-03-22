@@ -5,10 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.threeten.extra.Interval;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseAnvistBuilder;
@@ -41,7 +37,7 @@ public class YtelseRegisterInnhenting {
         this.vedtakYtelseRepository = vedtakYtelseRepository;
     }
 
-    void byggYtelser(Kobling behandling, AktørId aktørId, PersonIdent ident, Interval opplysningsPeriode,
+    void byggYtelser(Kobling behandling, AktørId aktørId, PersonIdent ident, IntervallEntitet opplysningsPeriode,
                      InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder, boolean medGrunnlag) {
 
         InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder = inntektArbeidYtelseAggregatBuilder.getAktørYtelseBuilder(aktørId);

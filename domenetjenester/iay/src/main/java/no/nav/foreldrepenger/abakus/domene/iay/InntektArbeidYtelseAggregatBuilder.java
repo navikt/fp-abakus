@@ -161,28 +161,6 @@ public class InntektArbeidYtelseAggregatBuilder {
         return versjon;
     }
 
-    void oppdaterArbeidsforholdReferanseEtterErstatting(AktørId søker, Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef gammelRef,
-                                                        InternArbeidsforholdRef nyRef) {
-        final AktørArbeidBuilder builder = getAktørArbeidBuilder(søker);
-        if (builder.getErOppdatering()) {
-            if (eksistererIkkeFraFør(arbeidsgiver, gammelRef, builder)) {
-                final YrkesaktivitetBuilder yrkesaktivitetBuilder = builder.getYrkesaktivitetBuilderForNøkkelAvType(
-                    Opptjeningsnøkkel.forArbeidsforholdIdMedArbeidgiver(gammelRef, arbeidsgiver),
-                    ArbeidType.AA_REGISTER_TYPER);
-                if (yrkesaktivitetBuilder.getErOppdatering()) {
-                    yrkesaktivitetBuilder.medArbeidsforholdId(nyRef);
-                    builder.leggTilYrkesaktivitet(yrkesaktivitetBuilder);
-                    leggTilAktørArbeid(builder);
-                }
-            }
-        }
-    }
-
-    private boolean eksistererIkkeFraFør(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef gammelRef, AktørArbeidBuilder builder) {
-        return !builder.getYrkesaktivitetBuilderForNøkkelAvType(Opptjeningsnøkkel.forArbeidsforholdIdMedArbeidgiver(gammelRef, arbeidsgiver),
-            ArbeidType.AA_REGISTER_TYPER).getErOppdatering();
-    }
-
     public static class AktørArbeidBuilder {
         private final AktørArbeid kladd;
         private final boolean oppdatering;
