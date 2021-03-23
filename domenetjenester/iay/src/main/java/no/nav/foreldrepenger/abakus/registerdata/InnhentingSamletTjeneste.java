@@ -37,7 +37,6 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.vedtak.util.env.Cluster;
 import no.nav.vedtak.util.env.Environment;
 
 @ApplicationScoped
@@ -52,8 +51,8 @@ public class InnhentingSamletTjeneste {
     private MeldekortTjeneste meldekortTjeneste;
     private InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste;
     private LønnskompensasjonRepository lønnskompensasjonRepository;
-    private boolean isDev;
-    private boolean isProd;
+    private boolean isDev = Environment.current().isDev();
+    private boolean isLocal = Environment.current().isLocal();
 
     InnhentingSamletTjeneste() {
         //CDI
@@ -70,8 +69,6 @@ public class InnhentingSamletTjeneste {
         this.meldekortTjeneste = meldekortTjeneste;
         this.innhentingInfotrygdTjeneste = innhentingInfotrygdTjeneste;
         this.lønnskompensasjonRepository = lønnskompensasjonRepository;
-        this.isDev = Cluster.DEV_FSS.equals(Environment.current().getCluster());
-        this.isProd = Cluster.PROD_FSS.equals(Environment.current().getCluster());
     }
 
     public InntektsInformasjon getInntektsInformasjon(AktørId aktørId, IntervallEntitet periode, InntektskildeType kilde, YtelseType ytelse) {
@@ -115,20 +112,19 @@ public class InnhentingSamletTjeneste {
         return arbeidsforholdTjeneste.finnArbeidsforholdFrilansForIdentIPerioden(ident, aktørId, opplysningsPeriode);
     }
 
-    private boolean envUnstable() {
-        return isDev;
-    }
-
     public List<InfotrygdYtelseGrunnlag> innhentInfotrygdGrunnlag(AktørId aktørId, PersonIdent ident, IntervallEntitet periode) {
-        if (envUnstable()) {
+        if (isDev) {
             return innhentingInfotrygdTjeneste.getInfotrygdYtelserFailSoft(ident, periode);
         }
         return innhentingInfotrygdTjeneste.getInfotrygdYtelser(ident, periode);
     }
 
     public List<InfotrygdYtelseGrunnlag> innhentSpokelseGrunnlag(AktørId aktørId, PersonIdent ident, @SuppressWarnings("unused") IntervallEntitet periode) {
-        if (!isProd) {
+        if (isLocal) {
             return Collections.emptyList();
+        }
+        if (isDev) {
+            return innhentingInfotrygdTjeneste.getSPøkelseYtelserFailSoft(ident);
         }
         return innhentingInfotrygdTjeneste.getSPøkelseYtelser(ident);
     }
