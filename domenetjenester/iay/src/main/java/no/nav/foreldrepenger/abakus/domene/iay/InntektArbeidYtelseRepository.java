@@ -176,19 +176,26 @@ public class InntektArbeidYtelseRepository {
                                                                                     Saksnummer saksnummer,
                                                                                     no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType,
                                                                                     boolean kunAktive) {
-
-        final TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery("SELECT gr" +
-            " FROM InntektArbeidGrunnlag gr" +
-            " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
-            " WHERE k.saksnummer = :saksnummer AND k.ytelseType = :ytelse and k.aktørId = :aktørId " + // NOSONAR
-            (kunAktive ? " AND (gr.aktiv = :aktivt AND k.aktiv=true)" : "") +
-            " ORDER BY gr.koblingId, gr.opprettetTidspunkt", InntektArbeidYtelseGrunnlag.class);
+        String sql;
+        if(kunAktive){
+            sql = "SELECT gr" +
+                " FROM InntektArbeidGrunnlag gr" +
+                " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
+                " WHERE k.saksnummer = :saksnummer AND k.ytelseType = :ytelse and k.aktørId = :aktørId " + // NOSONAR
+                " AND (gr.aktiv = true AND k.aktiv=true)" +
+                " ORDER BY gr.koblingId, gr.opprettetTidspunkt";
+        } else {
+            sql = "SELECT gr" +
+                " FROM InntektArbeidGrunnlag gr" +
+                " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
+                " WHERE k.saksnummer = :saksnummer AND k.ytelseType = :ytelse and k.aktørId = :aktørId " + // NOSONAR
+                " ORDER BY gr.koblingId, gr.opprettetTidspunkt";
+        }
+        
+        final TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery(sql, InntektArbeidYtelseGrunnlag.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("saksnummer", saksnummer);
         query.setParameter("ytelse", ytelseType);
-        if (kunAktive) {
-            query.setParameter("aktivt", kunAktive);
-        }
 
         var grunnlag = query.getResultList().stream().map(g -> g).collect(Collectors.toList());
         return grunnlag;
