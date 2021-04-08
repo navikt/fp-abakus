@@ -177,7 +177,7 @@ public class InntektArbeidYtelseGrunnlagDto {
     public PersonIdent getPerson() {
         return person;
     }
-    
+
     public YtelseType getYtelseType() {
         return this.ytelseType;
     }
@@ -202,6 +202,11 @@ public class InntektArbeidYtelseGrunnlagDto {
     }
 
     public InntektArbeidYtelseGrunnlagDto medOppgittOpptjening(OppgittOpptjeningDto oppgittOpptjening) {
+        setOppgittOpptjening(oppgittOpptjening);
+        return this;
+    }
+
+    public InntektArbeidYtelseGrunnlagDto medOppgittOpptjeningAggregat(OppgittOpptjeningDto oppgittOpptjening) {
         setOppgittOpptjening(oppgittOpptjening);
         return this;
     }

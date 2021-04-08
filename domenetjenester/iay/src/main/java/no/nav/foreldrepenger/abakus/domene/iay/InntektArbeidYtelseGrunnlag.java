@@ -23,6 +23,7 @@ import org.hibernate.annotations.NaturalId;
 
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningAggregat;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -63,6 +64,13 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     @ChangeTracked
     private OppgittOpptjening oppgittOpptjening;
 
+    // Krever nytt endepunkt, ditcher OppgittOpptjening ovenfor
+    @OneToOne
+    @JoinColumn(name = "oppgitt_opptjening_agg_id", updatable = false, unique = true)
+    @ChangeTracked
+    private OppgittOpptjeningAggregat oppgittOpptjeningAggregat;
+
+
     @OneToOne
     @ChangeTracked
     @JoinColumn(name = "inntektsmeldinger_id", updatable = false, unique = true)
@@ -73,6 +81,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     @JoinColumn(name = "informasjon_id", updatable = false, unique = true)
     private ArbeidsforholdInformasjon arbeidsforholdInformasjon;
 
+    // Kun for Frisinn
     @OneToOne
     @JoinColumn(name = "overstyrt_oppgitt_opptjening_id", updatable = false, unique = true)
     @ChangeTracked

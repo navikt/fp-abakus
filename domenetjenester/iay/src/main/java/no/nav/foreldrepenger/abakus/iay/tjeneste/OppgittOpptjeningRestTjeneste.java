@@ -91,6 +91,8 @@ public class OppgittOpptjeningRestTjeneste {
         return response;
     }
 
+    // TODO: Nytt endepunkt v2 for å lagre oppgitt opptjening på aggregat
+
     @POST
     @Path("/overstyr")
     @Operation(description = "Lagrer ned mottatt oppgitt opptjening", tags = "oppgitt opptjening", responses = {

@@ -43,6 +43,7 @@ public class InntektArbeidYtelseGrunnlagBuilder {
 
         if (skalIkkeKopierMed(dataset, Dataset.OPPGITT_OPPTJENING)) {
             kladd.setOppgittOpptjening(null);
+            // TODO: Også ta med aggregat
         }
 
         if (skalIkkeKopierMed(dataset, Dataset.OVERSTYRT_OPPGITT_OPPTJENING)) {
@@ -124,7 +125,7 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         }
         kladd.setSaksbehandlet(builder == null ? null : builder.build());
     }
-    
+
     public void medRegister(InntektArbeidYtelseAggregatBuilder builder) {
         VersjonType forventet = VersjonType.REGISTER;
         if(builder!=null && !Objects.equals(builder.getVersjon(),  forventet)) {

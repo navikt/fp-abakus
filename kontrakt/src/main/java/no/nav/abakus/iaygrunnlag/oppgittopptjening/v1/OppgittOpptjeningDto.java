@@ -25,6 +25,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class OppgittOpptjeningDto {
 
+    // TODO: JournalpostId
+
     @JsonProperty(value = "arbeidsforhold")
     @Valid
     private List<OppgittArbeidsforholdDto> arbeidsforhold;
@@ -62,7 +64,7 @@ public class OppgittOpptjeningDto {
         this.eksternReferanse = new UuidDto(eksternReferanse);
         this.opprettetTidspunkt = tidspunkt;
     }
-    
+
     public OppgittOpptjeningDto(@JsonProperty(value = "eksternReferanse", required = true) @Valid UUID eksternReferanse,
                                 @JsonProperty(value = "opprettetTidspunkt", required = true) @Valid LocalDateTime tidspunkt) {
         Objects.requireNonNull(eksternReferanse, "eksternReferanse");
@@ -125,7 +127,7 @@ public class OppgittOpptjeningDto {
     public UuidDto getEksternReferanse() {
         return eksternReferanse;
     }
-    
+
     public OffsetDateTime getOpprettetTidspunkt() {
         return opprettetTidspunkt;
     }

@@ -29,6 +29,8 @@ import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 @Table(name = "IAY_OPPGITT_OPPTJENING")
 public class OppgittOpptjening extends BaseEntitet {
 
+    // TODO: Legg til journalpost
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SO_OPPGITT_OPPTJENING")
     private Long id;
@@ -66,6 +68,10 @@ public class OppgittOpptjening extends BaseEntitet {
     OppgittOpptjening(UUID eksternReferanse, LocalDateTime opprettetTidspunktOriginalt) {
         this(eksternReferanse);
         super.setOpprettetTidspunkt(opprettetTidspunktOriginalt);
+    }
+
+    public OppgittOpptjening(OppgittOpptjening oppgittOpptjening) {
+
     }
 
     public List<OppgittArbeidsforhold> getOppgittArbeidsforhold() {

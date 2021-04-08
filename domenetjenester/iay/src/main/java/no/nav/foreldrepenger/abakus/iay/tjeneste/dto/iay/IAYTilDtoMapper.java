@@ -67,6 +67,14 @@ public class IAYTilDtoMapper {
             });
         }
 
+        if (dataset.contains(Dataset.OPPGITT_OPPTJENING_V2)) {
+            // TODO: Legg til aggregat
+            grunnlag.getOppgittOpptjening().ifPresent(oo -> {
+                var mapper = new MapOppgittOpptjening(null).mapTilDto(oo);
+                dto.medOppgittOpptjeningAggregat(mapper);
+            });
+        }
+
         if (dataset.contains(Dataset.OVERSTYRT_OPPGITT_OPPTJENING)) {
             grunnlag.getOverstyrtOppgittOpptjening().ifPresent(oo -> {
                 var mapper = new MapOppgittOpptjening(null).mapTilDto(oo);
