@@ -46,6 +46,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-${{ env.PREVIOUS_CACHE_KEY }}
 
+      - uses: navikt/github-app-token-generator@v1
+        id: get-token
+        with:
+          private-key: ${{ secrets.FP_PRIVATE_KEY }}
+          app-id: ${{ secrets.FP_APP_ID }}
+
       - name: Build
         shell: bash
         run: |
