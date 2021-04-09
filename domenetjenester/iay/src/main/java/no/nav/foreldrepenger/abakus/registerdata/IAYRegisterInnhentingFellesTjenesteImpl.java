@@ -93,6 +93,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         var aktørInntektBuilder = inntektArbeidYtelseAggregatBuilder.getAktørInntektBuilder(kobling.getAktørId());
 
         var inntektBuilder = aktørInntektBuilder.getInntektBuilder(InntektskildeType.SIGRUN, null);
+        inntektBuilder.tilbakestillInntektsposterForPerioder(map.keySet());
 
         for (var entry : map.entrySet()) {
             for (Map.Entry<InntektspostType, BigDecimal> type : entry.getValue().entrySet()) {

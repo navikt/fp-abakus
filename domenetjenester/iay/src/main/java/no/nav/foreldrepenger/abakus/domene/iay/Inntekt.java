@@ -25,6 +25,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.jpa.InntektsKildeKodeverdiConverter;
 
 @Entity(name = "Inntekt")
@@ -145,5 +146,11 @@ public class Inntekt extends BaseEntitet implements IndexKey {
 
     public boolean hasValues() {
         return arbeidsgiver != null || inntektskildeType != null || inntektspost != null;
+    }
+
+    void tilbakestillInntektsposterForPerioder(Set<IntervallEntitet> perioder) {
+        this.inntektspost = inntektspost.stream()
+            .filter(ip -> !perioder.contains(ip.getPeriode()))
+            .collect(Collectors.toSet());
     }
 }

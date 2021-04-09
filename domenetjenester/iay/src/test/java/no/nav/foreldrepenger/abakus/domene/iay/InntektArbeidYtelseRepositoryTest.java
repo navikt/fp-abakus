@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
@@ -31,6 +34,7 @@ import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.repository.KoblingRepository;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
@@ -42,7 +46,7 @@ public class InntektArbeidYtelseRepositoryTest {
 
     @RegisterExtension
     public static JpaExtension jpaExtension = new JpaExtension();
-  
+
     private InntektArbeidYtelseRepository repository;
     private KoblingRepository koblingRepository;
 
@@ -76,6 +80,50 @@ public class InntektArbeidYtelseRepositoryTest {
 
         assertThat(repository.erGrunnlagAktivt(grunnlagReferanse.getReferanse())).isFalse();
         assertThat(repository.erGrunnlagAktivt(nyGrunnlagReferanse.getReferanse())).isTrue();
+    }
+
+    @Test
+    public void skal_oppdatere_sigrun() {
+        var aktør = new AktørId("1231231231223");
+        var periodeFom = LocalDate.of(2020,1,1);
+        var periodeTom = LocalDate.of(2020,12,31);
+        var ko = new Kobling(YtelseType.FORELDREPENGER, new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()), aktør);
+        ko.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(2), LocalDate.now()));
+        koblingRepository.lagre(ko);
+
+        var grunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.nytt();
+        var gb = grunnlagBuilder.getRegisterBuilder();
+
+        var aib = gb.getAktørInntektBuilder(aktør);
+        var ib = aib.getInntektBuilder(InntektskildeType.SIGRUN, null);
+        var ipb = ib.getInntektspostBuilder().medInntektspostType(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE).medBeløp(BigDecimal.TEN).medPeriode(periodeFom, periodeTom);
+        var ipba = ib.getInntektspostBuilder().medInntektspostType(InntektspostType.LØNN).medBeløp(BigDecimal.TEN).medPeriode(periodeFom, periodeTom);
+        ib.leggTilInntektspost(ipb);ib.leggTilInntektspost(ipba);
+        aib.leggTilInntekt(ib);
+        gb.leggTilAktørInntekt(aib);
+
+        repository.lagre(ko.getKoblingReferanse(), gb);
+
+        var grunnlagBuilder2 = InntektArbeidYtelseGrunnlagBuilder.oppdatere(repository.hentInntektArbeidYtelseGrunnlagForBehandling(ko.getKoblingReferanse()));
+        var gb2 = grunnlagBuilder2.getRegisterBuilder();
+        var aib2 = gb2.getAktørInntektBuilder(aktør);
+        var ib2 = aib2.getInntektBuilder(InntektskildeType.SIGRUN, null);
+        ib2.tilbakestillInntektsposterForPerioder(Set.of(IntervallEntitet.fraOgMedTilOgMed(periodeFom, periodeTom)));
+        var ipb2 = ib2.getInntektspostBuilder().medInntektspostType(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE).medBeløp(BigDecimal.ONE).medPeriode(periodeFom, periodeTom);
+        var ipba2 = ib.getInntektspostBuilder().medInntektspostType(InntektspostType.LØNN).medBeløp(BigDecimal.TEN).medPeriode(periodeFom, periodeTom);
+
+        ib2.leggTilInntektspost(ipba2);ib2.leggTilInntektspost(ipb2);
+        aib2.leggTilInntekt(ib2);
+        gb2.leggTilAktørInntekt(aib2);
+
+        repository.lagre(ko.getKoblingReferanse(), gb2);
+
+        var g3 = repository.hentInntektArbeidYtelseGrunnlagForBehandling(ko.getKoblingReferanse()).orElseThrow();
+
+        assertThat(g3.getRegisterVersjon().flatMap(a -> a.getAktørInntekt().stream().filter(ai -> ai.getAktørId().equals(aktør)).findFirst())
+            .flatMap(ai -> ai.getInntekt().stream().findFirst())
+            .flatMap(i -> i.getAlleInntektsposter().stream().filter(ip -> ip.getInntektspostType().equals(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE)).findFirst())
+            .map(Inntektspost::getBeløp).orElse(Beløp.ZERO)).isEqualTo(new Beløp(BigDecimal.ONE));
     }
 
     @Test
@@ -122,7 +170,7 @@ public class InntektArbeidYtelseRepositoryTest {
         assertThat(overstyrtOppgittOpptjening.get().getAnnenAktivitet()).containsExactly(overstrytAnnenAktivitet);
         assertThat(oppgittOpptjening.get().getAnnenAktivitet()).containsExactly(annenAktivitet);
     }
-    
+
     @Test
     public void skal_kunne_hente_oppgitt_opptjening() {
         var ko = new Kobling(YtelseType.OMSORGSPENGER, new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()), new AktørId("1231231231223"));
@@ -142,7 +190,7 @@ public class InntektArbeidYtelseRepositoryTest {
 
         var oppgittOpptjeningVanlig = repository.hentOppgittOpptjeningFor(vanlig.getEksternReferanse());
         var oppgittOpptjeningOverstyring = repository.hentOppgittOpptjeningFor(overstyring.getEksternReferanse());
-        
+
         assertThat(oppgittOpptjeningVanlig).isNotEmpty();
         assertThat(oppgittOpptjeningOverstyring).isNotEmpty();
     }
@@ -256,7 +304,7 @@ public class InntektArbeidYtelseRepositoryTest {
         assertThat(aktivtGrunnlag.getInntektsmeldinger().get().getInntektsmeldinger()).contains(inntektsmelding4);
 
     }
-    
+
     @Test
     public void skal_kun_hente_aktivt_grunnlag() {
         var aktørId = new AktørId("1231231231223");

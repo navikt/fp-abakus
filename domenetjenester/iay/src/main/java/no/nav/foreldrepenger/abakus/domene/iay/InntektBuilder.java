@@ -1,8 +1,10 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.util.Optional;
+import java.util.Set;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 public class InntektBuilder {
     private final boolean oppdaterer;
@@ -47,6 +49,10 @@ public class InntektBuilder {
 
     boolean getErOppdatering() {
         return this.oppdaterer;
+    }
+
+    public void tilbakestillInntektsposterForPerioder(Set<IntervallEntitet> perioder) {
+        this.inntekt.tilbakestillInntektsposterForPerioder(perioder);
     }
 
     public Inntekt build() {
