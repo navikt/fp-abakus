@@ -145,6 +145,7 @@ jobs:
                       "version": "${{ env.TAG }}",
                       "issue_number": "${{ steps.createdeployissue.outputs.number }}"
                   }}'
+                  
       - name: Trigger k9-verdikjede
         if: success()
         uses: peter-evans/repository-dispatch@v1
