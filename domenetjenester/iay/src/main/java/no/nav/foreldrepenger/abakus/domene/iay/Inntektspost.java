@@ -201,8 +201,7 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
             ", ytelse=" + ytelse +
             ", inntektspostType=" + inntektspostType +
             ", skatteOgAvgiftsregelType=" + skatteOgAvgiftsregelType +
-            ", fraOgMed=" + periode.getFomDato() +
-            ", tilOgMed=" + periode.getTomDato() +
+            ", periode=" + periode +
             ", beløp=" + beløp +
             '>';
     }

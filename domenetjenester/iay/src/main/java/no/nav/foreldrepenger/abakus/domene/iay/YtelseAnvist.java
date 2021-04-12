@@ -135,11 +135,11 @@ public class YtelseAnvist extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "YtelseAnvistEntitet{" +
+        return getClass().getSimpleName() + "<" +
             "periode=" + anvistPeriode +
             ", beløp=" + beløp +
             ", dagsats=" + dagsats +
             ", utbetalingsgradProsent=" + utbetalingsgradProsent +
-            '}';
+            '>';
     }
 }

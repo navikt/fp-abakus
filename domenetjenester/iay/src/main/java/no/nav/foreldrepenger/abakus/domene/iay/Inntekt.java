@@ -153,4 +153,12 @@ public class Inntekt extends BaseEntitet implements IndexKey {
             .filter(ip -> !perioder.contains(ip.getPeriode()))
             .collect(Collectors.toSet());
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "<arbeidsgiver=" + arbeidsgiver
+            + ", inntektskildeType=" + inntektskildeType
+            + ", inntektspost=[" + (inntektspost == null ? 0 : inntektspost.size()) + "]" 
+            + ">";
+    }
 }

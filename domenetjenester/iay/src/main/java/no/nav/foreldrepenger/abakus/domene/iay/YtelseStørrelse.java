@@ -120,11 +120,11 @@ public class YtelseStørrelse extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "YtelseStørrelseEntitet{" +
+        return getClass().getSimpleName() + "<" +
             "virksomhet=" + orgNummer +
             ", beløp=" + beløp +
             ", hyppighet=" + hyppighet +
-            '}';
+            '>';
     }
 
     boolean hasValues() {
