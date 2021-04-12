@@ -21,6 +21,8 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.hibernate.jpa.QueryHints;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
@@ -44,6 +46,9 @@ import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 
 @ApplicationScoped
 public class InntektArbeidYtelseRepository {
+
+    private static final Logger log = LoggerFactory.getLogger(InntektArbeidYtelseRepository.class);
+
     private EntityManager entityManager;
     private KoblingRepository koblingRepository;
 
@@ -60,8 +65,7 @@ public class InntektArbeidYtelseRepository {
 
     public InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForBehandling(KoblingReferanse koblingReferanse) {
         Optional<InntektArbeidYtelseGrunnlag> grunnlag = getAktivtInntektArbeidGrunnlag(koblingReferanse);
-        return grunnlag.orElseThrow(() ->
-            new TekniskException("FP-731232", String.format("Finner ikke InntektArbeidYtelse grunnlag for kobling %s", koblingReferanse)));
+        return grunnlag.orElseThrow(() -> new TekniskException("FP-731232", String.format("Finner ikke InntektArbeidYtelse grunnlag for kobling %s", koblingReferanse)));
 
     }
 
@@ -230,7 +234,7 @@ public class InntektArbeidYtelseRepository {
         query.setParameter("eksternReferanse", oppgittOpptjeningEksternReferanse);
         var res = HibernateVerktøy.hentUniktResultat(query);
 
-        if(res.isEmpty()) {
+        if (res.isEmpty()) {
             return Optional.empty();
         } else {
             // sjekk om opptjening finnes i noen aktivt grunnlag
@@ -241,7 +245,7 @@ public class InntektArbeidYtelseRepository {
             query2.setParameter("aktiv", true);
             query2.setParameter("ref", oppgittOpptjeningEksternReferanse);
             boolean harAktivKoblingOgGrunnlag = query.getResultStream().findAny().isPresent();
-            if(harAktivKoblingOgGrunnlag) {
+            if (harAktivKoblingOgGrunnlag) {
                 return res;
             } else {
                 throw new IllegalStateException("Etterspurte OppgittOpptjening som ikke er koblet til noe aktiv kobling/grunnlag: " + oppgittOpptjeningEksternReferanse);
@@ -412,6 +416,9 @@ public class InntektArbeidYtelseRepository {
         if (tidligereAggregat.isPresent()) {
             InntektArbeidYtelseGrunnlag aggregat = tidligereAggregat.get();
             if (diffResultat(aggregat, nyttGrunnlag, false).isEmpty()) {
+                if (aggregat != null) {
+                    log.info("Ingen endring i iay-grunnlag, skipper ny lagring - beholder grunnlag: " + aggregat.getGrunnlagReferanse());
+                }
                 return;
             }
 
@@ -634,7 +641,7 @@ public class InntektArbeidYtelseRepository {
         if (resultList.isEmpty()) {
             return Optional.empty();
         } else if (resultList.size() == 1) {
-            validerKoblingErAktiv(koblingReferanse);  //validerer her istdf. spørring for å avdekke om det brukes feil
+            validerKoblingErAktiv(koblingReferanse); // validerer her istdf. spørring for å avdekke om det brukes feil
             final Optional<InntektArbeidYtelseGrunnlag> grunnlag = resultList.stream().findFirst();
             return grunnlag;
         }

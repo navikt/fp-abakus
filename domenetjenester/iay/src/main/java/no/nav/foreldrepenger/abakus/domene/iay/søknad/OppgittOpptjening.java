@@ -159,11 +159,23 @@ public class OppgittOpptjening extends BaseEntitet {
 
     @Override
     public String toString() {
-        return "OppgittOpptjeningEntitet{" +
+        return getClass().getSimpleName() + "<" +
             "id=" + id +
             ", oppgittArbeidsforhold=" + oppgittArbeidsforhold +
             ", egenNæring=" + egenNæring +
             ", annenAktivitet=" + annenAktivitet +
-            '}';
+            '>';
+    }
+
+    /** Nedstrippet versjon av toString, egnet for logging. */
+    public String toStringSimple() {
+        return getClass().getSimpleName() + "<" +
+            "id=" + id +
+            ", eksternReferanse=" + eksternReferanse +
+            ", oppgittArbeidsforhold=[" + (oppgittArbeidsforhold == null ? "0" : oppgittArbeidsforhold.size()) + "]" +
+            ", egenNæring=[" + (egenNæring == null ? "0" : egenNæring.size()) + "]" +
+            ", annenAktivitet=[" + (annenAktivitet == null ? "0" : annenAktivitet.size()) + "]" +
+            ", frilans=[" + (frilans == null ? "0" : frilans.getFrilansoppdrag().size()) + "]" +
+            '>';
     }
 }
