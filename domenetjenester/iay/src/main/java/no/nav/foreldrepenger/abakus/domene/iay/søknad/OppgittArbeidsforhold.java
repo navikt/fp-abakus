@@ -160,13 +160,13 @@ public class OppgittArbeidsforhold extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "OppgittArbeidsforholdImpl{" +
+        return getClass().getSimpleName() + "<" +
             "id=" + id +
             ", periode=" + periode +
             ", erUtenlandskInntekt=" + erUtenlandskInntekt +
             ", arbeidType=" + arbeidType +
             ", landkode=" + landkode +
             ", utenlandskVirksomhetNavn=" + utenlandskVirksomhetNavn +
-            '}';
+            '>';
     }
 }

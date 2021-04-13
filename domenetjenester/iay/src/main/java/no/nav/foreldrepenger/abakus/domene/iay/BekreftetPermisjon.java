@@ -67,7 +67,7 @@ public class BekreftetPermisjon {
 
     @Override
     public String toString() {
-        return "BekreftetPermisjon<" +
+        return getClass().getSimpleName() + "<" +
             "periode=" + periode +
             ", status=" + status +
             '>';

@@ -51,7 +51,7 @@ public class GrunnlagReferanse {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" + referanse.toString() + ">";
+        return getClass().getSimpleName() + "<" + referanse + ">";
     }
 
 }

@@ -18,7 +18,6 @@ public abstract class AbstractIntervall implements Comparable<AbstractIntervall>
 
     public abstract LocalDate getTomDato();
 
-
     public boolean overlapper(AbstractIntervall other) {
         boolean fomBeforeOrEqual = erEtterEllerLikPeriodestart(other.getTomDato());
         boolean tomAfterOrEqual = erFørEllerLikPeriodeslutt(other.getFomDato());
@@ -61,6 +60,6 @@ public abstract class AbstractIntervall implements Comparable<AbstractIntervall>
 
     @Override
     public String toString() {
-        return String.format("Periode: %s - %s", getFomDato().format(FORMATTER), getTomDato().format(FORMATTER));
+        return String.format("Periode[%s,%s]", getFomDato().format(FORMATTER), getTomDato().format(FORMATTER));
     }
 }

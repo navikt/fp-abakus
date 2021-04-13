@@ -44,7 +44,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     @DiffIgnore
     @Embedded
     @AttributeOverrides({
-        @AttributeOverride(name = "referanse", column = @Column(name = "grunnlag_referanse", updatable = false, unique = true))
+            @AttributeOverride(name = "referanse", column = @Column(name = "grunnlag_referanse", updatable = false, unique = true))
     })
     private GrunnlagReferanse grunnlagReferanse;
 
@@ -144,7 +144,8 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     }
 
     /**
-     * Returnerer innhentede registeropplysninger som aggregat.  Tar ikke hensyn til saksbehandlers overstyringer (se {@link #getSaksbehandletVersjon()}.
+     * Returnerer innhentede registeropplysninger som aggregat. Tar ikke hensyn til saksbehandlers overstyringer (se
+     * {@link #getSaksbehandletVersjon()}.
      */
     public Optional<InntektArbeidYtelseAggregat> getRegisterVersjon() {
         return Optional.ofNullable(register);
@@ -167,7 +168,6 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     public Optional<OppgittOpptjening> getOppgittOpptjening() {
         return Optional.ofNullable(oppgittOpptjening);
     }
-
 
     void setOppgittOpptjening(OppgittOpptjening oppgittOpptjening) {
         this.oppgittOpptjening = oppgittOpptjening;
@@ -237,4 +237,5 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     void fjernSaksbehandlet() {
         saksbehandlet = null;
     }
+
 }

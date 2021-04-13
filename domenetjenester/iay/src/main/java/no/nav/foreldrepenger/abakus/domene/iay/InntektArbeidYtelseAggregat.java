@@ -164,4 +164,5 @@ public class InntektArbeidYtelseAggregat extends BaseEntitet {
             ", aktørYtelse=" + aktørYtelse +
             '>';
     }
+
 }
