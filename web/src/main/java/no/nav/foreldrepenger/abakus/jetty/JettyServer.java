@@ -261,6 +261,7 @@ public class JettyServer {
     @SuppressWarnings("resource")
     private ResourceCollection createResourceCollection() throws IOException {
         return new ResourceCollection(
-                Resource.newClassPathResource("/web"));
+            Resource.newClassPathResource("META-INF/resources/webjars/"),
+            Resource.newClassPathResource("/web"));
     }
 }

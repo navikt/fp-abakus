@@ -14,26 +14,21 @@
     <name>Abakus :: Web :: Applikasjon</name>
 
     <properties>
-        <geronimo.jaspi.version>2.0.0</geronimo.jaspi.version>
-        <geronimo.osgi.version>1.1</geronimo.osgi.version>
         <swagger-ui.version>3.46.0</swagger-ui.version>
-
-        <replacer.version>1.5.3</replacer.version>
-        <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
+        <swagger.version>2.1.7</swagger.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!-- Sikkerhet: Geronimo -->
             <dependency>
                 <groupId>org.apache.geronimo.components</groupId>
                 <artifactId>geronimo-jaspi</artifactId>
-                <version>${geronimo.jaspi.version}</version>
+                <version>2.0.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-osgi-locator</artifactId>
-                <version>${geronimo.osgi.version}</version>
+                <version>1.1</version>
             </dependency>
             <dependency>
                 <groupId>org.flywaydb</groupId>
@@ -270,6 +265,11 @@
             <groupId>com.papertrailapp</groupId>
             <artifactId>logback-syslog4j</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>swagger-ui</artifactId>
+        </dependency>
 
         <!-- Test avhengigheter -->
         <dependency>
@@ -328,6 +328,24 @@
     <build>
         <!-- setter til app da det er default for jar som kjøres i nais baseimages -->
         <finalName>app</finalName>
+       
+        <resources>
+            <!-- filtrerer for å sette opp swagger versjon korrekt -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.html</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>**/*.html</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -370,74 +388,6 @@
                         <configuration>
                             <outputDirectory>${project.basedir}/target/lib/</outputDirectory>
                             <includeScope>runtime</includeScope>
-                        </configuration>
-                    </execution>
-                    <!-- Download Swagger-UI webjar og pack den ut. -->
-                    <execution>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.webjars</groupId>
-                                    <artifactId>swagger-ui</artifactId>
-                                    <version>${swagger-ui.version}</version>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${project.build.directory}/swagger-ui</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <!-- Replace the OpenAPI specification example URL with the local one. -->
-                <groupId>com.google.code.maven-replacer-plugin</groupId>
-                <artifactId>replacer</artifactId>
-                <version>${replacer.version}</version>
-                <executions>
-                    <execution>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <file>${project.build.directory}/swagger-ui/META-INF/resources/webjars/swagger-ui/${swagger-ui.version}/index.html</file>
-                    <replacements>
-                        <replacement>
-                            <token>https://petstore.swagger.io/v2/swagger.json</token>
-                            <value>/${project.parent.artifactId}/api/openapi.yaml</value>
-                        </replacement>
-                    </replacements>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>${maven-resources-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <resources>
-                                <resource>
-                                    <directory>${project.build.directory}/swagger-ui/META-INF/resources/webjars/swagger-ui/${swagger-ui.version}</directory>
-                                    <includes>
-                                        <include>*.js</include>
-                                        <include>*.css</include>
-                                        <include>*.png</include>
-                                        <include>index.html</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                            <encoding>UTF-8</encoding>
-                            <outputDirectory>${project.build.directory}/classes/web/swagger/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

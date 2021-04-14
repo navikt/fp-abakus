@@ -72,6 +72,12 @@ public class InntektTjeneste {
     }
 
     public InntektsInformasjon finnInntekt(FinnInntektRequest finnInntektRequest, InntektskildeType kilde, YtelseType ytelse) {
+        HentInntektListeBolkResponse response = finnInntektRaw(finnInntektRequest, kilde);
+        return oversettResponse(response, kilde, ytelse);
+
+    }
+
+    public HentInntektListeBolkResponse finnInntektRaw(FinnInntektRequest finnInntektRequest, InntektskildeType kilde) {
         var request = lagRequest(finnInntektRequest, kilde);
 
         HentInntektListeBolkResponse response;
@@ -81,8 +87,7 @@ public class InntektTjeneste {
             throw new IntegrasjonException("FP-824246",
                 "Feil ved kall til inntektstjenesten. Meld til #team_registre og #produksjonshendelser hvis dette skjer over lengre tidsperiode.", e);
         }
-        return oversettResponse(response, kilde, ytelse);
-
+        return response;
     }
 
     private HentInntektListeBolkRequest lagRequest(FinnInntektRequest finnInntektRequest, InntektskildeType kilde) {

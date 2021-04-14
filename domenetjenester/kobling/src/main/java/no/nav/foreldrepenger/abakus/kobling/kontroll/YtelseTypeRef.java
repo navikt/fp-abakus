@@ -8,10 +8,12 @@ import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
@@ -101,6 +103,23 @@ public @interface YtelseTypeRef {
             return find(null, instances, ytelseTypeKode.getKode());
         }
 
+        public static <I> List<Instance<I>> list(Class<I> cls, Instance<I> instances, String ytelseTypeKode) {
+            Objects.requireNonNull(instances, "instances");
+
+            final List<Instance<I>> resultat = new ArrayList<>();
+            Consumer<String> search = (String s) -> {
+                var inst = select(cls, instances, new YtelseTypeRefLiteral(s));
+                if (inst.isUnsatisfied()) {
+                    return;
+                }
+                resultat.add(inst);
+            };
+
+            search.accept(ytelseTypeKode);
+            search.accept("*"); // finn default
+            return List.copyOf(resultat);
+        }
+        
         public static <I> Optional<I> find(Class<I> cls, Instance<I> instances, String ytelseTypeKode) {
             Objects.requireNonNull(instances, "instances");
 
