@@ -83,7 +83,7 @@ public class DiagnostikkRestTjeneste {
 
         return Response.ok(streamingOutput)
             .type(MediaType.APPLICATION_OCTET_STREAM)
-            .header("Content-Disposition", String.format("attachment; filename=\"%s-%s-v%s.zip\"", kobling.getYtelseType(), saksnummer.getVerdi(), kobling.getVersjon()))
+            .header("Content-Disposition", String.format("attachment; filename=\"abakus-%s-%s-v%s.zip\"", kobling.getYtelseType(), saksnummer.getVerdi(), kobling.getVersjon()))
             .build();
     }
 
@@ -107,7 +107,7 @@ public class DiagnostikkRestTjeneste {
 
         @JsonValue
         @javax.validation.constraints.NotNull
-        @Pattern(regexp = "^[0-9a-zA-Z:-/]+$", message="[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+        @Pattern(regexp = "^[0-9a-zA-Z:\\-]+$", message="[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
         private final String verdi;
 
         public SaksnummerDto(String verdi) {

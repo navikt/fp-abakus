@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.app.diagnostikk;
+package no.nav.foreldrepenger.abakus.app.diagnostikk.dumps;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -20,6 +20,9 @@ import javax.inject.Inject;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
+import no.nav.foreldrepenger.abakus.app.diagnostikk.DebugDump;
+import no.nav.foreldrepenger.abakus.app.diagnostikk.DumpKontekst;
+import no.nav.foreldrepenger.abakus.app.diagnostikk.DumpOutput;
 import no.nav.foreldrepenger.abakus.app.jackson.JacksonJsonConfig;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
