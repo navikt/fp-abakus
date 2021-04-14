@@ -1,6 +1,5 @@
 package no.nav.foreldrepenger.abakus.app.diagnostikk;
 
-import java.util.Objects;
 import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -8,6 +7,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -16,6 +16,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.jetbrains.annotations.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -62,11 +64,11 @@ public class DiagnostikkRestTjeneste {
     @Operation(description = "Henter en dump av info for debugging og analyse av en sak. Logger hvem som har hatt innsyn", summary = ("Henter en dump av info for debugging og analyse av en sak"), tags = "forvaltning")
     @BeskyttetRessurs(action = BeskyttetRessursActionAttributt.READ, resource = AbakusBeskyttetRessursAttributt.DRIFT)
     public Response dumpSak(
-                            @NotNull @QueryParam("saksnummer") @Parameter(description = "saksnummer") @Valid @TilpassetAbacAttributt(supplierClass = AbacNoopSupplier.class) String saksnummerStr,
+                            @NotNull @QueryParam("saksnummer") @Parameter(description = "saksnummer") @Valid @TilpassetAbacAttributt(supplierClass = AbacNoopSupplier.class) SaksnummerDto saksnummerDto,
                             @NotNull @QueryParam("aktørId") @Parameter(description = "aktørId") @Valid @TilpassetAbacAttributt(supplierClass = AbacAktørIdSupplier.class) AktørId aktørId,
                             @NotNull @QueryParam("ytelseType") @Parameter(description = "ytelseType") @Valid @TilpassetAbacAttributt(supplierClass = AbacNoopSupplier.class) YtelseType ytelseType) {
 
-        var saksnummer = new Saksnummer(saksnummerStr);
+        var saksnummer = new Saksnummer(saksnummerDto.getVerdi());
         var kobling = koblingRepository.hentSisteKoblingReferanseFor(aktørId, saksnummer, ytelseType).orElseThrow(() -> new IllegalArgumentException("Fant ikke kobling for saksnummer=" + saksnummer + ", aktørId og ytelseType=" + ytelseType));
         var ident = aktørTjeneste.hentIdentForAktør(aktørId, ytelseType).orElseThrow(); // skal ikke komme hit, bør feile forrige linje
 
@@ -99,6 +101,23 @@ public class DiagnostikkRestTjeneste {
             // sjekker p.t. ikke på saksnummer, kun aktørId siden vi uansett gjør oppslag her for å matche
             return AbacDataAttributter.opprett();
         }
+    }
+
+    public static class SaksnummerDto {
+
+        @JsonValue
+        @javax.validation.constraints.NotNull
+        @Pattern(regexp = "^[0-9a-zA-Z:-/]+$", message="[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+        private final String verdi;
+
+        public SaksnummerDto(String verdi) {
+            this.verdi = verdi;
+        }
+
+        String getVerdi() {
+            return this.verdi;
+        }
+
     }
 
 }
