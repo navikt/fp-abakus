@@ -17,7 +17,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import net.bytebuddy.asm.Advice.This;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;

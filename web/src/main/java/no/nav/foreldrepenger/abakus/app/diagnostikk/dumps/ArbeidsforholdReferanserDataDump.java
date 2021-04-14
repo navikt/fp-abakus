@@ -43,7 +43,7 @@ public class ArbeidsforholdReferanserDataDump implements DebugDump {
             + " gr.informasjon_id as gr_informasjon_id,"
             + " cast(gr.grunnlag_referanse as varchar) as grunnlag_referanse,"
             + " r.informasjon_id,"
-            + " r.ekstern_referanse as r_ekstern_referanse,"
+            + " cast(r.ekstern_referanse as varchar) as r_ekstern_referanse,"
             + " cast(r.intern_referanse as varchar) as r_intern_referanse,"
             + " r.arbeidsgiver_orgnr as r_arbeidsgiver_orgnr,"
             + " r.arbeidsgiver_aktor_id as r_arbeidsgiver_aktor_id,"

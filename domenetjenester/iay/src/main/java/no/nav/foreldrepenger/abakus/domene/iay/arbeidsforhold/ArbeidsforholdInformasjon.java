@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
@@ -20,6 +21,7 @@ import javax.persistence.Version;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
@@ -128,8 +130,10 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof ArbeidsforholdInformasjon)) return false;
+        if (this == o)
+            return true;
+        if (o == null || !(o instanceof ArbeidsforholdInformasjon))
+            return false;
         var that = (ArbeidsforholdInformasjon) o;
         return Objects.equals(referanser, that.referanser) &&
             Objects.equals(overstyringer, that.overstyringer);
@@ -161,7 +165,7 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
 
     /**
      * @deprecated FIXME (FC): Trengs denne eller kan vi alltid stole på ref er den vi skal returnere? Skal egentlig returnere ref,
-     * men per nå har vi antagelig interne ider som har erstattet andre interne id'er. Må isåfall avsjekke migrering av disse.
+     *             men per nå har vi antagelig interne ider som har erstattet andre interne id'er. Må isåfall avsjekke migrering av disse.
      */
     @Deprecated(forRemoval = true)
     public InternArbeidsforholdRef finnEllerOpprett(Arbeidsgiver arbeidsgiver, final InternArbeidsforholdRef ref) {
@@ -218,31 +222,52 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
         return finnForEkstern(arbeidsgiver, arbeidsforholdRef);
     }
 
-    public EksternArbeidsforholdRef finnEkstern(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef internReferanse) {
-        if (internReferanse.getReferanse() == null) return EksternArbeidsforholdRef.nullRef();
+    public EksternArbeidsforholdRef finnEkstern(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef arbeidsforholdRef) {
+        return finnEkstern((UUID) null, arbeidsgiver, arbeidsforholdRef);
+    }
+
+    public EksternArbeidsforholdRef finnEkstern(GrunnlagReferanse grRef, Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef arbeidsforholdRef) {
+        return finnEkstern(grRef == null ? null : grRef.getReferanse(), arbeidsgiver, arbeidsforholdRef);
+    }
+
+    public EksternArbeidsforholdRef finnEkstern(UUID grunnlagReferanse, Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef internReferanse) {
+        if (internReferanse.getReferanse() == null)
+            return EksternArbeidsforholdRef.nullRef();
 
         return referanser.stream()
             .filter(this::erIkkeMerget)
             .filter(r -> Objects.equals(r.getInternReferanse(), internReferanse) && Objects.equals(r.getArbeidsgiver(), arbeidsgiver))
             .findFirst()
             .map(ArbeidsforholdReferanse::getEksternReferanse)
-            .orElseThrow(
-                () -> new IllegalStateException("Mangler eksternReferanse for internReferanse: " + internReferanse + ", arbeidsgiver: " + arbeidsgiver + ",\n blant referanser=" + referanser));
+            .orElseThrow(() -> manglerReferanse(grunnlagReferanse, arbeidsgiver, internReferanse));
     }
 
-    public EksternArbeidsforholdRef finnEksternRaw(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef internReferanse) {
-        if (internReferanse.getReferanse() == null) return EksternArbeidsforholdRef.nullRef();
+    public EksternArbeidsforholdRef finnEksternRaw(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef arbeidsforholdRef) {
+        return finnEksternRaw(null, arbeidsgiver, arbeidsforholdRef);
+    }
+
+    public EksternArbeidsforholdRef finnEksternRaw(UUID grunnlagReferanse, Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef internReferanse) {
+        if (internReferanse.getReferanse() == null)
+            return EksternArbeidsforholdRef.nullRef();
 
         return referanser.stream()
             .filter(r -> Objects.equals(r.getInternReferanse(), internReferanse) && Objects.equals(r.getArbeidsgiver(), arbeidsgiver))
             .findFirst()
             .map(ArbeidsforholdReferanse::getEksternReferanse)
-            .orElseThrow(
-                () -> new IllegalStateException("Mangler eksternReferanse for internReferanse: " + internReferanse + ", arbeidsgiver: " + arbeidsgiver));
+            .orElseThrow(() -> manglerReferanse(grunnlagReferanse, arbeidsgiver, internReferanse));
+    }
+
+    private IllegalStateException manglerReferanse(UUID grunnlagReferanse, Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef internReferanse) {
+        return new IllegalStateException(
+            "Mangler eksternReferanse for internReferanse: " + internReferanse
+                + ", arbeidsgiver: " + arbeidsgiver
+                + ",\n blant referanser=" + referanser
+                + (grunnlagReferanse == null ? "" : ". Grunnlag[" + grunnlagReferanse + "]"));
     }
 
     void leggTilNyReferanse(ArbeidsforholdReferanse arbeidsforholdReferanse) {
         arbeidsforholdReferanse.setInformasjon(this);
         referanser.add(arbeidsforholdReferanse);
     }
+
 }

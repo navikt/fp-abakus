@@ -230,7 +230,8 @@ public class InntektArbeidYtelseTjeneste {
             var informasjonBuilder = ArbeidsforholdInformasjonBuilder.oppdatere(arbeidsforholdInformasjon);
 
             var alleInntektsmeldingerForSaksummer = hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, ytelseType);
-
+            
+            var eksisterendeGrunnlagRef = original.getGrunnlagReferanse().getReferanse();
             var kopierInntektsmeldingerEtterNyeste = alleInntektsmeldingerForSaksummer.entrySet().stream()
                 .filter(im -> (Inntektsmelding.COMP_REKKEFØLGE.compare(im.getKey(), sisteEksisterendeInntektsmelding) > 0))
                 .map(entry -> {
@@ -239,7 +240,7 @@ public class InntektArbeidYtelseTjeneste {
 
                     var arbeidsgiver = nyInntektsmelding.getArbeidsgiver();
                     var internRef = nyInntektsmelding.getArbeidsforholdRef();
-                    var eksternRef = arbForholdInformasjon.finnEkstern(arbeidsgiver, nyInntektsmelding.getArbeidsforholdRef());
+                    var eksternRef = arbForholdInformasjon.finnEkstern(eksisterendeGrunnlagRef, arbeidsgiver, nyInntektsmelding.getArbeidsforholdRef());
 
                     InntektsmeldingBuilder inntektsmeldingBuilder = InntektsmeldingBuilder.kopi(nyInntektsmelding);
 

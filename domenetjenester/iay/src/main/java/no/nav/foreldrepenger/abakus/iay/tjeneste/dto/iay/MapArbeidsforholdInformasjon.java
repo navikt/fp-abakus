@@ -123,14 +123,14 @@ class MapArbeidsforholdInformasjon {
             var overstyringer = entitet.getOverstyringer().stream()
                 .map(ao -> {
                     var dto = new ArbeidsforholdOverstyringDto(mapAktør(ao.getArbeidsgiver()),
-                        mapArbeidsforholdsId(entitet, ao.getArbeidsgiver(), ao.getArbeidsforholdRef()))
+                        mapArbeidsforholdsId(entitet, grunnlagRef, ao.getArbeidsgiver(), ao.getArbeidsforholdRef()))
                         .medBegrunnelse(ao.getBegrunnelse())
                         .medBekreftetPermisjon(mapBekreftetPermisjon(ao.getBekreftetPermisjon()))
                         .medHandling(ao.getHandling())
                         .medNavn(ao.getArbeidsgiverNavn())
                         .medStillingsprosent(ao.getStillingsprosent() == null ? null : ao.getStillingsprosent().getVerdi())
                         .medNyArbeidsforholdRef(
-                            ao.getNyArbeidsforholdRef() == null ? null : mapArbeidsforholdsId(entitet, ao.getArbeidsgiver(), ao.getNyArbeidsforholdRef()))
+                            ao.getNyArbeidsforholdRef() == null ? null : mapArbeidsforholdsId(entitet, grunnlagRef, ao.getArbeidsgiver(), ao.getNyArbeidsforholdRef()))
                         .medArbeidsforholdOverstyrtePerioder(map(ao.getArbeidsforholdOverstyrtePerioder()));
                     return dto;
                 })
@@ -178,7 +178,7 @@ class MapArbeidsforholdInformasjon {
         }
 
         private ArbeidsforholdRefDto mapArbeidsforholdsId(no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon arbeidsforholdInformasjon,
-                                                          Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef ref) {
+                                                          UUID grunnlagRef, Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef ref) {
             if (ref == null) {
                 return null;
             }
@@ -190,7 +190,7 @@ class MapArbeidsforholdInformasjon {
              */
             String internId = ref.getReferanse();
             if (internId != null) {
-                EksternArbeidsforholdRef eksternReferanse = arbeidsforholdInformasjon.finnEksternRaw(arbeidsgiver, ref);
+                EksternArbeidsforholdRef eksternReferanse = arbeidsforholdInformasjon.finnEksternRaw(grunnlagRef, arbeidsgiver, ref);
                 if (eksternReferanse == null || eksternReferanse.getReferanse() == null) {
                     throw new IllegalStateException("Mangler eksternReferanse for internReferanse=" + ref);
                 }

@@ -198,7 +198,6 @@ public class MapAktørArbeid {
         private YrkesaktivitetDto mapYrkesaktivitet(Yrkesaktivitet a) {
             var aktivitetsAvtaler = a.getAlleAktivitetsAvtaler().stream().map(this::map).sorted(COMP_AKTIVITETSAVTALE).collect(Collectors.toList());
             var permisjoner = a.getPermisjon().stream().map(this::map).sorted(COMP_PERMISJON).collect(Collectors.toList());
-
             var arbeidsforholdId = mapArbeidsforholdsId(a.getArbeidsgiver(), a);
 
             var arbeidType = a.getArbeidType();
