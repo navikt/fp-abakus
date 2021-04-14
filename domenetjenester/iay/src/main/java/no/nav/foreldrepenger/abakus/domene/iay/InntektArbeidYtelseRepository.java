@@ -442,14 +442,17 @@ public class InntektArbeidYtelseRepository {
     private void sjekkKonsistens(InntektArbeidYtelseGrunnlag grunnlag) {
         final var arbeidsforholdInformasjon = grunnlag.getArbeidsforholdInformasjon()
             .orElseGet(() -> ArbeidsforholdInformasjonBuilder.builder(Optional.empty()).build());
-
+        
+        var grRef = grunnlag.getGrunnlagReferanse();
+        
         grunnlag.getRegisterVersjon().ifPresent(aggregat -> aggregat.getAktørArbeid()
             .stream()
             .map(AktørArbeid::hentAlleYrkesaktiviteter)
             .flatMap(Collection::stream)
             .forEach(it -> {
                 if (it.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold()) {
-                    arbeidsforholdInformasjon.finnEkstern(it.getArbeidsgiver(), it.getArbeidsforholdRef()); // Validerer om det finnes ekstern for intern ref
+                    var arRef = aggregat.getEksternReferanse();
+                    arbeidsforholdInformasjon.finnEkstern(grRef, it.getArbeidsgiver(), it.getArbeidsforholdRef()); // Validerer om det finnes ekstern for intern ref
                     // (kaster exception hvis ikke)
                 }
             }));
@@ -457,7 +460,7 @@ public class InntektArbeidYtelseRepository {
         grunnlag.getInntektsmeldinger().ifPresent(aggregat -> aggregat.getInntektsmeldinger()
             .forEach(it -> {
                 if (it.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold()) {
-                    arbeidsforholdInformasjon.finnEkstern(it.getArbeidsgiver(), it.getArbeidsforholdRef()); // Validerer om det finnes ekstern for intern ref
+                    arbeidsforholdInformasjon.finnEkstern(grRef, it.getArbeidsgiver(), it.getArbeidsforholdRef()); // Validerer om det finnes ekstern for intern ref
                     // (kaster exception hvis ikke)
                 }
             }));
@@ -468,7 +471,8 @@ public class InntektArbeidYtelseRepository {
             .flatMap(Collection::stream)
             .forEach(it -> {
                 if (it.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold()) {
-                    arbeidsforholdInformasjon.finnEkstern(it.getArbeidsgiver(), it.getArbeidsforholdRef()); // Validerer om det finnes ekstern for intern ref
+                    var arRef = aggregat.getEksternReferanse();
+                    arbeidsforholdInformasjon.finnEkstern(grRef, it.getArbeidsgiver(), it.getArbeidsforholdRef()); // Validerer om det finnes ekstern for intern ref
                     // (kaster exception hvis ikke)
                 }
             }));
