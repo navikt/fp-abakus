@@ -192,11 +192,11 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
         this.overstyrtOppgittOpptjening = overstyrtOppgittOpptjening;
     }
 
-    public OppgittOpptjeningAggregat getOppgittOpptjeningAggregat() {
-        return oppgittOpptjeningAggregat;
+    public Optional<OppgittOpptjeningAggregat> getOppgittOpptjeningAggregat() {
+        return Optional.ofNullable(oppgittOpptjeningAggregat);
     }
 
-     void setOppgittOpptjeningAggregat(OppgittOpptjeningAggregat oppgittOpptjeningAggregat) {
+    void setOppgittOpptjeningAggregat(OppgittOpptjeningAggregat oppgittOpptjeningAggregat) {
         this.oppgittOpptjeningAggregat = oppgittOpptjeningAggregat;
     }
 
@@ -211,12 +211,16 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
         this.aktiv = aktiv;
     }
 
-    /** Hvorvidt dette er det siste (aktive grunnlaget) for en behandling. */
+    /**
+     * Hvorvidt dette er det siste (aktive grunnlaget) for en behandling.
+     */
     public boolean isAktiv() {
         return aktiv;
     }
 
-    /** Unik id for dette grunnlaget. */
+    /**
+     * Unik id for dette grunnlaget.
+     */
     public Long getId() {
         return id;
     }

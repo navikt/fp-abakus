@@ -141,7 +141,7 @@ public class InntektArbeidYtelseGrunnlagBuilder {
             if (kladd.getOppgittOpptjening().isPresent()) {
                 throw new IllegalStateException("Utviklerfeil: Er ikke lov å endre oppgitt opptjening!");
             }
-            if (kladd.getOppgittOpptjeningAggregat() != null) {
+            if (kladd.getOppgittOpptjeningAggregat().isPresent()) {
                 throw new IllegalStateException("Utviklerfeil: Har allerede lagt inn oppgitt oppptjening på aggregat. Kan da ikke legge til oppgitt opptjening utenom aggregat.");
             }
             kladd.setOppgittOpptjening(builder.build());
@@ -158,9 +158,9 @@ public class InntektArbeidYtelseGrunnlagBuilder {
             if (oppgittOpptjening.getJournalpostId() == null) {
                 throw new IllegalStateException("Utviklerfeil: Legg-til krever journalpostId.");
             }
-            OppgittOpptjeningAggregat gammel = kladd.getOppgittOpptjeningAggregat();
-            OppgittOpptjeningAggregat aggregat = gammel != null
-                ? OppgittOpptjeningAggregat.oppdater(gammel, oppgittOpptjening)
+            Optional<OppgittOpptjeningAggregat> gammel = kladd.getOppgittOpptjeningAggregat();
+            OppgittOpptjeningAggregat aggregat = gammel.isPresent()
+                ? OppgittOpptjeningAggregat.oppdater(gammel.get(), oppgittOpptjening)
                 : OppgittOpptjeningAggregat.ny(oppgittOpptjening);
 
             kladd.setOppgittOpptjeningAggregat(aggregat);
@@ -171,7 +171,7 @@ public class InntektArbeidYtelseGrunnlagBuilder {
     public InntektArbeidYtelseGrunnlagBuilder medOverstyrtOppgittOpptjening(OppgittOpptjeningBuilder builder) {
         if (builder != null) {
             kladd.setOverstyrtOppgittOpptjening(builder.build());
-            if (kladd.getOppgittOpptjeningAggregat() != null) {
+            if (kladd.getOppgittOpptjeningAggregat().isPresent()) {
                 throw new IllegalStateException("Sanity check: Har allerede lagt inn oppgitt oppptjening på aggregat. Du vil da sannsynligvis ikke overstyre slik.");
             }
         }

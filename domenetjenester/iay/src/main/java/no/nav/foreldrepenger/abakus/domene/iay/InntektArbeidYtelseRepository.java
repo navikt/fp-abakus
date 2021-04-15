@@ -519,9 +519,7 @@ public class InntektArbeidYtelseRepository {
 
         nyttGrunnlag.getOppgittOpptjening().ifPresent(this::lagreOppgittOpptjening);
         nyttGrunnlag.getOverstyrtOppgittOpptjening().ifPresent(this::lagreOppgittOpptjening);
-        if (nyttGrunnlag.getOppgittOpptjeningAggregat() != null) {
-            lagreOppgitteOpptjeninger(nyttGrunnlag.getOppgittOpptjeningAggregat());
-        }
+        nyttGrunnlag.getOppgittOpptjeningAggregat().ifPresent(this::lagreOppgitteOpptjeninger);
 
         var registerVersjon = entitet.getRegisterVersjon();
         registerVersjon.ifPresent(this::lagreInntektArbeid);

@@ -14,7 +14,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningAggregat;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapAktørInntekt.MapTilDto;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -76,11 +75,10 @@ public class IAYTilDtoMapper {
         }
 
         if (dataset.contains(Dataset.OPPGITT_OPPTJENING_V2)) {
-            OppgittOpptjeningAggregat aggregat = grunnlag.getOppgittOpptjeningAggregat();
-            if (aggregat != null){
+            grunnlag.getOppgittOpptjeningAggregat().ifPresent(aggregat -> {
                 var mapper = new MapOppgittOpptjening(null).mapTilDto(aggregat.getOppgitteOpptjeninger());
                 dto.medOppgittOpptjeningAggregat(mapper);
-            }
+            });
         }
         return dto;
     }
