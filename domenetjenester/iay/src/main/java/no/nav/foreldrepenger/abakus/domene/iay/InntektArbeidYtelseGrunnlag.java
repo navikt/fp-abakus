@@ -66,7 +66,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
 
     // Krever nytt endepunkt, ditcher OppgittOpptjening ovenfor
     @OneToOne
-    @JoinColumn(name = "oppgitt_opptjening_agg_id", updatable = false, unique = true)
+    @JoinColumn(name = "oppgitte_opptjeninger_id", updatable = false, unique = true)
     @ChangeTracked
     private OppgittOpptjeningAggregat oppgittOpptjeningAggregat;
 

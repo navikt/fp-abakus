@@ -25,16 +25,16 @@ import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 
 @Entity(name = "OppgittOpptjeningAggregat")
-@Table(name = "GR_OPPGITT_OPPTJENING")
+@Table(name = "IAY_OPPGITTE_OPPTJENINGER")
 public class OppgittOpptjeningAggregat extends BaseEntitet {
 
     private static final Logger logger = LoggerFactory.getLogger(OppgittOpptjeningAggregat.class);
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_INNTEKTSMELDINGER")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_IAY_OPPGITTE_OPPTJENINGER")
     private Long id;
 
-    @OneToMany(mappedBy = "inntektsmeldinger")
+    @OneToMany(mappedBy = "oppgitteOpptjeninger")
     @ChangeTracked
     private Set<OppgittOpptjening> oppgitteOpptjeninger = new HashSet<>();
 

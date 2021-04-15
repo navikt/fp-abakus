@@ -39,7 +39,7 @@ public class OppgittOpptjening extends BaseEntitet {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "gr_oppgitt_opptjening_id", updatable = false)
+    @JoinColumn(name = "oppgitte_opptjeninger_id", updatable = false)
     private OppgittOpptjeningAggregat oppgitteOpptjeninger;
 
     @NaturalId

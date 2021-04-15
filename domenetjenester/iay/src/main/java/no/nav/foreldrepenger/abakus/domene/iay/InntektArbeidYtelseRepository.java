@@ -33,6 +33,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittEgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittFrilansoppdrag;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
@@ -187,7 +188,7 @@ public class InntektArbeidYtelseRepository {
                                                                                     no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType,
                                                                                     boolean kunAktive) {
         String sql;
-        if(kunAktive){
+        if (kunAktive) {
             sql = """
                 SELECT gr
                  FROM InntektArbeidGrunnlag gr
@@ -226,10 +227,10 @@ public class InntektArbeidYtelseRepository {
 
     /**
      * @param koblingReferanse
-     * @param versjonType (REGISTER, SAKSBEHANDLET)
+     * @param versjonType      (REGISTER, SAKSBEHANDLET)
      * @return InntektArbeidYtelseAggregatBuilder
-     *         <p>
-     *         NB! bør benytte via InntektArbeidYtelseTjeneste og ikke direkte
+     * <p>
+     * NB! bør benytte via InntektArbeidYtelseTjeneste og ikke direkte
      */
     public InntektArbeidYtelseAggregatBuilder opprettBuilderFor(KoblingReferanse koblingReferanse, UUID angittAggregatReferanse,
                                                                 LocalDateTime angittOpprettetTidspunkt, VersjonType versjonType) {
@@ -518,6 +519,9 @@ public class InntektArbeidYtelseRepository {
 
         nyttGrunnlag.getOppgittOpptjening().ifPresent(this::lagreOppgittOpptjening);
         nyttGrunnlag.getOverstyrtOppgittOpptjening().ifPresent(this::lagreOppgittOpptjening);
+        if (nyttGrunnlag.getOppgittOpptjeningAggregat() != null) {
+            lagreOppgitteOpptjeninger(nyttGrunnlag.getOppgittOpptjeningAggregat());
+        }
 
         var registerVersjon = entitet.getRegisterVersjon();
         registerVersjon.ifPresent(this::lagreInntektArbeid);
@@ -529,6 +533,12 @@ public class InntektArbeidYtelseRepository {
 
         entitet.getArbeidsforholdInformasjon().ifPresent(this::lagreInformasjon);
         entityManager.persist(nyttGrunnlag);
+    }
+
+    private void lagreOppgitteOpptjeninger(OppgittOpptjeningAggregat oppgittOpptjeningAggregat) {
+        entityManager.persist(oppgittOpptjeningAggregat);
+        oppgittOpptjeningAggregat.getOppgitteOpptjeninger()
+            .forEach(this::lagreOppgittOpptjening);
     }
 
     private void lagreInformasjon(ArbeidsforholdInformasjon arbeidsforholdInformasjon) {
