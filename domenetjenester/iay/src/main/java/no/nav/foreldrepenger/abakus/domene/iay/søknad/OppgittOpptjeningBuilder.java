@@ -12,6 +12,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
 import no.nav.abakus.iaygrunnlag.kodeverk.VirksomhetType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
 public class OppgittOpptjeningBuilder {
@@ -33,6 +34,16 @@ public class OppgittOpptjeningBuilder {
     public static OppgittOpptjeningBuilder ny(UUID eksternReferanse, OffsetDateTime opprettetTidspunktOriginalt) {
         return new OppgittOpptjeningBuilder(
             new OppgittOpptjening(eksternReferanse, opprettetTidspunktOriginalt.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()));
+    }
+
+    public OppgittOpptjeningBuilder medJournalpostId(JournalpostId journalpostId){
+        this.kladd.setJournalpostId(journalpostId);
+        return this;
+    }
+
+    public OppgittOpptjeningBuilder medInnsendingstidspuntk(LocalDateTime innsendingstidspunkt){
+        this.kladd.setInnsendingstidspunkt(innsendingstidspunkt);
+        return this;
     }
 
     public OppgittOpptjeningBuilder leggTilAnnenAktivitet(OppgittAnnenAktivitet annenAktivitet) {

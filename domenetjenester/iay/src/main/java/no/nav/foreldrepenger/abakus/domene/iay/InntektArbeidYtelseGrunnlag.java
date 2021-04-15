@@ -70,7 +70,6 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     @ChangeTracked
     private OppgittOpptjeningAggregat oppgittOpptjeningAggregat;
 
-
     @OneToOne
     @ChangeTracked
     @JoinColumn(name = "inntektsmeldinger_id", updatable = false, unique = true)
@@ -191,6 +190,14 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
 
     void setOverstyrtOppgittOpptjening(OppgittOpptjening overstyrtOppgittOpptjening) {
         this.overstyrtOppgittOpptjening = overstyrtOppgittOpptjening;
+    }
+
+    public OppgittOpptjeningAggregat getOppgittOpptjeningAggregat() {
+        return oppgittOpptjeningAggregat;
+    }
+
+     void setOppgittOpptjeningAggregat(OppgittOpptjeningAggregat oppgittOpptjeningAggregat) {
+        this.oppgittOpptjeningAggregat = oppgittOpptjeningAggregat;
     }
 
     void setKobling(Long koblingId) {

@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import javax.validation.Valid;
+import javax.validation.constraints.AssertFalse;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -21,6 +22,9 @@ import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningDto;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
 public class OppgittOpptjeningMottattRequest {
+
+    @JsonProperty(value = "opptjeningPrJournalpostId")
+    private Boolean opptjeningPrJournalpostId;
 
     @JsonProperty(value = "saksnummer", required = true)
     @NotNull
@@ -43,21 +47,30 @@ public class OppgittOpptjeningMottattRequest {
     @Valid
     private OppgittOpptjeningDto oppgittOpptjening;
 
-    /** Optional - for now, gjør required når K9, FP sender. */
+    /**
+     * Optional - for now, gjør required når K9, FP sender.
+     */
     @JsonProperty(value = "ytelseType")
     private YtelseType ytelseType = YtelseType.UDEFINERT;
 
     @JsonCreator
-    public OppgittOpptjeningMottattRequest(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
+    public OppgittOpptjeningMottattRequest(@JsonProperty(value = "opptjeningPrJournalpostId") Boolean opptjeningPrJournalpostId,
+                                           @JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
                                            @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UUID koblingReferanse,
                                            @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
                                            @JsonProperty(value = "ytelseType") YtelseType ytelseType,
                                            @JsonProperty(value = "oppgittOpptjening", required = true) @NotNull @Valid OppgittOpptjeningDto oppgittOpptjening) {
+        this.opptjeningPrJournalpostId = opptjeningPrJournalpostId;
         this.saksnummer = saksnummer;
         this.koblingReferanse = koblingReferanse;
         this.aktør = aktør;
         this.ytelseType = ytelseType;
         this.oppgittOpptjening = oppgittOpptjening;
+    }
+
+    @AssertFalse(message = "Når flagget opptjeningPrJournalpostId er satt, må journalpostId settes i oppgittOpptjening")
+    private boolean isManglerJournalpost() {
+        return Boolean.TRUE.equals(opptjeningPrJournalpostId) && oppgittOpptjening.getJournalpostId() == null;
     }
 
     public String getSaksnummer() {
@@ -78,6 +91,14 @@ public class OppgittOpptjeningMottattRequest {
 
     public YtelseType getYtelseType() {
         return this.ytelseType;
+    }
+
+    public boolean erOpptjeningPrJournalpostId() {
+        return Boolean.TRUE.equals(opptjeningPrJournalpostId);
+    }
+
+    public void setOpptjeningPrJournalpostId(Boolean opptjeningPrJournalpostId) {
+        this.opptjeningPrJournalpostId = opptjeningPrJournalpostId;
     }
 
     @Override

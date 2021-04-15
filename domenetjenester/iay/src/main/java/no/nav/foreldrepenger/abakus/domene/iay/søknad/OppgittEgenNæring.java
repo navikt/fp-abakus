@@ -84,7 +84,7 @@ public class OppgittEgenNæring extends BaseEntitet implements IndexKey {
     private boolean nyIArbeidslivet;
 
     @Convert(converter = LandKodeKodeverdiConverter.class)
-    @Column(name="land", nullable = false)
+    @Column(name = "land", nullable = false)
     private Landkode landkode;
 
     @Column(name = "utenlandsk_virksomhet_navn")
@@ -94,9 +94,27 @@ public class OppgittEgenNæring extends BaseEntitet implements IndexKey {
         // for hibernate
     }
 
+    /* copy ctor */
+    public OppgittEgenNæring(OppgittEgenNæring orginal) {
+        periode = orginal.getPeriode();
+        orgNummer = orginal.getOrgnummer();
+        virksomhetType = orginal.getVirksomhetType();
+        regnskapsførerNavn = orginal.getRegnskapsførerNavn();
+        regnskapsførerTlf = orginal.getRegnskapsførerTlf();
+        endringDato = orginal.getEndringDato();
+        begrunnelse = orginal.getBegrunnelse();
+        bruttoInntekt = orginal.getBruttoInntekt();
+        nyoppstartet = orginal.getNyoppstartet();
+        varigEndring = orginal.getVarigEndring();
+        nærRelasjon = orginal.getNærRelasjon();
+        nyIArbeidslivet = orginal.getNyIArbeidslivet();
+        landkode = orginal.getLandkode();
+        utenlandskVirksomhetNavn = orginal.getUtenlandskVirksomhetNavn();
+    }
+
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { periode, orgNummer, landkode, utenlandskVirksomhetNavn };
+        Object[] keyParts = {periode, orgNummer, landkode, utenlandskVirksomhetNavn};
         return IndexKeyComposer.createKey(keyParts);
     }
 

@@ -14,6 +14,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningAggregat;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapAktørInntekt.MapTilDto;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -67,19 +68,19 @@ public class IAYTilDtoMapper {
             });
         }
 
-        if (dataset.contains(Dataset.OPPGITT_OPPTJENING_V2)) {
-            // TODO: Legg til aggregat
-            grunnlag.getOppgittOpptjening().ifPresent(oo -> {
-                var mapper = new MapOppgittOpptjening(null).mapTilDto(oo);
-                dto.medOppgittOpptjeningAggregat(mapper);
-            });
-        }
-
         if (dataset.contains(Dataset.OVERSTYRT_OPPGITT_OPPTJENING)) {
             grunnlag.getOverstyrtOppgittOpptjening().ifPresent(oo -> {
                 var mapper = new MapOppgittOpptjening(null).mapTilDto(oo);
                 dto.medOverstyrtOppgittOpptjening(mapper);
             });
+        }
+
+        if (dataset.contains(Dataset.OPPGITT_OPPTJENING_V2)) {
+            OppgittOpptjeningAggregat aggregat = grunnlag.getOppgittOpptjeningAggregat();
+            if (aggregat != null){
+                var mapper = new MapOppgittOpptjening(null).mapTilDto(aggregat.getOppgitteOpptjeninger());
+                dto.medOppgittOpptjeningAggregat(mapper);
+            }
         }
         return dto;
     }

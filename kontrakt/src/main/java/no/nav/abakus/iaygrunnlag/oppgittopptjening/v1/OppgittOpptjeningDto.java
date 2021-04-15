@@ -15,17 +15,23 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import no.nav.abakus.iaygrunnlag.UuidDto;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import no.nav.abakus.iaygrunnlag.JournalpostId;
+import no.nav.abakus.iaygrunnlag.UuidDto;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class OppgittOpptjeningDto {
 
-    // TODO: JournalpostId
+    @JsonProperty(value = "journalpostId")
+    @Valid
+    private JournalpostId journalpostId;
+
+    @JsonProperty(value = "innsendingstidspunkt")
+    @Valid
+    private OffsetDateTime innsendingstidspunkt;
 
     @JsonProperty(value = "arbeidsforhold")
     @Valid
@@ -43,7 +49,9 @@ public class OppgittOpptjeningDto {
     @Valid
     private OppgittFrilansDto frilans;
 
-    /** Unik referanse for dette aggregatet. Kan benyttes f.eks. til å de-duplisere overførte data. */
+    /**
+     * Unik referanse for dette aggregatet. Kan benyttes f.eks. til å de-duplisere overførte data.
+     */
     @JsonProperty(value = "eksternReferanse", required = true)
     @Valid
     private UuidDto eksternReferanse;
@@ -57,10 +65,15 @@ public class OppgittOpptjeningDto {
     }
 
     @JsonCreator
-    public OppgittOpptjeningDto(@JsonProperty(value = "eksternReferanse", required = true) @Valid UUID eksternReferanse,
-                                @JsonProperty(value = "opprettetTidspunkt", required = true) @Valid OffsetDateTime tidspunkt) {
+    public OppgittOpptjeningDto(
+        @JsonProperty(value = "journalpostId") @Valid JournalpostId journalpostId,
+        @JsonProperty(value = "innsendingstidspunkt") @Valid OffsetDateTime innsendingstidspunkt,
+        @JsonProperty(value = "eksternReferanse", required = true) @Valid UUID eksternReferanse,
+        @JsonProperty(value = "opprettetTidspunkt", required = true) @Valid OffsetDateTime tidspunkt) {
         Objects.requireNonNull(eksternReferanse, "eksternReferanse");
         Objects.requireNonNull(tidspunkt, "tidspunkt");
+        this.journalpostId = journalpostId;
+        this.innsendingstidspunkt = innsendingstidspunkt;
         this.eksternReferanse = new UuidDto(eksternReferanse);
         this.opprettetTidspunkt = tidspunkt;
     }
@@ -147,5 +160,13 @@ public class OppgittOpptjeningDto {
     public OppgittOpptjeningDto medFrilans(OppgittFrilansDto frilans) {
         setFrilans(frilans);
         return this;
+    }
+
+    public JournalpostId getJournalpostId() {
+        return journalpostId;
+    }
+
+    public OffsetDateTime getInnsendingstidspunkt() {
+        return innsendingstidspunkt;
     }
 }

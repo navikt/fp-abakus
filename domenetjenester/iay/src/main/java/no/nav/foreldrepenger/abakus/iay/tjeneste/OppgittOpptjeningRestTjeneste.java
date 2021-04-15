@@ -64,10 +64,10 @@ public class OppgittOpptjeningRestTjeneste {
     @POST
     @Path("/motta")
     @Operation(description = "Lagrer ned mottatt oppgitt opptjening", tags = "oppgitt opptjening", responses = {
-            @ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))
+        @ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))
     })
     @BeskyttetRessurs(action = CREATE, resource = SØKNAD)
-    @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
+    @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response lagreOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
         Response response;
 
@@ -91,15 +91,43 @@ public class OppgittOpptjeningRestTjeneste {
         return response;
     }
 
-    // TODO: Nytt endepunkt v2 for å lagre oppgitt opptjening på aggregat
+    @POST
+    @Path("/motta-v2")
+    @Operation(description = "Lagrer ned mottatt oppgitt opptjening", tags = "oppgitt opptjening", responses = {
+        @ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))
+    })
+    @BeskyttetRessurs(action = CREATE, resource = SØKNAD)
+    @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
+    public Response lagreOppgittOpptjeningV2(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
+        Response response;
+
+        var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
+        var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
+        var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
+        var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId, new Saksnummer(mottattRequest.getSaksnummer()));
+
+        OppgittOpptjeningBuilder builder = new MapOppgittOpptjening(iayTjeneste).mapFraDto(mottattRequest.getOppgittOpptjening());
+        GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagrePrJournalpostId(koblingReferanse, builder);
+
+        koblingTjeneste.lagre(kobling);
+        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
+
+        if (grunnlagReferanse != null) {
+            response = Response.ok(new UuidDto(grunnlagReferanse.getReferanse())).build();
+        } else {
+            response = Response.noContent().build();
+        }
+
+        return response;
+    }
 
     @POST
     @Path("/overstyr")
     @Operation(description = "Lagrer ned mottatt oppgitt opptjening", tags = "oppgitt opptjening", responses = {
-            @ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))
+        @ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))
     })
     @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
-    @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
+    @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response lagreOverstrytOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
         Response response;
 
@@ -124,9 +152,6 @@ public class OppgittOpptjeningRestTjeneste {
     }
 
     public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
-
-        public AbacDataSupplier() {
-        }
 
         @Override
         public AbacDataAttributter apply(Object o) {

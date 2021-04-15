@@ -1,14 +1,17 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
+import java.time.ZoneId;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import no.nav.abakus.iaygrunnlag.JournalpostId;
 import no.nav.abakus.iaygrunnlag.Organisasjon;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
@@ -66,6 +69,19 @@ public class MapOppgittOpptjening {
 
     public MapOppgittOpptjening(InntektArbeidYtelseTjeneste iayTjeneste) {
         this.iayTjeneste = iayTjeneste;
+    }
+
+    public Map<JournalpostId, OppgittOpptjeningDto> mapTilDto(Collection<OppgittOpptjening> oppgittOpptjeninger) {
+        Map<JournalpostId, OppgittOpptjeningDto> resultat = new LinkedHashMap<>();
+        MapTilDto mapper = new MapTilDto();
+        for (OppgittOpptjening oppgittOpptjening : oppgittOpptjeninger) {
+            JournalpostId journalpostId = new JournalpostId(oppgittOpptjening.getJournalpostId().getVerdi());
+            OppgittOpptjeningDto oppgittOpptjeningDto = mapper.map(oppgittOpptjening);
+            if (resultat.put(journalpostId, oppgittOpptjeningDto) != null) {
+                throw new IllegalArgumentException("Har duplikat oppgitt opptjening for " + journalpostId);
+            }
+        }
+        return resultat;
     }
 
     public OppgittOpptjeningDto mapTilDto(OppgittOpptjening oppgittOpptjening) {
@@ -162,7 +178,7 @@ public class MapOppgittOpptjening {
             var virksomhet = egenNæring.getUtenlandskVirksomhetNavn();
             Landkode landkode = egenNæring.getLandkode();
 
-            var land = landkode == null || landkode.getKode() == null ? Landkode.NOR :  landkode;
+            var land = landkode == null || landkode.getKode() == null ? Landkode.NOR : landkode;
             if (virksomhet != null) {
                 dto.medOppgittVirksomhetNavn(virksomhet, land);
             } else {
@@ -196,16 +212,11 @@ public class MapOppgittOpptjening {
 
     private class MapFraDto {
 
-        MapFraDto() {
-            Objects.requireNonNull(iayTjeneste, "iayTjeneste");
-        }
-
         public OppgittOpptjeningBuilder map(OppgittOpptjeningDto dto) {
             if (dto == null)
                 return null;
 
             var oppgittOpptjeningEksternReferanse = UUID.fromString(dto.getEksternReferanse().getReferanse());
-            Optional<OppgittOpptjening> oppgittOpptjening = iayTjeneste.hentOppgittOpptjeningFor(oppgittOpptjeningEksternReferanse);
             var builder = OppgittOpptjeningBuilder.ny(oppgittOpptjeningEksternReferanse, dto.getOpprettetTidspunkt());
 
             var annenAktivitet = mapEach(dto.getAnnenAktivitet(), this::mapAnnenAktivitet);
@@ -219,6 +230,13 @@ public class MapOppgittOpptjening {
 
             var frilans = mapFrilans(dto.getFrilans());
             builder.leggTilFrilansOpplysninger(frilans);
+
+            if (dto.getJournalpostId() != null) {
+                builder.medJournalpostId(new no.nav.foreldrepenger.abakus.typer.JournalpostId(dto.getJournalpostId().getId()));
+            }
+            if (dto.getInnsendingstidspunkt() != null) {
+                builder.medInnsendingstidspuntk(dto.getInnsendingstidspunkt().atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime());
+            }
 
             return builder;
         }

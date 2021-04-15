@@ -74,6 +74,16 @@ public class OppgittArbeidsforhold extends BaseEntitet implements IndexKey {
         // hibernate
     }
 
+    /* copy ctor */
+    public OppgittArbeidsforhold(OppgittArbeidsforhold oppgittArbeidsforhold) {
+        periode = oppgittArbeidsforhold.getPeriode();
+        erUtenlandskInntekt = oppgittArbeidsforhold.erUtenlandskInntekt();
+        arbeidType = oppgittArbeidsforhold.getArbeidType();
+        landkode = oppgittArbeidsforhold.getLandkode();
+        utenlandskVirksomhetNavn = oppgittArbeidsforhold.getUtenlandskVirksomhetNavn();
+        inntekt = oppgittArbeidsforhold.getInntekt();
+    }
+
     @Override
     public String getIndexKey() {
         Object[] keyParts = { periode, landkode, utenlandskVirksomhetNavn, arbeidType };

@@ -300,6 +300,20 @@ public class InntektArbeidYtelseRepository {
         return build.getGrunnlagReferanse();
     }
 
+    public GrunnlagReferanse lagrePrJournalpostId(KoblingReferanse koblingReferanse, OppgittOpptjeningBuilder oppgittOpptjening) {
+        if (oppgittOpptjening == null) {
+            return null;
+        }
+        Optional<InntektArbeidYtelseGrunnlag> iayGrunnlag = hentInntektArbeidYtelseGrunnlagForBehandling(koblingReferanse);
+
+        InntektArbeidYtelseGrunnlagBuilder grunnlag = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayGrunnlag);
+        grunnlag.leggTilOppgittOpptjening(oppgittOpptjening);
+
+        InntektArbeidYtelseGrunnlag build = grunnlag.build();
+        lagreOgFlush(koblingReferanse, build);
+        return build.getGrunnlagReferanse();
+    }
+
     public GrunnlagReferanse lagreOverstyring(KoblingReferanse koblingReferanse, OppgittOpptjeningBuilder overstyrOppgittOpptjening) {
         if (overstyrOppgittOpptjening == null) {
             return null;

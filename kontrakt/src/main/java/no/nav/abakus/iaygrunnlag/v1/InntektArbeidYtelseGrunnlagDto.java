@@ -3,6 +3,7 @@ package no.nav.abakus.iaygrunnlag.v1;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import no.nav.abakus.iaygrunnlag.JournalpostId;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.UuidDto;
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon;
@@ -88,6 +90,10 @@ public class InntektArbeidYtelseGrunnlagDto {
     @Valid
     private OppgittOpptjeningDto overstyrtOppgittOpptjening;
 
+    @JsonProperty(value = "oppgittOpptjeningPrDokument")
+    @Valid
+    private Map<JournalpostId, OppgittOpptjeningDto> oppgittOpptjeningPrDokument;
+
     @JsonProperty(value = "arbeidsforholdInformasjon")
     @Valid
     private ArbeidsforholdInformasjon arbeidsforholdInformasjon;
@@ -122,7 +128,7 @@ public class InntektArbeidYtelseGrunnlagDto {
         this.person = person;
         this.grunnlagReferanse = grunnlagReferanse;
         this.grunnlagTidspunkt = grunnlagTidspunkt.atZone(DEFAULT_ZONE).toOffsetDateTime();
-        this.ytelseType= ytelseType;
+        this.ytelseType = ytelseType;
     }
 
     protected InntektArbeidYtelseGrunnlagDto() {
@@ -137,6 +143,7 @@ public class InntektArbeidYtelseGrunnlagDto {
             return false;
         }
         InntektArbeidYtelseGrunnlagDto other = (InntektArbeidYtelseGrunnlagDto) obj;
+        //TODO bør sammenligne alle feltene, eller ha en kommentar som sier hvorfor kun utvalgte felt brukes i equals-metoden
         return Objects.equals(person, other.person)
             && Objects.equals(register, other.register)
             && Objects.equals(overstyrt, other.overstyrt);
@@ -202,16 +209,25 @@ public class InntektArbeidYtelseGrunnlagDto {
     }
 
     public InntektArbeidYtelseGrunnlagDto medOppgittOpptjening(OppgittOpptjeningDto oppgittOpptjening) {
+        if (oppgittOpptjeningPrDokument != null) {
+            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr dokument) og gammel (en oppgitt opptjening) i samme sak.");
+        }
         setOppgittOpptjening(oppgittOpptjening);
         return this;
     }
 
-    public InntektArbeidYtelseGrunnlagDto medOppgittOpptjeningAggregat(OppgittOpptjeningDto oppgittOpptjening) {
-        setOppgittOpptjening(oppgittOpptjening);
+    public InntektArbeidYtelseGrunnlagDto medOppgittOpptjeningAggregat(Map<JournalpostId, OppgittOpptjeningDto> oppgittOpptjeningPrDokument) {
+        if (oppgittOpptjening != null || overstyrtOppgittOpptjening != null) {
+            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr dokument) og gammel (en oppgitt opptjening) i samme sak.");
+        }
+        setOppgittOpptjeningPrDokument(oppgittOpptjeningPrDokument);
         return this;
     }
 
     public InntektArbeidYtelseGrunnlagDto medOverstyrtOppgittOpptjening(OppgittOpptjeningDto overstyrtOppgittOpptjening) {
+        if (oppgittOpptjeningPrDokument != null) {
+            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr dokument) og gammel (en oppgitt opptjening) i samme sak.");
+        }
         setOverstyrtOppgittOpptjening(overstyrtOppgittOpptjening);
         return this;
     }
@@ -232,7 +248,10 @@ public class InntektArbeidYtelseGrunnlagDto {
 
     public void setOppgittOpptjening(OppgittOpptjeningDto oppgittOpptjening) {
         this.oppgittOpptjening = oppgittOpptjening;
+    }
 
+    public void setOppgittOpptjeningPrDokument(Map<JournalpostId, OppgittOpptjeningDto> oppgittOpptjeningPrDokument) {
+        this.oppgittOpptjeningPrDokument = oppgittOpptjeningPrDokument;
     }
 
     public void setOverstyrtOppgittOpptjening(OppgittOpptjeningDto overstyrtOppgittOpptjening) {
