@@ -145,6 +145,14 @@ public class OppgittOpptjeningDto {
         return opprettetTidspunkt;
     }
 
+    public JournalpostId getJournalpostId() {
+        return journalpostId;
+    }
+
+    public OffsetDateTime getInnsendingstidspunkt() {
+        return innsendingstidspunkt;
+    }
+
     public void setEksternReferanse(UuidDto eksternReferanse) {
         this.eksternReferanse = eksternReferanse;
     }
@@ -162,11 +170,11 @@ public class OppgittOpptjeningDto {
         return this;
     }
 
-    public JournalpostId getJournalpostId() {
-        return journalpostId;
+    public void setJournalpostId(JournalpostId journalpostId) {
+        this.journalpostId = journalpostId;
     }
 
-    public OffsetDateTime getInnsendingstidspunkt() {
-        return innsendingstidspunkt;
+    public void setInnsendingstidspunkt(OffsetDateTime innsendingstidspunkt) {
+        this.innsendingstidspunkt = innsendingstidspunkt;
     }
 }
