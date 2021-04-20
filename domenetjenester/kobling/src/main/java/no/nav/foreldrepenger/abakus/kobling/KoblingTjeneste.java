@@ -50,12 +50,9 @@ public class KoblingTjeneste {
     }
 
     public KoblingLås taSkrivesLås(KoblingReferanse referanse) {
-        Optional<Long> koblingId = repository.hentKoblingIdForKoblingReferanse(referanse);
-        return koblingId.isPresent() ? taSkrivesLås(koblingId.get()) : null;
-    }
-
-    public KoblingLås taSkrivesLås(Long koblingId) {
-        return låsRepository.taLås(koblingId);
+        return repository.hentForKoblingReferanse(referanse, true)
+            .map(Kobling::getId)
+            .map(KoblingLås::new).orElse(null);
     }
 
     public void oppdaterLåsVersjon(KoblingLås lås) {
