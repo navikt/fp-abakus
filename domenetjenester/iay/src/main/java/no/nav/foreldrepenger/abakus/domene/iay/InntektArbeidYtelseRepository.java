@@ -109,13 +109,15 @@ public class InntektArbeidYtelseRepository {
                                                              Saksnummer saksnummer,
                                                              no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType) {
 
-        final TypedQuery<Inntektsmelding> query = entityManager.createQuery("SELECT DISTINCT(im)" +
-            " FROM InntektArbeidGrunnlag gr" +
-            " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
-            " JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id" + // NOSONAR
-            " JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id" + // NOSONAR
-            " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true "// sjekker kun kobling.aktiv; ikke om grunnlag er aktivt eller ikke, tar alt
-            , Inntektsmelding.class);
+        // sjekker kun kobling.aktiv; ikke om grunnlag er aktivt eller ikke, tar alt
+        final TypedQuery<Inntektsmelding> query = entityManager.createQuery("""
+            SELECT DISTINCT(im)
+             FROM InntektArbeidGrunnlag gr
+             JOIN Kobling k ON k.id = gr.koblingId
+             JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id
+             JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id
+             WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true
+            """, Inntektsmelding.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("ref", saksnummer);
         query.setParameter("ytelse", ytelseType);
@@ -127,13 +129,15 @@ public class InntektArbeidYtelseRepository {
                                                                                                          Saksnummer saksnummer,
                                                                                                          KoblingReferanse ref,
                                                                                                          no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType) {
-        final TypedQuery<Object[]> query = entityManager.createQuery("SELECT im, arbInf" +
-            " FROM InntektArbeidGrunnlag gr" + // NOSONAR
-            " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
-            " JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id" + // NOSONAR
-            " JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id" + // NOSONAR
-            " JOIN ArbeidsforholdInformasjon arbInf on arbInf.id = gr.arbeidsforholdInformasjon.id" + // NOSONAR
-            " WHERE k.saksnummer = :ref AND k.koblingReferanse = :eksternRef AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true and gr.aktiv=:aktiv", Object[].class);
+        final TypedQuery<Object[]> query = entityManager.createQuery("""
+            SELECT im, arbInf
+             FROM InntektArbeidGrunnlag gr
+             JOIN Kobling k ON k.id = gr.koblingId
+             JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id
+             JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id
+             JOIN ArbeidsforholdInformasjon arbInf on arbInf.id = gr.arbeidsforholdInformasjon.id
+             WHERE k.saksnummer = :ref AND k.koblingReferanse = :eksternRef AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true and gr.aktiv=:aktiv
+             """, Object[].class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("ref", saksnummer);
         query.setParameter("ytelse", ytelseType);
@@ -147,13 +151,15 @@ public class InntektArbeidYtelseRepository {
                                                                                                          Saksnummer saksnummer,
                                                                                                          no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType) {
 
-        final TypedQuery<Object[]> query = entityManager.createQuery("SELECT im, arbInf" +
-            " FROM InntektArbeidGrunnlag gr" + // NOSONAR
-            " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
-            " JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id" + // NOSONAR
-            " JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id" + // NOSONAR
-            " JOIN ArbeidsforholdInformasjon arbInf on arbInf.id = gr.arbeidsforholdInformasjon.id" + // NOSONAR
-            " WHERE k.saksnummer = :saksnummer AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true ", Object[].class);
+        final TypedQuery<Object[]> query = entityManager.createQuery("""
+            SELECT im, arbInf
+             FROM InntektArbeidGrunnlag gr
+             JOIN Kobling k ON k.id = gr.koblingId
+             JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id
+             JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id
+             JOIN ArbeidsforholdInformasjon arbInf on arbInf.id = gr.arbeidsforholdInformasjon.id
+             WHERE k.saksnummer = :saksnummer AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true
+            """, Object[].class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("saksnummer", saksnummer);
         query.setParameter("ytelse", ytelseType);
@@ -182,20 +188,24 @@ public class InntektArbeidYtelseRepository {
                                                                                     boolean kunAktive) {
         String sql;
         if(kunAktive){
-            sql = "SELECT gr" +
-                " FROM InntektArbeidGrunnlag gr" +
-                " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
-                " WHERE k.saksnummer = :saksnummer AND k.ytelseType = :ytelse and k.aktørId = :aktørId " + // NOSONAR
-                " AND (gr.aktiv = true AND k.aktiv=true)" +
-                " ORDER BY gr.koblingId, gr.opprettetTidspunkt";
+            sql = """
+                SELECT gr
+                 FROM InntektArbeidGrunnlag gr
+                 JOIN Kobling k ON k.id = gr.koblingId
+                 WHERE k.saksnummer = :saksnummer AND k.ytelseType = :ytelse and k.aktørId = :aktørId
+                 AND (gr.aktiv = true AND k.aktiv=true)
+                 ORDER BY gr.koblingId, gr.opprettetTidspunkt
+                 """;
         } else {
-            sql = "SELECT gr" +
-                " FROM InntektArbeidGrunnlag gr" +
-                " JOIN Kobling k ON k.id = gr.koblingId" + // NOSONAR
-                " WHERE k.saksnummer = :saksnummer AND k.ytelseType = :ytelse and k.aktørId = :aktørId " + // NOSONAR
-                " ORDER BY gr.koblingId, gr.opprettetTidspunkt";
+            sql = """
+                SELECT gr
+                 FROM InntektArbeidGrunnlag gr
+                 JOIN Kobling k ON k.id = gr.koblingId
+                 WHERE k.saksnummer = :saksnummer AND k.ytelseType = :ytelse and k.aktørId = :aktørId
+                 ORDER BY gr.koblingId, gr.opprettetTidspunkt
+                 """;
         }
-        
+
         final TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery(sql, InntektArbeidYtelseGrunnlag.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("saksnummer", saksnummer);
@@ -442,9 +452,9 @@ public class InntektArbeidYtelseRepository {
     private void sjekkKonsistens(InntektArbeidYtelseGrunnlag grunnlag) {
         final var arbeidsforholdInformasjon = grunnlag.getArbeidsforholdInformasjon()
             .orElseGet(() -> ArbeidsforholdInformasjonBuilder.builder(Optional.empty()).build());
-        
+
         var grRef = grunnlag.getGrunnlagReferanse();
-        
+
         grunnlag.getRegisterVersjon().ifPresent(aggregat -> aggregat.getAktørArbeid()
             .stream()
             .map(AktørArbeid::hentAlleYrkesaktiviteter)

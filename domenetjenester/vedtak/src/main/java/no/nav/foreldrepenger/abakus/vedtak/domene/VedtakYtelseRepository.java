@@ -74,12 +74,14 @@ public class VedtakYtelseRepository {
         Objects.requireNonNull(fagsystem, "fagsystem");
         Objects.requireNonNull(ytelseType, "ytelseType");
 
-        TypedQuery<VedtakYtelse> query = entityManager.createQuery("SELECT v FROM VedtakYtelseEntitet v " +
-            "WHERE v.aktørId = :aktørId " +
-            "AND v.saksnummer = :saksnummer " +
-            "AND v.kilde = :fagsystem " +
-            "AND v.ytelseType = :ytelse " +
-            "AND v.aktiv = true ", VedtakYtelse.class);
+        TypedQuery<VedtakYtelse> query = entityManager.createQuery("""
+            SELECT v FROM VedtakYtelseEntitet v
+            WHERE v.aktørId = :aktørId
+            AND v.saksnummer = :saksnummer
+            AND v.kilde = :fagsystem
+            AND v.ytelseType = :ytelse
+            AND v.aktiv = true
+            """, VedtakYtelse.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("saksnummer", saksnummer);
         query.setParameter("fagsystem", fagsystem);
@@ -89,10 +91,12 @@ public class VedtakYtelseRepository {
     }
 
     public List<VedtakYtelse> hentYtelserForIPeriode(AktørId aktørId, LocalDate fom, LocalDate tom) {
-        TypedQuery<VedtakYtelse> query = entityManager.createQuery("FROM VedtakYtelseEntitet " +
-            "WHERE aktørId = :aktørId " +
-            "AND periode.fomDato <= :tom AND periode.tomDato >= :fom " +
-            "AND aktiv = true", VedtakYtelse.class);
+        TypedQuery<VedtakYtelse> query = entityManager.createQuery("""
+            SELECT v FROM VedtakYtelseEntitet v
+            WHERE v.aktørId = :aktørId
+            AND v.periode.fomDato <= :tom AND v.periode.tomDato >= :fom
+            AND v.aktiv = true
+            """, VedtakYtelse.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("fom", fom);
         query.setParameter("tom", tom);

@@ -230,7 +230,7 @@ public class InntektArbeidYtelseTjeneste {
             var informasjonBuilder = ArbeidsforholdInformasjonBuilder.oppdatere(arbeidsforholdInformasjon);
 
             var alleInntektsmeldingerForSaksummer = hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, ytelseType);
-            
+
             var eksisterendeGrunnlagRef = original.getGrunnlagReferanse().getReferanse();
             var kopierInntektsmeldingerEtterNyeste = alleInntektsmeldingerForSaksummer.entrySet().stream()
                 .filter(im -> (Inntektsmelding.COMP_REKKEFØLGE.compare(im.getKey(), sisteEksisterendeInntektsmelding) > 0))
@@ -298,16 +298,12 @@ public class InntektArbeidYtelseTjeneste {
             throw new IllegalStateException("Siste grunnlag på " + koblingId + " er ikke aktivt, grunnlagReferanse: " + siste.getGrunnlagReferanse());
         }
 
-        switch (grunnlagVersjon) {
-            case FØRSTE:
-                return List.of(første);
-            case SISTE:
-                return List.of(siste);
-            case FØRSTE_OG_SISTE:
-                return Objects.equals(første, siste) ? List.of(første) : List.of(første, siste);
-            default:
-                throw new UnsupportedOperationException("GrunnlagVersjon " + grunnlagVersjon + " er ikke støttet her for " + koblingId);
-        }
+        return switch (grunnlagVersjon) {
+            case FØRSTE -> List.of(første);
+            case SISTE -> List.of(siste);
+            case FØRSTE_OG_SISTE -> Objects.equals(første, siste) ? List.of(første) : List.of(første, siste);
+            default -> throw new UnsupportedOperationException("GrunnlagVersjon " + grunnlagVersjon + " er ikke støttet her for " + koblingId);
+        };
 
     }
 }
