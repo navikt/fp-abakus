@@ -1,7 +1,7 @@
 name: Bygg pull request
 
 on:
-  pull_request:
+  pull_request_target:
     paths-ignore:
       - '**.md'
       - '**.MD'
@@ -29,6 +29,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
       - uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
@@ -51,5 +54,6 @@ jobs:
         run: |
           mvn verify --batch-mode -DtrimStackTrace=false
         env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
           DATASOURCE_HOST: localhost
           DATASOURCE_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
