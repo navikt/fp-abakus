@@ -117,6 +117,7 @@ public class YtelseRestTjeneste {
         ytelse.setVedtakReferanse(vedtak.getVedtakReferanse().toString());
         ytelse.setStatus(vedtak.getStatus());
         ytelse.setFagsystem(vedtak.getKilde());
+        ytelse.setTilleggsopplysninger(vedtak.getTilleggsopplysninger());
         var periode = new Periode();
         periode.setFom(vedtak.getPeriode().getFomDato());
         periode.setTom(vedtak.getPeriode().getTomDato());
@@ -141,7 +142,7 @@ public class YtelseRestTjeneste {
     private void logMetrikk(String ressurs, Duration executionTime) {
         metrikkerTjeneste.logRestKall(ressurs, executionTime.toNanos());
     }
-    
+
     public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
         @Override
         public AbacDataAttributter apply(Object obj) {

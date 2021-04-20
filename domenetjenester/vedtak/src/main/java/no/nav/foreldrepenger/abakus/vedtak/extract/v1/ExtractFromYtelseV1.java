@@ -48,6 +48,7 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
             .medYtelseType(ytelseType)
             .medPeriode(mapTilEntitet(ytelse.getPeriode()))
             .medStatus(YtelseStatus.fraKode(ytelse.getStatus().getKode()))
+            .medTilleggsopplysninger(ytelse.getTilleggsopplysninger())
             .tilbakestillAnvisteYtelser();
 
         ytelse.getAnvist().forEach(anv -> mapAnvisning(builder, anv));

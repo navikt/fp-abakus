@@ -56,6 +56,9 @@ public class YtelseV1 extends Ytelse {
     @JsonProperty("periode")
     private Periode periode;
 
+    @JsonProperty("tilleggsopplysninger")
+    private String tilleggsopplysninger;
+
     @NotNull
     @Valid
     @JsonProperty("anvist")
@@ -137,6 +140,14 @@ public class YtelseV1 extends Ytelse {
 
     public void setVedtakReferanse(String vedtakReferanse) {
         this.vedtakReferanse = vedtakReferanse;
+    }
+
+    public String getTilleggsopplysninger() {
+        return tilleggsopplysninger;
+    }
+
+    public void setTilleggsopplysninger(String tilleggsopplysninger) {
+        this.tilleggsopplysninger = tilleggsopplysninger;
     }
 
     @Override
