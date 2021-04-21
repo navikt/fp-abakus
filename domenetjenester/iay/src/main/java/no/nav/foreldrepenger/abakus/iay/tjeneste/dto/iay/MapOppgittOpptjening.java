@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -100,6 +101,10 @@ public class MapOppgittOpptjening {
 
             var dto = new OppgittOpptjeningDto(oppgittOpptjening.getEksternReferanse(), oppgittOpptjening.getOpprettetTidspunkt());
 
+            Optional.ofNullable(oppgittOpptjening.getJournalpostId())
+                .ifPresent(jp -> dto.setJournalpostId(new JournalpostId(jp.getVerdi())));
+            Optional.ofNullable(oppgittOpptjening.getInnsendingstidspunkt())
+                .ifPresent(tidspunkt -> dto.setInnsendingstidspunkt(tidspunkt.atZone(ZoneId.of("Europe/Oslo")).toOffsetDateTime()));
             dto.medArbeidsforhold(oppgittOpptjening.getOppgittArbeidsforhold().stream()
                 .map(oa -> this.mapArbeidsforhold(oa)).sorted(COMP_OPPGITT_ARBEIDSFORHOLD).collect(Collectors.toList()));
             dto.medEgenNæring(oppgittOpptjening.getEgenNæring().stream()
