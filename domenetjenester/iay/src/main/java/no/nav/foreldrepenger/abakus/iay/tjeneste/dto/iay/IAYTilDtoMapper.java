@@ -77,7 +77,7 @@ public class IAYTilDtoMapper {
         if (dataset.contains(Dataset.OPPGITT_OPPTJENING_V2)) {
             grunnlag.getOppgittOpptjeningAggregat().ifPresent(aggregat -> {
                 var mapper = new MapOppgittOpptjening(null).mapTilDto(aggregat.getOppgitteOpptjeninger());
-                dto.medOppgittOpptjeningAggregat(mapper);
+                dto.medOppgittOpptjeninger(mapper);
             });
         }
         return dto;

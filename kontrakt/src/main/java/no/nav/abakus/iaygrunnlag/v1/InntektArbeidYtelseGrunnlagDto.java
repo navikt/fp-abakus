@@ -24,6 +24,7 @@ import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningDto;
+import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningerDto;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -90,9 +91,12 @@ public class InntektArbeidYtelseGrunnlagDto {
     @Valid
     private OppgittOpptjeningDto overstyrtOppgittOpptjening;
 
-    @JsonProperty(value = "oppgittOpptjeningPrDokument")
+    /**
+     * Variant som støtter mer enn en oppgitt opptjening. Den støtter oppgitt opptjening pr. journalpost
+     */
+    @JsonProperty(value = "oppgitteOpptjeninger")
     @Valid
-    private Map<JournalpostId, OppgittOpptjeningDto> oppgittOpptjeningPrDokument;
+    private OppgittOpptjeningerDto oppgitteOpptjeninger;
 
     @JsonProperty(value = "arbeidsforholdInformasjon")
     @Valid
@@ -177,8 +181,8 @@ public class InntektArbeidYtelseGrunnlagDto {
         return overstyrtOppgittOpptjening;
     }
 
-    public Map<JournalpostId, OppgittOpptjeningDto> getOppgittOpptjeningPrDokument() {
-        return oppgittOpptjeningPrDokument;
+    public OppgittOpptjeningerDto getOppgitteOpptjeninger() {
+        return oppgitteOpptjeninger;
     }
 
     public InntektArbeidYtelseAggregatOverstyrtDto getOverstyrt() {
@@ -217,8 +221,8 @@ public class InntektArbeidYtelseGrunnlagDto {
         return this;
     }
 
-    public InntektArbeidYtelseGrunnlagDto medOppgittOpptjeningAggregat(Map<JournalpostId, OppgittOpptjeningDto> oppgittOpptjeningPrDokument) {
-        setOppgittOpptjeningPrDokument(oppgittOpptjeningPrDokument);
+    public InntektArbeidYtelseGrunnlagDto medOppgittOpptjeninger(OppgittOpptjeningerDto oppgitteOpptjeninger) {
+        setOppgittOpptjeningPrDokument(oppgitteOpptjeninger);
         return this;
     }
 
@@ -242,22 +246,22 @@ public class InntektArbeidYtelseGrunnlagDto {
     }
 
     public void setOppgittOpptjening(OppgittOpptjeningDto oppgittOpptjening) {
-        if (oppgittOpptjeningPrDokument != null) {
-            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr dokument) og gammel (en oppgitt opptjening) i samme sak.");
+        if (oppgitteOpptjeninger != null) {
+            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr journalpostId) og gammel (en oppgitt opptjening) i samme sak.");
         }
         this.oppgittOpptjening = oppgittOpptjening;
     }
 
-    public void setOppgittOpptjeningPrDokument(Map<JournalpostId, OppgittOpptjeningDto> oppgittOpptjeningPrDokument) {
+    public void setOppgittOpptjeningPrDokument(OppgittOpptjeningerDto oppgitteOpptjeninger) {
         if (oppgittOpptjening != null || overstyrtOppgittOpptjening != null) {
-            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr dokument) og gammel (en oppgitt opptjening) i samme sak.");
+            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr journalpostId) og gammel (en oppgitt opptjening) i samme sak.");
         }
-        this.oppgittOpptjeningPrDokument = oppgittOpptjeningPrDokument;
+        this.oppgitteOpptjeninger = oppgitteOpptjeninger;
     }
 
     public void setOverstyrtOppgittOpptjening(OppgittOpptjeningDto overstyrtOppgittOpptjening) {
-        if (oppgittOpptjeningPrDokument != null) {
-            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr dokument) og gammel (en oppgitt opptjening) i samme sak.");
+        if (oppgitteOpptjeninger != null) {
+            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr journalpostId) og gammel (en oppgitt opptjening) i samme sak.");
         }
         this.overstyrtOppgittOpptjening = overstyrtOppgittOpptjening;
     }

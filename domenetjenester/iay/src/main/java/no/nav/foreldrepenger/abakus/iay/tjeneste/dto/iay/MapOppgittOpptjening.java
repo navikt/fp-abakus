@@ -4,9 +4,7 @@ import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
@@ -22,6 +20,7 @@ import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittEgenNæringDto;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittFrilansDto;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittFrilansoppdragDto;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningDto;
+import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningerDto;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittAnnenAktivitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittEgenNæring;
@@ -72,17 +71,9 @@ public class MapOppgittOpptjening {
         this.iayTjeneste = iayTjeneste;
     }
 
-    public Map<JournalpostId, OppgittOpptjeningDto> mapTilDto(Collection<OppgittOpptjening> oppgittOpptjeninger) {
-        Map<JournalpostId, OppgittOpptjeningDto> resultat = new LinkedHashMap<>();
-        MapTilDto mapper = new MapTilDto();
-        for (OppgittOpptjening oppgittOpptjening : oppgittOpptjeninger) {
-            JournalpostId journalpostId = new JournalpostId(oppgittOpptjening.getJournalpostId().getVerdi());
-            OppgittOpptjeningDto oppgittOpptjeningDto = mapper.map(oppgittOpptjening);
-            if (resultat.put(journalpostId, oppgittOpptjeningDto) != null) {
-                throw new IllegalArgumentException("Har duplikat oppgitt opptjening for " + journalpostId);
-            }
-        }
-        return resultat;
+    public OppgittOpptjeningerDto mapTilDto(Collection<OppgittOpptjening> oppgittOpptjeninger) {
+        return new OppgittOpptjeningerDto()
+            .medOppgitteOpptjeninger(oppgittOpptjeninger.stream().map(this::mapTilDto).collect(Collectors.toList()));
     }
 
     public OppgittOpptjeningDto mapTilDto(OppgittOpptjening oppgittOpptjening) {
