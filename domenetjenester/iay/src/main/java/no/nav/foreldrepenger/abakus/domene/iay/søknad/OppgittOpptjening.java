@@ -109,9 +109,13 @@ public class OppgittOpptjening extends BaseEntitet {
                 return kopi;
             })
             .collect(Collectors.toList());
-        if (orginal.getFrilans().isPresent()) {
-            frilans = new OppgittFrilans(orginal.getFrilans().get());
-        }
+        this.frilans = orginal.getFrilans()
+            .map(frilans -> {
+                var kopi = new OppgittFrilans(frilans);
+                kopi.setOppgittOpptjening(this);
+                return kopi;
+            })
+            .orElse(null);
     }
 
     void setOppgitteOpptjeninger(OppgittOpptjeningAggregat oppgitteOpptjeninger) {
