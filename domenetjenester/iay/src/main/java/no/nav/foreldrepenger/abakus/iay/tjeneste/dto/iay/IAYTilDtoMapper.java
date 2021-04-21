@@ -62,21 +62,21 @@ public class IAYTilDtoMapper {
 
         if (dataset.contains(Dataset.OPPGITT_OPPTJENING)) {
             grunnlag.getOppgittOpptjening().ifPresent(oo -> {
-                var mapper = new MapOppgittOpptjening(null).mapTilDto(oo);
+                var mapper = new MapOppgittOpptjening().mapTilDto(oo);
                 dto.medOppgittOpptjening(mapper);
             });
         }
 
         if (dataset.contains(Dataset.OVERSTYRT_OPPGITT_OPPTJENING)) {
             grunnlag.getOverstyrtOppgittOpptjening().ifPresent(oo -> {
-                var mapper = new MapOppgittOpptjening(null).mapTilDto(oo);
+                var mapper = new MapOppgittOpptjening().mapTilDto(oo);
                 dto.medOverstyrtOppgittOpptjening(mapper);
             });
         }
 
         if (dataset.contains(Dataset.OPPGITT_OPPTJENING_V2)) {
             grunnlag.getOppgittOpptjeningAggregat().ifPresent(aggregat -> {
-                var mapper = new MapOppgittOpptjening(null).mapTilDto(aggregat.getOppgitteOpptjeninger());
+                var mapper = new MapOppgittOpptjening().mapTilDto(aggregat.getOppgitteOpptjeninger());
                 dto.medOppgittOpptjeninger(mapper);
             });
         }

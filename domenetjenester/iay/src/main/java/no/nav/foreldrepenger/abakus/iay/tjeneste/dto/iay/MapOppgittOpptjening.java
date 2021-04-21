@@ -65,12 +65,6 @@ public class MapOppgittOpptjening {
         .thenComparing(dto -> dto.getLandkode() == null ? null : dto.getLandkode().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(OppgittEgenNæringDto::getVirksomhetNavn, Comparator.nullsLast(Comparator.naturalOrder()));
 
-    private InntektArbeidYtelseTjeneste iayTjeneste;
-
-    public MapOppgittOpptjening(InntektArbeidYtelseTjeneste iayTjeneste) {
-        this.iayTjeneste = iayTjeneste;
-    }
-
     public OppgittOpptjeningerDto mapTilDto(Collection<OppgittOpptjening> oppgittOpptjeninger) {
         return new OppgittOpptjeningerDto()
             .medOppgitteOpptjeninger(oppgittOpptjeninger.stream().map(this::mapTilDto).collect(Collectors.toList()));
