@@ -177,6 +177,10 @@ public class InntektArbeidYtelseGrunnlagDto {
         return overstyrtOppgittOpptjening;
     }
 
+    public Map<JournalpostId, OppgittOpptjeningDto> getOppgittOpptjeningPrDokument() {
+        return oppgittOpptjeningPrDokument;
+    }
+
     public InntektArbeidYtelseAggregatOverstyrtDto getOverstyrt() {
         return overstyrt;
     }
@@ -209,25 +213,16 @@ public class InntektArbeidYtelseGrunnlagDto {
     }
 
     public InntektArbeidYtelseGrunnlagDto medOppgittOpptjening(OppgittOpptjeningDto oppgittOpptjening) {
-        if (oppgittOpptjeningPrDokument != null) {
-            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr dokument) og gammel (en oppgitt opptjening) i samme sak.");
-        }
         setOppgittOpptjening(oppgittOpptjening);
         return this;
     }
 
     public InntektArbeidYtelseGrunnlagDto medOppgittOpptjeningAggregat(Map<JournalpostId, OppgittOpptjeningDto> oppgittOpptjeningPrDokument) {
-        if (oppgittOpptjening != null || overstyrtOppgittOpptjening != null) {
-            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr dokument) og gammel (en oppgitt opptjening) i samme sak.");
-        }
         setOppgittOpptjeningPrDokument(oppgittOpptjeningPrDokument);
         return this;
     }
 
     public InntektArbeidYtelseGrunnlagDto medOverstyrtOppgittOpptjening(OppgittOpptjeningDto overstyrtOppgittOpptjening) {
-        if (oppgittOpptjeningPrDokument != null) {
-            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr dokument) og gammel (en oppgitt opptjening) i samme sak.");
-        }
         setOverstyrtOppgittOpptjening(overstyrtOppgittOpptjening);
         return this;
     }
@@ -247,14 +242,23 @@ public class InntektArbeidYtelseGrunnlagDto {
     }
 
     public void setOppgittOpptjening(OppgittOpptjeningDto oppgittOpptjening) {
+        if (oppgittOpptjeningPrDokument != null) {
+            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr dokument) og gammel (en oppgitt opptjening) i samme sak.");
+        }
         this.oppgittOpptjening = oppgittOpptjening;
     }
 
     public void setOppgittOpptjeningPrDokument(Map<JournalpostId, OppgittOpptjeningDto> oppgittOpptjeningPrDokument) {
+        if (oppgittOpptjening != null || overstyrtOppgittOpptjening != null) {
+            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr dokument) og gammel (en oppgitt opptjening) i samme sak.");
+        }
         this.oppgittOpptjeningPrDokument = oppgittOpptjeningPrDokument;
     }
 
     public void setOverstyrtOppgittOpptjening(OppgittOpptjeningDto overstyrtOppgittOpptjening) {
+        if (oppgittOpptjeningPrDokument != null) {
+            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr dokument) og gammel (en oppgitt opptjening) i samme sak.");
+        }
         this.overstyrtOppgittOpptjening = overstyrtOppgittOpptjening;
     }
 
