@@ -23,9 +23,6 @@ import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningDto;
 @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
 public class OppgittOpptjeningMottattRequest {
 
-    @JsonProperty(value = "opptjeningPrJournalpostId")
-    private Boolean opptjeningPrJournalpostId;
-
     @JsonProperty(value = "saksnummer", required = true)
     @NotNull
     @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'")
@@ -54,23 +51,16 @@ public class OppgittOpptjeningMottattRequest {
     private YtelseType ytelseType = YtelseType.UDEFINERT;
 
     @JsonCreator
-    public OppgittOpptjeningMottattRequest(@JsonProperty(value = "opptjeningPrJournalpostId") Boolean opptjeningPrJournalpostId,
-                                           @JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
+    public OppgittOpptjeningMottattRequest(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
                                            @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UUID koblingReferanse,
                                            @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
                                            @JsonProperty(value = "ytelseType") YtelseType ytelseType,
                                            @JsonProperty(value = "oppgittOpptjening", required = true) @NotNull @Valid OppgittOpptjeningDto oppgittOpptjening) {
-        this.opptjeningPrJournalpostId = opptjeningPrJournalpostId;
         this.saksnummer = saksnummer;
         this.koblingReferanse = koblingReferanse;
         this.aktør = aktør;
         this.ytelseType = ytelseType;
         this.oppgittOpptjening = oppgittOpptjening;
-    }
-
-    @AssertFalse(message = "Når flagget opptjeningPrJournalpostId er satt, må journalpostId settes i oppgittOpptjening")
-    private boolean isManglerJournalpost() {
-        return Boolean.TRUE.equals(opptjeningPrJournalpostId) && oppgittOpptjening.getJournalpostId() == null;
     }
 
     public String getSaksnummer() {
@@ -93,12 +83,12 @@ public class OppgittOpptjeningMottattRequest {
         return this.ytelseType;
     }
 
-    public boolean erOpptjeningPrJournalpostId() {
-        return Boolean.TRUE.equals(opptjeningPrJournalpostId);
+    public boolean harOppgittJournalpostId() {
+        return oppgittOpptjening.getJournalpostId() != null;
     }
 
-    public void setOpptjeningPrJournalpostId(Boolean opptjeningPrJournalpostId) {
-        this.opptjeningPrJournalpostId = opptjeningPrJournalpostId;
+    public boolean harOppgittInnsendingstidspunkt() {
+        return oppgittOpptjening.getInnsendingstidspunkt() != null;
     }
 
     @Override

@@ -25,6 +25,7 @@ import no.nav.foreldrepenger.abakus.iay.tjeneste.ArbeidsforholdRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.GrunnlagRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.InntektsmeldingerRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.OppgittOpptjeningRestTjeneste;
+import no.nav.foreldrepenger.abakus.iay.tjeneste.OppgittOpptjeningV2RestTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataRestTjeneste;
 import no.nav.foreldrepenger.abakus.vedtak.tjeneste.YtelseRestTjeneste;
 import no.nav.vedtak.felles.prosesstask.rest.ProsessTaskRestTjeneste;
@@ -67,6 +68,7 @@ public class ApplicationConfig extends Application {
         classes.add(RegisterdataRestTjeneste.class);
         classes.add(InntektsmeldingerRestTjeneste.class);
         classes.add(OppgittOpptjeningRestTjeneste.class);
+        classes.add(OppgittOpptjeningV2RestTjeneste.class);
         classes.add(GrunnlagRestTjeneste.class);
         classes.add(ArbeidsforholdRestTjeneste.class);
         classes.add(YtelseRestTjeneste.class);
