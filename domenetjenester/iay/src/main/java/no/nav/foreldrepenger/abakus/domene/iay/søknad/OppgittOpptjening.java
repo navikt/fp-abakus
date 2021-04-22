@@ -7,12 +7,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -23,6 +27,7 @@ import org.hibernate.annotations.NaturalId;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
+import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 
 @Immutable
 @Entity(name = "OppgittOpptjening")
@@ -33,10 +38,23 @@ public class OppgittOpptjening extends BaseEntitet {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SO_OPPGITT_OPPTJENING")
     private Long id;
 
+    /**
+     * nullable - denne er kun i bruk når det lagres på aggregat ( se /v2/motta-endepunktet )
+     */
+    @ManyToOne
+    @JoinColumn(name = "oppgitte_opptjeninger_id", updatable = false)
+    private OppgittOpptjeningAggregat oppgitteOpptjeninger;
+
     @NaturalId
     @DiffIgnore
     @Column(name = "ekstern_referanse", updatable = false, unique = true)
     private UUID eksternReferanse;
+
+    @Embedded
+    private JournalpostId journalpostId;
+
+    @Column(name = "innsendingstidspunkt", updatable = false, nullable = false)
+    private LocalDateTime innsendingstidspunkt;
 
     @OneToMany(mappedBy = "oppgittOpptjening")
     @ChangeTracked
@@ -68,6 +86,45 @@ public class OppgittOpptjening extends BaseEntitet {
         super.setOpprettetTidspunkt(opprettetTidspunktOriginalt);
     }
 
+    /* copy ctor. */
+    public OppgittOpptjening(OppgittOpptjening orginal) {
+        this.eksternReferanse = orginal.getEksternReferanse();
+        this.journalpostId = orginal.getJournalpostId();
+        this.innsendingstidspunkt = orginal.getInnsendingstidspunkt();
+        this.oppgittArbeidsforhold = orginal.getOppgittArbeidsforhold().stream()
+            .map(oppgittArbeidsforhold -> {
+                OppgittArbeidsforhold kopi = new OppgittArbeidsforhold(oppgittArbeidsforhold);
+                kopi.setOppgittOpptjening(this);
+                return kopi;
+            })
+            .collect(Collectors.toList());
+        this.egenNæring = orginal.getEgenNæring().stream()
+            .map(egenNæring -> {
+                OppgittEgenNæring kopi = new OppgittEgenNæring(egenNæring);
+                kopi.setOppgittOpptjening(this);
+                return kopi;
+            })
+            .collect(Collectors.toList());
+        this.annenAktivitet = orginal.getAnnenAktivitet().stream()
+            .map(annenAktivitet -> {
+                OppgittAnnenAktivitet kopi = new OppgittAnnenAktivitet(annenAktivitet);
+                kopi.setOppgittOpptjening(this);
+                return kopi;
+            })
+            .collect(Collectors.toList());
+        this.frilans = orginal.getFrilans()
+            .map(frilans -> {
+                var kopi = new OppgittFrilans(frilans);
+                kopi.setOppgittOpptjening(this);
+                return kopi;
+            })
+            .orElse(null);
+    }
+
+    void setOppgitteOpptjeninger(OppgittOpptjeningAggregat oppgitteOpptjeninger) {
+        this.oppgitteOpptjeninger = oppgitteOpptjeninger;
+    }
+
     public List<OppgittArbeidsforhold> getOppgittArbeidsforhold() {
         if (this.oppgittArbeidsforhold == null) {
             return Collections.emptyList();
@@ -81,6 +138,22 @@ public class OppgittOpptjening extends BaseEntitet {
 
     public Long getId() {
         return id;
+    }
+
+    public void setJournalpostId(JournalpostId journalpostId) {
+        this.journalpostId = journalpostId;
+    }
+
+    public JournalpostId getJournalpostId() {
+        return journalpostId;
+    }
+
+    public void setInnsendingstidspunkt(LocalDateTime innsendingstidspunkt) {
+        this.innsendingstidspunkt = innsendingstidspunkt;
+    }
+
+    public LocalDateTime getInnsendingstidspunkt() {
+        return innsendingstidspunkt;
     }
 
     public List<OppgittEgenNæring> getEgenNæring() {
@@ -149,12 +222,13 @@ public class OppgittOpptjening extends BaseEntitet {
         var that = (OppgittOpptjening) o;
         return Objects.equals(oppgittArbeidsforhold, that.oppgittArbeidsforhold) &&
             Objects.equals(egenNæring, that.egenNæring) &&
-            Objects.equals(annenAktivitet, that.annenAktivitet);
+            Objects.equals(annenAktivitet, that.annenAktivitet) &&
+            Objects.equals(journalpostId, that.journalpostId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(oppgittArbeidsforhold, egenNæring, annenAktivitet);
+        return Objects.hash(oppgittArbeidsforhold, egenNæring, annenAktivitet, journalpostId);
     }
 
     @Override

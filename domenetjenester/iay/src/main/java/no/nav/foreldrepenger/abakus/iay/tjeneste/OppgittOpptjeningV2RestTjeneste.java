@@ -1,9 +1,7 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste;
 
-import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.GRUNNLAG;
 import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.SØKNAD;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.UPDATE;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -39,37 +37,36 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 
 @OpenAPIDefinition(tags = @Tag(name = "oppgitt opptjening"))
-@Path("/iay/oppgitt/v1")
+@Path("/iay/oppgitt/v2")
 @ApplicationScoped
 @Transactional
-public class OppgittOpptjeningRestTjeneste {
+public class OppgittOpptjeningV2RestTjeneste {
 
     private KoblingTjeneste koblingTjeneste;
     private OppgittOpptjeningTjeneste oppgittOpptjeningTjeneste;
 
-    public OppgittOpptjeningRestTjeneste() {
-    } // RESTEASY ctor
+    public OppgittOpptjeningV2RestTjeneste() {
+        // RESTEASY ctor
+    }
 
     @Inject
-    public OppgittOpptjeningRestTjeneste(KoblingTjeneste koblingTjeneste,
-                                         OppgittOpptjeningTjeneste oppgittOpptjeningTjeneste) {
+    public OppgittOpptjeningV2RestTjeneste(KoblingTjeneste koblingTjeneste,
+                                           OppgittOpptjeningTjeneste oppgittOpptjeningTjeneste) {
         this.koblingTjeneste = koblingTjeneste;
         this.oppgittOpptjeningTjeneste = oppgittOpptjeningTjeneste;
     }
 
     @POST
     @Path("/motta")
-    @Operation(description = "Lagrer ned mottatt oppgitt opptjening", tags = "oppgitt opptjening", responses = {
+    @Operation(description = "Lagrer ned mottatt oppgitt opptjening (versjon 2: støtter oppgitt opptjening pr journalpost)", tags = "oppgitt opptjening", responses = {
         @ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))
     })
     @BeskyttetRessurs(action = CREATE, resource = SØKNAD)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
-    public Response lagreOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
-        if (mottattRequest.harOppgittJournalpostId() || mottattRequest.harOppgittInnsendingstidspunkt()) {
-            return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), "v1/motta skal ikke ha journalpostId eller innsendingstidspunkt. Skal du egentlig bruke /v2/motta ?").build();
+    public Response lagreOppgittOpptjeningV2(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
+        if (!mottattRequest.harOppgittJournalpostId() || !mottattRequest.harOppgittInnsendingstidspunkt()) {
+            return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), "v2/motta krever at journalpostId og innsendingstidspunkt er satt på oppgitt opptjening").build();
         }
-
-        Response response;
 
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
         var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
@@ -77,48 +74,16 @@ public class OppgittOpptjeningRestTjeneste {
         var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId, new Saksnummer(mottattRequest.getSaksnummer()));
 
         OppgittOpptjeningBuilder builder = new MapOppgittOpptjening().mapFraDto(mottattRequest.getOppgittOpptjening());
-        GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagre(koblingReferanse, builder);
+        GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagrePrJournalpostId(koblingReferanse, builder);
 
         koblingTjeneste.lagre(kobling);
         koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
 
         if (grunnlagReferanse != null) {
-            response = Response.ok(new UuidDto(grunnlagReferanse.getReferanse())).build();
+            return Response.ok(new UuidDto(grunnlagReferanse.getReferanse())).build();
         } else {
-            response = Response.noContent().build();
+            return Response.noContent().build();
         }
-
-        return response;
-    }
-
-    @POST
-    @Path("/overstyr")
-    @Operation(description = "Lagrer ned mottatt oppgitt opptjening", tags = "oppgitt opptjening", responses = {
-        @ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))
-    })
-    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
-    @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
-    public Response lagreOverstrytOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
-        Response response;
-
-        var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
-        var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
-        var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
-        var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId, new Saksnummer(mottattRequest.getSaksnummer()));
-
-        OppgittOpptjeningBuilder builder = new MapOppgittOpptjening().mapFraDto(mottattRequest.getOppgittOpptjening());
-        GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagreOverstyring(koblingReferanse, builder);
-
-        koblingTjeneste.lagre(kobling);
-        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
-
-        if (grunnlagReferanse != null) {
-            response = Response.ok(new UuidDto(grunnlagReferanse.getReferanse())).build();
-        } else {
-            response = Response.noContent().build();
-        }
-
-        return response;
     }
 
     public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {

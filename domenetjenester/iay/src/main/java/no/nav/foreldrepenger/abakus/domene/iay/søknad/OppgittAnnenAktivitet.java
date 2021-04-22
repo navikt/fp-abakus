@@ -52,9 +52,15 @@ public class OppgittAnnenAktivitet extends BaseEntitet implements IndexKey {
         // hibernate
     }
 
+    /* copy ctor*/
+    public OppgittAnnenAktivitet(OppgittAnnenAktivitet orginal) {
+        periode = orginal.getPeriode();
+        arbeidType = orginal.getArbeidType();
+    }
+
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { periode, arbeidType };
+        Object[] keyParts = {periode, arbeidType};
         return IndexKeyComposer.createKey(keyParts);
     }
 

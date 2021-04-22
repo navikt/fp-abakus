@@ -22,6 +22,7 @@ import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningDto;
+import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgitteOpptjeningerDto;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -88,6 +89,13 @@ public class InntektArbeidYtelseGrunnlagDto {
     @Valid
     private OppgittOpptjeningDto overstyrtOppgittOpptjening;
 
+    /**
+     * Variant som støtter mer enn en oppgitt opptjening. Den støtter oppgitt opptjening pr. journalpost
+     */
+    @JsonProperty(value = "oppgitteOpptjeninger")
+    @Valid
+    private OppgitteOpptjeningerDto oppgitteOpptjeninger;
+
     @JsonProperty(value = "arbeidsforholdInformasjon")
     @Valid
     private ArbeidsforholdInformasjon arbeidsforholdInformasjon;
@@ -122,7 +130,7 @@ public class InntektArbeidYtelseGrunnlagDto {
         this.person = person;
         this.grunnlagReferanse = grunnlagReferanse;
         this.grunnlagTidspunkt = grunnlagTidspunkt.atZone(DEFAULT_ZONE).toOffsetDateTime();
-        this.ytelseType= ytelseType;
+        this.ytelseType = ytelseType;
     }
 
     protected InntektArbeidYtelseGrunnlagDto() {
@@ -137,6 +145,7 @@ public class InntektArbeidYtelseGrunnlagDto {
             return false;
         }
         InntektArbeidYtelseGrunnlagDto other = (InntektArbeidYtelseGrunnlagDto) obj;
+        //TODO bør sammenligne alle feltene, eller ha en kommentar som sier hvorfor kun utvalgte felt brukes i equals-metoden
         return Objects.equals(person, other.person)
             && Objects.equals(register, other.register)
             && Objects.equals(overstyrt, other.overstyrt);
@@ -170,6 +179,10 @@ public class InntektArbeidYtelseGrunnlagDto {
         return overstyrtOppgittOpptjening;
     }
 
+    public OppgitteOpptjeningerDto getOppgitteOpptjeninger() {
+        return oppgitteOpptjeninger;
+    }
+
     public InntektArbeidYtelseAggregatOverstyrtDto getOverstyrt() {
         return overstyrt;
     }
@@ -177,7 +190,7 @@ public class InntektArbeidYtelseGrunnlagDto {
     public PersonIdent getPerson() {
         return person;
     }
-    
+
     public YtelseType getYtelseType() {
         return this.ytelseType;
     }
@@ -206,6 +219,11 @@ public class InntektArbeidYtelseGrunnlagDto {
         return this;
     }
 
+    public InntektArbeidYtelseGrunnlagDto medOppgittOpptjeninger(OppgitteOpptjeningerDto oppgitteOpptjeninger) {
+        setOppgittOpptjeningPrDokument(oppgitteOpptjeninger);
+        return this;
+    }
+
     public InntektArbeidYtelseGrunnlagDto medOverstyrtOppgittOpptjening(OppgittOpptjeningDto overstyrtOppgittOpptjening) {
         setOverstyrtOppgittOpptjening(overstyrtOppgittOpptjening);
         return this;
@@ -226,11 +244,23 @@ public class InntektArbeidYtelseGrunnlagDto {
     }
 
     public void setOppgittOpptjening(OppgittOpptjeningDto oppgittOpptjening) {
+        if (oppgitteOpptjeninger != null) {
+            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr journalpostId) og gammel (en oppgitt opptjening) i samme sak.");
+        }
         this.oppgittOpptjening = oppgittOpptjening;
+    }
 
+    public void setOppgittOpptjeningPrDokument(OppgitteOpptjeningerDto oppgitteOpptjeninger) {
+        if (oppgittOpptjening != null || overstyrtOppgittOpptjening != null) {
+            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr journalpostId) og gammel (en oppgitt opptjening) i samme sak.");
+        }
+        this.oppgitteOpptjeninger = oppgitteOpptjeninger;
     }
 
     public void setOverstyrtOppgittOpptjening(OppgittOpptjeningDto overstyrtOppgittOpptjening) {
+        if (oppgitteOpptjeninger != null) {
+            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr journalpostId) og gammel (en oppgitt opptjening) i samme sak.");
+        }
         this.overstyrtOppgittOpptjening = overstyrtOppgittOpptjening;
     }
 

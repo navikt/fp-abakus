@@ -11,8 +11,10 @@
     <sequence-generator name="SEQ_OPPGITT_ARBEIDSFORHOLD" allocation-size="50" sequence-name="SEQ_OPPGITT_ARBEIDSFORHOLD" />
     <sequence-generator name="SEQ_EGEN_NAERING" allocation-size="50" sequence-name="SEQ_EGEN_NAERING" />
     <sequence-generator name="SEQ_ANNEN_AKTIVITET" allocation-size="50" sequence-name="SEQ_ANNEN_AKTIVITET" />
-    
+    <sequence-generator name="IAY_OPPGITTE_OPPTJENINGER" allocation-size="50" sequence-name="IAY_OPPGITTE_OPPTJENINGER" />
+
     <!-- Oppgitt opptjening fra søknad-->
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningAggregat"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittArbeidsforhold"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittEgenNæring"/>

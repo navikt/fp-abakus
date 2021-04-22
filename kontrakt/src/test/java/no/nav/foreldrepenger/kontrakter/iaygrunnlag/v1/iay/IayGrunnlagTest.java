@@ -223,7 +223,7 @@ public class IayGrunnlagTest {
                     .medUtsettelsePerioder(List.of(new UtsettelsePeriodeDto(periode, UtsettelseÅrsakType.FERIE))))));
 
         grunnlag.medOppgittOpptjening(
-            new OppgittOpptjeningDto(uuid, offTidspunkt)
+            new OppgittOpptjeningDto(null, null, uuid, offTidspunkt)
                 .medArbeidsforhold(List.of(
                     new OppgittArbeidsforholdDto(periode, ArbeidType.ORDINÆRT_ARBEIDSFORHOLD)
                         .medErUtenlandskInntekt(true)

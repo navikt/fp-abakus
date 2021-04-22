@@ -51,6 +51,13 @@ public class OppgittFrilansoppdrag extends BaseEntitet implements IndexKey {
         this.inntekt = inntekt;
     }
 
+    /* copy ctor */
+    public OppgittFrilansoppdrag(OppgittFrilansoppdrag orginal) {
+        oppdragsgiver = orginal.getOppdragsgiver();
+        periode = orginal.getPeriode();
+        inntekt = orginal.getInntekt();
+    }
+
     @Override
     public String getIndexKey() {
         Object[] keyParts = { periode, oppdragsgiver };
@@ -83,7 +90,7 @@ public class OppgittFrilansoppdrag extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "FrilansoppdragEntitet{" +
+        return "OppgittFrilansoppdrag{" +
             "frilans=" + frilans +
             ", oppdragsgiver='" + oppdragsgiver + '\'' +
             ", periode=" + periode +

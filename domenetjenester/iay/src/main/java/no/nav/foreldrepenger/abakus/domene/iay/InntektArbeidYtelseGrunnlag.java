@@ -23,6 +23,7 @@ import org.hibernate.annotations.NaturalId;
 
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningAggregat;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -58,10 +59,21 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     @ChangeTracked
     private InntektArbeidYtelseAggregat saksbehandlet;
 
+    /**
+     * versjon 1 - støtter kun en oppgitt opptjening på en behandling, kan heller ikke oppdateres
+     */
     @OneToOne
     @JoinColumn(name = "oppgitt_opptjening_id", updatable = false, unique = true)
     @ChangeTracked
     private OppgittOpptjening oppgittOpptjening;
+
+    /**
+     * versjon 2 - støtter å lagre flere oppgitt opptjening på en behandling
+     */
+    @OneToOne
+    @JoinColumn(name = "oppgitte_opptjeninger_id", updatable = false, unique = true)
+    @ChangeTracked
+    private OppgittOpptjeningAggregat oppgittOpptjeningAggregat;
 
     @OneToOne
     @ChangeTracked
@@ -73,6 +85,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     @JoinColumn(name = "informasjon_id", updatable = false, unique = true)
     private ArbeidsforholdInformasjon arbeidsforholdInformasjon;
 
+    // Kun for Frisinn
     @OneToOne
     @JoinColumn(name = "overstyrt_oppgitt_opptjening_id", updatable = false, unique = true)
     @ChangeTracked
@@ -95,6 +108,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
 
         // NB! skal ikke lage ny versjon av oppgitt opptjening! Lenker bare inn
         grunnlag.getOppgittOpptjening().ifPresent(kopiAvOppgittOpptjening -> this.setOppgittOpptjening(kopiAvOppgittOpptjening));
+        grunnlag.getOppgittOpptjeningAggregat().ifPresent(kopiAvAggregat -> this.setOppgittOpptjeningAggregat(kopiAvAggregat));
 
         grunnlag.getOverstyrtOppgittOpptjening().ifPresent(this::setOverstyrtOppgittOpptjening);
         grunnlag.getRegisterVersjon().ifPresent(nyRegisterVerson -> this.setRegister(nyRegisterVerson));
@@ -184,6 +198,14 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
         this.overstyrtOppgittOpptjening = overstyrtOppgittOpptjening;
     }
 
+    public Optional<OppgittOpptjeningAggregat> getOppgittOpptjeningAggregat() {
+        return Optional.ofNullable(oppgittOpptjeningAggregat);
+    }
+
+    void setOppgittOpptjeningAggregat(OppgittOpptjeningAggregat oppgittOpptjeningAggregat) {
+        this.oppgittOpptjeningAggregat = oppgittOpptjeningAggregat;
+    }
+
     void setKobling(Long koblingId) {
         if (this.koblingId != null && !Objects.equals(this.koblingId, koblingId)) {
             throw new IllegalStateException(String.format("Kan ikke overskrive koblingId %s: %s", this.koblingId, koblingId));
@@ -195,12 +217,16 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
         this.aktiv = aktiv;
     }
 
-    /** Hvorvidt dette er det siste (aktive grunnlaget) for en behandling. */
+    /**
+     * Hvorvidt dette er det siste (aktive grunnlaget) for en behandling.
+     */
     public boolean isAktiv() {
         return aktiv;
     }
 
-    /** Unik id for dette grunnlaget. */
+    /**
+     * Unik id for dette grunnlaget.
+     */
     public Long getId() {
         return id;
     }

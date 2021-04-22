@@ -43,7 +43,9 @@ public class OppgittOpptjeningMottattRequest {
     @Valid
     private OppgittOpptjeningDto oppgittOpptjening;
 
-    /** Optional - for now, gjør required når K9, FP sender. */
+    /**
+     * Optional - for now, gjør required når K9, FP sender.
+     */
     @JsonProperty(value = "ytelseType")
     private YtelseType ytelseType = YtelseType.UDEFINERT;
 
@@ -78,6 +80,14 @@ public class OppgittOpptjeningMottattRequest {
 
     public YtelseType getYtelseType() {
         return this.ytelseType;
+    }
+
+    public boolean harOppgittJournalpostId() {
+        return oppgittOpptjening.getJournalpostId() != null;
+    }
+
+    public boolean harOppgittInnsendingstidspunkt() {
+        return oppgittOpptjening.getInnsendingstidspunkt() != null;
     }
 
     @Override

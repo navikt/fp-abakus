@@ -1,14 +1,16 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
+import java.time.ZoneId;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import no.nav.abakus.iaygrunnlag.JournalpostId;
 import no.nav.abakus.iaygrunnlag.Organisasjon;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
@@ -18,6 +20,7 @@ import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittEgenNæringDto;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittFrilansDto;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittFrilansoppdragDto;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningDto;
+import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgitteOpptjeningerDto;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittAnnenAktivitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittEgenNæring;
@@ -28,7 +31,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder.EgenNæringBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder.OppgittArbeidsforholdBuilder;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
 public class MapOppgittOpptjening {
@@ -62,10 +64,9 @@ public class MapOppgittOpptjening {
         .thenComparing(dto -> dto.getLandkode() == null ? null : dto.getLandkode().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(OppgittEgenNæringDto::getVirksomhetNavn, Comparator.nullsLast(Comparator.naturalOrder()));
 
-    private InntektArbeidYtelseTjeneste iayTjeneste;
-
-    public MapOppgittOpptjening(InntektArbeidYtelseTjeneste iayTjeneste) {
-        this.iayTjeneste = iayTjeneste;
+    public OppgitteOpptjeningerDto mapTilDto(Collection<OppgittOpptjening> oppgittOpptjeninger) {
+        return new OppgitteOpptjeningerDto()
+            .medOppgitteOpptjeninger(oppgittOpptjeninger.stream().map(this::mapTilDto).collect(Collectors.toList()));
     }
 
     public OppgittOpptjeningDto mapTilDto(OppgittOpptjening oppgittOpptjening) {
@@ -84,6 +85,10 @@ public class MapOppgittOpptjening {
 
             var dto = new OppgittOpptjeningDto(oppgittOpptjening.getEksternReferanse(), oppgittOpptjening.getOpprettetTidspunkt());
 
+            Optional.ofNullable(oppgittOpptjening.getJournalpostId())
+                .ifPresent(jp -> dto.setJournalpostId(new JournalpostId(jp.getVerdi())));
+            Optional.ofNullable(oppgittOpptjening.getInnsendingstidspunkt())
+                .ifPresent(tidspunkt -> dto.setInnsendingstidspunkt(tidspunkt.atZone(ZoneId.of("Europe/Oslo")).toOffsetDateTime()));
             dto.medArbeidsforhold(oppgittOpptjening.getOppgittArbeidsforhold().stream()
                 .map(oa -> this.mapArbeidsforhold(oa)).sorted(COMP_OPPGITT_ARBEIDSFORHOLD).collect(Collectors.toList()));
             dto.medEgenNæring(oppgittOpptjening.getEgenNæring().stream()
@@ -162,7 +167,7 @@ public class MapOppgittOpptjening {
             var virksomhet = egenNæring.getUtenlandskVirksomhetNavn();
             Landkode landkode = egenNæring.getLandkode();
 
-            var land = landkode == null || landkode.getKode() == null ? Landkode.NOR :  landkode;
+            var land = landkode == null || landkode.getKode() == null ? Landkode.NOR : landkode;
             if (virksomhet != null) {
                 dto.medOppgittVirksomhetNavn(virksomhet, land);
             } else {
@@ -196,16 +201,11 @@ public class MapOppgittOpptjening {
 
     private class MapFraDto {
 
-        MapFraDto() {
-            Objects.requireNonNull(iayTjeneste, "iayTjeneste");
-        }
-
         public OppgittOpptjeningBuilder map(OppgittOpptjeningDto dto) {
             if (dto == null)
                 return null;
 
             var oppgittOpptjeningEksternReferanse = UUID.fromString(dto.getEksternReferanse().getReferanse());
-            Optional<OppgittOpptjening> oppgittOpptjening = iayTjeneste.hentOppgittOpptjeningFor(oppgittOpptjeningEksternReferanse);
             var builder = OppgittOpptjeningBuilder.ny(oppgittOpptjeningEksternReferanse, dto.getOpprettetTidspunkt());
 
             var annenAktivitet = mapEach(dto.getAnnenAktivitet(), this::mapAnnenAktivitet);
@@ -219,6 +219,13 @@ public class MapOppgittOpptjening {
 
             var frilans = mapFrilans(dto.getFrilans());
             builder.leggTilFrilansOpplysninger(frilans);
+
+            if (dto.getJournalpostId() != null) {
+                builder.medJournalpostId(new no.nav.foreldrepenger.abakus.typer.JournalpostId(dto.getJournalpostId().getId()));
+            }
+            if (dto.getInnsendingstidspunkt() != null) {
+                builder.medInnsendingstidspuntk(dto.getInnsendingstidspunkt().atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime());
+            }
 
             return builder;
         }

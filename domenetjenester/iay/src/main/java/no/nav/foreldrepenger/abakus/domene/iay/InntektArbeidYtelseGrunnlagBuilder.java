@@ -9,6 +9,8 @@ import java.util.UUID;
 import no.nav.abakus.iaygrunnlag.request.Dataset;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 
 public class InntektArbeidYtelseGrunnlagBuilder {
@@ -44,7 +46,9 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         if (skalIkkeKopierMed(dataset, Dataset.OPPGITT_OPPTJENING)) {
             kladd.setOppgittOpptjening(null);
         }
-
+        if (skalIkkeKopierMed(dataset, Dataset.OPPGITT_OPPTJENING_V2)) {
+            kladd.setOppgittOpptjeningAggregat(null);
+        }
         if (skalIkkeKopierMed(dataset, Dataset.OVERSTYRT_OPPGITT_OPPTJENING)) {
             kladd.setOverstyrtOppgittOpptjening(null);
         }
@@ -119,15 +123,15 @@ public class InntektArbeidYtelseGrunnlagBuilder {
 
     public void medSaksbehandlet(InntektArbeidYtelseAggregatBuilder builder) {
         VersjonType forventet = VersjonType.SAKSBEHANDLET;
-        if(builder!=null && !Objects.equals(builder.getVersjon(),  forventet)) {
+        if (builder != null && !Objects.equals(builder.getVersjon(), forventet)) {
             throw new IllegalArgumentException("kan kun angi " + forventet + ", fikk: " + builder.getVersjon());
         }
         kladd.setSaksbehandlet(builder == null ? null : builder.build());
     }
-    
+
     public void medRegister(InntektArbeidYtelseAggregatBuilder builder) {
         VersjonType forventet = VersjonType.REGISTER;
-        if(builder!=null && !Objects.equals(builder.getVersjon(),  forventet)) {
+        if (builder != null && !Objects.equals(builder.getVersjon(), forventet)) {
             throw new IllegalArgumentException("kan kun angi " + forventet + ", fikk: " + builder.getVersjon());
         }
         kladd.setRegister(builder == null ? null : builder.build());
@@ -138,7 +142,29 @@ public class InntektArbeidYtelseGrunnlagBuilder {
             if (kladd.getOppgittOpptjening().isPresent()) {
                 throw new IllegalStateException("Utviklerfeil: Er ikke lov å endre oppgitt opptjening!");
             }
+            if (kladd.getOppgittOpptjeningAggregat().isPresent()) {
+                throw new IllegalStateException("Utviklerfeil: Har allerede lagt inn oppgitt oppptjening på aggregat. Kan da ikke legge til oppgitt opptjening utenom aggregat.");
+            }
             kladd.setOppgittOpptjening(builder.build());
+        }
+        return this;
+    }
+
+    public InntektArbeidYtelseGrunnlagBuilder leggTilOppgittOpptjening(OppgittOpptjeningBuilder builder) {
+        if (builder != null) {
+            if (kladd.getOppgittOpptjening().isPresent()) {
+                throw new IllegalStateException("Utviklerfeil: Har allerede lagt inn oppgitt opptjening utenom aggregat. Kan da ikke legge til oppgitt opptjening på aggregat i tillegg.");
+            }
+            OppgittOpptjening oppgittOpptjening = builder.build();
+            if (oppgittOpptjening.getJournalpostId() == null) {
+                throw new IllegalStateException("Utviklerfeil: Legg-til krever journalpostId.");
+            }
+            Optional<OppgittOpptjeningAggregat> gammel = kladd.getOppgittOpptjeningAggregat();
+            OppgittOpptjeningAggregat aggregat = gammel.isPresent()
+                ? OppgittOpptjeningAggregat.oppdater(gammel.get(), oppgittOpptjening)
+                : OppgittOpptjeningAggregat.ny(oppgittOpptjening);
+
+            kladd.setOppgittOpptjeningAggregat(aggregat);
         }
         return this;
     }
@@ -146,6 +172,9 @@ public class InntektArbeidYtelseGrunnlagBuilder {
     public InntektArbeidYtelseGrunnlagBuilder medOverstyrtOppgittOpptjening(OppgittOpptjeningBuilder builder) {
         if (builder != null) {
             kladd.setOverstyrtOppgittOpptjening(builder.build());
+            if (kladd.getOppgittOpptjeningAggregat().isPresent()) {
+                throw new IllegalStateException("Sanity check: Har allerede lagt inn oppgitt oppptjening på aggregat. Du vil da sannsynligvis ikke overstyre slik.");
+            }
         }
         return this;
     }

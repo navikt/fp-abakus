@@ -53,6 +53,19 @@ public class OppgittFrilans extends BaseEntitet {
     public OppgittFrilans() {
     }
 
+    /* copy ctor */
+    public OppgittFrilans(OppgittFrilans orginal) {
+        harInntektFraFosterhjem = orginal.getHarInntektFraFosterhjem();
+        erNyoppstartet = orginal.getErNyoppstartet();
+        harNærRelasjon = orginal.getHarNærRelasjon();
+        frilansoppdrag = orginal.getFrilansoppdrag().stream()
+            .map(orginalFrilansoppdrag -> {
+                OppgittFrilansoppdrag kopi = new OppgittFrilansoppdrag(orginalFrilansoppdrag);
+                kopi.setFrilans(this);
+                return kopi;
+            }).collect(Collectors.toList());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -72,7 +85,7 @@ public class OppgittFrilans extends BaseEntitet {
 
     @Override
     public String toString() {
-        return "FrilansEntitet{" +
+        return "OppgittFrilans{" +
             "oppgittOpptjening=" + oppgittOpptjening +
             ", harInntektFraFosterhjem=" + harInntektFraFosterhjem +
             ", erNyoppstartet=" + erNyoppstartet +
