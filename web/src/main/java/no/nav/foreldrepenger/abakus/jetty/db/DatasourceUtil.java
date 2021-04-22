@@ -80,7 +80,7 @@ public class DatasourceUtil {
             String password) {
         config.setUsername(username);
         config.setPassword(password); // NOSONAR false positive
-        if (!no.nav.vedtak.util.StringUtils.nullOrEmpty(schema)) {
+        if (schema != null && !schema.isEmpty()) {
             config.setSchema(schema);
         }
         return new HikariDataSource(config);
