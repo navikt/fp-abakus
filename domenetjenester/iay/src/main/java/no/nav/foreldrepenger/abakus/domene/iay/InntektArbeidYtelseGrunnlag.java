@@ -59,12 +59,17 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     @ChangeTracked
     private InntektArbeidYtelseAggregat saksbehandlet;
 
+    /**
+     * versjon 1 - støtter kun en oppgitt opptjening på en behandling, kan heller ikke oppdateres
+     */
     @OneToOne
     @JoinColumn(name = "oppgitt_opptjening_id", updatable = false, unique = true)
     @ChangeTracked
     private OppgittOpptjening oppgittOpptjening;
 
-    // Krever nytt endepunkt, ditcher OppgittOpptjening ovenfor
+    /**
+     * versjon 2 - støtter å lagre flere oppgitt opptjening på en behandling
+     */
     @OneToOne
     @JoinColumn(name = "oppgitte_opptjeninger_id", updatable = false, unique = true)
     @ChangeTracked

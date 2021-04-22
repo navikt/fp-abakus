@@ -99,4 +99,11 @@ public class OppgittOpptjeningAggregat extends BaseEntitet {
     public int hashCode() {
         return Objects.hash(oppgitteOpptjeninger);
     }
+
+    @Override
+    public String toString() {
+        return "OppgittOpptjeningAggregat{" +
+            "oppgitteOpptjeninger=" + oppgitteOpptjeninger +
+            '}';
+    }
 }

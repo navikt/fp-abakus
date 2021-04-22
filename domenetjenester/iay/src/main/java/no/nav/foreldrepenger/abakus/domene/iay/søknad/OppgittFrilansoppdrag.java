@@ -90,7 +90,7 @@ public class OppgittFrilansoppdrag extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "FrilansoppdragEntitet{" +
+        return "OppgittFrilansoppdrag{" +
             "frilans=" + frilans +
             ", oppdragsgiver='" + oppdragsgiver + '\'' +
             ", periode=" + periode +

@@ -85,7 +85,7 @@ public class OppgittFrilans extends BaseEntitet {
 
     @Override
     public String toString() {
-        return "FrilansEntitet{" +
+        return "OppgittFrilans{" +
             "oppgittOpptjening=" + oppgittOpptjening +
             ", harInntektFraFosterhjem=" + harInntektFraFosterhjem +
             ", erNyoppstartet=" + erNyoppstartet +

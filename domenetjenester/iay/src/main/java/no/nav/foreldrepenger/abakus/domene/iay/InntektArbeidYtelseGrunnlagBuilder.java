@@ -45,9 +45,10 @@ public class InntektArbeidYtelseGrunnlagBuilder {
 
         if (skalIkkeKopierMed(dataset, Dataset.OPPGITT_OPPTJENING)) {
             kladd.setOppgittOpptjening(null);
-            // TODO: Også ta med aggregat
         }
-
+        if (skalIkkeKopierMed(dataset, Dataset.OPPGITT_OPPTJENING_V2)) {
+            kladd.setOppgittOpptjeningAggregat(null);
+        }
         if (skalIkkeKopierMed(dataset, Dataset.OVERSTYRT_OPPGITT_OPPTJENING)) {
             kladd.setOverstyrtOppgittOpptjening(null);
         }

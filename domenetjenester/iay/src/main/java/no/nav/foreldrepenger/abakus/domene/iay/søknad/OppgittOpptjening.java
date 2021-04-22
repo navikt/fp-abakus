@@ -38,6 +38,9 @@ public class OppgittOpptjening extends BaseEntitet {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SO_OPPGITT_OPPTJENING")
     private Long id;
 
+    /**
+     * nullable - denne er kun i bruk når det lagres på aggregat ( se /v2/motta-endepunktet )
+     */
     @ManyToOne
     @JoinColumn(name = "oppgitte_opptjeninger_id", updatable = false)
     private OppgittOpptjeningAggregat oppgitteOpptjeninger;
@@ -219,12 +222,13 @@ public class OppgittOpptjening extends BaseEntitet {
         var that = (OppgittOpptjening) o;
         return Objects.equals(oppgittArbeidsforhold, that.oppgittArbeidsforhold) &&
             Objects.equals(egenNæring, that.egenNæring) &&
-            Objects.equals(annenAktivitet, that.annenAktivitet);
+            Objects.equals(annenAktivitet, that.annenAktivitet) &&
+            Objects.equals(journalpostId, that.journalpostId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(oppgittArbeidsforhold, egenNæring, annenAktivitet);
+        return Objects.hash(oppgittArbeidsforhold, egenNæring, annenAktivitet, journalpostId);
     }
 
     @Override

@@ -272,7 +272,7 @@ public class OppgittEgenNæring extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "EgenNæringEntitet{" +
+        return "OppgittEgenNæring{" +
             "id=" + id +
             ", periode=" + periode +
             ", virksomhet=" + orgNummer +
