@@ -15,14 +15,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
-public class OppgittOpptjeningerDto {
+public class OppgitteOpptjeningerDto {
 
     @JsonProperty(value = "oppgitteOpptjeninger", required = true)
     @NotNull
     @Valid
     private List<OppgittOpptjeningDto> oppgitteOpptjeninger;
 
-    public OppgittOpptjeningerDto() {
+    public OppgitteOpptjeningerDto() {
         // default ctor
     }
 
@@ -34,7 +34,7 @@ public class OppgittOpptjeningerDto {
         this.oppgitteOpptjeninger = oppgitteOpptjeninger;
     }
 
-    public OppgittOpptjeningerDto medOppgitteOpptjeninger(List<OppgittOpptjeningDto> oppgitteOpptjeninger) {
+    public OppgitteOpptjeningerDto medOppgitteOpptjeninger(List<OppgittOpptjeningDto> oppgitteOpptjeninger) {
         setOppgitteOpptjeninger(oppgitteOpptjeninger);
         return this;
     }

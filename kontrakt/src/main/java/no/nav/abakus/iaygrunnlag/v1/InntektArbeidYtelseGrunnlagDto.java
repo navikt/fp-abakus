@@ -3,7 +3,6 @@ package no.nav.abakus.iaygrunnlag.v1;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -17,14 +16,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import no.nav.abakus.iaygrunnlag.JournalpostId;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.UuidDto;
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningDto;
-import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningerDto;
+import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgitteOpptjeningerDto;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -96,7 +94,7 @@ public class InntektArbeidYtelseGrunnlagDto {
      */
     @JsonProperty(value = "oppgitteOpptjeninger")
     @Valid
-    private OppgittOpptjeningerDto oppgitteOpptjeninger;
+    private OppgitteOpptjeningerDto oppgitteOpptjeninger;
 
     @JsonProperty(value = "arbeidsforholdInformasjon")
     @Valid
@@ -181,7 +179,7 @@ public class InntektArbeidYtelseGrunnlagDto {
         return overstyrtOppgittOpptjening;
     }
 
-    public OppgittOpptjeningerDto getOppgitteOpptjeninger() {
+    public OppgitteOpptjeningerDto getOppgitteOpptjeninger() {
         return oppgitteOpptjeninger;
     }
 
@@ -221,7 +219,7 @@ public class InntektArbeidYtelseGrunnlagDto {
         return this;
     }
 
-    public InntektArbeidYtelseGrunnlagDto medOppgittOpptjeninger(OppgittOpptjeningerDto oppgitteOpptjeninger) {
+    public InntektArbeidYtelseGrunnlagDto medOppgittOpptjeninger(OppgitteOpptjeningerDto oppgitteOpptjeninger) {
         setOppgittOpptjeningPrDokument(oppgitteOpptjeninger);
         return this;
     }
@@ -252,7 +250,7 @@ public class InntektArbeidYtelseGrunnlagDto {
         this.oppgittOpptjening = oppgittOpptjening;
     }
 
-    public void setOppgittOpptjeningPrDokument(OppgittOpptjeningerDto oppgitteOpptjeninger) {
+    public void setOppgittOpptjeningPrDokument(OppgitteOpptjeningerDto oppgitteOpptjeninger) {
         if (oppgittOpptjening != null || overstyrtOppgittOpptjening != null) {
             throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr journalpostId) og gammel (en oppgitt opptjening) i samme sak.");
         }
