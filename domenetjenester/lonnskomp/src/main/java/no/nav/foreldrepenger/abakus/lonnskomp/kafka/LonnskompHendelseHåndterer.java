@@ -105,7 +105,7 @@ public class LonnskompHendelseHåndterer {
             vedtak.setOrgNummer(new OrgNummer(melding.getBedriftNr()));
             vedtak.setPeriode(IntervallEntitet.fraOgMedTilOgMed(melding.getFom(), melding.getTom()));
             vedtak.setForrigeVedtakDato(forrigedato);
-            vedtak.setBeløp(new Beløp(melding.getTotalKompensasjon()));
+            vedtak.setBeløp(new Beløp(melding.getTotalKompensasjon() != null ? melding.getTotalKompensasjon() : BigDecimal.ZERO));
 
             Map<YearMonth, List<UtbetalingsdagMelding>> sortert = melding.getDagBeregninger().stream()
                 .filter(b -> b.getLønnskompensasjonsbeløp() != null && !Objects.equals("-", b.getLønnskompensasjonsbeløp()))

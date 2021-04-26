@@ -124,7 +124,7 @@ public class LønnskompensasjonAnvist extends BaseEntitet implements IndexKey {
 
         public LønnskompensasjonAnvistBuilder medBeløp(BigDecimal beløp) {
             if (beløp != null) {
-                this.anvist.setBeløp(new Beløp(beløp));
+                this.anvist.setBeløp(new Beløp(beløp != null ? beløp : BigDecimal.ZERO));
             }
             return this;
         }
