@@ -75,6 +75,11 @@ public class VedtakYtelseBuilder {
         return this;
     }
 
+    public VedtakYtelseBuilder medTilleggsopplysninger(String tilleggsopplysninger) {
+        ytelse.setTilleggsopplysninger(tilleggsopplysninger);
+        return this;
+    }
+
     public VedtakYtelseBuilder leggTil(YtelseAnvistBuilder ytelseAnvist) {
         Objects.requireNonNull(ytelseAnvist, "ytelseAnvist");
         ytelse.leggTilYtelseAnvist(ytelseAnvist.build());

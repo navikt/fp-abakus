@@ -18,11 +18,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.Type;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
@@ -88,6 +90,11 @@ public class VedtakYtelse extends BaseEntitet implements IndexKey {
     @ChangeTracked
     private TemaUnderkategori temaUnderkategori = TemaUnderkategori.UDEFINERT;
 
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "tilleggsopplysninger")
+    private String tilleggsopplysninger;
+
     @OneToMany(mappedBy = "ytelse")
     @ChangeTracked
     private Set<YtelseAnvist> ytelseAnvist = new LinkedHashSet<>();
@@ -113,6 +120,7 @@ public class VedtakYtelse extends BaseEntitet implements IndexKey {
         this.saksnummer = ytelse.getSaksnummer();
         this.temaUnderkategori = ytelse.getBehandlingsTema();
         this.kilde = ytelse.getKilde();
+        this.tilleggsopplysninger = ytelse.getTilleggsopplysninger();
         this.ytelseAnvist = ytelse.getYtelseAnvist()
             .stream()
             .map(YtelseAnvist::new)
@@ -206,6 +214,14 @@ public class VedtakYtelse extends BaseEntitet implements IndexKey {
 
     void setVedtattTidspunkt(LocalDateTime vedtattTidspunkt) {
         this.vedtattTidspunkt = vedtattTidspunkt;
+    }
+
+    public String getTilleggsopplysninger() {
+        return tilleggsopplysninger;
+    }
+
+    public void setTilleggsopplysninger(String tilleggsopplysninger) {
+        this.tilleggsopplysninger = tilleggsopplysninger;
     }
 
     void tilbakestillAnvisteYtelser() {
