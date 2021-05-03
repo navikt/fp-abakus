@@ -36,8 +36,8 @@
             <artifactId>kafka-streams</artifactId>
         </dependency>
         <dependency>
-            <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-            <artifactId>sensu-klient</artifactId>
+            <groupId>no.nav.foreldrepenger.felles</groupId>
+            <artifactId>felles-abac-legacy</artifactId>
         </dependency>
     </dependencies>
 

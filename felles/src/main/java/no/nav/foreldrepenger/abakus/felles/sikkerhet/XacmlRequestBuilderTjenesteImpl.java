@@ -1,12 +1,10 @@
-package no.nav.foreldrepenger.abakus.app.sikkerhet;
+package no.nav.foreldrepenger.abakus.felles.sikkerhet;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.Priority;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Alternative;
 
 import no.nav.vedtak.sikkerhet.abac.PdpRequest;
 import no.nav.vedtak.sikkerhet.pdp.XacmlRequestBuilderTjeneste;
@@ -14,8 +12,6 @@ import no.nav.vedtak.sikkerhet.pdp.xacml.XacmlAttributeSet;
 import no.nav.vedtak.sikkerhet.pdp.xacml.XacmlRequestBuilder;
 
 @Dependent
-@Alternative
-@Priority(2)
 public class XacmlRequestBuilderTjenesteImpl implements XacmlRequestBuilderTjeneste {
 
     public XacmlRequestBuilderTjenesteImpl() {

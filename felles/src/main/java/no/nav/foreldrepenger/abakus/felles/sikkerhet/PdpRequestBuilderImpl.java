@@ -1,8 +1,6 @@
-package no.nav.foreldrepenger.abakus.app.sikkerhet;
+package no.nav.foreldrepenger.abakus.felles.sikkerhet;
 
-import javax.annotation.Priority;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Alternative;
 
 import no.nav.vedtak.sikkerhet.abac.AbacAttributtSamling;
 import no.nav.vedtak.sikkerhet.abac.PdpKlient;
@@ -14,9 +12,6 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
  * Implementasjon av PDP request for denne applikasjonen.
  */
 @ApplicationScoped
-@Alternative
-@Priority(2)
-// HACK - FORDI DENNE KOLLIDERER MED DUMMYREQUESTBUILDER FRA FELLES-SIKKERHET-TESTUTILITIES NÅR VI KJØRER JETTY
 public class PdpRequestBuilderImpl implements PdpRequestBuilder {
 
     public static final String ABAC_DOMAIN = "duplo";

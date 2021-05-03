@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import io.prometheus.client.hotspot.DefaultExports;
 import no.nav.foreldrepenger.abakus.felles.kafka.KafkaIntegration;
-import no.nav.vedtak.felles.integrasjon.sensu.SensuKlient;
 import no.nav.vedtak.felles.prosesstask.impl.BatchTaskScheduler;
 import no.nav.vedtak.felles.prosesstask.impl.TaskManager;
 
@@ -28,7 +27,6 @@ public class ApplicationServiceStarter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationServiceStarter.class);
     private Map<KafkaIntegration, AtomicBoolean> serviceMap = new HashMap<>();
-    private SensuKlient sensuKlient;
     private TaskManager taskManager;
     private BatchTaskScheduler batchTaskScheduler;
 
@@ -38,10 +36,8 @@ public class ApplicationServiceStarter {
 
     @Inject
     public ApplicationServiceStarter(@Any Instance<KafkaIntegration> serviceHandlers,
-                                     SensuKlient sensuKlient,
                                      TaskManager taskManager,
                                      BatchTaskScheduler batchTaskScheduler) {
-        this.sensuKlient = sensuKlient;
         this.taskManager = taskManager;
         this.batchTaskScheduler = batchTaskScheduler;
         serviceHandlers.forEach(handler -> serviceMap.put(handler, new AtomicBoolean()));
@@ -49,7 +45,6 @@ public class ApplicationServiceStarter {
 
     public void startServices() {
         DefaultExports.initialize();
-        sensuKlient.start();
         taskManager.start();
         batchTaskScheduler.start();
         serviceMap.forEach((key, value) -> {
@@ -90,7 +85,6 @@ public class ApplicationServiceStarter {
 
         batchTaskScheduler.stop();
         taskManager.stop();
-        sensuKlient.stop();
     }
 
 }

@@ -14,7 +14,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import no.nav.abakus.vedtak.ytelse.Ytelse;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
-import no.nav.foreldrepenger.abakus.felles.metrikker.MetrikkerTjeneste;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
@@ -33,16 +32,14 @@ public class LagreVedtakTask implements ProsessTaskHandler {
 
     private VedtakYtelseRepository ytelseRepository;
     private ExtractFromYtelseV1 extractor;
-    private MetrikkerTjeneste metrikkerTjeneste;
 
     public LagreVedtakTask() {
     }
 
     @Inject
-    public LagreVedtakTask(VedtakYtelseRepository ytelseRepository, ExtractFromYtelseV1 extractor, MetrikkerTjeneste metrikkerTjeneste) {
+    public LagreVedtakTask(VedtakYtelseRepository ytelseRepository, ExtractFromYtelseV1 extractor) {
         this.ytelseRepository = ytelseRepository;
         this.extractor = extractor;
-        this.metrikkerTjeneste = metrikkerTjeneste;
     }
 
     @Override
@@ -71,10 +68,6 @@ public class LagreVedtakTask implements ProsessTaskHandler {
 
             ytelseRepository.lagre(builder);
 
-            metrikkerTjeneste.logVedtakMottatKafka(
-                    mottattVedtak1.getType().getKode(),
-                    mottattVedtak1.getStatus().getKode(),
-                    mottattVedtak1.getFagsystem().getKode());
         }
     }
 }

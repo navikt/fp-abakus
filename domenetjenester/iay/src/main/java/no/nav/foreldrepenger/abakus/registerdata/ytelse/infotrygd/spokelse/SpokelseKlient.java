@@ -61,7 +61,7 @@ public class SpokelseKlient {
             LOG.info("abakus spokelse REST {} fikk grunnlag {}", uriString, Arrays.toString(grunnlag));
             return Arrays.asList(grunnlag);
         } catch (Exception e) {
-            LOG.error("abakus spokelse feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
+            LOG.warn("abakus spokelse feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
             throw new TekniskException( "FP-180126", String.format("SPokelse %s gir feil, ta opp med team sykepenger.", uriString), e);
         }
     }

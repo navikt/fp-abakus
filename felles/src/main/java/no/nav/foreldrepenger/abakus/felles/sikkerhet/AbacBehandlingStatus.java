@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.app.sikkerhet;
+package no.nav.foreldrepenger.abakus.felles.sikkerhet;
 
 public enum AbacBehandlingStatus {
     OPPRETTET("Opprettet"),

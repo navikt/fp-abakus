@@ -42,7 +42,7 @@ public abstract class AbstractInfotrygdGrunnlag implements InfotrygdGrunnlag {
             var grunnlag = restClient.get(request, Grunnlag[].class);
             return Arrays.asList(grunnlag);
         } catch (Exception e) {
-            LOG.error("Feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
+            LOG.warn("Feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
             throw new TekniskException( "FP-180125", String.format("Tjeneste %s gir feil, meld til #infotrygd_replikering hvis dette skjer gjennom lengre tidsperiode.", uriString), e);
         }
     }
@@ -57,7 +57,7 @@ public abstract class AbstractInfotrygdGrunnlag implements InfotrygdGrunnlag {
             var grunnlag = restClient.get(request, Grunnlag[].class);
             return Arrays.asList(grunnlag);
         } catch (Exception e) {
-            LOG.error("Feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
+            LOG.warn("Feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
             return Collections.emptyList();
         }
     }

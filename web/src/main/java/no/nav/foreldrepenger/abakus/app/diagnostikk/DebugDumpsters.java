@@ -137,17 +137,17 @@ public class DebugDumpsters {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private static Object transformValue(Object in) {
-        var out = in instanceof Optional ? ((Optional) in).orElse(null) : in;
-        if (out instanceof Kodeverdi) {
-            out = ((Kodeverdi) out).getKode();
+        var out = in instanceof Optional optional ? optional.orElse(null) : in;
+        if (out instanceof Kodeverdi kodeverdi) {
+            out = kodeverdi.getKode();
         }
-        if (out instanceof Enum) {
-            out = ((Enum) out).name();
+        if (out instanceof Enum en) {
+            out = en.name();
         }
-        if (out instanceof Collection && ((Collection) out).isEmpty()) {
+        if (out instanceof Collection collection && collection.isEmpty()) {
             out = null;
         }
-        if (out instanceof Map && ((Map) out).isEmpty()) {
+        if (out instanceof Map map && map.isEmpty()) {
             out = null;
         }
         return out;

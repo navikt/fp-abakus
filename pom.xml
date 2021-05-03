@@ -25,16 +25,16 @@
 		<sha1 />
 		<changelist>-SNAPSHOT</changelist>
 		<java.version>16</java.version>
-        <argLine>-Xms256m -Dlog.level.no.nav=WARN -Dfile.encoding=${project.build.sourceEncoding} --illegal-access=permit</argLine>
+        <argLine>-Xms256m -Dlog.level.no.nav=WARN -Dfile.encoding=${project.build.sourceEncoding}</argLine>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<felles.version>3.1.11</felles.version>
-		<prosesstask.version>2.5.16</prosesstask.version>
+		<felles.version>3.2.41</felles.version>
+		<prosesstask.version>2.5.18</prosesstask.version>
 
-		<kontrakter.version>5.2.2</kontrakter.version>
+		<kontrakter.version>5.2.3</kontrakter.version>
 
 		<tjenestespesifikasjoner.version>1.2020.01.27-14.53-7065a2d75840</tjenestespesifikasjoner.version>
 
@@ -60,7 +60,7 @@
 				<!-- overstyrer her sålenge fp-felles inkluderer eldre versjon. -->
 				<groupId>org.flywaydb</groupId>
 				<artifactId>flyway-core</artifactId>
-				<version>7.8.1</version>
+				<version>7.8.2</version>
 			</dependency>
 			<dependency>
 				<groupId>no.nav.foreldrepenger.felles</groupId>
@@ -176,7 +176,7 @@
 			<dependency>
 				<groupId>org.postgresql</groupId>
 				<artifactId>postgresql</artifactId>
-				<version>42.2.19</version>
+				<version>42.2.20</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.kafka</groupId>
@@ -296,7 +296,7 @@
 			<dependency>
 				<groupId>org.glassfish.jaxb</groupId>
 				<artifactId>txw2</artifactId>
-				<version>3.0.0</version>
+				<version>3.0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.woodstox</groupId>
@@ -311,11 +311,6 @@
 				<version>${swagger.version}</version>
 			</dependency>
 
-			<dependency>
-				<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-				<artifactId>sensu-klient</artifactId>
-				<version>${felles.version}</version>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -449,7 +444,7 @@
 				<plugin>
 					<groupId>org.sonarsource.scanner.maven</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
-					<version>3.8.0.2131</version>
+					<version>3.9.0.2155</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
