@@ -71,10 +71,10 @@ public class ArbeidsforholdDtoTjeneste {
     }
 
     private Aktør mapArbeidsgiver(no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsgiver arbeidsgiver) {
-        if (arbeidsgiver instanceof Person) {
-            return new AktørIdPersonident(((Person) arbeidsgiver).getAktørId());
-        } else if (arbeidsgiver instanceof Organisasjon) {
-            return new no.nav.abakus.iaygrunnlag.Organisasjon(((Organisasjon) arbeidsgiver).getOrgNummer());
+        if (arbeidsgiver instanceof Person person) {
+            return new AktørIdPersonident(person.getAktørId());
+        } else if (arbeidsgiver instanceof Organisasjon organisasjon) {
+            return new no.nav.abakus.iaygrunnlag.Organisasjon(organisasjon.getOrgNummer());
         }
         throw new IllegalArgumentException("Utvikler feil: ArbeidsgiverEntitet av ukjent type.");
     }

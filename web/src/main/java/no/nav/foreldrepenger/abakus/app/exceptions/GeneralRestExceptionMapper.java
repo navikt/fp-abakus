@@ -35,17 +35,17 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationEx
     public Response toResponse(ApplicationException exception) {
         Throwable cause = exception.getCause();
 
-        if (cause instanceof Valideringsfeil) {
-            return handleValideringsfeil((Valideringsfeil) cause);
-        } else if (cause instanceof TomtResultatException) {
-            return handleTomtResultatFeil((TomtResultatException) cause);
+        if (cause instanceof Valideringsfeil valideringsfeil) {
+            return handleValideringsfeil(valideringsfeil);
+        } else if (cause instanceof TomtResultatException tomtResultatException) {
+            return handleTomtResultatFeil(tomtResultatException);
         }
 
         loggTilApplikasjonslogg(cause);
         String callId = MDCOperations.getCallId();
 
-        if (cause instanceof VLException) {
-            return handleVLException((VLException) cause, callId);
+        if (cause instanceof VLException vle) {
+            return handleVLException(vle, callId);
         }
 
         return handleGenerellFeil(cause, callId);
@@ -112,8 +112,8 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationEx
 
     private String getVLExceptionFeilmelding(String callId, VLException feil) {
         String feilbeskrivelse = feil.getMessage(); //$NON-NLS-1$
-        if (feil instanceof FunksjonellException) {
-            String løsningsforslag = ((FunksjonellException) feil).getLøsningsforslag();
+        if (feil instanceof FunksjonellException funksjonellException) {
+            String løsningsforslag = funksjonellException.getLøsningsforslag();
             return "Det oppstod en feil: " //$NON-NLS-1$
                 + avsluttMedPunktum(feilbeskrivelse)
                 + avsluttMedPunktum(løsningsforslag)
@@ -142,7 +142,7 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<ApplicationEx
             LOGGER.warn(cause.getMessage(), cause);
         } else {
             String message = cause.getMessage() != null ? LoggerUtils.removeLineBreaks(cause.getMessage()) : "";
-            LOGGER.error("Fikk uventet feil:" + message, cause); //NOSONAR //$NON-NLS-1$
+            LOGGER.warn("Fikk uventet feil:" + message, cause); //NOSONAR //$NON-NLS-1$
         }
 
         // key for å tracke prosess -- nullstill denne

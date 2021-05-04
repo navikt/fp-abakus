@@ -59,7 +59,7 @@ public class LonnskompConsumer implements KafkaIntegration {
             }
         });
         stream.setUncaughtExceptionHandler((t, e) -> {
-            log.error(topic + " :: Caught exception in stream, exiting", e);
+            log.warn(topic + " :: Caught exception in stream, exiting", e);
             stop();
         });
     }

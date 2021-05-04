@@ -61,8 +61,8 @@ public class DiffResult {
             // corner caser som kan være ansett som like.
 
             // List caser - tolerer at lister kan ha forskjellig rekkefølge
-            if (left instanceof List && right instanceof List) {
-                return areEqualListsOutOfOrder(key, (List) left, (List) right);
+            if (left instanceof List ll && right instanceof List lr) {
+                return areEqualListsOutOfOrder(key, ll, lr);
             }
         }
 

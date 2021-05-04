@@ -9,6 +9,7 @@ public class LønnskompensasjonVedtakMelding {
     private String fnr;
     private BigDecimal totalKompensasjon;
     private String bedriftNr;
+    private String behandlingstype;
     private LocalDate fom;
     private LocalDate tom;
     private String sakId;
@@ -29,6 +30,10 @@ public class LønnskompensasjonVedtakMelding {
 
     public String getBedriftNr() {
         return bedriftNr;
+    }
+
+    public String getBehandlingstype() {
+        return behandlingstype;
     }
 
     public LocalDate getFom() {

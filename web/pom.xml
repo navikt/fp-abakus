@@ -14,7 +14,7 @@
     <name>Abakus :: Web :: Applikasjon</name>
 
     <properties>
-        <swagger-ui.version>3.47.1</swagger-ui.version>
+        <swagger-ui.version>3.48.0</swagger-ui.version>
         <swagger.version>2.1.9</swagger.version>
     </properties>
 
@@ -99,6 +99,10 @@
         <dependency>
             <groupId>no.nav.foreldrepenger.abakus</groupId>
             <artifactId>migreringer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles</groupId>
+            <artifactId>felles-abac-legacy</artifactId>
         </dependency>
 
 
@@ -288,11 +292,6 @@
                     <artifactId>flyway-core</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.foreldrepenger.felles.sikkerhet</groupId>
-            <artifactId>felles-sikkerhet-testutilities</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <!-- Java11 -->

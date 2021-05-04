@@ -18,8 +18,7 @@ COPY web/target/lib/*.jar ./
 ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 \
     -Djava.security.egd=file:/dev/urandom \
     -Duser.timezone=Europe/Oslo \
-    -Dlogback.configurationFile=conf/logback.xml \
-    --illegal-access=permit"
+    -Dlogback.configurationFile=conf/logback.xml"
 
 # Export vault properties
 COPY .scripts/03-import-appdynamics.sh /init-scripts/03-import-appdynamics.sh

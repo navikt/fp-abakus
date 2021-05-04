@@ -72,10 +72,10 @@ public class TraverseGraph {
             throw new TraverseGraphException("Kunne ikke lese grafen [" + currentPath + "]", e); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
-        if (obj instanceof Collection) { // NOSONAR
-            traverseCollection(currentPath, (Collection<?>) obj, result);
-        } else if (obj instanceof Map) { // NOSONAR
-            traverseMap(currentPath, (Map<?, ?>) obj, result);
+        if (obj instanceof Collection collection) { // NOSONAR
+            traverseCollection(currentPath, collection, result);
+        } else if (obj instanceof Map map) { // NOSONAR
+            traverseMap(currentPath, map, result);
         } else {
             // hånter alt annet (vanlige felter)
             doTraverseRecursiveInternal(currentPath, result, obj);
@@ -95,7 +95,7 @@ public class TraverseGraph {
 
         Class<?> targetClass = obj.getClass();
         graphConfig.valider(currentPath, targetClass);
-        
+
         Class<?> currentClass = targetClass;
 
         while (!graphConfig.isRoot(currentClass)) {
@@ -123,10 +123,10 @@ public class TraverseGraph {
      */
     private void traverseDispatch(Node newPath, Object value, TraverseResult result) {
         // en sjelden grei bruk av instanceof. Garantert å håndtere alle varianter pga else til slutt
-        if (value instanceof Collection) { // NOSONAR
-            traverseCollection(newPath, (Collection<?>) value, result);
-        } else if (value instanceof Map) { // NOSONAR
-            traverseMap(newPath, (Map<?, ?>) value, result);
+        if (value instanceof Collection collection) { // NOSONAR
+            traverseCollection(newPath, collection, result);
+        } else if (value instanceof Map map) { // NOSONAR
+            traverseMap(newPath, map, result);
         } else {
             // hånter alt annet (vanlige felter)
             traverseRecursiveInternal(value, newPath, result);
@@ -143,8 +143,8 @@ public class TraverseGraph {
     private void traverseCollection(Node newPath, Collection<?> value, TraverseResult result) {
         for (Object v : value) {
             String collectionKey;
-            if (v instanceof IndexKey) {
-                collectionKey = ((IndexKey) v).getIndexKey();
+            if (v instanceof IndexKey indexKey) {
+                collectionKey = indexKey.getIndexKey();
             } else {
                 collectionKey = String.valueOf(listPositionEq.getKey(newPath, v));
             }

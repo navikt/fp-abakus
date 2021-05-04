@@ -1,6 +1,4 @@
-package no.nav.foreldrepenger.abakus.app.sikkerhet;
-
-import no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt;
+package no.nav.foreldrepenger.abakus.felles.sikkerhet;
 
 /**
  * Brukes for å mappe om resource-felter for REST-tjenester som oppgir resource som ikke er i duplo-sikkerhetsdomene

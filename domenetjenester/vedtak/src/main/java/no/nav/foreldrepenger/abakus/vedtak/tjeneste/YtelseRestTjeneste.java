@@ -4,7 +4,6 @@ import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessu
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Function;
@@ -32,7 +31,6 @@ import no.nav.abakus.vedtak.ytelse.Periode;
 import no.nav.abakus.vedtak.ytelse.Ytelse;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
 import no.nav.abakus.vedtak.ytelse.v1.anvisning.Anvisning;
-import no.nav.foreldrepenger.abakus.felles.metrikker.MetrikkerTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
@@ -55,17 +53,14 @@ public class YtelseRestTjeneste {
 
     private VedtakYtelseRepository ytelseRepository;
     private ExtractFromYtelseV1 extractor;
-    private MetrikkerTjeneste metrikkerTjeneste;
 
     public YtelseRestTjeneste() {} // RESTEASY ctor
 
     @Inject
     public YtelseRestTjeneste(VedtakYtelseRepository ytelseRepository,
-                              ExtractFromYtelseV1 extractor,
-                              MetrikkerTjeneste metrikkerTjeneste) {
+                              ExtractFromYtelseV1 extractor) {
         this.ytelseRepository = ytelseRepository;
         this.extractor = extractor;
-        this.metrikkerTjeneste = metrikkerTjeneste;
     }
 
     @POST
@@ -79,11 +74,6 @@ public class YtelseRestTjeneste {
         VedtakYtelseBuilder builder = extractor.extractFrom(ytelseVedtak);
 
         ytelseRepository.lagre(builder);
-
-        metrikkerTjeneste.logVedtakMottatRest(
-                ytelseVedtak.getType().getKode(),
-                ytelseVedtak.getStatus().getKode(),
-                ytelseVedtak.getFagsystem().getKode());
 
         return Response.accepted().build();
     }
@@ -137,10 +127,6 @@ public class YtelseRestTjeneste {
         anvist.getDagsats().map(Beløp::getVerdi).map(Desimaltall::new).ifPresent(anvisning::setDagsats);
         anvist.getUtbetalingsgradProsent().map(Stillingsprosent::getVerdi).map(Desimaltall::new).ifPresent(anvisning::setUtbetalingsgrad);
         return anvisning;
-    }
-
-    private void logMetrikk(String ressurs, Duration executionTime) {
-        metrikkerTjeneste.logRestKall(ressurs, executionTime.toNanos());
     }
 
     public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {

@@ -43,7 +43,9 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskRepository;
 public class LonnskompHendelseHåndterer {
 
     private static final Logger log = LoggerFactory.getLogger(LonnskompHendelseHåndterer.class);
-    private final static ObjectMapper OBJECT_MAPPER = JacksonJsonConfig.getMapper();
+    private static final ObjectMapper OBJECT_MAPPER = JacksonJsonConfig.getMapper();
+    private static final Set<String> IGNORE_BEHANDLINGSTYPER = Set.of("TILBAKEKREVING_VARSEL_SENDT");
+
     private LønnskompensasjonRepository repository;
     private ProsessTaskRepository prosessTaskRepository;
 
@@ -73,7 +75,11 @@ public class LonnskompHendelseHåndterer {
             throw new TekniskException("FP-328774", String.format("Feil under parsing av vedtak. key={%s} payload={%s}", key, payload) ,e);
         }
         if (mottattVedtak != null) {
+            if (mottattVedtak.getBehandlingstype() != null && IGNORE_BEHANDLINGSTYPER.contains(mottattVedtak.getBehandlingstype())) return;
             var sakId = mottattVedtak.getSakId() != null ? mottattVedtak.getSakId() : mottattVedtak.getId();
+            if (mottattVedtak.getTotalKompensasjon() == null) {
+                log.warn("Lønnskomp uten totalkompensasjon - kontakt teamet - vedtak {} behandlingstype {}", sakId, mottattVedtak.getBehandlingstype());
+            }
             var eksisterende = repository.hentSak(sakId, mottattVedtak.getFnr());
             var harAktørId = eksisterende.map(LønnskompensasjonVedtak::getAktørId);
 

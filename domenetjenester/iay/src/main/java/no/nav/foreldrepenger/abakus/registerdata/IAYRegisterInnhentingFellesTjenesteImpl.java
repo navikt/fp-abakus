@@ -358,10 +358,11 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
     }
 
     private Arbeidsgiver mapArbeidsgiver(ArbeidsforholdIdentifikator arbeidsforhold) {
-        if (arbeidsforhold.getArbeidsgiver() instanceof Person) {
-            return Arbeidsgiver.person(new AktørId(((Person) arbeidsforhold.getArbeidsgiver()).getAktørId()));
-        } else if (arbeidsforhold.getArbeidsgiver() instanceof Organisasjon) {
-            String orgnr = ((Organisasjon) arbeidsforhold.getArbeidsgiver()).getOrgNummer();
+        var arbeidsgiver = arbeidsforhold.getArbeidsgiver();
+        if (arbeidsgiver instanceof Person person) {
+            return Arbeidsgiver.person(new AktørId(person.getAktørId()));
+        } else if (arbeidsgiver instanceof Organisasjon organisasjon) {
+            String orgnr = organisasjon.getOrgNummer();
             return Arbeidsgiver.virksomhet(virksomhetTjeneste.hentOrganisasjon(orgnr));
         }
         throw new IllegalArgumentException("Utvikler feil: ArbeidsgiverEntitet av ukjent type.");
@@ -403,7 +404,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
                 String skatteOgAvgiftsregler = antalInntekterForAvgiftsregel.keySet().stream().collect(Collectors.joining(", "));
                 // TODO Diamant velger her en random verdi.
                 valgtSkatteOgAvgiftsregel = Optional.of(antalInntekterForAvgiftsregel.keySet().iterator().next());
-                LOGGER.error("ArbeidsgiverEntitet orgnr {} har flere månedsinntekter for måned {} med forskjellige skatte -og avgiftsregler {}. Velger {}",
+                LOGGER.warn("ArbeidsgiverEntitet orgnr {} har flere månedsinntekter for måned {} med forskjellige skatte -og avgiftsregler {}. Velger {}",
                     arbeidsgiver.getIdentifikator(), måned, skatteOgAvgiftsregler, valgtSkatteOgAvgiftsregel);
             } else if (antalInntekterForAvgiftsregel.keySet().size() == 1) {
                 valgtSkatteOgAvgiftsregel = Optional.of(antalInntekterForAvgiftsregel.keySet().iterator().next());

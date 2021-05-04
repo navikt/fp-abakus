@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 
 import no.nav.foreldrepenger.abakus.app.konfig.ApplicationServiceStarter;
 import no.nav.foreldrepenger.abakus.felles.kafka.KafkaIntegration;
-import no.nav.vedtak.felles.integrasjon.sensu.SensuKlient;
 import no.nav.vedtak.felles.prosesstask.impl.BatchTaskScheduler;
 import no.nav.vedtak.felles.prosesstask.impl.TaskManager;
 
@@ -36,7 +35,7 @@ public class ApplicationServiceStarterTest {
         when(iteratorMock.next()).thenReturn(serviceMock);
         doReturn(iteratorMock).when(instanceSpied).iterator();
 
-        serviceStarter = new ApplicationServiceStarter(instanceSpied, mock(SensuKlient.class), mock(TaskManager.class), mock(BatchTaskScheduler.class));
+        serviceStarter = new ApplicationServiceStarter(instanceSpied, mock(TaskManager.class), mock(BatchTaskScheduler.class));
     }
 
     @Test

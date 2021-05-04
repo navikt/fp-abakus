@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
-import no.nav.foreldrepenger.abakus.felles.metrikker.MetrikkerTjeneste;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
@@ -16,9 +15,8 @@ public class LagreVedtakTaskTest {
 
 
     private VedtakYtelseRepository repository = mock(VedtakYtelseRepository.class);
-    private MetrikkerTjeneste metrikkerTjeneste = mock(MetrikkerTjeneste.class);
     private ExtractFromYtelseV1 extractor = new ExtractFromYtelseV1(repository);
-    private LagreVedtakTask task = new LagreVedtakTask(repository, extractor, metrikkerTjeneste);
+    private LagreVedtakTask task = new LagreVedtakTask(repository, extractor);
 
     @Test
     public void skal_feile_ved_valideringsfeil() {
