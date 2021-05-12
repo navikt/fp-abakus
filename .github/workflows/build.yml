@@ -128,7 +128,7 @@ jobs:
           issue-number: ${{ steps.createdeployissue.outputs.number }}
           body: /promote dev-fss
 
-      - uses: navikt/github-app-token-generator@v1
+      - uses: navikt/github-app-token-generator@v1.1
         id: get-token
         with:
           private-key: ${{ secrets.FP_PRIVATE_KEY }}
