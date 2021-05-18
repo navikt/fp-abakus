@@ -145,12 +145,16 @@ jobs:
                       "version": "${{ env.TAG }}",
                       "issue_number": "${{ steps.createdeployissue.outputs.number }}"
                   }}'
-      - name: Trigger k9-verdikjede
-        if: success()
-        uses: peter-evans/repository-dispatch@v1
-        with:
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
-          repository: navikt/k9-verdikjede
-          event-type: saksbehandling-verdikjede
-          client-payload: '{ "trigger": "${{ github.repository }}", "version": "${{ env.TAG }}", "image": "${{ github.event.client_payload.github.payload.package.package_version.release.url }}"}'
+      - name: Trigger k9-verdikjede test
+        shell: bash
+        run: |
+          curl -XPOST -u "x-access-token:${{ steps.get-token.outputs.token }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/navikt/k9-verdikjede/actions/workflows/build.yml/dispatches \
+          -d '{"ref":"master",
+                  "inputs":{
+                      "trigger": "${{ github.repository }}",
+                      "version": "${{ env.TAG }}",
+                      "issue_number": "${{ steps.createdeployissue.outputs.number }}"
+                  }}'
 
