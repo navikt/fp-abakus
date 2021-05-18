@@ -89,6 +89,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
     }
 
     private void innhentNæringsOpplysninger(Kobling kobling, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder) {
+        LOGGER.info("Henter lignet inntekt for sak=[{}, {}] med behandling='{}'", kobling.getSaksnummer(), kobling.getYtelseType(), kobling.getKoblingReferanse());
         var map = sigrunTjeneste.beregnetSkatt(kobling.getAktørId());
         var aktørInntektBuilder = inntektArbeidYtelseAggregatBuilder.getAktørInntektBuilder(kobling.getAktørId());
 
@@ -96,6 +97,8 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         inntektBuilder.tilbakestillInntektsposterForPerioder(map.keySet());
 
         for (var entry : map.entrySet()) {
+            LOGGER.info("Fant lignet inntekt for periode {} for sak=[{}, {}] med behandling='{}'",
+                entry.getKey(), kobling.getSaksnummer(), kobling.getYtelseType(), kobling.getKoblingReferanse());
             for (Map.Entry<InntektspostType, BigDecimal> type : entry.getValue().entrySet()) {
                 InntektspostBuilder inntektspostBuilder = inntektBuilder.getInntektspostBuilder();
                 inntektspostBuilder
