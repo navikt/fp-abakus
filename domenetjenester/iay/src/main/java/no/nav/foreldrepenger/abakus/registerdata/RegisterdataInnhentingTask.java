@@ -72,7 +72,7 @@ public class RegisterdataInnhentingTask extends KoblingTask {
         } else {
             informasjonsElementer = Set.of(RegisterdataElement.values());
         }
-
+        log.info("Registerdataelementer for sak=[{}, {}] med behandling='{}' er: {} ", kobling.getSaksnummer(), kobling.getYtelseType(), kobling.getKoblingReferanse(), informasjonsElementer);
         InntektArbeidYtelseGrunnlagBuilder builder = finnInnhenter(kobling.getYtelseType()).innhentRegisterdata(kobling, informasjonsElementer);
         iayTjeneste.lagre(kobling.getKoblingReferanse(), builder);
     }
