@@ -67,7 +67,7 @@ public class AktørTjeneste {
             aktørId.ifPresent(a -> cacheIdentTilAktørId.put(fnr, a));
             return aktørId;
         } catch (VLException v) {
-            if (PdlKlient.PDL_KLIENT_NOT_FOUND_KODE.equals(v.getKode())) {
+            if (Pdl.PDL_KLIENT_NOT_FOUND_KODE.equals(v.getKode())) {
                 return Optional.empty();
             }
             throw v;
@@ -94,7 +94,7 @@ public class AktørTjeneste {
             ident.ifPresent(i -> cacheAktørIdTilIdent.put(aktørId, i));
             return ident;
         } catch (VLException v) {
-            if (PdlKlient.PDL_KLIENT_NOT_FOUND_KODE.equals(v.getKode())) {
+            if (Pdl.PDL_KLIENT_NOT_FOUND_KODE.equals(v.getKode())) {
                 return Optional.empty();
             }
             throw v;
