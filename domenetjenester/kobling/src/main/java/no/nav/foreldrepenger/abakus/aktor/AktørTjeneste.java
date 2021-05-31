@@ -46,9 +46,11 @@ public class AktørTjeneste {
     }
 
     @Inject
-    public AktørTjeneste(@KonfigVerdi(value = "pdl.base.url",defaultVerdi = "http://pdl-api.default/graphql") URI endpoint, StsAccessTokenConfig config) {
-        this.pdlKlientFOR = new JerseyPdlKlient(endpoint, config, "FOR");
-        this.pdlKlientOMS = new JerseyPdlKlient(endpoint, config, "OMS");
+    public AktørTjeneste(@KonfigVerdi(value = "pdl.base.url",defaultVerdi = "http://pdl-api.odl/graphql") URI endpoint, StsAccessTokenConfig config) {
+        this.pdlKlientFOR = new PdlKlient(endpoint, "FOR", config);
+        this.pdlKlientOMS = new PdlKlient(endpoint, "OMS", config);
+        //this.pdlKlientFOR = new JerseyPdlKlient(endpoint, config, "FOR"); Mens vi venter på restabilisering av PDL
+        //this.pdlKlientOMS = new JerseyPdlKlient(endpoint, config, "OMS");
         this.cacheAktørIdTilIdent = new LRUCache<>(DEFAULT_CACHE_SIZE, DEFAULT_CACHE_TIMEOUT);
         this.cacheIdentTilAktørId = new LRUCache<>(DEFAULT_CACHE_SIZE, DEFAULT_CACHE_TIMEOUT);
     }
