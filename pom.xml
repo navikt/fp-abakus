@@ -38,7 +38,7 @@
 
 		<tjenestespesifikasjoner.version>1.2020.01.27-14.53-7065a2d75840</tjenestespesifikasjoner.version>
 
-		<prometheus.version>0.10.0</prometheus.version>
+		<prometheus.version>0.11.0</prometheus.version>
 		<swagger.version>2.1.9</swagger.version>
 		<kafka.version>2.8.0</kafka.version>
 		<resteasy.version>4.6.0.Final</resteasy.version>
