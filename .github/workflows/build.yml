@@ -110,21 +110,26 @@ jobs:
                .then(response => {
                        core.setOutput('number', response.data.number);
                 });
-
-      - name: Trigg deploy til dev
-        if: success()
-        uses: peter-evans/create-or-update-comment@v1
-        with:
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
-          issue-number: ${{ steps.createdeployissue.outputs.number }}
-          body: /promote dev-fss
-
+              
       - uses: navikt/github-app-token-generator@v1.1
         id: get-token
         with:
           private-key: ${{ secrets.FP_PRIVATE_KEY }}
           app-id: ${{ secrets.FP_APP_ID }}
 
+      - name: Trigg deploy til dev-fss
+        if: success()
+        uses: actions/github-script@v4
+        with:
+          github-token: "${{ steps.get-token.outputs.token }}"
+          script: |
+            const issue = { owner: context.issue.owner,
+                            repo: context.issue.repo,
+                            issue_number: ${{ steps.createdeployissue.outputs.number }} }
+            github.issues.createComment({...issue,
+                                    title: 'Deploy av ${{ env.TAG }}',
+                                    body: '/promote dev-fss'})
+                                    
       - name: Trigger tester for FP
         run: |
           curl -XPOST -u "x-access-token:${{ steps.get-token.outputs.token }}" \
