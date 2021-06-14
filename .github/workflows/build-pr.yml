@@ -34,16 +34,16 @@ jobs:
           distribution: 'adopt'
           java-version: 16
 
-      - name: Set cache key
-        run: |
-          echo "CACHE_KEY=$(expr $(date +%V) - 1 + 1)-${{ github.event.pull_request.number }}" >> $GITHUB_ENV # unik cache key for PR
-          echo "PREVIOUS_CACHE_KEY=$(expr $(date +%V) - 1 + 1)" >> $GITHUB_ENV # samme som master cache key
+#       - name: Set cache key
+#         run: |
+#           echo "CACHE_KEY=$(expr $(date +%V) - 1 + 1)-${{ github.event.pull_request.number }}" >> $GITHUB_ENV # unik cache key for PR
+#           echo "PREVIOUS_CACHE_KEY=$(expr $(date +%V) - 1 + 1)" >> $GITHUB_ENV # samme som master cache key
 
-      - uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-maven-${{ env.CACHE_KEY }}
-          restore-keys: |
+#       - uses: actions/cache@v2
+#         with:
+#           path: ~/.m2
+#           key: ${{ runner.os }}-maven-${{ env.CACHE_KEY }}
+#           restore-keys: |
             ${{ runner.os }}-maven-${{ env.PREVIOUS_CACHE_KEY }}
 
       - name: Build
@@ -51,6 +51,6 @@ jobs:
         run: |
           mvn verify --batch-mode -DtrimStackTrace=false
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DATASOURCE_HOST: localhost
           DATASOURCE_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
