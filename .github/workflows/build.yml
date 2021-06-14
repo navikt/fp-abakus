@@ -61,7 +61,7 @@ jobs:
         env:
           TZ: "Europe/Oslo"
           GITHUB_USERNAME: x-access-token
-          GITHUB_PASSWORD: ${{ secrets.GH_ACCESS_TOKEN }}
+          GITHUB_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           DATASOURCE_HOST: localhost
@@ -72,7 +72,7 @@ jobs:
           docker build --pull --tag ${IMAGE_BASE_CR}:${TAG} --tag ${IMAGE_BASE_CR}:latest .
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login --username "x-access-token" --password-stdin ghcr.io
           docker push ${IMAGE_BASE_CR} --all-tags
-          
+
       - name: Lukk gamle issues
         uses: actions/github-script@v4
         with:
@@ -110,7 +110,7 @@ jobs:
                .then(response => {
                        core.setOutput('number', response.data.number);
                 });
-              
+
       - uses: navikt/github-app-token-generator@v1.1
         id: get-token
         with:
@@ -129,7 +129,7 @@ jobs:
             github.issues.createComment({...issue,
                                     title: 'Deploy av ${{ env.TAG }}',
                                     body: '/promote dev-fss'})
-                                    
+
       - name: Trigger tester for FP
         run: |
           curl -XPOST -u "x-access-token:${{ steps.get-token.outputs.token }}" \

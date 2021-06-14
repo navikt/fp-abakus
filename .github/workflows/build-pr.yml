@@ -34,17 +34,16 @@ jobs:
           distribution: 'adopt'
           java-version: 16
 
-#       - name: Set cache key
-#         run: |
-#           echo "CACHE_KEY=$(expr $(date +%V) - 1 + 1)-${{ github.event.pull_request.number }}" >> $GITHUB_ENV # unik cache key for PR
-#           echo "PREVIOUS_CACHE_KEY=$(expr $(date +%V) - 1 + 1)" >> $GITHUB_ENV # samme som master cache key
-
-#       - uses: actions/cache@v2
-#         with:
-#           path: ~/.m2
-#           key: ${{ runner.os }}-maven-${{ env.CACHE_KEY }}
-#           restore-keys: |
-#             ${{ runner.os }}-maven-${{ env.PREVIOUS_CACHE_KEY }}
+      - name: Set cache key
+        run: |
+          echo "CACHE_KEY=$(expr $(date +%V) - 1 + 1)-${{ github.event.pull_request.number }}" >> $GITHUB_ENV # unik cache key for PR
+          echo "PREVIOUS_CACHE_KEY=$(expr $(date +%V) - 1 + 1)" >> $GITHUB_ENV # samme som master cache key
+      - uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ env.CACHE_KEY }}
+          restore-keys: |
+            ${{ runner.os }}-maven-${{ env.PREVIOUS_CACHE_KEY }}
 
       - name: Build
         shell: bash
