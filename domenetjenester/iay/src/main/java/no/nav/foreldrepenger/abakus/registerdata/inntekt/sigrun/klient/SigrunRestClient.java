@@ -152,7 +152,7 @@ public class SigrunRestClient {
     // I mellomtiden bruker vi systemets OIDC-token, dvs vi propagerer ikke sikkerhetskonteksten
     private String veksleSamlTokenTilOIDCToken(@SuppressWarnings("unused") SAMLAssertionCredential samlToken) {
         try {
-            return new OpenAMHelper().getToken().getIdToken().getToken();
+            return new OpenAMHelper().getToken().idToken().getToken();
         } catch (IOException e) {
             throw new TekniskException("F-011590", "IOException ved henting av systemets OIDC-token", e);
         }
