@@ -32,7 +32,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<felles.version>3.2.116</felles.version>
-		<prosesstask.version>2.5.34</prosesstask.version>
+		<prosesstask.version>2.6.3</prosesstask.version>
 
 		<kontrakter.version>6.0.1</kontrakter.version>
 
@@ -70,13 +70,6 @@
 				<type>pom</type>
 			</dependency>
 			<dependency>
-				<groupId>no.nav.vedtak.prosesstask</groupId>
-				<artifactId>prosesstask-root</artifactId>
-				<version>${prosesstask.version}</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
-			<dependency>
 				<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
 				<artifactId>felles-integrasjon-pom</artifactId>
 				<version>${felles.version}</version>
@@ -89,6 +82,14 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+            <dependency>
+                <!-- Importeres etter felles-root og felles for å sikre samme avhengigheter gjennom hele! -->
+                <groupId>no.nav.vedtak.prosesstask</groupId>
+                <artifactId>prosesstask-root</artifactId>
+                <version>${prosesstask.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
 
 			<dependency>
 				<groupId>no.nav.foreldrepenger.kontrakter</groupId>
@@ -102,11 +103,6 @@
 				<groupId>no.nav.foreldrepenger.abakus</groupId>
 				<artifactId>felles</artifactId>
 				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.vedtak.prosesstask</groupId>
-				<artifactId>prosesstask-legacy</artifactId>
-				<version>${prosesstask.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>no.nav.foreldrepenger.abakus</groupId>
@@ -508,7 +504,7 @@
 		</plugins>
 	</build>
 
-    
+
     <repositories>
         <repository>
             <id>github</id>
@@ -516,7 +512,7 @@
             <url>https://maven.pkg.github.com/navikt/fp-abakus/</url>
         </repository>
     </repositories>
-    
+
 	<scm>
 		<connection>scm:git:https://github.com/navikt/fp-abakus.git</connection>
 		<developerConnection>scm:git:https://github.com/navikt/fp-abakus.git</developerConnection>
