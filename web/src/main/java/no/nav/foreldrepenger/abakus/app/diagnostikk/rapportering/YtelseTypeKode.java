@@ -4,9 +4,10 @@ package no.nav.foreldrepenger.abakus.app.diagnostikk.rapportering;
 public enum YtelseTypeKode {
     OMP,
     PSB,
-    OMP_KS,
-    OMP_MA,
-    OMP_AO,
+    PPN,
+    OLP,
+    FORELDREPENGER,
+    SVANGERSKAPSPENGER,
     FRISINN;
 
 }
