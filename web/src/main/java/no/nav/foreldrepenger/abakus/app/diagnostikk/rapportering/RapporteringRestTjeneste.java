@@ -23,8 +23,10 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.app.diagnostikk.DumpOutput;
@@ -35,6 +37,7 @@ import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 
+@OpenAPIDefinition(tags = @Tag(name = "rapportering"))
 @Path(RapporteringRestTjeneste.BASE_PATH)
 @ApplicationScoped
 @Transactional
@@ -52,12 +55,12 @@ public class RapporteringRestTjeneste {
 
     private Instance<RapportGenerator> rapportGenerators;
 
-    RapporteringRestTjeneste() {
+    public RapporteringRestTjeneste() {
         // for proxy
     }
 
     @Inject
-    RapporteringRestTjeneste(@Any Instance<RapportGenerator> rapportGenerators) {
+    public RapporteringRestTjeneste(@Any Instance<RapportGenerator> rapportGenerators) {
         this.rapportGenerators = rapportGenerators;
     }
 
