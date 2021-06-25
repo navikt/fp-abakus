@@ -42,6 +42,8 @@ import javax.ws.rs.core.Response;
 
 import org.jboss.weld.exceptions.IllegalStateException;
 import org.jboss.weld.exceptions.UnsupportedOperationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -92,6 +94,7 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 @Transactional
 public class GrunnlagRestTjeneste {
 
+    private static Logger log = LoggerFactory.getLogger(GrunnlagRestTjeneste.class);
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private KoblingTjeneste koblingTjeneste;
 
@@ -304,6 +307,8 @@ public class GrunnlagRestTjeneste {
 
         var koblingReferanse = getKoblingReferanse(aktørId, dto);
 
+        log.warn("Kall på deprecated tjeneste PUT /iay/grunnlag/v1: ytelse={}, kobling={}", dto.getYtelseType(), dto.getKoblingReferanse());
+        
         var dtoMapper = new IAYFraDtoMapper(iayTjeneste, aktørId, koblingReferanse);
         var nyttGrunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayTjeneste.hentGrunnlagFor(koblingReferanse));
         dtoMapper.mapOverstyringerTilGrunnlagBuilder(dto.getOverstyrt(), dto.getArbeidsforholdInformasjon(), nyttGrunnlagBuilder);
@@ -367,7 +372,7 @@ public class GrunnlagRestTjeneste {
             new KoblingReferanse(request.getGammelReferanse()),
             new KoblingReferanse(request.getNyReferanse()),
             request.getDataset());
-        
+
         koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
 
         return Response.ok().build();

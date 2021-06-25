@@ -102,7 +102,7 @@ public class InntektArbeidYtelseRepositoryTest {
         aib.leggTilInntekt(ib);
         gb.leggTilAktørInntekt(aib);
 
-        repository.lagre(ko.getKoblingReferanse(), gb);
+        repository.lagre(ko.getKoblingReferanse(), grunnlagBuilder);
 
         var grunnlagBuilder2 = InntektArbeidYtelseGrunnlagBuilder.oppdatere(repository.hentInntektArbeidYtelseGrunnlagForBehandling(ko.getKoblingReferanse()));
         var gb2 = grunnlagBuilder2.getRegisterBuilder();
@@ -116,7 +116,7 @@ public class InntektArbeidYtelseRepositoryTest {
         aib2.leggTilInntekt(ib2);
         gb2.leggTilAktørInntekt(aib2);
 
-        repository.lagre(ko.getKoblingReferanse(), gb2);
+        repository.lagre(ko.getKoblingReferanse(), grunnlagBuilder2);
 
         var g3 = repository.hentInntektArbeidYtelseGrunnlagForBehandling(ko.getKoblingReferanse()).orElseThrow();
 
