@@ -95,9 +95,9 @@ public class RapporteringRestTjeneste {
 
     }
 
-    static record IsoPeriode (LocalDate fom, LocalDate tom){
+    record IsoPeriode (LocalDate fom, LocalDate tom){
         /** Factory method for direkte bruk i JAXRS som @FormParam el. */
-        IsoPeriode valueOf(String iso8601Periode) {
+        static IsoPeriode valueOf(String iso8601Periode) {
             String[] split = iso8601Periode.split("/");
             return new IsoPeriode(LocalDate.parse(split[0]), LocalDate.parse(split[1]));
         }
