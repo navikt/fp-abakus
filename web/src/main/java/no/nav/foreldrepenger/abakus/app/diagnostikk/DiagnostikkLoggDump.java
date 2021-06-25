@@ -46,7 +46,7 @@ public class DiagnostikkLoggDump implements DebugDump {
             return List.of();
         }
 
-        return DebugDumpsters.dumpResultSetToCsv(path, results)
+        return CsvOutput.dumpResultSetToCsv(path, results)
             .map(v -> List.of(v)).orElse(List.of());
     }
 

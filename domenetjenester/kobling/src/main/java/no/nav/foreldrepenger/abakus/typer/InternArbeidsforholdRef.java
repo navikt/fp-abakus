@@ -40,7 +40,7 @@ public class InternArbeidsforholdRef implements IndexKey, Serializable {
     }
 
     public static InternArbeidsforholdRef ref(String referanse) {
-        return referanse == null ? NULL_OBJECT : new InternArbeidsforholdRef(UUID.fromString(referanse));
+        return referanse == null ? NULL_OBJECT : new InternArbeidsforholdRef(UUID.fromString(referanse.trim()));
     }
 
     public static InternArbeidsforholdRef nullRef() {

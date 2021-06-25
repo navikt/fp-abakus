@@ -21,7 +21,7 @@ public class EksternArbeidsforholdRef implements IndexKey, Serializable {
 
     /** Representerer alle arbeidsforhold for en arbeidsgiver. */
     private static final EksternArbeidsforholdRef NULL_OBJECT = new EksternArbeidsforholdRef(null);
-    
+
     @Column(name = "arbeidsforhold_id")
     private String referanse;
 
@@ -29,7 +29,7 @@ public class EksternArbeidsforholdRef implements IndexKey, Serializable {
     }
 
     private EksternArbeidsforholdRef(String referanse) {
-        this.referanse = referanse;
+        this.referanse = referanse == null ? null : referanse.trim();
     }
 
     public static EksternArbeidsforholdRef ref(String referanse) {
@@ -39,6 +39,7 @@ public class EksternArbeidsforholdRef implements IndexKey, Serializable {
     public static EksternArbeidsforholdRef nullRef() {
         return NULL_OBJECT;
     }
+
     public String getReferanse() {
         return referanse;
     }
@@ -63,11 +64,13 @@ public class EksternArbeidsforholdRef implements IndexKey, Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o)
+            return true;
         if (o == null && this.referanse == null) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass())
+            return false;
         EksternArbeidsforholdRef that = (EksternArbeidsforholdRef) o;
         return Objects.equals(referanse, that.referanse);
     }

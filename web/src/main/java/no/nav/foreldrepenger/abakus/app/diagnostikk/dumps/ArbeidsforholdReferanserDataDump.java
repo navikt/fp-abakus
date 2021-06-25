@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Tuple;
 
+import no.nav.foreldrepenger.abakus.app.diagnostikk.CsvOutput;
 import no.nav.foreldrepenger.abakus.app.diagnostikk.DebugDump;
 import no.nav.foreldrepenger.abakus.app.diagnostikk.DebugDumpsters;
 import no.nav.foreldrepenger.abakus.app.diagnostikk.DumpKontekst;
@@ -65,7 +66,7 @@ public class ArbeidsforholdReferanserDataDump implements DebugDump {
             return List.of();
         }
 
-        return DebugDumpsters.dumpResultSetToCsv(path, results)
+        return CsvOutput.dumpResultSetToCsv(path, results)
             .map(v -> List.of(v)).orElse(List.of());
     }
 }

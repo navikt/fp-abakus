@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -20,6 +18,7 @@ import javax.inject.Inject;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
+import no.nav.foreldrepenger.abakus.app.diagnostikk.ContainerContextRunner;
 import no.nav.foreldrepenger.abakus.app.diagnostikk.DebugDump;
 import no.nav.foreldrepenger.abakus.app.diagnostikk.DumpKontekst;
 import no.nav.foreldrepenger.abakus.app.diagnostikk.DumpOutput;
@@ -35,24 +34,12 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.felles.In
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.spokelse.SpokelseKlient;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-import no.nav.vedtak.log.mdc.MdcExtendedLogContext;
-import no.nav.vedtak.sikkerhet.loginmodule.ContainerLogin;
 
 @ApplicationScoped
 @YtelseTypeRef
 public class RegisterInnhentingDump implements DebugDump {
 
-
     private static final Collection<InntektskildeType> INNTEKTSKILDER = IAYRegisterInnhentingFellesTjenesteImpl.ELEMENT_TIL_INNTEKTS_KILDE_MAP.values();
-
-    private static final MdcExtendedLogContext LOG_CONTEXT = MdcExtendedLogContext.getContext("prosess"); //$NON-NLS-1$
-
-    private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor(r -> {
-        Thread t = new Thread(r);
-        t.setDaemon(true);
-        t.setName(RegisterInnhentingDump.class.getSimpleName() + "-thread");
-        return t;
-    });
 
     private InntektTjeneste inntektTjeneste;
     private MeldekortTjeneste meldekortTjeneste; // TODO
@@ -84,16 +71,13 @@ public class RegisterInnhentingDump implements DebugDump {
     @Override
     public List<DumpOutput> dump(DumpKontekst dumpKontekst) {
         try {
-
-            var data = submit(dumpKontekst, k -> dumpRegister(k))
-                .get(20, TimeUnit.SECONDS);
-
-            return data;
+            Future<List<DumpOutput>> future = submit(dumpKontekst, k -> dumpRegister(k));
+            return future.get(20, TimeUnit.SECONDS);
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
-            return List.of(new DumpOutput(prefiks + "-ERROR.txt", sw.toString()));
+            return List.of(new DumpOutput(prefiks + "-" + e.getClass().getSimpleName() + "-ERROR.txt", sw.toString()));
         }
     }
 
@@ -110,7 +94,7 @@ public class RegisterInnhentingDump implements DebugDump {
         dumps.addAll(innhentAareg(ident, periode));
 
         dumps.addAll(innhentInntekt(aktørId, periode));
-
+        
         return dumps;
     }
 
@@ -162,23 +146,6 @@ public class RegisterInnhentingDump implements DebugDump {
     }
 
     private Future<List<DumpOutput>> submit(DumpKontekst kontekst, Function<DumpKontekst, List<DumpOutput>> call) {
-
-        var future = EXECUTOR.submit(() -> {
-            LOG_CONTEXT.add("saksnummer", kontekst.getSaksnummer().getVerdi());
-            LOG_CONTEXT.add("ytelseType", kontekst.getYtelseType().getKode());
-
-            var containerLogin = new ContainerLogin();
-            try {
-                containerLogin.login();
-                var result = call.apply(kontekst);
-                return result;
-            } finally {
-                containerLogin.logout();
-                LOG_CONTEXT.remove("saksnummer");
-                LOG_CONTEXT.remove("ytelseType");
-            }
-
-        });
-        return future;
+        return ContainerContextRunner.doRun(kontekst.getKobling(), () -> call.apply(kontekst));
     }
 }

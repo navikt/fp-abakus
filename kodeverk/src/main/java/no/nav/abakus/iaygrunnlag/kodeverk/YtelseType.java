@@ -2,6 +2,7 @@ package no.nav.abakus.iaygrunnlag.kodeverk;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -91,13 +92,13 @@ public enum YtelseType implements Kodeverdi {
         return Collections.unmodifiableMap(KODER);
     }
 
-    @JsonProperty(value="kode")
+    @JsonProperty(value = "kode")
     @Override
     public String getKode() {
         return kode;
     }
 
-    @JsonProperty(value="kodeverk", access = Access.READ_ONLY)
+    @JsonProperty(value = "kodeverk", access = Access.READ_ONLY)
     @Override
     public String getKodeverk() {
         return KODEVERK;
@@ -106,6 +107,10 @@ public enum YtelseType implements Kodeverdi {
     @Override
     public String getNavn() {
         return navn;
+    }
+
+    public static List<YtelseType> abakusYtelser() {
+        return List.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER, YtelseType.OMSORGSPENGER, YtelseType.PLEIEPENGER_SYKT_BARN, YtelseType.PLEIEPENGER_NÆRSTÅENDE, YtelseType.OPPLÆRINGSPENGER, YtelseType.FRISINN);
     }
 
 }
