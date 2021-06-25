@@ -62,7 +62,7 @@ public class OppgittOpptjeningV2RestTjeneste {
         @ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))
     })
     @BeskyttetRessurs(action = CREATE, resource = SØKNAD)
-    @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
+    @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT"})
     public Response lagreOppgittOpptjeningV2(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
         if (!mottattRequest.harOppgittJournalpostId() || !mottattRequest.harOppgittInnsendingstidspunkt()) {
             return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), "v2/motta krever at journalpostId og innsendingstidspunkt er satt på oppgitt opptjening").build();

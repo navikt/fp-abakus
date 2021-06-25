@@ -277,16 +277,6 @@ public class InntektArbeidYtelseRepository {
         throw new TekniskException("FP-512369", "Aggregat kan ikke være null ved opprettelse av builder");
     }
 
-    public void lagre(KoblingReferanse koblingReferanse, InntektArbeidYtelseAggregatBuilder builder) {
-        InntektArbeidYtelseGrunnlagBuilder opptjeningAggregatBuilder = getGrunnlagBuilder(koblingReferanse, builder);
-        final ArbeidsforholdInformasjon informasjon = opptjeningAggregatBuilder.getInformasjon();
-
-        // lagre reserverte interne referanser opprettet tidligere
-        builder.getNyeInternArbeidsforholdReferanser()
-            .forEach(aref -> informasjon.opprettNyReferanse(aref.getArbeidsgiver(), aref.getInternReferanse(), aref.getEksternReferanse()));
-        lagreOgFlush(koblingReferanse, opptjeningAggregatBuilder.build());
-    }
-
     public GrunnlagReferanse lagre(KoblingReferanse koblingReferanse, OppgittOpptjeningBuilder oppgittOpptjening) {
         if (oppgittOpptjening == null) {
             return null;
@@ -539,13 +529,14 @@ public class InntektArbeidYtelseRepository {
             .forEach(this::lagreOppgittOpptjening);
     }
 
-    private void lagreInformasjon(ArbeidsforholdInformasjon arbeidsforholdInformasjon) {
-        var arbeidsforholdInformasjonEntitet = arbeidsforholdInformasjon; // NOSONAR
-        entityManager.persist(arbeidsforholdInformasjonEntitet);
-        for (var referanseEntitet : arbeidsforholdInformasjonEntitet.getArbeidsforholdReferanser()) {
+    private void lagreInformasjon(ArbeidsforholdInformasjon data) {
+        
+        // va
+        entityManager.persist(data);
+        for (var referanseEntitet : data.getArbeidsforholdReferanser()) {
             entityManager.persist(referanseEntitet);
         }
-        for (var overstyringEntitet : arbeidsforholdInformasjonEntitet.getOverstyringer()) {
+        for (var overstyringEntitet : data.getOverstyringer()) {
             entityManager.persist(overstyringEntitet);
         }
     }

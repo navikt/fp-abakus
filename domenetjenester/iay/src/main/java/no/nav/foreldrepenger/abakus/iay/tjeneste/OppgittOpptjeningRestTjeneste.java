@@ -98,7 +98,7 @@ public class OppgittOpptjeningRestTjeneste {
     })
     @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
-    public Response lagreOverstrytOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
+    public Response lagreOverstyrtOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
         Response response;
 
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());

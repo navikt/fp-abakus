@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -57,9 +59,7 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
     public ArbeidsforholdInformasjon(ArbeidsforholdInformasjon arbeidsforholdInformasjon) {
         ArbeidsforholdInformasjon arbeidsforholdInformasjonEntitet = arbeidsforholdInformasjon; // NOSONAR
         for (var arbeidsforholdReferanse : arbeidsforholdInformasjonEntitet.referanser) {
-            final ArbeidsforholdReferanse nyArbeidsforholdReferanse = new ArbeidsforholdReferanse(arbeidsforholdReferanse);
-            nyArbeidsforholdReferanse.setInformasjon(this);
-            this.referanser.add(nyArbeidsforholdReferanse);
+            leggTilNyReferanse(new ArbeidsforholdReferanse(arbeidsforholdReferanse));
         }
         for (var overstyring : arbeidsforholdInformasjonEntitet.overstyringer) {
             final ArbeidsforholdOverstyring nyOverstyring = new ArbeidsforholdOverstyring(overstyring);
@@ -268,6 +268,27 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
     void leggTilNyReferanse(ArbeidsforholdReferanse arbeidsforholdReferanse) {
         arbeidsforholdReferanse.setInformasjon(this);
         referanser.add(arbeidsforholdReferanse);
+        validerDuplikatReferanser();
+    }
+
+    @PostLoad
+    void validerDuplikatReferanser() {
+        record Key(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef eksternArbeidsforhold) {
+            static String internReferanse(ArbeidsforholdReferanse r2) {
+                return r2.getInternReferanse() == null ? null : r2.getInternReferanse().getReferanse();
+            }
+        }
+        var gruppertArbeidsforhold = referanser.stream()
+            .filter(this::erIkkeMerget)
+            .collect(Collectors.groupingBy(r -> new Key(r.getArbeidsgiver(), r.getEksternReferanse()),
+                Collectors.mapping(Key::internReferanse, Collectors.toCollection(TreeSet::new))));
+
+        for (var e : gruppertArbeidsforhold.entrySet()) {
+            if (e.getValue().size() > 1) {
+                throw new IllegalStateException("Duplikat internref for " + e.getKey() + ":" + e.getValue());
+            }
+        }
+
     }
 
 }

@@ -141,17 +141,6 @@ public class InntektArbeidYtelseTjeneste {
     }
 
     /**
-     * Oopprett builder for register data.
-     *
-     * @param koblingReferanse
-     * @return Register inntekt og arbeid før skjæringstidspunktet (Opprett for å endre eller legge til registeropplysning)
-     */
-    public InntektArbeidYtelseAggregatBuilder opprettBuilderForRegister(KoblingReferanse koblingReferanse, UUID angittReferanse,
-                                                                        LocalDateTime angittOpprettetTidspunkt) {
-        return repository.opprettBuilderFor(koblingReferanse, angittReferanse, angittOpprettetTidspunkt, VersjonType.REGISTER);
-    }
-
-    /**
      * Opprett builder for saksbehandlers overstyringer.
      *
      * @param koblingReferanse
@@ -160,14 +149,6 @@ public class InntektArbeidYtelseTjeneste {
     public InntektArbeidYtelseAggregatBuilder opprettBuilderForSaksbehandlet(KoblingReferanse koblingReferanse, UUID angittReferanse,
                                                                              LocalDateTime angittOpprettetTidspunkt) {
         return repository.opprettBuilderFor(koblingReferanse, angittReferanse, angittOpprettetTidspunkt, VersjonType.SAKSBEHANDLET);
-    }
-
-    /**
-     * @param koblingId
-     * @param inntektArbeidYtelseAggregatBuilder lagrer ned aggregat (builder bestemmer hvilke del av treet som blir lagret)
-     */
-    public void lagre(KoblingReferanse koblingReferanse, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder) {
-        repository.lagre(koblingReferanse, inntektArbeidYtelseAggregatBuilder);
     }
 
     public void lagre(KoblingReferanse koblingReferanse, InntektArbeidYtelseGrunnlagBuilder builder) {
