@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -21,6 +22,7 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.Opplysnings
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.PeriodeRS;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.PermisjonPermitteringRS;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 
 @ApplicationScoped
@@ -42,9 +44,24 @@ public class ArbeidsforholdTjeneste {
         // TODO: kall med aktørid når register har fikset ytelsesproblemer
         List<ArbeidsforholdRS> response = aaregRestKlient.finnArbeidsforholdForArbeidstaker(ident.getIdent(),
             interval.getFomDato(), interval.getTomDato());
-        return response.stream()
+        var mapArbeidsforhold = response.stream()
             .map(arbeidsforhold -> mapArbeidsforholdRSTilDto(arbeidsforhold, interval))
             .collect(Collectors.groupingBy(Arbeidsforhold::getIdentifikator));
+
+        valider(mapArbeidsforhold);
+        
+        return mapArbeidsforhold;
+    }
+
+    private void valider(Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> mapArbeidsforhold) {
+        var gruppert = mapArbeidsforhold.keySet().stream()
+            .collect(Collectors.groupingBy(r -> new Key(r.getArbeidsgiver(), r.getArbeidsforholdId())));
+        var dups = gruppert.entrySet().stream()
+            .filter(e -> e.getValue().size() > 1) // duplikater
+            .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+        if(!dups.isEmpty()) {
+            throw new IllegalStateException("Mottatt duplikater for arbeidsforhold fra AAreg: " + dups);
+        }
     }
 
     public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> finnArbeidsforholdFrilansForIdentIPerioden(PersonIdent ident, AktørId aktørId, IntervallEntitet interval) {
@@ -110,7 +127,7 @@ public class ArbeidsforholdTjeneste {
     }
 
     private Arbeidsavtale byggArbeidsavtaleRS(ArbeidsavtaleRS arbeidsavtale,
-                                               ArbeidsforholdRS arbeidsforhold) {
+                                              ArbeidsforholdRS arbeidsforhold) {
         Arbeidsavtale.Builder builder = new Arbeidsavtale.Builder()
             .medStillingsprosent(arbeidsavtale.getStillingsprosent())
             .medBeregnetAntallTimerPrUke(arbeidsavtale.getBeregnetAntallTimerPrUke())
@@ -158,11 +175,10 @@ public class ArbeidsforholdTjeneste {
     }
 
     private boolean overlapperMedIntervall(Arbeidsavtale av, IntervallEntitet interval) {
-        final var interval1 = av.getArbeidsavtaleTom() == null ? IntervallEntitet.fraOgMed(av.getArbeidsavtaleFom()) :
-            IntervallEntitet.fraOgMedTilOgMed(av.getArbeidsavtaleFom(), av.getArbeidsavtaleTom());
+        final var interval1 = av.getArbeidsavtaleTom() == null ? IntervallEntitet.fraOgMed(av.getArbeidsavtaleFom()) : IntervallEntitet.fraOgMedTilOgMed(av.getArbeidsavtaleFom(), av.getArbeidsavtaleTom());
         return interval.overlapper(interval1);
     }
 
-
-
+    static record Key(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef arbeidsforholdId) {
+    }
 }

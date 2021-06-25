@@ -326,7 +326,8 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         }
     }
 
-    private Optional<InternArbeidsforholdRef> finnReferanseFor(KoblingReferanse koblingReferanse, Arbeidsgiver arbeidsgiver,
+    private Optional<InternArbeidsforholdRef> finnReferanseFor(KoblingReferanse koblingReferanse, 
+                                                               Arbeidsgiver arbeidsgiver,
                                                                EksternArbeidsforholdRef arbeidsforholdRef) {
         Optional<ArbeidsforholdInformasjon> arbeidsforholdInformasjon = inntektArbeidYtelseTjeneste.hentGrunnlagFor(koblingReferanse)
             .flatMap(InntektArbeidYtelseGrunnlag::getArbeidsforholdInformasjon);
