@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.app.diagnostikk.rapportering;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -27,7 +28,6 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.app.diagnostikk.DumpOutput;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
@@ -71,7 +71,7 @@ public class RapporteringRestTjeneste {
     @BeskyttetRessurs(action = BeskyttetRessursActionAttributt.READ, resource = AbakusBeskyttetRessursAttributt.DRIFT)
     public Response genererRapportForYtelse(@NotNull @FormParam("ytelseType") @Parameter(description = "ytelseType", required = true) @Valid @TilpassetAbacAttributt(supplierClass = AbacEmptySupplier.class) YtelseTypeKode ytelseTypeKode,
                                             @NotNull @FormParam("rapport") @Parameter(description = "rapport", required = true) @Valid @TilpassetAbacAttributt(supplierClass = AbacEmptySupplier.class) RapportType rapportType,
-                                            @NotNull @FormParam("periode") @Parameter(description = "periode", required = true, example = "2020-01-01/2020-12-31") @Valid @TilpassetAbacAttributt(supplierClass = AbacEmptySupplier.class) Periode periode) {
+                                            @NotNull @FormParam("periode") @Parameter(description = "periode", required = true, example = "2020-01-01/2020-12-31") @Valid @TilpassetAbacAttributt(supplierClass = AbacEmptySupplier.class) IsoPeriode periode) {
 
         var ytelseType = YtelseType.fraKode(ytelseTypeKode.name());
         rapportType.valider(ytelseType);
@@ -82,7 +82,7 @@ public class RapporteringRestTjeneste {
         for (var generator : generators) {
             RapportGenerator g = generator.get();
             log.info("RapportGenerator [{}]({}), ytelse: {}", g.getClass().getName(), rapportType, ytelseType);
-            var output = g.generer(ytelseType, IntervallEntitet.fra(periode));
+            var output = g.generer(ytelseType, IntervallEntitet.fra(periode.fom, periode.tom));
             outputListe.addAll(output);
         }
 
@@ -95,4 +95,10 @@ public class RapporteringRestTjeneste {
 
     }
 
+    static record IsoPeriode (LocalDate fom, LocalDate tom){
+        /** Ctor for direkte bruk i JAXRS som @FormParam el. Der brukes ikke @JsonCreator men String ctor. */
+        IsoPeriode(String iso8601Periode) {
+            this(LocalDate.parse(iso8601Periode.split("/")[0]), LocalDate.parse(iso8601Periode.split("/")[1]));
+        }
+    }
 }
