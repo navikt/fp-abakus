@@ -33,7 +33,7 @@ public class UttrekkDuplikatArbeidsforhold implements RapportGenerator {
     public List<DumpOutput> generer(YtelseType ytelseType, IntervallEntitet periode) {
         String sql = """
                    select
-                      k.saksnummer, k.aktoer_id, k.ytelse_type, 
+                      k.saksnummer, k.bruker_aktoer_id as aktoer_id, k.ytelse_type, 
                       ar.informasjon_id, arbeidsgiver_orgnr, ekstern_referanse, 
                       count(distinct ar.id)
                     from IAY_ARBEIDSFORHOLD_REFER ar
@@ -41,7 +41,7 @@ public class UttrekkDuplikatArbeidsforhold implements RapportGenerator {
                     inner join kobling k on k.id=g.kobling_id
                     where k.aktiv=true and k.ytelse_type=:ytelseType
                       and (k.opplysning_periode_fom IS NULL OR ( k.opplysning_periode_fom <= :tom AND k.opplysning_periode_tom >=:fom ))
-                    group by k.saksnummer, k.aktoer_id, k.ytelse_type, ar.informasjon_id, arbeidsgiver_orgnr, ekstern_referanse
+                    group by k.saksnummer, k.bruker_aktoer_id, k.ytelse_type, ar.informasjon_id, arbeidsgiver_orgnr, ekstern_referanse
                     having count(distinct ar.id) > 1;
                 """;
 
