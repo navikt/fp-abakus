@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -38,6 +39,13 @@ public class Periode {
         }
         this.fom = fom;
         this.tom = tom;
+    }
+    
+    /** Ctor for direkte bruk i JAXRS som @FormParam el. Der brukes ikke @JsonCreator men String ctor. */
+    public Periode(String iso8601Periode) {
+        String[] strings = iso8601Periode.split("/");
+        this.fom = LocalDate.parse(strings[0]);
+        this.tom = LocalDate.parse(strings[1]);
     }
 
     public LocalDate getFom() {
