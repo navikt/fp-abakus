@@ -15,6 +15,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
 import no.nav.foreldrepenger.abakus.app.diagnostikk.DiagnostikkRestTjeneste;
+import no.nav.foreldrepenger.abakus.app.diagnostikk.rapportering.RapporteringRestTjeneste;
 import no.nav.foreldrepenger.abakus.app.exceptions.ConstraintViolationMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.GeneralRestExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.JsonMappingExceptionMapper;
@@ -75,6 +76,7 @@ public class ApplicationConfig extends Application {
         classes.add(ForvaltningRestTjeneste.class);
         classes.add(OpenApiResource.class);
         classes.add(DiagnostikkRestTjeneste.class);
+        classes.add(RapporteringRestTjeneste.class);
 
         classes.add(ConstraintViolationMapper.class);
         classes.add(JsonMappingExceptionMapper.class);
