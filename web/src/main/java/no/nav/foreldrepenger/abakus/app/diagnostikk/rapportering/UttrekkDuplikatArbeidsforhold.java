@@ -35,14 +35,14 @@ public class UttrekkDuplikatArbeidsforhold implements RapportGenerator {
                    select
                       k.saksnummer, k.bruker_aktoer_id as aktoer_id, k.ytelse_type, 
                       ar.informasjon_id, arbeidsgiver_orgnr, ekstern_referanse, 
-                      count(distinct ar.id)
+                      count(distinct ar.intern_referanse)
                     from IAY_ARBEIDSFORHOLD_REFER ar
                     inner join gr_arbeid_inntekt g on (ar.informasjon_id=g.informasjon_id and g.aktiv='J')
                     inner join kobling k on k.id=g.kobling_id
                     where k.aktiv=true and k.ytelse_type=:ytelseType
                       and (k.opplysning_periode_fom IS NULL OR ( k.opplysning_periode_fom <= :tom AND k.opplysning_periode_tom >=:fom ))
                     group by k.saksnummer, k.bruker_aktoer_id, k.ytelse_type, ar.informasjon_id, arbeidsgiver_orgnr, ekstern_referanse
-                    having count(distinct ar.id) > 1;
+                    having count(distinct ar.intern_referanse) > 1;
                 """;
 
         var query = entityManager.createNativeQuery(sql, Tuple.class)
