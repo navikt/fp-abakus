@@ -27,7 +27,7 @@ CREATE TABLE tmp_feilrettingskandidater AS (
             AND ar2.ekstern_referanse = ar1.ekstern_referanse
             AND ar2.id > ar1.id
         ) INNER JOIN KOBLING k ON (
-            k.id = g.kobling_id
+            k.id = g.kobling_id and k.aktiv=true
         )
     WHERE k.ytelse_type IN ('PSB', 'OMP')
 );
