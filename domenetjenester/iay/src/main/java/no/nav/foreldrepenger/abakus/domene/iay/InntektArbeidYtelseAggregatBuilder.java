@@ -101,14 +101,19 @@ public class InntektArbeidYtelseAggregatBuilder {
         return this;
     }
 
-    public void medNyInternArbeidsforholdRef(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef nyRef, EksternArbeidsforholdRef eksternReferanse) {
-        nyeInternArbeidsforholdReferanser.add(new ArbeidsforholdReferanse(arbeidsgiver, nyRef, eksternReferanse));
-    }
-
     public InternArbeidsforholdRef medNyInternArbeidsforholdRef(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef eksternReferanse) {
         if (eksternReferanse == null || eksternReferanse.getReferanse() == null) {
             return InternArbeidsforholdRef.nullRef();
         }
+
+        // Sjekk om det er generert en ny i denne builderen
+        var referanse = nyeInternArbeidsforholdReferanser.stream()
+            .filter(it -> Objects.equals(it.getArbeidsgiver(), arbeidsgiver) && Objects.equals(it.getEksternReferanse(), eksternReferanse))
+            .findFirst();
+        if (referanse.isPresent()) {
+            return referanse.get().getInternReferanse();
+        }
+
         InternArbeidsforholdRef nyRef = InternArbeidsforholdRef.nyRef();
         nyeInternArbeidsforholdReferanser.add(new ArbeidsforholdReferanse(arbeidsgiver, nyRef, eksternReferanse));
         return nyRef;
