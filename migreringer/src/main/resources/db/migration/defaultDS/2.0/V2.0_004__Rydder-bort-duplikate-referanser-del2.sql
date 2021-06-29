@@ -15,8 +15,8 @@ WHERE yrkesaktivitet_id IN (
 DELETE
 FROM iay_yrkesaktivitet
 WHERE id IN (
-    SELECT ya1.id
-    FROM bck_iay_yrkesaktivitet
+    SELECT a.id
+    FROM bck_iay_yrkesaktivitet a
 );
 
 DELETE
