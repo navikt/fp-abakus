@@ -30,7 +30,7 @@ CREATE TABLE tmp_feilrettingskandidater AS (
         ) INNER JOIN KOBLING k ON (
             k.id = g.kobling_id and k.aktiv=true
         )
-    WHERE k.ytelse_type IN ('PSB', 'OMP')
+    WHERE k.ytelse_type = 'PSB'
 );
 CREATE TABLE bck_iay_aktivitets_avtale AS (
     SELECT *
