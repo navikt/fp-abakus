@@ -18,8 +18,12 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.PostLoad;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Version;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
@@ -35,6 +39,8 @@ import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 @Table(name = "IAY_INFORMASJON")
 @Entity(name = "ArbeidsforholdInformasjon")
 public class ArbeidsforholdInformasjon extends BaseEntitet {
+
+    private static final Logger log = LoggerFactory.getLogger(ArbeidsforholdInformasjon.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_IAY_INFORMASJON")
@@ -285,7 +291,9 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
 
         for (var e : gruppertArbeidsforhold.entrySet()) {
             if (e.getValue().size() > 1) {
-                throw new IllegalStateException("Duplikat internref for " + e.getKey() + ":" + e.getValue());
+                String msg = String.format("Duplikat internref for %s=%s", e.getKey(), e.getValue());
+                log.warn(msg);
+                //throw new IllegalStateException(msg);
             }
         }
 

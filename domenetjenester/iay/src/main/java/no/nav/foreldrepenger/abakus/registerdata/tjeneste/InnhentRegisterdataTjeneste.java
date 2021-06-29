@@ -8,8 +8,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -21,15 +19,12 @@ import no.nav.abakus.iaygrunnlag.request.RegisterdataType;
 import no.nav.abakus.prosesstask.batch.BatchProsessTaskRepository;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.TaskConstants;
-import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
-import no.nav.foreldrepenger.abakus.registerdata.IAYRegisterInnhentingTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.RegisterdataInnhentingTask;
 import no.nav.foreldrepenger.abakus.registerdata.callback.CallbackTask;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -43,7 +38,6 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskStatus;
 public class InnhentRegisterdataTjeneste {
 
     private static final Map<RegisterdataType, RegisterdataElement> registerdataMapping = initMapping();
-    private Instance<IAYRegisterInnhentingTjeneste> innhentTjenester;
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private KoblingTjeneste koblingTjeneste;
     private BatchProsessTaskRepository prosessTaskRepository;
@@ -53,11 +47,9 @@ public class InnhentRegisterdataTjeneste {
     }
 
     @Inject
-    public InnhentRegisterdataTjeneste(@Any Instance<IAYRegisterInnhentingTjeneste> innhentingTjeneste,
-                                       InntektArbeidYtelseTjeneste iayTjeneste,
+    public InnhentRegisterdataTjeneste(InntektArbeidYtelseTjeneste iayTjeneste,
                                        KoblingTjeneste koblingTjeneste,
                                        BatchProsessTaskRepository prosessTaskRepository) {
-        this.innhentTjenester = innhentingTjeneste;
         this.iayTjeneste = iayTjeneste;
         this.koblingTjeneste = koblingTjeneste;
         this.prosessTaskRepository = prosessTaskRepository;
@@ -82,23 +74,6 @@ public class InnhentRegisterdataTjeneste {
         return elementer.stream()
             .map(registerdataMapping::get)
             .collect(Collectors.toSet());
-    }
-
-    public Optional<GrunnlagReferanse> innhent(InnhentRegisterdataRequest dto) {
-        Kobling kobling = oppdaterKobling(dto);
-
-        // Trigg innhenting
-        final var innhentingTjeneste = finnInnhenter(mapTilYtelseType(dto));
-        var informasjonsElementer = hentUtInformasjonsElementer(dto);
-        InntektArbeidYtelseGrunnlagBuilder builder = innhentingTjeneste.innhentRegisterdata(kobling, informasjonsElementer);
-        iayTjeneste.lagre(kobling.getKoblingReferanse(), builder);
-
-        Optional<InntektArbeidYtelseGrunnlag> grunnlag = iayTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse());
-        return grunnlag.map(InntektArbeidYtelseGrunnlag::getGrunnlagReferanse);
-    }
-
-    private IAYRegisterInnhentingTjeneste finnInnhenter(YtelseType ytelseType) {
-        return YtelseTypeRef.Lookup.find(innhentTjenester, ytelseType).get();
     }
 
     private Kobling oppdaterKobling(InnhentRegisterdataRequest dto) {
@@ -132,7 +107,7 @@ public class InnhentRegisterdataTjeneste {
         // Diff & log endringer
         koblingTjeneste.lagre(kobling);
         koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
-        
+
         return kobling;
     }
 
