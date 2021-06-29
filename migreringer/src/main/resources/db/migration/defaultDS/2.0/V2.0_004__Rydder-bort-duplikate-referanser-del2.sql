@@ -7,7 +7,7 @@ WHERE id IN (
 
 DELETE
 FROM iay_permisjon
-WHERE yrkesaktivitet_id IN (
+WHERE id IN (
     SELECT a.id
     FROM bck_iay_permisjon a
 );
