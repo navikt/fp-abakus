@@ -31,7 +31,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<felles.version>3.2.116</felles.version>
+		<felles.version>3.2.123</felles.version>
 		<prosesstask.version>2.6.3</prosesstask.version>
 
 		<kontrakter.version>6.0.2</kontrakter.version>
