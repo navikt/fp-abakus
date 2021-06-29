@@ -65,25 +65,6 @@ public class RegisterdataRestTjeneste {
     }
 
     @POST
-    @Path("/innhent/sync")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(description = "Trigger registerinnhenting for en gitt id", tags = "registerinnhenting")
-    @BeskyttetRessurs(action = CREATE, resource = REGISTERDATA)
-    @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
-    public Response innhentOgLagreRegisterdataSync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
-
-        Response response;
-        Optional<GrunnlagReferanse> innhent = innhentTjeneste.innhent(dto);
-        if (innhent.isPresent()) {
-            response = Response.ok(new UuidDto(innhent.get().getReferanse().toString())).build();
-        } else {
-            response = Response.noContent().build();
-        }
-
-        return response;
-    }
-
-    @POST
     @Path("/innhent/async")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(description = "Trigger registerinnhenting for en gitt id", tags = "registerinnhenting")

@@ -28,7 +28,7 @@ import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 @ApplicationScoped
 public class ArbeidsforholdTjeneste {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ArbeidsforholdTjeneste.class);
+    private static final Logger log = LoggerFactory.getLogger(ArbeidsforholdTjeneste.class);
     private AaregRestKlient aaregRestKlient;
 
     public ArbeidsforholdTjeneste() {
@@ -49,7 +49,7 @@ public class ArbeidsforholdTjeneste {
             .collect(Collectors.groupingBy(Arbeidsforhold::getIdentifikator));
 
         valider(mapArbeidsforhold);
-        
+
         return mapArbeidsforhold;
     }
 
@@ -59,8 +59,10 @@ public class ArbeidsforholdTjeneste {
         var dups = gruppert.entrySet().stream()
             .filter(e -> e.getValue().size() > 1) // duplikater
             .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
-        if(!dups.isEmpty()) {
-            throw new IllegalStateException("Mottatt duplikater for arbeidsforhold fra AAreg: " + dups);
+        if (!dups.isEmpty()) {
+            String msg = "Mottatt duplikater for arbeidsforhold fra AAreg: " + dups;
+            log.warn(msg);
+            // throw new IllegalStateException(msg);
         }
     }
 
@@ -143,11 +145,11 @@ public class ArbeidsforholdTjeneste {
         var ansettelseIntervall = ansettelsesPeriode.getTom() != null ? IntervallEntitet.fraOgMedTilOgMed(ansettelsesPeriode.getFom(), ansettelsesPeriode.getTom()) : IntervallEntitet.fraOgMed(ansettelsesPeriode.getFom());
 
         if (!ansettelseIntervall.inkluderer(arbeidsavtaleFom)) {
-            LOGGER.info("Arbeidsavtale fom={} ligger utenfor ansettelsesPeriode={}", arbeidsavtaleFom, ansettelseIntervall);
+            log.info("Arbeidsavtale fom={} ligger utenfor ansettelsesPeriode={}", arbeidsavtaleFom, ansettelseIntervall);
         }
 
         if (arbeidsavtaleTom != null && arbeidsavtaleTom.isBefore(arbeidsavtaleFom)) {
-            LOGGER.warn("Arbeidsavtale tom={} er før fom={} for orgnr={}, navArbeidsforholdId={}",
+            log.warn("Arbeidsavtale tom={} er før fom={} for orgnr={}, navArbeidsforholdId={}",
                 arbeidsavtaleTom, arbeidsavtaleFom, getIdentifikatorString(arbeidsforhold.getArbeidsgiver().getOrganisasjonsnummer()), arbeidsforhold.getNavArbeidsforholdId());
         }
 
