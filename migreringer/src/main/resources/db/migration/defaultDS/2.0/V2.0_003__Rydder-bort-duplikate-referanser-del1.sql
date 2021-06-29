@@ -25,6 +25,7 @@ CREATE TABLE tmp_feilrettingskandidater AS (
                 ar2.informasjon_id = ar1.informasjon_id
             AND ar2.arbeidsgiver_orgnr = ar1.arbeidsgiver_orgnr
             AND ar2.ekstern_referanse = ar1.ekstern_referanse
+            AND ar2.intern_referanse <> ar1.intern_referanse
             AND ar2.id > ar1.id
         ) INNER JOIN KOBLING k ON (
             k.id = g.kobling_id and k.aktiv=true
