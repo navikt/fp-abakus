@@ -38,6 +38,8 @@ spec:
     requests:
       cpu: "600m"
       memory: "1024Mi"
+  secureLogs:
+    enabled: true
   vault:
     enabled: true
     paths:
