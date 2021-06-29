@@ -1,4 +1,4 @@
-CREATE TABLE tmp_feilrettingskandidater AS (
+CREATE TABLE tmp_psb_feilrettingskandidater AS (
     SELECT k.saksnummer,
            g.id AS grunnlag_id,
            g.register_id AS register_id,
@@ -32,51 +32,51 @@ CREATE TABLE tmp_feilrettingskandidater AS (
         )
     WHERE k.ytelse_type = 'PSB'
 );
-CREATE TABLE bck_iay_aktivitets_avtale AS (
+CREATE TABLE bck_psb_iay_aktivitets_avtale AS (
     SELECT *
     FROM iay_aktivitets_avtale
     WHERE yrkesaktivitet_id IN (
         SELECT ya1.id
         FROM iay_yrkesaktivitet ya1 INNER JOIN iay_aktoer_arbeid aa1 ON (
                 ya1.aktoer_arbeid_id = aa1.id
-            ) INNER JOIN tmp_feilrettingskandidater tmp1 ON (
+            ) INNER JOIN tmp_psb_feilrettingskandidater tmp1 ON (
                 aa1.inntekt_arbeid_ytelser_id = tmp1.register_id
             )
     )
 );
 
-CREATE TABLE bck_iay_permisjon AS (
+CREATE TABLE bck_psb_iay_permisjon AS (
     SELECT *
     FROM iay_permisjon
     WHERE yrkesaktivitet_id IN (
         SELECT ya1.id
         FROM iay_yrkesaktivitet ya1 INNER JOIN iay_aktoer_arbeid aa1 ON (
                 ya1.aktoer_arbeid_id = aa1.id
-            ) INNER JOIN tmp_feilrettingskandidater tmp1 ON (
+            ) INNER JOIN tmp_psb_feilrettingskandidater tmp1 ON (
                 aa1.inntekt_arbeid_ytelser_id = tmp1.register_id
             )
     )
 );
 
-CREATE TABLE bck_iay_yrkesaktivitet AS (
+CREATE TABLE bck_psb_iay_yrkesaktivitet AS (
     SELECT *
     FROM iay_yrkesaktivitet
     WHERE id IN (
         SELECT ya1.id
         FROM iay_yrkesaktivitet ya1 INNER JOIN iay_aktoer_arbeid aa1 ON (
                 ya1.aktoer_arbeid_id = aa1.id
-            ) INNER JOIN tmp_feilrettingskandidater tmp1 ON (
+            ) INNER JOIN tmp_psb_feilrettingskandidater tmp1 ON (
                 aa1.inntekt_arbeid_ytelser_id = tmp1.register_id
             )
     )
 );
 
-CREATE TABLE bck_iay_arbeidsforhold_refer AS (
+CREATE TABLE bck_psb_iay_arbeidsforhold_refer AS (
     SELECT *
     FROM iay_arbeidsforhold_refer
     WHERE id in (
         SELECT id
-        FROM iay_arbeidsforhold_refer r INNER JOIN tmp_feilrettingskandidater tmp1 ON (
+        FROM iay_arbeidsforhold_refer r INNER JOIN tmp_psb_feilrettingskandidater tmp1 ON (
                     r.informasjon_id = tmp1.informasjon_id
                 AND r.arbeidsgiver_orgnr = tmp1.arbeidsgiver_orgnr
                 AND (
