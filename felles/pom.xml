@@ -20,6 +20,10 @@
             <artifactId>felles-db</artifactId>
         </dependency>
         <dependency>
+            <groupId>no.nav.foreldrepenger.felles</groupId>
+            <artifactId>felles-log</artifactId>
+        </dependency>
+        <dependency>
         	<groupId>no.nav.foreldrepenger.abakus</groupId>
         	<artifactId>abakus-kontrakt</artifactId>
         </dependency>

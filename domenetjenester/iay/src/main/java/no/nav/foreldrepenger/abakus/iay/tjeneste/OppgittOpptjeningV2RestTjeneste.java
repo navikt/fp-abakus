@@ -25,6 +25,7 @@ import no.nav.abakus.iaygrunnlag.UuidDto;
 import no.nav.abakus.iaygrunnlag.request.OppgittOpptjeningMottattRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
+import no.nav.foreldrepenger.abakus.felles.LoggUtil;
 import no.nav.foreldrepenger.abakus.iay.OppgittOpptjeningTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapOppgittOpptjening;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
@@ -41,7 +42,6 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 @ApplicationScoped
 @Transactional
 public class OppgittOpptjeningV2RestTjeneste {
-
     private KoblingTjeneste koblingTjeneste;
     private OppgittOpptjeningTjeneste oppgittOpptjeningTjeneste;
 
@@ -64,6 +64,7 @@ public class OppgittOpptjeningV2RestTjeneste {
     @BeskyttetRessurs(action = CREATE, resource = SØKNAD)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT"})
     public Response lagreOppgittOpptjeningV2(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
+        LoggUtil.setupLogMdc(mottattRequest.getYtelseType(), mottattRequest.getSaksnummer(), mottattRequest.getKoblingReferanse());
         if (!mottattRequest.harOppgittJournalpostId() || !mottattRequest.harOppgittInnsendingstidspunkt()) {
             return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), "v2/motta krever at journalpostId og innsendingstidspunkt er satt på oppgitt opptjening").build();
         }
@@ -85,7 +86,7 @@ public class OppgittOpptjeningV2RestTjeneste {
             return Response.noContent().build();
         }
     }
-
+    
     public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         @Override

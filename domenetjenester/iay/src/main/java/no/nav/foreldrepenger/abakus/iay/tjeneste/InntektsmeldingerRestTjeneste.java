@@ -48,6 +48,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
+import no.nav.foreldrepenger.abakus.felles.LoggUtil;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.InntektsmeldingerTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapInntektsmeldinger;
@@ -66,7 +67,7 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 @ApplicationScoped
 @Transactional
 public class InntektsmeldingerRestTjeneste {
-
+    
     private InntektsmeldingerTjeneste imTjeneste;
     private KoblingTjeneste koblingTjeneste;
     private InntektArbeidYtelseTjeneste iayTjeneste;
@@ -90,6 +91,8 @@ public class InntektsmeldingerRestTjeneste {
     @BeskyttetRessurs(action = READ, resource = INNTEKSTMELDING)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentInntektsmeldingerForSak(@NotNull @Valid InntektsmeldingerRequestAbacDto spesifikasjon) {
+        LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer(), "<alle>");
+
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
         var ytelseType = spesifikasjon.getYtelseType();
@@ -109,7 +112,7 @@ public class InntektsmeldingerRestTjeneste {
     @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
     public Response hentRefusjonskravDatoForSak(@NotNull @Valid InntektsmeldingerRequestAbacDto spesifikasjon) {
         Response response;
-
+        LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer());
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
         var ytelseType = YtelseType.fraKode(spesifikasjon.getYtelseType().getKode());
@@ -118,6 +121,7 @@ public class InntektsmeldingerRestTjeneste {
         if (kobling.isEmpty()) {
             response = Response.ok(new InntektsmeldingerDto().medInntektsmeldinger(Collections.emptyList())).build();
         } else {
+            LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer(), kobling.get().getKoblingReferanse().asString());
             InntektArbeidYtelseGrunnlag nyesteGrunnlag = iayTjeneste.hentAggregat(kobling.get().getKoblingReferanse());
             RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(inntektsmeldinger, nyesteGrunnlag);
             response = Response.ok(refusjonskravDatoerDto).build();
@@ -134,7 +138,8 @@ public class InntektsmeldingerRestTjeneste {
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public UuidDto lagreInntektsmeldinger(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid InntektsmeldingerMottattRequest mottattRequest) {
         UuidDto resultat = null;
-
+        LoggUtil.setupLogMdc(mottattRequest.getYtelseType(), mottattRequest.getSaksnummer(), mottattRequest.getKoblingReferanse().toString());
+        
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
 
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
@@ -183,6 +188,8 @@ public class InntektsmeldingerRestTjeneste {
     @BeskyttetRessurs(action = READ, resource = INNTEKSTMELDING)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentDifferanseMellomToReferanserPåSak(@NotNull @Valid InntektsmeldingDiffRequestAbacDto spesifikasjon) {
+        LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer(), spesifikasjon.getEksternRefEn() +"/" + spesifikasjon.getEksternRefTo());
+        
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
         var ytelseType = YtelseType.fraKode(spesifikasjon.getYtelseType().getKode());

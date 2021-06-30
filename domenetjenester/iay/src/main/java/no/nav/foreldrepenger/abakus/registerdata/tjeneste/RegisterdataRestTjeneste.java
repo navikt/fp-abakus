@@ -42,7 +42,9 @@ import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.abakus.iaygrunnlag.request.RegisterdataType;
 import no.nav.abakus.iaygrunnlag.request.SjekkStatusRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
+import no.nav.foreldrepenger.abakus.felles.LoggUtil;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
+import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.TaskResponsDto;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
@@ -57,11 +59,15 @@ public class RegisterdataRestTjeneste {
 
     private InnhentRegisterdataTjeneste innhentTjeneste;
 
+    private KoblingTjeneste koblingTjeneste;
+    
     public RegisterdataRestTjeneste() {} // RESTEASY ctor
 
     @Inject
-    public RegisterdataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste) {
+    public RegisterdataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste,
+                                    KoblingTjeneste koblingTjeneste) {
         this.innhentTjeneste = innhentTjeneste;
+        this.koblingTjeneste = koblingTjeneste;
     }
 
     @POST
@@ -72,7 +78,7 @@ public class RegisterdataRestTjeneste {
     @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
     public Response innhentOgLagreRegisterdataAsync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
         Response response;
-
+        LoggUtil.setupLogMdc(dto.getYtelseType(), dto.getSaksnummer());
         String taskGruppe = innhentTjeneste.triggAsyncInnhent(dto);
         if (taskGruppe != null) {
             response = Response.accepted(new TaskResponsDto(taskGruppe)).build();
@@ -91,8 +97,10 @@ public class RegisterdataRestTjeneste {
     @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
     public Response innhentAsyncStatus(@Parameter(name = "status") @Valid SjekkStatusAbacDto dto) {
         Response response;
+        KoblingReferanse koblingRef = new KoblingReferanse(dto.getReferanse().getReferanse());
+        setupLogMdcFraKoblingReferanse(koblingRef);
         if (innhentTjeneste.innhentingFerdig(dto.getTaskReferanse())) {
-            Optional<GrunnlagReferanse> grunnlagReferanse = innhentTjeneste.hentSisteReferanseFor(new KoblingReferanse(dto.getReferanse().getReferanse()));
+            Optional<GrunnlagReferanse> grunnlagReferanse = innhentTjeneste.hentSisteReferanseFor(koblingRef);
             if (grunnlagReferanse.isPresent()) {
                 response = Response.ok(new UuidDto(grunnlagReferanse.get().toString())).build();
             } else {
@@ -144,6 +152,11 @@ public class RegisterdataRestTjeneste {
 
     }
 
+    private void setupLogMdcFraKoblingReferanse(KoblingReferanse koblingReferanse) {
+        var kobling = koblingTjeneste.hentFor(koblingReferanse);
+        kobling.filter(k -> k.getSaksnummer() != null)
+            .ifPresent(k -> LoggUtil.setupLogMdc(k.getYtelseType(), kobling.get().getSaksnummer().getVerdi(), koblingReferanse.getReferanse())); // legger til saksnummer i MDC
+    }
     /**
      * Json bean med Abac.
      */

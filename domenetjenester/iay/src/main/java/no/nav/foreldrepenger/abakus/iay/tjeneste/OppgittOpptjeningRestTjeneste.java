@@ -27,6 +27,7 @@ import no.nav.abakus.iaygrunnlag.UuidDto;
 import no.nav.abakus.iaygrunnlag.request.OppgittOpptjeningMottattRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
+import no.nav.foreldrepenger.abakus.felles.LoggUtil;
 import no.nav.foreldrepenger.abakus.iay.OppgittOpptjeningTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapOppgittOpptjening;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
@@ -43,7 +44,7 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 @ApplicationScoped
 @Transactional
 public class OppgittOpptjeningRestTjeneste {
-
+    
     private KoblingTjeneste koblingTjeneste;
     private OppgittOpptjeningTjeneste oppgittOpptjeningTjeneste;
 
@@ -65,6 +66,8 @@ public class OppgittOpptjeningRestTjeneste {
     @BeskyttetRessurs(action = CREATE, resource = SØKNAD)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response lagreOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
+        LoggUtil.setupLogMdc(mottattRequest.getYtelseType(), mottattRequest.getSaksnummer(), mottattRequest.getKoblingReferanse());
+        
         if (mottattRequest.harOppgittJournalpostId() || mottattRequest.harOppgittInnsendingstidspunkt()) {
             return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), "v1/motta skal ikke ha journalpostId eller innsendingstidspunkt. Skal du egentlig bruke /v2/motta ?").build();
         }
@@ -100,7 +103,7 @@ public class OppgittOpptjeningRestTjeneste {
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response lagreOverstyrtOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
         Response response;
-
+        LoggUtil.setupLogMdc(mottattRequest.getYtelseType(), mottattRequest.getSaksnummer(), mottattRequest.getKoblingReferanse());
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
         var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
@@ -120,7 +123,7 @@ public class OppgittOpptjeningRestTjeneste {
 
         return response;
     }
-
+    
     public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         @Override

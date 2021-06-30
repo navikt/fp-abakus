@@ -31,6 +31,7 @@ import no.nav.abakus.vedtak.ytelse.Periode;
 import no.nav.abakus.vedtak.ytelse.Ytelse;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
 import no.nav.abakus.vedtak.ytelse.v1.anvisning.Anvisning;
+import no.nav.foreldrepenger.abakus.felles.LoggUtil;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
@@ -50,7 +51,6 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 @ApplicationScoped
 @Transactional
 public class YtelseRestTjeneste {
-
     private VedtakYtelseRepository ytelseRepository;
     private ExtractFromYtelseV1 extractor;
 
@@ -69,10 +69,12 @@ public class YtelseRestTjeneste {
     @Operation(description = "Lagrer ytelse vedtak", tags = "ytelse")
     @BeskyttetRessurs(action = CREATE, resource = VEDTAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response lagreVedtakk(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid Ytelse request) {
+    public Response lagreVedtak(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid Ytelse request) {
         final YtelseV1 ytelseVedtak = (YtelseV1) request;
+        LoggUtil.setupLogMdc(ytelseVedtak.getType(), ytelseVedtak.getSaksnummer());
+        
         VedtakYtelseBuilder builder = extractor.extractFrom(ytelseVedtak);
-
+        
         ytelseRepository.lagre(builder);
 
         return Response.accepted().build();
@@ -86,6 +88,8 @@ public class YtelseRestTjeneste {
     @BeskyttetRessurs(action = READ, resource = VEDTAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public List<Ytelse> hentVedtak(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
+        LoggUtil.setupLogMdc(request.getYtelse());
+        
         AktørId aktørId = new AktørId(request.getAktør().getIdent());
         LocalDate fom = request.getDato();
         LocalDate tom = Tid.TIDENES_ENDE;
