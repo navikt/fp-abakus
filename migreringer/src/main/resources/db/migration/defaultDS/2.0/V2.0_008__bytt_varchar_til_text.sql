@@ -1,2 +1,2 @@
-alter table iay_arbeidsforhold alter column beskrivelse type text;
+alter table iay_arbeidsforhold alter column begrunnelse type text;
 
