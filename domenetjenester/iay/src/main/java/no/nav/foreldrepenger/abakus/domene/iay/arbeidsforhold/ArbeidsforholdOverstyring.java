@@ -156,7 +156,7 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
 
     void setHandling(ArbeidsforholdHandlingType handling) {
         if(handling.isReadOnly()) {
-            throw new IllegalStateException("Kan ikke opprette grunnlag da ArbeidsforholdHandlingType ikke lenger er supportert (annet enn lesing: " + handling );
+            throw new UnsupportedOperationException("Kan ikke opprette grunnlag da ArbeidsforholdHandlingType ikke lenger er supportert (annet enn lesing: " + handling );
         }
         this.handling = handling;
     }
