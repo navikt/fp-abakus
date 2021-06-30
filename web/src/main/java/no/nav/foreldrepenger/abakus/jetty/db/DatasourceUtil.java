@@ -60,6 +60,7 @@ public class DatasourceUtil {
         // optimaliserer inserts for postgres
         var dsProperties=new Properties();
         dsProperties.setProperty("reWriteBatchedInserts", "true");
+        dsProperties.setProperty("logServerErrorDetail", "false");
         config.setDataSourceProperties(dsProperties);
 
         // skrur av autocommit her, da kan vi bypasse dette senere når hibernate setter opp entitymanager for bedre conn mgmt
