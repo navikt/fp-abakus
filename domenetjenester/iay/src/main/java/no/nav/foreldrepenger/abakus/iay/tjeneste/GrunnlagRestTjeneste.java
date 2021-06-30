@@ -73,6 +73,7 @@ import no.nav.abakus.iaygrunnlag.v1.OverstyrtInntektArbeidYtelseDto;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
+import no.nav.foreldrepenger.abakus.felles.LoggUtil;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYFraDtoMapper;
@@ -82,6 +83,7 @@ import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+import no.nav.vedtak.log.mdc.MdcExtendedLogContext;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
@@ -93,6 +95,7 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 @ApplicationScoped
 @Transactional
 public class GrunnlagRestTjeneste {
+    private static final MdcExtendedLogContext LOG_CONTEXT = MdcExtendedLogContext.getContext("prosess");
 
     private static Logger log = LoggerFactory.getLogger(GrunnlagRestTjeneste.class);
     private InntektArbeidYtelseTjeneste iayTjeneste;
@@ -108,13 +111,6 @@ public class GrunnlagRestTjeneste {
         this.koblingTjeneste = koblingTjeneste;
     }
 
-    private static Periode mapPeriode(IntervallEntitet datoIntervall) {
-        if (datoIntervall == null) {
-            return new Periode(LocalDate.now(), LocalDate.now());
-        }
-        return new Periode(datoIntervall.getFomDato(), datoIntervall.getTomDato());
-    }
-
     @POST
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -128,6 +124,8 @@ public class GrunnlagRestTjeneste {
     @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
     public Response hentIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
         Response response;
+
+        LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer(), spesifikasjon.getKoblingReferanse());
 
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
 
@@ -168,6 +166,7 @@ public class GrunnlagRestTjeneste {
                                                   @NotNull @Valid @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'") String saksnummer,
                                                   @NotNull @Valid @QueryParam("kobling") UUID koblingReferanse,
                                                   @Context Request req) {
+        LoggUtil.setupLogMdc(ytelseType, saksnummer, koblingReferanse);
 
         CacheControl cc = new CacheControl();
         cc.setMaxAge(0);
@@ -188,6 +187,7 @@ public class GrunnlagRestTjeneste {
 
         if (rb == null) {
             Kobling kobling = koblingTjeneste.hentFor(ref).orElseThrow(() -> new IllegalArgumentException("Har ikke kobling for " + ref));
+
             if (!Objects.equals(kobling.getYtelseType(), ytelseType) || kobling.getSaksnummer() == null || !Objects.equals(kobling.getSaksnummer().getVerdi(), saksnummer)) {
                 throw new IllegalArgumentException("Har ikke kobling for " + ref + ", for ytelse=" + ytelseType + ", saksnummer=" + saksnummer);
             }
@@ -218,6 +218,8 @@ public class GrunnlagRestTjeneste {
                                          @NotNull @Valid @QueryParam("kobling") UUID koblingReferanse,
                                          @Context Request req) {
 
+        LoggUtil.setupLogMdc(ytelseType, saksnummer, koblingReferanse);
+
         CacheControl cc = new CacheControl();
         cc.setMaxAge(0);
         cc.setProxyRevalidate(true);
@@ -247,26 +249,6 @@ public class GrunnlagRestTjeneste {
 
     }
 
-    private Date getSistOppdatert(LocalDateTime... tidspunkt) {
-        var tid = new ArrayList<>(Arrays.asList(tidspunkt));
-        Collections.sort(tid);
-        return Date.from(tid.get(tid.size() - 1).atZone(ZoneId.systemDefault()).toInstant());
-    }
-
-    private UUID utledSisteKjenteGrunnlagReferanseFraSpesifikasjon(InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
-        final var sisteKjenteGrunnlagReferanse = spesifikasjon.getSisteKjenteGrunnlagReferanse();
-        final var forespurtGrunnlagReferanse = spesifikasjon.getGrunnlagReferanse();
-
-        if (forespurtGrunnlagReferanse != null && forespurtGrunnlagReferanse.equals(sisteKjenteGrunnlagReferanse)) {
-            if (forespurtGrunnlagReferanse.equals(sisteKjenteGrunnlagReferanse)) {
-                return sisteKjenteGrunnlagReferanse;
-            }
-        } else {
-            return sisteKjenteGrunnlagReferanse;
-        }
-        return null;
-    }
-
     @PUT
     @Path("/overstyrt")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -280,6 +262,8 @@ public class GrunnlagRestTjeneste {
 
         var aktørId = new AktørId(dto.getPerson().getIdent());
         var koblingReferanse = getKoblingReferanse(aktørId, dto.getKoblingReferanse(), dto.getGrunnlagReferanse());
+
+        setupLogMdcFraKoblingReferanse(koblingReferanse);
 
         var nyttGrunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayTjeneste.hentGrunnlagFor(koblingReferanse));
 
@@ -303,12 +287,14 @@ public class GrunnlagRestTjeneste {
     @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response oppdaterOgLagreGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagAbacDto dto) {
+        
         var aktørId = new AktørId(dto.getPerson().getIdent());
-
         var koblingReferanse = getKoblingReferanse(aktørId, dto);
+        
+        setupLogMdcFraKoblingReferanse(koblingReferanse);
 
         log.warn("Kall på deprecated tjeneste PUT /iay/grunnlag/v1: ytelse={}, kobling={}", dto.getYtelseType(), dto.getKoblingReferanse());
-        
+
         var dtoMapper = new IAYFraDtoMapper(iayTjeneste, aktørId, koblingReferanse);
         var nyttGrunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayTjeneste.hentGrunnlagFor(koblingReferanse));
         dtoMapper.mapOverstyringerTilGrunnlagBuilder(dto.getOverstyrt(), dto.getArbeidsforholdInformasjon(), nyttGrunnlagBuilder);
@@ -333,6 +319,8 @@ public class GrunnlagRestTjeneste {
 
         var saksnummer = Objects.requireNonNull(spesifikasjon.getSaksnummer(), "saksnummer");
         var ytelseType = Objects.requireNonNull(spesifikasjon.getYtelseType(), "ytelseType");
+        
+        LoggUtil.setupLogMdc(ytelseType, saksnummer, spesifikasjon.getKoblingReferanse());
 
         var snapshot = new InntektArbeidYtelseGrunnlagSakSnapshotDto(saksnummer, ytelseType, spesifikasjon.getPerson());
 
@@ -365,6 +353,8 @@ public class GrunnlagRestTjeneste {
         var ref = new KoblingReferanse(request.getNyReferanse());
         var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(ref)); // alltid ta lås før skrive operasjoner
 
+        setupLogMdcFraKoblingReferanse(ref);
+        
         var kobling = oppdaterKobling(request);
 
         iayTjeneste.kopierGrunnlagFraEksisterendeBehandling(kobling.getYtelseType(), kobling.getAktørId(),
@@ -376,6 +366,26 @@ public class GrunnlagRestTjeneste {
         koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
 
         return Response.ok().build();
+    }
+
+    private Date getSistOppdatert(LocalDateTime... tidspunkt) {
+        var tid = new ArrayList<>(Arrays.asList(tidspunkt));
+        Collections.sort(tid);
+        return Date.from(tid.get(tid.size() - 1).atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    private UUID utledSisteKjenteGrunnlagReferanseFraSpesifikasjon(InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
+        final var sisteKjenteGrunnlagReferanse = spesifikasjon.getSisteKjenteGrunnlagReferanse();
+        final var forespurtGrunnlagReferanse = spesifikasjon.getGrunnlagReferanse();
+
+        if (forespurtGrunnlagReferanse != null && forespurtGrunnlagReferanse.equals(sisteKjenteGrunnlagReferanse)) {
+            if (forespurtGrunnlagReferanse.equals(sisteKjenteGrunnlagReferanse)) {
+                return sisteKjenteGrunnlagReferanse;
+            }
+        } else {
+            return sisteKjenteGrunnlagReferanse;
+        }
+        return null;
     }
 
     private Kobling oppdaterKobling(@NotNull @Valid KopierGrunnlagRequest dto) {
@@ -487,6 +497,19 @@ public class GrunnlagRestTjeneste {
             return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, ident);
         }
         throw new java.lang.IllegalStateException("Ukjent identtype" + identType);
+    }
+
+    private static Periode mapPeriode(IntervallEntitet datoIntervall) {
+        if (datoIntervall == null) {
+            return new Periode(LocalDate.now(), LocalDate.now());
+        }
+        return new Periode(datoIntervall.getFomDato(), datoIntervall.getTomDato());
+    }
+
+    private void setupLogMdcFraKoblingReferanse(KoblingReferanse koblingReferanse) {
+        var kobling = koblingTjeneste.hentFor(koblingReferanse);
+        kobling.filter(k -> k.getSaksnummer() != null)
+            .ifPresent(k -> LoggUtil.setupLogMdc(k.getYtelseType(), kobling.get().getSaksnummer().getVerdi(), koblingReferanse.getReferanse())); // legger til saksnummer i MDC
     }
 
     /**

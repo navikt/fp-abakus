@@ -55,4 +55,8 @@ public class KoblingReferanse {
             "referanse=" + referanse +
             '}';
     }
+
+    public String asString() {
+        return referanse.toString();
+    }
 }
