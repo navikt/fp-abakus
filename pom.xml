@@ -198,12 +198,6 @@
 				<scope>import</scope>
 			</dependency>
 
-            <dependency>
-                <groupId>net.minidev</groupId>
-                <artifactId>json-smart</artifactId>
-                <version>2.3</version>
-            </dependency>
-
 			<dependency>
 				<groupId>net.logstash.logback</groupId>
 				<artifactId>logstash-logback-encoder</artifactId>
