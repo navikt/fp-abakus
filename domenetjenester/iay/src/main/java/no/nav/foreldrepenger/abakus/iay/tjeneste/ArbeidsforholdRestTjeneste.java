@@ -51,13 +51,13 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 @Transactional
 public class ArbeidsforholdRestTjeneste {
     private static final MdcExtendedLogContext LOG_CONTEXT = MdcExtendedLogContext.getContext("prosess");
-    
+
     private KoblingTjeneste koblingTjeneste;
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private ArbeidsforholdDtoTjeneste dtoTjeneste;
     private VirksomhetTjeneste virksomhetTjeneste;
 
-    public ArbeidsforholdRestTjeneste() {} // RESTEASY ctor
+    public ArbeidsforholdRestTjeneste() {} // CDI Ctor
 
     @Inject
     public ArbeidsforholdRestTjeneste(KoblingTjeneste koblingTjeneste, InntektArbeidYtelseTjeneste iayTjeneste,
@@ -82,7 +82,7 @@ public class ArbeidsforholdRestTjeneste {
         YtelseType ytelse = request.getYtelse() != null ? request.getYtelse() : YtelseType.UDEFINERT;
         LOG_CONTEXT.add("ytelseType", request.getYtelse().getKode());
         LOG_CONTEXT.add("periode", periode);
-        
+
         LocalDate fom = periode.getFom();
         LocalDate tom = Objects.equals(fom, periode.getTom())
             ? fom.plusDays(1) // enkel dato søk
@@ -103,7 +103,7 @@ public class ArbeidsforholdRestTjeneste {
 
         KoblingReferanse referanse = new KoblingReferanse(UUID.fromString(request.getKoblingReferanse().getReferanse()));
         setupLogMdcFraKoblingReferanse(referanse);
-        
+
         var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(referanse));
 
         ArbeidsforholdInformasjon arbeidsforholdInformasjon = iayTjeneste.hentArbeidsforholdInformasjonForKobling(referanse);

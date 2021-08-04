@@ -102,7 +102,7 @@ public class GrunnlagRestTjeneste {
     private KoblingTjeneste koblingTjeneste;
 
     public GrunnlagRestTjeneste() {
-    } // RESTEASY ctor
+    } // CDI Ctor
 
     @Inject
     public GrunnlagRestTjeneste(InntektArbeidYtelseTjeneste iayTjeneste,
@@ -112,7 +112,6 @@ public class GrunnlagRestTjeneste {
     }
 
     @POST
-    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Hent ett enkelt IAY Grunnlag for angitt spesifikasjon. Spesifikasjonen kan angit hvilke data som ønskes", tags = "iay-grunnlag", responses = {
@@ -204,7 +203,6 @@ public class GrunnlagRestTjeneste {
     }
 
     @GET
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Hent aktivt IAY grunnlag grunnlag for angitt kobling", tags = "iay-grunnlag", responses = {
             @ApiResponse(description = "InntektArbeidYtelseGrunnlagDto", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArbeidsforholdInformasjon.class))),
@@ -278,7 +276,6 @@ public class GrunnlagRestTjeneste {
     /** @deprecated bytt til {@link #oppdaterOgLagreOverstyring(OverstyrtInntektArbeidYtelseDto)} . */
     @Deprecated(forRemoval = true)
     @PUT
-    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Lagrer siste versjon", tags = "iay-grunnlag", responses = {
@@ -287,10 +284,10 @@ public class GrunnlagRestTjeneste {
     @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response oppdaterOgLagreGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagAbacDto dto) {
-        
+
         var aktørId = new AktørId(dto.getPerson().getIdent());
         var koblingReferanse = getKoblingReferanse(aktørId, dto);
-        
+
         setupLogMdcFraKoblingReferanse(koblingReferanse);
 
         log.warn("Kall på deprecated tjeneste PUT /iay/grunnlag/v1: ytelse={}, kobling={}", dto.getYtelseType(), dto.getKoblingReferanse());
@@ -319,7 +316,7 @@ public class GrunnlagRestTjeneste {
 
         var saksnummer = Objects.requireNonNull(spesifikasjon.getSaksnummer(), "saksnummer");
         var ytelseType = Objects.requireNonNull(spesifikasjon.getYtelseType(), "ytelseType");
-        
+
         LoggUtil.setupLogMdc(ytelseType, saksnummer, spesifikasjon.getKoblingReferanse());
 
         var snapshot = new InntektArbeidYtelseGrunnlagSakSnapshotDto(saksnummer, ytelseType, spesifikasjon.getPerson());
@@ -354,7 +351,7 @@ public class GrunnlagRestTjeneste {
         var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(ref)); // alltid ta lås før skrive operasjoner
 
         setupLogMdcFraKoblingReferanse(ref);
-        
+
         var kobling = oppdaterKobling(request);
 
         iayTjeneste.kopierGrunnlagFraEksisterendeBehandling(kobling.getYtelseType(), kobling.getAktørId(),
