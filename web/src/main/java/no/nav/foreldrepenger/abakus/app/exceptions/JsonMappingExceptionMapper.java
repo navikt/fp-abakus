@@ -18,7 +18,7 @@ public class JsonMappingExceptionMapper implements ExceptionMapper<JsonMappingEx
         log.warn("FP-252294 JSON-mapping feil: {}", exception.getMessage(), exception);
         return Response
                 .status(Response.Status.BAD_REQUEST)
-                .entity(new FeilDto(FeilType.GENERELL_FEIL, String.format("JSON-mapping feil: %s", exception.getMessage())))
+                .entity(new FeilDto(String.format("JSON-mapping feil: %s", exception.getMessage()), FeilType.GENERELL_FEIL))
                 .type(MediaType.APPLICATION_JSON)
                 .build();
     }
