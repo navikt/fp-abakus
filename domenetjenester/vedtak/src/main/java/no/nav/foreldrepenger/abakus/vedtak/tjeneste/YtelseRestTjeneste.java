@@ -54,7 +54,7 @@ public class YtelseRestTjeneste {
     private VedtakYtelseRepository ytelseRepository;
     private ExtractFromYtelseV1 extractor;
 
-    public YtelseRestTjeneste() {} // RESTEASY ctor
+    public YtelseRestTjeneste() {} // CDI Ctor
 
     @Inject
     public YtelseRestTjeneste(VedtakYtelseRepository ytelseRepository,
@@ -72,9 +72,9 @@ public class YtelseRestTjeneste {
     public Response lagreVedtak(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid Ytelse request) {
         final YtelseV1 ytelseVedtak = (YtelseV1) request;
         LoggUtil.setupLogMdc(ytelseVedtak.getType(), ytelseVedtak.getSaksnummer());
-        
+
         VedtakYtelseBuilder builder = extractor.extractFrom(ytelseVedtak);
-        
+
         ytelseRepository.lagre(builder);
 
         return Response.accepted().build();
@@ -89,7 +89,7 @@ public class YtelseRestTjeneste {
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public List<Ytelse> hentVedtak(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
         LoggUtil.setupLogMdc(request.getYtelse());
-        
+
         AktørId aktørId = new AktørId(request.getAktør().getIdent());
         LocalDate fom = request.getDato();
         LocalDate tom = Tid.TIDENES_ENDE;

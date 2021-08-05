@@ -60,8 +60,8 @@ public class RegisterdataRestTjeneste {
     private InnhentRegisterdataTjeneste innhentTjeneste;
 
     private KoblingTjeneste koblingTjeneste;
-    
-    public RegisterdataRestTjeneste() {} // RESTEASY ctor
+
+    public RegisterdataRestTjeneste() {} // CDI ctor
 
     @Inject
     public RegisterdataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste,

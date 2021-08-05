@@ -46,7 +46,7 @@ public class OppgittOpptjeningV2RestTjeneste {
     private OppgittOpptjeningTjeneste oppgittOpptjeningTjeneste;
 
     public OppgittOpptjeningV2RestTjeneste() {
-        // RESTEASY ctor
+        // CDI Ctor
     }
 
     @Inject
@@ -86,7 +86,7 @@ public class OppgittOpptjeningV2RestTjeneste {
             return Response.noContent().build();
         }
     }
-    
+
     public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         @Override

@@ -67,13 +67,13 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 @ApplicationScoped
 @Transactional
 public class InntektsmeldingerRestTjeneste {
-    
+
     private InntektsmeldingerTjeneste imTjeneste;
     private KoblingTjeneste koblingTjeneste;
     private InntektArbeidYtelseTjeneste iayTjeneste;
 
     public InntektsmeldingerRestTjeneste() {
-    } // RESTEASY ctor
+    } // CDI Ctor
 
     @Inject
     public InntektsmeldingerRestTjeneste(InntektsmeldingerTjeneste imTjeneste,
@@ -139,7 +139,7 @@ public class InntektsmeldingerRestTjeneste {
     public UuidDto lagreInntektsmeldinger(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid InntektsmeldingerMottattRequest mottattRequest) {
         UuidDto resultat = null;
         LoggUtil.setupLogMdc(mottattRequest.getYtelseType(), mottattRequest.getSaksnummer(), mottattRequest.getKoblingReferanse().toString());
-        
+
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
 
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
@@ -189,7 +189,7 @@ public class InntektsmeldingerRestTjeneste {
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentDifferanseMellomToReferanserPåSak(@NotNull @Valid InntektsmeldingDiffRequestAbacDto spesifikasjon) {
         LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer(), spesifikasjon.getEksternRefEn() +"/" + spesifikasjon.getEksternRefTo());
-        
+
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
         var ytelseType = YtelseType.fraKode(spesifikasjon.getYtelseType().getKode());

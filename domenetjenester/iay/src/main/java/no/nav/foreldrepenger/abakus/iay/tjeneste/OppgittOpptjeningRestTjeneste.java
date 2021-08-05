@@ -44,12 +44,12 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 @ApplicationScoped
 @Transactional
 public class OppgittOpptjeningRestTjeneste {
-    
+
     private KoblingTjeneste koblingTjeneste;
     private OppgittOpptjeningTjeneste oppgittOpptjeningTjeneste;
 
     public OppgittOpptjeningRestTjeneste() {
-    } // RESTEASY ctor
+    } // CDI Ctor
 
     @Inject
     public OppgittOpptjeningRestTjeneste(KoblingTjeneste koblingTjeneste,
@@ -67,7 +67,7 @@ public class OppgittOpptjeningRestTjeneste {
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response lagreOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
         LoggUtil.setupLogMdc(mottattRequest.getYtelseType(), mottattRequest.getSaksnummer(), mottattRequest.getKoblingReferanse());
-        
+
         if (mottattRequest.harOppgittJournalpostId() || mottattRequest.harOppgittInnsendingstidspunkt()) {
             return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), "v1/motta skal ikke ha journalpostId eller innsendingstidspunkt. Skal du egentlig bruke /v2/motta ?").build();
         }
@@ -123,7 +123,7 @@ public class OppgittOpptjeningRestTjeneste {
 
         return response;
     }
-    
+
     public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         @Override
