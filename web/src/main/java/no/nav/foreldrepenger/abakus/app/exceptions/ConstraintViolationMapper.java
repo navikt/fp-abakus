@@ -30,7 +30,7 @@ public class ConstraintViolationMapper implements ExceptionMapper<ConstraintViol
         Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
         for (ConstraintViolation<?> constraintViolation : constraintViolations) {
             String feltNavn = getFeltNavn(constraintViolation.getPropertyPath());
-            feilene.add(new FeltFeilDto(feltNavn, constraintViolation.getMessage(), null));
+            feilene.add(new FeltFeilDto(feltNavn, constraintViolation.getMessage()));
         }
         VLException feil;
         if (feilene.isEmpty()) {

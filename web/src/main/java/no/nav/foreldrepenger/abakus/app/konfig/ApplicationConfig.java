@@ -2,10 +2,13 @@ package no.nav.foreldrepenger.abakus.app.konfig;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.ServerProperties;
 
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
@@ -16,10 +19,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
 import no.nav.foreldrepenger.abakus.app.diagnostikk.DiagnostikkRestTjeneste;
 import no.nav.foreldrepenger.abakus.app.diagnostikk.rapportering.RapporteringRestTjeneste;
-import no.nav.foreldrepenger.abakus.app.exceptions.ConstraintViolationMapper;
-import no.nav.foreldrepenger.abakus.app.exceptions.GeneralRestExceptionMapper;
-import no.nav.foreldrepenger.abakus.app.exceptions.JsonMappingExceptionMapper;
-import no.nav.foreldrepenger.abakus.app.exceptions.JsonParseExceptionMapper;
+import no.nav.foreldrepenger.abakus.app.exceptions.KnownExceptionMappers;
 import no.nav.foreldrepenger.abakus.app.jackson.JacksonJsonConfig;
 import no.nav.foreldrepenger.abakus.app.vedlikehold.ForvaltningRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.ArbeidsforholdRestTjeneste;
@@ -32,7 +32,7 @@ import no.nav.foreldrepenger.abakus.vedtak.tjeneste.YtelseRestTjeneste;
 import no.nav.vedtak.felles.prosesstask.rest.ProsessTaskRestTjeneste;
 
 @ApplicationPath(ApplicationConfig.API_URI)
-public class ApplicationConfig extends Application {
+public class ApplicationConfig extends ResourceConfig {
 
     public static final String API_URI = "/api";
 
@@ -59,10 +59,19 @@ public class ApplicationConfig extends Application {
         } catch (OpenApiConfigurationException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
+
+        property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true);
+        register(OpenApiResource.class);
+        register(JacksonJsonConfig.class);
+
+        registerClasses(getApplicationClasses());
+
+        registerInstances(new LinkedHashSet<>(new KnownExceptionMappers().getExceptionMappers()));
+
+        property(ServerProperties.PROCESSING_RESPONSE_ERRORS_ENABLED, true);
     }
 
-    @Override
-    public Set<Class<?>> getClasses() {
+    private static Set<Class<?>> getApplicationClasses() {
         Set<Class<?>> classes = new HashSet<>();
 
         classes.add(ProsessTaskRestTjeneste.class);
@@ -74,15 +83,8 @@ public class ApplicationConfig extends Application {
         classes.add(ArbeidsforholdRestTjeneste.class);
         classes.add(YtelseRestTjeneste.class);
         classes.add(ForvaltningRestTjeneste.class);
-        classes.add(OpenApiResource.class);
         classes.add(DiagnostikkRestTjeneste.class);
         classes.add(RapporteringRestTjeneste.class);
-
-        classes.add(ConstraintViolationMapper.class);
-        classes.add(JsonMappingExceptionMapper.class);
-        classes.add(JsonParseExceptionMapper.class);
-        classes.add(GeneralRestExceptionMapper.class);
-        classes.add(JacksonJsonConfig.class);
 
         return Collections.unmodifiableSet(classes);
     }
