@@ -8,9 +8,9 @@ import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.ws.addressing.WSAddressingFeature;
 
+import no.nav.foreldrepenger.konfig.KonfigVerdi;
 import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.binding.MeldekortUtbetalingsgrunnlagV1;
 import no.nav.vedtak.felles.integrasjon.felles.ws.CallIdOutInterceptor;
-import no.nav.vedtak.konfig.KonfigVerdi;
 
 @Dependent
 public class MeldekortUtbetalingsgrunnlagConsumerConfig {

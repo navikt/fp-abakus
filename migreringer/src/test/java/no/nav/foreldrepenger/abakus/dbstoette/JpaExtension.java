@@ -4,8 +4,8 @@ package no.nav.foreldrepenger.abakus.dbstoette;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.vedtak.felles.testutilities.db.EntityManagerAwareExtension;
-import no.nav.vedtak.util.env.Environment;
 
 public class JpaExtension extends EntityManagerAwareExtension {
 
