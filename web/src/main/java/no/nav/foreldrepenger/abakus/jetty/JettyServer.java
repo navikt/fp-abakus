@@ -1,7 +1,7 @@
 package no.nav.foreldrepenger.abakus.jetty;
 
-import static no.nav.foreldrepenger.konfig.Cluster.LOCAL;
-import static no.nav.foreldrepenger.konfig.Cluster.NAIS_CLUSTER_NAME;
+import static no.nav.vedtak.util.env.Cluster.LOCAL;
+import static no.nav.vedtak.util.env.Cluster.NAIS_CLUSTER_NAME;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,8 +53,8 @@ import no.nav.foreldrepenger.abakus.jetty.db.DatabaseScript;
 import no.nav.foreldrepenger.abakus.jetty.db.DatasourceRole;
 import no.nav.foreldrepenger.abakus.jetty.db.DatasourceUtil;
 import no.nav.foreldrepenger.abakus.jetty.db.EnvironmentClass;
-import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.vedtak.isso.IssoApplication;
+import no.nav.vedtak.util.env.Environment;
 
 public class JettyServer {
 

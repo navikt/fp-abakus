@@ -11,7 +11,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
-import no.nav.foreldrepenger.konfig.KonfigVerdi;
+import no.nav.vedtak.konfig.KonfigVerdi;
 
 @ApplicationScoped
 public class InntektRestHealthCheck  {

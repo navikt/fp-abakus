@@ -105,7 +105,7 @@ jobs:
                  owner: context.issue.owner,
                  repo: context.issue.repo,
                  labels: ['deployment'],
-                 body: 'Kommenter enten "/promote dev-fss namespace" eller "/promote prod-fss namespace", ns=default,teamforeldrepenger',
+                 body: 'Kommenter enten "/promote dev-fss" eller "/promote prod-fss"',
                  title: 'Deploy av ${{ env.TAG }}'})
                .then(response => {
                        core.setOutput('number', response.data.number);
@@ -128,7 +128,7 @@ jobs:
                             issue_number: ${{ steps.createdeployissue.outputs.number }} }
             github.issues.createComment({...issue,
                                     title: 'Deploy av ${{ env.TAG }}',
-                                    body: '/promote dev-fss teamforeldrepenger'})
+                                    body: '/promote dev-fss'})
 
       - name: Trigger tester for FP
         run: |

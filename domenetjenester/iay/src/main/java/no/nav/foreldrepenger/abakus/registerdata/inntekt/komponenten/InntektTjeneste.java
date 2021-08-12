@@ -21,7 +21,6 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-import no.nav.foreldrepenger.konfig.KonfigVerdi;
 import no.nav.tjenester.aordningen.inntektsinformasjon.Aktoer;
 import no.nav.tjenester.aordningen.inntektsinformasjon.AktoerType;
 import no.nav.tjenester.aordningen.inntektsinformasjon.ArbeidsInntektIdent;
@@ -38,6 +37,7 @@ import no.nav.tjenester.aordningen.inntektsinformasjon.tilleggsinformasjondetalj
 import no.nav.vedtak.exception.IntegrasjonException;
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
+import no.nav.vedtak.konfig.KonfigVerdi;
 
 @ApplicationScoped
 public class InntektTjeneste {
