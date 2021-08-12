@@ -45,7 +45,7 @@ spec:
       - mountPath: /var/run/secrets/nais.io/serviceuser
         kvPath: serviceuser/data/prod/srvfpabakus
       - mountPath: /var/run/secrets/nais.io/vault
-        kvPath: /kv/prod/fss/fpsak/teamforeldrepenger
+        kvPath: /kv/prod/fss/fpabakus/teamforeldrepenger
       - mountPath: /var/run/secrets/nais.io/appdynamics
         kvPath: /apikey/appdynamics/prod
       - mountPath: /var/run/secrets/nais.io/azuread
