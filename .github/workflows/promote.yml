@@ -39,7 +39,7 @@ jobs:
         env:
           APIKEY: ${{ secrets.DEPLOY_KEY }}
           CLUSTER: ${{ env.CLUSTER }}
-          RESOURCE: .deploy/${{ env.CLUSTER }}-${{ env.NAMESPACE }}.yaml
+          RESOURCE: .deploy/${{ env.CLUSTER }}-default.yaml
 
       - name: Oppdater kommentar med deployment status ved feil
         if: failure()

@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import no.nav.foreldrepenger.abakus.jetty.db.DatasourceRole;
 import no.nav.foreldrepenger.abakus.jetty.db.DatasourceUtil;
 import no.nav.foreldrepenger.abakus.jetty.db.EnvironmentClass;
-import no.nav.foreldrepenger.konfig.Cluster;
+import no.nav.vedtak.util.env.Cluster;
 
 public class JettyDevServer extends JettyServer {
     private static final Logger log = LoggerFactory.getLogger(JettyDevServer.class);

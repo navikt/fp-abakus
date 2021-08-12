@@ -31,10 +31,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<felles.version>4.0.3</felles.version>
-		<prosesstask.version>2.6.4</prosesstask.version>
+		<felles.version>3.2.123</felles.version>
+		<prosesstask.version>2.6.3</prosesstask.version>
 
-		<kontrakter.version>6.0.3</kontrakter.version>
+		<kontrakter.version>6.0.2</kontrakter.version>
 
 		<tjenestespesifikasjoner.version>1.2021.02.22-10.45-4201aaea72fb</tjenestespesifikasjoner.version>
 
@@ -98,12 +98,6 @@
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
-
-            <dependency>
-                <groupId>net.minidev</groupId>
-                <artifactId>json-smart</artifactId>
-                <version>2.3</version>
-            </dependency>
 
 			<dependency>
 				<groupId>no.nav.foreldrepenger.abakus</groupId>

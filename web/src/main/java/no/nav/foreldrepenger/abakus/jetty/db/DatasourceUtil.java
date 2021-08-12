@@ -1,6 +1,6 @@
 package no.nav.foreldrepenger.abakus.jetty.db;
 
-import static no.nav.foreldrepenger.konfig.Cluster.LOCAL;
+import static no.nav.vedtak.util.env.Cluster.LOCAL;
 
 import java.util.Properties;
 
@@ -9,10 +9,10 @@ import javax.sql.DataSource;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import no.nav.foreldrepenger.konfig.Cluster;
-import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil;
 import no.nav.vault.jdbc.hikaricp.VaultError;
+import no.nav.vedtak.util.env.Cluster;
+import no.nav.vedtak.util.env.Environment;
 
 public class DatasourceUtil {
 
