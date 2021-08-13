@@ -1,6 +1,6 @@
 package no.nav.foreldrepenger.abakus.felles.kafka;
 
-import no.nav.vedtak.util.env.Environment;
+import no.nav.foreldrepenger.konfig.Environment;
 
 public final class ApplicationIdUtil {
 
