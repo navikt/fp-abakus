@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -30,6 +31,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
+import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
@@ -57,6 +59,10 @@ public class Ytelse extends BaseEntitet implements IndexKey {
     @Embedded
     @ChangeTracked
     private IntervallEntitet periode;
+
+    @ChangeTracked
+    @Column(name = "vedtatt_tidspunkt")
+    private LocalDateTime vedtattTidspunkt;
 
     @ChangeTracked
     @Convert(converter = YtelseStatusKodeverdiConverter.class)
@@ -148,6 +154,14 @@ public class Ytelse extends BaseEntitet implements IndexKey {
 
     void setStatus(YtelseStatus status) {
         this.status = status;
+    }
+
+    public LocalDateTime getVedtattTidspunkt() {
+        return vedtattTidspunkt;
+    }
+
+    public void setVedtattTidspunkt(LocalDateTime vedtattTidspunkt) {
+        this.vedtattTidspunkt = vedtattTidspunkt;
     }
 
     public IntervallEntitet getPeriode() {

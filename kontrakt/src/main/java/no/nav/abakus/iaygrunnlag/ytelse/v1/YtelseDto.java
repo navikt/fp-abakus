@@ -1,5 +1,6 @@
 package no.nav.abakus.iaygrunnlag.ytelse.v1;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -46,6 +47,9 @@ public class YtelseDto {
     @Valid
     @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message="Saksnummer [${validatedValue}] matcher ikke tillatt pattern '{value}'")
     private String saksnummer;
+
+    @JsonProperty(value = "vedtattTidspunkt")
+    private LocalDateTime vedtattTidspunkt;
 
     @JsonProperty(value = "temaUnderkategori")
     private TemaUnderkategori temaUnderkategori;
@@ -98,6 +102,14 @@ public class YtelseDto {
         this.grunnlag = grunnlag;
     }
 
+    public LocalDateTime getVedtattTidspunkt() {
+        return vedtattTidspunkt;
+    }
+
+    public void setVedtattTidspunkt(LocalDateTime vedtattTidspunkt) {
+        this.vedtattTidspunkt = vedtattTidspunkt;
+    }
+
     public YtelseDto medGrunnlag(YtelseGrunnlagDto grunnlag) {
         this.grunnlag = grunnlag;
         return this;
@@ -134,6 +146,11 @@ public class YtelseDto {
 
     public YtelseDto medSaksnummer(String saksnummer) {
         setSaksnummer(saksnummer);
+        return this;
+    }
+
+    public YtelseDto medVedtattTidspunkt(LocalDateTime vedtattTidspunkt) {
+        setVedtattTidspunkt(vedtattTidspunkt);
         return this;
     }
 }
