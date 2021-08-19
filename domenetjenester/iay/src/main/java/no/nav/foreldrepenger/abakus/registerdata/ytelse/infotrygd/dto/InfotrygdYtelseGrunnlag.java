@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,7 +14,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
 public class InfotrygdYtelseGrunnlag {
 
-    private LocalDate identdato;
+    private LocalDateTime vedtattTidspunkt;
     private YtelseType ytelseType = YtelseType.UDEFINERT;
     private TemaUnderkategori temaUnderkategori = TemaUnderkategori.UDEFINERT;
     private YtelseStatus ytelseStatus = YtelseStatus.AVSLUTTET;
@@ -30,8 +31,8 @@ public class InfotrygdYtelseGrunnlag {
     private LocalDate fødselsdatoBarn;
     private LocalDate opprinneligIdentdato;
 
-    public LocalDate getIdentdato() {
-        return identdato;
+    public LocalDateTime getVedtattTidspunkt() {
+        return vedtattTidspunkt;
     }
 
     public YtelseType getYtelseType() {
@@ -91,7 +92,7 @@ public class InfotrygdYtelseGrunnlag {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         InfotrygdYtelseGrunnlag that = (InfotrygdYtelseGrunnlag) o;
-        return Objects.equals(identdato, that.identdato) &&
+        return Objects.equals(vedtattTidspunkt, that.vedtattTidspunkt) &&
             Objects.equals(ytelseType, that.ytelseType) &&
             Objects.equals(temaUnderkategori, that.temaUnderkategori) &&
             Objects.equals(ytelseStatus, that.ytelseStatus) &&
@@ -108,13 +109,13 @@ public class InfotrygdYtelseGrunnlag {
 
     @Override
     public int hashCode() {
-        return Objects.hash(identdato, ytelseType, temaUnderkategori, ytelseStatus, utbetaltePerioder, vedtaksPeriodeFom, vedtaksPeriodeTom, kategori, arbeidsforhold, dekningsgrad, gradering, fødselsdatoBarn, opprinneligIdentdato);
+        return Objects.hash(vedtattTidspunkt, ytelseType, temaUnderkategori, ytelseStatus, utbetaltePerioder, vedtaksPeriodeFom, vedtaksPeriodeTom, kategori, arbeidsforhold, dekningsgrad, gradering, fødselsdatoBarn, opprinneligIdentdato);
     }
 
     @Override
     public String toString() {
         return "InfotrygdYtelseGrunnlag{" +
-            "identdato=" + identdato +
+            "identdato=" + vedtattTidspunkt +
             ", ytelseType=" + ytelseType +
             ", temaUnderkategori=" + temaUnderkategori +
             ", ytelseStatus=" + ytelseStatus +
@@ -143,8 +144,8 @@ public class InfotrygdYtelseGrunnlag {
             grunnlag.utbetaltePerioder = new ArrayList<>();
         }
 
-        public Builder medIdentdato(LocalDate identdato) {
-            grunnlag.identdato = identdato;
+        public Builder medVedtattTidspunkt(LocalDateTime vedtattTidspunkt) {
+            grunnlag.vedtattTidspunkt = vedtattTidspunkt;
             return this;
         }
 
@@ -226,7 +227,7 @@ public class InfotrygdYtelseGrunnlag {
         public InfotrygdYtelseGrunnlag build() {
             Objects.requireNonNull(grunnlag.ytelseType);
             Objects.requireNonNull(grunnlag.temaUnderkategori);
-            Objects.requireNonNull(grunnlag.identdato);
+            Objects.requireNonNull(grunnlag.vedtattTidspunkt);
             Objects.requireNonNull(grunnlag.vedtaksPeriodeFom);
             return grunnlag;
         }

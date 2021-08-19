@@ -1,22 +1,18 @@
 package no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
-import no.nav.vedtak.util.Tuple;
 
 public class ArbeidsforholdInformasjonBuilder {
 
     private final ArbeidsforholdInformasjon kladd;
-    private final List<Tuple<Arbeidsgiver, Tuple<InternArbeidsforholdRef, InternArbeidsforholdRef>>> reverserteErstattninger = new ArrayList<>();
 
     private ArbeidsforholdInformasjonBuilder(ArbeidsforholdInformasjon kladd) {
         this.kladd = kladd;
@@ -32,14 +28,6 @@ public class ArbeidsforholdInformasjonBuilder {
     }
 
     public ArbeidsforholdInformasjonBuilder tilbakestillOverstyringer() {
-        final List<ArbeidsforholdReferanse> collect = kladd.getArbeidsforholdReferanser().stream().filter(it -> kladd.getOverstyringer().stream()
-            .anyMatch(ov -> ov.getHandling().equals(ArbeidsforholdHandlingType.SLÅTT_SAMMEN_MED_ANNET)
-                && ov.getNyArbeidsforholdRef().gjelderFor(it.getInternReferanse())))
-            .collect(Collectors.toList());
-        collect.forEach(it -> {
-            Optional<InternArbeidsforholdRef> arbeidsforholdRef = kladd.finnForEksternBeholdHistoriskReferanse(it.getArbeidsgiver(), it.getEksternReferanse());
-            arbeidsforholdRef.ifPresent(internArbeidsforholdRef -> reverserteErstattninger.add(new Tuple<>(it.getArbeidsgiver(), new Tuple<>(it.getInternReferanse(), internArbeidsforholdRef))));
-        });
         kladd.tilbakestillOverstyringer();
         return this;
     }

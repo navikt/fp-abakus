@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
@@ -48,6 +49,11 @@ public class YtelseBuilder {
 
     public YtelseBuilder medSaksreferanse(Saksnummer sakId) {
         ytelse.setSaksreferanse(sakId);
+        return this;
+    }
+
+    public YtelseBuilder medVedtattTidspunkt(LocalDateTime vedtattTidspunkt) {
+        ytelse.setVedtattTidspunkt(vedtattTidspunkt);
         return this;
     }
 

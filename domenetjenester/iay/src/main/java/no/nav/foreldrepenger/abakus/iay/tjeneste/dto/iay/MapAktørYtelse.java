@@ -82,7 +82,8 @@ public class MapAktørYtelse {
             var ytelseStatus = ytelse.getStatus();
             var temaUnderkategori = ytelse.getBehandlingsTema();
             var dto = new YtelseDto(fagsystem, ytelseType, periode, ytelseStatus)
-                .medSaksnummer(ytelse.getSaksreferanse() == null ? null : ytelse.getSaksreferanse().getVerdi());
+                .medSaksnummer(ytelse.getSaksreferanse() == null ? null : ytelse.getSaksreferanse().getVerdi())
+                .medVedtattTidspunkt(ytelse.getVedtattTidspunkt());
 
             dto.medTemaUnderkategori(temaUnderkategori);
 

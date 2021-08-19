@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd;
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -134,7 +135,7 @@ public class InnhentingInfotrygdTjeneste {
             .medYtelseType(bestemYtelseType(grunnlag))
             .medTemaUnderkategori(tuk)
             .medYtelseStatus(brukStatus)
-            .medIdentdato(brukIdentdato)
+            .medVedtattTidspunkt(brukIdentdato.atStartOfDay())
             .medVedtaksPeriodeFom(brukPeriode.getFom())
             .medVedtaksPeriodeTom(brukPeriode.getTom())
             .medArbeidskategori(arbeidskategori)
@@ -248,7 +249,7 @@ public class InnhentingInfotrygdTjeneste {
             .medTemaUnderkategori(TemaUnderkategori.SYKEPENGER_SYKEPENGER)
             .medYtelseStatus(YtelseStatus.AVSLUTTET)
             .medVedtaksreferanse(grunnlag.getVedtaksreferanse())
-            .medIdentdato(grunnlag.getVedtattTidspunkt() != null ? grunnlag.getVedtattTidspunkt().toLocalDate() : LocalDate.now())
+            .medVedtattTidspunkt(grunnlag.getVedtattTidspunkt() != null ? grunnlag.getVedtattTidspunkt() : LocalDateTime.now())
             .medVedtaksPeriodeFom(brukPeriode.getFom())
             .medVedtaksPeriodeTom(brukPeriode.getTom());
 

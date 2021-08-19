@@ -72,7 +72,8 @@ public class YtelseRegisterInnhenting {
         for (var vedtattYtelse : vedtatteYtelser) {
             YtelseBuilder ytelseBuilder = builder.getYtelselseBuilderForType(vedtattYtelse.getKilde(), vedtattYtelse.getYtelseType(), vedtattYtelse.getSaksnummer());
             ytelseBuilder.medPeriode(vedtattYtelse.getPeriode())
-                .medStatus(vedtattYtelse.getStatus());
+                .medStatus(vedtattYtelse.getStatus())
+                .medVedtattTidspunkt(vedtattYtelse.getVedtattTidspunkt());
 
             mapAnvisninger(vedtattYtelse, ytelseBuilder);
             builder.leggTilYtelse(ytelseBuilder);
@@ -97,6 +98,7 @@ public class YtelseRegisterInnhenting {
         YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.INFOTRYGD, grunnlag.getYtelseType(),
             grunnlag.getTemaUnderkategori(), periode, tidligsteAnvist)
             .medBehandlingsTema(grunnlag.getTemaUnderkategori())
+            .medVedtattTidspunkt(grunnlag.getVedtattTidspunkt())
             .medStatus(grunnlag.getYtelseStatus());
         grunnlag.getUtbetaltePerioder().forEach(vedtak -> {
             final IntervallEntitet intervall = utledPeriodeNårTomMuligFørFom(vedtak.getUtbetaltFom(), vedtak.getUtbetaltTom());
@@ -114,6 +116,7 @@ public class YtelseRegisterInnhenting {
         var saksnummer = new Saksnummer(grunnlag.getVedtaksreferanse());
         YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.VLSP, grunnlag.getYtelseType(), saksnummer)
             .medBehandlingsTema(grunnlag.getTemaUnderkategori())
+            .medVedtattTidspunkt(grunnlag.getVedtattTidspunkt())
             .medPeriode(periode)
             .medStatus(grunnlag.getYtelseStatus());
         grunnlag.getUtbetaltePerioder().forEach(vedtak -> {
@@ -153,6 +156,7 @@ public class YtelseRegisterInnhenting {
         ytelseBuilder
             .medPeriode(periode)
             .medStatus(ytelse.getYtelseTilstand())
+            .medVedtattTidspunkt(ytelse.getVedtattDato().atStartOfDay())
             .medYtelseGrunnlag(ytelseBuilder.getGrunnlagBuilder()
                 .medOpprinneligIdentdato(ytelse.getKravMottattDato())
                 .medVedtaksDagsats(ytelse.getVedtaksDagsats())

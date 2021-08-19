@@ -164,6 +164,7 @@ public class IayGrunnlagTest {
                         .medYtelser(List.of(
                             new YtelseDto(Fagsystem.FPSAK, ytelseType, periode, YtelseStatus.LØPENDE)
                                 .medSaksnummer("1234")
+                                .medVedtattTidspunkt(LocalDateTime.now().minusDays(1))
                                 .medTemaUnderkategori(TemaUnderkategori.FORELDREPENGER_FODSEL)
                                 .medGrunnlag(
                                     new YtelseGrunnlagDto()

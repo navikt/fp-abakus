@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -59,6 +60,10 @@ public class Ytelse extends BaseEntitet implements IndexKey {
     private IntervallEntitet periode;
 
     @ChangeTracked
+    @Column(name = "vedtatt_tidspunkt")
+    private LocalDateTime vedtattTidspunkt;
+
+    @ChangeTracked
     @Convert(converter = YtelseStatusKodeverdiConverter.class)
     @Column(name="status", nullable = false)
     private YtelseStatus status;
@@ -100,6 +105,7 @@ public class Ytelse extends BaseEntitet implements IndexKey {
     public Ytelse(Ytelse ytelse) {
         this.relatertYtelseType = ytelse.getRelatertYtelseType();
         this.status = ytelse.getStatus();
+        this.vedtattTidspunkt = ytelse.getVedtattTidspunkt();
         this.periode = ytelse.getPeriode();
         this.saksreferanse = ytelse.getSaksreferanse();
         this.temaUnderkategori = ytelse.getBehandlingsTema();
@@ -148,6 +154,14 @@ public class Ytelse extends BaseEntitet implements IndexKey {
 
     void setStatus(YtelseStatus status) {
         this.status = status;
+    }
+
+    public LocalDateTime getVedtattTidspunkt() {
+        return vedtattTidspunkt;
+    }
+
+    public void setVedtattTidspunkt(LocalDateTime vedtattTidspunkt) {
+        this.vedtattTidspunkt = vedtattTidspunkt;
     }
 
     public IntervallEntitet getPeriode() {
@@ -224,6 +238,7 @@ public class Ytelse extends BaseEntitet implements IndexKey {
             ", typeUnderkategori=" + temaUnderkategori + //$NON-NLS-1$
             ", periode=" + periode + //$NON-NLS-1$
             ", relatertYtelseStatus=" + status + //$NON-NLS-1$
+            ", vedtattTidspunkt=" + vedtattTidspunkt + //$NON-NLS-1$
             ", saksReferanse='" + saksreferanse + '\'' + //$NON-NLS-1$
             '}';
     }
