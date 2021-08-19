@@ -31,10 +31,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<felles.version>4.0.5</felles.version>
+		<felles.version>4.0.6</felles.version>
 		<prosesstask.version>2.6.5</prosesstask.version>
 
-		<kontrakter.version>6.0.3</kontrakter.version>
+		<kontrakter.version>6.0.4</kontrakter.version>
 
 		<tjenestespesifikasjoner.version>1.2021.02.22-10.45-4201aaea72fb</tjenestespesifikasjoner.version>
 
