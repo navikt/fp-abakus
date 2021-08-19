@@ -31,7 +31,6 @@ import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
@@ -106,6 +105,7 @@ public class Ytelse extends BaseEntitet implements IndexKey {
     public Ytelse(Ytelse ytelse) {
         this.relatertYtelseType = ytelse.getRelatertYtelseType();
         this.status = ytelse.getStatus();
+        this.vedtattTidspunkt = ytelse.getVedtattTidspunkt();
         this.periode = ytelse.getPeriode();
         this.saksreferanse = ytelse.getSaksreferanse();
         this.temaUnderkategori = ytelse.getBehandlingsTema();
@@ -238,6 +238,7 @@ public class Ytelse extends BaseEntitet implements IndexKey {
             ", typeUnderkategori=" + temaUnderkategori + //$NON-NLS-1$
             ", periode=" + periode + //$NON-NLS-1$
             ", relatertYtelseStatus=" + status + //$NON-NLS-1$
+            ", vedtattTidspunkt=" + vedtattTidspunkt + //$NON-NLS-1$
             ", saksReferanse='" + saksreferanse + '\'' + //$NON-NLS-1$
             '}';
     }
