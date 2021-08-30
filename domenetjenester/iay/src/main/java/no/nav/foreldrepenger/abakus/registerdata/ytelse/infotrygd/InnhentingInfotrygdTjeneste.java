@@ -248,7 +248,7 @@ public class InnhentingInfotrygdTjeneste {
             .medYtelseType(YtelseType.SYKEPENGER)
             .medTemaUnderkategori(TemaUnderkategori.SYKEPENGER_SYKEPENGER)
             .medYtelseStatus(YtelseStatus.AVSLUTTET)
-            .medVedtaksreferanse(grunnlag.getVedtaksreferanse())
+            .medVedtaksreferanse(grunnlag.getVedtaksreferanse().trim())
             .medVedtattTidspunkt(grunnlag.getVedtattTidspunkt() != null ? grunnlag.getVedtattTidspunkt() : LocalDateTime.now())
             .medVedtaksPeriodeFom(brukPeriode.getFom())
             .medVedtaksPeriodeTom(brukPeriode.getTom());
