@@ -14,7 +14,7 @@
     <name>Abakus :: Web :: Applikasjon</name>
 
     <properties>
-        <swagger-ui.version>3.51.2</swagger-ui.version>
+        <swagger-ui.version>3.52.1</swagger-ui.version>
         <swagger.version>2.1.10</swagger.version>
     </properties>
 
