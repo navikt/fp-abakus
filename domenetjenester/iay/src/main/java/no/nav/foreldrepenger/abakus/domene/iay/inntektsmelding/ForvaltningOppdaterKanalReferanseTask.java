@@ -16,10 +16,11 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
 
 @ApplicationScoped
-@ProsessTask(ForvaltningOppdaterKanalReferanseTask.TASK_TYPE)
+@ProsessTask(value = "forvaltning.oppdaterKanalreferanse", maxFailedRuns = 50)
 public class ForvaltningOppdaterKanalReferanseTask implements ProsessTaskHandler {
+
     private static final Logger log = LoggerFactory.getLogger(ForvaltningOppdaterKanalReferanseTask.class);
-    public static final String TASK_TYPE = "forvaltning.oppdaterKanalreferanse";
+
     private EntityManager entityManager;
 
     public ForvaltningOppdaterKanalReferanseTask() {

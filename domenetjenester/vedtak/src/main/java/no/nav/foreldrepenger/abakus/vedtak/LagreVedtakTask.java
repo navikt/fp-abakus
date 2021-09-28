@@ -23,10 +23,9 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
 
-@ProsessTask(LagreVedtakTask.TASKTYPE)
+@ProsessTask("vedtakEvent.lagre")
 public class LagreVedtakTask implements ProsessTaskHandler {
 
-    public static final String TASKTYPE = "vedtakEvent.lagre";
     public static final String KEY = "kafka.key";
     private final static ObjectMapper OBJECT_MAPPER = JacksonJsonConfig.getMapper();
 

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
+import no.nav.vedtak.felles.prosesstask.api.ProsessTaskDataBuilder;
 
 public class LagreVedtakTaskTest {
 
@@ -48,9 +49,10 @@ public class LagreVedtakTaskTest {
             "}\n" +
             "";
 
-        ProsessTaskData data = new ProsessTaskData(LagreVedtakTask.TASKTYPE);
-        data.setPayload(payload);
-        data.setProperty(LagreVedtakTask.KEY, UUID.randomUUID().toString());
+        ProsessTaskData data = ProsessTaskDataBuilder.forProsessTask(LagreVedtakTask.class)
+            .medPayload(payload)
+            .medProperty(LagreVedtakTask.KEY, UUID.randomUUID().toString())
+            .build();
 
         assertThrows(IllegalArgumentException.class, () ->task.doTask(data));
     }

@@ -13,8 +13,8 @@ import javax.persistence.Query;
 
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskGruppe;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskRepository;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskStatus;
+import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 import no.nav.vedtak.felles.prosesstask.api.TaskStatus;
 
 /**
@@ -24,7 +24,7 @@ import no.nav.vedtak.felles.prosesstask.api.TaskStatus;
 public class BatchProsessTaskRepository {
 
     private EntityManager entityManager;
-    private ProsessTaskRepository prosessTaskRepository;
+    private ProsessTaskTjeneste taskTjeneste;
 
     BatchProsessTaskRepository() {
         // for CDI proxying
@@ -32,10 +32,10 @@ public class BatchProsessTaskRepository {
 
     @Inject
     public BatchProsessTaskRepository(EntityManager entityManager,
-                                      ProsessTaskRepository prosessTaskRepository) {
+                                      ProsessTaskTjeneste taskTjeneste) {
         Objects.requireNonNull(entityManager, "entityManager");
         this.entityManager = entityManager;
-        this.prosessTaskRepository = prosessTaskRepository;
+        this.taskTjeneste = taskTjeneste;
     }
 
     public List<TaskStatus> finnStatusForGruppe(String gruppe) {
@@ -61,20 +61,6 @@ public class BatchProsessTaskRepository {
         return "" + måned;
     }
 
-    int rekjørAlleFeiledeTasks() {
-        Query query = entityManager.createNativeQuery("UPDATE PROSESS_TASK " +
-            "SET status = :status, " +
-            "feilede_forsoek = feilede_forsoek-1, " +
-            "neste_kjoering_etter = now() " +
-            "WHERE STATUS = :feilet");
-        query.setParameter("status", ProsessTaskStatus.KLAR.getDbKode())
-            .setParameter("feilet", ProsessTaskStatus.FEILET.getDbKode());
-        int updatedRows = query.executeUpdate();
-        entityManager.flush();
-
-        return updatedRows;
-    }
-
     public int tømNestePartisjon() {
         String partisjonsNr = utledPartisjonsNr(LocalDate.now());
         Query query = entityManager.createNativeQuery("TRUNCATE prosess_task_partition_ferdig_" + partisjonsNr);
@@ -85,10 +71,10 @@ public class BatchProsessTaskRepository {
     }
 
     public String lagre(ProsessTaskData taskData) {
-        return prosessTaskRepository.lagre(taskData);
+        return taskTjeneste.lagre(taskData);
     }
 
     public String lagre(ProsessTaskGruppe gruppe) {
-        return prosessTaskRepository.lagre(gruppe);
+        return taskTjeneste.lagre(gruppe);
     }
 }

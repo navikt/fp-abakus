@@ -10,10 +10,9 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
 
-@ProsessTask(LagreLønnskompensasjonTask.TASKTYPE)
+@ProsessTask(value = "lonnskompEvent.lagre", maxFailedRuns = 1)
 public class LagreLønnskompensasjonTask implements ProsessTaskHandler {
 
-    public static final String TASKTYPE = "lonnskompEvent.lagre";
     public static final String SAK = "sakId";
 
     private LønnskompensasjonRepository repository;

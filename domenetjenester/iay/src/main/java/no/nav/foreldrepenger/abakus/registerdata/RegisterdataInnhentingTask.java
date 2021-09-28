@@ -28,10 +28,9 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 
 @ApplicationScoped
-@ProsessTask(RegisterdataInnhentingTask.TASKTYPE)
+@ProsessTask("registerdata.innhent")
 public class RegisterdataInnhentingTask extends KoblingTask {
 
-    public static final String TASKTYPE = "registerdata.innhent";
     private static final Logger log = LoggerFactory.getLogger(RegisterdataInnhentingTask.class);
     private KoblingTjeneste koblingTjeneste;
     private InntektArbeidYtelseTjeneste iayTjeneste;
