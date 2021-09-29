@@ -1,7 +1,6 @@
 package no.nav.abakus.prosesstask.batch;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -53,21 +52,8 @@ public class BatchProsessTaskRepository {
         return statuser;
     }
 
-    static String utledPartisjonsNr(LocalDate date) {
-        int måned = date.plusMonths(1).getMonth().getValue();
-        if (måned < 10) {
-            return "0" + måned;
-        }
-        return "" + måned;
-    }
-
     public int tømNestePartisjon() {
-        String partisjonsNr = utledPartisjonsNr(LocalDate.now());
-        Query query = entityManager.createNativeQuery("TRUNCATE prosess_task_partition_ferdig_" + partisjonsNr);
-        int updatedRows = query.executeUpdate();
-        entityManager.flush();
-
-        return updatedRows;
+        return taskTjeneste.tømNestePartisjon();
     }
 
     public String lagre(ProsessTaskData taskData) {
