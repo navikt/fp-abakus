@@ -39,7 +39,7 @@
 		<tjenestespesifikasjoner.version>1.2021.02.22-10.45-4201aaea72fb</tjenestespesifikasjoner.version>
 
 		<prometheus.version>0.11.0</prometheus.version>
-		<swagger.version>2.1.10</swagger.version>
+		<swagger.version>2.1.11</swagger.version>
 		<kafka.version>2.8.0</kafka.version>
 		<jersey.version>2.34</jersey.version>
 	</properties>
