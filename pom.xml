@@ -31,15 +31,15 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<felles.version>4.0.9</felles.version>
-		<prosesstask.version>3.0.4</prosesstask.version>
+		<felles.version>4.0.10</felles.version>
+		<prosesstask.version>3.0.6</prosesstask.version>
 
 		<kontrakter.version>6.0.4</kontrakter.version>
 
 		<tjenestespesifikasjoner.version>1.2021.02.22-10.45-4201aaea72fb</tjenestespesifikasjoner.version>
 
 		<prometheus.version>0.12.0</prometheus.version>
-		<swagger.version>2.1.10</swagger.version>
+		<swagger.version>2.1.11</swagger.version>
 		<kafka.version>3.0.0</kafka.version>
 		<jersey.version>2.34</jersey.version>
 	</properties>
@@ -220,12 +220,6 @@
                 <artifactId>jakarta.el</artifactId>
                 <version>3.0.3</version>
             </dependency>
-            <!-- versjon som passer jandex-maven -->
-            <dependency>
-                <groupId>org.jboss</groupId>
-                <artifactId>jandex</artifactId>
-                <version>2.4.0.Final</version>
-            </dependency>
 			<dependency>
 				<!-- Transitive avhengighet resolution for å sikre bestemt versjon -->
 				<groupId>org.owasp.encoder</groupId>
@@ -314,7 +308,7 @@
 				<plugin>
 					<groupId>org.jboss.jandex</groupId>
 					<artifactId>jandex-maven-plugin</artifactId>
-					<version>1.2.0</version>
+					<version>1.1.1</version>
 					<executions>
 						<execution>
 							<id>make-index</id>
