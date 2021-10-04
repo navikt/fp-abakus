@@ -15,7 +15,6 @@
 
     <properties>
         <swagger-ui.version>3.52.3</swagger-ui.version>
-        <swagger.version>2.1.11</swagger.version>
     </properties>
 
     <dependencyManagement>
