@@ -39,6 +39,9 @@ spec:
       memory: "1024Mi"
   secureLogs:
     enabled: true
+  azure:
+    application:
+      enabled: true
   vault:
     enabled: true
     paths:
@@ -48,8 +51,6 @@ spec:
         kvPath: /kv/prod/fss/fpabakus/teamforeldrepenger
       - mountPath: /var/run/secrets/nais.io/appdynamics
         kvPath: /apikey/appdynamics/prod
-      - mountPath: /var/run/secrets/nais.io/azuread
-        kvPath: /azuread/data/prod/creds/fp-abakus
   env:
     - name: LOADBALANCER_URL
       value: https://fpabakus.nais.adeo.no
