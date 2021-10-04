@@ -102,8 +102,6 @@ spec:
     - name: FPABAKUS_IT_SP_GRUNNLAG_URL
       value: http://infotrygd-sykepenger-fp.default/grunnlag
     #AZURE
-    - name: AZURE_V2_TOKEN_ENDPOINT
-      value: https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/oauth2/v2.0/token
     - name: AZURE_HTTP_PROXY
       value: http://webproxy.nais:8088
     #SPOKELSE
