@@ -14,7 +14,7 @@ import org.mockito.ArgumentCaptor;
 
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonRepository;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonVedtak;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskRepository;
+import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 
 public class MottaVedtakTest {
 
@@ -22,8 +22,8 @@ public class MottaVedtakTest {
     private static String AKTØR = "1957590366776";
 
     private LønnskompensasjonRepository repository = mock(LønnskompensasjonRepository.class);
-    private ProsessTaskRepository taskRepository = mock(ProsessTaskRepository.class);
-    private LonnskompHendelseHåndterer håndterer = new LonnskompHendelseHåndterer(repository, taskRepository);
+    private ProsessTaskTjeneste taskTjeneste = mock(ProsessTaskTjeneste.class);
+    private LonnskompHendelseHåndterer håndterer = new LonnskompHendelseHåndterer(repository, taskTjeneste);
 
     @Test
     public void skal_motta_uten_anvist() {

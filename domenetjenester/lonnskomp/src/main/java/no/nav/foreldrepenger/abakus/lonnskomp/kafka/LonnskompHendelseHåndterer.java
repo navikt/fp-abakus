@@ -35,7 +35,7 @@ import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.vedtak.json.JacksonJsonConfig;
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskRepository;
+import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 
 @ApplicationScoped
 @ActivateRequestContext
@@ -47,16 +47,16 @@ public class LonnskompHendelseHåndterer {
     private static final Set<String> IGNORE_BEHANDLINGSTYPER = Set.of("TILBAKEKREVING_VARSEL_SENDT");
 
     private LønnskompensasjonRepository repository;
-    private ProsessTaskRepository prosessTaskRepository;
+    private ProsessTaskTjeneste taskTjeneste;
 
 
     public LonnskompHendelseHåndterer() {
     }
 
     @Inject
-    public LonnskompHendelseHåndterer(LønnskompensasjonRepository repository, ProsessTaskRepository taskRepository) {
+    public LonnskompHendelseHåndterer(LønnskompensasjonRepository repository, ProsessTaskTjeneste taskTjeneste) {
         this.repository = repository;
-        this.prosessTaskRepository = taskRepository;
+        this.taskTjeneste = taskTjeneste;
     }
 
     public void handleMessage(String key, String payload) {
@@ -89,14 +89,14 @@ public class LonnskompHendelseHåndterer {
                 repository.lagre(vedtak);
 
                 if (harAktørId.isEmpty()) {
-                    ProsessTaskData data = new ProsessTaskData(LagreLønnskompensasjonTask.TASKTYPE);
+                    var data = ProsessTaskData.forProsessTask(LagreLønnskompensasjonTask.class);
                     data.setProperty(LagreLønnskompensasjonTask.SAK, sakId);
-                    prosessTaskRepository.lagre(data);
+                    taskTjeneste.lagre(data);
                 }
             } else if (eksisterende.isPresent() && harAktørId.isEmpty()) {
-                ProsessTaskData data = new ProsessTaskData(LagreLønnskompensasjonTask.TASKTYPE);
+                var data = ProsessTaskData.forProsessTask(LagreLønnskompensasjonTask.class);
                 data.setProperty(LagreLønnskompensasjonTask.SAK, sakId);
-                prosessTaskRepository.lagre(data);
+                taskTjeneste.lagre(data);
             }
         }
     }

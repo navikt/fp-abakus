@@ -55,7 +55,7 @@ public class LagreLønnskompensasjonTaskTest {
 
         assertThat(vedtak.getAktørId()).isNull();
 
-        ProsessTaskData data = new ProsessTaskData(LagreLønnskompensasjonTask.TASKTYPE);
+        ProsessTaskData data = ProsessTaskData.forProsessTask(LagreLønnskompensasjonTask.class);
         data.setProperty(LagreLønnskompensasjonTask.SAK, SAK);
 
         LagreLønnskompensasjonTask task = new LagreLønnskompensasjonTask(repository, aktørTjeneste);

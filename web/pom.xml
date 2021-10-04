@@ -14,8 +14,7 @@
     <name>Abakus :: Web :: Applikasjon</name>
 
     <properties>
-        <swagger-ui.version>3.52.1</swagger-ui.version>
-        <swagger.version>2.1.10</swagger.version>
+        <swagger-ui.version>3.52.3</swagger-ui.version>
     </properties>
 
     <dependencyManagement>
@@ -34,11 +33,6 @@
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-core</artifactId>
                 <version>7.15.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm</artifactId>
-                <version>9.2</version>
             </dependency>
             <dependency>
                 <groupId>com.zaxxer</groupId>

@@ -119,8 +119,8 @@ public class InnhentRegisterdataTjeneste {
         Kobling kobling = oppdaterKobling(dto);
 
         ProsessTaskGruppe taskGruppe = new ProsessTaskGruppe();
-        ProsessTaskData innhentingTask = new ProsessTaskData(RegisterdataInnhentingTask.TASKTYPE);
-        ProsessTaskData callbackTask = new ProsessTaskData(CallbackTask.TASKTYPE);
+        var innhentingTask = ProsessTaskData.forProsessTask(RegisterdataInnhentingTask.class);
+        var callbackTask = ProsessTaskData.forProsessTask(CallbackTask.class);
         innhentingTask.setAktørId(kobling.getAktørId().getId());
         innhentingTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
         try {

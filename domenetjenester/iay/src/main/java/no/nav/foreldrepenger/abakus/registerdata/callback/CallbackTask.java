@@ -26,9 +26,9 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
 
 @ApplicationScoped
-@ProsessTask(CallbackTask.TASKTYPE)
+@ProsessTask("registerdata.callback")
 public class CallbackTask implements ProsessTaskHandler {
-    public static final String TASKTYPE = "registerdata.callback";
+
     public static final String EKSISTERENDE_GRUNNLAG_REF = "grunnlag.ref.old";
     private static final Logger log = LoggerFactory.getLogger(CallbackTask.class);
 
