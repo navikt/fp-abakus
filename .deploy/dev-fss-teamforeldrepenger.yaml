@@ -40,6 +40,9 @@ spec:
       memory: "1024Mi"
   secureLogs:
     enabled: true
+  azure:
+    application:
+      enabled: true
   vault:
     enabled: true
     paths:
@@ -49,8 +52,6 @@ spec:
         kvPath: /kv/preprod/fss/fpabakus/teamforeldrepenger
       - mountPath: /var/run/secrets/nais.io/appdynamics
         kvPath: /apikey/appdynamics/dev
-      - mountPath: /var/run/secrets/nais.io/azuread
-        kvPath: /azuread/data/dev/creds/fp-abakus
   env:
     - name: LOADBALANCER_URL
       value: https://fpabakus.nais.preprod.local
@@ -102,8 +103,6 @@ spec:
     - name: FPABAKUS_IT_SP_GRUNNLAG_URL
       value: http://infotrygd-sykepenger-fp.default/grunnlag
     #AZURE
-    - name: AZURE_V2_TOKEN_ENDPOINT
-      value: https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/oauth2/v2.0/token
     - name: AZURE_HTTP_PROXY
       value: http://webproxy.nais:8088
     #SPOKELSE

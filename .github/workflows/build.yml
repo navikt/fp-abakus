@@ -105,7 +105,7 @@ jobs:
                  owner: context.issue.owner,
                  repo: context.issue.repo,
                  labels: ['deployment'],
-                 body: 'Kommenter enten "/promote dev-fss namespace" eller "/promote prod-fss namespace", ns=default,teamforeldrepenger',
+                 body: 'Kommenter enten "/promote dev-fss teamforeldrepenger" eller "/promote prod-fss teamforeldrepenger"',
                  title: 'Deploy av ${{ env.TAG }}'})
                .then(response => {
                        core.setOutput('number', response.data.number);
