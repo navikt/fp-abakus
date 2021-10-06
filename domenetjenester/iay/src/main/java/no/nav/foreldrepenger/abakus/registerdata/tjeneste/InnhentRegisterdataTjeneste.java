@@ -16,7 +16,6 @@ import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.abakus.iaygrunnlag.request.RegisterdataType;
-import no.nav.abakus.prosesstask.batch.BatchProsessTaskRepository;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
@@ -32,7 +31,7 @@ import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.abakus.vedtak.json.JacksonJsonConfig;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskGruppe;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskStatus;
+import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 
 @ApplicationScoped
 public class InnhentRegisterdataTjeneste {
@@ -40,7 +39,7 @@ public class InnhentRegisterdataTjeneste {
     private static final Map<RegisterdataType, RegisterdataElement> registerdataMapping = initMapping();
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private KoblingTjeneste koblingTjeneste;
-    private BatchProsessTaskRepository prosessTaskRepository;
+    private ProsessTaskTjeneste taskTjeneste;
 
     InnhentRegisterdataTjeneste() {
         // CDI
@@ -49,10 +48,10 @@ public class InnhentRegisterdataTjeneste {
     @Inject
     public InnhentRegisterdataTjeneste(InntektArbeidYtelseTjeneste iayTjeneste,
                                        KoblingTjeneste koblingTjeneste,
-                                       BatchProsessTaskRepository prosessTaskRepository) {
+                                       ProsessTaskTjeneste taskTjeneste) {
         this.iayTjeneste = iayTjeneste;
         this.koblingTjeneste = koblingTjeneste;
-        this.prosessTaskRepository = prosessTaskRepository;
+        this.taskTjeneste = taskTjeneste;
     }
 
     private static Map<RegisterdataType, RegisterdataElement> initMapping() {
@@ -142,12 +141,11 @@ public class InnhentRegisterdataTjeneste {
         taskGruppe.addNesteSekvensiell(callbackTask);
         taskGruppe.setCallIdFraEksisterende();
 
-        return prosessTaskRepository.lagre(taskGruppe);
+        return taskTjeneste.lagre(taskGruppe);
     }
 
     public boolean innhentingFerdig(String taskReferanse) {
-        final var statuses = prosessTaskRepository.finnStatusForGruppe(taskReferanse);
-        return statuses.stream().anyMatch(it -> !ProsessTaskStatus.KLAR.equals(it.getStatus()));
+        return taskTjeneste.finnUferdigForGruppe(taskReferanse).isEmpty();
     }
 
     public Optional<GrunnlagReferanse> hentSisteReferanseFor(KoblingReferanse koblingRef) {
