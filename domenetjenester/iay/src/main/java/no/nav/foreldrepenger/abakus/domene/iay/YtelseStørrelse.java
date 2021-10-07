@@ -52,6 +52,10 @@ public class YtelseStørrelse extends BaseEntitet implements IndexKey {
     @ChangeTracked
     private Beløp beløp;
 
+    @Column(name = "er_refusjon", updatable = false)
+    @ChangeTracked
+    private Boolean erRefusjon;
+
     @Version
     @Column(name = "versjon", nullable = false)
     private long versjon;
@@ -88,6 +92,14 @@ public class YtelseStørrelse extends BaseEntitet implements IndexKey {
 
     public void setBeløp(Beløp beløp) {
         this.beløp = beløp;
+    }
+
+    public Boolean getErRefusjon() {
+        return erRefusjon;
+    }
+
+    public void setErRefusjon(Boolean erRefusjon) {
+        this.erRefusjon = erRefusjon;
     }
 
     public InntektPeriodeType getHyppighet() {
