@@ -5,9 +5,12 @@
 
     <sequence-generator name="SEQ_VEDTAK_YTELSE" allocation-size="50" sequence-name="SEQ_VEDTAK_YTELSE" />
     <sequence-generator name="SEQ_VEDTAK_YTELSE_ANVIST" allocation-size="50" sequence-name="SEQ_VEDTAK_YTELSE_ANVIST" />
+    <sequence-generator name="SEQ_VE_YTELSE_ANDEL" allocation-size="50" sequence-name="SEQ_VE_YTELSE_ANDEL" />
 
     <!-- InntektArbeidYtelser aggregat og grunnlag -->
     <entity class="no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelse" />
     <entity class="no.nav.foreldrepenger.abakus.vedtak.domene.YtelseAnvist" />
+    <entity class="no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseAndel" />
+
 
 </entity-mappings>

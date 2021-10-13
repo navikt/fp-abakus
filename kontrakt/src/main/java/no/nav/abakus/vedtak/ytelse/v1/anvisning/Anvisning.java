@@ -1,5 +1,8 @@
 package no.nav.abakus.vedtak.ytelse.v1.anvisning;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -23,6 +26,9 @@ public class Anvisning {
 
     @JsonProperty("utbetalingsgrad")
     private Desimaltall utbetalingsgrad;
+
+    @JsonProperty("andeler")
+    private List<AnvistAndel> andeler = new ArrayList<>();
 
     public Anvisning() {
     }
@@ -57,6 +63,14 @@ public class Anvisning {
 
     public void setUtbetalingsgrad(Desimaltall utbetalingsgrad) {
         this.utbetalingsgrad = utbetalingsgrad;
+    }
+
+    public List<AnvistAndel> getAndeler() {
+        return andeler;
+    }
+
+    public void setAndeler(List<AnvistAndel> andeler) {
+        this.andeler = andeler;
     }
 
     @Override

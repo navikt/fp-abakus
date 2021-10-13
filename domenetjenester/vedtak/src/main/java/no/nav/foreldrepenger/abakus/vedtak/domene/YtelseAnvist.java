@@ -1,8 +1,11 @@
 package no.nav.foreldrepenger.abakus.vedtak.domene;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -14,6 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -56,6 +60,10 @@ public class YtelseAnvist extends BaseEntitet implements IndexKey {
     @ChangeTracked
     private Stillingsprosent utbetalingsgradProsent;
 
+    @OneToMany(mappedBy = "ytelseAnvist")
+    @ChangeTracked
+    private List<VedtakYtelseAndel> andeler = new ArrayList<>();
+
     @Version
     @Column(name = "versjon", nullable = false)
     private long versjon;
@@ -69,6 +77,11 @@ public class YtelseAnvist extends BaseEntitet implements IndexKey {
         this.beløp = ytelseAnvist.getBeløp().orElse(null);
         this.dagsats = ytelseAnvist.getDagsats().orElse(null);
         this.utbetalingsgradProsent = ytelseAnvist.getUtbetalingsgradProsent().orElse(null);
+        this.andeler = ytelseAnvist.getAndeler()
+            .stream()
+            .map(VedtakYtelseAndel::new)
+            .peek(it -> it.setYtelseAnvist(this))
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -115,6 +128,16 @@ public class YtelseAnvist extends BaseEntitet implements IndexKey {
 
     void setYtelse(VedtakYtelse ytelse) {
         this.ytelse = ytelse;
+    }
+
+    public List<VedtakYtelseAndel> getAndeler() {
+        return andeler;
+    }
+
+    void leggTilFordeling(VedtakYtelseAndel vedtakYtelseAndel) {
+        vedtakYtelseAndel.setYtelseAnvist(this);
+        this.andeler.add(vedtakYtelseAndel);
+
     }
 
     @Override
