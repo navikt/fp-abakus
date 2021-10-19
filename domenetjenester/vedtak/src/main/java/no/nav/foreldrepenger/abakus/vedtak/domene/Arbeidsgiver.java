@@ -83,7 +83,7 @@ public class Arbeidsgiver implements IndexKey, TraverseValue, Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || !(o instanceof Arbeidsgiver)) {
+        if (!(o instanceof Arbeidsgiver)) {
             return false;
         }
         Arbeidsgiver that = (Arbeidsgiver) o;
