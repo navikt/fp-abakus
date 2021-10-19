@@ -73,9 +73,7 @@ public class VedtakYtelseAndel extends BaseEntitet implements IndexKey {
     }
 
     public VedtakYtelseAndel(VedtakYtelseAndel vedtakYtelseAndel) {
-        vedtakYtelseAndel.getArbeidsgiver().ifPresent(arbeidsgiver ->
-            this.arbeidsgiver = arbeidsgiver
-        );
+        vedtakYtelseAndel.getArbeidsgiver().ifPresent(this::setArbeidsgiver);
         this.dagsats = vedtakYtelseAndel.getDagsats();
         this.inntektskategori = vedtakYtelseAndel.getInntektskategori();
     }

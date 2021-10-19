@@ -80,8 +80,8 @@ public class YtelseAnvist extends BaseEntitet implements IndexKey {
         this.andeler = ytelseAnvist.getAndeler()
             .stream()
             .map(VedtakYtelseAndel::new)
-            .peek(it -> it.setYtelseAnvist(this))
             .collect(Collectors.toList());
+        this.andeler.forEach(a -> a.setYtelseAnvist(this));
     }
 
     @Override
