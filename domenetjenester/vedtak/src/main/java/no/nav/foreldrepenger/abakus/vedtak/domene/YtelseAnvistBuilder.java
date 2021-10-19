@@ -36,6 +36,11 @@ public class YtelseAnvistBuilder {
         return this;
     }
 
+    public YtelseAnvistBuilder leggTilFordeling(VedtakYtelseAndelBuilder vedtakYtelseFordelingBuilder) {
+        this.ytelseAnvist.leggTilFordeling(vedtakYtelseFordelingBuilder.build());
+        return this;
+    }
+
     public YtelseAnvistBuilder medUtbetalingsgradProsent(BigDecimal utbetalingsgradProsent) {
         if (utbetalingsgradProsent != null) {
             this.ytelseAnvist.setUtbetalingsgradProsent(new Stillingsprosent(utbetalingsgradProsent));
