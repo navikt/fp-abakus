@@ -71,7 +71,7 @@ public class MapAktørYtelse {
             var organisasjon = ytelseStørrelse.getVirksomhet().map(o -> new Organisasjon(o.getId())).orElse(null);
             var inntektPeriodeType = ytelseStørrelse.getHyppighet();
             var beløp = ytelseStørrelse.getBeløp().getVerdi();
-            return new FordelingDto(organisasjon, inntektPeriodeType, beløp);
+            return new FordelingDto(organisasjon, inntektPeriodeType, beløp, ytelseStørrelse.getErRefusjon());
         }
 
         private YtelseDto tilYtelse(Ytelse ytelse) {

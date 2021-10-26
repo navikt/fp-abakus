@@ -138,7 +138,8 @@ public class YtelseRegisterInnhenting {
         grunnlag.getArbeidsforhold().forEach(arbeid -> {
             final YtelseStørrelseBuilder ysBuilder = grunnlagBuilder.getStørrelseBuilder();
             ysBuilder.medBeløp(arbeid.getInntekt())
-                .medHyppighet(arbeid.getInntektperiode());
+                .medHyppighet(arbeid.getInntektperiode())
+                .medErRefusjon(arbeid.getRefusjon());
             if (OrganisasjonsNummerValidator.erGyldig(arbeid.getOrgnr())) {
                 ysBuilder.medVirksomhet(new OrgNummer(arbeid.getOrgnr()));
             }

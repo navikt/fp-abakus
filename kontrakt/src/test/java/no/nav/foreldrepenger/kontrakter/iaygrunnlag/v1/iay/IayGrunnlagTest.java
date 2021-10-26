@@ -174,7 +174,7 @@ public class IayGrunnlagTest {
                                         .medInntektsgrunnlagProsent(100)
                                         .medGraderingProsent(100)
                                         .medVedtaksDagsats(255)
-                                        .medFordeling(List.of(new FordelingDto(org, InntektPeriodeType.DAGLIG, 100))))
+                                        .medFordeling(List.of(new FordelingDto(org, InntektPeriodeType.DAGLIG, 100, true))))
                                 .medAnvisninger(List.of(
                                     new AnvisningDto(periode)
                                         .medBeløp(100)

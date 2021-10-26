@@ -10,11 +10,10 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /** Angir hyppighet og størrelse for ytelse. */
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -37,15 +36,20 @@ public class FordelingDto {
     @JsonProperty(value = "arbeidsgiver")
     @Valid
     private Aktør arbeidsgiver;
-    
+
+    /** Kan være null. */
+    @JsonProperty(value = "erRefusjon")
+    @Valid
+    private Boolean erRefusjon;
+
     protected FordelingDto() {
     }
 
-    public FordelingDto(Aktør arbeidsgiver, InntektPeriodeType inntektPeriodeType, int beløp) {
-        this(arbeidsgiver, inntektPeriodeType, BigDecimal.valueOf(beløp));
+    public FordelingDto(Aktør arbeidsgiver, InntektPeriodeType inntektPeriodeType, int beløp, Boolean erRefusjon) {
+        this(arbeidsgiver, inntektPeriodeType, BigDecimal.valueOf(beløp), erRefusjon);
     }
 
-    public FordelingDto(Aktør arbeidsgiver, InntektPeriodeType inntektPeriodeType, BigDecimal beløp) {
+    public FordelingDto(Aktør arbeidsgiver, InntektPeriodeType inntektPeriodeType, BigDecimal beløp, Boolean erRefusjon) {
         this.arbeidsgiver = arbeidsgiver;
         this.inntektPeriodeType = inntektPeriodeType;
         this.beløp = beløp == null ? null : beløp.setScale(2, RoundingMode.HALF_UP);
@@ -63,4 +67,7 @@ public class FordelingDto {
         return inntektPeriodeType;
     }
 
+    public Boolean getErRefusjon() {
+        return erRefusjon;
+    }
 }
