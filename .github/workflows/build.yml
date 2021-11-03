@@ -45,9 +45,10 @@ jobs:
       - name: Build artifacts & deploy
         shell: bash
         run: |
-          echo "TAG=$(expr $(date +%Y%m%d%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7))" >> $GITHUB_ENV
+          echo "TIMESTAMP=$(expr $(date +%Y%m%d%H%M%S))" >> $GITHUB_ENV
+          echo "TAG=$TIMESTAMP-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
           echo "Building artifacts $(echo $GITHUB_SHA | cut -c1-7)"
-          mvn jacoco:prepare-agent install -e --quiet --batch-mode --settings .github/.m2/settings.xml --file pom.xml -Drevision= -Dchangelist= -Dsha1=$TAG -Dfile.encoding=UTF-8 -Djacoco.destFile=$(pwd)/target/jacoco.exec
+          mvn jacoco:prepare-agent install -e --quiet --batch-mode --settings .github/.m2/settings.xml --file pom.xml -Drevision= -Dchangelist= -Dsha1=${TAG} -Dfile.encoding=UTF-8 -Djacoco.destFile=$(pwd)/target/jacoco.exec
           mvn jacoco:report sonar:sonar -e --quiet --batch-mode --settings .github/.m2/settings.xml --file pom.xml -Djacoco.dataFile=$(pwd)/target/jacoco.exec -Dsonar.projectKey="navikt_fp-abakus" -Dsonar.host.url='https://sonarcloud.io' -Dsonar.organization=navit -Dsonar.login=${SONAR_TOKEN}
           echo "Deployed artifacts"
         env:
