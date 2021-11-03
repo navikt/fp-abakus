@@ -45,6 +45,7 @@ jobs:
       - name: Build artifacts & deploy
         shell: bash
         run: |
+          echo "TIMESTAMP=$(expr $(date +%Y%m%d%H%M%S))" >> $GITHUB_ENV
           echo "TAG=$TIMESTAMP-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
           echo "Building artifacts $(echo $GITHUB_SHA | cut -c1-7)"
           mvn jacoco:prepare-agent install -e --quiet --batch-mode --settings .github/.m2/settings.xml --file pom.xml -Drevision= -Dchangelist= -Dsha1=$TIMESTAMP-$(echo $GITHUB_SHA | cut -c1-7) -Dfile.encoding=UTF-8 -Djacoco.destFile=$(pwd)/target/jacoco.exec
