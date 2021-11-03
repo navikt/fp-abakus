@@ -29,27 +29,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
       - uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
           java-version: 16
-
-      - name: Set cache key
-        run: |
-          echo "CACHE_KEY=$(expr $(date +%V) - 1 + 1)-${{ github.event.pull_request.number }}" >> $GITHUB_ENV # unik cache key for PR
-          echo "PREVIOUS_CACHE_KEY=$(expr $(date +%V) - 1 + 1)" >> $GITHUB_ENV # samme som master cache key
-      - uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-maven-${{ env.CACHE_KEY }}
-          restore-keys: |
-            ${{ runner.os }}-maven-${{ env.PREVIOUS_CACHE_KEY }}
+          cache: 'maven'
 
       - name: Build
         shell: bash
         run: |
-          mvn verify --batch-mode -DtrimStackTrace=false
+          mvn verify --batch-mode -DtrimStackTrace=false --settings .github/.m2/settings.xml
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           DATASOURCE_HOST: localhost
           DATASOURCE_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port

@@ -10,28 +10,16 @@ jobs:
     
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 16
-        uses: actions/setup-java@v2
+      - uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '16'
-
-      - name: Set cache key
-        run: |
-          echo "CACHE_KEY=$(expr $(date +%V) - 1 + 1)" >> $GITHUB_ENV
-          echo "PREVIOUS_CACHE_KEY=$(expr $(date +%V) - 1 + 1)" >> $GITHUB_ENV
-      - uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-maven-${{ env.CACHE_KEY }}
-          restore-keys: |
-            ${{ runner.os }}-maven-${{ env.PREVIOUS_CACHE_KEY }}
-            
+          java-version: 16
+          cache: 'maven'
+ 
       - name: Publish artifacts
         shell: bash
         run: |
-           mvn deploy -e --batch-mode --settings ./.m2/settings.xml --file pom.xml -am -pl kontrakt -DtrimStackTrace=false -Dchangelist= -Dsha1= -Drevision=$NEW_VERSION -Dfile.encoding=UTF-8 -DdeployAtEnd=true
+           mvn deploy -e --batch-mode --settings .github/.m2/settings.xml --file pom.xml -am -pl kontrakt -DtrimStackTrace=false -Dchangelist= -Dsha1= -Drevision=$NEW_VERSION -Dfile.encoding=UTF-8 -DdeployAtEnd=true
         env:
-          GITHUB_USERNAME: x-access-token
           GITHUB_PASSWORD: ${{ secrets.GH_ACCESS_TOKEN }}
           NEW_VERSION: ${{ github.event.release.tag_name }}
