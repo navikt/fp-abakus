@@ -52,7 +52,6 @@ jobs:
           echo "Deployed artifacts"
         env:
           TZ: "Europe/Oslo"
-          GITHUB_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           DATASOURCE_HOST: localhost
