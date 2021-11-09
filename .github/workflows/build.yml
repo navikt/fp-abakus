@@ -130,7 +130,7 @@ jobs:
                                "arg1": "dev-fss",
                                "arg2": "teamforeldrepenger"
                    }}}
-                 }
+                 }'
 
       - name: Trigger tester for FP
         run: |
