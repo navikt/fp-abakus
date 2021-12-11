@@ -149,8 +149,8 @@ public class InntektTjeneste {
                 if (erYtelseFraOffentlig(inntekt)
                     && erEtterbetaling(tilleggsinformasjon)
                     && skalPeriodisereInntektsKilde(kilde)) {
-                    brukYM = YearMonth.from(
-                        ((Etterbetalingsperiode) tilleggsinformasjon.getTilleggsinformasjonDetaljer()).getEtterbetalingsperiodeFom().plusDays(1));
+                    brukYM = YearMonth.from(((Etterbetalingsperiode) tilleggsinformasjon.getTilleggsinformasjonDetaljer())
+                        .getEtterbetalingsperiodeFom().plusDays(1));
                 }
                 var månedsinntekt = new Månedsinntekt.Builder()
                     .medBeløp(inntekt.getBeloep())
