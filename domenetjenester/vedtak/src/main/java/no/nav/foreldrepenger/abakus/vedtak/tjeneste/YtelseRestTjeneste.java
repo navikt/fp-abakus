@@ -24,6 +24,8 @@ import javax.ws.rs.core.Response;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
+import no.nav.abakus.iaygrunnlag.Organisasjon;
 import no.nav.abakus.iaygrunnlag.request.AktørDatoRequest;
 import no.nav.abakus.vedtak.ytelse.Aktør;
 import no.nav.abakus.vedtak.ytelse.Desimaltall;
@@ -31,10 +33,12 @@ import no.nav.abakus.vedtak.ytelse.Periode;
 import no.nav.abakus.vedtak.ytelse.Ytelse;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
 import no.nav.abakus.vedtak.ytelse.v1.anvisning.Anvisning;
+import no.nav.abakus.vedtak.ytelse.v1.anvisning.AnvistAndel;
 import no.nav.foreldrepenger.abakus.felles.LoggUtil;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
+import no.nav.foreldrepenger.abakus.vedtak.domene.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelse;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
@@ -130,7 +134,29 @@ public class YtelseRestTjeneste {
         anvist.getBeløp().map(Beløp::getVerdi).map(Desimaltall::new).ifPresent(anvisning::setBeløp);
         anvist.getDagsats().map(Beløp::getVerdi).map(Desimaltall::new).ifPresent(anvisning::setDagsats);
         anvist.getUtbetalingsgradProsent().map(Stillingsprosent::getVerdi).map(Desimaltall::new).ifPresent(anvisning::setUtbetalingsgrad);
+        anvisning.setAndeler(mapAndeler(anvist));
+
         return anvisning;
+    }
+
+    private List<AnvistAndel> mapAndeler(YtelseAnvist anvist) {
+        return anvist.getAndeler().stream().map(a -> new AnvistAndel(
+            a.getArbeidsgiver().map(YtelseRestTjeneste::mapArbeidsgiver).orElse(null),
+            a.getArbeidsforholdId(),
+            new Desimaltall(a.getDagsats().getVerdi()),
+            a.getUtbetalingsgradProsent() == null ? null : new Desimaltall(a.getUtbetalingsgradProsent().getVerdi()),
+            a.getRefusjonsgradProsent() == null ? null : new Desimaltall(a.getRefusjonsgradProsent().getVerdi()),
+            a.getInntektskategori()
+            )).collect(Collectors.toList());
+    }
+
+    private static no.nav.abakus.iaygrunnlag.Aktør mapArbeidsgiver(Arbeidsgiver arbeidsgiver) {
+        if (arbeidsgiver == null) {
+            return null;
+        }
+        return arbeidsgiver.getOrgnr() != null ?
+            new Organisasjon(arbeidsgiver.getIdentifikator()) :
+            new AktørIdPersonident(arbeidsgiver.getIdentifikator());
     }
 
     public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
