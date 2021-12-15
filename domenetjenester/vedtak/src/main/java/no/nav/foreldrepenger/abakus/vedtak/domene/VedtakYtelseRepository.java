@@ -61,6 +61,7 @@ public class VedtakYtelseRepository {
             entityManager.persist(ytelse);
             for (YtelseAnvist ytelseAnvist : ytelse.getYtelseAnvist()) {
                 entityManager.persist(ytelseAnvist);
+                ytelseAnvist.getAndeler().forEach(entityManager::persist);
             }
             entityManager.flush();
         } else {
