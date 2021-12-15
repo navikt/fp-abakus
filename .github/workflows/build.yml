@@ -56,6 +56,7 @@ jobs:
         env:
           TZ: "Europe/Oslo"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           DATASOURCE_HOST: localhost
           DATASOURCE_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port

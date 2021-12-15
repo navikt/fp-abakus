@@ -1,0 +1,51 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.192.0/containers/java
+{
+	"name": "Java",
+	"dockerComposeFile": "docker-compose.yml",
+ 	"service": "app",
+  	"workspaceFolder": "/fp-abakus",
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": {
+		"java.home": "/docker-java-home",
+		"maven.settingsFile": "/workspace/.github/.m2/settings.xml",
+		"sqltools.connections": [
+			{
+			  "name": "Container database",
+			  "driver": "PostgreSQL",
+			  "previewLimit": 50,
+			  "server": "localhost",
+			  "port": 5432,
+			  "database": "fpabakus_unit",
+			  "username": "fpabakus_unit",
+			  "password": "fpabakus_unit"
+			}
+		  ],
+		  "files.eol": "\n",
+		  "files.insertFinalNewline": true,
+		  "files.trimFinalNewlines": true,
+		  "files.trimTrailingWhitespace": true,
+		  "editor.formatOnSave": true,
+		  "editor.codeActionsOnSave": {
+			"source.organizeImports": true
+		  }
+	},
+
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"vscjava.vscode-java-pack",
+		"ms-azuretools.vscode-docker",
+		"mtxr.sqltools",
+		"mtxr.sqltools-driver-pg",
+		"eamodio.gitlens"
+	  ],
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [3000, 5432],
+
+	"postAttachCommand": "sh .devcontainer/postAttachCommand.sh",
+
+	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "vscode"
+}

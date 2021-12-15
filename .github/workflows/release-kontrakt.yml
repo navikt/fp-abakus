@@ -22,4 +22,5 @@ jobs:
            mvn deploy -e --batch-mode --settings .github/.m2/settings.xml --file pom.xml -am -pl kontrakt -DtrimStackTrace=false -Dchangelist= -Dsha1= -Drevision=$NEW_VERSION -Dfile.encoding=UTF-8 -DdeployAtEnd=true
         env:
           GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+          GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
           NEW_VERSION: ${{ github.event.release.tag_name }}
