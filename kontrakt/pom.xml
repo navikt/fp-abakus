@@ -14,14 +14,21 @@
 	<name>Abakus :: Kontrakter</name>
 
 	<properties>
-	</properties>
+		<maven.deploy.skip>false</maven.deploy.skip>
+    </properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>no.nav.foreldrepenger.abakus</groupId>
 			<artifactId>abakus-kodeverk</artifactId>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<!-- avhengighet må deklareres av bruker dersom ønsker å benytte kafka topics fra abakus  -->
 			<groupId>org.apache.kafka</groupId>
@@ -37,19 +44,5 @@
 		</dependency>
 
 	</dependencies>
-
-	<build>
-		<plugins>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<configuration>
-					<skip>false</skip>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-
 
 </project>
