@@ -549,10 +549,9 @@
         <profile>
             <id>jar-module</id>
             <activation>
-				<property>
-					<name>maven.deploy.skip</name>
-					<value>false</value>
-				</property>
+                <file>
+                    <exists>src/main/java/</exists>
+                </file>
             </activation>
             <build>
                 <plugins>
