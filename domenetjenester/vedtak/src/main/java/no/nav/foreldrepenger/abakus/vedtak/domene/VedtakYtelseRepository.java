@@ -48,7 +48,7 @@ public class VedtakYtelseRepository {
     public void lagre(VedtakYtelseBuilder builder) {
         var ytelse = builder.build();
         Optional<VedtakYtelse> vedtakYtelse = hentYtelseFor(ytelse.getAktør(), ytelse.getSaksnummer(), ytelse.getKilde(), ytelse.getYtelseType());
-        if (builder.erOppdatering() && vedtakYtelse.isPresent()) {
+        if (vedtakYtelse.isPresent() && (builder.erOppdatering() || manglerEksisterendeVedtakAndeler(vedtakYtelse.get(), ytelse))) {
             // Deaktiver eksisterende innslag
             VedtakYtelse ytelseEntitet = vedtakYtelse.get();
             ytelseEntitet.setAktiv(false);
@@ -67,6 +67,13 @@ public class VedtakYtelseRepository {
         } else {
             log.info("Forkaster vedtak siden en sitter på nyere vedtak. {} er eldre enn {}", ytelse, vedtakYtelse);
         }
+    }
+
+    // Lagrer vedtak med samme vedtakstidspunkt dersom ny har andeler og gammel mangler andeler
+    private boolean manglerEksisterendeVedtakAndeler(VedtakYtelse eksisterende, VedtakYtelse ny) {
+        var eksisterendeHarAndeler = eksisterende.getYtelseAnvist().stream().anyMatch(a -> !a.getAndeler().isEmpty());
+        var nyHarAndeler = ny.getYtelseAnvist().stream().anyMatch(a -> !a.getAndeler().isEmpty());
+        return eksisterende.getVedtattTidspunkt().equals(ny.getVedtattTidspunkt()) && nyHarAndeler && !eksisterendeHarAndeler;
     }
 
     private Optional<VedtakYtelse> hentYtelseFor(AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, YtelseType ytelseType) {
