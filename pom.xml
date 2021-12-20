@@ -35,15 +35,15 @@
 		<felles.version>4.0.10</felles.version>
 		<prosesstask.version>3.0.6</prosesstask.version>
 
-		<kontrakter.version>6.0.6</kontrakter.version>
+		<kontrakter.version>6.1.1</kontrakter.version>
 
 		<tjenestespesifikasjoner.version>1.2021.02.22-10.45-4201aaea72fb</tjenestespesifikasjoner.version>
 
-		<prometheus.version>0.12.0</prometheus.version>
+		<prometheus.version>0.13.0</prometheus.version>
 		<swagger.version>2.1.11</swagger.version>
 		<kafka.version>3.0.0</kafka.version>
 		<jersey.version>2.35</jersey.version>
-        <flyway.version>8.2.1</flyway.version>
+        <flyway.version>8.2.2</flyway.version>
 	</properties>
 
 	<prerequisites>
@@ -523,7 +523,7 @@
                     <dependency>
                         <groupId>no.nav.k9.dev</groupId>
                         <artifactId>dev-jakarta-transform</artifactId>
-                        <version>0.3.9</version>
+                        <version>0.4.1</version>
                     </dependency>
                     <dependency>
                         <groupId>ant-contrib</groupId>
