@@ -81,7 +81,7 @@ public class YtelseRestTjeneste {
 
         ytelseRepository.lagre(builder);
 
-        return Response.accepted().build();
+        return Response.ok().build();
     }
 
     @POST
