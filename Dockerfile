@@ -1,4 +1,4 @@
-FROM navikt/java:16-appdynamics
+FROM navikt/java:17-appdynamics
 
 LABEL org.opencontainers.image.source=https://github.com/navikt/fp-abakus
 ENV APPD_ENABLED=true
