@@ -15,8 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
@@ -35,7 +33,6 @@ public class ArbeidsforholdOverstyrtePerioder extends BaseEntitet {
     })
     private IntervallEntitet periode;
 
-    @JsonBackReference
     @ManyToOne(optional = false)
     @JoinColumn(name = "ARBEIDSFORHOLD_ID", nullable = false, updatable = false)
     private ArbeidsforholdOverstyring arbeidsforholdOverstyring;
