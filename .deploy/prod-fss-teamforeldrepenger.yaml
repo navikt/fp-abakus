@@ -98,7 +98,7 @@ spec:
     - name: FPABAKUS_IT_FP_GRUNNLAG_URL
       value: http://infotrygd-foreldrepenger.default/grunnlag
     - name: FPABAKUS_IT_PS_GRUNNLAG_URL
-      value: http://infotrygd-grunnlag-paaroerende-sykdom.default/paaroerendeSykdom/grunnlag
+      value: http://k9-infotrygd-grunnlag-paaroerende-sykdom.k9saksbehandling/paaroerendeSykdom/grunnlag
     - name: FPABAKUS_IT_SP_GRUNNLAG_URL
       value: http://infotrygd-sykepenger-fp.default/grunnlag
     #AZURE
