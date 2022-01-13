@@ -24,10 +24,9 @@
 		<revision>1.2</revision>
 		<sha1 />
 		<changelist>-SNAPSHOT</changelist>
-		<java.version>16</java.version>
+		<java.version>17</java.version>
+        <kontrakt.java.version>16</kontrakt.java.version>
         <argLine>-Xms256m -Dlog.level.no.nav=WARN -Dfile.encoding=${project.build.sourceEncoding}</argLine>
-		<maven.compiler.source>${java.version}</maven.compiler.source>
-		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<maven.deploy.skip>true</maven.deploy.skip>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -35,15 +34,15 @@
 		<felles.version>4.0.10</felles.version>
 		<prosesstask.version>3.0.6</prosesstask.version>
 
-		<kontrakter.version>6.1.1</kontrakter.version>
+		<kontrakter.version>6.1.3</kontrakter.version>
 
 		<tjenestespesifikasjoner.version>1.2021.02.22-10.45-4201aaea72fb</tjenestespesifikasjoner.version>
 
-		<prometheus.version>0.13.0</prometheus.version>
-		<swagger.version>2.1.11</swagger.version>
+		<prometheus.version>0.14.1</prometheus.version>
+		<swagger.version>2.1.12</swagger.version>
 		<kafka.version>3.0.0</kafka.version>
 		<jersey.version>2.35</jersey.version>
-        <flyway.version>8.2.2</flyway.version>
+        <flyway.version>8.4.1</flyway.version>
 	</properties>
 
 	<prerequisites>
@@ -338,7 +337,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
-					<version>3.0.0-M1</version>
+					<version>3.0.0-M2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -353,6 +352,11 @@
 					<artifactId>maven-failsafe-plugin</artifactId>
 					<version>3.0.0-M5</version>
 				</plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>buildnumber-maven-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
 				<plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
@@ -523,7 +527,7 @@
                     <dependency>
                         <groupId>no.nav.k9.dev</groupId>
                         <artifactId>dev-jakarta-transform</artifactId>
-                        <version>0.6.0</version>
+                        <version>0.6.2</version>
                     </dependency>
                     <dependency>
                         <groupId>ant-contrib</groupId>

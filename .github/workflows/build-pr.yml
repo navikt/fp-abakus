@@ -34,8 +34,8 @@ jobs:
           repository: ${{github.event.pull_request.head.repo.full_name}}
       - uses: actions/setup-java@v2
         with:
-          distribution: 'adopt'
-          java-version: 16
+          java-version: '17'
+          distribution: 'temurin'
           cache: 'maven'
 
       - name: Build
