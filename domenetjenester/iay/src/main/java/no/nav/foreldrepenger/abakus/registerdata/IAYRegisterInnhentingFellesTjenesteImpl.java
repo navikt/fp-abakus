@@ -326,7 +326,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         }
     }
 
-    private Optional<InternArbeidsforholdRef> finnReferanseFor(KoblingReferanse koblingReferanse, 
+    private Optional<InternArbeidsforholdRef> finnReferanseFor(KoblingReferanse koblingReferanse,
                                                                Arbeidsgiver arbeidsgiver,
                                                                EksternArbeidsforholdRef arbeidsforholdRef) {
         Optional<ArbeidsforholdInformasjon> arbeidsforholdInformasjon = inntektArbeidYtelseTjeneste.hentGrunnlagFor(koblingReferanse)
@@ -405,11 +405,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
             BigDecimal beløpSum = månedsinnteker.stream().map(MånedsbeløpOgSkatteOgAvgiftsregel::getBeløp).reduce(BigDecimal.ZERO,
                 BigDecimal::add);
             if (antalInntekterForAvgiftsregel.keySet().size() > 1) {
-                String skatteOgAvgiftsregler = antalInntekterForAvgiftsregel.keySet().stream().collect(Collectors.joining(", "));
-                // TODO Diamant velger her en random verdi.
-                valgtSkatteOgAvgiftsregel = Optional.of(antalInntekterForAvgiftsregel.keySet().iterator().next());
-                LOGGER.warn("ArbeidsgiverEntitet orgnr {} har flere månedsinntekter for måned {} med forskjellige skatte -og avgiftsregler {}. Velger {}",
-                    arbeidsgiver.getIdentifikator(), måned, skatteOgAvgiftsregler, valgtSkatteOgAvgiftsregel);
+                valgtSkatteOgAvgiftsregel = Optional.ofNullable(velgSkatteOgAvgiftsRegel(antalInntekterForAvgiftsregel.keySet()));
             } else if (antalInntekterForAvgiftsregel.keySet().size() == 1) {
                 valgtSkatteOgAvgiftsregel = Optional.of(antalInntekterForAvgiftsregel.keySet().iterator().next());
             }
@@ -453,6 +449,16 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
             return UtbetaltYtelseFraOffentligeType.finnForKodeverkEiersKode(månedsinntekt.getYtelseKode());
         }
         return UtbetaltNæringsYtelseType.finnForKodeverkEiersKode(månedsinntekt.getNæringsinntektKode());
+    }
+
+    private String velgSkatteOgAvgiftsRegel(Set<String> alternativ) {
+        if (alternativ.contains(SkatteOgAvgiftsregelType.SÆRSKILT_FRADRAG_FOR_SJØFOLK.getOffisiellKode())) {
+            return SkatteOgAvgiftsregelType.SÆRSKILT_FRADRAG_FOR_SJØFOLK.getOffisiellKode();
+        } else if (alternativ.contains(SkatteOgAvgiftsregelType.NETTOLØNN_FOR_SJØFOLK.getOffisiellKode())) {
+            return SkatteOgAvgiftsregelType.NETTOLØNN_FOR_SJØFOLK.getOffisiellKode();
+        } else {
+            return alternativ.stream().findFirst().orElse(null);
+        }
     }
 
     public static final class MånedsbeløpOgSkatteOgAvgiftsregel {
