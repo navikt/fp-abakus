@@ -8,8 +8,4 @@ public interface AppKonfigurasjon {
     }
 
     String getContextPath();
-
-    default int getSslPort() {
-        throw new IllegalStateException("SSL port should only be used locally");
-    }
 }

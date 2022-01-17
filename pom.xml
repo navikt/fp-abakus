@@ -25,14 +25,14 @@
 		<sha1 />
 		<changelist>-SNAPSHOT</changelist>
 		<java.version>17</java.version>
-        <kontrakt.java.version>16</kontrakt.java.version>
+        <kontrakt.java.version>17</kontrakt.java.version>
         <argLine>-Xms256m -Dlog.level.no.nav=WARN -Dfile.encoding=${project.build.sourceEncoding}</argLine>
 		<maven.deploy.skip>true</maven.deploy.skip>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<felles.version>4.0.10</felles.version>
-		<prosesstask.version>3.0.6</prosesstask.version>
+		<felles.version>4.1.11</felles.version>
+		<prosesstask.version>3.1.6</prosesstask.version>
 
 		<kontrakter.version>6.1.3</kontrakter.version>
 
@@ -56,7 +56,14 @@
 		det brukes. -->
 	<dependencyManagement>
 		<dependencies>
-
+            <!-- Overstyre felles -->
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-bom</artifactId>
+                <version>10.0.7</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
 			<dependency>
 				<!-- overstyrer her sålenge fp-felles inkluderer eldre versjon. -->
 				<groupId>org.flywaydb</groupId>
@@ -190,6 +197,11 @@
 				<artifactId>vault-jdbc</artifactId>
 				<version>1.3.9</version>
 			</dependency>
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>3.28.0-GA</version>
+            </dependency>
 
 			<dependency>
                 <groupId>org.glassfish.jersey</groupId>

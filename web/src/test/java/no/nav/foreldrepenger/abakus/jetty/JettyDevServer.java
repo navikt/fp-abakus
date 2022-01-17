@@ -9,12 +9,8 @@ import javax.sql.DataSource;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
-import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.SslConnectionFactory;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +28,6 @@ public class JettyDevServer extends JettyServer {
      */
     private static final String TRUSTSTORE_PASSW_PROP = "javax.net.ssl.trustStorePassword";
     private static final String TRUSTSTORE_PATH_PROP = "javax.net.ssl.trustStore";
-    private static final String KEYSTORE_PASSW_PROP = "no.nav.modig.security.appcert.password";
-    private static final String KEYSTORE_PATH_PROP = "no.nav.modig.security.appcert.keystore";
 
     public JettyDevServer() {
         super(new JettyDevKonfigurasjon());
@@ -112,38 +106,20 @@ public class JettyDevServer extends JettyServer {
     }
 
     @Override
-    protected void konfigurerSikkerhet(File jaspiConf) {
+    protected void konfigurerSikkerhet() {
         // overstyrer angitt dir for lokal testing
-        File alternativeJaspiConf = new File("src/main/resources/jetty/jaspi-conf.xml");
-        super.konfigurerSikkerhet(alternativeJaspiConf);
+        super.konfigurerSikkerhet();
 
         // truststore avgjør hva vi stoler på av sertifikater når vi gjør utadgående TLS kall
         initCryptoStoreConfig("truststore", TRUSTSTORE_PATH_PROP, TRUSTSTORE_PASSW_PROP, "changeit");
-
-        // keystore genererer sertifikat og TLS for innkommende kall. Bruker standard prop hvis definert, ellers faller tilbake på modig props
-        var keystoreProp = System.getProperty("javax.net.ssl.keyStore") != null ? "javax.net.ssl.keyStore" : KEYSTORE_PATH_PROP;
-        var keystorePasswProp = System.getProperty("javax.net.ssl.keyStorePassword") != null ? "javax.net.ssl.keyStorePassword" : KEYSTORE_PASSW_PROP;
-        initCryptoStoreConfig("keystore", keystoreProp, keystorePasswProp, "devillokeystore1234");
     }
 
     @SuppressWarnings("resource")
     @Override
     protected List<Connector> createConnectors(AppKonfigurasjon appKonfigurasjon, Server server) {
         List<Connector> connectors = super.createConnectors(appKonfigurasjon, server);
-
-        var sslContextFactory = new SslContextFactory.Server();
-        sslContextFactory.setKeyStorePath(System.getProperty(KEYSTORE_PATH_PROP));
-        sslContextFactory.setKeyStorePassword(System.getProperty(KEYSTORE_PASSW_PROP));
-        sslContextFactory.setKeyManagerPassword(System.getProperty(KEYSTORE_PASSW_PROP));
-
         HttpConfiguration https = createHttpConfiguration();
         https.addCustomizer(new SecureRequestCustomizer());
-
-        ServerConnector sslConnector = new ServerConnector(server,
-            new SslConnectionFactory(sslContextFactory, "http/1.1"),
-            new HttpConnectionFactory(https));
-        sslConnector.setPort(appKonfigurasjon.getSslPort());
-        connectors.add(sslConnector);
 
         return connectors;
     }

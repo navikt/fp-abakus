@@ -60,17 +60,13 @@ spec:
     - name: SECURITYTOKENSERVICE_URL
       value: https://sts-q1.preprod.local/SecurityTokenServiceProvider/
     #OpenID
+    - name: OIDC_OPEN_AM_WELL_KNOWN_URL
+      value: https://isso-q.adeo.no:443/isso/oauth2/.well-known/openid-configuration
     - name: OPENIDCONNECT_ISSOHOST
       value: https://isso-q.adeo.no:443/isso/oauth2
-    - name: OPENIDCONNECT_ISSOISSUER
-      value: https://isso-q.adeo.no:443/isso/oauth2
-    - name: OPENIDCONNECT_ISSOJWKS
-      value: https://isso-q.adeo.no:443/isso/oauth2/connect/jwk_uri
     #OIDC
-    - name: OIDC_STS_ISSUER_URL
-      value: https://security-token-service.nais.preprod.local
-    - name: OIDC_STS_JWKS_URL
-      value: http://security-token-service.default/rest/v1/sts/jwks
+    - name: OIDC_STS_WELL_KNOWN_URL
+      value: http://security-token-service.default/.well-known/openid-configuration
     #ABAC
     - name: ABAC_ATTRIBUTT_DRIFT
       value: "no.nav.abac.attributter.resource.duplo.abakus.drift"

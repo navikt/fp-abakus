@@ -24,10 +24,4 @@ public class JettyWebKonfigurasjon implements AppKonfigurasjon {
     public String getContextPath() {
         return CONTEXT_PATH;
     }
-
-    @Override
-    public int getSslPort() {
-        throw new IllegalStateException("SSL port should only be used locally");
-    }
-
 }

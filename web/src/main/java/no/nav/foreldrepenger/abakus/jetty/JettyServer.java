@@ -3,9 +3,7 @@ package no.nav.foreldrepenger.abakus.jetty;
 import static no.nav.foreldrepenger.konfig.Cluster.LOCAL;
 import static no.nav.foreldrepenger.konfig.Cluster.NAIS_CLUSTER_NAME;
 
-import java.io.File;
 import java.io.IOException;
-import java.security.Security;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,16 +16,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
-import org.apache.geronimo.components.jaspi.AuthConfigFactoryImpl;
-import org.eclipse.jetty.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.jaas.JAASLoginService;
 import org.eclipse.jetty.plus.jndi.EnvEntry;
-import org.eclipse.jetty.plus.webapp.EnvConfiguration;
-import org.eclipse.jetty.plus.webapp.PlusConfiguration;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.DefaultIdentityService;
 import org.eclipse.jetty.security.SecurityHandler;
+import org.eclipse.jetty.security.jaspi.DefaultAuthConfigFactory;
 import org.eclipse.jetty.security.jaspi.JaspiAuthenticatorFactory;
+import org.eclipse.jetty.security.jaspi.provider.JaspiAuthConfigProvider;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -38,12 +34,8 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceCollection;
-import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.MetaData;
-import org.eclipse.jetty.webapp.WebAppConfiguration;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.eclipse.jetty.webapp.WebInfConfiguration;
-import org.eclipse.jetty.webapp.WebXmlConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -55,6 +47,7 @@ import no.nav.foreldrepenger.abakus.jetty.db.DatasourceUtil;
 import no.nav.foreldrepenger.abakus.jetty.db.EnvironmentClass;
 import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.vedtak.isso.IssoApplication;
+import no.nav.vedtak.sikkerhet.jaspic.OidcAuthModule;
 
 public class JettyServer {
 
@@ -65,25 +58,6 @@ public class JettyServer {
             MDC.clear();
         }
     }
-
-    /**
-     * AbstractNetworkConnector#getHost()
-     *
-     * @see ServerConnector#openAcceptChannel()
-     */
-    protected static final String SERVER_HOST = "0.0.0.0";
-
-    /**
-     * nedstrippet sett med Jetty configurations for raskere startup.
-     */
-    protected static final Configuration[] CONFIGURATIONS = new Configuration[]{
-        new WebAppConfiguration(),
-        new WebInfConfiguration(),
-        new WebXmlConfiguration(),
-        new AnnotationConfiguration(),
-        new EnvConfiguration(),
-        new PlusConfiguration(),
-    };
 
     private static final Environment ENV = Environment.current();
 
@@ -123,20 +97,18 @@ public class JettyServer {
     }
 
     protected void konfigurer() throws Exception {
-        File jaspiConf = new File(System.getProperty("conf", "./conf") + "/jaspi-conf.xml"); // NOSONAR
-
-        konfigurerSikkerhet(jaspiConf);
+        konfigurerSikkerhet();
         konfigurerJndi();
     }
 
-    protected void konfigurerSikkerhet(File jaspiConf) {
-        Security.setProperty(AuthConfigFactory.DEFAULT_FACTORY_SECURITY_PROPERTY, AuthConfigFactoryImpl.class.getCanonicalName());
+    protected void konfigurerSikkerhet() {
+        var factory = new DefaultAuthConfigFactory();
+        factory.registerConfigProvider(new JaspiAuthConfigProvider(new OidcAuthModule()),
+            "HttpServlet",
+            "server " + appKonfigurasjon.getContextPath(),
+            "OIDC Authentication");
 
-        if (!jaspiConf.exists()) {
-            throw new IllegalStateException("Missing required file: " + jaspiConf.getAbsolutePath());
-        }
-        System.setProperty("org.apache.geronimo.jaspic.configurationFile", jaspiConf.getAbsolutePath());
-
+        AuthConfigFactory.setFactory(factory);
     }
 
     protected void konfigurerJndi() throws Exception {
@@ -148,8 +120,7 @@ public class JettyServer {
         String initSql = String.format("SET ROLE \"%s\"", DatasourceUtil.getDbRole("defaultDS", DatasourceRole.ADMIN));
         if (LOCAL.equals(ENV.getCluster())) {
             // TODO: Ønsker egentlig ikke dette, men har ikke satt opp skjema lokalt
-            // til å ha en admin bruker som gjør migrering og en annen som gjør CRUD
-            // operasjoner
+            // til å ha en admin bruker som gjør migrering og en annen som gjør CRUD operasjoner
             initSql = null;
         }
         DataSource migreringDs = DatasourceUtil.createDatasource("defaultDS", DatasourceRole.ADMIN, ENV.getCluster(),
@@ -181,7 +152,6 @@ public class JettyServer {
         List<Connector> connectors = new ArrayList<>();
         ServerConnector httpConnector = new ServerConnector(server, new HttpConnectionFactory(createHttpConfiguration()));
         httpConnector.setPort(appKonfigurasjon.getServerPort());
-        httpConnector.setHost(SERVER_HOST);
         connectors.add(httpConnector);
 
         return connectors;
@@ -201,7 +171,6 @@ public class JettyServer {
         webAppContext.setDescriptor(descriptor);
         webAppContext.setBaseResource(createResourceCollection());
         webAppContext.setContextPath(appKonfigurasjon.getContextPath());
-        webAppContext.setConfigurations(CONFIGURATIONS);
 
         webAppContext.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
 
@@ -259,7 +228,7 @@ public class JettyServer {
     }
 
     @SuppressWarnings("resource")
-    private ResourceCollection createResourceCollection() throws IOException {
+    private ResourceCollection createResourceCollection() {
         return new ResourceCollection(
             Resource.newClassPathResource("META-INF/resources/webjars/"),
             Resource.newClassPathResource("/web"));

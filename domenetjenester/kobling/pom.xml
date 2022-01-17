@@ -22,48 +22,14 @@
         <dependency>
             <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
             <artifactId>pdl-klient</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.codehaus.plexus</groupId>
-                    <artifactId>plexus-classworlds</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.codehaus.plexus</groupId>
-                    <artifactId>plexus-component-annotations</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.codehaus.plexus</groupId>
-                    <artifactId>plexus-utils</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.reactivestreams</groupId>
-                    <artifactId>reactive-streams</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 		<dependency>
 			<groupId>no.nav.foreldrepenger.felles</groupId>
 			<artifactId>felles-db</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>ca.szc.thirdparty.nl.jworks.markdown_to_asciidoc</groupId>
-					<artifactId>markdown_to_asciidoc</artifactId>
-				</exclusion>
-				<exclusion>
-					<artifactId>woodstox-core-asl</artifactId>
-					<groupId>org.codehaus.woodstox</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>no.nav.foreldrepenger.felles</groupId>
 			<artifactId>felles-util</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>ca.szc.thirdparty.nl.jworks.markdown_to_asciidoc</groupId>
-					<artifactId>markdown_to_asciidoc</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>no.nav.foreldrepenger.abakus</groupId>
