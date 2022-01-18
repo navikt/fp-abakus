@@ -93,6 +93,11 @@
 		</dependency>
 
 		<!-- TEST -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <scope>test</scope>
+        </dependency>
 		<dependency>
 			<groupId>no.nav.foreldrepenger.abakus</groupId>
 			<artifactId>migreringer</artifactId>
