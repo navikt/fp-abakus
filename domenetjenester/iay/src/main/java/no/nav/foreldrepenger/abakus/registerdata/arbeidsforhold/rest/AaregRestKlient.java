@@ -15,7 +15,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicHeader;
 
 import no.nav.foreldrepenger.konfig.KonfigVerdi;
-import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
+import no.nav.vedtak.felles.integrasjon.rest.StsStandardXtraTokenRestKlient;
 import no.nav.vedtak.log.mdc.MDCOperations;
 
 /*
@@ -33,14 +33,14 @@ public class AaregRestKlient {
     private static final String HEADER_NAV_PERSONIDENT = "Nav-Personident";
     private static final String HEADER_NAV_CONSUMER_TOKEN = "Nav-Consumer-Token";
 
-    private OidcRestClient oidcRestClient;
+    private StsStandardXtraTokenRestKlient oidcRestClient; // Setter på consumer-token fra STS
     private URI endpoint;
 
     public AaregRestKlient() {
     }
 
     @Inject
-    public AaregRestKlient(OidcRestClient oidcRestClient,
+    public AaregRestKlient(StsStandardXtraTokenRestKlient oidcRestClient,
                            @KonfigVerdi(value = ENDPOINT_KEY, defaultVerdi = DEFAULT_URI) URI endpoint) {
         this.oidcRestClient = oidcRestClient;
         this.endpoint = endpoint;
@@ -55,7 +55,7 @@ public class AaregRestKlient {
                     .addParameter("historikk", "true")
                     .addParameter("sporingsinformasjon", "false")
                     .build();
-            ArbeidsforholdRS[] match = oidcRestClient.get(request, lagHeader(ident), Set.of(HEADER_NAV_CONSUMER_TOKEN), ArbeidsforholdRS[].class);
+            ArbeidsforholdRS[] match = oidcRestClient.get(request, lagHeader(ident), ArbeidsforholdRS[].class);
             return Arrays.asList(match);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Utviklerfeil syntax-exception for finnArbeidsforholdForArbeidstaker");
