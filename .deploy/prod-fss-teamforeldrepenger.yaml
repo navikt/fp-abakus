@@ -65,7 +65,7 @@ spec:
       value: https://isso.adeo.no:443/isso/oauth2
     #OIDC
     - name: OIDC_STS_WELL_KNOWN_URL
-      value: http://security-token-service.default/.well-known/openid-configuration
+      value: https://security-token-service.nais.adeo.no/.well-known/openid-configuration
     #ABAC
     - name: ABAC_ATTRIBUTT_DRIFT
       value: "no.nav.abac.attributter.resource.duplo.abakus.drift"
