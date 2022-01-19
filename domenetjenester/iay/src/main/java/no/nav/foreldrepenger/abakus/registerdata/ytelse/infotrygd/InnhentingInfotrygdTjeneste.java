@@ -254,7 +254,7 @@ public class InnhentingInfotrygdTjeneste {
             .medVedtaksPeriodeTom(brukPeriode.getTom());
 
         grunnlag.utbetalingerNonNull().stream()
-            .map(v -> new InfotrygdYtelseAnvist(v.fom(), v.tom(), v.grad()))
+            .map(v -> new InfotrygdYtelseAnvist(v.fom(), v.tom(), v.gradScale2()))
             .forEach(grunnlagBuilder::leggTillAnvistPerioder);
 
         return grunnlagBuilder.build();
