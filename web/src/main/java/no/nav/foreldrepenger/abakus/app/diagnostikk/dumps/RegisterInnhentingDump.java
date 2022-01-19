@@ -31,9 +31,9 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FinnInntekt
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.felles.InfotrygdGrunnlagAggregator;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.spokelse.SpokelseKlient;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import no.nav.vedtak.felles.integrasjon.spokelse.Spøkelse;
 
 @ApplicationScoped
 @YtelseTypeRef
@@ -46,7 +46,7 @@ public class RegisterInnhentingDump implements DebugDump {
 
     private AaregRestKlient aaregKlient;
     private InfotrygdGrunnlagAggregator infotrygdGrunnlag;
-    private SpokelseKlient spokelseKlient;
+    private Spøkelse spokelseKlient;
     private ObjectWriter writer;
     private final String prefiks = "register-innhenting";
 
@@ -59,7 +59,7 @@ public class RegisterInnhentingDump implements DebugDump {
                                   InntektTjeneste inntektTjeneste,
                                   MeldekortTjeneste meldekortTjeneste,
                                   InfotrygdGrunnlagAggregator infotrygdGrunnlag,
-                                  SpokelseKlient spokelseKlient) {
+                                  Spøkelse spokelseKlient) {
         this.aaregKlient = aaregKlient;
         this.inntektTjeneste = inntektTjeneste;
         this.meldekortTjeneste = meldekortTjeneste;
@@ -94,7 +94,7 @@ public class RegisterInnhentingDump implements DebugDump {
         dumps.addAll(innhentAareg(ident, periode));
 
         dumps.addAll(innhentInntekt(aktørId, periode));
-        
+
         return dumps;
     }
 
