@@ -32,14 +32,14 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.Relat
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.TemaReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.TemaUnderkategoriReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.felles.InfotrygdGrunnlagAggregator;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.spokelse.SpokelseKlient;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.spokelse.SykepengeUtbetaling;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.spokelse.SykepengeVedtak;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Arbeidsforhold;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Periode;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Vedtak;
+import no.nav.vedtak.felles.integrasjon.spokelse.Spøkelse;
+import no.nav.vedtak.felles.integrasjon.spokelse.SykepengeUtbetaling;
+import no.nav.vedtak.felles.integrasjon.spokelse.SykepengeVedtak;
 import no.nav.vedtak.konfig.Tid;
 
 @ApplicationScoped
@@ -71,7 +71,7 @@ public class InnhentingInfotrygdTjeneste {
     );
 
     private InfotrygdGrunnlagAggregator infotrygdGrunnlag;
-    private SpokelseKlient spokelseKlient;
+    private Spøkelse spøkelse;
 
     InnhentingInfotrygdTjeneste() {
         // CDI
@@ -79,9 +79,9 @@ public class InnhentingInfotrygdTjeneste {
 
     @Inject
     public InnhentingInfotrygdTjeneste(InfotrygdGrunnlagAggregator infotrygdGrunnlag,
-                                       SpokelseKlient spokelseKlient) {
+                                       Spøkelse spøkelse) {
         this.infotrygdGrunnlag = infotrygdGrunnlag;
-        this.spokelseKlient = spokelseKlient;
+        this.spøkelse = spøkelse;
     }
 
     public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelser(PersonIdent ident, IntervallEntitet periode) {
@@ -100,7 +100,7 @@ public class InnhentingInfotrygdTjeneste {
 
     private List<InfotrygdYtelseGrunnlag> mapTilInfotrygdYtelseGrunnlag(List<Grunnlag> rest, LocalDate innhentFom) {
         var mappedGrunnlag = rest.stream()
-            .filter(g -> !YtelseType.UDEFINERT.equals(TemaReverse.reverseMap(g.getTema().getKode().name(), LOG)))
+            .filter(g -> !YtelseType.UDEFINERT.equals(TemaReverse.reverseMap(g.getTema().kode().name(), LOG)))
             .map(g -> restTilInfotrygdYtelseGrunnlag(g, innhentFom))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -122,13 +122,13 @@ public class InnhentingInfotrygdTjeneste {
         Periode brukPeriode = grunnlag.getPeriode() != null ? grunnlag.getPeriode() : fraSaksdata;
         Integer dekningsgrad = grunnlag.getDekningsgrad() != null ? grunnlag.getDekningsgrad().getProsent() : null;
         Arbeidskategori arbeidskategori = grunnlag.getKategori() == null ? Arbeidskategori.UGYLDIG :
-            ArbeidskategoriReverse.reverseMap(grunnlag.getKategori().getKode().getKode(), LOG);
+            ArbeidskategoriReverse.reverseMap(grunnlag.getKategori().kode().getKode(), LOG);
         TemaUnderkategori tuk = grunnlag.getBehandlingsTema() == null ? TemaUnderkategori.UDEFINERT :
-            TemaUnderkategoriReverse.reverseMap(grunnlag.getBehandlingsTema().getKode().name());
+            TemaUnderkategoriReverse.reverseMap(grunnlag.getBehandlingsTema().kode().name());
         YtelseStatus brukStatus = mapYtelseStatus(grunnlag);
         // Ignorer gamle vedtak
-        if (brukPeriode.getTom().isBefore(innhentFom) &&
-            grunnlag.getVedtak().stream().map(Vedtak::getPeriode).map(Periode::getTom).noneMatch(innhentFom::isBefore))
+        if (brukPeriode.tom().isBefore(innhentFom) &&
+            grunnlag.getVedtak().stream().map(Vedtak::periode).map(Periode::tom).noneMatch(innhentFom::isBefore))
             return null;
 
         var grunnlagBuilder = InfotrygdYtelseGrunnlag.getBuilder()
@@ -136,8 +136,8 @@ public class InnhentingInfotrygdTjeneste {
             .medTemaUnderkategori(tuk)
             .medYtelseStatus(brukStatus)
             .medVedtattTidspunkt(brukIdentdato.atStartOfDay())
-            .medVedtaksPeriodeFom(brukPeriode.getFom())
-            .medVedtaksPeriodeTom(brukPeriode.getTom())
+            .medVedtaksPeriodeFom(brukPeriode.fom())
+            .medVedtaksPeriodeTom(brukPeriode.tom())
             .medArbeidskategori(arbeidskategori)
             .medDekningsgrad(dekningsgrad)
             .medGradering(grunnlag.getGradering())
@@ -149,7 +149,7 @@ public class InnhentingInfotrygdTjeneste {
             .forEach(grunnlagBuilder::leggTilArbeidsforhold);
 
         grunnlag.getVedtak().stream()
-            .map(v -> new InfotrygdYtelseAnvist(v.getPeriode().getFom(), v.getPeriode().getTom(), new BigDecimal(v.getUtbetalingsgrad())))
+            .map(v -> new InfotrygdYtelseAnvist(v.periode().fom(), v.periode().tom(), new BigDecimal(v.utbetalingsgrad())))
             .forEach(grunnlagBuilder::leggTillAnvistPerioder);
 
         return grunnlagBuilder.build();
@@ -163,15 +163,15 @@ public class InnhentingInfotrygdTjeneste {
                 return YtelseStatus.LØPENDE;
             return YtelseStatus.UNDER_BEHANDLING;
         }
-        return RelatertYtelseStatusReverse.reverseMap(grunnlag.getStatus().getKode().name(), LOG);
+        return RelatertYtelseStatusReverse.reverseMap(grunnlag.getStatus().kode().name(), LOG);
     }
 
     private InfotrygdYtelseArbeid arbeidsforholdTilInfotrygdYtelseArbeid(Arbeidsforhold arbeidsforhold) {
-        InntektPeriodeType inntektPeriode = arbeidsforhold.getInntektperiode() == null ? InntektPeriodeType.UDEFINERT :
-            InntektPeriodeReverse.reverseMap(arbeidsforhold.getInntektperiode().getKode().name(), LOG);
-        BigDecimal inntekt= arbeidsforhold.getInntekt() != null ? new BigDecimal(arbeidsforhold.getInntekt()) : null;
-        return new InfotrygdYtelseArbeid(arbeidsforhold.getOrgnr().getOrgnr(),
-            inntekt, inntektPeriode, arbeidsforhold.getRefusjon());
+        InntektPeriodeType inntektPeriode = arbeidsforhold.inntektsperiode() == null ? InntektPeriodeType.UDEFINERT :
+            InntektPeriodeReverse.reverseMap(arbeidsforhold.inntektsperiode().kode().name(), LOG);
+        BigDecimal inntekt= arbeidsforhold.inntekt() != null ? new BigDecimal(arbeidsforhold.inntekt()) : null;
+        return new InfotrygdYtelseArbeid(arbeidsforhold.orgnr().getOrgnr(),
+            inntekt, inntektPeriode, arbeidsforhold.refusjon());
     }
 
     private Periode utledPeriode(LocalDate iverksatt, LocalDate opphoerFomDato, LocalDate registrert) {
@@ -200,12 +200,12 @@ public class InnhentingInfotrygdTjeneste {
 
     private YtelseType bestemYtelseType(Grunnlag grunnlag) {
         YtelseType kategori2 = grunnlag.getBehandlingsTema() == null ? YtelseType.UDEFINERT :
-            STØNADSKAT2_TIL_YTELSETYPE.getOrDefault(grunnlag.getBehandlingsTema().getKode(), YtelseType.UDEFINERT);
+            STØNADSKAT2_TIL_YTELSETYPE.getOrDefault(grunnlag.getBehandlingsTema().kode(), YtelseType.UDEFINERT);
         if (!YtelseType.UDEFINERT.equals(kategori2))
             return kategori2;
         LOG.info("Infotrygd ukjent stønadskategori 2");
         YtelseType kategori1 = grunnlag.getTema() == null ? YtelseType.UDEFINERT :
-            STØNADSKAT1_TIL_YTELSETYPE.getOrDefault(grunnlag.getTema().getKode(), YtelseType.UDEFINERT);
+            STØNADSKAT1_TIL_YTELSETYPE.getOrDefault(grunnlag.getTema().kode(), YtelseType.UDEFINERT);
         if (!YtelseType.UDEFINERT.equals(kategori1))
             return kategori1;
         LOG.info("Infotrygd ukjent stønadskategori 1 og 2");
@@ -213,14 +213,14 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     public List<InfotrygdYtelseGrunnlag> getSPøkelseYtelser(PersonIdent ident) {
-        List<SykepengeVedtak> rest = spokelseKlient.hentGrunnlag(ident.getIdent());
+        List<SykepengeVedtak> rest = spøkelse.hentGrunnlag(ident.getIdent());
 
         return mapSpøkelseTilInfotrygdYtelseGrunnlag(rest);
     }
 
     public List<InfotrygdYtelseGrunnlag> getSPøkelseYtelserFailSoft(PersonIdent ident) {
         try {
-            List<SykepengeVedtak> rest = spokelseKlient.hentGrunnlagFailSoft(ident.getIdent());
+            List<SykepengeVedtak> rest = spøkelse.hentGrunnlagFailSoft(ident.getIdent());
 
             return mapSpøkelseTilInfotrygdYtelseGrunnlag(rest);
         } catch (Exception e) {
@@ -237,8 +237,8 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     private InfotrygdYtelseGrunnlag spokelseTilInfotrygdYtelseGrunnlag(SykepengeVedtak grunnlag) {
-        LocalDate min = grunnlag.getUtbetalinger().stream().map(SykepengeUtbetaling::getFom).min(Comparator.naturalOrder()).orElse(null);
-        LocalDate max = grunnlag.getUtbetalinger().stream().map(SykepengeUtbetaling::getTom).max(Comparator.naturalOrder()).orElse(null);
+        LocalDate min = grunnlag.utbetalingerNonNull().stream().map(SykepengeUtbetaling::fom).min(Comparator.naturalOrder()).orElse(null);
+        LocalDate max = grunnlag.utbetalingerNonNull().stream().map(SykepengeUtbetaling::tom).max(Comparator.naturalOrder()).orElse(null);
         if (min == null)
             return null;
 
@@ -248,13 +248,13 @@ public class InnhentingInfotrygdTjeneste {
             .medYtelseType(YtelseType.SYKEPENGER)
             .medTemaUnderkategori(TemaUnderkategori.SYKEPENGER_SYKEPENGER)
             .medYtelseStatus(YtelseStatus.AVSLUTTET)
-            .medVedtaksreferanse(grunnlag.getVedtaksreferanse().trim())
-            .medVedtattTidspunkt(grunnlag.getVedtattTidspunkt() != null ? grunnlag.getVedtattTidspunkt() : LocalDateTime.now())
+            .medVedtaksreferanse(grunnlag.vedtaksreferanse().trim())
+            .medVedtattTidspunkt(grunnlag.vedtattTidspunkt() != null ? grunnlag.vedtattTidspunkt() : LocalDateTime.now())
             .medVedtaksPeriodeFom(brukPeriode.getFom())
             .medVedtaksPeriodeTom(brukPeriode.getTom());
 
-        grunnlag.getUtbetalinger().stream()
-            .map(v -> new InfotrygdYtelseAnvist(v.getFom(), v.getTom(), v.getGrad()))
+        grunnlag.utbetalingerNonNull().stream()
+            .map(v -> new InfotrygdYtelseAnvist(v.fom(), v.tom(), v.gradScale2()))
             .forEach(grunnlagBuilder::leggTillAnvistPerioder);
 
         return grunnlagBuilder.build();
