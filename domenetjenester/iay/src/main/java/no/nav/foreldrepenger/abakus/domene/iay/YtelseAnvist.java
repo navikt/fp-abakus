@@ -1,8 +1,10 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -14,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -36,6 +39,10 @@ public class YtelseAnvist extends BaseEntitet implements IndexKey {
     @ManyToOne(optional = false)
     @JoinColumn(name = "ytelse_id", nullable = false, updatable = false, unique = true)
     private Ytelse ytelse;
+
+    @OneToMany(mappedBy = "ytelseAnvist")
+    @ChangeTracked
+    private Set<YtelseAnvistAndel> ytelseAnvistAndeler = new LinkedHashSet<>();
 
     @Embedded
     @ChangeTracked
@@ -115,6 +122,16 @@ public class YtelseAnvist extends BaseEntitet implements IndexKey {
 
     public void setYtelse(Ytelse ytelse) {
         this.ytelse = ytelse;
+    }
+
+    public Set<YtelseAnvistAndel> getYtelseAnvistAndeler() {
+        return ytelseAnvistAndeler;
+    }
+
+    void leggTilYtelseAnvistAndel(YtelseAnvistAndel ytelseAnvistAndel) {
+        ytelseAnvistAndel.setYtelseAnvist(this);
+        this.ytelseAnvistAndeler.add(ytelseAnvistAndel);
+
     }
 
     @Override

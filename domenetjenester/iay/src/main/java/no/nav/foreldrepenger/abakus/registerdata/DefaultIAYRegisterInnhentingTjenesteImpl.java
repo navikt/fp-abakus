@@ -31,12 +31,12 @@ public class DefaultIAYRegisterInnhentingTjenesteImpl extends IAYRegisterInnhent
                                                     VirksomhetTjeneste virksomhetTjeneste,
                                                     InnhentingSamletTjeneste innhentingSamletTjeneste,
                                                     AktørTjeneste aktørConsumer,
-                                                    SigrunTjeneste sigrunTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
+                                                    SigrunTjeneste sigrunTjeneste, VedtattYtelseInnhentingTjeneste vedtattYtelseInnhentingTjeneste) {
         super(inntektArbeidYtelseTjeneste,
             virksomhetTjeneste,
             innhentingSamletTjeneste,
             aktørConsumer,
-            sigrunTjeneste, vedtakYtelseRepository);
+            sigrunTjeneste, vedtattYtelseInnhentingTjeneste);
     }
 
     @Override

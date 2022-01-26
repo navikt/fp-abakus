@@ -106,3 +106,6 @@ spec:
       value: api://dev-fss.tbd.spokelse/.default
     - name: SPOKELSE_GRUNNLAG_URL
       value: http://spokelse.tbd/grunnlag
+
+    - name: SKAL_INNENTE_YTELSE_ANVIST_ANDELER
+      value: true

@@ -43,6 +43,12 @@ public class YtelseAnvistBuilder {
         return this;
     }
 
+    public YtelseAnvistBuilder leggTilYtelseAnvistAndel(YtelseAnvistAndel ytelseAnvistAndel) {
+        this.ytelseAnvist.leggTilYtelseAnvistAndel(ytelseAnvistAndel);
+        return this;
+    }
+
+
     public YtelseAnvist build() {
         return ytelseAnvist;
     }

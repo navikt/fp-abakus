@@ -16,6 +16,7 @@
     <sequence-generator name="SEQ_AKTOER_YTELSE" allocation-size="50" sequence-name="SEQ_AKTOER_YTELSE" />
     <sequence-generator name="SEQ_YTELSE" allocation-size="50" sequence-name="SEQ_YTELSE" />
     <sequence-generator name="SEQ_YTELSE_ANVIST" allocation-size="50" sequence-name="SEQ_YTELSE_ANVIST" />
+    <sequence-generator name="SEQ_YTELSE_ANVIST_ANDEL" allocation-size="50" sequence-name="SEQ_YTELSE_ANVIST_ANDEL" />
     <sequence-generator name="SEQ_YTELSE_GRUNNLAG" allocation-size="50" sequence-name="SEQ_YTELSE_GRUNNLAG" />
     <sequence-generator name="SEQ_YTELSE_STOERRELSE" allocation-size="50" sequence-name="SEQ_YTELSE_STOERRELSE" />
 
@@ -53,6 +54,7 @@
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.Inntekt" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.Ytelse" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.YtelseAnvist" />
+    <entity class="no.nav.foreldrepenger.abakus.domene.iay.YtelseAnvistAndel" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlag" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelse" />
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet" />
