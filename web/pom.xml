@@ -14,7 +14,7 @@
     <name>Abakus :: Web :: Applikasjon</name>
 
     <properties>
-        <swagger-ui.version>4.2.0</swagger-ui.version>
+        <swagger-ui.version>4.2.1</swagger-ui.version>
     </properties>
 
     <dependencyManagement>
@@ -262,11 +262,6 @@
         </dependency>
 
         <!-- Annet -->
-        <dependency>
-            <groupId>org.owasp.encoder</groupId>
-            <artifactId>encoder</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>jakarta.el</artifactId>
