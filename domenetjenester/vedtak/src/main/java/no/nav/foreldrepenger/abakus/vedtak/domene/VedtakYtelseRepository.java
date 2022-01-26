@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import org.hibernate.jpa.QueryHints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,5 +112,9 @@ public class VedtakYtelseRepository {
         query.setHint(QueryHints.HINT_READONLY, true);
 
         return new ArrayList<>(query.getResultList());
+    }
+
+    public List<VedtakYtelse> hentYtelserForIPeriode(AktørId aktørId, IntervallEntitet periode) {
+        return hentYtelserForIPeriode(aktørId, periode.getFomDato(), periode.getTomDato());
     }
 }

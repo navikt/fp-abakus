@@ -1,13 +1,36 @@
 package no.nav.foreldrepenger.abakus.vedtak.tjeneste;
 
-import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.VEDTAK;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
+import no.nav.abakus.iaygrunnlag.Organisasjon;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.abakus.iaygrunnlag.request.AktørDatoRequest;
+import no.nav.abakus.iaygrunnlag.request.HentBrukersYtelserIPeriodeRequest;
+import no.nav.abakus.vedtak.ytelse.Aktør;
+import no.nav.abakus.vedtak.ytelse.Desimaltall;
+import no.nav.abakus.vedtak.ytelse.Periode;
+import no.nav.abakus.vedtak.ytelse.Ytelse;
+import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
+import no.nav.abakus.vedtak.ytelse.v1.anvisning.Anvisning;
+import no.nav.abakus.vedtak.ytelse.v1.anvisning.AnvistAndel;
+import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
+import no.nav.foreldrepenger.abakus.felles.LoggUtil;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.Beløp;
+import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
+import no.nav.foreldrepenger.abakus.vedtak.domene.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelse;
+import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
+import no.nav.foreldrepenger.abakus.vedtak.domene.YtelseAnvist;
+import no.nav.vedtak.konfig.Tid;
+import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
+import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
+import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
+import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -19,69 +42,49 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
-import no.nav.abakus.iaygrunnlag.Organisasjon;
-import no.nav.abakus.iaygrunnlag.request.AktørDatoRequest;
-import no.nav.abakus.vedtak.ytelse.Aktør;
-import no.nav.abakus.vedtak.ytelse.Desimaltall;
-import no.nav.abakus.vedtak.ytelse.Periode;
-import no.nav.abakus.vedtak.ytelse.Ytelse;
-import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
-import no.nav.abakus.vedtak.ytelse.v1.anvisning.Anvisning;
-import no.nav.abakus.vedtak.ytelse.v1.anvisning.AnvistAndel;
-import no.nav.foreldrepenger.abakus.felles.LoggUtil;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.Beløp;
-import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-import no.nav.foreldrepenger.abakus.vedtak.domene.Arbeidsgiver;
-import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelse;
-import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
-import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
-import no.nav.foreldrepenger.abakus.vedtak.domene.YtelseAnvist;
-import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
-import no.nav.vedtak.konfig.Tid;
-import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
-import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
-import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
-import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
+import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.VEDTAK;
+import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 
 @OpenAPIDefinition(tags = @Tag(name = "ytelse"))
 @Path("/ytelse/v1")
 @ApplicationScoped
 @Transactional
 public class YtelseRestTjeneste {
-    private VedtakYtelseRepository ytelseRepository;
-    private ExtractFromYtelseV1 extractor;
 
-    public YtelseRestTjeneste() {} // CDI Ctor
+    private static final Set<YtelseType> GYLDIGE_YTELSER = Set.of(YtelseType.PLEIEPENGER_NÆRSTÅENDE,
+        YtelseType.FORELDREPENGER,
+        YtelseType.OMSORGSPENGER,
+        YtelseType.OPPLÆRINGSPENGER,
+        YtelseType.FRISINN,
+        YtelseType.SVANGERSKAPSPENGER,
+        YtelseType.PLEIEPENGER_SYKT_BARN);
+
+    private VedtakYtelseRepository ytelseRepository;
+    private AktørTjeneste aktørTjeneste;
+
+    public YtelseRestTjeneste() {
+    } // CDI Ctor
 
     @Inject
-    public YtelseRestTjeneste(VedtakYtelseRepository ytelseRepository,
-                              ExtractFromYtelseV1 extractor) {
+    public YtelseRestTjeneste(VedtakYtelseRepository ytelseRepository, AktørTjeneste aktørTjeneste) {
         this.ytelseRepository = ytelseRepository;
-        this.extractor = extractor;
+        this.aktørTjeneste = aktørTjeneste;
     }
 
-    @POST
-    @Path("/vedtatt")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(description = "Lagrer ytelse vedtak", tags = "ytelse")
-    @BeskyttetRessurs(action = CREATE, resource = VEDTAK)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response lagreVedtak(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid Ytelse request) {
-        final YtelseV1 ytelseVedtak = (YtelseV1) request;
-        LoggUtil.setupLogMdc(ytelseVedtak.getType(), ytelseVedtak.getSaksnummer());
-
-        VedtakYtelseBuilder builder = extractor.extractFrom(ytelseVedtak);
-
-        ytelseRepository.lagre(builder);
-
-        return Response.ok().build();
+    private static no.nav.abakus.iaygrunnlag.Aktør mapArbeidsgiver(Arbeidsgiver arbeidsgiver) {
+        if (arbeidsgiver == null) {
+            return null;
+        }
+        return arbeidsgiver.getOrgnr() != null ?
+            new Organisasjon(arbeidsgiver.getIdentifikator()) :
+            new AktørIdPersonident(arbeidsgiver.getIdentifikator());
     }
 
     @POST
@@ -102,6 +105,51 @@ public class YtelseRestTjeneste {
             .collect(Collectors.toList());
 
         return ytelser;
+    }
+
+    @POST
+    @Path("/hent-vedtatte")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Henter alle vedtak for en gitt person, evt med periode etter en fom", tags = "ytelse")
+    @BeskyttetRessurs(action = READ, resource = VEDTAK)
+    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    public List<Ytelse> hentVedtakForPerson(@NotNull @TilpassetAbacAttributt(supplierClass = HentBrukersYtelserIPeriodeRequestAbacDataSupplier.class) @Valid HentBrukersYtelserIPeriodeRequest request) {
+
+        var etterspurteYtelser = request.getYtelser()
+            .stream()
+            .filter(GYLDIGE_YTELSER::contains)
+            .collect(Collectors.toSet());
+
+        if (etterspurteYtelser.isEmpty()) {
+            return List.of();
+        }
+
+        var ytelser = new ArrayList<Ytelse>();
+        var aktørIder = aktørTjeneste.hentAktørIderForIdent(new PersonIdent(request.getPersonident().getIdent()), utledTema(etterspurteYtelser));
+
+        LocalDate fom = request.getPeriode().getFom();
+        LocalDate tom = request.getPeriode().getTom();
+
+        var periode = IntervallEntitet.fraOgMedTilOgMed(fom, tom);
+
+        for (AktørId aktørId : aktørIder) {
+            ytelser.addAll(ytelseRepository.hentYtelserForIPeriode(aktørId, periode)
+                .stream()
+                .filter(it -> etterspurteYtelser.contains(it.getYtelseType()))
+                .map(this::mapLagretVedtakTilYtelse)
+                .toList());
+        }
+
+        return ytelser;
+    }
+
+    private YtelseType utledTema(Set<YtelseType> request) {
+        if (request.contains(YtelseType.FORELDREPENGER)) {
+            return YtelseType.FORELDREPENGER;
+        }
+
+        return YtelseType.OMSORGSPENGER;
     }
 
     private Ytelse mapLagretVedtakTilYtelse(VedtakYtelse vedtak) {
@@ -147,16 +195,7 @@ public class YtelseRestTjeneste {
             a.getUtbetalingsgradProsent() == null ? null : new Desimaltall(a.getUtbetalingsgradProsent().getVerdi()),
             a.getRefusjonsgradProsent() == null ? null : new Desimaltall(a.getRefusjonsgradProsent().getVerdi()),
             a.getInntektskategori()
-            )).collect(Collectors.toList());
-    }
-
-    private static no.nav.abakus.iaygrunnlag.Aktør mapArbeidsgiver(Arbeidsgiver arbeidsgiver) {
-        if (arbeidsgiver == null) {
-            return null;
-        }
-        return arbeidsgiver.getOrgnr() != null ?
-            new Organisasjon(arbeidsgiver.getIdentifikator()) :
-            new AktørIdPersonident(arbeidsgiver.getIdentifikator());
+        )).collect(Collectors.toList());
     }
 
     public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
@@ -176,6 +215,18 @@ public class YtelseRestTjeneste {
         public AbacDataAttributter apply(Object obj) {
             AktørDatoRequest req = (AktørDatoRequest) obj;
             return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, req.getAktør().getIdent());
+        }
+    }
+
+    public static class HentBrukersYtelserIPeriodeRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
+
+        public HentBrukersYtelserIPeriodeRequestAbacDataSupplier() {
+        }
+
+        @Override
+        public AbacDataAttributter apply(Object obj) {
+            HentBrukersYtelserIPeriodeRequest req = (HentBrukersYtelserIPeriodeRequest) obj;
+            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.FNR, req.getPersonident().getIdent());
         }
     }
 
