@@ -248,7 +248,10 @@ public class MeldekortTjeneste {
             log.info("ARENATEST MKUG FNR: MeldekortUtbetalingsgrunnlag (Arena) ugyldig input");
         } catch (FinnMeldekortUtbetalingsgrunnlagListeAktoerIkkeFunnet e) {
             log.info("ARENATEST MKUG FNR: MeldekortUtbetalingsgrunnlag (Arena) fant ikke person for oppgitt fnr");
+        } catch (Exception e) {
+            log.info("ARENATEST MKUG FNR: Annen feil");
         }
+
     }
 
 }
