@@ -129,8 +129,8 @@ public class InnhentingSamletTjeneste {
         return innhentingInfotrygdTjeneste.getSPøkelseYtelser(ident);
     }
 
-    public List<MeldekortUtbetalingsgrunnlagSak> hentYtelserTjenester(AktørId aktørId, IntervallEntitet opplysningsPeriode) {
-        List<MeldekortUtbetalingsgrunnlagSak> saker = meldekortTjeneste.hentMeldekortListe(aktørId,
+    public List<MeldekortUtbetalingsgrunnlagSak> hentYtelserTjenester(AktørId aktørId, PersonIdent ident, IntervallEntitet opplysningsPeriode) {
+        List<MeldekortUtbetalingsgrunnlagSak> saker = meldekortTjeneste.hentMeldekortListe(aktørId, ident,
             opplysningsPeriode.getFomDato(), opplysningsPeriode.getTomDato());
         return filtrerYtelserTjenester(saker);
     }
