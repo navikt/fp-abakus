@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import no.nav.foreldrepenger.abakus.app.konfig.ApplicationConfig;
+import no.nav.foreldrepenger.abakus.app.konfig.EksternApplicationConfig;
 import no.nav.foreldrepenger.abakus.jetty.db.DatabaseScript;
 import no.nav.foreldrepenger.abakus.jetty.db.DatasourceRole;
 import no.nav.foreldrepenger.abakus.jetty.db.DatasourceUtil;
@@ -224,7 +225,7 @@ public class JettyServer {
     }
 
     protected List<Class<?>> getApplicationClasses() {
-        return Arrays.asList(ApplicationConfig.class, IssoApplication.class);
+        return Arrays.asList(ApplicationConfig.class, EksternApplicationConfig.class, IssoApplication.class);
     }
 
     @SuppressWarnings("resource")
