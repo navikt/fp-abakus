@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -70,6 +71,25 @@ public class AktørTjeneste {
         } catch (VLException v) {
             if (Pdl.PDL_KLIENT_NOT_FOUND_KODE.equals(v.getKode())) {
                 return Optional.empty();
+            }
+            throw v;
+        }
+    }
+
+    public Set<AktørId> hentAktørIderForIdent(PersonIdent fnr, YtelseType ytelse) {
+        var request = new HentIdenterQueryRequest();
+        request.setIdent(fnr.getIdent());
+        request.setGrupper(List.of(IdentGruppe.AKTORID));
+        request.setHistorikk(Boolean.TRUE);
+        var projection = new IdentlisteResponseProjection()
+            .identer(new IdentInformasjonResponseProjection().ident());
+
+        try {
+            var identliste = hentIdenterForYtelse(request, projection, ytelse);
+            return identliste.getIdenter().stream().map(IdentInformasjon::getIdent).map(AktørId::new).collect(Collectors.toSet());
+        } catch (VLException v) {
+            if (Pdl.PDL_KLIENT_NOT_FOUND_KODE.equals(v.getKode())) {
+                return Set.of();
             }
             throw v;
         }
