@@ -29,6 +29,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.felles.InfotrygdGrunnlagAggregator;
 import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
@@ -129,6 +130,21 @@ public class ForvaltningRestTjeneste {
     public Response oppdaterAktoerId(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AktørRequestAbacDataSupplier.class) @NotNull @Valid ByttAktørRequest request) {
         int antall = oppdaterAktørIdFor(request.getUtgåttAktør().getVerdi(), request.getGyldigAktør().getVerdi());
         return Response.ok(antall).build();
+    }
+
+    @POST
+    @Path("/toggleTokenDebug")
+    @Consumes(APPLICATION_JSON)
+    @Produces(APPLICATION_JSON)
+    @Operation(description = "Slår debugging av T-rex på/av",
+        tags = "FORVALTNING",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Ny verdi for toggle.")
+        })
+    @BeskyttetRessurs(action = CREATE, resource = DRIFT)
+    public Response toggleTokenDebug() {
+        boolean toggle = InfotrygdGrunnlagAggregator.toggleDebugToken();
+        return Response.ok(toggle).build();
     }
 
     private int oppdaterAktørIdFor(String gammel, String gjeldende) {

@@ -3,9 +3,9 @@ package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -20,14 +20,12 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.ws.MeldekortUtbetalingsgrunnlagConsumer;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.RelatertYtelseStatusReverse;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.xmlutils.DateUtil;
 import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.binding.FinnMeldekortUtbetalingsgrunnlagListeAktoerIkkeFunnet;
 import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.binding.FinnMeldekortUtbetalingsgrunnlagListeSikkerhetsbegrensning;
 import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.binding.FinnMeldekortUtbetalingsgrunnlagListeUgyldigInput;
-import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.informasjon.AktoerId;
 import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.informasjon.Meldekort;
 import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.informasjon.ObjectFactory;
 import no.nav.tjeneste.virksomhet.meldekortutbetalingsgrunnlag.v1.informasjon.Periode;
@@ -145,59 +143,7 @@ public class MeldekortTjeneste {
         return vedtakene;
     }
 
-    public List<MeldekortUtbetalingsgrunnlagSak> hentMeldekortListe(AktørId aktørId, PersonIdent ident, LocalDate fom, LocalDate tom) {
-        try {
-            FinnMeldekortUtbetalingsgrunnlagListeRequest request = new FinnMeldekortUtbetalingsgrunnlagListeRequest();
-
-            AktoerId aktoer = objectFactory.createAktoerId();
-            aktoer.setAktoerId(aktørId.getId());
-            request.setIdent(aktoer);
-            Periode periode = objectFactory.createPeriode();
-            periode.setFom(DateUtil.convertToXMLGregorianCalendarRemoveTimezone(fom));
-            if (tom != null) {
-                periode.setTom(DateUtil.convertToXMLGregorianCalendarRemoveTimezone(tom));
-            }
-            request.setPeriode(periode);
-
-            Tema aapTema = objectFactory.createTema();
-            aapTema.setValue(YtelseType.ARBEIDSAVKLARINGSPENGER.getKode());
-            request.getTemaListe().add(aapTema);
-            Tema dagTema = objectFactory.createTema();
-            dagTema.setValue(YtelseType.DAGPENGER.getKode());
-            request.getTemaListe().add(dagTema);
-
-            FinnMeldekortUtbetalingsgrunnlagListeResponse response = meldekortUtbetalingsgrunnlagConsumer.finnMeldekortUtbetalingsgrunnlagListe(request);
-
-            List<MeldekortUtbetalingsgrunnlagSak> saker = new ArrayList<>();
-            if (response != null && !response.getMeldekortUtbetalingsgrunnlagListe().isEmpty()) {
-                for (Sak sak : response.getMeldekortUtbetalingsgrunnlagListe()) {
-                    saker.addAll(oversettArenaSak(sak));
-                }
-            }
-
-            var antallMK = Optional.ofNullable(response)
-                .map(FinnMeldekortUtbetalingsgrunnlagListeResponse::getMeldekortUtbetalingsgrunnlagListe).orElse(List.of()).stream()
-                .flatMap(l -> l.getVedtakListe().stream())
-                .mapToLong(v -> v.getMeldekortListe().size())
-                .sum();
-            var saksnumre = Optional.ofNullable(response)
-                .map(FinnMeldekortUtbetalingsgrunnlagListeResponse::getMeldekortUtbetalingsgrunnlagListe).orElse(List.of()).stream()
-                    .map(Sak::getFagsystemSakId)
-                        .collect(Collectors.toSet());
-
-            validerMeldekortListeFnr(antallMK, saksnumre, ident, fom, tom);
-
-            return saker;
-        } catch (FinnMeldekortUtbetalingsgrunnlagListeSikkerhetsbegrensning e) {
-            throw new TekniskException("FP-150919", "MeldekortUtbetalingsgrunnlag (Arena) ikke tilgjengelig (sikkerhetsbegrensning)", e);
-        } catch (FinnMeldekortUtbetalingsgrunnlagListeUgyldigInput e) {
-            throw new IntegrasjonException("FP-615299", "MeldekortUtbetalingsgrunnlag (Arena) ugyldig input", e);
-        } catch (FinnMeldekortUtbetalingsgrunnlagListeAktoerIkkeFunnet e) {
-            throw new IntegrasjonException("FP-615298", "MeldekortUtbetalingsgrunnlag (Arena) fant ikke person for oppgitt aktørId", e);
-        }
-    }
-
-    public void validerMeldekortListeFnr(long antallMeldekort, Set<String> saksnumre, PersonIdent ident, LocalDate fom, LocalDate tom) {
+    public List<MeldekortUtbetalingsgrunnlagSak> hentMeldekortListe(PersonIdent ident, LocalDate fom, LocalDate tom) {
         try {
             FinnMeldekortUtbetalingsgrunnlagListeRequest request = new FinnMeldekortUtbetalingsgrunnlagListeRequest();
 
@@ -220,38 +166,20 @@ public class MeldekortTjeneste {
 
             FinnMeldekortUtbetalingsgrunnlagListeResponse response = meldekortUtbetalingsgrunnlagConsumer.finnMeldekortUtbetalingsgrunnlagListe(request);
 
-            var testAntallMK = Optional.ofNullable(response)
-                .map(FinnMeldekortUtbetalingsgrunnlagListeResponse::getMeldekortUtbetalingsgrunnlagListe).orElse(List.of()).stream()
-                .flatMap(l -> l.getVedtakListe().stream())
-                .mapToLong(v -> v.getMeldekortListe().size())
-                .sum();
-            var testSaksnumre = Optional.ofNullable(response)
-                .map(FinnMeldekortUtbetalingsgrunnlagListeResponse::getMeldekortUtbetalingsgrunnlagListe).orElse(List.of()).stream()
-                .map(Sak::getFagsystemSakId)
-                .collect(Collectors.toSet());
-
-            if (testAntallMK == antallMeldekort) {
-                log.info("ARENATEST MKUG FNR: Samme antall MK");
-            } else {
-                log.info("ARENATEST MKUG FNR: Ulikt antall MK aktør {} bruker {}", antallMeldekort, testAntallMK);
-            }
-
-            if (testSaksnumre.size() == saksnumre.size() && testSaksnumre.containsAll(saksnumre)) {
-                log.info("ARENATEST MKUG FNR: Like saksnumre");
-            } else {
-                log.info("ARENATEST MKUG FNR: Ulike saksnumre aktør {} bruker {}", saksnumre, testSaksnumre);
-            }
+            return Optional.ofNullable(response)
+                .map(FinnMeldekortUtbetalingsgrunnlagListeResponse::getMeldekortUtbetalingsgrunnlagListe).orElse(List.of())
+                .stream()
+                .map(this::oversettArenaSak)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
 
         } catch (FinnMeldekortUtbetalingsgrunnlagListeSikkerhetsbegrensning e) {
-            log.info("ARENATEST MKUG FNR: MeldekortUtbetalingsgrunnlag (Arena) ikke tilgjengelig (sikkerhetsbegrensning)");
+            throw new TekniskException("FP-150919", "MeldekortUtbetalingsgrunnlag (Arena) ikke tilgjengelig (sikkerhetsbegrensning)", e);
         } catch (FinnMeldekortUtbetalingsgrunnlagListeUgyldigInput e) {
-            log.info("ARENATEST MKUG FNR: MeldekortUtbetalingsgrunnlag (Arena) ugyldig input");
+            throw new IntegrasjonException("FP-615299", "MeldekortUtbetalingsgrunnlag (Arena) ugyldig input", e);
         } catch (FinnMeldekortUtbetalingsgrunnlagListeAktoerIkkeFunnet e) {
-            log.info("ARENATEST MKUG FNR: MeldekortUtbetalingsgrunnlag (Arena) fant ikke person for oppgitt fnr");
-        } catch (Exception e) {
-            log.info("ARENATEST MKUG FNR: Annen feil");
+            throw new IntegrasjonException("FP-615298", "MeldekortUtbetalingsgrunnlag (Arena) fant ikke person for oppgitt aktørId", e);
         }
-
     }
 
 }

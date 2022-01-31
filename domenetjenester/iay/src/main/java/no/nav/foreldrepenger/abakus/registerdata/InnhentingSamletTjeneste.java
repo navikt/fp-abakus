@@ -112,14 +112,14 @@ public class InnhentingSamletTjeneste {
         return arbeidsforholdTjeneste.finnArbeidsforholdFrilansForIdentIPerioden(ident, aktørId, opplysningsPeriode);
     }
 
-    public List<InfotrygdYtelseGrunnlag> innhentInfotrygdGrunnlag(AktørId aktørId, PersonIdent ident, IntervallEntitet periode) {
+    public List<InfotrygdYtelseGrunnlag> innhentInfotrygdGrunnlag(PersonIdent ident, IntervallEntitet periode) {
         if (isDev) {
             return innhentingInfotrygdTjeneste.getInfotrygdYtelserFailSoft(ident, periode);
         }
         return innhentingInfotrygdTjeneste.getInfotrygdYtelser(ident, periode);
     }
 
-    public List<InfotrygdYtelseGrunnlag> innhentSpokelseGrunnlag(AktørId aktørId, PersonIdent ident, @SuppressWarnings("unused") IntervallEntitet periode) {
+    public List<InfotrygdYtelseGrunnlag> innhentSpokelseGrunnlag(PersonIdent ident, @SuppressWarnings("unused") IntervallEntitet periode) {
         if (isLocal) {
             return Collections.emptyList();
         }
@@ -129,8 +129,8 @@ public class InnhentingSamletTjeneste {
         return innhentingInfotrygdTjeneste.getSPøkelseYtelser(ident);
     }
 
-    public List<MeldekortUtbetalingsgrunnlagSak> hentYtelserTjenester(AktørId aktørId, PersonIdent ident, IntervallEntitet opplysningsPeriode) {
-        List<MeldekortUtbetalingsgrunnlagSak> saker = meldekortTjeneste.hentMeldekortListe(aktørId, ident,
+    public List<MeldekortUtbetalingsgrunnlagSak> hentDagpengerAAP(PersonIdent ident, IntervallEntitet opplysningsPeriode) {
+        List<MeldekortUtbetalingsgrunnlagSak> saker = meldekortTjeneste.hentMeldekortListe(ident,
             opplysningsPeriode.getFomDato(), opplysningsPeriode.getTomDato());
         return filtrerYtelserTjenester(saker);
     }

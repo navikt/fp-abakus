@@ -15,18 +15,21 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.Infotrygd
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
 import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
+import no.nav.vedtak.felles.integrasjon.rest.StsSystemRestKlient;
 
 public abstract class AbstractInfotrygdGrunnlag implements InfotrygdGrunnlag {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractInfotrygdGrunnlag.class);
 
     private OidcRestClient restClient;
+    private StsSystemRestKlient systemStsKlient;
     private URI uri;
     private String uriString;
 
-    public AbstractInfotrygdGrunnlag(OidcRestClient restClient, URI uri) {
+    public AbstractInfotrygdGrunnlag(OidcRestClient restClient, URI uri, StsSystemRestKlient systemStsKlient) {
         this.restClient = restClient;
         this.uri = uri;
         this.uriString = uri.toString();
+        this.systemStsKlient = systemStsKlient;
     }
 
     public AbstractInfotrygdGrunnlag() {
@@ -59,6 +62,21 @@ public abstract class AbstractInfotrygdGrunnlag implements InfotrygdGrunnlag {
         } catch (Exception e) {
             LOG.warn("Feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
             return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public void debugSystemTokenBruk(String fnr, LocalDate fom, LocalDate tom) {
+        if (systemStsKlient == null) return;
+        try {
+            var request = new URIBuilder(uri)
+                .addParameter("fnr", fnr)
+                .addParameter("fom", konverter(fom))
+                .addParameter("tom", konverter(tom)).build();
+            var grunnlag = systemStsKlient.get(request, Grunnlag[].class);
+            LOG.info("ABAKUS DEBUG STS fikk svar fra {}", uriString);
+        } catch (Exception e) {
+            LOG.info("ABAKUS DEBUG STS feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
         }
     }
 
