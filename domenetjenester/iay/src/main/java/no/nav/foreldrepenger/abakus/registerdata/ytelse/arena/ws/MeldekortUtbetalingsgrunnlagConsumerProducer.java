@@ -19,7 +19,7 @@ public class MeldekortUtbetalingsgrunnlagConsumerProducer {
     }
 
     public MeldekortUtbetalingsgrunnlagConsumer meldekortUtbetalingsgrunnlagConsumer() {
-        MeldekortUtbetalingsgrunnlagV1 port = StsConfigurationUtil.wrapWithSts(consumerConfig.getPort(), SECURITYCONTEXT_TIL_SAML);
+        MeldekortUtbetalingsgrunnlagV1 port = StsConfigurationUtil.wrapWithSts(consumerConfig.getPort(), SYSTEM_SAML);
         return new MeldekortUtbetalingsgrunnlagConsumerImpl(port);
     }
 
