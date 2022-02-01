@@ -86,7 +86,6 @@ public class InnhentingInfotrygdTjeneste {
 
     public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelser(PersonIdent ident, IntervallEntitet periode) {
         LocalDate innhentFom =  periode.getFomDato();
-        infotrygdGrunnlag.debugSystemTokenBruk(ident.getIdent(), innhentFom, periode.getTomDato()); // Overgang STS
         List<Grunnlag> rest = infotrygdGrunnlag.hentAggregertGrunnlag(ident.getIdent(), innhentFom, periode.getTomDato());
 
         return mapTilInfotrygdYtelseGrunnlag(rest, innhentFom);
@@ -94,7 +93,6 @@ public class InnhentingInfotrygdTjeneste {
 
     public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelserFailSoft(PersonIdent ident, IntervallEntitet periode) {
         LocalDate innhentFom =  periode.getFomDato();
-        infotrygdGrunnlag.debugSystemTokenBruk(ident.getIdent(), innhentFom, periode.getTomDato()); // Overgang STS
         List<Grunnlag> rest = infotrygdGrunnlag.hentAggregertGrunnlagFailSoft(ident.getIdent(), innhentFom, periode.getTomDato());
 
         return mapTilInfotrygdYtelseGrunnlag(rest, innhentFom);

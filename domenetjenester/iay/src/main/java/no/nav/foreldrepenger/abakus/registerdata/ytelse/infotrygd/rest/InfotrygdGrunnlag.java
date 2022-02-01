@@ -11,6 +11,4 @@ public interface InfotrygdGrunnlag {
 
     List<Grunnlag> hentGrunnlagFailSoft(String fnr, LocalDate fom, LocalDate tom);
 
-    void debugSystemTokenBruk(String fnr, LocalDate fom, LocalDate tom);
-
 }

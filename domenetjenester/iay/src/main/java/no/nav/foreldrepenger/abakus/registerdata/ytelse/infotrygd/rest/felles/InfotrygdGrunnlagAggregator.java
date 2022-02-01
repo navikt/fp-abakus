@@ -16,7 +16,6 @@ import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
 @ApplicationScoped
 public class InfotrygdGrunnlagAggregator {
 
-    private static volatile boolean DEBUG_STS = false; // NOSONAR
     private List<InfotrygdGrunnlag> tjenester;
 
     InfotrygdGrunnlagAggregator() {
@@ -40,18 +39,6 @@ public class InfotrygdGrunnlagAggregator {
             .flatMap(List::stream)
             .collect(toList());
     }
-
-    public void debugSystemTokenBruk(String fnr, LocalDate fom, LocalDate tom) {
-        if (DEBUG_STS) {
-            tjenester.forEach(t -> t.debugSystemTokenBruk(fnr, fom, tom));
-        }
-    }
-
-    public static synchronized boolean toggleDebugToken() {
-        DEBUG_STS = !DEBUG_STS;
-        return DEBUG_STS;
-    }
-
 
     @Override
     public String toString() {
