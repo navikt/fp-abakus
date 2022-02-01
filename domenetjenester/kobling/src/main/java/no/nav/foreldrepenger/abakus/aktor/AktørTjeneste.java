@@ -23,7 +23,7 @@ import no.nav.pdl.IdentlisteResponseProjection;
 import no.nav.vedtak.exception.VLException;
 import no.nav.vedtak.felles.integrasjon.pdl.Pdl;
 import no.nav.vedtak.felles.integrasjon.pdl.PdlKlient;
-import no.nav.vedtak.felles.integrasjon.rest.StsAccessTokenConfig;
+import no.nav.vedtak.felles.integrasjon.rest.StsStandardXtraTokenRestKlient;
 import no.nav.vedtak.util.LRUCache;
 
 
@@ -46,9 +46,9 @@ public class AktørTjeneste {
     }
 
     @Inject
-    public AktørTjeneste(@KonfigVerdi(value = "pdl.base.url",defaultVerdi = "http://pdl-api.odl/graphql") URI endpoint, StsAccessTokenConfig config) {
-        this.pdlKlientFOR = new PdlKlient(endpoint, "FOR", config);
-        this.pdlKlientOMS = new PdlKlient(endpoint, "OMS", config);
+    public AktørTjeneste(@KonfigVerdi(value = "pdl.base.url",defaultVerdi = "http://pdl-api.odl/graphql") URI endpoint, StsStandardXtraTokenRestKlient klient) {
+        this.pdlKlientFOR = new PdlKlient(klient, endpoint,"FOR");
+        this.pdlKlientOMS = new PdlKlient(klient, endpoint,"OMS");
         //this.pdlKlientFOR = new JerseyPdlKlient(endpoint, config, "FOR"); Mens vi venter på restabilisering av PDL
         //this.pdlKlientOMS = new JerseyPdlKlient(endpoint, config, "OMS");
         this.cacheAktørIdTilIdent = new LRUCache<>(DEFAULT_CACHE_SIZE, DEFAULT_CACHE_TIMEOUT);

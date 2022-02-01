@@ -17,7 +17,7 @@ public class InfotrygdPSGrunnlag extends AbstractInfotrygdGrunnlag {
 
     @Inject
     public InfotrygdPSGrunnlag(OidcRestClient restClient, @KonfigVerdi(value = "fpabakus.it.ps.grunnlag.url", defaultVerdi = DEFAULT_URI) URI uri) {
-        super(restClient, uri, null);
+        super(restClient, uri);
     }
 
     public InfotrygdPSGrunnlag() {

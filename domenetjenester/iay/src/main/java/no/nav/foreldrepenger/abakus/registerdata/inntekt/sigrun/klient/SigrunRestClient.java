@@ -34,10 +34,10 @@ import org.slf4j.LoggerFactory;
 import no.nav.vedtak.exception.IntegrasjonException;
 import no.nav.vedtak.exception.ManglerTilgangException;
 import no.nav.vedtak.exception.TekniskException;
-import no.nav.vedtak.isso.OpenAMHelper;
 import no.nav.vedtak.log.mdc.MDCOperations;
 import no.nav.vedtak.sikkerhet.context.SubjectHandler;
-import no.nav.vedtak.sikkerhet.domene.SAMLAssertionCredential;
+import no.nav.vedtak.sikkerhet.oidc.token.SikkerhetContext;
+import no.nav.vedtak.sikkerhet.oidc.token.TokenProvider;
 
 public class SigrunRestClient {
     private static final Logger LOG = LoggerFactory.getLogger(SigrunRestClient.class);
@@ -125,7 +125,7 @@ public class SigrunRestClient {
 
         var samlToken = SubjectHandler.getSubjectHandler().getSamlToken();
         if (samlToken != null) {
-            return veksleSamlTokenTilOIDCToken(samlToken);
+            return TokenProvider.getTokenFor(SikkerhetContext.SYSTEM).token();
         }
         throw new TekniskException("F-017072", "Klarte ikke å fremskaffe et OIDC token");
     }
@@ -146,16 +146,6 @@ public class SigrunRestClient {
                     String.format("Server svarte med feilkode http-kode '%s' og response var '%s'", status, response.getStatusLine().getReasonPhrase()));
             }
         };
-    }
-
-    //FIXME (u139158): PK-50281 STS for SAML til OIDC
-    // I mellomtiden bruker vi systemets OIDC-token, dvs vi propagerer ikke sikkerhetskonteksten
-    private String veksleSamlTokenTilOIDCToken(@SuppressWarnings("unused") SAMLAssertionCredential samlToken) {
-        try {
-            return new OpenAMHelper().getToken().idToken().getToken();
-        } catch (IOException e) {
-            throw new TekniskException("F-011590", "IOException ved henting av systemets OIDC-token", e);
-        }
     }
 
     void setEndpoint(URI endpoint) {

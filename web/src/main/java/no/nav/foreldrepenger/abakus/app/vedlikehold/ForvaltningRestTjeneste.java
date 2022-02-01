@@ -132,21 +132,6 @@ public class ForvaltningRestTjeneste {
         return Response.ok(antall).build();
     }
 
-    @POST
-    @Path("/toggleTokenDebug")
-    @Consumes(APPLICATION_JSON)
-    @Produces(APPLICATION_JSON)
-    @Operation(description = "Slår debugging av T-rex på/av",
-        tags = "FORVALTNING",
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Ny verdi for toggle.")
-        })
-    @BeskyttetRessurs(action = CREATE, resource = DRIFT)
-    public Response toggleTokenDebug() {
-        boolean toggle = InfotrygdGrunnlagAggregator.toggleDebugToken();
-        return Response.ok(toggle).build();
-    }
-
     private int oppdaterAktørIdFor(String gammel, String gjeldende) {
         int antall = 0;
         antall += entityManager.createNativeQuery("UPDATE kobling SET bruker_aktoer_id = :gjeldende WHERE bruker_aktoer_id = :gammel")
