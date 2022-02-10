@@ -38,8 +38,8 @@
 
 		<tjenestespesifikasjoner.version>1.2021.02.22-10.45-4201aaea72fb</tjenestespesifikasjoner.version>
 
-		<prometheus.version>0.14.1</prometheus.version>
-		<swagger.version>2.1.12</swagger.version>
+		<prometheus.version>0.15.0</prometheus.version>
+		<swagger.version>2.1.13</swagger.version>
 		<kafka.version>3.1.0</kafka.version>
 		<jersey.version>2.35</jersey.version>
         <flyway.version>8.4.4</flyway.version>
@@ -60,7 +60,7 @@
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-bom</artifactId>
-                <version>10.0.7</version>
+                <version>10.0.8</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
