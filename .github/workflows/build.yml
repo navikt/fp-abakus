@@ -68,7 +68,7 @@ jobs:
           docker push ${IMAGE_BASE_CR} --all-tags
 
       - name: Lukk gamle issues
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -91,7 +91,7 @@ jobs:
       -  name: Opprett deployment issue
          id: createdeployissue
          if: success()
-         uses: actions/github-script@v5
+         uses: actions/github-script@v6
          with:
            github-token: ${{secrets.GITHUB_TOKEN}}
            script: |
