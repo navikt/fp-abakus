@@ -2,19 +2,21 @@ package no.nav.abakus.iaygrunnlag.ytelse.v1;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Periode;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.ALWAYS)
@@ -25,13 +27,17 @@ public class AnvisningDto {
     @Valid
     private Periode periode;
 
-    /** Beløp i hele kroner (currency major unit). Tillater kun positive verdier.  Max verdi håndteres av mottager. */
+    /**
+     * Beløp i hele kroner (currency major unit). Tillater kun positive verdier.  Max verdi håndteres av mottager.
+     */
     @JsonProperty(value = "beløp")
     @Valid
     @DecimalMin(value = "0.00", message = "beløp [${validatedValue}] må være >= {value}")
     private BigDecimal beløp;
 
-    /** Beløp i hele kroner (currency major unit). Tillater kun positive verdier.  Max verdi håndteres av mottager. */
+    /**
+     * Beløp i hele kroner (currency major unit). Tillater kun positive verdier.  Max verdi håndteres av mottager.
+     */
     @JsonProperty(value = "dagsats")
     @Valid
     @DecimalMin(value = "0.00", message = "beløp [${validatedValue}] må være >= {value}")
@@ -45,6 +51,12 @@ public class AnvisningDto {
     @DecimalMin(value = "0.00", message = "prosentsats [${validatedValue}] må være >= {value}")
     @DecimalMax(value = "200.00", message = "prosentsats [${validatedValue}] må være <= {value}")
     private BigDecimal utbetalingsgrad;
+
+    @JsonProperty(value = "andeler")
+    @Valid
+    @Size
+    private List<AnvistAndelDto> andeler = new ArrayList<>();
+
 
     protected AnvisningDto() {
         // default ctor
@@ -60,6 +72,10 @@ public class AnvisningDto {
 
     public BigDecimal getBeløp() {
         return beløp;
+    }
+
+    public List<AnvistAndelDto> getAndeler() {
+        return andeler;
     }
 
     public void setBeløp(BigDecimal beløp) {
@@ -81,7 +97,11 @@ public class AnvisningDto {
     }
 
     public void setDagsats(BigDecimal dagsats) {
-        this.dagsats =  dagsats == null ? null : dagsats.setScale(2, RoundingMode.HALF_UP);
+        this.dagsats = dagsats == null ? null : dagsats.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public void setAndeler(List<AnvistAndelDto> andeler) {
+        this.andeler = andeler;
     }
 
     public AnvisningDto medDagsats(BigDecimal dagsats) {
@@ -100,12 +120,12 @@ public class AnvisningDto {
     public void setUtbetalingsgrad(BigDecimal utbetalingsgrad) {
         this.utbetalingsgrad = utbetalingsgrad == null ? null : utbetalingsgrad.setScale(2, RoundingMode.HALF_UP);
     }
-    
+
     public AnvisningDto medUtbetalingsgrad(BigDecimal utbetalingsgrad) {
         setUtbetalingsgrad(utbetalingsgrad);
         return this;
     }
-    
+
     public AnvisningDto medUtbetalingsgrad(int utbetalingsgrad) {
         setUtbetalingsgrad(BigDecimal.valueOf(utbetalingsgrad));
         return this;
