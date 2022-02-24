@@ -78,13 +78,14 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
                                                       VirksomhetTjeneste virksomhetTjeneste,
                                                       InnhentingSamletTjeneste innhentingSamletTjeneste,
                                                       AktørTjeneste aktørConsumer,
-                                                      SigrunTjeneste sigrunTjeneste, VedtakYtelseRepository vedtakYtelseRepository) {
+                                                      SigrunTjeneste sigrunTjeneste,
+                                                      VedtattYtelseInnhentingTjeneste vedtattYtelseInnhentingTjeneste) {
         this.inntektArbeidYtelseTjeneste = inntektArbeidYtelseTjeneste;
         this.virksomhetTjeneste = virksomhetTjeneste;
         this.innhentingSamletTjeneste = innhentingSamletTjeneste;
         this.aktørConsumer = aktørConsumer;
         this.sigrunTjeneste = sigrunTjeneste;
-        this.ytelseRegisterInnhenting = new YtelseRegisterInnhenting(innhentingSamletTjeneste, vedtakYtelseRepository);
+        this.ytelseRegisterInnhenting = new YtelseRegisterInnhenting(innhentingSamletTjeneste, vedtattYtelseInnhentingTjeneste);
         this.byggYrkesaktiviteterTjeneste = new ByggYrkesaktiviteterTjeneste();
     }
 

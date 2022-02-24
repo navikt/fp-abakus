@@ -6,7 +6,7 @@ import javax.persistence.Converter;
 import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
 
 @Converter(autoApply = true)
-class InntektskategoriKodeverdiConverter implements AttributeConverter<Inntektskategori, String> {
+public class InntektskategoriKodeverdiConverter implements AttributeConverter<Inntektskategori, String> {
     @Override
     public String convertToDatabaseColumn(Inntektskategori attribute) {
         return attribute == null ? null : attribute.getKode();
