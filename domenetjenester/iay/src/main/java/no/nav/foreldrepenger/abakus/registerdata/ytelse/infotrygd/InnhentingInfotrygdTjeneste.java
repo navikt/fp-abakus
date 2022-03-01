@@ -85,14 +85,14 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelser(PersonIdent ident, IntervallEntitet periode) {
-        LocalDate innhentFom =  periode.getFomDato();
+        LocalDate innhentFom = periode.getFomDato();
         List<Grunnlag> rest = infotrygdGrunnlag.hentAggregertGrunnlag(ident.getIdent(), innhentFom, periode.getTomDato());
 
         return mapTilInfotrygdYtelseGrunnlag(rest, innhentFom);
     }
 
     public List<InfotrygdYtelseGrunnlag> getInfotrygdYtelserFailSoft(PersonIdent ident, IntervallEntitet periode) {
-        LocalDate innhentFom =  periode.getFomDato();
+        LocalDate innhentFom = periode.getFomDato();
         List<Grunnlag> rest = infotrygdGrunnlag.hentAggregertGrunnlagFailSoft(ident.getIdent(), innhentFom, periode.getTomDato());
 
         return mapTilInfotrygdYtelseGrunnlag(rest, innhentFom);
@@ -119,6 +119,14 @@ public class InnhentingInfotrygdTjeneste {
             return null;
         }
         Periode fraSaksdata = utledPeriode(grunnlag.getIverksatt(), grunnlag.getOpphørFom(), grunnlag.getRegistrert());
+        if (grunnlag.getOpphørFom() != null) {
+            LOG.info("Infotrygdgrunnlag: OpphørFom: {}, Iverksatt: {}, Registrert: {}, Periode: {}",
+                grunnlag.getOpphørFom(),
+                grunnlag.getIverksatt(),
+                grunnlag.getRegistrert(),
+                grunnlag.getPeriode() == null ? "IKKE SATT" : grunnlag.getPeriode());
+
+        }
         Periode brukPeriode = grunnlag.getPeriode() != null ? grunnlag.getPeriode() : fraSaksdata;
         Integer dekningsgrad = grunnlag.getDekningsgrad() != null ? grunnlag.getDekningsgrad().getProsent() : null;
         Arbeidskategori arbeidskategori = grunnlag.getKategori() == null ? Arbeidskategori.UGYLDIG :
@@ -169,7 +177,7 @@ public class InnhentingInfotrygdTjeneste {
     private InfotrygdYtelseArbeid arbeidsforholdTilInfotrygdYtelseArbeid(Arbeidsforhold arbeidsforhold) {
         InntektPeriodeType inntektPeriode = arbeidsforhold.inntektsperiode() == null ? InntektPeriodeType.UDEFINERT :
             InntektPeriodeReverse.reverseMap(arbeidsforhold.inntektsperiode().kode().name(), LOG);
-        BigDecimal inntekt= arbeidsforhold.inntekt() != null ? new BigDecimal(arbeidsforhold.inntekt()) : null;
+        BigDecimal inntekt = arbeidsforhold.inntekt() != null ? new BigDecimal(arbeidsforhold.inntekt()) : null;
         return new InfotrygdYtelseArbeid(arbeidsforhold.orgnr().getOrgnr(),
             inntekt, inntektPeriode, arbeidsforhold.refusjon());
     }
