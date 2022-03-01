@@ -108,4 +108,4 @@ spec:
       value: http://spokelse.tbd/grunnlag
 
     - name: SKAL_INNENTE_YTELSE_ANVIST_ANDELER
-      value: true
+      value: "true"
