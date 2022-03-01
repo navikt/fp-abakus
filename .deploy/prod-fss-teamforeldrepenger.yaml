@@ -76,8 +76,6 @@ spec:
       value: http://kafka-schema-registry.tpa:8081
     - name: KAFKA_FATTEVEDTAK_TOPIC
       value: privat-familie-vedtakFattet-v1
-    - name: KAFKA_LONNSKOMPENSASJON_TOPIC
-      value: privat-permittering-lonnskomp-vedtak
     # Eksterne systemer
     - name: PDL_BASE_URL
       value: http://pdl-api.pdl/graphql
