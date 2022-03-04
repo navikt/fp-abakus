@@ -1,9 +1,7 @@
 package no.nav.foreldrepenger.abakus.lonnskomp.domene;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -51,16 +49,6 @@ public class LønnskompensasjonRepository {
         entityManager.flush();
     }
 
-    public List<LønnskompensasjonVedtak> hentSak(String sakId) {
-        Objects.requireNonNull(sakId, "sakId");
-
-        TypedQuery<LønnskompensasjonVedtak> query = entityManager.createQuery("SELECT v FROM LonnskompVedtakEntitet v " +
-            "WHERE aktiv = true AND v.sakId = :sakId ", LønnskompensasjonVedtak.class);
-        query.setParameter("sakId", sakId);
-
-        return new ArrayList<>(query.getResultList());
-    }
-
     public Optional<LønnskompensasjonVedtak> hentSak(String sakId, String fnr) {
         Objects.requireNonNull(sakId, "sakId");
 
@@ -89,14 +77,6 @@ public class LønnskompensasjonRepository {
                 resultat.add(v);
         }
         return resultat;
-    }
-
-    public void oppdaterFødselsnummer(String fnr, AktørId aktørId) {
-        Objects.requireNonNull(fnr, "fnr");
-
-        entityManager.createNativeQuery("UPDATE lonnskomp_vedtak SET aktoer_id = :aid WHERE fnr = :fnr")
-            .setParameter("aid", aktørId.getId()).setParameter("fnr", fnr).executeUpdate();
-        entityManager.flush();
     }
 
     public boolean skalLagreVedtak(LønnskompensasjonVedtak eksisterende, LønnskompensasjonVedtak vedtak) {
