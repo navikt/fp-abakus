@@ -1,5 +1,2 @@
-drop table kodeverk  ;
-
-drop sequence seq_kodeliste;
-drop sequence seq_kodeliste_navn;
-drop sequence seq_kodeliste_relasjon;
+drop table LONNSKOMP_FILTER;
+drop sequence SEQ_LONNSKOMP_FILTER;
