@@ -55,7 +55,6 @@ import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrganisasjonsNummerValidator;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.vedtak.exception.TekniskException;
 
 public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInnhentingTjeneste {
@@ -170,7 +169,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         }
     }
 
-    private  Map<Arbeidsgiver, Map<YearMonth, List<MånedsbeløpOgSkatteOgAvgiftsregel>>> mapTilArbeidsgiver(InntektsInformasjon inntektsInformasjon, YtelseType ytelse) {
+    private Map<Arbeidsgiver, Map<YearMonth, List<MånedsbeløpOgSkatteOgAvgiftsregel>>> mapTilArbeidsgiver(InntektsInformasjon inntektsInformasjon, YtelseType ytelse) {
         Map<String, Set<YearMonth>> alleArbeidsgivereMedMåneder = inntektsInformasjon.getMånedsinntekterUtenomYtelser().stream()
             .collect(Collectors.groupingBy(Månedsinntekt::getArbeidsgiver, Collectors.mapping(Månedsinntekt::getMåned, Collectors.toSet())));
         Map<String, Arbeidsgiver> arbeidsgivereLookup = new HashMap<>();
