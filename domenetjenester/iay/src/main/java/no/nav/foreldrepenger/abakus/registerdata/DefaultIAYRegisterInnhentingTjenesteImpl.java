@@ -13,7 +13,6 @@ import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.SigrunTjeneste;
-import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 
 /**
  * Standard IAY register innhenter.
@@ -31,7 +30,8 @@ public class DefaultIAYRegisterInnhentingTjenesteImpl extends IAYRegisterInnhent
                                                     VirksomhetTjeneste virksomhetTjeneste,
                                                     InnhentingSamletTjeneste innhentingSamletTjeneste,
                                                     AktørTjeneste aktørConsumer,
-                                                    SigrunTjeneste sigrunTjeneste, VedtattYtelseInnhentingTjeneste vedtattYtelseInnhentingTjeneste) {
+                                                    SigrunTjeneste sigrunTjeneste,
+                                                    VedtattYtelseInnhentingTjeneste vedtattYtelseInnhentingTjeneste) {
         super(inntektArbeidYtelseTjeneste,
             virksomhetTjeneste,
             innhentingSamletTjeneste,
@@ -53,7 +53,7 @@ public class DefaultIAYRegisterInnhentingTjenesteImpl extends IAYRegisterInnhent
         Optional<OppgittOpptjeningAggregat> aggregat = grunnlag.flatMap(InntektArbeidYtelseGrunnlag::getOppgittOpptjeningAggregat);
         boolean harOppgittOpptjeningSNMedAggregat = aggregat.isPresent() && aggregat.get().getOppgitteOpptjeninger().stream().anyMatch(oppgittOpptjening -> !oppgittOpptjening.getEgenNæring().isEmpty());
 
-        return harOppgittSNOpptjeningUtenAggregat || harOppgittOpptjeningSNMedAggregat ;
+        return harOppgittSNOpptjeningUtenAggregat || harOppgittOpptjeningSNMedAggregat;
 
 
     }

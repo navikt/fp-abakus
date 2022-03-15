@@ -12,7 +12,6 @@ import no.nav.foreldrepenger.abakus.registerdata.InnhentingSamletTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.VedtattYtelseInnhentingTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.SigrunTjeneste;
-import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 
 @ApplicationScoped
 @YtelseTypeRef("ES")
@@ -32,7 +31,8 @@ public class IAYRegisterInnhentingESTjenesteImpl extends IAYRegisterInnhentingFe
             virksomhetTjeneste,
             innhentingSamletTjeneste,
             aktørConsumer,
-            sigrunTjeneste, vedtattYtelseInnhentingTjeneste);
+            sigrunTjeneste, vedtattYtelseInnhentingTjeneste
+        );
     }
 
     @Override
