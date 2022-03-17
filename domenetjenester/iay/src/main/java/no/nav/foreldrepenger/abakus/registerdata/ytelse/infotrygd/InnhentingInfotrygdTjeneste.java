@@ -179,7 +179,7 @@ public class InnhentingInfotrygdTjeneste {
             InntektPeriodeReverse.reverseMap(arbeidsforhold.inntektsperiode().kode().name(), LOG);
         BigDecimal inntekt = arbeidsforhold.inntekt() != null ? new BigDecimal(arbeidsforhold.inntekt()) : null;
         return new InfotrygdYtelseArbeid(arbeidsforhold.orgnr().getOrgnr(),
-            inntekt, inntektPeriode, arbeidsforhold.refusjon());
+            inntekt, inntektPeriode, arbeidsforhold.refusjon(), arbeidsforhold.refusjonTom());
     }
 
     private Periode utledPeriode(LocalDate iverksatt, LocalDate opphoerFomDato, LocalDate registrert) {
