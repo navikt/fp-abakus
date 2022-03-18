@@ -69,6 +69,10 @@ public class InnhentingInfotrygdTjeneste {
         Map.entry(no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.BehandlingstemaKode.PI, YtelseType.PLEIEPENGER_SYKT_BARN),
         Map.entry(no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.BehandlingstemaKode.PN, YtelseType.PLEIEPENGER_SYKT_BARN)
     );
+    public static final String SELVSTENDIG = "02";
+    public static final String ARBTAKER_SELVSTENDIG = "03";
+    public static final String FL_OPPDRAGSTAKER_U_FORS = "24";
+    public static final String ARB_FL_OPPDRAGSTAKER_U_FORS = "25";
 
     private InfotrygdGrunnlagAggregator infotrygdGrunnlag;
     private Spøkelse spøkelse;
@@ -147,6 +151,7 @@ public class InnhentingInfotrygdTjeneste {
             .medVedtaksPeriodeFom(brukPeriode.fom())
             .medVedtaksPeriodeTom(brukPeriode.tom())
             .medArbeidskategori(arbeidskategori)
+            .medNæringEllerFrilansUtenForsikring(erNæringEllerFrilansUtenForsikring(grunnlag.getKategori()))
             .medDekningsgrad(dekningsgrad)
             .medGradering(grunnlag.getGradering())
             .medFødselsdatoBarn(grunnlag.getFødselsdatoBarn())
@@ -161,6 +166,13 @@ public class InnhentingInfotrygdTjeneste {
             .forEach(grunnlagBuilder::leggTillAnvistPerioder);
 
         return grunnlagBuilder.build();
+    }
+
+    private boolean erNæringEllerFrilansUtenForsikring(no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Arbeidskategori kategori) {
+        return kategori.kode().getKode().equals(SELVSTENDIG) ||
+            kategori.kode().getKode().equals(ARBTAKER_SELVSTENDIG) ||
+            kategori.kode().getKode().equals(FL_OPPDRAGSTAKER_U_FORS) ||
+            kategori.kode().getKode().equals(ARB_FL_OPPDRAGSTAKER_U_FORS);
     }
 
     private YtelseStatus mapYtelseStatus(Grunnlag grunnlag) {
