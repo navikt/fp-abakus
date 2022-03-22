@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Optional;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
 
@@ -45,8 +46,8 @@ public class InfotrygdYtelseArbeid {
         return refusjon;
     }
 
-    public LocalDate getRefusjonTom() {
-        return refusjonTom;
+    public Optional<LocalDate> getRefusjonTom() {
+        return Optional.ofNullable(refusjonTom);
     }
 
     @Override

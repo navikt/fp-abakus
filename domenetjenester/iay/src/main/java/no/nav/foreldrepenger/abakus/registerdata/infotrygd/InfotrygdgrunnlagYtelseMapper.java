@@ -175,7 +175,7 @@ public class InfotrygdgrunnlagYtelseMapper {
                                                                        IntervallEntitet periode,
                                                                        OrgNummer orgnummer,
                                                                        List<InfotrygdYtelseArbeid> grunnlagsandeler) {
-        var refusjonTom = grunnlagsandeler.stream().map(InfotrygdYtelseArbeid::getRefusjonTom).findFirst();
+        var refusjonTom = grunnlagsandeler.stream().flatMap(it -> it.getRefusjonTom().stream()).findFirst();
         refusjonTom.ifPresent(it -> validerRefusjonTom(periode, it));
         var refusjon = grunnlagsandeler.stream().filter(InfotrygdYtelseArbeid::getRefusjon)
             .map(InfotrygdgrunnlagYtelseMapper::mapTilDagsats).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
