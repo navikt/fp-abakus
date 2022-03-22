@@ -97,7 +97,7 @@ public class YtelseAnvistAndel extends BaseEntitet implements IndexKey {
 
 
     public InternArbeidsforholdRef getArbeidsforholdRef() {
-        return arbeidsforholdRef;
+        return arbeidsforholdRef != null ? arbeidsforholdRef : InternArbeidsforholdRef.nullRef();
     }
 
     void setArbeidsforholdRef(InternArbeidsforholdRef arbeidsforholdRef) {
