@@ -517,7 +517,7 @@ public class InntektArbeidYtelseRepository {
         var saksbehandletFørVersjon = nyttGrunnlag.getSaksbehandletVersjon();
         saksbehandletFørVersjon.ifPresent(this::lagreInntektArbeid);
 
-        nyttGrunnlag.getInntektsmeldinger().ifPresent(ims -> this.lagreInntektsMeldinger(ims));
+        nyttGrunnlag.getInntektsmeldinger().ifPresent(this::lagreInntektsMeldinger);
 
         entitet.getArbeidsforholdInformasjon().ifPresent(this::lagreInformasjon);
         entityManager.persist(nyttGrunnlag);
@@ -530,7 +530,7 @@ public class InntektArbeidYtelseRepository {
     }
 
     private void lagreInformasjon(ArbeidsforholdInformasjon data) {
-        
+
         // va
         entityManager.persist(data);
         for (var referanseEntitet : data.getArbeidsforholdReferanser()) {
@@ -637,6 +637,9 @@ public class InntektArbeidYtelseRepository {
             entityManager.persist(ytelse);
             for (YtelseAnvist ytelseAnvist : ytelse.getYtelseAnvist()) {
                 entityManager.persist(ytelseAnvist);
+                if (ytelseAnvist.getYtelseAnvistAndeler() != null) {
+                    ytelseAnvist.getYtelseAnvistAndeler().forEach(entityManager::persist);
+                }
             }
             ytelse.getYtelseGrunnlag().ifPresent(yg -> {
                 entityManager.persist(yg);

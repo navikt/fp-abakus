@@ -95,6 +95,7 @@ public class InfotrygdgrunnlagYtelseMapper {
     private static List<YtelseAnvistAndel> oversettYtelseArbeidTilAnvisteAndeler(List<InfotrygdYtelseArbeid> arbeidsforhold, Arbeidskategori kategori, IntervallEntitet periode, BigDecimal utbetalingsgrad) {
         var inntektskategorier = splittArbeidskategoriTilInntektskategorier(kategori);
         if (inntektskategorier.isEmpty()) {
+            LOGGER.info("Kunne ikke mappe inntektskategori fra infotrygdgrunnlag. Mapper ingen andeler for anvisning.");
             return Collections.emptyList();
         }
         var andelBuildere = new ArrayList<>(finnArbeidstakerAndeler(arbeidsforhold, utbetalingsgrad, periode));
