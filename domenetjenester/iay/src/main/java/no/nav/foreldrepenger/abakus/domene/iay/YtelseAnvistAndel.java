@@ -33,7 +33,7 @@ import no.nav.foreldrepenger.abakus.vedtak.domene.InntektskategoriKodeverdiConve
 public class YtelseAnvistAndel extends BaseEntitet implements IndexKey {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_IAY_YTELSE_ANVIST_ANDEL")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_YTELSE_ANVIST_ANDEL")
     private Long id;
 
     @ManyToOne(optional = false)
