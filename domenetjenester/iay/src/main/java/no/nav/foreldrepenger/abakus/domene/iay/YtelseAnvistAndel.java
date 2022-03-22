@@ -47,6 +47,9 @@ public class YtelseAnvistAndel extends BaseEntitet implements IndexKey {
     @Embedded
     private InternArbeidsforholdRef arbeidsforholdRef;
 
+    /**
+     * Netto dagsats som tilsvarer grunnlagsdagsats * utbetalingsgrad
+     */
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "dagsats", nullable = false)))
     @ChangeTracked

@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Objects;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
@@ -11,12 +12,14 @@ public class InfotrygdYtelseArbeid {
     private BigDecimal inntekt;
     private InntektPeriodeType inntektperiode;
     private Boolean refusjon;
+    private LocalDate refusjonTom;
 
-    public InfotrygdYtelseArbeid(String orgnr, BigDecimal inntekt, InntektPeriodeType inntektperiode, Boolean refusjon) {
+    public InfotrygdYtelseArbeid(String orgnr, BigDecimal inntekt, InntektPeriodeType inntektperiode, Boolean refusjon, LocalDate refusjonTom) {
         this.orgnr = orgnr;
         this.inntekt = inntekt;
         this.inntektperiode = inntektperiode;
         this.refusjon = refusjon;
+        this.refusjonTom = refusjonTom;
     }
 
     public InfotrygdYtelseArbeid(String orgnr, int inntekt, InntektPeriodeType inntektperiode, Boolean refusjon) {
@@ -42,6 +45,10 @@ public class InfotrygdYtelseArbeid {
         return refusjon;
     }
 
+    public LocalDate getRefusjonTom() {
+        return refusjonTom;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -50,12 +57,14 @@ public class InfotrygdYtelseArbeid {
         return Objects.equals(orgnr, that.orgnr) &&
             Objects.equals(inntekt, that.inntekt) &&
             Objects.equals(inntektperiode, that.inntektperiode) &&
-            Objects.equals(refusjon, that.refusjon);
+            Objects.equals(refusjon, that.refusjon) &&
+            Objects.equals(refusjonTom, that.refusjonTom);
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orgnr, inntekt, inntektperiode, refusjon);
+        return Objects.hash(orgnr, inntekt, inntektperiode, refusjon, refusjonTom);
     }
 
     @Override
@@ -65,6 +74,7 @@ public class InfotrygdYtelseArbeid {
             ", inntekt=" + inntekt +
             ", inntektperiode=" + inntektperiode +
             ", refusjon=" + refusjon +
+            ", refusjon=" + refusjonTom +
             '}';
     }
 
