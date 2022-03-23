@@ -16,6 +16,8 @@ public abstract class Ytelse {
 
     public abstract YtelseType getType();
 
+    public abstract Ytelser getYtelse();
+
     public abstract String getSaksnummer();
 
     public abstract Aktør getAktør();
