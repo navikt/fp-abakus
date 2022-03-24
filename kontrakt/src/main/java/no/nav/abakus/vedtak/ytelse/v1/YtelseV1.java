@@ -14,8 +14,11 @@ import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.vedtak.ytelse.Aktør;
+import no.nav.abakus.vedtak.ytelse.Kildesystem;
 import no.nav.abakus.vedtak.ytelse.Periode;
+import no.nav.abakus.vedtak.ytelse.Status;
 import no.nav.abakus.vedtak.ytelse.Ytelse;
+import no.nav.abakus.vedtak.ytelse.Ytelser;
 import no.nav.abakus.vedtak.ytelse.v1.anvisning.Anvisning;
 
 public class YtelseV1 extends Ytelse {
@@ -30,9 +33,14 @@ public class YtelseV1 extends Ytelse {
     @JsonProperty("vedtattTidspunkt")
     private LocalDateTime vedtattTidspunkt;
 
-    @NotNull
+    @Deprecated(forRemoval = true)
+    @NotNull // fjernes i neste fase
     @JsonProperty("type")
     private YtelseType type;
+
+    //@NotNull - enable etter overgang
+    @JsonProperty("ytelse")
+    private Ytelser ytelse;
 
     @Pattern(regexp = "^(-?[1-9]|[a-z0])[a-z0-9_:-]*$", flags = { Pattern.Flag.CASE_INSENSITIVE })
     @JsonProperty("saksnummer")
@@ -43,13 +51,23 @@ public class YtelseV1 extends Ytelse {
     @JsonProperty("vedtakReferanse")
     private String vedtakReferanse;
 
-    @NotNull
+    @Deprecated(forRemoval = true)
+    @NotNull // fjernes i neste fase
     @JsonProperty("status")
     private YtelseStatus status;
 
+    //@NotNull
+    @JsonProperty("ytelseStatus")
+    private Status ytelseStatus;
+
+    @Deprecated(forRemoval = true)
     @JsonProperty("fagsystem")
-    @NotNull
+    @NotNull // fjernes i neste fase
     private Fagsystem fagsystem;
+
+    @JsonProperty("kildesystem")
+    //@NotNull - enable ette overgang
+    private Kildesystem kildesystem;
 
     @NotNull
     @Valid
@@ -77,6 +95,15 @@ public class YtelseV1 extends Ytelse {
     }
 
     @Override
+    public Ytelser getYtelse() {
+        return ytelse;
+    }
+
+    public void setYtelse(Ytelser ytelse) {
+        this.ytelse = ytelse;
+    }
+
+    @Override
     public String getSaksnummer() {
         return saksnummer;
     }
@@ -93,12 +120,28 @@ public class YtelseV1 extends Ytelse {
         this.status = status;
     }
 
+    public Status getYtelseStatus() {
+        return ytelseStatus;
+    }
+
+    public void setYtelseStatus(Status ytelseStatus) {
+        this.ytelseStatus = ytelseStatus;
+    }
+
     public Fagsystem getFagsystem() {
         return fagsystem;
     }
 
     public void setFagsystem(Fagsystem fagsystem) {
         this.fagsystem = fagsystem;
+    }
+
+    public Kildesystem getKildesystem() {
+        return kildesystem;
+    }
+
+    public void setKildesystem(Kildesystem kildesystem) {
+        this.kildesystem = kildesystem;
     }
 
     public Periode getPeriode() {

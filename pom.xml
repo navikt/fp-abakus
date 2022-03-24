@@ -31,10 +31,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<felles.version>4.1.19</felles.version>
+		<felles.version>4.1.22</felles.version>
 		<prosesstask.version>3.1.7</prosesstask.version>
 
-		<kontrakter.version>6.1.10</kontrakter.version>
+		<kontrakter.version>6.1.19</kontrakter.version>
 
 		<tjenestespesifikasjoner.version>1.2021.02.22-10.45-4201aaea72fb</tjenestespesifikasjoner.version>
 
@@ -42,7 +42,7 @@
 		<swagger.version>2.1.13</swagger.version>
 		<kafka.version>3.1.0</kafka.version>
 		<jersey.version>2.35</jersey.version>
-        <flyway.version>8.5.1</flyway.version>
+        <flyway.version>8.5.4</flyway.version>
 	</properties>
 
 	<prerequisites>
@@ -376,7 +376,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.10.0</version>
+					<version>3.10.1</version>
 					<configuration>
 						<source>${java.version}</source>
 						<target>${java.version}</target>
