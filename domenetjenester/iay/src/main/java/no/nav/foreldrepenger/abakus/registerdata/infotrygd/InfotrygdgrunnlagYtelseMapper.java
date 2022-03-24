@@ -154,7 +154,7 @@ public class InfotrygdgrunnlagYtelseMapper {
     }
 
     private static BigDecimal finnDagsatsIkkeArbeidstaker(List<InfotrygdYtelseArbeid> arbeidsforhold, BigDecimal utbetalingsgrad) {
-        return arbeidsforhold.stream().filter(arb -> arb.getOrgnr() == null)
+        return arbeidsforhold.stream().filter(arb -> !OrganisasjonsNummerValidator.erGyldig(arb.getOrgnr()))
             .map(InfotrygdgrunnlagYtelseMapper::mapTilDagsats)
             .reduce(BigDecimal::add)
             .orElse(BigDecimal.ZERO)
@@ -204,7 +204,7 @@ public class InfotrygdgrunnlagYtelseMapper {
         return switch (arbeid.getInntektperiode()) {
             case FASTSATT25PAVVIK, ÅRLIG -> arbeid.getInntekt().divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
             case MÅNEDLIG -> arbeid.getInntekt().multiply(BigDecimal.valueOf(12)).divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
-            case DAGLIG -> arbeid.getInntekt().multiply(BigDecimal.valueOf(260)).divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
+            case DAGLIG -> arbeid.getInntekt();
             case UKENTLIG -> arbeid.getInntekt().multiply(BigDecimal.valueOf(52)).divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
             case BIUKENTLIG -> arbeid.getInntekt().multiply(BigDecimal.valueOf(26)).divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
             default -> throw new IllegalArgumentException("Ugyldig InntektPeriodeType" + arbeid.getInntektperiode());
