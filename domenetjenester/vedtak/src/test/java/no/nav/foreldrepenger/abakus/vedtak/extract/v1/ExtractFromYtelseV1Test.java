@@ -57,7 +57,7 @@ public class ExtractFromYtelseV1Test {
 
         Anvisning anvisning = new Anvisning();
         anvisning.setPeriode(periode);
-        anvisning.setAndeler(List.of(new AnvistAndel(new Organisasjon("999999999"), 1236, 100, 100, Inntektskategori.ARBEIDSTAKER, "ehuif2897")));
+        anvisning.setAndeler(List.of(new AnvistAndel(new Organisasjon("999999999"), 1236, 100, 100, Inntektklasse.ARBEIDSTAKER, "ehuif2897")));
         ytelseV1.setAnvist(List.of(anvisning));
 
         VedtakYtelseBuilder builder = extractor.extractFrom(ytelseV1);

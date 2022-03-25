@@ -5,16 +5,23 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.Organisasjon;
+import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
+import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.AktørDatoRequest;
 import no.nav.abakus.iaygrunnlag.request.HentBrukersYtelserIPeriodeRequest;
 import no.nav.abakus.vedtak.ytelse.Aktør;
 import no.nav.abakus.vedtak.ytelse.Desimaltall;
+import no.nav.abakus.vedtak.ytelse.Kildesystem;
 import no.nav.abakus.vedtak.ytelse.Periode;
+import no.nav.abakus.vedtak.ytelse.Status;
 import no.nav.abakus.vedtak.ytelse.Ytelse;
+import no.nav.abakus.vedtak.ytelse.Ytelser;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
 import no.nav.abakus.vedtak.ytelse.v1.anvisning.Anvisning;
 import no.nav.abakus.vedtak.ytelse.v1.anvisning.AnvistAndel;
+import no.nav.abakus.vedtak.ytelse.v1.anvisning.Inntektklasse;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.felles.LoggUtil;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
@@ -159,10 +166,13 @@ public class YtelseRestTjeneste {
         ytelse.setAktør(aktør);
         ytelse.setVedtattTidspunkt(vedtak.getVedtattTidspunkt());
         ytelse.setType(vedtak.getYtelseType());
+        ytelse.setYtelse(mapYtelser(vedtak.getYtelseType()));
         ytelse.setSaksnummer(vedtak.getSaksnummer().getVerdi());
         ytelse.setVedtakReferanse(vedtak.getVedtakReferanse().toString());
         ytelse.setStatus(vedtak.getStatus());
+        ytelse.setYtelseStatus(mapStatus(vedtak.getStatus()));
         ytelse.setFagsystem(vedtak.getKilde());
+        ytelse.setKildesystem(mapKildesystem(vedtak.getKilde()));
         ytelse.setTilleggsopplysninger(vedtak.getTilleggsopplysninger());
         var periode = new Periode();
         periode.setFom(vedtak.getPeriode().getFomDato());
@@ -196,6 +206,39 @@ public class YtelseRestTjeneste {
             a.getRefusjonsgradProsent() == null ? null : new Desimaltall(a.getRefusjonsgradProsent().getVerdi()),
             a.getInntektskategori()
         )).collect(Collectors.toList());
+    }
+
+    private Kildesystem mapKildesystem(Fagsystem fagsystem) {
+        return switch (fagsystem) {
+            case FPSAK -> Kildesystem.FPSAK;
+            case K9SAK -> Kildesystem.K9SAK;
+            default -> null;
+        };
+    }
+
+    private Status mapStatus(YtelseStatus ytelseStatus) {
+        return switch (ytelseStatus) {
+            case OPPRETTET, UNDER_BEHANDLING -> Status.UNDER_BEHANDLING;
+            case LØPENDE -> Status.LØPENDE;
+            case AVSLUTTET -> Status.AVSLUTTET;
+            default -> Status.UKJENT;
+        };
+    }
+
+    private Ytelser mapYtelser(YtelseType kodeverk) {
+        return switch (kodeverk) {
+            case PLEIEPENGER_SYKT_BARN -> Ytelser.PLEIEPENGER_SYKT_BARN;
+            case PLEIEPENGER_NÆRSTÅENDE -> Ytelser.PLEIEPENGER_NÆRSTÅENDE;
+            case OMSORGSPENGER -> Ytelser.OMSORGSPENGER;
+            case OPPLÆRINGSPENGER -> Ytelser.OPPLÆRINGSPENGER;
+
+            case ENGANGSTØNAD -> Ytelser.ENGANGSTØNAD;
+            case FORELDREPENGER -> Ytelser.FORELDREPENGER;
+            case SVANGERSKAPSPENGER -> Ytelser.SVANGERSKAPSPENGER;
+
+            case FRISINN -> Ytelser.FRISINN;
+            default -> null;
+        };
     }
 
     public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
