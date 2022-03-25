@@ -99,19 +99,19 @@ public class InfotrygdgrunnlagYtelseMapper {
             return Collections.emptyList();
         }
         var andelBuildere = new ArrayList<>(finnArbeidstakerAndeler(arbeidsforhold, utbetalingsgrad, periode));
-        finnIkkeArbeidstakerAndel(arbeidsforhold, utbetalingsgrad, inntektskategorier).ifPresent(andelBuildere::add);
+        finnIkkeArbeidstakerAndel(arbeidsforhold, utbetalingsgrad, inntektskategorier, kategori).ifPresent(andelBuildere::add);
         finnYtelseRapportertPåNødnummer(arbeidsforhold, utbetalingsgrad, inntektskategorier).ifPresent(andelBuildere::add);
         return andelBuildere;
 
     }
 
-    private static Optional<YtelseAnvistAndel> finnIkkeArbeidstakerAndel(List<InfotrygdYtelseArbeid> arbeidsforhold, BigDecimal utbetalingsgrad, Set<Inntektskategori> inntektskategorier) {
+    private static Optional<YtelseAnvistAndel> finnIkkeArbeidstakerAndel(List<InfotrygdYtelseArbeid> arbeidsforhold, BigDecimal utbetalingsgrad, Set<Inntektskategori> inntektskategorier, Arbeidskategori kategori) {
         var ikkeArbeidstakerKategori = inntektskategorier.stream().filter(a -> !a.equals(Inntektskategori.ARBEIDSTAKER)).findFirst();
         return ikkeArbeidstakerKategori.map(i -> YtelseAnvistAndelBuilder.ny()
             .medUtbetalingsgrad(utbetalingsgrad)
             .medInntektskategori(i)
             .medRefusjonsgrad(BigDecimal.ZERO)
-            .medDagsats(finnDagsatsIkkeArbeidstaker(arbeidsforhold, utbetalingsgrad))
+            .medDagsats(finnDagsatsIkkeArbeidstaker(arbeidsforhold, utbetalingsgrad, kategori))
             .build()
         );
     }
@@ -153,12 +153,16 @@ public class InfotrygdgrunnlagYtelseMapper {
         return Optional.empty();
     }
 
-    private static BigDecimal finnDagsatsIkkeArbeidstaker(List<InfotrygdYtelseArbeid> arbeidsforhold, BigDecimal utbetalingsgrad) {
+    private static BigDecimal finnDagsatsIkkeArbeidstaker(List<InfotrygdYtelseArbeid> arbeidsforhold, BigDecimal utbetalingsgrad, Arbeidskategori kategori) {
+        var erInaktiv = kategori.equals(Arbeidskategori.INAKTIV);
         return arbeidsforhold.stream().filter(arb -> !OrganisasjonsNummerValidator.erGyldig(arb.getOrgnr()))
             .map(InfotrygdgrunnlagYtelseMapper::mapTilDagsats)
             .reduce(BigDecimal::add)
             .orElse(BigDecimal.ZERO)
-            .multiply(utbetalingsgrad).divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP);
+            .multiply(utbetalingsgrad)
+            // Reduserer til 65% av grunnlaget dersom inaktiv
+            .multiply(erInaktiv ? BigDecimal.valueOf(0.65) : BigDecimal.ONE)
+            .divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP);
     }
 
     private static List<YtelseAnvistAndel> finnArbeidstakerAndeler(List<InfotrygdYtelseArbeid> arbeidsforhold, BigDecimal utbetalingsgrad, IntervallEntitet periode) {
