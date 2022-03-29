@@ -28,6 +28,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.Organisasjon;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
+import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.HentBrukersK9YtelserIPeriodeRequest;
@@ -42,6 +43,7 @@ import no.nav.abakus.vedtak.ytelse.Ytelser;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
 import no.nav.abakus.vedtak.ytelse.v1.anvisning.Anvisning;
 import no.nav.abakus.vedtak.ytelse.v1.anvisning.AnvistAndel;
+import no.nav.abakus.vedtak.ytelse.v1.anvisning.Inntektklasse;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -161,13 +163,10 @@ public class EksternDelingAvYtelserRestTjeneste {
         aktør.setVerdi(vedtak.getAktør().getId());
         ytelse.setAktør(aktør);
         ytelse.setVedtattTidspunkt(vedtak.getVedtattTidspunkt());
-        ytelse.setType(vedtak.getYtelseType());
         ytelse.setYtelse(mapYtelser(vedtak.getYtelseType()));
         ytelse.setSaksnummer(vedtak.getSaksnummer().getVerdi());
         ytelse.setVedtakReferanse(vedtak.getVedtakReferanse().toString());
-        ytelse.setStatus(vedtak.getStatus());
         ytelse.setYtelseStatus(mapStatus(vedtak.getStatus()));
-        ytelse.setFagsystem(vedtak.getKilde());
         ytelse.setKildesystem(mapKildesystem(vedtak.getKilde()));
         ytelse.setTilleggsopplysninger(vedtak.getTilleggsopplysninger());
         var periode = new Periode();
@@ -200,7 +199,7 @@ public class EksternDelingAvYtelserRestTjeneste {
             new Desimaltall(a.getDagsats().getVerdi()),
             a.getUtbetalingsgradProsent() == null ? null : new Desimaltall(a.getUtbetalingsgradProsent().getVerdi()),
             a.getRefusjonsgradProsent() == null ? null : new Desimaltall(a.getRefusjonsgradProsent().getVerdi()),
-            a.getInntektskategori()
+            fraInntektskategori(a.getInntektskategori())
         )).collect(Collectors.toList());
     }
 
@@ -234,6 +233,22 @@ public class EksternDelingAvYtelserRestTjeneste {
 
             case FRISINN -> Ytelser.FRISINN;
             default -> null;
+        };
+    }
+
+    private static Inntektklasse fraInntektskategori(Inntektskategori inntektskategori) {
+        return switch (inntektskategori) {
+            case ARBEIDSTAKER -> Inntektklasse.ARBEIDSTAKER;
+            case ARBEIDSTAKER_UTEN_FERIEPENGER -> Inntektklasse.ARBEIDSTAKER_UTEN_FERIEPENGER;
+            case FRILANSER -> Inntektklasse.FRILANSER;
+            case SELVSTENDIG_NÆRINGSDRIVENDE -> Inntektklasse.SELVSTENDIG_NÆRINGSDRIVENDE;
+            case DAGPENGER -> Inntektklasse.DAGPENGER;
+            case ARBEIDSAVKLARINGSPENGER -> Inntektklasse.ARBEIDSAVKLARINGSPENGER;
+            case SJØMANN -> Inntektklasse.MARITIM;
+            case DAGMAMMA -> Inntektklasse.DAGMAMMA;
+            case JORDBRUKER -> Inntektklasse.JORDBRUKER;
+            case FISKER -> Inntektklasse.FISKER;
+            default -> Inntektklasse.INGEN;
         };
     }
 

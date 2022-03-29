@@ -3,7 +3,6 @@ package no.nav.abakus.vedtak.ytelse;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
 
 @JsonTypeInfo(
@@ -13,8 +12,6 @@ import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
         @JsonSubTypes.Type(value = YtelseV1.class, name = "1.0"),
 })
 public abstract class Ytelse {
-
-    public abstract YtelseType getType();
 
     public abstract Ytelser getYtelse();
 

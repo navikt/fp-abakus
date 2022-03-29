@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Aktør;
-import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
 import no.nav.abakus.vedtak.ytelse.Desimaltall;
 
 /**
@@ -42,24 +41,11 @@ public class AnvistAndel {
     @JsonProperty("refusjonsgrad")
     private Desimaltall refusjonsgrad;
 
-    @JsonProperty(value = "inntektskategori")
-    @Valid
-    private Inntektskategori inntektskategori;
-
     @JsonProperty(value = "inntektklasse")
     @Valid
     private Inntektklasse inntektklasse;
 
     protected AnvistAndel() {
-    }
-
-    @Deprecated(forRemoval = true)
-    public AnvistAndel(Aktør arbeidsgiver, int beløp, int utbetalingsgrad, int refusjonsgrad, Inntektskategori inntektskategori, String arbeidsforholdId) {
-        this(arbeidsgiver,
-            arbeidsforholdId, new Desimaltall(BigDecimal.valueOf(beløp)),
-            new Desimaltall(BigDecimal.valueOf(utbetalingsgrad)),
-            new Desimaltall(BigDecimal.valueOf(refusjonsgrad)),
-            inntektskategori);
     }
 
     public AnvistAndel(Aktør arbeidsgiver, int beløp, int utbetalingsgrad, int refusjonsgrad, Inntektklasse inntektklasse, String arbeidsforholdId) {
@@ -70,23 +56,12 @@ public class AnvistAndel {
             inntektklasse);
     }
 
-    @Deprecated(forRemoval = true)
-    public AnvistAndel(Aktør arbeidsgiver, String arbeidsforholdId, Desimaltall beløp, Desimaltall utbetalingsgrad, Desimaltall refusjonsgrad, Inntektskategori inntektskategori) {
-        this(arbeidsgiver, arbeidsforholdId, beløp, utbetalingsgrad, refusjonsgrad, inntektskategori, fraInntektskategori(inntektskategori));
-    }
-
     public AnvistAndel(Aktør arbeidsgiver, String arbeidsforholdId, Desimaltall beløp, Desimaltall utbetalingsgrad, Desimaltall refusjonsgrad, Inntektklasse inntektklasse) {
-        this(arbeidsgiver, arbeidsforholdId, beløp, utbetalingsgrad, refusjonsgrad, fraInntektklasse(inntektklasse), inntektklasse);
-    }
-
-    @Deprecated(forRemoval = true)
-    public AnvistAndel(Aktør arbeidsgiver, String arbeidsforholdId, Desimaltall beløp, Desimaltall utbetalingsgrad, Desimaltall refusjonsgrad, Inntektskategori inntektskategori, Inntektklasse inntektklasse) {
         this.arbeidsgiver = arbeidsgiver;
         this.arbeidsforholdId = arbeidsforholdId;
         this.dagsats = beløp;
         this.utbetalingsgrad = utbetalingsgrad;
         this.refusjonsgrad = refusjonsgrad;
-        this.inntektskategori = inntektskategori;
         this.inntektklasse = inntektklasse;
     }
 
@@ -110,48 +85,9 @@ public class AnvistAndel {
         return refusjonsgrad;
     }
 
-    @Deprecated(forRemoval = true)
-    public Inntektskategori getInntektskategori() {
-        return inntektskategori;
-    }
-
     public Inntektklasse getInntektklasse() {
         return Optional.ofNullable(inntektklasse)
-            .or(() -> Optional.ofNullable(inntektskategori).map(AnvistAndel::fraInntektskategori))
             .orElse(Inntektklasse.INGEN);
     }
 
-    @Deprecated(forRemoval = true)
-    public static Inntektklasse fraInntektskategori(Inntektskategori inntektskategori) {
-        return switch (inntektskategori) {
-            case ARBEIDSTAKER -> Inntektklasse.ARBEIDSTAKER;
-            case ARBEIDSTAKER_UTEN_FERIEPENGER -> Inntektklasse.ARBEIDSTAKER_UTEN_FERIEPENGER;
-            case FRILANSER -> Inntektklasse.FRILANSER;
-            case SELVSTENDIG_NÆRINGSDRIVENDE -> Inntektklasse.SELVSTENDIG_NÆRINGSDRIVENDE;
-            case DAGPENGER -> Inntektklasse.DAGPENGER;
-            case ARBEIDSAVKLARINGSPENGER -> Inntektklasse.ARBEIDSAVKLARINGSPENGER;
-            case SJØMANN -> Inntektklasse.MARITIM;
-            case DAGMAMMA -> Inntektklasse.DAGMAMMA;
-            case JORDBRUKER -> Inntektklasse.JORDBRUKER;
-            case FISKER -> Inntektklasse.FISKER;
-            default -> Inntektklasse.INGEN;
-        };
-    }
-
-    @Deprecated(forRemoval = true)
-    public static Inntektskategori fraInntektklasse(Inntektklasse inntektklasse) {
-        return switch (inntektklasse) {
-            case ARBEIDSTAKER -> Inntektskategori.ARBEIDSTAKER;
-            case ARBEIDSTAKER_UTEN_FERIEPENGER -> Inntektskategori.ARBEIDSTAKER_UTEN_FERIEPENGER;
-            case FRILANSER -> Inntektskategori.FRILANSER;
-            case SELVSTENDIG_NÆRINGSDRIVENDE -> Inntektskategori.SELVSTENDIG_NÆRINGSDRIVENDE;
-            case DAGPENGER -> Inntektskategori.DAGPENGER;
-            case ARBEIDSAVKLARINGSPENGER -> Inntektskategori.ARBEIDSAVKLARINGSPENGER;
-            case MARITIM -> Inntektskategori.SJØMANN;
-            case DAGMAMMA -> Inntektskategori.DAGMAMMA;
-            case JORDBRUKER -> Inntektskategori.JORDBRUKER;
-            case FISKER -> Inntektskategori.FISKER;
-            default -> Inntektskategori.UDEFINERT;
-        };
-    }
 }
