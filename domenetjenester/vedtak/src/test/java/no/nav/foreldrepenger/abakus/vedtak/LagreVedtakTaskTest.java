@@ -2,10 +2,8 @@ package no.nav.foreldrepenger.abakus.vedtak;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -13,7 +11,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import no.nav.foreldrepenger.abakus.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelse;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
@@ -30,70 +27,60 @@ public class LagreVedtakTaskTest {
 
     @Test
     public void skal_feile_ved_valideringsfeil() {
-        String payload = "{\n" +
-            "  \"version\": \"1.0\",\n" +
-            "  \"aktør\": {\n" +
-            "    \"verdi\": \"1957590366736\"\n" +
-            "  },\n" +
-            "  \"vedtattTidspunkt\": \"2019-06-11T00:00:00\",\n" +
-            "  \"type\": {\n" +
-            "    \"kodeverk\": \"FAGSAK_YTELSE_TYPE\",\n" +
-            "    \"kode\": \"SVP\"\n" +
-            "  },\n" +
-            "  \"saksnummer\": \"139015437\",\n" +
-            "  \"vedtakReferanse\": \"3028155d-c556-4a8a-a38d-a526b1129bf2\",\n" +
-            "  \"status\": {\n" +
-            "    \"kodeverk\": \"YTELSE_STATUS\",\n" +
-            "    \"kode\": \"UBEH\"\n" +
-            "  },\n" +
-            "  \"fagsystem\": {\n" +
-            "    \"kodeverk\": \"FAGSYSTEM\",\n" +
-            "    \"kode\": \"FPSAK\"\n" +
-            "  },\n" +
-            "  \"periode\": {\n" +
-            "    \"fom\": null,\n" +
-            "    \"tom\": null\n" +
-            "  },\n" +
-            "  \"anvist\": [\n" +
-            "    {\n" +
-            "      \"periode\": {\n" +
-            "        \"fom\": null,\n" +
-            "        \"tom\": null\n" +
-            "      },\n" +
-            "      \"beløp\": {\n" +
-            "        \"verdi\": 1234\n" +
-            "      },\n" +
-            "      \"dagsats\": {\n" +
-            "        \"verdi\": 1234\n" +
-            "      },\n" +
-            "      \"utbetalingsgrad\": {\n" +
-            "        \"verdi\": 100\n" +
-            "      },\n" +
-            "      \"andeler\": [\n" +
-            "        {\n" +
-            "          \"arbeidsgiver\": {\n" +
-            "            \"ident\": \"999999999\",\n" +
-            "            \"identType\": \"ORGNUMMER\"\n" +
-            "          },\n" +
-            "          \"arbeidsforholdId\": \"joeisjf843jr3\",\n" +
-            "          \"dagsats\": {\n" +
-            "            \"verdi\": 1234\n" +
-            "          },\n" +
-            "          \"utbetalingsgrad\": {\n" +
-            "            \"verdi\": 100\n" +
-            "          },\n" +
-            "          \"refusjonsgrad\": {\n" +
-            "            \"verdi\": 100\n" +
-            "          },\n" +
-            "          \"inntektskategori\": {\n" +
-            "            \"kode\": \"ARBEIDSTAKER\",\n" +
-            "            \"kodeverk\": \"INNTEKTSKATEGORI\"\n" +
-            "          }\n" +
-            "        }\n" +
-            "      ]\n" +
-            "    }\n" +
-            "  ]\n" +
-            "}\n";
+        String payload = """
+            {
+              "version": "1.0",
+              "aktør": {
+                "verdi": "1957590366736"
+              },
+              "vedtattTidspunkt": "2019-06-11T00:00:00",
+              "ytelse": "SVANGERSKAPSPENGER",
+              "saksnummer": "139015437",
+              "vedtakReferanse": "3028155d-c556-4a8a-a38d-a526b1129bf2",
+              "ytelseStatus": "UNDER_BEHANDLING",
+              "kildesystem": "FPSAK",
+              "periode": {
+                "fom": null,
+                "tom": null
+              },
+              "anvist": [
+                {
+                  "periode": {
+                    "fom": null,
+                    "tom": null
+                  },
+                  "beløp": {
+                    "verdi": 1234
+                  },
+                  "dagsats": {
+                    "verdi": 1234
+                  },
+                  "utbetalingsgrad": {
+                    "verdi": 100
+                  },
+                  "andeler": [
+                    {
+                      "arbeidsgiver": {
+                        "ident": "999999999",
+                        "identType": "ORGNUMMER"
+                      },
+                      "arbeidsforholdId": "joeisjf843jr3",
+                      "dagsats": {
+                        "verdi": 1234
+                      },
+                      "utbetalingsgrad": {
+                        "verdi": 100
+                      },
+                      "refusjonsgrad": {
+                        "verdi": 100
+                      },
+                      "inntektklasse" : "ARBEIDSTAKER"
+                    }
+                  ]
+                }
+              ]
+            }
+            """;
 
         ProsessTaskData data = ProsessTaskDataBuilder.forProsessTask(LagreVedtakTask.class)
             .medPayload(payload)
@@ -106,129 +93,113 @@ public class LagreVedtakTaskTest {
 
     @Test
     public void skal_ikke_feile_uten_valideringsfeil() {
-        String payload = "{\n" +
-            "  \"version\" : \"1.0\",\n" +
-            "  \"aktør\" : {\n" +
-            "    \"verdi\" : \"1293528970663\"\n" +
-            "  },\n" +
-            "  \"vedtattTidspunkt\" : \"2021-12-15T11:06:01.623\",\n" +
-            "  \"type\" : {\n" +
-            "    \"kode\" : \"PSB\",\n" +
-            "    \"kodeverk\" : \"FAGSAK_YTELSE_TYPE\"\n" +
-            "  },\n" +
-            "  \"saksnummer\" : \"1DMNZBU\",\n" +
-            "  \"vedtakReferanse\" : \"e10b4624-d205-4bf8-a065-c41ed74be90b\",\n" +
-            "  \"status\" : {\n" +
-            "    \"kode\" : \"LOP\",\n" +
-            "    \"kodeverk\" : \"YTELSE_STATUS\"\n" +
-            "  },\n" +
-            "  \"fagsystem\" : {\n" +
-            "    \"kode\" : \"K9SAK\",\n" +
-            "    \"kodeverk\" : \"FAGSYSTEM\"\n" +
-            "  },\n" +
-            "  \"periode\" : {\n" +
-            "    \"fom\" : \"2021-11-01\",\n" +
-            "    \"tom\" : \"2021-11-19\"\n" +
-            "  },\n" +
-            "  \"tilleggsopplysninger\" : \"{\\n  \\\"pleietrengende\\\" : \\\"2569674469455\\\",\\n  \\\"innleggelsesPerioder\\\" : [ ]\\n}\",\n" +
-            "  \"anvist\" : [ {\n" +
-            "    \"periode\" : {\n" +
-            "      \"fom\" : \"2021-11-01\",\n" +
-            "      \"tom\" : \"2021-11-05\"\n" +
-            "    },\n" +
-            "    \"beløp\" : null,\n" +
-            "    \"dagsats\" : {\n" +
-            "      \"verdi\" : 1846.00\n" +
-            "    },\n" +
-            "    \"utbetalingsgrad\" : {\n" +
-            "      \"verdi\" : 100.00\n" +
-            "    },\n" +
-            "    \"andeler\" : [ {\n" +
-            "      \"arbeidsgiver\" : {\n" +
-            "        \"identType\" : \"ORGNUMMER\",\n" +
-            "        \"ident\" : \"972674818\"\n" +
-            "      },\n" +
-            "      \"arbeidsforholdId\" : \"1\",\n" +
-            "      \"dagsats\" : {\n" +
-            "        \"verdi\" : 1846.00\n" +
-            "      },\n" +
-            "      \"utbetalingsgrad\" : {\n" +
-            "        \"verdi\" : 100.00\n" +
-            "      },\n" +
-            "      \"refusjonsgrad\" : {\n" +
-            "        \"verdi\" : 100.00\n" +
-            "      },\n" +
-            "      \"inntektskategori\" : {\n" +
-            "        \"kode\" : \"ARBEIDSTAKER\",\n" +
-            "        \"kodeverk\" : \"INNTEKTSKATEGORI\"\n" +
-            "      }\n" +
-            "    } ]\n" +
-            "  }, {\n" +
-            "    \"periode\" : {\n" +
-            "      \"fom\" : \"2021-11-08\",\n" +
-            "      \"tom\" : \"2021-11-12\"\n" +
-            "    },\n" +
-            "    \"beløp\" : null,\n" +
-            "    \"dagsats\" : {\n" +
-            "      \"verdi\" : 1846.00\n" +
-            "    },\n" +
-            "    \"utbetalingsgrad\" : {\n" +
-            "      \"verdi\" : 100.00\n" +
-            "    },\n" +
-            "    \"andeler\" : [ {\n" +
-            "      \"arbeidsgiver\" : {\n" +
-            "        \"identType\" : \"ORGNUMMER\",\n" +
-            "        \"ident\" : \"972674818\"\n" +
-            "      },\n" +
-            "      \"arbeidsforholdId\" : \"1\",\n" +
-            "      \"dagsats\" : {\n" +
-            "        \"verdi\" : 1846.00\n" +
-            "      },\n" +
-            "      \"utbetalingsgrad\" : {\n" +
-            "        \"verdi\" : 100.00\n" +
-            "      },\n" +
-            "      \"refusjonsgrad\" : {\n" +
-            "        \"verdi\" : 100.00\n" +
-            "      },\n" +
-            "      \"inntektskategori\" : {\n" +
-            "        \"kode\" : \"ARBEIDSTAKER\",\n" +
-            "        \"kodeverk\" : \"INNTEKTSKATEGORI\"\n" +
-            "      }\n" +
-            "    } ]\n" +
-            "  }, {\n" +
-            "    \"periode\" : {\n" +
-            "      \"fom\" : \"2021-11-15\",\n" +
-            "      \"tom\" : \"2021-11-19\"\n" +
-            "    },\n" +
-            "    \"beløp\" : null,\n" +
-            "    \"dagsats\" : {\n" +
-            "      \"verdi\" : 1846.00\n" +
-            "    },\n" +
-            "    \"utbetalingsgrad\" : {\n" +
-            "      \"verdi\" : 100.00\n" +
-            "    },\n" +
-            "    \"andeler\" : [ {\n" +
-            "      \"arbeidsgiver\" : {\n" +
-            "        \"identType\" : \"ORGNUMMER\",\n" +
-            "        \"ident\" : \"972674818\"\n" +
-            "      },\n" +
-            "      \"arbeidsforholdId\" : \"1\",\n" +
-            "      \"dagsats\" : {\n" +
-            "        \"verdi\" : 1846.00\n" +
-            "      },\n" +
-            "      \"utbetalingsgrad\" : {\n" +
-            "        \"verdi\" : 100.00\n" +
-            "      },\n" +
-            "      \"refusjonsgrad\" : {\n" +
-            "        \"verdi\" : 100.00\n" +
-            "      },\n" +
-            "      \"inntektskategori\" : {\n" +
-            "        \"kode\" : \"ARBEIDSTAKER\",\n" +
-            "        \"kodeverk\" : \"INNTEKTSKATEGORI\"\n" +
-            "      }\n" +
-            "    } ]\n" +
-            "  } ]\n" +
-            "}";
+        String payload = """
+            {
+              "version" : "1.0",
+              "aktør" : {
+                "verdi" : "1293528970663"
+              },
+              "vedtattTidspunkt" : "2021-12-15T11:06:01.623",
+              "ytelse" : "PLEIEPENGER_SYKT_BARN",
+              "saksnummer" : "1DMNZBU",
+              "vedtakReferanse" : "e10b4624-d205-4bf8-a065-c41ed74be90b",
+              "ytelseStatus" : "LØPENDE",
+              "kildesystem" : "K9SAK",
+              "periode" : {
+                "fom" : "2021-11-01",
+                "tom" : "2021-11-19"
+              },
+              "tilleggsopplysninger" : "{\\n  \\"pleietrengende\\" : \\"2569674469455\\",\\n  \\"innleggelsesPerioder\\" : [ ]\\n}",
+              "anvist" : [ {
+                "periode" : {
+                  "fom" : "2021-11-01",
+                  "tom" : "2021-11-05"
+                },
+                "beløp" : null,
+                "dagsats" : {
+                  "verdi" : 1846.00
+                },
+                "utbetalingsgrad" : {
+                  "verdi" : 100.00
+                },
+                "andeler" : [ {
+                  "arbeidsgiver" : {
+                    "identType" : "ORGNUMMER",
+                    "ident" : "972674818"
+                  },
+                  "arbeidsforholdId" : "1",
+                  "dagsats" : {
+                    "verdi" : 1846.00
+                  },
+                  "utbetalingsgrad" : {
+                    "verdi" : 100.00
+                  },
+                  "refusjonsgrad" : {
+                    "verdi" : 100.00
+                  },
+                  "inntektklasse" : "ARBEIDSTAKER"
+                } ]
+              }, {
+                "periode" : {
+                  "fom" : "2021-11-08",
+                  "tom" : "2021-11-12"
+                },
+                "beløp" : null,
+                "dagsats" : {
+                  "verdi" : 1846.00
+                },
+                "utbetalingsgrad" : {
+                  "verdi" : 100.00
+                },
+                "andeler" : [ {
+                  "arbeidsgiver" : {
+                    "identType" : "ORGNUMMER",
+                    "ident" : "972674818"
+                  },
+                  "arbeidsforholdId" : "1",
+                  "dagsats" : {
+                    "verdi" : 1846.00
+                  },
+                  "utbetalingsgrad" : {
+                    "verdi" : 100.00
+                  },
+                  "refusjonsgrad" : {
+                    "verdi" : 100.00
+                  },
+                  "inntektklasse" : "ARBEIDSTAKER"
+                } ]
+              }, {
+                "periode" : {
+                  "fom" : "2021-11-15",
+                  "tom" : "2021-11-19"
+                },
+                "beløp" : null,
+                "dagsats" : {
+                  "verdi" : 1846.00
+                },
+                "utbetalingsgrad" : {
+                  "verdi" : 100.00
+                },
+               "andeler" : [ {
+                  "arbeidsgiver" : {
+                    "identType" : "ORGNUMMER",
+                    "ident" : "972674818"
+                  },
+                  "arbeidsforholdId" : "1",
+                  "dagsats" : {
+                    "verdi" : 1846.00
+                  },
+                  "utbetalingsgrad" : {
+                    "verdi" : 100.00
+                  },
+                  "refusjonsgrad" : {
+                    "verdi" : 100.00
+                  },
+                  "inntektklasse" : "ARBEIDSTAKER"
+                } ]
+              } ]
+            }
+            """;
 
         ProsessTaskData data = ProsessTaskDataBuilder.forProsessTask(LagreVedtakTask.class)
             .medPayload(payload)

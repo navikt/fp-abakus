@@ -1,6 +1,5 @@
 package no.nav.foreldrepenger.abakus.vedtak.extract.v1;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -44,8 +43,8 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
 
     @Override
     public VedtakYtelseBuilder extractFrom(YtelseV1 ytelse) {
-        Fagsystem fagsystem = Optional.ofNullable(ytelse.getKildesystem()).map(this::mapKildesystem).orElseGet(ytelse::getFagsystem);
-        no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType = getYtelseType(ytelse.getType(), ytelse.getYtelse());
+        Fagsystem fagsystem = mapKildesystem(ytelse.getKildesystem());
+        no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType = getYtelseType(ytelse.getYtelse());
         Saksnummer saksnummer = new Saksnummer(ytelse.getSaksnummer());
         AktørId aktørId = new AktørId(ytelse.getAktør().getVerdi());
 
@@ -57,7 +56,7 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
             .medKilde(fagsystem)
             .medYtelseType(ytelseType)
             .medPeriode(mapTilEntitet(ytelse.getPeriode()))
-            .medStatus(mapStatus(ytelse.getStatus(), ytelse.getYtelseStatus()))
+            .medStatus(mapStatus(ytelse.getYtelseStatus()))
             .medTilleggsopplysninger(ytelse.getTilleggsopplysninger())
             .tilbakestillAnvisteYtelser();
 
@@ -78,7 +77,7 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
 
     private VedtakYtelseAndelBuilder mapFordeling(AnvistAndel andel) {
         return VedtakYtelseAndelBuilder.ny()
-            .medInntektskategori(mapInntektsklasse(andel.getInntektskategori(), andel.getInntektklasse()))
+            .medInntektskategori(mapInntektsklasse(andel.getInntektklasse()))
             .medDagsats(andel.getDagsats().getVerdi())
             .medUtbetalingsgrad(andel.getUtbetalingsgrad().getVerdi())
             .medRefusjonsgrad(andel.getRefusjonsgrad().getVerdi())
@@ -93,9 +92,9 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
         };
     }
 
-    private YtelseStatus mapStatus(YtelseStatus ytelseStatus, Status status) {
+    private YtelseStatus mapStatus(Status status) {
         if (status == null) {
-            return ytelseStatus != null ? ytelseStatus : YtelseStatus.UDEFINERT;
+            return YtelseStatus.UDEFINERT;
         }
         return switch (status) {
             case UNDER_BEHANDLING -> YtelseStatus.UNDER_BEHANDLING;
@@ -116,9 +115,9 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
         return IntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom());
     }
 
-    private YtelseType getYtelseType(YtelseType kodeverk, Ytelser ytelse) {
+    private YtelseType getYtelseType(Ytelser ytelse) {
         if (ytelse == null) {
-            return kodeverk != null ? kodeverk : YtelseType.UDEFINERT;
+            return YtelseType.UDEFINERT;
         }
         return switch (ytelse) {
             case PLEIEPENGER_SYKT_BARN -> YtelseType.PLEIEPENGER_SYKT_BARN;
@@ -134,12 +133,23 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
         };
     }
 
-    private Inntektskategori mapInntektsklasse(Inntektskategori inntektskategori, Inntektklasse inntektklasse) {
+    private Inntektskategori mapInntektsklasse(Inntektklasse inntektklasse) {
         if (inntektklasse == null) {
-            return inntektskategori != null ? inntektskategori : Inntektskategori.UDEFINERT;
+            return Inntektskategori.UDEFINERT;
         }
-        return AnvistAndel.fraInntektklasse(inntektklasse);
-
+        return switch (inntektklasse) {
+            case ARBEIDSTAKER -> Inntektskategori.ARBEIDSTAKER;
+            case ARBEIDSTAKER_UTEN_FERIEPENGER -> Inntektskategori.ARBEIDSTAKER_UTEN_FERIEPENGER;
+            case FRILANSER -> Inntektskategori.FRILANSER;
+            case SELVSTENDIG_NÆRINGSDRIVENDE -> Inntektskategori.SELVSTENDIG_NÆRINGSDRIVENDE;
+            case DAGPENGER -> Inntektskategori.DAGPENGER;
+            case ARBEIDSAVKLARINGSPENGER -> Inntektskategori.ARBEIDSAVKLARINGSPENGER;
+            case MARITIM -> Inntektskategori.SJØMANN;
+            case DAGMAMMA -> Inntektskategori.DAGMAMMA;
+            case JORDBRUKER -> Inntektskategori.JORDBRUKER;
+            case FISKER -> Inntektskategori.FISKER;
+            default -> Inntektskategori.UDEFINERT;
+        };
     }
 
 }

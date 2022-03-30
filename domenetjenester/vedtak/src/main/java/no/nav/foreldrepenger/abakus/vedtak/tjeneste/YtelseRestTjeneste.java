@@ -1,5 +1,26 @@
 package no.nav.foreldrepenger.abakus.vedtak.tjeneste;
 
+import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.VEDTAK;
+import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,26 +59,6 @@ import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.VEDTAK;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 
 @OpenAPIDefinition(tags = @Tag(name = "ytelse"))
 @Path("/ytelse/v1")
@@ -165,13 +166,10 @@ public class YtelseRestTjeneste {
         aktør.setVerdi(vedtak.getAktør().getId());
         ytelse.setAktør(aktør);
         ytelse.setVedtattTidspunkt(vedtak.getVedtattTidspunkt());
-        ytelse.setType(vedtak.getYtelseType());
         ytelse.setYtelse(mapYtelser(vedtak.getYtelseType()));
         ytelse.setSaksnummer(vedtak.getSaksnummer().getVerdi());
         ytelse.setVedtakReferanse(vedtak.getVedtakReferanse().toString());
-        ytelse.setStatus(vedtak.getStatus());
         ytelse.setYtelseStatus(mapStatus(vedtak.getStatus()));
-        ytelse.setFagsystem(vedtak.getKilde());
         ytelse.setKildesystem(mapKildesystem(vedtak.getKilde()));
         ytelse.setTilleggsopplysninger(vedtak.getTilleggsopplysninger());
         var periode = new Periode();
@@ -204,7 +202,7 @@ public class YtelseRestTjeneste {
             new Desimaltall(a.getDagsats().getVerdi()),
             a.getUtbetalingsgradProsent() == null ? null : new Desimaltall(a.getUtbetalingsgradProsent().getVerdi()),
             a.getRefusjonsgradProsent() == null ? null : new Desimaltall(a.getRefusjonsgradProsent().getVerdi()),
-            a.getInntektskategori()
+            fraInntektskategori(a.getInntektskategori())
         )).collect(Collectors.toList());
     }
 
@@ -238,6 +236,22 @@ public class YtelseRestTjeneste {
 
             case FRISINN -> Ytelser.FRISINN;
             default -> null;
+        };
+    }
+
+    private static Inntektklasse fraInntektskategori(Inntektskategori inntektskategori) {
+        return switch (inntektskategori) {
+            case ARBEIDSTAKER -> Inntektklasse.ARBEIDSTAKER;
+            case ARBEIDSTAKER_UTEN_FERIEPENGER -> Inntektklasse.ARBEIDSTAKER_UTEN_FERIEPENGER;
+            case FRILANSER -> Inntektklasse.FRILANSER;
+            case SELVSTENDIG_NÆRINGSDRIVENDE -> Inntektklasse.SELVSTENDIG_NÆRINGSDRIVENDE;
+            case DAGPENGER -> Inntektklasse.DAGPENGER;
+            case ARBEIDSAVKLARINGSPENGER -> Inntektklasse.ARBEIDSAVKLARINGSPENGER;
+            case SJØMANN -> Inntektklasse.MARITIM;
+            case DAGMAMMA -> Inntektklasse.DAGMAMMA;
+            case JORDBRUKER -> Inntektklasse.JORDBRUKER;
+            case FISKER -> Inntektklasse.FISKER;
+            default -> Inntektklasse.INGEN;
         };
     }
 

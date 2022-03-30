@@ -10,9 +10,6 @@ import javax.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.vedtak.ytelse.Aktør;
 import no.nav.abakus.vedtak.ytelse.Kildesystem;
 import no.nav.abakus.vedtak.ytelse.Periode;
@@ -33,12 +30,7 @@ public class YtelseV1 extends Ytelse {
     @JsonProperty("vedtattTidspunkt")
     private LocalDateTime vedtattTidspunkt;
 
-    @Deprecated(forRemoval = true)
-    @NotNull // fjernes i neste fase
-    @JsonProperty("type")
-    private YtelseType type;
-
-    //@NotNull - enable etter overgang
+    @NotNull
     @JsonProperty("ytelse")
     private Ytelser ytelse;
 
@@ -51,22 +43,12 @@ public class YtelseV1 extends Ytelse {
     @JsonProperty("vedtakReferanse")
     private String vedtakReferanse;
 
-    @Deprecated(forRemoval = true)
-    @NotNull // fjernes i neste fase
-    @JsonProperty("status")
-    private YtelseStatus status;
-
-    //@NotNull
+    @NotNull
     @JsonProperty("ytelseStatus")
     private Status ytelseStatus;
 
-    @Deprecated(forRemoval = true)
-    @JsonProperty("fagsystem")
-    @NotNull // fjernes i neste fase
-    private Fagsystem fagsystem;
-
     @JsonProperty("kildesystem")
-    //@NotNull - enable ette overgang
+    @NotNull
     private Kildesystem kildesystem;
 
     @NotNull
@@ -83,15 +65,6 @@ public class YtelseV1 extends Ytelse {
     private List<Anvisning> anvist = new ArrayList<>();
 
     public YtelseV1() {
-    }
-
-    @Override
-    public YtelseType getType() {
-        return type;
-    }
-
-    public void setType(YtelseType type) {
-        this.type = type;
     }
 
     @Override
@@ -112,28 +85,12 @@ public class YtelseV1 extends Ytelse {
         this.saksnummer = saksnummer;
     }
 
-    public YtelseStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(YtelseStatus status) {
-        this.status = status;
-    }
-
     public Status getYtelseStatus() {
         return ytelseStatus;
     }
 
     public void setYtelseStatus(Status ytelseStatus) {
         this.ytelseStatus = ytelseStatus;
-    }
-
-    public Fagsystem getFagsystem() {
-        return fagsystem;
-    }
-
-    public void setFagsystem(Fagsystem fagsystem) {
-        this.fagsystem = fagsystem;
     }
 
     public Kildesystem getKildesystem() {
@@ -195,8 +152,8 @@ public class YtelseV1 extends Ytelse {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[aktør=" + aktør + ", vedtattTidspunkt=" + vedtattTidspunkt + ", type="
-                + type + ", saksnummer=" + saksnummer + ", vedtakReferanse=" + vedtakReferanse + ", status=" + status
-                + ", fagsystem=" + fagsystem + ", periode=" + periode + ", anvist=" + anvist + "]";
+        return getClass().getSimpleName() + "[aktør=" + aktør + ", vedtattTidspunkt=" + vedtattTidspunkt + ", ytelse="
+                + ytelse + ", saksnummer=" + saksnummer + ", vedtakReferanse=" + vedtakReferanse + ", status=" + ytelseStatus
+                + ", kildesystem=" + kildesystem + ", periode=" + periode + ", anvist=" + anvist + "]";
     }
 }

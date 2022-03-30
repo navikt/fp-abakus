@@ -12,7 +12,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import no.nav.abakus.iaygrunnlag.Organisasjon;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
-import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.vedtak.ytelse.Aktør;
@@ -44,9 +43,9 @@ public class ExtractFromYtelseV1Test {
         aktør.setVerdi(aktørId);
         ytelseV1.setAktør(aktør);
         ytelseV1.setVedtakReferanse(UUID.randomUUID().toString());
-        ytelseV1.setFagsystem(Fagsystem.FPSAK);
-        ytelseV1.setStatus(YtelseStatus.LØPENDE);
-        ytelseV1.setType(YtelseType.FORELDREPENGER);
+        ytelseV1.setKildesystem(Kildesystem.FPSAK);
+        ytelseV1.setYtelseStatus(Status.LØPENDE);
+        ytelseV1.setYtelse(Ytelser.FORELDREPENGER);
         ytelseV1.setVedtattTidspunkt(LocalDateTime.now());
         Periode periode = new Periode();
         periode.setFom(LocalDate.now().minusDays(30));
