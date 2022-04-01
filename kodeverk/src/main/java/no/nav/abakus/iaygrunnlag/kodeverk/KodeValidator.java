@@ -1,8 +1,9 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
 /** Plugin interface som kan benyttes sammen en jackson parser for å validere kodeverk lokalt ifht. hva som er støttet. */
+@Deprecated(forRemoval = true)
 public interface KodeValidator {
-    
+
     /** Happy, happy, happy ♬- I'm a happy validator. ♬  🎸 */
     KodeValidator HAPPY_VALIDATOR = new KodeValidator() {
 

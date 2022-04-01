@@ -29,10 +29,6 @@ public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {
 
     /** Default instance for Jax-rs application. Genererer ikke navn som del av output for kodeverk. */
     public JacksonJsonConfig() {
-        this(false);
-    }
-
-    public JacksonJsonConfig(boolean serialiserKodelisteNavn) {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new Jdk8Module());
         objectMapper.registerModule(new JavaTimeModule());
@@ -41,7 +37,7 @@ public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {
         // TODO (u139158): PK-44270 Diskutere med Front-end, ønsker i utgangpunktet å fjerne null, men hva med Javascript
         // KodelisteSerializer og KodeverkSerializer bør i tilfelle også støtte JsonInclude.Include.*
         // objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-        objectMapper.registerModule(createModule(serialiserKodelisteNavn));
+        objectMapper.registerModule(createModule());
         InjectableValues.Std std = new InjectableValues.Std();
         std.addValue(KodeValidator.class, KodeValidator.HAPPY_VALIDATOR);
         objectMapper.setInjectableValues(std);
@@ -68,16 +64,16 @@ public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {
         return List.of(JacksonJsonConfig.class, InntektArbeidYtelseGrunnlagDto.class);
     }
 
-    private static SimpleModule createModule(boolean serialiserKodelisteNavn) {
+    private static SimpleModule createModule() {
         SimpleModule module = new SimpleModule("VL-REST", new Version(1, 0, 0, null, null, null));
 
-        addSerializers(module, serialiserKodelisteNavn);
+        addSerializers(module);
 
         return module;
     }
 
-    private static void addSerializers(SimpleModule module, boolean serialiserKodelisteNavn) {
-        module.addSerializer(new KodelisteSerializer(serialiserKodelisteNavn));
+    private static void addSerializers(SimpleModule module) {
+        module.addSerializer(new KodelisteSerializer());
     }
 
     /**
