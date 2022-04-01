@@ -63,7 +63,7 @@ public enum TemaUnderkategori implements Kodeverdi {
     private String navn;
 
     private String kode;
-    
+
     @JsonIgnore
     private String offisiellKode;
 
@@ -77,11 +77,12 @@ public enum TemaUnderkategori implements Kodeverdi {
         this.offisiellKode = offisiellKode;
     }
 
-    @JsonCreator
-    public static TemaUnderkategori fraKode(@JsonProperty("kode") String kode) {
-        if (kode == null) {
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static TemaUnderkategori fraKode(@JsonProperty(value = "kode") Object node) {
+        if (node == null) {
             return null;
         }
+        String kode = TempAvledeKode.getVerdi(TemaUnderkategori.class, node, "kode");
         var ad = KODER.get(kode);
         if (ad == null) {
             throw new IllegalArgumentException("Ukjent TemaUnderkategori: " + kode);

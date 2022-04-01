@@ -25,7 +25,7 @@ public enum SkatteOgAvgiftsregelType implements Kodeverdi {
     NETTOLØNN("NETTOLØNN", "Nettolønn", "nettoloenn"),
     KILDESKATT_PÅ_PENSJONER("KILDESKATT_PÅ_PENSJONER", "Kildeskatt på pensjoner", "kildeskattPaaPensjoner"),
     JAN_MAYEN_OG_BILANDENE("JAN_MAYEN_OG_BILANDENE", "Inntekt på Jan Mayen og i norske biland i Antarktis", "janMayenOgBilandene"),
-    
+
     UDEFINERT("-", "Udefinert", "Ikke definert"),
     ;
 
@@ -49,7 +49,7 @@ public enum SkatteOgAvgiftsregelType implements Kodeverdi {
 
     @JsonProperty(value="kode")
     private String kode;
-    
+
     @JsonIgnore
     private String offisiellKode;
 
@@ -63,11 +63,12 @@ public enum SkatteOgAvgiftsregelType implements Kodeverdi {
         this.offisiellKode = offisiellKode;
     }
 
-    @JsonCreator
-    public static SkatteOgAvgiftsregelType fraKode(@JsonProperty("kode") String kode) {
-        if (kode == null) {
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static SkatteOgAvgiftsregelType fraKode(@JsonProperty(value = "kode") Object node) {
+        if (node == null) {
             return null;
         }
+        String kode = TempAvledeKode.getVerdi(SkatteOgAvgiftsregelType.class, node, "kode");
         var ad = KODER.get(kode);
         if (ad == null) {
             throw new IllegalArgumentException("Ukjent SkatteOgAvgiftsregelType: " + kode);
@@ -99,7 +100,7 @@ public enum SkatteOgAvgiftsregelType implements Kodeverdi {
     public String getOffisiellKode() {
         return offisiellKode;
     }
-    
+
     public static SkatteOgAvgiftsregelType finnForKodeverkEiersKode(String offisiellDokumentType) {
         return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }

@@ -76,11 +76,12 @@ public enum YtelseType implements Kodeverdi {
         this.navn = navn;
     }
 
-    @JsonCreator
-    public static YtelseType fraKode(@JsonProperty("kode") String kode) {
-        if (kode == null) {
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static YtelseType fraKode(@JsonProperty(value = "kode") Object node) {
+        if (node == null) {
             return null;
         }
+        String kode = TempAvledeKode.getVerdi(YtelseType.class, node, "kode");
         var ad = KODER.get(kode);
         if (ad == null) {
             throw new IllegalArgumentException("Ukjent YtelseType: " + kode);

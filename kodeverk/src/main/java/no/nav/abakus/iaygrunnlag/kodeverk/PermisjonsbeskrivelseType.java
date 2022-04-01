@@ -63,11 +63,12 @@ public enum PermisjonsbeskrivelseType implements Kodeverdi {
         this.offisiellKode = offisiellKode;
     }
 
-    @JsonCreator
-    public static PermisjonsbeskrivelseType fraKode(@JsonProperty("kode") String kode) {
-        if (kode == null) {
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static PermisjonsbeskrivelseType fraKode(@JsonProperty(value = "kode") Object node) {
+        if (node == null) {
             return null;
         }
+        String kode = TempAvledeKode.getVerdi(PermisjonsbeskrivelseType.class, node, "kode");
         var ad = KODER.get(kode);
         if (ad == null) {
             throw new IllegalArgumentException("Ukjent PermisjonsbeskrivelseType: " + kode);
@@ -104,7 +105,7 @@ public enum PermisjonsbeskrivelseType implements Kodeverdi {
     public boolean erRelevantForAvklarArbeidsforhold() {
         return !PERMISJON_IKKE_RELEVANT_FOR_AVKLAR_ARBEIDSFORHOLD.contains(this);
     }
-    
+
     public static PermisjonsbeskrivelseType finnForKodeverkEiersKode(String offisiellDokumentType) {
         return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }

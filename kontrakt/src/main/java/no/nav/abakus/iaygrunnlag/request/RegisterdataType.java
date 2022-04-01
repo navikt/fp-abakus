@@ -11,6 +11,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
+import no.nav.abakus.iaygrunnlag.kodeverk.TempAvledeKode;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -44,11 +46,12 @@ public enum RegisterdataType implements Kodeverdi {
         this.kode = name();
     }
 
-    @JsonCreator
-    public static RegisterdataType fraKode(@JsonProperty("kode") String kode) {
-        if (kode == null) {
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static RegisterdataType fraKode(@JsonProperty(value = "kode") Object node) {
+        if (node == null) {
             return null;
         }
+        String kode = TempAvledeKode.getVerdi(RegisterdataType.class, node, "kode");
         var ad = KODER.get(kode);
         if (ad == null) {
             throw new IllegalArgumentException("Ukjent RegisterdataType: " + kode);
