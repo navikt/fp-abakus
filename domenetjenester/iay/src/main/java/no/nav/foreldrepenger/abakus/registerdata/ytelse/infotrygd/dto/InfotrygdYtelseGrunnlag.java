@@ -22,15 +22,6 @@ public class InfotrygdYtelseGrunnlag {
     private LocalDate vedtaksPeriodeFom;
     private LocalDate vedtaksPeriodeTom;
     private String vedtaksreferanse;
-
-    /**
-     * Makrerer om grunnlaget gjelder for næring eller frilans uten forsikring
-     *
-     * Informasjonen brukes til å finne ut om vi kan mappe fra grunnlagsdagsats til utbetalingsgrad
-     *
-     * Næring og frilans uten forsikring har spesielle regler som gir reduksjon i netto dagsats som ikke reflekteres i utbetalingsgraden (se f.t.l. §§ 8-36 og 8-39)
-     */
-    private boolean næringEllerFrilansUtenForsikring;
     private Arbeidskategori kategori;
     private List<InfotrygdYtelseArbeid> arbeidsforhold;
 
@@ -96,10 +87,6 @@ public class InfotrygdYtelseGrunnlag {
 
     public String getVedtaksreferanse() {
         return vedtaksreferanse;
-    }
-
-    public boolean isNæringEllerFrilansUtenForsikring() {
-        return næringEllerFrilansUtenForsikring;
     }
 
     @Override
@@ -222,11 +209,6 @@ public class InfotrygdYtelseGrunnlag {
 
         public Builder medGradering(BigDecimal gradering) {
             grunnlag.gradering = gradering;
-            return this;
-        }
-
-        public Builder medNæringEllerFrilansUtenForsikring(boolean næringEllerFrilansUtenForsikring) {
-            grunnlag.næringEllerFrilansUtenForsikring = næringEllerFrilansUtenForsikring;
             return this;
         }
 
