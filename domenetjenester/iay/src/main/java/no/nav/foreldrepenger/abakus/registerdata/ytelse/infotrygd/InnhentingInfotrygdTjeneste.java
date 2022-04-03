@@ -169,10 +169,11 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     private boolean erNæringEllerFrilansUtenForsikring(no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Arbeidskategori kategori) {
-        return kategori.kode().getKode().equals(SELVSTENDIG) ||
+        return kategori != null &&
+            (kategori.kode().getKode().equals(SELVSTENDIG) ||
             kategori.kode().getKode().equals(ARBTAKER_SELVSTENDIG) ||
             kategori.kode().getKode().equals(FL_OPPDRAGSTAKER_U_FORS) ||
-            kategori.kode().getKode().equals(ARB_FL_OPPDRAGSTAKER_U_FORS);
+            kategori.kode().getKode().equals(ARB_FL_OPPDRAGSTAKER_U_FORS));
     }
 
     private YtelseStatus mapYtelseStatus(Grunnlag grunnlag) {

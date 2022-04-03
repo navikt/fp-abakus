@@ -79,7 +79,7 @@ public class InfotrygdgrunnlagYtelseMapper {
      */
     private static boolean skalMappeInfotrygdandeler(InfotrygdYtelseGrunnlag grunnlag) {
         var erToggletPå = !Environment.current().isProd();
-        return erToggletPå && !grunnlag.isNæringEllerFrilansUtenForsikring();
+        return erToggletPå && !grunnlag.isNæringEllerFrilansUtenForsikring() && !grunnlag.getKategori().equals(Arbeidskategori.UGYLDIG);
     }
 
     /** Mapper beregningsgrunnlagsandeler fra infotrygd til netto dagsats
