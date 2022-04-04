@@ -77,7 +77,8 @@ public class InfotrygdgrunnlagYtelseMapper {
      */
     private static boolean skalMappeInfotrygdandeler(InfotrygdYtelseGrunnlag grunnlag) {
         var erToggletPå = !Environment.current().isProd();
-        return erToggletPå && !grunnlag.getKategori().equals(Arbeidskategori.UGYLDIG);
+        var harDagsatsIListeMedUtbetalinger = grunnlag.getUtbetaltePerioder().stream().allMatch(p -> p.getDagsats() != null);
+        return erToggletPå && !grunnlag.getKategori().equals(Arbeidskategori.UGYLDIG) && harDagsatsIListeMedUtbetalinger;
     }
 
     /**
