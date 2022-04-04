@@ -9,18 +9,23 @@ public class InfotrygdYtelseAnvist {
     private LocalDate utbetaltFom;
     private LocalDate utbetaltTom;
     private BigDecimal utbetalingsgrad;
+    private String orgnr;
+    private Boolean erRefusjon;
+    private BigDecimal dagsats;
 
-    public InfotrygdYtelseAnvist(LocalDate utbetaltFom, LocalDate utbetaltTom, BigDecimal utbetalingsgrad) {
+    public InfotrygdYtelseAnvist(LocalDate utbetaltFom, LocalDate utbetaltTom,
+                                 BigDecimal utbetalingsgrad,
+                                 String orgnr,
+                                 Boolean erRefusjon,
+                                 BigDecimal dagsats) {
         this.utbetaltFom = utbetaltFom;
         this.utbetaltTom = utbetaltTom;
         this.utbetalingsgrad = utbetalingsgrad;
+        this.orgnr = orgnr;
+        this.erRefusjon = erRefusjon;
+        this.dagsats = dagsats;
     }
 
-    public InfotrygdYtelseAnvist(LocalDate utbetaltFom, LocalDate utbetaltTom, int utbetalingsgrad) {
-        this.utbetaltFom = utbetaltFom;
-        this.utbetaltTom = utbetaltTom;
-        this.utbetalingsgrad = new BigDecimal(utbetalingsgrad);
-    }
 
     public LocalDate getUtbetaltFom() {
         return utbetaltFom;
@@ -34,6 +39,18 @@ public class InfotrygdYtelseAnvist {
         return utbetalingsgrad;
     }
 
+    public String getOrgnr() {
+        return orgnr;
+    }
+
+    public Boolean getErRefusjon() {
+        return erRefusjon;
+    }
+
+    public BigDecimal getDagsats() {
+        return dagsats;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -41,7 +58,10 @@ public class InfotrygdYtelseAnvist {
         InfotrygdYtelseAnvist that = (InfotrygdYtelseAnvist) o;
         return Objects.equals(utbetaltFom, that.utbetaltFom) &&
             Objects.equals(utbetaltTom, that.utbetaltTom) &&
-            Objects.equals(utbetalingsgrad, that.utbetalingsgrad);
+            Objects.equals(utbetalingsgrad, that.utbetalingsgrad) &&
+            Objects.equals(orgnr, that.orgnr) &&
+            Objects.equals(erRefusjon, that.erRefusjon) &&
+            Objects.equals(dagsats, that.dagsats);
     }
 
     @Override

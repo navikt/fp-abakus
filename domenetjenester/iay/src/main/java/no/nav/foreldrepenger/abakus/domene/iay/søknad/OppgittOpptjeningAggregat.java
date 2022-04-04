@@ -72,7 +72,7 @@ public class OppgittOpptjeningAggregat extends BaseEntitet {
     }
 
     /**
-     * Get alle inntektsmeldinger (både de som skal brukes og ikke brukes).
+     * Get alle oppgitte opptjeninger
      *
      * @return
      */
