@@ -157,7 +157,8 @@ public class InnhentingInfotrygdTjeneste {
             .forEach(grunnlagBuilder::leggTilArbeidsforhold);
 
         grunnlag.getVedtak().stream()
-            .map(v -> new InfotrygdYtelseAnvist(v.periode().fom(), v.periode().tom(), new BigDecimal(v.utbetalingsgrad()), v.arbeidsgiverOrgnr(), v.erRefusjon(), BigDecimal.valueOf(v.dagsats())))
+            .map(v -> new InfotrygdYtelseAnvist(v.periode().fom(), v.periode().tom(), new BigDecimal(v.utbetalingsgrad()),
+                v.arbeidsgiverOrgnr(), v.erRefusjon(), v.dagsats() != null ? BigDecimal.valueOf(v.dagsats()) : null))
             .forEach(grunnlagBuilder::leggTillAnvistPerioder);
 
         return grunnlagBuilder.build();
