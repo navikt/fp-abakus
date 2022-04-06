@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -22,7 +25,9 @@ import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.felles.AbstractInfotrygdGrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.felles.JsonConverter;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.felles.PersonRequest;
+import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.foreldrepenger.konfig.KonfigVerdi;
+import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
 import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
 
@@ -45,10 +50,45 @@ public class InfotrygdPSGrunnlag extends AbstractInfotrygdGrunnlag {
 
     @Override
     public List<Grunnlag> hentGrunnlag(String fnr, LocalDate fom, LocalDate tom) {
+        try {
+            var request = new URIBuilder(uri)
+                .addParameter("fnr", fnr)
+                .addParameter("fom", konverter(fom))
+                .addParameter("tom", konverter(tom)).build();
+            var grunnlag = restClient.get(request, Grunnlag[].class);
+            return Arrays.asList(grunnlag);
+        } catch (Exception e) {
+            LOG.warn("Feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
+            throw new TekniskException("FP-180125", String.format("Tjeneste %s gir feil, meld til #infotrygd_replikering hvis dette skjer gjennom lengre tidsperiode.", uriString), e);
+        }
+    }
 
+    @Override
+    public List<Grunnlag> hentGrunnlagFailSoft(String fnr, LocalDate fom, LocalDate tom) {
+        if (Environment.current().isDev()) {
+            return hentMedPost(fnr, fom, tom);
+        } else {
+            return hentFailSoftMedGet(fnr, fom, tom);
+        }
+    }
+
+    private List<Grunnlag> hentFailSoftMedGet(String fnr, LocalDate fom, LocalDate tom) {
+        try {
+            var request = new URIBuilder(uri)
+                .addParameter("fnr", fnr)
+                .addParameter("fom", konverter(fom))
+                .addParameter("tom", konverter(tom)).build();
+            var grunnlag = restClient.get(request, Grunnlag[].class);
+            return Arrays.asList(grunnlag);
+        } catch (Exception e) {
+            LOG.warn("Feil ved oppslag mot {}, returnerer ingen grunnlag", uriString, e);
+            return Collections.emptyList();
+        }
+    }
+
+    private List<Grunnlag> hentMedPost(String fnr, LocalDate fom, LocalDate tom) {
         var jsonResponse = hentGrunnlagIJsonFormat(fnr, fom, tom);
         return jsonConverter.grunnlagBarnResponse(jsonResponse);
-
     }
 
     private String hentGrunnlagIJsonFormat(String fnr, LocalDate fom, LocalDate tom) {
@@ -78,6 +118,11 @@ public class InfotrygdPSGrunnlag extends AbstractInfotrygdGrunnlag {
         } catch (IOException | URISyntaxException e) {
             throw new IllegalStateException(String.format("Kunne ikke mappe til request for %s. Feilmelding var %s", uri, e.getMessage()));
         }
+    }
+
+    private static String konverter(LocalDate dato) {
+        var brukDato = dato == null ? LocalDate.now() : dato;
+        return brukDato.format(DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
 }
