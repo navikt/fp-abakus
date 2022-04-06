@@ -1,5 +1,9 @@
 package no.nav.abakus.iaygrunnlag;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -12,7 +16,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.KodeValidator;
 
-public class IayGrunnlagJsonMapper {
+public class JsonObjectMapper {
 
     private static final ObjectMapper OM;
 
@@ -27,7 +31,7 @@ public class IayGrunnlagJsonMapper {
         objectMapper.setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.NONE);
         objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
         objectMapper.setVisibility(PropertyAccessor.CREATOR, JsonAutoDetect.Visibility.ANY);
-        
+
         Std std = new InjectableValues.Std();
         std.addValue(KodeValidator.class, KodeValidator.HAPPY_VALIDATOR);
         objectMapper.setInjectableValues(std);
@@ -37,6 +41,14 @@ public class IayGrunnlagJsonMapper {
     public static ObjectMapper getMapper() {
         return OM;
     }
+
+    public static String getJson(Object object) throws IOException {
+        Writer jsonWriter = new StringWriter();
+        OM.writerWithDefaultPrettyPrinter().writeValue(jsonWriter, object);
+        jsonWriter.flush();
+        return jsonWriter.toString();
+    }
+
 
     /** Lag ObjectMapper med egen-definet kode-validator. */
     public static ObjectMapper getMapper(KodeValidator validator) {
