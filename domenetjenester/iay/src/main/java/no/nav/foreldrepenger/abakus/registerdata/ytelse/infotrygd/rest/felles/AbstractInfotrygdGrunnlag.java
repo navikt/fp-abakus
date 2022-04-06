@@ -17,11 +17,11 @@ import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
 import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
 
 public abstract class AbstractInfotrygdGrunnlag implements InfotrygdGrunnlag {
-    protected static final Logger LOG = LoggerFactory.getLogger(AbstractInfotrygdGrunnlag.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractInfotrygdGrunnlag.class);
 
-    protected OidcRestClient restClient;
-    protected URI uri;
-    protected String uriString;
+    private OidcRestClient restClient;
+    private URI uri;
+    private String uriString;
 
     public AbstractInfotrygdGrunnlag(OidcRestClient restClient, URI uri) {
         this.restClient = restClient;

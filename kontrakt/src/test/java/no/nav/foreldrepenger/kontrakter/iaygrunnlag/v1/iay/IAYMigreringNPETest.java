@@ -14,7 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
+import no.nav.abakus.iaygrunnlag.IayGrunnlagJsonMapper;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 
 public class IAYMigreringNPETest {
@@ -32,7 +32,7 @@ public class IAYMigreringNPETest {
     @ParameterizedTest
     @MethodSource("provideArguments")
     public void test_file(String fileName) throws Exception {
-        var reader = JsonObjectMapper.getMapper().readerFor(InntektArbeidYtelseGrunnlagDto.class);
+        var reader = IayGrunnlagJsonMapper.getMapper().readerFor(InntektArbeidYtelseGrunnlagDto.class);
 
         String str = readTestCase(fileName);
 
