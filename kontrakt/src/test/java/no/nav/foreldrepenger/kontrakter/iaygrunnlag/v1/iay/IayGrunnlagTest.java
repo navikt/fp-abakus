@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
 import no.nav.abakus.iaygrunnlag.FnrPersonident;
-import no.nav.abakus.iaygrunnlag.IayGrunnlagJsonMapper;
+import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.abakus.iaygrunnlag.JournalpostId;
 import no.nav.abakus.iaygrunnlag.Organisasjon;
 import no.nav.abakus.iaygrunnlag.Periode;
@@ -78,8 +78,8 @@ import no.nav.abakus.iaygrunnlag.ytelse.v1.YtelserDto;
 
 public class IayGrunnlagTest {
 
-    private static final ObjectWriter WRITER = IayGrunnlagJsonMapper.getMapper().writerWithDefaultPrettyPrinter();
-    private static final ObjectReader READER = IayGrunnlagJsonMapper.getMapper().reader();
+    private static final ObjectWriter WRITER = JsonObjectMapper.getMapper().writerWithDefaultPrettyPrinter();
+    private static final ObjectReader READER = JsonObjectMapper.getMapper().reader();
 
     private final UUID uuid = UUID.randomUUID();
     private final LocalDate fom = LocalDate.now();
