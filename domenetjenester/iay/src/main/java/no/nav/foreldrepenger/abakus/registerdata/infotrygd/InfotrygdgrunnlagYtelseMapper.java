@@ -37,6 +37,17 @@ public class InfotrygdgrunnlagYtelseMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InfotrygdgrunnlagYtelseMapper.class);
 
+    /**
+     * Kombinasjonskategorier fra infotrygd
+     */
+    private static final List<Arbeidskategori> KOMBINASJONSKATEGORIER = List.of(
+        Arbeidskategori.KOMBINASJON_ARBEIDSTAKER_OG_SELVSTENDIG_NÆRINGSDRIVENDE,
+        Arbeidskategori.KOMBINASJON_ARBEIDSTAKER_OG_FRILANSER,
+        Arbeidskategori.KOMBINASJON_ARBEIDSTAKER_OG_DAGPENGER,
+        Arbeidskategori.KOMBINASJON_ARBEIDSTAKER_OG_FISKER,
+        Arbeidskategori.KOMBINASJON_ARBEIDSTAKER_OG_JORDBRUKER
+    );
+
     private InfotrygdgrunnlagYtelseMapper() {
     }
 
@@ -70,7 +81,16 @@ public class InfotrygdgrunnlagYtelseMapper {
 
 
     /**
-     * Mapper ikke grunnlag uten arbeidskategori (UGYLDIG)
+     * For å kunne mappe utbetalinger fra infotrygd er vi avhengig av å få data som på korrekt måte kan brukes i automatisk saksbehandling.
+     * Etter et omfattende arbeid på dette området vinteren 2022 er det konkludert med at enkelte tilfeller må ekskluderes
+     * fordi datakvaliteten ikke er god nok til å kunne brukes til automatisk saksbehandling.
+     * Disse tilfellene er:
+     * - Vedtak der det mangler dagsats
+     * - Vedtak som er basert på beregningsgrunnlag uten arbeidskategori
+     * - Vedtak som er basert på beregningsgrunnlag med kombinasjoner i arbeidskategori
+     * <p>
+     * Sistnevte kan ikke brukes fordi linjene med utbetaling ikke inneholder nok informasjon til at de entydig kan mappes til riktig inntektskategori.
+     * Dette er fordi grunnlag med arbeid ofte mangler orgnr, og kan derfor ikke skilles fra utbetalinger for f.eks dagpenger.
      *
      * @param grunnlag Beregningsgrunnlag fra infotrygd
      * @return Verdi som sier som vi skal mappe inn andeler fra grunnlaget
@@ -78,7 +98,10 @@ public class InfotrygdgrunnlagYtelseMapper {
     private static boolean skalMappeInfotrygdandeler(InfotrygdYtelseGrunnlag grunnlag) {
         var erToggletPå = !Environment.current().isProd();
         var harDagsatsIListeMedUtbetalinger = grunnlag.getUtbetaltePerioder().stream().allMatch(p -> p.getDagsats() != null);
-        return erToggletPå && !grunnlag.getKategori().equals(Arbeidskategori.UGYLDIG) && harDagsatsIListeMedUtbetalinger;
+        return erToggletPå &&
+            !grunnlag.getKategori().equals(Arbeidskategori.UGYLDIG)
+            && !KOMBINASJONSKATEGORIER.contains(grunnlag.getKategori())
+            && harDagsatsIListeMedUtbetalinger;
     }
 
     /**
@@ -92,7 +115,7 @@ public class InfotrygdgrunnlagYtelseMapper {
     private static List<YtelseAnvistAndel> oversettYtelseArbeidTilAnvisteAndeler(Arbeidskategori kategori,
                                                                                  List<InfotrygdYtelseAnvist> utbetalinger) {
         var inntektskategorier = splittArbeidskategoriTilInntektskategorier(kategori);
-        if (inntektskategorier.isEmpty()) {
+        if (inntektskategorier.size() != 1) {
             LOGGER.info("Kunne ikke mappe inntektskategori fra infotrygdgrunnlag. Mapper ingen andeler for anvisning.");
             return Collections.emptyList();
         }
