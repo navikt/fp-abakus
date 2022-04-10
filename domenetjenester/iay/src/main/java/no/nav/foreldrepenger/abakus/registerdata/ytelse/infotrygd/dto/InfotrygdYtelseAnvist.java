@@ -66,7 +66,7 @@ public class InfotrygdYtelseAnvist {
 
     @Override
     public int hashCode() {
-        return Objects.hash(utbetaltFom, utbetaltTom, utbetalingsgrad);
+        return Objects.hash(utbetaltFom, utbetaltTom, utbetalingsgrad, orgnr, erRefusjon, dagsats);
     }
 
     @Override
@@ -75,6 +75,22 @@ public class InfotrygdYtelseAnvist {
             "utbetaltFom=" + utbetaltFom +
             ", utbetaltTom=" + utbetaltTom +
             ", utbetalingsgrad=" + utbetalingsgrad +
+            ", orgnr=" + getOrgnrString() +
+            ", erRefusjon=" + erRefusjon +
+            ", dagsats=" + dagsats +
+
             '}';
     }
+
+    private String getOrgnrString() {
+        if (orgnr == null) {
+            return null;
+        }
+        int length = orgnr.length();
+        if (length <= 4) {
+            return "*".repeat(length);
+        }
+        return "*".repeat(length - 4) + orgnr.substring(length - 4);
+    }
+
 }
