@@ -258,7 +258,7 @@ public class InfotrygdgrunnlagYtelseMapper {
                                                                        BigDecimal tilFordeling,
                                                                        boolean medRefusjon) {
         // Dersom vi finner en utbetaling som har orgnr fra beregningsgrunnlag bruker vi denne
-        if (anvisninger.stream().anyMatch(a -> a.getOrgnr().equals(orgnummer.getId()))) {
+        if (anvisninger.stream().anyMatch(a -> a.getOrgnr() != null && a.getOrgnr().equals(orgnummer.getId()))) {
             return beregnFraAnvisning(orgnummer, anvisninger);
         } else {
             return beregnAndelFraGrunnlag(orgnummer, alleGrunnlagsandeler, grunnlagsandelerForArbeid, anvisninger, tilFordeling, medRefusjon);
