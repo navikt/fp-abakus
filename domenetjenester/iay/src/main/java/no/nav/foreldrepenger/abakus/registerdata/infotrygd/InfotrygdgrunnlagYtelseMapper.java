@@ -28,7 +28,9 @@ import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelseBuilder;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseAnvist;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseArbeid;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseGrunnlag;
+import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.typer.OrganisasjonsNummerValidator;
 import no.nav.foreldrepenger.konfig.Environment;
@@ -36,17 +38,6 @@ import no.nav.foreldrepenger.konfig.Environment;
 public class InfotrygdgrunnlagYtelseMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InfotrygdgrunnlagYtelseMapper.class);
-
-    /**
-     * Kombinasjonskategorier fra infotrygd
-     */
-    private static final List<Arbeidskategori> KOMBINASJONSKATEGORIER = List.of(
-        Arbeidskategori.KOMBINASJON_ARBEIDSTAKER_OG_SELVSTENDIG_NÆRINGSDRIVENDE,
-        Arbeidskategori.KOMBINASJON_ARBEIDSTAKER_OG_FRILANSER,
-        Arbeidskategori.KOMBINASJON_ARBEIDSTAKER_OG_DAGPENGER,
-        Arbeidskategori.KOMBINASJON_ARBEIDSTAKER_OG_FISKER,
-        Arbeidskategori.KOMBINASJON_ARBEIDSTAKER_OG_JORDBRUKER
-    );
 
     private InfotrygdgrunnlagYtelseMapper() {
     }
@@ -68,7 +59,9 @@ public class InfotrygdgrunnlagYtelseMapper {
             var overlappendeUtbetalinger = grunnlag.getUtbetaltePerioder().stream().filter(v -> utledPeriodeNårTomMuligFørFom(v.getUtbetaltFom(), v.getUtbetaltTom()).overlapper(intervall)).toList();
             var anvistBuilder = ytelseBuilder.getAnvistBuilder();
             if (skalMappeInfotrygdandeler(grunnlag)) {
-                oversettYtelseArbeidTilAnvisteAndeler(grunnlag.getKategori(), overlappendeUtbetalinger).forEach(anvistBuilder::leggTilYtelseAnvistAndel);
+                oversettYtelseArbeidTilAnvisteAndeler(grunnlag.getKategori(),
+                    grunnlag.getArbeidsforhold(),
+                    overlappendeUtbetalinger).forEach(anvistBuilder::leggTilYtelseAnvistAndel);
             }
             ytelseBuilder.leggtilYtelseAnvist(anvistBuilder
                 .medAnvistPeriode(intervall)
@@ -87,10 +80,6 @@ public class InfotrygdgrunnlagYtelseMapper {
      * Disse tilfellene er:
      * - Vedtak der det mangler dagsats
      * - Vedtak som er basert på beregningsgrunnlag uten arbeidskategori
-     * - Vedtak som er basert på beregningsgrunnlag med kombinasjoner i arbeidskategori
-     * <p>
-     * Sistnevte kan ikke brukes fordi linjene med utbetaling ikke inneholder nok informasjon til at de entydig kan mappes til riktig inntektskategori.
-     * Dette er fordi grunnlag med arbeid ofte mangler orgnr, og kan derfor ikke skilles fra utbetalinger for f.eks dagpenger.
      *
      * @param grunnlag Beregningsgrunnlag fra infotrygd
      * @return Verdi som sier som vi skal mappe inn andeler fra grunnlaget
@@ -100,7 +89,6 @@ public class InfotrygdgrunnlagYtelseMapper {
         var harDagsatsIListeMedUtbetalinger = grunnlag.getUtbetaltePerioder().stream().allMatch(p -> p.getDagsats() != null);
         return erToggletPå &&
             !grunnlag.getKategori().equals(Arbeidskategori.UGYLDIG)
-            && !KOMBINASJONSKATEGORIER.contains(grunnlag.getKategori())
             && harDagsatsIListeMedUtbetalinger;
     }
 
@@ -108,34 +96,75 @@ public class InfotrygdgrunnlagYtelseMapper {
      * Mapper utbetalinger fra infotrygd til anviste andeler
      * <p>
      *
-     * @param kategori     Arbeidskategori fra infotrygd
-     * @param utbetalinger Vedtak/anvisning for periode
+     * @param kategori       Arbeidskategori fra infotrygd
+     * @param arbeidsforhold Beregningsgrunnlag fra infotrygd
+     * @param utbetalinger   Vedtak/anvisning for periode
      * @return Liste med andeler
      */
     private static List<YtelseAnvistAndel> oversettYtelseArbeidTilAnvisteAndeler(Arbeidskategori kategori,
-                                                                                 List<InfotrygdYtelseAnvist> utbetalinger) {
+                                                                                 List<InfotrygdYtelseArbeid> arbeidsforhold, List<InfotrygdYtelseAnvist> utbetalinger) {
         var inntektskategorier = splittArbeidskategoriTilInntektskategorier(kategori);
-        if (inntektskategorier.size() != 1) {
+        if (inntektskategorier.isEmpty()) {
             LOGGER.info("Kunne ikke mappe inntektskategori fra infotrygdgrunnlag. Mapper ingen andeler for anvisning.");
             return Collections.emptyList();
         }
-        var andelBuildere = new ArrayList<>(finnArbeidstakerAndeler(utbetalinger));
-        finnIkkeArbeidstakerAndel(utbetalinger, inntektskategorier).ifPresent(andelBuildere::add);
-        finnYtelseRapportertPåNødnummer(utbetalinger, inntektskategorier).ifPresent(andelBuildere::add);
-        return andelBuildere;
+        var totaltUtbetalt = utbetalinger.stream().map(InfotrygdYtelseAnvist::getDagsats).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+        var andelerMedRefusjon = finnArbeidstakerAndeler(arbeidsforhold, utbetalinger, totaltUtbetalt, true);
+        var andeler = new ArrayList<>(andelerMedRefusjon);
+        var andelerUtenRefusjon = finnArbeidstakerAndeler(arbeidsforhold, utbetalinger, finnRestTilFordeling(utbetalinger, andelerMedRefusjon), false);
+        andeler.addAll(andelerUtenRefusjon);
+        finnYtelseRapportertPåNødnummer(utbetalinger, inntektskategorier).ifPresent(andeler::add);
+        finnIkkeArbeidstakerAndel(utbetalinger, inntektskategorier, finnRestTilFordeling(utbetalinger, andeler)).ifPresent(andeler::add);
+        return andeler;
 
     }
 
-    private static Optional<YtelseAnvistAndel> finnIkkeArbeidstakerAndel(List<InfotrygdYtelseAnvist> utbetalinger, Set<Inntektskategori> inntektskategorier) {
+    private static BigDecimal finnRestTilFordeling(List<InfotrygdYtelseAnvist> utbetalinger, List<YtelseAnvistAndel> andeler) {
+        var total = utbetalinger.stream().map(InfotrygdYtelseAnvist::getDagsats).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+        var fordelt = andeler.stream().map(YtelseAnvistAndel::getDagsats)
+            .map(Beløp::getVerdi)
+            .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+        return total.subtract(fordelt);
+    }
+
+    private static Optional<YtelseAnvistAndel> finnIkkeArbeidstakerAndel(List<InfotrygdYtelseAnvist> utbetalinger,
+                                                                         Set<Inntektskategori> inntektskategorier,
+                                                                         BigDecimal restTilFordeling) {
         var ikkeArbeidstakerKategori = inntektskategorier.stream().filter(a -> !a.equals(Inntektskategori.ARBEIDSTAKER)).findFirst();
+        if (ikkeArbeidstakerKategori.isEmpty()) {
+            return Optional.empty();
+        }
+
         var utbetalingerUtenOrgnr = utbetalinger.stream().filter(arb -> !OrganisasjonsNummerValidator.erGyldig(arb.getOrgnr())).toList();
-        return ikkeArbeidstakerKategori.map(i -> YtelseAnvistAndelBuilder.ny()
+
+        if (utbetalingerUtenOrgnr.size() == 0) {
+            return Optional.of(YtelseAnvistAndelBuilder.ny()
+                .medUtbetalingsgrad(finnUtbetalingsgrad(utbetalingerUtenOrgnr))
+                .medInntektskategori(ikkeArbeidstakerKategori.get())
+                .medRefusjonsgrad(BigDecimal.ZERO)
+                .medDagsats(BigDecimal.ZERO)
+                .build()
+            );
+        }
+
+        if (restTilFordeling.compareTo(BigDecimal.ZERO) == 0) {
+            return Optional.of(YtelseAnvistAndelBuilder.ny()
+                .medUtbetalingsgrad(finnUtbetalingsgrad(utbetalingerUtenOrgnr))
+                .medInntektskategori(ikkeArbeidstakerKategori.get())
+                .medRefusjonsgrad(BigDecimal.ZERO)
+                .medDagsats(BigDecimal.ZERO)
+                .build()
+            );
+        }
+
+        return Optional.of(YtelseAnvistAndelBuilder.ny()
             .medUtbetalingsgrad(finnUtbetalingsgrad(utbetalingerUtenOrgnr))
-            .medInntektskategori(i)
+            .medInntektskategori(ikkeArbeidstakerKategori.get())
             .medRefusjonsgrad(BigDecimal.ZERO)
-            .medDagsats(finnDagsatsIkkeArbeidstaker(utbetalingerUtenOrgnr))
+            .medDagsats(restTilFordeling)
             .build()
         );
+
     }
 
     /**
@@ -174,27 +203,112 @@ public class InfotrygdgrunnlagYtelseMapper {
         return Optional.empty();
     }
 
-    private static BigDecimal finnDagsatsIkkeArbeidstaker(List<InfotrygdYtelseAnvist> utbetalinger) {
-        return utbetalinger.stream()
-            .map(InfotrygdYtelseAnvist::getDagsats)
-            .reduce(BigDecimal::add)
-            .orElse(BigDecimal.ZERO);
-    }
-
-    private static List<YtelseAnvistAndel> finnArbeidstakerAndeler(List<InfotrygdYtelseAnvist> utbetalinger) {
-        var gruppertPrOrg = utbetalinger.stream()
+    private static List<YtelseAnvistAndel> finnArbeidstakerAndeler(List<InfotrygdYtelseArbeid> arbeidsforhold,
+                                                                   List<InfotrygdYtelseAnvist> utbetalinger,
+                                                                   BigDecimal restTilFordeling,
+                                                                   boolean medRefusjon) {
+        var gruppertPrOrg = arbeidsforhold.stream()
             .filter(a -> a.getOrgnr() != null)
+            .filter(a -> medRefusjon ? a.getRefusjon() : a.getRefusjon() == null || !a.getRefusjon())
             .filter(a -> OrganisasjonsNummerValidator.erGyldig(a.getOrgnr()))
-            .collect(Collectors.groupingBy(InfotrygdYtelseAnvist::getOrgnr));
+            .collect(Collectors.groupingBy(InfotrygdYtelseArbeid::getOrgnr));
 
         return gruppertPrOrg.entrySet().stream()
-            .filter(e -> e.getValue().stream().map(InfotrygdYtelseAnvist::getDagsats).reduce(BigDecimal::add).orElse(BigDecimal.ZERO).compareTo(BigDecimal.ZERO) > 0)
-            .map(e -> mapGrunnlagsandelerTilAnvistandel(new OrgNummer(e.getKey()), e.getValue())).toList();
+            .map(e -> mapGrunnlagsandelerTilAnvistandel(
+                new OrgNummer(e.getKey()),
+                e.getValue(),
+                arbeidsforhold,
+                utbetalinger,
+                restTilFordeling, medRefusjon)).toList();
+    }
+
+    private static YtelseAnvistAndel beregnAndelFraGrunnlag(OrgNummer orgnummer,
+                                                            List<InfotrygdYtelseArbeid> alleGrunnlagsandeler,
+                                                            List<InfotrygdYtelseArbeid> grunnlagsandelerForArbeid,
+                                                            List<InfotrygdYtelseAnvist> anvisninger,
+                                                            BigDecimal tilFordeling,
+                                                            boolean medRefusjon) {
+        var gruppe = alleGrunnlagsandeler.stream().filter(a ->
+            medRefusjon ? a.getRefusjon() : a.getRefusjon() == null || !a.getRefusjon()).toList();
+        var grunnlagFraGruppe = gruppe.stream()
+            .map(InfotrygdgrunnlagYtelseMapper::mapTilDagsats)
+            .map(d -> finnUtbetalingsgrad(anvisninger).multiply(d))
+            .reduce(BigDecimal::add)
+            .orElse(BigDecimal.ZERO);
+
+        if (grunnlagFraGruppe.compareTo(tilFordeling) > 0) {
+            return beregnFraGrunnlagOgAnvisning(grunnlagFraGruppe,
+                grunnlagsandelerForArbeid,
+                tilFordeling,
+                Optional.of(orgnummer),
+                finnUtbetalingsgrad(anvisninger)).orElse(nullAndel(orgnummer));
+        } else {
+            return beregnFraGrunnlagOgAnvisning(grunnlagFraGruppe,
+                grunnlagsandelerForArbeid,
+                grunnlagFraGruppe,
+                Optional.of(orgnummer),
+                finnUtbetalingsgrad(anvisninger)).orElse(nullAndel(orgnummer));
+        }
     }
 
     private static YtelseAnvistAndel mapGrunnlagsandelerTilAnvistandel(OrgNummer orgnummer,
-                                                                       List<InfotrygdYtelseAnvist> anvisninger) {
+                                                                       List<InfotrygdYtelseArbeid> grunnlagsandelerForArbeid,
+                                                                       List<InfotrygdYtelseArbeid> alleGrunnlagsandeler,
+                                                                       List<InfotrygdYtelseAnvist> anvisninger,
+                                                                       BigDecimal tilFordeling,
+                                                                       boolean medRefusjon) {
+        // Dersom vi finner en utbetaling som har orgnr fra beregningsgrunnlag bruker vi denne
+        if (anvisninger.stream().anyMatch(a -> a.getOrgnr().equals(orgnummer.getId()))) {
+            return beregnFraAnvisning(orgnummer, anvisninger);
+        } else {
+            return beregnAndelFraGrunnlag(orgnummer, alleGrunnlagsandeler, grunnlagsandelerForArbeid, anvisninger, tilFordeling, medRefusjon);
+        }
+    }
 
+    private static Optional<YtelseAnvistAndel> beregnFraGrunnlagOgAnvisning(BigDecimal totalGrunnlag,
+                                                                            List<InfotrygdYtelseArbeid> grunnlagsandelerForAktivitet,
+                                                                            BigDecimal tilFordeling,
+                                                                            Optional<OrgNummer> orgnummer,
+                                                                            BigDecimal utbetalingsgrad) {
+        var totalgrunnlagForAktivitet = grunnlagsandelerForAktivitet.stream()
+            .map(InfotrygdgrunnlagYtelseMapper::mapTilDagsats)
+            .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+
+        if (tilFordeling.compareTo(BigDecimal.ZERO) == 0) {
+            return Optional.empty();
+        }
+
+        var fraksjonAvTotalUtbetaling = totalgrunnlagForAktivitet.divide(totalGrunnlag, RoundingMode.HALF_UP);
+        var andel = fraksjonAvTotalUtbetaling.multiply(tilFordeling);
+
+        BigDecimal refusjonsgrad = finnRefusjonsgrad(grunnlagsandelerForAktivitet, totalgrunnlagForAktivitet);
+        return Optional.of(YtelseAnvistAndelBuilder.ny()
+            .medDagsats(andel)
+            .medInntektskategori(Inntektskategori.ARBEIDSTAKER)
+            .medArbeidsgiver(orgnummer.map(Arbeidsgiver::virksomhet).orElse(null))
+            .medRefusjonsgrad(refusjonsgrad)
+            .medUtbetalingsgrad(utbetalingsgrad)
+            .build());
+    }
+
+    private static BigDecimal finnRefusjonsgrad(List<InfotrygdYtelseArbeid> grunnlagsandelerForAktivitet, BigDecimal totalgrunnlagForAktivitet) {
+        return grunnlagsandelerForAktivitet.stream()
+            .filter(InfotrygdYtelseArbeid::getRefusjon)
+            .map(InfotrygdgrunnlagYtelseMapper::mapTilDagsats)
+            .reduce(BigDecimal::add).orElse(BigDecimal.ZERO).divide(totalgrunnlagForAktivitet, RoundingMode.HALF_UP);
+    }
+
+    private static YtelseAnvistAndel nullAndel(OrgNummer orgnummer) {
+        return YtelseAnvistAndelBuilder.ny()
+            .medDagsats(BigDecimal.ZERO)
+            .medInntektskategori(Inntektskategori.ARBEIDSTAKER)
+            .medArbeidsgiver(Arbeidsgiver.virksomhet(orgnummer))
+            .medRefusjonsgrad(BigDecimal.ZERO)
+            .medUtbetalingsgrad(BigDecimal.ZERO)
+            .build();
+    }
+
+    private static YtelseAnvistAndel beregnFraAnvisning(OrgNummer orgnummer, List<InfotrygdYtelseAnvist> anvisninger) {
         var refusjon = anvisninger.stream().filter(InfotrygdYtelseAnvist::getErRefusjon)
             .map(InfotrygdYtelseAnvist::getDagsats)
             .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
@@ -239,6 +353,17 @@ public class InfotrygdgrunnlagYtelseMapper {
             case KOMBINASJON_ARBEIDSTAKER_OG_DAGPENGER -> Set.of(Inntektskategori.ARBEIDSTAKER, Inntektskategori.DAGPENGER);
             case DAGMAMMA -> Set.of(Inntektskategori.DAGMAMMA);
             default -> Set.of();
+        };
+    }
+
+    private static BigDecimal mapTilDagsats(InfotrygdYtelseArbeid arbeid) {
+        return switch (arbeid.getInntektperiode()) {
+            case FASTSATT25PAVVIK, ÅRLIG -> arbeid.getInntekt().divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
+            case MÅNEDLIG -> arbeid.getInntekt().multiply(BigDecimal.valueOf(12)).divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
+            case DAGLIG -> arbeid.getInntekt();
+            case UKENTLIG -> arbeid.getInntekt().multiply(BigDecimal.valueOf(52)).divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
+            case BIUKENTLIG -> arbeid.getInntekt().multiply(BigDecimal.valueOf(26)).divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
+            default -> throw new IllegalArgumentException("Ugyldig InntektPeriodeType" + arbeid.getInntektperiode());
         };
     }
 
