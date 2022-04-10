@@ -228,11 +228,12 @@ public class InfotrygdgrunnlagYtelseMapper {
                                                             List<InfotrygdYtelseAnvist> anvisninger,
                                                             BigDecimal tilFordeling,
                                                             boolean medRefusjon) {
-        var gruppe = alleGrunnlagsandeler.stream().filter(a ->
+        var gruppe = alleGrunnlagsandeler.stream()
+            .filter(a -> OrganisasjonsNummerValidator.erGyldig(a.getOrgnr())).filter(a ->
             medRefusjon ? a.getRefusjon() : a.getRefusjon() == null || !a.getRefusjon()).toList();
         var grunnlagFraGruppe = gruppe.stream()
             .map(InfotrygdgrunnlagYtelseMapper::mapTilDagsats)
-            .map(d -> finnUtbetalingsgrad(anvisninger).multiply(d))
+            .map(d -> finnUtbetalingsgrad(anvisninger).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP).multiply(d))
             .reduce(BigDecimal::add)
             .orElse(BigDecimal.ZERO);
 
@@ -283,7 +284,7 @@ public class InfotrygdgrunnlagYtelseMapper {
 
         BigDecimal refusjonsgrad = finnRefusjonsgrad(grunnlagsandelerForAktivitet, totalgrunnlagForAktivitet);
         return Optional.of(YtelseAnvistAndelBuilder.ny()
-            .medDagsats(andel)
+            .medDagsats(andel.setScale(0, RoundingMode.HALF_UP))
             .medInntektskategori(Inntektskategori.ARBEIDSTAKER)
             .medArbeidsgiver(orgnummer.map(Arbeidsgiver::virksomhet).orElse(null))
             .medRefusjonsgrad(refusjonsgrad)
