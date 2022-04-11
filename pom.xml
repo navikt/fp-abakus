@@ -22,7 +22,7 @@
 
 	<properties>
 		<revision>1.2</revision>
-		<sha1 />
+		<sha1/>
 		<changelist>-SNAPSHOT</changelist>
 		<java.version>17</java.version>
         <kontrakt.java.version>17</kontrakt.java.version>
@@ -214,7 +214,7 @@
 			<dependency>
 				<groupId>net.logstash.logback</groupId>
 				<artifactId>logstash-logback-encoder</artifactId>
-				<version>7.0.1</version>
+				<version>7.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.papertrailapp</groupId>
@@ -494,14 +494,14 @@
                         </goals>
                         <configuration>
                             <target>
-                                <property name="plugin_classpath" refid="maven.plugin.classpath" />
+                                <property name="plugin_classpath" refid="maven.plugin.classpath"/>
                                 <java classname="no.nav.k9.dev.jakarta.App">
-                                    <arg value="${project.build.directory}/${project.build.finalName}.jar" />
-                                    <arg value="${project.build.directory}/${project.artifactId}-jakarta-${project.version}.jar" />
-                                    <arg value="-q" />
-                                    <arg value="-o" />
+                                    <arg value="${project.build.directory}/${project.build.finalName}.jar"/>
+                                    <arg value="${project.build.directory}/${project.artifactId}-jakarta-${project.version}.jar"/>
+                                    <arg value="-q"/>
+                                    <arg value="-o"/>
                                     <classpath>
-                                        <pathelement path="${plugin_classpath}" />
+                                        <pathelement path="${plugin_classpath}"/>
                                     </classpath>
                                 </java>
                             </target>
@@ -515,14 +515,14 @@
                         </goals>
                         <configuration>
                             <target>
-                                <property name="plugin_classpath" refid="maven.plugin.classpath" />
+                                <property name="plugin_classpath" refid="maven.plugin.classpath"/>
                                 <java classname="no.nav.k9.dev.jakarta.App">
-                                    <arg value="${project.build.directory}/${project.build.finalName}-sources.jar" />
-                                    <arg value="${project.build.directory}/${project.artifactId}-jakarta-${project.version}-sources.jar" />
-                                    <arg value="-q" />
-                                    <arg value="-o" />
+                                    <arg value="${project.build.directory}/${project.build.finalName}-sources.jar"/>
+                                    <arg value="${project.build.directory}/${project.artifactId}-jakarta-${project.version}-sources.jar"/>
+                                    <arg value="-q"/>
+                                    <arg value="-o"/>
                                     <classpath>
-                                        <pathelement path="${plugin_classpath}" />
+                                        <pathelement path="${plugin_classpath}"/>
                                     </classpath>
                                 </java>
                             </target>
@@ -571,10 +571,9 @@
                                 <phase>package</phase>
                                 <configuration>
                                     <target>
-                                        <unzip src="${project.build.directory}/${project.artifactId}-jakarta-${project.version}.jar"
-                                            dest="${project.build.directory}/jakarta">
+                                        <unzip src="${project.build.directory}/${project.artifactId}-jakarta-${project.version}.jar" dest="${project.build.directory}/jakarta">
                                             <patternset>
-                                                <include name="META-INF/maven/**/pom.xml" />
+                                                <include name="META-INF/maven/**/pom.xml"/>
                                             </patternset>
                                         </unzip>
                                     </target>
@@ -589,17 +588,11 @@
                                 <configuration>
                                     <target>
                                         <!-- ompakker jar fil uten pom.xml -->
-                                        <jar
-                                            destfile="${project.build.directory}/${project.artifactId}-jakarta-${project.version}-TOBEDEPLOYED.jar">
-                                            <zipfileset
-                                                src="${project.build.directory}/${project.artifactId}-jakarta-${project.version}.jar"
-                                                excludes="META-INF/maven/**" />
+                                        <jar destfile="${project.build.directory}/${project.artifactId}-jakarta-${project.version}-TOBEDEPLOYED.jar">
+                                            <zipfileset src="${project.build.directory}/${project.artifactId}-jakarta-${project.version}.jar" excludes="META-INF/maven/**"/>
                                         </jar>
-                                        <jar
-                                            destfile="${project.build.directory}/${project.artifactId}-jakarta-${project.version}-sources-TOBEDEPLOYED.jar">
-                                            <zipfileset
-                                                src="${project.build.directory}/${project.artifactId}-jakarta-${project.version}-sources.jar"
-                                                excludes="META-INF/maven/**" />
+                                        <jar destfile="${project.build.directory}/${project.artifactId}-jakarta-${project.version}-sources-TOBEDEPLOYED.jar">
+                                            <zipfileset src="${project.build.directory}/${project.artifactId}-jakarta-${project.version}-sources.jar" excludes="META-INF/maven/**"/>
                                         </jar>
                                     </target>
                                 </configuration>
