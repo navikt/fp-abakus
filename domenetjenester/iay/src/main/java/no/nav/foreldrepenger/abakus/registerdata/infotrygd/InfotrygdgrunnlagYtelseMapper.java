@@ -33,7 +33,6 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdY
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.typer.OrganisasjonsNummerValidator;
-import no.nav.foreldrepenger.konfig.Environment;
 
 public class InfotrygdgrunnlagYtelseMapper {
 
@@ -85,10 +84,8 @@ public class InfotrygdgrunnlagYtelseMapper {
      * @return Verdi som sier som vi skal mappe inn andeler fra grunnlaget
      */
     private static boolean skalMappeInfotrygdandeler(InfotrygdYtelseGrunnlag grunnlag) {
-        var erToggletPå = !Environment.current().isProd();
         var harDagsatsIListeMedUtbetalinger = grunnlag.getUtbetaltePerioder().stream().allMatch(p -> p.getDagsats() != null);
-        return erToggletPå &&
-            !grunnlag.getKategori().equals(Arbeidskategori.UGYLDIG)
+        return !grunnlag.getKategori().equals(Arbeidskategori.UGYLDIG)
             && harDagsatsIListeMedUtbetalinger;
     }
 
@@ -230,7 +227,7 @@ public class InfotrygdgrunnlagYtelseMapper {
                                                             boolean medRefusjon) {
         var gruppe = alleGrunnlagsandeler.stream()
             .filter(a -> OrganisasjonsNummerValidator.erGyldig(a.getOrgnr())).filter(a ->
-            medRefusjon ? a.getRefusjon() : a.getRefusjon() == null || !a.getRefusjon()).toList();
+                medRefusjon ? a.getRefusjon() : a.getRefusjon() == null || !a.getRefusjon()).toList();
         var grunnlagFraGruppe = gruppe.stream()
             .map(InfotrygdgrunnlagYtelseMapper::mapTilDagsats)
             .map(d -> finnUtbetalingsgrad(anvisninger).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP).multiply(d))
