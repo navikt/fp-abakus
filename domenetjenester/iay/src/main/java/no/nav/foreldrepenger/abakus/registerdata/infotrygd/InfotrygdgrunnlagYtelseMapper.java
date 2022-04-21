@@ -272,7 +272,7 @@ public class InfotrygdgrunnlagYtelseMapper {
             .map(InfotrygdgrunnlagYtelseMapper::mapTilDagsats)
             .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
 
-        if (tilFordeling.compareTo(BigDecimal.ZERO) == 0) {
+        if (tilFordeling.compareTo(BigDecimal.ZERO) == 0 || totalgrunnlagForAktivitet.compareTo(BigDecimal.ZERO) == 0) {
             return Optional.empty();
         }
 
