@@ -8,7 +8,7 @@
 	<artifactId>fpabakus</artifactId>
 	<packaging>pom</packaging>
 	<name>Abakus :: Root</name>
-	<version>${revision}${sha1}${changelist}</version>
+	<version>${revision}</version>
 
 	<modules>
 		<module>felles</module>
@@ -21,10 +21,9 @@
 	</modules>
 
 	<properties>
-		<revision>1.2</revision>
-		<sha1/>
-		<changelist>-SNAPSHOT</changelist>
+		<revision>1.2-SNAPSHOT</revision>
 		<java.version>17</java.version>
+
         <kontrakt.java.version>17</kontrakt.java.version>
         <argLine>-Xms256m -Dlog.level.no.nav=WARN -Dfile.encoding=${project.build.sourceEncoding}</argLine>
 		<maven.deploy.skip>true</maven.deploy.skip>
@@ -44,11 +43,6 @@
 		<jersey.version>2.35</jersey.version>
         <flyway.version>8.5.5</flyway.version>
 	</properties>
-
-	<prerequisites>
-		<!-- deprecated i maven3, men trengs av versions plugin -->
-		<maven>3.6.1</maven>
-	</prerequisites>
 
 	<!-- NB: Unngå å put scope (test, provided) i dependency management. Det
 		har uheldige virkninger ved bruk av import og dependency (bruk composition

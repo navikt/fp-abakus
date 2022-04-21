@@ -6,7 +6,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.abakus</groupId>
         <artifactId>fpabakus</artifactId>
-        <version>${revision}${sha1}${changelist}</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>web</artifactId>
@@ -231,7 +231,7 @@
             <groupId>com.papertrailapp</groupId>
             <artifactId>logback-syslog4j</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>swagger-ui</artifactId>
@@ -278,7 +278,7 @@
     <build>
         <!-- setter til app da det er default for jar som kjøres i nais baseimages -->
         <finalName>app</finalName>
-       
+
         <resources>
             <!-- filtrerer for å sette opp swagger versjon korrekt -->
             <resource>
@@ -295,7 +295,7 @@
                 </excludes>
             </resource>
         </resources>
-        
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

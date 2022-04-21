@@ -7,13 +7,13 @@
     <parent>
         <groupId>no.nav.foreldrepenger.abakus</groupId>
         <artifactId>fpabakus</artifactId>
-        <version>${revision}${sha1}${changelist}</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>migreringer</artifactId>
     <packaging>jar</packaging>
     <name>Abakus :: Database migreringer</name>
-	
+
 	<properties>
 		<skipMigrering>false</skipMigrering>
 	</properties>
