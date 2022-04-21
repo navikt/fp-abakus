@@ -38,7 +38,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          mvn verify -B -s settings.xml -DskipTests
+          mvn install -B -s settings.xml -DskipTests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DATASOURCE_HOST: localhost
