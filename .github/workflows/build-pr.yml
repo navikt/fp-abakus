@@ -37,7 +37,7 @@ jobs:
         uses: whelk-io/maven-settings-xml-action@v20
         with:
           repositories: '[{ "id": "github", "name": "github", "url": "https://maven.pkg.github.com/${{ github.repository }}", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } }]'
-          servers: '[{ "id": "github", "username": "${{ github.actor }}", "password": "${{ secrets.READER_TOKEN }}" }]'
+          servers: '[{ "id": "github", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}" }]'
           output_file: settings.xml
 
       - uses: actions/setup-java@v3
@@ -46,11 +46,21 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build
-        shell: bash
+      - name: Build med sonar analyse
+        if: github.actor != 'dependabot[bot]'
         run: |
+          echo "Building $BUILD_VERSION"
+          mvn jacoco:prepare-agent verify jacoco:report sonar:sonar -e -B -s settings.xml -Drevision=${BUILD_VERSION} -Dsonar.login=${SONAR_TOKEN}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          DATASOURCE_HOST: localhost
+          DATASOURCE_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
+
+      - name: Build uten sonar analyse
+        if: github.actor == 'dependabot[bot]'
+        run: |
+          echo "Building $BUILD_VERSION"
           mvn verify -B -s settings.xml -DtrimStackTrace=false
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DATASOURCE_HOST: localhost
           DATASOURCE_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
