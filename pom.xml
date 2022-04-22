@@ -12,9 +12,9 @@
 
 	<groupId>no.nav.foreldrepenger.abakus</groupId>
 	<artifactId>fpabakus</artifactId>
+	<version>${revision}</version>
 	<packaging>pom</packaging>
 	<name>Abakus :: Root</name>
-	<version>${revision}</version>
 
 	<modules>
 		<module>felles</module>
@@ -28,6 +28,9 @@
 
 	<properties>
 		<revision>1.2-SNAPSHOT</revision>
+
+        <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
+        <sonar.projectKey>navikt_fp-abakus</sonar.projectKey>
 
         <kontrakt.java.version>17</kontrakt.java.version>
 

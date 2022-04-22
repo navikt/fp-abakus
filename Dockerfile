@@ -8,7 +8,7 @@ RUN mkdir webapp
 RUN mkdir conf
 
 # Config
-COPY web/target/classes/logback.xml conf/
+COPY web/target/classes/logback*.xml conf/
 
 # Application Container (Jetty)
 COPY web/target/app.jar .
