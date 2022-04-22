@@ -46,6 +46,10 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
+      - name: Set build version
+        run: |
+          echo "BUILD_VERSION=2.0-$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
+
       - name: Build med sonar analyse
         if: github.actor != 'dependabot[bot]'
         run: |
