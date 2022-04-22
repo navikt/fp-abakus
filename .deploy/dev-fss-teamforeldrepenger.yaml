@@ -51,18 +51,12 @@ spec:
       - mountPath: /var/run/secrets/nais.io/appdynamics
         kvPath: /apikey/appdynamics/dev
   env:
-    - name: LOADBALANCER_URL
-      value: https://fpabakus.nais.preprod.local
-    - name: ABAC_PDP_ENDPOINT_URL
-      value: http://abac-duplo.teamabac/application/authorize
     - name: SECURITYTOKENSERVICE_URL
       value: https://sts-q1.preprod.local/SecurityTokenServiceProvider/
-    #OpenID
+    #OpenAM
     - name: OIDC_OPEN_AM_WELL_KNOWN_URL
       value: https://isso-q.adeo.no:443/isso/oauth2/.well-known/openid-configuration
-    - name: OPENIDCONNECT_ISSOHOST
-      value: https://isso-q.adeo.no:443/isso/oauth2
-    #OIDC
+    #STS
     - name: OIDC_STS_WELL_KNOWN_URL
       value: https://security-token-service.nais.preprod.local/.well-known/openid-configuration
     #ABAC
@@ -76,8 +70,6 @@ spec:
     - name: KAFKA_FATTEVEDTAK_TOPIC
       value: privat-familie-vedtakFattet-v1-q1
     #Eksterne systemer
-    - name: PDL_BASE_URL
-      value: http://pdl-api.pdl/graphql
     - name: HENTINNTEKTLISTEBOLK_URL
       value: https://app-q1.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk
     - name: AAREG_RS_URL

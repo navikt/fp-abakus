@@ -1,7 +1,5 @@
 package no.nav.foreldrepenger.abakus.jetty.db;
 
-import static no.nav.foreldrepenger.konfig.Cluster.LOCAL;
-
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -9,64 +7,60 @@ import javax.sql.DataSource;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import no.nav.foreldrepenger.konfig.Cluster;
+import io.micrometer.core.instrument.Metrics;
 import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil;
 import no.nav.vault.jdbc.hikaricp.VaultError;
 
 public class DatasourceUtil {
 
-    private static final String VAULT_PREPROD_NAVN = "preprod-fss";
+    private static final Environment ENV = Environment.current();
 
-    public static DataSource createDatasource(String datasourceName, DatasourceRole role, Cluster cluster,
-            int maxPoolSize) {
-        String rolePrefix = getRolePrefix(datasourceName);
-        HikariConfig config = initConnectionPoolConfig(datasourceName, maxPoolSize);
-        if (LOCAL.equals(cluster)) {
-            return createLocalDatasource(config, "public", rolePrefix,
-                Environment.current().getProperty(datasourceName + ".password"));
+    public static DataSource createDatasource(DatasourceRole role, int maxPoolSize) {
+        HikariConfig config = initConnectionPoolConfig(maxPoolSize);
+        if (ENV.isVTP() || ENV.isLocal()) {
+            return createLocalDatasource(config);
         }
-        return createVaultDatasource(config, mountPath(cluster), getRole(rolePrefix, role));
-
+        return createVaultDatasource(config, mountPath(), getRole(role));
     }
 
-    private static String mountPath(Cluster cluster) {
-        return "postgresql/" + (cluster.isProd() ? cluster.clusterName() : VAULT_PREPROD_NAVN);
+    public static String getRole(DatasourceRole role) {
+        return String.format("%s-%s", getUsername(), role.name().toLowerCase());
     }
 
-    private static String getRole(String rolePrefix, DatasourceRole role) {
-        return String.format("%s-%s", rolePrefix, role.name().toLowerCase());
-    }
+    private static HikariConfig initConnectionPoolConfig(int maxPoolSize) {
+        var config = new HikariConfig();
 
-    public static String getDbRole(String datasoureName, DatasourceRole role) {
-        return String.format("%s-%s", getRolePrefix(datasoureName), role.name().toLowerCase());
-    }
-
-    private static String getRolePrefix(String datasourceName) {
-        return Environment.current().getProperty(datasourceName + ".username");
-    }
-
-    private static HikariConfig initConnectionPoolConfig(String dataSourceName, int maxPoolSize) {
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(Environment.current().getProperty(dataSourceName + ".url"));
-
+        config.setJdbcUrl(ENV.getRequiredProperty("defaultDS.url"));
         config.setMinimumIdle(0);
         config.setMaximumPoolSize(maxPoolSize);
         config.setIdleTimeout(10001);
         config.setMaxLifetime(30001);
         config.setConnectionTestQuery("select 1");
         config.setDriverClassName("org.postgresql.Driver");
+        config.setMetricRegistry(Metrics.globalRegistry);
 
         // optimaliserer inserts for postgres
-        var dsProperties=new Properties();
+        var dsProperties = new Properties();
         dsProperties.setProperty("reWriteBatchedInserts", "true");
-        dsProperties.setProperty("logServerErrorDetail", "false");
+        dsProperties.setProperty("logServerErrorDetail", "false"); // skrur av batch exceptions som lekker statements i åpen logg
         config.setDataSourceProperties(dsProperties);
 
         // skrur av autocommit her, da kan vi bypasse dette senere når hibernate setter opp entitymanager for bedre conn mgmt
         config.setAutoCommit(false);
 
         return config;
+    }
+
+    private static DataSource createLocalDatasource(HikariConfig config) {
+        config.setUsername(getUsername());
+        config.setPassword(getUsername()); // NOSONAR false positive
+        config.setSchema("public");
+        return new HikariDataSource(config);
+    }
+
+    private static String getUsername() {
+        return ENV.getRequiredProperty("defaultDS.username");
     }
 
     private static DataSource createVaultDatasource(HikariConfig config, String mountPath, String role) {
@@ -77,13 +71,7 @@ public class DatasourceUtil {
         }
     }
 
-    private static DataSource createLocalDatasource(HikariConfig config, String schema, String username,
-            String password) {
-        config.setUsername(username);
-        config.setPassword(password); // NOSONAR false positive
-        if (schema != null && !schema.isEmpty()) {
-            config.setSchema(schema);
-        }
-        return new HikariDataSource(config);
+    private static String mountPath() {
+        return "postgresql/" + (ENV.isProd() ? "prod-fss" : "preprod-fss");
     }
 }

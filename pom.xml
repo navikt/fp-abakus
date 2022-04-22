@@ -12,9 +12,9 @@
 
 	<groupId>no.nav.foreldrepenger.abakus</groupId>
 	<artifactId>fpabakus</artifactId>
+	<version>${revision}</version>
 	<packaging>pom</packaging>
 	<name>Abakus :: Root</name>
-	<version>${revision}</version>
 
 	<modules>
 		<module>felles</module>
