@@ -38,6 +38,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
+          mvn -B -s settings.xml versions:set -DnewVersion=snyk-snapshot
           mvn install -B -s settings.xml -DskipTests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
