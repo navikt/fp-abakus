@@ -15,6 +15,7 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.SigrunTjeneste;
 
 @ApplicationScoped
 @YtelseTypeRef("PSB")
+@YtelseTypeRef("PPN")
 @YtelseTypeRef("OMP")
 public class IAYRegisterInnhentingK9TjenesteImpl extends IAYRegisterInnhentingFellesTjenesteImpl {
 
