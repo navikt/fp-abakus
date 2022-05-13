@@ -7,7 +7,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.felles</groupId>
         <artifactId>fp-bom</artifactId>
-        <version>0.2.6</version>
+        <version>0.2.7</version>
     </parent>
 
 	<groupId>no.nav.foreldrepenger.abakus</groupId>
@@ -37,7 +37,7 @@
 		<felles.version>4.1.25</felles.version>
 		<prosesstask.version>3.1.7</prosesstask.version>
 
-		<kontrakter.version>6.1.19</kontrakter.version>
+		<kontrakter.version>6.1.21</kontrakter.version>
 
 		<tjenestespesifikasjoner.version>1.2021.02.22-10.45-4201aaea72fb</tjenestespesifikasjoner.version>
 	</properties>

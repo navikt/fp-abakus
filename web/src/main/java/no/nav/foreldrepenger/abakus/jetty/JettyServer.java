@@ -120,7 +120,9 @@ public class JettyServer {
     }
 
     protected void konfigurerJndi() throws Exception {
-        new EnvEntry("jdbc/defaultDS", DatasourceUtil.createDatasource(DatasourceRole.USER, 7));
+        // Balanser så CP-size = TaskThreads+1 + Antall Connections man ønsker
+        System.setProperty("task.manager.runner.threads", "6");
+        new EnvEntry("jdbc/defaultDS", DatasourceUtil.createDatasource(DatasourceRole.USER, 12));
     }
 
     void migrerDatabaser() {
