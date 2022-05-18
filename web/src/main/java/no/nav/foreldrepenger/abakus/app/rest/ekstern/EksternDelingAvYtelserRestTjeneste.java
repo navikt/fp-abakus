@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.vedtak.tjeneste;
+package no.nav.foreldrepenger.abakus.app.rest.ekstern;
 
 import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.VEDTAK;
 import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
@@ -46,6 +46,8 @@ import no.nav.abakus.vedtak.ytelse.v1.anvisning.AnvistAndel;
 import no.nav.abakus.vedtak.ytelse.v1.anvisning.Inntektklasse;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.registerdata.infotrygd.InfotrygdgrunnlagYtelseMapper;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.InnhentingInfotrygdTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
@@ -82,13 +84,16 @@ public class EksternDelingAvYtelserRestTjeneste {
     private VedtakYtelseRepository ytelseRepository;
     private AktørTjeneste aktørTjeneste;
 
+    private InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste;
+
     public EksternDelingAvYtelserRestTjeneste() {
     } // CDI Ctor
 
     @Inject
-    public EksternDelingAvYtelserRestTjeneste(VedtakYtelseRepository ytelseRepository, AktørTjeneste aktørTjeneste) {
+    public EksternDelingAvYtelserRestTjeneste(VedtakYtelseRepository ytelseRepository, InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste, AktørTjeneste aktørTjeneste) {
         this.ytelseRepository = ytelseRepository;
         this.aktørTjeneste = aktørTjeneste;
+        this.innhentingInfotrygdTjeneste = innhentingInfotrygdTjeneste;
     }
 
     private static no.nav.abakus.iaygrunnlag.Aktør mapArbeidsgiver(Arbeidsgiver arbeidsgiver) {
@@ -98,6 +103,30 @@ public class EksternDelingAvYtelserRestTjeneste {
         return arbeidsgiver.getOrgnr() != null ?
             new Organisasjon(arbeidsgiver.getIdentifikator()) :
             new AktørIdPersonident(arbeidsgiver.getIdentifikator());
+    }
+    private static no.nav.abakus.iaygrunnlag.Aktør mapArbeidsgiver(no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver arbeidsgiver) {
+        if (arbeidsgiver == null) {
+            return null;
+        }
+        return arbeidsgiver.getOrgnr() != null ?
+            new Organisasjon(arbeidsgiver.getIdentifikator()) :
+            new AktørIdPersonident(arbeidsgiver.getIdentifikator());
+    }
+
+    private static Inntektklasse fraInntektskategori(Inntektskategori inntektskategori) {
+        return switch (inntektskategori) {
+            case ARBEIDSTAKER -> Inntektklasse.ARBEIDSTAKER;
+            case ARBEIDSTAKER_UTEN_FERIEPENGER -> Inntektklasse.ARBEIDSTAKER_UTEN_FERIEPENGER;
+            case FRILANSER -> Inntektklasse.FRILANSER;
+            case SELVSTENDIG_NÆRINGSDRIVENDE -> Inntektklasse.SELVSTENDIG_NÆRINGSDRIVENDE;
+            case DAGPENGER -> Inntektklasse.DAGPENGER;
+            case ARBEIDSAVKLARINGSPENGER -> Inntektklasse.ARBEIDSAVKLARINGSPENGER;
+            case SJØMANN -> Inntektklasse.MARITIM;
+            case DAGMAMMA -> Inntektklasse.DAGMAMMA;
+            case JORDBRUKER -> Inntektklasse.JORDBRUKER;
+            case FISKER -> Inntektklasse.FISKER;
+            default -> Inntektklasse.INGEN;
+        };
     }
 
     @POST
@@ -114,18 +143,32 @@ public class EksternDelingAvYtelserRestTjeneste {
             .filter(GYLDIGE_YTELSER::contains)
             .collect(Collectors.toSet());
 
+        return hentUtYtelser(request, etterspurteYtelser, false);
+    }
+
+    private List<Ytelse> hentUtYtelser(HentBrukersYtelserIPeriodeRequest request, Set<YtelseType> etterspurteYtelser, boolean hentHistoriske) {
         if (etterspurteYtelser.isEmpty()) {
             return List.of();
         }
 
         var ytelser = new ArrayList<Ytelse>();
-        var aktørIder = aktørTjeneste.hentAktørIderForIdent(new PersonIdent(request.getPersonident().getIdent()), utledTema(etterspurteYtelser));
+        var fnr = new PersonIdent(request.getPersonident().getIdent());
+        var aktørIder = aktørTjeneste.hentAktørIderForIdent(fnr, utledTema(etterspurteYtelser));
 
         LocalDate fom = request.getPeriode().getFom();
         LocalDate tom = request.getPeriode().getTom();
 
         var periode = IntervallEntitet.fraOgMedTilOgMed(fom, tom);
 
+        if (hentHistoriske) {
+            var aktørId = aktørTjeneste.hentAktørForIdent(fnr, utledTema(etterspurteYtelser)).orElseThrow();
+            var infotrygdYtelser = innhentingInfotrygdTjeneste.getInfotrygdYtelser(fnr, periode);
+            ytelser.addAll(infotrygdYtelser.stream()
+                .map(InfotrygdgrunnlagYtelseMapper::oversettInfotrygdYtelseGrunnlagTilYtelse)
+                .filter(it -> etterspurteYtelser.contains(it.getRelatertYtelseType()))
+                .map(it -> ytelseTilYtelse(aktørId, it))
+                .toList());
+        }
         for (AktørId aktørId : aktørIder) {
             ytelser.addAll(ytelseRepository.hentYtelserForIPeriode(aktørId, periode)
                 .stream()
@@ -135,6 +178,49 @@ public class EksternDelingAvYtelserRestTjeneste {
         }
 
         return ytelser;
+    }
+
+    private YtelseV1 ytelseTilYtelse(AktørId aktørId, no.nav.foreldrepenger.abakus.domene.iay.Ytelse vedtak) {
+        var ytelse = new YtelseV1();
+        var aktør = new Aktør();
+        aktør.setVerdi(aktørId.getId());
+        ytelse.setAktør(aktør);
+        ytelse.setVedtattTidspunkt(vedtak.getVedtattTidspunkt());
+        ytelse.setYtelse(mapYtelser(vedtak.getRelatertYtelseType()));
+        ytelse.setSaksnummer(vedtak.getSaksreferanse().getVerdi());
+        ytelse.setYtelseStatus(mapStatus(vedtak.getStatus()));
+        ytelse.setKildesystem(mapKildesystem(vedtak.getKilde()));
+        var periode = new Periode();
+        periode.setFom(vedtak.getPeriode().getFomDato());
+        periode.setTom(vedtak.getPeriode().getTomDato());
+        ytelse.setPeriode(periode);
+        var anvist = vedtak.getYtelseAnvist().stream().map(this::mapLagretInfotrygdAnvist).collect(Collectors.toList());
+        ytelse.setAnvist(anvist);
+        return ytelse;
+    }
+
+    private Anvisning mapLagretInfotrygdAnvist(no.nav.foreldrepenger.abakus.domene.iay.YtelseAnvist anvist) {
+        var anvisning = new Anvisning();
+        var periode = new Periode();
+        periode.setFom(anvist.getAnvistFOM());
+        periode.setTom(anvist.getAnvistTOM());
+        anvisning.setPeriode(periode);
+        anvist.getBeløp().map(Beløp::getVerdi).map(Desimaltall::new).ifPresent(anvisning::setBeløp);
+        anvist.getDagsats().map(Beløp::getVerdi).map(Desimaltall::new).ifPresent(anvisning::setDagsats);
+        anvist.getUtbetalingsgradProsent().map(Stillingsprosent::getVerdi).map(Desimaltall::new).ifPresent(anvisning::setUtbetalingsgrad);
+        anvisning.setAndeler(mapInfotrygdAndeler(anvist));
+
+        return anvisning;
+    }
+
+    private List<AnvistAndel> mapInfotrygdAndeler(no.nav.foreldrepenger.abakus.domene.iay.YtelseAnvist anvist) {
+        return anvist.getYtelseAnvistAndeler().stream().map(a -> new AnvistAndel(
+            a.getArbeidsgiver().map(EksternDelingAvYtelserRestTjeneste::mapArbeidsgiver).orElse(null), a.getArbeidsforholdRef().getReferanse(),
+            new Desimaltall(a.getDagsats().getVerdi()),
+            a.getUtbetalingsgradProsent() == null ? null : new Desimaltall(a.getUtbetalingsgradProsent().getVerdi()),
+            a.getRefusjonsgradProsent() == null ? null : new Desimaltall(a.getRefusjonsgradProsent().getVerdi()),
+            fraInntektskategori(a.getInntektskategori())
+        )).collect(Collectors.toList());
     }
 
     @POST
@@ -147,6 +233,23 @@ public class EksternDelingAvYtelserRestTjeneste {
     public List<Ytelse> hentk9VedtakForPerson(@NotNull @TilpassetAbacAttributt(supplierClass = HentBrukersK9YtelserIPeriodeRequestAbacDataSupplier.class) @Valid HentBrukersK9YtelserIPeriodeRequest request) {
 
         return hentVedtakForPerson(new HentBrukersYtelserIPeriodeRequest(request.getPersonident(), request.getPeriode(), K9_YTELSER));
+    }
+
+    @POST
+    @Path("/hent-vedtatte-og-historiske/for-ident/k9")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Henter alle k9 vedtak for ytelser det blir etterspurt og tar med historikk", tags = "ekstern")
+    @BeskyttetRessurs(action = READ, resource = VEDTAK)
+    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    public List<Ytelse> hentk9VedtakForPersonMedHistorikk(@NotNull @TilpassetAbacAttributt(supplierClass = HentBrukersK9YtelserIPeriodeRequestAbacDataSupplier.class) @Valid HentBrukersK9YtelserIPeriodeRequest req) {
+        var request = new HentBrukersYtelserIPeriodeRequest(req.getPersonident(), req.getPeriode(), K9_YTELSER);
+        var etterspurteYtelser = request.getYtelser()
+            .stream()
+            .filter(GYLDIGE_YTELSER::contains)
+            .collect(Collectors.toSet());
+
+        return hentUtYtelser(request, etterspurteYtelser, true);
     }
 
     private YtelseType utledTema(Set<YtelseType> request) {
@@ -230,25 +333,8 @@ public class EksternDelingAvYtelserRestTjeneste {
             case ENGANGSTØNAD -> Ytelser.ENGANGSTØNAD;
             case FORELDREPENGER -> Ytelser.FORELDREPENGER;
             case SVANGERSKAPSPENGER -> Ytelser.SVANGERSKAPSPENGER;
-
             case FRISINN -> Ytelser.FRISINN;
             default -> null;
-        };
-    }
-
-    private static Inntektklasse fraInntektskategori(Inntektskategori inntektskategori) {
-        return switch (inntektskategori) {
-            case ARBEIDSTAKER -> Inntektklasse.ARBEIDSTAKER;
-            case ARBEIDSTAKER_UTEN_FERIEPENGER -> Inntektklasse.ARBEIDSTAKER_UTEN_FERIEPENGER;
-            case FRILANSER -> Inntektklasse.FRILANSER;
-            case SELVSTENDIG_NÆRINGSDRIVENDE -> Inntektklasse.SELVSTENDIG_NÆRINGSDRIVENDE;
-            case DAGPENGER -> Inntektklasse.DAGPENGER;
-            case ARBEIDSAVKLARINGSPENGER -> Inntektklasse.ARBEIDSAVKLARINGSPENGER;
-            case SJØMANN -> Inntektklasse.MARITIM;
-            case DAGMAMMA -> Inntektklasse.DAGMAMMA;
-            case JORDBRUKER -> Inntektklasse.JORDBRUKER;
-            case FISKER -> Inntektklasse.FISKER;
-            default -> Inntektklasse.INGEN;
         };
     }
 

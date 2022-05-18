@@ -20,6 +20,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.Ytelse;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseAnvistAndel;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseAnvistAndelBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseBuilder;
@@ -69,6 +70,36 @@ public class InfotrygdgrunnlagYtelseMapper {
         });
         ytelseBuilder.medYtelseGrunnlag(oversettYtelseArbeid(grunnlag, ytelseBuilder.getGrunnlagBuilder()));
         aktørYtelseBuilder.leggTilYtelse(ytelseBuilder);
+    }
+
+    public static Ytelse oversettInfotrygdYtelseGrunnlagTilYtelse(InfotrygdYtelseGrunnlag grunnlag) {
+        IntervallEntitet periode = utledPeriodeNårTomMuligFørFom(grunnlag.getVedtaksPeriodeFom(), grunnlag.getVedtaksPeriodeTom());
+        var tidligsteAnvist = grunnlag.getUtbetaltePerioder().stream().map(InfotrygdYtelseAnvist::getUtbetaltFom).min(Comparator.naturalOrder());
+        YtelseBuilder ytelseBuilder = InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder.oppdatere(Optional.empty()).getYtelselseBuilderForType(Fagsystem.INFOTRYGD, grunnlag.getYtelseType(),
+                grunnlag.getTemaUnderkategori(), periode, tidligsteAnvist)
+            .medBehandlingsTema(grunnlag.getTemaUnderkategori())
+            .medVedtattTidspunkt(grunnlag.getVedtattTidspunkt())
+            .medStatus(grunnlag.getYtelseStatus());
+        var unikePerioder = grunnlag.getUtbetaltePerioder().stream()
+            .map(v -> utledPeriodeNårTomMuligFørFom(v.getUtbetaltFom(), v.getUtbetaltTom()))
+            .distinct()
+            .sorted()
+            .toList();
+        unikePerioder.forEach(intervall -> {
+            var overlappendeUtbetalinger = grunnlag.getUtbetaltePerioder().stream().filter(v -> utledPeriodeNårTomMuligFørFom(v.getUtbetaltFom(), v.getUtbetaltTom()).overlapper(intervall)).toList();
+            var anvistBuilder = ytelseBuilder.getAnvistBuilder();
+            if (skalMappeInfotrygdandeler(grunnlag)) {
+                oversettYtelseArbeidTilAnvisteAndeler(grunnlag.getKategori(),
+                    grunnlag.getArbeidsforhold(),
+                    overlappendeUtbetalinger).forEach(anvistBuilder::leggTilYtelseAnvistAndel);
+            }
+            ytelseBuilder.leggtilYtelseAnvist(anvistBuilder
+                .medAnvistPeriode(intervall)
+                .medUtbetalingsgradProsent(finnUtbetalingsgrad(overlappendeUtbetalinger))
+                .build());
+        });
+        ytelseBuilder.medYtelseGrunnlag(oversettYtelseArbeid(grunnlag, ytelseBuilder.getGrunnlagBuilder()));
+        return ytelseBuilder.build();
     }
 
 
@@ -339,16 +370,20 @@ public class InfotrygdgrunnlagYtelseMapper {
             case FISKER -> Set.of(Inntektskategori.FISKER);
             case ARBEIDSTAKER -> Set.of(Inntektskategori.ARBEIDSTAKER);
             case SELVSTENDIG_NÆRINGSDRIVENDE -> Set.of(Inntektskategori.SELVSTENDIG_NÆRINGSDRIVENDE);
-            case KOMBINASJON_ARBEIDSTAKER_OG_SELVSTENDIG_NÆRINGSDRIVENDE -> Set.of(Inntektskategori.ARBEIDSTAKER, Inntektskategori.SELVSTENDIG_NÆRINGSDRIVENDE);
+            case KOMBINASJON_ARBEIDSTAKER_OG_SELVSTENDIG_NÆRINGSDRIVENDE ->
+                Set.of(Inntektskategori.ARBEIDSTAKER, Inntektskategori.SELVSTENDIG_NÆRINGSDRIVENDE);
             case SJØMANN -> Set.of(Inntektskategori.SJØMANN);
             case JORDBRUKER -> Set.of(Inntektskategori.JORDBRUKER);
             case DAGPENGER -> Set.of(Inntektskategori.DAGPENGER);
             case INAKTIV -> Set.of(Inntektskategori.ARBEIDSTAKER_UTEN_FERIEPENGER);
-            case KOMBINASJON_ARBEIDSTAKER_OG_JORDBRUKER -> Set.of(Inntektskategori.ARBEIDSTAKER, Inntektskategori.JORDBRUKER);
+            case KOMBINASJON_ARBEIDSTAKER_OG_JORDBRUKER ->
+                Set.of(Inntektskategori.ARBEIDSTAKER, Inntektskategori.JORDBRUKER);
             case KOMBINASJON_ARBEIDSTAKER_OG_FISKER -> Set.of(Inntektskategori.ARBEIDSTAKER, Inntektskategori.FISKER);
             case FRILANSER -> Set.of(Inntektskategori.FRILANSER);
-            case KOMBINASJON_ARBEIDSTAKER_OG_FRILANSER -> Set.of(Inntektskategori.ARBEIDSTAKER, Inntektskategori.FRILANSER);
-            case KOMBINASJON_ARBEIDSTAKER_OG_DAGPENGER -> Set.of(Inntektskategori.ARBEIDSTAKER, Inntektskategori.DAGPENGER);
+            case KOMBINASJON_ARBEIDSTAKER_OG_FRILANSER ->
+                Set.of(Inntektskategori.ARBEIDSTAKER, Inntektskategori.FRILANSER);
+            case KOMBINASJON_ARBEIDSTAKER_OG_DAGPENGER ->
+                Set.of(Inntektskategori.ARBEIDSTAKER, Inntektskategori.DAGPENGER);
             case DAGMAMMA -> Set.of(Inntektskategori.DAGMAMMA);
             default -> Set.of();
         };
@@ -356,11 +391,15 @@ public class InfotrygdgrunnlagYtelseMapper {
 
     private static BigDecimal mapTilDagsats(InfotrygdYtelseArbeid arbeid) {
         return switch (arbeid.getInntektperiode()) {
-            case FASTSATT25PAVVIK, ÅRLIG -> arbeid.getInntekt().divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
-            case MÅNEDLIG -> arbeid.getInntekt().multiply(BigDecimal.valueOf(12)).divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
+            case FASTSATT25PAVVIK, ÅRLIG ->
+                arbeid.getInntekt().divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
+            case MÅNEDLIG ->
+                arbeid.getInntekt().multiply(BigDecimal.valueOf(12)).divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
             case DAGLIG -> arbeid.getInntekt();
-            case UKENTLIG -> arbeid.getInntekt().multiply(BigDecimal.valueOf(52)).divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
-            case BIUKENTLIG -> arbeid.getInntekt().multiply(BigDecimal.valueOf(26)).divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
+            case UKENTLIG ->
+                arbeid.getInntekt().multiply(BigDecimal.valueOf(52)).divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
+            case BIUKENTLIG ->
+                arbeid.getInntekt().multiply(BigDecimal.valueOf(26)).divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
             default -> throw new IllegalArgumentException("Ugyldig InntektPeriodeType" + arbeid.getInntektperiode());
         };
     }

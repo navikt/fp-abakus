@@ -16,7 +16,7 @@ import no.nav.foreldrepenger.abakus.app.exceptions.GeneralRestExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.JsonMappingExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.JsonParseExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.jackson.JacksonJsonConfig;
-import no.nav.foreldrepenger.abakus.vedtak.tjeneste.EksternDelingAvYtelserRestTjeneste;
+import no.nav.foreldrepenger.abakus.app.rest.ekstern.EksternDelingAvYtelserRestTjeneste;
 
 @ApplicationPath(EksternApplicationConfig.API_URI)
 public class EksternApplicationConfig extends Application {

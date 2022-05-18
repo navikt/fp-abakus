@@ -33,7 +33,7 @@ public class HentBrukersK9YtelserIPeriodeRequest {
     public HentBrukersK9YtelserIPeriodeRequest() {
     }
 
-    public HentBrukersK9YtelserIPeriodeRequest(FnrPersonident personident, Periode periode, Set<YtelseType> ytelser) {
+    public HentBrukersK9YtelserIPeriodeRequest(FnrPersonident personident, Periode periode) {
         this.personident = Objects.requireNonNull(personident);
         this.periode = Objects.requireNonNull(periode);
     }
