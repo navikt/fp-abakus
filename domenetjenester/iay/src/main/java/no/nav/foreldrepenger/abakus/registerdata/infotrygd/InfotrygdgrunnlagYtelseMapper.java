@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,6 +144,16 @@ public class InfotrygdgrunnlagYtelseMapper {
         andeler.addAll(andelerUtenRefusjon);
         finnYtelseRapportertPåNødnummer(utbetalinger, inntektskategorier).ifPresent(andeler::add);
         finnIkkeArbeidstakerAndel(utbetalinger, inntektskategorier, finnRestTilFordeling(utbetalinger, andeler)).ifPresent(andeler::add);
+
+        var sorterteDagsatserOutput = andeler.stream().map(YtelseAnvistAndel::getDagsats).map(Beløp::getVerdi).map(BigDecimal::intValue).sorted(Comparator.naturalOrder()).toList();
+        var sorterteDagsatserInput = utbetalinger.stream().map(InfotrygdYtelseAnvist::getDagsats).map(BigDecimal::intValue).sorted(Comparator.naturalOrder()).toList();
+
+        if (!sorterteDagsatserOutput.equals(sorterteDagsatserInput)) {
+            LOGGER.info("Fant diff i fordeling fra infotrygd og mappet fordeling. " +
+                "Input var " + utbetalinger + "" +
+                "Output var " + andeler);
+        }
+
         return andeler;
 
     }
