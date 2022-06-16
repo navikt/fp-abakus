@@ -39,7 +39,7 @@ class InfotrygdgrunnlagYtelseMapperTest {
         var orgnr = "973093681";
         builder.leggTilArbeidsforhold(new InfotrygdYtelseArbeid(orgnr, BigDecimal.valueOf(10000), InntektPeriodeType.MÅNEDLIG, false, null));
         var dagsatsArbeid = BigDecimal.valueOf(462);
-        builder.leggTillAnvistPerioder(new InfotrygdYtelseAnvist(fom, tom, utbetalingsgrad, null, false, dagsatsArbeid));
+        builder.leggTillAnvistPerioder(new InfotrygdYtelseAnvist(fom, tom, utbetalingsgrad, orgnr, false, dagsatsArbeid));
 
         builder.leggTilArbeidsforhold(new InfotrygdYtelseArbeid(null, BigDecimal.valueOf(4000), InntektPeriodeType.DAGLIG, false, null));
         var dagsatsDagpenger = BigDecimal.valueOf(1994);
@@ -64,7 +64,7 @@ class InfotrygdgrunnlagYtelseMapperTest {
         var arbeidstakerAndel = ytelseAnvist.getYtelseAnvistAndeler().stream().filter(a -> a.getArbeidsgiver().isPresent()).findFirst().get();
         assertThat(arbeidstakerAndel.getArbeidsgiver().get().getIdentifikator()).isEqualTo(orgnr);
         assertThat(arbeidstakerAndel.getInntektskategori()).isEqualTo(Inntektskategori.ARBEIDSTAKER);
-        assertThat(arbeidstakerAndel.getRefusjonsgradProsent().getVerdi()).isEqualTo(BigDecimal.ZERO);
+        assertThat(arbeidstakerAndel.getRefusjonsgradProsent().getVerdi().compareTo(BigDecimal.ZERO)).isEqualTo(0);
         assertThat(arbeidstakerAndel.getDagsats().getVerdi()).isEqualTo(dagsatsArbeid);
         assertThat(arbeidstakerAndel.getUtbetalingsgradProsent().getVerdi()).isEqualTo(utbetalingsgrad);
 

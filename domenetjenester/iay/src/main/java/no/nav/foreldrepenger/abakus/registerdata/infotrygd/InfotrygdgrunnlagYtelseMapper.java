@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.registerdata.infotrygd;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,9 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdY
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.typer.OrganisasjonsNummerValidator;
+import no.nav.fpsak.tidsserie.LocalDateSegment;
+import no.nav.fpsak.tidsserie.LocalDateSegmentCombinator;
+import no.nav.fpsak.tidsserie.LocalDateTimeline;
 
 public class InfotrygdgrunnlagYtelseMapper {
 
@@ -33,22 +37,23 @@ public class InfotrygdgrunnlagYtelseMapper {
             .medBehandlingsTema(grunnlag.getTemaUnderkategori())
             .medVedtattTidspunkt(grunnlag.getVedtattTidspunkt())
             .medStatus(grunnlag.getYtelseStatus());
-        var unikePerioder = grunnlag.getUtbetaltePerioder().stream()
-            .map(v -> utledPeriodeNårTomMuligFørFom(v.getUtbetaltFom(), v.getUtbetaltTom()))
-            .distinct()
-            .sorted()
+        var segmenter = grunnlag.getUtbetaltePerioder().stream()
+            .map(v -> {
+                var p = utledPeriodeNårTomMuligFørFom(v.getUtbetaltFom(), v.getUtbetaltTom());
+                return new LocalDateSegment<>(p.getFomDato(), p.getTomDato(), List.of(v));
+            })
             .toList();
-        unikePerioder.forEach(intervall -> {
-            var overlappendeUtbetalinger = grunnlag.getUtbetaltePerioder().stream().filter(v -> utledPeriodeNårTomMuligFørFom(v.getUtbetaltFom(), v.getUtbetaltTom()).overlapper(intervall)).toList();
+        var utbetaltTidslinje = new LocalDateTimeline<>(segmenter, slåSammenAndelslisterKombinator());
+        utbetaltTidslinje.toSegments().forEach(segment -> {
             var anvistBuilder = ytelseBuilder.getAnvistBuilder();
             if (skalMappeInfotrygdandeler(grunnlag)) {
                 InfotrygdgrunnlagAnvistAndelMapper.oversettYtelseArbeidTilAnvisteAndeler(grunnlag.getKategori(),
-                    grunnlag.getArbeidsforhold(),
-                    overlappendeUtbetalinger).forEach(anvistBuilder::leggTilYtelseAnvistAndel);
+                    segment.getValue()).forEach(anvistBuilder::leggTilYtelseAnvistAndel);
             }
+            var utbetaltPeriode = IntervallEntitet.fra(segment.getLocalDateInterval().getFomDato(), segment.getLocalDateInterval().getTomDato());
             ytelseBuilder.leggtilYtelseAnvist(anvistBuilder
-                .medAnvistPeriode(intervall)
-                .medUtbetalingsgradProsent(finnUtbetalingsgrad(overlappendeUtbetalinger))
+                .medAnvistPeriode(utbetaltPeriode)
+                .medUtbetalingsgradProsent(finnUtbetalingsgrad(segment.getValue()))
                 .build());
         });
         ytelseBuilder.medYtelseGrunnlag(oversettYtelseArbeid(grunnlag, ytelseBuilder.getGrunnlagBuilder()));
@@ -73,7 +78,6 @@ public class InfotrygdgrunnlagYtelseMapper {
             var anvistBuilder = ytelseBuilder.getAnvistBuilder();
             if (skalMappeInfotrygdandeler(grunnlag)) {
                 InfotrygdgrunnlagAnvistAndelMapper.oversettYtelseArbeidTilAnvisteAndeler(grunnlag.getKategori(),
-                    grunnlag.getArbeidsforhold(),
                     overlappendeUtbetalinger).forEach(anvistBuilder::leggTilYtelseAnvistAndel);
             }
             ytelseBuilder.leggtilYtelseAnvist(anvistBuilder
@@ -139,5 +143,20 @@ public class InfotrygdgrunnlagYtelseMapper {
         return IntervallEntitet.fraOgMedTilOgMed(fom, tom);
     }
 
+
+    private static LocalDateSegmentCombinator<List<InfotrygdYtelseAnvist>, List<InfotrygdYtelseAnvist>, List<InfotrygdYtelseAnvist>> slåSammenAndelslisterKombinator() {
+        return (i, lhs, rhs) -> {
+            if (lhs == null) {
+                return rhs;
+            } else if (rhs == null) {
+                return lhs;
+            }
+            var result = new ArrayList<InfotrygdYtelseAnvist>();
+            result.addAll(lhs.getValue());
+            result.addAll(rhs.getValue());
+            return new LocalDateSegment<>(i, result);
+
+        };
+    }
 
 }

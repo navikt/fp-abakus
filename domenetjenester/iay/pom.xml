@@ -21,7 +21,12 @@
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
 
-		<dependency>
+        <dependency>
+            <groupId>no.nav.fpsak.tidsserie</groupId>
+            <artifactId>fpsak-tidsserie</artifactId>
+        </dependency>
+
+        <dependency>
 			<groupId>no.nav.vedtak.prosesstask</groupId>
 			<artifactId>prosesstask-legacy</artifactId>
 		</dependency>

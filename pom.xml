@@ -85,6 +85,14 @@
 				<type>pom</type>
 			</dependency>
 
+
+            <dependency>
+                <groupId>no.nav.fpsak.tidsserie</groupId>
+                <artifactId>fpsak-tidsserie</artifactId>
+                <version>2.6.4</version>
+            </dependency>
+
+
 			<dependency>
 				<groupId>no.nav.foreldrepenger.abakus</groupId>
 				<artifactId>felles</artifactId>
