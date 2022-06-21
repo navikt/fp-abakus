@@ -166,7 +166,7 @@
 			<dependency>
 				<groupId>com.sun.xml.ws</groupId>
 				<artifactId>jaxws-rt</artifactId>
-				<version>2.3.5</version>
+				<version>4.0.0</version>
 			</dependency>
 
 			<!-- Følgende kan fjernes når fpfelles får jaxws-rt istd håndkodede versjoner
