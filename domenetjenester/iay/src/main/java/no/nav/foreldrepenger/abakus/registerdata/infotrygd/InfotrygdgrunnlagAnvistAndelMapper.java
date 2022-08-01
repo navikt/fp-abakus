@@ -19,6 +19,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseAnvistAndel;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseAnvistAndelBuilder;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseAnvist;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseArbeid;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.typer.OrganisasjonsNummerValidator;
@@ -36,10 +37,12 @@ public class InfotrygdgrunnlagAnvistAndelMapper {
      * <p>
      *
      * @param kategori     Arbeidskategori fra infotrygd
+     * @param arbeidsforhold
      * @param utbetalinger Vedtak/anvisning for periode
      * @return Liste med andeler
      */
     public static List<YtelseAnvistAndel> oversettYtelseArbeidTilAnvisteAndeler(Arbeidskategori kategori,
+                                                                                List<InfotrygdYtelseArbeid> arbeidsforhold,
                                                                                 List<InfotrygdYtelseAnvist> utbetalinger) {
         LOGGER.info("Mapper utbetalinger fra infotrygd:  " + utbetalinger);
         var inntektskategorier = splittArbeidskategoriTilInntektskategorier(kategori);
@@ -51,7 +54,7 @@ public class InfotrygdgrunnlagAnvistAndelMapper {
         var andeler = new ArrayList<YtelseAnvistAndel>();
 
         // 1. Mapper først kategori som ikke er ARBEIDTAKER ved kombinasjon
-        andeler.addAll(finnIkkeArbeidstakerAndel(finnUtbetalingerUtenRefusjon(utbetalingerTilFordeling), inntektskategorier));
+        andeler.addAll(finnIkkeArbeidstakerAndel(finnUtbetalingerUtenRefusjon(utbetalingerTilFordeling), arbeidsforhold, inntektskategorier));
 
         if (inntektskategorier.contains(Inntektskategori.ARBEIDSTAKER)) {
             // Mapper alle med orgnr satt
@@ -101,15 +104,22 @@ public class InfotrygdgrunnlagAnvistAndelMapper {
     }
 
     private static List<YtelseAnvistAndel> finnIkkeArbeidstakerAndel(List<Mellomregninger> utbetalinger,
+                                                                     List<InfotrygdYtelseArbeid> arbeidsforhold,
                                                                      Set<Inntektskategori> inntektskategorier) {
         var ikkeArbeidstakerKategori = inntektskategorier.stream().filter(a -> !a.equals(Inntektskategori.ARBEIDSTAKER)).findFirst();
         if (ikkeArbeidstakerKategori.isEmpty()) {
             return Collections.emptyList();
         }
 
+        var dagsatserFraGrunnlag = arbeidsforhold.stream()
+            .filter(a -> a.getOrgnr() == null)
+            .map(InfotrygdgrunnlagAnvistAndelMapper::mapTilDagsats).toList();
+
         var utbetalingerUtenOrgnr = utbetalinger.stream().filter(arb -> arb.getArbeidsgiver() == null)
+            .filter(u -> !inntektskategorier.contains(Inntektskategori.ARBEIDSTAKER) || utbetalinger.size() <= 1 || harKorresponderendeDagsatsIGrunnlag(dagsatserFraGrunnlag, u))
             .filter(Mellomregninger::erIkkeFordelt)
             .toList();
+
 
         utbetalingerUtenOrgnr.forEach(u -> u.setErFordelt(true));
 
@@ -121,6 +131,18 @@ public class InfotrygdgrunnlagAnvistAndelMapper {
                 .medDagsats(u.getDagsats().getVerdi())
                 .build()
         ).toList();
+    }
+
+    private static boolean harKorresponderendeDagsatsIGrunnlag(List<BigDecimal> dagsatserFraGrunnlag, Mellomregninger u) {
+        return dagsatserFraGrunnlag.stream().anyMatch(d -> harDagsatsMedDiffMindreEnnTo(u, d));
+    }
+
+    private static boolean harDagsatsMedDiffMindreEnnTo(Mellomregninger u, BigDecimal d) {
+        return diff(u, d).compareTo(BigDecimal.valueOf(2)) < 0;
+    }
+
+    private static BigDecimal diff(Mellomregninger u, BigDecimal d) {
+        return d.subtract(u.getDagsats().getVerdi()).abs();
     }
 
     /**
@@ -223,6 +245,16 @@ public class InfotrygdgrunnlagAnvistAndelMapper {
             .toList();
     }
 
+    private static BigDecimal mapTilDagsats(InfotrygdYtelseArbeid arbeid) {
+        return switch (arbeid.getInntektperiode()) {
+            case FASTSATT25PAVVIK, ÅRLIG -> arbeid.getInntekt().divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
+            case MÅNEDLIG -> arbeid.getInntekt().multiply(BigDecimal.valueOf(12)).divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
+            case DAGLIG -> arbeid.getInntekt();
+            case UKENTLIG -> arbeid.getInntekt().multiply(BigDecimal.valueOf(52)).divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
+            case BIUKENTLIG -> arbeid.getInntekt().multiply(BigDecimal.valueOf(26)).divide(BigDecimal.valueOf(260), 10, RoundingMode.HALF_UP);
+            default -> throw new IllegalArgumentException("Ugyldig InntektPeriodeType" + arbeid.getInntektperiode());
+        };
+    }
 
     public static class Mellomregninger {
         private final Arbeidsgiver arbeidsgiver;

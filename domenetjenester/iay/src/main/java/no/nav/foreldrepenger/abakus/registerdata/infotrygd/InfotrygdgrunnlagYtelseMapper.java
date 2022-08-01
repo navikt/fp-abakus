@@ -48,6 +48,7 @@ public class InfotrygdgrunnlagYtelseMapper {
             var anvistBuilder = ytelseBuilder.getAnvistBuilder();
             if (skalMappeInfotrygdandeler(grunnlag)) {
                 InfotrygdgrunnlagAnvistAndelMapper.oversettYtelseArbeidTilAnvisteAndeler(grunnlag.getKategori(),
+                    grunnlag.getArbeidsforhold(),
                     segment.getValue()).forEach(anvistBuilder::leggTilYtelseAnvistAndel);
             }
             var utbetaltPeriode = IntervallEntitet.fra(segment.getLocalDateInterval().getFomDato(), segment.getLocalDateInterval().getTomDato());
@@ -78,7 +79,7 @@ public class InfotrygdgrunnlagYtelseMapper {
             var anvistBuilder = ytelseBuilder.getAnvistBuilder();
             if (skalMappeInfotrygdandeler(grunnlag)) {
                 InfotrygdgrunnlagAnvistAndelMapper.oversettYtelseArbeidTilAnvisteAndeler(grunnlag.getKategori(),
-                    overlappendeUtbetalinger).forEach(anvistBuilder::leggTilYtelseAnvistAndel);
+                    grunnlag.getArbeidsforhold(), overlappendeUtbetalinger).forEach(anvistBuilder::leggTilYtelseAnvistAndel);
             }
             ytelseBuilder.leggtilYtelseAnvist(anvistBuilder
                 .medAnvistPeriode(intervall)
