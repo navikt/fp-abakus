@@ -41,7 +41,7 @@ class InfotrygdgrunnlagYtelseMapperTest {
         var dagsatsArbeid = BigDecimal.valueOf(462);
         builder.leggTillAnvistPerioder(new InfotrygdYtelseAnvist(fom, tom, utbetalingsgrad, orgnr, false, dagsatsArbeid));
 
-        builder.leggTilArbeidsforhold(new InfotrygdYtelseArbeid(null, BigDecimal.valueOf(4000), InntektPeriodeType.DAGLIG, false, null));
+        builder.leggTilArbeidsforhold(new InfotrygdYtelseArbeid(null, BigDecimal.valueOf(1994), InntektPeriodeType.DAGLIG, false, null));
         var dagsatsDagpenger = BigDecimal.valueOf(1994);
         builder.leggTillAnvistPerioder(new InfotrygdYtelseAnvist(fom, tom, utbetalingsgrad, null, false, dagsatsDagpenger));
 
