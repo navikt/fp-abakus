@@ -112,11 +112,13 @@ public class InfotrygdgrunnlagAnvistAndelMapper {
         }
 
         var dagsatserFraGrunnlag = arbeidsforhold.stream()
-            .filter(a -> a.getOrgnr() == null)
+            .filter(a -> !OrganisasjonsNummerValidator.erGyldig(a.getOrgnr()))
             .map(InfotrygdgrunnlagAnvistAndelMapper::mapTilDagsats).toList();
 
         var utbetalingerUtenOrgnr = utbetalinger.stream().filter(arb -> arb.getArbeidsgiver() == null)
-            .filter(u -> !inntektskategorier.contains(Inntektskategori.ARBEIDSTAKER) || utbetalinger.size() <= 1 || harKorresponderendeDagsatsIGrunnlag(dagsatserFraGrunnlag, u))
+            .filter(u -> !inntektskategorier.contains(Inntektskategori.ARBEIDSTAKER)
+                || utbetalinger.size() <= 1
+                || harKorresponderendeDagsatsIGrunnlag(dagsatserFraGrunnlag, u))
             .filter(Mellomregninger::erIkkeFordelt)
             .toList();
 
