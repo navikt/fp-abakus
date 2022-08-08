@@ -10,14 +10,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Setup maven
-        uses: whelk-io/maven-settings-xml-action@v20
-        with:
-          repositories: '[{ "id": "github", "name": "github", "url": "https://maven.pkg.github.com/${{ github.repository }}", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } }]'
-          servers: '[{ "id": "github", "username": "${{ github.actor }}", "password": "${{ secrets.GH_ACCESS_TOKEN }}" }]'
-          output_file: settings.xml
-
       - uses: actions/setup-java@v3
         with:
           java-version: '17'
@@ -27,7 +19,8 @@ jobs:
       - name: Publish artifacts
         shell: bash
         run: |
-          mvn -B -s settings.xml versions:set -DnewVersion=${NEW_VERSION}
-          mvn -B -s settings.xml clean deploy
+          mvn deploy -e --batch-mode --settings .github/.m2/settings.xml --file pom.xml -am -pl kontrakt -DtrimStackTrace=false -Dchangelist= -Dsha1= -Drevision=$NEW_VERSION -Dfile.encoding=UTF-8
         env:
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+          GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
           NEW_VERSION: ${{ github.event.release.tag_name }}
