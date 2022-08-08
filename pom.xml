@@ -150,6 +150,23 @@
 				<version>${project.version}</version>
 			</dependency>
 
+            <!-- Komponenter fra Felles Integrasjon -->
+            <dependency>
+                <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+                <artifactId>pdl-klient</artifactId>
+                <version>${felles.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+                <artifactId>spokelse-klient</artifactId>
+                <version>${felles.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+                <artifactId>infotrygd-grunnlag-klient</artifactId>
+                <version>${felles.version}</version>
+            </dependency>
+
 			<!-- NAV tjenestespesifikasjoner -->
 			<dependency>
 				<groupId>no.nav.tjenester</groupId>
