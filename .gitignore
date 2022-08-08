@@ -37,4 +37,5 @@ app-local.properties
 .DS_Store
 /lsp/
 .factorypath
+.vscode
 
