@@ -323,7 +323,7 @@ public class GrunnlagRestTjeneste {
 
         var grunnlagEtterspurt = iayTjeneste.hentGrunnlagEtterspurtFor(aktørId,
             new Saksnummer(saksnummer),
-            YtelseType.fraKode(ytelseType.getKode()),
+            ytelseType,
             spesifikasjon.getGrunnlagVersjon());
 
         grunnlagEtterspurt.forEach(g -> {

@@ -15,13 +15,13 @@ public class DiffSjekkTest {
     public void skal_diffe_entitet_med_landkode() throws Exception {
         var traverser = TraverseEntityGraphFactory.build();
 
-        var objCAN = EgenNæringBuilder.ny().medLandkode(Landkode.CAN).build();
+        var objDNK = EgenNæringBuilder.ny().medLandkode(Landkode.DNK).build();
         var objNOR = EgenNæringBuilder.ny().medLandkode(Landkode.NOR).build();
 
         var differ = new DiffEntity(traverser);
 
-        assertThat(differ.areDifferent(objCAN, objNOR)).isTrue();
-        assertThat(differ.areDifferent(objCAN, objCAN)).isFalse();
+        assertThat(differ.areDifferent(objDNK, objNOR)).isTrue();
+        assertThat(differ.areDifferent(objDNK, objDNK)).isFalse();
 
     }
 
@@ -29,13 +29,13 @@ public class DiffSjekkTest {
     public void skal_diffe_landkode() throws Exception {
         var traverser = TraverseEntityGraphFactory.build();
 
-        var objCAN = Landkode.CAN;
+        var objDNK = Landkode.DNK;
         var objNOR = Landkode.NOR;
 
         var differ = new DiffEntity(traverser);
 
-        assertThat(differ.areDifferent(objCAN, objNOR)).isTrue();
-        assertThat(differ.areDifferent(objCAN, objCAN)).isFalse();
+        assertThat(differ.areDifferent(objDNK, objNOR)).isTrue();
+        assertThat(differ.areDifferent(objDNK, objDNK)).isFalse();
 
     }
 }

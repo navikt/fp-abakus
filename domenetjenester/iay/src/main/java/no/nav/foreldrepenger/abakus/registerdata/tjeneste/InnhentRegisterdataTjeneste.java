@@ -87,7 +87,7 @@ public class InnhentRegisterdataTjeneste {
         } else {
             kobling = koblingOpt.get();
             if (YtelseType.UDEFINERT.equals(kobling.getYtelseType())) {
-                var ytelseType = mapTilYtelseType(dto);
+                var ytelseType = dto.getYtelseType();
                 if (ytelseType != null) {
                     kobling.setYtelseType(ytelseType);
                 }
@@ -108,10 +108,6 @@ public class InnhentRegisterdataTjeneste {
         koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
 
         return kobling;
-    }
-
-    private YtelseType mapTilYtelseType(InnhentRegisterdataRequest dto) {
-        return YtelseType.fraKode(dto.getYtelseType().getKode());
     }
 
     public String triggAsyncInnhent(InnhentRegisterdataRequest dto) {

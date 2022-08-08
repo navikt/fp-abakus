@@ -10,11 +10,10 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.ALWAYS, content = Include.ALWAYS)
@@ -43,6 +42,7 @@ public class UtbetalingDto {
         this.kilde = Objects.requireNonNull(kilde, "kilde");
     }
 
+    @Deprecated(forRemoval = true) // bruk enum
     public UtbetalingDto(String kilde) {
         this(InntektskildeType.fraKode(Objects.requireNonNull(kilde, "kilde")));
     }

@@ -63,11 +63,12 @@ public enum UtbetaltYtelseFraOffentligeType implements UtbetaltYtelseType {
         this.offisiellKode = offisiellKode;
     }
 
-    @JsonCreator
-    public static UtbetaltYtelseFraOffentligeType fraKode(@JsonProperty("kode") String kode) {
-        if (kode == null) {
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static UtbetaltYtelseFraOffentligeType fraKode(@JsonProperty(value = "kode") Object node) {
+        if (node == null) {
             return null;
         }
+        String kode = TempAvledeKode.getVerdi(UtbetaltYtelseFraOffentligeType.class, node, "kode");
         var ad = KODER.get(kode);
         if (ad == null) {
             throw new IllegalArgumentException("Ukjent OffentligYtelseType: " + kode);

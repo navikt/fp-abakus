@@ -27,8 +27,8 @@ public class SigrunTilInternMapperTest {
         Map<Year, Optional<SSGResponse>> summertskattegrunnlag = new HashMap<>();
 
         Year iÅr = Year.of(iDag.getYear());
-        beregnet.put(iÅr, List.of(new BeregnetSkatt(TekniskNavn.PERSONINNTEKT_LØNN.getKode(), "5000")));
-        summertskattegrunnlag.put(iÅr, Optional.of(new SSGResponse(List.of(), List.of(new SSGGrunnlag(TekniskNavn.LØNNSINNTEKT_MED_TRYGDEAVGIFTSPLIKT_OMFATTET_AV_LØNNSTREKKORDNINGEN.getKode(), "5000")), null)));
+        beregnet.put(iÅr, List.of(new BeregnetSkatt(TekniskNavnMapper.PERSONINNTEKT_LØNN, "5000")));
+        summertskattegrunnlag.put(iÅr, Optional.of(new SSGResponse(List.of(), List.of(new SSGGrunnlag(TekniskNavnMapper.LØNNSINNTEKT_MED_TRYGDEAVGIFTSPLIKT_OMFATTET_AV_LØNNSTREKKORDNINGEN, "5000")), null)));
 
         Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> map = SigrunTilInternMapper.mapFraSigrunTilIntern(beregnet, summertskattegrunnlag);
         LocalDate førsteDagIÅr = LocalDate.of(iÅr.getValue(), 1, 1);
@@ -44,7 +44,7 @@ public class SigrunTilInternMapperTest {
         Map<Year, Optional<SSGResponse>> summertskattegrunnlag = new HashMap<>();
 
         Year iÅr = Year.of(iDag.getYear());
-        summertskattegrunnlag.put(iÅr, Optional.of(new SSGResponse(List.of(), List.of(new SSGGrunnlag(TekniskNavn.LØNNSINNTEKT_MED_TRYGDEAVGIFTSPLIKT_OMFATTET_AV_LØNNSTREKKORDNINGEN.getKode(), "5000")), null)));
+        summertskattegrunnlag.put(iÅr, Optional.of(new SSGResponse(List.of(), List.of(new SSGGrunnlag(TekniskNavnMapper.LØNNSINNTEKT_MED_TRYGDEAVGIFTSPLIKT_OMFATTET_AV_LØNNSTREKKORDNINGEN, "5000")), null)));
 
         Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> map = SigrunTilInternMapper.mapFraSigrunTilIntern(beregnet, summertskattegrunnlag);
         LocalDate førsteDagIÅr = LocalDate.of(iÅr.getValue(), 1, 1);
@@ -60,8 +60,8 @@ public class SigrunTilInternMapperTest {
         Map<Year, Optional<SSGResponse>> summertskattegrunnlag = new HashMap<>();
 
         Year iÅr = Year.of(iDag.getYear());
-        beregnet.put(iÅr, List.of(new BeregnetSkatt(TekniskNavn.PERSONINNTEKT_LØNN.getKode(), "5000"), new BeregnetSkatt(TekniskNavn.SKATTEOPPGJØRSDATO.getKode(), "2018-10-04")));
-        summertskattegrunnlag.put(iÅr, Optional.of(new SSGResponse(List.of(), List.of(new SSGGrunnlag(TekniskNavn.LØNNSINNTEKT_MED_TRYGDEAVGIFTSPLIKT_OMFATTET_AV_LØNNSTREKKORDNINGEN.getKode(), "5000")), null)));
+        beregnet.put(iÅr, List.of(new BeregnetSkatt(TekniskNavnMapper.PERSONINNTEKT_LØNN, "5000"), new BeregnetSkatt(TekniskNavnMapper.SKATTEOPPGJØRSDATO, "2018-10-04")));
+        summertskattegrunnlag.put(iÅr, Optional.of(new SSGResponse(List.of(), List.of(new SSGGrunnlag(TekniskNavnMapper.LØNNSINNTEKT_MED_TRYGDEAVGIFTSPLIKT_OMFATTET_AV_LØNNSTREKKORDNINGEN, "5000")), null)));
 
         Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> map = SigrunTilInternMapper.mapFraSigrunTilIntern(beregnet, summertskattegrunnlag);
         LocalDate førsteDagIÅr = LocalDate.of(iÅr.getValue(), 1, 1);
@@ -77,8 +77,8 @@ public class SigrunTilInternMapperTest {
         Map<Year, Optional<SSGResponse>> summertskattegrunnlag = new HashMap<>();
 
         Year iÅr = Year.of(iDag.getYear());
-        beregnet.put(iÅr, List.of(new BeregnetSkatt(TekniskNavn.PERSONINNTEKT_FISKE_FANGST_FAMILIEBARNEHAGE.getKode(), "5000")));
-        summertskattegrunnlag.put(iÅr, Optional.of(new SSGResponse(List.of(), List.of(new SSGGrunnlag(TekniskNavn.LØNNSINNTEKT_MED_TRYGDEAVGIFTSPLIKT_OMFATTET_AV_LØNNSTREKKORDNINGEN.getKode(), "5000")), null)));
+        beregnet.put(iÅr, List.of(new BeregnetSkatt(TekniskNavnMapper.PERSONINNTEKT_FISKE_FANGST_FAMILIEBARNEHAGE, "5000")));
+        summertskattegrunnlag.put(iÅr, Optional.of(new SSGResponse(List.of(), List.of(new SSGGrunnlag(TekniskNavnMapper.LØNNSINNTEKT_MED_TRYGDEAVGIFTSPLIKT_OMFATTET_AV_LØNNSTREKKORDNINGEN, "5000")), null)));
 
         Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> map = SigrunTilInternMapper.mapFraSigrunTilIntern(beregnet, summertskattegrunnlag);
         LocalDate førsteDagIÅr = LocalDate.of(iÅr.getValue(), 1, 1);
@@ -95,8 +95,8 @@ public class SigrunTilInternMapperTest {
         Map<Year, Optional<SSGResponse>> summertskattegrunnlag = new HashMap<>();
 
         Year iÅr = Year.of(iDag.getYear());
-        beregnet.put(iÅr, List.of(new BeregnetSkatt(TekniskNavn.PERSONINNTEKT_LØNN.getKode(), "5000"), new BeregnetSkatt(TekniskNavn.PERSONINNTEKT_BARE_PENSJONSDEL.getKode(), "5000"), new BeregnetSkatt(TekniskNavn.SKATTEOPPGJØRSDATO.getKode(), "2018-10-04")));
-        summertskattegrunnlag.put(iÅr, Optional.of(new SSGResponse(List.of(), List.of(new SSGGrunnlag(TekniskNavn.LØNNSINNTEKT_MED_TRYGDEAVGIFTSPLIKT_OMFATTET_AV_LØNNSTREKKORDNINGEN.getKode(), "5000")), null)));
+        beregnet.put(iÅr, List.of(new BeregnetSkatt(TekniskNavnMapper.PERSONINNTEKT_LØNN, "5000"), new BeregnetSkatt(TekniskNavnMapper.PERSONINNTEKT_BARE_PENSJONSDEL, "5000"), new BeregnetSkatt(TekniskNavnMapper.SKATTEOPPGJØRSDATO, "2018-10-04")));
+        summertskattegrunnlag.put(iÅr, Optional.of(new SSGResponse(List.of(), List.of(new SSGGrunnlag(TekniskNavnMapper.LØNNSINNTEKT_MED_TRYGDEAVGIFTSPLIKT_OMFATTET_AV_LØNNSTREKKORDNINGEN, "5000")), null)));
 
         Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> map = SigrunTilInternMapper.mapFraSigrunTilIntern(beregnet, summertskattegrunnlag);
         LocalDate førsteDagIÅr = LocalDate.of(iÅr.getValue(), 1, 1);

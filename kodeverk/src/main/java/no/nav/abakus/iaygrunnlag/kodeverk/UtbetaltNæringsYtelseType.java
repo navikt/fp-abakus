@@ -63,11 +63,12 @@ public enum UtbetaltNæringsYtelseType implements UtbetaltYtelseType {
         this.offisiellKode = offisiellKode;
     }
 
-    @JsonCreator
-    public static UtbetaltNæringsYtelseType fraKode(@JsonProperty("kode") String kode) {
-        if (kode == null) {
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static UtbetaltNæringsYtelseType fraKode(@JsonProperty(value = "kode") Object node) {
+        if (node == null) {
             return null;
         }
+        String kode = TempAvledeKode.getVerdi(UtbetaltNæringsYtelseType.class, node, "kode");
         var ad = KODER.get(kode);
         if (ad == null) {
             throw new IllegalArgumentException("Ukjent NæringsinntektType: " + kode);

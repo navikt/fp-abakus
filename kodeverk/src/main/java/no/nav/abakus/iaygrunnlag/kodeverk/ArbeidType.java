@@ -102,11 +102,12 @@ public enum ArbeidType implements Kodeverdi {
         return offisiellKode != null ? OFFISIELLE_KODER.getOrDefault(offisiellKode, UDEFINERT) : UDEFINERT;
     }
 
-    @JsonCreator
-    public static ArbeidType fraKode(@JsonProperty("kode") String kode) {
-        if (kode == null) {
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static ArbeidType fraKode(@JsonProperty(value = "kode") Object node) {
+        if (node == null) {
             return null;
         }
+        String kode = TempAvledeKode.getVerdi(ArbeidType.class, node, "kode");
         var ad = KODER.get(kode);
         if (ad == null) {
             throw new IllegalArgumentException("Ukjent ArbeidType: " + kode);

@@ -26,7 +26,7 @@ public enum InntektPeriodeType implements Kodeverdi {
     PREMIEGRUNNLAG("PREMGR", "Premiegrunnlag", "Y", Period.ofYears(1)),
     UDEFINERT("-", "Ikke definert", null, null),
     ;
-    
+
     /** @deprecated bruk enum konstant. */
     @Deprecated(forRemoval = true)
     public static final InntektPeriodeType PER_ÅR = ÅRLIG;
@@ -81,11 +81,12 @@ public enum InntektPeriodeType implements Kodeverdi {
         this.offisiellKode = offisiellKode;
     }
 
-    @JsonCreator
-    public static InntektPeriodeType fraKode(@JsonProperty("kode") String kode) {
-        if (kode == null) {
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static InntektPeriodeType fraKode(@JsonProperty(value = "kode") Object node) {
+        if (node == null) {
             return null;
         }
+        String kode = TempAvledeKode.getVerdi(InntektPeriodeType.class, node, "kode");
         var ad = KODER.get(kode);
         if (ad == null) {
             throw new IllegalArgumentException("Ukjent InntektPeriodeType: " + kode);

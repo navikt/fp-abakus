@@ -54,11 +54,12 @@ public enum BekreftetPermisjonStatus implements Kodeverdi {
         this.navn = navn;
     }
 
-    @JsonCreator
-    public static BekreftetPermisjonStatus fraKode(@JsonProperty("kode") String kode) {
-        if (kode == null) {
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static BekreftetPermisjonStatus fraKode(@JsonProperty(value = "kode") Object node) {
+        if (node == null) {
             return null;
         }
+        String kode = TempAvledeKode.getVerdi(BekreftetPermisjonStatus.class, node, "kode");
         var ad = KODER.get(kode);
         if (ad == null) {
             throw new IllegalArgumentException("Ukjent BekreftetPermisjonStatus: " + kode);
@@ -85,5 +86,5 @@ public enum BekreftetPermisjonStatus implements Kodeverdi {
     public String getKode() {
         return kode;
     }
-    
+
 }

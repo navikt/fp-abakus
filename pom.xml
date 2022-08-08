@@ -7,7 +7,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.felles</groupId>
         <artifactId>fp-bom</artifactId>
-        <version>0.2.7</version>
+        <version>0.3.1</version>
     </parent>
 
 	<groupId>no.nav.foreldrepenger.abakus</groupId>
@@ -34,8 +34,8 @@
 
         <kontrakt.java.version>17</kontrakt.java.version>
 
-		<felles.version>4.1.25</felles.version>
-		<prosesstask.version>3.1.7</prosesstask.version>
+		<felles.version>4.1.30</felles.version>
+		<prosesstask.version>3.1.8</prosesstask.version>
 
 		<kontrakter.version>6.1.21</kontrakter.version>
 
@@ -149,6 +149,23 @@
 				<artifactId>web</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+
+            <!-- Komponenter fra Felles Integrasjon -->
+            <dependency>
+                <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+                <artifactId>pdl-klient</artifactId>
+                <version>${felles.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+                <artifactId>spokelse-klient</artifactId>
+                <version>${felles.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+                <artifactId>infotrygd-grunnlag-klient</artifactId>
+                <version>${felles.version}</version>
+            </dependency>
 
 			<!-- NAV tjenestespesifikasjoner -->
 			<dependency>
@@ -266,7 +283,7 @@
                     <dependency>
                         <groupId>no.nav.k9.dev</groupId>
                         <artifactId>dev-jakarta-transform</artifactId>
-                        <version>0.6.3</version>
+                        <version>0.6.4</version>
                     </dependency>
                     <dependency>
                         <groupId>ant-contrib</groupId>

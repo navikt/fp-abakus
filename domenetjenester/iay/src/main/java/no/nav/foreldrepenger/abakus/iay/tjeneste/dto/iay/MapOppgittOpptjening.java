@@ -149,7 +149,7 @@ public class MapOppgittOpptjening {
             var periode = new Periode(periode1.getFomDato(), periode1.getTomDato());
 
             var org = egenNæring.getOrgnummer() == null ? null : new Organisasjon(egenNæring.getOrgnummer().getId());
-            var virksomhetType = egenNæring.getVirksomhetType().getKode();
+            var virksomhetType = egenNæring.getVirksomhetType();
 
             var dto = new OppgittEgenNæringDto(periode)
                 .medBegrunnelse(egenNæring.getBegrunnelse())

@@ -1,10 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
-
-public enum RelatertYtelseStatus implements Kodeverdi {
+public enum RelatertYtelseStatus {
 
     // Statuser fra Arena
     AVSLU("AVSLU"),
@@ -31,33 +27,14 @@ public enum RelatertYtelseStatus implements Kodeverdi {
     AVSLUTTET_IT("A"),
     ;
 
-    @JsonProperty(value = "kode")
     private String kode;
-
-    @JsonProperty(value = "kodeverk")
-    private String kodeverk = "RELATERT_YTELSE_STATUS";
 
     RelatertYtelseStatus(String kode) {
         this.kode = kode;
     }
 
-    @Override
     public String getKode() {
         return kode;
     }
 
-    @Override
-    public String getKodeverk() {
-        return kodeverk;
-    }
-
-    @Override
-    public String getOffisiellKode() {
-        return kode;
-    }
-
-    @Override
-    public String getNavn() {
-        return kode;
-    }
 }

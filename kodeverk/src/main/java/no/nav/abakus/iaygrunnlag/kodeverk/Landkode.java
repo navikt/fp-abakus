@@ -27,25 +27,9 @@ public class Landkode implements Kodeverdi {
     public static final Landkode NOR = fraKode("NOR"); //$NON-NLS-1$
     public static final Landkode DNK = fraKode("DNK"); //$NON-NLS-1$
     public static final Landkode SWE = fraKode("SWE"); //$NON-NLS-1$
-    public static final Landkode USA = fraKode("USA"); //$NON-NLS-1$
-    public static final Landkode PNG = fraKode("PNG"); //$NON-NLS-1$
-    public static final Landkode BEL = fraKode("BEL"); //$NON-NLS-1$
-    public static final Landkode FIN = fraKode("FIN"); //$NON-NLS-1$
-    public static final Landkode CAN = fraKode("CAN"); //$NON-NLS-1$
-    public static final Landkode ESP = fraKode("ESP"); //$NON-NLS-1$
-
-    /** Kodeverkklient spesifikk konstant. Statsløs bruker */
-    public static final Landkode STATSLØS = fraKode("XXX");
-
-    /** Kodeverkklient spesifikk konstant. Bruker oppgir ikke land */
-    public static final Landkode UOPPGITT_UKJENT = fraKode("???");
 
     /** Egendefinert konstant - ikke definert (null object pattern) for bruk i modeller som krever non-null. */
     public static final Landkode UDEFINERT = fraKode("-");
-
-    public static final Landkode NORGE = NOR;
-    public static final Landkode SVERIGE = SWE;
-    public static final Landkode DANMARK = DNK;
 
     /** ISO 3166 alpha 3-letter code. */
     @JsonProperty(value = "kode")
@@ -97,11 +81,12 @@ public class Landkode implements Kodeverdi {
         return Objects.hash(kode);
     }
 
-    @JsonCreator
-    public static Landkode fraKode(@JsonProperty("kode") String kode) {
-        if (kode == null) {
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static Landkode fraKode(@JsonProperty(value = "kode") Object node) {
+        if (node == null) {
             return null;
         }
+        String kode = TempAvledeKode.getVerdiLandKoder(KODEVERK, node, "kode");
         var ad = KODER.get(kode);
         if (ad == null) {
             throw new IllegalArgumentException("Ukjent Landkode: " + kode);
@@ -123,19 +108,14 @@ public class Landkode implements Kodeverdi {
             map.put(iso2cc, landkode);
             map.put(iso3cc, landkode);
         }
+        /** Udefinert */
         map.put("-", new Landkode("-"));
+        /** Kodeverkklient spesifikk konstant. Bruker oppgir ikke land */
         map.put("???", new Landkode("???"));
+        /** Kodeverkklient spesifikk konstant. Statsløs bruker */
         map.put("XXX", new Landkode("XXX"));
         map.put("XXK", new Landkode("XXK"));
 
         return Collections.unmodifiableMap(map);
-    }
-
-    public static boolean erNorge(String kode) {
-        return NOR.getKode().equals(kode);
-    }
-
-    public static Map<String, Landkode> kodeMap() {
-        return Collections.unmodifiableMap(KODER);
     }
 }

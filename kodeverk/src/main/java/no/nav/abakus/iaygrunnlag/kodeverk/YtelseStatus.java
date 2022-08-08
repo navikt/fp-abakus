@@ -21,7 +21,7 @@ public enum YtelseStatus implements Kodeverdi {
     UNDER_BEHANDLING("UBEH", "Under behandling"),
     LØPENDE("LOP", "Løpende"),
     AVSLUTTET("AVSLU", "Avsluttet"),
-    
+
     UDEFINERT("-", "Ikke definert"),
     ;
 
@@ -37,7 +37,7 @@ public enum YtelseStatus implements Kodeverdi {
             }
         }
     }
-    
+
     @JsonIgnore
     private String navn;
 
@@ -52,11 +52,12 @@ public enum YtelseStatus implements Kodeverdi {
         this.navn = navn;
     }
 
-    @JsonCreator
-    public static YtelseStatus fraKode(@JsonProperty("kode") String kode) {
-        if (kode == null) {
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static YtelseStatus fraKode(@JsonProperty(value = "kode") Object node) {
+        if (node == null) {
             return null;
         }
+        String kode = TempAvledeKode.getVerdi(YtelseStatus.class, node, "kode");
         var ad = KODER.get(kode);
         if (ad == null) {
             throw new IllegalArgumentException("Ukjent YtelseStatus: " + kode);

@@ -115,8 +115,8 @@ public class InntektsmeldingerRestTjeneste {
         LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer());
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
-        var ytelseType = YtelseType.fraKode(spesifikasjon.getYtelseType().getKode());
-        var inntektsmeldinger = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, YtelseType.fraKode(ytelseType.getKode()));
+        var ytelseType = spesifikasjon.getYtelseType();
+        var inntektsmeldinger = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
         var kobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType);
         if (kobling.isEmpty()) {
             response = Response.ok(new InntektsmeldingerDto().medInntektsmeldinger(Collections.emptyList())).build();
@@ -192,9 +192,9 @@ public class InntektsmeldingerRestTjeneste {
 
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
-        var ytelseType = YtelseType.fraKode(spesifikasjon.getYtelseType().getKode());
-        Map<Inntektsmelding, ArbeidsforholdInformasjon> førsteMap = iayTjeneste.hentAlleInntektsmeldingerForEksternRef(aktørId, saksnummer, new KoblingReferanse(spesifikasjon.getEksternRefEn()), YtelseType.fraKode(ytelseType.getKode()));
-        Map<Inntektsmelding, ArbeidsforholdInformasjon> andreMap = iayTjeneste.hentAlleInntektsmeldingerForEksternRef(aktørId, saksnummer, new KoblingReferanse(spesifikasjon.getEksternRefTo()), YtelseType.fraKode(ytelseType.getKode()));
+        var ytelseType = spesifikasjon.getYtelseType();
+        Map<Inntektsmelding, ArbeidsforholdInformasjon> førsteMap = iayTjeneste.hentAlleInntektsmeldingerForEksternRef(aktørId, saksnummer, new KoblingReferanse(spesifikasjon.getEksternRefEn()), ytelseType);
+        Map<Inntektsmelding, ArbeidsforholdInformasjon> andreMap = iayTjeneste.hentAlleInntektsmeldingerForEksternRef(aktørId, saksnummer, new KoblingReferanse(spesifikasjon.getEksternRefTo()), ytelseType);
 
         var diffMap = iayTjeneste.utledInntektsmeldingDiff(førsteMap, andreMap);
         InntektsmeldingerDto imDiffListe = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(diffMap);

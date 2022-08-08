@@ -43,11 +43,12 @@ public enum InntektsmeldingInnsendingsårsakType implements Kodeverdi {
         this.navn = navn;
     }
 
-    @JsonCreator
-    public static InntektsmeldingInnsendingsårsakType fraKode(@JsonProperty("kode") String kode) {
-        if (kode == null) {
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static InntektsmeldingInnsendingsårsakType fraKode(@JsonProperty(value = "kode") Object node) {
+        if (node == null) {
             return null;
         }
+        String kode = TempAvledeKode.getVerdi(InntektsmeldingInnsendingsårsakType.class, node, "kode");
         var ad = KODER.get(kode);
         if (ad == null) {
             throw new IllegalArgumentException("Ukjent InntektsmeldingInnsendingsårsak: " + kode);
@@ -75,5 +76,5 @@ public enum InntektsmeldingInnsendingsårsakType implements Kodeverdi {
     public String getKode() {
         return kode;
     }
-    
+
 }

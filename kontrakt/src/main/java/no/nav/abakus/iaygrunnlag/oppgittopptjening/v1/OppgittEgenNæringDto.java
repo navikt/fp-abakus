@@ -50,7 +50,7 @@ public class OppgittEgenNæringDto {
     @JsonProperty(value = "virksomhetNavn", required = false)
     @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message="[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String virksomhetNavn;
-    
+
     @JsonProperty(value = "landkode", required = true)
     @Valid
     @NotNull
@@ -117,6 +117,7 @@ public class OppgittEgenNæringDto {
         return this;
     }
 
+    @Deprecated(forRemoval = true) // bruk enum
     public OppgittEgenNæringDto medVirksomhetType(String kode) {
         if (kode != null) {
             setVirksomhetTypeDto(VirksomhetType.fraKode(kode));
@@ -261,7 +262,7 @@ public class OppgittEgenNæringDto {
     public void setVirksomhetNavn(String virksomhetNavn) {
         this.virksomhetNavn = virksomhetNavn;
     }
-    
+
     public OppgittEgenNæringDto medOppgittVirksomhetNavn(String virksomhetNavn, Landkode landkode) {
         setLandkode(landkode);
         setVirksomhetNavn(virksomhetNavn);
