@@ -13,12 +13,11 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -58,6 +57,7 @@ public class YrkesaktivitetDto {
         this.arbeidType = Objects.requireNonNull(arbeidType, "arbeidType");
     }
 
+    @Deprecated(forRemoval = true) // bruk enum
     public YrkesaktivitetDto(String arbeidType) {
         this(ArbeidType.fraKode(Objects.requireNonNull(arbeidType, "arbeidType")));
     }

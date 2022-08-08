@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.BeregnetSkatt;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGGrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
@@ -40,11 +39,11 @@ class SigrunTilInternMapper {
                     SSGResponse ssgResponse = entry.getValue().get();
                     Optional<SSGGrunnlag> ssggrunnlag = ssgResponse.getSvalbardGrunnlag()
                         .stream()
-                        .filter(f -> TekniskNavn.fraKode(f.getTekniskNavn()) != null)
+                        .filter(f -> TekniskNavnMapper.fraSigrunNavn(f.getTekniskNavn()) != null)
                         .findFirst();
                     ssggrunnlag.ifPresent(grunnlag -> {
                         IntervallEntitet datoIntervallEntitet = lagDatoIntervall(entry.getKey());
-                        InntektspostType inntektspostType = TekniskNavn.fraKode(grunnlag.getTekniskNavn()).getInntektspostType();
+                        InntektspostType inntektspostType = TekniskNavnMapper.fraSigrunNavn(grunnlag.getTekniskNavn());
                         Map<InntektspostType, BigDecimal> inntektspost = årTilInntektMap.get(datoIntervallEntitet);
                         if (inntektspost == null) {
                             Map<InntektspostType, BigDecimal> typeTilVerdiMap = new HashMap<>();
@@ -70,7 +69,7 @@ class SigrunTilInternMapper {
             IntervallEntitet intervallEntitet = lagDatoIntervall(entry.getKey());
             Map<InntektspostType, BigDecimal> typeTilVerdiMap = new HashMap<>();
             for (BeregnetSkatt beregnetSkatteobjekt : entry.getValue()) {
-                InntektspostType type = TekniskNavn.fraKode(beregnetSkatteobjekt.getTekniskNavn()).getInntektspostType();
+                InntektspostType type = TekniskNavnMapper.fraSigrunNavn(beregnetSkatteobjekt.getTekniskNavn());
                 if (type != null) {
                     BigDecimal beløp = typeTilVerdiMap.get(type);
                     if (beløp == null) {
