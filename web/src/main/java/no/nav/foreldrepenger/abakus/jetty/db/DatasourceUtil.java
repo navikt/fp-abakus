@@ -16,7 +16,7 @@ public class DatasourceUtil {
 
     private static final Environment ENV = Environment.current();
 
-    public static DataSource createDatasource(DatasourceRole role, int maxPoolSize) {
+    public static HikariDataSource createDatasource(DatasourceRole role, int maxPoolSize) {
         HikariConfig config = initConnectionPoolConfig(maxPoolSize);
         if (ENV.isVTP() || ENV.isLocal()) {
             return createLocalDatasource(config);
@@ -52,7 +52,7 @@ public class DatasourceUtil {
         return config;
     }
 
-    private static DataSource createLocalDatasource(HikariConfig config) {
+    private static HikariDataSource createLocalDatasource(HikariConfig config) {
         config.setUsername(getUsername());
         config.setPassword(getUsername()); // NOSONAR false positive
         config.setSchema("public");
@@ -63,7 +63,7 @@ public class DatasourceUtil {
         return ENV.getRequiredProperty("defaultDS.username");
     }
 
-    private static DataSource createVaultDatasource(HikariConfig config, String mountPath, String role) {
+    private static HikariDataSource createVaultDatasource(HikariConfig config, String mountPath, String role) {
         try {
             return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, mountPath, role);
         } catch (VaultError vaultError) {

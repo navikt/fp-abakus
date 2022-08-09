@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.jetty;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,18 +51,12 @@ public class JettyServer {
     private static final Logger log = LoggerFactory.getLogger(JettyServer.class);
 
     private static final String CONTEXT_PATH = ENV.getProperty("context.path", "/fpabakus");
-
-    /**
-     * Legges først slik at alltid resetter context før prosesserer nye requests. Kjøres først så ikke risikerer andre har satt Request#setHandled(true).
-     */
-    static final class ResetLogContextHandler extends AbstractHandler {
-        @Override
-        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-            MDC.clear();
-        }
-    }
-
     private final Integer serverPort;
+
+    JettyServer(int serverPort) {
+        this.serverPort = serverPort;
+        ContextPathHolder.instance(CONTEXT_PATH);
+    }
 
     public static void main(String[] args) throws Exception {
         jettyServer(args).bootStrap();
@@ -74,32 +67,6 @@ public class JettyServer {
             return new JettyServer(Integer.parseUnsignedInt(args[0]));
         }
         return new JettyServer(ENV.getProperty("server.port", Integer.class, 8080));
-    }
-
-    JettyServer(int serverPort) {
-        this.serverPort = serverPort;
-        ContextPathHolder.instance(CONTEXT_PATH);
-    }
-
-    void bootStrap() throws Exception {
-        konfigurerSikkerhet();
-        konfigurerJndi();
-        migrerDatabaser();
-        start();
-    }
-
-    private void konfigurerSikkerhet() {
-        if (ENV.isLocal()) {
-            initTrustStore();
-        }
-
-        var factory = new DefaultAuthConfigFactory();
-        factory.registerConfigProvider(new JaspiAuthConfigProvider(new OidcAuthModule()),
-            "HttpServlet",
-            "server " + CONTEXT_PATH,
-            "OIDC Authentication");
-
-        AuthConfigFactory.setFactory(factory);
     }
 
     private static void initTrustStore() {
@@ -117,49 +84,6 @@ public class JettyServer {
         var password = ENV.getProperty(trustStorePasswordProp, "changeit");
         System.setProperty(trustStorePathProp, storeFile.getAbsolutePath());
         System.setProperty(trustStorePasswordProp, password);
-    }
-
-    protected void konfigurerJndi() throws Exception {
-        // Balanser så CP-size = TaskThreads+1 + Antall Connections man ønsker
-        System.setProperty("task.manager.runner.threads", "6");
-        new EnvEntry("jdbc/defaultDS", DatasourceUtil.createDatasource(DatasourceRole.USER, 12));
-    }
-
-    void migrerDatabaser() {
-        var dataSource = DatasourceUtil.createDatasource(DatasourceRole.ADMIN, 1);
-        try {
-            var flyway = Flyway.configure()
-                .dataSource(dataSource)
-                .locations("classpath:/db/migration/defaultDS")
-                .baselineOnMigrate(true);
-            if (ENV.isProd() || ENV.isDev()) {
-                flyway.initSql(String.format("SET ROLE \"%s\"", DatasourceUtil.getRole(DatasourceRole.ADMIN)));
-            }
-            flyway.load().migrate();
-            dataSource.getConnection().close();
-        } catch (SQLException e) {
-            log.warn("Klarte ikke stenge connection etter migrering", e);
-        } catch (FlywayException e) {
-            log.error("Feil under migrering av databasen.");
-            throw e;
-        }
-    }
-
-    private void start() throws Exception {
-        var server = new Server(getServerPort());
-        server.setConnectors(createConnectors(server).toArray(new Connector[]{}));
-        var handlers = new HandlerList(new ResetLogContextHandler(), createContext());
-        server.setHandler(handlers);
-        server.start();
-        server.join();
-    }
-
-    private List<Connector> createConnectors(Server server) {
-        List<Connector> connectors = new ArrayList<>();
-        var httpConnector = new ServerConnector(server, new HttpConnectionFactory(createHttpConfiguration()));
-        httpConnector.setPort(getServerPort());
-        connectors.add(httpConnector);
-        return connectors;
     }
 
     private static WebAppContext createContext() throws IOException {
@@ -234,7 +158,77 @@ public class JettyServer {
         return List.of(ApplicationConfig.class, EksternApplicationConfig.class, IssoApplication.class);
     }
 
+    void bootStrap() throws Exception {
+        konfigurerSikkerhet();
+        konfigurerJndi();
+        migrerDatabaser();
+        start();
+    }
+
+    private void konfigurerSikkerhet() {
+        if (ENV.isLocal()) {
+            initTrustStore();
+        }
+
+        var factory = new DefaultAuthConfigFactory();
+        factory.registerConfigProvider(new JaspiAuthConfigProvider(new OidcAuthModule()),
+            "HttpServlet",
+            "server " + CONTEXT_PATH,
+            "OIDC Authentication");
+
+        AuthConfigFactory.setFactory(factory);
+    }
+
+    protected void konfigurerJndi() throws Exception {
+        // Balanser så CP-size = TaskThreads+1 + Antall Connections man ønsker
+        System.setProperty("task.manager.runner.threads", "6");
+        new EnvEntry("jdbc/defaultDS", DatasourceUtil.createDatasource(DatasourceRole.USER, 12));
+    }
+
+    void migrerDatabaser() {
+        try (var dataSource = DatasourceUtil.createDatasource(DatasourceRole.ADMIN, 1)) {
+            var flyway = Flyway.configure()
+                .dataSource(dataSource)
+                .locations("classpath:/db/migration/defaultDS")
+                .baselineOnMigrate(true);
+            if (ENV.isProd() || ENV.isDev()) {
+                flyway.initSql(String.format("SET ROLE \"%s\"", DatasourceUtil.getRole(DatasourceRole.ADMIN)));
+            }
+            flyway.load().migrate();
+        } catch (FlywayException e) {
+            log.error("Feil under migrering av databasen.");
+            throw e;
+        }
+    }
+
+    private void start() throws Exception {
+        var server = new Server(getServerPort());
+        server.setConnectors(createConnectors(server).toArray(new Connector[]{}));
+        var handlers = new HandlerList(new ResetLogContextHandler(), createContext());
+        server.setHandler(handlers);
+        server.start();
+        server.join();
+    }
+
+    private List<Connector> createConnectors(Server server) {
+        List<Connector> connectors = new ArrayList<>();
+        var httpConnector = new ServerConnector(server, new HttpConnectionFactory(createHttpConfiguration()));
+        httpConnector.setPort(getServerPort());
+        connectors.add(httpConnector);
+        return connectors;
+    }
+
     private Integer getServerPort() {
         return this.serverPort;
+    }
+
+    /**
+     * Legges først slik at alltid resetter context før prosesserer nye requests. Kjøres først så ikke risikerer andre har satt Request#setHandled(true).
+     */
+    static final class ResetLogContextHandler extends AbstractHandler {
+        @Override
+        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+            MDC.clear();
+        }
     }
 }

@@ -1,7 +1,5 @@
 package no.nav.foreldrepenger.abakus.jetty;
 
-import java.sql.SQLException;
-
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
 import org.slf4j.Logger;
@@ -16,6 +14,10 @@ public class JettyDevServer extends JettyServer {
     private static final Environment ENV = Environment.current();
     private static final Logger log = LoggerFactory.getLogger(JettyDevServer.class);
 
+    private JettyDevServer(int serverPort) {
+        super(serverPort);
+    }
+
     public static void main(String[] args) throws Exception {
         jettyServer(args).bootStrap();
     }
@@ -27,34 +29,21 @@ public class JettyDevServer extends JettyServer {
         return new JettyDevServer(ENV.getProperty("server.port", Integer.class, 8015));
     }
 
-    private JettyDevServer(int serverPort) {
-        super(serverPort);
-    }
-
     @Override
     void migrerDatabaser() {
         try {
             super.migrerDatabaser();
         } catch (Exception e) {
             log.info("Migreringer feilet, cleaner og prøver på nytt for lokal db.");
-            var migreringDs = DatasourceUtil.createDatasource(DatasourceRole.ADMIN, 1);
-            try {
+            try (var migreringDs = DatasourceUtil.createDatasource(DatasourceRole.ADMIN, 1)) {
                 var flyway = Flyway.configure()
                     .dataSource(migreringDs)
                     .locations("classpath:/db/migration/")
                     .baselineOnMigrate(true)
                     .load();
-                try {
-                    flyway.clean();
-                } catch (FlywayException fwe) {
-                    throw new IllegalStateException("Migrering feiler.", fwe);
-                }
-            } finally {
-                try {
-                    migreringDs.getConnection().close();
-                } catch (SQLException sqlException) {
-                    log.warn("Klarte ikke stenge connection etter migrering.", sqlException);
-                }
+                flyway.clean();
+            } catch (FlywayException fwe) {
+                throw new IllegalStateException("Migrering feiler.", fwe);
             }
             super.migrerDatabaser();
         }
