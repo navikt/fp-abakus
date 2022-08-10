@@ -2,6 +2,9 @@ package no.nav.abakus.iaygrunnlag.kodeverk;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
@@ -23,6 +26,8 @@ import com.fasterxml.jackson.databind.node.TextNode;
 @Deprecated(since = "2022-03-31")
 public class TempAvledeKode {
 
+
+    private static final Logger LOG = LoggerFactory.getLogger(TempAvledeKode.class);
 
     @SuppressWarnings("rawtypes")
     public static String getVerdi(Class<? extends Enum> enumCls, Object node, String key) {
@@ -50,9 +55,9 @@ public class TempAvledeKode {
                     kodeverk = (String) ((Map) node).get("kodeverk");
                 }
             } catch (Exception e) {
-                //LOG.info("KODEVERK-OBJEKT: tempavledekode kalt uten at det finnes kodeverk - kode {}", kode);
+                LOG.info("KODEVERK-OBJEKT: tempavledekode kalt uten at det finnes kodeverk - kode {}", kode);
             }
-            //LOG.info("KODEVERK-OBJEKT: mottok kodeverdiobjekt som ikke var String - kode {} fra kodeverk {} ", kode, kodeverk);
+            LOG.info("KODEVERK-OBJEKT: mottok kodeverdiobjekt som ikke var String - kode {} fra kodeverk {} ", kode, kodeverk);
         }
         return kode;
     }
@@ -83,9 +88,9 @@ public class TempAvledeKode {
                     kodeverk = (String) ((Map) node).get("kodeverk");
                 }
             } catch (Exception e) {
-                //LOG.info("KODEVERK-OBJEKT: tempavledekode kalt uten at det finnes kodeverk - kode {}", kode);
+                LOG.info("KODEVERK-OBJEKT: tempavledekode kalt uten at det finnes kodeverk - kode {}", kode);
             }
-            //LOG.info("KODEVERK-OBJEKT: mottok kodeverdiobjekt som ikke var String - kode {} fra kodeverk {} ", kode, kodeverk);
+            LOG.info("KODEVERK-OBJEKT: mottok kodeverdiobjekt som ikke var String - kode {} fra kodeverk {} ", kode, kodeverk);
         }
         return kode;
     }
