@@ -18,7 +18,7 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.SigrunTjeneste;
  * Standard IAY register innhenter.
  */
 @ApplicationScoped
-@YtelseTypeRef()
+@YtelseTypeRef
 public class DefaultIAYRegisterInnhentingTjenesteImpl extends IAYRegisterInnhentingFellesTjenesteImpl {
 
     DefaultIAYRegisterInnhentingTjenesteImpl() {

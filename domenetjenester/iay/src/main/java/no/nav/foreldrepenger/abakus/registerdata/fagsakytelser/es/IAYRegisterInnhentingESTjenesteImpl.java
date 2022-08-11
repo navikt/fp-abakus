@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.registerdata.fagsakytelser.es;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
@@ -14,7 +15,7 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.Virksom
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.SigrunTjeneste;
 
 @ApplicationScoped
-@YtelseTypeRef("ES")
+@YtelseTypeRef(YtelseType.ENGANGSTØNAD)
 public class IAYRegisterInnhentingESTjenesteImpl extends IAYRegisterInnhentingFellesTjenesteImpl {
 
     protected IAYRegisterInnhentingESTjenesteImpl() {
