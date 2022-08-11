@@ -59,7 +59,7 @@ public class DebugDumpsters {
     }
 
     private List<Instance<DebugDump>> findDumpsters(YtelseType ytelseType) {
-        return YtelseTypeRef.Lookup.list(DebugDump.class, dumpere, ytelseType.getKode());
+        return YtelseTypeRef.Lookup.list(DebugDump.class, dumpere, ytelseType);
     }
 
     private void addToZip(Saksnummer saksnummer, ZipOutputStream zipOut, DumpOutput dump) {

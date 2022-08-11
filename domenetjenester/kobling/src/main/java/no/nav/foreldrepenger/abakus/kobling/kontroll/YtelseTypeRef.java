@@ -44,7 +44,7 @@ public @interface YtelseTypeRef {
      *
      * @see no.nav.abakus.iaygrunnlag.kodeverk.YtelseType
      */
-    String value() default "*";
+    YtelseType value() default YtelseType.UDEFINERT;
 
     /**
      * container for repeatable annotations.
@@ -64,15 +64,15 @@ public @interface YtelseTypeRef {
      */
     class YtelseTypeRefLiteral extends AnnotationLiteral<YtelseTypeRef> implements YtelseTypeRef {
 
-        private String navn;
+        private YtelseType navn;
 
-        public YtelseTypeRefLiteral(String navn) {
+        public YtelseTypeRefLiteral(YtelseType navn) {
             this.navn = navn;
         }
 
         @Override
-        public String value() {
-            return navn == null ? "*" : navn;
+        public YtelseType value() {
+            return navn == null ? YtelseType.UDEFINERT : navn;
         }
 
     }
@@ -83,16 +83,8 @@ public @interface YtelseTypeRef {
         private Lookup() {
         }
 
-        public static <I> Optional<I> find(Class<I> cls, String ytelseTypeKode) {
-            return find(cls, (CDI<I>) CDI.current(), ytelseTypeKode);
-        }
-
         public static <I> Optional<I> find(Class<I> cls, YtelseType ytelseTypeKode) {
-            return find(cls, (CDI<I>) CDI.current(), ytelseTypeKode.getKode());
-        }
-
-        public static <I> Optional<I> find(Class<I> cls, Instance<I> instances, YtelseType ytelseTypeKode) {
-            return find(cls, instances, ytelseTypeKode.getKode());
+            return find(cls, (CDI<I>) CDI.current(), ytelseTypeKode);
         }
 
         /**
@@ -100,14 +92,14 @@ public @interface YtelseTypeRef {
          * injected med riktig forventet klassetype og @Any qualifier.
          */
         public static <I> Optional<I> find(Instance<I> instances, YtelseType ytelseTypeKode) {
-            return find(null, instances, ytelseTypeKode.getKode());
+            return find(null, instances, ytelseTypeKode);
         }
 
-        public static <I> List<Instance<I>> list(Class<I> cls, Instance<I> instances, String ytelseTypeKode) {
+        public static <I> List<Instance<I>> list(Class<I> cls, Instance<I> instances, YtelseType ytelseTypeKode) {
             Objects.requireNonNull(instances, "instances");
 
             final List<Instance<I>> resultat = new ArrayList<>();
-            Consumer<String> search = (String s) -> {
+            Consumer<YtelseType> search = (YtelseType s) -> {
                 var inst = select(cls, instances, new YtelseTypeRefLiteral(s));
                 if (inst.isUnsatisfied()) {
                     return;
@@ -116,14 +108,14 @@ public @interface YtelseTypeRef {
             };
 
             search.accept(ytelseTypeKode);
-            search.accept("*"); // finn default
+            search.accept(YtelseType.UDEFINERT); // finn default
             return List.copyOf(resultat);
         }
-        
-        public static <I> Optional<I> find(Class<I> cls, Instance<I> instances, String ytelseTypeKode) {
+
+        public static <I> Optional<I> find(Class<I> cls, Instance<I> instances, YtelseType ytelseTypeKode) {
             Objects.requireNonNull(instances, "instances");
 
-            for (var fagsakLiteral : coalesce(ytelseTypeKode, "*")) {
+            for (var fagsakLiteral : coalesce(ytelseTypeKode, YtelseType.UDEFINERT)) {
                 var inst = select(cls, instances, new YtelseTypeRef.YtelseTypeRefLiteral(fagsakLiteral));
                 if (inst.isResolvable()) {
                     return Optional.of(getInstance(inst));
@@ -152,8 +144,8 @@ public @interface YtelseTypeRef {
             return i;
         }
 
-        private static List<String> coalesce(String... vals) {
-            return Arrays.asList(vals).stream().filter(v -> v != null).distinct().collect(Collectors.toList());
+        private static List<YtelseType> coalesce(YtelseType... vals) {
+            return Arrays.stream(vals).filter(Objects::nonNull).distinct().collect(Collectors.toList());
         }
     }
 
