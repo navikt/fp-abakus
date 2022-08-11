@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
@@ -23,7 +24,6 @@ import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
 import no.nav.foreldrepenger.abakus.kobling.repository.LåsRepository;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.InnhentRegisterdataTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataElement;
-import no.nav.foreldrepenger.abakus.vedtak.json.JacksonJsonConfig;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 
@@ -63,7 +63,7 @@ public class RegisterdataInnhentingTask extends KoblingTask {
         var payloadAsString = prosessTaskData.getPayloadAsString();
         if (payloadAsString != null && !payloadAsString.isEmpty()) {
             try {
-                var request = JacksonJsonConfig.getMapper().readValue(payloadAsString, InnhentRegisterdataRequest.class);
+                var request = JsonObjectMapper.getMapper().readValue(payloadAsString, InnhentRegisterdataRequest.class);
                 informasjonsElementer = InnhentRegisterdataTjeneste.hentUtInformasjonsElementer(request);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException("Feilet i deserialisering av innhent request", e);

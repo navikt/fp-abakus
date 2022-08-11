@@ -12,12 +12,12 @@ import javax.validation.ValidatorFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.abakus.vedtak.ytelse.Ytelse;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
-import no.nav.foreldrepenger.abakus.vedtak.json.JacksonJsonConfig;
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
@@ -27,7 +27,7 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
 public class LagreVedtakTask implements ProsessTaskHandler {
 
     public static final String KEY = "kafka.key";
-    private final static ObjectMapper OBJECT_MAPPER = JacksonJsonConfig.getMapper();
+    private final static ObjectMapper OBJECT_MAPPER = JsonObjectMapper.getMapper();
 
     private VedtakYtelseRepository ytelseRepository;
     private ExtractFromYtelseV1 extractor;

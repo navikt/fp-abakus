@@ -5,23 +5,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.time.LocalDate;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 
 public class EregRestTest {
 
-    private static ObjectMapper mapper;
-
-    @BeforeAll
-    public static void setup() {
-        mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    }
+    private static ObjectMapper mapper = JsonObjectMapper.getMapper();
 
     @Test
     public void mapping_dto_til_grunnlag_til_dto() throws IOException {

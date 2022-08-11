@@ -11,13 +11,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsavtale;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
@@ -37,7 +35,7 @@ public class ArbeidsforholdTjenesteMedRestTest {
     private static final PersonIdent FNR = new PersonIdent("12312312312");
     private static final LocalDate FOM = LocalDate.now().minusYears(1L);
 
-    private static ObjectMapper mapper;
+    private static ObjectMapper mapper = JsonObjectMapper.getMapper();
 
     private static final String json = "{\n" +
         "  \"arbeidsforholdId\": \"990983666\",\n" +
@@ -67,13 +65,6 @@ public class ArbeidsforholdTjenesteMedRestTest {
         "      }\n" +
         "    ]\n" +
         "}";
-
-    @BeforeAll
-    public static void setup() {
-        mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    }
 
     @Test
     public void mapping_organisasjon() throws IOException {
