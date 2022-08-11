@@ -17,14 +17,10 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
 import no.nav.foreldrepenger.konfig.Environment;
@@ -35,7 +31,7 @@ import no.nav.vedtak.exception.TekniskException;
 @ApplicationScoped
 public class SigrunConsumerImpl implements SigrunConsumer {
 
-    private static final ObjectMapper mapper = getObjectMapper();
+    private static final ObjectMapper mapper = JsonObjectMapper.getMapper();
     private static final String TEKNISK_NAVN = "skatteoppgjoersdato";
 
     private static final MonthDay TIDLIGSTE_SJEKK_FJOR = MonthDay.of(5, 1);
@@ -52,16 +48,6 @@ public class SigrunConsumerImpl implements SigrunConsumer {
     public SigrunConsumerImpl(SigrunRestClient sigrunRestClient, @KonfigVerdi("SigrunRestBeregnetSkatt.url") URI endpoint) {
         this.sigrunRestClient = sigrunRestClient;
         this.sigrunRestClient.setEndpoint(endpoint);
-    }
-
-    private static ObjectMapper getObjectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new Jdk8Module());
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return mapper;
     }
 
     private static <T> List<T> fromJsonList(String json, TypeReference<List<T>> typeReference) {

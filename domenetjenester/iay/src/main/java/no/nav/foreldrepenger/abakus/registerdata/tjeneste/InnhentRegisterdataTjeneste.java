@@ -12,6 +12,7 @@ import javax.inject.Inject;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
@@ -28,7 +29,6 @@ import no.nav.foreldrepenger.abakus.registerdata.RegisterdataInnhentingTask;
 import no.nav.foreldrepenger.abakus.registerdata.callback.CallbackTask;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.foreldrepenger.abakus.vedtak.json.JacksonJsonConfig;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskGruppe;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
@@ -119,7 +119,7 @@ public class InnhentRegisterdataTjeneste {
         innhentingTask.setAktørId(kobling.getAktørId().getId());
         innhentingTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
         try {
-            innhentingTask.setPayload(JacksonJsonConfig.getMapper().writeValueAsString(dto));
+            innhentingTask.setPayload(JsonObjectMapper.getMapper().writeValueAsString(dto));
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Feil i serialisering av innhentingrequest", e);
         }
