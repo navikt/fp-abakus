@@ -19,14 +19,16 @@ class RegisterdataTaskTest {
 
     private static final String INPUT_UUID = "4b05205e-95f4-4b62-a7e8-5029a0423e76";
 
+    private static final LocalDate PERIODE_BASE = LocalDate.of(2022,8,11);
+
     private static final InnhentRegisterdataRequest REQUEST = new InnhentRegisterdataRequest("saksnummer",
-        UUID.fromString(INPUT_UUID), YtelseType.FORELDREPENGER, new Periode(LocalDate.now().minusYears(2), LocalDate.now().plusYears(1)),
+        UUID.fromString(INPUT_UUID), YtelseType.FORELDREPENGER, new Periode(PERIODE_BASE.minusYears(2), PERIODE_BASE.plusYears(1)),
         new AktørIdPersonident("0000000000000"));
 
     @Test
     void roundtrip_payload() throws IOException {
         // Arrange
-        var periodeRef = LocalDate.now();
+
         var innhentingTask = ProsessTaskData.forProsessTask(RegisterdataInnhentingTask.class);
         innhentingTask.setPayload(JsonObjectMapper.getMapper().writeValueAsString(REQUEST));
 
