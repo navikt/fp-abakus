@@ -7,16 +7,12 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
 import no.nav.abakus.iaygrunnlag.kodeverk.TempAvledeKode;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-@JsonFormat(shape = Shape.OBJECT)
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum RegisterdataType implements Kodeverdi {
 
@@ -40,6 +36,7 @@ public enum RegisterdataType implements Kodeverdi {
         }
     }
 
+    @JsonValue
     private String kode;
 
     private RegisterdataType() {
@@ -78,11 +75,6 @@ public enum RegisterdataType implements Kodeverdi {
     @Override
     public String getKode() {
         return kode;
-    }
-
-    @Override
-    public String getOffisiellKode() {
-        return getKode();
     }
 
 }

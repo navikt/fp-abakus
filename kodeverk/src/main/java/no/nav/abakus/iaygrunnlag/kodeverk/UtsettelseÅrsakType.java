@@ -7,11 +7,9 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum UtsettelseÅrsakType implements Kodeverdi {
 
@@ -35,9 +33,9 @@ public enum UtsettelseÅrsakType implements Kodeverdi {
         }
     }
 
-    @JsonIgnore
-    private String navn;
 
+    private String navn;
+    @JsonValue
     private String kode;
 
     UtsettelseÅrsakType(String kode, String navn) {
@@ -67,20 +65,13 @@ public enum UtsettelseÅrsakType implements Kodeverdi {
         return navn;
     }
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Override
     public String getKodeverk() {
         return KODEVERK;
     }
 
-    @JsonProperty(value="kode")
     @Override
     public String getKode() {
         return kode;
-    }
-
-    @Override
-    public String getOffisiellKode() {
-        return this.getKode();
     }
 }

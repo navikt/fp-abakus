@@ -9,16 +9,14 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonFormat.Shape;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-@JsonFormat(shape = Shape.OBJECT)
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum UtbetaltPensjonTrygdType implements UtbetaltYtelseType {
 
     ALDERSPENSJON("ALDERSPENSJON", "Alderspensjon", "alderspensjon"),
+    ALDERSPENSJON_SKJERMINGSTILLEGG("ALDERSPENSJON_SKJERMINGSTILLEGG", "Alderspensjon skjermingstillegg", "alderspensjonSkjermingstillegg"),
     ANNET("ANNET", "Annet", "annet"),
     AFP("AFP", "Avtalefestet pensjon", "avtalefestetPensjon"),
     BARNEPENSJON("BARNEPENSJON", "Barnepensjon", "barnepensjon"),
@@ -47,6 +45,8 @@ public enum UtbetaltPensjonTrygdType implements UtbetaltYtelseType {
     LIVRENTER("LIVRENTER", "Pensjon og livrenter i arbeidsforhold", "pensjonOgLivrenterIArbeidsforhold"),
     RENTEFORDEL_LÅN("RENTEFORDEL_LÅN", "Rentefordel lån", "rentefordelLaan"),
     SUPPLERENDE_STØNAD("SUPPLERENDE_STØNAD", "Supplerende stønad til person med kort botid i Norge", "supplerendeStoenadTilPersonKortBotidNorge"),
+    SUPPLERENDE_FLYKTNING("SUPPLERENDE_FLYKTNING", "Supplerende stønad til ufør flyktning", "supplerendeStoenadTilUfoerFlyktning"),
+    SLITERTILLEGG("SLITERTILLEGG", "Slitertillegg", "slitertillegg"),
     UFØREPENSJON("UFØREPENSJON", "Uførepensjon", "ufoerepensjon"),
     UFØREPENSJON_ANDRE("UFØREPENSJON_ANDRE", "Uførepensjon fra andre enn folketrygden", "ufoerepensjonFraAndreEnnFolketrygden"),
     UFØREPENSJON_ANDRE_ETTEROPPGJØR("UFØREPENSJON_ANDRE_ETTEROPPGJØR", "Uførepensjon etteroppgjør fra andre enn folketrygden", "ufoereytelseEtteroppgjoerFraAndreEnnFolketrygden"),
@@ -67,11 +67,11 @@ public enum UtbetaltPensjonTrygdType implements UtbetaltYtelseType {
         }
     }
 
-    @JsonIgnore
     private String navn;
 
+    @JsonValue
     private String kode;
-    @JsonIgnore
+
     private String offisiellKode;
 
     private UtbetaltPensjonTrygdType(String kode) {
@@ -106,13 +106,11 @@ public enum UtbetaltPensjonTrygdType implements UtbetaltYtelseType {
         return navn;
     }
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Override
     public String getKodeverk() {
         return KODEVERK;
     }
 
-    @JsonProperty(value = "kode")
     @Override
     public String getKode() {
         return kode;

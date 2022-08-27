@@ -13,11 +13,9 @@ import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-@JsonFormat(shape = Shape.OBJECT)
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public class Landkode implements Kodeverdi {
     private static final String KODEVERK = "LANDKODER";
@@ -32,7 +30,7 @@ public class Landkode implements Kodeverdi {
     public static final Landkode UDEFINERT = fraKode("-");
 
     /** ISO 3166 alpha 3-letter code. */
-    @JsonProperty(value = "kode")
+    @JsonValue
     @Size(max = 3)
     @Pattern(regexp = "^[\\p{Alnum}]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String kode;
@@ -44,12 +42,6 @@ public class Landkode implements Kodeverdi {
         this.kode = kode;
     }
 
-    @Override
-    public String getOffisiellKode() {
-        return kode;
-    }
-
-    @Override
     public String getNavn() {
         return kode;
     }
@@ -59,7 +51,6 @@ public class Landkode implements Kodeverdi {
         return kode;
     }
 
-    @JsonProperty(value = "kodeverk", access = JsonProperty.Access.READ_ONLY)
     @Override
     public String getKodeverk() {
         return KODEVERK;
