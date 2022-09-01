@@ -97,3 +97,5 @@ spec:
 
     - name: SKAL_INNENTE_YTELSE_ANVIST_ANDELER
       value: "true"
+    - name: APPD_ENABLED
+      value: "false"
