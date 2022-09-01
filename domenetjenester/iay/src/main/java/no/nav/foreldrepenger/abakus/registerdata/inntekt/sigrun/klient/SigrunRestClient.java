@@ -19,6 +19,7 @@ import static no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.Si
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -142,6 +143,10 @@ public class SigrunRestClient {
                 LOG.trace("Sigrun: {}", response.getStatusLine().getReasonPhrase());
                 return null;
             } else {
+                if (status == HttpStatus.SC_UNAUTHORIZED) {
+                    var challenge = response.getHeaders("WWW-Authenticate");
+                    LOG.info(Arrays.toString(challenge));
+                }
                 throw new IntegrasjonException("F-016912",
                     String.format("Server svarte med feilkode http-kode '%s' og response var '%s'", status, response.getStatusLine().getReasonPhrase()));
             }
@@ -153,6 +158,6 @@ public class SigrunRestClient {
     }
 
     private static TekniskException ioException(IOException cause) {
-        return new TekniskException( "F-012937", "IOException ved kommunikasjon med server", cause);
+        return new TekniskException("F-012937", "IOException ved kommunikasjon med server", cause);
     }
 }
