@@ -3,6 +3,8 @@ package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient;
 import static no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestConfig.AUTH_HEADER;
 import static no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestConfig.CALL_ID;
 import static no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestConfig.CONSUMER_ID;
+import static no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestConfig.ENDA_NYERE_HEADER_CALL_ID;
+import static no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestConfig.ENDA_NYERE_HEADER_CONSUMER_ID;
 import static no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestConfig.FILTER;
 import static no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestConfig.FILTER_SSG;
 import static no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestConfig.INNTEKTSAAR;
@@ -99,9 +101,11 @@ public class SigrunRestClient {
         request.setHeader(AUTH_HEADER, authHeaderValue);
         request.setHeader(CALL_ID, MDCOperations.getCallId());
         request.setHeader(NYE_HEADER_CALL_ID, MDCOperations.getCallId());
+        request.setHeader(ENDA_NYERE_HEADER_CALL_ID, MDCOperations.getCallId());
         request.setHeader("Accept", "application/json");
         request.setHeader(CONSUMER_ID, SubjectHandler.getSubjectHandler().getConsumerId());
         request.setHeader(NYE_HEADER_CONSUMER_ID, SubjectHandler.getSubjectHandler().getConsumerId());
+        request.setHeader(ENDA_NYERE_HEADER_CONSUMER_ID, SubjectHandler.getSubjectHandler().getConsumerId());
 
         return request;
     }
@@ -115,9 +119,11 @@ public class SigrunRestClient {
         request.addHeader(X_INNTEKTSÅR, år);
         request.setHeader(CALL_ID, MDCOperations.getCallId());
         request.setHeader(NYE_HEADER_CALL_ID, MDCOperations.getCallId());
+        request.setHeader(ENDA_NYERE_HEADER_CALL_ID, MDCOperations.getCallId());
         request.setHeader("Accept", "application/json");
         request.setHeader(CONSUMER_ID, SubjectHandler.getSubjectHandler().getConsumerId());
         request.setHeader(NYE_HEADER_CONSUMER_ID, SubjectHandler.getSubjectHandler().getConsumerId());
+        request.setHeader(ENDA_NYERE_HEADER_CONSUMER_ID, SubjectHandler.getSubjectHandler().getConsumerId());
         return request;
     }
 

@@ -8,6 +8,9 @@ class SigrunRestConfig {
     static final String OIDC_AUTH_HEADER_PREFIX = "Bearer ";
     static final String NYE_HEADER_CALL_ID = "no.nav.callid";
     static final String NYE_HEADER_CONSUMER_ID = "no.nav.consumer.id";
+    static final String ENDA_NYERE_HEADER_CALL_ID = "Nav-Call-Id";
+    static final String ENDA_NYERE_HEADER_CONSUMER_ID = "Nav-Consumer-Id";
+
 
     //api/beregnetskatt
     static final String FILTER = "BeregnetSkattPensjonsgivendeInntekt";
