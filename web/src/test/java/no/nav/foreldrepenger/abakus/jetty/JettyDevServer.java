@@ -40,6 +40,7 @@ public class JettyDevServer extends JettyServer {
                     .dataSource(migreringDs)
                     .locations("classpath:/db/migration/")
                     .baselineOnMigrate(true)
+                    .cleanDisabled(false)
                     .load();
                 flyway.clean();
             } catch (FlywayException fwe) {
