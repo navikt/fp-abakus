@@ -77,7 +77,7 @@ spec:
     - name: MELDEKORTUTBETALINGSGRUNNLAG_V1_URL
       value: https://arena-q1.adeo.no/ail_ws/MeldekortUtbetalingsgrunnlag_v1
     - name: SIGRUNRESTBEREGNETSKATT_URL
-      value: https://sigrun-q1.nais.preprod.local
+      value: https://sigrun-q1.dev.adeo.no
     - name: ORGANISASJON_RS_URL
       value: https://modapp-q1.adeo.no/ereg/api/v1/organisasjon
     - name: FPABAKUS_IT_FP_GRUNNLAG_URL
