@@ -119,18 +119,19 @@ public class SigrunRestClient {
     }
 
     private String getOIDCToken() {
-        String oidcToken = SubjectHandler.getSubjectHandler().getInternSsoToken();
-        if (oidcToken != null) {
-            LOG.info("Bruker intern SSO token");
-            return oidcToken;
-        }
-
         var samlToken = SubjectHandler.getSubjectHandler().getSamlToken();
         if (samlToken != null) {
             var stsToken = TokenProvider.getTokenFor(SikkerhetContext.SYSTEM);
             LOG.info("Bruker token av type {} utløper {}", stsToken.tokenType(), stsToken.expiresAt());
             return stsToken.token();
         }
+
+        String oidcToken = SubjectHandler.getSubjectHandler().getInternSsoToken();
+        if (oidcToken != null) {
+            LOG.info("Bruker intern SSO token");
+            return oidcToken;
+        }
+
         throw new TekniskException("F-017072", "Klarte ikke å fremskaffe et OIDC token");
     }
 
