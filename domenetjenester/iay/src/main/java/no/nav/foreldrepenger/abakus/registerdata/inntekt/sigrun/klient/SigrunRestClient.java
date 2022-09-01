@@ -38,6 +38,7 @@ import no.nav.vedtak.exception.ManglerTilgangException;
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.log.mdc.MDCOperations;
 import no.nav.vedtak.sikkerhet.context.SubjectHandler;
+import no.nav.vedtak.sikkerhet.oidc.token.OpenIDToken;
 import no.nav.vedtak.sikkerhet.oidc.token.SikkerhetContext;
 import no.nav.vedtak.sikkerhet.oidc.token.TokenProvider;
 
@@ -124,7 +125,10 @@ public class SigrunRestClient {
         String oidcToken = SubjectHandler.getSubjectHandler().getInternSsoToken();
         if (oidcToken != null) {
             if (isDev) {
-                LOG.info("Bruker intern SSO token " + oidcToken);
+                LOG.info("Intern SSO token " + oidcToken);
+                var nyttToken = TokenProvider.getTokenFor(SikkerhetContext.SYSTEM);
+                LOG.info("Nytt token " + nyttToken.token());
+                return nyttToken.token();
             }
             return oidcToken;
         }
