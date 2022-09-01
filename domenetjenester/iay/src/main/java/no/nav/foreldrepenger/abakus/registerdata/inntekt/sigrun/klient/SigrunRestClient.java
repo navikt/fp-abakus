@@ -126,9 +126,6 @@ public class SigrunRestClient {
         if (oidcToken != null) {
             if (isDev) {
                 LOG.info("Intern SSO token " + oidcToken);
-                var nyttToken = TokenProvider.getTokenFor(SikkerhetContext.SYSTEM);
-                LOG.info("Nytt token " + nyttToken.token());
-                return nyttToken.token();
             }
             return oidcToken;
         }
