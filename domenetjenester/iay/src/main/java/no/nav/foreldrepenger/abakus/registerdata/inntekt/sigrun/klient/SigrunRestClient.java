@@ -34,13 +34,11 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.vedtak.exception.IntegrasjonException;
 import no.nav.vedtak.exception.ManglerTilgangException;
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.log.mdc.MDCOperations;
 import no.nav.vedtak.sikkerhet.context.SubjectHandler;
-import no.nav.vedtak.sikkerhet.oidc.token.OpenIDToken;
 import no.nav.vedtak.sikkerhet.oidc.token.SikkerhetContext;
 import no.nav.vedtak.sikkerhet.oidc.token.TokenProvider;
 
@@ -49,7 +47,6 @@ public class SigrunRestClient {
     private final ResponseHandler<String> defaultResponseHandler;
     private CloseableHttpClient client;
     private URI endpoint;
-    private boolean isDev = Environment.current().isDev();
 
     SigrunRestClient(CloseableHttpClient closeableHttpClient) {
         super();
@@ -130,17 +127,12 @@ public class SigrunRestClient {
     private String getOIDCToken() {
         String oidcToken = SubjectHandler.getSubjectHandler().getInternSsoToken();
         if (oidcToken != null) {
-            if (isDev) {
-                LOG.info("Intern SSO token " + oidcToken);
-            }
             return oidcToken;
         }
 
         var samlToken = SubjectHandler.getSubjectHandler().getSamlToken();
         if (samlToken != null) {
-            var stsToken = TokenProvider.getTokenFor(SikkerhetContext.SYSTEM);
-            LOG.info("Bruker token av type {} utløper {}", stsToken.tokenType(), stsToken.expiresAt());
-            return stsToken.token();
+            return TokenProvider.getTokenFor(SikkerhetContext.SYSTEM).token();
         }
 
         throw new TekniskException("F-017072", "Klarte ikke å fremskaffe et OIDC token");
