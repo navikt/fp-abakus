@@ -12,7 +12,7 @@ import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 /**
  * Ekstern arbeidsforhold referanse.
  * Mottatt fra inntektsmelding eller AARegisteret.
- * 
+ *
  * Hvis null gjelder det flere arbeidsforhold, ellers for et spesifikt forhold
  */
 
@@ -59,7 +59,7 @@ public class EksternArbeidsforholdRef implements IndexKey, Serializable {
         if (!gjelderForSpesifiktArbeidsforhold() || !ref.gjelderForSpesifiktArbeidsforhold()) {
             return true;
         }
-        return Objects.equals(referanse, ref.referanse);
+        return Objects.equals(referanse.toUpperCase(), ref.referanse.toUpperCase());
     }
 
     @Override
@@ -72,7 +72,7 @@ public class EksternArbeidsforholdRef implements IndexKey, Serializable {
         if (o == null || getClass() != o.getClass())
             return false;
         EksternArbeidsforholdRef that = (EksternArbeidsforholdRef) o;
-        return Objects.equals(referanse, that.referanse);
+        return Objects.equals(referanse.toUpperCase(), that.referanse.toUpperCase());
     }
 
     @Override
