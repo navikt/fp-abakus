@@ -73,7 +73,7 @@ spec:
     - name: HENTINNTEKTLISTEBOLK_URL
       value: https://app-q1.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk
     - name: AAREG_RS_URL
-      value: https://modapp-q1.adeo.no/aareg-services/api/v1/arbeidstaker
+      value: http://aareg-services-nais-q1.arbeidsforhold/api/v1/arbeidstaker
     - name: MELDEKORTUTBETALINGSGRUNNLAG_V1_URL
       value: https://arena-q1.adeo.no/ail_ws/MeldekortUtbetalingsgrunnlag_v1
     - name: SIGRUNRESTBEREGNETSKATT_URL
