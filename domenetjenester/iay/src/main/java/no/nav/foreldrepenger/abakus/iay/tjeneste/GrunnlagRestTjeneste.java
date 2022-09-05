@@ -1,9 +1,6 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste;
 
 import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.GRUNNLAG;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.UPDATE;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -89,6 +86,7 @@ import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
+import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 
 @OpenAPIDefinition(tags = { @Tag(name = "iay-grunnlag") })
 @Path("/iay/grunnlag/v1")
@@ -119,7 +117,7 @@ public class GrunnlagRestTjeneste {
             @ApiResponse(responseCode = "204", description = "Det finnes ikke et grunnlag for forespørselen"),
             @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")
     })
-    @BeskyttetRessurs(action = READ, resource = GRUNNLAG)
+    @BeskyttetRessurs(actionType = ActionType.READ, resource = GRUNNLAG)
     @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
     public Response hentIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
         Response response;
@@ -159,7 +157,7 @@ public class GrunnlagRestTjeneste {
             @ApiResponse(responseCode = "204", description = "Det finnes ikke et arbeidsforhold grunnlag for forespørselen"),
             @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")
     })
-    @BeskyttetRessurs(action = READ, resource = GRUNNLAG)
+    @BeskyttetRessurs(actionType = ActionType.READ, resource = GRUNNLAG)
     @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT" })
     public Response hentArbeidsforholdInformasjon(@NotNull @Valid @QueryParam("ytelseType") YtelseType ytelseType,
                                                   @NotNull @Valid @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'") String saksnummer,
@@ -209,7 +207,7 @@ public class GrunnlagRestTjeneste {
             @ApiResponse(responseCode = "204", description = "Det finnes ikke et arbeidsforhold grunnlag for forespørselen"),
             @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")
     })
-    @BeskyttetRessurs(action = READ, resource = GRUNNLAG)
+    @BeskyttetRessurs(actionType = ActionType.READ, resource = GRUNNLAG)
     @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT" })
     public Response hentSisteIayGrunnlag(@NotNull @Valid @QueryParam("ytelseType") YtelseType ytelseType,
                                          @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @NotNull @Valid @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'") String saksnummer,
@@ -254,7 +252,7 @@ public class GrunnlagRestTjeneste {
     @Operation(description = "Lagrer siste versjon", tags = "iay-grunnlag", responses = {
             @ApiResponse(responseCode = "200", description = "Mottatt grunnlaget")
     })
-    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
+    @BeskyttetRessurs(actionType = ActionType.UPDATE, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response oppdaterOgLagreOverstyring(@NotNull @Valid OverstyrtInntektArbeidYtelseAbacDto dto) {
 
@@ -281,7 +279,7 @@ public class GrunnlagRestTjeneste {
     @Operation(description = "Lagrer siste versjon", tags = "iay-grunnlag", responses = {
             @ApiResponse(responseCode = "200", description = "Mottatt grunnlaget")
     })
-    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
+    @BeskyttetRessurs(actionType = ActionType.UPDATE, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response oppdaterOgLagreGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagAbacDto dto) {
 
@@ -309,7 +307,7 @@ public class GrunnlagRestTjeneste {
     @Operation(description = "Hent IAY Grunnlag for angitt søke spesifikasjon", tags = "iay-grunnlag", responses = {
             @ApiResponse(description = "Grunnlaget for saken", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InntektArbeidYtelseGrunnlagSakSnapshotDto.class)))
     })
-    @BeskyttetRessurs(action = READ, resource = GRUNNLAG)
+    @BeskyttetRessurs(actionType = ActionType.READ, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentSnapshotIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
@@ -344,7 +342,7 @@ public class GrunnlagRestTjeneste {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Kopier grunnlag", tags = "iay-grunnlag")
-    @BeskyttetRessurs(action = CREATE, resource = GRUNNLAG)
+    @BeskyttetRessurs(actionType = ActionType.CREATE, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response kopierOgLagreGrunnlag(@NotNull @Valid KopierGrunnlagRequestAbac request) {
         var ref = new KoblingReferanse(request.getNyReferanse());

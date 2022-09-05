@@ -3,10 +3,14 @@ package no.nav.foreldrepenger.abakus.felles.sikkerhet;
 import javax.enterprise.context.ApplicationScoped;
 
 import no.nav.vedtak.sikkerhet.abac.AbacAttributtSamling;
+import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.PdpKlient;
 import no.nav.vedtak.sikkerhet.abac.PdpRequest;
 import no.nav.vedtak.sikkerhet.abac.PdpRequestBuilder;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
+import no.nav.vedtak.sikkerhet.abac.pdp.AppRessursData;
+import no.nav.vedtak.sikkerhet.abac.pdp.BehandlingStatus;
+import no.nav.vedtak.sikkerhet.abac.pdp.FagsakStatus;
 
 /**
  * Implementasjon av PDP request for denne applikasjonen.
@@ -29,5 +33,26 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
         pdpRequest.put(AbacAttributter.RESOURCE_FORELDREPENGER_SAK_BEHANDLINGSSTATUS, AbacBehandlingStatus.UTREDES.getEksternKode());
         pdpRequest.put(AbacAttributter.RESOURCE_FORELDREPENGER_SAK_SAKSSTATUS, AbacFagsakStatus.UNDER_BEHANDLING.getEksternKode());
         return pdpRequest;
+    }
+
+    @Override
+    public String abacDomene() {
+        return ABAC_DOMAIN;
+    }
+
+    @Override
+    public boolean nyttAbacGrensesnitt() {
+        return true;
+    }
+
+    @Override
+    public AppRessursData lagAppRessursData(AbacDataAttributter dataAttributter) {
+        return AppRessursData.builder()
+            .leggTilAktørIdSet(dataAttributter.getVerdier(StandardAbacAttributtType.AKTØR_ID))
+            .leggTilFødselsnumre(dataAttributter.getVerdier(StandardAbacAttributtType.FNR))
+            // TODO: Hente fra pip-tjenesten? arv fra tidligere... men nå er 2 pips aktuelle ....
+            .medFagsakStatus(FagsakStatus.UNDER_BEHANDLING)
+            .medBehandlingStatus(BehandlingStatus.UTREDES)
+            .build();
     }
 }
