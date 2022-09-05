@@ -7,13 +7,9 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonFormat.Shape;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-@JsonFormat(shape = Shape.OBJECT)
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum Fagsystem implements Kodeverdi {
 
@@ -52,12 +48,11 @@ public enum Fagsystem implements Kodeverdi {
 
     private static final Map<String, Fagsystem> KODER = new LinkedHashMap<>();
 
-    @JsonIgnore
     private String navn;
 
-    @JsonIgnore
     private String offisiellKode;
 
+    @JsonValue
     private String kode;
 
     Fagsystem() {
@@ -101,13 +96,11 @@ public enum Fagsystem implements Kodeverdi {
         return offisiellKode;
     }
 
-    @JsonProperty(value = "kodeverk", access = Access.READ_ONLY)
     @Override
     public String getKodeverk() {
         return KODEVERK;
     }
 
-    @JsonProperty(value = "kode")
     @Override
     public String getKode() {
         return kode;

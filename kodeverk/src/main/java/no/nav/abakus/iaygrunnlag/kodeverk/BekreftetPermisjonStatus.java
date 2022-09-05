@@ -5,6 +5,7 @@ package no.nav.abakus.iaygrunnlag.kodeverk;
  * Definerer statuser for bekreftet permisjoner
  * </p>
  */
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -12,12 +13,9 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonFormat.Shape;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-@JsonFormat(shape = Shape.OBJECT)
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum BekreftetPermisjonStatus implements Kodeverdi {
 
@@ -39,10 +37,9 @@ public enum BekreftetPermisjonStatus implements Kodeverdi {
         }
     }
 
-    @JsonIgnore
     private String navn;
 
-    @JsonProperty(value="kode")
+    @JsonValue
     private String kode;
 
     private BekreftetPermisjonStatus(String kode) {
@@ -76,7 +73,6 @@ public enum BekreftetPermisjonStatus implements Kodeverdi {
         return navn;
     }
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Override
     public String getKodeverk() {
         return KODEVERK;
