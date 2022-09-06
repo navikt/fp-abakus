@@ -75,14 +75,6 @@ public class ArbeidsforholdInformasjonBuilder {
         kladd.leggTilNyReferanse(arbeidsforholdReferanse);
     }
 
-    @Deprecated // IKKE BRUK DENNE
-    public void fjernReferanse(ArbeidsforholdReferanse arbeidsforholdReferanse) {
-        if (kladd.getId() != null) {
-            throw new IllegalStateException("Kan ikke fjerne referanse fra lagret grunnlag");
-        }
-        kladd.fjernReferanse(arbeidsforholdReferanse);
-    }
-
     public boolean kommetInntektsmeldingPåArbeidsforholdHvorViTidligereBehandletUtenInntektsmelding(Inntektsmelding inntektsmelding) {
         return kladd.getOverstyringer()
             .stream()

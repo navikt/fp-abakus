@@ -18,7 +18,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.PostLoad;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -171,7 +170,7 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
 
     /**
      * @deprecated FIXME (FC): Trengs denne eller kan vi alltid stole på ref er den vi skal returnere? Skal egentlig returnere ref,
-     *             men per nå har vi antagelig interne ider som har erstattet andre interne id'er. Må isåfall avsjekke migrering av disse.
+     * men per nå har vi antagelig interne ider som har erstattet andre interne id'er. Må isåfall avsjekke migrering av disse.
      */
     @Deprecated(forRemoval = true)
     public InternArbeidsforholdRef finnEllerOpprett(Arbeidsgiver arbeidsgiver, final InternArbeidsforholdRef ref) {
@@ -216,10 +215,10 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
     public Optional<InternArbeidsforholdRef> finnForEksternBeholdHistoriskReferanse(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef arbeidsforholdRef) {
         // For å sike at det ikke mistes data ved sammenslåing av og innhenting av registerdata
         final Optional<ArbeidsforholdReferanse> referanseEntitet = referanser.stream().filter(re -> overstyringer.stream()
-            .anyMatch(ov -> ov.getHandling().equals(ArbeidsforholdHandlingType.SLÅTT_SAMMEN_MED_ANNET)
-                && ov.getArbeidsgiver().equals(arbeidsgiver)
-                && re.getEksternReferanse().equals(arbeidsforholdRef)
-                && re.getInternReferanse().equals(ov.getArbeidsforholdRef())))
+                .anyMatch(ov -> ov.getHandling().equals(ArbeidsforholdHandlingType.SLÅTT_SAMMEN_MED_ANNET)
+                    && ov.getArbeidsgiver().equals(arbeidsgiver)
+                    && re.getEksternReferanse().equals(arbeidsforholdRef)
+                    && re.getInternReferanse().equals(ov.getArbeidsforholdRef())))
             .findAny();
         if (referanseEntitet.isPresent()) {
             var internRef = referanseEntitet.get().getInternReferanse();
@@ -274,11 +273,6 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
     void leggTilNyReferanse(ArbeidsforholdReferanse arbeidsforholdReferanse) {
         arbeidsforholdReferanse.setInformasjon(this);
         referanser.add(arbeidsforholdReferanse);
-        validerDuplikatReferanser();
-    }
-
-    void fjernReferanse(ArbeidsforholdReferanse arbeidsforholdReferanse) {
-        referanser.remove(arbeidsforholdReferanse);
         validerDuplikatReferanser();
     }
 
