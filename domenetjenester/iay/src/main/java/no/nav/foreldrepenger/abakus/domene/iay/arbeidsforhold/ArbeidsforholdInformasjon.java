@@ -277,6 +277,11 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
         validerDuplikatReferanser();
     }
 
+    void fjernReferanse(ArbeidsforholdReferanse arbeidsforholdReferanse) {
+        referanser.remove(arbeidsforholdReferanse);
+        validerDuplikatReferanser();
+    }
+
     @PostLoad
     void validerDuplikatReferanser() {
         record Key(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef eksternArbeidsforhold) {
