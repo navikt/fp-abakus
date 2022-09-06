@@ -65,6 +65,10 @@ public class ArbeidsforholdReferanse extends BaseEntitet implements IndexKey, Tr
             arbeidsforholdInformasjonEntitet.eksternReferanse);
     }
 
+    public Long getId() {
+        return id;
+    }
+
     @Override
     public String getIndexKey() {
         Object[] keyParts = { internReferanse, eksternReferanse };
@@ -78,7 +82,7 @@ public class ArbeidsforholdReferanse extends BaseEntitet implements IndexKey, Tr
     public EksternArbeidsforholdRef getEksternReferanse() {
         return eksternReferanse;
     }
-    
+
     public Arbeidsgiver getArbeidsgiver() {
         return arbeidsgiverEntitet;
     }
