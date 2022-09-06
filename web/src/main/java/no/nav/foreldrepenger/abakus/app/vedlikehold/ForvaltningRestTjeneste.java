@@ -1,14 +1,12 @@
 package no.nav.foreldrepenger.abakus.app.vedlikehold;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.DRIFT;
 import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.GRUNNLAG;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -26,6 +24,7 @@ import javax.ws.rs.core.Response;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import no.nav.abakus.iaygrunnlag.UuidDto;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
@@ -141,13 +140,14 @@ public class ForvaltningRestTjeneste {
 
     @POST
     @Path("/migrerArbeidsforholdRefForSak")
-    @Consumes(TEXT_PLAIN)
+    @Consumes(APPLICATION_JSON)
+    @Produces(APPLICATION_JSON)
     @Operation(description = "UPDATE: Endrer referanser på IM til referanse som finnes i aareg ved match med ignore case",
         tags = "FORVALTNING")
     @BeskyttetRessurs(actionType = ActionType.CREATE, resource = DRIFT)
-    public Response migrerArbeidsforholdRefForSak(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AbacDataSupplier.class) @NotNull @Valid UUID koblingReferanse) {
+    public Response migrerArbeidsforholdRefForSak(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AbacDataSupplier.class) @NotNull @Valid UuidDto koblingReferanse) {
 
-        var inntektArbeidYtelseGrunnlag = iayTjeneste.hentAggregat(new KoblingReferanse(koblingReferanse));
+        var inntektArbeidYtelseGrunnlag = iayTjeneste.hentAggregat(new KoblingReferanse(koblingReferanse.getReferanse()));
 
         var iayGrunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(inntektArbeidYtelseGrunnlag);
 
@@ -216,8 +216,9 @@ public class ForvaltningRestTjeneste {
             .filter(r -> feilTilRiktigMap.containsKey(r.getInternReferanse().getReferanse()))
             .forEach(informasjonBuilder::fjernReferanse);
 
+        iayGrunnlagBuilder.medInformasjon(informasjonBuilder.build());
 
-        iayTjeneste.lagre(new KoblingReferanse(koblingReferanse), iayGrunnlagBuilder);
+        iayTjeneste.lagre(new KoblingReferanse(koblingReferanse.getReferanse()), iayGrunnlagBuilder);
 
         return Response.ok().build();
     }
