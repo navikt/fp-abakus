@@ -15,7 +15,7 @@ import no.nav.vedtak.sikkerhet.abac.pipdata.PipFagsakStatus;
 @ApplicationScoped
 public class PdpRequestBuilderImpl implements PdpRequestBuilder {
 
-    public static final String ABAC_DOMAIN = "duplo";
+    private static final String ABAC_DOMAIN = "duplo";
 
     @Override
     public String abacDomene() {
@@ -28,8 +28,8 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
             .leggTilAktørIdSet(dataAttributter.getVerdier(StandardAbacAttributtType.AKTØR_ID))
             .leggTilFødselsnumre(dataAttributter.getVerdier(StandardAbacAttributtType.FNR))
             // TODO: Hente fra pip-tjenesten? arv fra tidligere... men nå er 2 pips aktuelle ....
-            .medFagsakStatus(PipFagsakStatus.UNDER_BEHANDLING)
-            .medBehandlingStatus(PipBehandlingStatus.UTREDES)
+            .leggTilRessurs(DuploDataKeys.FAGSAK_STATUS, PipFagsakStatus.UNDER_BEHANDLING)
+            .leggTilRessurs(DuploDataKeys.BEHANDLING_STATUS, PipBehandlingStatus.UTREDES)
             .build();
     }
 }
