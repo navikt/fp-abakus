@@ -144,7 +144,7 @@ public class ForvaltningRestTjeneste {
     @Consumes(TEXT_PLAIN)
     @Operation(description = "UPDATE: Endrer referanser på IM til referanse som finnes i aareg ved match med ignore case",
         tags = "FORVALTNING")
-    @BeskyttetRessurs(action = CREATE, resource = DRIFT)
+    @BeskyttetRessurs(actionType = ActionType.CREATE, resource = DRIFT)
     public Response migrerArbeidsforholdRefForSak(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AbacDataSupplier.class) @NotNull @Valid UUID koblingReferanse) {
 
         var inntektArbeidYtelseGrunnlag = iayTjeneste.hentAggregat(new KoblingReferanse(koblingReferanse));
