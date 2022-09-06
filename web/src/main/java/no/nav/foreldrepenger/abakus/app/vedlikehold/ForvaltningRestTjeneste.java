@@ -4,8 +4,6 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.DRIFT;
 import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.GRUNNLAG;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.UPDATE;
 
 import java.util.Collections;
 import java.util.List;
@@ -44,6 +42,7 @@ import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
+import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 
 @Path("/forvaltning")
 @ApplicationScoped
@@ -77,7 +76,7 @@ public class ForvaltningRestTjeneste {
         responses = {
             @ApiResponse(responseCode = "200", description = "Forekomster av utgått aktørid erstattet.")
         })
-    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
+    @BeskyttetRessurs(actionType = ActionType.UPDATE, resource = GRUNNLAG)
     public Response setVarigEndring(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AbacDataSupplier.class) @NotNull @Valid VarigEndringRequest request) {
         var oppgittOpptjeningEksternReferanse = request.getEksternReferanse().toUuidReferanse();
         var org = new OrgNummer(request.getOrgnummer());
@@ -105,7 +104,7 @@ public class ForvaltningRestTjeneste {
         responses = {
             @ApiResponse(responseCode = "200", description = "Inntektsmelding eliminert.")
         })
-    @BeskyttetRessurs(action = UPDATE, resource = GRUNNLAG)
+    @BeskyttetRessurs(actionType = ActionType.UPDATE, resource = GRUNNLAG)
     public Response eliminerInntektsmelding(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AbacDataSupplier.class) @NotNull @Valid EliminerInntektsmeldingRequest request) {
         var koblingReferanse = new KoblingReferanse(request.getEksternReferanse().toUuidReferanse());
         var journalpost = new JournalpostId(request.getJournalpostId());
@@ -134,7 +133,7 @@ public class ForvaltningRestTjeneste {
         responses = {
             @ApiResponse(responseCode = "200", description = "Forekomster av utgått aktørid erstattet.")
         })
-    @BeskyttetRessurs(action = CREATE, resource = DRIFT)
+    @BeskyttetRessurs(actionType = ActionType.CREATE, resource = DRIFT)
     public Response oppdaterAktoerId(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AktørRequestAbacDataSupplier.class) @NotNull @Valid ByttAktørRequest request) {
         int antall = oppdaterAktørIdFor(request.getUtgåttAktør().getVerdi(), request.getGyldigAktør().getVerdi());
         return Response.ok(antall).build();

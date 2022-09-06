@@ -1,8 +1,6 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste;
 
 import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.ARBEIDSFORHOLD;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.CREATE;
-import static no.nav.vedtak.sikkerhet.abac.BeskyttetRessursActionAttributt.READ;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -44,6 +42,7 @@ import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
+import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 
 @OpenAPIDefinition(tags = @Tag(name = "arbeidsforhold"))
 @Path("/arbeidsforhold/v1")
@@ -74,7 +73,7 @@ public class ArbeidsforholdRestTjeneste {
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Gir ut alle arbeidsforhold i en gitt periode/dato for en gitt aktør. NB! Proxyer direkte til aa-registeret / ingen bruk av sak/kobling i abakus",
         tags = "arbeidsforhold")
-    @BeskyttetRessurs(action = READ, resource = ARBEIDSFORHOLD)
+    @BeskyttetRessurs(actionType = ActionType.READ, resource = ARBEIDSFORHOLD)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentArbeidsforhold(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
         AktørId aktørId = new AktørId(request.getAktør().getIdent());
@@ -97,7 +96,7 @@ public class ArbeidsforholdRestTjeneste {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Finner eksisterende intern referanse for arbeidsforholdId eller lager en ny", tags = "arbeidsforhold")
-    @BeskyttetRessurs(action = CREATE, resource = ARBEIDSFORHOLD)
+    @BeskyttetRessurs(actionType = ActionType.CREATE, resource = ARBEIDSFORHOLD)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response finnEllerOpprettArbeidsforholdReferanse(@NotNull @TilpassetAbacAttributt(supplierClass = ArbeidsforholdReferanseAbacDataSupplier.class) @Valid ArbeidsforholdReferanse request) {
 

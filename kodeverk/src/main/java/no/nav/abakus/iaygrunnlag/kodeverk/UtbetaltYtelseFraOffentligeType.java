@@ -9,12 +9,9 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonFormat.Shape;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-@JsonFormat(shape = Shape.OBJECT)
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum UtbetaltYtelseFraOffentligeType implements UtbetaltYtelseType {
 
@@ -29,6 +26,7 @@ public enum UtbetaltYtelseFraOffentligeType implements UtbetaltYtelseType {
     UFØRETRYGD("UFØRETRYGD", "Uføretrygd", "ufoeretrygd"),
     UFØRETRYGD_ETTEROPPGJØR("UFØRETRYGD_ETTEROPPGJØR", "Uføretrygd etteroppgjør", "ufoereytelseEtteroppgjoer"),
     UNDERHOLDNINGSBIDRAG_BARN("UNDERHOLDNINGSBIDRAG_BARN", "Underholdningsbidrag til barn", "underholdsbidragTilBarn"),
+    EKTEFELLE_UFØRE("EKTEFELLE_UFØRE", "Ektefelletillegg Uføretrygd", "ektefelletilleggUfoeretrygd"),
     VENTELØNN("VENTELØNN", "Ventelønn", "venteloenn"),
 
     UDEFINERT("-", "UNDEFINED", null),
@@ -46,11 +44,11 @@ public enum UtbetaltYtelseFraOffentligeType implements UtbetaltYtelseType {
         }
     }
 
-    @JsonIgnore
-    private String navn;
 
+    private String navn;
+    @JsonValue
     private String kode;
-    @JsonIgnore
+
     private String offisiellKode;
 
     private UtbetaltYtelseFraOffentligeType(String kode) {
@@ -85,13 +83,11 @@ public enum UtbetaltYtelseFraOffentligeType implements UtbetaltYtelseType {
         return navn;
     }
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Override
     public String getKodeverk() {
         return KODEVERK;
     }
 
-    @JsonProperty
     @Override
     public String getKode() {
         return kode;

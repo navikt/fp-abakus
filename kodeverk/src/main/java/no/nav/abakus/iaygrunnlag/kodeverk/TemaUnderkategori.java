@@ -7,17 +7,13 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonFormat.Shape;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Gammelt kodeverk fra infotrygd. Burde ikke lekke fra Abakus (bør fjernes fra iay kontrakt og der heller benytte FagsakYtelseType).
  * Kan fjernes når vi ikke lenger er avhengig av migrering fra infotrygd.
  */
-@JsonFormat(shape = Shape.OBJECT)
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum TemaUnderkategori implements Kodeverdi {
 
@@ -59,12 +55,11 @@ public enum TemaUnderkategori implements Kodeverdi {
         }
     }
 
-    @JsonIgnore
     private String navn;
 
+    @JsonValue
     private String kode;
 
-    @JsonIgnore
     private String offisiellKode;
 
     private TemaUnderkategori(String kode) {
@@ -99,13 +94,11 @@ public enum TemaUnderkategori implements Kodeverdi {
         return navn;
     }
 
-    @JsonProperty(value="kodeverk", access = Access.READ_ONLY)
     @Override
     public String getKodeverk() {
         return KODEVERK;
     }
 
-    @JsonProperty(value="kode")
     @Override
     public String getKode() {
         return kode;
