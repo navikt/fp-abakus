@@ -13,7 +13,6 @@ import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
@@ -72,12 +71,11 @@ public class Landkode implements Kodeverdi {
         return Objects.hash(kode);
     }
 
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static Landkode fraKode(@JsonProperty(value = "kode") Object node) {
-        if (node == null) {
+    @JsonCreator
+    public static Landkode fraKode(String kode) {
+        if (kode == null) {
             return null;
         }
-        String kode = TempAvledeKode.getVerdiLandKoder(KODEVERK, node, "kode");
         var ad = KODER.get(kode);
         if (ad == null) {
             throw new IllegalArgumentException("Ukjent Landkode: " + kode);

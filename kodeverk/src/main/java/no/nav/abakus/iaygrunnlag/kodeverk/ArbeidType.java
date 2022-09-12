@@ -18,12 +18,11 @@ package no.nav.abakus.iaygrunnlag.kodeverk;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
@@ -97,17 +96,12 @@ public enum ArbeidType implements Kodeverdi {
         return offisiellKode != null ? OFFISIELLE_KODER.getOrDefault(offisiellKode, UDEFINERT) : UDEFINERT;
     }
 
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static ArbeidType fraKode(@JsonProperty(value = "kode") Object node) {
-        if (node == null) {
+    public static ArbeidType fraKode(String kode) {
+        if (kode == null) {
             return null;
         }
-        String kode = TempAvledeKode.getVerdi(ArbeidType.class, node, "kode");
-        var ad = KODER.get(kode);
-        if (ad == null) {
-            throw new IllegalArgumentException("Ukjent ArbeidType: " + kode);
-        }
-        return ad;
+        return Optional.ofNullable(KODER.get(kode))
+            .orElseThrow(() -> new IllegalArgumentException("Ukjent ArbeidType: " + kode));
     }
 
     public static Map<String, ArbeidType> kodeMap() {

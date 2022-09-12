@@ -5,11 +5,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
@@ -67,17 +66,12 @@ public enum NaturalytelseType implements Kodeverdi {
         this.offisiellKode = offisiellKode;
     }
 
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static NaturalytelseType fraKode(@JsonProperty(value = "kode") Object node) {
-        if (node == null) {
+    public static NaturalytelseType fraKode(String kode) {
+        if (kode == null) {
             return null;
         }
-        String kode = TempAvledeKode.getVerdi(NaturalytelseType.class, node, "kode");
-        var ad = KODER.get(kode);
-        if (ad == null) {
-            throw new IllegalArgumentException("Ukjent NaturalYtelseType: " + kode);
-        }
-        return ad;
+        return Optional.ofNullable(KODER.get(kode))
+            .orElseThrow(() -> new IllegalArgumentException("Ukjent NaturalYtelseType: " + kode));
     }
 
     public static Map<String, NaturalytelseType> kodeMap() {
