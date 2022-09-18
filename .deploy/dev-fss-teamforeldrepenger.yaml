@@ -28,7 +28,7 @@ spec:
     path: "/fpabakus/internal/metrics/prometheus"
   replicas:
     min: 1
-    max: 2
+    max: 2web
     cpuThresholdPercentage: 80
   preStopHookPath: "/fpabakus/internal/preStop"
   resources:
@@ -43,6 +43,19 @@ spec:
   azure:
     application:
       enabled: true
+      claims:
+        extra:
+          - "NAVident"
+          - "azp_name"
+  accessPolicy:
+      inbound:
+        rules:
+          - application: fp-swagger
+            namespace: teamforeldrepenger
+            cluster: dev-fss
+            permissions:
+              scopes:
+              - "swagger"
   vault:
     enabled: true
     paths:
