@@ -35,7 +35,7 @@ spec:
       cpu: "2000m"
       memory: "2048Mi"
     requests:
-      cpu: "600m"
+      cpu: "1200m"
       memory: "1024Mi"
   secureLogs:
     enabled: true
