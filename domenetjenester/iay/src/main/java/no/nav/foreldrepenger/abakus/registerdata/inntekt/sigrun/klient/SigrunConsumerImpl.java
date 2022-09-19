@@ -131,7 +131,7 @@ public class SigrunConsumerImpl implements SigrunConsumer {
         })
             : new ArrayList<>();
         return beregnetSkatt.stream()
-            .anyMatch(l -> l.getTekniskNavn().equals(TEKNISK_NAVN));
+            .anyMatch(l -> l.tekniskNavn().equals(TEKNISK_NAVN));
     }
 
     private static TekniskException ioExceptionVedLesing(IOException cause) {

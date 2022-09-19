@@ -37,9 +37,13 @@ import no.nav.tjenester.aordningen.inntektsinformasjon.tilleggsinformasjondetalj
 import no.nav.tjenester.aordningen.inntektsinformasjon.tilleggsinformasjondetaljer.TilleggsinformasjonDetaljerType;
 import no.nav.vedtak.exception.IntegrasjonException;
 import no.nav.vedtak.exception.TekniskException;
-import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
+import no.nav.vedtak.felles.integrasjon.rest.RestClient;
+import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
+import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
+import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 
 @ApplicationScoped
+@RestClientConfig(tokenConfig = TokenFlow.CONTEXT, endpointProperty = "hentinntektlistebolk.url")
 public class InntektTjeneste {
 
     // Dato for eldste request til inntk - det er av og til noen ES saker som spør lenger tilbake i tid
@@ -50,7 +54,7 @@ public class InntektTjeneste {
 
     private static final Logger logger = LoggerFactory.getLogger(InntektTjeneste.class);
 
-    private OidcRestClient oidcRestClient;
+    private RestClient restClient;
     private URI endpoint;
     private AktørTjeneste aktørConsumer;
     private Map<InntektskildeType, InntektsFilter> kildeTilFilter;
@@ -61,10 +65,10 @@ public class InntektTjeneste {
 
     @Inject
     public InntektTjeneste(@KonfigVerdi(ENDPOINT_KEY) URI endpoint,
-                           OidcRestClient oidcRestClient,
+                           RestClient restClient,
                            AktørTjeneste aktørConsumer) {
         this.endpoint = endpoint;
-        this.oidcRestClient = oidcRestClient;
+        this.restClient = restClient;
         this.aktørConsumer = aktørConsumer;
         this.kildeTilFilter = Map.of(InntektskildeType.INNTEKT_OPPTJENING, InntektsFilter.OPPTJENINGSGRUNNLAG,
             InntektskildeType.INNTEKT_BEREGNING, InntektsFilter.BEREGNINGSGRUNNLAG,
@@ -82,7 +86,7 @@ public class InntektTjeneste {
 
         HentInntektListeBolkResponse response;
         try {
-            response = oidcRestClient.post(endpoint, request, HentInntektListeBolkResponse.class);
+            response = restClient.send(request, HentInntektListeBolkResponse.class);
         } catch (RuntimeException e) {
             throw new IntegrasjonException("FP-824246",
                 "Feil ved kall til inntektstjenesten. Meld til #team_registre og #produksjonshendelser hvis dette skjer over lengre tidsperiode.", e);
@@ -90,7 +94,7 @@ public class InntektTjeneste {
         return response;
     }
 
-    private HentInntektListeBolkRequest lagRequest(FinnInntektRequest finnInntektRequest, InntektskildeType kilde) {
+    private RestRequest lagRequest(FinnInntektRequest finnInntektRequest, InntektskildeType kilde) {
         var request = new HentInntektListeBolkRequest();
 
         if (finnInntektRequest.getFnr() != null) {
@@ -106,7 +110,7 @@ public class InntektTjeneste {
         }
         request.setMaanedFom(finnInntektRequest.getFom().isAfter(INNTK_TIDLIGSTE_DATO) ? finnInntektRequest.getFom() : INNTK_TIDLIGSTE_DATO);
         request.setMaanedTom(finnInntektRequest.getTom().isAfter(INNTK_TIDLIGSTE_DATO) ? finnInntektRequest.getTom() : INNTK_TIDLIGSTE_DATO);
-        return request;
+        return RestRequest.newPOSTJson(request, endpoint, InntektTjeneste.class);
     }
 
     private InntektsFilter getFilter(InntektskildeType kilde) {

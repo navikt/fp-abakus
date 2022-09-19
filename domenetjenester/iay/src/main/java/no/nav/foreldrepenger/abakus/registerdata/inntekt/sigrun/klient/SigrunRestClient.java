@@ -108,7 +108,7 @@ public class SigrunRestClient {
     }
 
     private HttpRequestBase lagRequestBS(String år, long aktørId) {
-        HttpRequestBase request = new HttpGet(endpoint.resolve(endpoint.getPath() + SigrunRestConfig.PATH));
+        HttpRequestBase request = new HttpGet(endpoint.resolve(endpoint.getPath() + SigrunRestConfig.PATH_BS));
         String authHeaderValue = OIDC_AUTH_HEADER_PREFIX + getOIDCToken();
         request.setHeader(AUTH_HEADER, authHeaderValue);
         request.addHeader(X_FILTER, FILTER);

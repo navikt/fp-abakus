@@ -37,27 +37,27 @@ class SigrunTilInternMapper {
                 boolean harSummertskattegrunnlagForÅr = entry.getValue().isPresent();
                 if (harSummertskattegrunnlagForÅr) {
                     SSGResponse ssgResponse = entry.getValue().get();
-                    Optional<SSGGrunnlag> ssggrunnlag = ssgResponse.getSvalbardGrunnlag()
+                    Optional<SSGGrunnlag> ssggrunnlag = ssgResponse.svalbardGrunnlag()
                         .stream()
-                        .filter(f -> TekniskNavnMapper.fraSigrunNavn(f.getTekniskNavn()) != null)
+                        .filter(f -> TekniskNavnMapper.fraSigrunNavn(f.tekniskNavn()) != null)
                         .findFirst();
                     ssggrunnlag.ifPresent(grunnlag -> {
                         IntervallEntitet datoIntervallEntitet = lagDatoIntervall(entry.getKey());
-                        InntektspostType inntektspostType = TekniskNavnMapper.fraSigrunNavn(grunnlag.getTekniskNavn());
+                        InntektspostType inntektspostType = TekniskNavnMapper.fraSigrunNavn(grunnlag.tekniskNavn());
                         Map<InntektspostType, BigDecimal> inntektspost = årTilInntektMap.get(datoIntervallEntitet);
                         if (inntektspost == null) {
                             Map<InntektspostType, BigDecimal> typeTilVerdiMap = new HashMap<>();
-                            typeTilVerdiMap.put(inntektspostType, new BigDecimal(grunnlag.getBeloep()));
+                            typeTilVerdiMap.put(inntektspostType, new BigDecimal(grunnlag.beloep()));
                             årTilInntektMap.put(datoIntervallEntitet, typeTilVerdiMap);
                         } else {
-                            BigDecimal beløp = new BigDecimal(grunnlag.getBeloep());
+                            BigDecimal beløp = new BigDecimal(grunnlag.beloep());
                             if (inntektspost.get(inntektspostType) == null) {
-                                inntektspost.put(inntektspostType, new BigDecimal(grunnlag.getBeloep()));
+                                inntektspost.put(inntektspostType, new BigDecimal(grunnlag.beloep()));
                             } else {
                                 inntektspost.replace(inntektspostType, inntektspost.get(InntektspostType.LØNN).add(beløp));
                             }
                         }
-                        LOGGER.info("Lagt til {} fra summertskattegrunnlag for svalbard år {}", grunnlag.getBeloep(), entry.getKey());
+                        LOGGER.info("Lagt til {} fra summertskattegrunnlag for svalbard år {}", grunnlag.beloep(), entry.getKey());
                     });
                 }
             }
@@ -69,13 +69,13 @@ class SigrunTilInternMapper {
             IntervallEntitet intervallEntitet = lagDatoIntervall(entry.getKey());
             Map<InntektspostType, BigDecimal> typeTilVerdiMap = new HashMap<>();
             for (BeregnetSkatt beregnetSkatteobjekt : entry.getValue()) {
-                InntektspostType type = TekniskNavnMapper.fraSigrunNavn(beregnetSkatteobjekt.getTekniskNavn());
+                InntektspostType type = TekniskNavnMapper.fraSigrunNavn(beregnetSkatteobjekt.tekniskNavn());
                 if (type != null) {
                     BigDecimal beløp = typeTilVerdiMap.get(type);
                     if (beløp == null) {
-                        typeTilVerdiMap.put(type, new BigDecimal(beregnetSkatteobjekt.getVerdi()));
+                        typeTilVerdiMap.put(type, new BigDecimal(beregnetSkatteobjekt.verdi()));
                     } else {
-                        typeTilVerdiMap.replace(type, beløp.add(new BigDecimal(beregnetSkatteobjekt.getVerdi())));
+                        typeTilVerdiMap.replace(type, beløp.add(new BigDecimal(beregnetSkatteobjekt.verdi())));
                     }
                 }
             }

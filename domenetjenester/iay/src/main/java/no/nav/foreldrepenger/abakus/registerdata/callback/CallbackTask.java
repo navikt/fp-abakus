@@ -20,7 +20,9 @@ import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.TaskConstants;
 import no.nav.vedtak.exception.TekniskException;
-import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
+import no.nav.vedtak.felles.integrasjon.rest.RestClient;
+import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
+import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
@@ -32,17 +34,17 @@ public class CallbackTask implements ProsessTaskHandler {
     public static final String EKSISTERENDE_GRUNNLAG_REF = "grunnlag.ref.old";
     private static final Logger log = LoggerFactory.getLogger(CallbackTask.class);
 
-    private OidcRestClient restClient;
+    private RestClient restClient;
     private KoblingTjeneste koblingTjeneste;
     private InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste;
 
     CallbackTask() {}
 
     @Inject
-    public CallbackTask(OidcRestClient oidcRestClient,
+    public CallbackTask(RestClient restClient,
                         KoblingTjeneste koblingTjeneste,
                         InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste) {
-        this.restClient = oidcRestClient;
+        this.restClient = restClient;
         this.koblingTjeneste = koblingTjeneste;
         this.inntektArbeidYtelseTjeneste = inntektArbeidYtelseTjeneste;
     }
@@ -68,7 +70,7 @@ public class CallbackTask implements ProsessTaskHandler {
         } catch (URISyntaxException e) {
             throw new TekniskException("FP-349977", String.format("Ugyldig callback url ved callback etter registerinnhenting: %s", callbackUrl));
         }
-        String post = restClient.post(uri, callbackDto);
+        String post = restClient.send(RestRequest.newPOSTJson(callbackDto, uri, TokenFlow.CONTEXT, null), String.class);
 
         log.info("Callback success, mottok respons: " + post);
     }
