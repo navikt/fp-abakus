@@ -1,6 +1,5 @@
 package no.nav.foreldrepenger.abakus.aktor;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -13,7 +12,6 @@ import javax.inject.Inject;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-import no.nav.foreldrepenger.konfig.KonfigVerdi;
 import no.nav.pdl.HentIdenterQueryRequest;
 import no.nav.pdl.IdentGruppe;
 import no.nav.pdl.IdentInformasjon;
@@ -21,9 +19,9 @@ import no.nav.pdl.IdentInformasjonResponseProjection;
 import no.nav.pdl.Identliste;
 import no.nav.pdl.IdentlisteResponseProjection;
 import no.nav.vedtak.exception.VLException;
+import no.nav.vedtak.felles.integrasjon.pdl.NativePdlKlient;
 import no.nav.vedtak.felles.integrasjon.pdl.Pdl;
-import no.nav.vedtak.felles.integrasjon.pdl.PdlKlient;
-import no.nav.vedtak.felles.integrasjon.rest.StsStandardXtraTokenRestKlient;
+import no.nav.vedtak.felles.integrasjon.rest.RestClient;
 import no.nav.vedtak.util.LRUCache;
 
 
@@ -46,11 +44,9 @@ public class AktørTjeneste {
     }
 
     @Inject
-    public AktørTjeneste(@KonfigVerdi(value = "pdl.base.url",defaultVerdi = "http://pdl-api.odl/graphql") URI endpoint, StsStandardXtraTokenRestKlient klient) {
-        this.pdlKlientFOR = new PdlKlient(klient, endpoint,"FOR");
-        this.pdlKlientOMS = new PdlKlient(klient, endpoint,"OMS");
-        //this.pdlKlientFOR = new JerseyPdlKlient(endpoint, config, "FOR"); Mens vi venter på restabilisering av PDL
-        //this.pdlKlientOMS = new JerseyPdlKlient(endpoint, config, "OMS");
+    public AktørTjeneste(RestClient restClient) {
+        this.pdlKlientFOR = new NativePdlKlient(restClient, "FOR");
+        this.pdlKlientOMS = new NativePdlKlient(restClient, "OMS");
         this.cacheAktørIdTilIdent = new LRUCache<>(DEFAULT_CACHE_SIZE, DEFAULT_CACHE_TIMEOUT);
         this.cacheIdentTilAktørId = new LRUCache<>(DEFAULT_CACHE_SIZE, DEFAULT_CACHE_TIMEOUT);
     }

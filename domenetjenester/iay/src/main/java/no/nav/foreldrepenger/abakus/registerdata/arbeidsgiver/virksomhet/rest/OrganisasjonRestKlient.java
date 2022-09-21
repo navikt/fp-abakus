@@ -1,15 +1,17 @@
 package no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.rest;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriBuilderException;
 
-import org.apache.http.client.utils.URIBuilder;
-
-import no.nav.foreldrepenger.konfig.KonfigVerdi;
-import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
+import no.nav.vedtak.felles.integrasjon.rest.RestClient;
+import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
+import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
+import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
+import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 
 /*
  * Dokumentasjon https://confluence.adeo.no/display/FEL/EREG+-+Tjeneste+REST+ereg.api
@@ -17,39 +19,36 @@ import no.nav.vedtak.felles.integrasjon.rest.OidcRestClient;
  */
 
 @ApplicationScoped
+@RestClientConfig(tokenConfig = TokenFlow.CONTEXT, endpointProperty = "organisasjon.rs.url", endpointDefault = "https://modapp.adeo.no/ereg/api/v1/organisasjon")
 public class OrganisasjonRestKlient {
-
-    private static final String ENDPOINT_KEY = "organisasjon.rs.url";
-    private static final String DEFAULT_URI = "https://modapp.adeo.no/ereg/api/v1/organisasjon";
 
     public static final String HEADER_NAV_CALL_ID = "Nav-Call-Id";
 
-    private OidcRestClient oidcRestClient;
+    private RestClient restClient;
     private URI endpoint;
 
     public OrganisasjonRestKlient() {
     }
 
     @Inject
-    public OrganisasjonRestKlient(OidcRestClient oidcRestClient,
-                                  @KonfigVerdi(value = ENDPOINT_KEY, defaultVerdi = DEFAULT_URI) URI endpoint) {
-        this.oidcRestClient = oidcRestClient ;
-        this.endpoint = endpoint;
+    public OrganisasjonRestKlient(RestClient restClient) {
+        this.restClient = restClient ;
+        this.endpoint = RestConfig.endpointFromAnnotation(OrganisasjonRestKlient.class);
     }
 
     public OrganisasjonEReg hentOrganisasjon(String orgnummer)  {
         var request = URI.create(endpoint.toString() + "/" + orgnummer);
-        return oidcRestClient.get(request, OrganisasjonEReg.class);
+        return restClient.send(RestRequest.newGET(request, OrganisasjonRestKlient.class), OrganisasjonEReg.class);
     }
 
     public JuridiskEnhetVirksomheter hentJurdiskEnhetVirksomheter(String orgnummer) {
         try {
-            var request = new URIBuilder(endpoint.toString() + "/" + orgnummer)
-                .addParameter("inkluderHierarki", "true")
-                .addParameter("inkluderHistorikk", "true")
+            var request = UriBuilder.fromUri(endpoint).path(orgnummer)
+                .queryParam("inkluderHierarki", "true")
+                .queryParam("inkluderHistorikk", "true")
                 .build();
-            return oidcRestClient.get(request, JuridiskEnhetVirksomheter.class);
-        } catch (URISyntaxException e) {
+            return restClient.send(RestRequest.newGET(request, OrganisasjonRestKlient.class), JuridiskEnhetVirksomheter.class);
+        } catch (IllegalArgumentException|UriBuilderException e) {
             throw new IllegalArgumentException("Utviklerfeil syntax-exception for hentJurdiskEnhetVirksomheter");
         }
     }

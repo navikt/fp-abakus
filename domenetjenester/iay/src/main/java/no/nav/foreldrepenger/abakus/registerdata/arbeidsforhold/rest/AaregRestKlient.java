@@ -1,22 +1,21 @@
 package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriBuilderException;
 
-import org.apache.http.Header;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.message.BasicHeader;
-
-import no.nav.foreldrepenger.konfig.KonfigVerdi;
-import no.nav.vedtak.felles.integrasjon.rest.StsStandardXtraTokenRestKlient;
-import no.nav.vedtak.log.mdc.MDCOperations;
+import no.nav.vedtak.felles.integrasjon.rest.NavHeaders;
+import no.nav.vedtak.felles.integrasjon.rest.RestClient;
+import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
+import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
+import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
+import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 
 /*
  * Dokumentasjon https://confluence.adeo.no/display/FEL/AAREG+-+Tjeneste+REST+aareg.api
@@ -24,63 +23,56 @@ import no.nav.vedtak.log.mdc.MDCOperations;
  */
 
 @ApplicationScoped
+@RestClientConfig(tokenConfig = TokenFlow.CONTEXT_ADD_CONSUMER, endpointProperty = "aareg.rs.url", endpointDefault = "https://modapp.adeo.no/aareg-services/api/v1/arbeidstaker")
 public class AaregRestKlient {
 
-    private static final String ENDPOINT_KEY = "aareg.rs.url";
-    private static final String DEFAULT_URI = "https://modapp.adeo.no/aareg-services/api/v1/arbeidstaker";
 
-    private static final String HEADER_NAV_CALL_ID = "Nav-Call-Id";
-    private static final String HEADER_NAV_PERSONIDENT = "Nav-Personident";
-    private static final String HEADER_NAV_CONSUMER_TOKEN = "Nav-Consumer-Token";
-
-    private StsStandardXtraTokenRestKlient oidcRestClient; // Setter på consumer-token fra STS
+    private RestClient restClient; // Setter på consumer-token fra STS
     private URI endpoint;
 
     public AaregRestKlient() {
     }
 
     @Inject
-    public AaregRestKlient(StsStandardXtraTokenRestKlient oidcRestClient,
-                           @KonfigVerdi(value = ENDPOINT_KEY, defaultVerdi = DEFAULT_URI) URI endpoint) {
-        this.oidcRestClient = oidcRestClient;
-        this.endpoint = endpoint;
+    public AaregRestKlient(RestClient restClient) {
+        this.restClient = restClient;
+        this.endpoint = RestConfig.endpointFromAnnotation(AaregRestKlient.class);
     }
 
     public List<ArbeidsforholdRS> finnArbeidsforholdForArbeidstaker(String ident, LocalDate qfom, LocalDate qtom) {
         try {
-            var request = new URIBuilder(endpoint.toString() + "/" + "arbeidsforhold")
-                    .addParameter("ansettelsesperiodeFom", String.valueOf(qfom))
-                    .addParameter("ansettelsesperiodeTom", String.valueOf(qtom))
-                    .addParameter("regelverk", "A_ORDNINGEN")
-                    .addParameter("historikk", "true")
-                    .addParameter("sporingsinformasjon", "false")
+            var target = UriBuilder.fromUri(endpoint).path("arbeidsforhold")
+                    .queryParam("ansettelsesperiodeFom", String.valueOf(qfom))
+                    .queryParam("ansettelsesperiodeTom", String.valueOf(qtom))
+                    .queryParam("regelverk", "A_ORDNINGEN")
+                    .queryParam("historikk", "true")
+                    .queryParam("sporingsinformasjon", "false")
                     .build();
-            ArbeidsforholdRS[] match = oidcRestClient.get(request, lagHeader(ident), ArbeidsforholdRS[].class);
-            return Arrays.asList(match);
-        } catch (URISyntaxException e) {
+            var request = RestRequest.newGET(target, AaregRestKlient.class)
+                .header(NavHeaders.HEADER_NAV_PERSONIDENT, ident);
+            var result = restClient.send(request, ArbeidsforholdRS[].class);
+            return Arrays.asList(result);
+        } catch (UriBuilderException|IllegalArgumentException e) {
             throw new IllegalArgumentException("Utviklerfeil syntax-exception for finnArbeidsforholdForArbeidstaker");
         }
     }
 
     public List<ArbeidsforholdRS> finnArbeidsforholdForFrilanser(String ident, LocalDate qfom, LocalDate qtom) {
         try {
-            var request = new URIBuilder(endpoint.toString() + "/" + "arbeidsforhold")
-                .addParameter("ansettelsesperiodeFom", String.valueOf(qfom))
-                .addParameter("ansettelsesperiodeTom", String.valueOf(qtom))
-                .addParameter("arbeidsforholdtype", "frilanserOppdragstakerHonorarPersonerMm")
-                .addParameter("regelverk", "A_ORDNINGEN")
-                .addParameter("historikk", "true")
-                .addParameter("sporingsinformasjon", "false")
+            var target = UriBuilder.fromUri(endpoint).path("arbeidsforhold")
+                .queryParam("ansettelsesperiodeFom", String.valueOf(qfom))
+                .queryParam("ansettelsesperiodeTom", String.valueOf(qtom))
+                .queryParam("arbeidsforholdtype", "frilanserOppdragstakerHonorarPersonerMm")
+                .queryParam("regelverk", "A_ORDNINGEN")
+                .queryParam("historikk", "true")
+                .queryParam("sporingsinformasjon", "false")
                 .build();
-            ArbeidsforholdRS[] match = oidcRestClient.get(request, lagHeader(ident), Set.of(HEADER_NAV_CONSUMER_TOKEN), ArbeidsforholdRS[].class);
-            return Arrays.asList(match);
-        } catch (URISyntaxException e) {
+            var request = RestRequest.newGET(target, AaregRestKlient.class)
+                .header(NavHeaders.HEADER_NAV_PERSONIDENT, ident);
+            var result = restClient.send(request, ArbeidsforholdRS[].class);
+            return Arrays.asList(result);
+        } catch (UriBuilderException|IllegalArgumentException e) {
             throw new IllegalArgumentException("Utviklerfeil syntax-exception for finnArbeidsforholdForArbeidstaker");
         }
-    }
-
-    private Set<Header> lagHeader(String ident) {
-        return Set.of(new BasicHeader(HEADER_NAV_CALL_ID, MDCOperations.getCallId()),
-                new BasicHeader(HEADER_NAV_PERSONIDENT, ident));
     }
 }
