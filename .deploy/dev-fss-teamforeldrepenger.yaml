@@ -56,6 +56,9 @@ spec:
             permissions:
               scopes:
               - "swagger"
+          - application: k9-sak
+            namespace: k9saksbehandling
+            cluster: dev-fss
   vault:
     enabled: true
     paths:
