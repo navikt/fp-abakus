@@ -3,11 +3,11 @@
     "identType" : "AKTØRID",
     "ident" : "1000017554179"
   },
-  "grunnlagTidspunkt" : "2019-01-15T14:30:29.378+01:00",
+  "grunnlagTidspunkt" : "2019-01-15T13:30:29.378Z",
   "grunnlagReferanse" : "8abb7314-cf49-0abc-e053-2880340a57a0",
   "koblingReferanse" : "88487f4b-f153-2133-e053-2880340a6560",
   "registerGrunnlag" : {
-    "opprettetTidspunkt" : "2019-01-15T14:30:29.377+01:00",
+    "opprettetTidspunkt" : "2019-01-15T13:30:29.377Z",
     "eksternReferanse" : "8a6bc440-f67e-1f94-e053-2880340a2b28",
     "arbeid" : [ {
       "person" : {
@@ -22,15 +22,9 @@
         "arbeidsforholdId" : {
           "abakusReferanse" : "f1dfba7b-0b24-4d06-b77c-cdfb9350158d",
           "eksternReferanse" : "4",
-          "eksternReferanseSystem" : {
-            "kodeverk" : "FAGSYSTEM",
-            "kode" : "AAREGISTERET"
-          }
+          "eksternReferanseSystem" : "AAREGISTERET"
         },
-        "arbeidType" : {
-          "kodeverk" : "ARBEID_TYPE",
-          "kode" : "ORDINÆRT_ARBEIDSFORHOLD"
-        },
+        "arbeidType" : "ORDINÆRT_ARBEIDSFORHOLD",
         "aktivitetsAvtaler" : [ {
           "periode" : {
             "fom" : "2017-12-01",
@@ -66,10 +60,7 @@
       "arbeidsforholdId" : {
         "abakusReferanse" : "f1dfba7b-0b24-4d06-b77c-cdfb9350158d",
         "eksternReferanse" : "4",
-        "eksternReferanseSystem" : {
-          "kodeverk" : "FAGSYSTEM",
-          "kode" : "AAREGISTERET"
-        }
+        "eksternReferanseSystem" : "AAREGISTERET"
       }
     } ],
     "overstyringer" : [ ]

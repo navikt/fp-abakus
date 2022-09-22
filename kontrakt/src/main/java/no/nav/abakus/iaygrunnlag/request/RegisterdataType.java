@@ -3,15 +3,14 @@ package no.nav.abakus.iaygrunnlag.request;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
-import no.nav.abakus.iaygrunnlag.kodeverk.TempAvledeKode;
 
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum RegisterdataType implements Kodeverdi {
@@ -43,17 +42,12 @@ public enum RegisterdataType implements Kodeverdi {
         this.kode = name();
     }
 
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static RegisterdataType fraKode(@JsonProperty(value = "kode") Object node) {
-        if (node == null) {
+    public static RegisterdataType fraKode(String kode) {
+        if (kode == null) {
             return null;
         }
-        String kode = TempAvledeKode.getVerdi(RegisterdataType.class, node, "kode");
-        var ad = KODER.get(kode);
-        if (ad == null) {
-            throw new IllegalArgumentException("Ukjent RegisterdataType: " + kode);
-        }
-        return ad;
+        return Optional.ofNullable(KODER.get(kode))
+            .orElseThrow(() -> new IllegalArgumentException("Ukjent RegisterdataType: " + kode));
     }
 
     public static Map<String, RegisterdataType> kodeMap() {
