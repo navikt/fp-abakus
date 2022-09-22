@@ -55,6 +55,9 @@ spec:
           permissions:
             scopes:
               - "swagger"
+        - application: fpsak
+          namespace: teamforeldrepenger
+          cluster: prod-fss
   vault:
     enabled: true
     paths:
