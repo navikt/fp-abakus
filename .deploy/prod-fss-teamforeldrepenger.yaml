@@ -51,7 +51,7 @@ spec:
       rules:
         - application: fp-swagger
           namespace: teamforeldrepenger
-          cluster: prod-fss
+          cluster: prod-gcp
           permissions:
             scopes:
               - "swagger"

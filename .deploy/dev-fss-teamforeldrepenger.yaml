@@ -56,6 +56,12 @@ spec:
             permissions:
               scopes:
               - "swagger"
+          - application: fp-swagger
+            namespace: teamforeldrepenger
+            cluster: dev-gcp
+            permissions:
+              scopes:
+                - "swagger"
           - application: fpsak
             namespace: teamforeldrepenger
             cluster: dev-fss
