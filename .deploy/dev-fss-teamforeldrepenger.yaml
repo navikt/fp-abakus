@@ -9,8 +9,10 @@ spec:
   image: {{ image }}
   port: 8080
   ingresses:
-    - "https://fpabakus.nais.preprod.local/"
-    - "https://fpabakus.dev.adeo.no/"
+    - "https://fpabakus.nais.preprod.local"
+    - "https://fpabakus.dev.adeo.no"
+    - "https://fpabakus.dev.intern.nav.no"
+    - "https://fpabakus.dev-fss-pub.nais.io"
   liveness:
     path: "/fpabakus/internal/isAlive"
     initialDelay: 25
@@ -50,12 +52,6 @@ spec:
   accessPolicy:
       inbound:
         rules:
-          - application: fp-swagger
-            namespace: teamforeldrepenger
-            cluster: dev-fss
-            permissions:
-              scopes:
-              - "swagger"
           - application: fp-swagger
             namespace: teamforeldrepenger
             cluster: dev-gcp

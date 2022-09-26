@@ -9,7 +9,9 @@ spec:
   image: {{ image }}
   port: 8080
   ingresses:
-    - "https://fpabakus.nais.adeo.no/"
+    - "https://fpabakus.nais.adeo.no"
+    - "https://fpabakus.intern.nav.no"
+    - "https://fpabakus.prod-fss-pub.nais.io"
   liveness:
     path: "/fpabakus/internal/isAlive"
     initialDelay: 25
