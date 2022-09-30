@@ -77,16 +77,16 @@ public class Arbeidsforhold {
         if (l1 == null && l2 == null)
             return true;
         if (l1 == null || l2 == null)
-            return true;
-        return l1.containsAll(l2) && l2.containsAll(l1);
+            return false;
+        return l1.size() == l2.size() && l2.containsAll(l1);
     }
 
     private boolean erLikePermisjoner(List<Permisjon> l1, List<Permisjon> l2) {
         if (l1 == null && l2 == null)
             return true;
         if (l1 == null || l2 == null)
-            return true;
-        return l1.containsAll(l2) && l2.containsAll(l1);
+            return false;
+        return l1.size() == l2.size() && l2.containsAll(l1);
     }
 
     @Override
