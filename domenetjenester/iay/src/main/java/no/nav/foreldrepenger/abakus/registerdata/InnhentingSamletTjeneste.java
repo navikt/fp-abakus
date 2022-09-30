@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -133,22 +134,23 @@ public class InnhentingSamletTjeneste {
     }
 
     public List<MeldekortUtbetalingsgrunnlagSak> hentDagpengerAAP(PersonIdent ident, IntervallEntitet opplysningsPeriode) {
-        List<MeldekortUtbetalingsgrunnlagSak> saker = meldekortTjeneste.hentMeldekortListe(ident, opplysningsPeriode.getFomDato(), opplysningsPeriode.getTomDato());
+        var fom = opplysningsPeriode.getFomDato();
+        var tom = opplysningsPeriode.getTomDato();
+        var saker = meldekortTjeneste.hentMeldekortListe(ident, fom, tom);
         if (isDev) {
-            hentDagpengerAAPFraFpWsProxyFailSafe(ident, opplysningsPeriode, saker);
+            hentDagpengerAAPFraFpWsProxyFailSafe(ident, fom, tom, saker);
         }
         return filtrerYtelserTjenester(saker);
     }
 
-    private void hentDagpengerAAPFraFpWsProxyFailSafe(PersonIdent ident, IntervallEntitet opplysningsPeriode, List<MeldekortUtbetalingsgrunnlagSak> saker) {
+    private void hentDagpengerAAPFraFpWsProxyFailSafe(PersonIdent ident, LocalDate fom, LocalDate tom, List<MeldekortUtbetalingsgrunnlagSak> saker) {
         try {
-            var sakerFpWsProxy = fpwsproxyKlient.hentDagpengerAAP(ident, opplysningsPeriode.getFomDato(), opplysningsPeriode.getTomDato());
-            if (erLikeMeldekort(saker, sakerFpWsProxy)) {
-
+            var sakerFpWsProxy = fpwsproxyKlient.hentDagpengerAAP(ident, fom, tom);
+            if (!erLikeMeldekortUtbetalingsgrunnlagSak(saker, sakerFpWsProxy)) {
                 LOGGER.info("""
-                AVVIK FUNNET: Direkte integrasjon mot arena samsvarer ikke med respons fra proxytjenesten fp-ws-proxy.
-                Arena: {},
-                Fp-ws-proxy: {}
+                AVVIK FUNNET: Direkte integrasjon mot arena samsvarer ikke med respons mottatt fra proxytjenesten fp-ws-proxy.
+                    Arena: {},
+                    Fp-ws-proxy: {}
                 """, saker, sakerFpWsProxy);
             }
         } catch (Exception e) {
@@ -156,12 +158,12 @@ public class InnhentingSamletTjeneste {
         }
     }
 
-    private boolean erLikeMeldekort(List<MeldekortUtbetalingsgrunnlagSak> l1, List<MeldekortUtbetalingsgrunnlagSak> l2) {
+    private boolean erLikeMeldekortUtbetalingsgrunnlagSak(List<MeldekortUtbetalingsgrunnlagSak> l1, List<MeldekortUtbetalingsgrunnlagSak> l2) {
         if (l1 == null && l2 == null)
             return true;
         if (l1 == null || l2 == null)
             return false;
-        return l1.containsAll(l2) && l2.containsAll(l1);
+        return l1.size() == l2.size() && l2.containsAll(l1);
     }
 
     private List<MeldekortUtbetalingsgrunnlagSak> filtrerYtelserTjenester(List<MeldekortUtbetalingsgrunnlagSak> saker) {
