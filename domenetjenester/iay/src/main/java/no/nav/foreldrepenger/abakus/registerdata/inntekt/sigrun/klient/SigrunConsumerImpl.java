@@ -32,7 +32,7 @@ import no.nav.vedtak.exception.TekniskException;
 public class SigrunConsumerImpl implements SigrunConsumer {
 
     private static final ObjectMapper mapper = JsonObjectMapper.getMapper();
-    private static final String TEKNISK_NAVN = "skatteoppgjoersdato";
+    private static final String TEKNISK_NAVN = "personinntektNaering";
 
     private static final MonthDay TIDLIGSTE_SJEKK_FJOR = MonthDay.of(5, 1);
 
