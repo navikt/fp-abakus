@@ -88,7 +88,7 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 
-@OpenAPIDefinition(tags = { @Tag(name = "iay-grunnlag") })
+@OpenAPIDefinition(tags = {@Tag(name = "iay-grunnlag")})
 @Path("/iay/grunnlag/v1")
 @ApplicationScoped
 @Transactional
@@ -113,12 +113,12 @@ public class GrunnlagRestTjeneste {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Hent ett enkelt IAY Grunnlag for angitt spesifikasjon. Spesifikasjonen kan angit hvilke data som ønskes", tags = "iay-grunnlag", responses = {
-            @ApiResponse(description = "InntektArbeidYtelseGrunnlagDto", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InntektArbeidYtelseGrunnlagDto.class))),
-            @ApiResponse(responseCode = "204", description = "Det finnes ikke et grunnlag for forespørselen"),
-            @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")
+        @ApiResponse(description = "InntektArbeidYtelseGrunnlagDto", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InntektArbeidYtelseGrunnlagDto.class))),
+        @ApiResponse(responseCode = "204", description = "Det finnes ikke et grunnlag for forespørselen"),
+        @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")
     })
     @BeskyttetRessurs(actionType = ActionType.READ, resource = GRUNNLAG)
-    @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
+    @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response hentIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
         Response response;
 
@@ -153,12 +153,12 @@ public class GrunnlagRestTjeneste {
     @Path("/arbeidsforhold-referanser")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Hent aktivt arbeidsforholdinformasjon grunnlag for angitt kobling", tags = "iay-grunnlag", responses = {
-            @ApiResponse(description = "ArbeidsforholdInformasjon", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArbeidsforholdInformasjon.class))),
-            @ApiResponse(responseCode = "204", description = "Det finnes ikke et arbeidsforhold grunnlag for forespørselen"),
-            @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")
+        @ApiResponse(description = "ArbeidsforholdInformasjon", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArbeidsforholdInformasjon.class))),
+        @ApiResponse(responseCode = "204", description = "Det finnes ikke et arbeidsforhold grunnlag for forespørselen"),
+        @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")
     })
     @BeskyttetRessurs(actionType = ActionType.READ, resource = GRUNNLAG)
-    @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT" })
+    @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT"})
     public Response hentArbeidsforholdInformasjon(@NotNull @Valid @QueryParam("ytelseType") YtelseType ytelseType,
                                                   @NotNull @Valid @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'") String saksnummer,
                                                   @NotNull @Valid @QueryParam("kobling") UUID koblingReferanse,
@@ -203,12 +203,12 @@ public class GrunnlagRestTjeneste {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Hent aktivt IAY grunnlag grunnlag for angitt kobling", tags = "iay-grunnlag", responses = {
-            @ApiResponse(description = "InntektArbeidYtelseGrunnlagDto", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArbeidsforholdInformasjon.class))),
-            @ApiResponse(responseCode = "204", description = "Det finnes ikke et arbeidsforhold grunnlag for forespørselen"),
-            @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")
+        @ApiResponse(description = "InntektArbeidYtelseGrunnlagDto", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArbeidsforholdInformasjon.class))),
+        @ApiResponse(responseCode = "204", description = "Det finnes ikke et arbeidsforhold grunnlag for forespørselen"),
+        @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")
     })
     @BeskyttetRessurs(actionType = ActionType.READ, resource = GRUNNLAG)
-    @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT" })
+    @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT"})
     public Response hentSisteIayGrunnlag(@NotNull @Valid @QueryParam("ytelseType") YtelseType ytelseType,
                                          @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @NotNull @Valid @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'") String saksnummer,
                                          @NotNull @Valid @QueryParam("kobling") UUID koblingReferanse,
@@ -250,7 +250,7 @@ public class GrunnlagRestTjeneste {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Lagrer siste versjon", tags = "iay-grunnlag", responses = {
-            @ApiResponse(responseCode = "200", description = "Mottatt grunnlaget")
+        @ApiResponse(responseCode = "200", description = "Mottatt grunnlaget")
     })
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
@@ -271,13 +271,15 @@ public class GrunnlagRestTjeneste {
         return Response.ok().build();
     }
 
-    /** @deprecated bytt til {@link #oppdaterOgLagreOverstyring(OverstyrtInntektArbeidYtelseDto)} . */
+    /**
+     * @deprecated bytt til {@link #oppdaterOgLagreOverstyring(OverstyrtInntektArbeidYtelseDto)} .
+     */
     @Deprecated(forRemoval = true)
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Lagrer siste versjon", tags = "iay-grunnlag", responses = {
-            @ApiResponse(responseCode = "200", description = "Mottatt grunnlaget")
+        @ApiResponse(responseCode = "200", description = "Mottatt grunnlaget")
     })
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
@@ -305,7 +307,7 @@ public class GrunnlagRestTjeneste {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Hent IAY Grunnlag for angitt søke spesifikasjon", tags = "iay-grunnlag", responses = {
-            @ApiResponse(description = "Grunnlaget for saken", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InntektArbeidYtelseGrunnlagSakSnapshotDto.class)))
+        @ApiResponse(description = "Grunnlaget for saken", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InntektArbeidYtelseGrunnlagSakSnapshotDto.class)))
     })
     @BeskyttetRessurs(actionType = ActionType.READ, resource = GRUNNLAG)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
@@ -400,18 +402,19 @@ public class GrunnlagRestTjeneste {
                 }
             }
         }
-        // Oppdater kobling
-        Periode opplysningsperiode = dto.getOpplysningsperiode();
-        if (opplysningsperiode != null) {
-            kobling.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(opplysningsperiode.getFom(), opplysningsperiode.getTom()));
-        }
-        Periode opptjeningsperiode = dto.getOpptjeningsperiode();
-        if (opptjeningsperiode != null) {
-            kobling.setOpptjeningsperiode(IntervallEntitet.fraOgMedTilOgMed(opptjeningsperiode.getFom(), opptjeningsperiode.getTom()));
-        }
+        // Oppdater kobling med perioder
+        mapPeriodeTilIntervall(dto.getOpplysningsperiode()).ifPresent(kobling::setOpplysningsperiode);
+        mapPeriodeTilIntervall(dto.getOpplysningsperiodeSkattegrunnlag()).ifPresent(kobling::setOpplysningsperiodeSkattegrunnlag);
+        mapPeriodeTilIntervall(dto.getOpptjeningsperiode()).ifPresent(kobling::setOpptjeningsperiode);
+
         // Diff & log endringer
         koblingTjeneste.lagre(kobling);
         return kobling;
+    }
+
+    private Optional<IntervallEntitet> mapPeriodeTilIntervall(Periode periode) {
+        return Optional.ofNullable(periode == null ? null :
+            IntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom()));
     }
 
     private KoblingReferanse getKoblingReferanse(AktørId aktørId, UUID koblingRef, UUID grunnlagRef) {

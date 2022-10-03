@@ -137,7 +137,7 @@ public class SigrunConsumerImplTest {
         Mockito.when(client.hentBeregnetSkattForAktørOgÅr(AKTØR_ID, iFjor.toString()))
             .thenReturn(Arrays.asList(DefaultJsonMapper.fromJson(JSON, BeregnetSkatt[].class)));
 
-        SigrunResponse beregnetskatt = consumer.beregnetskatt(AKTØR_ID);
+        SigrunResponse beregnetskatt = consumer.beregnetskatt(AKTØR_ID, null);
         assertThat(beregnetskatt.beregnetSkatt()).hasSize(3);
         assertThat(beregnetskatt.beregnetSkatt().get(iFjor)).hasSize(7);
         assertThat(beregnetskatt.beregnetSkatt().get(toÅrSiden)).hasSize(0);
@@ -156,7 +156,7 @@ public class SigrunConsumerImplTest {
         Mockito.when(client.hentBeregnetSkattForAktørOgÅr(AKTØR_ID, toÅrSiden.toString()))
             .thenReturn(Arrays.asList(DefaultJsonMapper.fromJson(JSON, BeregnetSkatt[].class)));
 
-        SigrunResponse beregnetskatt = consumer.beregnetskatt(AKTØR_ID);
+        SigrunResponse beregnetskatt = consumer.beregnetskatt(AKTØR_ID, null);
         assertThat(beregnetskatt.beregnetSkatt()).hasSize(3);
         assertThat(beregnetskatt.beregnetSkatt().get(iFjor)).isNull();
         assertThat(beregnetskatt.beregnetSkatt().get(toÅrSiden)).hasSize(7);
@@ -175,7 +175,7 @@ public class SigrunConsumerImplTest {
             .thenReturn(Optional.of(respons));
 
 
-        SigrunSummertSkattegrunnlagResponse response = consumer.summertSkattegrunnlag(AKTØR_ID);
+        SigrunSummertSkattegrunnlagResponse response = consumer.summertSkattegrunnlag(AKTØR_ID, null);
 
         Map<Year, Optional<SSGResponse>> summertskattegrunnlagMap = response.summertskattegrunnlagMap();
         Optional<SSGResponse> sum = summertskattegrunnlagMap.get(iFjor);

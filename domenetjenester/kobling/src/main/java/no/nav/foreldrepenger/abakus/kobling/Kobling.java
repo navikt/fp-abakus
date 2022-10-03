@@ -69,6 +69,14 @@ public class Kobling extends BaseEntitet implements IndexKey {
     })
     private IntervallEntitet opplysningsperiode;
 
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "fomDato", column = @Column(name = "opplysning_periode_skattegrunnlag_fom")),
+        @AttributeOverride(name = "tomDato", column = @Column(name = "opplysning_periode_skattegrunnlag_tom"))
+    })
+    private IntervallEntitet opplysningsperiodeSkattegrunnlag;
+
+
     /** inaktive koblinger skal ikke brukes. må filtreres vekk. */
     @Column(name = "aktiv", nullable = false)
     private Boolean aktiv = true;
@@ -123,6 +131,14 @@ public class Kobling extends BaseEntitet implements IndexKey {
         this.opplysningsperiode = opplysningsperiode;
     }
 
+    public IntervallEntitet getOpplysningsperiodeSkattegrunnlag() {
+        return opplysningsperiodeSkattegrunnlag;
+    }
+
+    public void setOpplysningsperiodeSkattegrunnlag(IntervallEntitet opplysningsperiodeSkattegrunnlag) {
+        this.opplysningsperiodeSkattegrunnlag = opplysningsperiodeSkattegrunnlag;
+    }
+
     public IntervallEntitet getOpptjeningsperiode() {
         return opptjeningsperiode;
     }
@@ -138,7 +154,7 @@ public class Kobling extends BaseEntitet implements IndexKey {
     public YtelseType getYtelseType() {
         return ytelseType;
     }
-    
+
     public long getVersjon() {
         return this.versjon;
     }

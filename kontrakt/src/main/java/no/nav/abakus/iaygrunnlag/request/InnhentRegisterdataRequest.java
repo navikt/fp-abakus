@@ -49,6 +49,10 @@ public class InnhentRegisterdataRequest {
     @Valid
     private Periode opplysningsperiode;
 
+    @JsonProperty(value = "opplysningsperiodeSkattegrunnlag")
+    @Valid
+    private Periode opplysningsperiodeSkattegrunnlag;
+
     @JsonProperty(value = "aktør", required = true)
     @NotNull
     @Valid
@@ -112,6 +116,14 @@ public class InnhentRegisterdataRequest {
 
     public Periode getOpplysningsperiode() {
         return opplysningsperiode;
+    }
+
+    public Periode getOpplysningsperiodeSkattegrunnlag() {
+        return opplysningsperiodeSkattegrunnlag;
+    }
+
+    public void setOpplysningsperiodeSkattegrunnlag(Periode opplysningsperiodeSkattegrunnlag) {
+        this.opplysningsperiodeSkattegrunnlag = opplysningsperiodeSkattegrunnlag;
     }
 
     public Periode getOpptjeningsperiode() {
