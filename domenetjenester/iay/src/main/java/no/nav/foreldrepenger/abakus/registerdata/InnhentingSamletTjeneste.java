@@ -32,6 +32,7 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInf
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs.FpwsproxyKlient;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.InnhentingInfotrygdTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -152,6 +153,8 @@ public class InnhentingSamletTjeneste {
                     Arena: {},
                     Fp-ws-proxy: {}
                 """, saker, sakerFpWsProxy);
+            } else {
+                LOGGER.info("Ingen avvik funnet melllom direkte integrasjon mot Arena og via fp-ws-proxy.");
             }
         } catch (Exception e) {
             LOGGER.info("Kall mot fp-ws-proxy api for arena feilet!", e);

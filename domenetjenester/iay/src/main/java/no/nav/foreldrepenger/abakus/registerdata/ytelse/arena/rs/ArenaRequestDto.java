@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.registerdata;
+package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs;
 
 import java.time.LocalDate;
 

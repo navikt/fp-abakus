@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.registerdata;
+package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -13,8 +13,10 @@ import javax.ws.rs.core.UriBuilderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagMeldekort;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.integrasjon.rest.RestClient;
 import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
@@ -42,13 +44,16 @@ public class FpwsproxyKlient {
             LOG.info("Henter dagpengerAAP for {} i periode fom {} tom {}", ident.getIdent(), fom, tom);
             var target = UriBuilder.fromUri(endpoint).build();
             var body = new ArenaRequestDto(ident.getIdent(), fom, tom);
-            var request = RestRequest.newPOSTJson(body, target, MeldekortUtbetalingsgrunnlagSak[].class);
+            var request = RestRequest.newPOSTJson(body, target, MeldekortUtbetalingsgrunnlagSakDto[].class);
             LOG.info("Sender request til fp-ws-proxy arena {}", request);
-            var result = restClient.send(request, MeldekortUtbetalingsgrunnlagSak[].class);
+            var result = restClient.send(request, MeldekortUtbetalingsgrunnlagSakDto[].class);
             LOG.info("Resultat mottatt er {} ", result);
-            return Arrays.asList(result);
+            return Arrays.stream(result)
+                .map(MedlemskortUtbetalingsgrunnlagSakMapper::tilDomeneModell)
+                .toList();
         } catch (UriBuilderException|IllegalArgumentException e) {
             throw new IllegalArgumentException("Utviklerfeil syntax-exception for hentDagpengerAAP");
         }
     }
+
 }
