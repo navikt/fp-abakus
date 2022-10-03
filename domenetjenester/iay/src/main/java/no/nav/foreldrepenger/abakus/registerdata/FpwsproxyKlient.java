@@ -22,7 +22,7 @@ import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 
 @ApplicationScoped
-@RestClientConfig(tokenConfig = TokenFlow.STS_CC, endpointProperty = "fpwsproxy.rs.url", endpointDefault = "https://fp-ws-proxy/api/arena")
+@RestClientConfig(tokenConfig = TokenFlow.STS_CC, endpointProperty = "fpwsproxy.rs.url", endpointDefault = "http://fp-ws-proxy/api/arena")
 public class FpwsproxyKlient {
     private static final Logger LOG = LoggerFactory.getLogger(FpwsproxyKlient.class);
     private RestClient restClient;
