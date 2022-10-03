@@ -2,14 +2,10 @@ package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient;
 
 class SigrunRestConfig {
     // felles config
-    static final String AUTH_HEADER = "Authorization";
     static final String CONSUMER_ID = "x-consumer-id";
-    static final String CALL_ID = "x-call-id";
-    static final String OIDC_AUTH_HEADER_PREFIX = "Bearer ";
+    static final String X_CALL_ID = "x-call-id";
     static final String NYE_HEADER_CALL_ID = "no.nav.callid";
     static final String NYE_HEADER_CONSUMER_ID = "no.nav.consumer.id";
-    static final String ENDA_NYERE_HEADER_CALL_ID = "Nav-Call-Id";
-    static final String ENDA_NYERE_HEADER_CONSUMER_ID = "Nav-Consumer-Id";
 
 
     //api/beregnetskatt
@@ -22,7 +18,6 @@ class SigrunRestConfig {
     //api/v1/summertskattegrunnlag
     static final String INNTEKTSAAR = "inntektsaar";
     static final String INNTEKTSFILTER = "inntektsfilter";
-    static final String NAV_PERSONIDENT = "Nav-Personident";
     static final String PATH_SSG = "/api/v1/summertskattegrunnlag";
     static final String FILTER_SSG = "SummertSkattegrunnlagForeldrepenger";
 }
