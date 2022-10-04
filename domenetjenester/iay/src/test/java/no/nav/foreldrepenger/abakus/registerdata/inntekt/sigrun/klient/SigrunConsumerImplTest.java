@@ -1,8 +1,11 @@
 package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.time.Year;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
@@ -11,13 +14,14 @@ import org.mockito.Mockito;
 
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
+import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 public class SigrunConsumerImplTest {
 
     private static final long AKTØR_ID = 123123L;
     private SigrunRestClient client = Mockito.mock(SigrunRestClient.class);
 
-    private SigrunConsumer consumer = new SigrunConsumerImpl(client, null);
+    private SigrunConsumer consumer = new SigrunConsumerImpl(client);
 
     private String JSON = """
         [
@@ -130,7 +134,8 @@ public class SigrunConsumerImplTest {
         Year toÅrSiden = Year.now().minusYears(2L);
         Year treÅrSiden = Year.now().minusYears(3L);
 
-        Mockito.when(client.hentBeregnetSkattForAktørOgÅr(AKTØR_ID, iFjor.toString())).thenReturn(JSON);
+        Mockito.when(client.hentBeregnetSkattForAktørOgÅr(AKTØR_ID, iFjor.toString()))
+            .thenReturn(Arrays.asList(DefaultJsonMapper.fromJson(JSON, BeregnetSkatt[].class)));
 
         SigrunResponse beregnetskatt = consumer.beregnetskatt(AKTØR_ID);
         assertThat(beregnetskatt.beregnetSkatt()).hasSize(3);
@@ -146,22 +151,29 @@ public class SigrunConsumerImplTest {
         Year treÅrSiden = Year.now().minusYears(3L);
         Year fireÅrSiden = Year.now().minusYears(4L);
 
-        Mockito.when(client.hentBeregnetSkattForAktørOgÅr(AKTØR_ID, iFjor.toString())).thenReturn(JSON_uten_skatteoppgjoersdato);
-        Mockito.when(client.hentBeregnetSkattForAktørOgÅr(AKTØR_ID, toÅrSiden.toString())).thenReturn(JSON);
+        Mockito.when(client.hentBeregnetSkattForAktørOgÅr(AKTØR_ID, iFjor.toString()))
+            .thenReturn(Arrays.asList(DefaultJsonMapper.fromJson(JSON_uten_skatteoppgjoersdato, BeregnetSkatt[].class)));
+        Mockito.when(client.hentBeregnetSkattForAktørOgÅr(AKTØR_ID, toÅrSiden.toString()))
+            .thenReturn(Arrays.asList(DefaultJsonMapper.fromJson(JSON, BeregnetSkatt[].class)));
 
         SigrunResponse beregnetskatt = consumer.beregnetskatt(AKTØR_ID);
         assertThat(beregnetskatt.beregnetSkatt()).hasSize(3);
         assertThat(beregnetskatt.beregnetSkatt().get(iFjor)).isNull();
         assertThat(beregnetskatt.beregnetSkatt().get(toÅrSiden)).hasSize(7);
-        assertThat(beregnetskatt.beregnetSkatt().get(treÅrSiden)).hasSize(0);
-        assertThat(beregnetskatt.beregnetSkatt().get(fireÅrSiden)).hasSize(0);
+        assertThat(beregnetskatt.beregnetSkatt().get(treÅrSiden)).isEmpty();
+        assertThat(beregnetskatt.beregnetSkatt().get(fireÅrSiden)).isEmpty();
     }
 
     @Test
     public void skal_hente_summertskattegrunnlag() {
         Year iFjor = Year.now().minusYears(1L);
+        var respons = DefaultJsonMapper.fromJson(JSON_summerskattegrunnlag, SSGResponse.class);
 
-        Mockito.when(client.hentSummertskattegrunnlag(AKTØR_ID, iFjor.toString())).thenReturn(JSON_summerskattegrunnlag);
+        Mockito.when(client.hentBeregnetSkattForAktørOgÅr(eq(AKTØR_ID), any()))
+            .thenReturn(Arrays.asList(DefaultJsonMapper.fromJson(JSON, BeregnetSkatt[].class)));
+        Mockito.when(client.hentSummertskattegrunnlag(AKTØR_ID, iFjor.toString()))
+            .thenReturn(Optional.of(respons));
+
 
         SigrunSummertSkattegrunnlagResponse response = consumer.summertSkattegrunnlag(AKTØR_ID);
 
