@@ -120,7 +120,7 @@ public class ForvaltningRestTjeneste {
             throw new IllegalArgumentException("Allerede varig endring");
         }
         int antall = entityManager.createNativeQuery(
-                "UPDATE iay_egen_naering SET varig_endring = 'J', endring_dato = :edato , brutto_inntekt = :belop, endret_av = :begr WHERE id = :enid")
+                "UPDATE iay_egen_naering SET varig_endring = 'J', endring_dato = :edato , brutto_inntekt = :belop, begrunnelse = :begr WHERE id = :enid")
             .setParameter("edato", request.getEndringDato())
             .setParameter("belop", request.getBruttoInntekt())
             .setParameter("begr", request.getEndringBegrunnelse())
