@@ -87,7 +87,7 @@ public class ForvaltningRestTjeneste {
         OppgittOpptjening oppgittOpptjening = iayTjeneste.hentOppgittOpptjeningFor(eksternReferanse.toUuidReferanse()).orElseThrow();
         var næringer = oppgittOpptjening.getEgenNæring().stream().filter(OppgittEgenNæring::getVarigEndring).toList();
         var antall = næringer.stream().map(næring -> {
-                var begrunnelse = næring.getBegrunnelse().replace("\n", "").replace("\r", "");
+            var begrunnelse = BegrunnelseVasker.vask(næring.getBegrunnelse());
                 if (!begrunnelse.equals(næring.getBegrunnelse())) {
                     return entityManager.createNativeQuery(
                             "UPDATE iay_egen_naering SET begrunnelse = :begr WHERE id = :enid")
