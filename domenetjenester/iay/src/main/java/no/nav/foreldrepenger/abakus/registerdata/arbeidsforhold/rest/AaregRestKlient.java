@@ -1,12 +1,10 @@
 package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest;
 
-import java.net.URI;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
@@ -27,28 +25,24 @@ import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 public class AaregRestKlient {
 
 
-    private RestClient restClient; // Setter på consumer-token fra STS
-    private URI endpoint;
+    private final RestClient restClient; // Setter på consumer-token fra STS
+    private final RestConfig restConfig;
 
     public AaregRestKlient() {
-    }
-
-    @Inject
-    public AaregRestKlient(RestClient restClient) {
-        this.restClient = restClient;
-        this.endpoint = RestConfig.endpointFromAnnotation(AaregRestKlient.class);
+        this.restClient = RestClient.client();
+        this.restConfig = RestConfig.forClient(AaregRestKlient.class);
     }
 
     public List<ArbeidsforholdRS> finnArbeidsforholdForArbeidstaker(String ident, LocalDate qfom, LocalDate qtom) {
         try {
-            var target = UriBuilder.fromUri(endpoint).path("arbeidsforhold")
+            var target = UriBuilder.fromUri(restConfig.endpoint()).path("arbeidsforhold")
                     .queryParam("ansettelsesperiodeFom", String.valueOf(qfom))
                     .queryParam("ansettelsesperiodeTom", String.valueOf(qtom))
                     .queryParam("regelverk", "A_ORDNINGEN")
                     .queryParam("historikk", "true")
                     .queryParam("sporingsinformasjon", "false")
                     .build();
-            var request = RestRequest.newGET(target, AaregRestKlient.class)
+            var request = RestRequest.newGET(target, restConfig)
                 .header(NavHeaders.HEADER_NAV_PERSONIDENT, ident);
             var result = restClient.send(request, ArbeidsforholdRS[].class);
             return Arrays.asList(result);
@@ -59,7 +53,7 @@ public class AaregRestKlient {
 
     public List<ArbeidsforholdRS> finnArbeidsforholdForFrilanser(String ident, LocalDate qfom, LocalDate qtom) {
         try {
-            var target = UriBuilder.fromUri(endpoint).path("arbeidsforhold")
+            var target = UriBuilder.fromUri(restConfig.endpoint()).path("arbeidsforhold")
                 .queryParam("ansettelsesperiodeFom", String.valueOf(qfom))
                 .queryParam("ansettelsesperiodeTom", String.valueOf(qtom))
                 .queryParam("arbeidsforholdtype", "frilanserOppdragstakerHonorarPersonerMm")
@@ -67,7 +61,7 @@ public class AaregRestKlient {
                 .queryParam("historikk", "true")
                 .queryParam("sporingsinformasjon", "false")
                 .build();
-            var request = RestRequest.newGET(target, AaregRestKlient.class)
+            var request = RestRequest.newGET(target, restConfig)
                 .header(NavHeaders.HEADER_NAV_PERSONIDENT, ident);
             var result = restClient.send(request, ArbeidsforholdRS[].class);
             return Arrays.asList(result);

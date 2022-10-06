@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten;
 
 import java.math.BigDecimal;
-import java.net.URI;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,7 +20,6 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-import no.nav.foreldrepenger.konfig.KonfigVerdi;
 import no.nav.tjenester.aordningen.inntektsinformasjon.Aktoer;
 import no.nav.tjenester.aordningen.inntektsinformasjon.AktoerType;
 import no.nav.tjenester.aordningen.inntektsinformasjon.ArbeidsInntektIdent;
@@ -39,11 +37,12 @@ import no.nav.vedtak.exception.IntegrasjonException;
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.integrasjon.rest.RestClient;
 import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
+import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 
 @ApplicationScoped
-@RestClientConfig(tokenConfig = TokenFlow.CONTEXT, endpointProperty = "hentinntektlistebolk.url")
+@RestClientConfig(tokenConfig = TokenFlow.CONTEXT, endpointProperty = "hentinntektlistebolk.url", endpointDefault = "https://app.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk")
 public class InntektTjeneste {
 
     // Dato for eldste request til inntk - det er av og til noen ES saker som spør lenger tilbake i tid
@@ -55,7 +54,7 @@ public class InntektTjeneste {
     private static final Logger logger = LoggerFactory.getLogger(InntektTjeneste.class);
 
     private RestClient restClient;
-    private URI endpoint;
+    private RestConfig restConfig;
     private AktørTjeneste aktørConsumer;
     private Map<InntektskildeType, InntektsFilter> kildeTilFilter;
 
@@ -64,11 +63,13 @@ public class InntektTjeneste {
     }
 
     @Inject
-    public InntektTjeneste(@KonfigVerdi(ENDPOINT_KEY) URI endpoint,
-                           RestClient restClient,
-                           AktørTjeneste aktørConsumer) {
-        this.endpoint = endpoint;
+    public InntektTjeneste(AktørTjeneste aktørConsumer) {
+        this(RestClient.client(), aktørConsumer);
+    }
+
+    public InntektTjeneste(RestClient restClient, AktørTjeneste aktørConsumer) {
         this.restClient = restClient;
+        this.restConfig = RestConfig.forClient(InntektTjeneste.class);
         this.aktørConsumer = aktørConsumer;
         this.kildeTilFilter = Map.of(InntektskildeType.INNTEKT_OPPTJENING, InntektsFilter.OPPTJENINGSGRUNNLAG,
             InntektskildeType.INNTEKT_BEREGNING, InntektsFilter.BEREGNINGSGRUNNLAG,
@@ -110,7 +111,7 @@ public class InntektTjeneste {
         }
         request.setMaanedFom(finnInntektRequest.getFom().isAfter(INNTK_TIDLIGSTE_DATO) ? finnInntektRequest.getFom() : INNTK_TIDLIGSTE_DATO);
         request.setMaanedTom(finnInntektRequest.getTom().isAfter(INNTK_TIDLIGSTE_DATO) ? finnInntektRequest.getTom() : INNTK_TIDLIGSTE_DATO);
-        return RestRequest.newPOSTJson(request, endpoint, InntektTjeneste.class);
+        return RestRequest.newPOSTJson(request, restConfig.endpoint(), restConfig);
     }
 
     private InntektsFilter getFilter(InntektskildeType kilde) {

@@ -10,6 +10,9 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
+import no.nav.vedtak.felles.integrasjon.organisasjon.JuridiskEnhetVirksomheter;
+import no.nav.vedtak.felles.integrasjon.organisasjon.OrganisasjonEReg;
+import no.nav.vedtak.felles.integrasjon.organisasjon.OrganisasjonstypeEReg;
 
 public class EregRestTest {
 
@@ -18,61 +21,64 @@ public class EregRestTest {
     @Test
     public void mapping_dto_til_grunnlag_til_dto() throws IOException {
         // Arrange
-        String json ="{\n \"organisasjonsnummer\":\"999999999\",\n" +
-            " \"type\":\"Virksomhet\",\n" +
-            " \"navn\":{\"redigertnavn\":\"MIN BEDRIFT\",\n" +
-            " \"navnelinje1\":\"MIN BEDRIFT\",\n" +
-            " \"navnelinje2\":\"  \",\n" +
-            " \"navnelinje3\":\"AVD DER JEG BOR\"\n" +
-            "},\n" +
-            " \"organisasjonDetaljer\":null,\n" +
-            " \"virksomhetDetaljer\":null\n" +
-            "}";
+        String json = """
+            {
+             "organisasjonsnummer":"999999999",
+             "type":"Virksomhet",
+             "navn":{"redigertnavn":"MIN BEDRIFT",
+             "navnelinje1":"MIN BEDRIFT",
+             "navnelinje2":"  ",
+             "navnelinje3":"AVD DER JEG BOR"
+            },
+             "organisasjonDetaljer":null,
+             "virksomhetDetaljer":null
+            }""";
 
         var org = fromJson(json, OrganisasjonEReg.class);
         assertThat(org.getNavn()).isEqualTo("MIN BEDRIFT AVD DER JEG BOR");
-        assertThat(org.getOrganisasjonsnummer()).isEqualTo("999999999");
-        assertThat(org.getType()).isEqualTo(OrganisasjonstypeEReg.VIRKSOMHET);
+        assertThat(org.organisasjonsnummer()).isEqualTo("999999999");
+        assertThat(org.type()).isEqualTo(OrganisasjonstypeEReg.VIRKSOMHET);
     }
 
     @Test
     public void mapping_jurdisk_enhet() throws IOException {
         // Arrange
-        String json ="{\n" +
-            "  \"organisasjonsnummer\": \"999999999\",\n" +
-            "  \"type\": \"JuridiskEnhet\",\n" +
-            "  \"organisasjonDetaljer\": {\n" +
-            "    \"registreringsdato\": \"2007-01-23T00:00:00\"\n" +
-            "  },\n" +
-            "  \"driverVirksomheter\": [\n" +
-            "    {\n" +
-            "      \"organisasjonsnummer\": \"999999997\",\n" +
-            "      \"bruksperiode\": {\n" +
-            "        \"fom\": \"2014-05-23T17:05:52.161\"\n" +
-            "      },\n" +
-            "      \"gyldighetsperiode\": {\n" +
-            "        \"fom\": \"2007-11-17\"\n" +
-            "      }\n" +
-            "    },\n" +
-            "    {\n" +
-            "      \"organisasjonsnummer\": \"999999998\",\n" +
-            "      \"bruksperiode\": {\n" +
-            "        \"fom\": \"2014-05-23T20:15:53.195\"\n" +
-            "      },\n" +
-            "      \"gyldighetsperiode\": {\n" +
-            "        \"fom\": \"2007-01-24\",\n" +
-            "        \"tom\": \"2007-11-16\"\n" +
-            "      }\n" +
-            "    }\n" +
-            "  ]\n" +
-            "}";
+        String json = """
+            {
+              "organisasjonsnummer": "999999999",
+              "type": "JuridiskEnhet",
+              "organisasjonDetaljer": {
+                "registreringsdato": "2007-01-23T00:00:00"
+              },
+              "driverVirksomheter": [
+                {
+                  "organisasjonsnummer": "999999997",
+                  "bruksperiode": {
+                    "fom": "2014-05-23T17:05:52.161"
+                  },
+                  "gyldighetsperiode": {
+                    "fom": "2007-11-17"
+                  }
+                },
+                {
+                  "organisasjonsnummer": "999999998",
+                  "bruksperiode": {
+                    "fom": "2014-05-23T20:15:53.195"
+                  },
+                  "gyldighetsperiode": {
+                    "fom": "2007-01-24",
+                    "tom": "2007-11-16"
+                  }
+                }
+              ]
+            }""";
 
         var org = fromJson(json, JuridiskEnhetVirksomheter.class);
-        assertThat(org.getDriverVirksomheter()).hasSize(2);
+        assertThat(org.driverVirksomheter()).hasSize(2);
         assertThat(org.getEksaktVirksomhetForDato(LocalDate.now())).hasSize(1);
         assertThat(org.getEksaktVirksomhetForDato(LocalDate.now()).get(0)).isEqualTo("999999997");
-        assertThat(org.getOrganisasjonsnummer()).isEqualTo("999999999");
-        assertThat(org.getType()).isEqualTo(OrganisasjonstypeEReg.JURIDISK_ENHET);
+        assertThat(org.organisasjonsnummer()).isEqualTo("999999999");
+        assertThat(org.type()).isEqualTo(OrganisasjonstypeEReg.JURIDISK_ENHET);
     }
 
     private static <T> T fromJson(String json, Class<T> clazz) throws IOException {

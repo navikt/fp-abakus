@@ -32,20 +32,21 @@ import no.nav.vedtak.sikkerhet.context.SubjectHandler;
 @RestClientConfig(tokenConfig = TokenFlow.CONTEXT, endpointProperty = "SigrunRestBeregnetSkatt.url", endpointDefault = "https://sigrun.nais.adeo.no")
 public class SigrunRestClient {
     private static final Logger LOG = LoggerFactory.getLogger(SigrunRestClient.class);
-    private RestClient client;
+    private final RestClient client;
+    private final RestConfig restConfig;
     private URI endpointBS;
     private URI endpointSSG;
 
 
     SigrunRestClient(RestClient client) {
         this.client = client;
-        var endpoint = RestConfig.endpointFromAnnotation(this.getClass());
-        this.endpointBS = endpoint.resolve(endpoint.getPath() + PATH_BS);
-        this.endpointSSG = endpoint.resolve(endpoint.getPath() + PATH_SSG);
+        this.restConfig = RestConfig.forClient(SigrunRestClient.class);
+        this.endpointBS = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_BS);
+        this.endpointSSG = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_SSG);
     }
 
     List<BeregnetSkatt> hentBeregnetSkattForAktørOgÅr(long aktørId, String år) {
-        var request = RestRequest.newGET(endpointBS, SigrunConsumerImpl.class)
+        var request = RestRequest.newGET(endpointBS, restConfig)
             .header(SigrunRestConfig.X_FILTER, SigrunRestConfig.FILTER)
             .header(SigrunRestConfig.X_AKTØRID, String.valueOf(aktørId))
             .header(SigrunRestConfig.X_INNTEKTSÅR, år)
@@ -67,7 +68,7 @@ public class SigrunRestClient {
             .queryParam(SigrunRestConfig.INNTEKTSFILTER, SigrunRestConfig.FILTER_SSG)
             .build();
 
-        var request = RestRequest.newGET(uri, SigrunConsumerImpl.class)
+        var request = RestRequest.newGET(uri, restConfig)
             .header(NavHeaders.HEADER_NAV_PERSONIDENT, String.valueOf(aktørId))
             .otherCallId(X_CALL_ID)
             .otherCallId(SigrunRestConfig.NYE_HEADER_CALL_ID)

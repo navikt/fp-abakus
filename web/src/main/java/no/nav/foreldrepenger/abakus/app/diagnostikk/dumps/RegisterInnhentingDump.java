@@ -127,7 +127,7 @@ public class RegisterInnhentingDump implements DebugDump {
 
         infotrygdGrunnlag.hentAggregertGrunnlag(ident.getIdent(), fom, tom)
             .forEach(g -> {
-                dumps.add(dumpJsonOutput(prefiks + "-infotrygd-" + g.getTema() + "-" + g.getBehandlingsTema(), () -> g));
+                dumps.add(dumpJsonOutput(prefiks + "-infotrygd-" + g.tema() + "-" + g.behandlingstema(), () -> g));
             });
         return dumps;
     }

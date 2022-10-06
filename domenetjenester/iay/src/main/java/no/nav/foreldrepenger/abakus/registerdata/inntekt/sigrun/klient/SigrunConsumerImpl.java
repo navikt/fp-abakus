@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
@@ -24,17 +23,12 @@ public class SigrunConsumerImpl implements SigrunConsumer {
 
     private static final MonthDay TIDLIGSTE_SJEKK_FJOR = MonthDay.of(5, 1);
 
-    private SigrunRestClient client;
-    private boolean isProd = Environment.current().isProd();
+    private final SigrunRestClient client;
+    private static final boolean isProd = Environment.current().isProd();
 
 
-    SigrunConsumerImpl() {
-        //CDI
-    }
-
-    @Inject
-    public SigrunConsumerImpl(RestClient restClient) {
-        this.client = new SigrunRestClient(restClient);
+    public SigrunConsumerImpl() {
+        this.client = new SigrunRestClient(RestClient.client());
 
     }
 

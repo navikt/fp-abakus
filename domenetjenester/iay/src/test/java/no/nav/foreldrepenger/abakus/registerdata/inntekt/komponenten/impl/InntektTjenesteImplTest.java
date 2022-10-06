@@ -10,7 +10,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.net.URI;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -50,7 +49,6 @@ public class InntektTjenesteImplTest {
     private static final String ORGNR = "456";
     private static final String SIKKERHETSAVVIK1 = "Mangler rettighet 1";
     private static final String SIKKERHETSAVVIK2 = "Mangler rettighet 2";
-    private URI uri = URI.create("http://inntektskomponenten");
 
     @Mock
     private RestClient restKlient;
@@ -58,7 +56,7 @@ public class InntektTjenesteImplTest {
 
     @BeforeEach
     public void before() {
-        inntektTjeneste = new InntektTjeneste(uri, restKlient, null);
+        inntektTjeneste = new InntektTjeneste(restKlient, null);
     }
 
     @SuppressWarnings("resource")
