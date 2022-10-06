@@ -12,9 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs.ArenaRequestDto;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs.MedlemskortUtbetalingsgrunnlagSakMapper;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs.MeldekortUtbetalingsgrunnlagSakDto;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.vedtak.felles.integrasjon.rest.RestClient;
 import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
