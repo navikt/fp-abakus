@@ -38,7 +38,6 @@ import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Periode;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Vedtak;
 import no.nav.vedtak.felles.integrasjon.spokelse.Spøkelse;
-import no.nav.vedtak.felles.integrasjon.spokelse.SykepengeUtbetaling;
 import no.nav.vedtak.felles.integrasjon.spokelse.SykepengeVedtak;
 import no.nav.vedtak.konfig.Tid;
 
@@ -100,7 +99,7 @@ public class InnhentingInfotrygdTjeneste {
 
     private List<InfotrygdYtelseGrunnlag> mapTilInfotrygdYtelseGrunnlag(List<Grunnlag> rest, LocalDate innhentFom) {
         var mappedGrunnlag = rest.stream()
-            .filter(g -> !YtelseType.UDEFINERT.equals(TemaReverse.reverseMap(g.getTema().kode().name(), LOG)))
+            .filter(g -> !YtelseType.UDEFINERT.equals(TemaReverse.reverseMap(g.tema().kode().name(), LOG)))
             .map(g -> restTilInfotrygdYtelseGrunnlag(g, innhentFom))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -111,32 +110,32 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     private InfotrygdYtelseGrunnlag restTilInfotrygdYtelseGrunnlag(Grunnlag grunnlag, LocalDate innhentFom) {
-        if (grunnlag.getIverksatt() == null || grunnlag.getIdentdato() == null || !grunnlag.getIverksatt().equals(grunnlag.getIdentdato())) {
-            LOG.info("Infotrygd ny mapper avvik iverksatt {} vs identdato {}", grunnlag.getIverksatt(), grunnlag.getIdentdato());
+        if (grunnlag.iverksatt() == null || grunnlag.identdato() == null || !grunnlag.iverksatt().equals(grunnlag.identdato())) {
+            LOG.info("Infotrygd ny mapper avvik iverksatt {} vs identdato {}", grunnlag.iverksatt(), grunnlag.identdato());
         }
-        LocalDate brukIdentdato = grunnlag.getIdentdato() != null ? grunnlag.getIdentdato() : grunnlag.getIverksatt();
+        LocalDate brukIdentdato = grunnlag.identdato() != null ? grunnlag.identdato() : grunnlag.iverksatt();
         if (brukIdentdato == null) {
             return null;
         }
-        Periode fraSaksdata = utledPeriode(grunnlag.getIverksatt(), grunnlag.getOpphørFom(), grunnlag.getRegistrert());
-        if (grunnlag.getOpphørFom() != null) {
+        Periode fraSaksdata = utledPeriode(grunnlag.iverksatt(), grunnlag.opphørFom(), grunnlag.registrert());
+        if (grunnlag.opphørFom() != null) {
             LOG.info("Infotrygdgrunnlag: OpphørFom: {}, Iverksatt: {}, Registrert: {}, Periode: {}",
-                grunnlag.getOpphørFom(),
-                grunnlag.getIverksatt(),
-                grunnlag.getRegistrert(),
-                grunnlag.getPeriode() == null ? "IKKE SATT" : grunnlag.getPeriode());
+                grunnlag.opphørFom(),
+                grunnlag.iverksatt(),
+                grunnlag.registrert(),
+                grunnlag.periode() == null ? "IKKE SATT" : grunnlag.periode());
 
         }
-        Periode brukPeriode = grunnlag.getPeriode() != null ? grunnlag.getPeriode() : fraSaksdata;
-        Integer dekningsgrad = grunnlag.getDekningsgrad() != null ? grunnlag.getDekningsgrad().getProsent() : null;
-        Arbeidskategori arbeidskategori = grunnlag.getKategori() == null ? Arbeidskategori.UGYLDIG :
-            ArbeidskategoriReverse.reverseMap(grunnlag.getKategori().kode().getKode(), LOG);
-        TemaUnderkategori tuk = grunnlag.getBehandlingsTema() == null ? TemaUnderkategori.UDEFINERT :
-            TemaUnderkategoriReverse.reverseMap(grunnlag.getBehandlingsTema().kode().name());
+        Periode brukPeriode = grunnlag.periode() != null ? grunnlag.periode() : fraSaksdata;
+        Integer dekningsgrad = grunnlag.dekningsgrad() != null ? grunnlag.dekningsgrad().prosent() : null;
+        Arbeidskategori arbeidskategori = grunnlag.kategori() == null ? Arbeidskategori.UGYLDIG :
+            ArbeidskategoriReverse.reverseMap(grunnlag.kategori().kode().getKode(), LOG);
+        TemaUnderkategori tuk = grunnlag.behandlingstema() == null ? TemaUnderkategori.UDEFINERT :
+            TemaUnderkategoriReverse.reverseMap(grunnlag.behandlingstema().kode().name());
         YtelseStatus brukStatus = mapYtelseStatus(grunnlag);
         // Ignorer gamle vedtak
         if (brukPeriode.tom().isBefore(innhentFom) &&
-            grunnlag.getVedtak().stream().map(Vedtak::periode).map(Periode::tom).noneMatch(innhentFom::isBefore))
+            grunnlag.vedtak().stream().map(Vedtak::periode).map(Periode::tom).noneMatch(innhentFom::isBefore))
             return null;
 
         var grunnlagBuilder = InfotrygdYtelseGrunnlag.getBuilder()
@@ -148,15 +147,15 @@ public class InnhentingInfotrygdTjeneste {
             .medVedtaksPeriodeTom(brukPeriode.tom())
             .medArbeidskategori(arbeidskategori)
             .medDekningsgrad(dekningsgrad)
-            .medGradering(grunnlag.getGradering())
-            .medFødselsdatoBarn(grunnlag.getFødselsdatoBarn())
-            .medOpprinneligIdentdato(grunnlag.getOpprinneligIdentdato());
+            .medGradering(grunnlag.gradering())
+            .medFødselsdatoBarn(grunnlag.fødselsdatoBarn())
+            .medOpprinneligIdentdato(grunnlag.opprinneligIdentdato());
 
-        grunnlag.getArbeidsforhold().stream()
+        grunnlag.arbeidsforhold().stream()
             .map(this::arbeidsforholdTilInfotrygdYtelseArbeid)
             .forEach(grunnlagBuilder::leggTilArbeidsforhold);
 
-        grunnlag.getVedtak().stream()
+        grunnlag.vedtak().stream()
             .map(v -> new InfotrygdYtelseAnvist(v.periode().fom(), v.periode().tom(), new BigDecimal(v.utbetalingsgrad()),
                 v.arbeidsgiverOrgnr(), v.erRefusjon(), v.dagsats() != null ? BigDecimal.valueOf(v.dagsats()) : null))
             .forEach(grunnlagBuilder::leggTillAnvistPerioder);
@@ -165,21 +164,21 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     private YtelseStatus mapYtelseStatus(Grunnlag grunnlag) {
-        if (grunnlag.getStatus() == null) {
-            if (grunnlag.getOpphørFom() != null)
+        if (grunnlag.status() == null) {
+            if (grunnlag.opphørFom() != null)
                 return YtelseStatus.AVSLUTTET;
-            if (grunnlag.getIverksatt() != null || grunnlag.getIdentdato() != null)
+            if (grunnlag.iverksatt() != null || grunnlag.identdato() != null)
                 return YtelseStatus.LØPENDE;
             return YtelseStatus.UNDER_BEHANDLING;
         }
-        return RelatertYtelseStatusReverse.reverseMap(grunnlag.getStatus().kode().name(), LOG);
+        return RelatertYtelseStatusReverse.reverseMap(grunnlag.status().kode().name(), LOG);
     }
 
     private InfotrygdYtelseArbeid arbeidsforholdTilInfotrygdYtelseArbeid(Arbeidsforhold arbeidsforhold) {
         InntektPeriodeType inntektPeriode = arbeidsforhold.inntektsperiode() == null ? InntektPeriodeType.UDEFINERT :
             InntektPeriodeReverse.reverseMap(arbeidsforhold.inntektsperiode().kode().name(), LOG);
         BigDecimal inntekt = arbeidsforhold.inntekt() != null ? new BigDecimal(arbeidsforhold.inntekt()) : null;
-        return new InfotrygdYtelseArbeid(arbeidsforhold.orgnr().getOrgnr(),
+        return new InfotrygdYtelseArbeid(arbeidsforhold.orgnr().orgnr(),
             inntekt, inntektPeriode, arbeidsforhold.refusjon(), arbeidsforhold.refusjonTom());
     }
 
@@ -208,13 +207,13 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     private YtelseType bestemYtelseType(Grunnlag grunnlag) {
-        YtelseType kategori2 = grunnlag.getBehandlingsTema() == null ? YtelseType.UDEFINERT :
-            STØNADSKAT2_TIL_YTELSETYPE.getOrDefault(grunnlag.getBehandlingsTema().kode(), YtelseType.UDEFINERT);
+        YtelseType kategori2 = grunnlag.behandlingstema() == null ? YtelseType.UDEFINERT :
+            STØNADSKAT2_TIL_YTELSETYPE.getOrDefault(grunnlag.behandlingstema().kode(), YtelseType.UDEFINERT);
         if (!YtelseType.UDEFINERT.equals(kategori2))
             return kategori2;
         LOG.info("Infotrygd ukjent stønadskategori 2");
-        YtelseType kategori1 = grunnlag.getTema() == null ? YtelseType.UDEFINERT :
-            STØNADSKAT1_TIL_YTELSETYPE.getOrDefault(grunnlag.getTema().kode(), YtelseType.UDEFINERT);
+        YtelseType kategori1 = grunnlag.tema() == null ? YtelseType.UDEFINERT :
+            STØNADSKAT1_TIL_YTELSETYPE.getOrDefault(grunnlag.tema().kode(), YtelseType.UDEFINERT);
         if (!YtelseType.UDEFINERT.equals(kategori1))
             return kategori1;
         LOG.info("Infotrygd ukjent stønadskategori 1 og 2");
@@ -246,8 +245,8 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     private InfotrygdYtelseGrunnlag spokelseTilInfotrygdYtelseGrunnlag(SykepengeVedtak grunnlag) {
-        LocalDate min = grunnlag.utbetalingerNonNull().stream().map(SykepengeUtbetaling::fom).min(Comparator.naturalOrder()).orElse(null);
-        LocalDate max = grunnlag.utbetalingerNonNull().stream().map(SykepengeUtbetaling::tom).max(Comparator.naturalOrder()).orElse(null);
+        LocalDate min = grunnlag.utbetalingerNonNull().stream().map(SykepengeVedtak.SykepengeUtbetaling::fom).min(Comparator.naturalOrder()).orElse(null);
+        LocalDate max = grunnlag.utbetalingerNonNull().stream().map(SykepengeVedtak.SykepengeUtbetaling::tom).max(Comparator.naturalOrder()).orElse(null);
         if (min == null)
             return null;
 
@@ -259,8 +258,8 @@ public class InnhentingInfotrygdTjeneste {
             .medYtelseStatus(YtelseStatus.AVSLUTTET)
             .medVedtaksreferanse(grunnlag.vedtaksreferanse().trim())
             .medVedtattTidspunkt(grunnlag.vedtattTidspunkt() != null ? grunnlag.vedtattTidspunkt() : LocalDateTime.now())
-            .medVedtaksPeriodeFom(brukPeriode.getFom())
-            .medVedtaksPeriodeTom(brukPeriode.getTom());
+            .medVedtaksPeriodeFom(brukPeriode.fom())
+            .medVedtaksPeriodeTom(brukPeriode.tom());
 
         grunnlag.utbetalingerNonNull().stream()
             .map(v -> new InfotrygdYtelseAnvist(v.fom(), v.tom(), v.gradScale2(), null, null, null))

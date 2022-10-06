@@ -21,6 +21,7 @@ import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.TaskConstants;
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.integrasjon.rest.RestClient;
+import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
@@ -41,10 +42,9 @@ public class CallbackTask implements ProsessTaskHandler {
     CallbackTask() {}
 
     @Inject
-    public CallbackTask(RestClient restClient,
-                        KoblingTjeneste koblingTjeneste,
+    public CallbackTask(KoblingTjeneste koblingTjeneste,
                         InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste) {
-        this.restClient = restClient;
+        this.restClient = RestClient.client();
         this.koblingTjeneste = koblingTjeneste;
         this.inntektArbeidYtelseTjeneste = inntektArbeidYtelseTjeneste;
     }
@@ -70,9 +70,10 @@ public class CallbackTask implements ProsessTaskHandler {
         } catch (URISyntaxException e) {
             throw new TekniskException("FP-349977", String.format("Ugyldig callback url ved callback etter registerinnhenting: %s", callbackUrl));
         }
-        String post = restClient.send(RestRequest.newPOSTJson(callbackDto, uri, TokenFlow.CONTEXT, null), String.class);
+        var restConfig = new RestConfig(TokenFlow.CONTEXT, uri, null, null);
+        var post = restClient.sendReturnOptional(RestRequest.newPOSTJson(callbackDto, uri, restConfig), String.class);
 
-        log.info("Callback success, mottok respons: " + post);
+        log.info("Callback success, mottok respons: {}", post);
     }
 
     private void setInformasjonOmAvsenderRef(Kobling kobling, CallbackDto callbackDto) {

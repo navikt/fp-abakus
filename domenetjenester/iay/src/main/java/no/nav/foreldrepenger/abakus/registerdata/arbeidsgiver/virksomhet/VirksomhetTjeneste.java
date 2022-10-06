@@ -15,12 +15,12 @@ import org.slf4j.LoggerFactory;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.OrganisasjonType;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.rest.JuridiskEnhetVirksomheter;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.rest.OrganisasjonEReg;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.rest.OrganisasjonRestKlient;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.rest.OrganisasjonstypeEReg;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.exception.TekniskException;
+import no.nav.vedtak.felles.integrasjon.organisasjon.JuridiskEnhetVirksomheter;
+import no.nav.vedtak.felles.integrasjon.organisasjon.OrganisasjonEReg;
+import no.nav.vedtak.felles.integrasjon.organisasjon.OrganisasjonstypeEReg;
 import no.nav.vedtak.util.LRUCache;
 
 
@@ -74,7 +74,7 @@ public class VirksomhetTjeneste {
      * @return true (når virksomheten er orgledd)
      */
     public boolean sjekkOmOrganisasjonErOrgledd(String orgNummer) {
-        return OrganisasjonstypeEReg.ORGLEDD.equals(hentResponseOrganisasjon(orgNummer).getType());
+        return OrganisasjonstypeEReg.ORGLEDD.equals(hentResponseOrganisasjon(orgNummer).type());
     }
 
     /**
@@ -124,14 +124,14 @@ public class VirksomhetTjeneste {
         var builder = new Virksomhet.Builder()
             .medNavn(org.getNavn())
             .medRegistrert(org.getRegistreringsdato())
-            .medOrgnr(org.getOrganisasjonsnummer());
-        if (OrganisasjonstypeEReg.VIRKSOMHET.equals(org.getType())) {
+            .medOrgnr(org.organisasjonsnummer());
+        if (OrganisasjonstypeEReg.VIRKSOMHET.equals(org.type())) {
             builder.medOrganisasjonstype(OrganisasjonType.VIRKSOMHET)
                 .medOppstart(org.getOppstartsdato())
                 .medAvsluttet(org.getNedleggelsesdato());
-        } else if (OrganisasjonstypeEReg.JURIDISK_ENHET.equals(org.getType())) {
+        } else if (OrganisasjonstypeEReg.JURIDISK_ENHET.equals(org.type())) {
             builder.medOrganisasjonstype(OrganisasjonType.JURIDISK_ENHET);
-        } else if (OrganisasjonstypeEReg.ORGLEDD.equals(org.getType())) {
+        } else if (OrganisasjonstypeEReg.ORGLEDD.equals(org.type())) {
             builder.medOrganisasjonstype(OrganisasjonType.ORGLEDD);
         }
         return builder.build();
@@ -144,7 +144,7 @@ public class VirksomhetTjeneste {
     }
 
     private JuridiskEnhetVirksomheter hentResponseJuridisk(String orgnr) {
-        var response = Optional.ofNullable(cacheJuridiskEREG.get(orgnr)).orElseGet(() -> eregRestKlient.hentJurdiskEnhetVirksomheter(orgnr));
+        var response = Optional.ofNullable(cacheJuridiskEREG.get(orgnr)).orElseGet(() -> eregRestKlient.hentOrganisasjonHistorikk(orgnr));
         cacheJuridiskEREG.put(orgnr, response);
         return response;
     }

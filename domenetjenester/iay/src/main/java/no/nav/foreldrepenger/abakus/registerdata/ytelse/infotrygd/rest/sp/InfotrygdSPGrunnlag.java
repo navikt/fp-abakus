@@ -1,24 +1,15 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sp;
 
-import java.net.URI;
+import javax.enterprise.context.Dependent;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.AbstractInfotrygdGrunnlag;
+import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
+import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.felles.AbstractInfotrygdGrunnlag;
-import no.nav.foreldrepenger.konfig.KonfigVerdi;
-import no.nav.vedtak.felles.integrasjon.rest.RestClient;
-
-@ApplicationScoped
 @SP
+@Dependent
+@RestClientConfig(tokenConfig = TokenFlow.STS_CC, endpointProperty = "fpabakus.it.sp.grunnlag.url", endpointDefault = "http://infotrygd-sykepenger-fp.default/grunnlag")
 public class InfotrygdSPGrunnlag extends AbstractInfotrygdGrunnlag {
-
-    private static final String DEFAULT_URI = "http://infotrygd-sykepenger-fp.default/grunnlag";
-
-    @Inject
-    public InfotrygdSPGrunnlag(RestClient restClient, @KonfigVerdi(value = "fpabakus.it.sp.grunnlag.url", defaultVerdi = DEFAULT_URI) URI uri) {
-        super(restClient, uri);
-    }
 
     public InfotrygdSPGrunnlag() {
         super();

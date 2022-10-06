@@ -37,34 +37,36 @@ public class ArbeidsforholdTjenesteMedRestTest {
 
     private static ObjectMapper mapper = JsonObjectMapper.getMapper();
 
-    private static final String json = "{\n" +
-        "  \"arbeidsforholdId\": \"990983666\",\n" +
-        "  \"navArbeidsforholdId\": \"1234565\",\n" +
-        "  \"type\": \"ordinaertArbeidsforhold\",\n" +
-        "  \"registrert\": \"2020-02-23\",\n" +
-        "  \"ansettelsesperiode\": {\n" +
-        "    \"periode\": {\n" +
-        "      \"fom\": \"2018-02-23\",\n" +
-        "      \"tom\": \"2029-02-23\"\n" +
-        "    }\n" +
-        "  },\n" +
-        "  \"arbeidsgiver\": {\n" +
-        "    \"type\": \"Organisasjon\",\n" +
-        "    \"organisasjonsnummer\": \"" + ORGNR +"\"\n" +
-        "  },\n" +
-        "  \"arbeidsavtaler\": [\n" +
-        "      {\n" +
-        "        \"stillingsprosent\": \"100.0\",\n" +
-        "        \"antallTimerPrUke\": \"37.5\",\n" +
-        "        \"beregnetAntallTimerPrUke\": \"37.5\",\n" +
-        "        \"yrke\": \"" + ULL + "\",\n" +
-        "        \"gyldighetsperiode\": {\n" +
-            "      \"fom\": \"2018-02-23\",\n" +
-            "      \"tom\": \"2029-02-23\"\n" +
-            "    }\n" +
-        "      }\n" +
-        "    ]\n" +
-        "}";
+    private static final String json = """
+        {
+          "arbeidsforholdId": "990983666",
+          "navArbeidsforholdId": "1234565",
+          "type": "ordinaertArbeidsforhold",
+          "registrert": "2020-02-23",
+          "ansettelsesperiode": {
+            "periode": {
+              "fom": "2018-02-23",
+              "tom": "2029-02-23"
+            }
+          },
+          "arbeidsgiver": {
+            "type": "Organisasjon",
+            "organisasjonsnummer": "973093681"
+          },
+          "arbeidsavtaler": [
+              {
+                "stillingsprosent": "100.0",
+                "antallTimerPrUke": "37.5",
+                "beregnetAntallTimerPrUke": "37.5",
+                "yrke": "8629102",
+                "gyldighetsperiode": {
+                  "fom": "2018-02-23",
+                  "tom": "2029-02-23"
+                }
+              }
+            ]
+        }
+        """;
 
     @Test
     public void mapping_organisasjon() throws IOException {
