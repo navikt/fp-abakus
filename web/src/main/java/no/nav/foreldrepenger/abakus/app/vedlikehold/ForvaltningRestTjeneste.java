@@ -84,10 +84,13 @@ public class ForvaltningRestTjeneste {
         })
     @BeskyttetRessurs(actionType = ActionType.CREATE, resource = DRIFT)
     public Response vaskBegrunnelse(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AbacDataSupplier.class) @NotNull @Valid UuidDto eksternReferanse) {
-        OppgittOpptjening oppgittOpptjening = iayTjeneste.hentOppgittOpptjeningFor(eksternReferanse.toUuidReferanse()).orElseThrow();
-        var næringer = oppgittOpptjening.getEgenNæring().stream().filter(OppgittEgenNæring::getVarigEndring).toList();
+        var iayAggregat = iayTjeneste.hentAggregat(new KoblingReferanse(eksternReferanse.getReferanse()));
+        var oppgittOpptjening = iayAggregat.getOppgittOpptjeningAggregat().stream().flatMap(oo -> oo.getOppgitteOpptjeninger().stream()).toList();
+        var næringer = oppgittOpptjening.stream()
+            .flatMap(oo -> oo.getEgenNæring().stream().filter(OppgittEgenNæring::getVarigEndring))
+            .toList();
         var antall = næringer.stream().map(næring -> {
-            var begrunnelse = BegrunnelseVasker.vask(næring.getBegrunnelse());
+                var begrunnelse = BegrunnelseVasker.vask(næring.getBegrunnelse());
                 if (!begrunnelse.equals(næring.getBegrunnelse())) {
                     return entityManager.createNativeQuery(
                             "UPDATE iay_egen_naering SET begrunnelse = :begr WHERE id = :enid")
