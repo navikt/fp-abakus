@@ -94,20 +94,21 @@ public class InnhentRegisterdataTjeneste {
             }
         }
 
-        // Oppdater kobling
-        Periode opplysningsperiode = dto.getOpplysningsperiode();
-        if (opplysningsperiode != null) {
-            kobling.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(opplysningsperiode.getFom(), opplysningsperiode.getTom()));
-        }
-        Periode opptjeningsperiode = dto.getOpptjeningsperiode();
-        if (opptjeningsperiode != null) {
-            kobling.setOpptjeningsperiode(IntervallEntitet.fraOgMedTilOgMed(opptjeningsperiode.getFom(), opptjeningsperiode.getTom()));
-        }
+        // Oppdater kobling med perioder
+        mapPeriodeTilIntervall(dto.getOpplysningsperiode()).ifPresent(kobling::setOpplysningsperiode);
+        mapPeriodeTilIntervall(dto.getOpplysningsperiodeSkattegrunnlag()).ifPresent(kobling::setOpplysningsperiodeSkattegrunnlag);
+        mapPeriodeTilIntervall(dto.getOpptjeningsperiode()).ifPresent(kobling::setOpptjeningsperiode);
+
         // Diff & log endringer
         koblingTjeneste.lagre(kobling);
         koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
 
         return kobling;
+    }
+
+    private Optional<IntervallEntitet> mapPeriodeTilIntervall(Periode periode) {
+        return Optional.ofNullable(periode == null ? null :
+            IntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom()));
     }
 
     public String triggAsyncInnhent(InnhentRegisterdataRequest dto) {

@@ -90,7 +90,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
 
     private void innhentNæringsOpplysninger(Kobling kobling, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder) {
         LOGGER.info("Henter lignet inntekt for sak=[{}, {}] med behandling='{}'", kobling.getSaksnummer(), kobling.getYtelseType(), kobling.getKoblingReferanse());
-        var map = sigrunTjeneste.beregnetSkatt(kobling.getAktørId());
+        var map = sigrunTjeneste.beregnetSkatt(kobling.getAktørId(), kobling.getOpplysningsperiodeSkattegrunnlag());
         var aktørInntektBuilder = inntektArbeidYtelseAggregatBuilder.getAktørInntektBuilder(kobling.getAktørId());
 
         var inntektBuilder = aktørInntektBuilder.getInntektBuilder(InntektskildeType.SIGRUN, null);
