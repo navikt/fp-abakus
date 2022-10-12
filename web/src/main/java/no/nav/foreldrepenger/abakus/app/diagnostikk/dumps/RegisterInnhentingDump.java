@@ -33,6 +33,7 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.felles.InfotrygdGrunnlagAggregator;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
 import no.nav.vedtak.felles.integrasjon.spokelse.Spøkelse;
 
 @ApplicationScoped
@@ -125,10 +126,10 @@ public class RegisterInnhentingDump implements DebugDump {
         var dumps = new ArrayList<DumpOutput>();
         dumps.add(dumpJsonOutput(prefiks + "-sp", () -> spokelseKlient.hentGrunnlag(ident.getIdent())));
 
-        infotrygdGrunnlag.hentAggregertGrunnlag(ident.getIdent(), fom, tom)
-            .forEach(g -> {
-                dumps.add(dumpJsonOutput(prefiks + "-infotrygd-" + g.tema() + "-" + g.behandlingstema(), () -> g));
-            });
+        var løpenummer = 1;
+        for (Grunnlag g : infotrygdGrunnlag.hentAggregertGrunnlag(ident.getIdent(), fom, tom)) {
+            dumps.add(dumpJsonOutput(prefiks + "-infotrygd-" + g.tema() + "-" + g.behandlingstema() + "-" + løpenummer++, () -> g));
+        }
         return dumps;
     }
 
