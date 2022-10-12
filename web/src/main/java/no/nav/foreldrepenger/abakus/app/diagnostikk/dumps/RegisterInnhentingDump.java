@@ -72,7 +72,7 @@ public class RegisterInnhentingDump implements DebugDump {
     public List<DumpOutput> dump(DumpKontekst dumpKontekst) {
         try {
             Future<List<DumpOutput>> future = submit(dumpKontekst, k -> dumpRegister(k));
-            return future.get(20, TimeUnit.SECONDS);
+            return future.get(120, TimeUnit.SECONDS);
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
