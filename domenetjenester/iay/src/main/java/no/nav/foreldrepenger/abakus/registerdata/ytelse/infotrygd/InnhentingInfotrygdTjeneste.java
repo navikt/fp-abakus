@@ -221,9 +221,11 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     public List<InfotrygdYtelseGrunnlag> getSPøkelseYtelser(PersonIdent ident) {
-        List<SykepengeVedtak> rest = spøkelse.hentGrunnlag(ident.getIdent());
-
-        return mapSpøkelseTilInfotrygdYtelseGrunnlag(rest);
+        var før = System.nanoTime();
+        List<SykepengeVedtak> vedtak = spøkelse.hentGrunnlag(ident.getIdent());
+        var etter = System.nanoTime();
+        LOG.info("Spøkelse antall {} svartid {}", vedtak.size(), etter-før);
+        return mapSpøkelseTilInfotrygdYtelseGrunnlag(vedtak);
     }
 
     public List<InfotrygdYtelseGrunnlag> getSPøkelseYtelserFailSoft(PersonIdent ident) {
