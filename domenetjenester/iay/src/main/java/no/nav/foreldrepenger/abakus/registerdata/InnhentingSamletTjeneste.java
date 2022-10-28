@@ -129,9 +129,9 @@ public class InnhentingSamletTjeneste {
             return Collections.emptyList();
         }
         if (isDev) {
-            return innhentingInfotrygdTjeneste.getSPøkelseYtelserFailSoft(ident);
+            return innhentingInfotrygdTjeneste.getSPøkelseYtelserFailSoft(ident, periode.getFomDato());
         }
-        return innhentingInfotrygdTjeneste.getSPøkelseYtelser(ident);
+        return innhentingInfotrygdTjeneste.getSPøkelseYtelser(ident, periode.getFomDato());
     }
 
     public List<MeldekortUtbetalingsgrunnlagSak> hentDagpengerAAP(PersonIdent ident, IntervallEntitet opplysningsPeriode) {

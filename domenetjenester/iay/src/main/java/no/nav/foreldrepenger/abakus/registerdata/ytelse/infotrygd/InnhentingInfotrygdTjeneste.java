@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -68,6 +69,9 @@ public class InnhentingInfotrygdTjeneste {
         Map.entry(no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.BehandlingstemaKode.PI, YtelseType.PLEIEPENGER_SYKT_BARN),
         Map.entry(no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.BehandlingstemaKode.PN, YtelseType.PLEIEPENGER_SYKT_BARN)
     );
+
+    private static final List<Duration> SPOKELSE_TIMEOUTS = List.of(Duration.ofMillis(100), Duration.ofMillis(250), Duration.ofMillis(500),
+        Duration.ofMillis(2500), Duration.ofMillis(12), Duration.ofSeconds(60));
 
     private InfotrygdGrunnlagAggregator infotrygdGrunnlag;
     private Spøkelse spøkelse;
@@ -220,17 +224,28 @@ public class InnhentingInfotrygdTjeneste {
         return YtelseType.UDEFINERT;
     }
 
-    public List<InfotrygdYtelseGrunnlag> getSPøkelseYtelser(PersonIdent ident) {
-        var før = System.nanoTime();
-        List<SykepengeVedtak> vedtak = spøkelse.hentGrunnlag(ident.getIdent());
-        var etter = System.nanoTime();
-        LOG.info("Spøkelse antall {} svartid {}", vedtak.size(), etter-før);
-        return mapSpøkelseTilInfotrygdYtelseGrunnlag(vedtak);
+    public List<InfotrygdYtelseGrunnlag> getSPøkelseYtelser(PersonIdent ident, LocalDate fom) {
+        var it = SPOKELSE_TIMEOUTS.iterator();
+        while (it.hasNext()) {
+            try {
+                var timeout = it.next();
+                var før = System.nanoTime();
+                var vedtak = spøkelse.hentGrunnlag(ident.getIdent(), fom, timeout);
+                var etter = System.nanoTime();
+                LOG.info("Spøkelse antall {} timeout {} svartid {}", vedtak.size(), timeout, (etter-før) / 1000000); // Log millis
+                return mapSpøkelseTilInfotrygdYtelseGrunnlag(vedtak);
+            } catch (Exception e) {
+                if (!it.hasNext()) {
+                    throw e;
+                }
+            }
+        }
+        return List.of();
     }
 
-    public List<InfotrygdYtelseGrunnlag> getSPøkelseYtelserFailSoft(PersonIdent ident) {
+    public List<InfotrygdYtelseGrunnlag> getSPøkelseYtelserFailSoft(PersonIdent ident, LocalDate fom) {
         try {
-            List<SykepengeVedtak> rest = spøkelse.hentGrunnlagFailSoft(ident.getIdent());
+            List<SykepengeVedtak> rest = spøkelse.hentGrunnlagFailSoft(ident.getIdent(), fom);
 
             return mapSpøkelseTilInfotrygdYtelseGrunnlag(rest);
         } catch (Exception e) {
