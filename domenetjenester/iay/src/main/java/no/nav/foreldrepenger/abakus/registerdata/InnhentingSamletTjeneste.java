@@ -46,7 +46,6 @@ import no.nav.foreldrepenger.konfig.Environment;
 public class InnhentingSamletTjeneste {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InnhentingSamletTjeneste.class);
-    private static final SecureRandom random = new SecureRandom();
     private static final Set<YtelseType> LØNNSKOMP_FOR_YTELSER = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER);
 
     private ArbeidsforholdTjeneste arbeidsforholdTjeneste;
@@ -139,14 +138,8 @@ public class InnhentingSamletTjeneste {
         var fom = opplysningsPeriode.getFomDato();
         var tom = opplysningsPeriode.getTomDato();
         var saker = meldekortTjeneste.hentMeldekortListe(ident, fom, tom);
-        if (returnerTrueIProsentAvTilfellene(50)) {
-            hentDagpengerAAPFraFpWsProxyFailSafe(ident, fom, tom, saker);
-        }
+        hentDagpengerAAPFraFpWsProxyFailSafe(ident, fom, tom, saker);
         return filtrerYtelserTjenester(saker);
-    }
-
-    private boolean returnerTrueIProsentAvTilfellene(int prosent) {
-        return random.nextInt(100) > prosent;
     }
 
     private void hentDagpengerAAPFraFpWsProxyFailSafe(PersonIdent ident, LocalDate fom, LocalDate tom, List<MeldekortUtbetalingsgrunnlagSak> saker) {
