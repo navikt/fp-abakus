@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
@@ -45,7 +46,6 @@ import no.nav.foreldrepenger.konfig.Environment;
 public class InnhentingSamletTjeneste {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InnhentingSamletTjeneste.class);
-
     private static final Set<YtelseType> LØNNSKOMP_FOR_YTELSER = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER);
 
     private ArbeidsforholdTjeneste arbeidsforholdTjeneste;
@@ -138,9 +138,7 @@ public class InnhentingSamletTjeneste {
         var fom = opplysningsPeriode.getFomDato();
         var tom = opplysningsPeriode.getTomDato();
         var saker = meldekortTjeneste.hentMeldekortListe(ident, fom, tom);
-        if (isDev) {
-            hentDagpengerAAPFraFpWsProxyFailSafe(ident, fom, tom, saker);
-        }
+        hentDagpengerAAPFraFpWsProxyFailSafe(ident, fom, tom, saker);
         return filtrerYtelserTjenester(saker);
     }
 
