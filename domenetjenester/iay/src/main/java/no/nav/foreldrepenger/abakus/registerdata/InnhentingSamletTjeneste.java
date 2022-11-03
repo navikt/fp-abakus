@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
 import java.math.BigDecimal;
-import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
@@ -46,6 +45,7 @@ import no.nav.foreldrepenger.konfig.Environment;
 public class InnhentingSamletTjeneste {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InnhentingSamletTjeneste.class);
+    private static final Logger SECURE_LOG = LoggerFactory.getLogger("SecureLog");
     private static final Set<YtelseType> LØNNSKOMP_FOR_YTELSER = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER);
 
     private ArbeidsforholdTjeneste arbeidsforholdTjeneste;
@@ -146,11 +146,11 @@ public class InnhentingSamletTjeneste {
         try {
             var sakerFpWsProxy = fpwsproxyKlient.hentDagpengerAAP(ident, fom, tom);
             if (!erLikeMeldekortUtbetalingsgrunnlagSak(saker, sakerFpWsProxy)) {
-                LOGGER.info("""
-                AVVIK FUNNET: Direkte integrasjon mot arena samsvarer ikke med respons mottatt fra proxytjenesten fp-ws-proxy.
-                    Arena: {},
+                LOGGER.info("AVVIK FUNNET: Direkte integrasjon mot arena samsvarer ikke med respons mottatt fra proxytjenesten fp-ws-proxy. Sjekk secure logs for mer info");
+                SECURE_LOG.info("""
+                    AVVIK: Arena: {}
                     Fp-ws-proxy: {}
-                """, saker, sakerFpWsProxy);
+                    """, saker, sakerFpWsProxy);
             } else {
                 LOGGER.info("Ingen avvik funnet melllom direkte integrasjon mot Arena og via fp-ws-proxy.");
             }

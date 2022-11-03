@@ -127,6 +127,6 @@ public class PersonIdent implements Comparable<PersonIdent>, IndexKey {
 
     @Override
     public String toString() {
-        return PersonIdent.class.getSimpleName() + "<ident=" + ident + ">";
+        return PersonIdent.class.getSimpleName() + "<ident=***>";
     }
 }

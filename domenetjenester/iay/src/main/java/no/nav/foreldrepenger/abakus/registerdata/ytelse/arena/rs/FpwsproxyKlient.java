@@ -39,9 +39,8 @@ public class FpwsproxyKlient {
             var target = UriBuilder.fromUri(restConfig.endpoint()).build();
             var body = new ArenaRequestDto(ident.getIdent(), fom, tom);
             var request = RestRequest.newPOSTJson(body, target, restConfig);
-            LOG.info("Sender request til fp-ws-proxy arena {}", request);
             var result = restClient.send(request, MeldekortUtbetalingsgrunnlagSakDto[].class);
-            LOG.info("Resultat mottatt er {} ", Arrays.asList(result));
+            LOG.info("Dagpenger hentet OK");
             return Arrays.stream(result)
                 .map(MedlemskortUtbetalingsgrunnlagSakMapper::tilDomeneModell)
                 .toList();
