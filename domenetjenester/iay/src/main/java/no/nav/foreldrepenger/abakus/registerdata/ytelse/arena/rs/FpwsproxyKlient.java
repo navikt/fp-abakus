@@ -35,7 +35,7 @@ public class FpwsproxyKlient {
 
     public List<MeldekortUtbetalingsgrunnlagSak> hentDagpengerAAP(PersonIdent ident, LocalDate fom, LocalDate tom) {
         try {
-            LOG.info("Henter dagpengerAAP for {} i periode fom {} tom {}", ident.getIdent(), fom, tom);
+            LOG.info("Henter dagpengerAAP for {} i periode fom {} tom {}", ident, fom, tom);
             var target = UriBuilder.fromUri(restConfig.endpoint()).build();
             var body = new ArenaRequestDto(ident.getIdent(), fom, tom);
             var request = RestRequest.newPOSTJson(body, target, restConfig);
