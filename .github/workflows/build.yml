@@ -38,11 +38,11 @@ jobs:
       name: Deploy
       if: github.ref_name == 'master'
       needs: [ build-app, create-issue ]
-      uses: navikt/fp-gha-workflows/.github/workflows/promote.yml@main
+      uses: navikt/fp-gha-workflows/.github/workflows/promote-abakus.yml@main
       with:
         issue-number: ${{ needs.create-issue.outputs.issue-number }}
         cluster: 'dev-fss'
-        resource: 'dev-fss-teamforeldrepenger.yaml' # default: naiserator.yaml
+        resource: 'dev-fss-teamforeldrepenger.yaml'
       secrets: inherit
 
     trigger-autotest-fp:
