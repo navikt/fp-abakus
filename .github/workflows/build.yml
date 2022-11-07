@@ -17,8 +17,6 @@ on:
 
 jobs:
     build-app:
-      name: Build
-
       services:
         postgres:
           image: postgres:12
@@ -31,14 +29,16 @@ jobs:
           # needed because the postgres container does not provide a healthcheck
           options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-      uses: navikt/fp-gha-workflows/.github/workflows/build-app.yml@main
-      with:
-        use-oracle: false # default: true
-        db-host: localhost # default: localhost
-        db-port: job.services.postgres.ports[5432]
-        sonar-scan: true # default: false
-        push: ${{ github.ref_name == 'master' }} # default: false
-      secrets: inherit
+      steps:
+      - name: Build
+        uses: navikt/fp-gha-workflows/.github/workflows/build-app.yml@main
+        with:
+          use-oracle: false # default: true
+          db-host: localhost # default: localhost
+          db-port: job.services.postgres.ports[5432]
+          sonar-scan: true # default: false
+          push: ${{ github.ref_name == 'master' }} # default: false
+        secrets: inherit
 
     create-issue:
       name: Issues
