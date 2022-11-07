@@ -48,16 +48,16 @@ jobs:
         build-version: ${{ needs.build-app.outputs.build-version }}
       secrets: inherit
 
-      promote-dev:
-        name: Deploy
-        if: github.ref_name == 'master'
-        needs: [ build-app, create-issue ]
-        uses: navikt/fp-gha-workflows/.github/workflows/promote.yml@main
-        with:
-          issue-number: ${{ needs.create-issue.outputs.issue-number }}
-          cluster: 'dev-fss'
-          namespace: 'teamforeldrepenger' # default: 'teamforeldrepenger'
-        secrets: inherit
+    promote-dev:
+      name: Deploy
+      if: github.ref_name == 'master'
+      needs: [ build-app, create-issue ]
+      uses: navikt/fp-gha-workflows/.github/workflows/promote.yml@main
+      with:
+        issue-number: ${{ needs.create-issue.outputs.issue-number }}
+        cluster: 'dev-fss'
+        namespace: 'teamforeldrepenger' # default: 'teamforeldrepenger'
+      secrets: inherit
 
     trigger-autotest-fp:
       name: Autotest FP
@@ -71,17 +71,17 @@ jobs:
         test-workflow: 'trigger.yml' # default: trigger.yml
       secrets: inherit
 
-      trigger-autotest-k9:
-        name: Autotest K9
-        if: github.ref_name == 'master'
-        needs: [ build-app, create-issue ]
-        uses: navikt/fp-gha-workflows/.github/workflows/autotest.yml@main
-        with:
-          build-version: ${{ needs.build-app.outputs.build-version }}
-          issue-number: ${{ needs.create-issue.outputs.issue-number }}
-          test-repo: 'k9-verdikjede' # default: fpsak-autotest
-          test-workflow: 'build.yml' # default: trigger.yml
-        secrets: inherit
+    trigger-autotest-k9:
+      name: Autotest K9
+      if: github.ref_name == 'master'
+      needs: [ build-app, create-issue ]
+      uses: navikt/fp-gha-workflows/.github/workflows/autotest.yml@main
+      with:
+        build-version: ${{ needs.build-app.outputs.build-version }}
+        issue-number: ${{ needs.create-issue.outputs.issue-number }}
+        test-repo: 'k9-verdikjede' # default: fpsak-autotest
+        test-workflow: 'build.yml' # default: trigger.yml
+      secrets: inherit
 
     snyk:
       name: Snyk
