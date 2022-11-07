@@ -42,7 +42,6 @@ jobs:
       with:
         issue-number: ${{ needs.create-issue.outputs.issue-number }}
         cluster: 'dev-fss'
-        namespace: 'teamforeldrepenger' # default: 'teamforeldrepenger'
       secrets: inherit
 
     trigger-autotest-fp:
@@ -53,8 +52,6 @@ jobs:
       with:
         build-version: ${{ needs.build-app.outputs.build-version }}
         issue-number: ${{ needs.create-issue.outputs.issue-number }}
-        test-repo: 'fpsak-autotest' # default: fpsak-autotest
-        test-workflow: 'trigger.yml' # default: trigger.yml
       secrets: inherit
 
     trigger-autotest-k9:
@@ -75,6 +72,5 @@ jobs:
       uses: navikt/fp-gha-workflows/.github/workflows/snyk.yml@main
       with:
         build-version: ${{ needs.build-app.outputs.build-version }}
-        java-version: '17' # default: 17
       secrets: inherit
 
