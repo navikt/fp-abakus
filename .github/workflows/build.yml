@@ -21,7 +21,7 @@ jobs:
       uses: navikt/fp-gha-workflows/.github/workflows/build-app.yml@main
       with:
         use-oracle: false # default: true
-        sonar-scan: true # default: false
+        sonar-scan: false # default: false
         push: ${{ github.ref_name == 'master' }} # default: false
       secrets: inherit
 
