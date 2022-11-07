@@ -15,168 +15,81 @@ on:
   schedule:
     - cron: '0 4 * * 1'
 
-env:
-  IMAGE_BASE_CR: ghcr.io/${{ github.repository }}
 jobs:
-  build:
+    build-app:
+      name: Build
 
-    runs-on: ubuntu-latest
+      services:
+        postgres:
+          image: postgres:12
+          env:
+            POSTGRES_USER: fpabakus_unit
+            POSTGRES_PASSWORD: fpabakus_unit
+            POSTGRES_DB: fpabakus_unit
+          ports:
+            - 5432:5432
+          # needed because the postgres container does not provide a healthcheck
+          options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-    services:
-      postgres:
-        image: postgres:12
-        env:
-          POSTGRES_USER: fpabakus_unit
-          POSTGRES_PASSWORD: fpabakus_unit
-          POSTGRES_DB: fpabakus_unit
-        ports:
-          - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      uses: navikt/fp-gha-workflows/.github/workflows/build-app.yml@main
+      with:
+        use-oracle: false # default: true
+        db-host: localhost # default: localhost
+        db-port: job.services.postgres.ports[5432]
+        sonar-scan: true # default: false
+        push: ${{ github.ref_name == 'master' }} # default: false
+      secrets: inherit
 
-    steps:
-      - uses: actions/checkout@v3.1.0
+    create-issue:
+      name: Issues
+      if: github.ref_name == 'master'
+      needs: build-app
+      uses: navikt/fp-gha-workflows/.github/workflows/issues.yml@main
+      with:
+        build-version: ${{ needs.build-app.outputs.build-version }}
+      secrets: inherit
 
-      - name: Setup maven
-        uses: whelk-io/maven-settings-xml-action@v21
+      promote-dev:
+        name: Deploy
+        if: github.ref_name == 'master'
+        needs: [ build-app, create-issue ]
+        uses: navikt/fp-gha-workflows/.github/workflows/promote.yml@main
         with:
-          repositories: '[{ "id": "github", "name": "github", "url": "https://maven.pkg.github.com/${{ github.repository }}", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } }]'
-          servers: '[{ "id": "github", "username": "${{ github.actor }}", "password": "${{ secrets.READER_TOKEN }}" }]'
-          output_file: settings.xml
+          issue-number: ${{ needs.create-issue.outputs.issue-number }}
+          cluster: 'dev-fss'
+          namespace: 'teamforeldrepenger' # default: 'teamforeldrepenger'
+        secrets: inherit
 
-      - uses: actions/setup-java@v3
+    trigger-autotest-fp:
+      name: Autotest FP
+      if: github.ref_name == 'master'
+      needs: [ build-app, create-issue ]
+      uses: navikt/fp-gha-workflows/.github/workflows/autotest.yml@main
+      with:
+        build-version: ${{ needs.build-app.outputs.build-version }}
+        issue-number: ${{ needs.create-issue.outputs.issue-number }}
+        test-repo: 'fpsak-autotest' # default: fpsak-autotest
+        test-workflow: 'trigger.yml' # default: trigger.yml
+      secrets: inherit
+
+      trigger-autotest-k9:
+        name: Autotest K9
+        if: github.ref_name == 'master'
+        needs: [ build-app, create-issue ]
+        uses: navikt/fp-gha-workflows/.github/workflows/autotest.yml@main
         with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: 'maven'
+          build-version: ${{ needs.build-app.outputs.build-version }}
+          issue-number: ${{ needs.create-issue.outputs.issue-number }}
+          test-repo: 'k9-verdikjede' # default: fpsak-autotest
+          test-workflow: 'build.yml' # default: trigger.yml
+        secrets: inherit
 
-      - name: Generer tag
-        run: |
-          echo "BUILD_VERSION=1.2-$(expr $(date +%Y%m%d%H%M%S))-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
-
-      - name: Build artifacts & deploy
-        shell: bash
-        run: |
-          echo "Building artifacts $(echo $GITHUB_SHA | cut -c1-7)"
-          mvn jacoco:prepare-agent install -e -q -B -s settings.xml -Drevision=${BUILD_VERSION} -Djacoco.destFile=$(pwd)/target/jacoco.exec
-          echo "Deployed artifacts"
-        env:
-          TZ: "Europe/Oslo"
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          DATASOURCE_HOST: localhost
-          DATASOURCE_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to GitHub Packages Docker Registry
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          platforms: linux/amd64, linux/arm64
-          pull: true
-          push: true
-          tags: ${{env.IMAGE_BASE_CR}}:${{env.BUILD_VERSION}}, ${{env.IMAGE_BASE_CR}}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Lukk gamle issues
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              labels: ['deployment']
-            }).then(response => {
-              response.data.forEach(issue => {
-                github.rest.issues.update({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: issue.number,
-                  state: 'closed'
-                });
-              });
-            });
-
-      -  name: Opprett deployment issue
-         id: createdeployissue
-         if: success()
-         uses: actions/github-script@v6
-         with:
-           github-token: ${{secrets.GITHUB_TOKEN}}
-           script: |
-               github.rest.issues.create( {
-                 owner: context.issue.owner,
-                 repo: context.issue.repo,
-                 labels: ['deployment'],
-                 title: 'Deploy av ${{ env.BUILD_VERSION }}',
-                 body: '${{ github.sha }}'})
-               .then(response => {
-                       core.setOutput('number', response.data.number);
-                });
-
-      - uses: navikt/github-app-token-generator@v1.1
-        id: get-token
-        with:
-          private-key: ${{ secrets.FP_PRIVATE_KEY }}
-          app-id: ${{ secrets.FP_APP_ID }}
-
-      - name: Trigg deploy til dev-fss
-        if: success()
-        run: |
-           curl -XPOST -u "x-access-token:${{ steps.get-token.outputs.token }}" \
-           -H "Accept: application/vnd.github.v3+json" \
-           https://api.github.com/repos/${{ github.repository }}/dispatches \
-           -d '{
-                 "event_type": "promote-command",
-                 "client_payload": {
-                   "github": {
-                       "payload": {
-                           "issue": {
-                               "number": "${{ steps.createdeployissue.outputs.number }}"
-                   }}},
-                   "slash_command": {
-                       "args": {
-                           "unnamed": {
-                               "arg1": "dev-fss"
-                   }}}
-                 }'
-
-      - name: Trigger tester for FP
-        run: |
-          curl -XPOST -u "x-access-token:${{ steps.get-token.outputs.token }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/navikt/fpsak-autotest/actions/workflows/trigger.yml/dispatches \
-          -d '{"ref":"master",
-                  "inputs":{
-                      "trigger": "${{ github.repository }}",
-                      "version": "${{ env.BUILD_VERSION }}",
-                      "issue_number": "${{ steps.createdeployissue.outputs.number }}"
-                  }}'
-      - name: Trigger k9-verdikjede test
-        shell: bash
-        run: |
-          curl -XPOST -u "x-access-token:${{ steps.get-token.outputs.token }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/navikt/k9-verdikjede/actions/workflows/build.yml/dispatches \
-          -d '{"ref":"master",
-                  "inputs":{
-                      "trigger": "${{ github.repository }}",
-                      "version": "${{ env.BUILD_VERSION }}",
-                      "issue_number": "${{ steps.createdeployissue.outputs.number }}"
-                  }}'
+    snyk:
+      name: Snyk
+      needs: build-app
+      uses: navikt/fp-gha-workflows/.github/workflows/snyk.yml@main
+      with:
+        build-version: ${{ needs.build-app.outputs.build-version }}
+        java-version: '17' # default: 17
+      secrets: inherit
 
