@@ -42,7 +42,7 @@ jobs:
       with:
         issue-number: ${{ needs.create-issue.outputs.issue-number }}
         cluster: 'dev-fss'
-        resource: 'dev-fss-teamforeldrepenger.yaml' # default: naiserator.yaml
+        resource: 'dev-fss-teamforeldrepenger.yaml'
       secrets: inherit
 
     trigger-autotest-fp:

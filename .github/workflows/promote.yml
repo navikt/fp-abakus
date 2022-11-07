@@ -10,6 +10,5 @@ jobs:
         with:
             issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
             cluster: ${{ github.event.client_payload.slash_command.args.unnamed.arg1 }}
-            namespace: 'teamforeldrepenger' # default: 'teamforeldrepenger'
             resource: ${{ github.event.client_payload.slash_command.args.unnamed.arg1 }}-teamforeldrepenger.yaml
         secrets: inherit
