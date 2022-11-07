@@ -253,6 +253,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
                             <mainClass>no.nav.foreldrepenger.abakus.jetty.JettyServer</mainClass>
                         </manifest>
                     </archive>
