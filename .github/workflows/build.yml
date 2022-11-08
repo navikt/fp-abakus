@@ -18,11 +18,12 @@ on:
 jobs:
     build-app:
       name: Build
-      uses: navikt/fp-gha-workflows/.github/workflows/build-app.yml@main
+      uses: navikt/fp-gha-workflows/.github/workflows/build-app-postgres.yml@main
       with:
-        use-oracle: false # default: true
+        postgres-user: fpabakus_unit
         sonar-scan: true # default: false
-        push: ${{ github.ref_name == 'master' }} # default: false
+        build-image: ${{ github.ref_name == 'master' }} # default: true
+        push-image: ${{ github.ref_name == 'master' }} # default: false
       secrets: inherit
 
     create-issue:
