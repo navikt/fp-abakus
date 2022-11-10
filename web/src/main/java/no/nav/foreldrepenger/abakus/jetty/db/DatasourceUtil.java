@@ -42,7 +42,7 @@ public class DatasourceUtil {
 
         // optimaliserer inserts for postgres
         var dsProperties = new Properties();
-        dsProperties.setProperty("reWriteBatchedInserts", "true");
+        dsProperties.setProperty("reWriteBatchedInserts", ENV.getRequiredProperty("write.batched.inserts", String.class));
         dsProperties.setProperty("logServerErrorDetail", "false"); // skrur av batch exceptions som lekker statements i åpen logg
         config.setDataSourceProperties(dsProperties);
 
