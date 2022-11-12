@@ -1,0 +1,62 @@
+{
+    "environment": "dev",
+    "serviceuserkv": "serviceuser/data/dev/srvfpabakus",
+    "minReplicas": "1",
+    "maxReplicas": "2",
+    "limits": {
+        "cpu": "2",
+        "mem": "2048Mi"
+    },
+    "requests": {
+        "cpu": "500m",
+        "mem": "1024Mi"
+    },
+    "ingresses": [
+        "https://fpabakus.nais.preprod.local",
+        "https://fpabakus.dev.adeo.no",
+        "https://fpabakus.dev.intern.nav.no",
+        "https://fpabakus.dev-fss-pub.nais.io"
+    ],
+    "env": {
+        "APPD_ENABLED": "false",
+        "SECURITYTOKENSERVICE_URL": "https://sts-q1.preprod.local/SecurityTokenServiceProvider/",
+        "OIDC_OPEN_AM_WELL_KNOWN_URL": "https://isso-q.adeo.no:443/isso/oauth2/.well-known/openid-configuration",
+        "OIDC_STS_WELL_KNOWN_URL": "https://security-token-service.nais.preprod.local/.well-known/openid-configuration",
+        "ABAC_ATTRIBUTT_DRIFT": "no.nav.abac.attributter.resource.duplo.abakus.drift",
+        "KAFKA_BOOTSTRAP_SERVERS": "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443",
+        "KAFKA_SCHEMA_REGISTRY_URL": "https://kafka-test-schema-registry.nais.preprod.local",
+        "KAFKA_FATTEVEDTAK_TOPIC": "privat-familie-vedtakFattet-v1-q1",
+        "HENTINNTEKTLISTEBOLK_URL": "https://app-q1.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk",
+        "AAREG_RS_URL": "http://aareg-services-nais-q1.arbeidsforhold/api/v1/arbeidstaker",
+        "MELDEKORTUTBETALINGSGRUNNLAG_V1_URL": "https://arena-q1.adeo.no/ail_ws/MeldekortUtbetalingsgrunnlag_v1",
+        "SIGRUNRESTBEREGNETSKATT_URL": "https://sigrun-q1.dev.adeo.no",
+        "ORGANISASJON_RS_URL": "https://modapp-q1.adeo.no/ereg/api/v1/organisasjon",
+        "FPABAKUS_IT_FP_GRUNNLAG_URL": "http://infotrygd-foreldrepenger.default/grunnlag",
+        "FPABAKUS_IT_PS_GRUNNLAG_URL": "http://k9-infotrygd-grunnlag-paaroerende-sykdom.k9saksbehandling/paaroerendeSykdom/grunnlag",
+        "FPABAKUS_IT_SP_GRUNNLAG_URL": "http://infotrygd-sykepenger-fp.default/grunnlag",
+        "AZURE_HTTP_PROXY": "http://webproxy.nais:8088",
+        "SPOKELSE_GRUNNLAG_SCOPES": "api://dev-fss.tbd.spokelse/.default",
+        "SPOKELSE_GRUNNLAG_URL": "http://spokelse.tbd/grunnlag",
+        "SKAL_INNENTE_YTELSE_ANVIST_ANDELER": "true"
+    },
+    "AZURE_IAC_RULES": [
+        {
+            "app": "fp-swagger",
+            "namespace": "teamforeldrepenger",
+            "cluster": "dev-gcp",
+            "scopes": [
+                "swagger"
+            ]
+        },
+        {
+            "app": "fpsak",
+            "namespace": "teamforeldrepenger",
+            "cluster": "dev-fss"
+        },
+        {
+            "app": "k9-sak",
+            "namespace": "k9saksbehandling",
+            "cluster": "dev-fss"
+        }
+    ]
+}

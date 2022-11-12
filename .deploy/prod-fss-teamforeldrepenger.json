@@ -1,0 +1,56 @@
+{
+    "environment": "prod",
+    "serviceuserkv": "serviceuser/data/prod/srvfpabakus",
+    "minReplicas": "4",
+    "maxReplicas": "6",
+    "limits": {
+        "cpu": "2",
+        "mem": "2048Mi"
+    },
+    "requests": {
+        "cpu": "500m",
+        "mem": "1024Mi"
+    },
+    "ingresses": [
+        "https://fpabakus.nais.adeo.no",
+        "https://fpabakus.intern.nav.no",
+        "https://fpabakus.prod-fss-pub.nais.io"
+    ],
+    "env": {
+        "APPD_ENABLED": "true",
+        "SECURITYTOKENSERVICE_URL": "https://sts.adeo.no/SecurityTokenServiceProvider/",
+        "OIDC_OPEN_AM_WELL_KNOWN_URL": "https://isso.adeo.no:443/isso/oauth2/.well-known/openid-configuration",
+        "OIDC_STS_WELL_KNOWN_URL": "https://security-token-service.nais.adeo.no/.well-known/openid-configuration",
+        "ABAC_ATTRIBUTT_DRIFT": "no.nav.abac.attributter.resource.duplo.abakus.drift",
+        "KAFKA_BOOTSTRAP_SERVERS": "a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443",
+        "KAFKA_SCHEMA_REGISTRY_URL": "http://kafka-schema-registry.tpa:8081",
+        "KAFKA_FATTEVEDTAK_TOPIC": "privat-familie-vedtakFattet-v1",
+        "HENTINNTEKTLISTEBOLK_URL": "https://app.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk",
+        "AAREG_RS_URL": "http://aareg-services-nais.arbeidsforhold/api/v1/arbeidstaker",
+        "MELDEKORTUTBETALINGSGRUNNLAG_V1_URL": "https://arena.adeo.no/ail_ws/MeldekortUtbetalingsgrunnlag_v1",
+        "SIGRUNRESTBEREGNETSKATT_URL": "https://sigrun.nais.adeo.no",
+        "ORGANISASJON_RS_URL": "https://modapp.adeo.no/ereg/api/v1/organisasjon",
+        "FPABAKUS_IT_FP_GRUNNLAG_URL": "http://infotrygd-foreldrepenger.default/grunnlag",
+        "FPABAKUS_IT_PS_GRUNNLAG_URL": "http://k9-infotrygd-grunnlag-paaroerende-sykdom.k9saksbehandling/paaroerendeSykdom/grunnlag",
+        "FPABAKUS_IT_SP_GRUNNLAG_URL": "http://infotrygd-sykepenger-fp.default/grunnlag",
+        "AZURE_HTTP_PROXY": "http://webproxy.nais:8088",
+        "SPOKELSE_GRUNNLAG_SCOPES": "api://prod-fss.tbd.spokelse/.default",
+        "SPOKELSE_GRUNNLAG_URL": "http://spokelse.tbd/grunnlag",
+        "SKAL_INNENTE_YTELSE_ANVIST_ANDELER": "true"
+    },
+    "AZURE_IAC_RULES": [
+        {
+            "app": "fp-swagger",
+            "namespace": "teamforeldrepenger",
+            "cluster": "prod-gcp",
+            "scopes": [
+                "swagger"
+            ]
+        },
+        {
+            "app": "fpsak",
+            "namespace": "teamforeldrepenger",
+            "cluster": "prod-fss"
+        }
+    ]
+}
