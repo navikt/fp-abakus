@@ -39,11 +39,10 @@ jobs:
       name: Deploy
       if: github.ref_name == 'master'
       needs: [ build-app, create-issue ]
-      uses: navikt/fp-gha-workflows/.github/workflows/promote-abakus.yml@main
+      uses: navikt/fp-gha-workflows/.github/workflows/promote.yml@main
       with:
         issue-number: ${{ needs.create-issue.outputs.issue-number }}
-        cluster: 'dev-fss'
-        resource: 'dev-fss-teamforeldrepenger.yaml'
+        cluster: dev-fss
       secrets: inherit
 
     trigger-autotest-fp:
@@ -66,6 +65,13 @@ jobs:
         issue-number: ${{ needs.create-issue.outputs.issue-number }}
         test-repo: 'k9-verdikjede' # default: fpsak-autotest
         test-workflow: 'build.yml' # default: trigger.yml
+      secrets: inherit
+
+    release-drafter:
+      name: Update
+      if: github.ref_name == 'master'
+      needs: build-app
+      uses: navikt/fp-gha-workflows/.github/workflows/release-drafter.yml@main
       secrets: inherit
 
     snyk:
