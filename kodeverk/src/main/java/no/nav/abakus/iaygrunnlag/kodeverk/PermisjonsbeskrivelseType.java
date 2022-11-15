@@ -18,8 +18,12 @@ public enum PermisjonsbeskrivelseType implements Kodeverdi {
 
     UDEFINERT("-", "Ikke definert", null),
     PERMISJON("PERMISJON", "Permisjon", "permisjon"),
-    UTDANNINGSPERMISJON("UTDANNINGSPERMISJON", "Utdanningspermisjon", "utdanningspermisjon"),
-    VELFERDSPERMISJON("VELFERDSPERMISJON", "Velferdspermisjon", "velferdspermisjon"),
+    UTDANNINGSPERMISJON("UTDANNINGSPERMISJON", "Utdanningspermisjon", "utdanningspermisjon"), // Utgår 31/12-2022
+    UTDANNINGSPERMISJON_IKKE_LOVFESTET("UTDANNINGSPERMISJON_IKKE_LOVFESTET", "Utdanningspermisjon (Ikke lovfestet)", "utdanningspermisjonIkkeLovfestet"),
+    UTDANNINGSPERMISJON_LOVFESTET("UTDANNINGSPERMISJON_LOVFESTET", "Utdanningspermisjon (Lovfestet)", "utdanningspermisjonLovfestet"),
+    VELFERDSPERMISJON("VELFERDSPERMISJON", "Velferdspermisjon", "velferdspermisjon"), // Utgår 31/12-2022
+    ANNEN_PERMISJON_IKKE_LOVFESTET("ANNEN_PERMISJON_IKKE_LOVFESTET", "Andre ikke-lovfestede permisjoner", "andreIkkeLovfestedePermisjoner"),
+    ANNEN_PERMISJON_LOVFESTET("ANNEN_PERMISJON_LOVFESTET", "Andre lovfestede permisjoner", "andreLovfestedePermisjoner"),
     PERMISJON_MED_FORELDREPENGER("PERMISJON_MED_FORELDREPENGER", "Permisjon med foreldrepenger", "permisjonMedForeldrepenger"),
     PERMITTERING("PERMITTERING", "Permittering", "permittering"),
     PERMISJON_VED_MILITÆRTJENESTE("PERMISJON_VED_MILITÆRTJENESTE", "Permisjon ved militærtjeneste", "permisjonVedMilitaertjeneste"),
@@ -27,6 +31,8 @@ public enum PermisjonsbeskrivelseType implements Kodeverdi {
 
     private static final Set<PermisjonsbeskrivelseType> PERMISJON_IKKE_RELEVANT_FOR_AVKLAR_ARBEIDSFORHOLD = Set.of(
         PermisjonsbeskrivelseType.UTDANNINGSPERMISJON,
+        PermisjonsbeskrivelseType.UTDANNINGSPERMISJON_IKKE_LOVFESTET,
+        PermisjonsbeskrivelseType.UTDANNINGSPERMISJON_LOVFESTET,
         PermisjonsbeskrivelseType.PERMISJON_MED_FORELDREPENGER
     );
 
