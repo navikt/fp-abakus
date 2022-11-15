@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -28,13 +27,6 @@ public enum PermisjonsbeskrivelseType implements Kodeverdi {
     PERMITTERING("PERMITTERING", "Permittering", "permittering"),
     PERMISJON_VED_MILITÆRTJENESTE("PERMISJON_VED_MILITÆRTJENESTE", "Permisjon ved militærtjeneste", "permisjonVedMilitaertjeneste"),
     ;
-
-    private static final Set<PermisjonsbeskrivelseType> PERMISJON_IKKE_RELEVANT_FOR_AVKLAR_ARBEIDSFORHOLD = Set.of(
-        PermisjonsbeskrivelseType.UTDANNINGSPERMISJON,
-        PermisjonsbeskrivelseType.UTDANNINGSPERMISJON_IKKE_LOVFESTET,
-        PermisjonsbeskrivelseType.UTDANNINGSPERMISJON_LOVFESTET,
-        PermisjonsbeskrivelseType.PERMISJON_MED_FORELDREPENGER
-    );
 
     private static final Map<String, PermisjonsbeskrivelseType> KODER = new LinkedHashMap<>();
 
@@ -95,10 +87,6 @@ public enum PermisjonsbeskrivelseType implements Kodeverdi {
     @Override
     public String getOffisiellKode() {
         return offisiellKode;
-    }
-
-    public boolean erRelevantForAvklarArbeidsforhold() {
-        return !PERMISJON_IKKE_RELEVANT_FOR_AVKLAR_ARBEIDSFORHOLD.contains(this);
     }
 
     public static PermisjonsbeskrivelseType finnForKodeverkEiersKode(String offisiellDokumentType) {
