@@ -181,20 +181,6 @@
 				<artifactId>aordningen-inntektsinformasjon-v1</artifactId>
 				<version>1.7</version>
 			</dependency>
-
-
-			<!-- Følgende kan fjernes når fpfelles får jaxws-rt istd håndkodede versjoner
-				av disse bibliotekene. Men må overstyres nå pga kompatibilitet. -->
-			<dependency>
-				<groupId>org.glassfish.jaxb</groupId>
-				<artifactId>txw2</artifactId>
-				<version>3.0.2</version>
-			</dependency>
-			<dependency>
-				<groupId>org.codehaus.woodstox</groupId>
-				<artifactId>stax2-api</artifactId>
-				<version>4.2.1</version>
-			</dependency>
         </dependencies>
 	</dependencyManagement>
 
