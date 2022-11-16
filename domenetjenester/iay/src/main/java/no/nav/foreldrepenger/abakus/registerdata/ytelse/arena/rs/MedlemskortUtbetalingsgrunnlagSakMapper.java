@@ -38,6 +38,7 @@ public class MedlemskortUtbetalingsgrunnlagSakMapper {
     }
 
     static Fagsystem tilKilde(FagsystemDto kilde) {
+        if (kilde == null) return null;
         return switch (kilde) {
             case BISYS -> Fagsystem.BISYS;
             case BIDRAGINNKREVING -> Fagsystem.BIDRAGINNKREVING;
@@ -67,6 +68,7 @@ public class MedlemskortUtbetalingsgrunnlagSakMapper {
     }
 
     static YtelseStatus tilTilstand(YtelseStatusDto tilstand) {
+        if (tilstand == null) return null;
         return switch (tilstand) {
             case OPPR -> YtelseStatus.OPPRETTET;
             case UBEH -> YtelseStatus.UNDER_BEHANDLING;
@@ -76,6 +78,7 @@ public class MedlemskortUtbetalingsgrunnlagSakMapper {
     }
 
     static YtelseType tilType(YtelseTypeDto type) {
+        if (type == null) return null;
         return switch (type) {
             case DAG -> YtelseType.DAGPENGER;
             case AAP -> YtelseType.ARBEIDSAVKLARINGSPENGER;
