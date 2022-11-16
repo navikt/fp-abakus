@@ -50,6 +50,10 @@
             <groupId>no.nav.foreldrepenger.felles</groupId>
             <artifactId>felles-xmlutils</artifactId>
         </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.kontrakter</groupId>
+            <artifactId>fp-ws-proxy-v1</artifactId>
+        </dependency>
 
 		<!-- integrasjoner -->
 		<dependency>
