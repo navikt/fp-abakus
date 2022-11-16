@@ -8,9 +8,12 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.foreldrepenger.kontrakter.arena.respons.BeløpDto;
+import no.nav.foreldrepenger.kontrakter.arena.respons.FagsystemDto;
+import no.nav.foreldrepenger.kontrakter.arena.respons.MeldekortUtbetalingsgrunnlagMeldekortDto;
+import no.nav.foreldrepenger.kontrakter.arena.respons.MeldekortUtbetalingsgrunnlagSakDto;
+import no.nav.foreldrepenger.kontrakter.arena.respons.YtelseStatusDto;
+import no.nav.foreldrepenger.kontrakter.arena.respons.YtelseTypeDto;
 import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 /**
@@ -43,7 +46,7 @@ class MeldekortUtbetalingsgrunnlagSakDtoSeraliseringOgDeseraliseringTest {
                         "dagsats": 1,
                         "meldekortFom": "2022-08-24",
                         "meldekortTom": "2022-08-29",
-                        "utbetalingsgrad": 10
+                        "utbetalingsgrad": 100
                     }
                 ],
                 "sakStatus": "AKTIV",
@@ -61,26 +64,29 @@ class MeldekortUtbetalingsgrunnlagSakDtoSeraliseringOgDeseraliseringTest {
 
 
     static MeldekortUtbetalingsgrunnlagSakDto getMeldekortUtbetalingsgrunnlagSakDto() {
-        return new MeldekortUtbetalingsgrunnlagSakDto(
-            Fagsystem.ARENA,
-            LocalDate.of(2022, 8, 24),
-            List.of(getMeldekortUtbetalingsgrunnlagMeldekortDto()),
-            "AKTIV",
-            "1234567890",
-            YtelseStatus.LØPENDE,
-            YtelseType.DAGPENGER,
-            "IVERK",
-            new BeløpDto(BigDecimal.valueOf(809.0)),
-            LocalDate.of(2022, 12, 27),
-            LocalDate.of(2023, 01, 6),
-            LocalDate.of(2022, 8, 24));
+        return new MeldekortUtbetalingsgrunnlagSakDto.Builder()
+            .kilde(FagsystemDto.ARENA)
+            .kravMottattDato(LocalDate.of(2022, 8, 24))
+            .meldekortene(List.of(getMeldekortUtbetalingsgrunnlagMeldekortDto()))
+            .sakStatus("AKTIV")
+            .saksnummer("1234567890")
+            .tilstand(YtelseStatusDto.LOP)
+            .type(YtelseTypeDto.DAG)
+            .vedtakStatus("IVERK")
+            .vedtaksDagsats(new BeløpDto(BigDecimal.valueOf(809.0)))
+            .vedtaksPeriodeFom(LocalDate.of(2022, 12, 27))
+            .vedtaksPeriodeTom(LocalDate.of(2023, 1, 6))
+            .vedtattDato(LocalDate.of(2022, 8, 24))
+            .build();
     }
 
     private static MeldekortUtbetalingsgrunnlagMeldekortDto getMeldekortUtbetalingsgrunnlagMeldekortDto() {
-        return new MeldekortUtbetalingsgrunnlagMeldekortDto(
-            BigDecimal.TEN, BigDecimal.ONE,
-            LocalDate.of(2022, 8, 24),
-            LocalDate.of(2022, 8, 29),
-            BigDecimal.TEN);
+        return new MeldekortUtbetalingsgrunnlagMeldekortDto.Builder()
+            .beløp(BigDecimal.TEN)
+            .dagsats(BigDecimal.ONE)
+            .meldekortFom(LocalDate.of(2022, 8, 24))
+            .meldekortTom(LocalDate.of(2022, 8, 29))
+            .utbetalingsgrad(BigDecimal.valueOf(100))
+            .build();
     }
 }
