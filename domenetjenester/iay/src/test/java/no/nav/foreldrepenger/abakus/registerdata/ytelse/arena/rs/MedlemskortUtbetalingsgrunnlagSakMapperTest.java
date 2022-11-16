@@ -1,5 +1,8 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs;
 
+import static no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs.MedlemskortUtbetalingsgrunnlagSakMapper.tilKilde;
+import static no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs.MedlemskortUtbetalingsgrunnlagSakMapper.tilTilstand;
+import static no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs.MedlemskortUtbetalingsgrunnlagSakMapper.tilType;
 import static no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs.MeldekortUtbetalingsgrunnlagSakDtoSeraliseringOgDeseraliseringTest.getMeldekortUtbetalingsgrunnlagSakDto;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,9 +26,9 @@ class MedlemskortUtbetalingsgrunnlagSakMapperTest {
         assertThat(meldekortUtbetalingsgrunnlagMeldekortDto.beløp()).isEqualTo(meldekortDomene.getBeløp());
         assertThat(meldekortUtbetalingsgrunnlagMeldekortDto.utbetalingsgrad()).isEqualTo(meldekortDomene.getUtbetalingsgrad());
 
-        assertThat(meldekortUtbetalingsgrunnlagSakDto.type()).isEqualTo(domeneobjekt.getYtelseType());
-        assertThat(meldekortUtbetalingsgrunnlagSakDto.tilstand()).isEqualTo(domeneobjekt.getYtelseTilstand());
-        assertThat(meldekortUtbetalingsgrunnlagSakDto.kilde()).isEqualTo(domeneobjekt.getKilde());
+        assertThat(tilType(meldekortUtbetalingsgrunnlagSakDto.type())).isEqualTo(domeneobjekt.getYtelseType());
+        assertThat(tilTilstand(meldekortUtbetalingsgrunnlagSakDto.tilstand())).isEqualTo(domeneobjekt.getYtelseTilstand());
+        assertThat(tilKilde(meldekortUtbetalingsgrunnlagSakDto.kilde())).isEqualTo(domeneobjekt.getKilde());
         assertThat(meldekortUtbetalingsgrunnlagSakDto.saksnummer()).isEqualTo(domeneobjekt.getSaksnummer().getVerdi());
         assertThat(meldekortUtbetalingsgrunnlagSakDto.sakStatus()).isEqualTo(domeneobjekt.getSakStatus());
         assertThat(meldekortUtbetalingsgrunnlagSakDto.vedtakStatus()).isEqualTo(domeneobjekt.getVedtakStatus());
