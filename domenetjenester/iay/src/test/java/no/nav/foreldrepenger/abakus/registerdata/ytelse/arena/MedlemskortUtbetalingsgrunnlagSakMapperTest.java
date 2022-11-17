@@ -1,14 +1,12 @@
-package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs;
+package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena;
 
-import static no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs.MedlemskortUtbetalingsgrunnlagSakMapper.tilKilde;
-import static no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs.MedlemskortUtbetalingsgrunnlagSakMapper.tilTilstand;
-import static no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs.MedlemskortUtbetalingsgrunnlagSakMapper.tilType;
-import static no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs.MeldekortUtbetalingsgrunnlagSakDtoSeraliseringOgDeseraliseringTest.getMeldekortUtbetalingsgrunnlagSakDto;
+import static no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MedlemskortUtbetalingsgrunnlagSakMapper.tilKilde;
+import static no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MedlemskortUtbetalingsgrunnlagSakMapper.tilTilstand;
+import static no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MedlemskortUtbetalingsgrunnlagSakMapper.tilType;
+import static no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSakDtoSeraliseringOgDeseraliseringTest.getMeldekortUtbetalingsgrunnlagSakDto;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
-
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagMeldekort;
 
 class MedlemskortUtbetalingsgrunnlagSakMapperTest {
 
