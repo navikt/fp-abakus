@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -21,27 +22,28 @@ import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 
 @Dependent
-@RestClientConfig(tokenConfig = TokenFlow.STS_CC, endpointProperty = "fpwsproxy.rs.url", endpointDefault = "http://fp-ws-proxy/api/arena")
+@RestClientConfig(tokenConfig = TokenFlow.STS_CC, endpointProperty = "fpwsproxy.rs.url", endpointDefault = "http://fp-ws-proxy/api") // TODO: legg inn fpwsproxy i FPApps
 public class FpwsproxyKlient {
 
     private static final Logger LOG = LoggerFactory.getLogger(FpwsproxyKlient.class);
 
     private final RestClient restClient;
     private final RestConfig restConfig;
+    private final URI endpointHentDagpengerAAP;
 
     public FpwsproxyKlient() {
         this.restClient = RestClient.client();
         this.restConfig = RestConfig.forClient(this.getClass());
+        this.endpointHentDagpengerAAP = UriBuilder.fromUri(restConfig.endpoint()).path("/arena").build();
     }
 
     public List<MeldekortUtbetalingsgrunnlagSak> hentDagpengerAAP(PersonIdent ident, LocalDate fom, LocalDate tom) {
         try {
-            LOG.info("Henter dagpengerAAP for {} i periode fom {} tom {}", ident, fom, tom);
-            var target = UriBuilder.fromUri(restConfig.endpoint()).build();
+            LOG.info("Henter dagpenger/AAP for {} i periode fom {} tom {}", ident, fom, tom);
             var body = new ArenaRequestDto(ident.getIdent(), fom, tom);
-            var request = RestRequest.newPOSTJson(body, target, restConfig);
+            var request = RestRequest.newPOSTJson(body, endpointHentDagpengerAAP, restConfig);
             var result = restClient.send(request, MeldekortUtbetalingsgrunnlagSakDto[].class);
-            LOG.info("Dagpenger hentet OK");
+            LOG.info("Dagpenger/AAP hentet OK");
             return Arrays.stream(result)
                 .map(MedlemskortUtbetalingsgrunnlagSakMapper::tilDomeneModell)
                 .toList();
