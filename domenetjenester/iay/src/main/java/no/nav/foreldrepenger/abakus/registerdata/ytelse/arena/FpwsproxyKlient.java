@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs;
+package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -11,7 +11,6 @@ import javax.ws.rs.core.UriBuilderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.foreldrepenger.kontrakter.arena.request.ArenaRequestDto;
 import no.nav.foreldrepenger.kontrakter.arena.respons.MeldekortUtbetalingsgrunnlagSakDto;
