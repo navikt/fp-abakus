@@ -29,6 +29,7 @@ import no.nav.foreldrepenger.abakus.registerdata.IAYRegisterInnhentingFellesTjen
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AaregRestKlient;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FinnInntektRequest;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjeneste;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.felles.InfotrygdGrunnlagAggregator;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
@@ -42,6 +43,8 @@ public class RegisterInnhentingDump implements DebugDump {
     private static final Collection<InntektskildeType> INNTEKTSKILDER = IAYRegisterInnhentingFellesTjenesteImpl.ELEMENT_TIL_INNTEKTS_KILDE_MAP.values();
 
     private InntektTjeneste inntektTjeneste;
+    private MeldekortTjeneste meldekortTjeneste; // TODO
+
     private AaregRestKlient aaregKlient;
     private InfotrygdGrunnlagAggregator infotrygdGrunnlag;
     private Spøkelse spokelseKlient;
@@ -55,10 +58,12 @@ public class RegisterInnhentingDump implements DebugDump {
     @Inject
     public RegisterInnhentingDump(AaregRestKlient aaregKlient,
                                   InntektTjeneste inntektTjeneste,
+                                  MeldekortTjeneste meldekortTjeneste,
                                   InfotrygdGrunnlagAggregator infotrygdGrunnlag,
                                   Spøkelse spokelseKlient) {
         this.aaregKlient = aaregKlient;
         this.inntektTjeneste = inntektTjeneste;
+        this.meldekortTjeneste = meldekortTjeneste;
         this.infotrygdGrunnlag = infotrygdGrunnlag;
         this.spokelseKlient = spokelseKlient;
         this.writer = new JacksonJsonConfig().getObjectMapper().writerWithDefaultPrettyPrinter();

@@ -47,6 +47,10 @@
             <artifactId>felles-abac-legacy</artifactId>
         </dependency>
         <dependency>
+            <groupId>no.nav.foreldrepenger.felles</groupId>
+            <artifactId>felles-xmlutils</artifactId>
+        </dependency>
+        <dependency>
             <groupId>no.nav.foreldrepenger.kontrakter</groupId>
             <artifactId>fp-ws-proxy-v1</artifactId>
         </dependency>
@@ -81,6 +85,14 @@
 		<dependency>
 			<groupId>no.nav.tjenester</groupId>
 			<artifactId>aordningen-inntektsinformasjon-v1</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.tjenestespesifikasjoner</groupId>
+			<artifactId>nav-meldekortUtbetalingsgrunnlag-v1-tjenestespesifikasjon</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+			<artifactId>felles-integrasjon-webservice</artifactId>
 		</dependency>
 
 		<dependency>

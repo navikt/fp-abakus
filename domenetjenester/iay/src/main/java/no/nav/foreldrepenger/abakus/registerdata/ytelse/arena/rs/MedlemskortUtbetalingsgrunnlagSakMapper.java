@@ -1,10 +1,12 @@
-package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena;
+package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs;
 
 import java.util.List;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagMeldekort;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.kontrakter.arena.respons.FagsystemDto;
 import no.nav.foreldrepenger.kontrakter.arena.respons.MeldekortUtbetalingsgrunnlagMeldekortDto;

@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena;
+package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

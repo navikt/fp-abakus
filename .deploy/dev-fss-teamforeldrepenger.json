@@ -28,6 +28,7 @@
         "KAFKA_FATTEVEDTAK_TOPIC": "privat-familie-vedtakFattet-v1-q1",
         "HENTINNTEKTLISTEBOLK_URL": "https://app-q1.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk",
         "AAREG_RS_URL": "http://aareg-services-nais-q1.arbeidsforhold/api/v1/arbeidstaker",
+        "MELDEKORTUTBETALINGSGRUNNLAG_V1_URL": "https://arena-q1.adeo.no/ail_ws/MeldekortUtbetalingsgrunnlag_v1",
         "SIGRUNRESTBEREGNETSKATT_URL": "https://sigrun-q1.dev.adeo.no",
         "ORGANISASJON_RS_URL": "https://modapp-q1.adeo.no/ereg/api/v1/organisasjon",
         "FPABAKUS_IT_FP_GRUNNLAG_URL": "http://infotrygd-foreldrepenger.default/grunnlag",

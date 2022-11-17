@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,8 +30,9 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FinnInntekt
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.FpwsproxyKlient;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.rs.FpwsproxyKlient;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.InnhentingInfotrygdTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -43,15 +45,17 @@ import no.nav.foreldrepenger.konfig.Environment;
 public class InnhentingSamletTjeneste {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InnhentingSamletTjeneste.class);
+    private static final Logger SECURE_LOG = LoggerFactory.getLogger("SecureLog");
     private static final Set<YtelseType> LØNNSKOMP_FOR_YTELSER = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER);
-    private final boolean isDev = Environment.current().isDev();
-    private final boolean isLocal = Environment.current().isLocal();
 
     private ArbeidsforholdTjeneste arbeidsforholdTjeneste;
     private InntektTjeneste inntektTjeneste;
+    private MeldekortTjeneste meldekortTjeneste;
     private FpwsproxyKlient fpwsproxyKlient;
     private InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste;
     private LønnskompensasjonRepository lønnskompensasjonRepository;
+    private boolean isDev = Environment.current().isDev();
+    private boolean isLocal = Environment.current().isLocal();
 
     InnhentingSamletTjeneste() {
         //CDI
@@ -62,9 +66,11 @@ public class InnhentingSamletTjeneste {
                                     InntektTjeneste inntektTjeneste,
                                     InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste,
                                     LønnskompensasjonRepository lønnskompensasjonRepository,
+                                    MeldekortTjeneste meldekortTjeneste,
                                     FpwsproxyKlient fpwsproxyKlient) {
         this.arbeidsforholdTjeneste = arbeidsforholdTjeneste;
         this.inntektTjeneste = inntektTjeneste;
+        this.meldekortTjeneste = meldekortTjeneste;
         this.fpwsproxyKlient = fpwsproxyKlient;
         this.innhentingInfotrygdTjeneste = innhentingInfotrygdTjeneste;
         this.lønnskompensasjonRepository = lønnskompensasjonRepository;
@@ -131,8 +137,34 @@ public class InnhentingSamletTjeneste {
     public List<MeldekortUtbetalingsgrunnlagSak> hentDagpengerAAP(PersonIdent ident, IntervallEntitet opplysningsPeriode) {
         var fom = opplysningsPeriode.getFomDato();
         var tom = opplysningsPeriode.getTomDato();
-        var saker = fpwsproxyKlient.hentDagpengerAAP(ident, fom, tom);
+        var saker = meldekortTjeneste.hentMeldekortListe(ident, fom, tom);
+        hentDagpengerAAPFraFpWsProxyFailSafe(ident, fom, tom, saker);
         return filtrerYtelserTjenester(saker);
+    }
+
+    private void hentDagpengerAAPFraFpWsProxyFailSafe(PersonIdent ident, LocalDate fom, LocalDate tom, List<MeldekortUtbetalingsgrunnlagSak> saker) {
+        try {
+            var sakerFpWsProxy = fpwsproxyKlient.hentDagpengerAAP(ident, fom, tom);
+            if (!erLikeMeldekortUtbetalingsgrunnlagSak(saker, sakerFpWsProxy)) {
+                LOGGER.info("AVVIK FUNNET: Direkte integrasjon mot arena samsvarer ikke med respons mottatt fra proxytjenesten fp-ws-proxy. Sjekk secure logs for mer info");
+                SECURE_LOG.info("""
+                    AVVIK: Arena: {}
+                    Fp-ws-proxy: {}
+                    """, saker, sakerFpWsProxy);
+            } else {
+                LOGGER.info("Ingen avvik funnet melllom direkte integrasjon mot Arena og via fp-ws-proxy.");
+            }
+        } catch (Exception e) {
+            LOGGER.info("Kall mot fp-ws-proxy api for arena feilet!", e);
+        }
+    }
+
+    private boolean erLikeMeldekortUtbetalingsgrunnlagSak(List<MeldekortUtbetalingsgrunnlagSak> l1, List<MeldekortUtbetalingsgrunnlagSak> l2) {
+        if (l1 == null && l2 == null)
+            return true;
+        if (l1 == null || l2 == null)
+            return false;
+        return l1.size() == l2.size() && l2.containsAll(l1);
     }
 
     private List<MeldekortUtbetalingsgrunnlagSak> filtrerYtelserTjenester(List<MeldekortUtbetalingsgrunnlagSak> saker) {

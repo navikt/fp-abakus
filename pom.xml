@@ -38,6 +38,8 @@
 		<prosesstask.version>3.1.13</prosesstask.version>
         <maven.deploy.skip>true</maven.deploy.skip>
 		<kontrakter.version>6.1.30</kontrakter.version>
+
+		<tjenestespesifikasjoner.version>1.2021.02.22-10.45-4201aaea72fb</tjenestespesifikasjoner.version>
 	</properties>
 
 	<!-- NB: Unngå å put scope (test, provided) i dependency management. Det
@@ -180,6 +182,31 @@
 				<groupId>no.nav.tjenester</groupId>
 				<artifactId>aordningen-inntektsinformasjon-v1</artifactId>
 				<version>1.7</version>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.tjenestespesifikasjoner</groupId>
+				<artifactId>nav-meldekortUtbetalingsgrunnlag-v1-tjenestespesifikasjon</artifactId>
+				<version>${tjenestespesifikasjoner.version}</version>
+			</dependency>
+
+			<!-- Java11 -->
+			<dependency>
+				<groupId>com.sun.xml.ws</groupId>
+				<artifactId>jaxws-rt</artifactId>
+				<version>2.3.5</version>
+			</dependency>
+
+			<!-- Følgende kan fjernes når fpfelles får jaxws-rt istd håndkodede versjoner
+				av disse bibliotekene. Men må overstyres nå pga kompatibilitet. -->
+			<dependency>
+				<groupId>org.glassfish.jaxb</groupId>
+				<artifactId>txw2</artifactId>
+				<version>3.0.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.woodstox</groupId>
+				<artifactId>stax2-api</artifactId>
+				<version>4.2.1</version>
 			</dependency>
         </dependencies>
 	</dependencyManagement>
