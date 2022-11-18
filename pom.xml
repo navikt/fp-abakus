@@ -34,7 +34,7 @@
 
         <kontrakt.java.version>17</kontrakt.java.version>
 
-		<felles.version>4.2.8</felles.version>
+		<felles.version>4.2.9</felles.version>
 		<prosesstask.version>3.1.13</prosesstask.version>
         <maven.deploy.skip>true</maven.deploy.skip>
 		<kontrakter.version>6.1.30</kontrakter.version>
