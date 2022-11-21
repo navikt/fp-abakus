@@ -21,6 +21,7 @@ import org.hibernate.annotations.NaturalId;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -63,6 +64,7 @@ public class Kobling extends BaseEntitet implements IndexKey {
     private AktørId aktørId;
 
     @Embedded
+    @ChangeTracked
     @AttributeOverrides({
             @AttributeOverride(name = "fomDato", column = @Column(name = "opplysning_periode_fom")),
             @AttributeOverride(name = "tomDato", column = @Column(name = "opplysning_periode_tom"))
@@ -70,6 +72,7 @@ public class Kobling extends BaseEntitet implements IndexKey {
     private IntervallEntitet opplysningsperiode;
 
     @Embedded
+    @ChangeTracked
     @AttributeOverrides({
         @AttributeOverride(name = "fomDato", column = @Column(name = "opplysning_periode_skattegrunnlag_fom")),
         @AttributeOverride(name = "tomDato", column = @Column(name = "opplysning_periode_skattegrunnlag_tom"))
