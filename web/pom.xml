@@ -216,12 +216,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Java11 -->
-        <dependency>
-            <groupId>com.sun.xml.ws</groupId>
-            <artifactId>jaxws-rt</artifactId>
-        </dependency>
-
         <!-- Annet -->
         <dependency>
             <groupId>org.glassfish</groupId>
