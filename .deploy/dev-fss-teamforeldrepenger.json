@@ -57,6 +57,11 @@
             "app": "k9-sak",
             "namespace": "k9saksbehandling",
             "cluster": "dev-fss"
+        },
+        {
+            "app": "k9-formidling",
+            "namespace": "k9saksbehandling",
+            "cluster": "dev-fss"
         }
     ]
 }
