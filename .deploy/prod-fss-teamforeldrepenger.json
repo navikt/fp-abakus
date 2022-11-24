@@ -1,5 +1,6 @@
 {
     "environment": "prod",
+    "kafkaPool": "nav-prod",
     "serviceuserkv": "serviceuser/data/prod/srvfpabakus",
     "minReplicas": "4",
     "maxReplicas": "6",

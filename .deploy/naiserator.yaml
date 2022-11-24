@@ -39,6 +39,8 @@ spec:
     requests:
       cpu: "{{requests.cpu}}"
       memory: "{{requests.mem}}"
+  kafka:
+    pool: {{kafkaPool}}
   secureLogs:
     enabled: true
   vault:

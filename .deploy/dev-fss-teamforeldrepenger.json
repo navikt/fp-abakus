@@ -1,5 +1,6 @@
 {
     "environment": "dev",
+    "kafkaPool": "nav-dev",
     "serviceuserkv": "serviceuser/data/dev/srvfpabakus",
     "minReplicas": "1",
     "maxReplicas": "2",
