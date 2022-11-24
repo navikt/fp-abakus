@@ -25,6 +25,7 @@
         "KAFKA_BOOTSTRAP_SERVERS": "a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443",
         "KAFKA_SCHEMA_REGISTRY_URL": "http://kafka-schema-registry.tpa:8081",
         "KAFKA_FATTEVEDTAK_TOPIC": "privat-familie-vedtakFattet-v1",
+        "KAFKA_FATTEVEDTAK_AIVEN_TOPIC": "teamforeldrepenger.familie-vedtakfattet-v1",
         "HENTINNTEKTLISTEBOLK_URL": "https://app.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk",
         "AAREG_RS_URL": "http://aareg-services-nais.arbeidsforhold/api/v1/arbeidstaker",
         "SIGRUNRESTBEREGNETSKATT_URL": "https://sigrun.nais.adeo.no",
