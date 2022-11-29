@@ -16,7 +16,7 @@ import no.nav.foreldrepenger.abakus.app.selftest.checks.DatabaseHealthCheck;
 @Path("/")
 @Produces(TEXT_PLAIN)
 @RequestScoped
-public class NaisRestTjeneste {
+public class HealthCheckRestService {
 
     private static final String RESPONSE_CACHE_KEY = "Cache-Control";
     private static final String RESPONSE_CACHE_VAL = "must-revalidate,no-cache,no-store";
@@ -25,13 +25,13 @@ public class NaisRestTjeneste {
     private ApplicationServiceStarter starterService;
     private DatabaseHealthCheck databaseHealthCheck;
 
-    public NaisRestTjeneste() {
+    public HealthCheckRestService() {
         // CDI
     }
 
     @Inject
-    public NaisRestTjeneste(ApplicationServiceStarter starterService,
-                            DatabaseHealthCheck databaseHealthCheck) {
+    public HealthCheckRestService(ApplicationServiceStarter starterService,
+                                  DatabaseHealthCheck databaseHealthCheck) {
         this.starterService = starterService;
         this.databaseHealthCheck = databaseHealthCheck;
     }

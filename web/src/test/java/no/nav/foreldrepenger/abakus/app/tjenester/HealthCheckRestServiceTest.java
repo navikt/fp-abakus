@@ -11,20 +11,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import no.nav.foreldrepenger.abakus.app.konfig.ApplicationServiceStarter;
-import no.nav.foreldrepenger.abakus.app.selftest.NaisRestTjeneste;
+import no.nav.foreldrepenger.abakus.app.selftest.HealthCheckRestService;
 import no.nav.foreldrepenger.abakus.app.selftest.checks.DatabaseHealthCheck;
 
 @SuppressWarnings("resource")
-public class NaisRestTjenesteTest {
+public class HealthCheckRestServiceTest {
 
-    private NaisRestTjeneste restTjeneste;
+    private HealthCheckRestService restTjeneste;
 
     private ApplicationServiceStarter serviceStarterMock = mock(ApplicationServiceStarter.class);
     private DatabaseHealthCheck databaseHealthCheck = mock(DatabaseHealthCheck.class);
 
     @BeforeEach
     public void setup() {
-        restTjeneste = new NaisRestTjeneste(serviceStarterMock, databaseHealthCheck);
+        restTjeneste = new HealthCheckRestService(serviceStarterMock, databaseHealthCheck);
     }
 
     @Test

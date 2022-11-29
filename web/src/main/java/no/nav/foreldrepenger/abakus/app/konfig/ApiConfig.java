@@ -5,10 +5,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
+import no.nav.foreldrepenger.konfig.Environment;
+import no.nav.vedtak.exception.TekniskException;
 import org.glassfish.jersey.server.ServerProperties;
 
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
@@ -35,12 +38,17 @@ import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataRestTjenes
 import no.nav.foreldrepenger.abakus.vedtak.tjeneste.YtelseRestTjeneste;
 import no.nav.vedtak.felles.prosesstask.rest.ProsessTaskRestTjeneste;
 
-@ApplicationPath(ApplicationConfig.API_URI)
-public class ApplicationConfig extends Application {
+@ApplicationPath(ApiConfig.API_URI)
+public class ApiConfig extends Application {
+
+    private static final Environment ENV = Environment.current();
 
     public static final String API_URI = "/api";
 
-    public ApplicationConfig() {
+    private static final String ID_PREFIX = "openapi.context.id.servlet.";
+
+
+    public ApiConfig() {
         OpenAPI oas = new OpenAPI();
         Info info = new Info()
             .title("Vedtaksløsningen - Abakus")
@@ -49,53 +57,53 @@ public class ApplicationConfig extends Application {
 
         oas.info(info)
             .addServersItem(new Server()
-                .url("/fpabakus"));
-        SwaggerConfiguration oasConfig = new SwaggerConfiguration()
+                .url(ENV.getProperty("context.path", "/fpabakus")));
+        var oasConfig = new SwaggerConfiguration()
+            .id(ID_PREFIX + ApiConfig.class.getName())
             .openAPI(oas)
             .prettyPrint(true)
-            .scannerClass("io.swagger.v3.jaxrs2.integration.JaxrsAnnotationScanner")
-            .resourcePackages(Set.of("no.nav.vedtak", "no.nav.foreldrepenger"));
+            .resourceClasses(getClasses().stream().map(Class::getName).collect(Collectors.toSet()))
+            .ignoredRoutes(Set.of(
+                "/api/ytelse/v1/hent-vedtatte/for-ident/k9",
+                "/api/ytelse/v1/hent-vedtatte-og-historiske/for-ident/k9",
+                "/api/ytelse/v1/hent-vedtatte/for-ident")
+            );
+
         try {
             new JaxrsOpenApiContextBuilder<>()
+                .ctxId(ID_PREFIX + ApiConfig.class.getName())
+                .application(this)
                 .openApiConfiguration(oasConfig)
                 .buildContext(true)
                 .read();
         } catch (OpenApiConfigurationException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new TekniskException("OPEN-API", e.getMessage(), e);
         }
     }
 
     @Override
     public Set<Class<?>> getClasses() {
-        Set<Class<?>> classes = new HashSet<>();
         // eksponert grensesnitt
-        classes.add(ProsessTaskRestTjeneste.class);
-        classes.add(RegisterdataRestTjeneste.class);
-        classes.add(InntektsmeldingerRestTjeneste.class);
-        classes.add(OppgittOpptjeningRestTjeneste.class);
-        classes.add(OppgittOpptjeningV2RestTjeneste.class);
-        classes.add(GrunnlagRestTjeneste.class);
-        classes.add(ArbeidsforholdRestTjeneste.class);
-        classes.add(YtelseRestTjeneste.class);
-        classes.add(ForvaltningRestTjeneste.class);
-        classes.add(DiagnostikkRestTjeneste.class);
-        classes.add(RapporteringRestTjeneste.class);
 
-        // swagger
-        classes.add(OpenApiResource.class);
+        return Set.of(ProsessTaskRestTjeneste.class,
+            RegisterdataRestTjeneste.class,
+            InntektsmeldingerRestTjeneste.class,
+            OppgittOpptjeningRestTjeneste.class,
+            OppgittOpptjeningV2RestTjeneste.class,
+            GrunnlagRestTjeneste.class,
+            ArbeidsforholdRestTjeneste.class,
+            YtelseRestTjeneste.class,
 
-        // Applikasjonsoppsett
-        classes.add(JacksonJsonConfig.class);
+            ForvaltningRestTjeneste.class,
+            DiagnostikkRestTjeneste.class,
+            RapporteringRestTjeneste.class,
 
-        // ExceptionMappers pga de som finnes i Jackson+Jersey-media
-        classes.add(ConstraintViolationMapper.class);
-        classes.add(JsonMappingExceptionMapper.class);
-        classes.add(JsonParseExceptionMapper.class);
-
-        // Generell exceptionmapper m/logging for øvrige tilfelle
-        classes.add(GeneralRestExceptionMapper.class);
-
-        return Collections.unmodifiableSet(classes);
+            OpenApiResource.class,
+            JacksonJsonConfig.class,
+            ConstraintViolationMapper.class,
+            JsonMappingExceptionMapper.class,
+            JsonParseExceptionMapper.class,
+            GeneralRestExceptionMapper.class);
     }
 
     @Override
