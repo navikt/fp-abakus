@@ -52,6 +52,14 @@
             "app": "fpsak",
             "namespace": "teamforeldrepenger",
             "cluster": "prod-fss"
+        },
+        {
+            "app": "tiltakspenger-fp",
+            "namespace": "tpts",
+            "cluster": "prod-fss",
+            "roles": [
+                "ekstern"
+            ]
         }
     ]
 }
