@@ -1,7 +1,11 @@
 window.onload = function() {
   // Begin Swagger UI call region
   const ui = SwaggerUIBundle({
-    url: "/fpabakus/api/openapi.yaml",
+    urls: [
+      {"url": "/fpabakus/api/openapi.yaml", "name": "ABAKUS intern API"},
+      {"url": "/fpabakus/ekstern/api/openapi.yaml", "name": "ABAKUS ekstern API"}
+    ],
+    explorer: true,
     dom_id: '#swagger-ui',
     deepLinking: true,
     presets: [

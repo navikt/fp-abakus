@@ -36,8 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import no.nav.foreldrepenger.abakus.app.konfig.ApplicationConfig;
-import no.nav.foreldrepenger.abakus.app.konfig.EksternApplicationConfig;
+import no.nav.foreldrepenger.abakus.app.konfig.ApiConfig;
+import no.nav.foreldrepenger.abakus.app.konfig.EksternApiConfig;
 import no.nav.foreldrepenger.abakus.jetty.db.DatasourceRole;
 import no.nav.foreldrepenger.abakus.jetty.db.DatasourceUtil;
 import no.nav.foreldrepenger.konfig.Environment;
@@ -155,7 +155,7 @@ public class JettyServer {
     }
 
     private static List<Class<?>> getApplicationClasses() {
-        return List.of(ApplicationConfig.class, EksternApplicationConfig.class, IssoApplication.class);
+        return List.of(ApiConfig.class, EksternApiConfig.class, IssoApplication.class);
     }
 
     void bootStrap() throws Exception {
