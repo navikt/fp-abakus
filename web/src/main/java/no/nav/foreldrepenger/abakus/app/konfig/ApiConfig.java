@@ -1,19 +1,5 @@
 package no.nav.foreldrepenger.abakus.app.konfig;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
-import no.nav.foreldrepenger.konfig.Environment;
-import no.nav.vedtak.exception.TekniskException;
-import org.glassfish.jersey.server.ServerProperties;
-
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
@@ -29,14 +15,20 @@ import no.nav.foreldrepenger.abakus.app.exceptions.JsonMappingExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.JsonParseExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.jackson.JacksonJsonConfig;
 import no.nav.foreldrepenger.abakus.app.vedlikehold.ForvaltningRestTjeneste;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.ArbeidsforholdRestTjeneste;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.GrunnlagRestTjeneste;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.InntektsmeldingerRestTjeneste;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.OppgittOpptjeningRestTjeneste;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.OppgittOpptjeningV2RestTjeneste;
+import no.nav.foreldrepenger.abakus.iay.tjeneste.*;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataRestTjeneste;
 import no.nav.foreldrepenger.abakus.vedtak.tjeneste.YtelseRestTjeneste;
+import no.nav.foreldrepenger.konfig.Environment;
+import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.prosesstask.rest.ProsessTaskRestTjeneste;
+import org.glassfish.jersey.server.ServerProperties;
+
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @ApplicationPath(ApiConfig.API_URI)
 public class ApiConfig extends Application {

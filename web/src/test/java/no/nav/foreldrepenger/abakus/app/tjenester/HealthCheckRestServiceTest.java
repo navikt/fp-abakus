@@ -15,7 +15,7 @@ import no.nav.foreldrepenger.abakus.app.selftest.HealthCheckRestService;
 import no.nav.foreldrepenger.abakus.app.selftest.checks.DatabaseHealthCheck;
 
 @SuppressWarnings("resource")
-public class HealthCheckRestServiceTest {
+class HealthCheckRestServiceTest {
 
     private HealthCheckRestService restTjeneste;
 
@@ -23,12 +23,12 @@ public class HealthCheckRestServiceTest {
     private DatabaseHealthCheck databaseHealthCheck = mock(DatabaseHealthCheck.class);
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         restTjeneste = new HealthCheckRestService(serviceStarterMock, databaseHealthCheck);
     }
 
     @Test
-    public void test_isAlive_skal_returnere_status_200() {
+    void test_isAlive_skal_returnere_status_200() {
         when(serviceStarterMock.isKafkaAlive()).thenReturn(true);
         Response response = restTjeneste.isAlive();
 
@@ -36,7 +36,7 @@ public class HealthCheckRestServiceTest {
     }
 
     @Test
-    public void test_isReady_skal_returnere_service_unavailable_når_kritiske_selftester_feiler() {
+    void test_isReady_skal_returnere_service_unavailable_når_kritiske_selftester_feiler() {
         when(databaseHealthCheck.isReady()).thenReturn(false);
 
         Response response = restTjeneste.isReady();
@@ -45,7 +45,7 @@ public class HealthCheckRestServiceTest {
     }
 
     @Test
-    public void test_isReady_skal_returnere_status_ok_når_selftester_er_ok() {
+    void test_isReady_skal_returnere_status_ok_når_selftester_er_ok() {
         when(databaseHealthCheck.isReady()).thenReturn(true);
 
         Response response = restTjeneste.isReady();
@@ -54,7 +54,7 @@ public class HealthCheckRestServiceTest {
     }
 
     @Test
-    public void test_preStop_skal_kalle_stopServices_og_returnere_status_ok() {
+    void test_preStop_skal_kalle_stopServices_og_returnere_status_ok() {
         Response response = restTjeneste.preStop();
 
         verify(serviceStarterMock).stopServices();
