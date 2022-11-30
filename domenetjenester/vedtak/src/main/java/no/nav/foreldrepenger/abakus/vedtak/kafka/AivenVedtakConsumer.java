@@ -33,6 +33,7 @@ public class AivenVedtakConsumer implements KafkaIntegration {
 
         final StreamsBuilder builder = new StreamsBuilder();
         builder.stream(topic, consumed)
+            .peek((key, value) -> log.info("Mottok melding på {} med key {}", topic, key))
             .foreach(vedtaksHendelseHåndterer::handleMessage);
 
         this.stream = new KafkaStreams(builder.build(), streamKafkaProperties.getProperties());
