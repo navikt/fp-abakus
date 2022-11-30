@@ -17,8 +17,8 @@
             <url-pattern>/internal/*</url-pattern>
             <url-pattern>/api/openapi.yaml</url-pattern>
             <url-pattern>/api/openapi.json</url-pattern>
-            <url-pattern>/ekstern/api/swagger.json</url-pattern>
-            <url-pattern>/ekstern/api/swagger.yaml</url-pattern>
+            <url-pattern>/ekstern/api/openapi.json</url-pattern>
+            <url-pattern>/ekstern/api/openapi.yaml</url-pattern>
         </web-resource-collection>
     </security-constraint>
     <security-constraint>
