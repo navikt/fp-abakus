@@ -53,6 +53,21 @@
             "cluster": "prod-fss"
         },
         {
+            "app": "k9-sak",
+            "namespace": "k9saksbehandling",
+            "cluster": "prod-fss"
+        },
+        {
+            "app": "k9-klage",
+            "namespace": "k9saksbehandling",
+            "cluster": "prod-fss"
+        },
+        {
+            "app": "k9-formidling",
+            "namespace": "k9saksbehandling",
+            "cluster": "prod-fss"
+        },
+        {
             "app": "tiltakspenger-fp",
             "namespace": "tpts",
             "cluster": "prod-fss",
