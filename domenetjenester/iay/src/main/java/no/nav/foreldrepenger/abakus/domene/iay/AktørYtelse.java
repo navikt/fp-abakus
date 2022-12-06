@@ -170,10 +170,16 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
             .collect(Collectors.toSet());
     }
 
-    // Her legger man inn ytelser/kilder som er innhentet tidligere, men som ikke blir reinnhentet etter sanering av integrasjon
-    // Siste SVP / Infotrygd ble innvilget høst 2019 og løp ut mars 2020. Nye søknader vil ikke ha disse i opptjeningen -> saner integrasjon.
+    /**
+     * Her legger man inn ytelser/kilder som er innhentet tidligere, men som ikke blir reinnhentet etter sanering av integrasjon
+     * Nye søknader vil ikke ha disse i opptjeningen -> saner integrasjon.
+     * - SVP Siste SVP / Infotrygd ble innvilget høst 2019 og løp ut mars 2020.
+     * - FP Siste utbetaling av foreldrepenger var tom januar 2022
+     */
+    private static final Set<YtelseType> UTGÅTT_INFOTRYGD = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER);
+
     private static boolean beholdLegacyYtelseFraKilde(Ytelse y) {
-        return Fagsystem.INFOTRYGD.equals(y.getKilde()) && YtelseType.SVANGERSKAPSPENGER.equals(y.getRelatertYtelseType());
+        return Fagsystem.INFOTRYGD.equals(y.getKilde()) && UTGÅTT_INFOTRYGD.contains(y.getRelatertYtelseType());
     }
 
     @Override
