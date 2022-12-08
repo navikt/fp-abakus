@@ -37,7 +37,7 @@
 		<felles.version>4.2.12</felles.version>
 		<prosesstask.version>3.1.13</prosesstask.version>
         <maven.deploy.skip>true</maven.deploy.skip>
-		<kontrakter.version>6.1.30</kontrakter.version>
+		<kontrakter.version>6.1.31</kontrakter.version>
 	</properties>
 
 	<!-- NB: Unngå å put scope (test, provided) i dependency management. Det
