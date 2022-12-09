@@ -35,6 +35,7 @@
         "AZURE_HTTP_PROXY": "http://webproxy.nais:8088",
         "SPOKELSE_GRUNNLAG_SCOPES": "api://prod-fss.tbd.spokelse/.default",
         "SPOKELSE_GRUNNLAG_URL": "http://spokelse.tbd/grunnlag",
+        "PDL_SCOPES": "api://prod-fss.pdl.pdl-api/.default",
         "SKAL_INNENTE_YTELSE_ANVIST_ANDELER": "true"
     },
     "AZURE_IAC_RULES": [
