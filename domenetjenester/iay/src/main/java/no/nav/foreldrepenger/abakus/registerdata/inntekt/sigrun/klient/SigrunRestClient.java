@@ -29,7 +29,7 @@ import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 import no.nav.vedtak.sikkerhet.context.SubjectHandler;
 
-@RestClientConfig(tokenConfig = TokenFlow.CONTEXT, endpointProperty = "SigrunRestBeregnetSkatt.url", endpointDefault = "https://sigrun.nais.adeo.no")
+@RestClientConfig(tokenConfig = TokenFlow.STS_CC, endpointProperty = "SigrunRestBeregnetSkatt.url", endpointDefault = "https://sigrun.nais.adeo.no")
 public class SigrunRestClient {
     private static final Logger LOG = LoggerFactory.getLogger(SigrunRestClient.class);
     private final RestClient client;

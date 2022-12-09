@@ -60,6 +60,7 @@ import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
+import no.nav.vedtak.sikkerhet.abac.beskyttet.AvailabilityType;
 
 @OpenAPIDefinition(tags = @Tag(name = "ekstern"), servers = @Server())
 @Path("/ytelse/v1")
@@ -134,7 +135,7 @@ public class EksternDelingAvYtelserRestTjeneste {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Henter alle vedtak for ytelser det blir etterspurt", tags = "ekstern")
-    @BeskyttetRessurs(actionType = ActionType.READ, resource = VEDTAK)
+    @BeskyttetRessurs(actionType = ActionType.READ, resource = VEDTAK, availabilityType = AvailabilityType.ALL)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public List<Ytelse> hentVedtakForPerson(@NotNull @TilpassetAbacAttributt(supplierClass = HentBrukersYtelserIPeriodeRequestAbacDataSupplier.class) @Valid HentBrukersYtelserIPeriodeRequest request) {
 
@@ -228,7 +229,7 @@ public class EksternDelingAvYtelserRestTjeneste {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Henter alle k9 vedtak for ytelser det blir etterspurt", tags = "ekstern")
-    @BeskyttetRessurs(actionType = ActionType.READ, resource = VEDTAK)
+    @BeskyttetRessurs(actionType = ActionType.READ, resource = VEDTAK, availabilityType = AvailabilityType.ALL)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public List<Ytelse> hentk9VedtakForPerson(@NotNull @TilpassetAbacAttributt(supplierClass = HentBrukersK9YtelserIPeriodeRequestAbacDataSupplier.class) @Valid HentBrukersK9YtelserIPeriodeRequest request) {
 
@@ -240,7 +241,7 @@ public class EksternDelingAvYtelserRestTjeneste {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Henter alle k9 vedtak for ytelser det blir etterspurt og tar med historikk", tags = "ekstern")
-    @BeskyttetRessurs(actionType = ActionType.READ, resource = VEDTAK)
+    @BeskyttetRessurs(actionType = ActionType.READ, resource = VEDTAK, availabilityType = AvailabilityType.ALL)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public List<Ytelse> hentk9VedtakForPersonMedHistorikk(@NotNull @TilpassetAbacAttributt(supplierClass = HentBrukersK9YtelserIPeriodeRequestAbacDataSupplier.class) @Valid HentBrukersK9YtelserIPeriodeRequest req) {
         var request = new HentBrukersYtelserIPeriodeRequest(req.getPersonident(), req.getPeriode(), K9_YTELSER);

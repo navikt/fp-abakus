@@ -70,7 +70,7 @@ public class CallbackTask implements ProsessTaskHandler {
         } catch (URISyntaxException e) {
             throw new TekniskException("FP-349977", String.format("Ugyldig callback url ved callback etter registerinnhenting: %s", callbackUrl));
         }
-        var restConfig = new RestConfig(TokenFlow.CONTEXT, uri, null, null);
+        var restConfig = new RestConfig(TokenFlow.ADAPTIVE, uri, null, null);
         var post = restClient.sendReturnOptional(RestRequest.newPOSTJson(callbackDto, uri, restConfig), String.class);
 
         log.info("Callback success, mottok respons: {}", post);
