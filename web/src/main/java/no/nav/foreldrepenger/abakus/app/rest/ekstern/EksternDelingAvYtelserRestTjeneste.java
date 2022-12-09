@@ -5,7 +5,6 @@ import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessu
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -20,9 +19,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -65,17 +61,12 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.AvailabilityType;
-import no.nav.vedtak.sikkerhet.context.SubjectHandler;
-import no.nav.vedtak.sikkerhet.oidc.config.OpenIDProvider;
-import no.nav.vedtak.sikkerhet.oidc.token.OpenIDToken;
 
 @OpenAPIDefinition(tags = @Tag(name = "ekstern"), servers = @Server())
 @Path("/ytelse/v1")
 @ApplicationScoped
 @Transactional
 public class EksternDelingAvYtelserRestTjeneste {
-
-    private static final Logger LOG = LoggerFactory.getLogger(EksternDelingAvYtelserRestTjeneste.class);
 
     private static final Set<YtelseType> GYLDIGE_YTELSER = Set.of(YtelseType.PLEIEPENGER_NÆRSTÅENDE,
         YtelseType.FORELDREPENGER,
@@ -152,9 +143,6 @@ public class EksternDelingAvYtelserRestTjeneste {
             .stream()
             .filter(GYLDIGE_YTELSER::contains)
             .collect(Collectors.toSet());
-
-        LOG.info("ABAKUS hent-vedtatte sluttbruker {} provider {}", SubjectHandler.getSubjectHandler().getSluttBruker(),
-            Optional.ofNullable(SubjectHandler.getSubjectHandler().getOpenIDToken()).map(OpenIDToken::provider).map(OpenIDProvider::name).orElse(""));
 
         return hentUtYtelser(request, etterspurteYtelser, false);
     }
