@@ -37,7 +37,6 @@ import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.arbeidsforhold.ArbeidsforholdDtoTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
-import no.nav.foreldrepenger.abakus.registerdata.InnhentingSamletTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
@@ -91,8 +90,8 @@ public class ArbeidsforholdRestTjeneste {
         LocalDate tom = Objects.equals(fom, periode.getTom())
             ? fom.plusDays(1) // enkel dato søk
             : periode.getTom(); // periode søk
-        var arbeidstakersArbeidsforhold = dtoTjeneste.mapFor(aktørId, fom, tom, ytelse);
         LOG.info("ABAKUS arbeidstaker - sjekk consumers for ytelse {}", ytelse);
+        var arbeidstakersArbeidsforhold = dtoTjeneste.mapFor(aktørId, fom, tom, ytelse);
         final Response response = Response.ok(arbeidstakersArbeidsforhold).build();
         return response;
     }
