@@ -127,6 +127,9 @@ public class LagreVedtakTaskTest {
                     "identType" : "ORGNUMMER",
                     "ident" : "972674818"
                   },
+                  "arbeidsgiverIdent" : {
+                    "ident" : "972674818"
+                  },
                   "arbeidsforholdId" : "1",
                   "dagsats" : {
                     "verdi" : 1846.00
@@ -154,6 +157,9 @@ public class LagreVedtakTaskTest {
                 "andeler" : [ {
                   "arbeidsgiver" : {
                     "identType" : "ORGNUMMER",
+                    "ident" : "972674818"
+                  },
+                  "arbeidsgiverIdent" : {
                     "ident" : "972674818"
                   },
                   "arbeidsforholdId" : "1",

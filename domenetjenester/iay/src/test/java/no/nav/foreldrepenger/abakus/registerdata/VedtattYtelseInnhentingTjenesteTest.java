@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
-import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
@@ -57,7 +56,6 @@ public class VedtattYtelseInnhentingTjenesteTest {
             .medSaksnummer(new Saksnummer("123"))
             .medKilde(Fagsystem.FPSAK)
             .medYtelseType(YtelseType.ENGANGSTØNAD)
-            .medBehandlingsTema(TemaUnderkategori.ENGANGSSTONAD_FODSEL)
             .leggTil(getYtelseAnvist())
             .build();
         Kobling k = new Kobling();
