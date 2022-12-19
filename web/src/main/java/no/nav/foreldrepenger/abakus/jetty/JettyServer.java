@@ -41,8 +41,6 @@ import no.nav.foreldrepenger.abakus.app.konfig.EksternApiConfig;
 import no.nav.foreldrepenger.abakus.jetty.db.DatasourceRole;
 import no.nav.foreldrepenger.abakus.jetty.db.DatasourceUtil;
 import no.nav.foreldrepenger.konfig.Environment;
-import no.nav.vedtak.isso.IssoApplication;
-import no.nav.vedtak.sikkerhet.ContextPathHolder;
 import no.nav.vedtak.sikkerhet.jaspic.OidcAuthModule;
 
 public class JettyServer {
@@ -55,7 +53,6 @@ public class JettyServer {
 
     JettyServer(int serverPort) {
         this.serverPort = serverPort;
-        ContextPathHolder.instance(CONTEXT_PATH);
     }
 
     public static void main(String[] args) throws Exception {
@@ -155,7 +152,7 @@ public class JettyServer {
     }
 
     private static List<Class<?>> getApplicationClasses() {
-        return List.of(ApiConfig.class, EksternApiConfig.class, IssoApplication.class);
+        return List.of(ApiConfig.class, EksternApiConfig.class);
     }
 
     void bootStrap() throws Exception {
