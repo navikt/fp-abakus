@@ -13,8 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-import no.nav.foreldrepenger.kontrakter.arena.request.ArenaRequestDto;
-import no.nav.foreldrepenger.kontrakter.arena.respons.MeldekortUtbetalingsgrunnlagSakDto;
+import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.request.ArenaRequestDto;
+import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.MeldekortUtbetalingsgrunnlagSakDto;
 import no.nav.vedtak.felles.integrasjon.rest.FpApplication;
 import no.nav.vedtak.felles.integrasjon.rest.RestClient;
 import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
