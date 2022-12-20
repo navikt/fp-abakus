@@ -94,12 +94,6 @@
             <artifactId>postgresql</artifactId>
         </dependency>
 
-        <!-- For Status side -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
-
         <!-- CDI -->
         <dependency>
             <groupId>jakarta.servlet</groupId>
