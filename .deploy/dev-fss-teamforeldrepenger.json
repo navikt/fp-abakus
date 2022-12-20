@@ -21,7 +21,6 @@
     "env": {
         "APPD_ENABLED": "false",
         "SECURITYTOKENSERVICE_URL": "https://sts-q1.preprod.local/SecurityTokenServiceProvider/",
-        "OIDC_OPEN_AM_WELL_KNOWN_URL": "https://isso-q.adeo.no:443/isso/oauth2/.well-known/openid-configuration",
         "OIDC_STS_WELL_KNOWN_URL": "https://security-token-service.nais.preprod.local/.well-known/openid-configuration",
         "ABAC_ATTRIBUTT_DRIFT": "no.nav.abac.attributter.resource.duplo.abakus.drift",
         "KAFKA_BOOTSTRAP_SERVERS": "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443",
