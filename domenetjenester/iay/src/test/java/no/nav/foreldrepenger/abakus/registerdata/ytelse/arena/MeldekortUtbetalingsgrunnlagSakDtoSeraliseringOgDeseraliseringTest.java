@@ -8,12 +8,12 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import no.nav.foreldrepenger.kontrakter.arena.respons.BeløpDto;
-import no.nav.foreldrepenger.kontrakter.arena.respons.FagsystemDto;
-import no.nav.foreldrepenger.kontrakter.arena.respons.MeldekortUtbetalingsgrunnlagMeldekortDto;
-import no.nav.foreldrepenger.kontrakter.arena.respons.MeldekortUtbetalingsgrunnlagSakDto;
-import no.nav.foreldrepenger.kontrakter.arena.respons.YtelseStatusDto;
-import no.nav.foreldrepenger.kontrakter.arena.respons.YtelseTypeDto;
+import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.BeløpDto;
+import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.FagsystemDto;
+import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.MeldekortUtbetalingsgrunnlagMeldekortDto;
+import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.MeldekortUtbetalingsgrunnlagSakDto;
+import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.YtelseStatusDto;
+import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.YtelseTypeDto;
 import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 /**
