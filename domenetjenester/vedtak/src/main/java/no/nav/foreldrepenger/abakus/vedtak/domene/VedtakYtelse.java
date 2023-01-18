@@ -28,7 +28,6 @@ import org.hibernate.annotations.Type;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
-import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -85,11 +84,6 @@ public class VedtakYtelse extends BaseEntitet implements IndexKey {
     @Column(name="kilde", nullable = false)
     private Fagsystem kilde;
 
-    @Convert(converter = TemaUnderkategoriKodeverdiConverter.class)
-    @Column(name="temaUnderkategori", nullable = false)
-    @ChangeTracked
-    private TemaUnderkategori temaUnderkategori = TemaUnderkategori.UDEFINERT;
-
     @Lob
     @Type(type = "org.hibernate.type.TextType")
     @Column(name = "tilleggsopplysninger")
@@ -118,7 +112,6 @@ public class VedtakYtelse extends BaseEntitet implements IndexKey {
         this.status = ytelse.getStatus();
         this.periode = ytelse.getPeriode();
         this.saksnummer = ytelse.getSaksnummer();
-        this.temaUnderkategori = ytelse.getBehandlingsTema();
         this.kilde = ytelse.getKilde();
         this.tilleggsopplysninger = ytelse.getTilleggsopplysninger();
         this.ytelseAnvist = ytelse.getYtelseAnvist()
@@ -148,14 +141,6 @@ public class VedtakYtelse extends BaseEntitet implements IndexKey {
 
     void setYtelseType(YtelseType ytelseType) {
         this.ytelseType = ytelseType;
-    }
-
-    public TemaUnderkategori getBehandlingsTema() {
-        return temaUnderkategori;
-    }
-
-    void setBehandlingsTema(TemaUnderkategori behandlingsTema) {
-        this.temaUnderkategori = behandlingsTema;
     }
 
     public YtelseStatus getStatus() {

@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
-import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
@@ -83,11 +82,6 @@ public class VedtakYtelseBuilder {
     public VedtakYtelseBuilder leggTil(YtelseAnvistBuilder ytelseAnvist) {
         Objects.requireNonNull(ytelseAnvist, "ytelseAnvist");
         ytelse.leggTilYtelseAnvist(ytelseAnvist.build());
-        return this;
-    }
-
-    public VedtakYtelseBuilder medBehandlingsTema(TemaUnderkategori behandlingsTema) {
-        ytelse.setBehandlingsTema(behandlingsTema);
         return this;
     }
 

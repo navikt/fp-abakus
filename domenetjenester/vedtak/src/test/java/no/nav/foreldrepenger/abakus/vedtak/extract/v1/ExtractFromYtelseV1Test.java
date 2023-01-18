@@ -22,6 +22,7 @@ import no.nav.abakus.vedtak.ytelse.Ytelser;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
 import no.nav.abakus.vedtak.ytelse.v1.anvisning.Anvisning;
 import no.nav.abakus.vedtak.ytelse.v1.anvisning.AnvistAndel;
+import no.nav.abakus.vedtak.ytelse.v1.anvisning.ArbeidsgiverIdent;
 import no.nav.abakus.vedtak.ytelse.v1.anvisning.Inntektklasse;
 import no.nav.foreldrepenger.abakus.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
@@ -56,7 +57,7 @@ public class ExtractFromYtelseV1Test {
 
         Anvisning anvisning = new Anvisning();
         anvisning.setPeriode(periode);
-        anvisning.setAndeler(List.of(new AnvistAndel(new Organisasjon("999999999"), 1236, 100, 100, Inntektklasse.ARBEIDSTAKER, "ehuif2897")));
+        anvisning.setAndeler(List.of(new AnvistAndel(new Organisasjon("999999999"), new ArbeidsgiverIdent("999999999"), 1236, 100, 100, Inntektklasse.ARBEIDSTAKER, "ehuif2897")));
         ytelseV1.setAnvist(List.of(anvisning));
 
         VedtakYtelseBuilder builder = extractor.extractFrom(ytelseV1);
@@ -96,7 +97,7 @@ public class ExtractFromYtelseV1Test {
 
         Anvisning anvisning = new Anvisning();
         anvisning.setPeriode(periode);
-        anvisning.setAndeler(List.of(new AnvistAndel(new Organisasjon("999999999"), 1236, 100, 100, Inntektklasse.ARBEIDSTAKER, "ehuif2897")));
+        anvisning.setAndeler(List.of(new AnvistAndel(new Organisasjon("999999999"),  new ArbeidsgiverIdent("999999999"), 1236, 100, 100, Inntektklasse.ARBEIDSTAKER, "ehuif2897")));
         ytelseV1.setAnvist(List.of(anvisning));
 
         VedtakYtelseBuilder builder = extractor.extractFrom(ytelseV1);

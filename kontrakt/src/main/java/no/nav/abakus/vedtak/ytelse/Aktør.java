@@ -23,8 +23,12 @@ public class Aktør {
         this.verdi = verdi;
     }
 
+    public boolean erAktørId() {
+        return verdi.length() == 13;
+    }
+
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[verdi=" + verdi + "]";
+        return getClass().getSimpleName() + "[verdi=MASKERT]";
     }
 }

@@ -27,6 +27,10 @@ public class AnvistAndel {
     @Valid
     private Aktør arbeidsgiver;
 
+    @JsonProperty(value = "arbeidsgiverIdent")
+    @Valid
+    private ArbeidsgiverIdent arbeidsgiverIdent;
+
     @JsonProperty(value = "arbeidsforholdId")
     @Valid
     private String arbeidsforholdId;
@@ -48,16 +52,32 @@ public class AnvistAndel {
     protected AnvistAndel() {
     }
 
+    @Deprecated(forRemoval = true)
     public AnvistAndel(Aktør arbeidsgiver, int beløp, int utbetalingsgrad, int refusjonsgrad, Inntektklasse inntektklasse, String arbeidsforholdId) {
-        this(arbeidsgiver,
-            arbeidsforholdId, new Desimaltall(BigDecimal.valueOf(beløp)),
+        this(arbeidsgiver,Optional.ofNullable(arbeidsgiver).map(Aktør::getIdent).map(ArbeidsgiverIdent::new).orElse(null), arbeidsforholdId,
+            new Desimaltall(BigDecimal.valueOf(beløp)),
             new Desimaltall(BigDecimal.valueOf(utbetalingsgrad)),
             new Desimaltall(BigDecimal.valueOf(refusjonsgrad)),
             inntektklasse);
     }
 
+    @Deprecated(forRemoval = true)
     public AnvistAndel(Aktør arbeidsgiver, String arbeidsforholdId, Desimaltall beløp, Desimaltall utbetalingsgrad, Desimaltall refusjonsgrad, Inntektklasse inntektklasse) {
-        this.arbeidsgiver = arbeidsgiver;
+        this(arbeidsgiver, Optional.ofNullable(arbeidsgiver).map(Aktør::getIdent).map(ArbeidsgiverIdent::new).orElse(null),
+            arbeidsforholdId, beløp, utbetalingsgrad, refusjonsgrad, inntektklasse);
+    }
+
+    public AnvistAndel(ArbeidsgiverIdent arbeidsgiverIdent, int beløp, int utbetalingsgrad, int refusjonsgrad, Inntektklasse inntektklasse, String arbeidsforholdId) {
+        this(arbeidsgiverIdent, arbeidsforholdId,
+            new Desimaltall(BigDecimal.valueOf(beløp)),
+            new Desimaltall(BigDecimal.valueOf(utbetalingsgrad)),
+            new Desimaltall(BigDecimal.valueOf(refusjonsgrad)),
+            inntektklasse);
+    }
+
+    public AnvistAndel(ArbeidsgiverIdent arbeidsgiverIdent, String arbeidsforholdId, Desimaltall beløp, Desimaltall utbetalingsgrad, Desimaltall refusjonsgrad, Inntektklasse inntektklasse) {
+        this.arbeidsgiver = null;
+        this.arbeidsgiverIdent = arbeidsgiverIdent;
         this.arbeidsforholdId = arbeidsforholdId;
         this.dagsats = beløp;
         this.utbetalingsgrad = utbetalingsgrad;
@@ -65,8 +85,33 @@ public class AnvistAndel {
         this.inntektklasse = inntektklasse;
     }
 
+    @Deprecated(forRemoval = true)
+    public AnvistAndel(Aktør arbeidsgiver, ArbeidsgiverIdent arbeidsgiverIdent, int beløp, int utbetalingsgrad, int refusjonsgrad, Inntektklasse inntektklasse, String arbeidsforholdId) {
+        this(arbeidsgiver, arbeidsgiverIdent, arbeidsforholdId,
+            new Desimaltall(BigDecimal.valueOf(beløp)),
+            new Desimaltall(BigDecimal.valueOf(utbetalingsgrad)),
+            new Desimaltall(BigDecimal.valueOf(refusjonsgrad)),
+            inntektklasse);
+    }
+
+    @Deprecated(forRemoval = true)
+    public AnvistAndel(Aktør arbeidsgiver, ArbeidsgiverIdent arbeidsgiverIdent, String arbeidsforholdId, Desimaltall beløp, Desimaltall utbetalingsgrad, Desimaltall refusjonsgrad, Inntektklasse inntektklasse) {
+        this.arbeidsgiver = arbeidsgiver;
+        this.arbeidsgiverIdent = arbeidsgiverIdent;
+        this.arbeidsforholdId = arbeidsforholdId;
+        this.dagsats = beløp;
+        this.utbetalingsgrad = utbetalingsgrad;
+        this.refusjonsgrad = refusjonsgrad;
+        this.inntektklasse = inntektklasse;
+    }
+
+    @Deprecated(forRemoval = true)
     public Aktør getArbeidsgiver() {
         return arbeidsgiver;
+    }
+
+    public ArbeidsgiverIdent getArbeidsgiverIdent() {
+        return arbeidsgiverIdent;
     }
 
     public String getArbeidsforholdId() {
