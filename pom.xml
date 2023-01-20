@@ -67,12 +67,6 @@
 				<version>${felles.version}</version>
 				<scope>import</scope>
 				<type>pom</type>
-				<exclusions>
-					<exclusion>
-						<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-						<artifactId>sigrun-klient</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
             <dependency>
                 <!-- Importeres etter felles-root og felles for å sikre samme avhengigheter gjennom hele! -->
@@ -312,7 +306,7 @@
                     <dependency>
                         <groupId>no.nav.k9.dev</groupId>
                         <artifactId>dev-jakarta-transform</artifactId>
-                        <version>0.6.4</version>
+                        <version>0.6.5</version>
                     </dependency>
                     <dependency>
                         <groupId>ant-contrib</groupId>
