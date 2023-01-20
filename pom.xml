@@ -7,7 +7,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.felles</groupId>
         <artifactId>fp-bom</artifactId>
-        <version>0.3.10</version>
+        <version>0.4.0</version>
     </parent>
 
 	<groupId>no.nav.foreldrepenger.abakus</groupId>
@@ -34,10 +34,10 @@
 
         <kontrakt.java.version>17</kontrakt.java.version>
 
-		<felles.version>4.2.17</felles.version>
-		<prosesstask.version>3.1.14</prosesstask.version>
+		<felles.version>4.2.19</felles.version>
+		<prosesstask.version>3.1.15</prosesstask.version>
         <maven.deploy.skip>true</maven.deploy.skip>
-		<kontrakter.version>6.2.1</kontrakter.version>
+		<kontrakter.version>6.2.6</kontrakter.version>
 	</properties>
 
 	<!-- NB: Unngå å put scope (test, provided) i dependency management. Det
@@ -46,6 +46,14 @@
 		det brukes. -->
 	<dependencyManagement>
 		<dependencies>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.felles</groupId>
+                <artifactId>fp-bom</artifactId>
+                <version>0.4.0</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+
 			<dependency>
 				<groupId>no.nav.foreldrepenger.felles</groupId>
 				<artifactId>felles</artifactId>
@@ -59,12 +67,6 @@
 				<version>${felles.version}</version>
 				<scope>import</scope>
 				<type>pom</type>
-				<exclusions>
-					<exclusion>
-						<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-						<artifactId>sigrun-klient</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
             <dependency>
                 <!-- Importeres etter felles-root og felles for å sikre samme avhengigheter gjennom hele! -->
@@ -304,7 +306,7 @@
                     <dependency>
                         <groupId>no.nav.k9.dev</groupId>
                         <artifactId>dev-jakarta-transform</artifactId>
-                        <version>0.6.4</version>
+                        <version>0.6.5</version>
                     </dependency>
                     <dependency>
                         <groupId>ant-contrib</groupId>

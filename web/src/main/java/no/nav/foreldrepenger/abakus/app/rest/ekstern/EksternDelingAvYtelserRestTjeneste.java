@@ -20,6 +20,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.servers.Server;
@@ -49,6 +52,7 @@ import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ConvertToYtelseV1;
+import no.nav.foreldrepenger.abakus.vedtak.tjeneste.YtelseRestTjeneste;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
@@ -61,6 +65,8 @@ import no.nav.vedtak.sikkerhet.abac.beskyttet.AvailabilityType;
 @ApplicationScoped
 @Transactional
 public class EksternDelingAvYtelserRestTjeneste {
+
+    private static final Logger LOG = LoggerFactory.getLogger(EksternDelingAvYtelserRestTjeneste.class);
 
     private static final Set<YtelseType> GYLDIGE_YTELSER = Set.of(YtelseType.PLEIEPENGER_NÆRSTÅENDE,
         YtelseType.FORELDREPENGER,
@@ -98,6 +104,7 @@ public class EksternDelingAvYtelserRestTjeneste {
     @BeskyttetRessurs(actionType = ActionType.READ, resource = VEDTAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public List<Ytelse> hentVedtakYtelse(@NotNull @TilpassetAbacAttributt(supplierClass = EksternDelingAvYtelserRestTjeneste.VedtakForPeriodeRequestAbacDataSupplier.class) @Valid VedtakForPeriodeRequest request) {
+        LOG.info("ABAKUS VEDTAK ekstern /hent-ytelse-vedtak for ytelser {}", request.getYtelser());
 
         if (request.getYtelser().isEmpty()) {
             return List.of();
@@ -141,6 +148,8 @@ public class EksternDelingAvYtelserRestTjeneste {
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public List<Ytelse> hentVedtakForPerson(@NotNull @TilpassetAbacAttributt(supplierClass = HentBrukersYtelserIPeriodeRequestAbacDataSupplier.class) @Valid HentBrukersYtelserIPeriodeRequest request) {
 
+        LOG.info("ABAKUS VEDTAK ekstern /hent-vedtatte/for-ident for ytelser {}", request.getYtelser());
+
         var etterspurteYtelser = request.getYtelser()
             .stream()
             .filter(GYLDIGE_YTELSER::contains)
@@ -158,7 +167,7 @@ public class EksternDelingAvYtelserRestTjeneste {
     @BeskyttetRessurs(actionType = ActionType.READ, resource = VEDTAK, availabilityType = AvailabilityType.ALL)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public List<Ytelse> hentk9VedtakForPerson(@NotNull @TilpassetAbacAttributt(supplierClass = HentBrukersK9YtelserIPeriodeRequestAbacDataSupplier.class) @Valid HentBrukersK9YtelserIPeriodeRequest request) {
-
+        LOG.info("ABAKUS VEDTAK ekstern /hent-vedtatte/for-ident/k9");
         return hentVedtakForPerson(new HentBrukersYtelserIPeriodeRequest(request.getPersonident(), request.getPeriode(), K9_YTELSER));
     }
 
@@ -171,6 +180,7 @@ public class EksternDelingAvYtelserRestTjeneste {
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public List<Ytelse> hentk9VedtakForPersonMedHistorikk(@NotNull @TilpassetAbacAttributt(supplierClass = HentBrukersK9YtelserIPeriodeRequestAbacDataSupplier.class) @Valid HentBrukersK9YtelserIPeriodeRequest req) {
         var request = new HentBrukersYtelserIPeriodeRequest(req.getPersonident(), req.getPeriode(), K9_YTELSER);
+        LOG.info("ABAKUS VEDTAK ekstern /hent-vedtatte-og-historiske/for-ident/k9 for ytelser {}", request.getYtelser());
         var etterspurteYtelser = request.getYtelser()
             .stream()
             .filter(GYLDIGE_YTELSER::contains)

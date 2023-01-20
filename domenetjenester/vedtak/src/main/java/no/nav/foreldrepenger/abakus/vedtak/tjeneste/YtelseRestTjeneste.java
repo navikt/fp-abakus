@@ -20,6 +20,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -49,6 +52,8 @@ import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 @Transactional
 public class YtelseRestTjeneste {
 
+    private static final Logger LOG = LoggerFactory.getLogger(YtelseRestTjeneste.class);
+
     private static final Set<YtelseType> GYLDIGE_YTELSER = Set.of(YtelseType.PLEIEPENGER_NÆRSTÅENDE,
         YtelseType.FORELDREPENGER,
         YtelseType.OMSORGSPENGER,
@@ -77,6 +82,8 @@ public class YtelseRestTjeneste {
     @BeskyttetRessurs(actionType = ActionType.READ, resource = VEDTAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public List<Ytelse> hentVedtak(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
+        LOG.info("ABAKUS VEDTAK intern /hentVedtakForAktoer for ytelse {}", request.getYtelse());
+
         AktørId aktørId = new AktørId(request.getAktør().getIdent());
         LocalDate fom = request.getDato();
         LocalDate tom = Tid.TIDENES_ENDE;

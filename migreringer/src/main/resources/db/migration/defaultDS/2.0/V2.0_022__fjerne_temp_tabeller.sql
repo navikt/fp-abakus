@@ -1,0 +1,5 @@
+drop table bck_fri_iay_aktivitets_avtale, bck_fri_iay_arbeidsforhold_refer, bck_fri_iay_permisjon, bck_fri_iay_yrkesaktivitet,
+    bck_omp_iay_aktivitets_avtale, bck_omp_iay_arbeidsforhold_refer, bck_omp_iay_permisjon, bck_omp_iay_yrkesaktivitet,
+    bck_psb_iay_aktivitets_avtale, bck_psb_iay_arbeidsforhold_refer, bck_psb_iay_permisjon, bck_psb_iay_yrkesaktivitet,
+    tmp_fri_feilrettingskandidater, tmp_omp_feilrettingskandidater, tmp_psb_feilrettingskandidater
+;
