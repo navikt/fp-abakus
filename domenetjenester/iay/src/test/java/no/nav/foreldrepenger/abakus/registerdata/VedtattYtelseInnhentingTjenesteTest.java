@@ -43,7 +43,7 @@ public class VedtattYtelseInnhentingTjenesteTest {
 
     @BeforeEach
     public void before() {
-        vedtattYtelseInnhentingTjeneste = new VedtattYtelseInnhentingTjeneste(vedtakYtelseRepository, true, inntektArbeidYtelseRepository);
+        vedtattYtelseInnhentingTjeneste = new VedtattYtelseInnhentingTjeneste(vedtakYtelseRepository, inntektArbeidYtelseRepository);
     }
 
     @Test

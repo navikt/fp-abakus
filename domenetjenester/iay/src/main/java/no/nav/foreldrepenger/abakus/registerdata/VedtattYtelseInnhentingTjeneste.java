@@ -25,13 +25,11 @@ import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelse;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseAndel;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
-import no.nav.foreldrepenger.konfig.KonfigVerdi;
 
 @ApplicationScoped
 public class VedtattYtelseInnhentingTjeneste {
 
     private VedtakYtelseRepository vedtakYtelseRepository;
-    private boolean skalInnhenteAnvisteAndeler;
     private InntektArbeidYtelseRepository inntektArbeidYtelseRepository;
 
     protected VedtattYtelseInnhentingTjeneste() {
@@ -39,10 +37,8 @@ public class VedtattYtelseInnhentingTjeneste {
 
     @Inject
     public VedtattYtelseInnhentingTjeneste(VedtakYtelseRepository vedtakYtelseRepository,
-                                           @KonfigVerdi(value = "SKAL_INNENTE_YTELSE_ANVIST_ANDELER", defaultVerdi = "false") boolean skalInnhenteAnvisteAndeler,
                                            InntektArbeidYtelseRepository inntektArbeidYtelseRepository) {
         this.vedtakYtelseRepository = vedtakYtelseRepository;
-        this.skalInnhenteAnvisteAndeler = skalInnhenteAnvisteAndeler;
         this.inntektArbeidYtelseRepository = inntektArbeidYtelseRepository;
     }
 
@@ -76,11 +72,9 @@ public class VedtattYtelseInnhentingTjeneste {
                 .medBeløp(anvisning.getBeløp().map(Beløp::getVerdi).orElse(null))
                 .medDagsats(anvisning.getDagsats().map(Beløp::getVerdi).orElse(null))
                 .medUtbetalingsgradProsent(anvisning.getUtbetalingsgradProsent().map(Stillingsprosent::getVerdi).orElse(null));
-            if (skalInnhenteAnvisteAndeler) {
-                if (anvisning.getAndeler() != null) {
-                    anvisning.getAndeler()
-                        .forEach(andel -> anvistBuilder.leggTilYtelseAnvistAndel(mapAndel(arbeidsforholdInformasjonBuilder, andel)));
-                }
+            if (anvisning.getAndeler() != null) {
+                anvisning.getAndeler()
+                    .forEach(andel -> anvistBuilder.leggTilYtelseAnvistAndel(mapAndel(arbeidsforholdInformasjonBuilder, andel)));
             }
             ytelseBuilder.leggtilYtelseAnvist(anvistBuilder.build());
         });

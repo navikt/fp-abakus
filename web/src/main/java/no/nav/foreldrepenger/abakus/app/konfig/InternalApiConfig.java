@@ -8,13 +8,13 @@ import javax.ws.rs.core.Application;
 import no.nav.foreldrepenger.abakus.app.metrics.PrometheusRestService;
 import no.nav.foreldrepenger.abakus.app.selftest.HealthCheckRestService;
 
-@ApplicationPath(InternalApplication.API_URL)
-public class InternalApplication extends Application {
+@ApplicationPath(InternalApiConfig.API_URL)
+public class InternalApiConfig extends Application {
 
     public static final String API_URL = "internal";
 
-    public InternalApplication() {
-
+    public InternalApiConfig() {
+        // CDI
     }
 
     @Override

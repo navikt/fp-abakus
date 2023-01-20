@@ -37,10 +37,10 @@ class VedtakProperties {
     @Inject
     VedtakProperties(@KonfigVerdi(value = "kafka.fattevedtak.topic", defaultVerdi = "teamforeldrepenger.familie-vedtakfattet-v1") String topicName,
                      // De neste stammer fra Aivenator
-                     @KonfigVerdi("KAFKA_BROKERS") String bootstrapServers,
-                     @KonfigVerdi("KAFKA_TRUSTSTORE_PATH") String trustStorePath,
-                     @KonfigVerdi("KAFKA_KEYSTORE_PATH") String keyStoreLocation,
-                     @KonfigVerdi("KAFKA_CREDSTORE_PASSWORD") String credStorePassword) {
+                     @KonfigVerdi("kafka.brokers") String bootstrapServers,
+                     @KonfigVerdi("kafka.truststore.path") String trustStorePath,
+                     @KonfigVerdi("kafka.keystore.path") String keyStoreLocation,
+                     @KonfigVerdi("kafka.credstore.password") String credStorePassword) {
         this.trustStorePath = trustStorePath;
         this.keyStoreLocation = keyStoreLocation;
         this.credStorePassword = credStorePassword;

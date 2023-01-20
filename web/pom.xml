@@ -192,11 +192,6 @@
             <artifactId>logback-syslog4j</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>swagger-ui</artifactId>
-        </dependency>
-
         <!-- Test avhengigheter -->
         <dependency>
             <groupId>no.nav.foreldrepenger.abakus</groupId>
