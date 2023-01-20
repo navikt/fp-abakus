@@ -13,7 +13,9 @@ public class InternalApiConfig extends Application {
 
     public static final String API_URL = "internal";
 
-    public InternalApiConfig() {}
+    public InternalApiConfig() {
+        // CDI
+    }
 
     @Override
     public Set<Class<?>> getClasses() {
