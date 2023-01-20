@@ -1,1 +1,0 @@
-ikke slett meg

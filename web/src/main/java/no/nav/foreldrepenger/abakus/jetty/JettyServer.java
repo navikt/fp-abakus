@@ -27,7 +27,6 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.util.resource.Resource;
-import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.eclipse.jetty.webapp.MetaData;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.flywaydb.core.Flyway;
@@ -95,7 +94,7 @@ public class JettyServer {
 
         ctx.setDescriptor(descriptor);
         ctx.setContextPath(CONTEXT_PATH);
-        ctx.setBaseResource(createResourceCollection());
+        ctx.setResourceBase(".");
 
         ctx.setInitParameter("pathInfoOnly", "true");
         ctx.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
@@ -106,18 +105,16 @@ public class JettyServer {
          */
         ctx.setAttribute("org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern",
             "^.*jersey-.*.jar$|^.*felles-sikkerhet-.*.jar$");
+
+        ctx.addEventListener(new org.jboss.weld.environment.servlet.BeanManagerResourceBindingListener());
+        ctx.addEventListener(new org.jboss.weld.environment.servlet.Listener());
+
         ctx.setSecurityHandler(createSecurityHandler());
 
         updateMetaData(ctx.getMetaData());
         ctx.setThrowUnavailableOnStartupException(true);
 
         return ctx;
-    }
-
-    private static ResourceCollection createResourceCollection() {
-        return new ResourceCollection(
-            Resource.newClassPathResource("META-INF/resources/webjars/"),
-            Resource.newClassPathResource("/web"));
     }
 
     private static HttpConfiguration createHttpConfiguration() {

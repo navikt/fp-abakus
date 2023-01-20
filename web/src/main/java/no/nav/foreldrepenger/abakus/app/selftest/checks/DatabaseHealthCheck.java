@@ -16,7 +16,7 @@ public class DatabaseHealthCheck {
 
     private static final String JDBC_DEFAULT_DS = "jdbc/defaultDS";
     private static final String SQL_QUERY = "select 1"; // Postgres method to check connection pool
-    private String jndiName;
+    private final String jndiName;
     // må være rask, og bruke et stabilt tabell-navn
     private String endpoint = null; // ukjent frem til første gangs test
 
