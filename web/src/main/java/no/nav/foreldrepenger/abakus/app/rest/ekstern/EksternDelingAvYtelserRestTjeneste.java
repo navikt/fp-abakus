@@ -27,8 +27,6 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
-import no.nav.abakus.iaygrunnlag.Organisasjon;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.HentBrukersK9YtelserIPeriodeRequest;
 import no.nav.abakus.iaygrunnlag.request.HentBrukersYtelserIPeriodeRequest;
@@ -52,7 +50,6 @@ import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ConvertToYtelseV1;
-import no.nav.foreldrepenger.abakus.vedtak.tjeneste.YtelseRestTjeneste;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
@@ -166,9 +163,10 @@ public class EksternDelingAvYtelserRestTjeneste {
     @Operation(description = "Henter alle k9 vedtak for ytelser det blir etterspurt", tags = "ekstern")
     @BeskyttetRessurs(actionType = ActionType.READ, resource = VEDTAK, availabilityType = AvailabilityType.ALL)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public List<Ytelse> hentk9VedtakForPerson(@NotNull @TilpassetAbacAttributt(supplierClass = HentBrukersK9YtelserIPeriodeRequestAbacDataSupplier.class) @Valid HentBrukersK9YtelserIPeriodeRequest request) {
+    public List<Ytelse> hentk9VedtakForPerson(@NotNull @TilpassetAbacAttributt(supplierClass = HentBrukersK9YtelserIPeriodeRequestAbacDataSupplier.class) @Valid HentBrukersK9YtelserIPeriodeRequest req) {
         LOG.info("ABAKUS VEDTAK ekstern /hent-vedtatte/for-ident/k9");
-        return hentVedtakForPerson(new HentBrukersYtelserIPeriodeRequest(request.getPersonident(), request.getPeriode(), K9_YTELSER));
+        var request = new HentBrukersYtelserIPeriodeRequest(req.getPersonident(), req.getPeriode(), K9_YTELSER);
+        return hentUtYtelser(request, K9_YTELSER, false);
     }
 
     @POST
@@ -179,14 +177,9 @@ public class EksternDelingAvYtelserRestTjeneste {
     @BeskyttetRessurs(actionType = ActionType.READ, resource = VEDTAK, availabilityType = AvailabilityType.ALL)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public List<Ytelse> hentk9VedtakForPersonMedHistorikk(@NotNull @TilpassetAbacAttributt(supplierClass = HentBrukersK9YtelserIPeriodeRequestAbacDataSupplier.class) @Valid HentBrukersK9YtelserIPeriodeRequest req) {
+        LOG.info("ABAKUS VEDTAK ekstern /hent-vedtatte-og-historiske/for-ident/k9");
         var request = new HentBrukersYtelserIPeriodeRequest(req.getPersonident(), req.getPeriode(), K9_YTELSER);
-        LOG.info("ABAKUS VEDTAK ekstern /hent-vedtatte-og-historiske/for-ident/k9 for ytelser {}", request.getYtelser());
-        var etterspurteYtelser = request.getYtelser()
-            .stream()
-            .filter(GYLDIGE_YTELSER::contains)
-            .collect(Collectors.toSet());
-
-        return hentUtYtelser(request, etterspurteYtelser, true);
+        return hentUtYtelser(request, K9_YTELSER, true);
     }
 
     private List<Ytelse> hentUtYtelser(HentBrukersYtelserIPeriodeRequest request, Set<YtelseType> etterspurteYtelser, boolean hentHistoriske) {
@@ -258,7 +251,6 @@ public class EksternDelingAvYtelserRestTjeneste {
 
     private List<AnvistAndel> mapInfotrygdAndeler(no.nav.foreldrepenger.abakus.domene.iay.YtelseAnvist anvist) {
         return anvist.getYtelseAnvistAndeler().stream().map(a -> new AnvistAndel(
-            a.getArbeidsgiver().map(EksternDelingAvYtelserRestTjeneste::mapArbeidsgiver).orElse(null),
             a.getArbeidsgiver().map(EksternDelingAvYtelserRestTjeneste::mapArbeidsgiverIdent).orElse(null),
             a.getArbeidsforholdRef().getReferanse(),
             new Desimaltall(a.getDagsats().getVerdi()),
@@ -266,15 +258,6 @@ public class EksternDelingAvYtelserRestTjeneste {
             a.getRefusjonsgradProsent() == null ? null : new Desimaltall(a.getRefusjonsgradProsent().getVerdi()),
             ConvertToYtelseV1.fraInntektskategori(a.getInntektskategori())
         )).collect(Collectors.toList());
-    }
-
-    private static no.nav.abakus.iaygrunnlag.Aktør mapArbeidsgiver(no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver arbeidsgiver) {
-        if (arbeidsgiver == null) {
-            return null;
-        }
-        return arbeidsgiver.getOrgnr() != null ?
-            new Organisasjon(arbeidsgiver.getIdentifikator()) :
-            new AktørIdPersonident(arbeidsgiver.getIdentifikator());
     }
 
     private static ArbeidsgiverIdent mapArbeidsgiverIdent(no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver arbeidsgiver) {

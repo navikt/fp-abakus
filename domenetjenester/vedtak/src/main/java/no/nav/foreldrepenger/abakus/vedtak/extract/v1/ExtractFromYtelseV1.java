@@ -104,15 +104,11 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
     }
 
     private Arbeidsgiver mapArbeidsgiver(AnvistAndel andel) {
-        var arbeidsgiver = andel.getArbeidsgiver();
         var arbeidsgiverIdent = andel.getArbeidsgiverIdent();
-        if (arbeidsgiver == null && arbeidsgiverIdent == null) {
+        if (arbeidsgiverIdent == null) {
             return null;
         }
-        if (arbeidsgiverIdent != null) {
-            return arbeidsgiverIdent.erOrganisasjon() ? Arbeidsgiver.virksomhet(arbeidsgiverIdent.ident()) : Arbeidsgiver.person(arbeidsgiverIdent.ident());
-        }
-        return arbeidsgiver.getErOrganisasjon() ? Arbeidsgiver.virksomhet(arbeidsgiver.getIdent()) : Arbeidsgiver.person(arbeidsgiver.getIdent());
+        return arbeidsgiverIdent.erOrganisasjon() ? Arbeidsgiver.virksomhet(arbeidsgiverIdent.ident()) : Arbeidsgiver.person(arbeidsgiverIdent.ident());
     }
 
     private IntervallEntitet mapTilEntitet(Periode periode) {

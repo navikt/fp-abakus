@@ -1,5 +1,6 @@
 package no.nav.abakus.vedtak.ytelse.request;
 
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 
@@ -50,6 +51,24 @@ public class VedtakForPeriodeRequest {
         this.ident = Objects.requireNonNull(ident);
         this.periode = Objects.requireNonNull(periode);
         this.ytelser = Objects.requireNonNull(ytelser);
+    }
+
+    public static VedtakForPeriodeRequest requestFor(String ident, LocalDate fom, LocalDate tom) {
+        var aktør = new Aktør();
+        aktør.setVerdi(Objects.requireNonNull(ident));
+        var periode = new Periode();
+        periode.setFom(Objects.requireNonNull(fom));
+        periode.setTom(Objects.requireNonNull(tom));
+        return new VedtakForPeriodeRequest(aktør, periode);
+    }
+
+    public static VedtakForPeriodeRequest requestFor(String ident, LocalDate fom, LocalDate tom, Set<Ytelser> ytelser) {
+        var aktør = new Aktør();
+        aktør.setVerdi(Objects.requireNonNull(ident));
+        var periode = new Periode();
+        periode.setFom(Objects.requireNonNull(fom));
+        periode.setTom(Objects.requireNonNull(tom));
+        return new VedtakForPeriodeRequest(aktør, periode, ytelser);
     }
 
     public Aktør getIdent() {

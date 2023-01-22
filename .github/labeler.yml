@@ -1,13 +1,14 @@
 kontrakt:
   - kontrakt/src/main/java/**/*
+  - kontrakt-vedtak/src/main/java/**/*
   - kodeverk/src/main/java/**/*
 
 migreringer:
   - migreringer/src/main/resources/**/*
-  
+
 web:
   - web/src/main/java/**/*
-  
+
 pom:
   - '**/*/pom.xml'
   - pom.xml
