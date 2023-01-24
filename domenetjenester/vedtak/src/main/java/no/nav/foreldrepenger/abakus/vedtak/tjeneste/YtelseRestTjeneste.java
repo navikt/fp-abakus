@@ -39,7 +39,6 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ConvertToYtelseV1;
-import no.nav.vedtak.konfig.Tid;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
@@ -72,26 +71,6 @@ public class YtelseRestTjeneste {
     public YtelseRestTjeneste(VedtakYtelseRepository ytelseRepository, AktørTjeneste aktørTjeneste) {
         this.ytelseRepository = ytelseRepository;
         this.aktørTjeneste = aktørTjeneste;
-    }
-
-    @POST
-    @Path("/hentVedtakForAktoer")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Henter alle vedtak for en gitt person, evt med periode etter en fom", tags = "ytelse")
-    @BeskyttetRessurs(actionType = ActionType.READ, resource = VEDTAK)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public List<Ytelse> hentVedtak(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
-        LOG.info("ABAKUS VEDTAK intern /hentVedtakForAktoer for ytelse {}", request.getYtelse());
-
-        AktørId aktørId = new AktørId(request.getAktør().getIdent());
-        LocalDate fom = request.getDato();
-        LocalDate tom = Tid.TIDENES_ENDE;
-        var ytelser = ytelseRepository.hentYtelserForIPeriode(aktørId, fom, tom).stream()
-            .map(ConvertToYtelseV1::convert)
-            .collect(Collectors.toList());
-
-        return ytelser;
     }
 
     @POST

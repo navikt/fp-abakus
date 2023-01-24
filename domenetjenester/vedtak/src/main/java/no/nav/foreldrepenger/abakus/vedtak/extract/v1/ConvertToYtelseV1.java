@@ -3,8 +3,6 @@ package no.nav.foreldrepenger.abakus.vedtak.extract.v1;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
-import no.nav.abakus.iaygrunnlag.Organisasjon;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
@@ -70,7 +68,6 @@ public final class ConvertToYtelseV1 {
 
     private static List<AnvistAndel> mapAndeler(YtelseAnvist anvist) {
         return anvist.getAndeler().stream().map(a -> new AnvistAndel(
-            a.getArbeidsgiver().map(ConvertToYtelseV1::mapArbeidsgiver).orElse(null),
             a.getArbeidsgiver().map(ConvertToYtelseV1::mapArbeidsgiverIdent).orElse(null),
             a.getArbeidsforholdId(),
             new Desimaltall(a.getDagsats().getVerdi()),
@@ -80,15 +77,6 @@ public final class ConvertToYtelseV1 {
         )).collect(Collectors.toList());
     }
 
-
-    private static no.nav.abakus.iaygrunnlag.Aktør mapArbeidsgiver(Arbeidsgiver arbeidsgiver) {
-        if (arbeidsgiver == null) {
-            return null;
-        }
-        return arbeidsgiver.getOrgnr() != null ?
-            new Organisasjon(arbeidsgiver.getIdentifikator()) :
-            new AktørIdPersonident(arbeidsgiver.getIdentifikator());
-    }
 
     private static ArbeidsgiverIdent mapArbeidsgiverIdent(Arbeidsgiver arbeidsgiver) {
         if (arbeidsgiver == null) {

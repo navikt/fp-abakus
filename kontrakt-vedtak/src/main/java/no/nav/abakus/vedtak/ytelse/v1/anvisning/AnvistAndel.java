@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.vedtak.ytelse.Desimaltall;
 
 /**
@@ -23,10 +22,6 @@ public class AnvistAndel {
     /**
      * Kan være null.
      */
-    @JsonProperty(value = "arbeidsgiver")
-    @Valid
-    private Aktør arbeidsgiver;
-
     @JsonProperty(value = "arbeidsgiverIdent")
     @Valid
     private ArbeidsgiverIdent arbeidsgiverIdent;
@@ -52,21 +47,6 @@ public class AnvistAndel {
     protected AnvistAndel() {
     }
 
-    @Deprecated(forRemoval = true)
-    public AnvistAndel(Aktør arbeidsgiver, int beløp, int utbetalingsgrad, int refusjonsgrad, Inntektklasse inntektklasse, String arbeidsforholdId) {
-        this(arbeidsgiver,Optional.ofNullable(arbeidsgiver).map(Aktør::getIdent).map(ArbeidsgiverIdent::new).orElse(null), arbeidsforholdId,
-            new Desimaltall(BigDecimal.valueOf(beløp)),
-            new Desimaltall(BigDecimal.valueOf(utbetalingsgrad)),
-            new Desimaltall(BigDecimal.valueOf(refusjonsgrad)),
-            inntektklasse);
-    }
-
-    @Deprecated(forRemoval = true)
-    public AnvistAndel(Aktør arbeidsgiver, String arbeidsforholdId, Desimaltall beløp, Desimaltall utbetalingsgrad, Desimaltall refusjonsgrad, Inntektklasse inntektklasse) {
-        this(arbeidsgiver, Optional.ofNullable(arbeidsgiver).map(Aktør::getIdent).map(ArbeidsgiverIdent::new).orElse(null),
-            arbeidsforholdId, beløp, utbetalingsgrad, refusjonsgrad, inntektklasse);
-    }
-
     public AnvistAndel(ArbeidsgiverIdent arbeidsgiverIdent, int beløp, int utbetalingsgrad, int refusjonsgrad, Inntektklasse inntektklasse, String arbeidsforholdId) {
         this(arbeidsgiverIdent, arbeidsforholdId,
             new Desimaltall(BigDecimal.valueOf(beløp)),
@@ -76,38 +56,12 @@ public class AnvistAndel {
     }
 
     public AnvistAndel(ArbeidsgiverIdent arbeidsgiverIdent, String arbeidsforholdId, Desimaltall beløp, Desimaltall utbetalingsgrad, Desimaltall refusjonsgrad, Inntektklasse inntektklasse) {
-        this.arbeidsgiver = null;
         this.arbeidsgiverIdent = arbeidsgiverIdent;
         this.arbeidsforholdId = arbeidsforholdId;
         this.dagsats = beløp;
         this.utbetalingsgrad = utbetalingsgrad;
         this.refusjonsgrad = refusjonsgrad;
         this.inntektklasse = inntektklasse;
-    }
-
-    @Deprecated(forRemoval = true)
-    public AnvistAndel(Aktør arbeidsgiver, ArbeidsgiverIdent arbeidsgiverIdent, int beløp, int utbetalingsgrad, int refusjonsgrad, Inntektklasse inntektklasse, String arbeidsforholdId) {
-        this(arbeidsgiver, arbeidsgiverIdent, arbeidsforholdId,
-            new Desimaltall(BigDecimal.valueOf(beløp)),
-            new Desimaltall(BigDecimal.valueOf(utbetalingsgrad)),
-            new Desimaltall(BigDecimal.valueOf(refusjonsgrad)),
-            inntektklasse);
-    }
-
-    @Deprecated(forRemoval = true)
-    public AnvistAndel(Aktør arbeidsgiver, ArbeidsgiverIdent arbeidsgiverIdent, String arbeidsforholdId, Desimaltall beløp, Desimaltall utbetalingsgrad, Desimaltall refusjonsgrad, Inntektklasse inntektklasse) {
-        this.arbeidsgiver = arbeidsgiver;
-        this.arbeidsgiverIdent = arbeidsgiverIdent;
-        this.arbeidsforholdId = arbeidsforholdId;
-        this.dagsats = beløp;
-        this.utbetalingsgrad = utbetalingsgrad;
-        this.refusjonsgrad = refusjonsgrad;
-        this.inntektklasse = inntektklasse;
-    }
-
-    @Deprecated(forRemoval = true)
-    public Aktør getArbeidsgiver() {
-        return arbeidsgiver;
     }
 
     public ArbeidsgiverIdent getArbeidsgiverIdent() {

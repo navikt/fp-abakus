@@ -22,9 +22,10 @@
 		<module>migreringer</module>
 		<module>kodeverk</module>
 		<module>kontrakt</module>
+        <module>kontrakt-vedtak</module>
 		<module>domenetjenester</module>
 		<module>web</module>
-	</modules>
+    </modules>
 
 	<properties>
 		<revision>1.2-SNAPSHOT</revision>
@@ -34,8 +35,8 @@
 
         <kontrakt.java.version>17</kontrakt.java.version>
 
-		<felles.version>4.2.20</felles.version>
-		<prosesstask.version>3.1.15</prosesstask.version>
+		<felles.version>4.2.21</felles.version>
+		<prosesstask.version>3.1.16</prosesstask.version>
         <maven.deploy.skip>true</maven.deploy.skip>
 		<kontrakter.version>6.2.8</kontrakter.version>
 	</properties>
@@ -108,6 +109,11 @@
 				<artifactId>abakus-kodeverk</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.abakus</groupId>
+                <artifactId>abakus-vedtak</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>no.nav.foreldrepenger.abakus</groupId>
 				<artifactId>abakus-kontrakt</artifactId>

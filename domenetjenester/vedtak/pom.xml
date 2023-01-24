@@ -41,7 +41,7 @@
 		</dependency>
 		<dependency>
 			<groupId>no.nav.foreldrepenger.abakus</groupId>
-			<artifactId>abakus-kontrakt</artifactId>
+			<artifactId>abakus-vedtak</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>no.nav.foreldrepenger.abakus</groupId>
