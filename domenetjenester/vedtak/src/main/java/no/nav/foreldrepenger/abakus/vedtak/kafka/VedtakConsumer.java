@@ -14,11 +14,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.abakus.felles.kafka.KafkaIntegration;
+import no.nav.foreldrepenger.konfig.KonfigVerdi;
+import no.nav.vedtak.felles.integrasjon.kafka.KafkaProperties;
 
 @ApplicationScoped
 public class VedtakConsumer implements KafkaIntegration {
 
     private static final Logger log = LoggerFactory.getLogger(VedtakConsumer.class);
+
+    private static final String APPLICATION_ID = "fpabakus"; // Hold konstant pga offset commit
+
     private KafkaStreams stream;
     private String topic;
 
@@ -26,8 +31,9 @@ public class VedtakConsumer implements KafkaIntegration {
     }
 
     @Inject
-    public VedtakConsumer(VedtaksHendelseHåndterer vedtaksHendelseHåndterer, VedtakProperties streamKafkaProperties) {
-        this.topic = streamKafkaProperties.getTopicName();
+    public VedtakConsumer(@KonfigVerdi(value = "kafka.fattevedtak.topic", defaultVerdi = "teamforeldrepenger.familie-vedtakfattet-v1") String topicName,
+                          VedtaksHendelseHåndterer vedtaksHendelseHåndterer) {
+        this.topic = topicName;
 
         final Consumed<String, String> consumed = Consumed.with(Topology.AutoOffsetReset.EARLIEST);
 
@@ -35,7 +41,7 @@ public class VedtakConsumer implements KafkaIntegration {
         builder.stream(topic, consumed)
             .foreach(vedtaksHendelseHåndterer::handleMessage);
 
-        this.stream = new KafkaStreams(builder.build(), streamKafkaProperties.getProperties());
+        this.stream = new KafkaStreams(builder.build(), KafkaProperties.forStreamsStringValue(APPLICATION_ID));
     }
 
     private void addShutdownHooks() {
