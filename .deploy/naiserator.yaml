@@ -56,12 +56,16 @@ spec:
      value: "{{this}}"
   {{/each}}
   azure:
-      application:
-          enabled: true
-          claims:
-              extra:
-                  - "NAVident"
-                  - "azp_name"
+    application:
+      enabled: true
+      claims:
+        extra:
+          - "NAVident"
+          - "azp_name"
+        groups:
+          {{#each groups as |group|}}
+          - id: "{{group}}"
+          {{/each}}
   {{#if AZURE_IAC_RULES}}
   accessPolicy:
     inbound:

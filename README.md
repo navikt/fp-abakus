@@ -1,5 +1,5 @@
-![](https://github.com/navikt/fp-abakus/workflows/Bygg%20og%20deploy/badge.svg) 
-[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=navikt_fp-abakus&metric=alert_status)](https://sonarcloud.io/dashboard?id=navikt_fp-abakus) 
+![](https://github.com/navikt/fp-abakus/workflows/Bygg%20og%20deploy/badge.svg)
+[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=navikt_fp-abakus&metric=alert_status)](https://sonarcloud.io/dashboard?id=navikt_fp-abakus)
 [![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=navikt_fp-abakus&metric=coverage)](https://sonarcloud.io/component_measures/metric/coverage/list?id=navikt_fp-abakus)
 [![SonarCloud Bugs](https://sonarcloud.io/api/project_badges/measure?project=navikt_fp-abakus&metric=bugs)](https://sonarcloud.io/component_measures/metric/reliability_rating/list?id=navikt_fp-abakus)
 [![SonarCloud Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=navikt_fp-abakus&metric=vulnerabilities)](https://sonarcloud.io/component_measures/metric/security_rating/list?id=navikt_fp-abakus)
@@ -24,3 +24,13 @@ Hvert grunnlag er immutable, men består av ett eller flere 'aggregater' (DDD te
 ### Linker
 [Foreldrepengeprosjektet på Confluence](http://confluence.adeo.no/display/MODNAV/Foreldrepengeprosjektet)
 
+### Sikkerhet
+Det er mulig å kalle tjenesten med bruk av følgende tokens
+- Azure CC
+- Azure OBO med følgende rettigheter:
+    - fpsak-saksbehandler
+    - fpsak-veileder
+    - k9-saksbehandler
+    - k9-veileder
+    - abakus-drift
+- STS (fases ut)
