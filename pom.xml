@@ -7,7 +7,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.felles</groupId>
         <artifactId>fp-bom</artifactId>
-        <version>0.4.2</version>
+        <version>0.4.3</version>
     </parent>
 
 	<groupId>no.nav.foreldrepenger.abakus</groupId>
@@ -50,7 +50,7 @@
             <dependency>
                 <groupId>no.nav.foreldrepenger.felles</groupId>
                 <artifactId>fp-bom</artifactId>
-                <version>0.4.2</version>
+                <version>0.4.3</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -226,10 +226,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
 			<plugin>
 				<!-- FOR Å LEGGE VED JAKARTA EE9 KOMPATIBLE ARTEFAKTER I TILLEGG -->

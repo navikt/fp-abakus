@@ -1,12 +1,13 @@
 package no.nav.foreldrepenger.abakus.jetty;
 
+import static org.eclipse.jetty.webapp.MetaInfConfiguration.CONTAINER_JAR_PATTERN;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.security.auth.message.config.AuthConfigFactory;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,9 +26,9 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.util.resource.Resource;
-import org.eclipse.jetty.webapp.MetaData;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
@@ -35,8 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import no.nav.foreldrepenger.abakus.app.konfig.ApiConfig;
-import no.nav.foreldrepenger.abakus.app.konfig.EksternApiConfig;
 import no.nav.foreldrepenger.abakus.jetty.db.DatasourceRole;
 import no.nav.foreldrepenger.abakus.jetty.db.DatasourceUtil;
 import no.nav.foreldrepenger.konfig.Environment;
@@ -48,6 +47,8 @@ public class JettyServer {
     private static final Logger log = LoggerFactory.getLogger(JettyServer.class);
 
     private static final String CONTEXT_PATH = ENV.getProperty("context.path", "/fpabakus");
+    private static final String JETTY_SCAN_LOCATIONS = "^.*jersey-.*\\.jar$|^.*felles-.*\\.jar$|^.*/app\\.jar$";
+    private static final String JETTY_LOCAL_CLASSES = "^.*/target/classes/|";
     private final Integer serverPort;
 
     JettyServer(int serverPort) {
@@ -66,8 +67,8 @@ public class JettyServer {
     }
 
     private static void initTrustStore() {
-        final String trustStorePathProp = "javax.net.ssl.trustStore";
-        final String trustStorePasswordProp = "javax.net.ssl.trustStorePassword";
+        final var trustStorePathProp = "javax.net.ssl.trustStore";
+        final var trustStorePasswordProp = "javax.net.ssl.trustStorePassword";
 
         var defaultLocation = ENV.getProperty("user.home", ".") + "/.modig/truststore.jks";
         var storePath = ENV.getProperty(trustStorePathProp, defaultLocation);
@@ -82,7 +83,7 @@ public class JettyServer {
         System.setProperty(trustStorePasswordProp, password);
     }
 
-    private static WebAppContext createContext() throws IOException {
+    private static ContextHandler createContext() throws IOException {
         var ctx = new WebAppContext();
         ctx.setParentLoaderPriority(true);
 
@@ -91,26 +92,21 @@ public class JettyServer {
         try (var resource = Resource.newClassPathResource("/WEB-INF/web.xml")) {
             descriptor = resource.getURI().toURL().toExternalForm();
         }
-
         ctx.setDescriptor(descriptor);
+
         ctx.setContextPath(CONTEXT_PATH);
         ctx.setResourceBase(".");
-
-        ctx.setInitParameter("pathInfoOnly", "true");
         ctx.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
+        ctx.setInitParameter("pathInfoOnly", "true");
 
-        /*
-         * lar jetty scanne flere jars for web resources (eks. WebFilter/WebListener annotations),
-         * men bare de som matchr pattern for raskere oppstart
-         */
-        ctx.setAttribute("org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern", "^.*jersey-.*.jar$|^.*felles-sikkerhet-.*.jar$");
 
-        ctx.addEventListener(new org.jboss.weld.environment.servlet.BeanManagerResourceBindingListener());
+        // Scanns the CLASSPATH for classes and jars.
+        ctx.setAttribute(CONTAINER_JAR_PATTERN, String.format("%s%s", ENV.isLocal() ? JETTY_LOCAL_CLASSES : "", JETTY_SCAN_LOCATIONS));
+
         ctx.addEventListener(new org.jboss.weld.environment.servlet.Listener());
+        ctx.addEventListener(new org.jboss.weld.environment.servlet.BeanManagerResourceBindingListener());
 
         ctx.setSecurityHandler(createSecurityHandler());
-
-        updateMetaData(ctx.getMetaData());
         ctx.setThrowUnavailableOnStartupException(true);
 
         return ctx;
@@ -135,20 +131,6 @@ public class JettyServer {
         loginService.setIdentityService(new DefaultIdentityService());
         securityHandler.setLoginService(loginService);
         return securityHandler;
-    }
-
-    private static void updateMetaData(MetaData metaData) {
-        // Find path to class-files while starting jetty from development environment.
-        var resources = getApplicationClasses().stream()
-            .map(c -> Resource.newResource(c.getProtectionDomain().getCodeSource().getLocation()))
-            .distinct()
-            .toList();
-
-        metaData.setWebInfClassesResources(resources);
-    }
-
-    private static List<Class<?>> getApplicationClasses() {
-        return List.of(ApiConfig.class, EksternApiConfig.class);
     }
 
     void bootStrap() throws Exception {
@@ -215,10 +197,7 @@ public class JettyServer {
      */
     static final class ResetLogContextHandler extends AbstractHandler {
         @Override
-        public void handle(String target,
-                           Request baseRequest,
-                           HttpServletRequest request,
-                           HttpServletResponse response) throws IOException, ServletException {
+        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
             MDC.clear();
         }
     }
