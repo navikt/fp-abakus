@@ -68,7 +68,7 @@ public class InternArbeidsforholdRef implements IndexKey, Serializable {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { referanse == null ? null : referanse.toString() };
+        Object[] keyParts = {referanse == null ? null : referanse.toString()};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -86,13 +86,15 @@ public class InternArbeidsforholdRef implements IndexKey, Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
+        }
         if (o == null && this.referanse == null) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
         InternArbeidsforholdRef that = (InternArbeidsforholdRef) o;
         return Objects.equals(referanse, that.referanse);
     }

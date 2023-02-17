@@ -1,9 +1,9 @@
 package no.nav.foreldrepenger.abakus.iay.jpa;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.OrganisasjonType;
+
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
-
-import no.nav.abakus.iaygrunnlag.kodeverk.OrganisasjonType;
 
 @Converter(autoApply = true)
 public class OrganisasjonstypeKodeverdiConverter implements AttributeConverter<OrganisasjonType, String> {

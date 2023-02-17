@@ -12,29 +12,31 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/** Oppgitt frilansinntekter fra søker. */
+/**
+ * Oppgitt frilansinntekter fra søker.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class OppgittFrilansDto {
-    
-    @JsonProperty(value="harInntektFraFosterhjem")
+
+    @JsonProperty(value = "harInntektFraFosterhjem")
     private Boolean harInntektFraFosterhjem;
-    
-    @JsonProperty(value="erNyoppstartet")
+
+    @JsonProperty(value = "erNyoppstartet")
     private Boolean erNyoppstartet;
-    
-    @JsonProperty(value="erNærRelasjon")
+
+    @JsonProperty(value = "erNærRelasjon")
     private Boolean erNærRelasjon;
-    
-    @JsonProperty(value="frilansoppdrag")
+
+    @JsonProperty(value = "frilansoppdrag")
     @NotNull
     @Valid
     private List<OppgittFrilansoppdragDto> frilansoppdrag;
 
     protected OppgittFrilansDto() {
     }
-    
+
     public OppgittFrilansDto(List<OppgittFrilansoppdragDto> frilansoppdrag) {
         Objects.requireNonNull(frilansoppdrag, "frilansoppdrag");
         this.frilansoppdrag = frilansoppdrag;
@@ -60,7 +62,7 @@ public class OppgittFrilansDto {
     public void setErNyoppstartet(boolean erNyoppstartet) {
         this.erNyoppstartet = erNyoppstartet;
     }
-    
+
     public OppgittFrilansDto medErNyoppstartet(boolean erNyoppstartet) {
         setErNyoppstartet(erNyoppstartet);
         return this;
@@ -73,7 +75,7 @@ public class OppgittFrilansDto {
     public void setHarNærRelasjon(boolean harNærRelasjon) {
         this.erNærRelasjon = harNærRelasjon;
     }
-    
+
     public OppgittFrilansDto medHarNærRelasjon(boolean harNærRelasjon) {
         setHarNærRelasjon(harNærRelasjon);
         return this;

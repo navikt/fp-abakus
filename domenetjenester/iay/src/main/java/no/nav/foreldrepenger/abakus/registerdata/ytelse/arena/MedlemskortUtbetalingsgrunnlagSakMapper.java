@@ -24,19 +24,23 @@ public class MedlemskortUtbetalingsgrunnlagSakMapper {
             .medType(tilType(meldekortUtbetalingsgrunnlagSakDto.type()))
             .medTilstand(tilTilstand(meldekortUtbetalingsgrunnlagSakDto.tilstand()))
             .medKilde(tilKilde(meldekortUtbetalingsgrunnlagSakDto.kilde()))
-            .medSaksnummer(meldekortUtbetalingsgrunnlagSakDto.saksnummer() != null ? new Saksnummer(meldekortUtbetalingsgrunnlagSakDto.saksnummer()) : null)
+            .medSaksnummer(
+                meldekortUtbetalingsgrunnlagSakDto.saksnummer() != null ? new Saksnummer(meldekortUtbetalingsgrunnlagSakDto.saksnummer()) : null)
             .medSakStatus(meldekortUtbetalingsgrunnlagSakDto.sakStatus())
             .medVedtakStatus(meldekortUtbetalingsgrunnlagSakDto.vedtakStatus())
             .medKravMottattDato(meldekortUtbetalingsgrunnlagSakDto.kravMottattDato())
             .medVedtattDato(meldekortUtbetalingsgrunnlagSakDto.vedtattDato())
             .medVedtaksPeriodeFom(meldekortUtbetalingsgrunnlagSakDto.vedtaksPeriodeFom())
             .medVedtaksPeriodeTom(meldekortUtbetalingsgrunnlagSakDto.vedtaksPeriodeTom())
-            .medVedtaksDagsats(meldekortUtbetalingsgrunnlagSakDto.vedtaksDagsats() != null ? meldekortUtbetalingsgrunnlagSakDto.vedtaksDagsats().verdi() : null)
+            .medVedtaksDagsats(
+                meldekortUtbetalingsgrunnlagSakDto.vedtaksDagsats() != null ? meldekortUtbetalingsgrunnlagSakDto.vedtaksDagsats().verdi() : null)
             .build();
     }
 
     static Fagsystem tilKilde(FagsystemDto kilde) {
-        if (kilde == null) return null;
+        if (kilde == null) {
+            return null;
+        }
         return switch (kilde) {
             case BISYS -> Fagsystem.BISYS;
             case BIDRAGINNKREVING -> Fagsystem.BIDRAGINNKREVING;
@@ -66,7 +70,9 @@ public class MedlemskortUtbetalingsgrunnlagSakMapper {
     }
 
     static YtelseStatus tilTilstand(YtelseStatusDto tilstand) {
-        if (tilstand == null) return null;
+        if (tilstand == null) {
+            return null;
+        }
         return switch (tilstand) {
             case OPPR -> YtelseStatus.OPPRETTET;
             case UBEH -> YtelseStatus.UNDER_BEHANDLING;
@@ -76,7 +82,9 @@ public class MedlemskortUtbetalingsgrunnlagSakMapper {
     }
 
     static YtelseType tilType(YtelseTypeDto type) {
-        if (type == null) return null;
+        if (type == null) {
+            return null;
+        }
         return switch (type) {
             case DAG -> YtelseType.DAGPENGER;
             case AAP -> YtelseType.ARBEIDSAVKLARINGSPENGER;
@@ -84,9 +92,7 @@ public class MedlemskortUtbetalingsgrunnlagSakMapper {
     }
 
     private static List<MeldekortUtbetalingsgrunnlagMeldekort> tilMeldekort(List<MeldekortUtbetalingsgrunnlagMeldekortDto> meldekortene) {
-        return meldekortene.stream()
-            .map(MedlemskortUtbetalingsgrunnlagSakMapper::tilMeldekortDomene)
-            .toList();
+        return meldekortene.stream().map(MedlemskortUtbetalingsgrunnlagSakMapper::tilMeldekortDomene).toList();
     }
 
     private static MeldekortUtbetalingsgrunnlagMeldekort tilMeldekortDomene(MeldekortUtbetalingsgrunnlagMeldekortDto meldekortUtbetalingsgrunnlagMeldekortDto) {

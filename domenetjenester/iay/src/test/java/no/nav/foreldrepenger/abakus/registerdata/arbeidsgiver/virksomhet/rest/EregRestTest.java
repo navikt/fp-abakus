@@ -18,6 +18,10 @@ public class EregRestTest {
 
     private static ObjectMapper mapper = JsonObjectMapper.getMapper();
 
+    private static <T> T fromJson(String json, Class<T> clazz) throws IOException {
+        return mapper.readerFor(clazz).readValue(json);
+    }
+
     @Test
     public void mapping_dto_til_grunnlag_til_dto() throws IOException {
         // Arrange
@@ -79,9 +83,5 @@ public class EregRestTest {
         assertThat(org.getEksaktVirksomhetForDato(LocalDate.now()).get(0)).isEqualTo("999999997");
         assertThat(org.organisasjonsnummer()).isEqualTo("999999999");
         assertThat(org.type()).isEqualTo(OrganisasjonstypeEReg.JURIDISK_ENHET);
-    }
-
-    private static <T> T fromJson(String json, Class<T> clazz) throws IOException {
-        return mapper.readerFor(clazz).readValue(json);
     }
 }

@@ -68,7 +68,8 @@ public class InnhentRegisterdataRequest {
 
     @JsonProperty(value = "elementer")
     @Valid
-    private Set<RegisterdataType> elementer = Set.of(RegisterdataType.ARBEIDSFORHOLD, RegisterdataType.INNTEKT_PENSJONSGIVENDE, RegisterdataType.YTELSE);
+    private Set<RegisterdataType> elementer = Set.of(RegisterdataType.ARBEIDSFORHOLD, RegisterdataType.INNTEKT_PENSJONSGIVENDE,
+        RegisterdataType.YTELSE);
 
     @JsonProperty(value = "callbackUrl")
     @Valid

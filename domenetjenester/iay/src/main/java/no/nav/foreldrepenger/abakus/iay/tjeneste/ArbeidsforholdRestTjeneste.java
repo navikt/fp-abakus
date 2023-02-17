@@ -60,11 +60,14 @@ public class ArbeidsforholdRestTjeneste {
     private ArbeidsforholdDtoTjeneste dtoTjeneste;
     private VirksomhetTjeneste virksomhetTjeneste;
 
-    public ArbeidsforholdRestTjeneste() {} // CDI Ctor
+    public ArbeidsforholdRestTjeneste() {
+    } // CDI Ctor
 
     @Inject
-    public ArbeidsforholdRestTjeneste(KoblingTjeneste koblingTjeneste, InntektArbeidYtelseTjeneste iayTjeneste,
-                                      ArbeidsforholdDtoTjeneste dtoTjeneste, VirksomhetTjeneste virksomhetTjeneste) {
+    public ArbeidsforholdRestTjeneste(KoblingTjeneste koblingTjeneste,
+                                      InntektArbeidYtelseTjeneste iayTjeneste,
+                                      ArbeidsforholdDtoTjeneste dtoTjeneste,
+                                      VirksomhetTjeneste virksomhetTjeneste) {
         this.koblingTjeneste = koblingTjeneste;
         this.iayTjeneste = iayTjeneste;
         this.dtoTjeneste = dtoTjeneste;
@@ -75,8 +78,7 @@ public class ArbeidsforholdRestTjeneste {
     @Path("/arbeidstaker")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Gir ut alle arbeidsforhold i en gitt periode/dato for en gitt aktør. NB! Proxyer direkte til aa-registeret / ingen bruk av sak/kobling i abakus",
-        tags = "arbeidsforhold")
+    @Operation(description = "Gir ut alle arbeidsforhold i en gitt periode/dato for en gitt aktør. NB! Proxyer direkte til aa-registeret / ingen bruk av sak/kobling i abakus", tags = "arbeidsforhold")
     @BeskyttetRessurs(actionType = ActionType.READ, resource = ARBEIDSFORHOLD)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentArbeidsforhold(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
@@ -87,8 +89,7 @@ public class ArbeidsforholdRestTjeneste {
         LOG_CONTEXT.add("periode", periode);
 
         LocalDate fom = periode.getFom();
-        LocalDate tom = Objects.equals(fom, periode.getTom())
-            ? fom.plusDays(1) // enkel dato søk
+        LocalDate tom = Objects.equals(fom, periode.getTom()) ? fom.plusDays(1) // enkel dato søk
             : periode.getTom(); // periode søk
         LOG.info("ABAKUS arbeidstaker - sjekk consumers for ytelse {}", ytelse);
         var arbeidstakersArbeidsforhold = dtoTjeneste.mapFor(aktørId, fom, tom, ytelse);
@@ -133,7 +134,8 @@ public class ArbeidsforholdRestTjeneste {
     private void setupLogMdcFraKoblingReferanse(KoblingReferanse koblingReferanse) {
         var kobling = koblingTjeneste.hentFor(koblingReferanse);
         kobling.filter(k -> k.getSaksnummer() != null)
-            .ifPresent(k -> LoggUtil.setupLogMdc(k.getYtelseType(), kobling.get().getSaksnummer().getVerdi(), koblingReferanse.getReferanse())); // legger til saksnummer i MDC
+            .ifPresent(k -> LoggUtil.setupLogMdc(k.getYtelseType(), kobling.get().getSaksnummer().getVerdi(),
+                koblingReferanse.getReferanse())); // legger til saksnummer i MDC
     }
 
     public static class AktørDatoRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {

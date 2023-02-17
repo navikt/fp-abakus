@@ -76,7 +76,7 @@ public class UtsettelsePeriode extends BaseEntitet implements IndexKey {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { årsak, periode };
+        Object[] keyParts = {årsak, periode};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -100,13 +100,14 @@ public class UtsettelsePeriode extends BaseEntitet implements IndexKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || !(o instanceof UtsettelsePeriode))
+        }
+        if (o == null || !(o instanceof UtsettelsePeriode)) {
             return false;
+        }
         var that = (UtsettelsePeriode) o;
-        return Objects.equals(periode, that.periode) &&
-            Objects.equals(årsak, that.årsak);
+        return Objects.equals(periode, that.periode) && Objects.equals(årsak, that.årsak);
     }
 
     @Override
@@ -116,11 +117,7 @@ public class UtsettelsePeriode extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "UtsettelsePeriodeEntitet{" +
-            "id=" + id +
-            ", periode=" + periode +
-            ", årsak=" + årsak +
-            '}';
+        return "UtsettelsePeriodeEntitet{" + "id=" + id + ", periode=" + periode + ", årsak=" + årsak + '}';
     }
 
     void setInntektsmelding(Inntektsmelding inntektsmelding) {

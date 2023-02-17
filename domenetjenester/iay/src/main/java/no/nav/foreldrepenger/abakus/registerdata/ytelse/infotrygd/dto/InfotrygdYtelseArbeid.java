@@ -52,14 +52,15 @@ public class InfotrygdYtelseArbeid {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         InfotrygdYtelseArbeid that = (InfotrygdYtelseArbeid) o;
-        return Objects.equals(orgnr, that.orgnr) &&
-            Objects.equals(inntekt, that.inntekt) &&
-            Objects.equals(inntektperiode, that.inntektperiode) &&
-            Objects.equals(refusjon, that.refusjon) &&
-            Objects.equals(refusjonTom, that.refusjonTom);
+        return Objects.equals(orgnr, that.orgnr) && Objects.equals(inntekt, that.inntekt) && Objects.equals(inntektperiode, that.inntektperiode)
+            && Objects.equals(refusjon, that.refusjon) && Objects.equals(refusjonTom, that.refusjonTom);
 
     }
 
@@ -70,13 +71,8 @@ public class InfotrygdYtelseArbeid {
 
     @Override
     public String toString() {
-        return "InfotrygdYtelseArbeid{" +
-            "orgnr='" + getOrgnrString() + '\'' +
-            ", inntekt=" + inntekt +
-            ", inntektperiode=" + inntektperiode +
-            ", refusjon=" + refusjon +
-            ", refusjon=" + refusjonTom +
-            '}';
+        return "InfotrygdYtelseArbeid{" + "orgnr='" + getOrgnrString() + '\'' + ", inntekt=" + inntekt + ", inntektperiode=" + inntektperiode
+            + ", refusjon=" + refusjon + ", refusjon=" + refusjonTom + '}';
     }
 
     private String getOrgnrString() {

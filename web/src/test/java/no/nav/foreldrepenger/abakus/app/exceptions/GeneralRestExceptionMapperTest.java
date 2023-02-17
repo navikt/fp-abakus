@@ -23,6 +23,18 @@ public class GeneralRestExceptionMapperTest {
 
     private final GeneralRestExceptionMapper exceptionMapper = new GeneralRestExceptionMapper();
 
+    private static FunksjonellException funksjonellFeil() {
+        return new FunksjonellException("FUNK_FEIL", "en funksjonell feilmelding", "et løsningsforslag");
+    }
+
+    private static TekniskException tekniskFeil() {
+        return new TekniskException("TEK_FEIL", "en teknisk feilmelding");
+    }
+
+    private static ManglerTilgangException manglerTilgangFeil() {
+        return new ManglerTilgangException("MANGLER_TILGANG_FEIL", "ManglerTilgangFeilmeldingKode");
+    }
+
     @BeforeEach
     public void setUp() {
         logSniffer = MemoryAppender.sniff(GeneralRestExceptionMapper.class);
@@ -113,19 +125,6 @@ public class GeneralRestExceptionMapperTest {
 
         assertThat(feilDto.feilmelding()).contains(feilmelding);
         assertThat(logSniffer.search(feilmelding, Level.WARN)).hasSize(1);
-    }
-
-
-    private static FunksjonellException funksjonellFeil() {
-        return new FunksjonellException("FUNK_FEIL", "en funksjonell feilmelding", "et løsningsforslag");
-    }
-
-    private static TekniskException tekniskFeil() {
-        return new TekniskException("TEK_FEIL", "en teknisk feilmelding");
-    }
-
-    private static ManglerTilgangException manglerTilgangFeil() {
-        return new ManglerTilgangException("MANGLER_TILGANG_FEIL","ManglerTilgangFeilmeldingKode");
     }
 
 }

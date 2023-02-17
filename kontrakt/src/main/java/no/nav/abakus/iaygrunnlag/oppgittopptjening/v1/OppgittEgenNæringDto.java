@@ -39,16 +39,19 @@ public class OppgittEgenNæringDto {
     private VirksomhetType virksomhetType;
 
     @JsonProperty(value = "regnskapsførerNavn")
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message="[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String regnskapsførerNavn;
 
     @JsonProperty(value = "regnskapsførerTlf")
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message="[${validatedValue}] matcher ikke oppgitt pattern [{regexp}]") // har caser som har sluppet gjennom selvbetjening med alfa
+    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "[${validatedValue}] matcher ikke oppgitt pattern [{regexp}]")
+    // har caser som har sluppet gjennom selvbetjening med alfa
     private String regnskapsførerTlf;
 
-    /** Oppgis normalt dersom ikke orgnr kan gis. F.eks for utlandske virsomheter, eller noen tilfeller Fiskere med Lott. */
+    /**
+     * Oppgis normalt dersom ikke orgnr kan gis. F.eks for utlandske virsomheter, eller noen tilfeller Fiskere med Lott.
+     */
     @JsonProperty(value = "virksomhetNavn", required = false)
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message="[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String virksomhetNavn;
 
     @JsonProperty(value = "landkode", required = true)
@@ -65,7 +68,9 @@ public class OppgittEgenNæringDto {
     @JsonProperty(value = "endringBegrunnelse")
     private String endringBegrunnelse;
 
-    /** Tillater kun positive verdier.  Max verdi håndteres av mottager. */
+    /**
+     * Tillater kun positive verdier.  Max verdi håndteres av mottager.
+     */
     @JsonProperty("bruttoInntekt")
     @DecimalMin(value = "0.00", message = "beløp [${validatedValue}] må være >= {value}")
     private BigDecimal bruttoInntekt;

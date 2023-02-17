@@ -45,6 +45,25 @@ public class SigrunRestClient {
         this.endpointSSG = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_SSG);
     }
 
+    private static Optional<String> handleResponse(HttpResponse<String> response) {
+        int status = response.statusCode();
+        var body = response.body();
+        if (status >= HttpURLConnection.HTTP_OK && status < HttpURLConnection.HTTP_MULT_CHOICE) {
+            return body != null && !body.isEmpty() ? Optional.of(body) : Optional.empty();
+        } else if (status == HttpURLConnection.HTTP_FORBIDDEN) {
+            throw new ManglerTilgangException("F-018815", "Mangler tilgang. Fikk http-kode 403 fra server");
+        } else if (status == HttpURLConnection.HTTP_NOT_FOUND) {
+            LOG.trace("Sigrun: {}", body);
+            return Optional.empty();
+        } else {
+            if (status == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                var challenge = response.headers().allValues("WWW-Authenticate");
+                LOG.info("Sigrun unauth: {}", challenge);
+            }
+            throw new IntegrasjonException("F-016912", String.format("Server svarte med feilkode http-kode '%s' og response var '%s'", status, body));
+        }
+    }
+
     List<BeregnetSkatt> hentBeregnetSkattForAktørOgÅr(long aktørId, String år) {
         var request = RestRequest.newGET(endpointBS, restConfig)
             .header(SigrunRestConfig.X_FILTER, SigrunRestConfig.FILTER)
@@ -56,9 +75,7 @@ public class SigrunRestClient {
             .header(SigrunRestConfig.NYE_HEADER_CONSUMER_ID, SubjectHandler.getSubjectHandler().getConsumerId());
 
         HttpResponse<String> response = client.sendReturnUnhandled(request);
-        return handleResponse(response)
-            .map(r -> Arrays.asList(DefaultJsonMapper.fromJson(r, BeregnetSkatt[].class)))
-            .orElse(new ArrayList<>());
+        return handleResponse(response).map(r -> Arrays.asList(DefaultJsonMapper.fromJson(r, BeregnetSkatt[].class))).orElse(new ArrayList<>());
     }
 
     //api/v1/summertskattegrunnlag
@@ -77,26 +94,6 @@ public class SigrunRestClient {
 
         HttpResponse<String> response = client.sendReturnUnhandled(request);
         return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, SSGResponse.class));
-    }
-
-    private static Optional<String> handleResponse(HttpResponse<String> response) {
-        int status = response.statusCode();
-        var body = response.body();
-        if (status >= HttpURLConnection.HTTP_OK && status < HttpURLConnection.HTTP_MULT_CHOICE) {
-            return body != null && !body.isEmpty() ? Optional.of(body) : Optional.empty();
-        } else if (status == HttpURLConnection.HTTP_FORBIDDEN) {
-            throw new ManglerTilgangException("F-018815", "Mangler tilgang. Fikk http-kode 403 fra server");
-        } else if (status == HttpURLConnection.HTTP_NOT_FOUND) {
-            LOG.trace("Sigrun: {}", body);
-            return Optional.empty();
-        } else {
-            if (status == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                var challenge = response.headers().allValues("WWW-Authenticate");
-                LOG.info("Sigrun unauth: {}", challenge);
-            }
-            throw new IntegrasjonException("F-016912",
-                String.format("Server svarte med feilkode http-kode '%s' og response var '%s'", status, body));
-        }
     }
 
 }

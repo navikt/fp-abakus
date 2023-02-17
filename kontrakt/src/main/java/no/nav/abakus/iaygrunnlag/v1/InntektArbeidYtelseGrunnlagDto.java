@@ -1,20 +1,7 @@
 package no.nav.abakus.iaygrunnlag.v1;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.util.Objects;
-import java.util.UUID;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.UuidDto;
@@ -23,6 +10,15 @@ import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningDto;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgitteOpptjeningerDto;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.util.Objects;
+import java.util.UUID;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -146,13 +142,15 @@ public class InntektArbeidYtelseGrunnlagDto {
         }
         InntektArbeidYtelseGrunnlagDto other = (InntektArbeidYtelseGrunnlagDto) obj;
         //TODO bør sammenligne alle feltene, eller ha en kommentar som sier hvorfor kun utvalgte felt brukes i equals-metoden
-        return Objects.equals(person, other.person)
-            && Objects.equals(register, other.register)
-            && Objects.equals(overstyrt, other.overstyrt);
+        return Objects.equals(person, other.person) && Objects.equals(register, other.register) && Objects.equals(overstyrt, other.overstyrt);
     }
 
     public ArbeidsforholdInformasjon getArbeidsforholdInformasjon() {
         return arbeidsforholdInformasjon;
+    }
+
+    public void setArbeidsforholdInformasjon(ArbeidsforholdInformasjon arbeidsforholdInformasjon) {
+        this.arbeidsforholdInformasjon = arbeidsforholdInformasjon;
     }
 
     public String getGrunnlagReferanse() {
@@ -175,8 +173,24 @@ public class InntektArbeidYtelseGrunnlagDto {
         return oppgittOpptjening;
     }
 
+    public void setOppgittOpptjening(OppgittOpptjeningDto oppgittOpptjening) {
+        if (oppgitteOpptjeninger != null) {
+            throw new IllegalArgumentException(
+                "Skal ikke bruke både ny (oppgitt opptjening pr journalpostId) og gammel (en oppgitt opptjening) i samme sak.");
+        }
+        this.oppgittOpptjening = oppgittOpptjening;
+    }
+
     public OppgittOpptjeningDto getOverstyrtOppgittOpptjening() {
         return overstyrtOppgittOpptjening;
+    }
+
+    public void setOverstyrtOppgittOpptjening(OppgittOpptjeningDto overstyrtOppgittOpptjening) {
+        if (oppgitteOpptjeninger != null) {
+            throw new IllegalArgumentException(
+                "Skal ikke bruke både ny (oppgitt opptjening pr journalpostId) og gammel (en oppgitt opptjening) i samme sak.");
+        }
+        this.overstyrtOppgittOpptjening = overstyrtOppgittOpptjening;
     }
 
     public OppgitteOpptjeningerDto getOppgitteOpptjeninger() {
@@ -185,6 +199,10 @@ public class InntektArbeidYtelseGrunnlagDto {
 
     public InntektArbeidYtelseAggregatOverstyrtDto getOverstyrt() {
         return overstyrt;
+    }
+
+    public void setOverstyrt(InntektArbeidYtelseAggregatOverstyrtDto overstyrt) {
+        this.overstyrt = overstyrt;
     }
 
     public PersonIdent getPerson() {
@@ -197,6 +215,10 @@ public class InntektArbeidYtelseGrunnlagDto {
 
     public InntektArbeidYtelseAggregatRegisterDto getRegister() {
         return register;
+    }
+
+    public void setRegister(InntektArbeidYtelseAggregatRegisterDto register) {
+        this.register = register;
     }
 
     @Override
@@ -239,37 +261,12 @@ public class InntektArbeidYtelseGrunnlagDto {
         return this;
     }
 
-    public void setArbeidsforholdInformasjon(ArbeidsforholdInformasjon arbeidsforholdInformasjon) {
-        this.arbeidsforholdInformasjon = arbeidsforholdInformasjon;
-    }
-
-    public void setOppgittOpptjening(OppgittOpptjeningDto oppgittOpptjening) {
-        if (oppgitteOpptjeninger != null) {
-            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr journalpostId) og gammel (en oppgitt opptjening) i samme sak.");
-        }
-        this.oppgittOpptjening = oppgittOpptjening;
-    }
-
     public void setOppgittOpptjeningPrDokument(OppgitteOpptjeningerDto oppgitteOpptjeninger) {
         if (oppgittOpptjening != null || overstyrtOppgittOpptjening != null) {
-            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr journalpostId) og gammel (en oppgitt opptjening) i samme sak.");
+            throw new IllegalArgumentException(
+                "Skal ikke bruke både ny (oppgitt opptjening pr journalpostId) og gammel (en oppgitt opptjening) i samme sak.");
         }
         this.oppgitteOpptjeninger = oppgitteOpptjeninger;
-    }
-
-    public void setOverstyrtOppgittOpptjening(OppgittOpptjeningDto overstyrtOppgittOpptjening) {
-        if (oppgitteOpptjeninger != null) {
-            throw new IllegalArgumentException("Skal ikke bruke både ny (oppgitt opptjening pr journalpostId) og gammel (en oppgitt opptjening) i samme sak.");
-        }
-        this.overstyrtOppgittOpptjening = overstyrtOppgittOpptjening;
-    }
-
-    public void setOverstyrt(InntektArbeidYtelseAggregatOverstyrtDto overstyrt) {
-        this.overstyrt = overstyrt;
-    }
-
-    public void setRegister(InntektArbeidYtelseAggregatRegisterDto register) {
-        this.register = register;
     }
 
 }

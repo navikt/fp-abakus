@@ -108,7 +108,8 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
         if (arbeidsgiverIdent == null) {
             return null;
         }
-        return arbeidsgiverIdent.erOrganisasjon() ? Arbeidsgiver.virksomhet(arbeidsgiverIdent.ident()) : Arbeidsgiver.person(arbeidsgiverIdent.ident());
+        return arbeidsgiverIdent.erOrganisasjon() ? Arbeidsgiver.virksomhet(arbeidsgiverIdent.ident()) : Arbeidsgiver.person(
+            arbeidsgiverIdent.ident());
     }
 
     private IntervallEntitet mapTilEntitet(Periode periode) {

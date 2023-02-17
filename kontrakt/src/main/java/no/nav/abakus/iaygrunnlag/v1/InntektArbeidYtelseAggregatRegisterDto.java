@@ -1,22 +1,21 @@
 package no.nav.abakus.iaygrunnlag.v1;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-
-import javax.validation.Valid;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.UuidDto;
 import no.nav.abakus.iaygrunnlag.inntekt.v1.InntekterDto;
 import no.nav.abakus.iaygrunnlag.ytelse.v1.YtelserDto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
+
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -29,7 +28,7 @@ public class InntektArbeidYtelseAggregatRegisterDto extends InntektArbeidYtelseA
     @JsonProperty(value = "ytelser")
     @Valid
     private List<YtelserDto> ytelser;
-    
+
     protected InntektArbeidYtelseAggregatRegisterDto() {
         // default ctor
     }
@@ -37,15 +36,15 @@ public class InntektArbeidYtelseAggregatRegisterDto extends InntektArbeidYtelseA
     public InntektArbeidYtelseAggregatRegisterDto(LocalDateTime tidspunkt, UuidDto aggregatReferanse) {
         super(tidspunkt, aggregatReferanse);
     }
-    
+
     public InntektArbeidYtelseAggregatRegisterDto(LocalDateTime tidspunkt, UUID aggregatReferanse) {
         super(tidspunkt, aggregatReferanse);
     }
-    
+
     public InntektArbeidYtelseAggregatRegisterDto(OffsetDateTime tidspunkt, UUID aggregatReferanse) {
         super(tidspunkt, aggregatReferanse);
     }
-    
+
     public InntektArbeidYtelseAggregatRegisterDto(OffsetDateTime tidspunkt, String aggregatReferanse) {
         super(tidspunkt, UUID.fromString(aggregatReferanse));
     }
@@ -54,13 +53,13 @@ public class InntektArbeidYtelseAggregatRegisterDto extends InntektArbeidYtelseA
         return inntekt;
     }
 
+    public void setInntekt(List<InntekterDto> inntekt) {
+        this.inntekt = inntekt;
+    }
+
     public InntektArbeidYtelseAggregatRegisterDto medInntekt(List<InntekterDto> inntekt) {
         this.inntekt = inntekt;
         return this;
-    }
-
-    public void setInntekt(List<InntekterDto> inntekt) {
-        this.inntekt = inntekt;
     }
 
     public List<YtelserDto> getYtelse() {
@@ -84,8 +83,7 @@ public class InntektArbeidYtelseAggregatRegisterDto extends InntektArbeidYtelseA
             return false;
         }
         InntektArbeidYtelseAggregatRegisterDto other = (InntektArbeidYtelseAggregatRegisterDto) obj;
-        return Objects.equals(inntekt, other.inntekt)
-            && Objects.equals(ytelser, other.ytelser);
+        return Objects.equals(inntekt, other.inntekt) && Objects.equals(ytelser, other.ytelser);
     }
 
     @Override

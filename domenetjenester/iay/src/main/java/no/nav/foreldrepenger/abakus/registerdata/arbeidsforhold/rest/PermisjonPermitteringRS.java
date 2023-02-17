@@ -33,10 +33,6 @@ public class PermisjonPermitteringRS {
 
     @Override
     public String toString() {
-        return "PermisjonPermitteringRS{" +
-                "periode=" + periode +
-                ", prosent=" + prosent +
-                ", type='" + type + '\'' +
-                '}';
+        return "PermisjonPermitteringRS{" + "periode=" + periode + ", prosent=" + prosent + ", type='" + type + '\'' + '}';
     }
 }

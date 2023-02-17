@@ -132,8 +132,7 @@ public class Permisjon extends BaseEntitet implements IndexKey {
             return false;
         }
         Permisjon other = (Permisjon) obj;
-        return Objects.equals(this.permisjonsbeskrivelseType, other.permisjonsbeskrivelseType)
-            && Objects.equals(this.periode, other.periode)
+        return Objects.equals(this.permisjonsbeskrivelseType, other.permisjonsbeskrivelseType) && Objects.equals(this.periode, other.periode)
             && Objects.equals(this.prosentsats, other.prosentsats);
     }
 
@@ -144,11 +143,8 @@ public class Permisjon extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" +
-            "permisjonsbeskrivelseType=" + permisjonsbeskrivelseType +
-            ", periode=" + periode +
-            ", prosentsats=" + prosentsats +
-            '>';
+        return getClass().getSimpleName() + "<" + "permisjonsbeskrivelseType=" + permisjonsbeskrivelseType + ", periode=" + periode + ", prosentsats="
+            + prosentsats + '>';
     }
 
     public Yrkesaktivitet getYrkesaktivitet() {

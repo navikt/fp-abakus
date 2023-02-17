@@ -1,30 +1,26 @@
 package no.nav.foreldrepenger.abakus.app.metrics;
 
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
-
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Gauge;
 import io.prometheus.client.exporter.common.TextFormat;
 import io.swagger.v3.oas.annotations.Operation;
 import no.nav.vedtak.felles.prosesstask.api.TaskMonitor;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+
 @Path("/metrics")
 @ApplicationScoped
 public class PrometheusRestService {
 
-    private static final Gauge TASK_GAUGE = Gauge.build()
-        .name("prosesstask_antall")
-        .labelNames("status")
-        .help("No tasks w/status.")
-        .register();
+    private static final Gauge TASK_GAUGE = Gauge.build().name("prosesstask_antall").labelNames("status").help("No tasks w/status.").register();
 
     @GET
     @Operation(tags = "metrics", hidden = true)

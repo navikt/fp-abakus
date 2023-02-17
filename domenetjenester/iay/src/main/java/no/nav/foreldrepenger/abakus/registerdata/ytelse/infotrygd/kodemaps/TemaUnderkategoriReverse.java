@@ -32,8 +32,7 @@ public class TemaUnderkategoriReverse {
         Map.entry(TemaUnderkategori.PÅRØRENDE_PLEIETRENGENDE_PÅRØRENDE.getKode(), TemaUnderkategori.PÅRØRENDE_PLEIETRENGENDE_PÅRØRENDE),
         Map.entry(TemaUnderkategori.PÅRØRENDE_PLEIEPENGER.getKode(), TemaUnderkategori.PÅRØRENDE_PLEIEPENGER),
 
-        Map.entry(TemaUnderkategori.OVERGANGSSTØNAD.getKode(), TemaUnderkategori.OVERGANGSSTØNAD)
-    );
+        Map.entry(TemaUnderkategori.OVERGANGSSTØNAD.getKode(), TemaUnderkategori.OVERGANGSSTØNAD));
 
 
     public static TemaUnderkategori reverseMap(String kode) {

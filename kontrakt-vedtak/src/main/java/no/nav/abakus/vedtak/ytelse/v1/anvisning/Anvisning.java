@@ -75,7 +75,7 @@ public class Anvisning {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[periode=" + periode + ", beløp=" + beløp + ", dagsats=" + dagsats
-                + ", utbetalingsgrad=" + utbetalingsgrad + "]";
+        return getClass().getSimpleName() + "[periode=" + periode + ", beløp=" + beløp + ", dagsats=" + dagsats + ", utbetalingsgrad="
+            + utbetalingsgrad + "]";
     }
 }

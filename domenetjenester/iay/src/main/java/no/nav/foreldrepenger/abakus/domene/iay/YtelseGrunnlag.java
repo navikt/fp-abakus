@@ -155,21 +155,26 @@ public class YtelseGrunnlag extends BaseEntitet {
         this.ytelse = ytelse;
     }
 
-    void setVedtaksDagsats(Beløp vedtaksDagsats) { this.vedtaksDagsats = vedtaksDagsats; }
+    public Optional<Beløp> getVedtaksDagsats() {
+        return Optional.ofNullable(vedtaksDagsats);
+    }
 
-    public Optional<Beløp> getVedtaksDagsats() { return Optional.ofNullable(vedtaksDagsats); }
+    void setVedtaksDagsats(Beløp vedtaksDagsats) {
+        this.vedtaksDagsats = vedtaksDagsats;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof YtelseGrunnlag)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !(o instanceof YtelseGrunnlag)) {
+            return false;
+        }
         var that = (YtelseGrunnlag) o;
-        return Objects.equals(arbeidskategori, that.arbeidskategori) &&
-            Objects.equals(dekningsgradProsent, that.dekningsgradProsent) &&
-            Objects.equals(graderingProsent, that.graderingProsent) &&
-            Objects.equals(inntektProsent, that.inntektProsent) &&
-            Objects.equals(opprinneligIdentdato, that.opprinneligIdentdato) &&
-            Objects.equals(vedtaksDagsats, that.vedtaksDagsats);
+        return Objects.equals(arbeidskategori, that.arbeidskategori) && Objects.equals(dekningsgradProsent, that.dekningsgradProsent)
+            && Objects.equals(graderingProsent, that.graderingProsent) && Objects.equals(inntektProsent, that.inntektProsent) && Objects.equals(
+            opprinneligIdentdato, that.opprinneligIdentdato) && Objects.equals(vedtaksDagsats, that.vedtaksDagsats);
     }
 
     @Override
@@ -179,13 +184,8 @@ public class YtelseGrunnlag extends BaseEntitet {
 
     @Override
     public String toString() {
-        return "YtelseGrunnlagEntitet{" +
-            "arbeidskategori=" + arbeidskategori +
-            ", dekngradProsent=" + dekningsgradProsent +
-            ", graderingProsent=" + graderingProsent +
-            ", inntektProsent=" + inntektProsent +
-            ", opprinneligIdentdato=" + opprinneligIdentdato +
-            ", vedtaksDagsats=" + vedtaksDagsats +
-            '}';
+        return "YtelseGrunnlagEntitet{" + "arbeidskategori=" + arbeidskategori + ", dekngradProsent=" + dekningsgradProsent + ", graderingProsent="
+            + graderingProsent + ", inntektProsent=" + inntektProsent + ", opprinneligIdentdato=" + opprinneligIdentdato + ", vedtaksDagsats="
+            + vedtaksDagsats + '}';
     }
 }

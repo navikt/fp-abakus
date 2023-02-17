@@ -46,12 +46,7 @@ public class ArbeidsavtaleRS {
 
     @Override
     public String toString() {
-        return "ArbeidsavtaleRS{" +
-            "stillingsprosent=" + stillingsprosent +
-            ", antallTimerPrUke=" + antallTimerPrUke +
-            ", beregnetAntallTimerPrUke=" + beregnetAntallTimerPrUke +
-            ", sistLoennsendring=" + sistLoennsendring +
-            ", gyldighetsperiode=" + gyldighetsperiode +
-            '}';
+        return "ArbeidsavtaleRS{" + "stillingsprosent=" + stillingsprosent + ", antallTimerPrUke=" + antallTimerPrUke + ", beregnetAntallTimerPrUke="
+            + beregnetAntallTimerPrUke + ", sistLoennsendring=" + sistLoennsendring + ", gyldighetsperiode=" + gyldighetsperiode + '}';
     }
 }

@@ -53,13 +53,8 @@ public class YtelseRestTjeneste {
 
     private static final Logger LOG = LoggerFactory.getLogger(YtelseRestTjeneste.class);
 
-    private static final Set<YtelseType> GYLDIGE_YTELSER = Set.of(YtelseType.PLEIEPENGER_NÆRSTÅENDE,
-        YtelseType.FORELDREPENGER,
-        YtelseType.OMSORGSPENGER,
-        YtelseType.OPPLÆRINGSPENGER,
-        YtelseType.FRISINN,
-        YtelseType.SVANGERSKAPSPENGER,
-        YtelseType.PLEIEPENGER_SYKT_BARN);
+    private static final Set<YtelseType> GYLDIGE_YTELSER = Set.of(YtelseType.PLEIEPENGER_NÆRSTÅENDE, YtelseType.FORELDREPENGER,
+        YtelseType.OMSORGSPENGER, YtelseType.OPPLÆRINGSPENGER, YtelseType.FRISINN, YtelseType.SVANGERSKAPSPENGER, YtelseType.PLEIEPENGER_SYKT_BARN);
 
     private VedtakYtelseRepository ytelseRepository;
     private AktørTjeneste aktørTjeneste;
@@ -109,10 +104,7 @@ public class YtelseRestTjeneste {
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public List<Ytelse> hentVedtakForPerson(@NotNull @TilpassetAbacAttributt(supplierClass = HentBrukersYtelserIPeriodeRequestAbacDataSupplier.class) @Valid HentBrukersYtelserIPeriodeRequest request) {
 
-        var etterspurteYtelser = request.getYtelser()
-            .stream()
-            .filter(GYLDIGE_YTELSER::contains)
-            .collect(Collectors.toSet());
+        var etterspurteYtelser = request.getYtelser().stream().filter(GYLDIGE_YTELSER::contains).collect(Collectors.toSet());
 
         if (etterspurteYtelser.isEmpty()) {
             return List.of();

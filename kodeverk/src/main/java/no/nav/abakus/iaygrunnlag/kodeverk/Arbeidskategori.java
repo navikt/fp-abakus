@@ -16,12 +16,13 @@ public enum Arbeidskategori implements Kodeverdi {
     ARBEIDSTAKER("ARBEIDSTAKER", "Arbeidstaker"),
     SELVSTENDIG_NÆRINGSDRIVENDE("SELVSTENDIG_NÆRINGSDRIVENDE", "Selvstendig næringsdrivende"),
     KOMBINASJON_ARBEIDSTAKER_OG_SELVSTENDIG_NÆRINGSDRIVENDE("KOMBINASJON_ARBEIDSTAKER_OG_SELVSTENDIG_NÆRINGSDRIVENDE",
-            "Kombinasjon arbeidstaker og selvstendig næringsdrivende"),
+        "Kombinasjon arbeidstaker og selvstendig næringsdrivende"),
     SJØMANN("SJØMANN", "Arbeidstaker - sjømann"),
     JORDBRUKER("JORDBRUKER", "Selvstendig næringsdrivende - Jordbruker"),
     DAGPENGER("DAGPENGER", "Tilstøtende ytelse - dagpenger"),
     INAKTIV("INAKTIV", "Inaktiv"),
-    KOMBINASJON_ARBEIDSTAKER_OG_JORDBRUKER("KOMBINASJON_ARBEIDSTAKER_OG_JORDBRUKER", "Kombinasjon arbeidstaker og selvstendig næringsdrivende - jordbruker"),
+    KOMBINASJON_ARBEIDSTAKER_OG_JORDBRUKER("KOMBINASJON_ARBEIDSTAKER_OG_JORDBRUKER",
+        "Kombinasjon arbeidstaker og selvstendig næringsdrivende - jordbruker"),
     KOMBINASJON_ARBEIDSTAKER_OG_FISKER("KOMBINASJON_ARBEIDSTAKER_OG_FISKER", "Kombinasjon arbeidstaker og selvstendig næringsdrivende - fisker"),
     FRILANSER("FRILANSER", "Frilanser"),
     KOMBINASJON_ARBEIDSTAKER_OG_FRILANSER("KOMBINASJON_ARBEIDSTAKER_OG_FRILANSER", "Kombinasjon arbeidstaker og frilanser"),
@@ -31,9 +32,8 @@ public enum Arbeidskategori implements Kodeverdi {
     UDEFINERT("-", "Ingen inntektskategori (default)"),
     ;
 
-    private static final Map<String, Arbeidskategori> KODER = new LinkedHashMap<>();
-
     public static final String KODEVERK = "ARBEIDSKATEGORI";
+    private static final Map<String, Arbeidskategori> KODER = new LinkedHashMap<>();
 
     static {
         for (var v : values()) {
@@ -57,12 +57,12 @@ public enum Arbeidskategori implements Kodeverdi {
         this.kode = kode;
         this.navn = navn;
     }
+
     public static Arbeidskategori fraKode(String kode) {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent Arbeidskategori: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent Arbeidskategori: " + kode));
     }
 
     public static Map<String, Arbeidskategori> kodeMap() {

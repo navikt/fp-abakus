@@ -17,7 +17,7 @@ import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 @ExtendWith(MockitoExtension.class)
 public class InfotrygdTjenesteImplTest {
     private static final String FNR = "01234567890";
-    private static final LocalDate KONFIG_FOM = LocalDate.of(2018,7,1);
+    private static final LocalDate KONFIG_FOM = LocalDate.of(2018, 7, 1);
 
     @Mock
     private InnhentingInfotrygdTjeneste samletTjeneste;

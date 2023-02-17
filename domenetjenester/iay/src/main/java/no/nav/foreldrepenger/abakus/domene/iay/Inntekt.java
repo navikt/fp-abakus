@@ -75,7 +75,7 @@ public class Inntekt extends BaseEntitet implements IndexKey {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { getArbeidsgiver(), getInntektsKilde() };
+        Object[] keyParts = {getArbeidsgiver(), getInntektsKilde()};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -87,8 +87,7 @@ public class Inntekt extends BaseEntitet implements IndexKey {
             return false;
         }
         Inntekt other = (Inntekt) obj;
-        return Objects.equals(this.getInntektsKilde(), other.getInntektsKilde())
-            && Objects.equals(this.getArbeidsgiver(), other.getArbeidsgiver());
+        return Objects.equals(this.getInntektsKilde(), other.getInntektsKilde()) && Objects.equals(this.getArbeidsgiver(), other.getArbeidsgiver());
     }
 
     @Override
@@ -122,7 +121,9 @@ public class Inntekt extends BaseEntitet implements IndexKey {
         this.arbeidsgiver = arbeidsgiver;
     }
 
-    /** Hent alle utbetalinger (ufiltrert). */
+    /**
+     * Hent alle utbetalinger (ufiltrert).
+     */
     public Collection<Inntektspost> getAlleInntektsposter() {
         return Collections.unmodifiableSet(inntektspost);
     }
@@ -149,16 +150,12 @@ public class Inntekt extends BaseEntitet implements IndexKey {
     }
 
     void tilbakestillInntektsposterForPerioder(Set<IntervallEntitet> perioder) {
-        this.inntektspost = inntektspost.stream()
-            .filter(ip -> !perioder.contains(ip.getPeriode()))
-            .collect(Collectors.toSet());
+        this.inntektspost = inntektspost.stream().filter(ip -> !perioder.contains(ip.getPeriode())).collect(Collectors.toSet());
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<arbeidsgiver=" + arbeidsgiver
-            + ", inntektskildeType=" + inntektskildeType
-            + ", inntektspost=[" + (inntektspost == null ? 0 : inntektspost.size()) + "]" 
-            + ">";
+        return getClass().getSimpleName() + "<arbeidsgiver=" + arbeidsgiver + ", inntektskildeType=" + inntektskildeType + ", inntektspost=[" + (
+            inntektspost == null ? 0 : inntektspost.size()) + "]" + ">";
     }
 }

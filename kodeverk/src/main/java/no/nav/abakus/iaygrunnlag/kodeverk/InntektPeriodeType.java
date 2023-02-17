@@ -1,14 +1,14 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.time.Period;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum InntektPeriodeType implements Kodeverdi {
@@ -23,31 +23,43 @@ public enum InntektPeriodeType implements Kodeverdi {
     UDEFINERT("-", "Ikke definert", null, null),
     ;
 
-    /** @deprecated bruk enum konstant. */
+    /**
+     * @deprecated bruk enum konstant.
+     */
     @Deprecated(forRemoval = true)
     public static final InntektPeriodeType PER_ÅR = ÅRLIG;
-    /** @deprecated bruk enum konstant. */
+    /**
+     * @deprecated bruk enum konstant.
+     */
     @Deprecated(forRemoval = true)
     public static final InntektPeriodeType PER_DAG = DAGLIG;
-    /** @deprecated bruk enum konstant. */
+    /**
+     * @deprecated bruk enum konstant.
+     */
     @Deprecated(forRemoval = true)
     public static final InntektPeriodeType PER_MÅNED = MÅNEDLIG;
-    /** @deprecated bruk enum konstant. */
+    /**
+     * @deprecated bruk enum konstant.
+     */
     @Deprecated(forRemoval = true)
     public static final InntektPeriodeType PER_UKE = UKENTLIG;
-    /** @deprecated bruk enum konstant. */
+    /**
+     * @deprecated bruk enum konstant.
+     */
     @Deprecated(forRemoval = true)
     public static final InntektPeriodeType PER_14DAGER = BIUKENTLIG;
-    /** @deprecated bruk enum konstant. */
+    /**
+     * @deprecated bruk enum konstant.
+     */
     @Deprecated(forRemoval = true)
     public static final InntektPeriodeType PREMIEGRUNNLAG_OPPDRAGSGIVER = PREMIEGRUNNLAG;
-    /** @deprecated bruk enum konstant. */
+    /**
+     * @deprecated bruk enum konstant.
+     */
     @Deprecated(forRemoval = true)
     public static final InntektPeriodeType FASTSATT_ETTER_AVVIKHÅNDTERING = FASTSATT25PAVVIK;
-
-    private static final Map<String, InntektPeriodeType> KODER = new LinkedHashMap<>();
-
     public static final String KODEVERK = "INNTEKT_PERIODE_TYPE";
+    private static final Map<String, InntektPeriodeType> KODER = new LinkedHashMap<>();
 
     static {
         for (var v : values()) {
@@ -81,8 +93,7 @@ public enum InntektPeriodeType implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent InntektPeriodeType: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent InntektPeriodeType: " + kode));
     }
 
     public static Map<String, InntektPeriodeType> kodeMap() {

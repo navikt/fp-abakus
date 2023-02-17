@@ -44,10 +44,10 @@ public class MapInntektsmeldingerTest {
 
     public static final String SAKSNUMMER = "1234123412345";
     private static final YtelseType ytelseType = YtelseType.FORELDREPENGER;
-    
+
     @RegisterExtension
     public static JpaExtension jpaExtension = new JpaExtension();
-    
+
     private final KoblingRepository repository = new KoblingRepository(jpaExtension.getEntityManager());
     private final KoblingTjeneste koblingTjeneste = new KoblingTjeneste(repository, new LåsRepository(jpaExtension.getEntityManager()));
     private final InntektArbeidYtelseRepository iayRepository = new InntektArbeidYtelseRepository(jpaExtension.getEntityManager());
@@ -77,7 +77,8 @@ public class MapInntektsmeldingerTest {
         iayRepository.lagre(koblingReferanse2, arbeidsforholdInformasjon, List.of(im));
 
         // Act
-        Map<Inntektsmelding, ArbeidsforholdInformasjon> alleIm = iayTjeneste.hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, foreldrepenger);
+        Map<Inntektsmelding, ArbeidsforholdInformasjon> alleIm = iayTjeneste.hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer,
+            foreldrepenger);
         InntektsmeldingerDto inntektsmeldingerDto = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(alleIm);
 
         // Assert
@@ -113,12 +114,13 @@ public class MapInntektsmeldingerTest {
                 .medArbeidsforholdRef(ref)
                 .medArbeidsgiver(virksomhet)
                 .medHandling(ArbeidsforholdHandlingType.BASERT_PÅ_INNTEKTSMELDING));
-        InntektArbeidYtelseGrunnlagBuilder grBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayRepository.hentInntektArbeidYtelseForBehandling(koblingReferanse))
-            .medInformasjon(arbeidsforholdInfo2.build());
+        InntektArbeidYtelseGrunnlagBuilder grBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(
+            iayRepository.hentInntektArbeidYtelseForBehandling(koblingReferanse)).medInformasjon(arbeidsforholdInfo2.build());
         iayRepository.lagre(koblingReferanse, grBuilder);
 
         // Act
-        Map<Inntektsmelding, ArbeidsforholdInformasjon> alleIm = iayTjeneste.hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, foreldrepenger);
+        Map<Inntektsmelding, ArbeidsforholdInformasjon> alleIm = iayTjeneste.hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer,
+            foreldrepenger);
         InntektsmeldingerDto inntektsmeldingerDto = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(alleIm);
 
         // Assert
@@ -152,13 +154,15 @@ public class MapInntektsmeldingerTest {
         // Act
         Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, foreldrepenger);
         Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, foreldrepenger).orElseThrow();
-        RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm, iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
+        RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm,
+            iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
 
         // Assert
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().size()).isEqualTo(1);
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getArbeidsgiver().getIdent()).isEqualTo(virksomhet.getIdentifikator());
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteDagMedRefusjonskrav()).isEqualTo(startPermisjon);
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(innsendingstidspunkt.toLocalDate());
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(
+            innsendingstidspunkt.toLocalDate());
     }
 
     @Test
@@ -167,7 +171,7 @@ public class MapInntektsmeldingerTest {
         Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
         KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
         AktørId aktørId = new AktørId("1234123412341");
-        
+
         Kobling kobling1 = new Kobling(ytelseType, saksnummer, koblingReferanse, aktørId);
         koblingTjeneste.lagre(kobling1);
         LocalDateTime innsendingstidspunkt = LocalDateTime.now();
@@ -185,13 +189,15 @@ public class MapInntektsmeldingerTest {
         // Act
         Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
         Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType).orElseThrow();
-        RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm, iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
+        RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm,
+            iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
 
         // Assert
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().size()).isEqualTo(1);
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getArbeidsgiver().getIdent()).isEqualTo(virksomhet.getIdentifikator());
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteDagMedRefusjonskrav()).isNull();
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(innsendingstidspunkt.toLocalDate());
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(
+            innsendingstidspunkt.toLocalDate());
     }
 
     @Test
@@ -229,7 +235,8 @@ public class MapInntektsmeldingerTest {
         // Act
         Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
         Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType).orElseThrow();
-        RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm, iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
+        RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm,
+            iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
 
         // Assert
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().size()).isEqualTo(0);
@@ -270,13 +277,15 @@ public class MapInntektsmeldingerTest {
         // Act
         Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
         Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType).orElseThrow();
-        RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm, iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
+        RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm,
+            iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
 
         // Assert
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().size()).isEqualTo(1);
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getArbeidsgiver().getIdent()).isEqualTo(virksomhet.getIdentifikator());
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteDagMedRefusjonskrav()).isEqualTo(startPermisjon);
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(innsendingstidspunkt.toLocalDate());
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(
+            innsendingstidspunkt.toLocalDate());
 
     }
 
@@ -316,17 +325,20 @@ public class MapInntektsmeldingerTest {
         // Act
         Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
         Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType).orElseThrow();
-        RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm, iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
+        RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm,
+            iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
 
         // Assert
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().size()).isEqualTo(2);
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getArbeidsgiver().getIdent()).isEqualTo(virksomhet2.getIdentifikator());
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteDagMedRefusjonskrav()).isEqualTo(startPermisjon);
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(innsendingstidspunkt2.toLocalDate());
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(
+            innsendingstidspunkt2.toLocalDate());
 
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(1).getArbeidsgiver().getIdent()).isEqualTo(virksomhet.getIdentifikator());
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(1).getFørsteDagMedRefusjonskrav()).isEqualTo(startPermisjon);
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(1).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(innsendingstidspunkt.toLocalDate());
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(1).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(
+            innsendingstidspunkt.toLocalDate());
 
     }
 
@@ -370,13 +382,15 @@ public class MapInntektsmeldingerTest {
         // Act
         Set<Inntektsmelding> alleIm = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
         Kobling nyesteKobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType).orElseThrow();
-        RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm, iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
+        RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(alleIm,
+            iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
 
         // Assert
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().size()).isEqualTo(1);
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getArbeidsgiver().getIdent()).isEqualTo(virksomhet.getIdentifikator());
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteDagMedRefusjonskrav()).isEqualTo(startPermisjon);
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(innsendingstidspunkt.toLocalDate());
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(
+            innsendingstidspunkt.toLocalDate());
 
     }
 

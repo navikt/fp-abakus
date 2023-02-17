@@ -46,20 +46,16 @@ public class InnhentRegisterdataTjeneste {
     }
 
     @Inject
-    public InnhentRegisterdataTjeneste(InntektArbeidYtelseTjeneste iayTjeneste,
-                                       KoblingTjeneste koblingTjeneste,
-                                       ProsessTaskTjeneste taskTjeneste) {
+    public InnhentRegisterdataTjeneste(InntektArbeidYtelseTjeneste iayTjeneste, KoblingTjeneste koblingTjeneste, ProsessTaskTjeneste taskTjeneste) {
         this.iayTjeneste = iayTjeneste;
         this.koblingTjeneste = koblingTjeneste;
         this.taskTjeneste = taskTjeneste;
     }
 
     private static Map<RegisterdataType, RegisterdataElement> initMapping() {
-        return Map.of(RegisterdataType.ARBEIDSFORHOLD, RegisterdataElement.ARBEIDSFORHOLD,
-            RegisterdataType.YTELSE, RegisterdataElement.YTELSE,
-            RegisterdataType.LIGNET_NÆRING, RegisterdataElement.LIGNET_NÆRING,
-            RegisterdataType.INNTEKT_PENSJONSGIVENDE, RegisterdataElement.INNTEKT_PENSJONSGIVENDE,
-            RegisterdataType.INNTEKT_BEREGNINGSGRUNNLAG, RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG,
+        return Map.of(RegisterdataType.ARBEIDSFORHOLD, RegisterdataElement.ARBEIDSFORHOLD, RegisterdataType.YTELSE, RegisterdataElement.YTELSE,
+            RegisterdataType.LIGNET_NÆRING, RegisterdataElement.LIGNET_NÆRING, RegisterdataType.INNTEKT_PENSJONSGIVENDE,
+            RegisterdataElement.INNTEKT_PENSJONSGIVENDE, RegisterdataType.INNTEKT_BEREGNINGSGRUNNLAG, RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG,
             RegisterdataType.INNTEKT_SAMMENLIGNINGSGRUNNLAG, RegisterdataElement.INNTEKT_SAMMENLIGNINGSGRUNNLAG);
     }
 
@@ -70,9 +66,7 @@ public class InnhentRegisterdataTjeneste {
             return Set.of();
         }
 
-        return elementer.stream()
-            .map(registerdataMapping::get)
-            .collect(Collectors.toSet());
+        return elementer.stream().map(registerdataMapping::get).collect(Collectors.toSet());
     }
 
     private Kobling oppdaterKobling(InnhentRegisterdataRequest dto) {
@@ -107,8 +101,7 @@ public class InnhentRegisterdataTjeneste {
     }
 
     private Optional<IntervallEntitet> mapPeriodeTilIntervall(Periode periode) {
-        return Optional.ofNullable(periode == null ? null :
-            IntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom()));
+        return Optional.ofNullable(periode == null ? null : IntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom()));
     }
 
     public String triggAsyncInnhent(InnhentRegisterdataRequest dto) {
@@ -128,7 +121,8 @@ public class InnhentRegisterdataTjeneste {
         callbackTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
 
         Optional<GrunnlagReferanse> eksisterendeGrunnlagRef = hentSisteReferanseFor(kobling.getKoblingReferanse());
-        eksisterendeGrunnlagRef.map(GrunnlagReferanse::getReferanse).ifPresent(ref -> callbackTask.setProperty(EKSISTERENDE_GRUNNLAG_REF, ref.toString()));
+        eksisterendeGrunnlagRef.map(GrunnlagReferanse::getReferanse)
+            .ifPresent(ref -> callbackTask.setProperty(EKSISTERENDE_GRUNNLAG_REF, ref.toString()));
 
         if (dto.getCallbackUrl() != null) {
             innhentingTask.setProperty(TaskConstants.CALLBACK_URL, dto.getCallbackUrl());

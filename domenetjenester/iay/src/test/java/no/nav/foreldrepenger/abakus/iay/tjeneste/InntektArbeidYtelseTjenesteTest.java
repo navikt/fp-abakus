@@ -53,11 +53,14 @@ public class InntektArbeidYtelseTjenesteTest {
         Mockito.doNothing().when(iayr).lagre(any(KoblingReferanse.class), any(InntektArbeidYtelseGrunnlagBuilder.class));
 
         Mockito.doAnswer(i -> Optional.of(iaygBuilder.build())).when(iayr).hentInntektArbeidYtelseGrunnlagForBehandling(any());
-        Mockito.doReturn(Map.of(gammel, nyArbeidsforholdInformasjon(), ny, nyArbeidsforholdInformasjon())).when(iayr).hentArbeidsforholdInfoInntektsmeldingerMapFor(any(), any(), any());
+        Mockito.doReturn(Map.of(gammel, nyArbeidsforholdInformasjon(), ny, nyArbeidsforholdInformasjon()))
+            .when(iayr)
+            .hentArbeidsforholdInfoInntektsmeldingerMapFor(any(), any(), any());
 
         // Act
         var iayt = new InntektArbeidYtelseTjeneste(iayr);
-        iayt.kopierGrunnlagFraEksisterendeBehandling(null, null, null, new KoblingReferanse(UUID.randomUUID()), new KoblingReferanse(UUID.randomUUID()),
+        iayt.kopierGrunnlagFraEksisterendeBehandling(null, null, null, new KoblingReferanse(UUID.randomUUID()),
+            new KoblingReferanse(UUID.randomUUID()),
             EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.INNTEKTSMELDING, Dataset.REGISTER, Dataset.OVERSTYRT));
 
         // Assert
@@ -90,11 +93,14 @@ public class InntektArbeidYtelseTjenesteTest {
         Mockito.doNothing().when(iayr).lagre(any(KoblingReferanse.class), any(InntektArbeidYtelseGrunnlagBuilder.class));
 
         Mockito.doAnswer(i -> Optional.of(iaygBuilder.build())).when(iayr).hentInntektArbeidYtelseGrunnlagForBehandling(any());
-        Mockito.doReturn(Map.of(gammel, nyArbeidsforholdInformasjon(), ny, nyArbeidsforholdInformasjonMedReferanse())).when(iayr).hentArbeidsforholdInfoInntektsmeldingerMapFor(any(), any(), any());
+        Mockito.doReturn(Map.of(gammel, nyArbeidsforholdInformasjon(), ny, nyArbeidsforholdInformasjonMedReferanse()))
+            .when(iayr)
+            .hentArbeidsforholdInfoInntektsmeldingerMapFor(any(), any(), any());
 
         // Act
         var iayt = new InntektArbeidYtelseTjeneste(iayr);
-        iayt.kopierGrunnlagFraEksisterendeBehandling(null, null, null, new KoblingReferanse(UUID.randomUUID()), new KoblingReferanse(UUID.randomUUID()),
+        iayt.kopierGrunnlagFraEksisterendeBehandling(null, null, null, new KoblingReferanse(UUID.randomUUID()),
+            new KoblingReferanse(UUID.randomUUID()),
             EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.INNTEKTSMELDING, Dataset.REGISTER, Dataset.OVERSTYRT));
 
         // Assert
@@ -128,11 +134,14 @@ public class InntektArbeidYtelseTjenesteTest {
         Mockito.doNothing().when(iayr).lagre(any(KoblingReferanse.class), any(InntektArbeidYtelseGrunnlagBuilder.class));
 
         Mockito.doAnswer(i -> Optional.of(iaygBuilder.build())).when(iayr).hentInntektArbeidYtelseGrunnlagForBehandling(any());
-        Mockito.doReturn(Map.of(gammel, nyArbeidsforholdInformasjonMedReferanse(), ny, nyArbeidsforholdInformasjon())).when(iayr).hentArbeidsforholdInfoInntektsmeldingerMapFor(any(), any(), any());
+        Mockito.doReturn(Map.of(gammel, nyArbeidsforholdInformasjonMedReferanse(), ny, nyArbeidsforholdInformasjon()))
+            .when(iayr)
+            .hentArbeidsforholdInfoInntektsmeldingerMapFor(any(), any(), any());
 
         // Act
         var iayt = new InntektArbeidYtelseTjeneste(iayr);
-        iayt.kopierGrunnlagFraEksisterendeBehandling(null, null, null, new KoblingReferanse(UUID.randomUUID()), new KoblingReferanse(UUID.randomUUID()),
+        iayt.kopierGrunnlagFraEksisterendeBehandling(null, null, null, new KoblingReferanse(UUID.randomUUID()),
+            new KoblingReferanse(UUID.randomUUID()),
             EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.INNTEKTSMELDING, Dataset.REGISTER, Dataset.OVERSTYRT));
 
         // Assert
@@ -149,13 +158,22 @@ public class InntektArbeidYtelseTjenesteTest {
         assertThat(sisteIms.getInnsendingstidspunkt()).isEqualTo(ny.getInnsendingstidspunkt());
     }
 
-    private Inntektsmelding nyInntektsmeldingMedReferanse(LocalDateTime innsendingstidspunkt, String journalpostId ) {
-        return InntektsmeldingBuilder.builder().medInnsendingstidspunkt(innsendingstidspunkt).medJournalpostId(journalpostId).medArbeidsgiver(arbeidsgiver).medArbeidsforholdId(internRef).build();
+    private Inntektsmelding nyInntektsmeldingMedReferanse(LocalDateTime innsendingstidspunkt, String journalpostId) {
+        return InntektsmeldingBuilder.builder()
+            .medInnsendingstidspunkt(innsendingstidspunkt)
+            .medJournalpostId(journalpostId)
+            .medArbeidsgiver(arbeidsgiver)
+            .medArbeidsforholdId(internRef)
+            .build();
     }
 
 
     private Inntektsmelding nyInntektsmelding(LocalDateTime innsendingstidspunkt, String journalpostId) {
-        return InntektsmeldingBuilder.builder().medInnsendingstidspunkt(innsendingstidspunkt).medJournalpostId(journalpostId).medArbeidsgiver(arbeidsgiver).build();
+        return InntektsmeldingBuilder.builder()
+            .medInnsendingstidspunkt(innsendingstidspunkt)
+            .medJournalpostId(journalpostId)
+            .medArbeidsgiver(arbeidsgiver)
+            .build();
     }
 
     private ArbeidsforholdInformasjon nyArbeidsforholdInformasjonMedReferanse() {

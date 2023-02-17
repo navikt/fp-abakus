@@ -45,9 +45,7 @@ public class FinnInntektRequest {
             return false;
         }
         FinnInntektRequest other = (FinnInntektRequest) obj;
-        return Objects.equals(this.fnr, other.fnr)
-            && Objects.equals(this.aktørId, other.aktørId)
-            && Objects.equals(this.fom, other.fom)
+        return Objects.equals(this.fnr, other.fnr) && Objects.equals(this.aktørId, other.aktørId) && Objects.equals(this.fom, other.fom)
             && Objects.equals(this.tom, other.tom);
     }
 

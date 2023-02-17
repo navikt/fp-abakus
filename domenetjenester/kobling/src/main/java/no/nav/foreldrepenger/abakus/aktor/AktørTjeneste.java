@@ -29,7 +29,8 @@ public class AktørTjeneste {
     private static final int DEFAULT_CACHE_SIZE = 1000;
     private static final long DEFAULT_CACHE_TIMEOUT = TimeUnit.MILLISECONDS.convert(8, TimeUnit.HOURS);
 
-    private static final Set<YtelseType> FORELDREPENGER_YTELSER = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER, YtelseType.ENGANGSTØNAD);
+    private static final Set<YtelseType> FORELDREPENGER_YTELSER = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER,
+        YtelseType.ENGANGSTØNAD);
 
     private final LRUCache<AktørId, PersonIdent> cacheAktørIdTilIdent;
     private final LRUCache<PersonIdent, AktørId> cacheIdentTilAktørId;
@@ -49,8 +50,7 @@ public class AktørTjeneste {
         request.setIdent(fnr.getIdent());
         request.setGrupper(List.of(IdentGruppe.AKTORID));
         request.setHistorikk(Boolean.FALSE);
-        var projection = new IdentlisteResponseProjection()
-            .identer(new IdentInformasjonResponseProjection().ident());
+        var projection = new IdentlisteResponseProjection().identer(new IdentInformasjonResponseProjection().ident());
 
         try {
             var identliste = hentIdenterForYtelse(request, projection, ytelse);
@@ -70,8 +70,7 @@ public class AktørTjeneste {
         request.setIdent(fnr.getIdent());
         request.setGrupper(List.of(IdentGruppe.AKTORID));
         request.setHistorikk(Boolean.TRUE);
-        var projection = new IdentlisteResponseProjection()
-            .identer(new IdentInformasjonResponseProjection().ident());
+        var projection = new IdentlisteResponseProjection().identer(new IdentInformasjonResponseProjection().ident());
 
         try {
             var identliste = hentIdenterForYtelse(request, projection, ytelse);
@@ -93,8 +92,7 @@ public class AktørTjeneste {
         request.setIdent(aktørId.getId());
         request.setGrupper(List.of(IdentGruppe.FOLKEREGISTERIDENT));
         request.setHistorikk(Boolean.FALSE);
-        var projection = new IdentlisteResponseProjection()
-            .identer(new IdentInformasjonResponseProjection().ident());
+        var projection = new IdentlisteResponseProjection().identer(new IdentInformasjonResponseProjection().ident());
 
         final Identliste identliste;
 
@@ -112,6 +110,7 @@ public class AktørTjeneste {
     }
 
     private Identliste hentIdenterForYtelse(HentIdenterQueryRequest request, IdentlisteResponseProjection projection, YtelseType ytelseType) {
-        return FORELDREPENGER_YTELSER.contains(ytelseType) ? pdlKlientFOR.hentIdenter(request, projection) : pdlKlientOMS.hentIdenter(request, projection);
+        return FORELDREPENGER_YTELSER.contains(ytelseType) ? pdlKlientFOR.hentIdenter(request, projection) : pdlKlientOMS.hentIdenter(request,
+            projection);
     }
 }

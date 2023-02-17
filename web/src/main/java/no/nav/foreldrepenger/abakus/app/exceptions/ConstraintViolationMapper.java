@@ -40,11 +40,7 @@ public class ConstraintViolationMapper implements ExceptionMapper<ConstraintViol
             feil = FeltValideringFeil.feltverdiKanIkkeValideres(feltNavn);
         }
         log.warn(feil.getMessage());
-        return Response
-            .status(Response.Status.BAD_REQUEST)
-            .entity(new FeilDto(feil.getMessage(), feilene))
-            .type(MediaType.APPLICATION_JSON)
-            .build();
+        return Response.status(Response.Status.BAD_REQUEST).entity(new FeilDto(feil.getMessage(), feilene)).type(MediaType.APPLICATION_JSON).build();
     }
 
     private String getFeltNavn(Path propertyPath) {

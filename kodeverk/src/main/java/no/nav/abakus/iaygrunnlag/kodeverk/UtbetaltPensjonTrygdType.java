@@ -37,8 +37,10 @@ public enum UtbetaltPensjonTrygdType implements UtbetaltYtelseType {
     KRIGSPENSJON("KRIGSPENSJON", "Krigspensjon", "krigspensjon"),
     KVALIFISERINGSSTØNAD("KVALIFISERINGSSTØNAD", "Kvalifiseringsstønad", "kvalifiseringstoenad"),
     NY_AFP("NY_AFP", "Ny avtalefestet pensjon privat sektor", "nyAvtalefestetPensjonPrivatSektor"),
-    NYE_LIVRENTER("NYE_LIVRENTER", "Nye livrenter i arbeidsforhold og livrenter fortsettelsesforsikringer", "nyeLivrenterIArbeidsforholdOgLivrenterFortsettelsesforsikringer"),
-    OVERGANGSSTØNAD_ENSLIG("OVERGANGSSTØNAD_ENSLIG", "Overgangsstønad til enslig mor eller far", "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe31Mars2014EllerTidligere"),
+    NYE_LIVRENTER("NYE_LIVRENTER", "Nye livrenter i arbeidsforhold og livrenter fortsettelsesforsikringer",
+        "nyeLivrenterIArbeidsforholdOgLivrenterFortsettelsesforsikringer"),
+    OVERGANGSSTØNAD_ENSLIG("OVERGANGSSTØNAD_ENSLIG", "Overgangsstønad til enslig mor eller far",
+        "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe31Mars2014EllerTidligere"),
     OVERGANGSSTØNAD_EKTEFELLE("OVERGANGSSTØNAD_EKTEFELLE", "Overgangsstønad til gjenlevende ektefelle", "overgangsstoenadTilGjenlevendeEktefelle"),
     PENSJON_DØDSMÅNED("PENSJON_DØDSMÅNED", "Pensjon i dødsmåned", "pensjonIDoedsmaaneden"),
     LIVRENTER("LIVRENTER", "Pensjon og livrenter i arbeidsforhold", "pensjonOgLivrenterIArbeidsforhold"),
@@ -48,15 +50,15 @@ public enum UtbetaltPensjonTrygdType implements UtbetaltYtelseType {
     SLITERTILLEGG("SLITERTILLEGG", "Slitertillegg", "slitertillegg"),
     UFØREPENSJON("UFØREPENSJON", "Uførepensjon", "ufoerepensjon"),
     UFØREPENSJON_ANDRE("UFØREPENSJON_ANDRE", "Uførepensjon fra andre enn folketrygden", "ufoerepensjonFraAndreEnnFolketrygden"),
-    UFØREPENSJON_ANDRE_ETTEROPPGJØR("UFØREPENSJON_ANDRE_ETTEROPPGJØR", "Uførepensjon etteroppgjør fra andre enn folketrygden", "ufoereytelseEtteroppgjoerFraAndreEnnFolketrygden"),
+    UFØREPENSJON_ANDRE_ETTEROPPGJØR("UFØREPENSJON_ANDRE_ETTEROPPGJØR", "Uførepensjon etteroppgjør fra andre enn folketrygden",
+        "ufoereytelseEtteroppgjoerFraAndreEnnFolketrygden"),
     UNDERHOLDNINGSBIDRAG("UNDERHOLDNINGSBIDRAG", "Underholdningsbidrag tidligere ektefelle", "underholdsbidragTilTidligereEktefelle"),
 
     UDEFINERT("-", "Undefined", null),
     ;
 
-    private static final Map<String, UtbetaltPensjonTrygdType> KODER = new LinkedHashMap<>();
-
     public static final String KODEVERK = "PENSJON_TRYGD_BESKRIVELSE";
+    private static final Map<String, UtbetaltPensjonTrygdType> KODER = new LinkedHashMap<>();
 
     static {
         for (var v : values()) {
@@ -87,12 +89,15 @@ public enum UtbetaltPensjonTrygdType implements UtbetaltYtelseType {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent PensjonTrygdType: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent PensjonTrygdType: " + kode));
     }
 
     public static Map<String, UtbetaltPensjonTrygdType> kodeMap() {
         return Collections.unmodifiableMap(KODER);
+    }
+
+    public static UtbetaltPensjonTrygdType finnForKodeverkEiersKode(String offisiellDokumentType) {
+        return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
     @Override
@@ -114,11 +119,6 @@ public enum UtbetaltPensjonTrygdType implements UtbetaltYtelseType {
     public String getOffisiellKode() {
         return offisiellKode;
     }
-
-    public static UtbetaltPensjonTrygdType finnForKodeverkEiersKode(String offisiellDokumentType) {
-        return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
-    }
-
 
     @Override
     public boolean erUdefinert() {

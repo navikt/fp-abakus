@@ -16,11 +16,10 @@ public class JsonMappingExceptionMapper implements ExceptionMapper<JsonMappingEx
     @Override
     public Response toResponse(JsonMappingException exception) {
         log.warn("FP-252294 JSON-mapping feil: {}", exception.getMessage(), exception);
-        return Response
-                .status(Response.Status.BAD_REQUEST)
-                .entity(new FeilDto(String.format("JSON-mapping feil: %s", exception.getMessage()), FeilType.GENERELL_FEIL))
-                .type(MediaType.APPLICATION_JSON)
-                .build();
+        return Response.status(Response.Status.BAD_REQUEST)
+            .entity(new FeilDto(String.format("JSON-mapping feil: %s", exception.getMessage()), FeilType.GENERELL_FEIL))
+            .type(MediaType.APPLICATION_JSON)
+            .build();
     }
 
 

@@ -44,12 +44,14 @@ public class VedtattYtelseInnhentingTjeneste {
 
     void innhentFraYtelsesRegister(AktørId aktørId, Kobling kobling, InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder builder) {
         IntervallEntitet opplysningsperiode = kobling.getOpplysningsperiode();
-        List<VedtakYtelse> vedtatteYtelser = vedtakYtelseRepository.hentYtelserForIPeriode(aktørId, opplysningsperiode.getFomDato(), opplysningsperiode.getTomDato());
+        List<VedtakYtelse> vedtatteYtelser = vedtakYtelseRepository.hentYtelserForIPeriode(aktørId, opplysningsperiode.getFomDato(),
+            opplysningsperiode.getTomDato());
 
         var arbeidsforholdInformasjon = inntektArbeidYtelseRepository.hentArbeidsforholdInformasjonForBehandling(kobling.getKoblingReferanse());
         var arbeidsforholdInformasjonBuilder = ArbeidsforholdInformasjonBuilder.builder(arbeidsforholdInformasjon);
         for (var vedtattYtelse : vedtatteYtelser) {
-            YtelseBuilder ytelseBuilder = builder.getYtelselseBuilderForType(vedtattYtelse.getKilde(), vedtattYtelse.getYtelseType(), vedtattYtelse.getSaksnummer());
+            YtelseBuilder ytelseBuilder = builder.getYtelselseBuilderForType(vedtattYtelse.getKilde(), vedtattYtelse.getYtelseType(),
+                vedtattYtelse.getSaksnummer());
             ytelseBuilder.medPeriode(vedtattYtelse.getPeriode())
                 .medStatus(vedtattYtelse.getStatus())
                 .medVedtattTidspunkt(vedtattYtelse.getVedtattTidspunkt());
@@ -64,7 +66,9 @@ public class VedtattYtelseInnhentingTjeneste {
     }
 
 
-    private void mapAnvisninger(VedtakYtelse vedtattYtelse, YtelseBuilder ytelseBuilder, ArbeidsforholdInformasjonBuilder arbeidsforholdInformasjonBuilder) {
+    private void mapAnvisninger(VedtakYtelse vedtattYtelse,
+                                YtelseBuilder ytelseBuilder,
+                                ArbeidsforholdInformasjonBuilder arbeidsforholdInformasjonBuilder) {
         vedtattYtelse.getYtelseAnvist().forEach(anvisning -> {
             YtelseAnvistBuilder anvistBuilder = ytelseBuilder.getAnvistBuilder();
             IntervallEntitet periode = utledPeriodeNårTomMuligFørFom(anvisning.getAnvistFom(), anvisning.getAnvistTom());
@@ -73,8 +77,7 @@ public class VedtattYtelseInnhentingTjeneste {
                 .medDagsats(anvisning.getDagsats().map(Beløp::getVerdi).orElse(null))
                 .medUtbetalingsgradProsent(anvisning.getUtbetalingsgradProsent().map(Stillingsprosent::getVerdi).orElse(null));
             if (anvisning.getAndeler() != null) {
-                anvisning.getAndeler()
-                    .forEach(andel -> anvistBuilder.leggTilYtelseAnvistAndel(mapAndel(arbeidsforholdInformasjonBuilder, andel)));
+                anvisning.getAndeler().forEach(andel -> anvistBuilder.leggTilYtelseAnvistAndel(mapAndel(arbeidsforholdInformasjonBuilder, andel)));
             }
             ytelseBuilder.leggtilYtelseAnvist(anvistBuilder.build());
         });
@@ -92,7 +95,9 @@ public class VedtattYtelseInnhentingTjeneste {
             .build();
     }
 
-    private InternArbeidsforholdRef mapInternArbeidsforholdRef(ArbeidsforholdInformasjonBuilder arbeidsforholdInformasjonBuilder, VedtakYtelseAndel andel, Arbeidsgiver arbeidsgiver) {
+    private InternArbeidsforholdRef mapInternArbeidsforholdRef(ArbeidsforholdInformasjonBuilder arbeidsforholdInformasjonBuilder,
+                                                               VedtakYtelseAndel andel,
+                                                               Arbeidsgiver arbeidsgiver) {
         if (andel.getArbeidsforholdId() != null) {
             return arbeidsforholdInformasjonBuilder.finnEllerOpprett(arbeidsgiver, EksternArbeidsforholdRef.ref(andel.getArbeidsforholdId()));
         }
@@ -100,7 +105,9 @@ public class VedtattYtelseInnhentingTjeneste {
     }
 
     private Arbeidsgiver mapArbeidsgiver(VedtakYtelseAndel andel) {
-        return andel.getArbeidsgiver().map(a -> a.getOrgnr() != null ? Arbeidsgiver.virksomhet(a.getOrgnr()) : Arbeidsgiver.person(a.getAktørId())).orElse(null);
+        return andel.getArbeidsgiver()
+            .map(a -> a.getOrgnr() != null ? Arbeidsgiver.virksomhet(a.getOrgnr()) : Arbeidsgiver.person(a.getAktørId()))
+            .orElse(null);
     }
 
     private IntervallEntitet utledPeriodeNårTomMuligFørFom(LocalDate fom, LocalDate tom) {
@@ -112,7 +119,6 @@ public class VedtattYtelseInnhentingTjeneste {
         }
         return IntervallEntitet.fraOgMedTilOgMed(fom, tom);
     }
-
 
 
 }

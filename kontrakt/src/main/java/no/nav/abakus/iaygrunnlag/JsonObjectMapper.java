@@ -21,8 +21,7 @@ public class JsonObjectMapper {
     private static final ObjectMapper OM;
 
     static {
-        ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new Jdk8Module())
+        ObjectMapper objectMapper = new ObjectMapper().registerModule(new Jdk8Module())
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -49,7 +48,9 @@ public class JsonObjectMapper {
     }
 
 
-    /** Lag ObjectMapper med egen-definet kode-validator. */
+    /**
+     * Lag ObjectMapper med egen-definet kode-validator.
+     */
     @Deprecated(forRemoval = true)
     public static ObjectMapper getMapper(KodeValidator validator) {
         Std std = new InjectableValues.Std();

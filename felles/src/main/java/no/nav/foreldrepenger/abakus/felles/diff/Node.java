@@ -6,7 +6,7 @@ import java.util.Objects;
  * Representere tre-struktur vha. Lenket liste, der hver node peker tilbake mot rot av treet. Svært effektivt for
  * bygge unike stier uten å bruke mye minne eller tid.
  */
-public class Node implements Comparable<Node>{
+public class Node implements Comparable<Node> {
     Node parent;
     String localName;
     String fullName;
@@ -28,8 +28,7 @@ public class Node implements Comparable<Node>{
             return false;
         }
         Node other = (Node) obj;
-        return Objects.equals(localName, other.localName)
-                && Objects.equals(parent, other.parent);
+        return Objects.equals(localName, other.localName) && Objects.equals(parent, other.parent);
     }
 
     @Override
@@ -53,7 +52,7 @@ public class Node implements Comparable<Node>{
     public Node getParent() {
         return parent;
     }
-    
+
     public String getFullName() {
         if (fullName == null) {
             if (parent == null) {

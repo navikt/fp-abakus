@@ -21,14 +21,17 @@ public class YtelseRegisterInnhenting {
     private final InnhentingSamletTjeneste innhentingSamletTjeneste;
     private final VedtattYtelseInnhentingTjeneste vedtattYtelseInnhentingTjeneste;
 
-    YtelseRegisterInnhenting(InnhentingSamletTjeneste innhentingSamletTjeneste,
-                             VedtattYtelseInnhentingTjeneste vedtattYtelseInnhentingTjeneste) {
+    YtelseRegisterInnhenting(InnhentingSamletTjeneste innhentingSamletTjeneste, VedtattYtelseInnhentingTjeneste vedtattYtelseInnhentingTjeneste) {
         this.innhentingSamletTjeneste = innhentingSamletTjeneste;
         this.vedtattYtelseInnhentingTjeneste = vedtattYtelseInnhentingTjeneste;
     }
 
-    void byggYtelser(Kobling behandling, AktørId aktørId, PersonIdent ident, IntervallEntitet opplysningsPeriode,
-                     InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder, boolean medGrunnlag) {
+    void byggYtelser(Kobling behandling,
+                     AktørId aktørId,
+                     PersonIdent ident,
+                     IntervallEntitet opplysningsPeriode,
+                     InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder,
+                     boolean medGrunnlag) {
 
         InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder = inntektArbeidYtelseAggregatBuilder.getAktørYtelseBuilder(aktørId);
         aktørYtelseBuilder.tilbakestillYtelser();
@@ -55,7 +58,8 @@ public class YtelseRegisterInnhenting {
         inntektArbeidYtelseAggregatBuilder.leggTilAktørYtelse(aktørYtelseBuilder);
     }
 
-    private void oversettSpokelseYtelseGrunnlagTilYtelse(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder, InfotrygdYtelseGrunnlag grunnlag) {
+    private void oversettSpokelseYtelseGrunnlagTilYtelse(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder,
+                                                         InfotrygdYtelseGrunnlag grunnlag) {
         IntervallEntitet periode = utledPeriodeNårTomMuligFørFom(grunnlag.getVedtaksPeriodeFom(), grunnlag.getVedtaksPeriodeTom());
         var saksnummer = new Saksnummer(grunnlag.getVedtaksreferanse());
         YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.VLSP, grunnlag.getYtelseType(), saksnummer)
@@ -65,10 +69,8 @@ public class YtelseRegisterInnhenting {
             .medStatus(grunnlag.getYtelseStatus());
         grunnlag.getUtbetaltePerioder().forEach(vedtak -> {
             final IntervallEntitet intervall = utledPeriodeNårTomMuligFørFom(vedtak.getUtbetaltFom(), vedtak.getUtbetaltTom());
-            ytelseBuilder.leggtilYtelseAnvist(ytelseBuilder.getAnvistBuilder()
-                .medAnvistPeriode(intervall)
-                .medUtbetalingsgradProsent(vedtak.getUtbetalingsgrad())
-                .build());
+            ytelseBuilder.leggtilYtelseAnvist(
+                ytelseBuilder.getAnvistBuilder().medAnvistPeriode(intervall).medUtbetalingsgradProsent(vedtak.getUtbetalingsgrad()).build());
         });
         aktørYtelseBuilder.leggTilYtelse(ytelseBuilder);
     }
@@ -77,9 +79,9 @@ public class YtelseRegisterInnhenting {
                                                                MeldekortUtbetalingsgrunnlagSak ytelse) {
         Optional<LocalDate> førsteMeldekortFom = finnFørsteMeldekortFom(ytelse);
         IntervallEntitet periode = utledMeldekortVedtaksPeriode(ytelse, førsteMeldekortFom);
-        YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(ytelse.getKilde(), ytelse.getYtelseType(), ytelse.getSaksnummer(), periode, førsteMeldekortFom);
-        ytelseBuilder
-            .medPeriode(periode)
+        YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(ytelse.getKilde(), ytelse.getYtelseType(), ytelse.getSaksnummer(),
+            periode, førsteMeldekortFom);
+        ytelseBuilder.medPeriode(periode)
             .medStatus(ytelse.getYtelseTilstand())
             .medVedtattTidspunkt(ytelse.getVedtattDato().atStartOfDay())
             .medYtelseGrunnlag(ytelseBuilder.getGrunnlagBuilder()
@@ -120,9 +122,7 @@ public class YtelseRegisterInnhenting {
     }
 
     private Optional<LocalDate> finnFørsteMeldekortFom(MeldekortUtbetalingsgrunnlagSak sak) {
-        return sak.getMeldekortene().stream()
-            .map(MeldekortUtbetalingsgrunnlagMeldekort::getMeldekortFom)
-            .min(LocalDate::compareTo);
+        return sak.getMeldekortene().stream().map(MeldekortUtbetalingsgrunnlagMeldekort::getMeldekortFom).min(LocalDate::compareTo);
     }
 
 }

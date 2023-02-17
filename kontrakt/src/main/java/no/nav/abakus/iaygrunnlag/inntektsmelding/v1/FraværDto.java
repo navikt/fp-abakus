@@ -25,7 +25,9 @@ public class FraværDto {
     @NotNull
     private Periode periode;
 
-    /** Hvis satt, angir en del av en dag. hvis ikke satt - regn hele dager med fravær. */
+    /**
+     * Hvis satt, angir en del av en dag. hvis ikke satt - regn hele dager med fravær.
+     */
     @JsonProperty(value = "varighetPerDag")
     @Valid
     private Duration varighetPerDag;
@@ -51,13 +53,14 @@ public class FraværDto {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this)
+        if (obj == this) {
             return true;
-        if (obj == null || obj.getClass() != this.getClass())
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
             return false;
+        }
         var other = (FraværDto) obj;
-        return Objects.equals(periode, other.periode)
-            && Objects.equals(varighetPerDag, other.varighetPerDag);
+        return Objects.equals(periode, other.periode) && Objects.equals(varighetPerDag, other.varighetPerDag);
     }
 
     @Override
@@ -67,9 +70,6 @@ public class FraværDto {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() +
-            "<periode=" + periode +
-            (varighetPerDag == null ? "" : ", varighetPerDag=" + varighetPerDag) +
-            ">";
+        return getClass().getSimpleName() + "<periode=" + periode + (varighetPerDag == null ? "" : ", varighetPerDag=" + varighetPerDag) + ">";
     }
 }

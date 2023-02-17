@@ -9,7 +9,7 @@ public class DiffEntity {
     public DiffEntity(TraverseGraphConfig config) {
         this(new TraverseGraph(config));
     }
-    
+
     public DiffEntity(TraverseGraph traverser) {
         this.traverser = traverser;
     }

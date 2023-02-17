@@ -67,14 +67,14 @@ public final class ConvertToYtelseV1 {
     }
 
     private static List<AnvistAndel> mapAndeler(YtelseAnvist anvist) {
-        return anvist.getAndeler().stream().map(a -> new AnvistAndel(
-            a.getArbeidsgiver().map(ConvertToYtelseV1::mapArbeidsgiverIdent).orElse(null),
-            a.getArbeidsforholdId(),
-            new Desimaltall(a.getDagsats().getVerdi()),
-            a.getUtbetalingsgradProsent() == null ? null : new Desimaltall(a.getUtbetalingsgradProsent().getVerdi()),
-            a.getRefusjonsgradProsent() == null ? null : new Desimaltall(a.getRefusjonsgradProsent().getVerdi()),
-            fraInntektskategori(a.getInntektskategori())
-        )).collect(Collectors.toList());
+        return anvist.getAndeler()
+            .stream()
+            .map(a -> new AnvistAndel(a.getArbeidsgiver().map(ConvertToYtelseV1::mapArbeidsgiverIdent).orElse(null), a.getArbeidsforholdId(),
+                new Desimaltall(a.getDagsats().getVerdi()),
+                a.getUtbetalingsgradProsent() == null ? null : new Desimaltall(a.getUtbetalingsgradProsent().getVerdi()),
+                a.getRefusjonsgradProsent() == null ? null : new Desimaltall(a.getRefusjonsgradProsent().getVerdi()),
+                fraInntektskategori(a.getInntektskategori())))
+            .collect(Collectors.toList());
     }
 
 

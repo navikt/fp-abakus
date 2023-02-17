@@ -133,15 +133,12 @@ public class AktørArbeid extends BaseEntitet implements IndexKey {
             yrkesaktiviter.removeIf(ya -> ya.getArbeidType().equals(arbeidType));
         } else {
             Opptjeningsnøkkel nøkkel = new Opptjeningsnøkkel(yrkesaktivitetKladd);
-            yrkesaktiviter.removeIf(ya -> ya.getArbeidType().equals(arbeidType)
-                && new Opptjeningsnøkkel(ya).matcher(nøkkel));
+            yrkesaktiviter.removeIf(ya -> ya.getArbeidType().equals(arbeidType) && new Opptjeningsnøkkel(ya).matcher(nøkkel));
         }
     }
 
     YrkesaktivitetBuilder getYrkesaktivitetBuilderForType(ArbeidType type) {
-        Optional<Yrkesaktivitet> yrkesaktivitet = yrkesaktiviter.stream()
-            .filter(ya -> ya.getArbeidType().equals(type))
-            .findFirst();
+        Optional<Yrkesaktivitet> yrkesaktivitet = yrkesaktiviter.stream().filter(ya -> ya.getArbeidType().equals(type)).findFirst();
         final YrkesaktivitetBuilder oppdatere = YrkesaktivitetBuilder.oppdatere(yrkesaktivitet);
         oppdatere.medArbeidType(type);
         return oppdatere;
@@ -170,16 +167,11 @@ public class AktørArbeid extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" +
-            "aktørId=" + aktørId +
-            ", yrkesaktiviteter=" + yrkesaktiviter +
-            '>';
+        return getClass().getSimpleName() + "<" + "aktørId=" + aktørId + ", yrkesaktiviteter=" + yrkesaktiviter + '>';
     }
 
     void tilbakestillYrkesaktiviteter() {
-        this.yrkesaktiviter = yrkesaktiviter.stream()
-            .filter(Yrkesaktivitet::erYrkesaktivitetMedLegacyInnhold)
-            .collect(Collectors.toSet());
+        this.yrkesaktiviter = yrkesaktiviter.stream().filter(Yrkesaktivitet::erYrkesaktivitetMedLegacyInnhold).collect(Collectors.toSet());
     }
 
     void tilbakestillYrkesaktiviteterInklusiveInntektFrilans() {

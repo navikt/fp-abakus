@@ -73,9 +73,9 @@ public class JettyServer {
         var storePath = ENV.getProperty(trustStorePathProp, defaultLocation);
         var storeFile = new File(storePath);
         if (!storeFile.exists()) {
-            throw new IllegalStateException("Finner ikke truststore i " + storePath
-                + "\n\tKonfrigurer enten som System property '" + trustStorePathProp + "' eller environment variabel '"
-                + trustStorePathProp.toUpperCase().replace('.', '_') + "'");
+            throw new IllegalStateException(
+                "Finner ikke truststore i " + storePath + "\n\tKonfrigurer enten som System property '" + trustStorePathProp
+                    + "' eller environment variabel '" + trustStorePathProp.toUpperCase().replace('.', '_') + "'");
         }
         var password = ENV.getProperty(trustStorePasswordProp, "changeit");
         System.setProperty(trustStorePathProp, storeFile.getAbsolutePath());
@@ -103,8 +103,7 @@ public class JettyServer {
          * lar jetty scanne flere jars for web resources (eks. WebFilter/WebListener annotations),
          * men bare de som matchr pattern for raskere oppstart
          */
-        ctx.setAttribute("org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern",
-            "^.*jersey-.*.jar$|^.*felles-sikkerhet-.*.jar$");
+        ctx.setAttribute("org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern", "^.*jersey-.*.jar$|^.*felles-sikkerhet-.*.jar$");
 
         ctx.addEventListener(new org.jboss.weld.environment.servlet.BeanManagerResourceBindingListener());
         ctx.addEventListener(new org.jboss.weld.environment.servlet.Listener());
@@ -165,9 +164,7 @@ public class JettyServer {
         }
 
         var factory = new DefaultAuthConfigFactory();
-        factory.registerConfigProvider(new JaspiAuthConfigProvider(new OidcAuthModule()),
-            "HttpServlet",
-            "server " + CONTEXT_PATH,
+        factory.registerConfigProvider(new JaspiAuthConfigProvider(new OidcAuthModule()), "HttpServlet", "server " + CONTEXT_PATH,
             "OIDC Authentication");
 
         AuthConfigFactory.setFactory(factory);
@@ -181,10 +178,7 @@ public class JettyServer {
 
     void migrerDatabaser() {
         try (var dataSource = DatasourceUtil.createDatasource(DatasourceRole.ADMIN, 2)) {
-            var flyway = Flyway.configure()
-                .dataSource(dataSource)
-                .locations("classpath:/db/migration/defaultDS")
-                .baselineOnMigrate(true);
+            var flyway = Flyway.configure().dataSource(dataSource).locations("classpath:/db/migration/defaultDS").baselineOnMigrate(true);
             if (ENV.isProd() || ENV.isDev()) {
                 flyway.initSql(String.format("SET ROLE \"%s\"", DatasourceUtil.getRole(DatasourceRole.ADMIN)));
             }
@@ -221,7 +215,10 @@ public class JettyServer {
      */
     static final class ResetLogContextHandler extends AbstractHandler {
         @Override
-        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        public void handle(String target,
+                           Request baseRequest,
+                           HttpServletRequest request,
+                           HttpServletResponse response) throws IOException, ServletException {
             MDC.clear();
         }
     }

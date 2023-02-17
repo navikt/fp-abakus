@@ -53,10 +53,6 @@ public class Topic {
 
     @Override
     public String toString() {
-        return "Topic{" +
-                "topic='" + topic + '\'' +
-                ", serdeKey=" + serdeKey +
-                ", serdeValue=" + serdeValue +
-                '}';
+        return "Topic{" + "topic='" + topic + '\'' + ", serdeKey=" + serdeKey + ", serdeValue=" + serdeValue + '}';
     }
 }

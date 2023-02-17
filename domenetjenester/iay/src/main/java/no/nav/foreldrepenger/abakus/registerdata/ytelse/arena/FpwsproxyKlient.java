@@ -45,10 +45,8 @@ public class FpwsproxyKlient {
             var request = RestRequest.newPOSTJson(body, endpointHentDagpengerAAP, restConfig);
             var result = restClient.send(request, MeldekortUtbetalingsgrunnlagSakDto[].class);
             LOG.info("Dagpenger/AAP hentet OK");
-            return Arrays.stream(result)
-                .map(MedlemskortUtbetalingsgrunnlagSakMapper::tilDomeneModell)
-                .toList();
-        } catch (UriBuilderException|IllegalArgumentException e) {
+            return Arrays.stream(result).map(MedlemskortUtbetalingsgrunnlagSakMapper::tilDomeneModell).toList();
+        } catch (UriBuilderException | IllegalArgumentException e) {
             throw new IllegalArgumentException("Utviklerfeil syntax-exception for hentDagpengerAAP");
         }
     }

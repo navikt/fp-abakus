@@ -1,17 +1,10 @@
 package no.nav.abakus.iaygrunnlag.ytelse.v1;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
@@ -19,7 +12,13 @@ import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -45,7 +44,7 @@ public class YtelseDto {
 
     @JsonProperty(value = "saksnummer")
     @Valid
-    @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message="Saksnummer [${validatedValue}] matcher ikke tillatt pattern '{value}'")
+    @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "Saksnummer [${validatedValue}] matcher ikke tillatt pattern '{value}'")
     private String saksnummer;
 
     @JsonProperty(value = "vedtattTidspunkt")
@@ -94,10 +93,6 @@ public class YtelseDto {
         return grunnlag;
     }
 
-    public void setSaksnummer(String saksnummer) {
-        this.saksnummer = saksnummer;
-    }
-
     public void setGrunnlag(YtelseGrunnlagDto grunnlag) {
         this.grunnlag = grunnlag;
     }
@@ -125,6 +120,10 @@ public class YtelseDto {
 
     public String getSaksnummer() {
         return saksnummer;
+    }
+
+    public void setSaksnummer(String saksnummer) {
+        this.saksnummer = saksnummer;
     }
 
     public Periode getPeriode() {

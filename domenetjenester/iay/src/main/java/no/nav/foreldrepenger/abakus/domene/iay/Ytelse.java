@@ -1,35 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Version;
-
-import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
-import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
-import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.abakus.iaygrunnlag.kodeverk.*;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -39,6 +10,12 @@ import no.nav.foreldrepenger.abakus.iay.jpa.YtelseStatusKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.iay.jpa.YtelseTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.abakus.vedtak.domene.FagsystemKodeverdiConverter;
+
+import javax.persistence.*;
+
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity(name = "YtelseEntitet")
 @Table(name = "IAY_RELATERT_YTELSE")
@@ -52,7 +29,7 @@ public class Ytelse extends BaseEntitet implements IndexKey {
     private YtelseGrunnlag ytelseGrunnlag;
 
     @Convert(converter = YtelseTypeKodeverdiConverter.class)
-    @Column(name="ytelse_type", nullable = false)
+    @Column(name = "ytelse_type", nullable = false)
     private YtelseType relatertYtelseType;
 
     @Embedded
@@ -65,7 +42,7 @@ public class Ytelse extends BaseEntitet implements IndexKey {
 
     @ChangeTracked
     @Convert(converter = YtelseStatusKodeverdiConverter.class)
-    @Column(name="status", nullable = false)
+    @Column(name = "status", nullable = false)
     private YtelseStatus status;
 
     /**
@@ -77,12 +54,12 @@ public class Ytelse extends BaseEntitet implements IndexKey {
     private Saksnummer saksreferanse;
 
     @ChangeTracked
-    @Convert(converter= FagsystemKodeverdiConverter.class)
-    @Column(name="kilde", nullable = false)
+    @Convert(converter = FagsystemKodeverdiConverter.class)
+    @Column(name = "kilde", nullable = false)
     private Fagsystem kilde;
 
     @Convert(converter = TemaUnderkategoriKodeverdiConverter.class)
-    @Column(name="temaUnderkategori", nullable = false)
+    @Column(name = "temaUnderkategori", nullable = false)
     @ChangeTracked
     private TemaUnderkategori temaUnderkategori = TemaUnderkategori.UDEFINERT;
 
@@ -124,7 +101,7 @@ public class Ytelse extends BaseEntitet implements IndexKey {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { periode, relatertYtelseType, saksreferanse };
+        Object[] keyParts = {periode, relatertYtelseType, saksreferanse};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -215,15 +192,16 @@ public class Ytelse extends BaseEntitet implements IndexKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || !(o instanceof Ytelse))
+        }
+        if (o == null || !(o instanceof Ytelse)) {
             return false;
+        }
         var that = (Ytelse) o;
-        return Objects.equals(relatertYtelseType, that.relatertYtelseType) &&
-            Objects.equals(temaUnderkategori, that.temaUnderkategori) &&
-            (Objects.equals(periode, that.periode) || Objects.equals(periode.getFomDato(), that.periode.getFomDato())) &&
-            Objects.equals(saksreferanse, that.saksreferanse);
+        return Objects.equals(relatertYtelseType, that.relatertYtelseType) && Objects.equals(temaUnderkategori, that.temaUnderkategori) && (
+            Objects.equals(periode, that.periode) || Objects.equals(periode.getFomDato(), that.periode.getFomDato())) && Objects.equals(saksreferanse,
+            that.saksreferanse);
     }
 
     @Override

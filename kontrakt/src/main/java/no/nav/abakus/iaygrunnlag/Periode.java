@@ -12,7 +12,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/** Periode med fom/tom dato. */
+/**
+ * Periode med fom/tom dato.
+ */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.ALWAYS)
@@ -39,7 +41,7 @@ public class Periode {
         this.fom = fom;
         this.tom = tom;
     }
-    
+
     public LocalDate getFom() {
         return fom;
     }
@@ -55,13 +57,14 @@ public class Periode {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this)
+        if (obj == this) {
             return true;
-        if (obj == null || obj.getClass() != this.getClass())
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
             return false;
+        }
         var other = getClass().cast(obj);
-        return Objects.equals(this.getFom(), other.getFom())
-            && Objects.equals(this.getTom(), other.getTom());
+        return Objects.equals(this.getFom(), other.getFom()) && Objects.equals(this.getTom(), other.getTom());
     }
 
     @Override

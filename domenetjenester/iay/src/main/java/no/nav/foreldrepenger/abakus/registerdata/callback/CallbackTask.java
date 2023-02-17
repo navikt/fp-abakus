@@ -39,11 +39,11 @@ public class CallbackTask implements ProsessTaskHandler {
     private KoblingTjeneste koblingTjeneste;
     private InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste;
 
-    CallbackTask() {}
+    CallbackTask() {
+    }
 
     @Inject
-    public CallbackTask(KoblingTjeneste koblingTjeneste,
-                        InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste) {
+    public CallbackTask(KoblingTjeneste koblingTjeneste, InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste) {
         this.restClient = RestClient.client();
         this.koblingTjeneste = koblingTjeneste;
         this.inntektArbeidYtelseTjeneste = inntektArbeidYtelseTjeneste;

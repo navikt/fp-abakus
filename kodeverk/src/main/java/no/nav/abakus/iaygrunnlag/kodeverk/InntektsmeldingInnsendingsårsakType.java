@@ -17,9 +17,8 @@ public enum InntektsmeldingInnsendingsårsakType implements Kodeverdi {
     UDEFINERT("-", "UDEFINERT"),
     ;
 
-    private static final Map<String, InntektsmeldingInnsendingsårsakType> KODER = new LinkedHashMap<>();
-
     public static final String KODEVERK = "INNTEKTSMELDING_INNSENDINGSAARSAK";
+    private static final Map<String, InntektsmeldingInnsendingsårsakType> KODER = new LinkedHashMap<>();
 
     static {
         for (var v : values()) {

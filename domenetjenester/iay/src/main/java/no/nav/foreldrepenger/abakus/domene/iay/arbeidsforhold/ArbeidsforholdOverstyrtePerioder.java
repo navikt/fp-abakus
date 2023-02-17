@@ -27,10 +27,7 @@ public class ArbeidsforholdOverstyrtePerioder extends BaseEntitet {
     private Long id;
 
     @Embedded
-    @AttributeOverrides({
-        @AttributeOverride(name = "fomDato", column = @Column(name = "FOM")),
-        @AttributeOverride(name = "tomDato", column = @Column(name = "TOM"))
-    })
+    @AttributeOverrides({@AttributeOverride(name = "fomDato", column = @Column(name = "FOM")), @AttributeOverride(name = "tomDato", column = @Column(name = "TOM"))})
     private IntervallEntitet periode;
 
     @ManyToOne(optional = false)
@@ -59,8 +56,12 @@ public class ArbeidsforholdOverstyrtePerioder extends BaseEntitet {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof ArbeidsforholdOverstyrtePerioder)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !(o instanceof ArbeidsforholdOverstyrtePerioder)) {
+            return false;
+        }
         var that = (ArbeidsforholdOverstyrtePerioder) o;
         return Objects.equals(periode, that.periode) && Objects.equals(arbeidsforholdOverstyring, that.arbeidsforholdOverstyring);
     }
@@ -72,10 +73,7 @@ public class ArbeidsforholdOverstyrtePerioder extends BaseEntitet {
 
     @Override
     public String toString() {
-        return "ArbeidsforholdOverstyrtePerioderEntitet{" +
-            "periode=" + periode +
-            ", arbeidsforholdOverstyring=" + arbeidsforholdOverstyring +
-            '}';
+        return "ArbeidsforholdOverstyrtePerioderEntitet{" + "periode=" + periode + ", arbeidsforholdOverstyring=" + arbeidsforholdOverstyring + '}';
     }
 
     public IntervallEntitet getOverstyrtePeriode() {

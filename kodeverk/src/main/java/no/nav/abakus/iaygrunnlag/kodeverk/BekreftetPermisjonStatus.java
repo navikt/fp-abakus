@@ -24,9 +24,8 @@ public enum BekreftetPermisjonStatus implements Kodeverdi {
     UGYLDIGE_PERIODER("UGYLDIGE_PERIODER", "Arbeidsforholdet inneholder permisjoner med ugyldige perioder"),
     ;
 
-    private static final Map<String, BekreftetPermisjonStatus> KODER = new LinkedHashMap<>();
-
     public static final String KODEVERK = "BEKREFTET_PERMISJON_STATUS";
+    private static final Map<String, BekreftetPermisjonStatus> KODER = new LinkedHashMap<>();
 
     static {
         for (var v : values()) {
@@ -54,8 +53,7 @@ public enum BekreftetPermisjonStatus implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent BekreftetPermisjonStatus: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent BekreftetPermisjonStatus: " + kode));
     }
 
     public static Map<String, BekreftetPermisjonStatus> kodeMap() {

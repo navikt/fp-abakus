@@ -38,7 +38,8 @@ class InfotrygdgrunnlagAnvistAndelMapperTest {
         List<InfotrygdYtelseArbeid> arbeidsforhold = List.of(new InfotrygdYtelseArbeid(null, 1994, InntektPeriodeType.DAGLIG, null));
 
         // Act
-        var anvisninger = InfotrygdgrunnlagAnvistAndelMapper.oversettYtelseArbeidTilAnvisteAndeler(arbeidskategori, arbeidsforhold, infotrygdutbetalinger);
+        var anvisninger = InfotrygdgrunnlagAnvistAndelMapper.oversettYtelseArbeidTilAnvisteAndeler(arbeidskategori, arbeidsforhold,
+            infotrygdutbetalinger);
 
         // Assert
         assertThat(anvisninger.size()).isEqualTo(2);
@@ -76,7 +77,8 @@ class InfotrygdgrunnlagAnvistAndelMapperTest {
         List<InfotrygdYtelseArbeid> arbeidsforhold = List.of(new InfotrygdYtelseArbeid(null, 1995, InntektPeriodeType.DAGLIG, null));
 
         // Act
-        var anvisninger = InfotrygdgrunnlagAnvistAndelMapper.oversettYtelseArbeidTilAnvisteAndeler(arbeidskategori, arbeidsforhold, infotrygdutbetalinger);
+        var anvisninger = InfotrygdgrunnlagAnvistAndelMapper.oversettYtelseArbeidTilAnvisteAndeler(arbeidskategori, arbeidsforhold,
+            infotrygdutbetalinger);
 
         // Assert
         assertThat(anvisninger.size()).isEqualTo(2);
@@ -114,7 +116,8 @@ class InfotrygdgrunnlagAnvistAndelMapperTest {
         List<InfotrygdYtelseArbeid> arbeidsforhold = List.of(new InfotrygdYtelseArbeid(null, 1996, InntektPeriodeType.DAGLIG, null));
 
         // Act
-        var anvisninger = InfotrygdgrunnlagAnvistAndelMapper.oversettYtelseArbeidTilAnvisteAndeler(arbeidskategori, arbeidsforhold, infotrygdutbetalinger);
+        var anvisninger = InfotrygdgrunnlagAnvistAndelMapper.oversettYtelseArbeidTilAnvisteAndeler(arbeidskategori, arbeidsforhold,
+            infotrygdutbetalinger);
 
         // Assert
         assertThat(anvisninger.size()).isEqualTo(2);
@@ -151,7 +154,8 @@ class InfotrygdgrunnlagAnvistAndelMapperTest {
         List<InfotrygdYtelseArbeid> arbeidsforhold = List.of(new InfotrygdYtelseArbeid(null, 1994, InntektPeriodeType.DAGLIG, null));
 
         // Act
-        var anvisninger = InfotrygdgrunnlagAnvistAndelMapper.oversettYtelseArbeidTilAnvisteAndeler(arbeidskategori, arbeidsforhold, infotrygdutbetalinger);
+        var anvisninger = InfotrygdgrunnlagAnvistAndelMapper.oversettYtelseArbeidTilAnvisteAndeler(arbeidskategori, arbeidsforhold,
+            infotrygdutbetalinger);
 
         // Assert
         assertThat(anvisninger.size()).isEqualTo(2);
@@ -189,7 +193,10 @@ class InfotrygdgrunnlagAnvistAndelMapperTest {
 
         // Assert
         assertThat(anvisninger.size()).isEqualTo(1);
-        var arbeid1 = anvisninger.stream().filter(a -> a.getArbeidsgiver().isPresent() && a.getArbeidsgiver().get().getOrgnr().getId().equals(orgnr)).findFirst().get();
+        var arbeid1 = anvisninger.stream()
+            .filter(a -> a.getArbeidsgiver().isPresent() && a.getArbeidsgiver().get().getOrgnr().getId().equals(orgnr))
+            .findFirst()
+            .get();
         assertThat(arbeid1.getArbeidsgiver().get().getIdentifikator()).isEqualTo(orgnr);
         assertThat(arbeid1.getInntektskategori()).isEqualTo(Inntektskategori.ARBEIDSTAKER);
         assertThat(arbeid1.getRefusjonsgradProsent().getVerdi()).isCloseTo(BigDecimal.ZERO, Offset.offset(BigDecimal.valueOf(0.000001)));
@@ -220,14 +227,20 @@ class InfotrygdgrunnlagAnvistAndelMapperTest {
 
         // Assert
         assertThat(anvisninger.size()).isEqualTo(2);
-        var arbeid1 = anvisninger.stream().filter(a -> a.getArbeidsgiver().isPresent() && a.getArbeidsgiver().get().getOrgnr().getId().equals(orgnr)).findFirst().get();
+        var arbeid1 = anvisninger.stream()
+            .filter(a -> a.getArbeidsgiver().isPresent() && a.getArbeidsgiver().get().getOrgnr().getId().equals(orgnr))
+            .findFirst()
+            .get();
         assertThat(arbeid1.getArbeidsgiver().get().getIdentifikator()).isEqualTo(orgnr);
         assertThat(arbeid1.getInntektskategori()).isEqualTo(Inntektskategori.ARBEIDSTAKER);
         assertThat(arbeid1.getRefusjonsgradProsent().getVerdi()).isCloseTo(BigDecimal.ZERO, Offset.offset(BigDecimal.valueOf(0.000001)));
         assertThat(arbeid1.getDagsats().getVerdi()).isEqualTo(dagsatsArbeid);
         assertThat(arbeid1.getUtbetalingsgradProsent().getVerdi()).isEqualTo(utbetalingsgrad);
 
-        var arbeid2 = anvisninger.stream().filter(a -> a.getArbeidsgiver().isPresent() && a.getArbeidsgiver().get().getOrgnr().getId().equals(orgnr2)).findFirst().get();
+        var arbeid2 = anvisninger.stream()
+            .filter(a -> a.getArbeidsgiver().isPresent() && a.getArbeidsgiver().get().getOrgnr().getId().equals(orgnr2))
+            .findFirst()
+            .get();
         assertThat(arbeid2.getArbeidsgiver().get().getIdentifikator()).isEqualTo(orgnr2);
         assertThat(arbeid2.getInntektskategori()).isEqualTo(Inntektskategori.ARBEIDSTAKER);
         assertThat(arbeid2.getRefusjonsgradProsent().getVerdi()).isCloseTo(BigDecimal.ZERO, Offset.offset(BigDecimal.valueOf(0.000001)));

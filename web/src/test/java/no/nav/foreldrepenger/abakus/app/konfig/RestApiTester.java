@@ -36,7 +36,8 @@ public class RestApiTester {
     }
 
     static Collection<Class<?>> finnAlleRestTjenester(Application config) {
-        return config.getClasses().stream()
+        return config.getClasses()
+            .stream()
             .filter(c -> c.getAnnotation(Path.class) != null)
             .filter(c -> !UNNTATT.contains(c))
             .collect(Collectors.toList());

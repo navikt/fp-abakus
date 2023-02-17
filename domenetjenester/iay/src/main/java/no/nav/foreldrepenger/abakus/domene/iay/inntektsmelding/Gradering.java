@@ -67,7 +67,7 @@ public class Gradering extends BaseEntitet implements IndexKey {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { periode };
+        Object[] keyParts = {periode};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -100,17 +100,17 @@ public class Gradering extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "GraderingEntitet{" +
-            "id=" + id +
-            ", periode=" + periode +
-            ", arbeidstidProsent=" + arbeidstidProsent +
-            '}';
+        return "GraderingEntitet{" + "id=" + id + ", periode=" + periode + ", arbeidstidProsent=" + arbeidstidProsent + '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof Gradering)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !(o instanceof Gradering)) {
+            return false;
+        }
         var that = (Gradering) o;
         return Objects.equals(periode, that.periode);
     }

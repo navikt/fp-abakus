@@ -37,7 +37,9 @@ public class Fravær extends BaseEntitet implements IndexKey {
     @ChangeTracked
     private IntervallEntitet periode;
 
-    /** tid oppgittFravær per dag. Hvis ikke oppgitt antas hele dagen å telle med. */
+    /**
+     * tid oppgittFravær per dag. Hvis ikke oppgitt antas hele dagen å telle med.
+     */
     @ChangeTracked
     @Column(name = "varighet_per_dag", nullable = true)
     private Duration varighetPerDag;
@@ -59,17 +61,17 @@ public class Fravær extends BaseEntitet implements IndexKey {
         this.varighetPerDag = entity.getVarighetPerDag();
     }
 
-    public Duration getVarighetPerDag() {
-        return varighetPerDag;
-    }
-
     public Fravær(IntervallEntitet datoIntervall, Duration varighetPerDag) {
         this(datoIntervall.getFomDato(), datoIntervall.getTomDato(), varighetPerDag);
     }
 
+    public Duration getVarighetPerDag() {
+        return varighetPerDag;
+    }
+
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { periode };
+        Object[] keyParts = {periode};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -83,10 +85,12 @@ public class Fravær extends BaseEntitet implements IndexKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || !(o instanceof Fravær))
+        }
+        if (o == null || !(o instanceof Fravær)) {
             return false;
+        }
         var that = (Fravær) o;
         return Objects.equals(periode, that.periode);
     }
@@ -98,10 +102,6 @@ public class Fravær extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "NaturalYtelseEntitet{" +
-            "id=" + id +
-            ", periode=" + periode +
-            ", varighetPerDag=" + varighetPerDag +
-            '}';
+        return "NaturalYtelseEntitet{" + "id=" + id + ", periode=" + periode + ", varighetPerDag=" + varighetPerDag + '}';
     }
 }

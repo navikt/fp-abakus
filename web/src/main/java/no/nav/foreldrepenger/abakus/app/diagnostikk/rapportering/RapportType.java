@@ -23,7 +23,8 @@ public enum RapportType {
 
     public void valider(YtelseType ytelseType) {
         if (!ytelseTyper.contains(ytelseType)) {
-            throw new IllegalArgumentException("Støtter ikke dette uttrekket [" + this.name() + "] for ytelseType:" + ytelseType + ", tillater kun: " + ytelseTyper);
+            throw new IllegalArgumentException(
+                "Støtter ikke dette uttrekket [" + this.name() + "] for ytelseType:" + ytelseType + ", tillater kun: " + ytelseTyper);
         }
     }
 }

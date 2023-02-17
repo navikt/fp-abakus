@@ -35,25 +35,26 @@ public class AaregRestKlient {
 
     public List<ArbeidsforholdRS> finnArbeidsforholdForArbeidstaker(String ident, LocalDate qfom, LocalDate qtom) {
         try {
-            var target = UriBuilder.fromUri(restConfig.endpoint()).path("arbeidsforhold")
-                    .queryParam("ansettelsesperiodeFom", String.valueOf(qfom))
-                    .queryParam("ansettelsesperiodeTom", String.valueOf(qtom))
-                    .queryParam("regelverk", "A_ORDNINGEN")
-                    .queryParam("historikk", "true")
-                    .queryParam("sporingsinformasjon", "false")
-                    .build();
-            var request = RestRequest.newGET(target, restConfig)
-                .header(NavHeaders.HEADER_NAV_PERSONIDENT, ident);
+            var target = UriBuilder.fromUri(restConfig.endpoint())
+                .path("arbeidsforhold")
+                .queryParam("ansettelsesperiodeFom", String.valueOf(qfom))
+                .queryParam("ansettelsesperiodeTom", String.valueOf(qtom))
+                .queryParam("regelverk", "A_ORDNINGEN")
+                .queryParam("historikk", "true")
+                .queryParam("sporingsinformasjon", "false")
+                .build();
+            var request = RestRequest.newGET(target, restConfig).header(NavHeaders.HEADER_NAV_PERSONIDENT, ident);
             var result = restClient.send(request, ArbeidsforholdRS[].class);
             return Arrays.asList(result);
-        } catch (UriBuilderException|IllegalArgumentException e) {
+        } catch (UriBuilderException | IllegalArgumentException e) {
             throw new IllegalArgumentException("Utviklerfeil syntax-exception for finnArbeidsforholdForArbeidstaker");
         }
     }
 
     public List<ArbeidsforholdRS> finnArbeidsforholdForFrilanser(String ident, LocalDate qfom, LocalDate qtom) {
         try {
-            var target = UriBuilder.fromUri(restConfig.endpoint()).path("arbeidsforhold")
+            var target = UriBuilder.fromUri(restConfig.endpoint())
+                .path("arbeidsforhold")
                 .queryParam("ansettelsesperiodeFom", String.valueOf(qfom))
                 .queryParam("ansettelsesperiodeTom", String.valueOf(qtom))
                 .queryParam("arbeidsforholdtype", "frilanserOppdragstakerHonorarPersonerMm")
@@ -61,11 +62,10 @@ public class AaregRestKlient {
                 .queryParam("historikk", "true")
                 .queryParam("sporingsinformasjon", "false")
                 .build();
-            var request = RestRequest.newGET(target, restConfig)
-                .header(NavHeaders.HEADER_NAV_PERSONIDENT, ident);
+            var request = RestRequest.newGET(target, restConfig).header(NavHeaders.HEADER_NAV_PERSONIDENT, ident);
             var result = restClient.send(request, ArbeidsforholdRS[].class);
             return Arrays.asList(result);
-        } catch (UriBuilderException|IllegalArgumentException e) {
+        } catch (UriBuilderException | IllegalArgumentException e) {
             throw new IllegalArgumentException("Utviklerfeil syntax-exception for finnArbeidsforholdForArbeidstaker");
         }
     }

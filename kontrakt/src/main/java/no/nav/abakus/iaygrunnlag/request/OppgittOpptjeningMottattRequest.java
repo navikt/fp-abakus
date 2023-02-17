@@ -97,23 +97,20 @@ public class OppgittOpptjeningMottattRequest {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this)
+        if (obj == this) {
             return true;
-        if (!(obj instanceof OppgittOpptjeningMottattRequest))
+        }
+        if (!(obj instanceof OppgittOpptjeningMottattRequest)) {
             return false;
+        }
         var other = (OppgittOpptjeningMottattRequest) obj;
-        return Objects.equals(saksnummer, other.saksnummer)
-            && Objects.equals(koblingReferanse, other.koblingReferanse)
-            && Objects.equals(aktør, other.aktør)
-            && Objects.equals(ytelseType, other.ytelseType);
+        return Objects.equals(saksnummer, other.saksnummer) && Objects.equals(koblingReferanse, other.koblingReferanse) && Objects.equals(aktør,
+            other.aktør) && Objects.equals(ytelseType, other.ytelseType);
 
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<saksnummer=" + saksnummer
-            + ", koblingRef=" + koblingReferanse
-            + ", ytelseType=" + ytelseType
-            + ">";
+        return getClass().getSimpleName() + "<saksnummer=" + saksnummer + ", koblingRef=" + koblingReferanse + ", ytelseType=" + ytelseType + ">";
     }
 }

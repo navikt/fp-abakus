@@ -29,7 +29,8 @@ public class InfotrygdgrunnlagYtelseMapper {
     private InfotrygdgrunnlagYtelseMapper() {
     }
 
-    public static void oversettInfotrygdYtelseGrunnlagTilYtelse(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder, InfotrygdYtelseGrunnlag grunnlag) {
+    public static void oversettInfotrygdYtelseGrunnlagTilYtelse(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder,
+                                                                InfotrygdYtelseGrunnlag grunnlag) {
         IntervallEntitet periode = utledPeriodeNårTomMuligFørFom(grunnlag.getVedtaksPeriodeFom(), grunnlag.getVedtaksPeriodeTom());
         var tidligsteAnvist = grunnlag.getUtbetaltePerioder().stream().map(InfotrygdYtelseAnvist::getUtbetaltFom).min(Comparator.naturalOrder());
         YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.INFOTRYGD, grunnlag.getYtelseType(),
@@ -37,25 +38,20 @@ public class InfotrygdgrunnlagYtelseMapper {
             .medBehandlingsTema(grunnlag.getTemaUnderkategori())
             .medVedtattTidspunkt(grunnlag.getVedtattTidspunkt())
             .medStatus(grunnlag.getYtelseStatus());
-        var segmenter = grunnlag.getUtbetaltePerioder().stream()
-            .map(v -> {
-                var p = utledPeriodeNårTomMuligFørFom(v.getUtbetaltFom(), v.getUtbetaltTom());
-                return new LocalDateSegment<>(p.getFomDato(), p.getTomDato(), List.of(v));
-            })
-            .toList();
+        var segmenter = grunnlag.getUtbetaltePerioder().stream().map(v -> {
+            var p = utledPeriodeNårTomMuligFørFom(v.getUtbetaltFom(), v.getUtbetaltTom());
+            return new LocalDateSegment<>(p.getFomDato(), p.getTomDato(), List.of(v));
+        }).toList();
         var utbetaltTidslinje = new LocalDateTimeline<>(segmenter, slåSammenAndelslisterKombinator());
         utbetaltTidslinje.toSegments().forEach(segment -> {
             var anvistBuilder = ytelseBuilder.getAnvistBuilder();
             if (skalMappeInfotrygdandeler(grunnlag)) {
-                InfotrygdgrunnlagAnvistAndelMapper.oversettYtelseArbeidTilAnvisteAndeler(grunnlag.getKategori(),
-                    grunnlag.getArbeidsforhold(),
+                InfotrygdgrunnlagAnvistAndelMapper.oversettYtelseArbeidTilAnvisteAndeler(grunnlag.getKategori(), grunnlag.getArbeidsforhold(),
                     segment.getValue()).forEach(anvistBuilder::leggTilYtelseAnvistAndel);
             }
             var utbetaltPeriode = IntervallEntitet.fra(segment.getLocalDateInterval().getFomDato(), segment.getLocalDateInterval().getTomDato());
-            ytelseBuilder.leggtilYtelseAnvist(anvistBuilder
-                .medAnvistPeriode(utbetaltPeriode)
-                .medUtbetalingsgradProsent(finnUtbetalingsgrad(segment.getValue()))
-                .build());
+            ytelseBuilder.leggtilYtelseAnvist(
+                anvistBuilder.medAnvistPeriode(utbetaltPeriode).medUtbetalingsgradProsent(finnUtbetalingsgrad(segment.getValue())).build());
         });
         ytelseBuilder.medYtelseGrunnlag(oversettYtelseArbeid(grunnlag, ytelseBuilder.getGrunnlagBuilder()));
         aktørYtelseBuilder.leggTilYtelse(ytelseBuilder);
@@ -64,27 +60,29 @@ public class InfotrygdgrunnlagYtelseMapper {
     public static Ytelse oversettInfotrygdYtelseGrunnlagTilYtelse(InfotrygdYtelseGrunnlag grunnlag) {
         IntervallEntitet periode = utledPeriodeNårTomMuligFørFom(grunnlag.getVedtaksPeriodeFom(), grunnlag.getVedtaksPeriodeTom());
         var tidligsteAnvist = grunnlag.getUtbetaltePerioder().stream().map(InfotrygdYtelseAnvist::getUtbetaltFom).min(Comparator.naturalOrder());
-        YtelseBuilder ytelseBuilder = InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder.oppdatere(Optional.empty()).getYtelselseBuilderForType(Fagsystem.INFOTRYGD, grunnlag.getYtelseType(),
-                grunnlag.getTemaUnderkategori(), periode, tidligsteAnvist)
+        YtelseBuilder ytelseBuilder = InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder.oppdatere(Optional.empty())
+            .getYtelselseBuilderForType(Fagsystem.INFOTRYGD, grunnlag.getYtelseType(), grunnlag.getTemaUnderkategori(), periode, tidligsteAnvist)
             .medBehandlingsTema(grunnlag.getTemaUnderkategori())
             .medVedtattTidspunkt(grunnlag.getVedtattTidspunkt())
             .medStatus(grunnlag.getYtelseStatus());
-        var unikePerioder = grunnlag.getUtbetaltePerioder().stream()
+        var unikePerioder = grunnlag.getUtbetaltePerioder()
+            .stream()
             .map(v -> utledPeriodeNårTomMuligFørFom(v.getUtbetaltFom(), v.getUtbetaltTom()))
             .distinct()
             .sorted()
             .toList();
         unikePerioder.forEach(intervall -> {
-            var overlappendeUtbetalinger = grunnlag.getUtbetaltePerioder().stream().filter(v -> utledPeriodeNårTomMuligFørFom(v.getUtbetaltFom(), v.getUtbetaltTom()).overlapper(intervall)).toList();
+            var overlappendeUtbetalinger = grunnlag.getUtbetaltePerioder()
+                .stream()
+                .filter(v -> utledPeriodeNårTomMuligFørFom(v.getUtbetaltFom(), v.getUtbetaltTom()).overlapper(intervall))
+                .toList();
             var anvistBuilder = ytelseBuilder.getAnvistBuilder();
             if (skalMappeInfotrygdandeler(grunnlag)) {
-                InfotrygdgrunnlagAnvistAndelMapper.oversettYtelseArbeidTilAnvisteAndeler(grunnlag.getKategori(),
-                    grunnlag.getArbeidsforhold(), overlappendeUtbetalinger).forEach(anvistBuilder::leggTilYtelseAnvistAndel);
+                InfotrygdgrunnlagAnvistAndelMapper.oversettYtelseArbeidTilAnvisteAndeler(grunnlag.getKategori(), grunnlag.getArbeidsforhold(),
+                    overlappendeUtbetalinger).forEach(anvistBuilder::leggTilYtelseAnvistAndel);
             }
-            ytelseBuilder.leggtilYtelseAnvist(anvistBuilder
-                .medAnvistPeriode(intervall)
-                .medUtbetalingsgradProsent(finnUtbetalingsgrad(overlappendeUtbetalinger))
-                .build());
+            ytelseBuilder.leggtilYtelseAnvist(
+                anvistBuilder.medAnvistPeriode(intervall).medUtbetalingsgradProsent(finnUtbetalingsgrad(overlappendeUtbetalinger)).build());
         });
         ytelseBuilder.medYtelseGrunnlag(oversettYtelseArbeid(grunnlag, ytelseBuilder.getGrunnlagBuilder()));
         return ytelseBuilder.build();
@@ -104,8 +102,7 @@ public class InfotrygdgrunnlagYtelseMapper {
      */
     private static boolean skalMappeInfotrygdandeler(InfotrygdYtelseGrunnlag grunnlag) {
         var harDagsatsIListeMedUtbetalinger = grunnlag.getUtbetaltePerioder().stream().allMatch(p -> p.getDagsats() != null);
-        return !grunnlag.getKategori().equals(Arbeidskategori.UGYLDIG)
-            && harDagsatsIListeMedUtbetalinger;
+        return !grunnlag.getKategori().equals(Arbeidskategori.UGYLDIG) && harDagsatsIListeMedUtbetalinger;
     }
 
     private static BigDecimal finnUtbetalingsgrad(List<InfotrygdYtelseAnvist> anvisninger) {
@@ -113,8 +110,7 @@ public class InfotrygdgrunnlagYtelseMapper {
         return anvisninger.stream().map(InfotrygdYtelseAnvist::getUtbetalingsgrad).findFirst().orElse(BigDecimal.valueOf(100));
     }
 
-    private static YtelseGrunnlag oversettYtelseArbeid(InfotrygdYtelseGrunnlag grunnlag, YtelseGrunnlagBuilder
-        grunnlagBuilder) {
+    private static YtelseGrunnlag oversettYtelseArbeid(InfotrygdYtelseGrunnlag grunnlag, YtelseGrunnlagBuilder grunnlagBuilder) {
         grunnlagBuilder.medDekningsgradProsent(grunnlag.getDekningsgrad());
         grunnlagBuilder.medGraderingProsent(grunnlag.getGradering());
         grunnlagBuilder.medOpprinneligIdentdato(grunnlag.getOpprinneligIdentdato());
@@ -122,9 +118,7 @@ public class InfotrygdgrunnlagYtelseMapper {
         grunnlagBuilder.tilbakestillStørrelse();
         grunnlag.getArbeidsforhold().forEach(arbeid -> {
             final YtelseStørrelseBuilder ysBuilder = grunnlagBuilder.getStørrelseBuilder();
-            ysBuilder.medBeløp(arbeid.getInntekt())
-                .medHyppighet(arbeid.getInntektperiode())
-                .medErRefusjon(arbeid.getRefusjon());
+            ysBuilder.medBeløp(arbeid.getInntekt()).medHyppighet(arbeid.getInntektperiode()).medErRefusjon(arbeid.getRefusjon());
             if (OrganisasjonsNummerValidator.erGyldig(arbeid.getOrgnr())) {
                 ysBuilder.medVirksomhet(new OrgNummer(arbeid.getOrgnr()));
             }

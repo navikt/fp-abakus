@@ -12,14 +12,16 @@ import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 /**
  * Ekstern arbeidsforhold referanse.
  * Mottatt fra inntektsmelding eller AARegisteret.
- * 
+ * <p>
  * Hvis null gjelder det flere arbeidsforhold, ellers for et spesifikt forhold
  */
 
 @Embeddable
 public class EksternArbeidsforholdRef implements IndexKey, Serializable {
 
-    /** Representerer alle arbeidsforhold for en arbeidsgiver. */
+    /**
+     * Representerer alle arbeidsforhold for en arbeidsgiver.
+     */
     private static final EksternArbeidsforholdRef NULL_OBJECT = new EksternArbeidsforholdRef(null);
 
     @Column(name = "arbeidsforhold_id")
@@ -46,7 +48,7 @@ public class EksternArbeidsforholdRef implements IndexKey, Serializable {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { referanse };
+        Object[] keyParts = {referanse};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -64,13 +66,15 @@ public class EksternArbeidsforholdRef implements IndexKey, Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
+        }
         if (o == null && this.referanse == null) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
         EksternArbeidsforholdRef that = (EksternArbeidsforholdRef) o;
         return Objects.equals(referanse, that.referanse);
     }

@@ -1,8 +1,5 @@
 package no.nav.foreldrepenger.abakus.app.vedlikehold;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -10,6 +7,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.vedtak.ytelse.Aktør;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 
 /**

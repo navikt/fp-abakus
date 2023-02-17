@@ -27,17 +27,11 @@ public class InfotrygdGrunnlagAggregator {
     }
 
     public List<Grunnlag> hentAggregertGrunnlag(String fnr, LocalDate fom, LocalDate tom) {
-        return tjenester.stream()
-                .map(t -> t.hentGrunnlag(fnr, fom, tom))
-                .flatMap(List::stream)
-                .collect(toList());
+        return tjenester.stream().map(t -> t.hentGrunnlag(fnr, fom, tom)).flatMap(List::stream).collect(toList());
     }
 
     public List<Grunnlag> hentAggregertGrunnlagFailSoft(String fnr, LocalDate fom, LocalDate tom) {
-        return tjenester.stream()
-            .map(t -> t.hentGrunnlagFailSoft(fnr, fom, tom))
-            .flatMap(List::stream)
-            .collect(toList());
+        return tjenester.stream().map(t -> t.hentGrunnlagFailSoft(fnr, fom, tom)).flatMap(List::stream).collect(toList());
     }
 
     @Override

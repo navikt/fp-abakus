@@ -1,11 +1,5 @@
 package no.nav.abakus.iaygrunnlag.inntektsmelding.v1;
 
-import java.time.LocalDate;
-import java.util.Objects;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -13,6 +7,12 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Aktør;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import java.time.LocalDate;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -40,7 +40,10 @@ public class RefusjonskravDatoDto {
     private LocalDate førsteInnsendingAvRefusjonskrav;
 
 
-    public RefusjonskravDatoDto(Aktør arbeidsgiver, LocalDate førsteInnsendingAvRefusjonskrav, LocalDate førsteDagMedRefusjonskrav, boolean harRefusjonFraStart) {
+    public RefusjonskravDatoDto(Aktør arbeidsgiver,
+                                LocalDate førsteInnsendingAvRefusjonskrav,
+                                LocalDate førsteDagMedRefusjonskrav,
+                                boolean harRefusjonFraStart) {
         Objects.requireNonNull(arbeidsgiver, "arbeidsgiver");
         Objects.requireNonNull(arbeidsgiver, "førsteInnsendingAvRefusjonskrav");
         Objects.requireNonNull(arbeidsgiver, "førsteDagMedRefusjonskrav");
@@ -72,11 +75,7 @@ public class RefusjonskravDatoDto {
 
     @Override
     public String toString() {
-        return "RefusjonskravDatoDto{" +
-            "arbeidsgiver=" + arbeidsgiver +
-            ", førsteDagMedRefusjonskrav=" + førsteDagMedRefusjonskrav +
-            ", harRefusjonFraStart=" + harRefusjonFraStart +
-            ", førsteInnsendingAvRefusjonskrav=" + førsteInnsendingAvRefusjonskrav +
-            '}';
+        return "RefusjonskravDatoDto{" + "arbeidsgiver=" + arbeidsgiver + ", førsteDagMedRefusjonskrav=" + førsteDagMedRefusjonskrav
+            + ", harRefusjonFraStart=" + harRefusjonFraStart + ", førsteInnsendingAvRefusjonskrav=" + førsteInnsendingAvRefusjonskrav + '}';
     }
 }

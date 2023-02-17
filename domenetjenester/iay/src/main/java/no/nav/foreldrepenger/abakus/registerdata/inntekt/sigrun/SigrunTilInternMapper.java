@@ -22,7 +22,8 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertsk
 class SigrunTilInternMapper {
     private static final Logger LOGGER = LoggerFactory.getLogger(SigrunTilInternMapper.class);
 
-    static Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> mapFraSigrunTilIntern(Map<Year, List<BeregnetSkatt>> beregnetSkatt, Map<Year, Optional<SSGResponse>> summertskattegrunnlagMap) {
+    static Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> mapFraSigrunTilIntern(Map<Year, List<BeregnetSkatt>> beregnetSkatt,
+                                                                                          Map<Year, Optional<SSGResponse>> summertskattegrunnlagMap) {
         Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> årTilInntektMap = new HashMap<>();
 
         mapBeregnetSkatt(beregnetSkatt, årTilInntektMap);
@@ -30,7 +31,8 @@ class SigrunTilInternMapper {
         return årTilInntektMap;
     }
 
-    private static void mapSummertskattegrunnlag(Map<Year, Optional<SSGResponse>> summertskattegrunnlagMap, Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> årTilInntektMap) {
+    private static void mapSummertskattegrunnlag(Map<Year, Optional<SSGResponse>> summertskattegrunnlagMap,
+                                                 Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> årTilInntektMap) {
         if (!summertskattegrunnlagMap.isEmpty()) {
             Set<Map.Entry<Year, Optional<SSGResponse>>> entrySet = summertskattegrunnlagMap.entrySet();
             for (Map.Entry<Year, Optional<SSGResponse>> entry : entrySet) {
@@ -64,7 +66,8 @@ class SigrunTilInternMapper {
         }
     }
 
-    private static void mapBeregnetSkatt(Map<Year, List<BeregnetSkatt>> beregnetSkatt, Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> årTilInntektMap) {
+    private static void mapBeregnetSkatt(Map<Year, List<BeregnetSkatt>> beregnetSkatt,
+                                         Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> årTilInntektMap) {
         for (Map.Entry<Year, List<BeregnetSkatt>> entry : beregnetSkatt.entrySet()) {
             IntervallEntitet intervallEntitet = lagDatoIntervall(entry.getKey());
             Map<InntektspostType, BigDecimal> typeTilVerdiMap = new HashMap<>();

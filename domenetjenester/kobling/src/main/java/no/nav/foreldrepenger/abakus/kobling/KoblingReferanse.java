@@ -51,9 +51,7 @@ public class KoblingReferanse {
 
     @Override
     public String toString() {
-        return getClass().getName() + "{" +
-            "referanse=" + referanse +
-            '}';
+        return getClass().getName() + "{" + "referanse=" + referanse + '}';
     }
 
     public String asString() {

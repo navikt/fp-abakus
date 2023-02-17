@@ -41,11 +41,9 @@ public class LåsRepository {
     }
 
     private Long lås(final Long behandlingId, LockModeType lockModeType) {
-        Object[] result = (Object[]) entityManager
-            .createQuery("select k.id, k.versjon from Kobling k where k.id=:id and k.aktiv=true") //$NON-NLS-1$
+        Object[] result = (Object[]) entityManager.createQuery("select k.id, k.versjon from Kobling k where k.id=:id and k.aktiv=true") //$NON-NLS-1$
             .setParameter("id", behandlingId) //$NON-NLS-1$
-            .setLockMode(lockModeType)
-            .getSingleResult();
+            .setLockMode(lockModeType).getSingleResult();
         return (Long) result[0];
     }
 
@@ -62,7 +60,7 @@ public class LåsRepository {
         LockModeType lockMode = LockModeType.PESSIMISTIC_FORCE_INCREMENT;
         Object entity = entityManager.find(Kobling.class, id);
         if (entity == null) {
-            throw new TekniskException( "FP-131239", String.format("Fant ikke entitet for låsing [%s], id=%s.", Kobling.class.getSimpleName(), id));
+            throw new TekniskException("FP-131239", String.format("Fant ikke entitet for låsing [%s], id=%s.", Kobling.class.getSimpleName(), id));
         } else {
             entityManager.lock(entity, lockMode);
         }

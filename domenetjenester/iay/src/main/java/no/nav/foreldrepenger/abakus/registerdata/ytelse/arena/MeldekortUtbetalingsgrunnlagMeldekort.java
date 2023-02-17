@@ -35,6 +35,29 @@ public class MeldekortUtbetalingsgrunnlagMeldekort {
         return utbetalingsgrad;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        MeldekortUtbetalingsgrunnlagMeldekort that = (MeldekortUtbetalingsgrunnlagMeldekort) o;
+        return Objects.equals(meldekortFom, that.meldekortFom) && Objects.equals(meldekortTom, that.meldekortTom) && Objects.equals(dagsats,
+            that.dagsats) && Objects.equals(beløp, that.beløp) && Objects.equals(utbetalingsgrad, that.utbetalingsgrad);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(meldekortFom, meldekortTom, dagsats, beløp, utbetalingsgrad);
+    }
+
+    @Override
+    public String toString() {
+        return "MeldekortUtbetalingsgrunnlagMeldekort{" + "meldekortFom=" + meldekortFom + ", meldekortTom=" + meldekortTom + ", dagsats=" + dagsats
+            + ", beløp=" + beløp + ", utbetalingsgrad=" + utbetalingsgrad + '}';
+    }
 
     public static class MeldekortMeldekortBuilder {
         private final MeldekortUtbetalingsgrunnlagMeldekort meldekort;
@@ -76,33 +99,5 @@ public class MeldekortUtbetalingsgrunnlagMeldekort {
             return this.meldekort;
         }
 
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MeldekortUtbetalingsgrunnlagMeldekort that = (MeldekortUtbetalingsgrunnlagMeldekort) o;
-        return Objects.equals(meldekortFom, that.meldekortFom) &&
-            Objects.equals(meldekortTom, that.meldekortTom) &&
-            Objects.equals(dagsats, that.dagsats) &&
-            Objects.equals(beløp, that.beløp) &&
-            Objects.equals(utbetalingsgrad, that.utbetalingsgrad);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(meldekortFom, meldekortTom, dagsats, beløp, utbetalingsgrad);
-    }
-
-    @Override
-    public String toString() {
-        return "MeldekortUtbetalingsgrunnlagMeldekort{" +
-            "meldekortFom=" + meldekortFom +
-            ", meldekortTom=" + meldekortTom +
-            ", dagsats=" + dagsats +
-            ", beløp=" + beløp +
-            ", utbetalingsgrad=" + utbetalingsgrad +
-            '}';
     }
 }

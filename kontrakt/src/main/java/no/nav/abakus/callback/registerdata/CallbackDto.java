@@ -1,9 +1,9 @@
 package no.nav.abakus.callback.registerdata;
 
-import java.time.LocalDateTime;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import java.time.LocalDateTime;
 
 /**
  * Metadata for callback

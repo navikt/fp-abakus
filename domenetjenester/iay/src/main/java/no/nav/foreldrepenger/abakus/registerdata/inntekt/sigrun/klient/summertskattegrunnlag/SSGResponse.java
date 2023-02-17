@@ -2,5 +2,5 @@ package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summerts
 
 import java.util.List;
 
-public record SSGResponse(List<SSGGrunnlag> grunnlag,  List<SSGGrunnlag> svalbardGrunnlag, String skatteoppgjoersdato) {
+public record SSGResponse(List<SSGGrunnlag> grunnlag, List<SSGGrunnlag> svalbardGrunnlag, String skatteoppgjoersdato) {
 }

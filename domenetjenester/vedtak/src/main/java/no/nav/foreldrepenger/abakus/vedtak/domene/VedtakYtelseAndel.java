@@ -132,10 +132,15 @@ public class VedtakYtelseAndel extends BaseEntitet implements IndexKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         VedtakYtelseAndel that = (VedtakYtelseAndel) o;
-        return ytelseAnvist.equals(that.ytelseAnvist) && Objects.equals(arbeidsgiver, that.arbeidsgiver) && dagsats.equals(that.dagsats) && inntektskategori == that.inntektskategori;
+        return ytelseAnvist.equals(that.ytelseAnvist) && Objects.equals(arbeidsgiver, that.arbeidsgiver) && dagsats.equals(that.dagsats)
+            && inntektskategori == that.inntektskategori;
     }
 
     @Override
@@ -145,19 +150,13 @@ public class VedtakYtelseAndel extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "VedtakYtelseFordeling{" +
-            "id=" + id +
-            ", ytelseAnvist=" + ytelseAnvist +
-            ", arbeidsgiver=" + arbeidsgiver +
-            ", dagsats=" + dagsats +
-            ", inntektskategori=" + inntektskategori +
-            ", versjon=" + versjon +
-            '}';
+        return "VedtakYtelseFordeling{" + "id=" + id + ", ytelseAnvist=" + ytelseAnvist + ", arbeidsgiver=" + arbeidsgiver + ", dagsats=" + dagsats
+            + ", inntektskategori=" + inntektskategori + ", versjon=" + versjon + '}';
     }
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { arbeidsgiver, dagsats, inntektskategori };
+        Object[] keyParts = {arbeidsgiver, dagsats, inntektskategori};
         return IndexKeyComposer.createKey(keyParts);
     }
 }

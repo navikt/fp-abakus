@@ -90,7 +90,7 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { inntektspostType, ytelse, periode };
+        Object[] keyParts = {inntektspostType, ytelse, periode};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -141,17 +141,17 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
         return beløp;
     }
 
+    void setBeløp(Beløp beløp) {
+        this.beløp = beløp;
+    }
+
     /**
      * Periode inntektsposten gjelder.
-     * 
+     *
      * @return
      */
     public IntervallEntitet getPeriode() {
         return periode;
-    }
-
-    void setBeløp(Beløp beløp) {
-        this.beløp = beløp;
     }
 
     public UtbetaltYtelseType getYtelseType() {
@@ -182,11 +182,9 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
             return false;
         }
         Inntektspost other = (Inntektspost) obj;
-        return Objects.equals(this.inntektspostType, other.inntektspostType)
-            && Objects.equals(this.ytelseType, other.ytelseType)
-            && Objects.equals(this.ytelse, other.ytelse)
-            && Objects.equals(this.skatteOgAvgiftsregelType, other.skatteOgAvgiftsregelType)
-            && Objects.equals(this.periode, other.periode);
+        return Objects.equals(this.inntektspostType, other.inntektspostType) && Objects.equals(this.ytelseType, other.ytelseType) && Objects.equals(
+            this.ytelse, other.ytelse) && Objects.equals(this.skatteOgAvgiftsregelType, other.skatteOgAvgiftsregelType) && Objects.equals(
+            this.periode, other.periode);
     }
 
     @Override
@@ -196,21 +194,13 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" +
-            "ytelseType=" + ytelseType +
-            ", ytelse=" + ytelse +
-            ", inntektspostType=" + inntektspostType +
-            ", skatteOgAvgiftsregelType=" + skatteOgAvgiftsregelType +
-            ", periode=" + periode +
-            ", beløp=" + beløp +
-            '>';
+        return getClass().getSimpleName() + "<" + "ytelseType=" + ytelseType + ", ytelse=" + ytelse + ", inntektspostType=" + inntektspostType
+            + ", skatteOgAvgiftsregelType=" + skatteOgAvgiftsregelType + ", periode=" + periode + ", beløp=" + beløp + '>';
     }
 
     public boolean hasValues() {
-        return (ytelse != null || !Objects.equals(ytelse, "-"))
-            || inntektspostType != null
-            || periode.getFomDato() != null || periode.getTomDato() != null
-            || beløp != null;
+        return (ytelse != null || !Objects.equals(ytelse, "-")) || inntektspostType != null || periode.getFomDato() != null
+            || periode.getTomDato() != null || beløp != null;
     }
 
 }

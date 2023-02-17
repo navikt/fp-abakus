@@ -33,21 +33,21 @@ public class ArbeidsforholdIdentifikator {
 
     @Override
     public String toString() {
-        return "ArbeidsforholdIdentifikator{" +
-            "arbeidsgiver=" + arbeidsgiver +
-            ", arbeidsforholdId=" + arbeidsforholdId +
-            ", type='" + type + '\'' +
-            '}';
+        return "ArbeidsforholdIdentifikator{" + "arbeidsgiver=" + arbeidsgiver + ", arbeidsforholdId=" + arbeidsforholdId + ", type='" + type + '\''
+            + '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ArbeidsforholdIdentifikator that = (ArbeidsforholdIdentifikator) o;
-        return Objects.equals(arbeidsgiver, that.arbeidsgiver) &&
-            Objects.equals(arbeidsforholdId, that.arbeidsforholdId) &&
-            Objects.equals(type, that.type);
+        return Objects.equals(arbeidsgiver, that.arbeidsgiver) && Objects.equals(arbeidsforholdId, that.arbeidsforholdId) && Objects.equals(type,
+            that.type);
     }
 
     @Override

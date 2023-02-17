@@ -27,13 +27,10 @@ public class IAYRegisterInnhentingESTjenesteImpl extends IAYRegisterInnhentingFe
                                                VirksomhetTjeneste virksomhetTjeneste,
                                                InnhentingSamletTjeneste innhentingSamletTjeneste,
                                                AktørTjeneste aktørConsumer,
-                                               SigrunTjeneste sigrunTjeneste, VedtattYtelseInnhentingTjeneste vedtattYtelseInnhentingTjeneste) {
-        super(inntektArbeidYtelseTjeneste,
-            virksomhetTjeneste,
-            innhentingSamletTjeneste,
-            aktørConsumer,
-            sigrunTjeneste, vedtattYtelseInnhentingTjeneste
-        );
+                                               SigrunTjeneste sigrunTjeneste,
+                                               VedtattYtelseInnhentingTjeneste vedtattYtelseInnhentingTjeneste) {
+        super(inntektArbeidYtelseTjeneste, virksomhetTjeneste, innhentingSamletTjeneste, aktørConsumer, sigrunTjeneste,
+            vedtattYtelseInnhentingTjeneste);
     }
 
     @Override

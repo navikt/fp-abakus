@@ -35,19 +35,19 @@ import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
 public class MapOppgittOpptjening {
 
-    private static final Comparator<OppgittFrilansoppdragDto> COMP_FRILANSOPPDRAG = Comparator
-        .comparing(OppgittFrilansoppdragDto::getOppdragsgiver, Comparator.nullsLast(Comparator.naturalOrder()))
-        .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
-        .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
-
-    private static final Comparator<OppgittAnnenAktivitetDto> COMP_ANNEN_AKTIVITET = Comparator
-        .comparing((OppgittAnnenAktivitetDto dto) -> dto.getArbeidTypeDto() == null ? null : dto.getArbeidTypeDto().getKode(),
+    private static final Comparator<OppgittFrilansoppdragDto> COMP_FRILANSOPPDRAG = Comparator.comparing(OppgittFrilansoppdragDto::getOppdragsgiver,
             Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
 
-    private static final Comparator<OppgittArbeidsforholdDto> COMP_OPPGITT_ARBEIDSFORHOLD = Comparator
-        .comparing((OppgittArbeidsforholdDto dto) -> dto.getArbeidTypeDto() == null ? null : dto.getArbeidTypeDto().getKode(),
+    private static final Comparator<OppgittAnnenAktivitetDto> COMP_ANNEN_AKTIVITET = Comparator.comparing(
+            (OppgittAnnenAktivitetDto dto) -> dto.getArbeidTypeDto() == null ? null : dto.getArbeidTypeDto().getKode(),
+            Comparator.nullsLast(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+        .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
+
+    private static final Comparator<OppgittArbeidsforholdDto> COMP_OPPGITT_ARBEIDSFORHOLD = Comparator.comparing(
+            (OppgittArbeidsforholdDto dto) -> dto.getArbeidTypeDto() == null ? null : dto.getArbeidTypeDto().getKode(),
             Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()))
@@ -55,8 +55,8 @@ public class MapOppgittOpptjening {
         .thenComparing(OppgittArbeidsforholdDto::getInntekt, Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(OppgittArbeidsforholdDto::getVirksomhetNavn, Comparator.nullsLast(Comparator.naturalOrder()));
 
-    private static final Comparator<OppgittEgenNæringDto> COMP_OPPGITT_EGEN_NÆRING = Comparator
-        .comparing((OppgittEgenNæringDto dto) -> dto.getVirksomhetTypeDto() == null ? null : dto.getVirksomhetTypeDto().getKode(),
+    private static final Comparator<OppgittEgenNæringDto> COMP_OPPGITT_EGEN_NÆRING = Comparator.comparing(
+            (OppgittEgenNæringDto dto) -> dto.getVirksomhetTypeDto() == null ? null : dto.getVirksomhetTypeDto().getKode(),
             Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()))
@@ -65,8 +65,7 @@ public class MapOppgittOpptjening {
         .thenComparing(OppgittEgenNæringDto::getVirksomhetNavn, Comparator.nullsLast(Comparator.naturalOrder()));
 
     public OppgitteOpptjeningerDto mapTilDto(Collection<OppgittOpptjening> oppgittOpptjeninger) {
-        return new OppgitteOpptjeningerDto()
-            .medOppgitteOpptjeninger(oppgittOpptjeninger.stream().map(this::mapTilDto).collect(Collectors.toList()));
+        return new OppgitteOpptjeningerDto().medOppgitteOpptjeninger(oppgittOpptjeninger.stream().map(this::mapTilDto).collect(Collectors.toList()));
     }
 
     public OppgittOpptjeningDto mapTilDto(OppgittOpptjening oppgittOpptjening) {
@@ -80,21 +79,27 @@ public class MapOppgittOpptjening {
     private class MapTilDto {
 
         public OppgittOpptjeningDto map(OppgittOpptjening oppgittOpptjening) {
-            if (oppgittOpptjening == null)
+            if (oppgittOpptjening == null) {
                 return null;
+            }
 
             var dto = new OppgittOpptjeningDto(oppgittOpptjening.getEksternReferanse(), oppgittOpptjening.getOpprettetTidspunkt());
 
-            Optional.ofNullable(oppgittOpptjening.getJournalpostId())
-                .ifPresent(jp -> dto.setJournalpostId(new JournalpostId(jp.getVerdi())));
+            Optional.ofNullable(oppgittOpptjening.getJournalpostId()).ifPresent(jp -> dto.setJournalpostId(new JournalpostId(jp.getVerdi())));
             Optional.ofNullable(oppgittOpptjening.getInnsendingstidspunkt())
                 .ifPresent(tidspunkt -> dto.setInnsendingstidspunkt(tidspunkt.atZone(ZoneId.of("Europe/Oslo")).toOffsetDateTime()));
-            dto.medArbeidsforhold(oppgittOpptjening.getOppgittArbeidsforhold().stream()
-                .map(oa -> this.mapArbeidsforhold(oa)).sorted(COMP_OPPGITT_ARBEIDSFORHOLD).collect(Collectors.toList()));
-            dto.medEgenNæring(oppgittOpptjening.getEgenNæring().stream()
-                .map(this::mapEgenNæring).sorted(COMP_OPPGITT_EGEN_NÆRING).collect(Collectors.toList()));
-            dto.medAnnenAktivitet(oppgittOpptjening.getAnnenAktivitet().stream()
-                .map(this::mapAnnenAktivitet).sorted(COMP_ANNEN_AKTIVITET).collect(Collectors.toList()));
+            dto.medArbeidsforhold(oppgittOpptjening.getOppgittArbeidsforhold()
+                .stream()
+                .map(oa -> this.mapArbeidsforhold(oa))
+                .sorted(COMP_OPPGITT_ARBEIDSFORHOLD)
+                .collect(Collectors.toList()));
+            dto.medEgenNæring(
+                oppgittOpptjening.getEgenNæring().stream().map(this::mapEgenNæring).sorted(COMP_OPPGITT_EGEN_NÆRING).collect(Collectors.toList()));
+            dto.medAnnenAktivitet(oppgittOpptjening.getAnnenAktivitet()
+                .stream()
+                .map(this::mapAnnenAktivitet)
+                .sorted(COMP_ANNEN_AKTIVITET)
+                .collect(Collectors.toList()));
 
             oppgittOpptjening.getFrilans().ifPresent(f -> dto.medFrilans(mapFrilans(f)));
 
@@ -102,27 +107,31 @@ public class MapOppgittOpptjening {
         }
 
         private OppgittFrilansDto mapFrilans(OppgittFrilans frilans) {
-            if (frilans == null)
+            if (frilans == null) {
                 return null;
+            }
 
-            var frilansoppdrag = frilans.getFrilansoppdrag().stream().map(this::mapFrilansoppdrag).sorted(COMP_FRILANSOPPDRAG).collect(Collectors.toList());
-            var frilansDto = new OppgittFrilansDto(frilansoppdrag)
-                .medErNyoppstartet(frilans.getErNyoppstartet())
+            var frilansoppdrag = frilans.getFrilansoppdrag()
+                .stream()
+                .map(this::mapFrilansoppdrag)
+                .sorted(COMP_FRILANSOPPDRAG)
+                .collect(Collectors.toList());
+            var frilansDto = new OppgittFrilansDto(frilansoppdrag).medErNyoppstartet(frilans.getErNyoppstartet())
                 .medHarInntektFraFosterhjem(frilans.getHarInntektFraFosterhjem())
                 .medHarNærRelasjon(frilans.getHarNærRelasjon());
             return frilansDto;
         }
 
         private OppgittArbeidsforholdDto mapArbeidsforhold(OppgittArbeidsforhold arbeidsforhold) {
-            if (arbeidsforhold == null)
+            if (arbeidsforhold == null) {
                 return null;
+            }
 
             IntervallEntitet periode1 = arbeidsforhold.getPeriode();
             var periode = new Periode(periode1.getFomDato(), periode1.getTomDato());
             var arbeidType = arbeidsforhold.getArbeidType();
 
-            var dto = new OppgittArbeidsforholdDto(periode, arbeidType)
-                .medErUtenlandskInntekt(arbeidsforhold.erUtenlandskInntekt());
+            var dto = new OppgittArbeidsforholdDto(periode, arbeidType).medErUtenlandskInntekt(arbeidsforhold.erUtenlandskInntekt());
 
             Landkode landkode = arbeidsforhold.getLandkode();
             var land = landkode == null || landkode.getKode() == null ? Landkode.NOR : landkode;
@@ -142,8 +151,9 @@ public class MapOppgittOpptjening {
         }
 
         private OppgittEgenNæringDto mapEgenNæring(OppgittEgenNæring egenNæring) {
-            if (egenNæring == null)
+            if (egenNæring == null) {
                 return null;
+            }
 
             IntervallEntitet periode1 = egenNæring.getPeriode();
             var periode = new Periode(periode1.getFomDato(), periode1.getTomDato());
@@ -151,8 +161,7 @@ public class MapOppgittOpptjening {
             var org = egenNæring.getOrgnummer() == null ? null : new Organisasjon(egenNæring.getOrgnummer().getId());
             var virksomhetType = egenNæring.getVirksomhetType();
 
-            var dto = new OppgittEgenNæringDto(periode)
-                .medBegrunnelse(egenNæring.getBegrunnelse())
+            var dto = new OppgittEgenNæringDto(periode).medBegrunnelse(egenNæring.getBegrunnelse())
                 .medBruttoInntekt(egenNæring.getBruttoInntekt())
                 .medEndringDato(egenNæring.getEndringDato())
                 .medNyIArbeidslivet(egenNæring.getNyIArbeidslivet())
@@ -177,8 +186,9 @@ public class MapOppgittOpptjening {
         }
 
         private OppgittFrilansoppdragDto mapFrilansoppdrag(OppgittFrilansoppdrag frilansoppdrag) {
-            if (frilansoppdrag == null)
+            if (frilansoppdrag == null) {
                 return null;
+            }
 
             var periode = new Periode(frilansoppdrag.getPeriode().getFomDato(), frilansoppdrag.getPeriode().getTomDato());
             var oppdragsgiver = frilansoppdrag.getOppdragsgiver();
@@ -190,8 +200,9 @@ public class MapOppgittOpptjening {
         }
 
         private OppgittAnnenAktivitetDto mapAnnenAktivitet(OppgittAnnenAktivitet annenAktivitet) {
-            if (annenAktivitet == null)
+            if (annenAktivitet == null) {
                 return null;
+            }
 
             var periode = new Periode(annenAktivitet.getPeriode().getFomDato(), annenAktivitet.getPeriode().getTomDato());
             var arbeidType = annenAktivitet.getArbeidType();
@@ -202,8 +213,9 @@ public class MapOppgittOpptjening {
     private class MapFraDto {
 
         public OppgittOpptjeningBuilder map(OppgittOpptjeningDto dto) {
-            if (dto == null)
+            if (dto == null) {
                 return null;
+            }
 
             var oppgittOpptjeningEksternReferanse = UUID.fromString(dto.getEksternReferanse().getReferanse());
             var builder = OppgittOpptjeningBuilder.ny(oppgittOpptjeningEksternReferanse, dto.getOpprettetTidspunkt());
@@ -238,8 +250,9 @@ public class MapOppgittOpptjening {
         }
 
         private OppgittFrilans mapFrilans(OppgittFrilansDto dto) {
-            if (dto == null)
+            if (dto == null) {
                 return null;
+            }
 
             var frilans = new OppgittFrilans();
 
@@ -247,23 +260,22 @@ public class MapOppgittOpptjening {
             frilans.setHarNærRelasjon(dto.isHarNærRelasjon());
             frilans.setHarInntektFraFosterhjem(dto.isHarInntektFraFosterhjem());
 
-            var frilansoppdrag = mapEach(dto.getFrilansoppdrag(),
-                f -> new OppgittFrilansoppdrag(f.getOppdragsgiver(),
-                    IntervallEntitet.fraOgMedTilOgMed(f.getPeriode().getFom(), f.getPeriode().getTom()), f.getInntekt()));
+            var frilansoppdrag = mapEach(dto.getFrilansoppdrag(), f -> new OppgittFrilansoppdrag(f.getOppdragsgiver(),
+                IntervallEntitet.fraOgMedTilOgMed(f.getPeriode().getFom(), f.getPeriode().getTom()), f.getInntekt()));
             frilans.setFrilansoppdrag(frilansoppdrag);
             return frilans;
         }
 
         private EgenNæringBuilder mapEgenNæring(OppgittEgenNæringDto dto) {
-            if (dto == null)
+            if (dto == null) {
                 return null;
+            }
 
             var builder = EgenNæringBuilder.ny();
 
             var org = dto.getVirksomhet() == null ? null : new OrgNummer(dto.getVirksomhet().getIdent());
             var periode = dto.getPeriode();
-            builder
-                .medBegrunnelse(dto.getBegrunnelse())
+            builder.medBegrunnelse(dto.getBegrunnelse())
                 .medBruttoInntekt(dto.getBruttoInntekt())
                 .medEndringDato(dto.getEndringDato())
                 .medVirksomhet(org)
@@ -292,8 +304,9 @@ public class MapOppgittOpptjening {
         }
 
         private OppgittArbeidsforholdBuilder mapOppgittArbeidsforhold(OppgittArbeidsforholdDto dto) {
-            if (dto == null)
+            if (dto == null) {
                 return null;
+            }
 
             Periode dto1 = dto.getPeriode();
             var builder = OppgittArbeidsforholdBuilder.ny()
@@ -309,8 +322,9 @@ public class MapOppgittOpptjening {
         }
 
         private OppgittAnnenAktivitet mapAnnenAktivitet(OppgittAnnenAktivitetDto dto) {
-            if (dto == null)
+            if (dto == null) {
                 return null;
+            }
 
             Periode dto1 = dto.getPeriode();
             var periode = IntervallEntitet.fraOgMedTilOgMed(dto1.getFom(), dto1.getTom());

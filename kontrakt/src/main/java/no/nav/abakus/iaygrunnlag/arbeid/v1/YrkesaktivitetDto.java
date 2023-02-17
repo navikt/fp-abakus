@@ -45,7 +45,7 @@ public class YrkesaktivitetDto {
     private List<PermisjonDto> permisjoner;
 
     @JsonProperty("navnArbeidsgiverUtland")
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message="Yrkesaktivitet#navnArbeidsgiverUtland [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Yrkesaktivitet#navnArbeidsgiverUtland [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     @Valid
     private String navnArbeidsgiverUtland;
 
@@ -64,8 +64,7 @@ public class YrkesaktivitetDto {
 
     @AssertTrue(message = "Må ha minst en av aktivitetsAvtaler eller permisjoner")
     private boolean isOk() {
-        boolean ok = (aktivitetsAvtaler != null && !aktivitetsAvtaler.isEmpty())
-                || (permisjoner != null && !permisjoner.isEmpty());
+        boolean ok = (aktivitetsAvtaler != null && !aktivitetsAvtaler.isEmpty()) || (permisjoner != null && !permisjoner.isEmpty());
         return ok;
     }
 

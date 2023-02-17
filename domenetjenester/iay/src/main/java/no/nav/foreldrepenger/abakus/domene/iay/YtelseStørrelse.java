@@ -65,16 +65,14 @@ public class YtelseStørrelse extends BaseEntitet implements IndexKey {
     }
 
     public YtelseStørrelse(YtelseStørrelse ytelseStørrelse) {
-        ytelseStørrelse.getVirksomhet().ifPresent(orgNummer ->
-            this.orgNummer = orgNummer
-        );
+        ytelseStørrelse.getVirksomhet().ifPresent(orgNummer -> this.orgNummer = orgNummer);
         this.beløp = ytelseStørrelse.getBeløp();
         this.hyppighet = ytelseStørrelse.getHyppighet();
     }
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { orgNummer };
+        Object[] keyParts = {orgNummer};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -116,12 +114,14 @@ public class YtelseStørrelse extends BaseEntitet implements IndexKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof YtelseStørrelse)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !(o instanceof YtelseStørrelse)) {
+            return false;
+        }
         var that = (YtelseStørrelse) o;
-        return Objects.equals(orgNummer, that.orgNummer) &&
-            Objects.equals(beløp, that.beløp) &&
-            Objects.equals(hyppighet, that.hyppighet);
+        return Objects.equals(orgNummer, that.orgNummer) && Objects.equals(beløp, that.beløp) && Objects.equals(hyppighet, that.hyppighet);
     }
 
     @Override
@@ -132,11 +132,7 @@ public class YtelseStørrelse extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" +
-            "virksomhet=" + orgNummer +
-            ", beløp=" + beløp +
-            ", hyppighet=" + hyppighet +
-            '>';
+        return getClass().getSimpleName() + "<" + "virksomhet=" + orgNummer + ", beløp=" + beløp + ", hyppighet=" + hyppighet + '>';
     }
 
     boolean hasValues() {

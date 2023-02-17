@@ -1,4 +1,5 @@
 package no.nav.foreldrepenger.abakus.app;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -41,11 +42,9 @@ public class RapporterUnmappedKolonnerIDatabaseTest {
 
     private static EntityManagerFactory entityManagerFactory;
 
-    private static List<Pattern> WHITELIST = List.of(
-        Pattern.compile("^PROSESS_TASK.*$", Pattern.CASE_INSENSITIVE),
+    private static List<Pattern> WHITELIST = List.of(Pattern.compile("^PROSESS_TASK.*$", Pattern.CASE_INSENSITIVE),
         Pattern.compile("^.*SCHEMA_VERSION.*$", Pattern.CASE_INSENSITIVE),
-        Pattern.compile("^BEHANDLING#SIST_OPPDATERT_TIDSPUNKT.*$", Pattern.CASE_INSENSITIVE)
-        );
+        Pattern.compile("^BEHANDLING#SIST_OPPDATERT_TIDSPUNKT.*$", Pattern.CASE_INSENSITIVE));
 
     public RapporterUnmappedKolonnerIDatabaseTest() {
     }
@@ -58,8 +57,7 @@ public class RapporterUnmappedKolonnerIDatabaseTest {
         Map<String, Object> configuration = new HashMap<>();
 
         configuration.put("hibernate.integrator_provider",
-            (IntegratorProvider) () -> Collections.singletonList(
-                MetadataExtractorIntegrator.INSTANCE));
+            (IntegratorProvider) () -> Collections.singletonList(MetadataExtractorIntegrator.INSTANCE));
 
         entityManagerFactory = Persistence.createEntityManagerFactory("pu-default", configuration);
     }
@@ -75,15 +73,9 @@ public class RapporterUnmappedKolonnerIDatabaseTest {
 
         var em = entityManagerFactory.createEntityManager();
         try {
-            @SuppressWarnings({ "unchecked" })
-            var result = (NavigableMap<String, Set<String>>) em
-                .createNativeQuery(
-                    "select table_name, column_name\n" +
-                        "     from information_schema.columns\n" +
-                        "     where table_schema in ('public')\n" +
-                        "     order by 1,2")
-                .getResultStream()
-                .collect(groupingBy);
+            @SuppressWarnings({"unchecked"}) var result = (NavigableMap<String, Set<String>>) em.createNativeQuery(
+                "select table_name, column_name\n" + "     from information_schema.columns\n" + "     where table_schema in ('public')\n"
+                    + "     order by 1,2").getResultStream().collect(groupingBy);
 
             var filtered = new TreeMap<String, Set<String>>();
             for (var entry : result.entrySet()) {
@@ -102,11 +94,9 @@ public class RapporterUnmappedKolonnerIDatabaseTest {
     }
 
     private Set<String> whitelistColumns(String table, Set<String> columns) {
-       var cols = columns.stream()
-               .filter(c -> !WHITELIST.stream().anyMatch(p -> p.matcher(table + "#" + c).matches()))
-               .collect(Collectors.toSet());
+        var cols = columns.stream().filter(c -> !WHITELIST.stream().anyMatch(p -> p.matcher(table + "#" + c).matches())).collect(Collectors.toSet());
 
-       return cols;
+        return cols;
     }
 
     @Test
@@ -116,25 +106,19 @@ public class RapporterUnmappedKolonnerIDatabaseTest {
     }
 
     private void sjekk_alle_kolonner_mappet() throws Exception {
-        for (var namespace : MetadataExtractorIntegrator.INSTANCE
-            .getDatabase()
-            .getNamespaces()) {
+        for (var namespace : MetadataExtractorIntegrator.INSTANCE.getDatabase().getNamespaces()) {
             String namespaceName = getSchemaName(namespace);
             var dbColumns = getColumns(namespaceName);
 
             for (var table : namespace.getTables()) {
 
                 String tableName = table.getName().toUpperCase();
-                if(whitelistTable(tableName)) {
+                if (whitelistTable(tableName)) {
                     continue;
                 }
 
-                List<Column> columns = StreamSupport.stream(
-                    Spliterators.spliteratorUnknownSize(
-                        table.getColumnIterator(),
-                        Spliterator.ORDERED),
-                    false)
-                    .collect(Collectors.toList());
+                List<Column> columns = StreamSupport.stream(Spliterators.spliteratorUnknownSize(table.getColumnIterator(), Spliterator.ORDERED),
+                    false).collect(Collectors.toList());
 
                 var columnNames = columns.stream().map(c -> c.getName().toUpperCase()).collect(Collectors.toCollection(TreeSet::new));
                 if (dbColumns.containsKey(tableName)) {
@@ -152,9 +136,7 @@ public class RapporterUnmappedKolonnerIDatabaseTest {
     }
 
     private void sjekk_alle_tabeller_mappet() throws Exception {
-        for (var namespace : MetadataExtractorIntegrator.INSTANCE
-            .getDatabase()
-            .getNamespaces()) {
+        for (var namespace : MetadataExtractorIntegrator.INSTANCE.getDatabase().getNamespaces()) {
             String namespaceName = getSchemaName(namespace);
             var dbColumns = getColumns(namespaceName);
             var dbTables = dbColumns.keySet();
@@ -172,8 +154,7 @@ public class RapporterUnmappedKolonnerIDatabaseTest {
         return schema == null ? null : schema.getCanonicalName().toUpperCase();
     }
 
-    public static class MetadataExtractorIntegrator
-            implements org.hibernate.integrator.spi.Integrator {
+    public static class MetadataExtractorIntegrator implements org.hibernate.integrator.spi.Integrator {
 
         public static final MetadataExtractorIntegrator INSTANCE = new MetadataExtractorIntegrator();
 
@@ -184,18 +165,13 @@ public class RapporterUnmappedKolonnerIDatabaseTest {
         }
 
         @Override
-        public void integrate(
-                              Metadata metadata,
-                              SessionFactoryImplementor sessionFactory,
-                              SessionFactoryServiceRegistry serviceRegistry) {
+        public void integrate(Metadata metadata, SessionFactoryImplementor sessionFactory, SessionFactoryServiceRegistry serviceRegistry) {
 
             database = metadata.getDatabase();
         }
 
         @Override
-        public void disintegrate(
-                                 SessionFactoryImplementor sessionFactory,
-                                 SessionFactoryServiceRegistry serviceRegistry) {
+        public void disintegrate(SessionFactoryImplementor sessionFactory, SessionFactoryServiceRegistry serviceRegistry) {
         }
     }
 

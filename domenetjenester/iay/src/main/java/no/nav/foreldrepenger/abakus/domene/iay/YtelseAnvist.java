@@ -80,7 +80,7 @@ public class YtelseAnvist extends BaseEntitet implements IndexKey {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { this.anvistPeriode };
+        Object[] keyParts = {this.anvistPeriode};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -96,16 +96,20 @@ public class YtelseAnvist extends BaseEntitet implements IndexKey {
         return Optional.ofNullable(utbetalingsgradProsent);
     }
 
+    public void setUtbetalingsgradProsent(Stillingsprosent utbetalingsgradProsent) {
+        this.utbetalingsgradProsent = utbetalingsgradProsent;
+    }
+
     public Optional<Beløp> getBeløp() {
         return Optional.ofNullable(beløp);
     }
 
-    public Optional<Beløp> getDagsats() {
-        return Optional.ofNullable(dagsats);
-    }
-
     public void setBeløp(Beløp beløp) {
         this.beløp = beløp;
+    }
+
+    public Optional<Beløp> getDagsats() {
+        return Optional.ofNullable(dagsats);
     }
 
     public void setDagsats(Beløp dagsats) {
@@ -114,10 +118,6 @@ public class YtelseAnvist extends BaseEntitet implements IndexKey {
 
     void setAnvistPeriode(IntervallEntitet periode) {
         this.anvistPeriode = periode;
-    }
-
-    public void setUtbetalingsgradProsent(Stillingsprosent utbetalingsgradProsent) {
-        this.utbetalingsgradProsent = utbetalingsgradProsent;
     }
 
     public void setYtelse(Ytelse ytelse) {
@@ -136,13 +136,15 @@ public class YtelseAnvist extends BaseEntitet implements IndexKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof YtelseAnvist)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !(o instanceof YtelseAnvist)) {
+            return false;
+        }
         YtelseAnvist that = (YtelseAnvist) o;
-        return Objects.equals(anvistPeriode, that.anvistPeriode) &&
-            Objects.equals(beløp, that.beløp) &&
-            Objects.equals(dagsats, that.dagsats) &&
-            Objects.equals(utbetalingsgradProsent, that.utbetalingsgradProsent);
+        return Objects.equals(anvistPeriode, that.anvistPeriode) && Objects.equals(beløp, that.beløp) && Objects.equals(dagsats, that.dagsats)
+            && Objects.equals(utbetalingsgradProsent, that.utbetalingsgradProsent);
     }
 
     @Override
@@ -152,11 +154,7 @@ public class YtelseAnvist extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" +
-            "periode=" + anvistPeriode +
-            ", beløp=" + beløp +
-            ", dagsats=" + dagsats +
-            ", utbetalingsgradProsent=" + utbetalingsgradProsent +
-            '>';
+        return getClass().getSimpleName() + "<" + "periode=" + anvistPeriode + ", beløp=" + beløp + ", dagsats=" + dagsats
+            + ", utbetalingsgradProsent=" + utbetalingsgradProsent + '>';
     }
 }

@@ -24,9 +24,8 @@ public class SigrunConsumerImpl implements SigrunConsumer {
     private static final String TEKNISK_NAVN = "skatteoppgjoersdato";
 
     private static final MonthDay TIDLIGSTE_SJEKK_FJOR = MonthDay.of(5, 1);
-
-    private final SigrunRestClient client;
     private static final boolean isProd = Environment.current().isProd();
+    private final SigrunRestClient client;
 
 
     public SigrunConsumerImpl() {
@@ -42,7 +41,7 @@ public class SigrunConsumerImpl implements SigrunConsumer {
 
     @Override
     public SigrunResponse beregnetskatt(Long aktørId, IntervallEntitet opplysningsperiode) {
-         var årTilListeMedSkatt = ferdiglignedeBeregnetSkattÅr(aktørId, opplysningsperiode).stream()
+        var årTilListeMedSkatt = ferdiglignedeBeregnetSkattÅr(aktørId, opplysningsperiode).stream()
             .collect(Collectors.toMap(år -> år, år -> client.hentBeregnetSkattForAktørOgÅr(aktørId, år.toString())));
         return new SigrunResponse(årTilListeMedSkatt);
     }
@@ -111,11 +110,11 @@ public class SigrunConsumerImpl implements SigrunConsumer {
     }
 
     private boolean iFjorErFerdiglignetBeregnet(Long aktørId, Year iFjor) {
-        if (isProd && Year.now().minusYears(1).equals(iFjor) && MonthDay.now().isBefore(TIDLIGSTE_SJEKK_FJOR)) return false;
-        return client.hentBeregnetSkattForAktørOgÅr(aktørId, iFjor.toString()).stream()
-            .anyMatch(l -> l.tekniskNavn().equals(TEKNISK_NAVN));
+        if (isProd && Year.now().minusYears(1).equals(iFjor) && MonthDay.now().isBefore(TIDLIGSTE_SJEKK_FJOR)) {
+            return false;
+        }
+        return client.hentBeregnetSkattForAktørOgÅr(aktørId, iFjor.toString()).stream().anyMatch(l -> l.tekniskNavn().equals(TEKNISK_NAVN));
     }
-
 
 
 }

@@ -43,16 +43,12 @@ import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 @Transactional
 public class RapporteringRestTjeneste {
 
+    static final String BASE_PATH = "/rapportering";
     private static final Logger log = LoggerFactory.getLogger(RapporteringRestTjeneste.class);
-
-    private static final DateTimeFormatter DT_FORMAT = new DateTimeFormatterBuilder()
-        .append(DateTimeFormatter.ISO_LOCAL_DATE)
+    private static final DateTimeFormatter DT_FORMAT = new DateTimeFormatterBuilder().append(DateTimeFormatter.ISO_LOCAL_DATE)
         .appendLiteral('T')
         .appendPattern("HHmmss")
         .toFormatter();
-
-    static final String BASE_PATH = "/rapportering";
-
     private Instance<RapportGenerator> rapportGenerators;
 
     public RapporteringRestTjeneste() {
@@ -90,7 +86,8 @@ public class RapporteringRestTjeneste {
 
         return Response.ok(streamingOutput)
             .type(MediaType.APPLICATION_OCTET_STREAM)
-            .header("Content-Disposition", String.format("attachment; filename=\"%s-%s-%s.zip\"", rapportType.name(), ytelseType.getKode(), LocalDateTime.now().format(DT_FORMAT)))
+            .header("Content-Disposition", String.format("attachment; filename=\"%s-%s-%s.zip\"", rapportType.name(), ytelseType.getKode(),
+                LocalDateTime.now().format(DT_FORMAT)))
             .build();
 
     }
@@ -98,6 +95,7 @@ public class RapporteringRestTjeneste {
     public static class IsoPeriode {
         LocalDate fom;
         LocalDate tom;
+
         public IsoPeriode(String iso8601Periode) {
             String[] split = iso8601Periode.split("/");
             this.fom = LocalDate.parse(split[0]);

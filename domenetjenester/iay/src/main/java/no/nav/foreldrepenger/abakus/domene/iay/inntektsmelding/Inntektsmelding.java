@@ -143,7 +143,9 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
     Inntektsmelding() {
     }
 
-    /** copy ctor. */
+    /**
+     * copy ctor.
+     */
     public Inntektsmelding(Inntektsmelding inntektsmelding) {
         this.arbeidsgiver = inntektsmelding.getArbeidsgiver();
         this.arbeidsforholdRef = inntektsmelding.getArbeidsforholdRef();
@@ -188,7 +190,7 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { arbeidsgiver, arbeidsforholdRef };
+        Object[] keyParts = {arbeidsgiver, arbeidsforholdRef};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -229,13 +231,15 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
         return kanalreferanse;
     }
 
-    /** Dato inntektsmelding mottatt i NAV (tilsvarer dato lagret i Joark). */
-    public LocalDate getMottattDato() {
-        return mottattDato;
-    }
-
     void setKanalreferanse(String kanalreferanse) {
         this.kanalreferanse = kanalreferanse;
+    }
+
+    /**
+     * Dato inntektsmelding mottatt i NAV (tilsvarer dato lagret i Joark).
+     */
+    public LocalDate getMottattDato() {
+        return mottattDato;
     }
 
     void setMottattDato(LocalDate mottattDato) {
@@ -300,8 +304,7 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
     }
 
     public boolean gjelderSammeArbeidsforhold(Inntektsmelding annen) {
-        return getArbeidsgiver().equals(annen.getArbeidsgiver())
-            && getArbeidsforholdRef().gjelderFor(annen.getArbeidsforholdRef());
+        return getArbeidsgiver().equals(annen.getArbeidsgiver()) && getArbeidsforholdRef().gjelderFor(annen.getArbeidsforholdRef());
     }
 
     /**
@@ -322,6 +325,10 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
         return startDatoPermisjon;
     }
 
+    void setStartDatoPermisjon(LocalDate startDatoPermisjon) {
+        this.startDatoPermisjon = startDatoPermisjon;
+    }
+
     /**
      * Referanse til {@link no.nav.foreldrepenger.behandlingslager.behandling.MottattDokument} som benyttes for å markere
      * hvilke dokument som er gjeldende i behandlingen
@@ -334,10 +341,6 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
 
     void setJournalpostId(JournalpostId journalpostId) {
         this.journalpostId = journalpostId;
-    }
-
-    void setStartDatoPermisjon(LocalDate startDatoPermisjon) {
-        this.startDatoPermisjon = startDatoPermisjon;
     }
 
     /**
@@ -429,15 +432,15 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
+        }
         if (o == null || !(o instanceof Inntektsmelding)) {
             return false;
         }
         var entitet = (Inntektsmelding) o;
-        return Objects.equals(getArbeidsgiver(), entitet.getArbeidsgiver()) &&
-            Objects.equals(getJournalpostId(), entitet.getJournalpostId()) &&
-            Objects.equals(getArbeidsforholdRef(), entitet.getArbeidsforholdRef());
+        return Objects.equals(getArbeidsgiver(), entitet.getArbeidsgiver()) && Objects.equals(getJournalpostId(), entitet.getJournalpostId())
+            && Objects.equals(getArbeidsforholdRef(), entitet.getArbeidsforholdRef());
     }
 
     @Override
@@ -447,22 +450,11 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" +
-            "id=" + id +
-            ", virksomhet=" + arbeidsgiver +
-            ", arbeidsforholdId='" + arbeidsforholdRef + '\'' +
-            ", startDatoPermisjon=" + startDatoPermisjon +
-            ", nærRelasjon=" + nærRelasjon +
-            ", journalpostId=" + journalpostId +
-            ", inntektBeløp=" + inntektBeløp +
-            ", refusjonBeløpPerMnd=" + refusjonBeløpPerMnd +
-            ", refusjonOpphører=" + refusjonOpphører +
-            ", innsendingsårsak= " + innsendingsårsak +
-            ", innsendingstidspunkt= " + innsendingstidspunkt +
-            ", kanalreferanse=" + kanalreferanse +
-            ", kildesystem=" + kildesystem +
-            ", mottattDato=" + mottattDato +
-            '>';
+        return getClass().getSimpleName() + "<" + "id=" + id + ", virksomhet=" + arbeidsgiver + ", arbeidsforholdId='" + arbeidsforholdRef + '\''
+            + ", startDatoPermisjon=" + startDatoPermisjon + ", nærRelasjon=" + nærRelasjon + ", journalpostId=" + journalpostId + ", inntektBeløp="
+            + inntektBeløp + ", refusjonBeløpPerMnd=" + refusjonBeløpPerMnd + ", refusjonOpphører=" + refusjonOpphører + ", innsendingsårsak= "
+            + innsendingsårsak + ", innsendingstidspunkt= " + innsendingstidspunkt + ", kanalreferanse=" + kanalreferanse + ", kildesystem="
+            + kildesystem + ", mottattDato=" + mottattDato + '>';
     }
 
 }

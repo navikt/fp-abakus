@@ -1,15 +1,8 @@
 package no.nav.foreldrepenger.abakus.felles.diff;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeMap;
-
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraph.TraverseResult;
+
+import java.util.*;
 
 /**
  * Henter ut resultat fra å diffe to entitet objekter.
@@ -53,7 +46,7 @@ public class DiffResult {
         });
     }
 
-    @SuppressWarnings({ "rawtypes" })
+    @SuppressWarnings({"rawtypes"})
     private boolean areEqual(Node key, Object left, Object right) {
         if (Objects.equals(left, right)) {
             return true;
@@ -69,17 +62,19 @@ public class DiffResult {
         return false;
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private boolean areEqualListsOutOfOrder(Node key, List lhsList, List rhsList) {
         Set lhsSet = new HashSet<>(lhsList);
         Set rhsSet = new HashSet<>(rhsList);
 
         if (lhsSet.size() != lhsList.size()) {
-            throw new IllegalArgumentException("Bad Equals eller duplikater i List.  lhsList har forskjellig størrelse fra lhsSet. Key=\"" + key //$NON-NLS-1$
-                + "\"\n,\"lhsList\"=" + lhsList + "\n,\"rhsList\"=" + rhsList); //$NON-NLS-1$ //$NON-NLS-2$
+            throw new IllegalArgumentException(
+                "Bad Equals eller duplikater i List.  lhsList har forskjellig størrelse fra lhsSet. Key=\"" + key //$NON-NLS-1$
+                    + "\"\n,\"lhsList\"=" + lhsList + "\n,\"rhsList\"=" + rhsList); //$NON-NLS-1$ //$NON-NLS-2$
         } else if (rhsSet.size() != rhsList.size()) {
-            throw new IllegalArgumentException("Bad Equals eller duplikater i List.  rhsList har forskjellig størrelse fra rhsSet. Key=\"" + key //$NON-NLS-1$
-                + "\"\n,\"lhsList\"=" + lhsList + "\n,\"rhsList\"=" + rhsList); //$NON-NLS-1$ //$NON-NLS-2$
+            throw new IllegalArgumentException(
+                "Bad Equals eller duplikater i List.  rhsList har forskjellig størrelse fra rhsSet. Key=\"" + key //$NON-NLS-1$
+                    + "\"\n,\"lhsList\"=" + lhsList + "\n,\"rhsList\"=" + rhsList); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         return Objects.equals(lhsSet, rhsSet);
