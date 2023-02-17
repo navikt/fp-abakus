@@ -9,14 +9,12 @@ class BegrunnelseVaskerTest {
     @Test
     void skal_vaske_begrunnelse() {
 
-        var uvasket = "Gått fra \n" +
-            "usammenhengende vikariater med varierende arbeidsomfang,til fast kontrakt med mer stabil og \n" +
-            "høyere inntekt.";
+        var uvasket =
+            "Gått fra \n" + "usammenhengende vikariater med varierende arbeidsomfang,til fast kontrakt med mer stabil og \n" + "høyere inntekt.";
 
 
-        var forventet = "Gått fra " +
-            "usammenhengende vikariater med varierende arbeidsomfang,til fast kontrakt med mer stabil og " +
-            "høyere inntekt.";
+        var forventet =
+            "Gått fra " + "usammenhengende vikariater med varierende arbeidsomfang,til fast kontrakt med mer stabil og " + "høyere inntekt.";
 
         var vasket = BegrunnelseVasker.vask(uvasket);
 

@@ -30,8 +30,7 @@ public class HealthCheckRestService {
     }
 
     @Inject
-    public HealthCheckRestService(ApplicationServiceStarter starterService,
-                                  DatabaseHealthCheck databaseHealthCheck) {
+    public HealthCheckRestService(ApplicationServiceStarter starterService, DatabaseHealthCheck databaseHealthCheck) {
         this.starterService = starterService;
         this.databaseHealthCheck = databaseHealthCheck;
     }
@@ -41,15 +40,9 @@ public class HealthCheckRestService {
     @Operation(description = "sjekker om poden lever", tags = "nais", hidden = true)
     public Response isAlive() {
         if (starterService.isKafkaAlive()) {
-            return Response
-                .ok(RESPONSE_OK)
-                .header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL)
-                .build();
+            return Response.ok(RESPONSE_OK).header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL).build();
         } else {
-            return Response
-                .serverError()
-                .header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL)
-                .build();
+            return Response.serverError().header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL).build();
         }
     }
 
@@ -58,15 +51,9 @@ public class HealthCheckRestService {
     @Operation(description = "sjekker om poden er klar", tags = "nais", hidden = true)
     public Response isReady() {
         if (databaseHealthCheck.isReady()) {
-            return Response
-                .ok(RESPONSE_OK)
-                .header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL)
-                .build();
+            return Response.ok(RESPONSE_OK).header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL).build();
         } else {
-            return Response
-                .status(Response.Status.SERVICE_UNAVAILABLE)
-                .header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL)
-                .build();
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE).header(RESPONSE_CACHE_KEY, RESPONSE_CACHE_VAL).build();
         }
     }
 

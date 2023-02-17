@@ -47,15 +47,22 @@ public class AnvistAndel {
     protected AnvistAndel() {
     }
 
-    public AnvistAndel(ArbeidsgiverIdent arbeidsgiverIdent, int beløp, int utbetalingsgrad, int refusjonsgrad, Inntektklasse inntektklasse, String arbeidsforholdId) {
-        this(arbeidsgiverIdent, arbeidsforholdId,
-            new Desimaltall(BigDecimal.valueOf(beløp)),
-            new Desimaltall(BigDecimal.valueOf(utbetalingsgrad)),
-            new Desimaltall(BigDecimal.valueOf(refusjonsgrad)),
-            inntektklasse);
+    public AnvistAndel(ArbeidsgiverIdent arbeidsgiverIdent,
+                       int beløp,
+                       int utbetalingsgrad,
+                       int refusjonsgrad,
+                       Inntektklasse inntektklasse,
+                       String arbeidsforholdId) {
+        this(arbeidsgiverIdent, arbeidsforholdId, new Desimaltall(BigDecimal.valueOf(beløp)), new Desimaltall(BigDecimal.valueOf(utbetalingsgrad)),
+            new Desimaltall(BigDecimal.valueOf(refusjonsgrad)), inntektklasse);
     }
 
-    public AnvistAndel(ArbeidsgiverIdent arbeidsgiverIdent, String arbeidsforholdId, Desimaltall beløp, Desimaltall utbetalingsgrad, Desimaltall refusjonsgrad, Inntektklasse inntektklasse) {
+    public AnvistAndel(ArbeidsgiverIdent arbeidsgiverIdent,
+                       String arbeidsforholdId,
+                       Desimaltall beløp,
+                       Desimaltall utbetalingsgrad,
+                       Desimaltall refusjonsgrad,
+                       Inntektklasse inntektklasse) {
         this.arbeidsgiverIdent = arbeidsgiverIdent;
         this.arbeidsforholdId = arbeidsforholdId;
         this.dagsats = beløp;
@@ -85,8 +92,7 @@ public class AnvistAndel {
     }
 
     public Inntektklasse getInntektklasse() {
-        return Optional.ofNullable(inntektklasse)
-            .orElse(Inntektklasse.INGEN);
+        return Optional.ofNullable(inntektklasse).orElse(Inntektklasse.INGEN);
     }
 
 }

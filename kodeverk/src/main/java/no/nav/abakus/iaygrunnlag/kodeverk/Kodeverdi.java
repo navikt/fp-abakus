@@ -1,6 +1,8 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
-/** Kodeverk som er portet til java. */
+/**
+ * Kodeverk som er portet til java.
+ */
 public interface Kodeverdi extends IndexKey {
 
     String getKode();
@@ -13,7 +15,7 @@ public interface Kodeverdi extends IndexKey {
     default String getIndexKey() {
         return getKode();
     }
-    
+
     default String getOffisiellKode() {
         return getKode();
     }

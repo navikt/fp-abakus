@@ -19,7 +19,7 @@ import no.nav.vedtak.konfig.Tid;
 
 public class InntektsmeldingBuilder {
 
-    public static final Comparator<? super InntektsmeldingBuilder> COMP_REKKEFØLGE =  (InntektsmeldingBuilder a, InntektsmeldingBuilder b) -> {
+    public static final Comparator<? super InntektsmeldingBuilder> COMP_REKKEFØLGE = (InntektsmeldingBuilder a, InntektsmeldingBuilder b) -> {
         if (a == b) {
             return 0;
         }

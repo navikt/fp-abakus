@@ -25,7 +25,9 @@ public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {
     private final ObjectMapper objectMapper;
 
 
-    /** Default instance for Jax-rs application. Genererer ikke navn som del av output for kodeverk. */
+    /**
+     * Default instance for Jax-rs application. Genererer ikke navn som del av output for kodeverk.
+     */
     public JacksonJsonConfig() {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new Jdk8Module());
@@ -42,21 +44,6 @@ public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {
         registerSubTypesDynamically();
     }
 
-    private void registerSubTypesDynamically() {
-        // avled code location fra klassene
-        getKontraktLokasjoner()
-            .stream()
-            .map(c -> {
-                try {
-                    return c.getProtectionDomain().getCodeSource().getLocation().toURI();
-                } catch (URISyntaxException e) {
-                    throw new IllegalArgumentException("Ikke en URI for klasse: " + c, e);
-                }
-            })
-            .distinct()
-            .forEach(uri -> getObjectMapper().registerSubtypes(getJsonTypeNameClasses(uri)));
-    }
-
     public static List<Class<?>> getKontraktLokasjoner() {
         return List.of(JacksonJsonConfig.class, InntektArbeidYtelseGrunnlagDto.class);
     }
@@ -68,6 +55,17 @@ public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {
         IndexClasses indexClasses;
         indexClasses = IndexClasses.getIndexFor(classLocation);
         return indexClasses.getClassesWithAnnotation(JsonTypeName.class);
+    }
+
+    private void registerSubTypesDynamically() {
+        // avled code location fra klassene
+        getKontraktLokasjoner().stream().map(c -> {
+            try {
+                return c.getProtectionDomain().getCodeSource().getLocation().toURI();
+            } catch (URISyntaxException e) {
+                throw new IllegalArgumentException("Ikke en URI for klasse: " + c, e);
+            }
+        }).distinct().forEach(uri -> getObjectMapper().registerSubtypes(getJsonTypeNameClasses(uri)));
     }
 
     public ObjectMapper getObjectMapper() {

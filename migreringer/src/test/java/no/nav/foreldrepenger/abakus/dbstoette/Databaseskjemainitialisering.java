@@ -68,14 +68,15 @@ public final class Databaseskjemainitialisering {
     private static HikariDataSource createDs(String user) {
         Objects.requireNonNull(user, "user");
         var cfg = new HikariConfig();
-        cfg.setJdbcUrl(System.getProperty("datasource.defaultDS.url", String.format("jdbc:postgresql://127.0.0.1:5432/%s?reWriteBatchedInserts=true", USER)));
+        cfg.setJdbcUrl(
+            System.getProperty("datasource.defaultDS.url", String.format("jdbc:postgresql://127.0.0.1:5432/%s?reWriteBatchedInserts=true", USER)));
         cfg.setUsername(USER);
         cfg.setPassword(USER);
         cfg.setConnectionTimeout(1500);
         cfg.setValidationTimeout(120L * 1000L);
         cfg.setMaximumPoolSize(4);
         cfg.setAutoCommit(false);
-        
+
         var ds = new HikariDataSource(cfg);
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override

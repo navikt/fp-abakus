@@ -1,18 +1,14 @@
 package no.nav.foreldrepenger.abakus.app.diagnostikk;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
+
+import javax.persistence.Tuple;
+
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.persistence.Tuple;
-
-import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
 
 public class CsvOutput {
 
@@ -53,7 +49,7 @@ public class CsvOutput {
         return sb.toString();
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private static Object transformValue(Object in) {
         var out = in instanceof Optional ? ((Optional) in).orElse(null) : in;
         if (out instanceof Kodeverdi) {
@@ -88,7 +84,9 @@ public class CsvOutput {
         return Optional.of(dumpAsCsv(true, results, path, toCsv));
     }
 
-    /** Muliggjør mer effektiv bruk av minne enn å ta en Liste av tuple. */
+    /**
+     * Muliggjør mer effektiv bruk av minne enn å ta en Liste av tuple.
+     */
     public static Optional<DumpOutput> dumpResultSetToCsv(String path, Stream<Tuple> results) {
 
         class CsvCollector implements Consumer<Tuple> {

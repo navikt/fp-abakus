@@ -1,13 +1,13 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Gammelt kodeverk fra infotrygd. Burde ikke lekke fra Abakus (bør fjernes fra iay kontrakt og der heller benytte FagsakYtelseType).
@@ -75,8 +75,7 @@ public enum TemaUnderkategori implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent TemaUnderkategori: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent TemaUnderkategori: " + kode));
     }
 
     public static Map<String, TemaUnderkategori> kodeMap() {

@@ -10,10 +10,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.UuidDto;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -27,12 +26,12 @@ public class SjekkStatusRequest {
 
     @JsonProperty(value = "taskReferanse", required = true)
     @NotNull
-    @Pattern(regexp = "\\d+", message="Task referanse [${validatedValue}] matcher ikke tillatt pattern '{value}'")
+    @Pattern(regexp = "\\d+", message = "Task referanse [${validatedValue}] matcher ikke tillatt pattern '{value}'")
     private String taskReferanse;
 
     @JsonCreator
-    public SjekkStatusRequest( @JsonProperty(value = "referanse", required = true) @Valid @NotNull UuidDto referanse, 
-                           @JsonProperty(value = "taskReferanse", required = true) @NotNull @Pattern(regexp = "\\d+") String taskReferanse) {
+    public SjekkStatusRequest(@JsonProperty(value = "referanse", required = true) @Valid @NotNull UuidDto referanse,
+                              @JsonProperty(value = "taskReferanse", required = true) @NotNull @Pattern(regexp = "\\d+") String taskReferanse) {
         this.referanse = referanse;
         this.taskReferanse = taskReferanse;
     }

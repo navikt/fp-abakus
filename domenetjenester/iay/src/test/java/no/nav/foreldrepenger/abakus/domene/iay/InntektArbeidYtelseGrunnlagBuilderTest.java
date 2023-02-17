@@ -30,7 +30,9 @@ public class InntektArbeidYtelseGrunnlagBuilderTest {
         assertThat(gr.getSaksbehandletVersjon()).isPresent();
         assertThat(gr.getInntektsmeldinger()).isPresent();
 
-        var nyttGrunnlag = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(gr, EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.OVERSTYRT_OPPGITT_OPPTJENING, Dataset.INNTEKTSMELDING, Dataset.REGISTER, Dataset.OVERSTYRT)).build();
+        var nyttGrunnlag = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(gr,
+            EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.OVERSTYRT_OPPGITT_OPPTJENING, Dataset.INNTEKTSMELDING, Dataset.REGISTER,
+                Dataset.OVERSTYRT)).build();
 
         assertThat(nyttGrunnlag.getOppgittOpptjening()).isPresent();
         assertThat(nyttGrunnlag.getOverstyrtOppgittOpptjening()).isPresent();
@@ -38,7 +40,8 @@ public class InntektArbeidYtelseGrunnlagBuilderTest {
         assertThat(nyttGrunnlag.getSaksbehandletVersjon()).isPresent();
         assertThat(nyttGrunnlag.getInntektsmeldinger()).isPresent();
 
-        nyttGrunnlag = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(gr, EnumSet.of(Dataset.INNTEKTSMELDING, Dataset.REGISTER, Dataset.OVERSTYRT)).build();
+        nyttGrunnlag = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(gr, EnumSet.of(Dataset.INNTEKTSMELDING, Dataset.REGISTER, Dataset.OVERSTYRT))
+            .build();
 
         assertThat(nyttGrunnlag.getOppgittOpptjening()).isNotPresent();
         assertThat(nyttGrunnlag.getOverstyrtOppgittOpptjening()).isNotPresent();

@@ -36,15 +36,11 @@ public class ArbeidsforholdReferanse extends BaseEntitet implements IndexKey, Tr
     private Arbeidsgiver arbeidsgiverEntitet;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "referanse", column = @Column(name = "intern_referanse", nullable = false))
-    })
+    @AttributeOverrides({@AttributeOverride(name = "referanse", column = @Column(name = "intern_referanse", nullable = false))})
     private InternArbeidsforholdRef internReferanse;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "referanse", column = @Column(name = "ekstern_referanse", nullable = false))
-    })
+    @AttributeOverrides({@AttributeOverride(name = "referanse", column = @Column(name = "ekstern_referanse", nullable = false))})
     private EksternArbeidsforholdRef eksternReferanse;
 
     @ManyToOne
@@ -54,7 +50,9 @@ public class ArbeidsforholdReferanse extends BaseEntitet implements IndexKey, Tr
     ArbeidsforholdReferanse() {
     }
 
-    public ArbeidsforholdReferanse(Arbeidsgiver arbeidsgiverEntitet, InternArbeidsforholdRef internReferanse, EksternArbeidsforholdRef eksternReferanse) {
+    public ArbeidsforholdReferanse(Arbeidsgiver arbeidsgiverEntitet,
+                                   InternArbeidsforholdRef internReferanse,
+                                   EksternArbeidsforholdRef eksternReferanse) {
         this.arbeidsgiverEntitet = arbeidsgiverEntitet;
         this.internReferanse = internReferanse;
         this.eksternReferanse = eksternReferanse;
@@ -71,7 +69,7 @@ public class ArbeidsforholdReferanse extends BaseEntitet implements IndexKey, Tr
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { internReferanse, eksternReferanse };
+        Object[] keyParts = {internReferanse, eksternReferanse};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -93,14 +91,15 @@ public class ArbeidsforholdReferanse extends BaseEntitet implements IndexKey, Tr
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || !(o instanceof ArbeidsforholdReferanse))
+        }
+        if (o == null || !(o instanceof ArbeidsforholdReferanse)) {
             return false;
+        }
         var that = (ArbeidsforholdReferanse) o;
-        return Objects.equals(arbeidsgiverEntitet, that.arbeidsgiverEntitet) &&
-            Objects.equals(internReferanse, that.internReferanse) &&
-            Objects.equals(eksternReferanse, that.eksternReferanse);
+        return Objects.equals(arbeidsgiverEntitet, that.arbeidsgiverEntitet) && Objects.equals(internReferanse, that.internReferanse)
+            && Objects.equals(eksternReferanse, that.eksternReferanse);
     }
 
     @Override
@@ -110,10 +109,7 @@ public class ArbeidsforholdReferanse extends BaseEntitet implements IndexKey, Tr
 
     @Override
     public String toString() {
-        return "ArbeidsforholdReferanseEntitet{" +
-            "ArbeidsgiverEntitet=" + arbeidsgiverEntitet +
-            ", internReferanse=" + internReferanse +
-            ", eksternReferanse=" + eksternReferanse +
-            '}';
+        return "ArbeidsforholdReferanseEntitet{" + "ArbeidsgiverEntitet=" + arbeidsgiverEntitet + ", internReferanse=" + internReferanse
+            + ", eksternReferanse=" + eksternReferanse + '}';
     }
 }

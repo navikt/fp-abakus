@@ -24,6 +24,9 @@ public class InfotrygdPSGrunnlag extends AbstractInfotrygdGrunnlag {
         super();
     }
 
+    protected static LocalDate konverter(LocalDate dato) {
+        return dato == null ? LocalDate.now() : dato;
+    }
 
     @Override
     public List<Grunnlag> hentGrunnlag(String fnr, LocalDate fom, LocalDate tom) {
@@ -31,7 +34,9 @@ public class InfotrygdPSGrunnlag extends AbstractInfotrygdGrunnlag {
             return hentGrunnlagIJsonFormat(fnr, fom, tom);
         } catch (Exception e) {
             LOG.warn("Feil ved oppslag mot {}, returnerer ingen grunnlag", getRestConfig().endpoint(), e);
-            throw new TekniskException("FP-180125", String.format("Tjeneste %s gir feil, meld til #infotrygd_replikering hvis dette skjer gjennom lengre tidsperiode.", getRestConfig().endpoint()), e);
+            throw new TekniskException("FP-180125",
+                String.format("Tjeneste %s gir feil, meld til #infotrygd_replikering hvis dette skjer gjennom lengre tidsperiode.",
+                    getRestConfig().endpoint()), e);
         }
 
     }
@@ -51,9 +56,5 @@ public class InfotrygdPSGrunnlag extends AbstractInfotrygdGrunnlag {
         var request = RestRequest.newPOSTJson(prequest, getRestConfig().endpoint(), getRestConfig());
         var resultat = getRestClient().send(request, Grunnlag[].class);
         return Arrays.asList(resultat);
-    }
-
-    protected static LocalDate konverter(LocalDate dato) {
-        return dato == null ? LocalDate.now() : dato;
     }
 }

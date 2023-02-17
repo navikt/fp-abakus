@@ -1,25 +1,21 @@
 package no.nav.abakus.iaygrunnlag.inntekt.v1;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import no.nav.abakus.iaygrunnlag.Periode;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
+import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
+import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseType;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import no.nav.abakus.iaygrunnlag.Periode;
-import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
-import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
-import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseType;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -38,13 +34,17 @@ public class UtbetalingsPostDto {
     @JsonProperty("skattAvgiftType")
     private SkatteOgAvgiftsregelType skattAvgiftType;
 
-    /** Tillater her både positive og negative beløp (korreksjoner). Min/max verdi håndteres av mottager og avsender. */
+    /**
+     * Tillater her både positive og negative beløp (korreksjoner). Min/max verdi håndteres av mottager og avsender.
+     */
     @JsonProperty("beløp")
     @Valid
     @NotNull
     private BigDecimal beløp;
 
-    /** Satt dersom dette gjelder en ytelse, ellers ikke (henger sammen med {@link UtbetalingDto#getKilde()}) */
+    /**
+     * Satt dersom dette gjelder en ytelse, ellers ikke (henger sammen med {@link UtbetalingDto#getKilde()})
+     */
     @JsonProperty(value = "ytelseType")
     @Valid
     private WrapUtbetaltYtelse ytelseType;
@@ -117,15 +117,16 @@ public class UtbetalingsPostDto {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this)
+        if (obj == this) {
             return true;
-        if (obj == null || obj.getClass() != this.getClass())
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
             return false;
+        }
         var other = this.getClass().cast(obj);
 
-        return Objects.equals(inntektspostType, other.inntektspostType)
-            && Objects.equals(periode, other.periode)
-            && Objects.equals(ytelseType, other.ytelseType);
+        return Objects.equals(inntektspostType, other.inntektspostType) && Objects.equals(periode, other.periode) && Objects.equals(ytelseType,
+            other.ytelseType);
     }
 
     @Override
@@ -163,14 +164,15 @@ public class UtbetalingsPostDto {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj == this)
+            if (obj == this) {
                 return true;
-            if (obj == null || obj.getClass() != this.getClass())
+            }
+            if (obj == null || obj.getClass() != this.getClass()) {
                 return false;
+            }
             var other = (WrapUtbetaltYtelse) obj;
 
-            return Objects.equals(kode, other.kode)
-                && Objects.equals(kodeverk, other.kodeverk);
+            return Objects.equals(kode, other.kode) && Objects.equals(kodeverk, other.kodeverk);
         }
 
         @Override

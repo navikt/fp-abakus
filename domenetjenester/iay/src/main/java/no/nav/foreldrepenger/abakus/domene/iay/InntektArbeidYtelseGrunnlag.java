@@ -44,9 +44,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     @NaturalId
     @DiffIgnore
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "referanse", column = @Column(name = "grunnlag_referanse", updatable = false, unique = true))
-    })
+    @AttributeOverrides({@AttributeOverride(name = "referanse", column = @Column(name = "grunnlag_referanse", updatable = false, unique = true))})
     private GrunnlagReferanse grunnlagReferanse;
 
     @OneToOne
@@ -113,8 +111,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
         grunnlag.getOverstyrtOppgittOpptjening().ifPresent(this::setOverstyrtOppgittOpptjening);
         grunnlag.getRegisterVersjon().ifPresent(nyRegisterVerson -> this.setRegister(nyRegisterVerson));
 
-        grunnlag.getSaksbehandletVersjon()
-            .ifPresent(nySaksbehandletFørVersjon -> this.setSaksbehandlet(nySaksbehandletFørVersjon));
+        grunnlag.getSaksbehandletVersjon().ifPresent(nySaksbehandletFørVersjon -> this.setSaksbehandlet(nySaksbehandletFørVersjon));
 
         grunnlag.getInntektsmeldinger().ifPresent(this::setInntektsmeldinger);
 
@@ -245,14 +242,14 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || !(o instanceof InntektArbeidYtelseGrunnlag))
+        }
+        if (o == null || !(o instanceof InntektArbeidYtelseGrunnlag)) {
             return false;
+        }
         var that = (InntektArbeidYtelseGrunnlag) o;
-        return aktiv == that.aktiv &&
-            Objects.equals(register, that.register) &&
-            Objects.equals(saksbehandlet, that.saksbehandlet);
+        return aktiv == that.aktiv && Objects.equals(register, that.register) && Objects.equals(saksbehandlet, that.saksbehandlet);
     }
 
     @Override

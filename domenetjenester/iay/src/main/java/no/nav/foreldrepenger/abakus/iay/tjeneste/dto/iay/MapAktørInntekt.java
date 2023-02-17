@@ -1,40 +1,27 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import no.nav.abakus.iaygrunnlag.Aktør;
-import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
-import no.nav.abakus.iaygrunnlag.Organisasjon;
-import no.nav.abakus.iaygrunnlag.Periode;
-import no.nav.abakus.iaygrunnlag.PersonIdent;
+import no.nav.abakus.iaygrunnlag.*;
 import no.nav.abakus.iaygrunnlag.inntekt.v1.InntekterDto;
 import no.nav.abakus.iaygrunnlag.inntekt.v1.UtbetalingDto;
 import no.nav.abakus.iaygrunnlag.inntekt.v1.UtbetalingsPostDto;
-import no.nav.foreldrepenger.abakus.domene.iay.AktørInntekt;
-import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
-import no.nav.foreldrepenger.abakus.domene.iay.Inntekt;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.*;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.Inntektspost;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektspostBuilder;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 public class MapAktørInntekt {
 
-    private static final Comparator<UtbetalingDto> COMP_UTBETALING = Comparator
-        .comparing((UtbetalingDto dto) -> dto.getKilde() == null ? null : dto.getKilde().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
+    private static final Comparator<UtbetalingDto> COMP_UTBETALING = Comparator.comparing(
+            (UtbetalingDto dto) -> dto.getKilde() == null ? null : dto.getKilde().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getUtbetaler() == null ? null : dto.getUtbetaler().getIdent(), Comparator.nullsLast(Comparator.naturalOrder()));
 
-    private static final Comparator<UtbetalingsPostDto> COMP_UTBETALINGSPOST = Comparator
-        .comparing((UtbetalingsPostDto dto) -> dto.getInntektspostType().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
-        .thenComparing((UtbetalingsPostDto dto) -> dto.getYtelseType() == null ? null : dto.getYtelseType().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
+    private static final Comparator<UtbetalingsPostDto> COMP_UTBETALINGSPOST = Comparator.comparing(
+            (UtbetalingsPostDto dto) -> dto.getInntektspostType().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
+        .thenComparing((UtbetalingsPostDto dto) -> dto.getYtelseType() == null ? null : dto.getYtelseType().getKode(),
+            Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
 
@@ -62,7 +49,9 @@ public class MapAktørInntekt {
             return builders;
         }
 
-        /** Returnerer person sin aktørId. Denne trenger ikke være samme som søkers aktørid men kan f.eks. være annen part i en sak. */
+        /**
+         * Returnerer person sin aktørId. Denne trenger ikke være samme som søkers aktørid men kan f.eks. være annen part i en sak.
+         */
         private AktørId tilAktørId(PersonIdent person) {
             if (!(person instanceof AktørIdPersonident)) {
                 throw new IllegalArgumentException("Støtter kun " + AktørIdPersonident.class.getSimpleName() + " her");
@@ -74,8 +63,7 @@ public class MapAktørInntekt {
             InntektBuilder inntektBuilder = InntektBuilder.oppdatere(Optional.empty())
                 .medArbeidsgiver(mapArbeidsgiver(dto.getUtbetaler()))
                 .medInntektsKilde(dto.getKilde());
-            dto.getPoster()
-                .forEach(post -> inntektBuilder.leggTilInntektspost(mapInntektspost(post)));
+            dto.getPoster().forEach(post -> inntektBuilder.leggTilInntektspost(mapInntektspost(post)));
             return inntektBuilder;
         }
 
@@ -89,8 +77,9 @@ public class MapAktørInntekt {
         }
 
         private Arbeidsgiver mapArbeidsgiver(Aktør arbeidsgiver) {
-            if (arbeidsgiver == null)
+            if (arbeidsgiver == null) {
                 return null;
+            }
             if (arbeidsgiver.getErOrganisasjon()) {
                 return Arbeidsgiver.virksomhet(new OrgNummer(arbeidsgiver.getIdent()));
             }
@@ -147,8 +136,7 @@ public class MapAktørInntekt {
             var ytelseType = inntektspost.getYtelseType();
             var skattOgAvgiftType = inntektspost.getSkatteOgAvgiftsregelType();
 
-            UtbetalingsPostDto dto = new UtbetalingsPostDto(periode, inntektspostType)
-                .medUtbetaltYtelseType(ytelseType)
+            UtbetalingsPostDto dto = new UtbetalingsPostDto(periode, inntektspostType).medUtbetaltYtelseType(ytelseType)
                 .medSkattAvgiftType(skattOgAvgiftType)
                 .medBeløp(inntektspost.getBeløp().getVerdi());
 

@@ -30,9 +30,8 @@ public enum ArbeidsforholdHandlingType implements Kodeverdi {
     INNTEKT_IKKE_MED_I_BG("INNTEKT_IKKE_MED_I_BG", "Inntekten til arbeidsforholdet skal ikke være med i beregningsgrunnlaget"),
     ;
 
-    private static final Map<String, ArbeidsforholdHandlingType> KODER = new LinkedHashMap<>();
-
     public static final String KODEVERK = "ARBEIDSFORHOLD_HANDLING_TYPE";
+    private static final Map<String, ArbeidsforholdHandlingType> KODER = new LinkedHashMap<>();
 
     static {
         for (var v : values()) {
@@ -60,8 +59,7 @@ public enum ArbeidsforholdHandlingType implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent ArbeidsforholdHandlingType: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent ArbeidsforholdHandlingType: " + kode));
     }
 
     public static Map<String, ArbeidsforholdHandlingType> kodeMap() {

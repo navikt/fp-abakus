@@ -1,25 +1,16 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-
-import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
-import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
-import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
-import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.abakus.iaygrunnlag.kodeverk.*;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanse;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 
 /**
  * Builder for å håndtere en gitt versjon {@link VersjonType} av grunnlaget.
@@ -50,9 +41,11 @@ public class InntektArbeidYtelseAggregatBuilder {
     }
 
     public static InntektArbeidYtelseAggregatBuilder builderFor(Optional<InntektArbeidYtelseAggregat> kopierDataFra,
-                                                                UUID angittReferanse, LocalDateTime angittTidspunkt, VersjonType versjon) {
-        return kopierDataFra
-            .map(kopier -> new InntektArbeidYtelseAggregatBuilder(new InntektArbeidYtelseAggregat(angittReferanse, angittTidspunkt, kopier), versjon))
+                                                                UUID angittReferanse,
+                                                                LocalDateTime angittTidspunkt,
+                                                                VersjonType versjon) {
+        return kopierDataFra.map(
+                kopier -> new InntektArbeidYtelseAggregatBuilder(new InntektArbeidYtelseAggregat(angittReferanse, angittTidspunkt, kopier), versjon))
             .orElseGet(() -> new InntektArbeidYtelseAggregatBuilder(new InntektArbeidYtelseAggregat(angittReferanse, angittTidspunkt), versjon));
     }
 
@@ -340,12 +333,18 @@ public class InntektArbeidYtelseAggregatBuilder {
             return kladd.getYtelseBuilderForType(fagsystem, type, sakId);
         }
 
-        public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer sakId, IntervallEntitet periode,
+        public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem,
+                                                        YtelseType type,
+                                                        Saksnummer sakId,
+                                                        IntervallEntitet periode,
                                                         Optional<LocalDate> tidligsteAnvistFom) {
             return kladd.getYtelseBuilderForType(fagsystem, type, sakId, periode, tidligsteAnvistFom);
         }
 
-        public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem, YtelseType type, TemaUnderkategori typeKategori, IntervallEntitet periode,
+        public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem,
+                                                        YtelseType type,
+                                                        TemaUnderkategori typeKategori,
+                                                        IntervallEntitet periode,
                                                         Optional<LocalDate> tidligsteAnvistFom) {
             return kladd.getYtelseBuilderForType(fagsystem, type, typeKategori, periode, tidligsteAnvistFom);
         }
@@ -375,10 +374,7 @@ public class InntektArbeidYtelseAggregatBuilder {
 
         @Override
         public String toString() {
-            return getClass().getSimpleName() + "<" +
-                "kladd=" + kladd +
-                ", oppdatering=" + oppdatering +
-                '>';
+            return getClass().getSimpleName() + "<" + "kladd=" + kladd + ", oppdatering=" + oppdatering + '>';
         }
 
     }

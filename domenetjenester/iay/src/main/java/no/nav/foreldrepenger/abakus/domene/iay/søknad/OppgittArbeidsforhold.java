@@ -61,7 +61,7 @@ public class OppgittArbeidsforhold extends BaseEntitet implements IndexKey {
     private ArbeidType arbeidType;
 
     @Convert(converter = LandKodeKodeverdiConverter.class)
-    @Column(name="land", nullable = false)
+    @Column(name = "land", nullable = false)
     private Landkode landkode;
 
     @Column(name = "utenlandsk_virksomhet_navn")
@@ -86,7 +86,7 @@ public class OppgittArbeidsforhold extends BaseEntitet implements IndexKey {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { periode, landkode, utenlandskVirksomhetNavn, arbeidType };
+        Object[] keyParts = {periode, landkode, utenlandskVirksomhetNavn, arbeidType};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -152,15 +152,17 @@ public class OppgittArbeidsforhold extends BaseEntitet implements IndexKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof OppgittArbeidsforhold)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !(o instanceof OppgittArbeidsforhold)) {
+            return false;
+        }
 
         var that = (OppgittArbeidsforhold) o;
 
-        return Objects.equals(periode, that.periode) &&
-            Objects.equals(arbeidType, that.arbeidType) &&
-            Objects.equals(utenlandskVirksomhetNavn, that.utenlandskVirksomhetNavn) &&
-            Objects.equals(landkode, that.landkode);
+        return Objects.equals(periode, that.periode) && Objects.equals(arbeidType, that.arbeidType) && Objects.equals(utenlandskVirksomhetNavn,
+            that.utenlandskVirksomhetNavn) && Objects.equals(landkode, that.landkode);
     }
 
     @Override
@@ -170,13 +172,7 @@ public class OppgittArbeidsforhold extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" +
-            "id=" + id +
-            ", periode=" + periode +
-            ", erUtenlandskInntekt=" + erUtenlandskInntekt +
-            ", arbeidType=" + arbeidType +
-            ", landkode=" + landkode +
-            ", utenlandskVirksomhetNavn=" + utenlandskVirksomhetNavn +
-            '>';
+        return getClass().getSimpleName() + "<" + "id=" + id + ", periode=" + periode + ", erUtenlandskInntekt=" + erUtenlandskInntekt
+            + ", arbeidType=" + arbeidType + ", landkode=" + landkode + ", utenlandskVirksomhetNavn=" + utenlandskVirksomhetNavn + '>';
     }
 }

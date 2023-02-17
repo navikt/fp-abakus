@@ -20,9 +20,8 @@ public enum UtsettelseÅrsakType implements Kodeverdi {
     UDEFINERT("-", "Ikke satt eller valgt kode"),
     ;
 
-    private static final Map<String, UtsettelseÅrsakType> KODER = new LinkedHashMap<>();
-
     public static final String KODEVERK = "UTSETTELSE_AARSAK_TYPE";
+    private static final Map<String, UtsettelseÅrsakType> KODER = new LinkedHashMap<>();
 
     static {
         for (var v : values()) {
@@ -46,8 +45,7 @@ public enum UtsettelseÅrsakType implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent UtsettelseÅrsak: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent UtsettelseÅrsak: " + kode));
     }
 
     public static Map<String, UtsettelseÅrsakType> kodeMap() {

@@ -15,14 +15,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class FnrPersonident extends PersonIdent {
     public static final String IDENT_TYPE = "FNR";
-    
+
     @JsonProperty(value = "ident", required = true)
     @NotNull
     @Pattern(regexp = "^\\d{11}+$", message = "fnr [${validatedValue}] har ikke gyldig verdi (11 siffer)")
     private String ident;
 
     @JsonCreator
-    public FnrPersonident(@JsonProperty(value = "ident", required=true) String kode) {
+    public FnrPersonident(@JsonProperty(value = "ident", required = true) String kode) {
         this.ident = kode;
     }
 

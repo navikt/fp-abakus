@@ -34,7 +34,7 @@ public class YtelseV1 extends Ytelse {
     @JsonProperty("ytelse")
     private Ytelser ytelse;
 
-    @Pattern(regexp = "^(-?[1-9]|[a-z0])[a-z0-9_:-]*$", flags = { Pattern.Flag.CASE_INSENSITIVE })
+    @Pattern(regexp = "^(-?[1-9]|[a-z0])[a-z0-9_:-]*$", flags = {Pattern.Flag.CASE_INSENSITIVE})
     @JsonProperty("saksnummer")
     private String saksnummer;
 
@@ -152,8 +152,8 @@ public class YtelseV1 extends Ytelse {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[aktør=" + aktør + ", vedtattTidspunkt=" + vedtattTidspunkt + ", ytelse="
-                + ytelse + ", saksnummer=" + saksnummer + ", vedtakReferanse=" + vedtakReferanse + ", status=" + ytelseStatus
-                + ", kildesystem=" + kildesystem + ", periode=" + periode + ", anvist=" + anvist + "]";
+        return getClass().getSimpleName() + "[aktør=" + aktør + ", vedtattTidspunkt=" + vedtattTidspunkt + ", ytelse=" + ytelse + ", saksnummer="
+            + saksnummer + ", vedtakReferanse=" + vedtakReferanse + ", status=" + ytelseStatus + ", kildesystem=" + kildesystem + ", periode="
+            + periode + ", anvist=" + anvist + "]";
     }
 }

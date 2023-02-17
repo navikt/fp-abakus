@@ -35,20 +35,19 @@ public class SjekkDtoStrukturTest {
         List<Arguments> params = new ArrayList<>();
 
         // avled code location fra klassene
-        KONTRAKT_LOKASJONER.stream()
-            .map(c -> {
-                try {
-                    return c.getProtectionDomain().getCodeSource().getLocation().toURI();
-                } catch (URISyntaxException e) {
-                    throw new IllegalArgumentException("Ikke en URI for klasse: " + c, e);
-                }
-            }).distinct()
-            .forEach(uri -> {
-                IndexClasses.getIndexFor(uri).getClasses(
-                    ci -> ci.name().toString().endsWith("Dto"), c -> !c.isInterface())
-                    .stream().forEach(c -> params.add(Arguments.of(c.getName(), c)));
+        KONTRAKT_LOKASJONER.stream().map(c -> {
+            try {
+                return c.getProtectionDomain().getCodeSource().getLocation().toURI();
+            } catch (URISyntaxException e) {
+                throw new IllegalArgumentException("Ikke en URI for klasse: " + c, e);
+            }
+        }).distinct().forEach(uri -> {
+            IndexClasses.getIndexFor(uri)
+                .getClasses(ci -> ci.name().toString().endsWith("Dto"), c -> !c.isInterface())
+                .stream()
+                .forEach(c -> params.add(Arguments.of(c.getName(), c)));
 
-            });
+        });
 
         return params.stream();
     }
@@ -66,7 +65,8 @@ public class SjekkDtoStrukturTest {
             .filter(f -> f.getAnnotation(JsonProperty.class) == null)
             .filter(f -> f.getAnnotation(JsonValue.class) == null)
             .filter(f -> f.getAnnotation(JsonIgnore.class) == null)
-            .map(f -> f.getName()).collect(Collectors.toSet());
+            .map(f -> f.getName())
+            .collect(Collectors.toSet());
 
         if (!fieldNames.isEmpty()) {
             for (PropertyDescriptor prop : Introspector.getBeanInfo(c, c.getSuperclass()).getPropertyDescriptors()) {
@@ -74,8 +74,7 @@ public class SjekkDtoStrukturTest {
                     Method readName = prop.getReadMethod();
                     String propName = prop.getName();
                     if (!SKIPPED.contains(propName)) {
-                        if (readName.getAnnotation(JsonIgnore.class) == null
-                            && readName.getAnnotation(JsonProperty.class) == null) {
+                        if (readName.getAnnotation(JsonIgnore.class) == null && readName.getAnnotation(JsonProperty.class) == null) {
                             Assertions.assertThat(propName)
                                 .as("Gettere er ikke samstemt med felt i klasse, sørg for matchende bean navn og return type eller bruk @JsonProperty/@JsonIgnore/@JsonValue til å sette navn for json struktur: "
                                     + c.getName())
@@ -88,8 +87,7 @@ public class SjekkDtoStrukturTest {
                     Method readName = prop.getWriteMethod();
                     String propName = prop.getName();
                     if (!SKIPPED.contains(propName)) {
-                        if (readName.getAnnotation(JsonIgnore.class) == null
-                            && readName.getAnnotation(JsonProperty.class) == null) {
+                        if (readName.getAnnotation(JsonIgnore.class) == null && readName.getAnnotation(JsonProperty.class) == null) {
                             Assertions.assertThat(propName)
                                 .as("Settere er ikke samstemt med felt i klasse, sørg for matchende bean navn og return type eller bruk @JsonProperty/@JsonIgnore/@JsonValue til å sette navn for json struktur: "
                                     + c.getName())

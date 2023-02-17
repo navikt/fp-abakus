@@ -32,13 +32,13 @@ public enum NaturalytelseType implements Kodeverdi {
     BEDRIFTSBARNEHAGEPLASS("BEDRIFTSBARNEHAGE", "Bedriftsbarnehageplass", "bedriftsbarnehageplass"),
     YRKEBIL_TJENESTLIGBEHOV_KILOMETER("YRKESBIL_KILOMETER", "Yrkesbil tjenesteligbehov kilometer", "yrkebilTjenestligbehovKilometer"),
     YRKEBIL_TJENESTLIGBEHOV_LISTEPRIS("YRKESBIL_LISTEPRIS", "Yrkesbil tjenesteligbehov listepris", "yrkebilTjenestligbehovListepris"),
-    INNBETALING_TIL_UTENLANDSK_PENSJONSORDNING("UTENLANDSK_PENSJONSORDNING", "Innbetaling utenlandsk pensjonsordning", "innbetalingTilUtenlandskPensjonsordning"),
+    INNBETALING_TIL_UTENLANDSK_PENSJONSORDNING("UTENLANDSK_PENSJONSORDNING", "Innbetaling utenlandsk pensjonsordning",
+        "innbetalingTilUtenlandskPensjonsordning"),
     UDEFINERT("-", "Ikke definert", null),
     ;
 
-    private static final Map<String, NaturalytelseType> KODER = new LinkedHashMap<>();
-
     public static final String KODEVERK = "NATURAL_YTELSE_TYPE";
+    private static final Map<String, NaturalytelseType> KODER = new LinkedHashMap<>();
 
     static {
         for (var v : values()) {
@@ -70,12 +70,15 @@ public enum NaturalytelseType implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent NaturalYtelseType: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent NaturalYtelseType: " + kode));
     }
 
     public static Map<String, NaturalytelseType> kodeMap() {
         return Collections.unmodifiableMap(KODER);
+    }
+
+    public static NaturalytelseType finnForKodeverkEiersKode(String offisiellDokumentType) {
+        return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
     @Override
@@ -96,10 +99,6 @@ public enum NaturalytelseType implements Kodeverdi {
     @Override
     public String getOffisiellKode() {
         return offisiellKode;
-    }
-
-    public static NaturalytelseType finnForKodeverkEiersKode(String offisiellDokumentType) {
-        return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
 }

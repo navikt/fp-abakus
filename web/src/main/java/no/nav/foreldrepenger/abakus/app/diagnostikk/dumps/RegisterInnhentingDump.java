@@ -1,20 +1,5 @@
 package no.nav.foreldrepenger.abakus.app.diagnostikk.dumps;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
@@ -35,18 +20,32 @@ import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
 import no.nav.vedtak.felles.integrasjon.spokelse.Spøkelse;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+
 @ApplicationScoped
 @YtelseTypeRef
 public class RegisterInnhentingDump implements DebugDump {
 
     private static final Collection<InntektskildeType> INNTEKTSKILDER = IAYRegisterInnhentingFellesTjenesteImpl.ELEMENT_TIL_INNTEKTS_KILDE_MAP.values();
-
+    private final String prefiks = "register-innhenting";
     private InntektTjeneste inntektTjeneste;
     private AaregRestKlient aaregKlient;
     private InfotrygdGrunnlagAggregator infotrygdGrunnlag;
     private Spøkelse spokelseKlient;
     private ObjectWriter writer;
-    private final String prefiks = "register-innhenting";
 
     public RegisterInnhentingDump() {
         //
@@ -99,9 +98,7 @@ public class RegisterInnhentingDump implements DebugDump {
         var fom = periode.getFomDato();
         var tom = periode.getTomDato();
         INNTEKTSKILDER.forEach(inntektsKilde -> {
-            var request = FinnInntektRequest.builder(YearMonth.from(fom), YearMonth.from(tom))
-                .medAktørId(aktørId.getId())
-                .build();
+            var request = FinnInntektRequest.builder(YearMonth.from(fom), YearMonth.from(tom)).medAktørId(aktørId.getId()).build();
 
             dumps.add(dumpJsonOutput(prefiks + "-inntekt-" + inntektsKilde.getKode(), () -> inntektTjeneste.finnInntektRaw(request, inntektsKilde)));
         });

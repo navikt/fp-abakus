@@ -23,9 +23,8 @@ public enum RegisterdataType implements Kodeverdi {
     YTELSE,
     ;
 
-    private static final Map<String, RegisterdataType> KODER = new LinkedHashMap<>();
-
     public static final String KODEVERK = "REGISTERDATA_TYPE";
+    private static final Map<String, RegisterdataType> KODER = new LinkedHashMap<>();
 
     static {
         for (var v : values()) {
@@ -46,8 +45,7 @@ public enum RegisterdataType implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent RegisterdataType: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent RegisterdataType: " + kode));
     }
 
     public static Map<String, RegisterdataType> kodeMap() {

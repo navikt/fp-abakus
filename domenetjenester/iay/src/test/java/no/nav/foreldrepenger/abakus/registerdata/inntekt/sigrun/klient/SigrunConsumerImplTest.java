@@ -19,73 +19,6 @@ import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 public class SigrunConsumerImplTest {
 
     private static final long AKTØR_ID = 123123L;
-    private SigrunRestClient client = Mockito.mock(SigrunRestClient.class);
-
-    private SigrunConsumer consumer = new SigrunConsumerImpl(client);
-
-    private String JSON = """
-        [
-          {
-            "tekniskNavn": "personinntektFiskeFangstFamiliebarnehage",
-            "verdi": "814952"
-          },
-          {
-            "tekniskNavn": "personinntektNaering",
-            "verdi": "785896"
-          },
-          {
-            "tekniskNavn": "personinntektBarePensjonsdel",
-            "verdi": "844157"
-          },
-          {
-            "tekniskNavn": "svalbardLoennLoennstrekkordningen",
-            "verdi": "874869"
-          },
-          {
-            "tekniskNavn": "personinntektLoenn",
-            "verdi": "746315"
-          },
-          {
-            "tekniskNavn": "svalbardPersoninntektNaering",
-            "verdi": "696009"
-          },
-          {
-            "tekniskNavn": "skatteoppgjoersdato",
-            "verdi": "2017-08-09"
-          }
-        ]
-        """;
-
-
-    private String JSON_uten_skatteoppgjoersdato = """
-        [
-          {
-            "tekniskNavn": "personinntektFiskeFangstFamiliebarnehage",
-            "verdi": "814952"
-          },
-          {
-            "tekniskNavn": "personinntektNaering",
-            "verdi": "785896"
-          },
-          {
-            "tekniskNavn": "personinntektBarePensjonsdel",
-            "verdi": "844157"
-          },
-          {
-            "tekniskNavn": "svalbardLoennLoennstrekkordningen",
-            "verdi": "874869"
-          },
-          {
-            "tekniskNavn": "personinntektLoenn",
-            "verdi": "746315"
-          },
-          {
-            "tekniskNavn": "svalbardPersoninntektNaering",
-            "verdi": "696009"
-          }
-        ]
-        """;
-
     String JSON_summerskattegrunnlag = """
         {
           "grunnlag": [
@@ -126,6 +59,68 @@ public class SigrunConsumerImplTest {
             }
           ]
         }
+        """;
+    private SigrunRestClient client = Mockito.mock(SigrunRestClient.class);
+    private SigrunConsumer consumer = new SigrunConsumerImpl(client);
+    private String JSON = """
+        [
+          {
+            "tekniskNavn": "personinntektFiskeFangstFamiliebarnehage",
+            "verdi": "814952"
+          },
+          {
+            "tekniskNavn": "personinntektNaering",
+            "verdi": "785896"
+          },
+          {
+            "tekniskNavn": "personinntektBarePensjonsdel",
+            "verdi": "844157"
+          },
+          {
+            "tekniskNavn": "svalbardLoennLoennstrekkordningen",
+            "verdi": "874869"
+          },
+          {
+            "tekniskNavn": "personinntektLoenn",
+            "verdi": "746315"
+          },
+          {
+            "tekniskNavn": "svalbardPersoninntektNaering",
+            "verdi": "696009"
+          },
+          {
+            "tekniskNavn": "skatteoppgjoersdato",
+            "verdi": "2017-08-09"
+          }
+        ]
+        """;
+    private String JSON_uten_skatteoppgjoersdato = """
+        [
+          {
+            "tekniskNavn": "personinntektFiskeFangstFamiliebarnehage",
+            "verdi": "814952"
+          },
+          {
+            "tekniskNavn": "personinntektNaering",
+            "verdi": "785896"
+          },
+          {
+            "tekniskNavn": "personinntektBarePensjonsdel",
+            "verdi": "844157"
+          },
+          {
+            "tekniskNavn": "svalbardLoennLoennstrekkordningen",
+            "verdi": "874869"
+          },
+          {
+            "tekniskNavn": "personinntektLoenn",
+            "verdi": "746315"
+          },
+          {
+            "tekniskNavn": "svalbardPersoninntektNaering",
+            "verdi": "696009"
+          }
+        ]
         """;
 
     @Test
@@ -171,8 +166,7 @@ public class SigrunConsumerImplTest {
 
         Mockito.when(client.hentBeregnetSkattForAktørOgÅr(eq(AKTØR_ID), any()))
             .thenReturn(Arrays.asList(DefaultJsonMapper.fromJson(JSON, BeregnetSkatt[].class)));
-        Mockito.when(client.hentSummertskattegrunnlag(AKTØR_ID, iFjor.toString()))
-            .thenReturn(Optional.of(respons));
+        Mockito.when(client.hentSummertskattegrunnlag(AKTØR_ID, iFjor.toString())).thenReturn(Optional.of(respons));
 
 
         SigrunSummertSkattegrunnlagResponse response = consumer.summertSkattegrunnlag(AKTØR_ID, null);

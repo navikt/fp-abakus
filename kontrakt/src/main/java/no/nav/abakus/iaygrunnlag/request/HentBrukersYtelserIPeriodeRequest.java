@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import no.nav.abakus.iaygrunnlag.FnrPersonident;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
 import java.util.Objects;
 import java.util.Set;
 
@@ -29,13 +31,8 @@ public class HentBrukersYtelserIPeriodeRequest {
     private Periode periode;
 
     @JsonProperty(value = "ytelser")
-    private Set<YtelseType> ytelser = Set.of(YtelseType.PLEIEPENGER_NÆRSTÅENDE,
-        YtelseType.FORELDREPENGER,
-        YtelseType.OMSORGSPENGER,
-        YtelseType.OPPLÆRINGSPENGER,
-        YtelseType.FRISINN,
-        YtelseType.SVANGERSKAPSPENGER,
-        YtelseType.PLEIEPENGER_SYKT_BARN);
+    private Set<YtelseType> ytelser = Set.of(YtelseType.PLEIEPENGER_NÆRSTÅENDE, YtelseType.FORELDREPENGER, YtelseType.OMSORGSPENGER,
+        YtelseType.OPPLÆRINGSPENGER, YtelseType.FRISINN, YtelseType.SVANGERSKAPSPENGER, YtelseType.PLEIEPENGER_SYKT_BARN);
 
     public HentBrukersYtelserIPeriodeRequest() {
     }

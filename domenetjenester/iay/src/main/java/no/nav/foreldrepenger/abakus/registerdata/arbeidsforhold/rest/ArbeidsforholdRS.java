@@ -1,11 +1,11 @@
 package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
@@ -57,14 +57,8 @@ public class ArbeidsforholdRS {
 
     @Override
     public String toString() {
-        return "ArbeidsforholdRS{" +
-                "arbeidsforholdId='" + arbeidsforholdId + '\'' +
-                ", navArbeidsforholdId=" + navArbeidsforholdId +
-                ", arbeidsgiver=" + arbeidsgiver +
-                ", ansettelsesperiode=" + ansettelsesperiode +
-                ", arbeidsavtaler=" + arbeidsavtaler +
-                ", permisjonPermitteringer=" + permisjonPermitteringer +
-                ", type='" + type + '\'' +
-                '}';
+        return "ArbeidsforholdRS{" + "arbeidsforholdId='" + arbeidsforholdId + '\'' + ", navArbeidsforholdId=" + navArbeidsforholdId
+            + ", arbeidsgiver=" + arbeidsgiver + ", ansettelsesperiode=" + ansettelsesperiode + ", arbeidsavtaler=" + arbeidsavtaler
+            + ", permisjonPermitteringer=" + permisjonPermitteringer + ", type='" + type + '\'' + '}';
     }
 }

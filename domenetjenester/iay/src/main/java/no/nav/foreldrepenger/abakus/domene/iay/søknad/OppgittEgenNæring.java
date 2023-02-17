@@ -248,20 +248,18 @@ public class OppgittEgenNæring extends BaseEntitet implements IndexKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof OppgittEgenNæring)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !(o instanceof OppgittEgenNæring)) {
+            return false;
+        }
         var that = (OppgittEgenNæring) o;
-        return Objects.equals(periode, that.periode) &&
-            Objects.equals(orgNummer, that.orgNummer) &&
-            Objects.equals(nyoppstartet, that.nyoppstartet) &&
-            Objects.equals(virksomhetType, that.virksomhetType) &&
-            Objects.equals(regnskapsførerNavn, that.regnskapsførerNavn) &&
-            Objects.equals(regnskapsførerTlf, that.regnskapsførerTlf) &&
-            Objects.equals(endringDato, that.endringDato) &&
-            Objects.equals(begrunnelse, that.begrunnelse) &&
-            Objects.equals(bruttoInntekt, that.bruttoInntekt) &&
-            Objects.equals(landkode, that.landkode) &&
-            Objects.equals(utenlandskVirksomhetNavn, that.utenlandskVirksomhetNavn);
+        return Objects.equals(periode, that.periode) && Objects.equals(orgNummer, that.orgNummer) && Objects.equals(nyoppstartet, that.nyoppstartet)
+            && Objects.equals(virksomhetType, that.virksomhetType) && Objects.equals(regnskapsførerNavn, that.regnskapsførerNavn) && Objects.equals(
+            regnskapsførerTlf, that.regnskapsførerTlf) && Objects.equals(endringDato, that.endringDato) && Objects.equals(begrunnelse,
+            that.begrunnelse) && Objects.equals(bruttoInntekt, that.bruttoInntekt) && Objects.equals(landkode, that.landkode) && Objects.equals(
+            utenlandskVirksomhetNavn, that.utenlandskVirksomhetNavn);
     }
 
     @Override
@@ -272,19 +270,9 @@ public class OppgittEgenNæring extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "OppgittEgenNæring{" +
-            "id=" + id +
-            ", periode=" + periode +
-            ", virksomhet=" + orgNummer +
-            ", nyoppstartet=" + nyoppstartet +
-            ", virksomhetType=" + virksomhetType +
-            ", regnskapsførerNavn='" + regnskapsførerNavn + '\'' +
-            ", regnskapsførerTlf='" + regnskapsførerTlf + '\'' +
-            ", endringDato=" + endringDato +
-            ", begrunnelse='" + begrunnelse + '\'' +
-            ", bruttoInntekt=" + bruttoInntekt +
-            ", landkode=" + landkode +
-            ", utenlandskVirksomhetNavn=" + utenlandskVirksomhetNavn +
-            '}';
+        return "OppgittEgenNæring{" + "id=" + id + ", periode=" + periode + ", virksomhet=" + orgNummer + ", nyoppstartet=" + nyoppstartet
+            + ", virksomhetType=" + virksomhetType + ", regnskapsførerNavn='" + regnskapsførerNavn + '\'' + ", regnskapsførerTlf='"
+            + regnskapsførerTlf + '\'' + ", endringDato=" + endringDato + ", begrunnelse='" + begrunnelse + '\'' + ", bruttoInntekt=" + bruttoInntekt
+            + ", landkode=" + landkode + ", utenlandskVirksomhetNavn=" + utenlandskVirksomhetNavn + '}';
     }
 }

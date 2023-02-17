@@ -56,10 +56,7 @@ public class ApplicationServiceStarter {
     }
 
     public boolean isKafkaAlive() {
-        return serviceMap.entrySet()
-            .stream()
-            .filter(it -> it.getKey() != null)
-            .allMatch(it -> it.getKey().isAlive());
+        return serviceMap.entrySet().stream().filter(it -> it.getKey() != null).allMatch(it -> it.getKey().isAlive());
     }
 
     public void stopServices() {

@@ -29,9 +29,11 @@ public class SigrunTjeneste {
     }
 
 
-    public Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> beregnetSkatt(AktørId aktørId, IntervallEntitet opplysningsperiodeSkattegrunnlag) {
+    public Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> beregnetSkatt(AktørId aktørId,
+                                                                                  IntervallEntitet opplysningsperiodeSkattegrunnlag) {
         SigrunResponse beregnetskatt = sigrunConsumer.beregnetskatt(Long.valueOf(aktørId.getId()), opplysningsperiodeSkattegrunnlag);
-        SigrunSummertSkattegrunnlagResponse summertSkattegrunnlag = sigrunConsumer.summertSkattegrunnlag(Long.valueOf(aktørId.getId()), opplysningsperiodeSkattegrunnlag);
+        SigrunSummertSkattegrunnlagResponse summertSkattegrunnlag = sigrunConsumer.summertSkattegrunnlag(Long.valueOf(aktørId.getId()),
+            opplysningsperiodeSkattegrunnlag);
         return SigrunTilInternMapper.mapFraSigrunTilIntern(beregnetskatt.beregnetSkatt(), summertSkattegrunnlag.summertskattegrunnlagMap());
     }
 

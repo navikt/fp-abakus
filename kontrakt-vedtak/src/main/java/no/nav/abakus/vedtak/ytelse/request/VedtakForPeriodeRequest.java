@@ -22,9 +22,8 @@ import no.nav.abakus.vedtak.ytelse.Ytelser;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class VedtakForPeriodeRequest {
 
-    public static final Set<Ytelser> ALLE_YTELSER = Set.of(Ytelser.FORELDREPENGER, Ytelser.SVANGERSKAPSPENGER,
-        Ytelser.PLEIEPENGER_SYKT_BARN, Ytelser.PLEIEPENGER_NÆRSTÅENDE, Ytelser.OPPLÆRINGSPENGER, Ytelser.OMSORGSPENGER,
-        Ytelser.FRISINN);
+    public static final Set<Ytelser> ALLE_YTELSER = Set.of(Ytelser.FORELDREPENGER, Ytelser.SVANGERSKAPSPENGER, Ytelser.PLEIEPENGER_SYKT_BARN,
+        Ytelser.PLEIEPENGER_NÆRSTÅENDE, Ytelser.OPPLÆRINGSPENGER, Ytelser.OMSORGSPENGER, Ytelser.FRISINN);
 
     @JsonProperty(value = "ident", required = true)
     @NotNull

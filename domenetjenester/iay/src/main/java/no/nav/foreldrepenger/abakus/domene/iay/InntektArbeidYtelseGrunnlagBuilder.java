@@ -96,17 +96,15 @@ public class InntektArbeidYtelseGrunnlagBuilder {
     public ArbeidsforholdInformasjon getInformasjon() {
         var informasjon = kladd.getArbeidsforholdInformasjon();
 
-        var informasjonEntitet = informasjon
-            .map(it -> {
-                var entitet = it;
-                if (entitet.getId() == null) {
-                    // ulagret, med preparert, returner her istdf å lage nye hver gang.
-                    return entitet;
-                } else {
-                    return new ArbeidsforholdInformasjon(it);
-                }
-            })
-            .orElseGet(() -> new ArbeidsforholdInformasjon());
+        var informasjonEntitet = informasjon.map(it -> {
+            var entitet = it;
+            if (entitet.getId() == null) {
+                // ulagret, med preparert, returner her istdf å lage nye hver gang.
+                return entitet;
+            } else {
+                return new ArbeidsforholdInformasjon(it);
+            }
+        }).orElseGet(() -> new ArbeidsforholdInformasjon());
         kladd.setInformasjon(informasjonEntitet);
         return informasjonEntitet;
     }
@@ -143,7 +141,8 @@ public class InntektArbeidYtelseGrunnlagBuilder {
                 throw new IllegalStateException("Utviklerfeil: Er ikke lov å endre oppgitt opptjening!");
             }
             if (kladd.getOppgittOpptjeningAggregat().isPresent()) {
-                throw new IllegalStateException("Utviklerfeil: Har allerede lagt inn oppgitt oppptjening på aggregat. Kan da ikke legge til oppgitt opptjening utenom aggregat.");
+                throw new IllegalStateException(
+                    "Utviklerfeil: Har allerede lagt inn oppgitt oppptjening på aggregat. Kan da ikke legge til oppgitt opptjening utenom aggregat.");
             }
             kladd.setOppgittOpptjening(builder.build());
         }
@@ -153,16 +152,16 @@ public class InntektArbeidYtelseGrunnlagBuilder {
     public InntektArbeidYtelseGrunnlagBuilder leggTilOppgittOpptjening(OppgittOpptjeningBuilder builder) {
         if (builder != null) {
             if (kladd.getOppgittOpptjening().isPresent()) {
-                throw new IllegalStateException("Utviklerfeil: Har allerede lagt inn oppgitt opptjening utenom aggregat. Kan da ikke legge til oppgitt opptjening på aggregat i tillegg.");
+                throw new IllegalStateException(
+                    "Utviklerfeil: Har allerede lagt inn oppgitt opptjening utenom aggregat. Kan da ikke legge til oppgitt opptjening på aggregat i tillegg.");
             }
             OppgittOpptjening oppgittOpptjening = builder.build();
             if (oppgittOpptjening.getJournalpostId() == null) {
                 throw new IllegalStateException("Utviklerfeil: Legg-til krever journalpostId.");
             }
             Optional<OppgittOpptjeningAggregat> gammel = kladd.getOppgittOpptjeningAggregat();
-            OppgittOpptjeningAggregat aggregat = gammel.isPresent()
-                ? OppgittOpptjeningAggregat.oppdater(gammel.get(), oppgittOpptjening)
-                : OppgittOpptjeningAggregat.ny(oppgittOpptjening);
+            OppgittOpptjeningAggregat aggregat = gammel.isPresent() ? OppgittOpptjeningAggregat.oppdater(gammel.get(),
+                oppgittOpptjening) : OppgittOpptjeningAggregat.ny(oppgittOpptjening);
 
             kladd.setOppgittOpptjeningAggregat(aggregat);
         }
@@ -173,7 +172,8 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         if (builder != null) {
             kladd.setOverstyrtOppgittOpptjening(builder.build());
             if (kladd.getOppgittOpptjeningAggregat().isPresent()) {
-                throw new IllegalStateException("Sanity check: Har allerede lagt inn oppgitt oppptjening på aggregat. Du vil da sannsynligvis ikke overstyre slik.");
+                throw new IllegalStateException(
+                    "Sanity check: Har allerede lagt inn oppgitt oppptjening på aggregat. Du vil da sannsynligvis ikke overstyre slik.");
             }
         }
         return this;

@@ -34,41 +34,38 @@ import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 @Table(name = "IAY_YRKESAKTIVITET")
 public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
 
+    /*
+     * Her legger man inn data som er innhentet tidligere, men som ikke blir reinnhentet etter sanering av integrasjon eller endring av logikk
+     * For Yrkesaktivitet gjelder dette frilansaktiviteter innhentet fra Inntektskomponenten
+     */
+    static final LocalDate CUTOFF_FRILANS_AAREG = LocalDate.of(2020, 1, 1);
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_YRKESAKTIVITET")
     private Long id;
-
     @OneToMany(mappedBy = "yrkesaktivitet")
     @ChangeTracked
     private Set<AktivitetsAvtale> aktivitetsAvtale = new LinkedHashSet<>();
-
     @OneToMany(mappedBy = "yrkesaktivitet")
     @ChangeTracked
     private Set<Permisjon> permisjon = new LinkedHashSet<>();
-
     @Column(name = "NAVN_ARBEIDSGIVER_UTLAND")
     @ChangeTracked
     private String navnArbeidsgiverUtland;
-
     /**
      * Kan være privat eller virksomhet som arbeidsgiver. Dersom {@link #arbeidType} = 'NÆRING', er denne null.
      */
     @Embedded
     @ChangeTracked
     private Arbeidsgiver arbeidsgiver;
-
     @Embedded
     private InternArbeidsforholdRef arbeidsforholdRef;
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "aktoer_arbeid_id", nullable = false, updatable = false)
     private AktørArbeid aktørArbeid;
-
     @ChangeTracked
     @Convert(converter = ArbeidTypeKodeverdiConverter.class)
     @Column(name = "arbeid_type", nullable = false, updatable = false)
     private ArbeidType arbeidType;
-
     @Version
     @Column(name = "versjon", nullable = false)
     private long versjon;
@@ -99,7 +96,7 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { arbeidsgiver, arbeidsforholdRef, arbeidType };
+        Object[] keyParts = {arbeidsgiver, arbeidsforholdRef, arbeidType};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -209,7 +206,7 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
     /**
      * Identifiser om yrkesaktiviteten gjelder for arbeidsgiver og arbeidsforholdRef.
      *
-     * @param arbeidsgiver en {@link Arbeidsgiver}
+     * @param arbeidsgiver      en {@link Arbeidsgiver}
      * @param arbeidsforholdRef et {@link InternArbeidsforholdRef}
      * @return true hvis arbeidsgiver og arbeidsforholdRef macther
      */
@@ -229,23 +226,14 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
 
     void tilbakestillAvtaler() {
         if (erYrkesaktivitetMedLegacyInnhold()) {
-            this.aktivitetsAvtale = aktivitetsAvtale.stream()
-                .filter(this::erLegacyAktivitetsAvtale)
-                .collect(Collectors.toSet());
+            this.aktivitetsAvtale = aktivitetsAvtale.stream().filter(this::erLegacyAktivitetsAvtale).collect(Collectors.toSet());
         } else {
             aktivitetsAvtale.clear();
         }
     }
 
-    /*
-     * Her legger man inn data som er innhentet tidligere, men som ikke blir reinnhentet etter sanering av integrasjon eller endring av logikk
-     * For Yrkesaktivitet gjelder dette frilansaktiviteter innhentet fra Inntektskomponenten
-     */
-    static final LocalDate CUTOFF_FRILANS_AAREG = LocalDate.of(2020,1,1);
-
     boolean erYrkesaktivitetMedLegacyInnhold() {
-        return ArbeidType.FRILANSER_OPPDRAGSTAKER_MED_MER.equals(arbeidType)
-            && aktivitetsAvtale.stream().anyMatch(this::erLegacyAktivitetsAvtale);
+        return ArbeidType.FRILANSER_OPPDRAGSTAKER_MED_MER.equals(arbeidType) && aktivitetsAvtale.stream().anyMatch(this::erLegacyAktivitetsAvtale);
     }
 
     private boolean erLegacyAktivitetsAvtale(AktivitetsAvtale avtale) {
@@ -264,10 +252,9 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
             return false;
         }
         Yrkesaktivitet other = (Yrkesaktivitet) obj;
-        return Objects.equals(this.getArbeidsforholdRef(), other.getArbeidsforholdRef()) &&
-            Objects.equals(this.getNavnArbeidsgiverUtland(), other.getNavnArbeidsgiverUtland()) &&
-            Objects.equals(this.getArbeidType(), other.getArbeidType()) &&
-            Objects.equals(this.getArbeidsgiver(), other.getArbeidsgiver());
+        return Objects.equals(this.getArbeidsforholdRef(), other.getArbeidsforholdRef()) && Objects.equals(this.getNavnArbeidsgiverUtland(),
+            other.getNavnArbeidsgiverUtland()) && Objects.equals(this.getArbeidType(), other.getArbeidType()) && Objects.equals(
+            this.getArbeidsgiver(), other.getArbeidsgiver());
     }
 
     @Override
@@ -277,12 +264,8 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "YrkesaktivitetEntitet{" +
-            "id=" + id +
-            ", arbeidsgiver=" + arbeidsgiver +
-            ", arbeidsforholdRef=" + arbeidsforholdRef +
-            ", arbeidType=" + arbeidType +
-            '}';
+        return "YrkesaktivitetEntitet{" + "id=" + id + ", arbeidsgiver=" + arbeidsgiver + ", arbeidsforholdRef=" + arbeidsforholdRef + ", arbeidType="
+            + arbeidType + '}';
     }
 
     void fjernPeriode(IntervallEntitet aktivitetsPeriode) {

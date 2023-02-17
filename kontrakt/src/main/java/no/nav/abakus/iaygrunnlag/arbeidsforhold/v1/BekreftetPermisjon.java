@@ -11,17 +11,16 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.BekreftetPermisjonStatus;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class BekreftetPermisjon {
-    
+
     @JsonProperty(value = "status")
     @NotNull
     private BekreftetPermisjonStatus status;
@@ -32,7 +31,7 @@ public class BekreftetPermisjon {
     private Periode periode;
 
     @JsonCreator
-    public BekreftetPermisjon(@JsonProperty("periode") @Valid @NotNull Periode periode, 
+    public BekreftetPermisjon(@JsonProperty("periode") @Valid @NotNull Periode periode,
                               @JsonProperty(value = "status") @NotNull BekreftetPermisjonStatus status) {
         Objects.requireNonNull(periode, "periode");
         this.periode = periode;
@@ -53,10 +52,12 @@ public class BekreftetPermisjon {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
         BekreftetPermisjon that = (BekreftetPermisjon) o;
         return Objects.equals(periode, that.periode);
     }
@@ -68,10 +69,7 @@ public class BekreftetPermisjon {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" +
-            "periode=" + periode +
-            ", status=" + status+
-            '>';
+        return getClass().getSimpleName() + "<" + "periode=" + periode + ", status=" + status + '>';
     }
 
 }

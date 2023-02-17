@@ -76,7 +76,8 @@ public class InntektsmeldingerRestTjeneste {
 
     @Inject
     public InntektsmeldingerRestTjeneste(InntektsmeldingerTjeneste imTjeneste,
-                                         KoblingTjeneste koblingTjeneste, InntektArbeidYtelseTjeneste iayTjeneste) {
+                                         KoblingTjeneste koblingTjeneste,
+                                         InntektArbeidYtelseTjeneste iayTjeneste) {
         this.imTjeneste = imTjeneste;
         this.koblingTjeneste = koblingTjeneste;
         this.iayTjeneste = iayTjeneste;
@@ -108,7 +109,7 @@ public class InntektsmeldingerRestTjeneste {
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Hent refusjonskrav fra inntektsmeldinger for angitt søke spesifikasjon", tags = "inntektsmelding")
     @BeskyttetRessurs(actionType = ActionType.READ, resource = INNTEKSTMELDING)
-    @SuppressWarnings({ "findsecbugs:JAXRS_ENDPOINT", "resource" })
+    @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response hentRefusjonskravDatoForSak(@NotNull @Valid InntektsmeldingerRequestAbacDto spesifikasjon) {
         Response response;
         LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer());
@@ -130,9 +131,7 @@ public class InntektsmeldingerRestTjeneste {
 
     @POST
     @Path("/motta")
-    @Operation(description = "Motta og lagre inntektsmelding(er)", tags = "inntektsmelding", responses = {
-            @ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))
-    })
+    @Operation(description = "Motta og lagre inntektsmelding(er)", tags = "inntektsmelding", responses = {@ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))})
     @BeskyttetRessurs(actionType = ActionType.CREATE, resource = INNTEKSTMELDING)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public UuidDto lagreInntektsmeldinger(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid InntektsmeldingerMottattRequest mottattRequest) {
@@ -143,7 +142,8 @@ public class InntektsmeldingerRestTjeneste {
 
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
         var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
-        var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId, new Saksnummer(mottattRequest.getSaksnummer()));
+        var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId,
+            new Saksnummer(mottattRequest.getSaksnummer()));
 
         var informasjonBuilder = ArbeidsforholdInformasjonBuilder.oppdatere(imTjeneste.hentArbeidsforholdInformasjonForKobling(koblingReferanse));
 
@@ -187,13 +187,16 @@ public class InntektsmeldingerRestTjeneste {
     @BeskyttetRessurs(actionType = ActionType.READ, resource = INNTEKSTMELDING)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentDifferanseMellomToReferanserPåSak(@NotNull @Valid InntektsmeldingDiffRequestAbacDto spesifikasjon) {
-        LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer(), spesifikasjon.getEksternRefEn() +"/" + spesifikasjon.getEksternRefTo());
+        LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer(),
+            spesifikasjon.getEksternRefEn() + "/" + spesifikasjon.getEksternRefTo());
 
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
         var ytelseType = spesifikasjon.getYtelseType();
-        Map<Inntektsmelding, ArbeidsforholdInformasjon> førsteMap = iayTjeneste.hentAlleInntektsmeldingerForEksternRef(aktørId, saksnummer, new KoblingReferanse(spesifikasjon.getEksternRefEn()), ytelseType);
-        Map<Inntektsmelding, ArbeidsforholdInformasjon> andreMap = iayTjeneste.hentAlleInntektsmeldingerForEksternRef(aktørId, saksnummer, new KoblingReferanse(spesifikasjon.getEksternRefTo()), ytelseType);
+        Map<Inntektsmelding, ArbeidsforholdInformasjon> førsteMap = iayTjeneste.hentAlleInntektsmeldingerForEksternRef(aktørId, saksnummer,
+            new KoblingReferanse(spesifikasjon.getEksternRefEn()), ytelseType);
+        Map<Inntektsmelding, ArbeidsforholdInformasjon> andreMap = iayTjeneste.hentAlleInntektsmeldingerForEksternRef(aktørId, saksnummer,
+            new KoblingReferanse(spesifikasjon.getEksternRefTo()), ytelseType);
 
         var diffMap = iayTjeneste.utledInntektsmeldingDiff(førsteMap, andreMap);
         InntektsmeldingerDto imDiffListe = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(diffMap);

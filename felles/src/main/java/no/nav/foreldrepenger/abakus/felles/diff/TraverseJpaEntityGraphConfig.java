@@ -18,7 +18,9 @@ import javax.persistence.Version;
 
 import javassist.Modifier;
 
-/** Konfig for å scanne JPA klasser. */
+/**
+ * Konfig for å scanne JPA klasser.
+ */
 public class TraverseJpaEntityGraphConfig extends TraverseGraphConfig {
 
     @Override
@@ -34,29 +36,21 @@ public class TraverseJpaEntityGraphConfig extends TraverseGraphConfig {
         }
 
         // følger bare standard, mappede felter i Entity grafen
-        return fld.isAnnotationPresent(Column.class)
-            || fld.isAnnotationPresent(JoinColumn.class)
-            || fld.isAnnotationPresent(OneToOne.class)
-            || fld.isAnnotationPresent(ManyToOne.class)
-            || fld.isAnnotationPresent(OneToMany.class)
-            || fld.isAnnotationPresent(ManyToMany.class)
+        return fld.isAnnotationPresent(Column.class) || fld.isAnnotationPresent(JoinColumn.class) || fld.isAnnotationPresent(OneToOne.class)
+            || fld.isAnnotationPresent(ManyToOne.class) || fld.isAnnotationPresent(OneToMany.class) || fld.isAnnotationPresent(ManyToMany.class)
             || fld.isAnnotationPresent(Embedded.class);
     }
 
     protected boolean isSkippedFields(Field fld) {
-        return fld.isAnnotationPresent(DiffIgnore.class)
-            || (fld.isAnnotationPresent(Id.class) && fld.isAnnotationPresent(GeneratedValue.class))
-            || fld.isAnnotationPresent(Version.class)
-            || fld.isAnnotationPresent(GeneratedValue.class)
-            || fld.isAnnotationPresent(Transient.class);
+        return fld.isAnnotationPresent(DiffIgnore.class) || (fld.isAnnotationPresent(Id.class) && fld.isAnnotationPresent(GeneratedValue.class))
+            || fld.isAnnotationPresent(Version.class) || fld.isAnnotationPresent(GeneratedValue.class) || fld.isAnnotationPresent(Transient.class);
     }
 
     @Override
     public void valider(Node currentPath, Class<?> targetClass) {
         super.valider(currentPath, targetClass);
 
-        boolean ok = targetClass.isAnnotationPresent(Entity.class)
-            || targetClass.isAnnotationPresent(Embeddable.class);
+        boolean ok = targetClass.isAnnotationPresent(Entity.class) || targetClass.isAnnotationPresent(Embeddable.class);
         if (!ok) {
             throw new IllegalArgumentException(
                 "target [" + targetClass + "] er ikke en Entity eller Embeddable (mangler annotation):" + currentPath); //$NON-NLS-1$ //$NON-NLS-2$

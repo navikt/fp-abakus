@@ -25,7 +25,7 @@ public class ArbeidsforholdRefDto {
     @JsonProperty(value = "eksternReferanseSystem")
     @NotNull
     private Fagsystem eksternReferanseSystem;
-    
+
     @JsonProperty(value = "abakusReferanse")
     @Pattern(regexp = "^[\\p{L}\\p{N}_\\.\\-]+$", message = "Abakusreferanse [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String abakusReferanse;
@@ -39,7 +39,9 @@ public class ArbeidsforholdRefDto {
         this.eksternReferanseSystem = Objects.requireNonNull(eksternReferanseSystem, "eksternReferanseSystem");
     }
 
-    /** Hjelpe ctor -default ekstern system er AAREGISTERET inntil videre. */
+    /**
+     * Hjelpe ctor -default ekstern system er AAREGISTERET inntil videre.
+     */
     public ArbeidsforholdRefDto(@JsonProperty(value = "abakusReferanse") String internReferanse,
                                 @JsonProperty(value = "eksternReferanse", required = true) String eksternReferanse) {
         this(internReferanse, eksternReferanse, Fagsystem.AAREGISTERET);
@@ -59,19 +61,20 @@ public class ArbeidsforholdRefDto {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<abakusRef=" + getAbakusReferanse() + ", eksternRef=" + getEksternReferanse() +
-            " (" + getEksternReferanseSystem() + ")>";
+        return getClass().getSimpleName() + "<abakusRef=" + getAbakusReferanse() + ", eksternRef=" + getEksternReferanse() + " ("
+            + getEksternReferanseSystem() + ")>";
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this)
+        if (obj == this) {
             return true;
-        if (obj == null || obj.getClass() != this.getClass())
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
             return false;
+        }
         var other = getClass().cast(obj);
-        return Objects.equals(this.abakusReferanse, other.abakusReferanse)
-            && Objects.equals(this.eksternReferanse, other.eksternReferanse)
+        return Objects.equals(this.abakusReferanse, other.abakusReferanse) && Objects.equals(this.eksternReferanse, other.eksternReferanse)
             && Objects.equals(this.eksternReferanseSystem, other.eksternReferanseSystem);
     }
 

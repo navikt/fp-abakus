@@ -142,14 +142,16 @@ public class YtelseAnvistAndel extends BaseEntitet implements IndexKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         YtelseAnvistAndel that = (YtelseAnvistAndel) o;
-        return ytelseAnvist.equals(that.ytelseAnvist) && Objects.equals(arbeidsgiver, that.arbeidsgiver) &&
-            dagsats.equals(that.dagsats) &&
-            inntektskategori == that.inntektskategori &&
-            utbetalingsgradProsent.equals(that.utbetalingsgradProsent) &&
-            refusjonsgradProsent.equals(that.refusjonsgradProsent);
+        return ytelseAnvist.equals(that.ytelseAnvist) && Objects.equals(arbeidsgiver, that.arbeidsgiver) && dagsats.equals(that.dagsats)
+            && inntektskategori == that.inntektskategori && utbetalingsgradProsent.equals(that.utbetalingsgradProsent) && refusjonsgradProsent.equals(
+            that.refusjonsgradProsent);
     }
 
     @Override
@@ -159,22 +161,14 @@ public class YtelseAnvistAndel extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "YtelseAnvistAndel{" +
-            "id=" + id +
-            ", ytelseAnvist=" + ytelseAnvist +
-            ", arbeidsgiver=" + arbeidsgiver +
-            ", arbeidsforholdRef=" + arbeidsforholdRef +
-            ", dagsats=" + dagsats +
-            ", utbetalingsgradProsent=" + utbetalingsgradProsent +
-            ", refusjonsgradProsent=" + refusjonsgradProsent +
-            ", inntektskategori=" + inntektskategori +
-            ", versjon=" + versjon +
-            '}';
+        return "YtelseAnvistAndel{" + "id=" + id + ", ytelseAnvist=" + ytelseAnvist + ", arbeidsgiver=" + arbeidsgiver + ", arbeidsforholdRef="
+            + arbeidsforholdRef + ", dagsats=" + dagsats + ", utbetalingsgradProsent=" + utbetalingsgradProsent + ", refusjonsgradProsent="
+            + refusjonsgradProsent + ", inntektskategori=" + inntektskategori + ", versjon=" + versjon + '}';
     }
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { arbeidsgiver, dagsats, inntektskategori, utbetalingsgradProsent, refusjonsgradProsent };
+        Object[] keyParts = {arbeidsgiver, dagsats, inntektskategori, utbetalingsgradProsent, refusjonsgradProsent};
         return IndexKeyComposer.createKey(keyParts);
     }
 }

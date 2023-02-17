@@ -36,8 +36,9 @@ public class ForvaltningOppdaterKanalReferanseTask implements ProsessTaskHandler
     @Override
     public void doTask(ProsessTaskData prosessTaskData) {
 
-        Stream<Tuple> stream = entityManager.createNativeQuery("select distinct journalpost_id, endret_tid from IAY_INNTEKTSMELDING where kanalreferanse is null order by endret_tid nulls first", Tuple.class)
-            .getResultStream();
+        Stream<Tuple> stream = entityManager.createNativeQuery(
+            "select distinct journalpost_id, endret_tid from IAY_INNTEKTSMELDING where kanalreferanse is null order by endret_tid nulls first",
+            Tuple.class).getResultStream();
 
         var journalpostIder = stream.map(t -> t.get("journalpost_id", String.class)).collect(Collectors.toList());
 

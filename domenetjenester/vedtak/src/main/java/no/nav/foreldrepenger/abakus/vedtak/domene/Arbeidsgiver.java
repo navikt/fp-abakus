@@ -52,11 +52,9 @@ public class Arbeidsgiver implements IndexKey, TraverseValue, Serializable {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { "arbeidsgiverAktørId", arbeidsgiverAktørId };
-        Object[] keyParts1 = { "virksomhet", arbeidsgiverOrgnr };
-        return arbeidsgiverOrgnr == null
-            ? IndexKeyComposer.createKey(keyParts)
-            : IndexKeyComposer.createKey(keyParts1);
+        Object[] keyParts = {"arbeidsgiverAktørId", arbeidsgiverAktørId};
+        Object[] keyParts1 = {"virksomhet", arbeidsgiverOrgnr};
+        return arbeidsgiverOrgnr == null ? IndexKeyComposer.createKey(keyParts) : IndexKeyComposer.createKey(keyParts1);
     }
 
     public OrgNummer getOrgnr() {
@@ -87,8 +85,7 @@ public class Arbeidsgiver implements IndexKey, TraverseValue, Serializable {
             return false;
         }
         Arbeidsgiver that = (Arbeidsgiver) o;
-        return Objects.equals(arbeidsgiverOrgnr, that.arbeidsgiverOrgnr) &&
-            Objects.equals(arbeidsgiverAktørId, that.arbeidsgiverAktørId);
+        return Objects.equals(arbeidsgiverOrgnr, that.arbeidsgiverOrgnr) && Objects.equals(arbeidsgiverAktørId, that.arbeidsgiverAktørId);
     }
 
     @Override
@@ -98,9 +95,7 @@ public class Arbeidsgiver implements IndexKey, TraverseValue, Serializable {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" +
-            "arbeidsgiverOrgnr=" + arbeidsgiverOrgnr +
-            ", arbeidsgiverAktørId='" + arbeidsgiverAktørId + '\'' +
-            '>';
+        return getClass().getSimpleName() + "<" + "arbeidsgiverOrgnr=" + arbeidsgiverOrgnr + ", arbeidsgiverAktørId='" + arbeidsgiverAktørId + '\''
+            + '>';
     }
 }

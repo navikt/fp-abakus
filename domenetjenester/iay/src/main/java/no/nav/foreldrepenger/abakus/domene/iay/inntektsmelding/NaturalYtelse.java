@@ -1,23 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Objects;
-
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Version;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.NaturalytelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -26,6 +8,12 @@ import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.jpa.NaturalytelseTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
+
+import javax.persistence.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity(name = "NaturalYtelse")
 @Table(name = "IAY_NATURAL_YTELSE")
@@ -77,7 +65,7 @@ public class NaturalYtelse extends BaseEntitet implements IndexKey {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { type, periode };
+        Object[] keyParts = {type, periode};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -99,11 +87,14 @@ public class NaturalYtelse extends BaseEntitet implements IndexKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof NaturalYtelse)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !(o instanceof NaturalYtelse)) {
+            return false;
+        }
         var that = (NaturalYtelse) o;
-        return Objects.equals(periode, that.periode) &&
-            Objects.equals(type, that.type);
+        return Objects.equals(periode, that.periode) && Objects.equals(type, that.type);
     }
 
     @Override
@@ -113,11 +104,6 @@ public class NaturalYtelse extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "NaturalYtelseEntitet{" +
-            "id=" + id +
-            ", periode=" + periode +
-            ", beloepPerMnd=" + beloepPerMnd +
-            ", type=" + type +
-            '}';
+        return "NaturalYtelseEntitet{" + "id=" + id + ", periode=" + periode + ", beloepPerMnd=" + beloepPerMnd + ", type=" + type + '}';
     }
 }

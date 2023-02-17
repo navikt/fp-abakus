@@ -1,40 +1,10 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-
-import org.hibernate.jpa.QueryHints;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.diff.RegisterdataDiffsjekker;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittAnnenAktivitet;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittArbeidsforhold;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittEgenNæring;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittFrilansoppdrag;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningAggregat;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.*;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
@@ -44,6 +14,21 @@ import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
+
+import org.hibernate.jpa.QueryHints;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class InntektArbeidYtelseRepository {
@@ -66,14 +51,14 @@ public class InntektArbeidYtelseRepository {
 
     public InntektArbeidYtelseGrunnlag hentInntektArbeidYtelseForBehandling(KoblingReferanse koblingReferanse) {
         Optional<InntektArbeidYtelseGrunnlag> grunnlag = getAktivtInntektArbeidGrunnlag(koblingReferanse);
-        return grunnlag.orElseThrow(() -> new TekniskException("FP-731232", String.format("Finner ikke InntektArbeidYtelse grunnlag for kobling %s", koblingReferanse)));
+        return grunnlag.orElseThrow(
+            () -> new TekniskException("FP-731232", String.format("Finner ikke InntektArbeidYtelse grunnlag for kobling %s", koblingReferanse)));
 
     }
 
     public Optional<InntektArbeidYtelseAggregat> hentIAYAggregatFor(KoblingReferanse koblingReferanse, UUID eksternReferanse) {
-        TypedQuery<InntektArbeidYtelseAggregat> query = entityManager.createQuery("SELECT iay " +
-            " FROM InntektArbeidYtelser iay " +
-            " WHERE iay.eksternReferanse = :eksternReferanse", InntektArbeidYtelseAggregat.class);
+        TypedQuery<InntektArbeidYtelseAggregat> query = entityManager.createQuery(
+            "SELECT iay " + " FROM InntektArbeidYtelser iay " + " WHERE iay.eksternReferanse = :eksternReferanse", InntektArbeidYtelseAggregat.class);
         query.setParameter("eksternReferanse", eksternReferanse);
 
         var res = HibernateVerktøy.hentUniktResultat(query);
@@ -84,17 +69,15 @@ public class InntektArbeidYtelseRepository {
     }
 
     private void validerKoblingMatcherIayAggregat(KoblingReferanse koblingReferanse, UUID eksternReferanse) {
-        var matchKoblingIayAggregat = entityManager.createNativeQuery("select 1 from kobling k "
-            + " where k.aktiv=true and k.kobling_referanse=:ref and "
-            + " ("
-            + "  exists(select 1 from GR_ARBEID_INNTEKT gr inner join IAY_INNTEKT_ARBEID_YTELSER iaya on gr.register_id=iaya.id where iaya.ekstern_referanse=:eksternReferanse )"
-            + "   OR "
-            + "  exists (select 1 from GR_ARBEID_INNTEKT gr inner join IAY_INNTEKT_ARBEID_YTELSER iaya on gr.saksbehandlet_id=iaya.id where iaya.ekstern_referanse=:eksternReferanse )"
-            + " )")
-            .setParameter("ref", koblingReferanse.getReferanse())
-            .setParameter("eksternReferanse", eksternReferanse);
+        var matchKoblingIayAggregat = entityManager.createNativeQuery(
+            "select 1 from kobling k " + " where k.aktiv=true and k.kobling_referanse=:ref and " + " ("
+                + "  exists(select 1 from GR_ARBEID_INNTEKT gr inner join IAY_INNTEKT_ARBEID_YTELSER iaya on gr.register_id=iaya.id where iaya.ekstern_referanse=:eksternReferanse )"
+                + "   OR "
+                + "  exists (select 1 from GR_ARBEID_INNTEKT gr inner join IAY_INNTEKT_ARBEID_YTELSER iaya on gr.saksbehandlet_id=iaya.id where iaya.ekstern_referanse=:eksternReferanse )"
+                + " )").setParameter("ref", koblingReferanse.getReferanse()).setParameter("eksternReferanse", eksternReferanse);
         if (matchKoblingIayAggregat.getResultStream().findFirst().isEmpty()) {
-            throw new IllegalStateException("KoblingReferanse [" + koblingReferanse + "] er ikke aktiv eller er ikke knyttet til IAY aggregat [" + eksternReferanse + "]");
+            throw new IllegalStateException(
+                "KoblingReferanse [" + koblingReferanse + "] er ikke aktiv eller er ikke knyttet til IAY aggregat [" + eksternReferanse + "]");
         }
     }
 
@@ -170,15 +153,15 @@ public class InntektArbeidYtelseRepository {
 
     private Map<Inntektsmelding, ArbeidsforholdInformasjon> queryTilMap(List<Object[]> list) {
         Map<Inntektsmelding, ArbeidsforholdInformasjon> inntektsmeldingArbinfoMap = new HashMap<>();
-        list
-            .forEach(res -> {
-                Inntektsmelding im = (Inntektsmelding) res[0];
-                ArbeidsforholdInformasjon arbInf = (ArbeidsforholdInformasjon) res[1];
-                if (!inntektsmeldingArbinfoMap.containsKey(im)) {
-                    inntektsmeldingArbinfoMap.put(im, arbInf);
-                }
-            });
-        return inntektsmeldingArbinfoMap.entrySet().stream()
+        list.forEach(res -> {
+            Inntektsmelding im = (Inntektsmelding) res[0];
+            ArbeidsforholdInformasjon arbInf = (ArbeidsforholdInformasjon) res[1];
+            if (!inntektsmeldingArbinfoMap.containsKey(im)) {
+                inntektsmeldingArbinfoMap.put(im, arbInf);
+            }
+        });
+        return inntektsmeldingArbinfoMap.entrySet()
+            .stream()
             .sorted(Map.Entry.comparingByKey(Inntektsmelding.COMP_REKKEFØLGE))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
     }
@@ -232,16 +215,17 @@ public class InntektArbeidYtelseRepository {
      * <p>
      * NB! bør benytte via InntektArbeidYtelseTjeneste og ikke direkte
      */
-    public InntektArbeidYtelseAggregatBuilder opprettBuilderFor(KoblingReferanse koblingReferanse, UUID angittAggregatReferanse,
-                                                                LocalDateTime angittOpprettetTidspunkt, VersjonType versjonType) {
+    public InntektArbeidYtelseAggregatBuilder opprettBuilderFor(KoblingReferanse koblingReferanse,
+                                                                UUID angittAggregatReferanse,
+                                                                LocalDateTime angittOpprettetTidspunkt,
+                                                                VersjonType versjonType) {
         Optional<InntektArbeidYtelseGrunnlag> grunnlag = hentInntektArbeidYtelseGrunnlagForBehandling(koblingReferanse);
         return opprettBuilderFor(versjonType, angittAggregatReferanse, angittOpprettetTidspunkt, grunnlag);
     }
 
     public Optional<OppgittOpptjening> hentOppgittOpptjeningFor(UUID oppgittOpptjeningEksternReferanse) {
-        TypedQuery<OppgittOpptjening> query = entityManager.createQuery("SELECT oo " +
-            " FROM OppgittOpptjening oo " +
-            " WHERE oo.eksternReferanse = :eksternReferanse", OppgittOpptjening.class);
+        TypedQuery<OppgittOpptjening> query = entityManager.createQuery(
+            "SELECT oo " + " FROM OppgittOpptjening oo " + " WHERE oo.eksternReferanse = :eksternReferanse", OppgittOpptjening.class);
         query.setParameter("eksternReferanse", oppgittOpptjeningEksternReferanse);
         var res = HibernateVerktøy.hentUniktResultat(query);
 
@@ -249,8 +233,7 @@ public class InntektArbeidYtelseRepository {
             return Optional.empty();
         } else {
             // sjekk om opptjening finnes i noen aktivt grunnlag
-            var query2 = entityManager.createNativeQuery("select 1 from kobling k"
-                + " inner join GR_ARBEID_INNTEKT gr on gr.kobling_id=k.id"
+            var query2 = entityManager.createNativeQuery("select 1 from kobling k" + " inner join GR_ARBEID_INNTEKT gr on gr.kobling_id=k.id"
                 + " inner join oppgitt_opptjening opp on opp.id=gr.oppgitt_opptjening_id"
                 + " where k.aktiv=true and gr.aktiv=:aktiv and opp.ekstern_referanse=:ref");
             query2.setParameter("aktiv", true);
@@ -259,12 +242,15 @@ public class InntektArbeidYtelseRepository {
             if (harAktivKoblingOgGrunnlag) {
                 return res;
             } else {
-                throw new IllegalStateException("Etterspurte OppgittOpptjening som ikke er koblet til noe aktiv kobling/grunnlag: " + oppgittOpptjeningEksternReferanse);
+                throw new IllegalStateException(
+                    "Etterspurte OppgittOpptjening som ikke er koblet til noe aktiv kobling/grunnlag: " + oppgittOpptjeningEksternReferanse);
             }
         }
     }
 
-    private InntektArbeidYtelseAggregatBuilder opprettBuilderFor(VersjonType versjonType, UUID angittReferanse, LocalDateTime opprettetTidspunkt,
+    private InntektArbeidYtelseAggregatBuilder opprettBuilderFor(VersjonType versjonType,
+                                                                 UUID angittReferanse,
+                                                                 LocalDateTime opprettetTidspunkt,
                                                                  Optional<InntektArbeidYtelseGrunnlag> grunnlag) {
         InntektArbeidYtelseGrunnlagBuilder grunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(grunnlag);
         Objects.requireNonNull(grunnlagBuilder, "grunnlagBuilder");
@@ -272,7 +258,8 @@ public class InntektArbeidYtelseRepository {
         Objects.requireNonNull(aggregat, "aggregat"); // NOSONAR
         if (aggregat.isPresent()) {
             final InntektArbeidYtelseGrunnlag aggregat1 = aggregat.get();
-            return InntektArbeidYtelseAggregatBuilder.builderFor(hentRiktigVersjon(versjonType, aggregat1), angittReferanse, opprettetTidspunkt, versjonType);
+            return InntektArbeidYtelseAggregatBuilder.builderFor(hentRiktigVersjon(versjonType, aggregat1), angittReferanse, opprettetTidspunkt,
+                versjonType);
         }
         throw new TekniskException("FP-512369", "Aggregat kan ikke være null ved opprettelse av builder");
     }
@@ -319,7 +306,8 @@ public class InntektArbeidYtelseRepository {
         return build.getGrunnlagReferanse();
     }
 
-    public GrunnlagReferanse lagre(KoblingReferanse koblingReferanse, ArbeidsforholdInformasjonBuilder informasjonBuilder,
+    public GrunnlagReferanse lagre(KoblingReferanse koblingReferanse,
+                                   ArbeidsforholdInformasjonBuilder informasjonBuilder,
                                    List<Inntektsmelding> inntektsmeldingerList) {
         Objects.requireNonNull(inntektsmeldingerList, "inntektsmelding"); // NOSONAR
         InntektArbeidYtelseGrunnlagBuilder builder = opprettGrunnlagBuilderFor(koblingReferanse);
@@ -328,8 +316,8 @@ public class InntektArbeidYtelseRepository {
 
         InntektArbeidYtelseGrunnlag grunnlag = builder.build();
         var utdaterteInntektsmeldinger = inntektsmeldingerList.stream()
-            .filter(it -> utdaterteInntektsmeldingerJournalposter.contains(it.getJournalpostId())
-                && harIkkeAltHåndtertJournalpost(grunnlag, it.getJournalpostId()))
+            .filter(it -> utdaterteInntektsmeldingerJournalposter.contains(it.getJournalpostId()) && harIkkeAltHåndtertJournalpost(grunnlag,
+                it.getJournalpostId()))
             .collect(Collectors.toList());
         var utdatertBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(grunnlag);
         lagreDeaktivertGrunnlagMedUtdaterteInntektsmeldinger(koblingReferanse, informasjonBuilder, utdaterteInntektsmeldinger, utdatertBuilder);
@@ -340,10 +328,13 @@ public class InntektArbeidYtelseRepository {
 
     private boolean harIkkeAltHåndtertJournalpost(InntektArbeidYtelseGrunnlag build, JournalpostId journalpostId) {
         var imaggregat = build.getInntektsmeldinger();
-        return imaggregat.map(inntektsmeldingAggregat -> inntektsmeldingAggregat.getInntektsmeldinger().stream().noneMatch(it -> it.getJournalpostId().equals(journalpostId))).orElse(true);
+        return imaggregat.map(inntektsmeldingAggregat -> inntektsmeldingAggregat.getInntektsmeldinger()
+            .stream()
+            .noneMatch(it -> it.getJournalpostId().equals(journalpostId))).orElse(true);
     }
 
-    private void lagreDeaktivertGrunnlagMedUtdaterteInntektsmeldinger(KoblingReferanse koblingReferanse, ArbeidsforholdInformasjonBuilder informasjonBuilder,
+    private void lagreDeaktivertGrunnlagMedUtdaterteInntektsmeldinger(KoblingReferanse koblingReferanse,
+                                                                      ArbeidsforholdInformasjonBuilder informasjonBuilder,
                                                                       List<Inntektsmelding> utdaterteInntektsmeldinger,
                                                                       InntektArbeidYtelseGrunnlagBuilder utdatertBuilder) {
         Set<JournalpostId> utdaterteInntektsmeldingerJournalposter = new HashSet<>();
@@ -365,8 +356,8 @@ public class InntektArbeidYtelseRepository {
 
         if (!utdaterteInntektsmeldingerJournalposter.isEmpty()) {
             var collect = utdaterteInntektsmeldinger.stream()
-                .filter(it -> utdaterteInntektsmeldingerJournalposter.contains(it.getJournalpostId())
-                    && harIkkeAltHåndtertJournalpost(build, it.getJournalpostId()))
+                .filter(it -> utdaterteInntektsmeldingerJournalposter.contains(it.getJournalpostId()) && harIkkeAltHåndtertJournalpost(build,
+                    it.getJournalpostId()))
                 .collect(Collectors.toList());
             var builder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(build);
             lagreDeaktivertGrunnlagMedUtdaterteInntektsmeldinger(koblingReferanse, informasjonBuilder, collect, builder);
@@ -460,37 +451,35 @@ public class InntektArbeidYtelseRepository {
 
         var grRef = grunnlag.getGrunnlagReferanse();
 
-        grunnlag.getRegisterVersjon().ifPresent(aggregat -> aggregat.getAktørArbeid()
-            .stream()
-            .map(AktørArbeid::hentAlleYrkesaktiviteter)
-            .flatMap(Collection::stream)
-            .forEach(it -> {
-                if (it.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold()) {
-                    var arRef = aggregat.getEksternReferanse();
-                    arbeidsforholdInformasjon.finnEkstern(grRef, it.getArbeidsgiver(), it.getArbeidsforholdRef()); // Validerer om det finnes ekstern for intern ref
-                    // (kaster exception hvis ikke)
-                }
-            }));
+        grunnlag.getRegisterVersjon()
+            .ifPresent(
+                aggregat -> aggregat.getAktørArbeid().stream().map(AktørArbeid::hentAlleYrkesaktiviteter).flatMap(Collection::stream).forEach(it -> {
+                    if (it.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold()) {
+                        var arRef = aggregat.getEksternReferanse();
+                        arbeidsforholdInformasjon.finnEkstern(grRef, it.getArbeidsgiver(),
+                            it.getArbeidsforholdRef()); // Validerer om det finnes ekstern for intern ref
+                        // (kaster exception hvis ikke)
+                    }
+                }));
 
-        grunnlag.getInntektsmeldinger().ifPresent(aggregat -> aggregat.getInntektsmeldinger()
-            .forEach(it -> {
-                if (it.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold()) {
-                    arbeidsforholdInformasjon.finnEkstern(grRef, it.getArbeidsgiver(), it.getArbeidsforholdRef()); // Validerer om det finnes ekstern for intern ref
-                    // (kaster exception hvis ikke)
-                }
-            }));
+        grunnlag.getInntektsmeldinger().ifPresent(aggregat -> aggregat.getInntektsmeldinger().forEach(it -> {
+            if (it.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold()) {
+                arbeidsforholdInformasjon.finnEkstern(grRef, it.getArbeidsgiver(),
+                    it.getArbeidsforholdRef()); // Validerer om det finnes ekstern for intern ref
+                // (kaster exception hvis ikke)
+            }
+        }));
 
-        grunnlag.getSaksbehandletVersjon().ifPresent(aggregat -> aggregat.getAktørArbeid()
-            .stream()
-            .map(AktørArbeid::hentAlleYrkesaktiviteter)
-            .flatMap(Collection::stream)
-            .forEach(it -> {
-                if (it.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold()) {
-                    var arRef = aggregat.getEksternReferanse();
-                    arbeidsforholdInformasjon.finnEkstern(grRef, it.getArbeidsgiver(), it.getArbeidsforholdRef()); // Validerer om det finnes ekstern for intern ref
-                    // (kaster exception hvis ikke)
-                }
-            }));
+        grunnlag.getSaksbehandletVersjon()
+            .ifPresent(
+                aggregat -> aggregat.getAktørArbeid().stream().map(AktørArbeid::hentAlleYrkesaktiviteter).flatMap(Collection::stream).forEach(it -> {
+                    if (it.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold()) {
+                        var arRef = aggregat.getEksternReferanse();
+                        arbeidsforholdInformasjon.finnEkstern(grRef, it.getArbeidsgiver(),
+                            it.getArbeidsforholdRef()); // Validerer om det finnes ekstern for intern ref
+                        // (kaster exception hvis ikke)
+                    }
+                }));
     }
 
     public void lagre(KoblingReferanse koblingReferanse, InntektArbeidYtelseGrunnlagBuilder builder) {
@@ -525,8 +514,7 @@ public class InntektArbeidYtelseRepository {
 
     private void lagreOppgitteOpptjeninger(OppgittOpptjeningAggregat oppgittOpptjeningAggregat) {
         entityManager.persist(oppgittOpptjeningAggregat);
-        oppgittOpptjeningAggregat.getOppgitteOpptjeninger()
-            .forEach(this::lagreOppgittOpptjening);
+        oppgittOpptjeningAggregat.getOppgitteOpptjeninger().forEach(this::lagreOppgittOpptjening);
     }
 
     private void lagreInformasjon(ArbeidsforholdInformasjon data) {
@@ -661,10 +649,10 @@ public class InntektArbeidYtelseRepository {
 
     private Optional<InntektArbeidYtelseGrunnlag> getAktivtInntektArbeidGrunnlag(KoblingReferanse koblingReferanse) {
 
-        final TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery("SELECT gr FROM InntektArbeidGrunnlag gr " +
-            " JOIN Kobling k ON k.id=gr.koblingId" + // NOSONAR
-            " WHERE k.koblingReferanse = :ref" + //$NON-NLS-1$ //NOSONAR
-            " AND gr.aktiv = :aktivt", InntektArbeidYtelseGrunnlag.class);
+        final TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery(
+            "SELECT gr FROM InntektArbeidGrunnlag gr " + " JOIN Kobling k ON k.id=gr.koblingId" + // NOSONAR
+                " WHERE k.koblingReferanse = :ref" + //$NON-NLS-1$ //NOSONAR
+                " AND gr.aktiv = :aktivt", InntektArbeidYtelseGrunnlag.class);
         query.setParameter("ref", koblingReferanse); // NOSONAR
         query.setParameter("aktivt", true);
         List<InntektArbeidYtelseGrunnlag> resultList = query.getResultList();
@@ -704,7 +692,8 @@ public class InntektArbeidYtelseRepository {
     }
 
     public Long hentKoblingIdFor(GrunnlagReferanse grunnlagReferanse) {
-        var query = entityManager.createQuery("SELECT k FROM Kobling k JOIN InntektArbeidGrunnlag gr ON gr.koblingId=k.id WHERE gr.grunnlagReferanse=:ref", Kobling.class);
+        var query = entityManager.createQuery(
+            "SELECT k FROM Kobling k JOIN InntektArbeidGrunnlag gr ON gr.koblingId=k.id WHERE gr.grunnlagReferanse=:ref", Kobling.class);
         query.setParameter("ref", grunnlagReferanse);
         Kobling kobling = HibernateVerktøy.hentEksaktResultat(query);
         validerKoblingErAktiv(kobling.getKoblingReferanse());
@@ -713,8 +702,8 @@ public class InntektArbeidYtelseRepository {
 
     private Optional<InntektArbeidYtelseGrunnlag> getVersjonAvInntektArbeidYtelseForReferanseId(GrunnlagReferanse grunnlagReferanse) {
         Objects.requireNonNull(grunnlagReferanse, "aggregatId"); // NOSONAR
-        final TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery("FROM InntektArbeidGrunnlag gr " +
-            " WHERE gr.grunnlagReferanse = :ref ", InntektArbeidYtelseGrunnlag.class);
+        final TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery(
+            "FROM InntektArbeidGrunnlag gr " + " WHERE gr.grunnlagReferanse = :ref ", InntektArbeidYtelseGrunnlag.class);
         query.setParameter("ref", grunnlagReferanse);
         query.setHint(QueryHints.HINT_CACHE_MODE, "IGNORE");
         Optional<InntektArbeidYtelseGrunnlag> grunnlagOpt = query.getResultList().stream().findFirst();
@@ -727,9 +716,9 @@ public class InntektArbeidYtelseRepository {
     }
 
     public KoblingReferanse hentKoblingReferanseFor(GrunnlagReferanse grunnlagReferanse) {
-        final TypedQuery<KoblingReferanse> query = entityManager
-            .createQuery("SELECT k.koblingReferanse FROM Kobling k JOIN InntektArbeidGrunnlag gr ON gr.koblingId = k.id WHERE gr.grunnlagReferanse=:ref",
-                KoblingReferanse.class);
+        final TypedQuery<KoblingReferanse> query = entityManager.createQuery(
+            "SELECT k.koblingReferanse FROM Kobling k JOIN InntektArbeidGrunnlag gr ON gr.koblingId = k.id WHERE gr.grunnlagReferanse=:ref",
+            KoblingReferanse.class);
         query.setParameter("ref", grunnlagReferanse);
         return query.getSingleResult();
     }
@@ -740,8 +729,9 @@ public class InntektArbeidYtelseRepository {
 
     public boolean erGrunnlagAktivt(UUID eksternReferanse) {
         Objects.requireNonNull(eksternReferanse, "aggregatId"); // NOSONAR
-        final TypedQuery<Boolean> query = entityManager.createQuery("SELECT gr.aktiv FROM InntektArbeidGrunnlag gr JOIN Kobling k ON gr.koblingId=k.id " +
-            " WHERE gr.grunnlagReferanse = :ref AND k.aktiv = true ", Boolean.class);
+        final TypedQuery<Boolean> query = entityManager.createQuery(
+            "SELECT gr.aktiv FROM InntektArbeidGrunnlag gr JOIN Kobling k ON gr.koblingId=k.id "
+                + " WHERE gr.grunnlagReferanse = :ref AND k.aktiv = true ", Boolean.class);
         query.setParameter("ref", new GrunnlagReferanse(eksternReferanse));
         query.setHint(QueryHints.HINT_CACHE_MODE, "IGNORE");
         Optional<Boolean> grunnlagOpt = query.getResultList().stream().findFirst();

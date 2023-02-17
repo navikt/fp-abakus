@@ -48,31 +48,32 @@ import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
 public class MapInntektsmeldinger {
 
-    private static final Comparator<RefusjonDto> COMP_ENDRINGER_REFUSJON = Comparator
-        .comparing((RefusjonDto re) -> re.getFom(), Comparator.nullsLast(Comparator.naturalOrder()));
+    private static final Comparator<RefusjonDto> COMP_ENDRINGER_REFUSJON = Comparator.comparing((RefusjonDto re) -> re.getFom(),
+        Comparator.nullsLast(Comparator.naturalOrder()));
 
-    private static final Comparator<GraderingDto> COMP_GRADERING = Comparator
-        .comparing((GraderingDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+    private static final Comparator<GraderingDto> COMP_GRADERING = Comparator.comparing((GraderingDto dto) -> dto.getPeriode().getFom(),
+            Comparator.nullsFirst(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(GraderingDto::getArbeidstidProsent, Comparator.nullsLast(Comparator.naturalOrder()));
 
-    private static final Comparator<NaturalytelseDto> COMP_NATURALYTELSE = Comparator
-        .comparing((NaturalytelseDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+    private static final Comparator<NaturalytelseDto> COMP_NATURALYTELSE = Comparator.comparing((NaturalytelseDto dto) -> dto.getPeriode().getFom(),
+            Comparator.nullsFirst(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getType() == null ? null : dto.getType().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(NaturalytelseDto::getBeløpPerMnd, Comparator.nullsLast(Comparator.naturalOrder()));
 
-    private static final Comparator<UtsettelsePeriodeDto> COMP_UTSETTELSE = Comparator
-        .comparing((UtsettelsePeriodeDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+    private static final Comparator<UtsettelsePeriodeDto> COMP_UTSETTELSE = Comparator.comparing(
+            (UtsettelsePeriodeDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()))
-        .thenComparing(dto -> dto.getUtsettelseÅrsakDto() == null ? null : dto.getUtsettelseÅrsakDto().getKode(), Comparator.nullsLast(Comparator.naturalOrder()));
+        .thenComparing(dto -> dto.getUtsettelseÅrsakDto() == null ? null : dto.getUtsettelseÅrsakDto().getKode(),
+            Comparator.nullsLast(Comparator.naturalOrder()));
 
-    private static final Comparator<FraværDto> COMP_FRAVÆR = Comparator
-        .comparing((FraværDto dto) -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
+    private static final Comparator<FraværDto> COMP_FRAVÆR = Comparator.comparing((FraværDto dto) -> dto.getPeriode().getFom(),
+            Comparator.nullsFirst(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
 
-    private static final Comparator<InntektsmeldingDto> COMP_INNTEKTSMELDING = Comparator
-        .comparing((InntektsmeldingDto im) -> im.getArbeidsgiver().getIdent())
+    private static final Comparator<InntektsmeldingDto> COMP_INNTEKTSMELDING = Comparator.comparing(
+            (InntektsmeldingDto im) -> im.getArbeidsgiver().getIdent())
         .thenComparing(im -> im.getInnsendingstidspunkt())
         .thenComparing(im -> im.getArbeidsforholdRef() == null ? null : im.getArbeidsforholdRef().getAbakusReferanse(),
             Comparator.nullsLast(Comparator.naturalOrder()));
@@ -94,18 +95,21 @@ public class MapInntektsmeldinger {
         return new RefusjonskravDatoerDto(refusjonskravDatoList);
     }
 
-    private static List<RefusjonskravDatoDto> lagRefusjonskravdatoPerArbeidsgiver(Set<Inntektsmelding> inntektsmeldinger, InntektArbeidYtelseGrunnlag nyesteGrunnlag) {
+    private static List<RefusjonskravDatoDto> lagRefusjonskravdatoPerArbeidsgiver(Set<Inntektsmelding> inntektsmeldinger,
+                                                                                  InntektArbeidYtelseGrunnlag nyesteGrunnlag) {
         List<RefusjonskravDatoDto> refusjonskravDatoList = new ArrayList<>();
         Map<Arbeidsgiver, Optional<LocalDate>> førsteRefusjonsdatoMap = lagFørsteRefusjonsdatoMap(nyesteGrunnlag.getInntektsmeldinger().get());
-        førsteRefusjonsdatoMap.forEach((arbeidsgiver, førsteDatoMedRefusjon) -> finnFørsteDatoForInnsendelseAvRefusjonskrav(inntektsmeldinger, arbeidsgiver)
-            .ifPresent(innsendingDato ->
-                refusjonskravDatoList.add(new RefusjonskravDatoDto(mapTilAktør(arbeidsgiver), innsendingDato.toLocalDate(), førsteDatoMedRefusjon.orElse(null), harRefusjonFraStart(arbeidsgiver, nyesteGrunnlag))
-                )));
+        førsteRefusjonsdatoMap.forEach(
+            (arbeidsgiver, førsteDatoMedRefusjon) -> finnFørsteDatoForInnsendelseAvRefusjonskrav(inntektsmeldinger, arbeidsgiver).ifPresent(
+                innsendingDato -> refusjonskravDatoList.add(
+                    new RefusjonskravDatoDto(mapTilAktør(arbeidsgiver), innsendingDato.toLocalDate(), førsteDatoMedRefusjon.orElse(null),
+                        harRefusjonFraStart(arbeidsgiver, nyesteGrunnlag)))));
         return refusjonskravDatoList;
     }
 
     private static boolean harRefusjonFraStart(Arbeidsgiver arbeidsgiver, InntektArbeidYtelseGrunnlag nyesteGrunnlag) {
-        return nyesteGrunnlag.getInntektsmeldinger().stream()
+        return nyesteGrunnlag.getInntektsmeldinger()
+            .stream()
             .flatMap(ims -> ims.getInntektsmeldinger().stream())
             .filter(im -> im.getArbeidsgiver().equals(arbeidsgiver))
             .anyMatch(MapInntektsmeldinger::harRefusjonFraStart);
@@ -113,8 +117,7 @@ public class MapInntektsmeldinger {
 
 
     private static Map<Arbeidsgiver, Optional<LocalDate>> lagFørsteRefusjonsdatoMap(InntektsmeldingAggregat inntektsmeldingAggregat) {
-        return inntektsmeldingAggregat
-            .getInntektsmeldinger()
+        return inntektsmeldingAggregat.getInntektsmeldinger()
             .stream()
             .filter(MapInntektsmeldinger::harRefusjonskrav)
             .collect(Collectors.toMap(Inntektsmelding::getArbeidsgiver, MapInntektsmeldinger::finnFørsteDatoMedRefusjon,
@@ -130,8 +133,10 @@ public class MapInntektsmeldinger {
         return dato1.isAfter(dato2) ? d2 : d1;
     }
 
-    private static Optional<LocalDateTime> finnFørsteDatoForInnsendelseAvRefusjonskrav(Set<Inntektsmelding> inntektsmeldinger, Arbeidsgiver arbeidsgiver) {
-        return inntektsmeldinger.stream().filter(im -> im.getArbeidsgiver().equals(arbeidsgiver))
+    private static Optional<LocalDateTime> finnFørsteDatoForInnsendelseAvRefusjonskrav(Set<Inntektsmelding> inntektsmeldinger,
+                                                                                       Arbeidsgiver arbeidsgiver) {
+        return inntektsmeldinger.stream()
+            .filter(im -> im.getArbeidsgiver().equals(arbeidsgiver))
             .filter(MapInntektsmeldinger::harRefusjonskrav)
             .map(Inntektsmelding::getInnsendingstidspunkt)
             .min(Comparator.naturalOrder());
@@ -146,22 +151,17 @@ public class MapInntektsmeldinger {
     }
 
     private static Optional<LocalDate> finnFørsteDatoMedRefusjon(Inntektsmelding im) {
-        return harRefusjonFraStart(im) ? Optional.ofNullable(utledStartDato(im)) :
-            im.getEndringerRefusjon().stream()
-                .map(Refusjon::getFom)
-                .min(Comparator.naturalOrder());
+        return harRefusjonFraStart(im) ? Optional.ofNullable(utledStartDato(im)) : im.getEndringerRefusjon()
+            .stream()
+            .map(Refusjon::getFom)
+            .min(Comparator.naturalOrder());
     }
 
     private static LocalDate utledStartDato(Inntektsmelding im) {
         if (im.getStartDatoPermisjon() != null) {
             return im.getStartDatoPermisjon();
         } else {
-            return im.getOppgittFravær()
-                .stream()
-                .map(Fravær::getPeriode)
-                .map(IntervallEntitet::getFomDato)
-                .min(LocalDate::compareTo)
-                .orElse(null);
+            return im.getOppgittFravær().stream().map(Fravær::getPeriode).map(IntervallEntitet::getFomDato).min(LocalDate::compareTo).orElse(null);
         }
     }
 
@@ -201,8 +201,11 @@ public class MapInntektsmeldinger {
                 return null;
             } else if (arbeidsforholdInformasjon != null && inntektsmeldingAggregat != null) {
                 var dto = new InntektsmeldingerDto();
-                var inntektsmeldinger = inntektsmeldingAggregat.getInntektsmeldinger().stream()
-                    .map(im -> this.mapInntektsmelding(im)).sorted(COMP_INNTEKTSMELDING).collect(Collectors.toList());
+                var inntektsmeldinger = inntektsmeldingAggregat.getInntektsmeldinger()
+                    .stream()
+                    .map(im -> this.mapInntektsmelding(im))
+                    .sorted(COMP_INNTEKTSMELDING)
+                    .collect(Collectors.toList());
                 dto.medInntektsmeldinger(inntektsmeldinger);
 
                 return dto;
@@ -222,8 +225,8 @@ public class MapInntektsmeldinger {
             var innsendingsårsak = im.getInntektsmeldingInnsendingsårsak();
             var mottattDato = im.getMottattDato();
 
-            var inntektsmeldingDto = new InntektsmeldingDto(arbeidsgiver, journalpostId, innsendingstidspunkt, mottattDato)
-                .medArbeidsforholdRef(arbeidsforholdId)
+            var inntektsmeldingDto = new InntektsmeldingDto(arbeidsgiver, journalpostId, innsendingstidspunkt, mottattDato).medArbeidsforholdRef(
+                    arbeidsforholdId)
                 .medInnsendingsårsak(innsendingsårsak)
                 .medInntektBeløp(im.getInntektBeløp().getVerdi())
                 .medKanalreferanse(im.getKanalreferanse())
@@ -280,12 +283,12 @@ public class MapInntektsmeldinger {
         }
 
         private Aktør mapAktør(Arbeidsgiver arbeidsgiverEntitet) {
-            return arbeidsgiverEntitet.erAktørId()
-                ? new AktørIdPersonident(arbeidsgiverEntitet.getAktørId().getId())
-                : new Organisasjon(arbeidsgiverEntitet.getOrgnr().getId());
+            return arbeidsgiverEntitet.erAktørId() ? new AktørIdPersonident(arbeidsgiverEntitet.getAktørId().getId()) : new Organisasjon(
+                arbeidsgiverEntitet.getOrgnr().getId());
         }
 
-        private ArbeidsforholdRefDto mapArbeidsforholdsId(@SuppressWarnings("unused") Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef internRef,
+        private ArbeidsforholdRefDto mapArbeidsforholdsId(@SuppressWarnings("unused") Arbeidsgiver arbeidsgiver,
+                                                          InternArbeidsforholdRef internRef,
                                                           EksternArbeidsforholdRef eksternRef) {
             if ((internRef == null || internRef.getReferanse() == null) && (eksternRef == null || eksternRef.getReferanse() == null)) {
                 return null;
@@ -306,7 +309,10 @@ public class MapInntektsmeldinger {
             if (dto == null) {
                 return null;
             }
-            var inntektsmeldinger = dto.getInntektsmeldinger().stream().map(im -> mapInntektsmelding(arbeidsforholdInformasjon, im)).collect(Collectors.toList());
+            var inntektsmeldinger = dto.getInntektsmeldinger()
+                .stream()
+                .map(im -> mapInntektsmelding(arbeidsforholdInformasjon, im))
+                .collect(Collectors.toList());
             return new InntektsmeldingAggregat(inntektsmeldinger);
         }
 
@@ -343,39 +349,29 @@ public class MapInntektsmeldinger {
                 .medKildesystem(dto.getKildesystem())
                 .medMottattDato(dto.getMottattDato());
 
-            dto.getEndringerRefusjon().stream()
-                .map(eir -> new Refusjon(eir.getRefusjonsbeløpMnd(), eir.getFom()))
-                .forEach(builder::leggTil);
+            dto.getEndringerRefusjon().stream().map(eir -> new Refusjon(eir.getRefusjonsbeløpMnd(), eir.getFom())).forEach(builder::leggTil);
 
-            dto.getGraderinger().stream()
-                .map(gr -> {
-                    var periode = gr.getPeriode();
-                    return new Gradering(periode.getFom(), periode.getTom(), gr.getArbeidstidProsent());
-                })
-                .forEach(builder::leggTil);
+            dto.getGraderinger().stream().map(gr -> {
+                var periode = gr.getPeriode();
+                return new Gradering(periode.getFom(), periode.getTom(), gr.getArbeidstidProsent());
+            }).forEach(builder::leggTil);
 
-            dto.getNaturalytelser().stream()
-                .map(ny -> {
-                    var periode = ny.getPeriode();
-                    var naturalYtelseType = ny.getType();
-                    return new NaturalYtelse(periode.getFom(), periode.getTom(), ny.getBeløpPerMnd(), naturalYtelseType);
-                })
-                .forEach(builder::leggTil);
+            dto.getNaturalytelser().stream().map(ny -> {
+                var periode = ny.getPeriode();
+                var naturalYtelseType = ny.getType();
+                return new NaturalYtelse(periode.getFom(), periode.getTom(), ny.getBeløpPerMnd(), naturalYtelseType);
+            }).forEach(builder::leggTil);
 
-            dto.getUtsettelsePerioder().stream()
-                .map(up -> {
-                    var periode = up.getPeriode();
-                    var utsettelseÅrsak = up.getUtsettelseÅrsakDto();
-                    return UtsettelsePeriode.utsettelse(periode.getFom(), periode.getTom(), utsettelseÅrsak);
-                })
-                .forEach(builder::leggTil);
+            dto.getUtsettelsePerioder().stream().map(up -> {
+                var periode = up.getPeriode();
+                var utsettelseÅrsak = up.getUtsettelseÅrsakDto();
+                return UtsettelsePeriode.utsettelse(periode.getFom(), periode.getTom(), utsettelseÅrsak);
+            }).forEach(builder::leggTil);
 
-            dto.getOppgittFravær().stream()
-                .map(ny -> {
-                    var periode = ny.getPeriode();
-                    return new Fravær(periode.getFom(), periode.getTom(), ny.getVarighetPerDag());
-                })
-                .forEach(builder::leggTil);
+            dto.getOppgittFravær().stream().map(ny -> {
+                var periode = ny.getPeriode();
+                return new Fravær(periode.getFom(), periode.getTom(), ny.getVarighetPerDag());
+            }).forEach(builder::leggTil);
 
             return builder.build();
         }

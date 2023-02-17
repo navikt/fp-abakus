@@ -42,14 +42,6 @@ public class ContainerContextRunner {
         return CDI.current().select(ContainerContextRunner.class).get();
     }
 
-    @Transactional
-    private <T> T submit(Callable<T> call) throws Exception {
-        var containerLogin = new ContainerLogin();
-        containerLogin.login();
-        var result = call.call();
-        return result;
-    }
-
     public static <T> Future<T> doRun(Kobling kobling, Callable<T> call) {
         var saksnummer = kobling.getSaksnummer();
 
@@ -71,6 +63,14 @@ public class ContainerContextRunner {
 
         return future;
 
+    }
+
+    @Transactional
+    private <T> T submit(Callable<T> call) throws Exception {
+        var containerLogin = new ContainerLogin();
+        containerLogin.login();
+        var result = call.call();
+        return result;
     }
 
 }

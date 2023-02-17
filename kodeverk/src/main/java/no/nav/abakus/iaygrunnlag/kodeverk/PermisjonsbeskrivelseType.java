@@ -18,7 +18,8 @@ public enum PermisjonsbeskrivelseType implements Kodeverdi {
     UDEFINERT("-", "Ikke definert", null),
     PERMISJON("PERMISJON", "Permisjon", "permisjon"),
     UTDANNINGSPERMISJON("UTDANNINGSPERMISJON", "Utdanningspermisjon", "utdanningspermisjon"), // Utgår 31/12-2022
-    UTDANNINGSPERMISJON_IKKE_LOVFESTET("UTDANNINGSPERMISJON_IKKE_LOVFESTET", "Utdanningspermisjon (Ikke lovfestet)", "utdanningspermisjonIkkeLovfestet"),
+    UTDANNINGSPERMISJON_IKKE_LOVFESTET("UTDANNINGSPERMISJON_IKKE_LOVFESTET", "Utdanningspermisjon (Ikke lovfestet)",
+        "utdanningspermisjonIkkeLovfestet"),
     UTDANNINGSPERMISJON_LOVFESTET("UTDANNINGSPERMISJON_LOVFESTET", "Utdanningspermisjon (Lovfestet)", "utdanningspermisjonLovfestet"),
     VELFERDSPERMISJON("VELFERDSPERMISJON", "Velferdspermisjon", "velferdspermisjon"), // Utgår 31/12-2022
     ANNEN_PERMISJON_IKKE_LOVFESTET("ANNEN_PERMISJON_IKKE_LOVFESTET", "Andre ikke-lovfestede permisjoner", "andreIkkeLovfestedePermisjoner"),
@@ -28,9 +29,8 @@ public enum PermisjonsbeskrivelseType implements Kodeverdi {
     PERMISJON_VED_MILITÆRTJENESTE("PERMISJON_VED_MILITÆRTJENESTE", "Permisjon ved militærtjeneste", "permisjonVedMilitaertjeneste"),
     ;
 
-    private static final Map<String, PermisjonsbeskrivelseType> KODER = new LinkedHashMap<>();
-
     public static final String KODEVERK = "PERMISJONSBESKRIVELSE_TYPE";
+    private static final Map<String, PermisjonsbeskrivelseType> KODER = new LinkedHashMap<>();
 
     static {
         for (var v : values()) {
@@ -61,12 +61,15 @@ public enum PermisjonsbeskrivelseType implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent PermisjonsbeskrivelseType: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent PermisjonsbeskrivelseType: " + kode));
     }
 
     public static Map<String, PermisjonsbeskrivelseType> kodeMap() {
         return Collections.unmodifiableMap(KODER);
+    }
+
+    public static PermisjonsbeskrivelseType finnForKodeverkEiersKode(String offisiellDokumentType) {
+        return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
     @Override
@@ -87,10 +90,6 @@ public enum PermisjonsbeskrivelseType implements Kodeverdi {
     @Override
     public String getOffisiellKode() {
         return offisiellKode;
-    }
-
-    public static PermisjonsbeskrivelseType finnForKodeverkEiersKode(String offisiellDokumentType) {
-        return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
 

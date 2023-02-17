@@ -52,8 +52,8 @@ public class LønnskompensasjonRepository {
     public Optional<LønnskompensasjonVedtak> hentSak(String sakId, String fnr) {
         Objects.requireNonNull(sakId, "sakId");
 
-        TypedQuery<LønnskompensasjonVedtak> query = entityManager.createQuery("SELECT v FROM LonnskompVedtakEntitet v " +
-            "WHERE aktiv = true AND v.sakId = :sakId and v.fnr = :fnr", LønnskompensasjonVedtak.class);
+        TypedQuery<LønnskompensasjonVedtak> query = entityManager.createQuery(
+            "SELECT v FROM LonnskompVedtakEntitet v " + "WHERE aktiv = true AND v.sakId = :sakId and v.fnr = :fnr", LønnskompensasjonVedtak.class);
         query.setParameter("sakId", sakId);
         query.setParameter("fnr", fnr);
 
@@ -61,10 +61,9 @@ public class LønnskompensasjonRepository {
     }
 
     public Set<LønnskompensasjonVedtak> hentLønnskompensasjonForIPeriode(AktørId aktørId, LocalDate fom, LocalDate tom) {
-        TypedQuery<LønnskompensasjonVedtak> query = entityManager.createQuery("FROM LonnskompVedtakEntitet " +
-            "WHERE aktørId = :aktørId " +
-            "AND periode.fomDato <= :tom AND periode.tomDato >= :fom " +
-            "AND aktiv = true", LønnskompensasjonVedtak.class);
+        TypedQuery<LønnskompensasjonVedtak> query = entityManager.createQuery(
+            "FROM LonnskompVedtakEntitet " + "WHERE aktørId = :aktørId " + "AND periode.fomDato <= :tom AND periode.tomDato >= :fom "
+                + "AND aktiv = true", LønnskompensasjonVedtak.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("fom", fom);
         query.setParameter("tom", tom);
@@ -73,17 +72,20 @@ public class LønnskompensasjonRepository {
         Set<LønnskompensasjonVedtak> resultat = new LinkedHashSet<>();
         var allevedtak = query.getResultList();
         for (LønnskompensasjonVedtak v : allevedtak) {
-            if (resultat.stream().noneMatch(e -> LønnskompensasjonVedtak.erLikForBrukerOrg(e,v)))
+            if (resultat.stream().noneMatch(e -> LønnskompensasjonVedtak.erLikForBrukerOrg(e, v))) {
                 resultat.add(v);
+            }
         }
         return resultat;
     }
 
     public boolean skalLagreVedtak(LønnskompensasjonVedtak eksisterende, LønnskompensasjonVedtak vedtak) {
-        if (vedtak == null)
+        if (vedtak == null) {
             return false;
-        if (eksisterende == null)
+        }
+        if (eksisterende == null) {
             return true;
+        }
         var likeUtenomForrigeVedtak = Objects.equals(eksisterende, vedtak);
         if (likeUtenomForrigeVedtak) {
             log.info("Lønnskomp forkastes pga likt innhold {}", vedtak);

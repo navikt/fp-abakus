@@ -38,22 +38,25 @@ import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 @Entity(name = "AktørYtelse")
 public class AktørYtelse extends BaseEntitet implements IndexKey {
 
+    /**
+     * Her legger man inn ytelser/kilder som er innhentet tidligere, men som ikke blir reinnhentet etter sanering av integrasjon
+     * Nye søknader vil ikke ha disse i opptjeningen -> saner integrasjon.
+     * - SVP Siste SVP / Infotrygd ble innvilget høst 2019 og løp ut mars 2020.
+     * - FP Siste utbetaling av foreldrepenger var tom januar 2022
+     */
+    private static final Set<YtelseType> UTGÅTT_INFOTRYGD = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER);
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_AKTOER_YTELSE")
     private Long id;
-
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id", nullable = false, updatable = false)))
     private AktørId aktørId;
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "inntekt_arbeid_ytelser_id", nullable = false, updatable = false)
     private InntektArbeidYtelseAggregat inntektArbeidYtelser;
-
     @OneToMany(mappedBy = "aktørYtelse")
     @ChangeTracked
     private Set<Ytelse> ytelser = new LinkedHashSet<>();
-
     @Version
     @Column(name = "versjon", nullable = false)
     private long versjon;
@@ -74,9 +77,13 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
         }).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
+    private static boolean beholdLegacyYtelseFraKilde(Ytelse y) {
+        return Fagsystem.INFOTRYGD.equals(y.getKilde()) && UTGÅTT_INFOTRYGD.contains(y.getRelatertYtelseType());
+    }
+
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { getAktørId() };
+        Object[] keyParts = {getAktørId()};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -93,7 +100,9 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
         this.aktørId = aktørId;
     }
 
-    /** Alle tilstøende ytelser (ufiltrert). */
+    /**
+     * Alle tilstøende ytelser (ufiltrert).
+     */
     public Collection<Ytelse> getAlleYtelser() {
         return List.copyOf(ytelser);
     }
@@ -113,15 +122,17 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
         return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medSaksreferanse(saksnummer);
     }
 
-    YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer saksnummer, IntervallEntitet periode, Optional<LocalDate> tidligsteAnvistFom) {
+    YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem,
+                                          YtelseType type,
+                                          Saksnummer saksnummer,
+                                          IntervallEntitet periode,
+                                          Optional<LocalDate> tidligsteAnvistFom) {
         // OBS kan være flere med samme Saksnummer+FOM: Konvensjon ifm satsjustering
         List<Ytelse> aktuelleYtelser = getAlleYtelser().stream()
             .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type) && (saksnummer.equals(ya.getSaksreferanse())
                 && periode.getFomDato().equals(ya.getPeriode().getFomDato())))
             .collect(Collectors.toList());
-        Optional<Ytelse> ytelse = aktuelleYtelser.stream()
-            .filter(ya -> periode.equals(ya.getPeriode()))
-            .findFirst();
+        Optional<Ytelse> ytelse = aktuelleYtelser.stream().filter(ya -> periode.equals(ya.getPeriode())).findFirst();
         if (ytelse.isEmpty() && !aktuelleYtelser.isEmpty()) {
             // Håndtere endret TOM-dato som regel ifm at ytelsen er opphørt. Hvis flere med samme FOM-dato sjekk anvist-fom
             if (tidligsteAnvistFom.isPresent()) {
@@ -136,15 +147,17 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
         return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medSaksreferanse(saksnummer);
     }
 
-    YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, YtelseType type, TemaUnderkategori typeKategori, IntervallEntitet periode, Optional<LocalDate> tidligsteAnvistFom) {
+    YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem,
+                                          YtelseType type,
+                                          TemaUnderkategori typeKategori,
+                                          IntervallEntitet periode,
+                                          Optional<LocalDate> tidligsteAnvistFom) {
         // OBS kan være flere med samme Tema/TUK+FOM: Konvensjon ifm rammevedtak BS
         List<Ytelse> aktuelleYtelser = getAlleYtelser().stream()
-            .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type)
-                && ya.getBehandlingsTema().equals(typeKategori) && (periode.getFomDato().equals(ya.getPeriode().getFomDato())))
+            .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type) && ya.getBehandlingsTema().equals(typeKategori)
+                && (periode.getFomDato().equals(ya.getPeriode().getFomDato())))
             .collect(Collectors.toList());
-        Optional<Ytelse> ytelse = aktuelleYtelser.stream()
-            .filter(ya -> periode.equals(ya.getPeriode()))
-            .findFirst();
+        Optional<Ytelse> ytelse = aktuelleYtelser.stream().filter(ya -> periode.equals(ya.getPeriode())).findFirst();
         if (ytelse.isEmpty() && !aktuelleYtelser.isEmpty()) {
             // Håndtere endret TOM-dato som regel ifm at ytelsen er opphørt. Hvis flere med samme FOM-dato sjekk anvist-fom
             if (tidligsteAnvistFom.isPresent()) {
@@ -165,21 +178,7 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
     }
 
     void tilbakestillYtelser() {
-        this.ytelser = ytelser.stream()
-            .filter(AktørYtelse::beholdLegacyYtelseFraKilde)
-            .collect(Collectors.toSet());
-    }
-
-    /**
-     * Her legger man inn ytelser/kilder som er innhentet tidligere, men som ikke blir reinnhentet etter sanering av integrasjon
-     * Nye søknader vil ikke ha disse i opptjeningen -> saner integrasjon.
-     * - SVP Siste SVP / Infotrygd ble innvilget høst 2019 og løp ut mars 2020.
-     * - FP Siste utbetaling av foreldrepenger var tom januar 2022
-     */
-    private static final Set<YtelseType> UTGÅTT_INFOTRYGD = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER);
-
-    private static boolean beholdLegacyYtelseFraKilde(Ytelse y) {
-        return Fagsystem.INFOTRYGD.equals(y.getKilde()) && UTGÅTT_INFOTRYGD.contains(y.getRelatertYtelseType());
+        this.ytelser = ytelser.stream().filter(AktørYtelse::beholdLegacyYtelseFraKilde).collect(Collectors.toSet());
     }
 
     @Override
@@ -200,10 +199,7 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" +
-            "aktørId=" + aktørId +
-            ", ytelser=" + ytelser +
-            '>';
+        return getClass().getSimpleName() + "<" + "aktørId=" + aktørId + ", ytelser=" + ytelser + '>';
     }
 
 }

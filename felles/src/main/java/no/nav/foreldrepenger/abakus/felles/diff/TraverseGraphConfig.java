@@ -26,7 +26,9 @@ import javassist.Modifier;
 
 public class TraverseGraphConfig {
 
-    /** Return alltid true, dvs. vil aldri filtrere bort noe. */
+    /**
+     * Return alltid true, dvs. vil aldri filtrere bort noe.
+     */
     public static final Function<Object, Boolean> NO_FILTER = new Function<Object, Boolean>() {
         @Override
         public Boolean apply(Object t) {
@@ -34,36 +36,36 @@ public class TraverseGraphConfig {
         }
     };
 
-    /** Final klasser som ikke trenger videre forklaring. For raskest oppslag. */
-    private static final Set<Class<?>> LEAVES_FINAL = Set.of(
-        String.class, Character.class, Character.TYPE, //
+    /**
+     * Final klasser som ikke trenger videre forklaring. For raskest oppslag.
+     */
+    private static final Set<Class<?>> LEAVES_FINAL = Set.of(String.class, Character.class, Character.TYPE, //
         Long.class, Double.class, Integer.class, Short.class, Byte.class, Boolean.class, //
         Long.TYPE, Double.TYPE, Integer.TYPE, Short.TYPE, Byte.TYPE, Boolean.TYPE, //
         BigInteger.class, BigDecimal.class, //
-        LocalDate.class, LocalDateTime.class, OffsetDateTime.class, ZonedDateTime.class, Instant.class,
-        UUID.class, URI.class, URL.class //
+        LocalDate.class, LocalDateTime.class, OffsetDateTime.class, ZonedDateTime.class, Instant.class, UUID.class, URI.class, URL.class //
     );
 
-    /** Rot klasser som ikke skal inspiseres i et hierarki. */
+    /**
+     * Rot klasser som ikke skal inspiseres i et hierarki.
+     */
     private static final Set<Class<?>> ROOTS_CLASSES = Set.of(Object.class);
 
     /**
      * Ikke final - men Interfacer/Abstract klasser som fanger store grupper av LEAF objekter (eks. Temporal --
      * LocalDate, Number -- Long, osv).
      */
-    private static final Set<Class<?>> LEAVES_EXTENDABLE = Set.of(Number.class, Enum.class, TemporalAccessor.class, TemporalAmount.class, TemporalField.class,
-        TraverseValue.class);
-
+    private static final Set<Class<?>> LEAVES_EXTENDABLE = Set.of(Number.class, Enum.class, TemporalAccessor.class, TemporalAmount.class,
+        TemporalField.class, TraverseValue.class);
+    /**
+     * Filter - returnerer false dersom objekt ikke skal sammmenlignes. Default sammenligner alt.
+     */
+    Function<Object, Boolean> inclusionFilter = NO_FILTER;
     private Set<Class<?>> leafFinalClasses = LEAVES_FINAL;
     private Set<Class<?>> leafExtendableClasses = LEAVES_EXTENDABLE;
     private Set<Class<?>> rootClasses = ROOTS_CLASSES;
-
     private boolean ignoreNulls;
-
     private boolean onlyCheckTrackedFields;
-
-    /** Filter - returnerer false dersom objekt ikke skal sammmenlignes. Default sammenligner alt. */
-    Function<Object, Boolean> inclusionFilter = NO_FILTER;
 
     public boolean isMappedField(Field fld) {
         int mods = fld.getModifiers();
@@ -78,17 +80,8 @@ public class TraverseGraphConfig {
         this.rootClasses.addAll(asList(moreRootClasses));
     }
 
-    public void setIgnoreNulls(boolean ignoreNulls) {
-        this.ignoreNulls = ignoreNulls;
-    }
-
-    public void setOnlyCheckTrackedFields(boolean onlyCheckTrackedFields) {
-        this.onlyCheckTrackedFields = onlyCheckTrackedFields;
-    }
-
     public boolean isTraverseField(final Field field) {
-        return (isOnlyCheckTrackedFields() && isChangeTrackedField(field))
-            || (!isOnlyCheckTrackedFields() && isMappedField(field));
+        return (isOnlyCheckTrackedFields() && isChangeTrackedField(field)) || (!isOnlyCheckTrackedFields() && isMappedField(field));
     }
 
     public boolean isLeaf(Object obj) {
@@ -108,6 +101,7 @@ public class TraverseGraphConfig {
     protected boolean isChangeTrackedField(Field fld) {
         return fld.isAnnotationPresent(ChangeTracked.class);
     }
+
     public boolean isRoot(Class<?> cls) {
         return cls == null || rootClasses.contains(cls);
     }
@@ -132,8 +126,16 @@ public class TraverseGraphConfig {
         return ignoreNulls;
     }
 
+    public void setIgnoreNulls(boolean ignoreNulls) {
+        this.ignoreNulls = ignoreNulls;
+    }
+
     public boolean isOnlyCheckTrackedFields() {
         return onlyCheckTrackedFields;
+    }
+
+    public void setOnlyCheckTrackedFields(boolean onlyCheckTrackedFields) {
+        this.onlyCheckTrackedFields = onlyCheckTrackedFields;
     }
 
     @SuppressWarnings("unused")

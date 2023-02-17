@@ -11,7 +11,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/** Representerer et arbeidsforhold for en arbeidsgiver i en behandling. */
+/**
+ * Representerer et arbeidsforhold for en arbeidsgiver i en behandling.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
@@ -21,17 +23,17 @@ public class ArbeidsforholdReferanse {
     @NotNull
     @Valid
     private UuidDto koblingReferanse; // kobling-referanse
-    
+
     @JsonProperty(value = "arbeidsgiver", required = true)
     @NotNull
     @Valid
     private Aktør arbeidsgiver;
-    
+
     @JsonProperty(value = "arbeidsforholdId", required = true)
     @Valid
     @NotNull
     private ArbeidsforholdRefDto arbeidsforholdId;
-    
+
     protected ArbeidsforholdReferanse() {
         // default ctor
     }
@@ -40,7 +42,7 @@ public class ArbeidsforholdReferanse {
         this.koblingReferanse = new UuidDto(koblingReferanse);
         this.arbeidsgiver = arbeidsgiver;
     }
-    
+
     public ArbeidsforholdReferanse(String koblingReferanse, Aktør arbeidsgiver, ArbeidsforholdRefDto arbeidsforholdId) {
         this.koblingReferanse = new UuidDto(koblingReferanse);
         this.arbeidsgiver = arbeidsgiver;

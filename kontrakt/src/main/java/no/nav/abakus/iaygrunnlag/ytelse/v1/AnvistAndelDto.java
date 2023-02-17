@@ -55,7 +55,8 @@ public class AnvistAndelDto {
     }
 
 
-    public AnvistAndelDto(Aktør arbeidsgiver, String arbeidsforholdId,
+    public AnvistAndelDto(Aktør arbeidsgiver,
+                          String arbeidsforholdId,
                           BigDecimal dagsats,
                           BigDecimal utbetalingsgrad,
                           BigDecimal refusjonsgrad,

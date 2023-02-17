@@ -21,20 +21,6 @@ import no.nav.vedtak.mapper.json.DefaultJsonMapper;
  */
 class MeldekortUtbetalingsgrunnlagSakDtoSeraliseringOgDeseraliseringTest {
 
-    @Test
-    void konsistenstestForÅSjekkeAtDeseraliseringFungereUavhengigAvSeralisering() {
-        var seralisertStreng = hardkodetSeralisertStreng();
-        var testA = DefaultJsonMapper.fromJson(seralisertStreng, MeldekortUtbetalingsgrunnlagSakDto.class);
-        assertThat(testA).isEqualTo(getMeldekortUtbetalingsgrunnlagSakDto());
-    }
-
-    @Test
-    void konsistenstestForÅSjekkeAtSeraliseringFungereUavhengigAvDeseralisering() {
-        var meldekortUtbetalingsgrunnlagSakDto = getMeldekortUtbetalingsgrunnlagSakDto();
-        var seralized = DefaultJsonMapper.toJson(meldekortUtbetalingsgrunnlagSakDto);
-        assertThat(seralized).isEqualToIgnoringWhitespace(hardkodetSeralisertStreng().replaceAll("[\n\r ]", ""));
-    }
-
     private static String hardkodetSeralisertStreng() {
         return """
              {
@@ -62,10 +48,8 @@ class MeldekortUtbetalingsgrunnlagSakDtoSeraliseringOgDeseraliseringTest {
             """;
     }
 
-
     static MeldekortUtbetalingsgrunnlagSakDto getMeldekortUtbetalingsgrunnlagSakDto() {
-        return new MeldekortUtbetalingsgrunnlagSakDto.Builder()
-            .kilde(FagsystemDto.ARENA)
+        return new MeldekortUtbetalingsgrunnlagSakDto.Builder().kilde(FagsystemDto.ARENA)
             .kravMottattDato(LocalDate.of(2022, 8, 24))
             .meldekortene(List.of(getMeldekortUtbetalingsgrunnlagMeldekortDto()))
             .sakStatus("AKTIV")
@@ -81,12 +65,25 @@ class MeldekortUtbetalingsgrunnlagSakDtoSeraliseringOgDeseraliseringTest {
     }
 
     private static MeldekortUtbetalingsgrunnlagMeldekortDto getMeldekortUtbetalingsgrunnlagMeldekortDto() {
-        return new MeldekortUtbetalingsgrunnlagMeldekortDto.Builder()
-            .beløp(BigDecimal.TEN)
+        return new MeldekortUtbetalingsgrunnlagMeldekortDto.Builder().beløp(BigDecimal.TEN)
             .dagsats(BigDecimal.ONE)
             .meldekortFom(LocalDate.of(2022, 8, 24))
             .meldekortTom(LocalDate.of(2022, 8, 29))
             .utbetalingsgrad(BigDecimal.valueOf(100))
             .build();
+    }
+
+    @Test
+    void konsistenstestForÅSjekkeAtDeseraliseringFungereUavhengigAvSeralisering() {
+        var seralisertStreng = hardkodetSeralisertStreng();
+        var testA = DefaultJsonMapper.fromJson(seralisertStreng, MeldekortUtbetalingsgrunnlagSakDto.class);
+        assertThat(testA).isEqualTo(getMeldekortUtbetalingsgrunnlagSakDto());
+    }
+
+    @Test
+    void konsistenstestForÅSjekkeAtSeraliseringFungereUavhengigAvDeseralisering() {
+        var meldekortUtbetalingsgrunnlagSakDto = getMeldekortUtbetalingsgrunnlagSakDto();
+        var seralized = DefaultJsonMapper.toJson(meldekortUtbetalingsgrunnlagSakDto);
+        assertThat(seralized).isEqualToIgnoringWhitespace(hardkodetSeralisertStreng().replaceAll("[\n\r ]", ""));
     }
 }

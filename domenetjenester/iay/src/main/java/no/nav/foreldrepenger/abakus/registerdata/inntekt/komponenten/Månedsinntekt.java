@@ -162,13 +162,15 @@ public class Månedsinntekt {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             YtelseNøkkel nøkkel = (YtelseNøkkel) o;
-            return Objects.equals(måned, nøkkel.måned) &&
-                Objects.equals(ytelseKode, nøkkel.ytelseKode) &&
-                Objects.equals(pensjonKode, nøkkel.pensjonKode) &&
-                Objects.equals(næringsinntektKode, nøkkel.næringsinntektKode);
+            return Objects.equals(måned, nøkkel.måned) && Objects.equals(ytelseKode, nøkkel.ytelseKode) && Objects.equals(pensjonKode,
+                nøkkel.pensjonKode) && Objects.equals(næringsinntektKode, nøkkel.næringsinntektKode);
         }
 
         @Override

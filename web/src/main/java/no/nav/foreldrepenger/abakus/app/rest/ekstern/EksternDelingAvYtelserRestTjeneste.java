@@ -65,18 +65,11 @@ public class EksternDelingAvYtelserRestTjeneste {
 
     private static final Logger LOG = LoggerFactory.getLogger(EksternDelingAvYtelserRestTjeneste.class);
 
-    private static final Set<YtelseType> GYLDIGE_YTELSER = Set.of(YtelseType.PLEIEPENGER_NÆRSTÅENDE,
-        YtelseType.FORELDREPENGER,
-        YtelseType.OMSORGSPENGER,
-        YtelseType.OPPLÆRINGSPENGER,
-        YtelseType.FRISINN,
-        YtelseType.SVANGERSKAPSPENGER,
-        YtelseType.PLEIEPENGER_SYKT_BARN);
+    private static final Set<YtelseType> GYLDIGE_YTELSER = Set.of(YtelseType.PLEIEPENGER_NÆRSTÅENDE, YtelseType.FORELDREPENGER,
+        YtelseType.OMSORGSPENGER, YtelseType.OPPLÆRINGSPENGER, YtelseType.FRISINN, YtelseType.SVANGERSKAPSPENGER, YtelseType.PLEIEPENGER_SYKT_BARN);
 
     // Kapittel 9 (ekskluderer FRISINN)
-    private static final Set<YtelseType> K9_YTELSER = Set.of(YtelseType.PLEIEPENGER_NÆRSTÅENDE,
-        YtelseType.OMSORGSPENGER,
-        YtelseType.OPPLÆRINGSPENGER,
+    private static final Set<YtelseType> K9_YTELSER = Set.of(YtelseType.PLEIEPENGER_NÆRSTÅENDE, YtelseType.OMSORGSPENGER, YtelseType.OPPLÆRINGSPENGER,
         YtelseType.PLEIEPENGER_SYKT_BARN);
 
     private VedtakYtelseRepository ytelseRepository;
@@ -87,10 +80,19 @@ public class EksternDelingAvYtelserRestTjeneste {
     } // CDI Ctor
 
     @Inject
-    public EksternDelingAvYtelserRestTjeneste(VedtakYtelseRepository ytelseRepository, InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste, AktørTjeneste aktørTjeneste) {
+    public EksternDelingAvYtelserRestTjeneste(VedtakYtelseRepository ytelseRepository,
+                                              InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste,
+                                              AktørTjeneste aktørTjeneste) {
         this.ytelseRepository = ytelseRepository;
         this.aktørTjeneste = aktørTjeneste;
         this.innhentingInfotrygdTjeneste = innhentingInfotrygdTjeneste;
+    }
+
+    private static ArbeidsgiverIdent mapArbeidsgiverIdent(no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver arbeidsgiver) {
+        if (arbeidsgiver == null) {
+            return null;
+        }
+        return new ArbeidsgiverIdent(arbeidsgiver.getIdentifikator());
     }
 
     @POST
@@ -147,14 +149,10 @@ public class EksternDelingAvYtelserRestTjeneste {
 
         LOG.info("ABAKUS VEDTAK ekstern /hent-vedtatte/for-ident for ytelser {}", request.getYtelser());
 
-        var etterspurteYtelser = request.getYtelser()
-            .stream()
-            .filter(GYLDIGE_YTELSER::contains)
-            .collect(Collectors.toSet());
+        var etterspurteYtelser = request.getYtelser().stream().filter(GYLDIGE_YTELSER::contains).collect(Collectors.toSet());
 
         return hentUtYtelser(request, etterspurteYtelser, false);
     }
-
 
     @POST
     @Path("/hent-vedtatte/for-ident/k9")
@@ -250,21 +248,14 @@ public class EksternDelingAvYtelserRestTjeneste {
     }
 
     private List<AnvistAndel> mapInfotrygdAndeler(no.nav.foreldrepenger.abakus.domene.iay.YtelseAnvist anvist) {
-        return anvist.getYtelseAnvistAndeler().stream().map(a -> new AnvistAndel(
-            a.getArbeidsgiver().map(EksternDelingAvYtelserRestTjeneste::mapArbeidsgiverIdent).orElse(null),
-            a.getArbeidsforholdRef().getReferanse(),
-            new Desimaltall(a.getDagsats().getVerdi()),
-            a.getUtbetalingsgradProsent() == null ? null : new Desimaltall(a.getUtbetalingsgradProsent().getVerdi()),
-            a.getRefusjonsgradProsent() == null ? null : new Desimaltall(a.getRefusjonsgradProsent().getVerdi()),
-            ConvertToYtelseV1.fraInntektskategori(a.getInntektskategori())
-        )).collect(Collectors.toList());
-    }
-
-    private static ArbeidsgiverIdent mapArbeidsgiverIdent(no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver arbeidsgiver) {
-        if (arbeidsgiver == null) {
-            return null;
-        }
-        return new ArbeidsgiverIdent(arbeidsgiver.getIdentifikator());
+        return anvist.getYtelseAnvistAndeler()
+            .stream()
+            .map(a -> new AnvistAndel(a.getArbeidsgiver().map(EksternDelingAvYtelserRestTjeneste::mapArbeidsgiverIdent).orElse(null),
+                a.getArbeidsforholdRef().getReferanse(), new Desimaltall(a.getDagsats().getVerdi()),
+                a.getUtbetalingsgradProsent() == null ? null : new Desimaltall(a.getUtbetalingsgradProsent().getVerdi()),
+                a.getRefusjonsgradProsent() == null ? null : new Desimaltall(a.getRefusjonsgradProsent().getVerdi()),
+                ConvertToYtelseV1.fraInntektskategori(a.getInntektskategori())))
+            .collect(Collectors.toList());
     }
 
     private YtelseType utledTema(Set<YtelseType> request) {

@@ -22,7 +22,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
  * Denne klassen kan traverse en Entity graph og trekk ut verdier som key/value.
  * <p>
  * Genererte verdier, {@link Id}, {@link Version}, {@link GeneratedValue} vil ignoreres.
- *
+ * <p>
  * Bør opprette ny instans for hver gang det brukes til sammenligning.
  */
 public class TraverseGraph {

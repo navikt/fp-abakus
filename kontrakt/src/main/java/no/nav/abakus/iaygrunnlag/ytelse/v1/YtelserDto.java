@@ -8,28 +8,29 @@ import javax.validation.Valid;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.PersonIdent;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.ALWAYS)
 public class YtelserDto {
 
-    /** Bruker ytelse gjelder for. */
+    /**
+     * Bruker ytelse gjelder for.
+     */
     @JsonProperty(value = "person", required = true)
     @Valid
     private PersonIdent person;
 
-    @JsonProperty(value="ytelser")
+    @JsonProperty(value = "ytelser")
     @Valid
     private List<YtelseDto> ytelser;
 
     protected YtelserDto() {
     }
-    
+
     public YtelserDto(PersonIdent person) {
         Objects.requireNonNull(person, "person");
         this.person = person;
@@ -46,7 +47,7 @@ public class YtelserDto {
     public void setYtelser(List<YtelseDto> ytelser) {
         this.ytelser = ytelser;
     }
-    
+
     public YtelserDto medYtelser(List<YtelseDto> ytelser) {
         this.ytelser = ytelser;
         return this;

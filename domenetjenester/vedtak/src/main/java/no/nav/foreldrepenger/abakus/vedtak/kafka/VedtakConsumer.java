@@ -38,8 +38,7 @@ public class VedtakConsumer implements KafkaIntegration {
         final Consumed<String, String> consumed = Consumed.with(Topology.AutoOffsetReset.EARLIEST);
 
         final StreamsBuilder builder = new StreamsBuilder();
-        builder.stream(topic, consumed)
-            .foreach(vedtaksHendelseHåndterer::handleMessage);
+        builder.stream(topic, consumed).foreach(vedtaksHendelseHåndterer::handleMessage);
 
         this.stream = new KafkaStreams(builder.build(), KafkaProperties.forStreamsStringValue(APPLICATION_ID));
     }

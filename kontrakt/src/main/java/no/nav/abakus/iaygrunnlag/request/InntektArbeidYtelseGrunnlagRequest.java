@@ -164,13 +164,19 @@ public class InntektArbeidYtelseGrunnlagRequest {
         return grunnlagVersjon;
     }
 
-    /** Setter scope for hvilke grunnlag som hentes per behandling. */
+    /**
+     * Setter scope for hvilke grunnlag som hentes per behandling.
+     */
     public enum GrunnlagVersjon {
 
-        /** Alle grunnlag versjoner per behandling. Egnet kun ved full migrering. */
+        /**
+         * Alle grunnlag versjoner per behandling. Egnet kun ved full migrering.
+         */
         ALLE,
 
-        /** Default valg. Kun siste (dvs. aktiv) grunnlag per behandling. Typisk dersom man ønsker kun gjeldende grunnlag. */
+        /**
+         * Default valg. Kun siste (dvs. aktiv) grunnlag per behandling. Typisk dersom man ønsker kun gjeldende grunnlag.
+         */
         SISTE,
 
         /**

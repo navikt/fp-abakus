@@ -1,9 +1,16 @@
 package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.impl;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.*;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AaregRestKlient;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.ArbeidsforholdRS;
+import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -11,21 +18,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
-import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsavtale;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdTjeneste;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Organisasjon;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AaregRestKlient;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.ArbeidsforholdRS;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ArbeidsforholdTjenesteMedRestTest {
 
@@ -34,9 +30,6 @@ public class ArbeidsforholdTjenesteMedRestTest {
     private static final AktørId AKTØR_ID = new AktørId("1231231231223");
     private static final PersonIdent FNR = new PersonIdent("12312312312");
     private static final LocalDate FOM = LocalDate.now().minusYears(1L);
-
-    private static ObjectMapper mapper = JsonObjectMapper.getMapper();
-
     private static final String json = """
         {
           "arbeidsforholdId": "990983666",
@@ -67,6 +60,11 @@ public class ArbeidsforholdTjenesteMedRestTest {
             ]
         }
         """;
+    private static ObjectMapper mapper = JsonObjectMapper.getMapper();
+
+    private static <T> T fromJson(String json, Class<T> clazz) throws IOException {
+        return mapper.readerFor(clazz).readValue(json);
+    }
 
     @Test
     public void mapping_organisasjon() throws IOException {
@@ -84,7 +82,8 @@ public class ArbeidsforholdTjenesteMedRestTest {
         ArbeidsforholdTjeneste arbeidsforholdTjeneste = new ArbeidsforholdTjeneste(aaregRestKlient);
 
         // Act
-        Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(FNR, AKTØR_ID, IntervallEntitet.fraOgMedTilOgMed(FOM, LocalDate.now()));
+        Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(FNR,
+            AKTØR_ID, IntervallEntitet.fraOgMedTilOgMed(FOM, LocalDate.now()));
 
         // Assert
         assertThat(((Organisasjon) arbeidsforhold.values().iterator().next().get(0).getArbeidsgiver()).getOrgNummer()).isEqualTo(ORGNR);
@@ -101,10 +100,5 @@ public class ArbeidsforholdTjenesteMedRestTest {
             }
         });
 
-    }
-
-
-    private static <T> T fromJson(String json, Class<T> clazz) throws IOException {
-        return mapper.readerFor(clazz).readValue(json);
     }
 }

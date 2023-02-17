@@ -28,7 +28,7 @@ import no.nav.foreldrepenger.abakus.app.diagnostikk.rapportering.RapportTypeRef.
 @Stereotype
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD })
+@Target({ElementType.TYPE, ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
 @Documented
 public @interface RapportTypeRef {
 
@@ -44,7 +44,7 @@ public @interface RapportTypeRef {
      */
     @Inherited
     @Retention(RetentionPolicy.RUNTIME)
-    @Target({ ElementType.TYPE, ElementType.PARAMETER, ElementType.FIELD })
+    @Target({ElementType.TYPE, ElementType.PARAMETER, ElementType.FIELD})
     @Documented
     public @interface ContainerOfRapportTypeRef {
         RapportTypeRef[] value();

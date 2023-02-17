@@ -1,13 +1,24 @@
 package no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl;
 
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FinnInntektRequest;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjeneste;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
+import no.nav.tjenester.aordningen.inntektsinformasjon.*;
+import no.nav.tjenester.aordningen.inntektsinformasjon.inntekt.Inntekt;
+import no.nav.tjenester.aordningen.inntektsinformasjon.inntekt.InntektType;
+import no.nav.tjenester.aordningen.inntektsinformasjon.response.HentInntektListeBolkResponse;
+import no.nav.vedtak.exception.VLException;
+import no.nav.vedtak.felles.integrasjon.rest.RestClient;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -17,29 +28,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FinnInntektRequest;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjeneste;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
-import no.nav.tjenester.aordningen.inntektsinformasjon.Aktoer;
-import no.nav.tjenester.aordningen.inntektsinformasjon.AktoerType;
-import no.nav.tjenester.aordningen.inntektsinformasjon.ArbeidsInntektIdent;
-import no.nav.tjenester.aordningen.inntektsinformasjon.ArbeidsInntektInformasjon;
-import no.nav.tjenester.aordningen.inntektsinformasjon.ArbeidsInntektMaaned;
-import no.nav.tjenester.aordningen.inntektsinformasjon.Sikkerhetsavvik;
-import no.nav.tjenester.aordningen.inntektsinformasjon.inntekt.Inntekt;
-import no.nav.tjenester.aordningen.inntektsinformasjon.inntekt.InntektType;
-import no.nav.tjenester.aordningen.inntektsinformasjon.response.HentInntektListeBolkResponse;
-import no.nav.vedtak.exception.VLException;
-import no.nav.vedtak.felles.integrasjon.rest.RestClient;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class InntektTjenesteImplTest {
@@ -82,10 +75,10 @@ public class InntektTjenesteImplTest {
         // To måneder siden
         ArbeidsInntektInformasjon arbeidsInntektInformasjonMnd2 = new ArbeidsInntektInformasjon();
         arbeidsInntektInformasjonMnd2.setInntektListe(new ArrayList<>());
-        arbeidsInntektInformasjonMnd2.getInntektListe().add(
-            opprettInntekt(new BigDecimal(100), GJELDENDE_MÅNED.minusMonths(2), null, SYKEPENGER, InntektType.YTELSE_FRA_OFFENTLIGE));
-        arbeidsInntektInformasjonMnd2.getInntektListe().add(
-            opprettInntekt(new BigDecimal(200), GJELDENDE_MÅNED.minusMonths(2), arbeidsplassen, null, InntektType.LOENNSINNTEKT));
+        arbeidsInntektInformasjonMnd2.getInntektListe()
+            .add(opprettInntekt(new BigDecimal(100), GJELDENDE_MÅNED.minusMonths(2), null, SYKEPENGER, InntektType.YTELSE_FRA_OFFENTLIGE));
+        arbeidsInntektInformasjonMnd2.getInntektListe()
+            .add(opprettInntekt(new BigDecimal(200), GJELDENDE_MÅNED.minusMonths(2), arbeidsplassen, null, InntektType.LOENNSINNTEKT));
         ArbeidsInntektMaaned arbeidsInntektMaaned2 = new ArbeidsInntektMaaned();
         arbeidsInntektMaaned2.setArbeidsInntektInformasjon(arbeidsInntektInformasjonMnd2);
         response.getArbeidsInntektIdentListe().get(0).getArbeidsInntektMaaned().add(arbeidsInntektMaaned2);
@@ -100,18 +93,17 @@ public class InntektTjenesteImplTest {
 
         // Denne måneden
         ArbeidsInntektInformasjon arbeidsInntektInformasjonMnd4 = new ArbeidsInntektInformasjon();
-        arbeidsInntektInformasjonMnd4.setInntektListe(Collections.singletonList(
-            opprettInntekt(new BigDecimal(405), GJELDENDE_MÅNED, arbeidsplassen, null, InntektType.LOENNSINNTEKT)));
+        arbeidsInntektInformasjonMnd4.setInntektListe(
+            Collections.singletonList(opprettInntekt(new BigDecimal(405), GJELDENDE_MÅNED, arbeidsplassen, null, InntektType.LOENNSINNTEKT)));
         ArbeidsInntektMaaned arbeidsInntektMaaned4 = new ArbeidsInntektMaaned();
         arbeidsInntektMaaned4.setArbeidsInntektInformasjon(arbeidsInntektInformasjonMnd4);
         response.getArbeidsInntektIdentListe().get(0).getArbeidsInntektMaaned().add(arbeidsInntektMaaned4);
 
-        FinnInntektRequest finnInntektRequest = FinnInntektRequest
-            .builder(GJELDENDE_MÅNED.minusMonths(3), GJELDENDE_MÅNED)
-            .medFnr(FNR).build();
+        FinnInntektRequest finnInntektRequest = FinnInntektRequest.builder(GJELDENDE_MÅNED.minusMonths(3), GJELDENDE_MÅNED).medFnr(FNR).build();
 
         // Act
-        InntektsInformasjon inntektsInformasjon = inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING, YtelseType.FORELDREPENGER);
+        InntektsInformasjon inntektsInformasjon = inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING,
+            YtelseType.FORELDREPENGER);
 
         // Assert
         verify(restKlient, times(1)).send(any(), eq(HentInntektListeBolkResponse.class));
@@ -140,12 +132,11 @@ public class InntektTjenesteImplTest {
         arbeidsplassen.setIdentifikator(ORGNR);
         YearMonth tidligst = YearMonth.from(LocalDate.parse("2015-07-01", DateTimeFormatter.ISO_LOCAL_DATE));
 
-        FinnInntektRequest finnInntektRequest = FinnInntektRequest
-            .builder(tidligst.minusMonths(3), tidligst.plusMonths(3))
-            .medFnr(FNR).build();
+        FinnInntektRequest finnInntektRequest = FinnInntektRequest.builder(tidligst.minusMonths(3), tidligst.plusMonths(3)).medFnr(FNR).build();
 
         // Act
-        final InntektsInformasjon inntektsInformasjon = inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING, YtelseType.OMSORGSPENGER);
+        final InntektsInformasjon inntektsInformasjon = inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING,
+            YtelseType.OMSORGSPENGER);
 
         // Assert
         verify(restKlient, times(1)).send(any(), eq(HentInntektListeBolkResponse.class));
@@ -166,9 +157,7 @@ public class InntektTjenesteImplTest {
         response.getSikkerhetsavvikListe().add(sikkerhetsavvik2);
         when(restKlient.send(any(), any())).thenReturn(response);
 
-        FinnInntektRequest finnInntektRequest = FinnInntektRequest
-            .builder(GJELDENDE_MÅNED.minusMonths(3), GJELDENDE_MÅNED)
-            .medFnr(FNR).build();
+        FinnInntektRequest finnInntektRequest = FinnInntektRequest.builder(GJELDENDE_MÅNED.minusMonths(3), GJELDENDE_MÅNED).medFnr(FNR).build();
 
         try {
             // Act

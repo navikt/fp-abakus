@@ -58,7 +58,9 @@ public class OverstyrtInntektArbeidYtelseDto {
     @Valid
     private InntektArbeidYtelseAggregatOverstyrtDto overstyrt;
 
-    /** Referanser til arbeidsforhold satt av saksbehandler. */
+    /**
+     * Referanser til arbeidsforhold satt av saksbehandler.
+     */
     @JsonProperty(value = "arbeidsforholdInformasjon")
     @Valid
     private ArbeidsforholdInformasjon arbeidsforholdInformasjon;
@@ -108,14 +110,10 @@ public class OverstyrtInntektArbeidYtelseDto {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<"
-            + "person=*****"
-            + ", ytelseType=" + ytelseType
-            + (koblingReferanse == null ? "" : ", koblingReferanse=" + koblingReferanse)
-            + (grunnlagReferanse == null ? "" : ", grunnlagReferanse" + grunnlagReferanse)
-            + (overstyrt == null ? "" : ", overstyrtIay={...}")
-            + (arbeidsforholdInformasjon == null ? "" : ", arbeidsforholdInformasjon={...}")
-            + ">";
+        return getClass().getSimpleName() + "<" + "person=*****" + ", ytelseType=" + ytelseType + (
+            koblingReferanse == null ? "" : ", koblingReferanse=" + koblingReferanse) + (
+            grunnlagReferanse == null ? "" : ", grunnlagReferanse" + grunnlagReferanse) + (overstyrt == null ? "" : ", overstyrtIay={...}") + (
+            arbeidsforholdInformasjon == null ? "" : ", arbeidsforholdInformasjon={...}") + ">";
     }
 
 }

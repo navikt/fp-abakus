@@ -121,7 +121,8 @@ public @interface YtelseTypeRef {
                     return Optional.of(getInstance(inst));
                 } else {
                     if (inst.isAmbiguous()) {
-                        throw new IllegalStateException("Har flere matchende instanser for klasse : " + cls.getName() + ", fagsakType=" + fagsakLiteral);
+                        throw new IllegalStateException(
+                            "Har flere matchende instanser for klasse : " + cls.getName() + ", fagsakType=" + fagsakLiteral);
                     }
                 }
             }
@@ -130,9 +131,7 @@ public @interface YtelseTypeRef {
         }
 
         private static <I> Instance<I> select(Class<I> cls, Instance<I> instances, Annotation anno) {
-            return cls != null
-                ? instances.select(cls, anno)
-                : instances.select(anno);
+            return cls != null ? instances.select(cls, anno) : instances.select(anno);
         }
 
         private static <I> I getInstance(Instance<I> inst) {

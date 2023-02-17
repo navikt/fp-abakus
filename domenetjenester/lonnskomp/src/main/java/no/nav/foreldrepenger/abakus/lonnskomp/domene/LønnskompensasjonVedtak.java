@@ -89,9 +89,20 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
         ytelse.getAnvistePerioder().stream().map(LønnskompensasjonAnvist::new).forEach(this::leggTilAnvistPeriode);
     }
 
+    public static boolean erLikForBrukerOrg(LønnskompensasjonVedtak v1, LønnskompensasjonVedtak v2) {
+        if (v1 == null && v2 == null) {
+            return true;
+        }
+        if (v1 == null || v2 == null) {
+            return false;
+        }
+        return Objects.equals(v1.aktørId, v2.aktørId) && Objects.equals(v1.orgNummer, v2.orgNummer) && Objects.equals(v1.periode, v2.periode)
+            && Objects.equals(v1.beløp, v2.beløp);
+    }
+
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { periode, aktørId, sakId, };
+        Object[] keyParts = {periode, aktørId, sakId,};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -175,24 +186,16 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         LønnskompensasjonVedtak that = (LønnskompensasjonVedtak) o;
-        return Objects.equals(sakId, that.sakId) &&
-            Objects.equals(fnr, that.fnr) &&
-            Objects.equals(orgNummer, that.orgNummer) &&
-            Objects.equals(periode, that.periode) &&
-            Objects.equals(beløp, that.beløp) &&
-            anvistePerioder.size() == that.anvistePerioder.size() && anvistePerioder.containsAll(that.anvistePerioder);
-    }
-
-    public static boolean erLikForBrukerOrg(LønnskompensasjonVedtak v1, LønnskompensasjonVedtak v2) {
-        if (v1 == null && v2 == null) return true;
-        if (v1 == null || v2 == null) return false;
-        return Objects.equals(v1.aktørId, v2.aktørId) &&
-            Objects.equals(v1.orgNummer, v2.orgNummer) &&
-            Objects.equals(v1.periode, v2.periode) &&
-            Objects.equals(v1.beløp, v2.beløp);
+        return Objects.equals(sakId, that.sakId) && Objects.equals(fnr, that.fnr) && Objects.equals(orgNummer, that.orgNummer) && Objects.equals(
+            periode, that.periode) && Objects.equals(beløp, that.beløp) && anvistePerioder.size() == that.anvistePerioder.size()
+            && anvistePerioder.containsAll(that.anvistePerioder);
     }
 
     @Override
@@ -202,12 +205,7 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "LønnskompensasjonVedtak{" +
-            "sakId='" + sakId + '\'' +
-            ", orgNummer=" + orgNummer +
-            ", forrigeVedtakDato=" + forrigeVedtakDato +
-            ", periode=" + periode +
-            ", beløp=" + beløp +
-            '}';
+        return "LønnskompensasjonVedtak{" + "sakId='" + sakId + '\'' + ", orgNummer=" + orgNummer + ", forrigeVedtakDato=" + forrigeVedtakDato
+            + ", periode=" + periode + ", beløp=" + beløp + '}';
     }
 }

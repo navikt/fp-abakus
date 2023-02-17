@@ -20,8 +20,8 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
 import no.nav.abakus.iaygrunnlag.FnrPersonident;
-import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.abakus.iaygrunnlag.JournalpostId;
+import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.abakus.iaygrunnlag.Organisasjon;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.arbeid.v1.AktivitetsAvtaleDto;
@@ -134,122 +134,84 @@ public class IayGrunnlagTest {
 
         var arbeidsforholdId = new ArbeidsforholdRefDto(UUID.randomUUID().toString(), "aaregRef");
 
-        grunnlag.medRegister(
-            new InntektArbeidYtelseAggregatRegisterDto(tidspunkt, uuid)
-                .medArbeid(List.of(
-                    new ArbeidDto(fnr)
-                        .medYrkesaktiviteter(List.of(
-                            new YrkesaktivitetDto(arbeidType)
-                                .medArbeidsgiver(org)
-                                .medPermisjoner(List.of(new PermisjonDto(periode, PermisjonsbeskrivelseType.PERMISJON).medProsentsats(50)))
-                                .medArbeidsforholdId(arbeidsforholdId)
-                                .medNavnArbeidsgiverUtland("UtenlandskArbeidsgiverAS")
-                                .medAktivitetsAvtaler(List.of(
-                                    new AktivitetsAvtaleDto(periode)
-                                        .medSistLønnsendring(fom)
-                                        .medBeskrivelse("beskrivelse")
-                                        .medStillingsprosent(50)))))))
-                .medInntekt(List.of(
-                    new InntekterDto(fnr)
-                        .medUtbetalinger(List.of(
-                            new UtbetalingDto(InntektskildeType.INNTEKT_SAMMENLIGNING)
-                                .medArbeidsgiver(org)
-                                .medPoster(List.of(
-                                    new UtbetalingsPostDto(periode, InntektspostType.LØNN)
-                                        .medUtbetaltYtelseType(utbetaltYtelse)
-                                        .medBeløp(100)
-                                        .medSkattAvgiftType(SkatteOgAvgiftsregelType.NETTOLØNN)))))))
-                .medYtelse(List.of(
-                    new YtelserDto(fnr)
-                        .medYtelser(List.of(
-                            new YtelseDto(Fagsystem.FPSAK, ytelseType, periode, YtelseStatus.LØPENDE)
-                                .medSaksnummer("1234")
-                                .medVedtattTidspunkt(LocalDateTime.now().minusDays(1))
-                                .medTemaUnderkategori(TemaUnderkategori.FORELDREPENGER_FODSEL)
-                                .medGrunnlag(
-                                    new YtelseGrunnlagDto()
-                                        .medArbeidskategoriDto(Arbeidskategori.ARBEIDSTAKER)
-                                        .medOpprinneligIdentDato(fom)
-                                        .medDekningsgradProsent(100)
-                                        .medInntektsgrunnlagProsent(100)
-                                        .medGraderingProsent(100)
-                                        .medVedtaksDagsats(255)
-                                        .medFordeling(List.of(new FordelingDto(org, InntektPeriodeType.DAGLIG, 100, true))))
-                                .medAnvisninger(List.of(
-                                    new AnvisningDto(periode)
-                                        .medBeløp(100)
-                                        .medDagsats(100)
-                                        .medUtbetalingsgrad(100))))))));
+        grunnlag.medRegister(new InntektArbeidYtelseAggregatRegisterDto(tidspunkt, uuid).medArbeid(List.of(new ArbeidDto(fnr).medYrkesaktiviteter(
+                List.of(new YrkesaktivitetDto(arbeidType).medArbeidsgiver(org)
+                    .medPermisjoner(List.of(new PermisjonDto(periode, PermisjonsbeskrivelseType.PERMISJON).medProsentsats(50)))
+                    .medArbeidsforholdId(arbeidsforholdId)
+                    .medNavnArbeidsgiverUtland("UtenlandskArbeidsgiverAS")
+                    .medAktivitetsAvtaler(
+                        List.of(new AktivitetsAvtaleDto(periode).medSistLønnsendring(fom).medBeskrivelse("beskrivelse").medStillingsprosent(50)))))))
+            .medInntekt(List.of(new InntekterDto(fnr).medUtbetalinger(List.of(
+                new UtbetalingDto(InntektskildeType.INNTEKT_SAMMENLIGNING).medArbeidsgiver(org)
+                    .medPoster(List.of(new UtbetalingsPostDto(periode, InntektspostType.LØNN).medUtbetaltYtelseType(utbetaltYtelse)
+                        .medBeløp(100)
+                        .medSkattAvgiftType(SkatteOgAvgiftsregelType.NETTOLØNN)))))))
+            .medYtelse(List.of(new YtelserDto(fnr).medYtelser(List.of(
+                new YtelseDto(Fagsystem.FPSAK, ytelseType, periode, YtelseStatus.LØPENDE).medSaksnummer("1234")
+                    .medVedtattTidspunkt(LocalDateTime.now().minusDays(1))
+                    .medTemaUnderkategori(TemaUnderkategori.FORELDREPENGER_FODSEL)
+                    .medGrunnlag(new YtelseGrunnlagDto().medArbeidskategoriDto(Arbeidskategori.ARBEIDSTAKER)
+                        .medOpprinneligIdentDato(fom)
+                        .medDekningsgradProsent(100)
+                        .medInntektsgrunnlagProsent(100)
+                        .medGraderingProsent(100)
+                        .medVedtaksDagsats(255)
+                        .medFordeling(List.of(new FordelingDto(org, InntektPeriodeType.DAGLIG, 100, true))))
+                    .medAnvisninger(List.of(new AnvisningDto(periode).medBeløp(100).medDagsats(100).medUtbetalingsgrad(100))))))));
 
-        grunnlag.medArbeidsforholdInformasjon(new ArbeidsforholdInformasjon(UUID.randomUUID())
-            .medReferanser(List.of(new ArbeidsforholdReferanseDto(org, arbeidsforholdId)))
-            .medOverstyringer(List.of(new ArbeidsforholdOverstyringDto(org, arbeidsforholdId)
-                .medBegrunnelse("en begrunnelse")
-                .medHandling(ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING)
-                .medNavn("Mitt arbeisforhold")
-                .medStillingsprosent(100)
-                .medBekreftetPermisjon(fom, tom, BekreftetPermisjonStatus.BRUK_PERMISJON))));
+        grunnlag.medArbeidsforholdInformasjon(
+            new ArbeidsforholdInformasjon(UUID.randomUUID()).medReferanser(List.of(new ArbeidsforholdReferanseDto(org, arbeidsforholdId)))
+                .medOverstyringer(List.of(new ArbeidsforholdOverstyringDto(org, arbeidsforholdId).medBegrunnelse("en begrunnelse")
+                    .medHandling(ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING)
+                    .medNavn("Mitt arbeisforhold")
+                    .medStillingsprosent(100)
+                    .medBekreftetPermisjon(fom, tom, BekreftetPermisjonStatus.BRUK_PERMISJON))));
 
-        grunnlag.medOverstyrt(
-            new InntektArbeidYtelseAggregatOverstyrtDto(tidspunkt, uuid)
-                .medArbeid(List.of(
-                    new ArbeidDto(fnr)
-                        .medYrkesaktiviteter(List.of(
-                            new YrkesaktivitetDto(arbeidType)
-                                .medArbeidsgiver(org)
-                                .medPermisjoner(List.of(new PermisjonDto(periode, PermisjonsbeskrivelseType.PERMISJON).medProsentsats(50)))
-                                .medArbeidsforholdId(new ArbeidsforholdRefDto(UUID.randomUUID().toString(), "ekstern"))
-                                .medAktivitetsAvtaler(List.of(
-                                    new AktivitetsAvtaleDto(periode)
-                                        .medSistLønnsendring(fom)
-                                        .medBeskrivelse("beskrivelse")
-                                        .medStillingsprosent(30))))))));
+        grunnlag.medOverstyrt(new InntektArbeidYtelseAggregatOverstyrtDto(tidspunkt, uuid).medArbeid(List.of(new ArbeidDto(fnr).medYrkesaktiviteter(
+            List.of(new YrkesaktivitetDto(arbeidType).medArbeidsgiver(org)
+                .medPermisjoner(List.of(new PermisjonDto(periode, PermisjonsbeskrivelseType.PERMISJON).medProsentsats(50)))
+                .medArbeidsforholdId(new ArbeidsforholdRefDto(UUID.randomUUID().toString(), "ekstern"))
+                .medAktivitetsAvtaler(
+                    List.of(new AktivitetsAvtaleDto(periode).medSistLønnsendring(fom).medBeskrivelse("beskrivelse").medStillingsprosent(30))))))));
 
-        grunnlag.medInntektsmeldinger(
-            new InntektsmeldingerDto().medInntektsmeldinger(List.of(
-                new InntektsmeldingDto(org, journalpostId, tidspunkt, fom)
-                    .medArbeidsforholdRef(new ArbeidsforholdRefDto(UUID.randomUUID().toString(), "ID 1"))
-                    .medInnsendingsårsak(InntektsmeldingInnsendingsårsakType.NY)
-                    .medInntektBeløp(99999)
-                    .medKanalreferanse("BBC")
-                    .medKildesystem("TheSource")
-                    .medRefusjonOpphører(fom)
-                    .medRefusjonsBeløpPerMnd(100)
-                    .medStartDatoPermisjon(fom)
-                    .medNærRelasjon(false)
-                    .medEndringerRefusjon(List.of(new RefusjonDto(fom, 100)))
-                    .medGraderinger(List.of(new GraderingDto(periode, 50)))
-                    .medNaturalytelser(List.of(new NaturalytelseDto(periode, NaturalytelseType.ELEKTRISK_KOMMUNIKASJON, 100)))
-                    .medOppgittFravær(List.of(new FraværDto(periode)))
-                    .medUtsettelsePerioder(List.of(new UtsettelsePeriodeDto(periode, UtsettelseÅrsakType.FERIE))))));
+        grunnlag.medInntektsmeldinger(new InntektsmeldingerDto().medInntektsmeldinger(List.of(
+            new InntektsmeldingDto(org, journalpostId, tidspunkt, fom).medArbeidsforholdRef(
+                    new ArbeidsforholdRefDto(UUID.randomUUID().toString(), "ID 1"))
+                .medInnsendingsårsak(InntektsmeldingInnsendingsårsakType.NY)
+                .medInntektBeløp(99999)
+                .medKanalreferanse("BBC")
+                .medKildesystem("TheSource")
+                .medRefusjonOpphører(fom)
+                .medRefusjonsBeløpPerMnd(100)
+                .medStartDatoPermisjon(fom)
+                .medNærRelasjon(false)
+                .medEndringerRefusjon(List.of(new RefusjonDto(fom, 100)))
+                .medGraderinger(List.of(new GraderingDto(periode, 50)))
+                .medNaturalytelser(List.of(new NaturalytelseDto(periode, NaturalytelseType.ELEKTRISK_KOMMUNIKASJON, 100)))
+                .medOppgittFravær(List.of(new FraværDto(periode)))
+                .medUtsettelsePerioder(List.of(new UtsettelsePeriodeDto(periode, UtsettelseÅrsakType.FERIE))))));
 
-        grunnlag.medOppgittOpptjening(
-            new OppgittOpptjeningDto(null, null, uuid, offTidspunkt)
-                .medArbeidsforhold(List.of(
-                    new OppgittArbeidsforholdDto(periode, ArbeidType.ORDINÆRT_ARBEIDSFORHOLD)
-                        .medErUtenlandskInntekt(true)
-                        .medInntekt(BigDecimal.valueOf(10000))
-                        .medOppgittVirksomhetNavn("GammelDansk", Landkode.DNK)))
-                .medEgenNæring(List.of(
-                    new OppgittEgenNæringDto(periode)
-                        .medBegrunnelse("MinBegrunnelse")
-                        .medBruttoInntekt(10000)
-                        .medEndringDato(fom)
-                        .medNyIArbeidslivet(false)
-                        .medNyoppstartet(false)
-                        .medNærRelasjon(false)
-                        .medOppgittVirksomhetNavn("Argonne National Laboratory (9700 S. Cass Avenue, Lemont, IL 60439, USA [https://www.anl.gov/])", Landkode.SWE)
-                        .medRegnskapsførerNavn("Regnskapsfører")
-                        .medRegnskapsførerTlf("Sentralbord:      71 44 33 00  Direktenummer:  468 41 333  Mail: adf@ladf.no")
-                        .medVarigEndring(true)
-                        .medVirksomhet(org)
-                        .medVirksomhetType(VirksomhetType.ANNEN)))
-                .medAnnenAktivitet(List.of(new OppgittAnnenAktivitetDto(periode, arbeidType)))
-                .medFrilans(new OppgittFrilansDto(List.of(
-                    new OppgittFrilansoppdragDto(periode, "MittOppdrag")))
-                        .medErNyoppstartet(false)
-                        .medHarInntektFraFosterhjem(false)
-                        .medHarNærRelasjon(false)));
+        grunnlag.medOppgittOpptjening(new OppgittOpptjeningDto(null, null, uuid, offTidspunkt).medArbeidsforhold(List.of(
+                new OppgittArbeidsforholdDto(periode, ArbeidType.ORDINÆRT_ARBEIDSFORHOLD).medErUtenlandskInntekt(true)
+                    .medInntekt(BigDecimal.valueOf(10000))
+                    .medOppgittVirksomhetNavn("GammelDansk", Landkode.DNK)))
+            .medEgenNæring(List.of(new OppgittEgenNæringDto(periode).medBegrunnelse("MinBegrunnelse")
+                .medBruttoInntekt(10000)
+                .medEndringDato(fom)
+                .medNyIArbeidslivet(false)
+                .medNyoppstartet(false)
+                .medNærRelasjon(false)
+                .medOppgittVirksomhetNavn("Argonne National Laboratory (9700 S. Cass Avenue, Lemont, IL 60439, USA [https://www.anl.gov/])",
+                    Landkode.SWE)
+                .medRegnskapsførerNavn("Regnskapsfører")
+                .medRegnskapsførerTlf("Sentralbord:      71 44 33 00  Direktenummer:  468 41 333  Mail: adf@ladf.no")
+                .medVarigEndring(true)
+                .medVirksomhet(org)
+                .medVirksomhetType(VirksomhetType.ANNEN)))
+            .medAnnenAktivitet(List.of(new OppgittAnnenAktivitetDto(periode, arbeidType)))
+            .medFrilans(new OppgittFrilansDto(List.of(new OppgittFrilansoppdragDto(periode, "MittOppdrag"))).medErNyoppstartet(false)
+                .medHarInntektFraFosterhjem(false)
+                .medHarNærRelasjon(false)));
         return grunnlag;
     }
 

@@ -19,11 +19,6 @@ public class OpplysningspliktigArbeidsgiverRS {
     @JsonProperty("offentligIdent")
     private String offentligIdent;
 
-    public enum Type {
-        Organisasjon,
-        Person
-    }
-
     public Type getType() {
         return type;
     }
@@ -42,11 +37,12 @@ public class OpplysningspliktigArbeidsgiverRS {
 
     @Override
     public String toString() {
-        return "OpplysningspliktigArbeidsgiverRS{" +
-            "type=" + type +
-            ", organisasjonsnummer='" + organisasjonsnummer + '\'' +
-            ", aktoerId='" + aktoerId + '\'' +
-            ", offentligIdent='" + offentligIdent + '\'' +
-            '}';
+        return "OpplysningspliktigArbeidsgiverRS{" + "type=" + type + ", organisasjonsnummer='" + organisasjonsnummer + '\'' + ", aktoerId='"
+            + aktoerId + '\'' + ", offentligIdent='" + offentligIdent + '\'' + '}';
+    }
+
+    public enum Type {
+        Organisasjon,
+        Person
     }
 }

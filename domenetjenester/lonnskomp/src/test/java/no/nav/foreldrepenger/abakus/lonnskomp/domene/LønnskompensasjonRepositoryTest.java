@@ -29,8 +29,9 @@ public class LønnskompensasjonRepositoryTest {
     @Test
     public void skal_håndtere_lagring_rett() {
         var anvist = LønnskompensasjonAnvist.LønnskompensasjonAnvistBuilder.ny()
-            .medAnvistPeriode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.of(2020,4,20), LocalDate.of(2020,4,20)))
-            .medBeløp(new BigDecimal(1000)).build();
+            .medAnvistPeriode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.of(2020, 4, 20), LocalDate.of(2020, 4, 20)))
+            .medBeløp(new BigDecimal(1000))
+            .build();
         var vedtak = new LønnskompensasjonVedtak();
         vedtak.setAktørId(AKTØR_ID);
         vedtak.setFnr(FNR.getIdent());
@@ -58,7 +59,9 @@ public class LønnskompensasjonRepositoryTest {
         }
 
         final var oppdatertVedtattVedtak = repository.hentLønnskompensasjonForIPeriode(AKTØR_ID, LocalDate.now().minusMonths(17), LocalDate.now())
-            .stream().findFirst().orElse(null);
+            .stream()
+            .findFirst()
+            .orElse(null);
 
         assertThat(oppdatertVedtattVedtak).isNotNull();
         assertThat(oppdatertVedtattVedtak.getId()).isNotEqualTo(vedtak.getId());
@@ -68,8 +71,9 @@ public class LønnskompensasjonRepositoryTest {
     @Test
     public void skal_forkaste_vedtak_som_likt() {
         var anvist = LønnskompensasjonAnvist.LønnskompensasjonAnvistBuilder.ny()
-            .medAnvistPeriode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.of(2020,4,20), LocalDate.of(2020,4,20)))
-            .medBeløp(new BigDecimal(1000)).build();
+            .medAnvistPeriode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.of(2020, 4, 20), LocalDate.of(2020, 4, 20)))
+            .medBeløp(new BigDecimal(1000))
+            .build();
         var vedtak = new LønnskompensasjonVedtak();
         vedtak.setAktørId(AKTØR_ID);
         vedtak.setFnr(FNR.getIdent());
@@ -91,7 +95,9 @@ public class LønnskompensasjonRepositoryTest {
         }
 
         final var oppdatertVedtattVedtak = repository.hentLønnskompensasjonForIPeriode(AKTØR_ID, LocalDate.now().minusYears(1), LocalDate.now())
-            .stream().findFirst().orElse(null);
+            .stream()
+            .findFirst()
+            .orElse(null);
 
         assertThat(oppdatertVedtattVedtak).isNotNull();
         assertThat(oppdatertVedtattVedtak.getId()).isEqualTo(vedtak.getId());

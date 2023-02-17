@@ -21,7 +21,8 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
 
     private static final Cluster CLUSTER = Environment.current().getCluster();
     private static final String ABAC_DOMAIN = "duplo";
-    private static final List<String> INTERNAL_CLUSTER_NAMESPACE = List.of(CLUSTER.clusterName() + ":k9saksbehandling", CLUSTER.clusterName() + ":teamforeldrepenger");
+    private static final List<String> INTERNAL_CLUSTER_NAMESPACE = List.of(CLUSTER.clusterName() + ":k9saksbehandling",
+        CLUSTER.clusterName() + ":teamforeldrepenger");
 
     @Override
     public String abacDomene() {

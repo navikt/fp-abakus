@@ -14,17 +14,13 @@ public final class TekniskNavnMapper {
     static final String SVALBARD_LØNN_LØNNSTREKKORDNINGEN = "svalbardLoennLoennstrekkordningen";
     static final String SVALBARD_PERSONINNTEKT_NÆRING = "svalbardPersoninntektNaering";
     static final String LØNNSINNTEKT_MED_TRYGDEAVGIFTSPLIKT_OMFATTET_AV_LØNNSTREKKORDNINGEN = "loennsinntektMedTrygdeavgiftspliktOmfattetAvLoennstrekkordningen";
-    static final String SKATTEOPPGJØRSDATO  = "skatteoppgjoersdato";
+    static final String SKATTEOPPGJØRSDATO = "skatteoppgjoersdato";
 
-    private static final Map<String, InntektspostType> SIGRUN_TIL_INNTEKTSPOST = Map.of(
-        PERSONINNTEKT_LØNN, InntektspostType.LØNN,
-        PERSONINNTEKT_BARE_PENSJONSDEL, InntektspostType.LØNN,
-        PERSONINNTEKT_NÆRING, InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE,
-        PERSONINNTEKT_FISKE_FANGST_FAMILIEBARNEHAGE, InntektspostType.NÆRING_FISKE_FANGST_FAMBARNEHAGE,
-        SVALBARD_LØNN_LØNNSTREKKORDNINGEN, InntektspostType.LØNN,
-        SVALBARD_PERSONINNTEKT_NÆRING, InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE,
-        LØNNSINNTEKT_MED_TRYGDEAVGIFTSPLIKT_OMFATTET_AV_LØNNSTREKKORDNINGEN, InntektspostType.LØNN
-    );
+    private static final Map<String, InntektspostType> SIGRUN_TIL_INNTEKTSPOST = Map.of(PERSONINNTEKT_LØNN, InntektspostType.LØNN,
+        PERSONINNTEKT_BARE_PENSJONSDEL, InntektspostType.LØNN, PERSONINNTEKT_NÆRING, InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE,
+        PERSONINNTEKT_FISKE_FANGST_FAMILIEBARNEHAGE, InntektspostType.NÆRING_FISKE_FANGST_FAMBARNEHAGE, SVALBARD_LØNN_LØNNSTREKKORDNINGEN,
+        InntektspostType.LØNN, SVALBARD_PERSONINNTEKT_NÆRING, InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE,
+        LØNNSINNTEKT_MED_TRYGDEAVGIFTSPLIKT_OMFATTET_AV_LØNNSTREKKORDNINGEN, InntektspostType.LØNN);
 
     private static final List<String> SIGRUN_TIL_NULL = List.of(SKATTEOPPGJØRSDATO);
 

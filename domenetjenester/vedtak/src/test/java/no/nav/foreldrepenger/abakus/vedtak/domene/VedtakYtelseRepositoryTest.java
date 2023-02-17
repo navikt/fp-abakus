@@ -21,7 +21,7 @@ public class VedtakYtelseRepositoryTest {
 
     @RegisterExtension
     public static final JpaExtension repositoryRule = new JpaExtension();
-  
+
     private VedtakYtelseRepository repository = new VedtakYtelseRepository(repositoryRule.getEntityManager());
 
     @Test
@@ -42,9 +42,7 @@ public class VedtakYtelseRepositoryTest {
 
         final var nyBuilder = repository.opprettBuilderFor(aktørId, saksnummer, Fagsystem.FPSAK, YtelseType.FORELDREPENGER);
         final var intervallEntitet = IntervallEntitet.fraOgMedTilOgMed(LocalDate.now(), LocalDate.now().plusMonths(3));
-        nyBuilder.medVedtakReferanse(UUID.randomUUID())
-            .medVedtattTidspunkt(LocalDateTime.now())
-            .medPeriode(intervallEntitet);
+        nyBuilder.medVedtakReferanse(UUID.randomUUID()).medVedtattTidspunkt(LocalDateTime.now()).medPeriode(intervallEntitet);
 
         repository.lagre(nyBuilder);
 

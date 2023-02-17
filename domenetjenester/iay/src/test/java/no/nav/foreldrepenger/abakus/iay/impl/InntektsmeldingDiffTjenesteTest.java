@@ -23,10 +23,7 @@ public class InntektsmeldingDiffTjenesteTest {
 
     private static Virksomhet lagVirksomhet(String orgnr) {
         Virksomhet.Builder builder = new Virksomhet.Builder();
-        return builder.medOrgnr(orgnr)
-            .medNavn("Test")
-            .medOppstart(LocalDate.of(2010,1,1))
-            .build();
+        return builder.medOrgnr(orgnr).medNavn("Test").medOppstart(LocalDate.of(2010, 1, 1)).build();
     }
 
     @Test
@@ -74,9 +71,7 @@ public class InntektsmeldingDiffTjenesteTest {
         assertThat(diff.keySet()).contains(inntektsmelding2);
     }
 
-    private Inntektsmelding lagIMf(Arbeidsgiver ag, int inntekt, int refusjon, UUID uuid,
-                                   LocalDateTime innsendingstidspunkt,
-                                   LocalDate motattdato) {
+    private Inntektsmelding lagIMf(Arbeidsgiver ag, int inntekt, int refusjon, UUID uuid, LocalDateTime innsendingstidspunkt, LocalDate motattdato) {
         return InntektsmeldingBuilder.builder()
             .medJournalpostId(uuid.toString())
             .medArbeidsgiver(ag)

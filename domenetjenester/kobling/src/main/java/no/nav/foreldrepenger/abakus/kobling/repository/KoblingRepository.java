@@ -63,9 +63,9 @@ public class KoblingRepository {
     }
 
     public Optional<Kobling> hentSisteKoblingReferanseFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
-        TypedQuery<Kobling> query = entityManager.createQuery("FROM Kobling k " +
-            " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true" + // NOSONAR
-            " ORDER BY k.opprettetTidspunkt desc, k.id desc", Kobling.class);
+        TypedQuery<Kobling> query = entityManager.createQuery(
+            "FROM Kobling k " + " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true" + // NOSONAR
+                " ORDER BY k.opprettetTidspunkt desc, k.id desc", Kobling.class);
         query.setParameter("ref", saksnummer);
         query.setParameter("ytelse", ytelseType);
         query.setParameter("aktørId", aktørId);

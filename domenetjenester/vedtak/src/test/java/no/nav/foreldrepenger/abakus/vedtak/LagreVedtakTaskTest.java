@@ -87,7 +87,7 @@ public class LagreVedtakTaskTest {
             .medProperty(LagreVedtakTask.KEY, UUID.randomUUID().toString())
             .build();
 
-        assertThrows(IllegalArgumentException.class, () ->task.doTask(data));
+        assertThrows(IllegalArgumentException.class, () -> task.doTask(data));
     }
 
 
@@ -216,9 +216,7 @@ public class LagreVedtakTaskTest {
 
         extension.getEntityManager().flush();
 
-        var vedtakYtelser = repository.hentYtelserForIPeriode(new AktørId("1293528970663"),
-            LocalDate.of(2021, 11, 1),
-            LocalDate.of(2021, 11, 19));
+        var vedtakYtelser = repository.hentYtelserForIPeriode(new AktørId("1293528970663"), LocalDate.of(2021, 11, 1), LocalDate.of(2021, 11, 19));
 
         assertThat(vedtakYtelser.size()).isEqualTo(1);
         assertThat(vedtakYtelser.get(0).getYtelseAnvist().size()).isEqualTo(3);

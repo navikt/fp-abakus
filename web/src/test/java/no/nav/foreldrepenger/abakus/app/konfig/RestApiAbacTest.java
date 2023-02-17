@@ -60,17 +60,14 @@ public class RestApiAbacTest {
 
                 if (Collection.class.isAssignableFrom(parameter.getType())) {
                     ParameterizedType type = (ParameterizedType) parameter.getParameterizedType();
-                    @SuppressWarnings("rawtypes")
-                    Class<?> aClass = (Class) (type.getActualTypeArguments()[0]);
-                    if (!AbacDto.class.isAssignableFrom(aClass)
-                        && !parameter.isAnnotationPresent(TilpassetAbacAttributt.class)
+                    @SuppressWarnings("rawtypes") Class<?> aClass = (Class) (type.getActualTypeArguments()[0]);
+                    if (!AbacDto.class.isAssignableFrom(aClass) && !parameter.isAnnotationPresent(TilpassetAbacAttributt.class)
                         && !IgnorerteInputTyper.ignore(aClass)) {
-                        feilmeldinger
-                            .append(String.format(feilmelding, restMethode.getDeclaringClass().getSimpleName(), restMethode.getName(), aClass.getSimpleName()));
+                        feilmeldinger.append(String.format(feilmelding, restMethode.getDeclaringClass().getSimpleName(), restMethode.getName(),
+                            aClass.getSimpleName()));
                     }
                 } else {
-                    if (!AbacDto.class.isAssignableFrom(parameter.getType())
-                        && !parameter.isAnnotationPresent(TilpassetAbacAttributt.class)
+                    if (!AbacDto.class.isAssignableFrom(parameter.getType()) && !parameter.isAnnotationPresent(TilpassetAbacAttributt.class)
                         && !IgnorerteInputTyper.ignore(parameter.getType())) {
                         feilmeldinger.append(String.format(feilmelding, restMethode.getDeclaringClass().getSimpleName(), restMethode.getName(),
                             parameter.getType().getSimpleName()));
@@ -87,9 +84,9 @@ public class RestApiAbacTest {
         Class<?> klasse = metode.getDeclaringClass();
         BeskyttetRessurs annotation = metode.getAnnotation(BeskyttetRessurs.class);
         if (annotation != null && annotation.actionType() == ActionType.DUMMY) {
-            fail(klasse.getSimpleName() + "." + metode.getName() + " Ikke bruk DUMMY-verdi for "
-                + ActionType.class.getSimpleName());
-        } else if (annotation != null && annotation.resource().isEmpty() && annotation.property().isEmpty() && annotation.resourceType() == ResourceType.DUMMY) {
+            fail(klasse.getSimpleName() + "." + metode.getName() + " Ikke bruk DUMMY-verdi for " + ActionType.class.getSimpleName());
+        } else if (annotation != null && annotation.resource().isEmpty() && annotation.property().isEmpty()
+            && annotation.resourceType() == ResourceType.DUMMY) {
             fail(klasse.getSimpleName() + "." + metode.getName() + " En verdi for resource må være satt!");
         }
     }

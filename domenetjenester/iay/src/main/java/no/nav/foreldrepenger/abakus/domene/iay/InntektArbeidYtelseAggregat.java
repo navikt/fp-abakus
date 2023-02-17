@@ -94,7 +94,9 @@ public class InntektArbeidYtelseAggregat extends BaseEntitet {
         this(kopierFra.getEksternReferanse(), kopierFra.getOpprettetTidspunkt(), kopierFra);
     }
 
-    /** Identifisere en immutable instans av grunnlaget unikt og er egnet for utveksling (eks. til abakus eller andre systemer) */
+    /**
+     * Identifisere en immutable instans av grunnlaget unikt og er egnet for utveksling (eks. til abakus eller andre systemer)
+     */
     public UUID getEksternReferanse() {
         return eksternReferanse;
     }
@@ -146,8 +148,7 @@ public class InntektArbeidYtelseAggregat extends BaseEntitet {
             return false;
         }
         InntektArbeidYtelseAggregat other = (InntektArbeidYtelseAggregat) obj;
-        return Objects.equals(this.getAktørInntekt(), other.getAktørInntekt())
-            && Objects.equals(this.getAktørArbeid(), other.getAktørArbeid())
+        return Objects.equals(this.getAktørInntekt(), other.getAktørInntekt()) && Objects.equals(this.getAktørArbeid(), other.getAktørArbeid())
             && Objects.equals(this.getAktørYtelse(), other.getAktørYtelse());
     }
 
@@ -158,11 +159,8 @@ public class InntektArbeidYtelseAggregat extends BaseEntitet {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" +
-            "aktørInntekt=" + aktørInntekt +
-            ", aktørArbeid=" + aktørArbeid +
-            ", aktørYtelse=" + aktørYtelse +
-            '>';
+        return getClass().getSimpleName() + "<" + "aktørInntekt=" + aktørInntekt + ", aktørArbeid=" + aktørArbeid + ", aktørYtelse=" + aktørYtelse
+            + '>';
     }
 
 }

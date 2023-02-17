@@ -73,11 +73,9 @@ public class YtelseFilter {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()
-            + "<ytelser(" + ytelser.size() + ")"
-            + (skjæringstidspunkt == null ? "" : ", skjæringstidspunkt=" + skjæringstidspunkt)
-            + (venstreSideASkjæringstidspunkt == null ? "" : ", venstreSideASkjæringstidspunkt=" + venstreSideASkjæringstidspunkt)
-            + ">";
+        return getClass().getSimpleName() + "<ytelser(" + ytelser.size() + ")" + (
+            skjæringstidspunkt == null ? "" : ", skjæringstidspunkt=" + skjæringstidspunkt) + (
+            venstreSideASkjæringstidspunkt == null ? "" : ", venstreSideASkjæringstidspunkt=" + venstreSideASkjæringstidspunkt) + ">";
     }
 
     /**
@@ -96,8 +94,8 @@ public class YtelseFilter {
             if (venstreSideASkjæringstidspunkt) {
                 return periode.getFomDato().isBefore(skjæringstidspunkt.plusDays(1));
             } else {
-                return periode.getFomDato().isAfter(skjæringstidspunkt) ||
-                    periode.getFomDato().isBefore(skjæringstidspunkt.plusDays(1)) && periode.getTomDato().isAfter(skjæringstidspunkt);
+                return periode.getFomDato().isAfter(skjæringstidspunkt)
+                    || periode.getFomDato().isBefore(skjæringstidspunkt.plusDays(1)) && periode.getTomDato().isAfter(skjæringstidspunkt);
             }
         }
         return true;
@@ -111,7 +109,8 @@ public class YtelseFilter {
     }
 
     public YtelseFilter filter(Predicate<Ytelse> filterFunc) {
-        var copy = copyWith(getFiltrertYtelser().stream().filter(filterFunc).collect(Collectors.toList()), skjæringstidspunkt, venstreSideASkjæringstidspunkt);
+        var copy = copyWith(getFiltrertYtelser().stream().filter(filterFunc).collect(Collectors.toList()), skjæringstidspunkt,
+            venstreSideASkjæringstidspunkt);
         if (copy.ytelseFilter == null) {
             copy.ytelseFilter = filterFunc;
         } else {

@@ -1,5 +1,15 @@
 package no.nav.foreldrepenger.abakus.app.konfig;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+
+import org.glassfish.jersey.server.ServerProperties;
+
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
@@ -15,43 +25,28 @@ import no.nav.foreldrepenger.abakus.app.jackson.JacksonJsonConfig;
 import no.nav.foreldrepenger.abakus.app.rest.ekstern.EksternDelingAvYtelserRestTjeneste;
 import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.vedtak.exception.TekniskException;
-import org.glassfish.jersey.server.ServerProperties;
-
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @ApplicationPath(EksternApiConfig.API_URI)
 public class EksternApiConfig extends Application {
 
-    private static final Environment ENV = Environment.current();
-
     public static final String API_URI = "/ekstern/api";
-
+    private static final Environment ENV = Environment.current();
     private static final String ID_PREFIX = "openapi.context.id.servlet.";
 
     public EksternApiConfig() {
         var oas = new OpenAPI();
-        var info = new Info()
-            .title("Vedtaksløsningen - Abakus - Ekstern")
+        var info = new Info().title("Vedtaksløsningen - Abakus - Ekstern")
             .version("1.0")
             .description("Ekstern REST grensesnitt for Abakus. Alle kall må authentiseres med en gyldig Azure OBO eller CC token.");
 
-        oas.info(info)
-            .addServersItem(new Server()
-                .url(ENV.getProperty("context.path", "/fpabakus")));
-        var oasConfig = new SwaggerConfiguration()
-            .id(ID_PREFIX + EksternApiConfig.class.getName())
+        oas.info(info).addServersItem(new Server().url(ENV.getProperty("context.path", "/fpabakus")));
+        var oasConfig = new SwaggerConfiguration().id(ID_PREFIX + EksternApiConfig.class.getName())
             .openAPI(oas)
             .prettyPrint(true)
             .resourceClasses(getClasses().stream().map(Class::getName).collect(Collectors.toSet()));
 
         try {
-            new JaxrsOpenApiContextBuilder<>()
-                .ctxId(ID_PREFIX + EksternApiConfig.class.getName())
+            new JaxrsOpenApiContextBuilder<>().ctxId(ID_PREFIX + EksternApiConfig.class.getName())
                 .application(this)
                 .openApiConfiguration(oasConfig)
                 .buildContext(true)
@@ -65,16 +60,13 @@ public class EksternApiConfig extends Application {
     public Set<Class<?>> getClasses() {
         // eksponert grensesnitt
 
-        return Set.of(
-            EksternDelingAvYtelserRestTjeneste.class,
+        return Set.of(EksternDelingAvYtelserRestTjeneste.class,
             // Applikasjonsoppsett
             JacksonJsonConfig.class,
             // Swagger
             OpenApiResource.class,
             // ExceptionMappers pga de som finnes i Jackson+Jersey-media
-            ConstraintViolationMapper.class,
-            JsonMappingExceptionMapper.class,
-            JsonParseExceptionMapper.class,
+            ConstraintViolationMapper.class, JsonMappingExceptionMapper.class, JsonParseExceptionMapper.class,
             // Generell exceptionmapper m/logging for øvrige tilfelle
             GeneralRestExceptionMapper.class);
     }

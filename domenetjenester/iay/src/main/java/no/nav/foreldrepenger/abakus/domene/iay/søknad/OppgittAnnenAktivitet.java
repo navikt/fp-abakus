@@ -78,11 +78,14 @@ public class OppgittAnnenAktivitet extends BaseEntitet implements IndexKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof OppgittAnnenAktivitet)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !(o instanceof OppgittAnnenAktivitet)) {
+            return false;
+        }
         var that = (OppgittAnnenAktivitet) o;
-        return Objects.equals(periode, that.periode) &&
-            Objects.equals(arbeidType, that.arbeidType);
+        return Objects.equals(periode, that.periode) && Objects.equals(arbeidType, that.arbeidType);
     }
 
     @Override
@@ -92,10 +95,6 @@ public class OppgittAnnenAktivitet extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "AnnenAktivitetEntitet{" +
-            "id=" + id +
-            ", periode=" + periode +
-            ", arbeidType=" + arbeidType +
-            '}';
+        return "AnnenAktivitetEntitet{" + "id=" + id + ", periode=" + periode + ", arbeidType=" + arbeidType + '}';
     }
 }

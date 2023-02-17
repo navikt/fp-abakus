@@ -16,12 +16,12 @@ public enum InntektspostType implements Kodeverdi {
     LØNN("LØNN", "Lønn", "LONN"),
     YTELSE("YTELSE", "Ytelse", "YTELSE"),
     SELVSTENDIG_NÆRINGSDRIVENDE("SELVSTENDIG_NÆRINGSDRIVENDE", "Selvstendig næringsdrivende", "-"),
-    NÆRING_FISKE_FANGST_FAMBARNEHAGE("NÆRING_FISKE_FANGST_FAMBARNEHAGE", "Jordbruk/Skogbruk/Fiske/FamilieBarnehage", "personinntektFiskeFangstFamilebarnehage"),
-            ;
-
-    private static final Map<String, InntektspostType> KODER = new LinkedHashMap<>();
+    NÆRING_FISKE_FANGST_FAMBARNEHAGE("NÆRING_FISKE_FANGST_FAMBARNEHAGE", "Jordbruk/Skogbruk/Fiske/FamilieBarnehage",
+        "personinntektFiskeFangstFamilebarnehage"),
+    ;
 
     public static final String KODEVERK = "INNTEKTSPOST_TYPE";
+    private static final Map<String, InntektspostType> KODER = new LinkedHashMap<>();
 
     static {
         for (var v : values()) {
@@ -52,8 +52,7 @@ public enum InntektspostType implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent InntektspostType: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent InntektspostType: " + kode));
     }
 
     public static Map<String, InntektspostType> kodeMap() {

@@ -21,9 +21,8 @@ public enum YtelseStatus implements Kodeverdi {
     ;
 
     public static final YtelseStatus DEFAULT = OPPRETTET;
-    private static final Map<String, YtelseStatus> KODER = new LinkedHashMap<>();
-
     public static final String KODEVERK = "YTELSE_STATUS";
+    private static final Map<String, YtelseStatus> KODER = new LinkedHashMap<>();
 
     static {
         for (var v : values()) {
@@ -52,8 +51,7 @@ public enum YtelseStatus implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent YtelseStatus: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent YtelseStatus: " + kode));
     }
 
     public static Map<String, YtelseStatus> kodeMap() {

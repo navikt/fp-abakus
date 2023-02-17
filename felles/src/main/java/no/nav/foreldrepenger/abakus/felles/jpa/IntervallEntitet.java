@@ -21,6 +21,7 @@ public class IntervallEntitet extends AbstractIntervall {
     public IntervallEntitet() {
         //hibernate
     }
+
     private IntervallEntitet(LocalDate fomDato, LocalDate tomDato) {
         if (fomDato == null) {
             throw new IllegalArgumentException("Fra og med dato må være satt.");
@@ -41,25 +42,11 @@ public class IntervallEntitet extends AbstractIntervall {
     public static IntervallEntitet fraOgMed(LocalDate fomDato) {
         return new IntervallEntitet(fomDato, TIDENES_ENDE);
     }
-    
+
     public static IntervallEntitet tilOgMed(LocalDate tom) {
         return IntervallEntitet.fraOgMedTilOgMed(TIDENES_BEGYNNELSE, tom);
     }
 
-    @Override
-    public LocalDate getFomDato() {
-        return this.fomDato;
-    }
-
-    @Override
-    public LocalDate getTomDato() {
-        return this.tomDato;
-    }
-
-    protected IntervallEntitet lagNyPeriode(LocalDate fomDato, LocalDate tomDato) {
-        return fraOgMedTilOgMed(fomDato, tomDato);
-    }
-    
     public static IntervallEntitet fra(Periode periode) {
         LocalDate fom = periode.getFom();
         LocalDate tom = periode.getTom();
@@ -76,5 +63,19 @@ public class IntervallEntitet extends AbstractIntervall {
         } else {
             return IntervallEntitet.fraOgMedTilOgMed(TIDENES_BEGYNNELSE, TIDENES_ENDE);
         }
+    }
+
+    @Override
+    public LocalDate getFomDato() {
+        return this.fomDato;
+    }
+
+    @Override
+    public LocalDate getTomDato() {
+        return this.tomDato;
+    }
+
+    protected IntervallEntitet lagNyPeriode(LocalDate fomDato, LocalDate tomDato) {
+        return fraOgMedTilOgMed(fomDato, tomDato);
     }
 }

@@ -47,7 +47,8 @@ public class InntektTjeneste {
 
     // Dato for eldste request til inntk - det er av og til noen ES saker som spør lenger tilbake i tid
     private static final YearMonth INNTK_TIDLIGSTE_DATO = YearMonth.of(2015, 7);
-    private static final Set<InntektskildeType> SKAL_PERIODISERE_INNTEKTSKILDE = Set.of(InntektskildeType.INNTEKT_SAMMENLIGNING, InntektskildeType.INNTEKT_BEREGNING);
+    private static final Set<InntektskildeType> SKAL_PERIODISERE_INNTEKTSKILDE = Set.of(InntektskildeType.INNTEKT_SAMMENLIGNING,
+        InntektskildeType.INNTEKT_BEREGNING);
 
     private static final String ENDPOINT_KEY = "hentinntektlistebolk.url";
 
@@ -71,9 +72,8 @@ public class InntektTjeneste {
         this.restClient = restClient;
         this.restConfig = RestConfig.forClient(InntektTjeneste.class);
         this.aktørConsumer = aktørConsumer;
-        this.kildeTilFilter = Map.of(InntektskildeType.INNTEKT_OPPTJENING, InntektsFilter.OPPTJENINGSGRUNNLAG,
-            InntektskildeType.INNTEKT_BEREGNING, InntektsFilter.BEREGNINGSGRUNNLAG,
-            InntektskildeType.INNTEKT_SAMMENLIGNING, InntektsFilter.SAMMENLIGNINGSGRUNNLAG);
+        this.kildeTilFilter = Map.of(InntektskildeType.INNTEKT_OPPTJENING, InntektsFilter.OPPTJENINGSGRUNNLAG, InntektskildeType.INNTEKT_BEREGNING,
+            InntektsFilter.BEREGNINGSGRUNNLAG, InntektskildeType.INNTEKT_SAMMENLIGNING, InntektsFilter.SAMMENLIGNINGSGRUNNLAG);
     }
 
     public InntektsInformasjon finnInntekt(FinnInntektRequest finnInntektRequest, InntektskildeType kilde, YtelseType ytelse) {
@@ -144,21 +144,20 @@ public class InntektTjeneste {
         return new InntektsInformasjon(månedsinntekter, arbeidsforhold, kilde);
     }
 
-    private ArbeidsInntektInformasjon oversettInntekter(List<Månedsinntekt> månedsinntekter, ArbeidsInntektMaaned arbeidsInntektMaaned, InntektskildeType kilde) {
+    private ArbeidsInntektInformasjon oversettInntekter(List<Månedsinntekt> månedsinntekter,
+                                                        ArbeidsInntektMaaned arbeidsInntektMaaned,
+                                                        InntektskildeType kilde) {
         var arbeidsInntektInformasjon = arbeidsInntektMaaned.getArbeidsInntektInformasjon();
 
         if (arbeidsInntektInformasjon != null && arbeidsInntektInformasjon.getInntektListe() != null) {
             for (var inntekt : arbeidsInntektInformasjon.getInntektListe()) {
                 var brukYM = inntekt.getUtbetaltIMaaned();
                 var tilleggsinformasjon = inntekt.getTilleggsinformasjon();
-                if (erYtelseFraOffentlig(inntekt)
-                    && erEtterbetaling(tilleggsinformasjon)
-                    && skalPeriodisereInntektsKilde(kilde)) {
-                    brukYM = YearMonth.from(((Etterbetalingsperiode) tilleggsinformasjon.getTilleggsinformasjonDetaljer())
-                        .getEtterbetalingsperiodeFom().plusDays(1));
+                if (erYtelseFraOffentlig(inntekt) && erEtterbetaling(tilleggsinformasjon) && skalPeriodisereInntektsKilde(kilde)) {
+                    brukYM = YearMonth.from(
+                        ((Etterbetalingsperiode) tilleggsinformasjon.getTilleggsinformasjonDetaljer()).getEtterbetalingsperiodeFom().plusDays(1));
                 }
-                var månedsinntekt = new Månedsinntekt.Builder()
-                    .medBeløp(inntekt.getBeloep())
+                var månedsinntekt = new Månedsinntekt.Builder().medBeløp(inntekt.getBeloep())
                     .medSkatteOgAvgiftsregelType(inntekt.getSkatteOgAvgiftsregel());
 
                 if (brukYM != null) {
@@ -177,12 +176,13 @@ public class InntektTjeneste {
     }
 
     private boolean erEtterbetaling(Tilleggsinformasjon tilleggsinformasjon) {
-        return tilleggsinformasjon != null &&
-            TilleggsinformasjonDetaljerType.ETTERBETALINGSPERIODE
-                .equals(tilleggsinformasjon.getTilleggsinformasjonDetaljer().getDetaljerType());
+        return tilleggsinformasjon != null && TilleggsinformasjonDetaljerType.ETTERBETALINGSPERIODE.equals(
+            tilleggsinformasjon.getTilleggsinformasjonDetaljer().getDetaljerType());
     }
 
-    private void oversettArbeidsforhold(List<FrilansArbeidsforhold> arbeidsforhold, ArbeidsInntektInformasjon arbeidsInntektInformasjon, YtelseType ytelse) {
+    private void oversettArbeidsforhold(List<FrilansArbeidsforhold> arbeidsforhold,
+                                        ArbeidsInntektInformasjon arbeidsInntektInformasjon,
+                                        YtelseType ytelse) {
         if (arbeidsInntektInformasjon.getArbeidsforholdListe() == null) {
             return;
         }
@@ -222,21 +222,17 @@ public class InntektTjeneste {
 
     private void utledOgSettUtbetalerOgYtelse(Inntekt inntekt, Månedsinntekt.Builder månedsinntekt) {
         if (erYtelseFraOffentlig(inntekt)) {
-            månedsinntekt.medYtelse(true)
-                .medYtelseKode(inntekt.getBeskrivelse());
+            månedsinntekt.medYtelse(true).medYtelseKode(inntekt.getBeskrivelse());
         } else if (erPensjonEllerTrygd(inntekt)) {
-            månedsinntekt.medYtelse(true)
-                .medPensjonEllerTrygdKode(inntekt.getBeskrivelse());
+            månedsinntekt.medYtelse(true).medPensjonEllerTrygdKode(inntekt.getBeskrivelse());
         } else if (erNæringsinntekt(inntekt)) {
-            månedsinntekt.medYtelse(true)
-                .medNæringsinntektKode(inntekt.getBeskrivelse());
+            månedsinntekt.medYtelse(true).medNæringsinntektKode(inntekt.getBeskrivelse());
         } else if (erLønn(inntekt)) {
             månedsinntekt.medYtelse(false);
             månedsinntekt.medArbeidsgiver(inntekt.getVirksomhet().getIdentifikator()); // OK med NPE hvis inntekt.getArbeidsgiver() er null
             månedsinntekt.medArbeidsforholdRef(inntekt.getArbeidsforholdREF());
         } else {
-            throw new TekniskException("FP-711674",
-                String.format("Kunne ikke mappe svar fra Inntektskomponenten: virksomhet=%s, inntektType=%s",
+            throw new TekniskException("FP-711674", String.format("Kunne ikke mappe svar fra Inntektskomponenten: virksomhet=%s, inntektType=%s",
                 inntekt.getVirksomhet().getIdentifikator(), inntekt.getInntektType()));
         }
     }

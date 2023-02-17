@@ -1,9 +1,9 @@
 package no.nav.foreldrepenger.abakus.iay.jpa;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
+
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
-
-import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
 
 @Converter(autoApply = true)
 public class TemaUnderkategoriKodeverdiConverter implements AttributeConverter<TemaUnderkategori, String> {

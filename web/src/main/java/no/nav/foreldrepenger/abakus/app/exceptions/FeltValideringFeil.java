@@ -7,7 +7,7 @@ import javax.validation.ConstraintViolationException;
 import no.nav.vedtak.exception.FunksjonellException;
 import no.nav.vedtak.exception.TekniskException;
 
-class FeltValideringFeil  {
+class FeltValideringFeil {
 
     static FunksjonellException feltverdiKanIkkeValideres(List<String> feltnavn) {
         return new FunksjonellException("FP-328673",
