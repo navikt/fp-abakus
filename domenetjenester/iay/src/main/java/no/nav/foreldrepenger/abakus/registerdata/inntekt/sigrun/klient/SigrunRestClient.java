@@ -21,21 +21,22 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertsk
 import no.nav.vedtak.exception.IntegrasjonException;
 import no.nav.vedtak.exception.ManglerTilgangException;
 import no.nav.vedtak.felles.integrasjon.rest.NavHeaders;
+import no.nav.vedtak.felles.integrasjon.rest.OidcContextSupplier;
 import no.nav.vedtak.felles.integrasjon.rest.RestClient;
 import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 import no.nav.vedtak.mapper.json.DefaultJsonMapper;
-import no.nav.vedtak.sikkerhet.context.SubjectHandler;
 
 @RestClientConfig(tokenConfig = TokenFlow.STS_CC, endpointProperty = "sigrunrestberegnetskatt.url", endpointDefault = "https://sigrun.nais.adeo.no")
 public class SigrunRestClient {
     private static final Logger LOG = LoggerFactory.getLogger(SigrunRestClient.class);
+    private final OidcContextSupplier CONTEXT_SUPPLIER = new OidcContextSupplier();
     private final RestClient client;
     private final RestConfig restConfig;
-    private URI endpointBS;
-    private URI endpointSSG;
+    private final URI endpointBS;
+    private final URI endpointSSG;
 
 
     SigrunRestClient(RestClient client) {
@@ -71,8 +72,8 @@ public class SigrunRestClient {
             .header(SigrunRestConfig.X_INNTEKTSÅR, år)
             .otherCallId(X_CALL_ID)
             .otherCallId(SigrunRestConfig.NYE_HEADER_CALL_ID)
-            .header(SigrunRestConfig.CONSUMER_ID, SubjectHandler.getSubjectHandler().getConsumerId())
-            .header(SigrunRestConfig.NYE_HEADER_CONSUMER_ID, SubjectHandler.getSubjectHandler().getConsumerId());
+            .header(SigrunRestConfig.CONSUMER_ID, CONTEXT_SUPPLIER.consumerIdForCurrentKontekst().get())
+            .header(SigrunRestConfig.NYE_HEADER_CONSUMER_ID, CONTEXT_SUPPLIER.consumerIdForCurrentKontekst().get());
 
         HttpResponse<String> response = client.sendReturnUnhandled(request);
         return handleResponse(response).map(r -> Arrays.asList(DefaultJsonMapper.fromJson(r, BeregnetSkatt[].class))).orElse(new ArrayList<>());
@@ -89,8 +90,8 @@ public class SigrunRestClient {
             .header(NavHeaders.HEADER_NAV_PERSONIDENT, String.valueOf(aktørId))
             .otherCallId(X_CALL_ID)
             .otherCallId(SigrunRestConfig.NYE_HEADER_CALL_ID)
-            .header(SigrunRestConfig.CONSUMER_ID, SubjectHandler.getSubjectHandler().getConsumerId())
-            .header(SigrunRestConfig.NYE_HEADER_CONSUMER_ID, SubjectHandler.getSubjectHandler().getConsumerId());
+            .header(SigrunRestConfig.CONSUMER_ID, CONTEXT_SUPPLIER.consumerIdForCurrentKontekst().get())
+            .header(SigrunRestConfig.NYE_HEADER_CONSUMER_ID, CONTEXT_SUPPLIER.consumerIdForCurrentKontekst().get());
 
         HttpResponse<String> response = client.sendReturnUnhandled(request);
         return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, SSGResponse.class));

@@ -53,7 +53,7 @@
 		</dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.felles</groupId>
-            <artifactId>felles-abac-legacy</artifactId>
+            <artifactId>felles-abac-kontekst</artifactId>
         </dependency>
 
 		<!-- TEST -->
