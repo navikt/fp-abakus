@@ -67,18 +67,26 @@
         {
             "app": "sparkel-pleiepenger",
             "namespace": "tbd",
-            "cluster": "dev-gcp",
+            "cluster": "dev-fss",
             "roles": [
                 "ekstern"
             ]
         },
         {
+            "app": "sparkel-pleiepenger",
+            "namespace": "tbd",
+            "cluster": "dev-gcp",
+            "roles": [
+                "ekstern"
+            ]
+          },
+          {
             "app": "sparkel-sputnik",
             "namespace": "tbd",
             "cluster": "dev-gcp",
             "roles": [
                 "ekstern"
             ]
-        }
+          }
     ]
 }
