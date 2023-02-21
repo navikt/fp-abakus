@@ -24,7 +24,7 @@
         </dependency>
         <dependency>
             <groupId>no.nav.vedtak.prosesstask</groupId>
-            <artifactId>prosesstask-legacy</artifactId>
+            <artifactId>prosesstask-kontekst</artifactId>
         </dependency>
         <dependency>
             <groupId>no.nav.vedtak.prosesstask</groupId>
@@ -48,7 +48,7 @@
         </dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.felles</groupId>
-            <artifactId>felles-abac-legacy</artifactId>
+            <artifactId>felles-abac-kontekst</artifactId>
         </dependency>
 
 

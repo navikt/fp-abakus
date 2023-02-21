@@ -67,6 +67,14 @@
         {
             "app": "sparkel-pleiepenger",
             "namespace": "tbd",
+            "cluster": "prod-fss",
+            "roles": [
+                "ekstern"
+            ]
+        },
+        {
+            "app": "sparkel-pleiepenger",
+            "namespace": "tbd",
             "cluster": "prod-gcp",
             "roles": [
                 "ekstern"

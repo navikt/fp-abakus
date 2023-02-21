@@ -35,10 +35,10 @@
 
         <kontrakt.java.version>17</kontrakt.java.version>
 
-		<felles.version>4.2.23</felles.version>
-		<prosesstask.version>3.1.17</prosesstask.version>
+		<felles.version>4.2.26</felles.version>
+		<prosesstask.version>3.1.20</prosesstask.version>
         <maven.deploy.skip>true</maven.deploy.skip>
-		<kontrakter.version>6.2.9</kontrakter.version>
+		<kontrakter.version>6.2.10</kontrakter.version>
 	</properties>
 
 	<!-- NB: Unngå å put scope (test, provided) i dependency management. Det

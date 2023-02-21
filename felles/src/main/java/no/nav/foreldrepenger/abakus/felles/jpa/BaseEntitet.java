@@ -1,15 +1,17 @@
 package no.nav.foreldrepenger.abakus.felles.jpa;
 
-import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
-import no.nav.vedtak.sikkerhet.context.SubjectHandler;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
+import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
+import no.nav.vedtak.sikkerhet.kontekst.Kontekst;
+import no.nav.vedtak.sikkerhet.kontekst.KontekstHolder;
 
 /**
  * En basis {@link Entity} klasse som håndtere felles standarder for utformign av tabeller (eks. sporing av hvem som har
@@ -37,8 +39,8 @@ public class BaseEntitet implements Serializable {
     private LocalDateTime endretTidspunkt; // NOSONAR
 
     private static String finnBrukernavn() {
-        String brukerident = SubjectHandler.getSubjectHandler().getUid();
-        return brukerident != null ? brukerident : BRUKERNAVN_NÅR_SIKKERHETSKONTEKST_IKKE_FINNES;
+        return Optional.ofNullable(KontekstHolder.getKontekst()).map(Kontekst::getKompaktUid)
+            .orElse(BRUKERNAVN_NÅR_SIKKERHETSKONTEKST_IKKE_FINNES);
     }
 
     @PrePersist
