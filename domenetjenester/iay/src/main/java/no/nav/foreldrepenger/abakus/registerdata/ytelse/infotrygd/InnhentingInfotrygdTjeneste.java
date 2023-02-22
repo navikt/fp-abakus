@@ -98,7 +98,7 @@ public class InnhentingInfotrygdTjeneste {
         return mapTilInfotrygdYtelseGrunnlag(rest, innhentFom);
     }
 
-    private List<InfotrygdYtelseGrunnlag> mapTilInfotrygdYtelseGrunnlag(List<Grunnlag> rest, LocalDate innhentFom) {
+    public static List<InfotrygdYtelseGrunnlag> mapTilInfotrygdYtelseGrunnlag(List<Grunnlag> rest, LocalDate innhentFom) {
         var mappedGrunnlag = rest.stream()
             .filter(g -> !YtelseType.UDEFINERT.equals(TemaReverse.reverseMap(g.tema().kode().name(), LOG)))
             .map(g -> restTilInfotrygdYtelseGrunnlag(g, innhentFom))
@@ -110,7 +110,7 @@ public class InnhentingInfotrygdTjeneste {
         return mappedGrunnlag;
     }
 
-    private InfotrygdYtelseGrunnlag restTilInfotrygdYtelseGrunnlag(Grunnlag grunnlag, LocalDate innhentFom) {
+    private static InfotrygdYtelseGrunnlag restTilInfotrygdYtelseGrunnlag(Grunnlag grunnlag, LocalDate innhentFom) {
         if (grunnlag.iverksatt() == null || grunnlag.identdato() == null || !grunnlag.iverksatt().equals(grunnlag.identdato())) {
             LOG.info("Infotrygd ny mapper avvik iverksatt {} vs identdato {}", grunnlag.iverksatt(), grunnlag.identdato());
         }
@@ -153,7 +153,7 @@ public class InnhentingInfotrygdTjeneste {
             .medFødselsdatoBarn(grunnlag.fødselsdatoBarn())
             .medOpprinneligIdentdato(grunnlag.opprinneligIdentdato());
 
-        grunnlag.arbeidsforhold().stream().map(this::arbeidsforholdTilInfotrygdYtelseArbeid).forEach(grunnlagBuilder::leggTilArbeidsforhold);
+        grunnlag.arbeidsforhold().stream().map(InnhentingInfotrygdTjeneste::arbeidsforholdTilInfotrygdYtelseArbeid).forEach(grunnlagBuilder::leggTilArbeidsforhold);
 
         grunnlag.vedtak()
             .stream()
@@ -164,7 +164,7 @@ public class InnhentingInfotrygdTjeneste {
         return grunnlagBuilder.build();
     }
 
-    private YtelseStatus mapYtelseStatus(Grunnlag grunnlag) {
+    private static YtelseStatus mapYtelseStatus(Grunnlag grunnlag) {
         if (grunnlag.status() == null) {
             if (grunnlag.opphørFom() != null) {
                 return YtelseStatus.AVSLUTTET;
@@ -177,7 +177,7 @@ public class InnhentingInfotrygdTjeneste {
         return RelatertYtelseStatusReverse.reverseMap(grunnlag.status().kode().name(), LOG);
     }
 
-    private InfotrygdYtelseArbeid arbeidsforholdTilInfotrygdYtelseArbeid(Arbeidsforhold arbeidsforhold) {
+    private static InfotrygdYtelseArbeid arbeidsforholdTilInfotrygdYtelseArbeid(Arbeidsforhold arbeidsforhold) {
         InntektPeriodeType inntektPeriode =
             arbeidsforhold.inntektsperiode() == null ? InntektPeriodeType.UDEFINERT : InntektPeriodeReverse.reverseMap(
                 arbeidsforhold.inntektsperiode().kode().name(), LOG);
@@ -186,7 +186,7 @@ public class InnhentingInfotrygdTjeneste {
             arbeidsforhold.refusjonTom());
     }
 
-    private Periode utledPeriode(LocalDate iverksatt, LocalDate opphoerFomDato, LocalDate registrert) {
+    private static Periode utledPeriode(LocalDate iverksatt, LocalDate opphoerFomDato, LocalDate registrert) {
         if (opphoerFomDato != null) {
             LocalDate tomFraOpphørFom = localDateMinus1Virkedag(opphoerFomDato);
             if (tomFraOpphørFom.isAfter(iverksatt)) {
@@ -202,7 +202,7 @@ public class InnhentingInfotrygdTjeneste {
         }
     }
 
-    private LocalDate localDateMinus1Virkedag(LocalDate opphoerFomDato) {
+    private static LocalDate localDateMinus1Virkedag(LocalDate opphoerFomDato) {
         LocalDate dato = opphoerFomDato.minusDays(1);
         if (dato.getDayOfWeek().getValue() > DayOfWeek.FRIDAY.getValue()) {
             dato = opphoerFomDato.minusDays(1L + dato.getDayOfWeek().getValue() - DayOfWeek.FRIDAY.getValue());
@@ -210,7 +210,7 @@ public class InnhentingInfotrygdTjeneste {
         return dato;
     }
 
-    private YtelseType bestemYtelseType(Grunnlag grunnlag) {
+    private static YtelseType bestemYtelseType(Grunnlag grunnlag) {
         YtelseType kategori2 =
             grunnlag.behandlingstema() == null ? YtelseType.UDEFINERT : STØNADSKAT2_TIL_YTELSETYPE.getOrDefault(grunnlag.behandlingstema().kode(),
                 YtelseType.UDEFINERT);

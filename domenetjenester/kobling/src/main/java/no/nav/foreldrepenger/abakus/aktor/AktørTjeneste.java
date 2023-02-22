@@ -109,6 +109,24 @@ public class AktørTjeneste {
         }
     }
 
+    public Set<PersonIdent> hentPersonIdenterForAktør(AktørId aktørId, YtelseType ytelse) {
+        var request = new HentIdenterQueryRequest();
+        request.setIdent(aktørId.getId());
+        request.setGrupper(List.of(IdentGruppe.FOLKEREGISTERIDENT));
+        request.setHistorikk(Boolean.TRUE);
+        var projection = new IdentlisteResponseProjection().identer(new IdentInformasjonResponseProjection().ident());
+
+        try {
+            var identliste = hentIdenterForYtelse(request, projection, ytelse);
+            return identliste.getIdenter().stream().map(IdentInformasjon::getIdent).map(PersonIdent::new).collect(Collectors.toSet());
+        } catch (VLException v) {
+            if (Persondata.PDL_KLIENT_NOT_FOUND_KODE.equals(v.getKode())) {
+                return Set.of();
+            }
+            throw v;
+        }
+    }
+
     private Identliste hentIdenterForYtelse(HentIdenterQueryRequest request, IdentlisteResponseProjection projection, YtelseType ytelseType) {
         return FORELDREPENGER_YTELSER.contains(ytelseType) ? pdlKlientFOR.hentIdenter(request, projection) : pdlKlientOMS.hentIdenter(request,
             projection);

@@ -5,6 +5,7 @@ import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessu
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -44,6 +45,7 @@ import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.infotrygd.InfotrygdgrunnlagYtelseMapper;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.InnhentingInfotrygdTjeneste;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.ps.InfotrygdPSGrunnlag;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
@@ -75,6 +77,7 @@ public class EksternDelingAvYtelserRestTjeneste {
     private VedtakYtelseRepository ytelseRepository;
     private AktørTjeneste aktørTjeneste;
     private InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste;
+    private InfotrygdPSGrunnlag infotrygdPSGrunnlag;
 
     public EksternDelingAvYtelserRestTjeneste() {
     } // CDI Ctor
@@ -82,10 +85,12 @@ public class EksternDelingAvYtelserRestTjeneste {
     @Inject
     public EksternDelingAvYtelserRestTjeneste(VedtakYtelseRepository ytelseRepository,
                                               InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste,
+                                              InfotrygdPSGrunnlag infotrygdPSGrunnlag,
                                               AktørTjeneste aktørTjeneste) {
         this.ytelseRepository = ytelseRepository;
         this.aktørTjeneste = aktørTjeneste;
         this.innhentingInfotrygdTjeneste = innhentingInfotrygdTjeneste;
+        this.infotrygdPSGrunnlag = infotrygdPSGrunnlag;
     }
 
     private static ArbeidsgiverIdent mapArbeidsgiverIdent(no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver arbeidsgiver) {
@@ -123,11 +128,59 @@ public class EksternDelingAvYtelserRestTjeneste {
         return ytelser;
     }
 
+    @POST
+    @Path("/hent-ytelse-infotrygd-k9")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Henter alle vedtak for en gitt person, evt med periode etter en fom", tags = "ytelse")
+    @BeskyttetRessurs(actionType = ActionType.READ, resource = VEDTAK, availabilityType = AvailabilityType.ALL)
+    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    public List<Ytelse> hentVedtakYtelseInfotrygdK9(@NotNull @TilpassetAbacAttributt(supplierClass = EksternDelingAvYtelserRestTjeneste.VedtakForPeriodeRequestAbacDataSupplier.class) @Valid VedtakForPeriodeRequest request) {
+        LOG.info("ABAKUS VEDTAK ekstern /hent-ytelse-infotrygd-k9 for ytelser {}", request.getYtelser());
+
+        var aktørIdOpt = utledEnkeltAktørIdFraRequest(request.getIdent(), utledTemaFraYtelser(request.getYtelser()));
+
+        if (request.getYtelser().isEmpty() || aktørIdOpt.isEmpty()) {
+            return List.of();
+        }
+
+        var aktørId = aktørIdOpt.orElseThrow();
+        var identer = utledPersonIdentFraRequest(request.getIdent(), utledTemaFraYtelser(request.getYtelser()));
+        var periode = IntervallEntitet.fraOgMedTilOgMed(request.getPeriode().getFom(), request.getPeriode().getTom());
+        var ytelser = new ArrayList<Ytelse>();
+        for (var ident : identer) {
+            var infotrygdYtelser = infotrygdPSGrunnlag.hentGrunnlag(ident.getIdent(), periode.getFomDato(), periode.getTomDato());
+            var mappedYtelser =  InnhentingInfotrygdTjeneste.mapTilInfotrygdYtelseGrunnlag(infotrygdYtelser, periode.getFomDato());
+            ytelser.addAll(mappedYtelser.stream()
+                .map(InfotrygdgrunnlagYtelseMapper::oversettInfotrygdYtelseGrunnlagTilYtelse)
+                .map(it -> ytelseTilYtelse(aktørId, it))
+                .filter(it -> request.getYtelser().contains(it.getYtelse()))
+                .toList());
+        }
+
+        return ytelser;
+    }
+
     private Set<AktørId> utledAktørIdFraRequest(Aktør aktør, YtelseType tema) {
         if (aktør.erAktørId()) {
             return Set.of(new AktørId(aktør.getVerdi()));
         }
         return aktørTjeneste.hentAktørIderForIdent(new PersonIdent(aktør.getVerdi()), tema);
+    }
+
+    private Optional<AktørId> utledEnkeltAktørIdFraRequest(Aktør aktør, YtelseType tema) {
+        if (aktør.erAktørId()) {
+            return Optional.of(new AktørId(aktør.getVerdi()));
+        }
+        return aktørTjeneste.hentAktørForIdent(new PersonIdent(aktør.getVerdi()), tema);
+    }
+
+    private Set<PersonIdent> utledPersonIdentFraRequest(Aktør aktør, YtelseType tema) {
+        if (aktør.erAktørId()) {
+            return aktørTjeneste.hentPersonIdenterForAktør(new AktørId(aktør.getVerdi()), tema);
+
+        }
+        return Set.of(new PersonIdent(aktør.getVerdi()));
     }
 
     private YtelseType utledTemaFraYtelser(Set<Ytelser> request) {
