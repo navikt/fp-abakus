@@ -46,6 +46,7 @@ import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.infotrygd.InfotrygdgrunnlagYtelseMapper;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.InnhentingInfotrygdTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.ps.InfotrygdPSGrunnlag;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.ps.PS;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
@@ -85,7 +86,7 @@ public class EksternDelingAvYtelserRestTjeneste {
     @Inject
     public EksternDelingAvYtelserRestTjeneste(VedtakYtelseRepository ytelseRepository,
                                               InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste,
-                                              InfotrygdPSGrunnlag infotrygdPSGrunnlag,
+                                              @PS InfotrygdPSGrunnlag infotrygdPSGrunnlag,
                                               AktørTjeneste aktørTjeneste) {
         this.ytelseRepository = ytelseRepository;
         this.aktørTjeneste = aktørTjeneste;
