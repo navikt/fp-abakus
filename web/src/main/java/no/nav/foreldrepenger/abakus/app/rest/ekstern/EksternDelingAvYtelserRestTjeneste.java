@@ -75,6 +75,8 @@ public class EksternDelingAvYtelserRestTjeneste {
     private static final Set<YtelseType> K9_YTELSER = Set.of(YtelseType.PLEIEPENGER_NÆRSTÅENDE, YtelseType.OMSORGSPENGER, YtelseType.OPPLÆRINGSPENGER,
         YtelseType.PLEIEPENGER_SYKT_BARN);
 
+    private static final Set<Ytelser> K9_INFOTRYGD_YTELSER = Set.of(Ytelser.PLEIEPENGER_NÆRSTÅENDE, Ytelser.OPPLÆRINGSPENGER, Ytelser.PLEIEPENGER_SYKT_BARN);
+
     private VedtakYtelseRepository ytelseRepository;
     private AktørTjeneste aktørTjeneste;
     private InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste;
@@ -125,6 +127,7 @@ public class EksternDelingAvYtelserRestTjeneste {
                 .map(ConvertToYtelseV1::convert)
                 .toList());
         }
+        ytelser.addAll(hentVedtakYtelseInfotrygdK9Intern(request));
 
         return ytelser;
     }
@@ -139,9 +142,16 @@ public class EksternDelingAvYtelserRestTjeneste {
     public List<Ytelse> hentVedtakYtelseInfotrygdK9(@NotNull @TilpassetAbacAttributt(supplierClass = EksternDelingAvYtelserRestTjeneste.VedtakForPeriodeRequestAbacDataSupplier.class) @Valid VedtakForPeriodeRequest request) {
         LOG.info("ABAKUS VEDTAK ekstern /hent-ytelse-infotrygd-k9 for ytelser {}", request.getYtelser());
 
-        var aktørIdOpt = utledEnkeltAktørIdFraRequest(request.getIdent(), utledTemaFraYtelser(request.getYtelser()));
+        return hentVedtakYtelseInfotrygdK9Intern(request);
+    }
 
-        if (request.getYtelser().isEmpty() || aktørIdOpt.isEmpty()) {
+    public List<Ytelse> hentVedtakYtelseInfotrygdK9Intern(VedtakForPeriodeRequest request) {
+        if (request.getYtelser().isEmpty() || K9_INFOTRYGD_YTELSER.stream().noneMatch(y -> request.getYtelser().contains(y))) {
+            return List.of();
+        }
+
+        var aktørIdOpt = utledEnkeltAktørIdFraRequest(request.getIdent(), utledTemaFraYtelser(request.getYtelser()));
+        if (aktørIdOpt.isEmpty()) {
             return List.of();
         }
 
