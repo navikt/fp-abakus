@@ -104,9 +104,6 @@ public class InnhentingInfotrygdTjeneste {
             .map(g -> restTilInfotrygdYtelseGrunnlag(g, innhentFom))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
-        if (!mappedGrunnlag.isEmpty()) {
-            LOG.info("Infotrygd abacus mapped grunnlag {}", mappedGrunnlag);
-        }
         return mappedGrunnlag;
     }
 
