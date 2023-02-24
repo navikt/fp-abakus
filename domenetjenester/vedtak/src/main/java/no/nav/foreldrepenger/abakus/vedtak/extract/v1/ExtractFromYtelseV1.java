@@ -88,7 +88,6 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
         return switch (kildesystem) {
             case FPSAK -> Fagsystem.FPSAK;
             case K9SAK -> Fagsystem.K9SAK;
-            case INFOTRYGD -> Fagsystem.INFOTRYGD;
         };
     }
 
