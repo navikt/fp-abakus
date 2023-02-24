@@ -3,10 +3,12 @@ package no.nav.foreldrepenger.abakus.app.rest.ekstern;
 import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.VEDTAK;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -284,14 +286,15 @@ public class EksternDelingAvYtelserRestTjeneste {
         var aktør = new Aktør();
         aktør.setVerdi(aktørId.getId());
         ytelse.setAktør(aktør);
-        ytelse.setVedtattTidspunkt(vedtak.getVedtattTidspunkt());
+        ytelse.setVedtattTidspunkt(Optional.ofNullable(vedtak.getVedtattTidspunkt()).orElseGet(LocalDateTime::now));
         ytelse.setYtelse(ConvertToYtelseV1.mapYtelser(vedtak.getRelatertYtelseType()));
         Optional.ofNullable(vedtak.getSaksreferanse()).map(Saksnummer::getVerdi).ifPresent(ytelse::setSaksnummer);
         ytelse.setYtelseStatus(ConvertToYtelseV1.mapStatus(vedtak.getStatus()));
         ytelse.setKildesystem(ConvertToYtelseV1.mapKildesystem(vedtak.getKilde()));
+        ytelse.setVedtakReferanse(UUID.randomUUID().toString()); // NotNull i kontrakt
         var periode = new Periode();
-        periode.setFom(vedtak.getPeriode().getFomDato());
-        periode.setTom(vedtak.getPeriode().getTomDato());
+        periode.setFom(Optional.ofNullable(vedtak.getPeriode()).map(IntervallEntitet::getFomDato).orElseGet(LocalDate::now));
+        periode.setTom(Optional.ofNullable(vedtak.getPeriode()).map(IntervallEntitet::getTomDato).orElseGet(LocalDate::now));
         ytelse.setPeriode(periode);
         var anvist = vedtak.getYtelseAnvist().stream().map(this::mapLagretInfotrygdAnvist).collect(Collectors.toList());
         ytelse.setAnvist(anvist);
