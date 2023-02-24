@@ -50,6 +50,7 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.ps.PS;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ConvertToYtelseV1;
@@ -285,7 +286,7 @@ public class EksternDelingAvYtelserRestTjeneste {
         ytelse.setAktør(aktør);
         ytelse.setVedtattTidspunkt(vedtak.getVedtattTidspunkt());
         ytelse.setYtelse(ConvertToYtelseV1.mapYtelser(vedtak.getRelatertYtelseType()));
-        ytelse.setSaksnummer(vedtak.getSaksreferanse().getVerdi());
+        Optional.ofNullable(vedtak.getSaksreferanse()).map(Saksnummer::getVerdi).ifPresent(ytelse::setSaksnummer);
         ytelse.setYtelseStatus(ConvertToYtelseV1.mapStatus(vedtak.getStatus()));
         ytelse.setKildesystem(ConvertToYtelseV1.mapKildesystem(vedtak.getKilde()));
         var periode = new Periode();

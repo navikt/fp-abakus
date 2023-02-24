@@ -44,8 +44,6 @@ public class InfotrygdgrunnlagAnvistAndelMapper {
     public static List<YtelseAnvistAndel> oversettYtelseArbeidTilAnvisteAndeler(Arbeidskategori kategori,
                                                                                 List<InfotrygdYtelseArbeid> arbeidsforhold,
                                                                                 List<InfotrygdYtelseAnvist> utbetalinger) {
-        LOGGER.info("Mapper utbetalinger fra infotrygd:  " + utbetalinger);
-        LOGGER.info("Arbeidsforhold fra infotrygd:  " + arbeidsforhold);
         var inntektskategorier = splittArbeidskategoriTilInntektskategorier(kategori);
         if (inntektskategorier.isEmpty()) {
             LOGGER.info("Kunne ikke mappe inntektskategori fra infotrygdgrunnlag. Mapper ingen andeler for anvisning.");

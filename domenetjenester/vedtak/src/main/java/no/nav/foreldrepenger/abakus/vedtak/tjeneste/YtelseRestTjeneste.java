@@ -104,6 +104,8 @@ public class YtelseRestTjeneste {
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public List<Ytelse> hentVedtakForPerson(@NotNull @TilpassetAbacAttributt(supplierClass = HentBrukersYtelserIPeriodeRequestAbacDataSupplier.class) @Valid HentBrukersYtelserIPeriodeRequest request) {
 
+        LOG.info("ABAKUS VEDTAK intern /hent-vedtak-ytelse for ytelser {}", request.getYtelser());
+
         var etterspurteYtelser = request.getYtelser().stream().filter(GYLDIGE_YTELSER::contains).collect(Collectors.toSet());
 
         if (etterspurteYtelser.isEmpty()) {
