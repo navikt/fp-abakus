@@ -20,7 +20,7 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertsk
 
 
 class SigrunTilInternMapper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SigrunTilInternMapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SigrunTilInternMapper.class);
 
     static Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> mapFraSigrunTilIntern(Map<Year, List<BeregnetSkatt>> beregnetSkatt,
                                                                                           Map<Year, Optional<SSGResponse>> summertskattegrunnlagMap) {
@@ -59,7 +59,7 @@ class SigrunTilInternMapper {
                                 inntektspost.replace(inntektspostType, inntektspost.get(InntektspostType.LØNN).add(beløp));
                             }
                         }
-                        LOGGER.info("Lagt til {} fra summertskattegrunnlag for svalbard år {}", grunnlag.beloep(), entry.getKey());
+                        LOG.info("Lagt til {} fra summertskattegrunnlag for svalbard år {}", grunnlag.beloep(), entry.getKey());
                     });
                 }
             }

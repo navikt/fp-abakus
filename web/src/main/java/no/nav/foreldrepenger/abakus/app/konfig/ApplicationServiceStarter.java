@@ -25,7 +25,7 @@ import no.nav.vedtak.felles.prosesstask.impl.TaskManager;
 @ApplicationScoped
 public class ApplicationServiceStarter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationServiceStarter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationServiceStarter.class);
     private Map<KafkaIntegration, AtomicBoolean> serviceMap = new HashMap<>();
     private TaskManager taskManager;
     private BatchTaskScheduler batchTaskScheduler;
@@ -49,7 +49,7 @@ public class ApplicationServiceStarter {
         batchTaskScheduler.start();
         serviceMap.forEach((key, value) -> {
             if (value.compareAndSet(false, true)) {
-                LOGGER.info("starter service: {}", key.getClass().getSimpleName());
+                LOG.info("starter service: {}", key.getClass().getSimpleName());
                 key.start();
             }
         });
@@ -63,7 +63,7 @@ public class ApplicationServiceStarter {
         List<Thread> threadList = new ArrayList<>();
         serviceMap.forEach((key, value) -> {
             if (value.compareAndSet(true, false)) {
-                LOGGER.info("stopper service: {}", key.getClass().getSimpleName());
+                LOG.info("stopper service: {}", key.getClass().getSimpleName());
                 Thread t = new Thread(key::stop);
                 t.start();
                 threadList.add(t);
@@ -75,7 +75,7 @@ public class ApplicationServiceStarter {
                 t.join(31000);
                 threadList.remove(t);
             } catch (InterruptedException e) {
-                LOGGER.warn(e.getMessage());
+                LOG.warn(e.getMessage());
                 t.interrupt();
             }
         }

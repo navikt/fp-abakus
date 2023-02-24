@@ -18,17 +18,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 
 @Entity(name = "OppgittOpptjeningAggregat")
 @Table(name = "IAY_OPPGITTE_OPPTJENINGER")
 public class OppgittOpptjeningAggregat extends BaseEntitet {
-
-    private static final Logger logger = LoggerFactory.getLogger(OppgittOpptjeningAggregat.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_IAY_OPPGITTE_OPPTJENINGER")

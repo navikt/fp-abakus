@@ -27,7 +27,7 @@ import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 @ApplicationScoped
 public class DebugDumpsters {
 
-    private static final Logger log = LoggerFactory.getLogger(DebugDumpsters.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DebugDumpsters.class);
 
     private @Any Instance<DebugDump> dumpere;
 
@@ -76,7 +76,7 @@ public class DebugDumpsters {
     private List<DumpOutput> dumpOutput(DumpKontekst kobling, List<Instance<DebugDump>> dumpsters) {
         var dumpers = dumpsters.stream().flatMap(v -> v.stream()).collect(Collectors.toList());
         var dumperNames = dumpers.stream().map(d -> d.getClass().getName()).collect(Collectors.toList());
-        log.info("Dumper fra: {}", dumperNames);
+        LOG.info("Dumper fra: {}", dumperNames);
 
         List<DumpOutput> allDumps = dumpers.stream().flatMap(ddp -> {
             try {

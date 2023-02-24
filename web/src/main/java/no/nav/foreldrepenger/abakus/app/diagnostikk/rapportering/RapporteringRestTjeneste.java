@@ -44,7 +44,7 @@ import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 public class RapporteringRestTjeneste {
 
     static final String BASE_PATH = "/rapportering";
-    private static final Logger log = LoggerFactory.getLogger(RapporteringRestTjeneste.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RapporteringRestTjeneste.class);
     private static final DateTimeFormatter DT_FORMAT = new DateTimeFormatterBuilder().append(DateTimeFormatter.ISO_LOCAL_DATE)
         .appendLiteral('T')
         .appendPattern("HHmmss")
@@ -77,7 +77,7 @@ public class RapporteringRestTjeneste {
         List<DumpOutput> outputListe = new ArrayList<>();
         for (var generator : generators) {
             RapportGenerator g = generator.get();
-            log.info("RapportGenerator [{}]({}), ytelse: {}", g.getClass().getName(), rapportType, ytelseType);
+            LOG.info("RapportGenerator [{}]({}), ytelse: {}", g.getClass().getName(), rapportType, ytelseType);
             var output = g.generer(ytelseType, IntervallEntitet.fra(periode.fom, periode.tom));
             outputListe.addAll(output);
         }

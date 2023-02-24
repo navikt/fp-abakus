@@ -16,10 +16,11 @@ import org.jboss.weld.context.unbound.UnboundLiteral;
 import no.nav.foreldrepenger.abakus.app.diagnostikk.dumps.RegisterInnhentingDump;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.vedtak.log.mdc.MdcExtendedLogContext;
-import no.nav.vedtak.sikkerhet.loginmodule.ContainerLogin;
+import no.nav.vedtak.sikkerhet.kontekst.BasisKontekst;
+import no.nav.vedtak.sikkerhet.kontekst.KontekstHolder;
 
 /**
- * Kjører et kall på en egen tråd med ContainerLogin. Kan benyttes til å kalle med system kontekst videre internt.
+ * Kjører et kall på en egen tråd med Kontekst som en prosesstask. Kan benyttes til å kalle med system kontekst videre internt.
  * NB: ikke bruk som convenience utenfor dump.
  */
 @Dependent
@@ -67,9 +68,9 @@ public class ContainerContextRunner {
 
     @Transactional
     private <T> T submit(Callable<T> call) throws Exception {
-        var containerLogin = new ContainerLogin();
-        containerLogin.login();
+        KontekstHolder.setKontekst(BasisKontekst.forProsesstask());
         var result = call.call();
+        KontekstHolder.fjernKontekst();
         return result;
     }
 

@@ -1,17 +1,5 @@
 package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold;
 
-import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.*;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
@@ -19,10 +7,27 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AaregRestKlient;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.ArbeidsavtaleRS;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.ArbeidsforholdRS;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.OpplysningspliktigArbeidsgiverRS;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.PeriodeRS;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.PermisjonPermitteringRS;
+import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+
 @ApplicationScoped
 public class ArbeidsforholdTjeneste {
 
-    private static final Logger log = LoggerFactory.getLogger(ArbeidsforholdTjeneste.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ArbeidsforholdTjeneste.class);
     private AaregRestKlient aaregRestKlient;
 
     public ArbeidsforholdTjeneste() {
@@ -55,7 +60,7 @@ public class ArbeidsforholdTjeneste {
             .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
         if (!dups.isEmpty()) {
             String msg = "Mottatt duplikater for arbeidsforhold fra AAreg: " + dups;
-            log.warn(msg);
+            LOG.warn(msg);
             // throw new IllegalStateException(msg);
         }
     }
@@ -136,11 +141,11 @@ public class ArbeidsforholdTjeneste {
             ansettelsesPeriode.getTom()) : IntervallEntitet.fraOgMed(ansettelsesPeriode.getFom());
 
         if (!ansettelseIntervall.inkluderer(arbeidsavtaleFom)) {
-            log.info("Arbeidsavtale fom={} ligger utenfor ansettelsesPeriode={}", arbeidsavtaleFom, ansettelseIntervall);
+            LOG.info("Arbeidsavtale fom={} ligger utenfor ansettelsesPeriode={}", arbeidsavtaleFom, ansettelseIntervall);
         }
 
         if (arbeidsavtaleTom != null && arbeidsavtaleTom.isBefore(arbeidsavtaleFom)) {
-            log.warn("Arbeidsavtale tom={} er før fom={} for orgnr={}, navArbeidsforholdId={}", arbeidsavtaleTom, arbeidsavtaleFom,
+            LOG.warn("Arbeidsavtale tom={} er før fom={} for orgnr={}, navArbeidsforholdId={}", arbeidsavtaleTom, arbeidsavtaleFom,
                 getIdentifikatorString(arbeidsforhold.getArbeidsgiver().getOrganisasjonsnummer()), arbeidsforhold.getNavArbeidsforholdId());
         }
 

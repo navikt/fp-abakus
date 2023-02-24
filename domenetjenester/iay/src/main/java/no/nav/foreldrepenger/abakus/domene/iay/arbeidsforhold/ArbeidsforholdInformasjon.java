@@ -39,7 +39,7 @@ import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 @Entity(name = "ArbeidsforholdInformasjon")
 public class ArbeidsforholdInformasjon extends BaseEntitet {
 
-    private static final Logger log = LoggerFactory.getLogger(ArbeidsforholdInformasjon.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ArbeidsforholdInformasjon.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_IAY_INFORMASJON")
@@ -287,7 +287,7 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
         for (var e : gruppertArbeidsforhold.entrySet()) {
             if (e.getValue().size() > 1) {
                 String msg = String.format("Duplikat internref for %s=%s", e.getKey(), e.getValue());
-                log.warn(msg);
+                LOG.warn(msg);
                 //throw new IllegalStateException(msg);
             }
         }

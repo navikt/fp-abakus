@@ -15,7 +15,7 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 @ProsessTask(value = "partition.cleanBucket", cronExpression = "0 0 7 1 * *", maxFailedRuns = 1)
 public class CleanNextBucketBatchTask implements ProsessTaskHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(CleanNextBucketBatchTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CleanNextBucketBatchTask.class);
     private ProsessTaskTjeneste taskTjeneste;
 
     @Inject
@@ -26,6 +26,6 @@ public class CleanNextBucketBatchTask implements ProsessTaskHandler {
     @Override
     public void doTask(ProsessTaskData prosessTaskData) {
         int antallSlettet = taskTjeneste.tømNestePartisjon();
-        log.info("Tømmer neste partisjon med ferdige tasks, slettet {}", antallSlettet);
+        LOG.info("Tømmer neste partisjon med ferdige tasks, slettet {}", antallSlettet);
     }
 }
