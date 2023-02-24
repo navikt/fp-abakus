@@ -12,8 +12,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import org.hibernate.jpa.QueryHints;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
@@ -21,7 +19,6 @@ import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 @ApplicationScoped
 public class LønnskompensasjonRepository {
 
-    private static final Logger log = LoggerFactory.getLogger(LønnskompensasjonRepository.class);
     private EntityManager entityManager;
 
     LønnskompensasjonRepository() {
@@ -87,9 +84,6 @@ public class LønnskompensasjonRepository {
             return true;
         }
         var likeUtenomForrigeVedtak = Objects.equals(eksisterende, vedtak);
-        if (likeUtenomForrigeVedtak) {
-            log.info("Lønnskomp forkastes pga likt innhold {}", vedtak);
-        }
         return !likeUtenomForrigeVedtak;
     }
 

@@ -33,7 +33,7 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
 public class CallbackTask implements ProsessTaskHandler {
 
     public static final String EKSISTERENDE_GRUNNLAG_REF = "grunnlag.ref.old";
-    private static final Logger log = LoggerFactory.getLogger(CallbackTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CallbackTask.class);
 
     private RestClient restClient;
     private KoblingTjeneste koblingTjeneste;
@@ -54,7 +54,7 @@ public class CallbackTask implements ProsessTaskHandler {
         String callbackUrl = data.getPropertyValue(TaskConstants.CALLBACK_URL);
         Kobling kobling = koblingTjeneste.hent(Long.valueOf(data.getBehandlingId()));
         if (callbackUrl == null || callbackUrl.isEmpty()) {
-            log.info("Prøver callback uten url for kobling: {} ... Ignorerer", kobling);
+            LOG.info("Prøver callback uten url for kobling: {} ... Ignorerer", kobling);
             return;
         }
         CallbackDto callbackDto = new CallbackDto();
@@ -72,8 +72,6 @@ public class CallbackTask implements ProsessTaskHandler {
         }
         var restConfig = new RestConfig(TokenFlow.ADAPTIVE, uri, null, null);
         var post = restClient.sendReturnOptional(RestRequest.newPOSTJson(callbackDto, uri, restConfig), String.class);
-
-        log.info("Callback success, mottok respons: {}", post);
     }
 
     private void setInformasjonOmAvsenderRef(Kobling kobling, CallbackDto callbackDto) {
