@@ -28,7 +28,7 @@ import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 @Table(name = "IAY_INNTEKTSMELDINGER")
 public class InntektsmeldingAggregat extends BaseEntitet {
 
-    private static final Logger logger = LoggerFactory.getLogger(InntektsmeldingAggregat.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InntektsmeldingAggregat.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_INNTEKTSMELDINGER")
@@ -104,7 +104,7 @@ public class InntektsmeldingAggregat extends BaseEntitet {
             .collect(Collectors.toCollection(HashSet::new));
         boolean fjernet = inntektsmeldinger.removeIf(it -> skalFjerneInntektsmelding(it, inntektsmelding));
         inntektsmeldinger.stream().filter(it -> it.gjelderSammeArbeidsforhold(inntektsmelding) && !fjernet).findFirst().ifPresent(e -> {
-            logger.info("Persistert inntektsmelding med journalpostid {} er nyere enn den mottatte med journalpostid {}. Ignoreres",
+            LOG.info("Persistert inntektsmelding med journalpostid {} er nyere enn den mottatte med journalpostid {}. Ignoreres",
                 e.getJournalpostId(), inntektsmelding.getJournalpostId());
         });
 

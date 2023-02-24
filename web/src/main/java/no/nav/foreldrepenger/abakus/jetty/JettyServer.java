@@ -44,7 +44,7 @@ import no.nav.vedtak.sikkerhet.jaspic.OidcAuthModule;
 public class JettyServer {
 
     private static final Environment ENV = Environment.current();
-    private static final Logger log = LoggerFactory.getLogger(JettyServer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JettyServer.class);
 
     private static final String CONTEXT_PATH = ENV.getProperty("context.path", "/fpabakus");
     private static final String JETTY_SCAN_LOCATIONS = "^.*jersey-.*\\.jar$|^.*felles-.*\\.jar$|^.*/app\\.jar$";
@@ -166,7 +166,7 @@ public class JettyServer {
             }
             flyway.load().migrate();
         } catch (FlywayException e) {
-            log.error("Feil under migrering av databasen.");
+            LOG.error("Feil under migrering av databasen.");
             throw e;
         }
     }

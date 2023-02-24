@@ -27,8 +27,7 @@ import no.nav.vedtak.util.LRUCache;
 @ApplicationScoped
 public class VirksomhetTjeneste {
 
-    private static final String TJENESTE = "EREG";
-    private static final Logger LOGGER = LoggerFactory.getLogger(VirksomhetTjeneste.class);
+    private static final Logger LOG = LoggerFactory.getLogger(VirksomhetTjeneste.class);
     private static final long CACHE_ELEMENT_LIVE_TIME_MS = TimeUnit.MILLISECONDS.convert(30, TimeUnit.MINUTES);
 
 
@@ -89,7 +88,7 @@ public class VirksomhetTjeneste {
 
         if (OrganisasjonType.JURIDISK_ENHET.equals(virksomhet.getOrganisasjonstype())) {
             Optional<Virksomhet> unikVirksomhetForJuridiskEnhet = hentUnikVirksomhetForJuridiskEnhet(orgNummer, hentedato);
-            LOGGER.info("ABAKUS EREG fant {} unik virksomhet for juridisk {}", unikVirksomhetForJuridiskEnhet.isPresent() ? "en" : "ikke",
+            LOG.info("ABAKUS EREG fant {} unik virksomhet for juridisk {}", unikVirksomhetForJuridiskEnhet.isPresent() ? "en" : "ikke",
                 getIdentifikatorString(orgNummer));
             return unikVirksomhetForJuridiskEnhet.orElse(virksomhet);
         }

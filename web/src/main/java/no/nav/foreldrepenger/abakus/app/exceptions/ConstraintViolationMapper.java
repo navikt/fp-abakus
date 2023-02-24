@@ -21,7 +21,7 @@ import no.nav.vedtak.exception.VLException;
 
 public class ConstraintViolationMapper implements ExceptionMapper<ConstraintViolationException> {
 
-    private static final Logger log = LoggerFactory.getLogger(ConstraintViolationMapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConstraintViolationMapper.class);
 
     @Override
     public Response toResponse(ConstraintViolationException exception) {
@@ -39,7 +39,7 @@ public class ConstraintViolationMapper implements ExceptionMapper<ConstraintViol
             List<String> feltNavn = feilene.stream().map(FeltFeilDto::toString).collect(Collectors.toList());
             feil = FeltValideringFeil.feltverdiKanIkkeValideres(feltNavn);
         }
-        log.warn(feil.getMessage());
+        LOG.warn(feil.getMessage());
         return Response.status(Response.Status.BAD_REQUEST).entity(new FeilDto(feil.getMessage(), feilene)).type(MediaType.APPLICATION_JSON).build();
     }
 

@@ -15,7 +15,7 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 @ProsessTask(value = "retry.feilendeTasks", cronExpression = "0 30 6,8,10,12,14,16,18 * * *", maxFailedRuns = 1)
 public class RekjørFeiledeTasksBatchTask implements ProsessTaskHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(RekjørFeiledeTasksBatchTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RekjørFeiledeTasksBatchTask.class);
     private ProsessTaskTjeneste taskTjeneste;
 
     @Inject
@@ -26,6 +26,6 @@ public class RekjørFeiledeTasksBatchTask implements ProsessTaskHandler {
     @Override
     public void doTask(ProsessTaskData prosessTaskData) {
         var rekjørAlleFeiledeTasks = taskTjeneste.restartAlleFeiledeTasks();
-        log.info("Rekjører alle feilende tasks, oppdaterte {} tasks", rekjørAlleFeiledeTasks);
+        LOG.info("Rekjører alle feilende tasks, oppdaterte {} tasks", rekjørAlleFeiledeTasks);
     }
 }

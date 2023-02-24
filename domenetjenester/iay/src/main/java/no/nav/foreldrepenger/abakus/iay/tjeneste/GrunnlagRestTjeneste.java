@@ -80,7 +80,6 @@ import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.vedtak.log.mdc.MdcExtendedLogContext;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
@@ -93,9 +92,8 @@ import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 @ApplicationScoped
 @Transactional
 public class GrunnlagRestTjeneste {
-    private static final MdcExtendedLogContext LOG_CONTEXT = MdcExtendedLogContext.getContext("prosess");
 
-    private static Logger log = LoggerFactory.getLogger(GrunnlagRestTjeneste.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GrunnlagRestTjeneste.class);
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private KoblingTjeneste koblingTjeneste;
 
@@ -296,7 +294,7 @@ public class GrunnlagRestTjeneste {
 
         setupLogMdcFraKoblingReferanse(koblingReferanse);
 
-        log.warn("Kall på deprecated tjeneste PUT /iay/grunnlag/v1: ytelse={}, kobling={}", dto.getYtelseType(), dto.getKoblingReferanse());
+        LOG.warn("Kall på deprecated tjeneste PUT /iay/grunnlag/v1: ytelse={}, kobling={}", dto.getYtelseType(), dto.getKoblingReferanse());
 
         var dtoMapper = new IAYFraDtoMapper(iayTjeneste, aktørId, koblingReferanse);
         var nyttGrunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayTjeneste.hentGrunnlagFor(koblingReferanse));

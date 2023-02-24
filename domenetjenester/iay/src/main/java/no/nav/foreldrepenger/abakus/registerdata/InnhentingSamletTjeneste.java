@@ -42,7 +42,7 @@ import no.nav.foreldrepenger.konfig.Environment;
 @ApplicationScoped
 public class InnhentingSamletTjeneste {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InnhentingSamletTjeneste.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InnhentingSamletTjeneste.class);
     private static final Set<YtelseType> LØNNSKOMP_FOR_YTELSER = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER);
     private final boolean isDev = Environment.current().isDev();
     private final boolean isLocal = Environment.current().isLocal();
@@ -165,11 +165,11 @@ public class InnhentingSamletTjeneste {
     }
 
     private void loggArenaIgnorert(String ignorert, Saksnummer saksnummer) {
-        LOGGER.info("FP-112843 Ignorerer Arena-sak uten {}, saksnummer: {}", ignorert, saksnummer);
+        LOG.info("FP-112843 Ignorerer Arena-sak uten {}, saksnummer: {}", ignorert, saksnummer);
     }
 
     private void loggArenaTomFørFom(Saksnummer saksnummer) {
-        LOGGER.info("FP-597341 Ignorerer Arena-sak med vedtakTom før vedtakFom, saksnummer: {}", saksnummer);
+        LOG.info("FP-597341 Ignorerer Arena-sak med vedtakTom før vedtakFom, saksnummer: {}", saksnummer);
     }
 
 }

@@ -27,7 +27,7 @@ import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
 public class InfotrygdgrunnlagAnvistAndelMapper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InfotrygdgrunnlagAnvistAndelMapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InfotrygdgrunnlagAnvistAndelMapper.class);
 
     private InfotrygdgrunnlagAnvistAndelMapper() {
     }
@@ -46,7 +46,7 @@ public class InfotrygdgrunnlagAnvistAndelMapper {
                                                                                 List<InfotrygdYtelseAnvist> utbetalinger) {
         var inntektskategorier = splittArbeidskategoriTilInntektskategorier(kategori);
         if (inntektskategorier.isEmpty()) {
-            LOGGER.info("Kunne ikke mappe inntektskategori fra infotrygdgrunnlag. Mapper ingen andeler for anvisning.");
+            LOG.info("Kunne ikke mappe inntektskategori fra infotrygdgrunnlag. Mapper ingen andeler for anvisning.");
             return Collections.emptyList();
         }
         var utbetalingerTilFordeling = mapTilMellomregninger(utbetalinger);
@@ -97,7 +97,7 @@ public class InfotrygdgrunnlagAnvistAndelMapper {
             .toList();
 
         if (!sorterteDagsatserOutput.equals(sorterteDagsatserInput)) {
-            LOGGER.info("Fant diff i fordeling fra infotrygd og mappet fordeling. " + "Input var " + utbetalinger + "" + "Output var " + andeler);
+            LOG.info("Fant diff i fordeling fra infotrygd og mappet fordeling. " + "Input var " + utbetalinger + "" + "Output var " + andeler);
         }
 
         return andeler;

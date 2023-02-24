@@ -50,9 +50,7 @@ public class InntektTjeneste {
     private static final Set<InntektskildeType> SKAL_PERIODISERE_INNTEKTSKILDE = Set.of(InntektskildeType.INNTEKT_SAMMENLIGNING,
         InntektskildeType.INNTEKT_BEREGNING);
 
-    private static final String ENDPOINT_KEY = "hentinntektlistebolk.url";
-
-    private static final Logger logger = LoggerFactory.getLogger(InntektTjeneste.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InntektTjeneste.class);
 
     private RestClient restClient;
     private RestConfig restConfig;
@@ -216,7 +214,7 @@ public class InntektTjeneste {
             AktørId aktørId = aktørConsumer.hentAktørForIdent(new PersonIdent(arbeidsgiver.getIdentifikator()), ytelse).orElse(null);
             builder.medArbeidsgiverAktørId(aktørId);
         } else {
-            logger.info("Arbeidsgiver for frilanser har ukjent aktørtype: {}", arbeidsgiver.getAktoerType());
+            LOG.info("Arbeidsgiver for frilanser har ukjent aktørtype: {}", arbeidsgiver.getAktoerType());
         }
     }
 

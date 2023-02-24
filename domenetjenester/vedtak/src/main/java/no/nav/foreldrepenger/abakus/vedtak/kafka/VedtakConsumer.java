@@ -20,7 +20,7 @@ import no.nav.vedtak.felles.integrasjon.kafka.KafkaProperties;
 @ApplicationScoped
 public class VedtakConsumer implements KafkaIntegration {
 
-    private static final Logger log = LoggerFactory.getLogger(VedtakConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(VedtakConsumer.class);
 
     private static final String APPLICATION_ID = "fpabakus"; // Hold konstant pga offset commit
 
@@ -45,16 +45,16 @@ public class VedtakConsumer implements KafkaIntegration {
 
     private void addShutdownHooks() {
         stream.setStateListener((newState, oldState) -> {
-            log.info("{} :: From state={} to state={}", topic, oldState, newState);
+            LOG.info("{} :: From state={} to state={}", topic, oldState, newState);
 
             if (newState == KafkaStreams.State.ERROR) {
                 // if the stream has died there is no reason to keep spinning
-                log.warn("{} :: No reason to keep living, closing stream", topic);
+                LOG.warn("{} :: No reason to keep living, closing stream", topic);
                 stop();
             }
         });
         stream.setUncaughtExceptionHandler((t, e) -> {
-            log.error(topic + " :: Caught exception in stream, exiting", e);
+            LOG.error(topic + " :: Caught exception in stream, exiting", e);
             stop();
         });
     }
@@ -73,13 +73,13 @@ public class VedtakConsumer implements KafkaIntegration {
     public void start() {
         addShutdownHooks();
         stream.start();
-        log.info("Starter konsumering av topic={}, tilstand={}", topic, stream.state());
+        LOG.info("Starter konsumering av topic={}, tilstand={}", topic, stream.state());
     }
 
     @Override
     public void stop() {
-        log.info("Starter shutdown av topic={}, tilstand={} med 10 sekunder timeout", topic, stream.state());
+        LOG.info("Starter shutdown av topic={}, tilstand={} med 10 sekunder timeout", topic, stream.state());
         stream.close(Duration.of(30, ChronoUnit.SECONDS));
-        log.info("Shutdown av topic={}, tilstand={} med 10 sekunder timeout", topic, stream.state());
+        LOG.info("Shutdown av topic={}, tilstand={} med 10 sekunder timeout", topic, stream.state());
     }
 }

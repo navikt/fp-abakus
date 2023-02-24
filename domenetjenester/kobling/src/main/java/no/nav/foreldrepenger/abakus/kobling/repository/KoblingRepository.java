@@ -28,7 +28,7 @@ import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 
 @ApplicationScoped
 public class KoblingRepository {
-    private static final Logger log = LoggerFactory.getLogger(KoblingRepository.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KoblingRepository.class);
     private EntityManager entityManager;
 
     KoblingRepository() {
@@ -86,7 +86,7 @@ public class KoblingRepository {
         DiffResult diff = getDiff(eksisterendeKobling.orElse(null), nyKobling);
 
         if (!diff.isEmpty()) {
-            log.info("Detekterte endringer på kobling med referanse={}, endringer={}", nyKobling.getId(), diff.getLeafDifferences());
+            LOG.info("Detekterte endringer på kobling med referanse={}, endringer={}", nyKobling.getId(), diff.getLeafDifferences());
             entityManager.persist(nyKobling);
             entityManager.flush();
         }

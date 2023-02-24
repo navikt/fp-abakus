@@ -25,7 +25,7 @@ import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 @ApplicationScoped
 public class VedtakYtelseRepository {
 
-    private static final Logger log = LoggerFactory.getLogger(VedtakYtelseRepository.class);
+    private static final Logger LOG = LoggerFactory.getLogger(VedtakYtelseRepository.class);
     private EntityManager entityManager;
 
     VedtakYtelseRepository() {
@@ -66,7 +66,7 @@ public class VedtakYtelseRepository {
             }
             entityManager.flush();
         } else {
-            log.info("Forkaster vedtak siden en sitter på nyere vedtak. {} er eldre enn {}", ytelse, vedtakYtelse);
+            LOG.info("Forkaster vedtak siden en sitter på nyere vedtak. {} er eldre enn {}", ytelse, vedtakYtelse);
         }
     }
 
