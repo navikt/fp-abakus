@@ -13,20 +13,20 @@ spec:
     - {{url}}
   {{/each}}
   liveness:
-    path: /fpabakus/internal/isAlive
+    path: /fpabakus/internal/health/isAlive
     initialDelay: 10
     periodSeconds: 10
     failureThreshold: 20
     timeout: 3
   readiness:
-    path: /fpabakus/internal/isReady
+    path: /fpabakus/internal/health/isReady
     initialDelay: 10
     periodSeconds: 10
     failureThreshold: 20
     timeout: 3
   preStopHook:
     http:
-      path: /fpabakus/internal/preStop
+      path: /fpabakus/internal/health/preStop
   prometheus:
     enabled: true
     path: /fpabakus/internal/metrics/prometheus

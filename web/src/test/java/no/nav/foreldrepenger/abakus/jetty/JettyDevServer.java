@@ -5,8 +5,6 @@ import org.flywaydb.core.api.FlywayException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.jetty.db.DatasourceRole;
-import no.nav.foreldrepenger.abakus.jetty.db.DatasourceUtil;
 import no.nav.foreldrepenger.konfig.Environment;
 
 public class JettyDevServer extends JettyServer {

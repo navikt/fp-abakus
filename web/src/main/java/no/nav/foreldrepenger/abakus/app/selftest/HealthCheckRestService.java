@@ -36,7 +36,7 @@ public class HealthCheckRestService {
     }
 
     @GET
-    @Path("/isAlive")
+    @Path("/health/isAlive")
     @Operation(description = "sjekker om poden lever", tags = "nais", hidden = true)
     public Response isAlive() {
         if (starterService.isKafkaAlive()) {
@@ -46,8 +46,19 @@ public class HealthCheckRestService {
         }
     }
 
+    /**
+     * @deprecated Både k9-verdikjede og fpsak-autotest trenger å bytte til det nye endepunkt /internal/health/isAlive
+     */
+    @Deprecated(since = "03.2023", forRemoval = true)
     @GET
-    @Path("/isReady")
+    @Path("/isAlive")
+    @Operation(description = "sjekker om poden lever", tags = "nais", hidden = true)
+    public Response isAliveDeprecated() {
+        return isAlive();
+    }
+
+    @GET
+    @Path("/health/isReady")
     @Operation(description = "sjekker om poden er klar", tags = "nais", hidden = true)
     public Response isReady() {
         if (databaseHealthCheck.isReady()) {
@@ -57,8 +68,19 @@ public class HealthCheckRestService {
         }
     }
 
+    /**
+     * @deprecated Både k9-verdikjede og fpsak-autotest trenger å bytte til det nye endepunkt /internal/health/isReady
+     */
+    @Deprecated(since = "03.2023", forRemoval = true)
     @GET
-    @Path("/preStop")
+    @Path("/isReady")
+    @Operation(description = "sjekker om poden er klar", tags = "nais", hidden = true)
+    public Response isReadyDeprecated() {
+        return isReady();
+    }
+
+    @GET
+    @Path("/health/preStop")
     @Operation(description = "kalles på før stopp", tags = "nais", hidden = true)
     public Response preStop() {
         starterService.stopServices();
