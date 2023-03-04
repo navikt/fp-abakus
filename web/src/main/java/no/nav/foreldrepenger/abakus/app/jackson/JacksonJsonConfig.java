@@ -24,7 +24,6 @@ public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {
 
     private final ObjectMapper objectMapper;
 
-
     /**
      * Default instance for Jax-rs application. Genererer ikke navn som del av output for kodeverk.
      */
@@ -37,7 +36,7 @@ public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {
         // TODO (u139158): PK-44270 Diskutere med Front-end, ønsker i utgangpunktet å fjerne null, men hva med Javascript
         // KodelisteSerializer og KodeverkSerializer bør i tilfelle også støtte JsonInclude.Include.*
         // objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-        InjectableValues.Std std = new InjectableValues.Std();
+        var std = new InjectableValues.Std();
         std.addValue(KodeValidator.class, KodeValidator.HAPPY_VALIDATOR);
         objectMapper.setInjectableValues(std);
 
@@ -52,8 +51,7 @@ public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {
      * Scan subtyper dynamisk fra utvalgte jar/war slik at superklasse slipper å deklarere @JsonSubtypes.
      */
     private static List<Class<?>> getJsonTypeNameClasses(URI classLocation) {
-        IndexClasses indexClasses;
-        indexClasses = IndexClasses.getIndexFor(classLocation);
+        var indexClasses = IndexClasses.getIndexFor(classLocation);
         return indexClasses.getClassesWithAnnotation(JsonTypeName.class);
     }
 

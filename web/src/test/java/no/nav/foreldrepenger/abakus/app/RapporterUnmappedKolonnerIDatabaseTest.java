@@ -37,7 +37,7 @@ import no.nav.foreldrepenger.abakus.dbstoette.Databaseskjemainitialisering;
  * kun aksesseres gjennom native sql), men p.t. høyst sannsynlig ikke.
  * Bør gjennomgås jevnlig for å luke manglende contract av db skjema.
  */
-public class RapporterUnmappedKolonnerIDatabaseTest {
+class RapporterUnmappedKolonnerIDatabaseTest {
     private static final Logger LOG = LoggerFactory.getLogger(RapporterUnmappedKolonnerIDatabaseTest.class);
 
     private static EntityManagerFactory entityManagerFactory;
@@ -46,11 +46,11 @@ public class RapporterUnmappedKolonnerIDatabaseTest {
         Pattern.compile("^.*SCHEMA_VERSION.*$", Pattern.CASE_INSENSITIVE),
         Pattern.compile("^BEHANDLING#SIST_OPPDATERT_TIDSPUNKT.*$", Pattern.CASE_INSENSITIVE));
 
-    public RapporterUnmappedKolonnerIDatabaseTest() {
+    RapporterUnmappedKolonnerIDatabaseTest() {
     }
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         // Kan ikke skrus på nå - trigger på CHAR kolonner som kunne vært VARCHAR. Må fikses først
         // System.setProperty("hibernate.hbm2ddl.auto", "validate");
         Databaseskjemainitialisering.initUnitTestDataSource();
@@ -63,7 +63,7 @@ public class RapporterUnmappedKolonnerIDatabaseTest {
     }
 
     @AfterAll
-    public static void teardown() throws Exception {
+    static void teardown() throws Exception {
         entityManagerFactory.close();
     }
 
@@ -99,26 +99,27 @@ public class RapporterUnmappedKolonnerIDatabaseTest {
         return cols;
     }
 
+    @SuppressWarnings("java:S2699")
     @Test
-    public void sjekk_unmapped() throws Exception {
+    void sjekk_unmapped() throws Exception {
         sjekk_alle_tabeller_mappet();
         sjekk_alle_kolonner_mappet();
     }
 
-    private void sjekk_alle_kolonner_mappet() throws Exception {
+    private void sjekk_alle_kolonner_mappet() {
         for (var namespace : MetadataExtractorIntegrator.INSTANCE.getDatabase().getNamespaces()) {
-            String namespaceName = getSchemaName(namespace);
+            var namespaceName = getSchemaName(namespace);
             var dbColumns = getColumns(namespaceName);
 
             for (var table : namespace.getTables()) {
 
-                String tableName = table.getName().toUpperCase();
+                var tableName = table.getName().toUpperCase();
                 if (whitelistTable(tableName)) {
                     continue;
                 }
 
-                List<Column> columns = StreamSupport.stream(Spliterators.spliteratorUnknownSize(table.getColumnIterator(), Spliterator.ORDERED),
-                    false).collect(Collectors.toList());
+                var columns = StreamSupport.stream(Spliterators.spliteratorUnknownSize(table.getColumnIterator(), Spliterator.ORDERED),
+                    false).toList();
 
                 var columnNames = columns.stream().map(c -> c.getName().toUpperCase()).collect(Collectors.toCollection(TreeSet::new));
                 if (dbColumns.containsKey(tableName)) {
@@ -137,11 +138,11 @@ public class RapporterUnmappedKolonnerIDatabaseTest {
 
     private void sjekk_alle_tabeller_mappet() throws Exception {
         for (var namespace : MetadataExtractorIntegrator.INSTANCE.getDatabase().getNamespaces()) {
-            String namespaceName = getSchemaName(namespace);
+            var namespaceName = getSchemaName(namespace);
             var dbColumns = getColumns(namespaceName);
             var dbTables = dbColumns.keySet();
             for (var table : namespace.getTables()) {
-                String tableName = table.getName().toUpperCase();
+                var tableName = table.getName().toUpperCase();
                 dbTables.remove(tableName);
             }
             dbTables.forEach(t -> LOG.warn("Table not mapped in hibernate{}: {}", namespaceName, t));
@@ -154,19 +155,18 @@ public class RapporterUnmappedKolonnerIDatabaseTest {
         return schema == null ? null : schema.getCanonicalName().toUpperCase();
     }
 
-    public static class MetadataExtractorIntegrator implements org.hibernate.integrator.spi.Integrator {
+    static class MetadataExtractorIntegrator implements org.hibernate.integrator.spi.Integrator {
 
-        public static final MetadataExtractorIntegrator INSTANCE = new MetadataExtractorIntegrator();
+        static final MetadataExtractorIntegrator INSTANCE = new MetadataExtractorIntegrator();
 
         private Database database;
 
-        public Database getDatabase() {
+        Database getDatabase() {
             return database;
         }
 
         @Override
         public void integrate(Metadata metadata, SessionFactoryImplementor sessionFactory, SessionFactoryServiceRegistry serviceRegistry) {
-
             database = metadata.getDatabase();
         }
 

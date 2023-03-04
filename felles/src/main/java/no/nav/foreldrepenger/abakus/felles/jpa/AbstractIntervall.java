@@ -19,8 +19,8 @@ public abstract class AbstractIntervall implements Comparable<AbstractIntervall>
     public abstract LocalDate getTomDato();
 
     public boolean overlapper(AbstractIntervall other) {
-        boolean fomBeforeOrEqual = erEtterEllerLikPeriodestart(other.getTomDato());
-        boolean tomAfterOrEqual = erFørEllerLikPeriodeslutt(other.getFomDato());
+        var fomBeforeOrEqual = erEtterEllerLikPeriodestart(other.getTomDato());
+        var tomAfterOrEqual = erFørEllerLikPeriodeslutt(other.getFomDato());
         return fomBeforeOrEqual && tomAfterOrEqual;
     }
 
@@ -41,10 +41,9 @@ public abstract class AbstractIntervall implements Comparable<AbstractIntervall>
         if (object == this) {
             return true;
         }
-        if (!(object instanceof AbstractIntervall)) {
+        if (!(object instanceof AbstractIntervall annen)) {
             return false;
         }
-        AbstractIntervall annen = (AbstractIntervall) object;
         return this.getFomDato().equals(annen.getFomDato()) && this.getTomDato().equals(annen.getTomDato());
     }
 

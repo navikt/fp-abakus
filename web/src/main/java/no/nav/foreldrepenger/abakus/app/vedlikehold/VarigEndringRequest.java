@@ -16,7 +16,6 @@ import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-
 /**
  * Input request for å bytte en utgått aktørid med en aktiv
  */
@@ -45,6 +44,7 @@ public class VarigEndringRequest {
     private String endringBegrunnelse;
 
     public VarigEndringRequest() {
+        // Jackson
     }
 
     public UuidDto getEksternReferanse() {

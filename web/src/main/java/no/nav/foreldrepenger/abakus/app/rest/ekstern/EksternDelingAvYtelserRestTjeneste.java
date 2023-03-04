@@ -256,8 +256,8 @@ public class EksternDelingAvYtelserRestTjeneste {
         var fnr = new PersonIdent(request.getPersonident().getIdent());
         var aktørIder = aktørTjeneste.hentAktørIderForIdent(fnr, utledTema(etterspurteYtelser));
 
-        LocalDate fom = request.getPeriode().getFom();
-        LocalDate tom = request.getPeriode().getTom();
+        var fom = request.getPeriode().getFom();
+        var tom = request.getPeriode().getTom();
 
         var periode = IntervallEntitet.fraOgMedTilOgMed(fom, tom);
 
@@ -296,7 +296,7 @@ public class EksternDelingAvYtelserRestTjeneste {
         periode.setFom(Optional.ofNullable(vedtak.getPeriode()).map(IntervallEntitet::getFomDato).orElseGet(LocalDate::now));
         periode.setTom(Optional.ofNullable(vedtak.getPeriode()).map(IntervallEntitet::getTomDato).orElseGet(LocalDate::now));
         ytelse.setPeriode(periode);
-        var anvist = vedtak.getYtelseAnvist().stream().map(this::mapLagretInfotrygdAnvist).collect(Collectors.toList());
+        var anvist = vedtak.getYtelseAnvist().stream().map(this::mapLagretInfotrygdAnvist).toList();
         ytelse.setAnvist(anvist);
         return ytelse;
     }
@@ -323,7 +323,7 @@ public class EksternDelingAvYtelserRestTjeneste {
                 a.getUtbetalingsgradProsent() == null ? null : new Desimaltall(a.getUtbetalingsgradProsent().getVerdi()),
                 a.getRefusjonsgradProsent() == null ? null : new Desimaltall(a.getRefusjonsgradProsent().getVerdi()),
                 ConvertToYtelseV1.fraInntektskategori(a.getInntektskategori())))
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private YtelseType utledTema(Set<YtelseType> request) {
@@ -338,11 +338,12 @@ public class EksternDelingAvYtelserRestTjeneste {
     public static class HentBrukersYtelserIPeriodeRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         public HentBrukersYtelserIPeriodeRequestAbacDataSupplier() {
+            // Jackson
         }
 
         @Override
         public AbacDataAttributter apply(Object obj) {
-            HentBrukersYtelserIPeriodeRequest req = (HentBrukersYtelserIPeriodeRequest) obj;
+            var req = (HentBrukersYtelserIPeriodeRequest) obj;
             return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.FNR, req.getPersonident().getIdent());
         }
     }
@@ -350,11 +351,12 @@ public class EksternDelingAvYtelserRestTjeneste {
     public static class HentBrukersK9YtelserIPeriodeRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         public HentBrukersK9YtelserIPeriodeRequestAbacDataSupplier() {
+            // Jackson
         }
 
         @Override
         public AbacDataAttributter apply(Object obj) {
-            HentBrukersK9YtelserIPeriodeRequest req = (HentBrukersK9YtelserIPeriodeRequest) obj;
+            var req = (HentBrukersK9YtelserIPeriodeRequest) obj;
             return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.FNR, req.getPersonident().getIdent());
         }
     }
@@ -362,6 +364,7 @@ public class EksternDelingAvYtelserRestTjeneste {
     public static class VedtakForPeriodeRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         public VedtakForPeriodeRequestAbacDataSupplier() {
+            // Jackson
         }
 
         @Override
