@@ -1,4 +1,6 @@
-package no.nav.foreldrepenger.abakus.jetty.db;
+package no.nav.foreldrepenger.abakus.jetty;
+
+import java.util.Properties;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -7,22 +9,24 @@ import io.micrometer.core.instrument.Metrics;
 import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil;
 import no.nav.vault.jdbc.hikaricp.VaultError;
+import no.nav.vedtak.exception.TekniskException;
 
-import java.util.Properties;
-
-public class DatasourceUtil {
+class DatasourceUtil {
 
     private static final Environment ENV = Environment.current();
 
-    public static HikariDataSource createDatasource(DatasourceRole role, int maxPoolSize) {
-        HikariConfig config = initConnectionPoolConfig(maxPoolSize);
+    private DatasourceUtil() {
+    }
+
+    static HikariDataSource createDatasource(DatasourceRole role, int maxPoolSize) {
+        var config = initConnectionPoolConfig(maxPoolSize);
         if (ENV.isVTP() || ENV.isLocal()) {
             return createLocalDatasource(config);
         }
         return createVaultDatasource(config, mountPath(), getRole(role));
     }
 
-    public static String getRole(DatasourceRole role) {
+    static String getRole(DatasourceRole role) {
         return String.format("%s-%s", getUsername(), role.name().toLowerCase());
     }
 
@@ -65,7 +69,7 @@ public class DatasourceUtil {
         try {
             return HikariCPVaultUtil.createHikariDataSourceWithVaultIntegration(config, mountPath, role);
         } catch (VaultError vaultError) {
-            throw new RuntimeException("Vault feil ved opprettelse av databaseforbindelse", vaultError);
+            throw new TekniskException("VAULT-ERROR", "Vault feil ved opprettelse av databaseforbindelse", vaultError);
         }
     }
 
