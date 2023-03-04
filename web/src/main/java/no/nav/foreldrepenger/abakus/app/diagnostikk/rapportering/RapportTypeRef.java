@@ -66,6 +66,22 @@ public @interface RapportTypeRef {
             return navn;
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+            if (!super.equals(o))
+                return false;
+            var that = (RapportTypeRefLiteral) o;
+            return navn == that.navn;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(super.hashCode(), navn);
+        }
     }
 
     public static final class Lookup {

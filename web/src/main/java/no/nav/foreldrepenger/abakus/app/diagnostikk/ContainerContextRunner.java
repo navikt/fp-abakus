@@ -29,7 +29,7 @@ public class ContainerContextRunner {
     private static final MdcExtendedLogContext LOG_CONTEXT = MdcExtendedLogContext.getContext("prosess"); //$NON-NLS-1$
 
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor(r -> {
-        Thread t = new Thread(r);
+        var t = new Thread(r);
         t.setDaemon(true);
         t.setName(RegisterInnhentingDump.class.getSimpleName() + "-thread");
         return t;
@@ -37,6 +37,7 @@ public class ContainerContextRunner {
 
     @Inject
     public ContainerContextRunner() {
+        // CDI
     }
 
     public static ContainerContextRunner createRunner() {
@@ -46,7 +47,7 @@ public class ContainerContextRunner {
     public static <T> Future<T> doRun(Kobling kobling, Callable<T> call) {
         var saksnummer = kobling.getSaksnummer();
 
-        var future = EXECUTOR.submit((() -> {
+        return EXECUTOR.submit((() -> {
             T result;
             var requestContext = CDI.current().select(RequestContext.class, UnboundLiteral.INSTANCE).get();
             requestContext.activate();
@@ -61,8 +62,6 @@ public class ContainerContextRunner {
             }
             return result;
         }));
-
-        return future;
 
     }
 

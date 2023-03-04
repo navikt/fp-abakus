@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.NamingException;
 import javax.security.auth.message.config.AuthConfigFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -97,7 +98,6 @@ public class JettyServer {
         ctx.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
         ctx.setInitParameter("pathInfoOnly", "true");
 
-
         // Scanns the CLASSPATH for classes and jars.
         ctx.setAttribute(CONTAINER_JAR_PATTERN, String.format("%s%s", ENV.isLocal() ? JETTY_LOCAL_CLASSES : "", JETTY_SCAN_LOCATIONS));
 
@@ -150,7 +150,7 @@ public class JettyServer {
         AuthConfigFactory.setFactory(factory);
     }
 
-    protected void konfigurerJndi() throws Exception {
+    protected void konfigurerJndi() throws NamingException {
         // Balanser så CP-size = TaskThreads+1 + Antall Connections man ønsker
         System.setProperty("task.manager.runner.threads", "6");
         new EnvEntry("jdbc/defaultDS", DatasourceUtil.createDatasource(DatasourceRole.USER, 12));

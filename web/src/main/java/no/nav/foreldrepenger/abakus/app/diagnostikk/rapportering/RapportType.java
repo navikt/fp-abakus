@@ -13,10 +13,6 @@ public enum RapportType {
     @JsonIgnore
     private final Set<YtelseType> ytelseTyper;
 
-    private RapportType(YtelseType... ytelseTyper) {
-        this.ytelseTyper = Set.of(ytelseTyper);
-    }
-
     private RapportType(Collection<YtelseType> ytelseTyper) {
         this.ytelseTyper = Set.copyOf(ytelseTyper);
     }

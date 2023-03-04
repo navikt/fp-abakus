@@ -12,6 +12,9 @@ import java.util.stream.Stream;
 
 public class CsvOutput {
 
+    private CsvOutput() {
+    }
+
     public static <V> DumpOutput dumpAsCsv(boolean includeHeader, List<V> input, String path, Map<String, Function<V, ?>> valueMapper) {
         var sb = new StringBuilder(500);
         if (includeHeader) {
@@ -33,12 +36,11 @@ public class CsvOutput {
     }
 
     private static <V> String csvValueRow(V input, Map<String, Function<V, ?>> valueMapper) {
-        var values = valueMapper.values().stream().map(v -> {
+        return valueMapper.values().stream().map(v -> {
             var s = v.apply(input);
             var obj = transformValue(s);
             return s == null || "null".equals(s) ? "" : "\"" + String.valueOf(obj).replace("\"", "\"\"") + "\""; // csv escape and quoting
         }).collect(Collectors.joining(","));
-        return values;
     }
 
     private static <V> String csvHeader(Map<String, Function<V, ?>> valueMapper) {
@@ -51,17 +53,17 @@ public class CsvOutput {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static Object transformValue(Object in) {
-        var out = in instanceof Optional ? ((Optional) in).orElse(null) : in;
-        if (out instanceof Kodeverdi) {
-            out = ((Kodeverdi) out).getKode();
+        var out = in instanceof Optional optional ? optional.orElse(null) : in;
+        if (out instanceof Kodeverdi kodeverdi) {
+            out = kodeverdi.getKode();
         }
-        if (out instanceof Enum) {
-            out = ((Enum) out).name();
+        if (out instanceof Enum enums) {
+            out = enums.name();
         }
-        if (out instanceof Collection && ((Collection) out).isEmpty()) {
+        if (out instanceof Collection collection && collection.isEmpty()) {
             out = null;
         }
-        if (out instanceof Map && ((Map) out).isEmpty()) {
+        if (out instanceof Map map && map.isEmpty()) {
             out = null;
         }
         return out;

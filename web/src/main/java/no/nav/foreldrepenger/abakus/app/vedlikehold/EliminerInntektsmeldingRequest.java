@@ -30,6 +30,7 @@ public class EliminerInntektsmeldingRequest {
     private String journalpostId;
 
     public EliminerInntektsmeldingRequest() {
+        // Jackson
     }
 
     public UuidDto getEksternReferanse() {

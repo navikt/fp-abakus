@@ -54,7 +54,7 @@ public class UttrekkDuplikatArbeidsforhold implements RapportGenerator {
         String path = "duplikat-arbeidsforhold.csv";
 
         try (Stream<Tuple> stream = query.getResultStream()) {
-            return CsvOutput.dumpResultSetToCsv(path, stream).map(v -> List.of(v)).orElse(List.of());
+            return CsvOutput.dumpResultSetToCsv(path, stream).map(List::of).orElse(List.of());
         }
 
     }

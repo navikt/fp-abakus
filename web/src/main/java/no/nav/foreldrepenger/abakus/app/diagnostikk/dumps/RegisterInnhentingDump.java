@@ -1,5 +1,20 @@
 package no.nav.foreldrepenger.abakus.app.diagnostikk.dumps;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
@@ -20,27 +35,12 @@ import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
 import no.nav.vedtak.felles.integrasjon.spokelse.Spøkelse;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-
 @ApplicationScoped
 @YtelseTypeRef
 public class RegisterInnhentingDump implements DebugDump {
 
     private static final Collection<InntektskildeType> INNTEKTSKILDER = IAYRegisterInnhentingFellesTjenesteImpl.ELEMENT_TIL_INNTEKTS_KILDE_MAP.values();
-    private final String prefiks = "register-innhenting";
+    private static final String PREFIKS = "register-innhenting";
     private InntektTjeneste inntektTjeneste;
     private AaregRestKlient aaregKlient;
     private InfotrygdGrunnlagAggregator infotrygdGrunnlag;
@@ -66,13 +66,13 @@ public class RegisterInnhentingDump implements DebugDump {
     @Override
     public List<DumpOutput> dump(DumpKontekst dumpKontekst) {
         try {
-            Future<List<DumpOutput>> future = submit(dumpKontekst, k -> dumpRegister(k));
+            var future = submit(dumpKontekst, this::dumpRegister);
             return future.get(120, TimeUnit.SECONDS);
         } catch (Exception e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
+            var sw = new StringWriter();
+            var pw = new PrintWriter(sw);
             e.printStackTrace(pw);
-            return List.of(new DumpOutput(prefiks + "-" + e.getClass().getSimpleName() + "-ERROR.txt", sw.toString()));
+            return List.of(new DumpOutput(PREFIKS + "-" + e.getClass().getSimpleName() + "-ERROR.txt", sw.toString()));
         }
     }
 
@@ -100,7 +100,7 @@ public class RegisterInnhentingDump implements DebugDump {
         INNTEKTSKILDER.forEach(inntektsKilde -> {
             var request = FinnInntektRequest.builder(YearMonth.from(fom), YearMonth.from(tom)).medAktørId(aktørId.getId()).build();
 
-            dumps.add(dumpJsonOutput(prefiks + "-inntekt-" + inntektsKilde.getKode(), () -> inntektTjeneste.finnInntektRaw(request, inntektsKilde)));
+            dumps.add(dumpJsonOutput(PREFIKS + "-inntekt-" + inntektsKilde.getKode(), () -> inntektTjeneste.finnInntektRaw(request, inntektsKilde)));
         });
         return dumps;
     }
@@ -109,18 +109,18 @@ public class RegisterInnhentingDump implements DebugDump {
         var dumps = new ArrayList<DumpOutput>();
         var fom = periode.getFomDato();
         var tom = periode.getTomDato();
-        dumps.add(dumpJsonOutput(prefiks + "-aareg-arbeid", () -> aaregKlient.finnArbeidsforholdForArbeidstaker(ident.getIdent(), fom, tom)));
-        dumps.add(dumpJsonOutput(prefiks + "-aareg-frilans", () -> aaregKlient.finnArbeidsforholdForFrilanser(ident.getIdent(), fom, tom)));
+        dumps.add(dumpJsonOutput(PREFIKS + "-aareg-arbeid", () -> aaregKlient.finnArbeidsforholdForArbeidstaker(ident.getIdent(), fom, tom)));
+        dumps.add(dumpJsonOutput(PREFIKS + "-aareg-frilans", () -> aaregKlient.finnArbeidsforholdForFrilanser(ident.getIdent(), fom, tom)));
         return dumps;
     }
 
     private List<DumpOutput> innhentYtelser(PersonIdent ident, LocalDate fom, LocalDate tom) {
         var dumps = new ArrayList<DumpOutput>();
-        dumps.add(dumpJsonOutput(prefiks + "-sp", () -> spokelseKlient.hentGrunnlag(ident.getIdent())));
+        dumps.add(dumpJsonOutput(PREFIKS + "-sp", () -> spokelseKlient.hentGrunnlag(ident.getIdent())));
 
         var løpenummer = 1;
         for (Grunnlag g : infotrygdGrunnlag.hentAggregertGrunnlag(ident.getIdent(), fom, tom)) {
-            dumps.add(dumpJsonOutput(prefiks + "-infotrygd-" + g.tema() + "-" + g.behandlingstema() + "-" + løpenummer++, () -> g));
+            dumps.add(dumpJsonOutput(PREFIKS + "-infotrygd-" + g.tema() + "-" + g.behandlingstema() + "-" + løpenummer++, () -> g));
         }
         return dumps;
     }
