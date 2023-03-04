@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import no.nav.foreldrepenger.abakus.app.konfig.ApplicationServiceStarter;
 import no.nav.foreldrepenger.abakus.app.selftest.checks.DatabaseHealthCheck;
 
-@Path("/health")
+@Path("/")
 @Produces(TEXT_PLAIN)
 @RequestScoped
 public class HealthCheckRestService {
