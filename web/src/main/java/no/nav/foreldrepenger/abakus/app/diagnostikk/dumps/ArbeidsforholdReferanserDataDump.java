@@ -51,6 +51,6 @@ public class ArbeidsforholdReferanserDataDump implements DebugDump {
             return List.of();
         }
 
-        return CsvOutput.dumpResultSetToCsv(path, results).map(v -> List.of(v)).orElse(List.of());
+        return CsvOutput.dumpResultSetToCsv(path, results).map(List::of).orElse(List.of());
     }
 }

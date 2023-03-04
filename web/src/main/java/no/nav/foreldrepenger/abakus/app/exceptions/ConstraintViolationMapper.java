@@ -2,11 +2,7 @@ package no.nav.foreldrepenger.abakus.app.exceptions;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
 import javax.ws.rs.core.MediaType;
@@ -27,16 +23,16 @@ public class ConstraintViolationMapper implements ExceptionMapper<ConstraintViol
     public Response toResponse(ConstraintViolationException exception) {
         Collection<FeltFeilDto> feilene = new ArrayList<>();
 
-        Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
-        for (ConstraintViolation<?> constraintViolation : constraintViolations) {
-            String feltNavn = getFeltNavn(constraintViolation.getPropertyPath());
+        var constraintViolations = exception.getConstraintViolations();
+        for (var constraintViolation : constraintViolations) {
+            var feltNavn = getFeltNavn(constraintViolation.getPropertyPath());
             feilene.add(new FeltFeilDto(feltNavn, constraintViolation.getMessage()));
         }
         VLException feil;
         if (feilene.isEmpty()) {
             feil = FeltValideringFeil.feilUnderValideringAvContraints(exception);
         } else {
-            List<String> feltNavn = feilene.stream().map(FeltFeilDto::toString).collect(Collectors.toList());
+            var feltNavn = feilene.stream().map(FeltFeilDto::toString).toList();
             feil = FeltValideringFeil.feltverdiKanIkkeValideres(feltNavn);
         }
         LOG.warn(feil.getMessage());

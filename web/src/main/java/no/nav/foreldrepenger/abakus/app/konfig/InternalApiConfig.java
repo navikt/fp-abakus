@@ -6,7 +6,7 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 import no.nav.foreldrepenger.abakus.app.metrics.PrometheusRestService;
-import no.nav.foreldrepenger.abakus.app.selftest.HealthCheckRestService;
+import no.nav.foreldrepenger.abakus.app.healthcheck.HealthCheckRestService;
 
 @ApplicationPath(InternalApiConfig.API_URL)
 public class InternalApiConfig extends Application {

@@ -142,7 +142,7 @@ public class ForvaltningRestTjeneste {
             .orElse(List.of())
             .stream()
             .filter(im -> !journalpost.equals(im.getJournalpostId()))
-            .collect(Collectors.toList());
+            .toList();
         grunnlagBuilder.setInntektsmeldinger(new InntektsmeldingAggregat(beholdIM));
         iayTjeneste.lagre(koblingReferanse, grunnlagBuilder);
         return Response.ok().build();
@@ -167,16 +167,16 @@ public class ForvaltningRestTjeneste {
     @Operation(description = "UPDATE: Endrer referanser på IM til referanse som finnes i aareg ved match med ignore case", tags = "FORVALTNING")
     @BeskyttetRessurs(actionType = ActionType.CREATE, resource = DRIFT)
     public Response migrerArbeidsforholdRefForSak(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AbacDataSupplier.class) @NotNull @Valid UuidDto koblingReferanse) {
-        Map<String, ArbeidsforholdReferanse> feilTilRiktigMap = finnMappingFraGammelTilNyReferanse(koblingReferanse);
+        var feilTilRiktigMap = finnMappingFraGammelTilNyReferanse(koblingReferanse);
         var kobling = koblingTjeneste.hentFor(new KoblingReferanse(koblingReferanse.getReferanse()));
-        migrerAlleGrunnlagPåKobling(kobling.get(), feilTilRiktigMap);
+        migrerAlleGrunnlagPåKobling(kobling.orElseThrow(), feilTilRiktigMap);
         return Response.ok().build();
     }
 
     private Map<String, ArbeidsforholdReferanse> finnMappingFraGammelTilNyReferanse(UuidDto koblingReferanse) {
         var inntektArbeidYtelseGrunnlag = iayTjeneste.hentAggregat(new KoblingReferanse(koblingReferanse.getReferanse()));
         var arbeidsforholdInformasjonOpt = inntektArbeidYtelseGrunnlag.getArbeidsforholdInformasjon();
-        var arbeidsforholdInformasjon = arbeidsforholdInformasjonOpt.get();
+        var arbeidsforholdInformasjon = arbeidsforholdInformasjonOpt.orElseThrow();
         var referanserForKobling = arbeidsforholdInformasjon.getArbeidsforholdReferanser();
         var referansePrArbeidsgiverMap = referanserForKobling.stream().collect(Collectors.groupingBy(ArbeidsforholdReferanse::getArbeidsgiver));
 
@@ -331,6 +331,7 @@ public class ForvaltningRestTjeneste {
     public static class AktørRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         public AktørRequestAbacDataSupplier() {
+            // Jackson
         }
 
         @Override

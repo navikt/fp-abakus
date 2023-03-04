@@ -1,5 +1,7 @@
 package no.nav.foreldrepenger.abakus.vedtak.kafka;
 
+import static org.apache.kafka.streams.errors.StreamsUncaughtExceptionHandler.StreamThreadExceptionResponse.SHUTDOWN_CLIENT;
+
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
@@ -13,12 +15,13 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.felles.kafka.KafkaIntegration;
 import no.nav.foreldrepenger.konfig.KonfigVerdi;
 import no.nav.vedtak.felles.integrasjon.kafka.KafkaProperties;
+import no.nav.vedtak.log.metrics.Controllable;
+import no.nav.vedtak.log.metrics.LiveAndReadinessAware;
 
 @ApplicationScoped
-public class VedtakConsumer implements KafkaIntegration {
+public class VedtakConsumer implements LiveAndReadinessAware, Controllable {
 
     private static final Logger LOG = LoggerFactory.getLogger(VedtakConsumer.class);
 
@@ -37,7 +40,7 @@ public class VedtakConsumer implements KafkaIntegration {
 
         final Consumed<String, String> consumed = Consumed.with(Topology.AutoOffsetReset.EARLIEST);
 
-        final StreamsBuilder builder = new StreamsBuilder();
+        final var builder = new StreamsBuilder();
         builder.stream(topic, consumed).foreach(vedtaksHendelseHåndterer::handleMessage);
 
         this.stream = new KafkaStreams(builder.build(), KafkaProperties.forStreamsStringValue(APPLICATION_ID));
@@ -53,9 +56,9 @@ public class VedtakConsumer implements KafkaIntegration {
                 stop();
             }
         });
-        stream.setUncaughtExceptionHandler((t, e) -> {
-            LOG.error(topic + " :: Caught exception in stream, exiting", e);
-            stop();
+        stream.setUncaughtExceptionHandler(ex -> {
+            LOG.error(topic + " :: Caught exception in stream, exiting", ex);
+            return SHUTDOWN_CLIENT;
         });
     }
 
@@ -65,8 +68,9 @@ public class VedtakConsumer implements KafkaIntegration {
         return stream != null && stream.state().isRunningOrRebalancing();
     }
 
-    public String getTopic() {
-        return topic;
+    @Override
+    public boolean isReady() {
+        return isAlive();
     }
 
     @Override

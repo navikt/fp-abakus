@@ -31,6 +31,7 @@ public class ByttAktørRequest {
     private Aktør gyldigAktør;
 
     public ByttAktørRequest() {
+        // Jackson
     }
 
     public Aktør getUtgåttAktør() {

@@ -9,6 +9,9 @@ import no.nav.vedtak.exception.TekniskException;
 
 class FeltValideringFeil {
 
+    private FeltValideringFeil() {
+    }
+
     static FunksjonellException feltverdiKanIkkeValideres(List<String> feltnavn) {
         return new FunksjonellException("FP-328673",
             String.format("Det oppstod en valideringsfeil på felt %s. Vennligst kontroller at alle feltverdier er korrekte.", feltnavn),

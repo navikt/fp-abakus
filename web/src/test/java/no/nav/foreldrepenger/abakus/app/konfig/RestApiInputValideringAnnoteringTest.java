@@ -12,7 +12,7 @@ import javax.ws.rs.core.Context;
 import org.junit.jupiter.api.Test;
 
 
-public class RestApiInputValideringAnnoteringTest extends RestApiTester {
+class RestApiInputValideringAnnoteringTest extends RestApiTester {
 
     private Function<Method, String> printKlasseOgMetodeNavn = (method -> String.format("%s.%s", method.getDeclaringClass(), method.getName()));
 
@@ -22,7 +22,7 @@ public class RestApiInputValideringAnnoteringTest extends RestApiTester {
      * Kontakt Team Humle hvis du trenger hjelp til å endre koden din slik at den går igjennom her
      */
     @Test
-    public void alle_felter_i_objekter_som_brukes_som_inputDTO_skal_enten_ha_valideringsannotering_eller_være_av_godkjent_type() throws Exception {
+    void alle_felter_i_objekter_som_brukes_som_inputDTO_skal_enten_ha_valideringsannotering_eller_være_av_godkjent_type() throws Exception {
         for (Method method : finnAlleRestMetoder()) {
             for (int i = 0; i < method.getParameterCount(); i++) {
                 Parameter parameter = method.getParameters()[i];

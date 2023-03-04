@@ -4,9 +4,8 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -43,18 +42,16 @@ public class DebugDumpsters {
     public StreamingOutput dumper(DumpKontekst kobling) {
         var ytelseType = kobling.getYtelseType();
         var saksnummer = kobling.getSaksnummer();
-        StreamingOutput streamingOutput = outputStream -> {
-            try (ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(outputStream));) {
+        return outputStream -> {
+            try (var zipOut = new ZipOutputStream(new BufferedOutputStream(outputStream));) {
                 var dumpsters = findDumpsters(ytelseType);
-                List<DumpOutput> allDumps = dumpOutput(kobling, dumpsters);
+                var allDumps = dumpOutput(kobling, dumpsters);
                 allDumps.forEach(dump -> addToZip(saksnummer, zipOut, dump));
             } finally {
                 outputStream.flush();
                 outputStream.close();
             }
         };
-
-        return streamingOutput;
 
     }
 
@@ -66,7 +63,7 @@ public class DebugDumpsters {
         var zipEntry = new ZipEntry(saksnummer.getVerdi() + "/" + dump.getPath());
         try {
             zipOut.putNextEntry(zipEntry);
-            zipOut.write(dump.getContent().getBytes(Charset.forName("UTF8")));
+            zipOut.write(dump.getContent().getBytes(StandardCharsets.UTF_8));
             zipOut.closeEntry();
         } catch (IOException e) {
             throw new IllegalStateException("Kunne ikke zippe dump fra : " + dump, e);
@@ -74,21 +71,20 @@ public class DebugDumpsters {
     }
 
     private List<DumpOutput> dumpOutput(DumpKontekst kobling, List<Instance<DebugDump>> dumpsters) {
-        var dumpers = dumpsters.stream().flatMap(v -> v.stream()).collect(Collectors.toList());
-        var dumperNames = dumpers.stream().map(d -> d.getClass().getName()).collect(Collectors.toList());
+        var dumpers = dumpsters.stream().flatMap(Instance::stream).toList();
+        var dumperNames = dumpers.stream().map(d -> d.getClass().getName()).toList();
         LOG.info("Dumper fra: {}", dumperNames);
 
-        List<DumpOutput> allDumps = dumpers.stream().flatMap(ddp -> {
+        return dumpers.stream().flatMap(ddp -> {
             try {
                 return ddp.dump(kobling).stream();
             } catch (Exception e) {
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
+                var sw = new StringWriter();
+                var pw = new PrintWriter(sw);
                 e.printStackTrace(pw);
                 return Stream.of(new DumpOutput(ddp.getClass().getSimpleName() + "-ERROR.txt", sw.toString()));
             }
-        }).collect(Collectors.toList());
-        return allDumps;
+        }).toList();
     }
 
 }
