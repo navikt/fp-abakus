@@ -8,77 +8,82 @@ on:
       - '**.md'
       - '**.MD'
       - '.gitignore'
+      - '.editorconfig'
+      - '.java-version'
+      - '.gitattributes'
       - 'LICENSE'
       - 'CODEOWNERS'
-      - 'dokumentasjon/**'
+      - 'docs/**'
       - 'lokalutvikling/**'
+      - '.devcontainer/**'
+      - '.github/*.yml'
   schedule:
     - cron: '0 4 * * 1'
 
 jobs:
-    build-app:
-      name: Build
-      uses: navikt/fp-gha-workflows/.github/workflows/build-app-postgres.yml@main
-      with:
-        postgres-user: fpabakus_unit
-        sonar-scan: true # default: false
-        build-image: ${{ github.ref_name == 'master' }} # default: true
-        push-image: ${{ github.ref_name == 'master' }} # default: false
-      secrets: inherit
+  build-app:
+    name: Build
+    uses: navikt/fp-gha-workflows/.github/workflows/build-app-postgres.yml@main
+    with:
+      postgres-user: fpabakus_unit
+      sonar-scan: true # default: false
+      build-image: ${{ github.ref_name == 'master' }} # default: true
+      push-image: ${{ github.ref_name == 'master' }} # default: false
+    secrets: inherit
 
-    create-issue:
-      name: Issues
-      if: github.ref_name == 'master'
-      needs: build-app
-      uses: navikt/fp-gha-workflows/.github/workflows/issues.yml@main
-      with:
-        build-version: ${{ needs.build-app.outputs.build-version }}
-      secrets: inherit
+  create-issue:
+    name: Issues
+    if: github.ref_name == 'master'
+    needs: build-app
+    uses: navikt/fp-gha-workflows/.github/workflows/issues.yml@main
+    with:
+      build-version: ${{ needs.build-app.outputs.build-version }}
+    secrets: inherit
 
-    promote-dev:
-      name: Deploy
-      if: github.ref_name == 'master'
-      needs: [ build-app, create-issue ]
-      uses: navikt/fp-gha-workflows/.github/workflows/promote.yml@main
-      with:
-        issue-number: ${{ needs.create-issue.outputs.issue-number }}
-        cluster: dev-fss
-      secrets: inherit
+  promote-dev:
+    name: Deploy
+    if: github.ref_name == 'master'
+    needs: [ build-app, create-issue ]
+    uses: navikt/fp-gha-workflows/.github/workflows/promote.yml@main
+    with:
+      issue-number: ${{ needs.create-issue.outputs.issue-number }}
+      cluster: dev-fss
+    secrets: inherit
 
-    trigger-autotest-fp:
-      name: Autotest FP
-      if: github.ref_name == 'master'
-      needs: [ build-app, create-issue ]
-      uses: navikt/fp-gha-workflows/.github/workflows/autotest.yml@main
-      with:
-        build-version: ${{ needs.build-app.outputs.build-version }}
-        issue-number: ${{ needs.create-issue.outputs.issue-number }}
-      secrets: inherit
+  trigger-autotest-fp:
+    name: Autotest FP
+    if: github.ref_name == 'master'
+    needs: [ build-app, create-issue ]
+    uses: navikt/fp-gha-workflows/.github/workflows/autotest.yml@main
+    with:
+      build-version: ${{ needs.build-app.outputs.build-version }}
+      issue-number: ${{ needs.create-issue.outputs.issue-number }}
+    secrets: inherit
 
-    trigger-autotest-k9:
-      name: Autotest K9
-      if: github.ref_name == 'master'
-      needs: [ build-app, create-issue ]
-      uses: navikt/fp-gha-workflows/.github/workflows/autotest.yml@main
-      with:
-        build-version: ${{ needs.build-app.outputs.build-version }}
-        issue-number: ${{ needs.create-issue.outputs.issue-number }}
-        test-repo: 'k9-verdikjede' # default: fpsak-autotest
-        test-workflow: 'build.yml' # default: trigger.yml
-      secrets: inherit
+  trigger-autotest-k9:
+    name: Autotest K9
+    if: github.ref_name == 'master'
+    needs: [ build-app, create-issue ]
+    uses: navikt/fp-gha-workflows/.github/workflows/autotest.yml@main
+    with:
+      build-version: ${{ needs.build-app.outputs.build-version }}
+      issue-number: ${{ needs.create-issue.outputs.issue-number }}
+      test-repo: 'k9-verdikjede' # default: fpsak-autotest
+      test-workflow: 'build.yml' # default: trigger.yml
+    secrets: inherit
 
-    release-drafter:
-      name: Update
-      if: github.ref_name == 'master'
-      needs: build-app
-      uses: navikt/fp-gha-workflows/.github/workflows/release-drafter.yml@main
-      secrets: inherit
+  release-drafter:
+    name: Update
+    if: github.ref_name == 'master'
+    needs: build-app
+    uses: navikt/fp-gha-workflows/.github/workflows/release-drafter.yml@main
+    secrets: inherit
 
-    snyk:
-      name: Snyk
-      needs: build-app
-      uses: navikt/fp-gha-workflows/.github/workflows/snyk.yml@main
-      with:
-        build-version: ${{ needs.build-app.outputs.build-version }}
-      secrets: inherit
+  snyk:
+    name: Snyk
+    needs: build-app
+    uses: navikt/fp-gha-workflows/.github/workflows/snyk.yml@main
+    with:
+      build-version: ${{ needs.build-app.outputs.build-version }}
+    secrets: inherit
 
