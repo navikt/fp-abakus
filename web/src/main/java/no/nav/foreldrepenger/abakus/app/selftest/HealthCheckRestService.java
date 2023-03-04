@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import no.nav.foreldrepenger.abakus.app.konfig.ApplicationServiceStarter;
 import no.nav.foreldrepenger.abakus.app.selftest.checks.DatabaseHealthCheck;
 
-@Path("/")
+@Path("/health")
 @Produces(TEXT_PLAIN)
 @RequestScoped
 public class HealthCheckRestService {
@@ -36,7 +36,7 @@ public class HealthCheckRestService {
     }
 
     @GET
-    @Path("isAlive")
+    @Path("/isAlive")
     @Operation(description = "sjekker om poden lever", tags = "nais", hidden = true)
     public Response isAlive() {
         if (starterService.isKafkaAlive()) {
@@ -47,7 +47,7 @@ public class HealthCheckRestService {
     }
 
     @GET
-    @Path("isReady")
+    @Path("/isReady")
     @Operation(description = "sjekker om poden er klar", tags = "nais", hidden = true)
     public Response isReady() {
         if (databaseHealthCheck.isReady()) {
@@ -58,7 +58,7 @@ public class HealthCheckRestService {
     }
 
     @GET
-    @Path("preStop")
+    @Path("/preStop")
     @Operation(description = "kalles på før stopp", tags = "nais", hidden = true)
     public Response preStop() {
         starterService.stopServices();

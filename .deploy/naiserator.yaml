@@ -6,32 +6,34 @@ metadata:
   labels:
     team: teamforeldrepenger
 spec:
-  image:  {{image}}
+  image: {{image}}
   port: 8080
   ingresses:
   {{#each ingresses as |url|}}
-     - {{url}}
+    - {{url}}
   {{/each}}
   liveness:
-    path: "/fpabakus/internal/isAlive"
-    initialDelay: 25
-    timeout: 5
+    path: /fpabakus/internal/health/isAlive
+    initialDelay: 10
     periodSeconds: 10
-    failureThreshold: 27
+    failureThreshold: 20
+    timeout: 3
   readiness:
-    path: "/fpabakus/internal/isReady"
-    initialDelay: 25
-    timeout: 5
+    path: /fpabakus/internal/health/isReady
+    initialDelay: 10
     periodSeconds: 10
-    failureThreshold: 27
+    failureThreshold: 20
+    timeout: 3
+  preStopHook:
+    http:
+      path: /fpabakus/internal/health/preStop
   prometheus:
     enabled: true
-    path: "/fpabakus/internal/metrics/prometheus"
+    path: /fpabakus/internal/metrics/prometheus
   replicas:
     min: {{minReplicas}}
     max: {{maxReplicas}}
     cpuThresholdPercentage: 80
-  preStopHookPath: "/fpabakus/internal/preStop"
   resources:
     limits:
       cpu: "{{limits.cpu}}"
