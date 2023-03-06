@@ -127,6 +127,7 @@ public class InnhentRegisterdataTjeneste {
         if (dto.getCallbackUrl() != null) {
             innhentingTask.setProperty(TaskConstants.CALLBACK_URL, dto.getCallbackUrl());
             callbackTask.setProperty(TaskConstants.CALLBACK_URL, dto.getCallbackUrl());
+            Optional.ofNullable(dto.getCallbackScope()).ifPresent(s -> callbackTask.setProperty(TaskConstants.CALLBACK_SCOPE, s));
         }
         taskGruppe.addNesteSekvensiell(innhentingTask);
         taskGruppe.addNesteSekvensiell(callbackTask);

@@ -52,6 +52,7 @@ public class CallbackTask implements ProsessTaskHandler {
     @Override
     public void doTask(ProsessTaskData data) {
         String callbackUrl = data.getPropertyValue(TaskConstants.CALLBACK_URL);
+        String callbackScope = data.getPropertyValue(TaskConstants.CALLBACK_SCOPE);
         Kobling kobling = koblingTjeneste.hent(Long.valueOf(data.getBehandlingId()));
         if (callbackUrl == null || callbackUrl.isEmpty()) {
             LOG.info("Prøver callback uten url for kobling: {} ... Ignorerer", kobling);
@@ -70,7 +71,8 @@ public class CallbackTask implements ProsessTaskHandler {
         } catch (URISyntaxException e) {
             throw new TekniskException("FP-349977", String.format("Ugyldig callback url ved callback etter registerinnhenting: %s", callbackUrl));
         }
-        var restConfig = new RestConfig(TokenFlow.ADAPTIVE, uri, null, null);
+        var restConfig = callbackScope == null ? new RestConfig(TokenFlow.STS_CC, uri, null, null) : // Må legge til abakus i k9/inbound + ha callback-scope
+            new RestConfig(TokenFlow.ADAPTIVE, uri, callbackScope, null);
         var post = restClient.sendReturnOptional(RestRequest.newPOSTJson(callbackDto, uri, restConfig), String.class);
     }
 
