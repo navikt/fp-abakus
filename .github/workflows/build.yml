@@ -44,10 +44,11 @@ jobs:
     name: Deploy
     if: github.ref_name == 'master'
     needs: [ build-app, create-issue ]
-    uses: navikt/fp-gha-workflows/.github/workflows/promote.yml@main
+    uses: navikt/fp-gha-workflows/.github/workflows/deploy-app.yml@main
     with:
       issue-number: ${{ needs.create-issue.outputs.issue-number }}
-      cluster: dev-fss
+      environment: dev
+      platform: fss
     secrets: inherit
 
   trigger-autotest-fp:
