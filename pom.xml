@@ -38,7 +38,7 @@
 
 		<felles.version>4.2.30</felles.version>
 		<prosesstask.version>3.1.21</prosesstask.version>
-		<kontrakter.version>6.2.11</kontrakter.version>
+		<kontrakter.version>6.2.12</kontrakter.version>
 
         <maven.deploy.skip>true</maven.deploy.skip>
 	</properties>
