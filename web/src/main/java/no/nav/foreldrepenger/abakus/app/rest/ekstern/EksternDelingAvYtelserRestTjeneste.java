@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -31,8 +30,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-import no.nav.abakus.iaygrunnlag.request.HentBrukersK9YtelserIPeriodeRequest;
-import no.nav.abakus.iaygrunnlag.request.HentBrukersYtelserIPeriodeRequest;
 import no.nav.abakus.vedtak.ytelse.Aktør;
 import no.nav.abakus.vedtak.ytelse.Desimaltall;
 import no.nav.abakus.vedtak.ytelse.Periode;
@@ -71,18 +68,10 @@ public class EksternDelingAvYtelserRestTjeneste {
 
     private static final Logger LOG = LoggerFactory.getLogger(EksternDelingAvYtelserRestTjeneste.class);
 
-    private static final Set<YtelseType> GYLDIGE_YTELSER = Set.of(YtelseType.PLEIEPENGER_NÆRSTÅENDE, YtelseType.FORELDREPENGER,
-        YtelseType.OMSORGSPENGER, YtelseType.OPPLÆRINGSPENGER, YtelseType.FRISINN, YtelseType.SVANGERSKAPSPENGER, YtelseType.PLEIEPENGER_SYKT_BARN);
-
-    // Kapittel 9 (ekskluderer FRISINN)
-    private static final Set<YtelseType> K9_YTELSER = Set.of(YtelseType.PLEIEPENGER_NÆRSTÅENDE, YtelseType.OMSORGSPENGER, YtelseType.OPPLÆRINGSPENGER,
-        YtelseType.PLEIEPENGER_SYKT_BARN);
-
     private static final Set<Ytelser> K9_INFOTRYGD_YTELSER = Set.of(Ytelser.PLEIEPENGER_NÆRSTÅENDE, Ytelser.OPPLÆRINGSPENGER, Ytelser.PLEIEPENGER_SYKT_BARN);
 
     private VedtakYtelseRepository ytelseRepository;
     private AktørTjeneste aktørTjeneste;
-    private InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste;
     private InfotrygdPSGrunnlag infotrygdPSGrunnlag;
 
     public EksternDelingAvYtelserRestTjeneste() {
@@ -90,12 +79,10 @@ public class EksternDelingAvYtelserRestTjeneste {
 
     @Inject
     public EksternDelingAvYtelserRestTjeneste(VedtakYtelseRepository ytelseRepository,
-                                              InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste,
                                               @PS InfotrygdPSGrunnlag infotrygdPSGrunnlag,
                                               AktørTjeneste aktørTjeneste) {
         this.ytelseRepository = ytelseRepository;
         this.aktørTjeneste = aktørTjeneste;
-        this.innhentingInfotrygdTjeneste = innhentingInfotrygdTjeneste;
         this.infotrygdPSGrunnlag = infotrygdPSGrunnlag;
     }
 
@@ -135,18 +122,6 @@ public class EksternDelingAvYtelserRestTjeneste {
         return ytelser;
     }
 
-    @POST
-    @Path("/hent-ytelse-infotrygd-k9")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Henter alle vedtak for en gitt person, evt med periode etter en fom", tags = "ytelse")
-    @BeskyttetRessurs(actionType = ActionType.READ, resource = VEDTAK, availabilityType = AvailabilityType.ALL)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public List<Ytelse> hentVedtakYtelseInfotrygdK9(@NotNull @TilpassetAbacAttributt(supplierClass = EksternDelingAvYtelserRestTjeneste.VedtakForPeriodeRequestAbacDataSupplier.class) @Valid VedtakForPeriodeRequest request) {
-        LOG.info("ABAKUS VEDTAK ekstern /hent-ytelse-infotrygd-k9 for ytelser {}", request.getYtelser());
-
-        return hentVedtakYtelseInfotrygdK9Intern(request);
-    }
 
     public List<Ytelse> hentVedtakYtelseInfotrygdK9Intern(VedtakForPeriodeRequest request) {
         if (request.getYtelser().isEmpty() || K9_INFOTRYGD_YTELSER.stream().noneMatch(y -> request.getYtelser().contains(y))) {
@@ -205,82 +180,6 @@ public class EksternDelingAvYtelserRestTjeneste {
         return YtelseType.OMSORGSPENGER;
     }
 
-    @POST
-    @Path("/hent-vedtatte/for-ident")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Henter alle vedtak for ytelser det blir etterspurt", tags = "ekstern")
-    @BeskyttetRessurs(actionType = ActionType.READ, resource = VEDTAK, availabilityType = AvailabilityType.ALL)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public List<Ytelse> hentVedtakForPerson(@NotNull @TilpassetAbacAttributt(supplierClass = HentBrukersYtelserIPeriodeRequestAbacDataSupplier.class) @Valid HentBrukersYtelserIPeriodeRequest request) {
-
-        LOG.info("ABAKUS VEDTAK ekstern /hent-vedtatte/for-ident for ytelser {}", request.getYtelser());
-
-        var etterspurteYtelser = request.getYtelser().stream().filter(GYLDIGE_YTELSER::contains).collect(Collectors.toSet());
-
-        return hentUtYtelser(request, etterspurteYtelser, false);
-    }
-
-    @POST
-    @Path("/hent-vedtatte/for-ident/k9")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Henter alle k9 vedtak for ytelser det blir etterspurt", tags = "ekstern")
-    @BeskyttetRessurs(actionType = ActionType.READ, resource = VEDTAK, availabilityType = AvailabilityType.ALL)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public List<Ytelse> hentk9VedtakForPerson(@NotNull @TilpassetAbacAttributt(supplierClass = HentBrukersK9YtelserIPeriodeRequestAbacDataSupplier.class) @Valid HentBrukersK9YtelserIPeriodeRequest req) {
-        LOG.info("ABAKUS VEDTAK ekstern /hent-vedtatte/for-ident/k9");
-        var request = new HentBrukersYtelserIPeriodeRequest(req.getPersonident(), req.getPeriode(), K9_YTELSER);
-        return hentUtYtelser(request, K9_YTELSER, false);
-    }
-
-    @POST
-    @Path("/hent-vedtatte-og-historiske/for-ident/k9")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Henter alle k9 vedtak for ytelser det blir etterspurt og tar med historikk", tags = "ekstern")
-    @BeskyttetRessurs(actionType = ActionType.READ, resource = VEDTAK, availabilityType = AvailabilityType.ALL)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public List<Ytelse> hentk9VedtakForPersonMedHistorikk(@NotNull @TilpassetAbacAttributt(supplierClass = HentBrukersK9YtelserIPeriodeRequestAbacDataSupplier.class) @Valid HentBrukersK9YtelserIPeriodeRequest req) {
-        LOG.info("ABAKUS VEDTAK ekstern /hent-vedtatte-og-historiske/for-ident/k9");
-        var request = new HentBrukersYtelserIPeriodeRequest(req.getPersonident(), req.getPeriode(), K9_YTELSER);
-        return hentUtYtelser(request, K9_YTELSER, true);
-    }
-
-    private List<Ytelse> hentUtYtelser(HentBrukersYtelserIPeriodeRequest request, Set<YtelseType> etterspurteYtelser, boolean hentHistoriske) {
-        if (etterspurteYtelser.isEmpty()) {
-            return List.of();
-        }
-
-        var ytelser = new ArrayList<Ytelse>();
-        var fnr = new PersonIdent(request.getPersonident().getIdent());
-        var aktørIder = aktørTjeneste.hentAktørIderForIdent(fnr, utledTema(etterspurteYtelser));
-
-        var fom = request.getPeriode().getFom();
-        var tom = request.getPeriode().getTom();
-
-        var periode = IntervallEntitet.fraOgMedTilOgMed(fom, tom);
-
-        if (hentHistoriske) {
-            var aktørId = aktørTjeneste.hentAktørForIdent(fnr, utledTema(etterspurteYtelser)).orElseThrow();
-            var infotrygdYtelser = innhentingInfotrygdTjeneste.getInfotrygdYtelser(fnr, periode);
-            ytelser.addAll(infotrygdYtelser.stream()
-                .map(InfotrygdgrunnlagYtelseMapper::oversettInfotrygdYtelseGrunnlagTilYtelse)
-                .filter(it -> etterspurteYtelser.contains(it.getRelatertYtelseType()))
-                .map(it -> ytelseTilYtelse(aktørId, it))
-                .toList());
-        }
-        for (AktørId aktørId : aktørIder) {
-            ytelser.addAll(ytelseRepository.hentYtelserForIPeriode(aktørId, periode)
-                .stream()
-                .filter(it -> etterspurteYtelser.contains(it.getYtelseType()))
-                .map(ConvertToYtelseV1::convert)
-                .toList());
-        }
-
-        return ytelser;
-    }
-
     private YtelseV1 ytelseTilYtelse(AktørId aktørId, no.nav.foreldrepenger.abakus.domene.iay.Ytelse vedtak) {
         var ytelse = new YtelseV1();
         var aktør = new Aktør();
@@ -324,41 +223,6 @@ public class EksternDelingAvYtelserRestTjeneste {
                 a.getRefusjonsgradProsent() == null ? null : new Desimaltall(a.getRefusjonsgradProsent().getVerdi()),
                 ConvertToYtelseV1.fraInntektskategori(a.getInntektskategori())))
             .toList();
-    }
-
-    private YtelseType utledTema(Set<YtelseType> request) {
-        if (request.contains(YtelseType.FORELDREPENGER)) {
-            return YtelseType.FORELDREPENGER;
-        }
-
-        return YtelseType.OMSORGSPENGER;
-    }
-
-
-    public static class HentBrukersYtelserIPeriodeRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
-
-        public HentBrukersYtelserIPeriodeRequestAbacDataSupplier() {
-            // Jackson
-        }
-
-        @Override
-        public AbacDataAttributter apply(Object obj) {
-            var req = (HentBrukersYtelserIPeriodeRequest) obj;
-            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.FNR, req.getPersonident().getIdent());
-        }
-    }
-
-    public static class HentBrukersK9YtelserIPeriodeRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
-
-        public HentBrukersK9YtelserIPeriodeRequestAbacDataSupplier() {
-            // Jackson
-        }
-
-        @Override
-        public AbacDataAttributter apply(Object obj) {
-            var req = (HentBrukersK9YtelserIPeriodeRequest) obj;
-            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.FNR, req.getPersonident().getIdent());
-        }
     }
 
     public static class VedtakForPeriodeRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
