@@ -1,10 +1,10 @@
 package no.nav.foreldrepenger.abakus.typer;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 
 class StillingsprosentTest {
@@ -91,7 +91,7 @@ class StillingsprosentTest {
         BigDecimal value = null;
         Stillingsprosent sp = new Stillingsprosent(value);
 
-        assertThat(sp.hashCode()).isZero();
+        assertThat(sp.hashCode()).isEqualTo(31); // Array av ett element som er null
     }
 
     @Test

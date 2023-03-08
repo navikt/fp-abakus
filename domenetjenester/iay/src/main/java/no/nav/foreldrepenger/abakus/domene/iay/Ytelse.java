@@ -1,6 +1,35 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.*;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Version;
+
+import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -10,12 +39,6 @@ import no.nav.foreldrepenger.abakus.iay.jpa.YtelseStatusKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.iay.jpa.YtelseTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.abakus.vedtak.domene.FagsystemKodeverdiConverter;
-
-import javax.persistence.*;
-
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Entity(name = "YtelseEntitet")
 @Table(name = "IAY_RELATERT_YTELSE")

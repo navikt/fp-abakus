@@ -1,21 +1,25 @@
 package no.nav.abakus.iaygrunnlag.inntekt.v1;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import no.nav.abakus.iaygrunnlag.Periode;
-import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
-import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
-import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseType;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Objects;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import no.nav.abakus.iaygrunnlag.Periode;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
+import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
+import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseType;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)

@@ -1,8 +1,15 @@
 package no.nav.foreldrepenger.abakus.felles.diff;
 
-import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraph.TraverseResult;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeMap;
 
-import java.util.*;
+import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraph.TraverseResult;
 
 /**
  * Henter ut resultat fra å diffe to entitet objekter.
