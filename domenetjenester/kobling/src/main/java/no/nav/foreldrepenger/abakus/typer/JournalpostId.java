@@ -23,7 +23,7 @@ public class JournalpostId implements Serializable, IndexKey {
 
     @JsonValue
     @Column(name = "journalpost_id", updatable = false)
-    private String journalpostId;
+    private String journalpostId;  // NOSONAR
 
     JournalpostId() {
         // for hibernate
@@ -45,7 +45,7 @@ public class JournalpostId implements Serializable, IndexKey {
     }
 
     public static boolean erGyldig(String input) {
-        return input != null && !(input = input.trim()).isEmpty() && VALID.matcher(input).matches();
+        return input != null && !input.isEmpty() && VALID.matcher(input.trim()).matches();
     }
 
     @Override

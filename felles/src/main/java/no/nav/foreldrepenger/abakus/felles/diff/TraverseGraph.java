@@ -72,9 +72,9 @@ public class TraverseGraph {
             throw new TraverseGraphException("Kunne ikke lese grafen [" + currentPath + "]", e);
         }
 
-        if (obj instanceof Collection collection) {
+        if (obj instanceof Collection collection) { // NOSONAR
             traverseCollection(currentPath, collection, result);
-        } else if (obj instanceof Map map) {
+        } else if (obj instanceof Map map) { // NOSONAR
             traverseMap(currentPath, map, result);
         } else {
             // hånter alt annet (vanlige felter)
@@ -123,9 +123,9 @@ public class TraverseGraph {
      */
     private void traverseDispatch(Node newPath, Object value, TraverseResult result) {
         // en sjelden grei bruk av instanceof. Garantert å håndtere alle varianter pga else til slutt
-        if (value instanceof Collection collection) {
+        if (value instanceof Collection collection) { // NOSONAR
             traverseCollection(newPath, collection, result);
-        } else if (value instanceof Map map) {
+        } else if (value instanceof Map map) { // NOSONAR
             traverseMap(newPath, map, result);
         } else {
             // hånter alt annet (vanlige felter)

@@ -20,7 +20,7 @@ public class Saksnummer implements SakId, IndexKey {
     private static final Pattern INVALID = Pattern.compile("[^" + CHARS + "]+", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
     @Column(name = "saksnummer")
-    private String saksnummer;
+    private String saksnummer; // NOSONAR
 
     Saksnummer() {
         // for hibernate

@@ -28,7 +28,7 @@ public class OrgNummer implements Serializable, Comparable<OrgNummer>, IndexKey,
 
     @JsonValue
     @Column(name = "org_nummer", updatable = false, length = 50)
-    private String orgNummer;
+    private String orgNummer;  // NOSONAR
 
     public OrgNummer(String orgNummer) {
         Objects.requireNonNull(orgNummer, "orgNummer");
