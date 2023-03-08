@@ -22,7 +22,7 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
-public class InnhentingSamletTjenesteTest {
+class InnhentingSamletTjenesteTest {
 
 
     private LønnskompensasjonRepository repository = mock(LønnskompensasjonRepository.class);
@@ -35,7 +35,7 @@ public class InnhentingSamletTjenesteTest {
     }
 
     @Test
-    public void skal_telle_riktig_dager_og_fordele() {
+    void skal_telle_riktig_dager_og_fordele() {
         // Arrange
         LocalDate fom = LocalDate.of(2020, 5, 15);
         LocalDate tom = LocalDate.of(2020, 6, 10);

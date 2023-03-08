@@ -1,16 +1,9 @@
 package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
-import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.*;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AaregRestKlient;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.ArbeidsforholdRS;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -18,15 +11,25 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Test;
 
-public class ArbeidsforholdTjenesteMedRestTest {
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsavtale;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdTjeneste;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Organisasjon;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AaregRestKlient;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.ArbeidsforholdRS;
+import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+
+class ArbeidsforholdTjenesteMedRestTest {
 
     private static final String ORGNR = "973093681";
-    private static final String ULL = "8629102";
     private static final AktørId AKTØR_ID = new AktørId("1231231231223");
     private static final PersonIdent FNR = new PersonIdent("12312312312");
     private static final LocalDate FOM = LocalDate.now().minusYears(1L);
@@ -67,7 +70,7 @@ public class ArbeidsforholdTjenesteMedRestTest {
     }
 
     @Test
-    public void mapping_organisasjon() throws IOException {
+    void mapping_organisasjon() throws IOException {
         var arbeidsforhold = fromJson(json, ArbeidsforholdRS.class);
 
         assertThat(arbeidsforhold.getArbeidsgiver().getOrganisasjonsnummer()).isEqualTo(ORGNR);
@@ -75,7 +78,7 @@ public class ArbeidsforholdTjenesteMedRestTest {
     }
 
     @Test
-    public void skal_kalle_consumer_og_oversette_response() throws Exception {
+    void skal_kalle_consumer_og_oversette_response() throws Exception {
         // Arrange
         AaregRestKlient aaregRestKlient = mock(AaregRestKlient.class);
         when(aaregRestKlient.finnArbeidsforholdForArbeidstaker(any(), any(), any())).thenReturn(List.of(fromJson(json, ArbeidsforholdRS.class)));

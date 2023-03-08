@@ -24,10 +24,10 @@ import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
-public class FjernOverstyringerForBortfalteArbeidsforholdTest {
+class FjernOverstyringerForBortfalteArbeidsforholdTest {
 
     @Test
-    public void skal_fjerne_overstyringer_for_arbeidsforhold() {
+    void skal_fjerne_overstyringer_for_arbeidsforhold() {
         // Arrange
         EksternArbeidsforholdRef eksternRef = EksternArbeidsforholdRef.ref("eksternRef");
         EksternArbeidsforholdRef eksternRef2 = EksternArbeidsforholdRef.ref("eksternRef2");
@@ -62,7 +62,7 @@ public class FjernOverstyringerForBortfalteArbeidsforholdTest {
 
 
     @Test
-    public void skal_ikke_fjerne_overstyringer_for_fiktive_arbeidsforhold() {
+    void skal_ikke_fjerne_overstyringer_for_fiktive_arbeidsforhold() {
         // Arrange
         EksternArbeidsforholdRef eksternRef = EksternArbeidsforholdRef.ref("eksternRef");
         OrgNummer orgnr = new OrgNummer("910909088");

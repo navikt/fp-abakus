@@ -29,7 +29,7 @@ public class AktørId implements Serializable, Comparable<AktørId>, IndexKey, T
     @NotNull
     @javax.validation.constraints.Pattern(regexp = VALID_REGEXP, message = "aktørId ${validatedValue} har ikke gyldig verdi ( pattern '{regexp}')")
     @Column(name = "aktoer_id", updatable = false, length = 50)
-    private String aktørId;  // NOSONAR
+    private String aktørId; // NOSONAR
 
     protected AktørId() {
         // for hibernate

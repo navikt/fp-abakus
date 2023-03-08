@@ -21,9 +21,9 @@ public class Landkode implements Kodeverdi {
 
     private static final Map<String, Landkode> KODER = initKoder();
 
-    public static final Landkode NOR = fraKode("NOR"); //$NON-NLS-1$
-    public static final Landkode DNK = fraKode("DNK"); //$NON-NLS-1$
-    public static final Landkode SWE = fraKode("SWE"); //$NON-NLS-1$
+    public static final Landkode NOR = fraKode("NOR");
+    public static final Landkode DNK = fraKode("DNK");
+    public static final Landkode SWE = fraKode("SWE");
 
     /**
      * Egendefinert konstant - ikke definert (null object pattern) for bruk i modeller som krever non-null.

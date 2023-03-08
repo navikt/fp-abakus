@@ -27,7 +27,7 @@ public class MeldekortUtbetalingsgrunnlagSak {
     private LocalDate vedtaksPeriodeTom;
     private Beløp vedtaksDagsats;
 
-    private MeldekortUtbetalingsgrunnlagSak() { // NOSONAR
+    private MeldekortUtbetalingsgrunnlagSak() {
     }
 
     public YtelseType getYtelseType() {

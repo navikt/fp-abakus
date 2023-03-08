@@ -9,10 +9,10 @@ import no.nav.foreldrepenger.abakus.domene.iay.diff.TraverseEntityGraphFactory;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder.EgenNæringBuilder;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffEntity;
 
-public class DiffSjekkTest {
+class DiffSjekkTest {
 
     @Test
-    public void skal_diffe_entitet_med_landkode() throws Exception {
+    void skal_diffe_entitet_med_landkode() throws Exception {
         var traverser = TraverseEntityGraphFactory.build();
 
         var objDNK = EgenNæringBuilder.ny().medLandkode(Landkode.DNK).build();
@@ -26,7 +26,7 @@ public class DiffSjekkTest {
     }
 
     @Test
-    public void skal_diffe_landkode() throws Exception {
+    void skal_diffe_landkode() throws Exception {
         var traverser = TraverseEntityGraphFactory.build();
 
         var objDNK = Landkode.DNK;

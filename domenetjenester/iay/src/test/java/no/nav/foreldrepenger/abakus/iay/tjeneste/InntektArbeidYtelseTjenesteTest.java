@@ -32,13 +32,13 @@ import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
-public class InntektArbeidYtelseTjenesteTest {
+class InntektArbeidYtelseTjenesteTest {
 
     private Arbeidsgiver arbeidsgiver = Arbeidsgiver.virksomhet(new OrgNummer(OrgNummer.KUNSTIG_ORG));
     private InternArbeidsforholdRef internRef = InternArbeidsforholdRef.nyRef();
 
     @Test
-    public void skal_kopiere_iay_grunnlag() {
+    void skal_kopiere_iay_grunnlag() {
 
         // Arrange
         LocalDateTime innsendingstidspunkt = LocalDateTime.now().minusDays(10);
@@ -78,7 +78,7 @@ public class InntektArbeidYtelseTjenesteTest {
     }
 
     @Test
-    public void skal_kopiere_inntektsmelding_og_ekstern_ref_hvis_finnes_paa_ny() {
+    void skal_kopiere_inntektsmelding_og_ekstern_ref_hvis_finnes_paa_ny() {
 
         // Arrange
         LocalDateTime innsendingstidspunkt = LocalDateTime.now().minusDays(10);
@@ -119,7 +119,7 @@ public class InntektArbeidYtelseTjenesteTest {
     }
 
     @Test
-    public void skal_kopiere_inntektsmelding_og_ekstern_ref_hvis_finnes_fra_for() {
+    void skal_kopiere_inntektsmelding_og_ekstern_ref_hvis_finnes_fra_for() {
 
         // Arrange
         LocalDateTime innsendingstidspunkt = LocalDateTime.now().minusDays(10);

@@ -61,7 +61,7 @@ public enum YtelseType implements Kodeverdi {
     UDEFINERT("-", "Ikke definert"),
     ;
 
-    public static final String KODEVERK = "FAGSAK_YTELSE_TYPE"; //$NON-NLS-1$
+    public static final String KODEVERK = "FAGSAK_YTELSE_TYPE";
 
     private static final Map<String, YtelseType> KODER = new LinkedHashMap<>();
 

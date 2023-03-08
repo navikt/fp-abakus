@@ -21,7 +21,7 @@ public class LåsRepository {
 
     @Inject
     public LåsRepository(EntityManager entityManager) {
-        Objects.requireNonNull(entityManager, "entityManager"); //$NON-NLS-1$
+        Objects.requireNonNull(entityManager, "entityManager");
         this.entityManager = entityManager;
     }
 
@@ -41,8 +41,8 @@ public class LåsRepository {
     }
 
     private Long lås(final Long behandlingId, LockModeType lockModeType) {
-        Object[] result = (Object[]) entityManager.createQuery("select k.id, k.versjon from Kobling k where k.id=:id and k.aktiv=true") //$NON-NLS-1$
-            .setParameter("id", behandlingId) //$NON-NLS-1$
+        Object[] result = (Object[]) entityManager.createQuery("select k.id, k.versjon from Kobling k where k.id=:id and k.aktiv=true")
+            .setParameter("id", behandlingId)
             .setLockMode(lockModeType).getSingleResult();
         return (Long) result[0];
     }

@@ -43,6 +43,7 @@ public class InntektsmeldingAggregat extends BaseEntitet {
     private long versjon;
 
     public InntektsmeldingAggregat() {
+        // Plattform (CDI, Hibernate, Jackson)
     }
 
     InntektsmeldingAggregat(InntektsmeldingAggregat inntektsmeldingAggregat) {

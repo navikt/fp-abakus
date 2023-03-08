@@ -42,7 +42,7 @@ import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.testutilities.cdi.CdiAwareExtension;
 
 @ExtendWith(CdiAwareExtension.class)
-public class InntektArbeidYtelseRepositoryTest {
+class InntektArbeidYtelseRepositoryTest {
 
     @RegisterExtension
     public static JpaExtension jpaExtension = new JpaExtension();
@@ -57,7 +57,7 @@ public class InntektArbeidYtelseRepositoryTest {
     }
 
     @Test
-    public void skal_svare_om_er_siste() {
+    void skal_svare_om_er_siste() {
         var ko = new Kobling(YtelseType.OMSORGSPENGER, new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()),
             new AktørId("1231231231223"));
         ko.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(2), LocalDate.now()));
@@ -85,7 +85,7 @@ public class InntektArbeidYtelseRepositoryTest {
     }
 
     @Test
-    public void skal_oppdatere_sigrun() {
+    void skal_oppdatere_sigrun() {
         var aktør = new AktørId("1231231231223");
         var periodeFom = LocalDate.of(2020, 1, 1);
         var periodeTom = LocalDate.of(2020, 12, 31);
@@ -148,7 +148,7 @@ public class InntektArbeidYtelseRepositoryTest {
     }
 
     @Test
-    public void skal_kunne_lagre_overstyring_av_oppgitt_opptjening() {
+    void skal_kunne_lagre_overstyring_av_oppgitt_opptjening() {
         var ko = new Kobling(YtelseType.OMSORGSPENGER, new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()),
             new AktørId("1231231231223"));
         ko.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(2), LocalDate.now()));
@@ -167,7 +167,7 @@ public class InntektArbeidYtelseRepositoryTest {
     }
 
     @Test
-    public void skal_kunne_lagre_både_vanlig_og_overstyring_av_oppgitt_opptjening() {
+    void skal_kunne_lagre_både_vanlig_og_overstyring_av_oppgitt_opptjening() {
         var ko = new Kobling(YtelseType.OMSORGSPENGER, new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()),
             new AktørId("1231231231223"));
         ko.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(2), LocalDate.now()));
@@ -198,7 +198,7 @@ public class InntektArbeidYtelseRepositoryTest {
     }
 
     @Test
-    public void skal_kunne_hente_oppgitt_opptjening() {
+    void skal_kunne_hente_oppgitt_opptjening() {
         var ko = new Kobling(YtelseType.OMSORGSPENGER, new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()),
             new AktørId("1231231231223"));
         ko.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(2), LocalDate.now()));
@@ -224,7 +224,7 @@ public class InntektArbeidYtelseRepositoryTest {
     }
 
     @Test
-    public void skal_kunne_lagre_overstyring_av_oppgitt_opptjening_flere_ganger() {
+    void skal_kunne_lagre_overstyring_av_oppgitt_opptjening_flere_ganger() {
         var ko = new Kobling(YtelseType.OMSORGSPENGER, new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()),
             new AktørId("1231231231223"));
         ko.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(2), LocalDate.now()));
@@ -260,7 +260,7 @@ public class InntektArbeidYtelseRepositoryTest {
     }
 
     @Test
-    public void skal_ta_vare_på_utdatert_inntektsmeldinger_basert_på_kanalreferanse() {
+    void skal_ta_vare_på_utdatert_inntektsmeldinger_basert_på_kanalreferanse() {
         var aktørId = new AktørId("1231231231223");
         var koblingReferanse = new KoblingReferanse(UUID.randomUUID());
         var saksnummer = new Saksnummer("12341234");
@@ -340,7 +340,7 @@ public class InntektArbeidYtelseRepositoryTest {
     }
 
     @Test
-    public void skal_kun_hente_aktivt_grunnlag() {
+    void skal_kun_hente_aktivt_grunnlag() {
         var aktørId = new AktørId("1231231231223");
         var koblingReferanse = new KoblingReferanse(UUID.randomUUID());
         var saksnummer = new Saksnummer("12341234");
@@ -420,7 +420,7 @@ public class InntektArbeidYtelseRepositoryTest {
     }
 
     @Test
-    public void skal_ta_vare_på_utdatert_inntektsmeldinger_basert_på_innsendingstidspunkt_mangler_kanalreferanse() {
+    void skal_ta_vare_på_utdatert_inntektsmeldinger_basert_på_innsendingstidspunkt_mangler_kanalreferanse() {
         var aktørId = new AktørId("1231231231223");
         var koblingReferanse = new KoblingReferanse(UUID.randomUUID());
         var saksnummer = new Saksnummer("12341234");

@@ -48,6 +48,7 @@ public class ArbeidsforholdReferanse extends BaseEntitet implements IndexKey, Tr
     private ArbeidsforholdInformasjon informasjon;
 
     ArbeidsforholdReferanse() {
+        // Plattform (CDI, Hibernate, Jackson)
     }
 
     public ArbeidsforholdReferanse(Arbeidsgiver arbeidsgiverEntitet,

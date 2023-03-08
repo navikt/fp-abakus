@@ -1,8 +1,15 @@
 package no.nav.foreldrepenger.abakus.felles.diff;
 
-import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraph.TraverseResult;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeMap;
 
-import java.util.*;
+import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraph.TraverseResult;
 
 /**
  * Henter ut resultat fra å diffe to entitet objekter.
@@ -69,12 +76,12 @@ public class DiffResult {
 
         if (lhsSet.size() != lhsList.size()) {
             throw new IllegalArgumentException(
-                "Bad Equals eller duplikater i List.  lhsList har forskjellig størrelse fra lhsSet. Key=\"" + key //$NON-NLS-1$
-                    + "\"\n,\"lhsList\"=" + lhsList + "\n,\"rhsList\"=" + rhsList); //$NON-NLS-1$ //$NON-NLS-2$
+                "Bad Equals eller duplikater i List.  lhsList har forskjellig størrelse fra lhsSet. Key=\"" + key
+                    + "\"\n,\"lhsList\"=" + lhsList + "\n,\"rhsList\"=" + rhsList);
         } else if (rhsSet.size() != rhsList.size()) {
             throw new IllegalArgumentException(
-                "Bad Equals eller duplikater i List.  rhsList har forskjellig størrelse fra rhsSet. Key=\"" + key //$NON-NLS-1$
-                    + "\"\n,\"lhsList\"=" + lhsList + "\n,\"rhsList\"=" + rhsList); //$NON-NLS-1$ //$NON-NLS-2$
+                "Bad Equals eller duplikater i List.  rhsList har forskjellig størrelse fra rhsSet. Key=\"" + key
+                    + "\"\n,\"lhsList\"=" + lhsList + "\n,\"rhsList\"=" + rhsList);
         }
 
         return Objects.equals(lhsSet, rhsSet);

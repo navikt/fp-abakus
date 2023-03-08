@@ -21,6 +21,7 @@ public class VedtaksHendelseHåndterer {
     private ProsessTaskTjeneste taskTjeneste;
 
     public VedtaksHendelseHåndterer() {
+        // CDI
     }
 
     @Inject

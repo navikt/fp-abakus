@@ -59,10 +59,11 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
     private Long versjon;
 
     public ArbeidsforholdInformasjon() {
+        // Plattform (CDI, Hibernate, Jackson)
     }
 
     public ArbeidsforholdInformasjon(ArbeidsforholdInformasjon arbeidsforholdInformasjon) {
-        ArbeidsforholdInformasjon arbeidsforholdInformasjonEntitet = arbeidsforholdInformasjon; // NOSONAR
+        ArbeidsforholdInformasjon arbeidsforholdInformasjonEntitet = arbeidsforholdInformasjon;
         for (var arbeidsforholdReferanse : arbeidsforholdInformasjonEntitet.referanser) {
             leggTilNyReferanse(new ArbeidsforholdReferanse(arbeidsforholdReferanse));
         }

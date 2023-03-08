@@ -16,7 +16,7 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertsk
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
 import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
-public class SigrunConsumerImplTest {
+class SigrunConsumerImplTest {
 
     private static final long AKTØR_ID = 123123L;
     String JSON_summerskattegrunnlag = """
@@ -124,7 +124,7 @@ public class SigrunConsumerImplTest {
         """;
 
     @Test
-    public void skal_hente_og_mappe_om_data_fra_sigrun() {
+    void skal_hente_og_mappe_om_data_fra_sigrun() {
         Year iFjor = Year.now().minusYears(1L);
         Year toÅrSiden = Year.now().minusYears(2L);
         Year treÅrSiden = Year.now().minusYears(3L);
@@ -140,7 +140,7 @@ public class SigrunConsumerImplTest {
     }
 
     @Test
-    public void skal_hente_data_for_forifjor_når_skatteoppgjoersdato_mangler_for_ifjor() {
+    void skal_hente_data_for_forifjor_når_skatteoppgjoersdato_mangler_for_ifjor() {
         Year iFjor = Year.now().minusYears(1L);
         Year toÅrSiden = Year.now().minusYears(2L);
         Year treÅrSiden = Year.now().minusYears(3L);
@@ -160,7 +160,7 @@ public class SigrunConsumerImplTest {
     }
 
     @Test
-    public void skal_hente_summertskattegrunnlag() {
+    void skal_hente_summertskattegrunnlag() {
         Year iFjor = Year.now().minusYears(1L);
         var respons = DefaultJsonMapper.fromJson(JSON_summerskattegrunnlag, SSGResponse.class);
 

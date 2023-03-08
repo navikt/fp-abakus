@@ -26,6 +26,7 @@ public class BekreftetPermisjon {
     private IntervallEntitet periode;
 
     public BekreftetPermisjon() {
+        // Plattform (CDI, Hibernate, Jackson)
     }
 
     public BekreftetPermisjon(LocalDate permisjonFom, LocalDate permisjonTom, BekreftetPermisjonStatus status) {

@@ -49,6 +49,7 @@ public class Fravær extends BaseEntitet implements IndexKey {
     private long versjon;
 
     Fravær() {
+        // Plattform (CDI, Hibernate, Jackson)
     }
 
     public Fravær(LocalDate fom, LocalDate tom, Duration varighetPerDag) {

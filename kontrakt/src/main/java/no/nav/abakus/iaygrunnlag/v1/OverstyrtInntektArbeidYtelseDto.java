@@ -67,8 +67,8 @@ public class OverstyrtInntektArbeidYtelseDto {
 
     @JsonCreator
     public OverstyrtInntektArbeidYtelseDto(@JsonProperty(value = "personIdent", required = true) PersonIdent person,
-                                           @JsonProperty(value = "grunnlagReferanse") @Valid @NotNull UUID grunnlagReferanse,
-                                           @JsonProperty(value = "koblingReferanse") @Valid @NotNull UUID koblingReferanse,
+                                           @JsonProperty(value = "grunnlagReferanse") @Valid UUID grunnlagReferanse,
+                                           @JsonProperty(value = "koblingReferanse") @Valid UUID koblingReferanse,
                                            @JsonProperty(value = "ytelseType") YtelseType ytelseType,
                                            @JsonProperty(value = "arbeidsforholdInformasjon") ArbeidsforholdInformasjon arbeidsforholdInformasjon,
                                            @JsonProperty(value = "overstyrt") InntektArbeidYtelseAggregatOverstyrtDto overstyrt) {

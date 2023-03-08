@@ -1,14 +1,14 @@
 package no.nav.foreldrepenger.abakus.typer;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.jupiter.api.Test;
 
-public class InternArbeidsforholdRefTest {
+
+class InternArbeidsforholdRefTest {
 
     @Test
-    public void skal_teste_at_indexKey_kan_returneres_og_at_ref_gjelder_spesifikt_arbfor() {
+    void skal_teste_at_indexKey_kan_returneres_og_at_ref_gjelder_spesifikt_arbfor() {
         InternArbeidsforholdRef ref = InternArbeidsforholdRef.nyRef();
 
         assertThat(ref.getIndexKey()).isNotNull();
@@ -16,7 +16,7 @@ public class InternArbeidsforholdRefTest {
     }
 
     @Test
-    public void skal_teste_at_null_ref_skal_genereres() {
+    void skal_teste_at_null_ref_skal_genereres() {
         InternArbeidsforholdRef ref = InternArbeidsforholdRef.nullRef();
 
         assertThat(ref.getUUIDReferanse()).isNull();
@@ -24,7 +24,7 @@ public class InternArbeidsforholdRefTest {
     }
 
     @Test
-    public void skal_teste_at_ref_med_nullref_gjelder_for_satt_referanse() {
+    void skal_teste_at_ref_med_nullref_gjelder_for_satt_referanse() {
         InternArbeidsforholdRef sattRef = InternArbeidsforholdRef.nyRef();
         InternArbeidsforholdRef nullRef = InternArbeidsforholdRef.nullRef();
 
@@ -33,7 +33,7 @@ public class InternArbeidsforholdRefTest {
     }
 
     @Test
-    public void skal_teste_at_ref_kan_lages_fra_annen_ref() {
+    void skal_teste_at_ref_kan_lages_fra_annen_ref() {
         InternArbeidsforholdRef sattRef = InternArbeidsforholdRef.nyRef();
         InternArbeidsforholdRef nyRef = InternArbeidsforholdRef.ref(sattRef.getReferanse());
 
