@@ -46,7 +46,7 @@ class RapporterUnmappedKolonnerIDatabaseTest {
         Pattern.compile("^.*SCHEMA_VERSION.*$", Pattern.CASE_INSENSITIVE),
         Pattern.compile("^BEHANDLING#SIST_OPPDATERT_TIDSPUNKT.*$", Pattern.CASE_INSENSITIVE));
 
-    RapporterUnmappedKolonnerIDatabaseTest() {
+    private RapporterUnmappedKolonnerIDatabaseTest() {
     }
 
     @BeforeAll

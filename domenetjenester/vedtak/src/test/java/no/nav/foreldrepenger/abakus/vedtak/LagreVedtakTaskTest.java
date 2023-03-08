@@ -16,7 +16,7 @@ import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskDataBuilder;
 
-public class LagreVedtakTaskTest {
+class LagreVedtakTaskTest {
 
     @RegisterExtension
     public static JpaExtension extension = new JpaExtension();
@@ -26,7 +26,7 @@ public class LagreVedtakTaskTest {
     private LagreVedtakTask task = new LagreVedtakTask(repository, extractor);
 
     @Test
-    public void skal_feile_ved_valideringsfeil() {
+    void skal_feile_ved_valideringsfeil() {
         String payload = """
             {
               "version": "1.0",
@@ -92,7 +92,7 @@ public class LagreVedtakTaskTest {
 
 
     @Test
-    public void skal_ikke_feile_uten_valideringsfeil() {
+    void skal_ikke_feile_uten_valideringsfeil() {
         String payload = """
             {
               "version" : "1.0",

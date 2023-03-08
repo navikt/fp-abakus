@@ -17,7 +17,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 
-public class IAYMigreringNPETest {
+class IAYMigreringNPETest {
 
     public static Stream<Arguments> provideArguments() throws URISyntaxException {
         return Stream.of("/iay_case_001.json", "/iay_case_002.json", "/iay_case_003.json", "/iay_case_004.json", "/iay_case_005.json")

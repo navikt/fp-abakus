@@ -55,7 +55,7 @@ public class InntektArbeidYtelseRepository {
 
     @Inject
     public InntektArbeidYtelseRepository(EntityManager entityManager) {
-        Objects.requireNonNull(entityManager, "entityManager"); //$NON-NLS-1$
+        Objects.requireNonNull(entityManager, "entityManager");
         this.entityManager = entityManager;
         this.koblingRepository = new KoblingRepository(entityManager);
     }
@@ -265,8 +265,8 @@ public class InntektArbeidYtelseRepository {
                                                                  Optional<InntektArbeidYtelseGrunnlag> grunnlag) {
         InntektArbeidYtelseGrunnlagBuilder grunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(grunnlag);
         Objects.requireNonNull(grunnlagBuilder, "grunnlagBuilder");
-        Optional<InntektArbeidYtelseGrunnlag> aggregat = Optional.ofNullable(grunnlagBuilder.getKladd()); // NOSONAR
-        Objects.requireNonNull(aggregat, "aggregat"); // NOSONAR
+        Optional<InntektArbeidYtelseGrunnlag> aggregat = Optional.ofNullable(grunnlagBuilder.getKladd());
+        Objects.requireNonNull(aggregat, "aggregat");
         if (aggregat.isPresent()) {
             final InntektArbeidYtelseGrunnlag aggregat1 = aggregat.get();
             return InntektArbeidYtelseAggregatBuilder.builderFor(hentRiktigVersjon(versjonType, aggregat1), angittReferanse, opprettetTidspunkt,
@@ -320,7 +320,7 @@ public class InntektArbeidYtelseRepository {
     public GrunnlagReferanse lagre(KoblingReferanse koblingReferanse,
                                    ArbeidsforholdInformasjonBuilder informasjonBuilder,
                                    List<Inntektsmelding> inntektsmeldingerList) {
-        Objects.requireNonNull(inntektsmeldingerList, "inntektsmelding"); // NOSONAR
+        Objects.requireNonNull(inntektsmeldingerList, "inntektsmelding");
         InntektArbeidYtelseGrunnlagBuilder builder = opprettGrunnlagBuilderFor(koblingReferanse);
 
         var utdaterteInntektsmeldingerJournalposter = oppdaterBuilderMedNyeInntektsmeldinger(informasjonBuilder, inntektsmeldingerList, builder);
@@ -408,7 +408,7 @@ public class InntektArbeidYtelseRepository {
     }
 
     private InntektArbeidYtelseGrunnlagBuilder getGrunnlagBuilder(KoblingReferanse koblingReferanse, InntektArbeidYtelseAggregatBuilder builder) {
-        Objects.requireNonNull(builder, "inntektArbeidYtelserBuilder"); // NOSONAR
+        Objects.requireNonNull(builder, "inntektArbeidYtelserBuilder");
         InntektArbeidYtelseGrunnlagBuilder opptjeningAggregatBuilder = opprettGrunnlagBuilderFor(koblingReferanse);
         opptjeningAggregatBuilder.medData(builder);
         return opptjeningAggregatBuilder;
@@ -658,10 +658,10 @@ public class InntektArbeidYtelseRepository {
     private Optional<InntektArbeidYtelseGrunnlag> getAktivtInntektArbeidGrunnlag(KoblingReferanse koblingReferanse) {
 
         final TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery(
-            "SELECT gr FROM InntektArbeidGrunnlag gr " + " JOIN Kobling k ON k.id=gr.koblingId" + // NOSONAR
-                " WHERE k.koblingReferanse = :ref" + //$NON-NLS-1$ //NOSONAR
+            "SELECT gr FROM InntektArbeidGrunnlag gr " + " JOIN Kobling k ON k.id=gr.koblingId" +
+                " WHERE k.koblingReferanse = :ref" +
                 " AND gr.aktiv = :aktivt", InntektArbeidYtelseGrunnlag.class);
-        query.setParameter("ref", koblingReferanse); // NOSONAR
+        query.setParameter("ref", koblingReferanse);
         query.setParameter("aktivt", true);
         List<InntektArbeidYtelseGrunnlag> resultList = query.getResultList();
         if (resultList.isEmpty()) {
@@ -709,7 +709,7 @@ public class InntektArbeidYtelseRepository {
     }
 
     private Optional<InntektArbeidYtelseGrunnlag> getVersjonAvInntektArbeidYtelseForReferanseId(GrunnlagReferanse grunnlagReferanse) {
-        Objects.requireNonNull(grunnlagReferanse, "aggregatId"); // NOSONAR
+        Objects.requireNonNull(grunnlagReferanse, "aggregatId");
         final TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery(
             "FROM InntektArbeidGrunnlag gr " + " WHERE gr.grunnlagReferanse = :ref ", InntektArbeidYtelseGrunnlag.class);
         query.setParameter("ref", grunnlagReferanse);
@@ -736,7 +736,7 @@ public class InntektArbeidYtelseRepository {
     }
 
     public boolean erGrunnlagAktivt(UUID eksternReferanse) {
-        Objects.requireNonNull(eksternReferanse, "aggregatId"); // NOSONAR
+        Objects.requireNonNull(eksternReferanse, "aggregatId");
         final TypedQuery<Boolean> query = entityManager.createQuery(
             "SELECT gr.aktiv FROM InntektArbeidGrunnlag gr JOIN Kobling k ON gr.koblingId=k.id "
                 + " WHERE gr.grunnlagReferanse = :ref AND k.aktiv = true ", Boolean.class);

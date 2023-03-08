@@ -251,14 +251,14 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" + //$NON-NLS-1$
-            "antallTimer=" + antallTimer + //$NON-NLS-1$
-            ", antallTimerFulltid=" + antallTimerFulltid + //$NON-NLS-1$
-            ", periode=" + periode + //$NON-NLS-1$
-            ", overstyrtPeriode=" + overstyrtPeriode + //$NON-NLS-1$
-            ", prosentsats=" + prosentsats + //$NON-NLS-1$
-            ", beskrivelse=" + beskrivelse + //$NON-NLS-1$
-            ", sisteLønnsendringsdato=" + sisteLønnsendringsdato + //$NON-NLS-1$
+        return getClass().getSimpleName() + "<" +
+            "antallTimer=" + antallTimer +
+            ", antallTimerFulltid=" + antallTimerFulltid +
+            ", periode=" + periode +
+            ", overstyrtPeriode=" + overstyrtPeriode +
+            ", prosentsats=" + prosentsats +
+            ", beskrivelse=" + beskrivelse +
+            ", sisteLønnsendringsdato=" + sisteLønnsendringsdato +
             '>';
     }
 

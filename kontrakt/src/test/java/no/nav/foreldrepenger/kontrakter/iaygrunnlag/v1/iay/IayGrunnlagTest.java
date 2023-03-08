@@ -76,7 +76,7 @@ import no.nav.abakus.iaygrunnlag.ytelse.v1.YtelseDto;
 import no.nav.abakus.iaygrunnlag.ytelse.v1.YtelseGrunnlagDto;
 import no.nav.abakus.iaygrunnlag.ytelse.v1.YtelserDto;
 
-public class IayGrunnlagTest {
+class IayGrunnlagTest {
 
     private static final ObjectWriter WRITER = JsonObjectMapper.getMapper().writerWithDefaultPrettyPrinter();
     private static final ObjectReader READER = JsonObjectMapper.getMapper().reader();
@@ -95,7 +95,7 @@ public class IayGrunnlagTest {
     private final JournalpostId journalpostId = new JournalpostId("ImajournalpostId");
 
     @Test
-    public void skal_generere_og_validere_roundtrip_mega_iaygrunnlag_json() throws Exception {
+    void skal_generere_og_validere_roundtrip_mega_iaygrunnlag_json() throws Exception {
 
         var grunnlag = byggInntektArbeidYtelseGrunnlag();
 
@@ -111,7 +111,7 @@ public class IayGrunnlagTest {
     }
 
     @Test
-    public void skal_generere_og_validere_roundtrip_mega_iaygrunnlag_snapshot_json() throws Exception {
+    void skal_generere_og_validere_roundtrip_mega_iaygrunnlag_snapshot_json() throws Exception {
 
         var grunnlag = byggInntektArbeidYtelseGrunnlag();
         var snapshot = new InntektArbeidYtelseGrunnlagSakSnapshotDto("minsak", YtelseType.FORELDREPENGER, fnr);

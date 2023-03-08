@@ -37,7 +37,7 @@ public class KoblingRepository {
 
     @Inject
     public KoblingRepository(EntityManager entityManager) {
-        Objects.requireNonNull(entityManager, "entityManager"); //$NON-NLS-1$
+        Objects.requireNonNull(entityManager, "entityManager");
         this.entityManager = entityManager;
     }
 
@@ -64,7 +64,7 @@ public class KoblingRepository {
 
     public Optional<Kobling> hentSisteKoblingReferanseFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
         TypedQuery<Kobling> query = entityManager.createQuery(
-            "FROM Kobling k " + " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true" + // NOSONAR
+            "FROM Kobling k " + " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true" +
                 " ORDER BY k.opprettetTidspunkt desc, k.id desc", Kobling.class);
         query.setParameter("ref", saksnummer);
         query.setParameter("ytelse", ytelseType);
@@ -93,7 +93,7 @@ public class KoblingRepository {
     }
 
     private DiffResult getDiff(Kobling eksisterendeKobling, Kobling nyKobling) {
-        var config = new TraverseJpaEntityGraphConfig(); // NOSONAR
+        var config = new TraverseJpaEntityGraphConfig();
         config.setIgnoreNulls(true);
         config.setOnlyCheckTrackedFields(false);
         config.addLeafClasses(Kodeverdi.class);

@@ -86,6 +86,7 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
     private long versjon;
 
     ArbeidsforholdOverstyring() {
+        // Plattform (CDI, Hibernate, Jackson)
     }
 
     ArbeidsforholdOverstyring(ArbeidsforholdOverstyring kopierFra) {

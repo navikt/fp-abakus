@@ -94,7 +94,8 @@ public class UtbetalingsPostDto {
     }
 
     public void setBeløp(BigDecimal beløp) {
-        this.beløp = beløp == null ? null : beløp.setScale(2, RoundingMode.HALF_UP);
+        Objects.requireNonNull(beløp);
+        this.beløp = beløp.setScale(2, RoundingMode.HALF_UP);
     }
 
     public UtbetalingsPostDto medBeløp(BigDecimal beløp) {

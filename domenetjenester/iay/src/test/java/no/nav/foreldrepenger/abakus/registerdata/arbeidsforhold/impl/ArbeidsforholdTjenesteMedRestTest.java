@@ -23,10 +23,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ArbeidsforholdTjenesteMedRestTest {
+class ArbeidsforholdTjenesteMedRestTest {
 
     private static final String ORGNR = "973093681";
-    private static final String ULL = "8629102";
     private static final AktørId AKTØR_ID = new AktørId("1231231231223");
     private static final PersonIdent FNR = new PersonIdent("12312312312");
     private static final LocalDate FOM = LocalDate.now().minusYears(1L);
@@ -67,7 +66,7 @@ public class ArbeidsforholdTjenesteMedRestTest {
     }
 
     @Test
-    public void mapping_organisasjon() throws IOException {
+    void mapping_organisasjon() throws IOException {
         var arbeidsforhold = fromJson(json, ArbeidsforholdRS.class);
 
         assertThat(arbeidsforhold.getArbeidsgiver().getOrganisasjonsnummer()).isEqualTo(ORGNR);
@@ -75,7 +74,7 @@ public class ArbeidsforholdTjenesteMedRestTest {
     }
 
     @Test
-    public void skal_kalle_consumer_og_oversette_response() throws Exception {
+    void skal_kalle_consumer_og_oversette_response() throws Exception {
         // Arrange
         AaregRestKlient aaregRestKlient = mock(AaregRestKlient.class);
         when(aaregRestKlient.finnArbeidsforholdForArbeidstaker(any(), any(), any())).thenReturn(List.of(fromJson(json, ArbeidsforholdRS.class)));

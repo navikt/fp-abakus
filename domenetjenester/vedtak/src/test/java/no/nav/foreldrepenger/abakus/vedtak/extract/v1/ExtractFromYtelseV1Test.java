@@ -27,13 +27,13 @@ import no.nav.foreldrepenger.abakus.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 
-public class ExtractFromYtelseV1Test {
+class ExtractFromYtelseV1Test {
 
     @RegisterExtension
     public static JpaExtension extension = new JpaExtension();
 
     @Test
-    public void skal_lagre_informasjon() {
+    void skal_lagre_informasjon() {
         VedtakYtelseRepository repository = new VedtakYtelseRepository(extension.getEntityManager());
         ExtractFromYtelseV1 extractor = new ExtractFromYtelseV1(repository);
 
@@ -73,7 +73,7 @@ public class ExtractFromYtelseV1Test {
     }
 
     @Test
-    public void skal_lagre_informasjon_plain_enum() {
+    void skal_lagre_informasjon_plain_enum() {
         VedtakYtelseRepository repository = new VedtakYtelseRepository(extension.getEntityManager());
         ExtractFromYtelseV1 extractor = new ExtractFromYtelseV1(repository);
 

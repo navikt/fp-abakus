@@ -69,12 +69,12 @@ public class TraverseGraph {
         } catch (TraverseGraphException t) {
             throw t;
         } catch (RuntimeException e) {
-            throw new TraverseGraphException("Kunne ikke lese grafen [" + currentPath + "]", e); //$NON-NLS-1$ //$NON-NLS-2$
+            throw new TraverseGraphException("Kunne ikke lese grafen [" + currentPath + "]", e);
         }
 
-        if (obj instanceof Collection collection) { // NOSONAR
+        if (obj instanceof Collection collection) {
             traverseCollection(currentPath, collection, result);
-        } else if (obj instanceof Map map) { // NOSONAR
+        } else if (obj instanceof Map map) {
             traverseMap(currentPath, map, result);
         } else {
             // hånter alt annet (vanlige felter)
@@ -123,9 +123,9 @@ public class TraverseGraph {
      */
     private void traverseDispatch(Node newPath, Object value, TraverseResult result) {
         // en sjelden grei bruk av instanceof. Garantert å håndtere alle varianter pga else til slutt
-        if (value instanceof Collection collection) { // NOSONAR
+        if (value instanceof Collection collection) {
             traverseCollection(newPath, collection, result);
-        } else if (value instanceof Map map) { // NOSONAR
+        } else if (value instanceof Map map) {
             traverseMap(newPath, map, result);
         } else {
             // hånter alt annet (vanlige felter)
@@ -135,7 +135,7 @@ public class TraverseGraph {
 
     private void traverseMap(Node newPath, Map<?, ?> map, TraverseResult result) {
         for (Map.Entry<?, ?> entry : map.entrySet()) {
-            Node collNode = new Node("{" + (entry.getKey()) + "}", newPath, map); //$NON-NLS-1$ //$NON-NLS-2$
+            Node collNode = new Node("{" + (entry.getKey()) + "}", newPath, map);
             traverseRecursiveInternal(entry.getValue(), collNode, result);
         }
     }
@@ -149,7 +149,7 @@ public class TraverseGraph {
                 collectionKey = String.valueOf(listPositionEq.getKey(newPath, v));
             }
 
-            Node collNode = new Node("[" + (collectionKey) + "]", newPath, v); //$NON-NLS-1$ //$NON-NLS-2$
+            Node collNode = new Node("[" + (collectionKey) + "]", newPath, v);
             traverseRecursiveInternal(v, collNode, result);
         }
     }

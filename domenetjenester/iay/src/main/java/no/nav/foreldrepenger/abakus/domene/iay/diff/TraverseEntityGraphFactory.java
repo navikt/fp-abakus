@@ -22,7 +22,7 @@ public final class TraverseEntityGraphFactory {
 
     public static TraverseGraph build(boolean medChangedTrackedOnly, Function<Object, Boolean> inclusionFilter) {
         /* default oppsett for behandlingslager. */
-        var config = new TraverseJpaEntityGraphConfig(); // NOSONAR
+        var config = new TraverseJpaEntityGraphConfig();
         config.setIgnoreNulls(true);
         config.setOnlyCheckTrackedFields(medChangedTrackedOnly);
 

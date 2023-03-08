@@ -12,17 +12,17 @@ import org.junit.jupiter.api.Test;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittEgenNæringDto;
 
-public class IAYValideringTest {
+class IAYValideringTest {
 
     @Test
-    public void test_virksomhetnavn() throws Exception {
+    void test_virksomhetnavn() throws Exception {
         var dto = new OppgittEgenNæringDto(new Periode(LocalDate.now(), LocalDate.now()));
         dto.setVirksomhetNavn("hello$£@£$1@£€6{[,æ'\"?`/$£æøåÆØÅ12340ø");
         validateResult(dto, true);
     }
 
     @Test
-    public void test_feil_bruttoinntekt() throws Exception {
+    void test_feil_bruttoinntekt() throws Exception {
         var dto = new OppgittEgenNæringDto(new Periode(LocalDate.now(), LocalDate.now()));
         dto.setBruttoInntekt(BigDecimal.valueOf(-1));
         validateResult(dto, false);

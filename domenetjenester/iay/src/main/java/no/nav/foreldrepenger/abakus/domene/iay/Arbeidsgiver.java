@@ -41,6 +41,7 @@ public class Arbeidsgiver implements IndexKey, TraverseValue, Serializable {
     }
 
     private Arbeidsgiver() {
+        // Plattform (CDI, Hibernate, Jackson)
     }
 
     public static Arbeidsgiver virksomhet(Virksomhet virksomhet) {

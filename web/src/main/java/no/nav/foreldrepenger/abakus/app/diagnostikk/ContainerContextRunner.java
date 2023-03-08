@@ -26,7 +26,7 @@ import no.nav.vedtak.sikkerhet.kontekst.KontekstHolder;
 @Dependent
 public class ContainerContextRunner {
 
-    private static final MdcExtendedLogContext LOG_CONTEXT = MdcExtendedLogContext.getContext("prosess"); //$NON-NLS-1$
+    private static final MdcExtendedLogContext LOG_CONTEXT = MdcExtendedLogContext.getContext("prosess");
 
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor(r -> {
         var t = new Thread(r);

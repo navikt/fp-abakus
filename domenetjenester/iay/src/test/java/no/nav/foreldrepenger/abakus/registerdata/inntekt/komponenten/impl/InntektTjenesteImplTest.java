@@ -35,7 +35,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class InntektTjenesteImplTest {
+class InntektTjenesteImplTest {
     private static final String FNR = "01234567890";
     private static final YearMonth GJELDENDE_MÅNED = YearMonth.now();
     private static final String SYKEPENGER = "sykepenger";
@@ -54,7 +54,7 @@ public class InntektTjenesteImplTest {
 
     @SuppressWarnings("resource")
     @Test
-    public void skal_kalle_consumer_og_oversette_response() throws Exception {
+    void skal_kalle_consumer_og_oversette_response() throws Exception {
         // Arrange
         HentInntektListeBolkResponse response = opprettResponse();
 
@@ -121,7 +121,7 @@ public class InntektTjenesteImplTest {
 
     @SuppressWarnings("resource")
     @Test
-    public void skal_avkorte_periode_gi_tom_response() throws Exception {
+    void skal_avkorte_periode_gi_tom_response() throws Exception {
         // Arrange
         HentInntektListeBolkResponse response = opprettResponse();
 
@@ -146,7 +146,7 @@ public class InntektTjenesteImplTest {
     }
 
     @Test
-    public void skal_oppdage_sikkerhetsavvik_i_response_og_kaste_exception() throws Exception {
+    void skal_oppdage_sikkerhetsavvik_i_response_og_kaste_exception() throws Exception {
         // Arrange
         HentInntektListeBolkResponse response = opprettResponse();
         Sikkerhetsavvik sikkerhetsavvik1 = new Sikkerhetsavvik();

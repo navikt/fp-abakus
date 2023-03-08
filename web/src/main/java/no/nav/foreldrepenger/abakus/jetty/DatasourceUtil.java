@@ -56,7 +56,7 @@ class DatasourceUtil {
 
     private static HikariDataSource createLocalDatasource(HikariConfig config) {
         config.setUsername(getUsername());
-        config.setPassword(getUsername()); // NOSONAR false positive
+        config.setPassword(getUsername());
         config.setSchema("public");
         return new HikariDataSource(config);
     }

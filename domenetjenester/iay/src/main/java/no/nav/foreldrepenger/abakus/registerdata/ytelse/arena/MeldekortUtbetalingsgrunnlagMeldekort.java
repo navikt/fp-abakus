@@ -12,7 +12,7 @@ public class MeldekortUtbetalingsgrunnlagMeldekort {
     private BigDecimal beløp;
     private BigDecimal utbetalingsgrad;
 
-    private MeldekortUtbetalingsgrunnlagMeldekort() { // NOSONAR
+    private MeldekortUtbetalingsgrunnlagMeldekort() {
     }
 
     public LocalDate getMeldekortFom() {

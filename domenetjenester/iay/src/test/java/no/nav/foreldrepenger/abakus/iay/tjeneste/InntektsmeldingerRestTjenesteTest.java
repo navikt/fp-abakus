@@ -36,7 +36,7 @@ import no.nav.foreldrepenger.abakus.kobling.repository.KoblingRepository;
 import no.nav.foreldrepenger.abakus.kobling.repository.LåsRepository;
 
 
-public class InntektsmeldingerRestTjenesteTest {
+class InntektsmeldingerRestTjenesteTest {
 
     public static final String SAKSNUMMER = "1234123412345";
 
@@ -57,7 +57,7 @@ public class InntektsmeldingerRestTjenesteTest {
     }
 
     @Test
-    public void skal_lagre_kobling_og_inntektsmelding() {
+    void skal_lagre_kobling_og_inntektsmelding() {
         InntektsmeldingerDto im = new InntektsmeldingerDto().medInntektsmeldinger(List.of(
             new InntektsmeldingDto(new Organisasjon("999999999"), new JournalpostId(UUID.randomUUID().toString()), LocalDateTime.now(),
                 LocalDate.now()).medStartDatoPermisjon(LocalDate.now())
