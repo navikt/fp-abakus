@@ -3,8 +3,6 @@ package no.nav.abakus.iaygrunnlag;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -22,21 +20,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Periode {
 
     @JsonProperty(value = "fom")
-    @NotNull
     private LocalDate fom;
 
     @JsonProperty(value = "tom")
-    @NotNull
     private LocalDate tom;
 
     @JsonCreator
     public Periode(@JsonProperty(value = "fom") LocalDate fom, @JsonProperty(value = "tom") LocalDate tom) {
         if (fom == null && tom == null) {
             throw new IllegalArgumentException("Både fom og tom er null");
-        } else if (fom != null && tom != null) {
-            if (fom.isAfter(tom)) {
-                throw new IllegalArgumentException("Input data gir umulig periode (fom > tom): [" + fom + ", " + tom + "]");
-            }
+        } else if (fom != null && tom != null && fom.isAfter(tom)) {
+            throw new IllegalArgumentException("Input data gir umulig periode (fom > tom): [" + fom + ", " + tom + "]");
+
         }
         this.fom = fom;
         this.tom = tom;

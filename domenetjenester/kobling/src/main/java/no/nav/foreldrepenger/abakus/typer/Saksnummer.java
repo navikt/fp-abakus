@@ -37,7 +37,7 @@ public class Saksnummer implements SakId, IndexKey {
     }
 
     @SuppressWarnings("unused")
-    public Saksnummer(String sakId, Fagsystem fagsystem) { // NOSONAR
+    public Saksnummer(String sakId, Fagsystem fagsystem) {
         this(sakId);
         // FIXME (FC): Set fagsystem
     }

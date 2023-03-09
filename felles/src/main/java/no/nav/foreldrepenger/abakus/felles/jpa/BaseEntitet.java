@@ -28,7 +28,7 @@ public class BaseEntitet implements Serializable {
 
     @DiffIgnore
     @Column(name = "opprettet_tid", nullable = false, insertable = true, updatable = false)
-    private LocalDateTime opprettetTidspunkt; // NOSONAR
+    private LocalDateTime opprettetTidspunkt;
 
     @DiffIgnore
     @Column(name = "endret_av", insertable = false, updatable = true)
@@ -36,7 +36,7 @@ public class BaseEntitet implements Serializable {
 
     @DiffIgnore
     @Column(name = "endret_tid", insertable = false, updatable = true)
-    private LocalDateTime endretTidspunkt; // NOSONAR
+    private LocalDateTime endretTidspunkt;
 
     private static String finnBrukernavn() {
         return Optional.ofNullable(KontekstHolder.getKontekst()).map(Kontekst::getKompaktUid)

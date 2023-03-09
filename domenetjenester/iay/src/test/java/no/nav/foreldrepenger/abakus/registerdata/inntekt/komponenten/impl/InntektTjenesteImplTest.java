@@ -1,24 +1,13 @@
 package no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.impl;
 
 
-import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FinnInntektRequest;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjeneste;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
-import no.nav.tjenester.aordningen.inntektsinformasjon.*;
-import no.nav.tjenester.aordningen.inntektsinformasjon.inntekt.Inntekt;
-import no.nav.tjenester.aordningen.inntektsinformasjon.inntekt.InntektType;
-import no.nav.tjenester.aordningen.inntektsinformasjon.response.HentInntektListeBolkResponse;
-import no.nav.vedtak.exception.VLException;
-import no.nav.vedtak.felles.integrasjon.rest.RestClient;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -28,14 +17,32 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FinnInntektRequest;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjeneste;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
+import no.nav.tjenester.aordningen.inntektsinformasjon.Aktoer;
+import no.nav.tjenester.aordningen.inntektsinformasjon.AktoerType;
+import no.nav.tjenester.aordningen.inntektsinformasjon.ArbeidsInntektIdent;
+import no.nav.tjenester.aordningen.inntektsinformasjon.ArbeidsInntektInformasjon;
+import no.nav.tjenester.aordningen.inntektsinformasjon.ArbeidsInntektMaaned;
+import no.nav.tjenester.aordningen.inntektsinformasjon.Sikkerhetsavvik;
+import no.nav.tjenester.aordningen.inntektsinformasjon.inntekt.Inntekt;
+import no.nav.tjenester.aordningen.inntektsinformasjon.inntekt.InntektType;
+import no.nav.tjenester.aordningen.inntektsinformasjon.response.HentInntektListeBolkResponse;
+import no.nav.vedtak.exception.VLException;
+import no.nav.vedtak.felles.integrasjon.rest.RestClient;
 
 @ExtendWith(MockitoExtension.class)
-public class InntektTjenesteImplTest {
+class InntektTjenesteImplTest {
     private static final String FNR = "01234567890";
     private static final YearMonth GJELDENDE_MÅNED = YearMonth.now();
     private static final String SYKEPENGER = "sykepenger";
@@ -54,7 +61,7 @@ public class InntektTjenesteImplTest {
 
     @SuppressWarnings("resource")
     @Test
-    public void skal_kalle_consumer_og_oversette_response() throws Exception {
+    void skal_kalle_consumer_og_oversette_response() throws Exception {
         // Arrange
         HentInntektListeBolkResponse response = opprettResponse();
 
@@ -121,7 +128,7 @@ public class InntektTjenesteImplTest {
 
     @SuppressWarnings("resource")
     @Test
-    public void skal_avkorte_periode_gi_tom_response() throws Exception {
+    void skal_avkorte_periode_gi_tom_response() throws Exception {
         // Arrange
         HentInntektListeBolkResponse response = opprettResponse();
 
@@ -146,7 +153,7 @@ public class InntektTjenesteImplTest {
     }
 
     @Test
-    public void skal_oppdage_sikkerhetsavvik_i_response_og_kaste_exception() throws Exception {
+    void skal_oppdage_sikkerhetsavvik_i_response_og_kaste_exception() throws Exception {
         // Arrange
         HentInntektListeBolkResponse response = opprettResponse();
         Sikkerhetsavvik sikkerhetsavvik1 = new Sikkerhetsavvik();

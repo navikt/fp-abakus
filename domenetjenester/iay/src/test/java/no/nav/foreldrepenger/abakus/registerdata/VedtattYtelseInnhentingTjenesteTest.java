@@ -33,7 +33,7 @@ import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.domene.YtelseAnvistBuilder;
 
-public class VedtattYtelseInnhentingTjenesteTest {
+class VedtattYtelseInnhentingTjenesteTest {
 
     private VedtakYtelseRepository vedtakYtelseRepository = mock(VedtakYtelseRepository.class);
 
@@ -47,7 +47,7 @@ public class VedtattYtelseInnhentingTjenesteTest {
     }
 
     @Test
-    public void skal_mappe_vedtatt_ytelse() throws Exception {
+    void skal_mappe_vedtatt_ytelse() throws Exception {
         // Arrange
         VedtakYtelse vy = VedtakYtelseBuilder.oppdatere(Optional.empty())
             .medPeriode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusMonths(4), LocalDate.now().minusMonths(2)))

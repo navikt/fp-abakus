@@ -2,6 +2,7 @@ package no.nav.abakus.iaygrunnlag.ytelse.v1;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Objects;
 
 import javax.validation.Valid;
 import javax.validation.constraints.DecimalMin;
@@ -60,9 +61,11 @@ public class FordelingDto {
     }
 
     public FordelingDto(Aktør arbeidsgiver, InntektPeriodeType inntektPeriodeType, BigDecimal beløp, Boolean erRefusjon) {
+        Objects.requireNonNull(beløp);
         this.arbeidsgiver = arbeidsgiver;
         this.inntektPeriodeType = inntektPeriodeType;
-        this.beløp = beløp == null ? null : beløp.setScale(2, RoundingMode.HALF_UP);
+        this.beløp = beløp.setScale(2, RoundingMode.HALF_UP);
+        this.erRefusjon = erRefusjon;
     }
 
     public Aktør getArbeidsgiver() {

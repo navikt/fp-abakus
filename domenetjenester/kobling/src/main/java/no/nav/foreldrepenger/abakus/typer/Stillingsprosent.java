@@ -51,7 +51,7 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
             return;
         }
         if (BigDecimal.ZERO.compareTo(verdi) > 0) {
-            throw new IllegalArgumentException("Prosent må være >= 0"); //$NON-NLS-1$
+            throw new IllegalArgumentException("Prosent må være >= 0");
         }
     }
 

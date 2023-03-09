@@ -68,12 +68,19 @@ public class RegisterInnhentingDump implements DebugDump {
         try {
             var future = submit(dumpKontekst, this::dumpRegister);
             return future.get(120, TimeUnit.SECONDS);
+        }  catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return lagOutputForException(e);
         } catch (Exception e) {
-            var sw = new StringWriter();
-            var pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            return List.of(new DumpOutput(PREFIKS + "-" + e.getClass().getSimpleName() + "-ERROR.txt", sw.toString()));
+            return lagOutputForException(e);
         }
+    }
+
+    private static List<DumpOutput> lagOutputForException(Exception e) {
+        var sw = new StringWriter();
+        var pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        return List.of(new DumpOutput(PREFIKS + "-" + e.getClass().getSimpleName() + "-ERROR.txt", sw.toString()));
     }
 
     private List<DumpOutput> dumpRegister(DumpKontekst kontekst) {

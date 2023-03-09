@@ -14,7 +14,7 @@ import no.nav.vedtak.felles.integrasjon.organisasjon.JuridiskEnhetVirksomheter;
 import no.nav.vedtak.felles.integrasjon.organisasjon.OrganisasjonEReg;
 import no.nav.vedtak.felles.integrasjon.organisasjon.OrganisasjonstypeEReg;
 
-public class EregRestTest {
+class EregRestTest {
 
     private static ObjectMapper mapper = JsonObjectMapper.getMapper();
 
@@ -23,7 +23,7 @@ public class EregRestTest {
     }
 
     @Test
-    public void mapping_dto_til_grunnlag_til_dto() throws IOException {
+    void mapping_dto_til_grunnlag_til_dto() throws IOException {
         // Arrange
         String json = """
             {
@@ -45,7 +45,7 @@ public class EregRestTest {
     }
 
     @Test
-    public void mapping_jurdisk_enhet() throws IOException {
+    void mapping_jurdisk_enhet() throws IOException {
         // Arrange
         String json = """
             {

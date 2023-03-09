@@ -22,7 +22,6 @@ import org.hibernate.boot.model.relational.Database;
 import org.hibernate.boot.model.relational.Namespace;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.jpa.boot.spi.IntegratorProvider;
-import org.hibernate.mapping.Column;
 import org.hibernate.service.spi.SessionFactoryServiceRegistry;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -46,7 +45,7 @@ class RapporterUnmappedKolonnerIDatabaseTest {
         Pattern.compile("^.*SCHEMA_VERSION.*$", Pattern.CASE_INSENSITIVE),
         Pattern.compile("^BEHANDLING#SIST_OPPDATERT_TIDSPUNKT.*$", Pattern.CASE_INSENSITIVE));
 
-    RapporterUnmappedKolonnerIDatabaseTest() {
+    private RapporterUnmappedKolonnerIDatabaseTest() {
     }
 
     @BeforeAll

@@ -1,5 +1,7 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.migrering;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -9,13 +11,13 @@ import java.time.ZonedDateTime;
 import org.junit.jupiter.api.Test;
 
 
-public class DatoTidkonverteringTest {
+class DatoTidkonverteringTest {
 
     private static final LocalDate VINTERDAG = LocalDate.of(2019, 02, 17);
     private static final LocalTime NOON = LocalTime.of(12, 00);
 
     @Test
-    public void skal_konvertere_localdatetime_til_zulu_og_tilbake() throws Exception {
+    void skal_konvertere_localdatetime_til_zulu_og_tilbake() throws Exception {
         var ts1 = LocalDateTime.of(VINTERDAG, NOON);
         System.out.println(ts1);
         // til offset
@@ -33,6 +35,8 @@ public class DatoTidkonverteringTest {
         // zulu til localdatetime
         var ts1_1 = zulu1.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
         System.out.println(ts1_1);
+
+        assertThat(ts1).isEqualTo(ts1_1);
 
     }
 

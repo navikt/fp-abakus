@@ -40,7 +40,7 @@ import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 
-public class MapInntektsmeldingerTest {
+class MapInntektsmeldingerTest {
 
     public static final String SAKSNUMMER = "1234123412345";
     private static final YtelseType ytelseType = YtelseType.FORELDREPENGER;
@@ -54,7 +54,7 @@ public class MapInntektsmeldingerTest {
     private final InntektArbeidYtelseTjeneste iayTjeneste = new InntektArbeidYtelseTjeneste(iayRepository);
 
     @Test
-    public void skal_hente_alle_inntektsmeldinger_for_fagsak_uten_duplikater() {
+    void skal_hente_alle_inntektsmeldinger_for_fagsak_uten_duplikater() {
         // Arrange
         Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
         KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
@@ -86,7 +86,7 @@ public class MapInntektsmeldingerTest {
     }
 
     @Test
-    public void skal_hente_alle_inntektsmeldinger_for_fagsak_uten_duplikater_med_flere_versjoner_av_arbeidsforholdInformasjon() {
+    void skal_hente_alle_inntektsmeldinger_for_fagsak_uten_duplikater_med_flere_versjoner_av_arbeidsforholdInformasjon() {
         // Arrange
         Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
         KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
@@ -129,7 +129,7 @@ public class MapInntektsmeldingerTest {
 
 
     @Test
-    public void skal_mappe_en_inntektsmelding_til_første_refusjonsdato_og_første_innsendelsesdato() {
+    void skal_mappe_en_inntektsmelding_til_første_refusjonsdato_og_første_innsendelsesdato() {
         // Arrange
         Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
         KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
@@ -166,7 +166,7 @@ public class MapInntektsmeldingerTest {
     }
 
     @Test
-    public void skal_mappe_en_inntektsmelding_til_første_refusjonsdato_og_første_innsendelsesdato_når_startdato_permisjon_er_null() {
+    void skal_mappe_en_inntektsmelding_til_første_refusjonsdato_og_første_innsendelsesdato_når_startdato_permisjon_er_null() {
         // Arrange
         Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
         KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
@@ -201,7 +201,7 @@ public class MapInntektsmeldingerTest {
     }
 
     @Test
-    public void skal_mappe_ikkje_mappe_refusjonsdatoer_når_siste_inntektsmelding_ikkje_har_refusjonskrav() {
+    void skal_mappe_ikkje_mappe_refusjonsdatoer_når_siste_inntektsmelding_ikkje_har_refusjonskrav() {
         // Arrange
         Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
         KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
@@ -243,7 +243,7 @@ public class MapInntektsmeldingerTest {
     }
 
     @Test
-    public void skal_mappe_til_refusjonskravdatoer_for_flere_inntektsmeldinger_med_refusjonskrav() {
+    void skal_mappe_til_refusjonskravdatoer_for_flere_inntektsmeldinger_med_refusjonskrav() {
         // Arrange
         Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
         KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
@@ -290,7 +290,7 @@ public class MapInntektsmeldingerTest {
     }
 
     @Test
-    public void skal_mappe_til_refusjonskravdatoer_for_flere_arbeidsgivere_med_refusjonskrav() {
+    void skal_mappe_til_refusjonskravdatoer_for_flere_arbeidsgivere_med_refusjonskrav() {
         // Arrange
         Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
         KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());
@@ -343,7 +343,7 @@ public class MapInntektsmeldingerTest {
     }
 
     @Test
-    public void skal_mappe_til_refusjonskravdatoer_for_flere_arbeidsforhold_med_refusjonskrav() {
+    void skal_mappe_til_refusjonskravdatoer_for_flere_arbeidsforhold_med_refusjonskrav() {
         // Arrange
         Saksnummer saksnummer = new Saksnummer(SAKSNUMMER);
         KoblingReferanse koblingReferanse = new KoblingReferanse(UUID.randomUUID());

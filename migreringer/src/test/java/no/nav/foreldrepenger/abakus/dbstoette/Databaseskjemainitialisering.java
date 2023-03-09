@@ -58,10 +58,10 @@ public final class Databaseskjemainitialisering {
 
         try {
 
-            new EnvEntry("jdbc/defaultDS", ds); // NOSONAR
+            new EnvEntry("jdbc/defaultDS", ds);
             return ds;
         } catch (NamingException e) {
-            throw new IllegalStateException("Feil under registrering av JDNI-entry for default datasource", e); // NOSONAR
+            throw new IllegalStateException("Feil under registrering av JDNI-entry for default datasource", e);
         }
     }
 

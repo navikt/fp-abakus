@@ -130,13 +130,15 @@ public class ForvaltningRestTjeneste {
         var journalpost = new JournalpostId(request.getJournalpostId());
         var eksisterende = iayTjeneste.hentGrunnlagFor(koblingReferanse).orElseThrow();
         var grunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(eksisterende);
-        eksisterende.getInntektsmeldinger()
+        var sammeJpId = eksisterende.getInntektsmeldinger()
             .map(InntektsmeldingAggregat::getInntektsmeldinger)
             .orElse(List.of())
             .stream()
             .filter(im -> journalpost.equals(im.getJournalpostId()))
-            .findFirst()
-            .orElseThrow();
+            .findFirst();
+        if (sammeJpId.isEmpty()) {
+            throw new IllegalArgumentException("Fant ingen inntektsmelding med angitt journalpostID");
+        }
         var beholdIM = eksisterende.getInntektsmeldinger()
             .map(InntektsmeldingAggregat::getInntektsmeldinger)
             .orElse(List.of())

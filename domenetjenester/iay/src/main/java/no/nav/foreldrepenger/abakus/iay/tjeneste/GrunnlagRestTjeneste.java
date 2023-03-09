@@ -372,14 +372,7 @@ public class GrunnlagRestTjeneste {
         final var sisteKjenteGrunnlagReferanse = spesifikasjon.getSisteKjenteGrunnlagReferanse();
         final var forespurtGrunnlagReferanse = spesifikasjon.getGrunnlagReferanse();
 
-        if (forespurtGrunnlagReferanse != null && forespurtGrunnlagReferanse.equals(sisteKjenteGrunnlagReferanse)) {
-            if (forespurtGrunnlagReferanse.equals(sisteKjenteGrunnlagReferanse)) {
-                return sisteKjenteGrunnlagReferanse;
-            }
-        } else {
-            return sisteKjenteGrunnlagReferanse;
-        }
-        return null;
+        return forespurtGrunnlagReferanse == null || forespurtGrunnlagReferanse.equals(sisteKjenteGrunnlagReferanse) ? sisteKjenteGrunnlagReferanse : null;
     }
 
     private Kobling oppdaterKobling(@NotNull @Valid KopierGrunnlagRequest dto) {
@@ -459,7 +452,7 @@ public class GrunnlagRestTjeneste {
         return koblingReferanse;
     }
 
-    private InntektArbeidYtelseGrunnlag getGrunnlag(@SuppressWarnings("unused") InntektArbeidYtelseGrunnlagRequest spesifikasjon,
+    private InntektArbeidYtelseGrunnlag getGrunnlag(@SuppressWarnings("unused") InntektArbeidYtelseGrunnlagRequest spesifikasjon,  // NOSONAR
                                                     GrunnlagReferanse grunnlagReferanse,
                                                     KoblingReferanse koblingReferanse) {
         if (grunnlagReferanse != null) {
@@ -522,7 +515,7 @@ public class GrunnlagRestTjeneste {
                                          @JsonProperty(value = "gammelReferanse", required = true) @Valid @NotNull UUID gammelReferanse,
                                          @JsonProperty(value = "ytelseType", required = true) @Valid @NotNull no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType,
                                          @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
-                                         @JsonProperty(value = "dataset", required = false) @NotNull @Valid Set<Dataset> dataset) {
+                                         @JsonProperty(value = "dataset", required = false) @Valid Set<Dataset> dataset) {
 
             super(saksnummer, nyReferanse, gammelReferanse, ytelseType, aktør, dataset == null ? EnumSet.allOf(Dataset.class) : dataset);
         }

@@ -12,7 +12,7 @@ public class AktivitetsAvtaleBuilder {
     private boolean oppdatering;
 
     AktivitetsAvtaleBuilder(AktivitetsAvtale aktivitetsAvtaleEntitet, boolean oppdatering) {
-        this.aktivitetsAvtaleEntitet = aktivitetsAvtaleEntitet; // NOSONAR
+        this.aktivitetsAvtaleEntitet = aktivitetsAvtaleEntitet;
         this.oppdatering = oppdatering;
     }
 
