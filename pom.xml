@@ -410,13 +410,13 @@
             </releases>
         </repository>
     </repositories>
+
 	<pluginRepositories>
         <pluginRepository>
             <id>github</id>
             <url>https://maven.pkg.github.com/navikt/dev-jakarta-transform/</url>
         </pluginRepository>
     </pluginRepositories>
-
 
 	<scm>
 		<connection>scm:git:https://github.com/navikt/fp-abakus.git</connection>
