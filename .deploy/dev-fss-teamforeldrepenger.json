@@ -14,7 +14,6 @@
   },
   "ingresses": [
     "https://fpabakus.dev.intern.nav.no",
-    "https://fpabakus.intern.dev.nav.no",
     "https://fpabakus.dev-fss-pub.nais.io"
   ],
   "env": {
