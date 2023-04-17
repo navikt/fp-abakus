@@ -19,6 +19,7 @@ import javax.persistence.Version;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
+import no.nav.abakus.iaygrunnlag.kodeverk.LønnsinntektBeskrivelse;
 import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseFraOffentligeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseType;
@@ -27,6 +28,7 @@ import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.jpa.InntektspostTypeKodeverdiConverter;
+import no.nav.foreldrepenger.abakus.iay.jpa.LønnsbeskrivelseKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.iay.jpa.SkatteOgAvgiftsregelTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 
@@ -46,6 +48,12 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
     @Column(name = "skatte_og_avgiftsregel_type", nullable = false, updatable = false)
     private SkatteOgAvgiftsregelType skatteOgAvgiftsregelType = SkatteOgAvgiftsregelType.UDEFINERT;
 
+    /**
+     * Beskriver hva inntekten gjelder dersom den er av typen LØNN
+     */
+    @Convert(converter = LønnsbeskrivelseKodeverdiConverter.class)
+    @Column(name = "lonnsinntekt_beskrivelse", updatable = false)
+    private LønnsinntektBeskrivelse lønnsinntektBeskrivelse = LønnsinntektBeskrivelse.UDEFINERT;
     @ManyToOne(optional = false)
     @JoinColumn(name = "inntekt_id", nullable = false, updatable = false, unique = true)
     private Inntekt inntekt;
@@ -82,6 +90,7 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
     Inntektspost(Inntektspost inntektspost) {
         this.inntektspostType = inntektspost.getInntektspostType();
         this.skatteOgAvgiftsregelType = inntektspost.getSkatteOgAvgiftsregelType();
+        this.lønnsinntektBeskrivelse = inntektspost.getLønnsinntektBeskrivelse();
         this.periode = inntektspost.getPeriode();
         this.beløp = inntektspost.getBeløp();
         this.ytelse = inntektspost.getYtelseType().getKode();
@@ -126,6 +135,14 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
 
     void setSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType skatteOgAvgiftsregelType) {
         this.skatteOgAvgiftsregelType = skatteOgAvgiftsregelType;
+    }
+
+    public LønnsinntektBeskrivelse getLønnsinntektBeskrivelse() {
+        return lønnsinntektBeskrivelse;
+    }
+
+    public void setLønnsinntektBeskrivelse(LønnsinntektBeskrivelse lønnsinntektBeskrivelse) {
+        this.lønnsinntektBeskrivelse = lønnsinntektBeskrivelse;
     }
 
     public void setPeriode(LocalDate fom, LocalDate tom) {

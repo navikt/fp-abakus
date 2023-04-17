@@ -18,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
+import no.nav.abakus.iaygrunnlag.kodeverk.LønnsinntektBeskrivelse;
 import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseType;
 
@@ -37,6 +38,9 @@ public class UtbetalingsPostDto {
 
     @JsonProperty("skattAvgiftType")
     private SkatteOgAvgiftsregelType skattAvgiftType;
+
+    @JsonProperty("lønnsinntektBeskrivelse")
+    private LønnsinntektBeskrivelse lønnsinntektBeskrivelse;
 
     /**
      * Tillater her både positive og negative beløp (korreksjoner). Min/max verdi håndteres av mottager og avsender.
@@ -75,6 +79,14 @@ public class UtbetalingsPostDto {
         this.skattAvgiftType = skattAvgiftType;
     }
 
+    public LønnsinntektBeskrivelse getLønnsinntektBeskrivelse() {
+        return lønnsinntektBeskrivelse;
+    }
+
+    public void setLønnsinntektBeskrivelse(LønnsinntektBeskrivelse lønnsinntektBeskrivelse) {
+        this.lønnsinntektBeskrivelse = lønnsinntektBeskrivelse;
+    }
+
     public void setUtbetaltYtelseType(UtbetaltYtelseType ytelseType) {
         this.ytelseType = ytelseType == null ? null : new WrapUtbetaltYtelse(ytelseType.getKode(), ytelseType.getKodeverk());
     }
@@ -88,6 +100,12 @@ public class UtbetalingsPostDto {
         setSkattAvgiftType(SkatteOgAvgiftsregelType.UDEFINERT.equals(skattAvgiftType) ? null : skattAvgiftType);
         return this;
     }
+
+    public UtbetalingsPostDto medLønnsinntektbeskrivelse(LønnsinntektBeskrivelse lønnsinntektBeskrivelse) {
+        setLønnsinntektBeskrivelse(LønnsinntektBeskrivelse.UDEFINERT.equals(lønnsinntektBeskrivelse) ? null : lønnsinntektBeskrivelse);
+        return this;
+    }
+
 
     public Periode getPeriode() {
         return periode;

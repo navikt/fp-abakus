@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
+import no.nav.abakus.iaygrunnlag.kodeverk.LønnsinntektBeskrivelse;
 import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltNæringsYtelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltPensjonTrygdType;
@@ -187,7 +188,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
             .stream()
             .filter(mi -> arbeidsgivereLookup.get(mi.getArbeidsgiver()) != null)
             .map(mi -> new MånedsbeløpOgSkatteOgAvgiftsregel(arbeidsgivereLookup.get(mi.getArbeidsgiver()), mi.getMåned(), mi.getBeløp(),
-                mi.getSkatteOgAvgiftsregelType()))
+                mi.getSkatteOgAvgiftsregelType(), mi.getLønnsbeskrivelseKode()))
             .collect(Collectors.groupingBy(MånedsbeløpOgSkatteOgAvgiftsregel::getArbeidsgiver,
                 Collectors.groupingBy(MånedsbeløpOgSkatteOgAvgiftsregel::getMåned)));
     }
@@ -415,23 +416,43 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
 
         for (var måned : inntekter.keySet()) {
             var månedsinnteker = inntekter.get(måned);
-            Map<String, Integer> antalInntekterForAvgiftsregel = månedsinnteker.stream()
-                .filter(e -> e.getSkatteOgAvgiftsregelType() != null)
-                .collect(Collectors.groupingBy(MånedsbeløpOgSkatteOgAvgiftsregel::getSkatteOgAvgiftsregelType,
-                    Collectors.collectingAndThen(Collectors.mapping(MånedsbeløpOgSkatteOgAvgiftsregel::getBeløp, Collectors.toSet()), Set::size)));
-
-            Optional<String> valgtSkatteOgAvgiftsregel = Optional.empty();
             BigDecimal beløpSum = månedsinnteker.stream().map(MånedsbeløpOgSkatteOgAvgiftsregel::getBeløp).reduce(BigDecimal.ZERO, BigDecimal::add);
-            if (antalInntekterForAvgiftsregel.keySet().size() > 1) {
-                valgtSkatteOgAvgiftsregel = Optional.ofNullable(velgSkatteOgAvgiftsRegel(antalInntekterForAvgiftsregel.keySet()));
-            } else if (antalInntekterForAvgiftsregel.keySet().size() == 1) {
-                valgtSkatteOgAvgiftsregel = Optional.of(antalInntekterForAvgiftsregel.keySet().iterator().next());
-            }
 
-            lagInntektsposter(måned, beløpSum, valgtSkatteOgAvgiftsregel, inntektBuilder);
+            Optional<String> valgtSkatteOgAvgiftsregel = finnSkatteOgAvgiftsregel(månedsinnteker);
+
+            var lønnsinntektBeskrivelseKode = finnLønnsbeskrivelseType(månedsinnteker);
+            lagInntektsposter(måned, beløpSum, valgtSkatteOgAvgiftsregel, lønnsinntektBeskrivelseKode, inntektBuilder);
         }
 
         return inntektBuilder.medArbeidsgiver(arbeidsgiver);
+    }
+
+    private Optional<String> finnSkatteOgAvgiftsregel(List<MånedsbeløpOgSkatteOgAvgiftsregel> månedsinnteker) {
+        Map<String, Integer> antalInntekterForAvgiftsregel = månedsinnteker.stream()
+            .filter(e -> e.getSkatteOgAvgiftsregelType() != null)
+            .collect(Collectors.groupingBy(MånedsbeløpOgSkatteOgAvgiftsregel::getSkatteOgAvgiftsregelType,
+                Collectors.collectingAndThen(Collectors.mapping(MånedsbeløpOgSkatteOgAvgiftsregel::getBeløp, Collectors.toSet()), Set::size)));
+        Optional<String> valgtSkatteOgAvgiftsregel = Optional.empty();
+        if (antalInntekterForAvgiftsregel.keySet().size() > 1) {
+            valgtSkatteOgAvgiftsregel = Optional.ofNullable(velgSkatteOgAvgiftsRegel(antalInntekterForAvgiftsregel.keySet()));
+        } else if (antalInntekterForAvgiftsregel.keySet().size() == 1) {
+            valgtSkatteOgAvgiftsregel = Optional.of(antalInntekterForAvgiftsregel.keySet().iterator().next());
+        }
+        return valgtSkatteOgAvgiftsregel;
+    }
+
+    private Optional<String> finnLønnsbeskrivelseType(List<MånedsbeløpOgSkatteOgAvgiftsregel> månedsinnteker) {
+        Map<String, Integer> antalInntekterForLønnsbeskrivelseType = månedsinnteker.stream()
+            .filter(e -> e.getLønnsinntektBeskrivelseKode() != null)
+            .collect(Collectors.groupingBy(MånedsbeløpOgSkatteOgAvgiftsregel::getLønnsinntektBeskrivelseKode,
+                Collectors.collectingAndThen(Collectors.mapping(MånedsbeløpOgSkatteOgAvgiftsregel::getBeløp, Collectors.toSet()), Set::size)));
+        Optional<String> valgtLønnsbesrivelseType = Optional.empty();
+        if (antalInntekterForLønnsbeskrivelseType.keySet().size() > 1) {
+            valgtLønnsbesrivelseType = Optional.ofNullable(velgSkatteOgAvgiftsRegel(antalInntekterForLønnsbeskrivelseType.keySet()));
+        } else if (antalInntekterForLønnsbeskrivelseType.keySet().size() == 1) {
+            valgtLønnsbesrivelseType = Optional.of(antalInntekterForLønnsbeskrivelseType.keySet().iterator().next());
+        }
+        return valgtLønnsbesrivelseType;
     }
 
     private void lagInntektsposterYtelse(Månedsinntekt månedsinntekt, InntektBuilder inntektBuilder) {
@@ -445,16 +466,12 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
     private void lagInntektsposter(YearMonth måned,
                                    BigDecimal sumInntektsbeløp,
                                    Optional<String> valgtSkatteOgAvgiftsregel,
+                                   Optional<String> lønnsinntektBeskrivelseKode,
                                    InntektBuilder inntektBuilder) {
-
         InntektspostBuilder inntektspostBuilder = inntektBuilder.getInntektspostBuilder();
         inntektspostBuilder.medBeløp(sumInntektsbeløp).medPeriode(måned.atDay(1), måned.atEndOfMonth()).medInntektspostType(InntektspostType.LØNN);
-
-        if (valgtSkatteOgAvgiftsregel.isPresent()) {
-            var skatteOgAvgiftsregelType = SkatteOgAvgiftsregelType.finnForKodeverkEiersKode(valgtSkatteOgAvgiftsregel.get());
-            inntektspostBuilder.medSkatteOgAvgiftsregelType(skatteOgAvgiftsregelType);
-        }
-
+        valgtSkatteOgAvgiftsregel.map(SkatteOgAvgiftsregelType::finnForKodeverkEiersKode).ifPresent(inntektspostBuilder::medSkatteOgAvgiftsregelType);
+        lønnsinntektBeskrivelseKode.map(LønnsinntektBeskrivelse::finnForKodeverkEiersKode).ifPresent(inntektspostBuilder::medLønnsinntektBeskrivelse);
         inntektBuilder.leggTilInntektspost(inntektspostBuilder);
     }
 
@@ -483,11 +500,15 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         private BigDecimal beløp;
         private String skatteOgAvgiftsregelType;
 
-        public MånedsbeløpOgSkatteOgAvgiftsregel(Arbeidsgiver arbeidsgiver, YearMonth måned, BigDecimal beløp, String skatteOgAvgiftsregelType) {
+        private String lønnsinntektBeskrivelseKode;
+
+        public MånedsbeløpOgSkatteOgAvgiftsregel(Arbeidsgiver arbeidsgiver, YearMonth måned, BigDecimal beløp, String skatteOgAvgiftsregelType,
+                                                 String lønnsinntektBeskrivelseKode) {
             this.arbeidsgiver = arbeidsgiver;
             this.måned = måned;
             this.beløp = beløp;
             this.skatteOgAvgiftsregelType = skatteOgAvgiftsregelType;
+            this.lønnsinntektBeskrivelseKode = lønnsinntektBeskrivelseKode;
         }
 
         public Arbeidsgiver getArbeidsgiver() {
@@ -504,6 +525,10 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
 
         public String getSkatteOgAvgiftsregelType() {
             return skatteOgAvgiftsregelType;
+        }
+
+        public String getLønnsinntektBeskrivelseKode() {
+            return lønnsinntektBeskrivelseKode;
         }
     }
 }
