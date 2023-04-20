@@ -13,17 +13,12 @@ import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.abakus.iaygrunnlag.kodeverk.LønnsinntektBeskrivelse;
 import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
-import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltNæringsYtelseType;
-import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltPensjonTrygdType;
-import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseFraOffentligeType;
-import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektspostBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.Opptjeningsnøkkel;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
 
 /**
  * Lager Inntekt for lønnsinnntekter
@@ -32,8 +27,8 @@ class ByggLønnsinntektInntektTjeneste {
 
 
     static void mapLønnsinntekter(InntektsInformasjon inntektsInformasjon,
-                                                  InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder,
-                                                  Map<String, Arbeidsgiver> arbeidsgivereLookup) {
+                                  InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder aktørInntektBuilder,
+                                  Map<String, Arbeidsgiver> arbeidsgivereLookup) {
         mapTilArbeidsgiver(inntektsInformasjon, arbeidsgivereLookup).entrySet()
             .stream()
             .map(e -> byggInntekt(e.getValue(), e.getKey(), aktørInntektBuilder, inntektsInformasjon.getKilde()))

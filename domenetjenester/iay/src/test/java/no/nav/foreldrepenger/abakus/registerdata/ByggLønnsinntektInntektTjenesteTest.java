@@ -218,6 +218,53 @@ class ByggLønnsinntektInntektTjenesteTest {
     }
 
     @Test
+    void skal_mappe_omsorgsstønad_ved_fleire_beskrivelser() {
+        var månedsinntektBuilder = new Månedsinntekt.Builder();
+
+
+        var omsorgsstønad = månedsinntektBuilder.medBeløp(BigDecimal.TEN)
+            .medMåned(YearMonth.now())
+            .medArbeidsgiver(ORGNR)
+            .medArbeidsforholdRef(null)
+            .medLønnsbeskrivelseKode(null)
+            .medLønnsbeskrivelseKode(LønnsinntektBeskrivelse.KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE.getOffisiellKode())
+            .medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.NETTOLØNN.getOffisiellKode())
+            .build();
+
+        var ukjentLønn = månedsinntektBuilder.medBeløp(BigDecimal.TEN)
+            .medMåned(YearMonth.now())
+            .medArbeidsgiver(ORGNR)
+            .medArbeidsforholdRef(null)
+            .medLønnsbeskrivelseKode(null)
+            .medLønnsbeskrivelseKode("enUkjentKode")
+            .medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.NETTOLØNN.getOffisiellKode())
+            .build();
+
+
+        var inntektsInformasjon = new InntektsInformasjon(List.of(omsorgsstønad, ukjentLønn), List.of(), InntektskildeType.INNTEKT_BEREGNING);
+        var arbeidsgivereLookup = Map.of(ORGNR, Arbeidsgiver.virksomhet(new OrgNummer(ORGNR)));
+
+        // Act
+        var aktørInntektBuilder = InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder.oppdatere(Optional.empty());
+        ByggLønnsinntektInntektTjeneste.mapLønnsinntekter(inntektsInformasjon, aktørInntektBuilder,
+            arbeidsgivereLookup);
+
+        // Assert
+        var inntekter = aktørInntektBuilder.build().getInntekt();
+        assertThat(inntekter.size()).isEqualTo(1);
+        var inntekt = inntekter.iterator().next();
+        var poster = inntekt.getAlleInntektsposter();
+        assertThat(poster.size()).isEqualTo(1);
+        var inntektspost = poster.iterator().next();
+
+        assertThat(inntektspost.getInntektspostType()).isEqualTo(InntektspostType.LØNN);
+        assertThat(inntektspost.getSkatteOgAvgiftsregelType()).isEqualTo(SkatteOgAvgiftsregelType.NETTOLØNN);
+        assertThat(inntektspost.getLønnsinntektBeskrivelse()).isEqualTo(LønnsinntektBeskrivelse.KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE);
+        assertThat(inntektspost.getBeløp().getVerdi().compareTo(BigDecimal.valueOf(20))).isEqualTo(0);
+    }
+
+
+    @Test
     void skal_mappe_ukjent_lønnsbeskrivelse_til_udefinert() {
         var månedsinntektBuilder = new Månedsinntekt.Builder();
 
