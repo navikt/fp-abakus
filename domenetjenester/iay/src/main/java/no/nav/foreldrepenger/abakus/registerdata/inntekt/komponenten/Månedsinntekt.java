@@ -14,6 +14,7 @@ public class Månedsinntekt {
     private String pensjonKode;
     private String skatteOgAvgiftsregelType;
     private String næringsinntektKode;
+    private String lønnsbeskrivelseKode;
     private boolean ytelse;
 
     private Månedsinntekt(BigDecimal beløp, YearMonth måned, String arbeidsgiver, String arbeidsforholdRef, String skatteOgAvgiftsregelType) {
@@ -65,6 +66,10 @@ public class Månedsinntekt {
         return næringsinntektKode;
     }
 
+    public String getLønnsbeskrivelseKode() {
+        return lønnsbeskrivelseKode;
+    }
+
     public static class Builder {
         private BigDecimal beløp;
         private YearMonth måned;
@@ -72,6 +77,7 @@ public class Månedsinntekt {
         private String arbeidsforholdRef;
         private String ytelseKode;
         private String pensjonKode;
+        private String lønnsbeskrivelseKode;
         private String næringsinntektKode;
         private boolean ytelse;
         private String skatteOgAvgiftsregelType;
@@ -90,6 +96,12 @@ public class Månedsinntekt {
             this.utbetaler = arbeidsgiver;
             return this;
         }
+
+        public Builder medLønnsbeskrivelseKode(String kode) {
+            this.lønnsbeskrivelseKode = kode;
+            return this;
+        }
+
 
         public Builder medPensjonEllerTrygdKode(String kode) {
             this.pensjonKode = kode;
@@ -126,6 +138,7 @@ public class Månedsinntekt {
             månedsinntekt.ytelse = ytelse;
             månedsinntekt.pensjonKode = pensjonKode;
             månedsinntekt.ytelseKode = ytelseKode;
+            månedsinntekt.lønnsbeskrivelseKode = lønnsbeskrivelseKode;
             månedsinntekt.næringsinntektKode = næringsinntektKode;
             return månedsinntekt;
         }
