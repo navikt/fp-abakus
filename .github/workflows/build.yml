@@ -71,7 +71,7 @@ jobs:
 
   notify:
     name: Notify
-    if: github.ref_name == 'master' && (success() || failure())
+    if: github.ref_name == 'master' && (success() || failure()) && !contains(fromJSON(needs.*.result, 'skipped')
     needs: [build-app, fpsak-tester, verdikjede-tester]
     uses: navikt/fp-autotest/.github/workflows/report-and-notify.yml@autotester
     with:
