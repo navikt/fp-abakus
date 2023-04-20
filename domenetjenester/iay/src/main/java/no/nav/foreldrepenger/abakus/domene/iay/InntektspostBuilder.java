@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
+import no.nav.abakus.iaygrunnlag.kodeverk.LønnsinntektBeskrivelse;
 import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseType;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
@@ -26,6 +27,11 @@ public class InntektspostBuilder {
 
     public InntektspostBuilder medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType skatteOgAvgiftsregelType) {
         this.inntektspost.setSkatteOgAvgiftsregelType(skatteOgAvgiftsregelType);
+        return this;
+    }
+
+    public InntektspostBuilder medLønnsinntektBeskrivelse(LønnsinntektBeskrivelse lønnsinntektBeskrivelse) {
+        this.inntektspost.setLønnsinntektBeskrivelse(lønnsinntektBeskrivelse);
         return this;
     }
 

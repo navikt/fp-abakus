@@ -229,6 +229,7 @@ public class InntektTjeneste {
             månedsinntekt.medYtelse(false);
             månedsinntekt.medArbeidsgiver(inntekt.getVirksomhet().getIdentifikator()); // OK med NPE hvis inntekt.getArbeidsgiver() er null
             månedsinntekt.medArbeidsforholdRef(inntekt.getArbeidsforholdREF());
+            månedsinntekt.medLønnsbeskrivelseKode(inntekt.getBeskrivelse());
         } else {
             throw new TekniskException("FP-711674", String.format("Kunne ikke mappe svar fra Inntektskomponenten: virksomhet=%s, inntektType=%s",
                 inntekt.getVirksomhet().getIdentifikator(), inntekt.getInntektType()));
