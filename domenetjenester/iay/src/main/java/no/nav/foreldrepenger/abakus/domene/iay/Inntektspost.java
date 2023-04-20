@@ -52,7 +52,7 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
      * Beskriver hva inntekten gjelder dersom den er av typen LØNN
      */
     @Convert(converter = LønnsbeskrivelseKodeverdiConverter.class)
-    @Column(name = "lonnsinntekt_beskrivelse", updatable = false)
+    @Column(name = "lonnsinntekt_beskrivelse", nullable = false, updatable = false)
     private LønnsinntektBeskrivelse lønnsinntektBeskrivelse = LønnsinntektBeskrivelse.UDEFINERT;
     @ManyToOne(optional = false)
     @JoinColumn(name = "inntekt_id", nullable = false, updatable = false, unique = true)

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -442,15 +443,19 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
     }
 
     private Optional<String> finnLønnsbeskrivelseType(List<MånedsbeløpOgSkatteOgAvgiftsregel> månedsinnteker) {
-        Map<String, Integer> antalInntekterForLønnsbeskrivelseType = månedsinnteker.stream()
-            .filter(e -> e.getLønnsinntektBeskrivelseKode() != null)
-            .collect(Collectors.groupingBy(MånedsbeløpOgSkatteOgAvgiftsregel::getLønnsinntektBeskrivelseKode,
-                Collectors.collectingAndThen(Collectors.mapping(MånedsbeløpOgSkatteOgAvgiftsregel::getBeløp, Collectors.toSet()), Set::size)));
+        Set<String> lønnsinntektBeskrivelse = månedsinnteker.stream()
+            .map(MånedsbeløpOgSkatteOgAvgiftsregel::getLønnsinntektBeskrivelseKode)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
         Optional<String> valgtLønnsbesrivelseType = Optional.empty();
-        if (antalInntekterForLønnsbeskrivelseType.keySet().size() > 1) {
-            valgtLønnsbesrivelseType = Optional.ofNullable(velgSkatteOgAvgiftsRegel(antalInntekterForLønnsbeskrivelseType.keySet()));
-        } else if (antalInntekterForLønnsbeskrivelseType.keySet().size() == 1) {
-            valgtLønnsbesrivelseType = Optional.of(antalInntekterForLønnsbeskrivelseType.keySet().iterator().next());
+        if (lønnsinntektBeskrivelse.size() > 1) {
+            if (lønnsinntektBeskrivelse.contains(LønnsinntektBeskrivelse.KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE.getOffisiellKode())) {
+                return Optional.of(LønnsinntektBeskrivelse.KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE.getOffisiellKode());
+            } else {
+                return Optional.of(lønnsinntektBeskrivelse.iterator().next());
+            }
+        } else if (lønnsinntektBeskrivelse.size() == 1) {
+            return Optional.of(lønnsinntektBeskrivelse.iterator().next());
         }
         return valgtLønnsbesrivelseType;
     }
@@ -502,7 +507,10 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
 
         private String lønnsinntektBeskrivelseKode;
 
-        public MånedsbeløpOgSkatteOgAvgiftsregel(Arbeidsgiver arbeidsgiver, YearMonth måned, BigDecimal beløp, String skatteOgAvgiftsregelType,
+        public MånedsbeløpOgSkatteOgAvgiftsregel(Arbeidsgiver arbeidsgiver,
+                                                 YearMonth måned,
+                                                 BigDecimal beløp,
+                                                 String skatteOgAvgiftsregelType,
                                                  String lønnsinntektBeskrivelseKode) {
             this.arbeidsgiver = arbeidsgiver;
             this.måned = måned;
