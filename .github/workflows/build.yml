@@ -30,49 +30,7 @@ jobs:
       build-image: ${{ github.ref_name == 'master' }} # default: true
       push-image: ${{ github.ref_name == 'master' }} # default: false
     secrets: inherit
-
-  create-issue:
-    name: Issues
-    if: github.ref_name == 'master'
-    needs: build-app
-    uses: navikt/fp-gha-workflows/.github/workflows/issues.yml@main
-    with:
-      build-version: ${{ needs.build-app.outputs.build-version }}
-    secrets: inherit
-
-  promote-dev:
-    name: Deploy
-    if: github.ref_name == 'master'
-    needs: [ build-app, create-issue ]
-    uses: navikt/fp-gha-workflows/.github/workflows/deploy-app.yml@main
-    with:
-      issue-number: ${{ needs.create-issue.outputs.issue-number }}
-      environment: dev
-      platform: fss
-    secrets: inherit
-
-  trigger-autotest-fp:
-    name: Autotest FP
-    if: github.ref_name == 'master'
-    needs: [ build-app, create-issue ]
-    uses: navikt/fp-gha-workflows/.github/workflows/autotest.yml@main
-    with:
-      build-version: ${{ needs.build-app.outputs.build-version }}
-      issue-number: ${{ needs.create-issue.outputs.issue-number }}
-    secrets: inherit
-
-  trigger-autotest-k9:
-    name: Autotest K9
-    if: github.ref_name == 'master'
-    needs: [ build-app, create-issue ]
-    uses: navikt/fp-gha-workflows/.github/workflows/autotest.yml@main
-    with:
-      build-version: ${{ needs.build-app.outputs.build-version }}
-      issue-number: ${{ needs.create-issue.outputs.issue-number }}
-      test-repo: 'k9-verdikjede' # default: fpsak-autotest
-      test-workflow: 'build.yml' # default: trigger.yml
-    secrets: inherit
-
+  
   release-drafter:
     name: Update
     if: github.ref_name == 'master'
@@ -80,11 +38,67 @@ jobs:
     uses: navikt/fp-gha-workflows/.github/workflows/release-drafter.yml@main
     secrets: inherit
 
-  snyk:
-    name: Snyk
+  trigger-autotest-k9:
+    name: Autotest K9
+    if: github.ref_name == 'master'
     needs: build-app
-    uses: navikt/fp-gha-workflows/.github/workflows/snyk.yml@main
+    uses: navikt/fp-gha-workflows/.github/workflows/autotest.yml@main
     with:
       build-version: ${{ needs.build-app.outputs.build-version }}
+      test-repo: 'k9-verdikjede' # default: fpsak-autotest
+      test-workflow: 'build.yml' # default: trigger.yml
     secrets: inherit
+
+  fpsak-tester:
+    name: Fpsak tester
+    if: github.ref_name == 'master'
+    needs: build-app
+    uses: navikt/fp-autotest/.github/workflows/autotest.yml@master
+    with:
+      build-version: ${{ needs.build-app.outputs.build-version }}
+      test-suite: fpsak
+    secrets: inherit
+    
+  verdikjede-tester:
+    name: Verdikjedetester
+    if: github.ref_name == 'master'
+    needs: build-app
+    uses: navikt/fp-autotest/.github/workflows/autotest.yml@master
+    with:
+      build-version: ${{ needs.build-app.outputs.build-version }}
+      test-suite: verdikjede
+    secrets: inherit
+
+  notify:
+    name: Notify
+    if: github.ref_name == 'master' && (success() || failure())
+    needs: [build-app, fpsak-tester, verdikjede-tester]
+    uses: navikt/fp-autotest/.github/workflows/report-and-notify.yml@autotester
+    with:
+      fpsak: ${{ needs.fpsak-tester.outputs.resultat }}
+      verdikjede: ${{ needs.verdikjede-tester.outputs.resultat }}
+      build-version: ${{ needs.build-app.outputs.build-version }}
+    secrets: inherit
+
+  deploy-dev:
+    name: Deploy dev
+    if: github.ref_name == 'master'
+    needs: [build-app, fpsak-tester, verdikjede-tester]
+    uses: navikt/fp-gha-workflows/.github/workflows/deploy.yml@main
+    with:
+      image: ghcr.io/${{ github.repository }}:${{ needs.build-app.outputs.build-version }}
+      cluster: dev-fss
+    secrets: inherit
+
+  deploy-prod:
+    name: Deploy prod
+    if: github.ref_name == 'master'
+    needs: [build-app, fpsak-tester, verdikjede-tester, deploy-dev]
+    uses: navikt/fp-gha-workflows/.github/workflows/deploy.yml@main
+    with:
+      image: ghcr.io/${{ github.repository }}:${{ needs.build-app.outputs.build-version }}
+      cluster: prod-fss
+    secrets: inherit
+
+
 
