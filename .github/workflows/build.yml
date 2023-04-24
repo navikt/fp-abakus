@@ -17,8 +17,6 @@ on:
       - 'lokalutvikling/**'
       - '.devcontainer/**'
       - '.github/*.yml'
-  schedule:
-    - cron: '0 4 * * 1'
 
 jobs:
   build-app:
