@@ -40,12 +40,24 @@ jobs:
     name: Autotest K9
     if: github.ref_name == 'master'
     needs: build-app
-    uses: navikt/fp-gha-workflows/.github/workflows/autotest.yml@main
-    with:
-      build-version: ${{ needs.build-app.outputs.build-version }}
-      test-repo: 'k9-verdikjede' # default: fpsak-autotest
-      test-workflow: 'build.yml' # default: trigger.yml
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: navikt/github-app-token-generator@v1
+        id: get-token
+        with:
+          private-key: ${{ secrets.FP_PRIVATE_KEY }} # Erstatt med K9SAKSBEHANDLING_PRIVATE_KEY
+          app-id: ${{ secrets.FP_APP_ID }} # Erstatt med K9SAKSBEHANDLING_APP_ID
+      - name: Trigger verdikjede test
+        shell: bash
+        run: |
+          curl -XPOST -u "x-access-token:${{ steps.get-token.outputs.token }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/navikt/k9-verdikjede/actions/workflows/build.yml/dispatches \
+          -d '{"ref":"master",
+                  "inputs":{
+                      "trigger": "${{ github.repository }}",
+                      "version": "${{ needs.build-app.outputs.build-version }}"
+                  }}'
 
   fpsak-tester:
     name: Fpsak tester
