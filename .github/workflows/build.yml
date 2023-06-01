@@ -24,11 +24,10 @@ jobs:
     uses: navikt/fp-gha-workflows/.github/workflows/build-app-postgres.yml@main
     with:
       postgres-user: fpabakus_unit
-      sonar-scan: true # default: false
       build-image: ${{ github.ref_name == 'master' }} # default: true
       push-image: ${{ github.ref_name == 'master' }} # default: false
     secrets: inherit
-  
+
   release-drafter:
     name: Update
     if: github.ref_name == 'master'
@@ -68,7 +67,7 @@ jobs:
       build-version: ${{ needs.build-app.outputs.build-version }}
       test-suite: fpsak
     secrets: inherit
-    
+
   verdikjede-tester:
     name: Verdikjedetester
     if: github.ref_name == 'master'
