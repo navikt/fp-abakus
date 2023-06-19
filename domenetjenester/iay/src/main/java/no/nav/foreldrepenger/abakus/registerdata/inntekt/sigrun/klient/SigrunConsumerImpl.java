@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient;
 
 import static java.util.Arrays.asList;
 
+import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.Year;
 import java.util.ArrayList;
@@ -80,10 +81,15 @@ public class SigrunConsumerImpl implements SigrunConsumer {
     }
 
     private List<Year> hentÅrsListeForSummertskattegrunnlag(Long aktørId, IntervallEntitet opplysningsperiode) {
+        Year iFjor = Year.now().minusYears(1L);
         if (opplysningsperiode != null) {
-            return summertSkattegrunnlagÅrslisteFraOpplysningsperiode(opplysningsperiode);
+            if (Environment.current().isProd()){
+                return summertSkattegrunnlagÅrslisteFraOpplysningsperiode(opplysningsperiode);
+            } else {
+                var justertOpplysningsperiode = justerOpplysningsperiodeNårSisteÅrIkkeErFerdiglignet(aktørId, opplysningsperiode);
+                return summertSkattegrunnlagÅrslisteFraOpplysningsperiode(justertOpplysningsperiode);
+            }
         } else {
-            Year iFjor = Year.now().minusYears(1L);
             //filteret(SummertSkattegrunnlagForeldrepenger) i Sigrun er ikke impl. tidligere enn 2018
             if (iFjor.equals(Year.of(2018))) {
                 return List.of(iFjor);
@@ -92,6 +98,22 @@ public class SigrunConsumerImpl implements SigrunConsumer {
             }
             return ferdiglignedeBeregnetSkattÅr(aktørId, opplysningsperiode);
         }
+    }
+
+    private IntervallEntitet justerOpplysningsperiodeNårSisteÅrIkkeErFerdiglignet(Long aktørId, IntervallEntitet opplysningsperiode) {
+        // justerer slik at vi henter ett å eldre data når siste år som etterspørs ikke er ferdiglignet enda
+        int fomÅr = opplysningsperiode.getFomDato().getYear();
+        int tomÅr = opplysningsperiode.getTomDato().getYear();
+        Year iFjor = Year.now().minusYears(1);
+        if (opplysningsperiode.getTomDato().getYear() == iFjor.getValue() && !iFjorErFerdiglignetBeregnet(aktørId, iFjor)) {
+            tomÅr--; //justerer slutten, har ikke ferdiglignet data for året
+            if (tomÅr - fomÅr < 2) { //dataminimering, ikke behov for data ut over 3 hele år før første stp
+                fomÅr--;
+            }
+        }
+        LocalDate fom = LocalDate.of(fomÅr, 1, 1);
+        LocalDate tom = LocalDate.of(tomÅr, 12, 31);
+        return IntervallEntitet.fraOgMedTilOgMed(fom, tom);
     }
 
     private ArrayList<Year> summertSkattegrunnlagÅrslisteFraOpplysningsperiode(IntervallEntitet opplysningsperiode) {
