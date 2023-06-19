@@ -82,7 +82,7 @@ jobs:
     name: Notify
     if: github.ref_name == 'master' && (success() || failure()) && !contains(needs.*.result, 'skipped')
     needs: [build-app, fpsak-tester, verdikjede-tester]
-    uses: navikt/fp-autotest/.github/workflows/report-and-notify.yml@autotester
+    uses: navikt/fp-autotest/.github/workflows/report-and-notify.yml@master
     with:
       fpsak: ${{ needs.fpsak-tester.outputs.resultat }}
       verdikjede: ${{ needs.verdikjede-tester.outputs.resultat }}
