@@ -4,14 +4,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 
+import java.time.MonthDay;
 import java.time.Year;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
 import no.nav.vedtak.mapper.json.DefaultJsonMapper;
@@ -178,6 +182,44 @@ class SigrunConsumerImplTest {
         assertThat(ssgResponse.grunnlag()).hasSize(4);
         assertThat(ssgResponse.svalbardGrunnlag()).hasSize(4);
         assertThat(ssgResponse.skatteoppgjoersdato()).isNotEmpty();
+    }
+
+    @Test
+    void skal_utvide_beregningsperioden_når_fjoråret_ikke_er_ferdiglignet() {
+        Year iFjor = Year.now().minusYears(1L);
+        var respons = DefaultJsonMapper.fromJson(JSON_summerskattegrunnlag, SSGResponse.class);
+
+        String jsonUtenFerdiglignetÅr = "[]";
+        Mockito.when(client.hentBeregnetSkattForAktørOgÅr(eq(AKTØR_ID), any()))
+            .thenReturn(Arrays.asList(DefaultJsonMapper.fromJson(jsonUtenFerdiglignetÅr, BeregnetSkatt[].class)));
+        Mockito.when(client.hentSummertskattegrunnlag(AKTØR_ID, iFjor.toString())).thenReturn(Optional.of(respons));
+
+
+        SigrunConsumerImpl consumer = new SigrunConsumerImpl(client);
+        List<Year> årDetHentesFor = consumer.hentÅrsListeForSummertskattegrunnlag(AKTØR_ID,
+            IntervallEntitet.fraOgMedTilOgMed(iFjor.atDay(1), iFjor.atMonthDay(MonthDay.of(12, 31))));
+
+        assertThat(årDetHentesFor).containsOnly(iFjor, iFjor.minusYears(1));
+
+    }
+
+    @Test
+    void skal_ikke_utvide_beregningsperioden_når_fjoråret_er_ferdiglignet() {
+        Year iFjor = Year.now().minusYears(1L);
+        var respons = DefaultJsonMapper.fromJson(JSON_summerskattegrunnlag, SSGResponse.class);
+
+        String jsonMedFerdiglignetÅr = JSON;
+        Mockito.when(client.hentBeregnetSkattForAktørOgÅr(eq(AKTØR_ID), any()))
+            .thenReturn(Arrays.asList(DefaultJsonMapper.fromJson(jsonMedFerdiglignetÅr, BeregnetSkatt[].class)));
+        Mockito.when(client.hentSummertskattegrunnlag(AKTØR_ID, iFjor.toString())).thenReturn(Optional.of(respons));
+
+
+        SigrunConsumerImpl consumer = new SigrunConsumerImpl(client);
+        List<Year> årDetHentesFor = consumer.hentÅrsListeForSummertskattegrunnlag(AKTØR_ID,
+            IntervallEntitet.fraOgMedTilOgMed(iFjor.atDay(1), iFjor.atMonthDay(MonthDay.of(12, 31))));
+
+        assertThat(årDetHentesFor).containsOnly(iFjor);
+
     }
 
 }

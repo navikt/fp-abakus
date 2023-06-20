@@ -80,7 +80,7 @@ public class SigrunConsumerImpl implements SigrunConsumer {
         return årsListe;
     }
 
-    private List<Year> hentÅrsListeForSummertskattegrunnlag(Long aktørId, IntervallEntitet opplysningsperiode) {
+    List<Year> hentÅrsListeForSummertskattegrunnlag(Long aktørId, IntervallEntitet opplysningsperiode) {
         Year iFjor = Year.now().minusYears(1L);
         if (opplysningsperiode != null) {
             var justertOpplysningsperiode = justerOpplysningsperiodeNårSisteÅrIkkeErFerdiglignet(aktørId, opplysningsperiode);
