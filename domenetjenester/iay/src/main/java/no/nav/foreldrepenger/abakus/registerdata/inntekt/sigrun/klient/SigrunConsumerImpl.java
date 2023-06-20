@@ -83,12 +83,8 @@ public class SigrunConsumerImpl implements SigrunConsumer {
     private List<Year> hentÅrsListeForSummertskattegrunnlag(Long aktørId, IntervallEntitet opplysningsperiode) {
         Year iFjor = Year.now().minusYears(1L);
         if (opplysningsperiode != null) {
-            if (Environment.current().isProd()){
-                return summertSkattegrunnlagÅrslisteFraOpplysningsperiode(opplysningsperiode);
-            } else {
-                var justertOpplysningsperiode = justerOpplysningsperiodeNårSisteÅrIkkeErFerdiglignet(aktørId, opplysningsperiode);
-                return summertSkattegrunnlagÅrslisteFraOpplysningsperiode(justertOpplysningsperiode);
-            }
+            var justertOpplysningsperiode = justerOpplysningsperiodeNårSisteÅrIkkeErFerdiglignet(aktørId, opplysningsperiode);
+            return summertSkattegrunnlagÅrslisteFraOpplysningsperiode(justertOpplysningsperiode);
         } else {
             //filteret(SummertSkattegrunnlagForeldrepenger) i Sigrun er ikke impl. tidligere enn 2018
             if (iFjor.equals(Year.of(2018))) {
