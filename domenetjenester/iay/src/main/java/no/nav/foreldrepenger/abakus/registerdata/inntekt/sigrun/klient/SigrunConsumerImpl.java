@@ -106,8 +106,7 @@ public class SigrunConsumerImpl implements SigrunConsumer {
         int tomÅr = opplysningsperiode.getTomDato().getYear();
         Year iFjor = Year.now().minusYears(1);
         if (opplysningsperiode.getTomDato().getYear() == iFjor.getValue() && !iFjorErFerdiglignetBeregnet(aktørId, iFjor)) {
-            tomÅr--; //justerer slutten, har ikke ferdiglignet data for året
-            if (tomÅr - fomÅr < 2) { //dataminimering, ikke behov for data ut over 3 hele år før første stp
+            if (tomÅr - fomÅr < 3) { //dataminimering, ikke behov for data ut over 3 hele år før første stp
                 fomÅr--;
             }
         }
