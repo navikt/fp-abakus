@@ -13,6 +13,9 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
@@ -21,6 +24,8 @@ import no.nav.vedtak.felles.integrasjon.rest.RestClient;
 
 @ApplicationScoped
 public class SigrunConsumerImpl implements SigrunConsumer {
+
+    private static final Logger logger = LoggerFactory.getLogger(SigrunConsumerImpl.class);
 
     private static final String TEKNISK_NAVN = "skatteoppgjoersdato";
 
@@ -101,8 +106,12 @@ public class SigrunConsumerImpl implements SigrunConsumer {
         int fomÅr = opplysningsperiode.getFomDato().getYear();
         int tomÅr = opplysningsperiode.getTomDato().getYear();
         Year iFjor = Year.now().minusYears(1);
-        if (opplysningsperiode.getTomDato().getYear() == iFjor.getValue() && !iFjorErFerdiglignetBeregnet(aktørId, iFjor)) {
-            if (tomÅr - fomÅr < 3) { //dataminimering, ikke behov for data ut over 3 hele år før første stp
+        logger.info("Opprinnelig opplysningsperiode er fom {} tom {}", fomÅr, tomÅr);
+        if (opplysningsperiode.getTomDato().getYear() == iFjor.getValue()) {
+            boolean fjordårdetFerdiglignet = iFjorErFerdiglignetBeregnet(aktørId, iFjor);
+            logger.info("Ferdiglignet {}", fjordårdetFerdiglignet);
+            if (!fjordårdetFerdiglignet && tomÅr - fomÅr < 3) { //dataminimering, ikke behov for data ut over 3 hele år før første stp
+                logger.info("Utvider opplysningsperioden med ett år pga ikke-ferdiglignet år");
                 fomÅr--;
             }
         }
