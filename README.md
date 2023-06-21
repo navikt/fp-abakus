@@ -1,7 +1,6 @@
 FP-ABAKUS
 ================
 [![Bygg og deploy](https://github.com/navikt/fp-abakus/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/navikt/fp-abakus/actions/workflows/build.yml)
-[![Promote](https://github.com/navikt/fp-abakus/actions/workflows/promote.yml/badge.svg?branch=master)](https://github.com/navikt/fp-abakus/actions/workflows/promote.yml)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/navikt/fp-abakus)](https://github.com/navikt/fp-abakus/releases)
 ![GitHub](https://img.shields.io/github/license/navikt/fp-abakus)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=navikt_fp-abakus&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=navikt_fp-abakus)
