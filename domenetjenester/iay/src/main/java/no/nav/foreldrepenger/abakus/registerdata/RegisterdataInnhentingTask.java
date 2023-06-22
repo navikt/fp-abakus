@@ -20,6 +20,7 @@ import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTask;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
+import no.nav.foreldrepenger.abakus.kobling.TaskConstants;
 import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
 import no.nav.foreldrepenger.abakus.kobling.repository.LåsRepository;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.InnhentRegisterdataTjeneste;
@@ -56,7 +57,9 @@ public class RegisterdataInnhentingTask extends KoblingTask {
 
     @Override
     protected void prosesser(ProsessTaskData prosessTaskData) {
-        Kobling kobling = koblingTjeneste.hent(Long.valueOf(prosessTaskData.getBehandlingId()));
+        String nyKoblingId = prosessTaskData.getPropertyValue(TaskConstants.NY_KOBLING_ID);
+        Long koblingId = nyKoblingId != null ? Long.valueOf(nyKoblingId) : Long.valueOf(prosessTaskData.getBehandlingId());
+        Kobling kobling = koblingTjeneste.hent(koblingId);
         LOG.info("Starter registerinnhenting for sak=[{}, {}] med behandling='{}'", kobling.getSaksnummer(), kobling.getYtelseType(),
             kobling.getKoblingReferanse());
 

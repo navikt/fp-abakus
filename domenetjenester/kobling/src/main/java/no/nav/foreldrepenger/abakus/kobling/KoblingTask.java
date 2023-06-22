@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.kobling;
 import no.nav.foreldrepenger.abakus.kobling.repository.LåsRepository;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
+import no.nav.vedtak.log.mdc.MdcExtendedLogContext;
 
 public abstract class KoblingTask implements ProsessTaskHandler {
 
@@ -17,7 +18,9 @@ public abstract class KoblingTask implements ProsessTaskHandler {
 
     @Override
     public void doTask(ProsessTaskData prosessTaskData) {
-        Long koblingId = Long.valueOf(prosessTaskData.getBehandlingId()); // koblingId
+        String nyKoblingId = prosessTaskData.getPropertyValue(TaskConstants.NY_KOBLING_ID);
+        Long koblingId = nyKoblingId != null ? Long.valueOf(nyKoblingId) : Long.valueOf(prosessTaskData.getBehandlingId());
+
         KoblingLås koblingLås = låsRepository.taLås(koblingId);
 
         prosesser(prosessTaskData);
