@@ -45,6 +45,9 @@ public class SigrunTjeneste {
     }
 
     IntervallEntitet justerOpplysningsperiodeNårSisteÅrIkkeErFerdiglignet(Long aktørId, IntervallEntitet opplysningsperiode) {
+        if (opplysningsperiode == null){
+            return null; //fpsak spør unten å oppgi periode
+        }
         // justerer slik at vi henter ett å eldre data når siste år som etterspørs ikke er ferdiglignet enda
         int fomÅr = opplysningsperiode.getFomDato().getYear();
         int tomÅr = opplysningsperiode.getTomDato().getYear();
