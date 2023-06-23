@@ -71,4 +71,5 @@ public class RegisterdataInnhentingTask extends KoblingTask {
         InntektArbeidYtelseGrunnlagBuilder builder = innhentTjeneste.innhentRegisterdata(kobling, informasjonsElementer);
         iayTjeneste.lagre(kobling.getKoblingReferanse(), builder);
     }
+
 }
