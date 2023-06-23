@@ -53,7 +53,9 @@ public class CallbackTask implements ProsessTaskHandler {
     public void doTask(ProsessTaskData data) {
         String callbackUrl = data.getPropertyValue(TaskConstants.CALLBACK_URL);
         String callbackScope = data.getPropertyValue(TaskConstants.CALLBACK_SCOPE);
-        Kobling kobling = koblingTjeneste.hent(Long.valueOf(data.getBehandlingId()));
+        String nyKoblingId = data.getPropertyValue(TaskConstants.NY_KOBLING_ID);
+        Long koblingId = nyKoblingId != null ? Long.valueOf(nyKoblingId) : Long.valueOf(data.getBehandlingId());
+        Kobling kobling = koblingTjeneste.hent(koblingId);
         if (callbackUrl == null || callbackUrl.isEmpty()) {
             LOG.info("Prøver callback uten url for kobling: {} ... Ignorerer", kobling);
             return;
