@@ -53,12 +53,10 @@ public class ContainerContextRunner {
             requestContext.activate();
             var runner = ContainerContextRunner.createRunner();
             try {
-                LOG_CONTEXT.add("koblingId", kobling.getId());
                 LOG_CONTEXT.add("saksnummer", saksnummer);
                 result = runner.submit(call);
             } finally {
                 LOG_CONTEXT.remove("saksnummer");
-                LOG_CONTEXT.remove("koblingId");
                 CDI.current().destroy(runner);
                 requestContext.deactivate();
             }
