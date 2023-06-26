@@ -17,11 +17,14 @@ import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 
 /*
  * Dokumentasjon https://confluence.adeo.no/display/FEL/AAREG+-+Tjeneste+REST+aareg.api
- * Swagger https://modapp-q1.adeo.no/aareg-services/api/swagger-ui.html
+ * Swagger https://aareg-services-q2.dev.intern.nav.no/swagger-ui/index.html?urls.primaryName=aareg.api.v1#/arbeidstaker/finnArbeidsforholdPrArbeidstaker
+ * Swagger V2 https://aareg-services-q2.dev.intern.nav.no/swagger-ui/index.html?urls.primaryName=aareg.api.v2#/arbeidstaker/finnArbeidsforholdPrArbeidstaker
  */
 
 @ApplicationScoped
-@RestClientConfig(tokenConfig = TokenFlow.STS_ADD_CONSUMER, endpointProperty = "aareg.rs.url", endpointDefault = "https://modapp.adeo.no/aareg-services/api/v1/arbeidstaker")
+@RestClientConfig(tokenConfig = TokenFlow.ADAPTIVE_ADD_CONSUMER, endpointProperty = "aareg.rs.url",
+    endpointDefault = "http://aareg-services-nais.arbeidsforhold/api/v1/arbeidstaker",
+    scopesProperty = "aareg.scopes", scopesDefault = "api://prod-fss.arbeidsforhold.aareg-services-nais/.default")
 public class AaregRestKlient {
 
 
