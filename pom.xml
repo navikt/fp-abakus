@@ -36,7 +36,7 @@
 
         <kontrakt.java.version>17</kontrakt.java.version>
 
-		<felles.version>4.2.47</felles.version>
+		<felles.version>4.2.48</felles.version>
 		<prosesstask.version>3.1.29</prosesstask.version>
 		<kontrakter.version>6.2.21</kontrakter.version>
 
@@ -281,7 +281,7 @@
                     <dependency>
                         <groupId>no.nav.k9.dev</groupId>
                         <artifactId>dev-jakarta-transform</artifactId>
-                        <version>0.6.6</version>
+                        <version>0.6.7</version>
                     </dependency>
                     <dependency>
                         <groupId>ant-contrib</groupId>
