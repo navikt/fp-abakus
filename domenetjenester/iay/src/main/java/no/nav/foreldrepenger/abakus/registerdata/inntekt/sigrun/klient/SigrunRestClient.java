@@ -29,7 +29,8 @@ import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
-@RestClientConfig(tokenConfig = TokenFlow.STS_CC, endpointProperty = "sigrunrestberegnetskatt.url", endpointDefault = "https://sigrun.nais.adeo.no")
+@RestClientConfig(tokenConfig = TokenFlow.AZUREAD_CC, endpointProperty = "sigrunrestberegnetskatt.url", endpointDefault = "http://sigrun.team-inntekt",
+    scopesProperty = "sigrunrestberegnetskatt.scopes", scopesDefault = "api://prod-fss.team-inntekt.sigrun/.default")
 public class SigrunRestClient {
     private static final Logger LOG = LoggerFactory.getLogger(SigrunRestClient.class);
     private final OidcContextSupplier CONTEXT_SUPPLIER = new OidcContextSupplier();
