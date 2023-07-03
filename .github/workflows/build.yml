@@ -21,8 +21,6 @@ on:
 jobs:
   build-app:
     name: Build
-    permissions:
-      packages: write
     uses: navikt/fp-gha-workflows/.github/workflows/build-app-postgres.yml@main
     with:
       postgres-user: fpabakus_unit
