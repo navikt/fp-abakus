@@ -21,6 +21,8 @@ on:
 jobs:
   build-app:
     name: Build
+    permissions:
+      packages: write
     uses: navikt/fp-gha-workflows/.github/workflows/build-app-postgres.yml@main
     with:
       postgres-user: fpabakus_unit
@@ -66,7 +68,6 @@ jobs:
     with:
       build-version: ${{ needs.build-app.outputs.build-version }}
       test-suite: fpsak
-    secrets: inherit
 
   verdikjede-tester:
     name: Verdikjedetester
@@ -76,7 +77,6 @@ jobs:
     with:
       build-version: ${{ needs.build-app.outputs.build-version }}
       test-suite: verdikjede
-    secrets: inherit
 
   notify:
     name: Notify
