@@ -34,6 +34,9 @@ jobs:
     name: Update
     if: github.ref_name == 'master'
     needs: build-app
+    permissions:
+      contents: write
+      pull-requests: read
     uses: navikt/fp-gha-workflows/.github/workflows/release-drafter.yml@main
     secrets: inherit
 
