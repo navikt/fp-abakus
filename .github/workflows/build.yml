@@ -21,6 +21,8 @@ on:
 jobs:
   build-app:
     name: Build
+    permissions:
+      packages: write
     uses: navikt/fp-gha-workflows/.github/workflows/build-app-postgres.yml@main
     with:
       postgres-user: fpabakus_unit
@@ -32,6 +34,9 @@ jobs:
     name: Update
     if: github.ref_name == 'master'
     needs: build-app
+    permissions:
+      contents: write
+      pull-requests: read
     uses: navikt/fp-gha-workflows/.github/workflows/release-drafter.yml@main
     secrets: inherit
 
@@ -66,7 +71,6 @@ jobs:
     with:
       build-version: ${{ needs.build-app.outputs.build-version }}
       test-suite: fpsak
-    secrets: inherit
 
   verdikjede-tester:
     name: Verdikjedetester
@@ -76,7 +80,6 @@ jobs:
     with:
       build-version: ${{ needs.build-app.outputs.build-version }}
       test-suite: verdikjede
-    secrets: inherit
 
   notify:
     name: Notify
