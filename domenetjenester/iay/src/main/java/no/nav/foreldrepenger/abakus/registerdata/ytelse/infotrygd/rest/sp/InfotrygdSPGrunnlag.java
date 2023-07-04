@@ -8,7 +8,9 @@ import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 
 @SP
 @Dependent
-@RestClientConfig(tokenConfig = TokenFlow.STS_CC, endpointProperty = "fpabakus.it.sp.grunnlag.url", endpointDefault = "http://infotrygd-sykepenger-fp.default/grunnlag")
+@RestClientConfig(tokenConfig = TokenFlow.AZUREAD_CC, endpointProperty = "fpabakus.it.sp.grunnlag.url",
+    endpointDefault = "http://infotrygd-sykepenger-fp.infotrygd/grunnlag",
+    scopesProperty = "fpabakus.it.sp.scopes", scopesDefault = "api://prod-fss.infotrygd.infotrygd-sykepenger-fp/.default")
 public class InfotrygdSPGrunnlag extends AbstractInfotrygdGrunnlag {
 
     public InfotrygdSPGrunnlag() {
