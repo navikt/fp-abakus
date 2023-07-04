@@ -39,7 +39,7 @@ public class Beløp implements Serializable, IndexKey, TraverseValue {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { skalertVerdi() };
+        Object[] keyParts = {skalertVerdi()};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -65,10 +65,7 @@ public class Beløp implements Serializable, IndexKey, TraverseValue {
 
     @Override
     public String toString() {
-        return "Beløp{" +
-            "verdi=" + verdi +
-            ", skalertVerdi=" + skalertVerdi() +
-            '}';
+        return "Beløp{" + "verdi=" + verdi + ", skalertVerdi=" + skalertVerdi() + '}';
     }
 
     public int compareTo(Beløp annetBeløp) {

@@ -28,7 +28,7 @@ import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 @Table(name = "IAY_INNTEKTSMELDINGER")
 public class InntektsmeldingAggregat extends BaseEntitet {
 
-    private static final Logger logger = LoggerFactory.getLogger(InntektsmeldingAggregat.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InntektsmeldingAggregat.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_INNTEKTSMELDINGER")
@@ -43,6 +43,7 @@ public class InntektsmeldingAggregat extends BaseEntitet {
     private long versjon;
 
     public InntektsmeldingAggregat() {
+        // Plattform (CDI, Hibernate, Jackson)
     }
 
     InntektsmeldingAggregat(InntektsmeldingAggregat inntektsmeldingAggregat) {
@@ -50,23 +51,18 @@ public class InntektsmeldingAggregat extends BaseEntitet {
     }
 
     public InntektsmeldingAggregat(Collection<Inntektsmelding> inntektsmeldinger) {
-        this.inntektsmeldinger.addAll(inntektsmeldinger.stream()
-            .sorted(Inntektsmelding.COMP_REKKEFØLGE)
-            .map(i -> {
-                var inntektsmeldingEntitet = new Inntektsmelding(i);
-                inntektsmeldingEntitet.setInntektsmeldinger(this);
-                return inntektsmeldingEntitet;
-            })
-            .collect(Collectors.toList()));
+        this.inntektsmeldinger.addAll(inntektsmeldinger.stream().sorted(Inntektsmelding.COMP_REKKEFØLGE).map(i -> {
+            var inntektsmeldingEntitet = new Inntektsmelding(i);
+            inntektsmeldingEntitet.setInntektsmeldinger(this);
+            return inntektsmeldingEntitet;
+        }).collect(Collectors.toList()));
     }
 
     /**
      * Get alle inntektsmeldinger (både de som skal brukes og ikke brukes).
      */
     public List<Inntektsmelding> getInntektsmeldinger() {
-        return inntektsmeldinger.stream()
-            .sorted(Inntektsmelding.COMP_REKKEFØLGE)
-            .collect(Collectors.toUnmodifiableList());
+        return inntektsmeldinger.stream().sorted(Inntektsmelding.COMP_REKKEFØLGE).collect(Collectors.toUnmodifiableList());
     }
 
     public Long getId() {
@@ -109,8 +105,8 @@ public class InntektsmeldingAggregat extends BaseEntitet {
             .collect(Collectors.toCollection(HashSet::new));
         boolean fjernet = inntektsmeldinger.removeIf(it -> skalFjerneInntektsmelding(it, inntektsmelding));
         inntektsmeldinger.stream().filter(it -> it.gjelderSammeArbeidsforhold(inntektsmelding) && !fjernet).findFirst().ifPresent(e -> {
-            logger.info("Persistert inntektsmelding med journalpostid {} er nyere enn den mottatte med journalpostid {}. Ignoreres", e.getJournalpostId(),
-                inntektsmelding.getJournalpostId());
+            LOG.info("Persistert inntektsmelding med journalpostid {} er nyere enn den mottatte med journalpostid {}. Ignoreres",
+                e.getJournalpostId(), inntektsmelding.getJournalpostId());
         });
 
         if (fjernet || inntektsmeldinger.stream().noneMatch(it -> it.gjelderSammeArbeidsforhold(inntektsmelding))) {
@@ -140,10 +136,12 @@ public class InntektsmeldingAggregat extends BaseEntitet {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || !(o instanceof InntektsmeldingAggregat))
+        }
+        if (o == null || !(o instanceof InntektsmeldingAggregat)) {
             return false;
+        }
         var that = (InntektsmeldingAggregat) o;
         return Objects.equals(inntektsmeldinger, that.inntektsmeldinger);
     }

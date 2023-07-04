@@ -2,12 +2,10 @@ package no.nav.foreldrepenger.abakus.vedtak.tjeneste;
 
 import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.VEDTAK;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -23,37 +21,17 @@ import javax.ws.rs.core.MediaType;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
-import no.nav.abakus.iaygrunnlag.Organisasjon;
-import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
-import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-import no.nav.abakus.iaygrunnlag.request.AktørDatoRequest;
-import no.nav.abakus.iaygrunnlag.request.HentBrukersYtelserIPeriodeRequest;
 import no.nav.abakus.vedtak.ytelse.Aktør;
-import no.nav.abakus.vedtak.ytelse.Desimaltall;
-import no.nav.abakus.vedtak.ytelse.Kildesystem;
-import no.nav.abakus.vedtak.ytelse.Periode;
-import no.nav.abakus.vedtak.ytelse.Status;
 import no.nav.abakus.vedtak.ytelse.Ytelse;
 import no.nav.abakus.vedtak.ytelse.Ytelser;
-import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
-import no.nav.abakus.vedtak.ytelse.v1.anvisning.Anvisning;
-import no.nav.abakus.vedtak.ytelse.v1.anvisning.AnvistAndel;
-import no.nav.abakus.vedtak.ytelse.v1.anvisning.Inntektklasse;
+import no.nav.abakus.vedtak.ytelse.request.VedtakForPeriodeRequest;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
-import no.nav.foreldrepenger.abakus.felles.LoggUtil;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-import no.nav.foreldrepenger.abakus.vedtak.domene.Arbeidsgiver;
-import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelse;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
-import no.nav.foreldrepenger.abakus.vedtak.domene.YtelseAnvist;
-import no.nav.vedtak.konfig.Tid;
+import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ConvertToYtelseV1;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
@@ -65,14 +43,6 @@ import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 @ApplicationScoped
 @Transactional
 public class YtelseRestTjeneste {
-
-    private static final Set<YtelseType> GYLDIGE_YTELSER = Set.of(YtelseType.PLEIEPENGER_NÆRSTÅENDE,
-        YtelseType.FORELDREPENGER,
-        YtelseType.OMSORGSPENGER,
-        YtelseType.OPPLÆRINGSPENGER,
-        YtelseType.FRISINN,
-        YtelseType.SVANGERSKAPSPENGER,
-        YtelseType.PLEIEPENGER_SYKT_BARN);
 
     private VedtakYtelseRepository ytelseRepository;
     private AktørTjeneste aktørTjeneste;
@@ -86,206 +56,62 @@ public class YtelseRestTjeneste {
         this.aktørTjeneste = aktørTjeneste;
     }
 
-    private static no.nav.abakus.iaygrunnlag.Aktør mapArbeidsgiver(Arbeidsgiver arbeidsgiver) {
-        if (arbeidsgiver == null) {
-            return null;
-        }
-        return arbeidsgiver.getOrgnr() != null ?
-            new Organisasjon(arbeidsgiver.getIdentifikator()) :
-            new AktørIdPersonident(arbeidsgiver.getIdentifikator());
-    }
-
+    /**
+     * Intern bruk - kun fra fpsak så langt
+     */
     @POST
-    @Path("/hentVedtakForAktoer")
+    @Path("/hent-vedtak-ytelse")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Henter alle vedtak for en gitt person, evt med periode etter en fom", tags = "ytelse")
     @BeskyttetRessurs(actionType = ActionType.READ, resource = VEDTAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public List<Ytelse> hentVedtak(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
-        LoggUtil.setupLogMdc(request.getYtelse());
+    public List<Ytelse> hentVedtakYtelse(@NotNull @TilpassetAbacAttributt(supplierClass = VedtakForPeriodeRequestAbacDataSupplier.class) @Valid VedtakForPeriodeRequest request) {
 
-        AktørId aktørId = new AktørId(request.getAktør().getIdent());
-        LocalDate fom = request.getDato();
-        LocalDate tom = Tid.TIDENES_ENDE;
-        var ytelser = ytelseRepository.hentYtelserForIPeriode(aktørId, fom, tom).stream()
-            .map(this::mapLagretVedtakTilYtelse)
-            .collect(Collectors.toList());
-
-        return ytelser;
-    }
-
-    @POST
-    @Path("/hent-vedtatte")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Henter alle vedtak for en gitt person, evt med periode etter en fom", tags = "ytelse")
-    @BeskyttetRessurs(actionType = ActionType.READ, resource = VEDTAK)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public List<Ytelse> hentVedtakForPerson(@NotNull @TilpassetAbacAttributt(supplierClass = HentBrukersYtelserIPeriodeRequestAbacDataSupplier.class) @Valid HentBrukersYtelserIPeriodeRequest request) {
-
-        var etterspurteYtelser = request.getYtelser()
-            .stream()
-            .filter(GYLDIGE_YTELSER::contains)
-            .collect(Collectors.toSet());
-
-        if (etterspurteYtelser.isEmpty()) {
+        if (request.getYtelser().isEmpty()) {
             return List.of();
         }
 
+        Set<AktørId> aktørIder = utledAktørIdFraRequest(request.getIdent(), utledTemaFraYtelser(request.getYtelser()));
+        var periode = IntervallEntitet.fraOgMedTilOgMed(request.getPeriode().getFom(), request.getPeriode().getTom());
         var ytelser = new ArrayList<Ytelse>();
-        var aktørIder = aktørTjeneste.hentAktørIderForIdent(new PersonIdent(request.getPersonident().getIdent()), utledTema(etterspurteYtelser));
-
-        LocalDate fom = request.getPeriode().getFom();
-        LocalDate tom = request.getPeriode().getTom();
-
-        var periode = IntervallEntitet.fraOgMedTilOgMed(fom, tom);
-
         for (AktørId aktørId : aktørIder) {
             ytelser.addAll(ytelseRepository.hentYtelserForIPeriode(aktørId, periode)
                 .stream()
-                .filter(it -> etterspurteYtelser.contains(it.getYtelseType()))
-                .map(this::mapLagretVedtakTilYtelse)
+                .filter(it -> request.getYtelser().contains(ConvertToYtelseV1.mapYtelser(it.getYtelseType())))
+                .map(ConvertToYtelseV1::convert)
                 .toList());
         }
 
         return ytelser;
     }
 
-    private YtelseType utledTema(Set<YtelseType> request) {
-        if (request.contains(YtelseType.FORELDREPENGER)) {
+    private Set<AktørId> utledAktørIdFraRequest(Aktør aktør, YtelseType tema) {
+        if (aktør.erAktørId()) {
+            return Set.of(new AktørId(aktør.getVerdi()));
+        }
+        return aktørTjeneste.hentAktørIderForIdent(new PersonIdent(aktør.getVerdi()), tema);
+    }
+
+    private YtelseType utledTemaFraYtelser(Set<Ytelser> request) {
+        if (request.contains(Ytelser.FORELDREPENGER)) {
             return YtelseType.FORELDREPENGER;
         }
 
         return YtelseType.OMSORGSPENGER;
     }
 
-    private Ytelse mapLagretVedtakTilYtelse(VedtakYtelse vedtak) {
-        var ytelse = new YtelseV1();
-        var aktør = new Aktør();
-        aktør.setVerdi(vedtak.getAktør().getId());
-        ytelse.setAktør(aktør);
-        ytelse.setVedtattTidspunkt(vedtak.getVedtattTidspunkt());
-        ytelse.setYtelse(mapYtelser(vedtak.getYtelseType()));
-        ytelse.setSaksnummer(vedtak.getSaksnummer().getVerdi());
-        ytelse.setVedtakReferanse(vedtak.getVedtakReferanse().toString());
-        ytelse.setYtelseStatus(mapStatus(vedtak.getStatus()));
-        ytelse.setKildesystem(mapKildesystem(vedtak.getKilde()));
-        ytelse.setTilleggsopplysninger(vedtak.getTilleggsopplysninger());
-        var periode = new Periode();
-        periode.setFom(vedtak.getPeriode().getFomDato());
-        periode.setTom(vedtak.getPeriode().getTomDato());
-        ytelse.setPeriode(periode);
-        var anvist = vedtak.getYtelseAnvist().stream().map(this::mapLagretAnvist).collect(Collectors.toList());
-        ytelse.setAnvist(anvist);
-        return ytelse;
-    }
+    public static class VedtakForPeriodeRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
-    private Anvisning mapLagretAnvist(YtelseAnvist anvist) {
-        var anvisning = new Anvisning();
-        var periode = new Periode();
-        periode.setFom(anvist.getAnvistFom());
-        periode.setTom(anvist.getAnvistTom());
-        anvisning.setPeriode(periode);
-        anvist.getBeløp().map(Beløp::getVerdi).map(Desimaltall::new).ifPresent(anvisning::setBeløp);
-        anvist.getDagsats().map(Beløp::getVerdi).map(Desimaltall::new).ifPresent(anvisning::setDagsats);
-        anvist.getUtbetalingsgradProsent().map(Stillingsprosent::getVerdi).map(Desimaltall::new).ifPresent(anvisning::setUtbetalingsgrad);
-        anvisning.setAndeler(mapAndeler(anvist));
-
-        return anvisning;
-    }
-
-    private List<AnvistAndel> mapAndeler(YtelseAnvist anvist) {
-        return anvist.getAndeler().stream().map(a -> new AnvistAndel(
-            a.getArbeidsgiver().map(YtelseRestTjeneste::mapArbeidsgiver).orElse(null),
-            a.getArbeidsforholdId(),
-            new Desimaltall(a.getDagsats().getVerdi()),
-            a.getUtbetalingsgradProsent() == null ? null : new Desimaltall(a.getUtbetalingsgradProsent().getVerdi()),
-            a.getRefusjonsgradProsent() == null ? null : new Desimaltall(a.getRefusjonsgradProsent().getVerdi()),
-            fraInntektskategori(a.getInntektskategori())
-        )).collect(Collectors.toList());
-    }
-
-    private Kildesystem mapKildesystem(Fagsystem fagsystem) {
-        return switch (fagsystem) {
-            case FPSAK -> Kildesystem.FPSAK;
-            case K9SAK -> Kildesystem.K9SAK;
-            default -> null;
-        };
-    }
-
-    private Status mapStatus(YtelseStatus ytelseStatus) {
-        return switch (ytelseStatus) {
-            case OPPRETTET, UNDER_BEHANDLING -> Status.UNDER_BEHANDLING;
-            case LØPENDE -> Status.LØPENDE;
-            case AVSLUTTET -> Status.AVSLUTTET;
-            default -> Status.UKJENT;
-        };
-    }
-
-    private Ytelser mapYtelser(YtelseType kodeverk) {
-        return switch (kodeverk) {
-            case PLEIEPENGER_SYKT_BARN -> Ytelser.PLEIEPENGER_SYKT_BARN;
-            case PLEIEPENGER_NÆRSTÅENDE -> Ytelser.PLEIEPENGER_NÆRSTÅENDE;
-            case OMSORGSPENGER -> Ytelser.OMSORGSPENGER;
-            case OPPLÆRINGSPENGER -> Ytelser.OPPLÆRINGSPENGER;
-
-            case ENGANGSTØNAD -> Ytelser.ENGANGSTØNAD;
-            case FORELDREPENGER -> Ytelser.FORELDREPENGER;
-            case SVANGERSKAPSPENGER -> Ytelser.SVANGERSKAPSPENGER;
-
-            case FRISINN -> Ytelser.FRISINN;
-            default -> null;
-        };
-    }
-
-    private static Inntektklasse fraInntektskategori(Inntektskategori inntektskategori) {
-        return switch (inntektskategori) {
-            case ARBEIDSTAKER -> Inntektklasse.ARBEIDSTAKER;
-            case ARBEIDSTAKER_UTEN_FERIEPENGER -> Inntektklasse.ARBEIDSTAKER_UTEN_FERIEPENGER;
-            case FRILANSER -> Inntektklasse.FRILANSER;
-            case SELVSTENDIG_NÆRINGSDRIVENDE -> Inntektklasse.SELVSTENDIG_NÆRINGSDRIVENDE;
-            case DAGPENGER -> Inntektklasse.DAGPENGER;
-            case ARBEIDSAVKLARINGSPENGER -> Inntektklasse.ARBEIDSAVKLARINGSPENGER;
-            case SJØMANN -> Inntektklasse.MARITIM;
-            case DAGMAMMA -> Inntektklasse.DAGMAMMA;
-            case JORDBRUKER -> Inntektklasse.JORDBRUKER;
-            case FISKER -> Inntektklasse.FISKER;
-            default -> Inntektklasse.INGEN;
-        };
-    }
-
-    public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
-        @Override
-        public AbacDataAttributter apply(Object obj) {
-            Ytelse req = (Ytelse) obj;
-            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, req.getAktør().getVerdi());
-        }
-    }
-
-    public static class AktørDatoRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
-
-        public AktørDatoRequestAbacDataSupplier() {
+        public VedtakForPeriodeRequestAbacDataSupplier() {
         }
 
         @Override
         public AbacDataAttributter apply(Object obj) {
-            AktørDatoRequest req = (AktørDatoRequest) obj;
-            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, req.getAktør().getIdent());
+            var req = (VedtakForPeriodeRequest) obj;
+            var attributeType = req.getIdent().erAktørId() ? StandardAbacAttributtType.AKTØR_ID : StandardAbacAttributtType.FNR;
+            return AbacDataAttributter.opprett().leggTil(attributeType, req.getIdent().getVerdi());
         }
     }
-
-    public static class HentBrukersYtelserIPeriodeRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
-
-        public HentBrukersYtelserIPeriodeRequestAbacDataSupplier() {
-        }
-
-        @Override
-        public AbacDataAttributter apply(Object obj) {
-            HentBrukersYtelserIPeriodeRequest req = (HentBrukersYtelserIPeriodeRequest) obj;
-            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.FNR, req.getPersonident().getIdent());
-        }
-    }
-
 
 }

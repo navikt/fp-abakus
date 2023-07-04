@@ -31,18 +31,17 @@ import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
 class MapArbeidsforholdInformasjon {
 
-    private static final Comparator<ArbeidsforholdReferanseDto> COMP_ARBEIDSFORHOLD_REFERANSE = Comparator
-        .comparing((ArbeidsforholdReferanseDto ref) -> ref.getArbeidsgiver().getIdent())
+    private static final Comparator<ArbeidsforholdReferanseDto> COMP_ARBEIDSFORHOLD_REFERANSE = Comparator.comparing(
+            (ArbeidsforholdReferanseDto ref) -> ref.getArbeidsgiver().getIdent())
         .thenComparing(ref -> ref.getArbeidsforholdReferanse() == null ? null : ref.getArbeidsforholdReferanse().getAbakusReferanse(),
             Comparator.nullsLast(Comparator.naturalOrder()));
 
-    private static final Comparator<ArbeidsforholdOverstyringDto> COMP_ARBEIDSFORHOLD_OVERSTYRING = Comparator
-        .comparing((ArbeidsforholdOverstyringDto ov) -> ov.getArbeidsgiver().getIdent())
+    private static final Comparator<ArbeidsforholdOverstyringDto> COMP_ARBEIDSFORHOLD_OVERSTYRING = Comparator.comparing(
+            (ArbeidsforholdOverstyringDto ov) -> ov.getArbeidsgiver().getIdent())
         .thenComparing(ov -> ov.getArbeidsforholdRef() == null ? null : ov.getArbeidsforholdRef().getAbakusReferanse(),
             Comparator.nullsLast(Comparator.naturalOrder()));
 
-    private static final Comparator<Periode> COMP_PERIODE = Comparator
-        .comparing(Periode::getFom, Comparator.nullsFirst(Comparator.naturalOrder()))
+    private static final Comparator<Periode> COMP_PERIODE = Comparator.comparing(Periode::getFom, Comparator.nullsFirst(Comparator.naturalOrder()))
         .thenComparing(Periode::getTom, Comparator.nullsLast(Comparator.naturalOrder()));
 
     static class MapFraDto {
@@ -116,40 +115,36 @@ class MapArbeidsforholdInformasjon {
     static class MapTilDto {
 
         ArbeidsforholdInformasjon map(UUID grunnlagRef, no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon entitet) {
-            if (entitet == null)
+            if (entitet == null) {
                 return null;
+            }
 
             var arbeidsforholdInformasjon = new ArbeidsforholdInformasjon(grunnlagRef);
-            var overstyringer = entitet.getOverstyringer().stream()
-                .map(ao -> {
-                    var dto = new ArbeidsforholdOverstyringDto(mapAktør(ao.getArbeidsgiver()),
-                        mapArbeidsforholdsId(entitet, grunnlagRef, ao.getArbeidsgiver(), ao.getArbeidsforholdRef()))
-                        .medBegrunnelse(ao.getBegrunnelse())
-                        .medBekreftetPermisjon(mapBekreftetPermisjon(ao.getBekreftetPermisjon()))
-                        .medHandling(ao.getHandling())
-                        .medNavn(ao.getArbeidsgiverNavn())
-                        .medStillingsprosent(ao.getStillingsprosent() == null ? null : ao.getStillingsprosent().getVerdi())
-                        .medNyArbeidsforholdRef(
-                            ao.getNyArbeidsforholdRef() == null ? null : mapArbeidsforholdsId(entitet, grunnlagRef, ao.getArbeidsgiver(), ao.getNyArbeidsforholdRef()))
-                        .medArbeidsforholdOverstyrtePerioder(map(ao.getArbeidsforholdOverstyrtePerioder()));
-                    return dto;
-                })
-                .sorted(COMP_ARBEIDSFORHOLD_OVERSTYRING)
-                .collect(Collectors.toList());
+            var overstyringer = entitet.getOverstyringer().stream().map(ao -> {
+                var dto = new ArbeidsforholdOverstyringDto(mapAktør(ao.getArbeidsgiver()),
+                    mapArbeidsforholdsId(entitet, grunnlagRef, ao.getArbeidsgiver(), ao.getArbeidsforholdRef())).medBegrunnelse(ao.getBegrunnelse())
+                    .medBekreftetPermisjon(mapBekreftetPermisjon(ao.getBekreftetPermisjon()))
+                    .medHandling(ao.getHandling())
+                    .medNavn(ao.getArbeidsgiverNavn())
+                    .medStillingsprosent(ao.getStillingsprosent() == null ? null : ao.getStillingsprosent().getVerdi())
+                    .medNyArbeidsforholdRef(
+                        ao.getNyArbeidsforholdRef() == null ? null : mapArbeidsforholdsId(entitet, grunnlagRef, ao.getArbeidsgiver(),
+                            ao.getNyArbeidsforholdRef()))
+                    .medArbeidsforholdOverstyrtePerioder(map(ao.getArbeidsforholdOverstyrtePerioder()));
+                return dto;
+            }).sorted(COMP_ARBEIDSFORHOLD_OVERSTYRING).collect(Collectors.toList());
 
-            var referanser = entitet.getArbeidsforholdReferanser().stream()
+            var referanser = entitet.getArbeidsforholdReferanser()
+                .stream()
                 .map(this::mapArbeidsforholdReferanse)
                 .sorted(COMP_ARBEIDSFORHOLD_REFERANSE)
                 .collect(Collectors.toList());
 
-            return arbeidsforholdInformasjon
-                .medOverstyringer(overstyringer)
-                .medReferanser(referanser);
+            return arbeidsforholdInformasjon.medOverstyringer(overstyringer).medReferanser(referanser);
         }
 
         private List<Periode> map(List<ArbeidsforholdOverstyrtePerioder> perioder) {
-            return perioder == null ? null
-                : perioder.stream()
+            return perioder == null ? null : perioder.stream()
                 .map(ArbeidsforholdOverstyrtePerioder::getOverstyrtePeriode)
                 .map(this::mapPeriode)
                 .sorted(COMP_PERIODE)
@@ -178,7 +173,9 @@ class MapArbeidsforholdInformasjon {
         }
 
         private ArbeidsforholdRefDto mapArbeidsforholdsId(no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon arbeidsforholdInformasjon,
-                                                          UUID grunnlagRef, Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef ref) {
+                                                          UUID grunnlagRef,
+                                                          Arbeidsgiver arbeidsgiver,
+                                                          InternArbeidsforholdRef ref) {
             if (ref == null) {
                 return null;
             }
@@ -200,9 +197,8 @@ class MapArbeidsforholdInformasjon {
         }
 
         private Aktør mapAktør(Arbeidsgiver arbeidsgiver) {
-            return arbeidsgiver.erAktørId()
-                ? new AktørIdPersonident(arbeidsgiver.getAktørId().getId())
-                : new Organisasjon(arbeidsgiver.getOrgnr().getId());
+            return arbeidsgiver.erAktørId() ? new AktørIdPersonident(arbeidsgiver.getAktørId().getId()) : new Organisasjon(
+                arbeidsgiver.getOrgnr().getId());
         }
     }
 }

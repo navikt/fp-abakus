@@ -17,15 +17,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 
-public class IAYMigreringNPETest {
+class IAYMigreringNPETest {
 
     public static Stream<Arguments> provideArguments() throws URISyntaxException {
-        return Stream.of(
-            "/iay_case_001.json",
-            "/iay_case_002.json",
-            "/iay_case_003.json",
-            "/iay_case_004.json",
-            "/iay_case_005.json")
+        return Stream.of("/iay_case_001.json", "/iay_case_002.json", "/iay_case_003.json", "/iay_case_004.json", "/iay_case_005.json")
             .map(v -> Arguments.of(v));
     }
 
@@ -46,9 +41,8 @@ public class IAYMigreringNPETest {
 
     private String readTestCase(String fileName) throws IOException {
         String str = null;
-        try (var is = getClass().getResourceAsStream(fileName);
-                java.util.Scanner s = new java.util.Scanner(is, Charset.forName("UTF-8"));
-                Scanner s2 = s.useDelimiter("\\A")) {
+        try (var is = getClass().getResourceAsStream(fileName); java.util.Scanner s = new java.util.Scanner(is,
+            Charset.forName("UTF-8")); Scanner s2 = s.useDelimiter("\\A")) {
 
             str = s2.hasNext() ? s2.next() : "";
         }

@@ -37,13 +37,12 @@ public class InntektsInformasjon {
     }
 
     public List<Månedsinntekt> getMånedsinntekterUtenomYtelser() {
-        return getMånedsinntekter().stream()
-            .filter(it -> !it.isYtelse())
-            .collect(Collectors.toList());
+        return getMånedsinntekter().stream().filter(it -> !it.isYtelse()).collect(Collectors.toList());
     }
 
     public List<Månedsinntekt> getYtelsesTrygdEllerPensjonInntektSummert() {
-        Map<YtelseNøkkel, List<Månedsinntekt>> ytelseNøkkel = månedsinntekter.stream().filter(Månedsinntekt::isYtelse)
+        Map<YtelseNøkkel, List<Månedsinntekt>> ytelseNøkkel = månedsinntekter.stream()
+            .filter(Månedsinntekt::isYtelse)
             .collect(Collectors.groupingBy(Månedsinntekt::getNøkkel));
 
         List<Månedsinntekt> summert = new ArrayList<>();

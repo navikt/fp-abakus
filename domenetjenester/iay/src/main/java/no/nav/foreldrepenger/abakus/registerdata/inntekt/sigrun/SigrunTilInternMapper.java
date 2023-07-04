@@ -20,9 +20,13 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertsk
 
 
 class SigrunTilInternMapper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SigrunTilInternMapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SigrunTilInternMapper.class);
 
-    static Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> mapFraSigrunTilIntern(Map<Year, List<BeregnetSkatt>> beregnetSkatt, Map<Year, Optional<SSGResponse>> summertskattegrunnlagMap) {
+    private SigrunTilInternMapper() {
+    }
+
+    static Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> mapFraSigrunTilIntern(Map<Year, List<BeregnetSkatt>> beregnetSkatt,
+                                                                                          Map<Year, Optional<SSGResponse>> summertskattegrunnlagMap) {
         Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> årTilInntektMap = new HashMap<>();
 
         mapBeregnetSkatt(beregnetSkatt, årTilInntektMap);
@@ -30,41 +34,44 @@ class SigrunTilInternMapper {
         return årTilInntektMap;
     }
 
-    private static void mapSummertskattegrunnlag(Map<Year, Optional<SSGResponse>> summertskattegrunnlagMap, Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> årTilInntektMap) {
+    private static void mapSummertskattegrunnlag(Map<Year, Optional<SSGResponse>> summertskattegrunnlagMap,
+                                                 Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> årTilInntektMap) {
         if (!summertskattegrunnlagMap.isEmpty()) {
             Set<Map.Entry<Year, Optional<SSGResponse>>> entrySet = summertskattegrunnlagMap.entrySet();
             for (Map.Entry<Year, Optional<SSGResponse>> entry : entrySet) {
-                boolean harSummertskattegrunnlagForÅr = entry.getValue().isPresent();
-                if (harSummertskattegrunnlagForÅr) {
-                    SSGResponse ssgResponse = entry.getValue().get();
-                    Optional<SSGGrunnlag> ssggrunnlag = ssgResponse.svalbardGrunnlag()
-                        .stream()
-                        .filter(f -> TekniskNavnMapper.fraSigrunNavn(f.tekniskNavn()) != null)
-                        .findFirst();
-                    ssggrunnlag.ifPresent(grunnlag -> {
-                        IntervallEntitet datoIntervallEntitet = lagDatoIntervall(entry.getKey());
-                        InntektspostType inntektspostType = TekniskNavnMapper.fraSigrunNavn(grunnlag.tekniskNavn());
-                        Map<InntektspostType, BigDecimal> inntektspost = årTilInntektMap.get(datoIntervallEntitet);
-                        if (inntektspost == null) {
-                            Map<InntektspostType, BigDecimal> typeTilVerdiMap = new HashMap<>();
-                            typeTilVerdiMap.put(inntektspostType, new BigDecimal(grunnlag.beloep()));
-                            årTilInntektMap.put(datoIntervallEntitet, typeTilVerdiMap);
-                        } else {
-                            BigDecimal beløp = new BigDecimal(grunnlag.beloep());
-                            if (inntektspost.get(inntektspostType) == null) {
-                                inntektspost.put(inntektspostType, new BigDecimal(grunnlag.beloep()));
-                            } else {
-                                inntektspost.replace(inntektspostType, inntektspost.get(InntektspostType.LØNN).add(beløp));
-                            }
-                        }
-                        LOGGER.info("Lagt til {} fra summertskattegrunnlag for svalbard år {}", grunnlag.beloep(), entry.getKey());
-                    });
-                }
+                entry.getValue().ifPresent(ssgResponse -> leggTilSSG(årTilInntektMap, entry.getKey(), ssgResponse));
             }
         }
     }
 
-    private static void mapBeregnetSkatt(Map<Year, List<BeregnetSkatt>> beregnetSkatt, Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> årTilInntektMap) {
+    private static void leggTilSSG(Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> årTilInntektMap,
+                                  Year år, SSGResponse ssgResponse) {
+        Optional<SSGGrunnlag> ssggrunnlag = ssgResponse.svalbardGrunnlag()
+            .stream()
+            .filter(f -> TekniskNavnMapper.fraSigrunNavn(f.tekniskNavn()) != null)
+            .findFirst();
+        ssggrunnlag.ifPresent(grunnlag -> {
+            IntervallEntitet datoIntervallEntitet = lagDatoIntervall(år);
+            InntektspostType inntektspostType = TekniskNavnMapper.fraSigrunNavn(grunnlag.tekniskNavn());
+            Map<InntektspostType, BigDecimal> inntektspost = årTilInntektMap.get(datoIntervallEntitet);
+            if (inntektspost == null) {
+                Map<InntektspostType, BigDecimal> typeTilVerdiMap = new HashMap<>();
+                typeTilVerdiMap.put(inntektspostType, new BigDecimal(grunnlag.beloep()));
+                årTilInntektMap.put(datoIntervallEntitet, typeTilVerdiMap);
+            } else {
+                BigDecimal beløp = new BigDecimal(grunnlag.beloep());
+                if (inntektspost.get(inntektspostType) == null) {
+                    inntektspost.put(inntektspostType, new BigDecimal(grunnlag.beloep()));
+                } else {
+                    inntektspost.replace(inntektspostType, inntektspost.get(InntektspostType.LØNN).add(beløp));
+                }
+            }
+            LOG.info("Lagt til {} fra summertskattegrunnlag for svalbard år {}", grunnlag.beloep(), år);
+        });
+    }
+
+    private static void mapBeregnetSkatt(Map<Year, List<BeregnetSkatt>> beregnetSkatt,
+                                         Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> årTilInntektMap) {
         for (Map.Entry<Year, List<BeregnetSkatt>> entry : beregnetSkatt.entrySet()) {
             IntervallEntitet intervallEntitet = lagDatoIntervall(entry.getKey());
             Map<InntektspostType, BigDecimal> typeTilVerdiMap = new HashMap<>();

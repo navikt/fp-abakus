@@ -21,10 +21,9 @@ public class KoblingLås {
 
     void setKoblingId(long koblingId) {
         if (this.koblingId != null && !Objects.equals(koblingId, this.koblingId)) {
-            throw new IllegalStateException(
-                "Kan ikke endre koblingId til annen verdi, var [" + //$NON-NLS-1$
-                    this.koblingId + "], forsøkte å sette til [" + //$NON-NLS-1$ // NOSONAR
-                    koblingId + "]"); //$NON-NLS-1$ // NOSONAR
+            throw new IllegalStateException("Kan ikke endre koblingId til annen verdi, var [" +
+                this.koblingId + "], forsøkte å sette til [" +
+                koblingId + "]");
         }
         this.koblingId = koblingId;
     }
@@ -47,8 +46,7 @@ public class KoblingLås {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() +
-            "<koblingId=" + getKoblingId() + //$NON-NLS-1$
-            ">"; //$NON-NLS-1$
+        return getClass().getSimpleName() + "<koblingId=" + getKoblingId() +
+            ">";
     }
 }

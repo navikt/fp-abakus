@@ -12,6 +12,6 @@ public final class AbakusBeskyttetRessursAttributt {
     public static final String VEDTAK = "no.nav.abac.attributter.resource.duplo.abakus.vedtak";
     public static final String DRIFT = "no.nav.abac.attributter.resource.duplo.abakus.drift";
 
-    public static final Set<String> ALLE_GODKJENTE_KODER =
-            Set.of(ABAKUS, GRUNNLAG, ARBEIDSFORHOLD, INNTEKSTMELDING, SØKNAD, REGISTERDATA, VEDTAK, DRIFT);
+    public static final Set<String> ALLE_GODKJENTE_KODER = Set.of(ABAKUS, GRUNNLAG, ARBEIDSFORHOLD, INNTEKSTMELDING, SØKNAD, REGISTERDATA, VEDTAK,
+        DRIFT);
 }

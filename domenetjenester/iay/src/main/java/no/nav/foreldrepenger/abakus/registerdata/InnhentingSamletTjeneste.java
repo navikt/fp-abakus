@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +29,7 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FinnInntekt
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortTjeneste;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.FpwsproxyKlient;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.InnhentingInfotrygdTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseGrunnlag;
@@ -43,33 +42,30 @@ import no.nav.foreldrepenger.konfig.Environment;
 @ApplicationScoped
 public class InnhentingSamletTjeneste {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InnhentingSamletTjeneste.class);
-
+    private static final Logger LOG = LoggerFactory.getLogger(InnhentingSamletTjeneste.class);
     private static final Set<YtelseType> LØNNSKOMP_FOR_YTELSER = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER);
+    private final boolean isDev = Environment.current().isDev();
+    private final boolean isLocal = Environment.current().isLocal();
 
     private ArbeidsforholdTjeneste arbeidsforholdTjeneste;
     private InntektTjeneste inntektTjeneste;
-    private MeldekortTjeneste meldekortTjeneste;
     private FpwsproxyKlient fpwsproxyKlient;
     private InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste;
     private LønnskompensasjonRepository lønnskompensasjonRepository;
-    private boolean isDev = Environment.current().isDev();
-    private boolean isLocal = Environment.current().isLocal();
 
     InnhentingSamletTjeneste() {
         //CDI
     }
 
     @Inject
-    public InnhentingSamletTjeneste(ArbeidsforholdTjeneste arbeidsforholdTjeneste,  // NOSONAR
+    public InnhentingSamletTjeneste(ArbeidsforholdTjeneste arbeidsforholdTjeneste,
+
                                     InntektTjeneste inntektTjeneste,
                                     InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste,
                                     LønnskompensasjonRepository lønnskompensasjonRepository,
-                                    MeldekortTjeneste meldekortTjeneste,
                                     FpwsproxyKlient fpwsproxyKlient) {
         this.arbeidsforholdTjeneste = arbeidsforholdTjeneste;
         this.inntektTjeneste = inntektTjeneste;
-        this.meldekortTjeneste = meldekortTjeneste;
         this.fpwsproxyKlient = fpwsproxyKlient;
         this.innhentingInfotrygdTjeneste = innhentingInfotrygdTjeneste;
         this.lønnskompensasjonRepository = lønnskompensasjonRepository;
@@ -90,16 +86,17 @@ public class InnhentingSamletTjeneste {
 
     public List<Månedsinntekt> getLønnskompensasjon(AktørId aktørId, IntervallEntitet periode) {
         List<Månedsinntekt> resultat = new ArrayList<>();
-        lønnskompensasjonRepository.hentLønnskompensasjonForIPeriode(aktørId, periode.getFomDato(), periode.getTomDato()).stream()
+        lønnskompensasjonRepository.hentLønnskompensasjonForIPeriode(aktørId, periode.getFomDato(), periode.getTomDato())
+            .stream()
             .filter(lk -> lk.getBeløp().getVerdi().compareTo(BigDecimal.ZERO) > 0)
             .forEach(lk -> resultat.addAll(periodiserLønnskompensasjon(lk)));
         return resultat;
     }
 
     private List<Månedsinntekt> periodiserLønnskompensasjon(LønnskompensasjonVedtak vedtak) {
-        return vedtak.getAnvistePerioder().stream()
-            .map(a -> new Månedsinntekt.Builder()
-                .medMåned(YearMonth.from(a.getAnvistFom()))
+        return vedtak.getAnvistePerioder()
+            .stream()
+            .map(a -> new Månedsinntekt.Builder().medMåned(YearMonth.from(a.getAnvistFom()))
                 .medBeløp(a.getBeløp().map(Beløp::getVerdi).orElse(BigDecimal.ZERO))
                 .medArbeidsgiver(vedtak.getOrgNummer().getId())
                 .medYtelse(false)
@@ -108,11 +105,15 @@ public class InnhentingSamletTjeneste {
             .collect(Collectors.toList());
     }
 
-    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> getArbeidsforhold(AktørId aktørId, PersonIdent ident, IntervallEntitet opplysningsPeriode) {
+    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> getArbeidsforhold(AktørId aktørId,
+                                                                                    PersonIdent ident,
+                                                                                    IntervallEntitet opplysningsPeriode) {
         return arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident, aktørId, opplysningsPeriode);
     }
 
-    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> getArbeidsforholdFrilans(AktørId aktørId, PersonIdent ident, IntervallEntitet opplysningsPeriode) {
+    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> getArbeidsforholdFrilans(AktørId aktørId,
+                                                                                           PersonIdent ident,
+                                                                                           IntervallEntitet opplysningsPeriode) {
         return arbeidsforholdTjeneste.finnArbeidsforholdFrilansForIdentIPerioden(ident, aktørId, opplysningsPeriode);
     }
 
@@ -128,42 +129,16 @@ public class InnhentingSamletTjeneste {
             return Collections.emptyList();
         }
         if (isDev) {
-            return innhentingInfotrygdTjeneste.getSPøkelseYtelserFailSoft(ident);
+            return innhentingInfotrygdTjeneste.getSPøkelseYtelserFailSoft(ident, periode.getFomDato());
         }
-        return innhentingInfotrygdTjeneste.getSPøkelseYtelser(ident);
+        return innhentingInfotrygdTjeneste.getSPøkelseYtelser(ident, periode.getFomDato());
     }
 
     public List<MeldekortUtbetalingsgrunnlagSak> hentDagpengerAAP(PersonIdent ident, IntervallEntitet opplysningsPeriode) {
         var fom = opplysningsPeriode.getFomDato();
         var tom = opplysningsPeriode.getTomDato();
-        var saker = meldekortTjeneste.hentMeldekortListe(ident, fom, tom);
-        if (isDev) {
-            hentDagpengerAAPFraFpWsProxyFailSafe(ident, fom, tom, saker);
-        }
+        var saker = fpwsproxyKlient.hentDagpengerAAP(ident, fom, tom);
         return filtrerYtelserTjenester(saker);
-    }
-
-    private void hentDagpengerAAPFraFpWsProxyFailSafe(PersonIdent ident, LocalDate fom, LocalDate tom, List<MeldekortUtbetalingsgrunnlagSak> saker) {
-        try {
-            var sakerFpWsProxy = fpwsproxyKlient.hentDagpengerAAP(ident, fom, tom);
-            if (!erLikeMeldekortUtbetalingsgrunnlagSak(saker, sakerFpWsProxy)) {
-                LOGGER.info("""
-                AVVIK FUNNET: Direkte integrasjon mot arena samsvarer ikke med respons mottatt fra proxytjenesten fp-ws-proxy.
-                    Arena: {},
-                    Fp-ws-proxy: {}
-                """, saker, sakerFpWsProxy);
-            }
-        } catch (Exception e) {
-            LOGGER.info("Kall mot fp-ws-proxy api for arena feilet!", e);
-        }
-    }
-
-    private boolean erLikeMeldekortUtbetalingsgrunnlagSak(List<MeldekortUtbetalingsgrunnlagSak> l1, List<MeldekortUtbetalingsgrunnlagSak> l2) {
-        if (l1 == null && l2 == null)
-            return true;
-        if (l1 == null || l2 == null)
-            return false;
-        return l1.size() == l2.size() && l2.containsAll(l1);
     }
 
     private List<MeldekortUtbetalingsgrunnlagSak> filtrerYtelserTjenester(List<MeldekortUtbetalingsgrunnlagSak> saker) {
@@ -179,8 +154,8 @@ public class InnhentingSamletTjeneste {
                 loggArenaIgnorert("meldekort", sak.getSaksnummer());
             } else if (sak.getVedtaksPeriodeFom() == null && sak.getMeldekortene().isEmpty()) {
                 loggArenaIgnorert("vedtaksDato", sak.getSaksnummer());
-            } else if (sak.getVedtaksPeriodeTom() != null && sak.getVedtaksPeriodeTom().isBefore(sak.getVedtaksPeriodeFom())
-                && sak.getMeldekortene().isEmpty()) {
+            } else if (sak.getVedtaksPeriodeTom() != null && sak.getVedtaksPeriodeTom().isBefore(sak.getVedtaksPeriodeFom()) && sak.getMeldekortene()
+                .isEmpty()) {
                 loggArenaTomFørFom(sak.getSaksnummer());
             } else {
                 filtrert.add(sak);
@@ -190,11 +165,11 @@ public class InnhentingSamletTjeneste {
     }
 
     private void loggArenaIgnorert(String ignorert, Saksnummer saksnummer) {
-        LOGGER.info("FP-112843 Ignorerer Arena-sak uten {}, saksnummer: {}", ignorert, saksnummer);
+        LOG.info("FP-112843 Ignorerer Arena-sak uten {}, saksnummer: {}", ignorert, saksnummer);
     }
 
     private void loggArenaTomFørFom(Saksnummer saksnummer) {
-        LOGGER.info("FP-597341 Ignorerer Arena-sak med vedtakTom før vedtakFom, saksnummer: {}", saksnummer);
+        LOG.info("FP-597341 Ignorerer Arena-sak med vedtakTom før vedtakFom, saksnummer: {}", saksnummer);
     }
 
 }

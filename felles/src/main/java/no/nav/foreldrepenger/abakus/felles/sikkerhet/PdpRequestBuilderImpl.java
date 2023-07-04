@@ -1,7 +1,11 @@
 package no.nav.foreldrepenger.abakus.felles.sikkerhet;
 
+import java.util.List;
+
 import javax.enterprise.context.ApplicationScoped;
 
+import no.nav.foreldrepenger.konfig.Cluster;
+import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.PdpRequestBuilder;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
@@ -15,7 +19,10 @@ import no.nav.vedtak.sikkerhet.abac.pipdata.PipFagsakStatus;
 @ApplicationScoped
 public class PdpRequestBuilderImpl implements PdpRequestBuilder {
 
+    private static final Cluster CLUSTER = Environment.current().getCluster();
     private static final String ABAC_DOMAIN = "duplo";
+    private static final List<String> INTERNAL_CLUSTER_NAMESPACE = List.of(CLUSTER.clusterName() + ":k9saksbehandling",
+        CLUSTER.clusterName() + ":teamforeldrepenger");
 
     @Override
     public String abacDomene() {
@@ -31,5 +38,10 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
             .leggTilRessurs(DuploDataKeys.FAGSAK_STATUS, PipFagsakStatus.UNDER_BEHANDLING)
             .leggTilRessurs(DuploDataKeys.BEHANDLING_STATUS, PipBehandlingStatus.UTREDES)
             .build();
+    }
+
+    @Override
+    public boolean internAzureConsumer(String azpName) {
+        return INTERNAL_CLUSTER_NAMESPACE.stream().anyMatch(azpName::startsWith);
     }
 }

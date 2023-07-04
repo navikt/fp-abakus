@@ -31,7 +31,7 @@
 		</dependency>
         <dependency>
             <groupId>no.nav.vedtak.prosesstask</groupId>
-            <artifactId>prosesstask-legacy</artifactId>
+            <artifactId>prosesstask-kontekst</artifactId>
         </dependency>
 
 		<!-- Test -->

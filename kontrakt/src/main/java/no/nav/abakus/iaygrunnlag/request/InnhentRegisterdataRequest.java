@@ -25,6 +25,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 public class InnhentRegisterdataRequest {
 
     private static final String URL_PATTERN = "^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
+    private static final String SCOPE_PATTERN = "^(api?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
 
     /**
      * Saksnummer alle grunnlag og koblinger er linket til.
@@ -49,6 +50,10 @@ public class InnhentRegisterdataRequest {
     @Valid
     private Periode opplysningsperiode;
 
+    @JsonProperty(value = "opplysningsperiodeSkattegrunnlag")
+    @Valid
+    private Periode opplysningsperiodeSkattegrunnlag;
+
     @JsonProperty(value = "aktør", required = true)
     @NotNull
     @Valid
@@ -64,12 +69,18 @@ public class InnhentRegisterdataRequest {
 
     @JsonProperty(value = "elementer")
     @Valid
-    private Set<RegisterdataType> elementer = Set.of(RegisterdataType.ARBEIDSFORHOLD, RegisterdataType.INNTEKT_PENSJONSGIVENDE, RegisterdataType.YTELSE);
+    private Set<RegisterdataType> elementer = Set.of(RegisterdataType.ARBEIDSFORHOLD, RegisterdataType.INNTEKT_PENSJONSGIVENDE,
+        RegisterdataType.YTELSE);
 
     @JsonProperty(value = "callbackUrl")
     @Valid
     @Pattern(regexp = URL_PATTERN, message = "callbackUrl [${validatedValue}] matcher ikke tillatt url pattern [{regexp}]")
     private String callbackUrl;
+
+    @JsonProperty(value = "callbackScope")
+    @Valid
+    @Pattern(regexp = SCOPE_PATTERN, message = "callbackScope [${validatedValue}] matcher ikke tillatt scope pattern [{regexp}]")
+    private String callbackScope;
 
     public InnhentRegisterdataRequest(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
                                       @JsonProperty(value = "referanse", required = true) @Valid @NotNull UUID referanse,
@@ -114,6 +125,14 @@ public class InnhentRegisterdataRequest {
         return opplysningsperiode;
     }
 
+    public Periode getOpplysningsperiodeSkattegrunnlag() {
+        return opplysningsperiodeSkattegrunnlag;
+    }
+
+    public void setOpplysningsperiodeSkattegrunnlag(Periode opplysningsperiodeSkattegrunnlag) {
+        this.opplysningsperiodeSkattegrunnlag = opplysningsperiodeSkattegrunnlag;
+    }
+
     public Periode getOpptjeningsperiode() {
         return opptjeningsperiode;
     }
@@ -128,6 +147,14 @@ public class InnhentRegisterdataRequest {
 
     public void setCallbackUrl(String callbackUrl) {
         this.callbackUrl = callbackUrl;
+    }
+
+    public String getCallbackScope() {
+        return callbackScope;
+    }
+
+    public void setCallbackScope(String callbackScope) {
+        this.callbackScope = callbackScope;
     }
 
     public Set<RegisterdataType> getElementer() {

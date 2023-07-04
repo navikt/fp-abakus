@@ -15,15 +15,15 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.InnhentingInfo
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 
 @ExtendWith(MockitoExtension.class)
-public class InfotrygdTjenesteImplTest {
+class InfotrygdTjenesteImplTest {
     private static final String FNR = "01234567890";
-    private static final LocalDate KONFIG_FOM = LocalDate.of(2018,7,1);
+    private static final LocalDate KONFIG_FOM = LocalDate.of(2018, 7, 1);
 
     @Mock
     private InnhentingInfotrygdTjeneste samletTjeneste;
 
     @Test
-    public void skal_kalle_consumer_og_oversette_response() throws Exception {
+    void skal_kalle_consumer_og_oversette_response() throws Exception {
         // Arrange
         var response = samletTjeneste.getInfotrygdYtelser(PersonIdent.fra(FNR), IntervallEntitet.fraOgMed(KONFIG_FOM));
         assertThat(response).isEmpty();

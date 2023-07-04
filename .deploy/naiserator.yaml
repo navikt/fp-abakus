@@ -1,0 +1,94 @@
+kind: Application
+apiVersion: nais.io/v1alpha1
+metadata:
+  name: fpabakus
+  namespace: teamforeldrepenger
+  labels:
+    team: teamforeldrepenger
+spec:
+  image: {{image}}
+  port: 8080
+  ingresses:
+  {{#each ingresses as |url|}}
+    - {{url}}
+  {{/each}}
+  liveness:
+    path: /fpabakus/internal/health/isAlive
+    initialDelay: 10
+    periodSeconds: 10
+    failureThreshold: 20
+    timeout: 3
+  readiness:
+    path: /fpabakus/internal/health/isReady
+    initialDelay: 10
+    periodSeconds: 10
+    failureThreshold: 20
+    timeout: 3
+  preStopHook:
+    http:
+      path: /fpabakus/internal/health/preStop
+  prometheus:
+    enabled: true
+    path: /fpabakus/internal/metrics/prometheus
+  replicas:
+    min: {{minReplicas}}
+    max: {{maxReplicas}}
+    cpuThresholdPercentage: 80
+  resources:
+    limits:
+      cpu: "{{limits.cpu}}"
+      memory: "{{limits.mem}}"
+    requests:
+      cpu: "{{requests.cpu}}"
+      memory: "{{requests.mem}}"
+  kafka:
+    pool: {{kafkaPool}}
+  secureLogs:
+    enabled: true
+  vault:
+    enabled: true
+    paths:
+      - mountPath: /var/run/secrets/nais.io/serviceuser
+        kvPath: {{serviceuserkv}}
+      - mountPath: /var/run/secrets/nais.io/appdynamics
+        kvPath: /apikey/appdynamics/{{environment}}
+  env:
+  {{#each env}}
+   - name: {{@key}}
+     value: "{{this}}"
+  {{/each}}
+  azure:
+    application:
+      enabled: true
+      claims:
+        extra:
+          - "NAVident"
+          - "azp_name"
+        groups:
+          {{#each groups as |group|}}
+          - id: "{{group}}"
+          {{/each}}
+  {{#if AZURE_IAC_RULES}}
+  accessPolicy:
+    inbound:
+      rules:
+      {{#each AZURE_IAC_RULES}}
+      - application: {{app}}
+        namespace: {{namespace}}
+        cluster: {{cluster}}
+        {{#if scopes}}
+        permissions:
+          scopes:
+          {{#each scopes}}
+            - "{{this}}"
+          {{/each}}
+        {{/if}}
+        {{#if roles}}
+        permissions:
+          roles:
+          {{#each roles}}
+            - "{{this}}"
+          {{/each}}
+        {{/if}}
+      {{/each}}
+  {{/if}}

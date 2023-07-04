@@ -17,7 +17,9 @@ public final class IndexKeyComposer {
         // hidden
     }
 
-    /** Hjelpe metode for å effektivt generere keys. */
+    /**
+     * Hjelpe metode for å effektivt generere keys.
+     */
     public static String createKey(Object... keyParts) {
         StringBuilder sb = new StringBuilder(keyParts.length * 10);
         int max = keyParts.length;
@@ -45,8 +47,8 @@ public final class IndexKeyComposer {
             return ((IndexKey) obj).getIndexKey();
         } else if (IntervallEntitet.class.isAssignableFrom(objClass)) {
             IntervallEntitet periode = (IntervallEntitet) obj;
-            return "[" + periode.getFomDato().format(DateTimeFormatter.ISO_DATE) + //$NON-NLS-1$
-                "," + periode.getTomDato().format(DateTimeFormatter.ISO_DATE) + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+            return "[" + periode.getFomDato().format(DateTimeFormatter.ISO_DATE) +
+                "," + periode.getTomDato().format(DateTimeFormatter.ISO_DATE) + "]";
         } else if (LocalDate.class.isAssignableFrom(objClass)) {
             LocalDate dt = (LocalDate) obj;
             return dt.format(DateTimeFormatter.ISO_DATE);

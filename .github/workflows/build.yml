@@ -3,153 +3,56 @@ name: Bygg og deploy
 on:
   push:
     branches:
-      - master
+      - '**'
     paths-ignore:
       - '**.md'
       - '**.MD'
       - '.gitignore'
+      - '.editorconfig'
+      - '.java-version'
+      - '.gitattributes'
       - 'LICENSE'
       - 'CODEOWNERS'
-      - 'dokumentasjon/**'
+      - 'docs/**'
       - 'lokalutvikling/**'
-  schedule:
-    - cron: '0 4 * * 1'
+      - '.devcontainer/**'
+      - '.github/*.yml'
 
-env:
-  IMAGE_BASE_CR: ghcr.io/${{ github.repository }}
 jobs:
-  build:
+  build-app:
+    name: Build
+    permissions:
+      contents: read
+      packages: write
+    uses: navikt/fp-gha-workflows/.github/workflows/build-app-postgres.yml@main
+    with:
+      postgres-user: fpabakus_unit
+      build-image: ${{ github.ref_name == 'master' }} # default: true
+      push-image: ${{ github.ref_name == 'master' }} # default: false
+    secrets: inherit
 
+  release-drafter:
+    name: Update
+    if: github.ref_name == 'master'
+    needs: build-app
+    permissions:
+      contents: write
+      pull-requests: read
+    uses: navikt/fp-gha-workflows/.github/workflows/release-drafter.yml@main
+    secrets: inherit
+
+  trigger-autotest-k9:
+    name: Autotest K9
+    if: github.ref_name == 'master'
+    needs: build-app
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:12
-        env:
-          POSTGRES_USER: fpabakus_unit
-          POSTGRES_PASSWORD: fpabakus_unit
-          POSTGRES_DB: fpabakus_unit
-        ports:
-          - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup maven
-        uses: whelk-io/maven-settings-xml-action@v20
-        with:
-          repositories: '[{ "id": "github", "name": "github", "url": "https://maven.pkg.github.com/${{ github.repository }}", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } }]'
-          servers: '[{ "id": "github", "username": "${{ github.actor }}", "password": "${{ secrets.READER_TOKEN }}" }]'
-          output_file: settings.xml
-
-      - uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: 'maven'
-
-      - name: Generer tag
-        run: |
-          echo "BUILD_VERSION=1.2-$(expr $(date +%Y%m%d%H%M%S))-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
-
-      - name: Build artifacts & deploy
-        shell: bash
-        run: |
-          echo "Building artifacts $(echo $GITHUB_SHA | cut -c1-7)"
-          mvn jacoco:prepare-agent install -e -q -B -s settings.xml -Drevision=${BUILD_VERSION} -Djacoco.destFile=$(pwd)/target/jacoco.exec
-          echo "Deployed artifacts"
-        env:
-          TZ: "Europe/Oslo"
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          DATASOURCE_HOST: localhost
-          DATASOURCE_PORT: ${{ job.services.postgres.ports[5432] }} # get randomly assigned published port
-
-      - name: Bygg og push docker-image
-        run: |
-          docker build --pull --tag ${IMAGE_BASE_CR}:${BUILD_VERSION} --tag ${IMAGE_BASE_CR}:latest .
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login --username "x-access-token" --password-stdin ghcr.io
-          docker push ${IMAGE_BASE_CR} --all-tags
-
-      - name: Lukk gamle issues
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              labels: ['deployment']
-            }).then(response => {
-              response.data.forEach(issue => {
-                github.rest.issues.update({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: issue.number,
-                  state: 'closed'
-                });
-              });
-            });
-
-      -  name: Opprett deployment issue
-         id: createdeployissue
-         if: success()
-         uses: actions/github-script@v6
-         with:
-           github-token: ${{secrets.GITHUB_TOKEN}}
-           script: |
-               github.rest.issues.create( {
-                 owner: context.issue.owner,
-                 repo: context.issue.repo,
-                 labels: ['deployment'],
-                 title: 'Deploy av ${{ env.BUILD_VERSION }}',
-                 body: '${{ github.sha }}'})
-               .then(response => {
-                       core.setOutput('number', response.data.number);
-                });
-
-      - uses: navikt/github-app-token-generator@v1.1
+      - uses: navikt/github-app-token-generator@v1
         id: get-token
         with:
-          private-key: ${{ secrets.FP_PRIVATE_KEY }}
-          app-id: ${{ secrets.FP_APP_ID }}
-
-      - name: Trigg deploy til dev-fss
-        if: success()
-        run: |
-           curl -XPOST -u "x-access-token:${{ steps.get-token.outputs.token }}" \
-           -H "Accept: application/vnd.github.v3+json" \
-           https://api.github.com/repos/${{ github.repository }}/dispatches \
-           -d '{
-                 "event_type": "promote-command",
-                 "client_payload": {
-                   "github": {
-                       "payload": {
-                           "issue": {
-                               "number": "${{ steps.createdeployissue.outputs.number }}"
-                   }}},
-                   "slash_command": {
-                       "args": {
-                           "unnamed": {
-                               "arg1": "dev-fss"
-                   }}}
-                 }'
-
-      - name: Trigger tester for FP
-        run: |
-          curl -XPOST -u "x-access-token:${{ steps.get-token.outputs.token }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/navikt/fpsak-autotest/actions/workflows/trigger.yml/dispatches \
-          -d '{"ref":"master",
-                  "inputs":{
-                      "trigger": "${{ github.repository }}",
-                      "version": "${{ env.BUILD_VERSION }}",
-                      "issue_number": "${{ steps.createdeployissue.outputs.number }}"
-                  }}'
-      - name: Trigger k9-verdikjede test
+          private-key: ${{ secrets.FP_PRIVATE_KEY }} # Erstatt med K9SAKSBEHANDLING_PRIVATE_KEY
+          app-id: ${{ secrets.FP_APP_ID }} # Erstatt med K9SAKSBEHANDLING_APP_ID
+      - name: Trigger verdikjede test
         shell: bash
         run: |
           curl -XPOST -u "x-access-token:${{ steps.get-token.outputs.token }}" \
@@ -158,7 +61,57 @@ jobs:
           -d '{"ref":"master",
                   "inputs":{
                       "trigger": "${{ github.repository }}",
-                      "version": "${{ env.BUILD_VERSION }}",
-                      "issue_number": "${{ steps.createdeployissue.outputs.number }}"
+                      "version": "${{ needs.build-app.outputs.build-version }}"
                   }}'
+
+  fpsak-tester:
+    name: Fpsak tester
+    if: github.ref_name == 'master'
+    needs: build-app
+    uses: navikt/fp-autotest/.github/workflows/autotest.yml@master
+    with:
+      build-version: ${{ needs.build-app.outputs.build-version }}
+      test-suite: fpsak
+
+  verdikjede-tester:
+    name: Verdikjedetester
+    if: github.ref_name == 'master'
+    needs: build-app
+    uses: navikt/fp-autotest/.github/workflows/autotest.yml@master
+    with:
+      build-version: ${{ needs.build-app.outputs.build-version }}
+      test-suite: verdikjede
+
+  notify:
+    name: Notify
+    if: github.ref_name == 'master' && (success() || failure()) && !contains(needs.*.result, 'skipped')
+    needs: [build-app, fpsak-tester, verdikjede-tester]
+    uses: navikt/fp-autotest/.github/workflows/report-and-notify.yml@master
+    with:
+      fpsak: ${{ needs.fpsak-tester.outputs.resultat }}
+      verdikjede: ${{ needs.verdikjede-tester.outputs.resultat }}
+      build-version: ${{ needs.build-app.outputs.build-version }}
+    secrets: inherit
+
+  deploy-dev:
+    name: Deploy dev
+    if: github.ref_name == 'master'
+    needs: [build-app, fpsak-tester, verdikjede-tester]
+    uses: navikt/fp-gha-workflows/.github/workflows/deploy.yml@main
+    with:
+      image: ghcr.io/${{ github.repository }}:${{ needs.build-app.outputs.build-version }}
+      cluster: dev-fss
+    secrets: inherit
+
+  deploy-prod:
+    name: Deploy prod
+    if: github.ref_name == 'master'
+    needs: [build-app, fpsak-tester, verdikjede-tester, deploy-dev]
+    uses: navikt/fp-gha-workflows/.github/workflows/deploy.yml@main
+    with:
+      image: ghcr.io/${{ github.repository }}:${{ needs.build-app.outputs.build-version }}
+      cluster: prod-fss
+    secrets: inherit
+
+
 

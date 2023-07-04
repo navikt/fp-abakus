@@ -17,24 +17,36 @@ import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.log.util.MemoryAppender;
 
 @Execution(ExecutionMode.SAME_THREAD)
-public class GeneralRestExceptionMapperTest {
+class GeneralRestExceptionMapperTest {
 
     private static MemoryAppender logSniffer;
 
     private final GeneralRestExceptionMapper exceptionMapper = new GeneralRestExceptionMapper();
 
+    private static FunksjonellException funksjonellFeil() {
+        return new FunksjonellException("FUNK_FEIL", "en funksjonell feilmelding", "et løsningsforslag");
+    }
+
+    private static TekniskException tekniskFeil() {
+        return new TekniskException("TEK_FEIL", "en teknisk feilmelding");
+    }
+
+    private static ManglerTilgangException manglerTilgangFeil() {
+        return new ManglerTilgangException("MANGLER_TILGANG_FEIL", "ManglerTilgangFeilmeldingKode");
+    }
+
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         logSniffer = MemoryAppender.sniff(GeneralRestExceptionMapper.class);
     }
 
     @AfterEach
-    public void afterEach() {
+    void afterEach() {
         logSniffer.reset();
     }
 
     @Test
-    public void skalIkkeMappeManglerTilgangFeil() {
+    void skalIkkeMappeManglerTilgangFeil() {
         var response = exceptionMapper.toResponse(manglerTilgangFeil());
 
         assertThat(response.getStatus()).isEqualTo(403);
@@ -47,7 +59,7 @@ public class GeneralRestExceptionMapperTest {
     }
 
     @Test
-    public void skalMappeFunksjonellFeil() {
+    void skalMappeFunksjonellFeil() {
         var response = exceptionMapper.toResponse(funksjonellFeil());
 
         assertThat(response.getEntity()).isInstanceOf(FeilDto.class);
@@ -60,7 +72,7 @@ public class GeneralRestExceptionMapperTest {
     }
 
     @Test
-    public void skalMappeVLException() {
+    void skalMappeVLException() {
         var response = exceptionMapper.toResponse(tekniskFeil());
 
         assertThat(response.getEntity()).isInstanceOf(FeilDto.class);
@@ -72,7 +84,7 @@ public class GeneralRestExceptionMapperTest {
     }
 
     @Test
-    public void skalMappeWrappedGenerellFeil() {
+    void skalMappeWrappedGenerellFeil() {
         String feilmelding = "en helt generell feil";
         RuntimeException generellFeil = new RuntimeException(feilmelding);
 
@@ -87,7 +99,7 @@ public class GeneralRestExceptionMapperTest {
     }
 
     @Test
-    public void skalMappeWrappedFeilUtenCause() {
+    void skalMappeWrappedFeilUtenCause() {
         String feilmelding = "en helt generell feil";
 
         Response response = exceptionMapper.toResponse(new TekniskException("KODE", feilmelding));
@@ -101,7 +113,7 @@ public class GeneralRestExceptionMapperTest {
     }
 
     @Test
-    public void skalMappeGenerellFeil() {
+    void skalMappeGenerellFeil() {
         String feilmelding = "en helt generell feil";
         RuntimeException generellFeil = new IllegalArgumentException(feilmelding);
 
@@ -113,19 +125,6 @@ public class GeneralRestExceptionMapperTest {
 
         assertThat(feilDto.feilmelding()).contains(feilmelding);
         assertThat(logSniffer.search(feilmelding, Level.WARN)).hasSize(1);
-    }
-
-
-    private static FunksjonellException funksjonellFeil() {
-        return new FunksjonellException("FUNK_FEIL", "en funksjonell feilmelding", "et løsningsforslag");
-    }
-
-    private static TekniskException tekniskFeil() {
-        return new TekniskException("TEK_FEIL", "en teknisk feilmelding");
-    }
-
-    private static ManglerTilgangException manglerTilgangFeil() {
-        return new ManglerTilgangException("MANGLER_TILGANG_FEIL","ManglerTilgangFeilmeldingKode");
     }
 
 }

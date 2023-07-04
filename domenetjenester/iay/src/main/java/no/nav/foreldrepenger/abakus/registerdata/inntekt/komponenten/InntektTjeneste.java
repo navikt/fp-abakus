@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten;
 
 import java.math.BigDecimal;
-import java.net.URI;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,7 +20,6 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-import no.nav.foreldrepenger.konfig.KonfigVerdi;
 import no.nav.tjenester.aordningen.inntektsinformasjon.Aktoer;
 import no.nav.tjenester.aordningen.inntektsinformasjon.AktoerType;
 import no.nav.tjenester.aordningen.inntektsinformasjon.ArbeidsInntektIdent;
@@ -39,23 +37,24 @@ import no.nav.vedtak.exception.IntegrasjonException;
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.integrasjon.rest.RestClient;
 import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
+import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 
 @ApplicationScoped
-@RestClientConfig(tokenConfig = TokenFlow.CONTEXT, endpointProperty = "hentinntektlistebolk.url")
+@RestClientConfig(tokenConfig = TokenFlow.AZUREAD_CC, endpointProperty = "hentinntektlistebolk.url", endpointDefault = "https://app.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk",
+    scopesProperty = "hentinntektlistebolk.scopes", scopesDefault = "api://prod-fss.team-inntekt.inntektskomponenten/.default")
 public class InntektTjeneste {
 
     // Dato for eldste request til inntk - det er av og til noen ES saker som spør lenger tilbake i tid
     private static final YearMonth INNTK_TIDLIGSTE_DATO = YearMonth.of(2015, 7);
-    private static final Set<InntektskildeType> SKAL_PERIODISERE_INNTEKTSKILDE = Set.of(InntektskildeType.INNTEKT_SAMMENLIGNING, InntektskildeType.INNTEKT_BEREGNING);
+    private static final Set<InntektskildeType> SKAL_PERIODISERE_INNTEKTSKILDE = Set.of(InntektskildeType.INNTEKT_SAMMENLIGNING,
+        InntektskildeType.INNTEKT_BEREGNING);
 
-    private static final String ENDPOINT_KEY = "hentinntektlistebolk.url";
-
-    private static final Logger logger = LoggerFactory.getLogger(InntektTjeneste.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InntektTjeneste.class);
 
     private RestClient restClient;
-    private URI endpoint;
+    private RestConfig restConfig;
     private AktørTjeneste aktørConsumer;
     private Map<InntektskildeType, InntektsFilter> kildeTilFilter;
 
@@ -64,15 +63,16 @@ public class InntektTjeneste {
     }
 
     @Inject
-    public InntektTjeneste(@KonfigVerdi(ENDPOINT_KEY) URI endpoint,
-                           RestClient restClient,
-                           AktørTjeneste aktørConsumer) {
-        this.endpoint = endpoint;
+    public InntektTjeneste(AktørTjeneste aktørConsumer) {
+        this(RestClient.client(), aktørConsumer);
+    }
+
+    public InntektTjeneste(RestClient restClient, AktørTjeneste aktørConsumer) {
         this.restClient = restClient;
+        this.restConfig = RestConfig.forClient(InntektTjeneste.class);
         this.aktørConsumer = aktørConsumer;
-        this.kildeTilFilter = Map.of(InntektskildeType.INNTEKT_OPPTJENING, InntektsFilter.OPPTJENINGSGRUNNLAG,
-            InntektskildeType.INNTEKT_BEREGNING, InntektsFilter.BEREGNINGSGRUNNLAG,
-            InntektskildeType.INNTEKT_SAMMENLIGNING, InntektsFilter.SAMMENLIGNINGSGRUNNLAG);
+        this.kildeTilFilter = Map.of(InntektskildeType.INNTEKT_OPPTJENING, InntektsFilter.OPPTJENINGSGRUNNLAG, InntektskildeType.INNTEKT_BEREGNING,
+            InntektsFilter.BEREGNINGSGRUNNLAG, InntektskildeType.INNTEKT_SAMMENLIGNING, InntektsFilter.SAMMENLIGNINGSGRUNNLAG);
     }
 
     public InntektsInformasjon finnInntekt(FinnInntektRequest finnInntektRequest, InntektskildeType kilde, YtelseType ytelse) {
@@ -110,7 +110,7 @@ public class InntektTjeneste {
         }
         request.setMaanedFom(finnInntektRequest.getFom().isAfter(INNTK_TIDLIGSTE_DATO) ? finnInntektRequest.getFom() : INNTK_TIDLIGSTE_DATO);
         request.setMaanedTom(finnInntektRequest.getTom().isAfter(INNTK_TIDLIGSTE_DATO) ? finnInntektRequest.getTom() : INNTK_TIDLIGSTE_DATO);
-        return RestRequest.newPOSTJson(request, endpoint, InntektTjeneste.class);
+        return RestRequest.newPOSTJson(request, restConfig.endpoint(), restConfig);
     }
 
     private InntektsFilter getFilter(InntektskildeType kilde) {
@@ -143,21 +143,20 @@ public class InntektTjeneste {
         return new InntektsInformasjon(månedsinntekter, arbeidsforhold, kilde);
     }
 
-    private ArbeidsInntektInformasjon oversettInntekter(List<Månedsinntekt> månedsinntekter, ArbeidsInntektMaaned arbeidsInntektMaaned, InntektskildeType kilde) {
+    private ArbeidsInntektInformasjon oversettInntekter(List<Månedsinntekt> månedsinntekter,
+                                                        ArbeidsInntektMaaned arbeidsInntektMaaned,
+                                                        InntektskildeType kilde) {
         var arbeidsInntektInformasjon = arbeidsInntektMaaned.getArbeidsInntektInformasjon();
 
         if (arbeidsInntektInformasjon != null && arbeidsInntektInformasjon.getInntektListe() != null) {
             for (var inntekt : arbeidsInntektInformasjon.getInntektListe()) {
                 var brukYM = inntekt.getUtbetaltIMaaned();
                 var tilleggsinformasjon = inntekt.getTilleggsinformasjon();
-                if (erYtelseFraOffentlig(inntekt)
-                    && erEtterbetaling(tilleggsinformasjon)
-                    && skalPeriodisereInntektsKilde(kilde)) {
-                    brukYM = YearMonth.from(((Etterbetalingsperiode) tilleggsinformasjon.getTilleggsinformasjonDetaljer())
-                        .getEtterbetalingsperiodeFom().plusDays(1));
+                if (erYtelseFraOffentlig(inntekt) && erEtterbetaling(tilleggsinformasjon) && skalPeriodisereInntektsKilde(kilde)) {
+                    brukYM = YearMonth.from(
+                        ((Etterbetalingsperiode) tilleggsinformasjon.getTilleggsinformasjonDetaljer()).getEtterbetalingsperiodeFom().plusDays(1));
                 }
-                var månedsinntekt = new Månedsinntekt.Builder()
-                    .medBeløp(inntekt.getBeloep())
+                var månedsinntekt = new Månedsinntekt.Builder().medBeløp(inntekt.getBeloep())
                     .medSkatteOgAvgiftsregelType(inntekt.getSkatteOgAvgiftsregel());
 
                 if (brukYM != null) {
@@ -176,12 +175,13 @@ public class InntektTjeneste {
     }
 
     private boolean erEtterbetaling(Tilleggsinformasjon tilleggsinformasjon) {
-        return tilleggsinformasjon != null &&
-            TilleggsinformasjonDetaljerType.ETTERBETALINGSPERIODE
-                .equals(tilleggsinformasjon.getTilleggsinformasjonDetaljer().getDetaljerType());
+        return tilleggsinformasjon != null && TilleggsinformasjonDetaljerType.ETTERBETALINGSPERIODE.equals(
+            tilleggsinformasjon.getTilleggsinformasjonDetaljer().getDetaljerType());
     }
 
-    private void oversettArbeidsforhold(List<FrilansArbeidsforhold> arbeidsforhold, ArbeidsInntektInformasjon arbeidsInntektInformasjon, YtelseType ytelse) {
+    private void oversettArbeidsforhold(List<FrilansArbeidsforhold> arbeidsforhold,
+                                        ArbeidsInntektInformasjon arbeidsInntektInformasjon,
+                                        YtelseType ytelse) {
         if (arbeidsInntektInformasjon.getArbeidsforholdListe() == null) {
             return;
         }
@@ -215,27 +215,24 @@ public class InntektTjeneste {
             AktørId aktørId = aktørConsumer.hentAktørForIdent(new PersonIdent(arbeidsgiver.getIdentifikator()), ytelse).orElse(null);
             builder.medArbeidsgiverAktørId(aktørId);
         } else {
-            logger.info("Arbeidsgiver for frilanser har ukjent aktørtype: {}", arbeidsgiver.getAktoerType());
+            LOG.info("Arbeidsgiver for frilanser har ukjent aktørtype: {}", arbeidsgiver.getAktoerType());
         }
     }
 
     private void utledOgSettUtbetalerOgYtelse(Inntekt inntekt, Månedsinntekt.Builder månedsinntekt) {
         if (erYtelseFraOffentlig(inntekt)) {
-            månedsinntekt.medYtelse(true)
-                .medYtelseKode(inntekt.getBeskrivelse());
+            månedsinntekt.medYtelse(true).medYtelseKode(inntekt.getBeskrivelse());
         } else if (erPensjonEllerTrygd(inntekt)) {
-            månedsinntekt.medYtelse(true)
-                .medPensjonEllerTrygdKode(inntekt.getBeskrivelse());
+            månedsinntekt.medYtelse(true).medPensjonEllerTrygdKode(inntekt.getBeskrivelse());
         } else if (erNæringsinntekt(inntekt)) {
-            månedsinntekt.medYtelse(true)
-                .medNæringsinntektKode(inntekt.getBeskrivelse());
+            månedsinntekt.medYtelse(true).medNæringsinntektKode(inntekt.getBeskrivelse());
         } else if (erLønn(inntekt)) {
             månedsinntekt.medYtelse(false);
             månedsinntekt.medArbeidsgiver(inntekt.getVirksomhet().getIdentifikator()); // OK med NPE hvis inntekt.getArbeidsgiver() er null
             månedsinntekt.medArbeidsforholdRef(inntekt.getArbeidsforholdREF());
+            månedsinntekt.medLønnsbeskrivelseKode(inntekt.getBeskrivelse());
         } else {
-            throw new TekniskException("FP-711674",
-                String.format("Kunne ikke mappe svar fra Inntektskomponenten: virksomhet=%s, inntektType=%s",
+            throw new TekniskException("FP-711674", String.format("Kunne ikke mappe svar fra Inntektskomponenten: virksomhet=%s, inntektType=%s",
                 inntekt.getVirksomhet().getIdentifikator(), inntekt.getInntektType()));
         }
     }

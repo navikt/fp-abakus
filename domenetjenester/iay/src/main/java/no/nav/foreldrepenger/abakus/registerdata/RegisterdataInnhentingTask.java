@@ -20,6 +20,7 @@ import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTask;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
+import no.nav.foreldrepenger.abakus.kobling.TaskConstants;
 import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
 import no.nav.foreldrepenger.abakus.kobling.repository.LåsRepository;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.InnhentRegisterdataTjeneste;
@@ -31,7 +32,7 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 @ProsessTask("registerdata.innhent")
 public class RegisterdataInnhentingTask extends KoblingTask {
 
-    private static final Logger log = LoggerFactory.getLogger(RegisterdataInnhentingTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RegisterdataInnhentingTask.class);
     private KoblingTjeneste koblingTjeneste;
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private Instance<IAYRegisterInnhentingTjeneste> innhentTjenester;
@@ -56,8 +57,11 @@ public class RegisterdataInnhentingTask extends KoblingTask {
 
     @Override
     protected void prosesser(ProsessTaskData prosessTaskData) {
-        Kobling kobling = koblingTjeneste.hent(Long.valueOf(prosessTaskData.getBehandlingId()));
-        log.info("Starter registerinnhenting for sak=[{}, {}] med behandling='{}'", kobling.getSaksnummer(), kobling.getYtelseType(), kobling.getKoblingReferanse());
+        String nyKoblingId = prosessTaskData.getPropertyValue(TaskConstants.NY_KOBLING_ID);
+        Long koblingId = nyKoblingId != null ? Long.valueOf(nyKoblingId) : Long.valueOf(prosessTaskData.getBehandlingId());
+        Kobling kobling = koblingTjeneste.hent(koblingId);
+        LOG.info("Starter registerinnhenting for sak=[{}, {}] med behandling='{}'", kobling.getSaksnummer(), kobling.getYtelseType(),
+            kobling.getKoblingReferanse());
 
         Set<RegisterdataElement> informasjonsElementer;
         var payloadAsString = prosessTaskData.getPayloadAsString();
@@ -71,7 +75,8 @@ public class RegisterdataInnhentingTask extends KoblingTask {
         } else {
             informasjonsElementer = Set.of(RegisterdataElement.values());
         }
-        log.info("Registerdataelementer for sak=[{}, {}] med behandling='{}' er: {} ", kobling.getSaksnummer(), kobling.getYtelseType(), kobling.getKoblingReferanse(), informasjonsElementer);
+        LOG.info("Registerdataelementer for sak=[{}, {}] med behandling='{}' er: {} ", kobling.getSaksnummer(), kobling.getYtelseType(),
+            kobling.getKoblingReferanse(), informasjonsElementer);
         InntektArbeidYtelseGrunnlagBuilder builder = finnInnhenter(kobling.getYtelseType()).innhentRegisterdata(kobling, informasjonsElementer);
         iayTjeneste.lagre(kobling.getKoblingReferanse(), builder);
     }

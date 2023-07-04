@@ -48,9 +48,7 @@ public class AktørDatoRequest {
         this.ytelse = ytelse;
     }
 
-    public AktørDatoRequest(PersonIdent aktør,
-                            LocalDate dato,
-                            YtelseType ytelse) {
+    public AktørDatoRequest(PersonIdent aktør, LocalDate dato, YtelseType ytelse) {
         this.aktør = aktør;
         this.periode = new Periode(dato, dato);
         this.ytelse = ytelse;
@@ -68,9 +66,11 @@ public class AktørDatoRequest {
         return ytelse;
     }
 
-    /** Fungerer kun dersom fom/tom er like (perioden dekker kun en dag) */
+    /**
+     * Fungerer kun dersom fom/tom er like (perioden dekker kun en dag)
+     */
     public LocalDate getDato() {
-        if(Objects.equals(periode.getFom(), periode.getTom())&& periode.getFom()!=null) {
+        if (Objects.equals(periode.getFom(), periode.getTom()) && periode.getFom() != null) {
             return periode.getFom();
         } else {
             return null; // ubestemt

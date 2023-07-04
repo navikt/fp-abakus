@@ -13,17 +13,14 @@ public enum RapportType {
     @JsonIgnore
     private final Set<YtelseType> ytelseTyper;
 
-    private RapportType(YtelseType... ytelseTyper) {
-        this.ytelseTyper = Set.of(ytelseTyper);
-    }
-
     private RapportType(Collection<YtelseType> ytelseTyper) {
         this.ytelseTyper = Set.copyOf(ytelseTyper);
     }
 
     public void valider(YtelseType ytelseType) {
         if (!ytelseTyper.contains(ytelseType)) {
-            throw new IllegalArgumentException("Støtter ikke dette uttrekket [" + this.name() + "] for ytelseType:" + ytelseType + ", tillater kun: " + ytelseTyper);
+            throw new IllegalArgumentException(
+                "Støtter ikke dette uttrekket [" + this.name() + "] for ytelseType:" + ytelseType + ", tillater kun: " + ytelseTyper);
         }
     }
 }

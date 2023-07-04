@@ -41,15 +41,17 @@ public class InntektsmeldingerMottattRequest {
     @Valid
     private InntektsmeldingerDto inntektsmeldinger;
 
-    /** Optional - for now, gjør required når K9, FP sender.*/
-    @JsonProperty(value="ytelseType")
+    /**
+     * Optional - for now, gjør required når K9, FP sender.
+     */
+    @JsonProperty(value = "ytelseType")
     private YtelseType ytelseType = YtelseType.UDEFINERT;
-    
+
     @JsonCreator
     public InntektsmeldingerMottattRequest(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
                                            @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UUID koblingReferanse,
                                            @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
-                                           @JsonProperty(value="ytelseType") @Valid YtelseType ytelseType,
+                                           @JsonProperty(value = "ytelseType") @Valid YtelseType ytelseType,
                                            @JsonProperty(value = "inntektsmeldinger", required = true) @NotNull @Valid InntektsmeldingerDto inntektsmeldinger) {
         this.saksnummer = saksnummer;
         this.koblingReferanse = koblingReferanse;
@@ -73,7 +75,7 @@ public class InntektsmeldingerMottattRequest {
     public InntektsmeldingerDto getInntektsmeldinger() {
         return inntektsmeldinger;
     }
-    
+
     public YtelseType getYtelseType() {
         return this.ytelseType;
     }

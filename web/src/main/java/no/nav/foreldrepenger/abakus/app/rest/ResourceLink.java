@@ -41,7 +41,7 @@ public class ResourceLink {
     private Object requestPayload;
 
     @SuppressWarnings("unused")
-    private ResourceLink() { // NOSONAR
+    private ResourceLink() {
         this((URI) null, null, null); // for Jackson
     }
 
@@ -105,9 +105,7 @@ public class ResourceLink {
             return false;
         }
         ResourceLink other = (ResourceLink) obj;
-        return Objects.equals(this.href, other.href)
-            && Objects.equals(this.rel, other.rel)
-            && Objects.equals(this.type, other.type);
+        return Objects.equals(this.href, other.href) && Objects.equals(this.rel, other.rel) && Objects.equals(this.type, other.type);
     }
 
     @Override

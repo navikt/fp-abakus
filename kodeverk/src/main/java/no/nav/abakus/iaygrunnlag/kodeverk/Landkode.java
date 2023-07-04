@@ -21,14 +21,18 @@ public class Landkode implements Kodeverdi {
 
     private static final Map<String, Landkode> KODER = initKoder();
 
-    public static final Landkode NOR = fraKode("NOR"); //$NON-NLS-1$
-    public static final Landkode DNK = fraKode("DNK"); //$NON-NLS-1$
-    public static final Landkode SWE = fraKode("SWE"); //$NON-NLS-1$
+    public static final Landkode NOR = fraKode("NOR");
+    public static final Landkode DNK = fraKode("DNK");
+    public static final Landkode SWE = fraKode("SWE");
 
-    /** Egendefinert konstant - ikke definert (null object pattern) for bruk i modeller som krever non-null. */
+    /**
+     * Egendefinert konstant - ikke definert (null object pattern) for bruk i modeller som krever non-null.
+     */
     public static final Landkode UDEFINERT = fraKode("-");
 
-    /** ISO 3166 alpha 3-letter code. */
+    /**
+     * ISO 3166 alpha 3-letter code.
+     */
     @JsonValue
     @Size(max = 3)
     @Pattern(regexp = "^[\\p{Alnum}]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
@@ -39,6 +43,38 @@ public class Landkode implements Kodeverdi {
 
     private Landkode(String kode) {
         this.kode = kode;
+    }
+
+    @JsonCreator
+    public static Landkode fraKode(String kode) {
+        if (kode == null) {
+            return null;
+        }
+        var ad = KODER.get(kode);
+        if (ad == null) {
+            throw new IllegalArgumentException("Ukjent Landkode: " + kode);
+        }
+        return ad;
+    }
+
+    private static Map<String, Landkode> initKoder() {
+        var map = new LinkedHashMap<String, Landkode>();
+        for (var iso2cc : Locale.getISOCountries(IsoCountryCode.PART1_ALPHA2)) {
+            Locale locale = new Locale("", iso2cc);
+            String iso3cc = locale.getISO3Country().toUpperCase();
+            Landkode landkode = new Landkode(iso3cc);
+            map.put(iso2cc, landkode);
+            map.put(iso3cc, landkode);
+        }
+        /** Udefinert */
+        map.put("-", new Landkode("-"));
+        /** Kodeverkklient spesifikk konstant. Bruker oppgir ikke land */
+        map.put("???", new Landkode("???"));
+        /** Kodeverkklient spesifikk konstant. Statsløs bruker */
+        map.put("XXX", new Landkode("XXX"));
+        map.put("XXK", new Landkode("XXK"));
+
+        return Collections.unmodifiableMap(map);
     }
 
     public String getNavn() {
@@ -71,40 +107,8 @@ public class Landkode implements Kodeverdi {
         return Objects.hash(kode);
     }
 
-    @JsonCreator
-    public static Landkode fraKode(String kode) {
-        if (kode == null) {
-            return null;
-        }
-        var ad = KODER.get(kode);
-        if (ad == null) {
-            throw new IllegalArgumentException("Ukjent Landkode: " + kode);
-        }
-        return ad;
-    }
-
     @Override
     public String toString() {
         return kode;
-    }
-
-    private static Map<String, Landkode> initKoder() {
-        var map = new LinkedHashMap<String, Landkode>();
-        for (var iso2cc : Locale.getISOCountries(IsoCountryCode.PART1_ALPHA2)) {
-            Locale locale = new Locale("", iso2cc);
-            String iso3cc = locale.getISO3Country().toUpperCase();
-            Landkode landkode = new Landkode(iso3cc);
-            map.put(iso2cc, landkode);
-            map.put(iso3cc, landkode);
-        }
-        /** Udefinert */
-        map.put("-", new Landkode("-"));
-        /** Kodeverkklient spesifikk konstant. Bruker oppgir ikke land */
-        map.put("???", new Landkode("???"));
-        /** Kodeverkklient spesifikk konstant. Statsløs bruker */
-        map.put("XXX", new Landkode("XXX"));
-        map.put("XXK", new Landkode("XXK"));
-
-        return Collections.unmodifiableMap(map);
     }
 }

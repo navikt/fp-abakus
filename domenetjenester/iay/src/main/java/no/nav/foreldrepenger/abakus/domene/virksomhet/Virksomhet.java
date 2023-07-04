@@ -60,10 +60,7 @@ public class Virksomhet {
 
     @Override
     public String toString() {
-        return "Virksomhet{" +
-            "navn=" + navn +
-            ", orgnr=" + orgnr +
-            '}';
+        return "Virksomhet{" + "navn=" + navn + ", orgnr=" + orgnr + '}';
     }
 
     public static class Builder {

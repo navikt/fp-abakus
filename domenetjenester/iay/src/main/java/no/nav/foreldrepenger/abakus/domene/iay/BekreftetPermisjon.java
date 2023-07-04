@@ -22,13 +22,11 @@ public class BekreftetPermisjon {
     private BekreftetPermisjonStatus status = BekreftetPermisjonStatus.UDEFINERT;
 
     @Embedded
-    @AttributeOverrides({
-        @AttributeOverride(name = "fomDato", column = @Column(name = "bekreftet_permisjon_fom")),
-        @AttributeOverride(name = "tomDato", column = @Column(name = "bekreftet_permisjon_tom"))
-    })
+    @AttributeOverrides({@AttributeOverride(name = "fomDato", column = @Column(name = "bekreftet_permisjon_fom")), @AttributeOverride(name = "tomDato", column = @Column(name = "bekreftet_permisjon_tom"))})
     private IntervallEntitet periode;
 
     public BekreftetPermisjon() {
+        // Plattform (CDI, Hibernate, Jackson)
     }
 
     public BekreftetPermisjon(LocalDate permisjonFom, LocalDate permisjonTom, BekreftetPermisjonStatus status) {
@@ -51,13 +49,14 @@ public class BekreftetPermisjon {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || !(o instanceof BekreftetPermisjon))
+        }
+        if (o == null || !(o instanceof BekreftetPermisjon)) {
             return false;
+        }
         var that = (BekreftetPermisjon) o;
-        return Objects.equals(periode, that.periode)
-            && Objects.equals(status, that.status);
+        return Objects.equals(periode, that.periode) && Objects.equals(status, that.status);
     }
 
     @Override
@@ -67,10 +66,7 @@ public class BekreftetPermisjon {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" +
-            "periode=" + periode +
-            ", status=" + status +
-            '>';
+        return getClass().getSimpleName() + "<" + "periode=" + periode + ", status=" + status + '>';
     }
 
 }

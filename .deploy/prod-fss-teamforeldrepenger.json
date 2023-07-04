@@ -1,0 +1,75 @@
+{
+  "environment": "prod",
+  "kafkaPool": "nav-prod",
+  "serviceuserkv": "serviceuser/data/prod/srvfpabakus",
+  "minReplicas": "4",
+  "maxReplicas": "6",
+  "limits": {
+    "cpu": "2",
+    "mem": "2048Mi"
+  },
+  "requests": {
+    "cpu": "500m",
+    "mem": "1024Mi"
+  },
+  "ingresses": [
+    "https://fpabakus.intern.nav.no",
+    "https://fpabakus.prod-fss-pub.nais.io"
+  ],
+  "env": {
+    "APPD_ENABLED": "true"
+  },
+  "groups": [
+    "73107205-17ec-4a07-a56e-e0a8542f90c9",
+    "77f05833-ebfd-45fb-8be7-88eca8e7418f",
+    "466d0df7-22ba-4c68-b848-73478cfd0486",
+    "be11a922-59a2-4afa-b5ad-b9e9bd445268",
+    "04b22158-354a-483f-a836-cf19b17ba5c3"
+  ],
+  "AZURE_IAC_RULES": [
+    {
+      "app": "fp-swagger",
+      "namespace": "teamforeldrepenger",
+      "cluster": "prod-gcp",
+      "scopes": [
+        "swagger"
+      ]
+    },
+    {
+      "app": "fpsak",
+      "namespace": "teamforeldrepenger",
+      "cluster": "prod-fss"
+    },
+    {
+      "app": "k9-sak",
+      "namespace": "k9saksbehandling",
+      "cluster": "prod-fss"
+    },
+    {
+      "app": "k9-klage",
+      "namespace": "k9saksbehandling",
+      "cluster": "prod-fss"
+    },
+    {
+      "app": "k9-formidling",
+      "namespace": "k9saksbehandling",
+      "cluster": "prod-fss"
+    },
+    {
+      "app": "tiltakspenger-fp",
+      "namespace": "tpts",
+      "cluster": "prod-fss",
+      "roles": [
+        "ekstern"
+      ]
+    },
+    {
+      "app": "sparkel-sputnik",
+      "namespace": "tbd",
+      "cluster": "prod-gcp",
+      "roles": [
+        "ekstern"
+      ]
+    }
+  ]
+}

@@ -1,21 +1,5 @@
 package no.nav.foreldrepenger.abakus.app.diagnostikk;
 
-import java.util.function.Function;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,6 +15,22 @@ import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import java.util.function.Function;
 
 @Path("/diagnostikk")
 @ApplicationScoped
@@ -62,13 +62,14 @@ public class DiagnostikkRestTjeneste {
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     @Operation(description = "Henter en dump av info for debugging og analyse av en sak. Logger hvem som har hatt innsyn", summary = ("Henter en dump av info for debugging og analyse av en sak"), tags = "forvaltning")
     @BeskyttetRessurs(actionType = ActionType.READ, resource = AbakusBeskyttetRessursAttributt.DRIFT)
-    public Response dumpSak(
-                            @NotNull @QueryParam("saksnummer") @Parameter(description = "saksnummer") @Valid @TilpassetAbacAttributt(supplierClass = AbacNoopSupplier.class) SaksnummerDto saksnummerDto,
+    public Response dumpSak(@NotNull @QueryParam("saksnummer") @Parameter(description = "saksnummer") @Valid @TilpassetAbacAttributt(supplierClass = AbacNoopSupplier.class) SaksnummerDto saksnummerDto,
                             @NotNull @QueryParam("aktørId") @Parameter(description = "aktørId") @Valid @TilpassetAbacAttributt(supplierClass = AbacAktørIdSupplier.class) AktørId aktørId,
                             @NotNull @QueryParam("ytelseType") @Parameter(description = "ytelseType") @Valid @TilpassetAbacAttributt(supplierClass = AbacNoopSupplier.class) YtelseType ytelseType) {
 
         var saksnummer = new Saksnummer(saksnummerDto.getVerdi());
-        var kobling = koblingRepository.hentSisteKoblingReferanseFor(aktørId, saksnummer, ytelseType).orElseThrow(() -> new IllegalArgumentException("Fant ikke kobling for saksnummer=" + saksnummer + ", aktørId og ytelseType=" + ytelseType));
+        var kobling = koblingRepository.hentSisteKoblingReferanseFor(aktørId, saksnummer, ytelseType)
+            .orElseThrow(
+                () -> new IllegalArgumentException("Fant ikke kobling for saksnummer=" + saksnummer + ", aktørId og ytelseType=" + ytelseType));
         var ident = aktørTjeneste.hentIdentForAktør(aktørId, ytelseType).orElseThrow(); // skal ikke komme hit, bør feile forrige linje
 
         /*
@@ -82,7 +83,8 @@ public class DiagnostikkRestTjeneste {
 
         return Response.ok(streamingOutput)
             .type(MediaType.APPLICATION_OCTET_STREAM)
-            .header("Content-Disposition", String.format("attachment; filename=\"abakus-%s-%s-v%s.zip\"", kobling.getYtelseType(), saksnummer.getVerdi(), kobling.getVersjon()))
+            .header("Content-Disposition",
+                String.format("attachment; filename=\"abakus-%s-%s-v%s.zip\"", kobling.getYtelseType(), saksnummer.getVerdi(), kobling.getVersjon()))
             .build();
     }
 
@@ -106,7 +108,7 @@ public class DiagnostikkRestTjeneste {
 
         @JsonValue
         @javax.validation.constraints.NotNull
-        @Pattern(regexp = "^[0-9a-zA-Z:\\-]+$", message="[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+        @Pattern(regexp = "^[0-9a-zA-Z:\\-]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
         private final String verdi;
 
         public SaksnummerDto(String verdi) {

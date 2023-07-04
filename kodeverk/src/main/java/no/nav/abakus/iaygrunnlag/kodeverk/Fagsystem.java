@@ -47,10 +47,16 @@ public enum Fagsystem implements Kodeverdi {
 
     private static final Map<String, Fagsystem> KODER = new LinkedHashMap<>();
 
+    static {
+        for (var v : values()) {
+            if (KODER.putIfAbsent(v.kode, v) != null) {
+                throw new IllegalArgumentException("Duplikat : " + v.kode);
+            }
+        }
+    }
+
     private String navn;
-
     private String offisiellKode;
-
     @JsonValue
     private String kode;
 
@@ -72,8 +78,7 @@ public enum Fagsystem implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent Fagsystem: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent Fagsystem: " + kode));
     }
 
     public static Map<String, Fagsystem> kodeMap() {
@@ -98,13 +103,5 @@ public enum Fagsystem implements Kodeverdi {
     @Override
     public String getKode() {
         return kode;
-    }
-
-    static {
-        for (var v : values()) {
-            if (KODER.putIfAbsent(v.kode, v) != null) {
-                throw new IllegalArgumentException("Duplikat : " + v.kode);
-            }
-        }
     }
 }

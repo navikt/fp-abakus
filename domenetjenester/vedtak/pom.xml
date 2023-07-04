@@ -35,13 +35,17 @@
 			<groupId>org.apache.kafka</groupId>
 			<artifactId>kafka-streams</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+            <artifactId>kafka-properties</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.glassfish</groupId>
 			<artifactId>jakarta.el</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>no.nav.foreldrepenger.abakus</groupId>
-			<artifactId>abakus-kontrakt</artifactId>
+			<artifactId>abakus-vedtak</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>no.nav.foreldrepenger.abakus</groupId>
@@ -49,7 +53,7 @@
 		</dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.felles</groupId>
-            <artifactId>felles-abac-legacy</artifactId>
+            <artifactId>felles-abac-kontekst</artifactId>
         </dependency>
 
 		<!-- TEST -->

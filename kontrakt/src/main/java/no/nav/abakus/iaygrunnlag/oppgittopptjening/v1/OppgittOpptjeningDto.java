@@ -65,11 +65,10 @@ public class OppgittOpptjeningDto {
     }
 
     @JsonCreator
-    public OppgittOpptjeningDto(
-        @JsonProperty(value = "journalpostId") @Valid JournalpostId journalpostId,
-        @JsonProperty(value = "innsendingstidspunkt") @Valid OffsetDateTime innsendingstidspunkt,
-        @JsonProperty(value = "eksternReferanse", required = true) @Valid UUID eksternReferanse,
-        @JsonProperty(value = "opprettetTidspunkt", required = true) @Valid OffsetDateTime tidspunkt) {
+    public OppgittOpptjeningDto(@JsonProperty(value = "journalpostId") @Valid JournalpostId journalpostId,
+                                @JsonProperty(value = "innsendingstidspunkt") @Valid OffsetDateTime innsendingstidspunkt,
+                                @JsonProperty(value = "eksternReferanse", required = true) @Valid UUID eksternReferanse,
+                                @JsonProperty(value = "opprettetTidspunkt", required = true) @Valid OffsetDateTime tidspunkt) {
         Objects.requireNonNull(eksternReferanse, "eksternReferanse");
         Objects.requireNonNull(tidspunkt, "tidspunkt");
         this.journalpostId = journalpostId;
@@ -88,10 +87,8 @@ public class OppgittOpptjeningDto {
 
     @AssertTrue(message = "Må oppgi minst en av arbeidsforhold, egenNæring, annenAktivitet eller frilans")
     private boolean isOk() {
-        return (arbeidsforhold != null && !arbeidsforhold.isEmpty())
-            || (egenNæring != null && !egenNæring.isEmpty())
-            || (annenAktivitet != null && !annenAktivitet.isEmpty())
-            || (frilans != null);
+        return (arbeidsforhold != null && !arbeidsforhold.isEmpty()) || (egenNæring != null && !egenNæring.isEmpty()) || (annenAktivitet != null
+            && !annenAktivitet.isEmpty()) || (frilans != null);
     }
 
     public List<OppgittArbeidsforholdDto> getArbeidsforhold() {
@@ -137,20 +134,12 @@ public class OppgittOpptjeningDto {
         return frilans;
     }
 
+    public void setFrilans(OppgittFrilansDto frilans) {
+        this.frilans = frilans;
+    }
+
     public UuidDto getEksternReferanse() {
         return eksternReferanse;
-    }
-
-    public OffsetDateTime getOpprettetTidspunkt() {
-        return opprettetTidspunkt;
-    }
-
-    public JournalpostId getJournalpostId() {
-        return journalpostId;
-    }
-
-    public OffsetDateTime getInnsendingstidspunkt() {
-        return innsendingstidspunkt;
     }
 
     public void setEksternReferanse(UuidDto eksternReferanse) {
@@ -161,20 +150,28 @@ public class OppgittOpptjeningDto {
         this.eksternReferanse = new UuidDto(eksternReferanse);
     }
 
-    public void setFrilans(OppgittFrilansDto frilans) {
-        this.frilans = frilans;
+    public OffsetDateTime getOpprettetTidspunkt() {
+        return opprettetTidspunkt;
     }
 
-    public OppgittOpptjeningDto medFrilans(OppgittFrilansDto frilans) {
-        setFrilans(frilans);
-        return this;
+    public JournalpostId getJournalpostId() {
+        return journalpostId;
     }
 
     public void setJournalpostId(JournalpostId journalpostId) {
         this.journalpostId = journalpostId;
     }
 
+    public OffsetDateTime getInnsendingstidspunkt() {
+        return innsendingstidspunkt;
+    }
+
     public void setInnsendingstidspunkt(OffsetDateTime innsendingstidspunkt) {
         this.innsendingstidspunkt = innsendingstidspunkt;
+    }
+
+    public OppgittOpptjeningDto medFrilans(OppgittFrilansDto frilans) {
+        setFrilans(frilans);
+        return this;
     }
 }

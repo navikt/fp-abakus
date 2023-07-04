@@ -74,12 +74,16 @@ public class AnvisningDto {
         return beløp;
     }
 
+    public void setBeløp(BigDecimal beløp) {
+        this.beløp = beløp == null ? null : beløp.setScale(2, RoundingMode.HALF_UP);
+    }
+
     public List<AnvistAndelDto> getAndeler() {
         return andeler;
     }
 
-    public void setBeløp(BigDecimal beløp) {
-        this.beløp = beløp == null ? null : beløp.setScale(2, RoundingMode.HALF_UP);
+    public void setAndeler(List<AnvistAndelDto> andeler) {
+        this.andeler = andeler;
     }
 
     public AnvisningDto medBeløp(BigDecimal beløp) {
@@ -98,10 +102,6 @@ public class AnvisningDto {
 
     public void setDagsats(BigDecimal dagsats) {
         this.dagsats = dagsats == null ? null : dagsats.setScale(2, RoundingMode.HALF_UP);
-    }
-
-    public void setAndeler(List<AnvistAndelDto> andeler) {
-        this.andeler = andeler;
     }
 
     public AnvisningDto medDagsats(BigDecimal dagsats) {

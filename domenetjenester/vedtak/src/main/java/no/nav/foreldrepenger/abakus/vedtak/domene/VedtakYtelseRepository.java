@@ -11,13 +11,13 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import org.hibernate.jpa.QueryHints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
@@ -25,7 +25,7 @@ import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 @ApplicationScoped
 public class VedtakYtelseRepository {
 
-    private static final Logger log = LoggerFactory.getLogger(VedtakYtelseRepository.class);
+    private static final Logger LOG = LoggerFactory.getLogger(VedtakYtelseRepository.class);
     private EntityManager entityManager;
 
     VedtakYtelseRepository() {
@@ -34,7 +34,7 @@ public class VedtakYtelseRepository {
 
     @Inject
     public VedtakYtelseRepository(EntityManager entityManager) {
-        Objects.requireNonNull(entityManager, "entityManager"); //$NON-NLS-1$
+        Objects.requireNonNull(entityManager, "entityManager");
         this.entityManager = entityManager;
     }
 
@@ -66,7 +66,7 @@ public class VedtakYtelseRepository {
             }
             entityManager.flush();
         } else {
-            log.info("Forkaster vedtak siden en sitter på nyere vedtak. {} er eldre enn {}", ytelse, vedtakYtelse);
+            LOG.info("Forkaster vedtak siden en sitter på nyere vedtak. {} er eldre enn {}", ytelse, vedtakYtelse);
         }
     }
 

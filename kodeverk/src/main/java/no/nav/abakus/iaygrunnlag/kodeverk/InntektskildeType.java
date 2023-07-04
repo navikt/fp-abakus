@@ -20,9 +20,8 @@ public enum InntektskildeType implements Kodeverdi {
     VANLIG("VANLIG", "Vanlig"),
     ;
 
-    private static final Map<String, InntektskildeType> KODER = new LinkedHashMap<>();
-
     public static final String KODEVERK = "INNTEKTS_KILDE";
+    private static final Map<String, InntektskildeType> KODER = new LinkedHashMap<>();
 
     static {
         for (var v : values()) {
@@ -50,8 +49,7 @@ public enum InntektskildeType implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent InntektsKilde: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent InntektsKilde: " + kode));
     }
 
     public static Map<String, InntektskildeType> kodeMap() {

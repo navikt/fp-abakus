@@ -28,7 +28,7 @@ import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 
 @ApplicationScoped
 public class KoblingRepository {
-    private static final Logger log = LoggerFactory.getLogger(KoblingRepository.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KoblingRepository.class);
     private EntityManager entityManager;
 
     KoblingRepository() {
@@ -37,7 +37,7 @@ public class KoblingRepository {
 
     @Inject
     public KoblingRepository(EntityManager entityManager) {
-        Objects.requireNonNull(entityManager, "entityManager"); //$NON-NLS-1$
+        Objects.requireNonNull(entityManager, "entityManager");
         this.entityManager = entityManager;
     }
 
@@ -63,9 +63,9 @@ public class KoblingRepository {
     }
 
     public Optional<Kobling> hentSisteKoblingReferanseFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
-        TypedQuery<Kobling> query = entityManager.createQuery("FROM Kobling k " +
-            " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true" + // NOSONAR
-            " ORDER BY k.opprettetTidspunkt desc, k.id desc", Kobling.class);
+        TypedQuery<Kobling> query = entityManager.createQuery(
+            "FROM Kobling k " + " WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true" +
+                " ORDER BY k.opprettetTidspunkt desc, k.id desc", Kobling.class);
         query.setParameter("ref", saksnummer);
         query.setParameter("ytelse", ytelseType);
         query.setParameter("aktørId", aktørId);
@@ -86,14 +86,14 @@ public class KoblingRepository {
         DiffResult diff = getDiff(eksisterendeKobling.orElse(null), nyKobling);
 
         if (!diff.isEmpty()) {
-            log.info("Detekterte endringer på kobling med referanse={}, endringer={}", nyKobling.getId(), diff.getLeafDifferences());
+            LOG.info("Detekterte endringer på kobling med referanse={}, endringer={}", nyKobling.getId(), diff.getLeafDifferences());
             entityManager.persist(nyKobling);
             entityManager.flush();
         }
     }
 
     private DiffResult getDiff(Kobling eksisterendeKobling, Kobling nyKobling) {
-        var config = new TraverseJpaEntityGraphConfig(); // NOSONAR
+        var config = new TraverseJpaEntityGraphConfig();
         config.setIgnoreNulls(true);
         config.setOnlyCheckTrackedFields(false);
         config.addLeafClasses(Kodeverdi.class);

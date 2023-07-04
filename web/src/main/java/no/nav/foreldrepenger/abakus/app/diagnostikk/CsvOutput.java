@@ -1,20 +1,19 @@
 package no.nav.foreldrepenger.abakus.app.diagnostikk;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
+
+import javax.persistence.Tuple;
+
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.persistence.Tuple;
-
-import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
-
 public class CsvOutput {
+
+    private CsvOutput() {
+    }
 
     public static <V> DumpOutput dumpAsCsv(boolean includeHeader, List<V> input, String path, Map<String, Function<V, ?>> valueMapper) {
         var sb = new StringBuilder(500);
@@ -37,12 +36,11 @@ public class CsvOutput {
     }
 
     private static <V> String csvValueRow(V input, Map<String, Function<V, ?>> valueMapper) {
-        var values = valueMapper.values().stream().map(v -> {
+        return valueMapper.values().stream().map(v -> {
             var s = v.apply(input);
             var obj = transformValue(s);
             return s == null || "null".equals(s) ? "" : "\"" + String.valueOf(obj).replace("\"", "\"\"") + "\""; // csv escape and quoting
         }).collect(Collectors.joining(","));
-        return values;
     }
 
     private static <V> String csvHeader(Map<String, Function<V, ?>> valueMapper) {
@@ -53,19 +51,19 @@ public class CsvOutput {
         return sb.toString();
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private static Object transformValue(Object in) {
-        var out = in instanceof Optional ? ((Optional) in).orElse(null) : in;
-        if (out instanceof Kodeverdi) {
-            out = ((Kodeverdi) out).getKode();
+        var out = in instanceof Optional optional ? optional.orElse(null) : in;
+        if (out instanceof Kodeverdi kodeverdi) {
+            out = kodeverdi.getKode();
         }
-        if (out instanceof Enum) {
-            out = ((Enum) out).name();
+        if (out instanceof Enum enums) {
+            out = enums.name();
         }
-        if (out instanceof Collection && ((Collection) out).isEmpty()) {
+        if (out instanceof Collection collection && collection.isEmpty()) {
             out = null;
         }
-        if (out instanceof Map && ((Map) out).isEmpty()) {
+        if (out instanceof Map map && map.isEmpty()) {
             out = null;
         }
         return out;
@@ -88,7 +86,9 @@ public class CsvOutput {
         return Optional.of(dumpAsCsv(true, results, path, toCsv));
     }
 
-    /** Muliggjør mer effektiv bruk av minne enn å ta en Liste av tuple. */
+    /**
+     * Muliggjør mer effektiv bruk av minne enn å ta en Liste av tuple.
+     */
     public static Optional<DumpOutput> dumpResultSetToCsv(String path, Stream<Tuple> results) {
 
         class CsvCollector implements Consumer<Tuple> {

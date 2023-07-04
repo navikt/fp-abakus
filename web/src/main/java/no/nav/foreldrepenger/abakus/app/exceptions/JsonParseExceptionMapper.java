@@ -11,16 +11,15 @@ import com.fasterxml.jackson.core.JsonParseException;
 
 public class JsonParseExceptionMapper implements ExceptionMapper<JsonParseException> {
 
-    private static final Logger log = LoggerFactory.getLogger(JsonParseExceptionMapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JsonParseExceptionMapper.class);
 
     @Override
     public Response toResponse(JsonParseException exception) {
-        log.warn("FP-299955 JSON-parsing feil: {}}", exception.getMessage(), exception);
-        return Response
-                .status(Response.Status.BAD_REQUEST)
-                .entity(new FeilDto(String.format("JSON-parsing feil: %s", exception.getMessage())))
-                .type(MediaType.APPLICATION_JSON)
-                .build();
+        LOG.warn("FP-299955 JSON-parsing feil: {}}", exception.getMessage(), exception);
+        return Response.status(Response.Status.BAD_REQUEST)
+            .entity(new FeilDto(String.format("JSON-parsing feil: %s", exception.getMessage())))
+            .type(MediaType.APPLICATION_JSON)
+            .build();
     }
 
 

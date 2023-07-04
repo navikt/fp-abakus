@@ -27,7 +27,7 @@ public class MeldekortUtbetalingsgrunnlagSak {
     private LocalDate vedtaksPeriodeTom;
     private Beløp vedtaksDagsats;
 
-    private MeldekortUtbetalingsgrunnlagSak() { // NOSONAR
+    private MeldekortUtbetalingsgrunnlagSak() {
     }
 
     public YtelseType getYtelseType() {
@@ -76,6 +76,46 @@ public class MeldekortUtbetalingsgrunnlagSak {
 
     public List<MeldekortUtbetalingsgrunnlagMeldekort> getMeldekortene() {
         return meldekortene;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        MeldekortUtbetalingsgrunnlagSak that = (MeldekortUtbetalingsgrunnlagSak) o;
+        return erLikeMeldekort(meldekortene, that.meldekortene) && type == that.type && tilstand == that.tilstand && kilde == that.kilde
+            && Objects.equals(saksnummer, that.saksnummer) && Objects.equals(sakStatus, that.sakStatus) && Objects.equals(vedtakStatus,
+            that.vedtakStatus) && Objects.equals(kravMottattDato, that.kravMottattDato) && Objects.equals(vedtattDato, that.vedtattDato)
+            && Objects.equals(vedtaksPeriodeFom, that.vedtaksPeriodeFom) && Objects.equals(vedtaksPeriodeTom, that.vedtaksPeriodeTom)
+            && Objects.equals(vedtaksDagsats, that.vedtaksDagsats);
+    }
+
+    private boolean erLikeMeldekort(List<MeldekortUtbetalingsgrunnlagMeldekort> l1, List<MeldekortUtbetalingsgrunnlagMeldekort> l2) {
+        if (l1 == null && l2 == null) {
+            return true;
+        }
+        if (l1 == null || l2 == null) {
+            return false;
+        }
+        return l1.size() == l2.size() && l2.containsAll(l1);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(meldekortene, type, tilstand, kilde, saksnummer, sakStatus, vedtakStatus, kravMottattDato, vedtattDato, vedtaksPeriodeFom,
+            vedtaksPeriodeTom, vedtaksDagsats);
+    }
+
+    @Override
+    public String toString() {
+        return "MeldekortUtbetalingsgrunnlagSak{" + "meldekortene=" + meldekortene + ", type=" + type + ", tilstand=" + tilstand + ", kilde=" + kilde
+            + ", saksnummer=" + saksnummer + ", sakStatus='" + sakStatus + '\'' + ", vedtakStatus='" + vedtakStatus + '\'' + ", kravMottattDato="
+            + kravMottattDato + ", vedtattDato=" + vedtattDato + ", vedtaksPeriodeFom=" + vedtaksPeriodeFom + ", vedtaksPeriodeTom="
+            + vedtaksPeriodeTom + ", vedtaksDagsats=" + vedtaksDagsats + '}';
     }
 
     public static class MeldekortSakBuilder {
@@ -144,6 +184,7 @@ public class MeldekortUtbetalingsgrunnlagSak {
             this.sak.vedtaksDagsats = vedtaksDagsats;
             return this;
         }
+
         public MeldekortSakBuilder medVedtaksDagsats(BigDecimal vedtaksDagsats) {
             this.sak.vedtaksDagsats = new Beløp(vedtaksDagsats);
             return this;
@@ -159,55 +200,5 @@ public class MeldekortUtbetalingsgrunnlagSak {
             return this.sak;
         }
 
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MeldekortUtbetalingsgrunnlagSak that = (MeldekortUtbetalingsgrunnlagSak) o;
-        return erLikeMeldekort(meldekortene, that.meldekortene) &&
-            type == that.type &&
-            tilstand == that.tilstand &&
-            kilde == that.kilde &&
-            Objects.equals(saksnummer, that.saksnummer) &&
-            Objects.equals(sakStatus, that.sakStatus) &&
-            Objects.equals(vedtakStatus, that.vedtakStatus) &&
-            Objects.equals(kravMottattDato, that.kravMottattDato) &&
-            Objects.equals(vedtattDato, that.vedtattDato) &&
-            Objects.equals(vedtaksPeriodeFom, that.vedtaksPeriodeFom) &&
-            Objects.equals(vedtaksPeriodeTom, that.vedtaksPeriodeTom) &&
-            Objects.equals(vedtaksDagsats, that.vedtaksDagsats);
-    }
-
-    private boolean erLikeMeldekort(List<MeldekortUtbetalingsgrunnlagMeldekort> l1, List<MeldekortUtbetalingsgrunnlagMeldekort> l2) {
-        if (l1 == null && l2 == null)
-            return true;
-        if (l1 == null || l2 == null)
-            return false;
-        return l1.size() == l2.size() && l2.containsAll(l1);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(meldekortene, type, tilstand, kilde, saksnummer, sakStatus, vedtakStatus, kravMottattDato, vedtattDato, vedtaksPeriodeFom, vedtaksPeriodeTom, vedtaksDagsats);
-    }
-
-    @Override
-    public String toString() {
-        return "MeldekortUtbetalingsgrunnlagSak{" +
-            "meldekortene=" + meldekortene +
-            ", type=" + type +
-            ", tilstand=" + tilstand +
-            ", kilde=" + kilde +
-            ", saksnummer=" + saksnummer +
-            ", sakStatus='" + sakStatus + '\'' +
-            ", vedtakStatus='" + vedtakStatus + '\'' +
-            ", kravMottattDato=" + kravMottattDato +
-            ", vedtattDato=" + vedtattDato +
-            ", vedtaksPeriodeFom=" + vedtaksPeriodeFom +
-            ", vedtaksPeriodeTom=" + vedtaksPeriodeTom +
-            ", vedtaksDagsats=" + vedtaksDagsats +
-            '}';
     }
 }

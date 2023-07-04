@@ -10,7 +10,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.InfotrygdGrunnlag;
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.InfotrygdGrunnlag;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
 
 @ApplicationScoped
@@ -27,17 +27,11 @@ public class InfotrygdGrunnlagAggregator {
     }
 
     public List<Grunnlag> hentAggregertGrunnlag(String fnr, LocalDate fom, LocalDate tom) {
-        return tjenester.stream()
-                .map(t -> t.hentGrunnlag(fnr, fom, tom))
-                .flatMap(List::stream)
-                .collect(toList());
+        return tjenester.stream().map(t -> t.hentGrunnlag(fnr, fom, tom)).flatMap(List::stream).collect(toList());
     }
 
     public List<Grunnlag> hentAggregertGrunnlagFailSoft(String fnr, LocalDate fom, LocalDate tom) {
-        return tjenester.stream()
-            .map(t -> t.hentGrunnlagFailSoft(fnr, fom, tom))
-            .flatMap(List::stream)
-            .collect(toList());
+        return tjenester.stream().map(t -> t.hentGrunnlagFailSoft(fnr, fom, tom)).flatMap(List::stream).collect(toList());
     }
 
     @Override

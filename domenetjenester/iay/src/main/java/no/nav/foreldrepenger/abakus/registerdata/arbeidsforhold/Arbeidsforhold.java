@@ -16,8 +16,13 @@ public class Arbeidsforhold {
     private List<Permisjon> permisjoner;
     private EksternArbeidsforholdRef arbeidsforholdId;
 
-    private Arbeidsforhold(Arbeidsgiver arbeidsgiver, String type, LocalDate arbeidFom, LocalDate arbeidTom,
-                           List<Arbeidsavtale> arbeidsavtaler, List<Permisjon> permisjoner, EksternArbeidsforholdRef arbeidsforholdId) {
+    private Arbeidsforhold(Arbeidsgiver arbeidsgiver,
+                           String type,
+                           LocalDate arbeidFom,
+                           LocalDate arbeidTom,
+                           List<Arbeidsavtale> arbeidsavtaler,
+                           List<Permisjon> permisjoner,
+                           EksternArbeidsforholdRef arbeidsforholdId) {
         this.arbeidsgiver = arbeidsgiver;
         this.type = type;
         this.arbeidFom = arbeidFom;
@@ -61,31 +66,36 @@ public class Arbeidsforhold {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Arbeidsforhold that = (Arbeidsforhold) o;
-        return Objects.equals(arbeidsgiver, that.arbeidsgiver) &&
-            Objects.equals(type, that.type) &&
-            Objects.equals(arbeidFom, that.arbeidFom) &&
-            Objects.equals(arbeidTom, that.arbeidTom) &&
-            erLikeArbeidsavtaler(arbeidsavtaler, that.arbeidsavtaler) &&
-            erLikePermisjoner(permisjoner, that.permisjoner) &&
-            ((arbeidsgiver instanceof Organisasjon && Objects.equals(arbeidsforholdId, that.arbeidsforholdId)) || arbeidsgiver instanceof Person);
+        return Objects.equals(arbeidsgiver, that.arbeidsgiver) && Objects.equals(type, that.type) && Objects.equals(arbeidFom, that.arbeidFom)
+            && Objects.equals(arbeidTom, that.arbeidTom) && erLikeArbeidsavtaler(arbeidsavtaler, that.arbeidsavtaler) && erLikePermisjoner(
+            permisjoner, that.permisjoner) && ((arbeidsgiver instanceof Organisasjon && Objects.equals(arbeidsforholdId, that.arbeidsforholdId))
+            || arbeidsgiver instanceof Person);
     }
 
     private boolean erLikeArbeidsavtaler(List<Arbeidsavtale> l1, List<Arbeidsavtale> l2) {
-        if (l1 == null && l2 == null)
+        if (l1 == null && l2 == null) {
             return true;
-        if (l1 == null || l2 == null)
+        }
+        if (l1 == null || l2 == null) {
             return false;
+        }
         return l1.size() == l2.size() && l2.containsAll(l1);
     }
 
     private boolean erLikePermisjoner(List<Permisjon> l1, List<Permisjon> l2) {
-        if (l1 == null && l2 == null)
+        if (l1 == null && l2 == null) {
             return true;
-        if (l1 == null || l2 == null)
+        }
+        if (l1 == null || l2 == null) {
             return false;
+        }
         return l1.size() == l2.size() && l2.containsAll(l1);
     }
 
@@ -96,15 +106,8 @@ public class Arbeidsforhold {
 
     @Override
     public String toString() {
-        return "Arbeidsforhold{" +
-            "arbeidsgiver=" + arbeidsgiver +
-            ", type='" + type + '\'' +
-            ", arbeidFom=" + arbeidFom +
-            ", arbeidTom=" + arbeidTom +
-            ", arbeidsavtaler=" + arbeidsavtaler +
-            ", permisjoner=" + permisjoner +
-            ", arbeidsforholdId=" + arbeidsforholdId +
-            '}';
+        return "Arbeidsforhold{" + "arbeidsgiver=" + arbeidsgiver + ", type='" + type + '\'' + ", arbeidFom=" + arbeidFom + ", arbeidTom=" + arbeidTom
+            + ", arbeidsavtaler=" + arbeidsavtaler + ", permisjoner=" + permisjoner + ", arbeidsforholdId=" + arbeidsforholdId + '}';
     }
 
     public static class Builder {

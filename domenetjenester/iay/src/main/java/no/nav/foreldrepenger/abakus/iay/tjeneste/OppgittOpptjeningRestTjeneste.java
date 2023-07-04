@@ -51,24 +51,22 @@ public class OppgittOpptjeningRestTjeneste {
     } // CDI Ctor
 
     @Inject
-    public OppgittOpptjeningRestTjeneste(KoblingTjeneste koblingTjeneste,
-                                         OppgittOpptjeningTjeneste oppgittOpptjeningTjeneste) {
+    public OppgittOpptjeningRestTjeneste(KoblingTjeneste koblingTjeneste, OppgittOpptjeningTjeneste oppgittOpptjeningTjeneste) {
         this.koblingTjeneste = koblingTjeneste;
         this.oppgittOpptjeningTjeneste = oppgittOpptjeningTjeneste;
     }
 
     @POST
     @Path("/motta")
-    @Operation(description = "Lagrer ned mottatt oppgitt opptjening", tags = "oppgitt opptjening", responses = {
-        @ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))
-    })
+    @Operation(description = "Lagrer ned mottatt oppgitt opptjening", tags = "oppgitt opptjening", responses = {@ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))})
     @BeskyttetRessurs(actionType = ActionType.CREATE, resource = SØKNAD)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response lagreOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
         LoggUtil.setupLogMdc(mottattRequest.getYtelseType(), mottattRequest.getSaksnummer(), mottattRequest.getKoblingReferanse());
 
         if (mottattRequest.harOppgittJournalpostId() || mottattRequest.harOppgittInnsendingstidspunkt()) {
-            return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), "v1/motta skal ikke ha journalpostId eller innsendingstidspunkt. Skal du egentlig bruke /v2/motta ?").build();
+            return Response.status(Response.Status.BAD_REQUEST.getStatusCode(),
+                "v1/motta skal ikke ha journalpostId eller innsendingstidspunkt. Skal du egentlig bruke /v2/motta ?").build();
         }
 
         Response response;
@@ -76,7 +74,8 @@ public class OppgittOpptjeningRestTjeneste {
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
         var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
-        var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId, new Saksnummer(mottattRequest.getSaksnummer()));
+        var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId,
+            new Saksnummer(mottattRequest.getSaksnummer()));
 
         OppgittOpptjeningBuilder builder = new MapOppgittOpptjening().mapFraDto(mottattRequest.getOppgittOpptjening());
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagre(koblingReferanse, builder);
@@ -95,9 +94,7 @@ public class OppgittOpptjeningRestTjeneste {
 
     @POST
     @Path("/overstyr")
-    @Operation(description = "Lagrer ned mottatt oppgitt opptjening", tags = "oppgitt opptjening", responses = {
-        @ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))
-    })
+    @Operation(description = "Lagrer ned mottatt oppgitt opptjening", tags = "oppgitt opptjening", responses = {@ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))})
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resource = GRUNNLAG)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response lagreOverstyrtOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
@@ -106,7 +103,8 @@ public class OppgittOpptjeningRestTjeneste {
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
         var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
-        var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId, new Saksnummer(mottattRequest.getSaksnummer()));
+        var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId,
+            new Saksnummer(mottattRequest.getSaksnummer()));
 
         OppgittOpptjeningBuilder builder = new MapOppgittOpptjening().mapFraDto(mottattRequest.getOppgittOpptjening());
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagreOverstyring(koblingReferanse, builder);

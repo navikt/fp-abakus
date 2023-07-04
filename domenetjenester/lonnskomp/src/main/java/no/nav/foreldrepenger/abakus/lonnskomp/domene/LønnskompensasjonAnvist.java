@@ -61,7 +61,7 @@ public class LønnskompensasjonAnvist extends BaseEntitet implements IndexKey {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { this.anvistPeriode };
+        Object[] keyParts = {this.anvistPeriode};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -91,11 +91,14 @@ public class LønnskompensasjonAnvist extends BaseEntitet implements IndexKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof LønnskompensasjonAnvist)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !(o instanceof LønnskompensasjonAnvist)) {
+            return false;
+        }
         var that = (LønnskompensasjonAnvist) o;
-        return Objects.equals(anvistPeriode, that.anvistPeriode) &&
-            Objects.equals(beløp, that.beløp);
+        return Objects.equals(anvistPeriode, that.anvistPeriode) && Objects.equals(beløp, that.beløp);
     }
 
     @Override
@@ -105,10 +108,7 @@ public class LønnskompensasjonAnvist extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "LønnskompensasjonAnvistEntitet{" +
-            "periode=" + anvistPeriode +
-            ", beløp=" + beløp +
-            '}';
+        return "LønnskompensasjonAnvistEntitet{" + "periode=" + anvistPeriode + ", beløp=" + beløp + '}';
     }
 
     public static class LønnskompensasjonAnvistBuilder {

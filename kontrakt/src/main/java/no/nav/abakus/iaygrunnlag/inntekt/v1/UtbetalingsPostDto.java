@@ -18,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
+import no.nav.abakus.iaygrunnlag.kodeverk.LønnsinntektBeskrivelse;
 import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseType;
 
@@ -38,13 +39,20 @@ public class UtbetalingsPostDto {
     @JsonProperty("skattAvgiftType")
     private SkatteOgAvgiftsregelType skattAvgiftType;
 
-    /** Tillater her både positive og negative beløp (korreksjoner). Min/max verdi håndteres av mottager og avsender. */
+    @JsonProperty("lønnsinntektBeskrivelse")
+    private LønnsinntektBeskrivelse lønnsinntektBeskrivelse;
+
+    /**
+     * Tillater her både positive og negative beløp (korreksjoner). Min/max verdi håndteres av mottager og avsender.
+     */
     @JsonProperty("beløp")
     @Valid
     @NotNull
     private BigDecimal beløp;
 
-    /** Satt dersom dette gjelder en ytelse, ellers ikke (henger sammen med {@link UtbetalingDto#getKilde()}) */
+    /**
+     * Satt dersom dette gjelder en ytelse, ellers ikke (henger sammen med {@link UtbetalingDto#getKilde()})
+     */
     @JsonProperty(value = "ytelseType")
     @Valid
     private WrapUtbetaltYtelse ytelseType;
@@ -71,6 +79,14 @@ public class UtbetalingsPostDto {
         this.skattAvgiftType = skattAvgiftType;
     }
 
+    public LønnsinntektBeskrivelse getLønnsinntektBeskrivelse() {
+        return lønnsinntektBeskrivelse;
+    }
+
+    public void setLønnsinntektBeskrivelse(LønnsinntektBeskrivelse lønnsinntektBeskrivelse) {
+        this.lønnsinntektBeskrivelse = lønnsinntektBeskrivelse;
+    }
+
     public void setUtbetaltYtelseType(UtbetaltYtelseType ytelseType) {
         this.ytelseType = ytelseType == null ? null : new WrapUtbetaltYtelse(ytelseType.getKode(), ytelseType.getKodeverk());
     }
@@ -85,6 +101,12 @@ public class UtbetalingsPostDto {
         return this;
     }
 
+    public UtbetalingsPostDto medLønnsinntektbeskrivelse(LønnsinntektBeskrivelse lønnsinntektBeskrivelse) {
+        setLønnsinntektBeskrivelse(LønnsinntektBeskrivelse.UDEFINERT.equals(lønnsinntektBeskrivelse) ? null : lønnsinntektBeskrivelse);
+        return this;
+    }
+
+
     public Periode getPeriode() {
         return periode;
     }
@@ -94,7 +116,8 @@ public class UtbetalingsPostDto {
     }
 
     public void setBeløp(BigDecimal beløp) {
-        this.beløp = beløp == null ? null : beløp.setScale(2, RoundingMode.HALF_UP);
+        Objects.requireNonNull(beløp);
+        this.beløp = beløp.setScale(2, RoundingMode.HALF_UP);
     }
 
     public UtbetalingsPostDto medBeløp(BigDecimal beløp) {
@@ -117,15 +140,16 @@ public class UtbetalingsPostDto {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this)
+        if (obj == this) {
             return true;
-        if (obj == null || obj.getClass() != this.getClass())
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
             return false;
+        }
         var other = this.getClass().cast(obj);
 
-        return Objects.equals(inntektspostType, other.inntektspostType)
-            && Objects.equals(periode, other.periode)
-            && Objects.equals(ytelseType, other.ytelseType);
+        return Objects.equals(inntektspostType, other.inntektspostType) && Objects.equals(periode, other.periode) && Objects.equals(ytelseType,
+            other.ytelseType);
     }
 
     @Override
@@ -163,14 +187,15 @@ public class UtbetalingsPostDto {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj == this)
+            if (obj == this) {
                 return true;
-            if (obj == null || obj.getClass() != this.getClass())
+            }
+            if (obj == null || obj.getClass() != this.getClass()) {
                 return false;
+            }
             var other = (WrapUtbetaltYtelse) obj;
 
-            return Objects.equals(kode, other.kode)
-                && Objects.equals(kodeverk, other.kodeverk);
+            return Objects.equals(kode, other.kode) && Objects.equals(kodeverk, other.kodeverk);
         }
 
         @Override

@@ -21,6 +21,7 @@ import org.hibernate.annotations.NaturalId;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -49,9 +50,7 @@ public class Kobling extends BaseEntitet implements IndexKey {
      */
     @NaturalId
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "referanse", column = @Column(name = "kobling_referanse", updatable = false, unique = true))
-    })
+    @AttributeOverrides({@AttributeOverride(name = "referanse", column = @Column(name = "kobling_referanse", updatable = false, unique = true))})
     private KoblingReferanse koblingReferanse;
 
     @Convert(converter = YtelseTypeKodeverdiConverter.class)
@@ -63,21 +62,24 @@ public class Kobling extends BaseEntitet implements IndexKey {
     private AktørId aktørId;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "fomDato", column = @Column(name = "opplysning_periode_fom")),
-            @AttributeOverride(name = "tomDato", column = @Column(name = "opplysning_periode_tom"))
-    })
+    @ChangeTracked
+    @AttributeOverrides({@AttributeOverride(name = "fomDato", column = @Column(name = "opplysning_periode_fom")), @AttributeOverride(name = "tomDato", column = @Column(name = "opplysning_periode_tom"))})
     private IntervallEntitet opplysningsperiode;
 
-    /** inaktive koblinger skal ikke brukes. må filtreres vekk. */
+    @Embedded
+    @ChangeTracked
+    @AttributeOverrides({@AttributeOverride(name = "fomDato", column = @Column(name = "opplysning_periode_skattegrunnlag_fom")), @AttributeOverride(name = "tomDato", column = @Column(name = "opplysning_periode_skattegrunnlag_tom"))})
+    private IntervallEntitet opplysningsperiodeSkattegrunnlag;
+
+
+    /**
+     * inaktive koblinger skal ikke brukes. må filtreres vekk.
+     */
     @Column(name = "aktiv", nullable = false)
     private Boolean aktiv = true;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "fomDato", column = @Column(name = "opptjening_periode_fom")),
-            @AttributeOverride(name = "tomDato", column = @Column(name = "opptjening_periode_tom"))
-    })
+    @AttributeOverrides({@AttributeOverride(name = "fomDato", column = @Column(name = "opptjening_periode_fom")), @AttributeOverride(name = "tomDato", column = @Column(name = "opptjening_periode_tom"))})
     private IntervallEntitet opptjeningsperiode;
 
     @Version
@@ -92,6 +94,11 @@ public class Kobling extends BaseEntitet implements IndexKey {
         this.koblingReferanse = Objects.requireNonNull(koblingReferanse, "koblingReferanse");
         this.aktørId = Objects.requireNonNull(aktørId, "aktørId");
         this.ytelseType = ytelseType == null ? YtelseType.UDEFINERT : ytelseType;
+    }
+
+    public static Fagsystem gjelderFagsystem(Kobling k) {
+        return Set.of(YtelseType.ENGANGSTØNAD, YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER)
+            .contains(k.getYtelseType()) ? Fagsystem.FPSAK : Fagsystem.K9SAK;
     }
 
     @Override
@@ -123,6 +130,14 @@ public class Kobling extends BaseEntitet implements IndexKey {
         this.opplysningsperiode = opplysningsperiode;
     }
 
+    public IntervallEntitet getOpplysningsperiodeSkattegrunnlag() {
+        return opplysningsperiodeSkattegrunnlag;
+    }
+
+    public void setOpplysningsperiodeSkattegrunnlag(IntervallEntitet opplysningsperiodeSkattegrunnlag) {
+        this.opplysningsperiodeSkattegrunnlag = opplysningsperiodeSkattegrunnlag;
+    }
+
     public IntervallEntitet getOpptjeningsperiode() {
         return opptjeningsperiode;
     }
@@ -138,30 +153,22 @@ public class Kobling extends BaseEntitet implements IndexKey {
     public YtelseType getYtelseType() {
         return ytelseType;
     }
-    
-    public long getVersjon() {
-        return this.versjon;
-    }
 
     public void setYtelseType(YtelseType ytelseType) {
         this.ytelseType = ytelseType;
     }
 
+    public long getVersjon() {
+        return this.versjon;
+    }
+
     @Override
     public String toString() {
-        return "Kobling{" +
-            "KoblingReferanse=" + koblingReferanse +
-            ", saksnummer = " + saksnummer +
-            ", opplysningsperiode=" + opplysningsperiode +
-            ", opptjeningsperiode=" + opptjeningsperiode +
-            '}';
+        return "Kobling{" + "KoblingReferanse=" + koblingReferanse + ", saksnummer = " + saksnummer + ", opplysningsperiode=" + opplysningsperiode
+            + ", opptjeningsperiode=" + opptjeningsperiode + '}';
     }
 
     public boolean erAktiv() {
         return aktiv;
-    }
-
-    public static Fagsystem gjelderFagsystem(Kobling k) {
-        return Set.of(YtelseType.ENGANGSTØNAD, YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER).contains(k.getYtelseType()) ? Fagsystem.FPSAK : Fagsystem.K9SAK;
     }
 }

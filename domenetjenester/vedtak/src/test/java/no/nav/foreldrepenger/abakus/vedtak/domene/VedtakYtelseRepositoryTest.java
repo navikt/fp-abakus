@@ -17,15 +17,15 @@ import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 
-public class VedtakYtelseRepositoryTest {
+class VedtakYtelseRepositoryTest {
 
     @RegisterExtension
     public static final JpaExtension repositoryRule = new JpaExtension();
-  
+
     private VedtakYtelseRepository repository = new VedtakYtelseRepository(repositoryRule.getEntityManager());
 
     @Test
-    public void skal_håndtere_lagring_rett() {
+    void skal_håndtere_lagring_rett() {
         final var aktørId = new AktørId("1231231231234");
         final var saksnummer = new Saksnummer("1234");
         final var builder = repository.opprettBuilderFor(aktørId, saksnummer, Fagsystem.FPSAK, YtelseType.FORELDREPENGER);
@@ -42,9 +42,7 @@ public class VedtakYtelseRepositoryTest {
 
         final var nyBuilder = repository.opprettBuilderFor(aktørId, saksnummer, Fagsystem.FPSAK, YtelseType.FORELDREPENGER);
         final var intervallEntitet = IntervallEntitet.fraOgMedTilOgMed(LocalDate.now(), LocalDate.now().plusMonths(3));
-        nyBuilder.medVedtakReferanse(UUID.randomUUID())
-            .medVedtattTidspunkt(LocalDateTime.now())
-            .medPeriode(intervallEntitet);
+        nyBuilder.medVedtakReferanse(UUID.randomUUID()).medVedtattTidspunkt(LocalDateTime.now()).medPeriode(intervallEntitet);
 
         repository.lagre(nyBuilder);
 
@@ -56,7 +54,7 @@ public class VedtakYtelseRepositoryTest {
     }
 
     @Test
-    public void skal_forkaste_vedtak_som_er_eldre() {
+    void skal_forkaste_vedtak_som_er_eldre() {
         final var aktørId = new AktørId("1231231231234");
         final var saksnummer = new Saksnummer("1234");
         final var builder = repository.opprettBuilderFor(aktørId, saksnummer, Fagsystem.FPSAK, YtelseType.FORELDREPENGER);

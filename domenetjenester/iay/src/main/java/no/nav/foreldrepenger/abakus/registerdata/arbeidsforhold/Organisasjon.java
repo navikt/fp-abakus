@@ -25,15 +25,17 @@ public class Organisasjon implements Arbeidsgiver {
 
     @Override
     public String toString() {
-        return "Organisasjon{" +
-            "orgNummer='" + orgNummer + '\'' +
-            '}';
+        return "Organisasjon{" + "orgNummer='" + orgNummer + '\'' + '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Organisasjon that = (Organisasjon) o;
         return Objects.equals(orgNummer, that.orgNummer);
     }

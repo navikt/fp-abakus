@@ -74,7 +74,7 @@ public class AktørInntekt extends BaseEntitet implements IndexKey {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { getAktørId() };
+        Object[] keyParts = {getAktørId()};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -95,7 +95,9 @@ public class AktørInntekt extends BaseEntitet implements IndexKey {
         this.aktørId = aktørId;
     }
 
-    /** Returner alle inntekter, ufiltrert. */
+    /**
+     * Returner alle inntekter, ufiltrert.
+     */
     public Collection<Inntekt> getInntekt() {
         return Collections.unmodifiableSet(inntekt);
     }
@@ -105,11 +107,11 @@ public class AktørInntekt extends BaseEntitet implements IndexKey {
     }
 
     public InntektBuilder getInntektBuilder(InntektskildeType inntektskildeType, Opptjeningsnøkkel nøkkel) {
-        Optional<Inntekt> inntektOptional = getInntekt()
-            .stream()
+        Optional<Inntekt> inntektOptional = getInntekt().stream()
             .filter(i -> inntektskildeType.equals(i.getInntektsKilde()))
-            .filter(i -> i.getArbeidsgiver() != null && new Opptjeningsnøkkel(i.getArbeidsgiver()).matcher(nøkkel)
-                || inntektskildeType.equals(InntektskildeType.SIGRUN)).findFirst();
+            .filter(i -> i.getArbeidsgiver() != null && new Opptjeningsnøkkel(i.getArbeidsgiver()).matcher(nøkkel) || inntektskildeType.equals(
+                InntektskildeType.SIGRUN))
+            .findFirst();
         InntektBuilder oppdatere = InntektBuilder.oppdatere(inntektOptional);
         if (!oppdatere.getErOppdatering()) {
             oppdatere.medInntektsKilde(inntektskildeType);
@@ -118,12 +120,10 @@ public class AktørInntekt extends BaseEntitet implements IndexKey {
     }
 
     public InntektBuilder getInntektBuilderForYtelser(InntektskildeType inntektskildeType) {
-        Optional<Inntekt> inntektOptional = getInntekt()
-            .stream()
+        Optional<Inntekt> inntektOptional = getInntekt().stream()
             .filter(i -> i.getArbeidsgiver() == null)
             .filter(i -> inntektskildeType.equals(i.getInntektsKilde()))
-            .filter(i -> i.getAlleInntektsposter().stream()
-                .anyMatch(post -> post.getInntektspostType().equals(InntektspostType.YTELSE)))
+            .filter(i -> i.getAlleInntektsposter().stream().anyMatch(post -> post.getInntektspostType().equals(InntektspostType.YTELSE)))
             .findFirst();
         InntektBuilder oppdatere = InntektBuilder.oppdatere(inntektOptional);
         if (!oppdatere.getErOppdatering()) {
@@ -159,9 +159,6 @@ public class AktørInntekt extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" +
-            "aktørId=" + aktørId +
-            ", inntekt=" + inntekt +
-            '>';
+        return getClass().getSimpleName() + "<" + "aktørId=" + aktørId + ", inntekt=" + inntekt + '>';
     }
 }

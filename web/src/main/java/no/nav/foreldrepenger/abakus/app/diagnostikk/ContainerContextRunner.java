@@ -16,19 +16,20 @@ import org.jboss.weld.context.unbound.UnboundLiteral;
 import no.nav.foreldrepenger.abakus.app.diagnostikk.dumps.RegisterInnhentingDump;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.vedtak.log.mdc.MdcExtendedLogContext;
-import no.nav.vedtak.sikkerhet.loginmodule.ContainerLogin;
+import no.nav.vedtak.sikkerhet.kontekst.BasisKontekst;
+import no.nav.vedtak.sikkerhet.kontekst.KontekstHolder;
 
 /**
- * Kjører et kall på en egen tråd med ContainerLogin. Kan benyttes til å kalle med system kontekst videre internt.
+ * Kjører et kall på en egen tråd med Kontekst som en prosesstask. Kan benyttes til å kalle med system kontekst videre internt.
  * NB: ikke bruk som convenience utenfor dump.
  */
 @Dependent
 public class ContainerContextRunner {
 
-    private static final MdcExtendedLogContext LOG_CONTEXT = MdcExtendedLogContext.getContext("prosess"); //$NON-NLS-1$
+    private static final MdcExtendedLogContext LOG_CONTEXT = MdcExtendedLogContext.getContext("prosess");
 
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor(r -> {
-        Thread t = new Thread(r);
+        var t = new Thread(r);
         t.setDaemon(true);
         t.setName(RegisterInnhentingDump.class.getSimpleName() + "-thread");
         return t;
@@ -36,24 +37,17 @@ public class ContainerContextRunner {
 
     @Inject
     public ContainerContextRunner() {
+        // CDI
     }
 
     public static ContainerContextRunner createRunner() {
         return CDI.current().select(ContainerContextRunner.class).get();
     }
 
-    @Transactional
-    private <T> T submit(Callable<T> call) throws Exception {
-        var containerLogin = new ContainerLogin();
-        containerLogin.login();
-        var result = call.call();
-        return result;
-    }
-
     public static <T> Future<T> doRun(Kobling kobling, Callable<T> call) {
         var saksnummer = kobling.getSaksnummer();
 
-        var future = EXECUTOR.submit((() -> {
+        return EXECUTOR.submit((() -> {
             T result;
             var requestContext = CDI.current().select(RequestContext.class, UnboundLiteral.INSTANCE).get();
             requestContext.activate();
@@ -69,8 +63,14 @@ public class ContainerContextRunner {
             return result;
         }));
 
-        return future;
+    }
 
+    @Transactional
+    private <T> T submit(Callable<T> call) throws Exception {
+        KontekstHolder.setKontekst(BasisKontekst.forProsesstask());
+        var result = call.call();
+        KontekstHolder.fjernKontekst();
+        return result;
     }
 
 }

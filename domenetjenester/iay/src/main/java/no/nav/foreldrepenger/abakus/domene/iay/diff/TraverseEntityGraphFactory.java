@@ -19,16 +19,16 @@ public final class TraverseEntityGraphFactory {
     public static TraverseGraph build(boolean medChangedTrackedOnly) {
         return build(medChangedTrackedOnly, TraverseGraphConfig.NO_FILTER);
     }
-    
+
     public static TraverseGraph build(boolean medChangedTrackedOnly, Function<Object, Boolean> inclusionFilter) {
         /* default oppsett for behandlingslager. */
-        var config = new TraverseJpaEntityGraphConfig(); // NOSONAR
+        var config = new TraverseJpaEntityGraphConfig();
         config.setIgnoreNulls(true);
         config.setOnlyCheckTrackedFields(medChangedTrackedOnly);
-        
+
         config.addLeafClasses(Kodeverdi.class);
         config.addLeafClasses(IntervallEntitet.class);
-        
+
         config.addRootClasses(Kobling.class);
         config.setInclusionFilter(inclusionFilter);
         return new TraverseGraph(config);

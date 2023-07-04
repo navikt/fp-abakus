@@ -13,39 +13,55 @@ import com.fasterxml.jackson.annotation.JsonValue;
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum YtelseType implements Kodeverdi {
 
-    /** Folketrygdloven K4 ytelser. */
+    /**
+     * Folketrygdloven K4 ytelser.
+     */
     DAGPENGER("DAG", "Dagpenger"),
 
-    /** Ny ytelse for kompenasasjon for koronatiltak for Selvstendig næringsdrivende og Frilansere (Anmodning 10). */
+    /**
+     * Ny ytelse for kompenasasjon for koronatiltak for Selvstendig næringsdrivende og Frilansere (Anmodning 10).
+     */
     FRISINN("FRISINN", "FRISINN"),
 
-    /** Folketrygdloven K8 ytelser. */
+    /**
+     * Folketrygdloven K8 ytelser.
+     */
     SYKEPENGER("SP", "Sykepenger"),
 
-    /** Folketrygdloven K9 ytelser. */
+    /**
+     * Folketrygdloven K9 ytelser.
+     */
     PLEIEPENGER_SYKT_BARN("PSB", "Pleiepenger sykt barn"),
     PLEIEPENGER_NÆRSTÅENDE("PPN", "Pleiepenger nærstående"),
     OMSORGSPENGER("OMP", "Omsorgspenger"),
     OPPLÆRINGSPENGER("OLP", "Opplæringspenger"),
 
-    /** @deprecated Legacy infotrygd K9 ytelse type (må tolkes sammen med TemaUnderkategori). */
+    /**
+     * @deprecated Legacy infotrygd K9 ytelse type (må tolkes sammen med TemaUnderkategori).
+     */
     PÅRØRENDESYKDOM("PS", "Pårørende sykdom"),
 
-    /** Folketrygdloven K11 ytelser. */
+    /**
+     * Folketrygdloven K11 ytelser.
+     */
     ARBEIDSAVKLARINGSPENGER("AAP"),
 
-    /** Folketrygdloven K14 ytelser. */
+    /**
+     * Folketrygdloven K14 ytelser.
+     */
     ENGANGSTØNAD("ES", "Engangsstønad"),
     FORELDREPENGER("FP", "Foreldrepenger"),
     SVANGERSKAPSPENGER("SVP", "Svangerskapspenger"),
 
-    /** Folketrygdloven K15 ytelser. */
+    /**
+     * Folketrygdloven K15 ytelser.
+     */
     ENSLIG_FORSØRGER("EF", "Enslig forsørger"),
 
     UDEFINERT("-", "Ikke definert"),
     ;
 
-    public static final String KODEVERK = "FAGSAK_YTELSE_TYPE"; //$NON-NLS-1$
+    public static final String KODEVERK = "FAGSAK_YTELSE_TYPE";
 
     private static final Map<String, YtelseType> KODER = new LinkedHashMap<>();
 
@@ -75,12 +91,16 @@ public enum YtelseType implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent YtelseType: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent YtelseType: " + kode));
     }
 
     public static Map<String, YtelseType> kodeMap() {
         return Collections.unmodifiableMap(KODER);
+    }
+
+    public static List<YtelseType> abakusYtelser() {
+        return List.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER, YtelseType.OMSORGSPENGER, YtelseType.PLEIEPENGER_SYKT_BARN,
+            YtelseType.PLEIEPENGER_NÆRSTÅENDE, YtelseType.OPPLÆRINGSPENGER, YtelseType.FRISINN);
     }
 
     @Override
@@ -96,10 +116,6 @@ public enum YtelseType implements Kodeverdi {
     @Override
     public String getNavn() {
         return navn;
-    }
-
-    public static List<YtelseType> abakusYtelser() {
-        return List.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER, YtelseType.OMSORGSPENGER, YtelseType.PLEIEPENGER_SYKT_BARN, YtelseType.PLEIEPENGER_NÆRSTÅENDE, YtelseType.OPPLÆRINGSPENGER, YtelseType.FRISINN);
     }
 
 }

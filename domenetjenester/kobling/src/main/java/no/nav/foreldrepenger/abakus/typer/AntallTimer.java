@@ -60,7 +60,7 @@ public class AntallTimer implements Serializable, IndexKey, TraverseValue {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { skalertVerdi() };
+        Object[] keyParts = {skalertVerdi()};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -82,9 +82,6 @@ public class AntallTimer implements Serializable, IndexKey, TraverseValue {
 
     @Override
     public String toString() {
-        return "AntallTimer{" +
-            "verdi=" + verdi +
-            ", skalertVerdi=" + skalertVerdi() +
-            '}';
+        return "AntallTimer{" + "verdi=" + verdi + ", skalertVerdi=" + skalertVerdi() + '}';
     }
 }

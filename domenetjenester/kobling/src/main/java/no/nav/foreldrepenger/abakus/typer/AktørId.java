@@ -24,12 +24,12 @@ public class AktørId implements Serializable, Comparable<AktørId>, IndexKey, T
     private static final String VALID_REGEXP = "^\\d{13}$";
 
     private static final Pattern VALID = Pattern.compile(VALID_REGEXP, Pattern.CASE_INSENSITIVE);
-
+    private static AtomicLong DUMMY_AKTØRID = new AtomicLong(1000000000000L);
     @JsonValue
     @NotNull
     @javax.validation.constraints.Pattern(regexp = VALID_REGEXP, message = "aktørId ${validatedValue} har ikke gyldig verdi ( pattern '{regexp}')")
     @Column(name = "aktoer_id", updatable = false, length = 50)
-    private String aktørId;  // NOSONAR
+    private String aktørId; // NOSONAR
 
     protected AktørId() {
         // for hibernate
@@ -44,11 +44,18 @@ public class AktørId implements Serializable, Comparable<AktørId>, IndexKey, T
         this.aktørId = validateAktørId(aktørId);
     }
 
+    /**
+     * Genererer dummy aktørid unikt for test.
+     */
+    public static AktørId dummy() {
+        return new AktørId(DUMMY_AKTØRID.getAndIncrement());
+    }
+
     private String validateAktørId(String aktørId) {
         Objects.requireNonNull(aktørId, "aktørId");
         if (!VALID.matcher(aktørId).matches()) {
             // skal ikke skje, funksjonelle feilmeldinger håndteres ikke her.
-            throw new IllegalArgumentException("Ugyldig aktørId" + aktørId +", tillatt pattern: "+ VALID_REGEXP);
+            throw new IllegalArgumentException("Ugyldig aktørId" + aktørId + ", tillatt pattern: " + VALID_REGEXP);
         }
         return aktørId;
     }
@@ -95,13 +102,5 @@ public class AktørId implements Serializable, Comparable<AktørId>, IndexKey, T
     public int compareTo(AktørId o) {
         // TODO: Burde ikke finnes
         return aktørId.compareTo(o.aktørId);
-    }
-
-
-    private static AtomicLong DUMMY_AKTØRID = new AtomicLong(1000000000000L);
-
-    /** Genererer dummy aktørid unikt for test. */
-    public static AktørId dummy( ) {
-        return new AktørId(DUMMY_AKTØRID.getAndIncrement());
     }
 }

@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
-import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
@@ -86,11 +85,6 @@ public class VedtakYtelseBuilder {
         return this;
     }
 
-    public VedtakYtelseBuilder medBehandlingsTema(TemaUnderkategori behandlingsTema) {
-        ytelse.setBehandlingsTema(behandlingsTema);
-        return this;
-    }
-
     // public for å kunne testes
     public VedtakYtelse build() {
         return ytelse;
@@ -110,6 +104,7 @@ public class VedtakYtelseBuilder {
      * @return true / false avhengig av tidsstempel
      */
     boolean erOppdatering() {
-        return originalVedtattTidspunkt != null && ytelse.getVedtattTidspunkt() != null && originalVedtattTidspunkt.isBefore(ytelse.getVedtattTidspunkt());
+        return originalVedtattTidspunkt != null && ytelse.getVedtattTidspunkt() != null && originalVedtattTidspunkt.isBefore(
+            ytelse.getVedtattTidspunkt());
     }
 }

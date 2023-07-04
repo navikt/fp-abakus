@@ -18,19 +18,16 @@ import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingBu
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
-public class InntektsmeldingDiffTjenesteTest {
+class InntektsmeldingDiffTjenesteTest {
     private static final Arbeidsgiver AG1 = Arbeidsgiver.virksomhet(lagVirksomhet("910909088"));
 
     private static Virksomhet lagVirksomhet(String orgnr) {
         Virksomhet.Builder builder = new Virksomhet.Builder();
-        return builder.medOrgnr(orgnr)
-            .medNavn("Test")
-            .medOppstart(LocalDate.of(2010,1,1))
-            .build();
+        return builder.medOrgnr(orgnr).medNavn("Test").medOppstart(LocalDate.of(2010, 1, 1)).build();
     }
 
     @Test
-    public void skal_ikke_finne_diff_ved_like_inntektsmeldinger() {
+    void skal_ikke_finne_diff_ved_like_inntektsmeldinger() {
         UUID uuid = UUID.randomUUID();
         LocalDateTime innsending = LocalDateTime.now();
         LocalDate mottatt = LocalDate.now();
@@ -44,7 +41,7 @@ public class InntektsmeldingDiffTjenesteTest {
     }
 
     @Test
-    public void skal_lage_diff_tilkommet_im() {
+    void skal_lage_diff_tilkommet_im() {
         UUID uuid = UUID.randomUUID();
         LocalDateTime innsending = LocalDateTime.now();
         LocalDate mottatt = LocalDate.now();
@@ -58,7 +55,7 @@ public class InntektsmeldingDiffTjenesteTest {
     }
 
     @Test
-    public void skal_lage_diff_ny_im_med_nytt_refusjonakrav() {
+    void skal_lage_diff_ny_im_med_nytt_refusjonakrav() {
         UUID uuid = UUID.randomUUID();
         LocalDateTime innsending = LocalDateTime.now();
         LocalDate mottatt = LocalDate.now();
@@ -74,9 +71,7 @@ public class InntektsmeldingDiffTjenesteTest {
         assertThat(diff.keySet()).contains(inntektsmelding2);
     }
 
-    private Inntektsmelding lagIMf(Arbeidsgiver ag, int inntekt, int refusjon, UUID uuid,
-                                   LocalDateTime innsendingstidspunkt,
-                                   LocalDate motattdato) {
+    private Inntektsmelding lagIMf(Arbeidsgiver ag, int inntekt, int refusjon, UUID uuid, LocalDateTime innsendingstidspunkt, LocalDate motattdato) {
         return InntektsmeldingBuilder.builder()
             .medJournalpostId(uuid.toString())
             .medArbeidsgiver(ag)

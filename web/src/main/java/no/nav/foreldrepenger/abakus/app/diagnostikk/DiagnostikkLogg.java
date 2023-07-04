@@ -1,15 +1,9 @@
 package no.nav.foreldrepenger.abakus.app.diagnostikk;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.PreRemove;
-import javax.persistence.Table;
-
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+
+import javax.persistence.*;
 
 @Entity(name = "DiagnostikkLogg")
 @Table(name = "DIAGNOSTIKK_LOGG")

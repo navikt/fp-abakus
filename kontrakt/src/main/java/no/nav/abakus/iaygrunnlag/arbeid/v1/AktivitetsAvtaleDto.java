@@ -13,10 +13,9 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Periode;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -104,16 +103,24 @@ public class AktivitetsAvtaleDto {
         return stillingsprosent;
     }
 
+    public void setStillingsprosent(BigDecimal stillingsprosent) {
+        this.stillingsprosent = stillingsprosent == null ? null : stillingsprosent.setScale(2, RoundingMode.HALF_UP);
+    }
+
     public BigDecimal getAntallTimer() {
         return antallTimer;
     }
 
-    public BigDecimal getAntallTimerFulltid() {
-        return antallTimerFulltid;
-    }
-
     public void setAntallTimer(BigDecimal antallTimer) {
         this.antallTimer = antallTimer == null ? null : antallTimer.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public void setAntallTimer(int timer) {
+        this.setAntallTimer(BigDecimal.valueOf(timer));
+    }
+
+    public BigDecimal getAntallTimerFulltid() {
+        return antallTimerFulltid;
     }
 
     public void setAntallTimerFulltid(BigDecimal antallTimerFulltid) {
@@ -122,14 +129,6 @@ public class AktivitetsAvtaleDto {
 
     public void setAntallTimerFulltid(int timer) {
         this.setAntallTimerFulltid(BigDecimal.valueOf(timer));
-    }
-
-    public void setAntallTimer(int timer) {
-        this.setAntallTimer(BigDecimal.valueOf(timer));
-    }
-
-    public void setStillingsprosent(BigDecimal stillingsprosent) {
-        this.stillingsprosent = stillingsprosent == null ? null : stillingsprosent.setScale(2, RoundingMode.HALF_UP);
     }
 
     public AktivitetsAvtaleDto medStillingsprosent(BigDecimal stillingsprosent) {

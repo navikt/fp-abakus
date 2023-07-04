@@ -12,10 +12,9 @@ import javax.validation.constraints.DecimalMin;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -43,14 +42,16 @@ public class YtelseGrunnlagDto {
     @JsonProperty(value = "inntektsgrunnlagProsent")
     @Valid
     @DecimalMin(value = "0.00", message = "inntektsgrunnlagProsent [${validatedValue}] må være >= {value}")
-    @DecimalMax(value = "100.00", message = "inntektsgrunnlagProsent [${validatedValue}] må være <= {value}") 
+    @DecimalMax(value = "100.00", message = "inntektsgrunnlagProsent [${validatedValue}] må være <= {value}")
     private BigDecimal inntektsgrunnlagProsent;
 
     @JsonProperty(value = "fordeling")
     @Valid
     private List<FordelingDto> fordeling;
 
-    /** Beløp i hele kroner (currency major unit). Tillater kun positive verdier.  Max verdi håndteres av mottager. */
+    /**
+     * Beløp i hele kroner (currency major unit). Tillater kun positive verdier.  Max verdi håndteres av mottager.
+     */
     @JsonProperty(value = "dagsats")
     @Valid
     @DecimalMin(value = "0.00", message = "[${validatedValue}] må være >= {value}")
@@ -152,7 +153,9 @@ public class YtelseGrunnlagDto {
         return this;
     }
 
-    public BigDecimal getVedtaksDagsats() { return vedtaksDagsats; }
+    public BigDecimal getVedtaksDagsats() {
+        return vedtaksDagsats;
+    }
 
     public void setVedtaksDagsats(BigDecimal vedtaksDagsats) {
         this.vedtaksDagsats = vedtaksDagsats == null ? null : vedtaksDagsats.setScale(2, RoundingMode.HALF_UP);

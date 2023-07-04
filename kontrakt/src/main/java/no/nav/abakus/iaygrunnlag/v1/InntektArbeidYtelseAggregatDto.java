@@ -14,11 +14,10 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.UuidDto;
 import no.nav.abakus.iaygrunnlag.arbeid.v1.ArbeidDto;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -30,7 +29,9 @@ public abstract class InntektArbeidYtelseAggregatDto<S extends InntektArbeidYtel
     @NotNull
     private OffsetDateTime opprettetTidspunkt;
 
-    /** Unik referanse for dette aggregatet. Kan benyttes f.eks. til å de-duplisere overførte data. */
+    /**
+     * Unik referanse for dette aggregatet. Kan benyttes f.eks. til å de-duplisere overførte data.
+     */
     @JsonProperty(value = "eksternReferanse", required = true)
     @Valid
     private UuidDto eksternReferanse;
@@ -64,16 +65,16 @@ public abstract class InntektArbeidYtelseAggregatDto<S extends InntektArbeidYtel
         return arbeid;
     }
 
+    public void setArbeid(List<ArbeidDto> arbeid) {
+        this.arbeid = arbeid;
+    }
+
     public UUID getEksternReferanse() {
         return eksternReferanse == null ? null : eksternReferanse.toUuidReferanse();
     }
-    
+
     public OffsetDateTime getOpprettetTidspunkt() {
         return opprettetTidspunkt;
-    }
-
-    public void setArbeid(List<ArbeidDto> arbeid) {
-        this.arbeid = arbeid;
     }
 
     @SuppressWarnings("unchecked")
@@ -89,8 +90,7 @@ public abstract class InntektArbeidYtelseAggregatDto<S extends InntektArbeidYtel
         } else if (obj == null || !(obj.getClass().equals(this.getClass()))) {
             return false;
         }
-        @SuppressWarnings("rawtypes")
-        InntektArbeidYtelseAggregatDto other = (InntektArbeidYtelseAggregatDto) obj;
+        @SuppressWarnings("rawtypes") InntektArbeidYtelseAggregatDto other = (InntektArbeidYtelseAggregatDto) obj;
         return Objects.equals(arbeid, other.arbeid);
     }
 

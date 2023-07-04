@@ -113,7 +113,11 @@ class InfotrygdgrunnlagYtelseMapperTest {
         assertThat(ytelseAnvist.getAnvistTOM()).isEqualTo(tom);
 
         assertThat(ytelseAnvist.getYtelseAnvistAndeler().size()).isEqualTo(1);
-        var arbeid1 = ytelseAnvist.getYtelseAnvistAndeler().stream().filter(a -> a.getArbeidsgiver().isPresent() && a.getArbeidsgiver().get().getOrgnr().getId().equals(orgnr)).findFirst().get();
+        var arbeid1 = ytelseAnvist.getYtelseAnvistAndeler()
+            .stream()
+            .filter(a -> a.getArbeidsgiver().isPresent() && a.getArbeidsgiver().get().getOrgnr().getId().equals(orgnr))
+            .findFirst()
+            .get();
         assertThat(arbeid1.getArbeidsgiver().get().getIdentifikator()).isEqualTo(orgnr);
         assertThat(arbeid1.getInntektskategori()).isEqualTo(Inntektskategori.ARBEIDSTAKER);
         assertThat(arbeid1.getRefusjonsgradProsent().getVerdi()).isCloseTo(BigDecimal.ZERO, Offset.offset(BigDecimal.valueOf(0.000001)));

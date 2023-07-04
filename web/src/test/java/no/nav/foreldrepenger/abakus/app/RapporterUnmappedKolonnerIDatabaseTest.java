@@ -1,4 +1,5 @@
 package no.nav.foreldrepenger.abakus.app;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,6 @@ import org.hibernate.boot.model.relational.Database;
 import org.hibernate.boot.model.relational.Namespace;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.jpa.boot.spi.IntegratorProvider;
-import org.hibernate.mapping.Column;
 import org.hibernate.service.spi.SessionFactoryServiceRegistry;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -36,36 +36,33 @@ import no.nav.foreldrepenger.abakus.dbstoette.Databaseskjemainitialisering;
  * kun aksesseres gjennom native sql), men p.t. høyst sannsynlig ikke.
  * Bør gjennomgås jevnlig for å luke manglende contract av db skjema.
  */
-public class RapporterUnmappedKolonnerIDatabaseTest {
-    private static final Logger log = LoggerFactory.getLogger(RapporterUnmappedKolonnerIDatabaseTest.class);
+class RapporterUnmappedKolonnerIDatabaseTest {
+    private static final Logger LOG = LoggerFactory.getLogger(RapporterUnmappedKolonnerIDatabaseTest.class);
 
     private static EntityManagerFactory entityManagerFactory;
 
-    private static List<Pattern> WHITELIST = List.of(
-        Pattern.compile("^PROSESS_TASK.*$", Pattern.CASE_INSENSITIVE),
+    private static List<Pattern> WHITELIST = List.of(Pattern.compile("^PROSESS_TASK.*$", Pattern.CASE_INSENSITIVE),
         Pattern.compile("^.*SCHEMA_VERSION.*$", Pattern.CASE_INSENSITIVE),
-        Pattern.compile("^BEHANDLING#SIST_OPPDATERT_TIDSPUNKT.*$", Pattern.CASE_INSENSITIVE)
-        );
+        Pattern.compile("^BEHANDLING#SIST_OPPDATERT_TIDSPUNKT.*$", Pattern.CASE_INSENSITIVE));
 
-    public RapporterUnmappedKolonnerIDatabaseTest() {
+    private RapporterUnmappedKolonnerIDatabaseTest() {
     }
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         // Kan ikke skrus på nå - trigger på CHAR kolonner som kunne vært VARCHAR. Må fikses først
         // System.setProperty("hibernate.hbm2ddl.auto", "validate");
         Databaseskjemainitialisering.initUnitTestDataSource();
         Map<String, Object> configuration = new HashMap<>();
 
         configuration.put("hibernate.integrator_provider",
-            (IntegratorProvider) () -> Collections.singletonList(
-                MetadataExtractorIntegrator.INSTANCE));
+            (IntegratorProvider) () -> Collections.singletonList(MetadataExtractorIntegrator.INSTANCE));
 
         entityManagerFactory = Persistence.createEntityManagerFactory("pu-default", configuration);
     }
 
     @AfterAll
-    public static void teardown() throws Exception {
+    static void teardown() throws Exception {
         entityManagerFactory.close();
     }
 
@@ -75,15 +72,9 @@ public class RapporterUnmappedKolonnerIDatabaseTest {
 
         var em = entityManagerFactory.createEntityManager();
         try {
-            @SuppressWarnings({ "unchecked" })
-            var result = (NavigableMap<String, Set<String>>) em
-                .createNativeQuery(
-                    "select table_name, column_name\n" +
-                        "     from information_schema.columns\n" +
-                        "     where table_schema in ('public')\n" +
-                        "     order by 1,2")
-                .getResultStream()
-                .collect(groupingBy);
+            @SuppressWarnings({"unchecked"}) var result = (NavigableMap<String, Set<String>>) em.createNativeQuery(
+                "select table_name, column_name\n" + "     from information_schema.columns\n" + "     where table_schema in ('public')\n"
+                    + "     order by 1,2").getResultStream().collect(groupingBy);
 
             var filtered = new TreeMap<String, Set<String>>();
             for (var entry : result.entrySet()) {
@@ -102,49 +93,42 @@ public class RapporterUnmappedKolonnerIDatabaseTest {
     }
 
     private Set<String> whitelistColumns(String table, Set<String> columns) {
-       var cols = columns.stream()
-               .filter(c -> !WHITELIST.stream().anyMatch(p -> p.matcher(table + "#" + c).matches()))
-               .collect(Collectors.toSet());
+        var cols = columns.stream().filter(c -> !WHITELIST.stream().anyMatch(p -> p.matcher(table + "#" + c).matches())).collect(Collectors.toSet());
 
-       return cols;
+        return cols;
     }
 
+    @SuppressWarnings("java:S2699")
     @Test
-    public void sjekk_unmapped() throws Exception {
+    void sjekk_unmapped() throws Exception {
         sjekk_alle_tabeller_mappet();
         sjekk_alle_kolonner_mappet();
     }
 
-    private void sjekk_alle_kolonner_mappet() throws Exception {
-        for (var namespace : MetadataExtractorIntegrator.INSTANCE
-            .getDatabase()
-            .getNamespaces()) {
-            String namespaceName = getSchemaName(namespace);
+    private void sjekk_alle_kolonner_mappet() {
+        for (var namespace : MetadataExtractorIntegrator.INSTANCE.getDatabase().getNamespaces()) {
+            var namespaceName = getSchemaName(namespace);
             var dbColumns = getColumns(namespaceName);
 
             for (var table : namespace.getTables()) {
 
-                String tableName = table.getName().toUpperCase();
-                if(whitelistTable(tableName)) {
+                var tableName = table.getName().toUpperCase();
+                if (whitelistTable(tableName)) {
                     continue;
                 }
 
-                List<Column> columns = StreamSupport.stream(
-                    Spliterators.spliteratorUnknownSize(
-                        table.getColumnIterator(),
-                        Spliterator.ORDERED),
-                    false)
-                    .collect(Collectors.toList());
+                var columns = StreamSupport.stream(Spliterators.spliteratorUnknownSize(table.getColumnIterator(), Spliterator.ORDERED),
+                    false).toList();
 
                 var columnNames = columns.stream().map(c -> c.getName().toUpperCase()).collect(Collectors.toCollection(TreeSet::new));
                 if (dbColumns.containsKey(tableName)) {
                     var unmapped = new TreeSet<>(whitelistColumns(tableName, dbColumns.get(tableName)));
                     unmapped.removeAll(columnNames);
                     if (!unmapped.isEmpty()) {
-                        log.warn("Table {} has unmapped columns: {}", table.getName(), unmapped);
+                        LOG.warn("Table {} has unmapped columns: {}", table.getName(), unmapped);
                     }
                 } else {
-                    log.warn("Table {} not in database schema {}", tableName, namespaceName);
+                    LOG.warn("Table {} not in database schema {}", tableName, namespaceName);
                 }
             }
         }
@@ -152,17 +136,15 @@ public class RapporterUnmappedKolonnerIDatabaseTest {
     }
 
     private void sjekk_alle_tabeller_mappet() throws Exception {
-        for (var namespace : MetadataExtractorIntegrator.INSTANCE
-            .getDatabase()
-            .getNamespaces()) {
-            String namespaceName = getSchemaName(namespace);
+        for (var namespace : MetadataExtractorIntegrator.INSTANCE.getDatabase().getNamespaces()) {
+            var namespaceName = getSchemaName(namespace);
             var dbColumns = getColumns(namespaceName);
             var dbTables = dbColumns.keySet();
             for (var table : namespace.getTables()) {
-                String tableName = table.getName().toUpperCase();
+                var tableName = table.getName().toUpperCase();
                 dbTables.remove(tableName);
             }
-            dbTables.forEach(t -> log.warn("Table not mapped in hibernate{}: {}", namespaceName, t));
+            dbTables.forEach(t -> LOG.warn("Table not mapped in hibernate{}: {}", namespaceName, t));
         }
 
     }
@@ -172,30 +154,23 @@ public class RapporterUnmappedKolonnerIDatabaseTest {
         return schema == null ? null : schema.getCanonicalName().toUpperCase();
     }
 
-    public static class MetadataExtractorIntegrator
-            implements org.hibernate.integrator.spi.Integrator {
+    static class MetadataExtractorIntegrator implements org.hibernate.integrator.spi.Integrator {
 
-        public static final MetadataExtractorIntegrator INSTANCE = new MetadataExtractorIntegrator();
+        static final MetadataExtractorIntegrator INSTANCE = new MetadataExtractorIntegrator();
 
         private Database database;
 
-        public Database getDatabase() {
+        Database getDatabase() {
             return database;
         }
 
         @Override
-        public void integrate(
-                              Metadata metadata,
-                              SessionFactoryImplementor sessionFactory,
-                              SessionFactoryServiceRegistry serviceRegistry) {
-
+        public void integrate(Metadata metadata, SessionFactoryImplementor sessionFactory, SessionFactoryServiceRegistry serviceRegistry) {
             database = metadata.getDatabase();
         }
 
         @Override
-        public void disintegrate(
-                                 SessionFactoryImplementor sessionFactory,
-                                 SessionFactoryServiceRegistry serviceRegistry) {
+        public void disintegrate(SessionFactoryImplementor sessionFactory, SessionFactoryServiceRegistry serviceRegistry) {
         }
     }
 

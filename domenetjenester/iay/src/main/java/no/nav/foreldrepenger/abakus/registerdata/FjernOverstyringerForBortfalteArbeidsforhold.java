@@ -15,14 +15,15 @@ final class FjernOverstyringerForBortfalteArbeidsforhold {
 
     /**
      * Identifiserer og fjerner overstyringer for arbeidsforhold som har blitt overstyrt tidligere, men som nå ikke har blitt innhentet på nytt.
-     *
+     * <p>
      * Dette kan være fordi arbeidsforholdet har blitt fjernet/endret i aareg til å ligge utenfor opplysningsperioden.
      *
-     * @param grunnlagBuilder Builder for grunnlaget
+     * @param grunnlagBuilder         Builder for grunnlaget
      * @param innhentetArbeidsforhold Liste over arbeidsforhold som har blitt innhentet
      * @return Informasjonbuilder der overstyringer for bortfalte arbeidsforhold har blitt fjernet
      */
-    static ArbeidsforholdInformasjonBuilder fjern(InntektArbeidYtelseGrunnlagBuilder grunnlagBuilder, Set<ArbeidsforholdIdentifikator> innhentetArbeidsforhold) {
+    static ArbeidsforholdInformasjonBuilder fjern(InntektArbeidYtelseGrunnlagBuilder grunnlagBuilder,
+                                                  Set<ArbeidsforholdIdentifikator> innhentetArbeidsforhold) {
 
         ArbeidsforholdInformasjon informasjon = grunnlagBuilder.getInformasjon();
         List<ArbeidsforholdOverstyring> overstyringerSomMåFjernes = finnOverstyringerForBortfalteArbeidsforhold(innhentetArbeidsforhold, informasjon);
@@ -32,12 +33,15 @@ final class FjernOverstyringerForBortfalteArbeidsforhold {
     }
 
 
-    private static List<ArbeidsforholdOverstyring> finnOverstyringerForBortfalteArbeidsforhold(Set<ArbeidsforholdIdentifikator> innhentetArbeidsforhold, ArbeidsforholdInformasjon informasjon) {
-        return informasjon.getOverstyringer().stream()
+    private static List<ArbeidsforholdOverstyring> finnOverstyringerForBortfalteArbeidsforhold(Set<ArbeidsforholdIdentifikator> innhentetArbeidsforhold,
+                                                                                               ArbeidsforholdInformasjon informasjon) {
+        return informasjon.getOverstyringer()
+            .stream()
             .filter(FjernOverstyringerForBortfalteArbeidsforhold::erIkkeLagtTilFraInntektsmeldingEllerFiktivt)
             .filter(ov -> innhentetArbeidsforhold.stream()
-                .noneMatch(arbeid -> arbeid.getArbeidsgiver().getIdentifikator().equals(ov.getArbeidsgiver().getIdentifikator())
-                    && (arbeid.harArbeidsforholdRef() && arbeid.getArbeidsforholdId().gjelderFor(informasjon.finnEkstern(ov.getArbeidsgiver(), ov.getArbeidsforholdRef())))))
+                .noneMatch(arbeid -> arbeid.getArbeidsgiver().getIdentifikator().equals(ov.getArbeidsgiver().getIdentifikator()) && (
+                    arbeid.harArbeidsforholdRef() && arbeid.getArbeidsforholdId()
+                        .gjelderFor(informasjon.finnEkstern(ov.getArbeidsgiver(), ov.getArbeidsforholdRef())))))
             .collect(Collectors.toList());
     }
 

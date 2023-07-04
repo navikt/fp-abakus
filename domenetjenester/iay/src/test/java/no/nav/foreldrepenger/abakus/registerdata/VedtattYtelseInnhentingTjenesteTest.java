@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
-import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
@@ -34,7 +33,7 @@ import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.domene.YtelseAnvistBuilder;
 
-public class VedtattYtelseInnhentingTjenesteTest {
+class VedtattYtelseInnhentingTjenesteTest {
 
     private VedtakYtelseRepository vedtakYtelseRepository = mock(VedtakYtelseRepository.class);
 
@@ -44,11 +43,11 @@ public class VedtattYtelseInnhentingTjenesteTest {
 
     @BeforeEach
     public void before() {
-        vedtattYtelseInnhentingTjeneste = new VedtattYtelseInnhentingTjeneste(vedtakYtelseRepository, true, inntektArbeidYtelseRepository);
+        vedtattYtelseInnhentingTjeneste = new VedtattYtelseInnhentingTjeneste(vedtakYtelseRepository, inntektArbeidYtelseRepository);
     }
 
     @Test
-    public void skal_mappe_vedtatt_ytelse() throws Exception {
+    void skal_mappe_vedtatt_ytelse() throws Exception {
         // Arrange
         VedtakYtelse vy = VedtakYtelseBuilder.oppdatere(Optional.empty())
             .medPeriode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusMonths(4), LocalDate.now().minusMonths(2)))
@@ -57,28 +56,33 @@ public class VedtattYtelseInnhentingTjenesteTest {
             .medSaksnummer(new Saksnummer("123"))
             .medKilde(Fagsystem.FPSAK)
             .medYtelseType(YtelseType.ENGANGSTØNAD)
-            .medBehandlingsTema(TemaUnderkategori.ENGANGSSTONAD_FODSEL)
             .leggTil(getYtelseAnvist())
             .build();
         Kobling k = new Kobling();
         k.setOpplysningsperiode(IntervallEntitet.fraOgMed(LocalDate.now().minusMonths(17)));
         when(vedtakYtelseRepository.hentYtelserForIPeriode(any(), any(), any())).thenReturn(List.of(vy));
         when(inntektArbeidYtelseRepository.hentInntektArbeidYtelseGrunnlagForBehandling(any())).thenReturn(Optional.empty());
-        InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder builder = InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder.oppdatere(Optional.empty());
+        InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder builder = InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder.oppdatere(
+            Optional.empty());
         // Act
         vedtattYtelseInnhentingTjeneste.innhentFraYtelsesRegister(AktørId.dummy(), k, builder);
         assertThat(builder.build().getAlleYtelser()).isNotEmpty();
         assertThat(builder.build().getAlleYtelser().stream().map(Ytelse::getYtelseAnvist).flatMap(Collection::stream).count()).isEqualTo(1);
-        assertThat(builder.build().getAlleYtelser().stream().map(Ytelse::getYtelseAnvist)
+        assertThat(builder.build()
+            .getAlleYtelser()
+            .stream()
+            .map(Ytelse::getYtelseAnvist)
             .flatMap(Collection::stream)
-            .map(YtelseAnvist::getYtelseAnvistAndeler).count()).isEqualTo(1);
+            .map(YtelseAnvist::getYtelseAnvistAndeler)
+            .count()).isEqualTo(1);
 
     }
 
     private YtelseAnvistBuilder getYtelseAnvist() {
         return YtelseAnvistBuilder.ny()
             .medAnvistPeriode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusMonths(4), LocalDate.now().minusMonths(2)))
-            .leggTilFordeling(VedtakYtelseAndelBuilder.ny().medArbeidsforholdId("aiowjd332423")
+            .leggTilFordeling(VedtakYtelseAndelBuilder.ny()
+                .medArbeidsforholdId("aiowjd332423")
                 .medArbeidsgiver(Arbeidsgiver.virksomhet("910909088"))
                 .medDagsats(BigDecimal.TEN)
                 .medInntektskategori(Inntektskategori.ARBEIDSTAKER)

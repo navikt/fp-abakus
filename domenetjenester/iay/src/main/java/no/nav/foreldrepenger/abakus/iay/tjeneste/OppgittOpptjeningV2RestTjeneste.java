@@ -50,29 +50,28 @@ public class OppgittOpptjeningV2RestTjeneste {
     }
 
     @Inject
-    public OppgittOpptjeningV2RestTjeneste(KoblingTjeneste koblingTjeneste,
-                                           OppgittOpptjeningTjeneste oppgittOpptjeningTjeneste) {
+    public OppgittOpptjeningV2RestTjeneste(KoblingTjeneste koblingTjeneste, OppgittOpptjeningTjeneste oppgittOpptjeningTjeneste) {
         this.koblingTjeneste = koblingTjeneste;
         this.oppgittOpptjeningTjeneste = oppgittOpptjeningTjeneste;
     }
 
     @POST
     @Path("/motta")
-    @Operation(description = "Lagrer ned mottatt oppgitt opptjening (versjon 2: støtter oppgitt opptjening pr journalpost)", tags = "oppgitt opptjening", responses = {
-        @ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))
-    })
+    @Operation(description = "Lagrer ned mottatt oppgitt opptjening (versjon 2: støtter oppgitt opptjening pr journalpost)", tags = "oppgitt opptjening", responses = {@ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))})
     @BeskyttetRessurs(actionType = ActionType.CREATE, resource = SØKNAD)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT"})
     public Response lagreOppgittOpptjeningV2(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
         LoggUtil.setupLogMdc(mottattRequest.getYtelseType(), mottattRequest.getSaksnummer(), mottattRequest.getKoblingReferanse());
         if (!mottattRequest.harOppgittJournalpostId() || !mottattRequest.harOppgittInnsendingstidspunkt()) {
-            return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), "v2/motta krever at journalpostId og innsendingstidspunkt er satt på oppgitt opptjening").build();
+            return Response.status(Response.Status.BAD_REQUEST.getStatusCode(),
+                "v2/motta krever at journalpostId og innsendingstidspunkt er satt på oppgitt opptjening").build();
         }
 
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
         var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
-        var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId, new Saksnummer(mottattRequest.getSaksnummer()));
+        var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId,
+            new Saksnummer(mottattRequest.getSaksnummer()));
 
         OppgittOpptjeningBuilder builder = new MapOppgittOpptjening().mapFraDto(mottattRequest.getOppgittOpptjening());
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagrePrJournalpostId(koblingReferanse, builder);

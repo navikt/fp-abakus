@@ -25,6 +25,9 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 @JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE)
 public class KopierGrunnlagRequest {
 
+    @JsonProperty("dataset")
+    @Valid
+    public Set<Dataset> dataset = EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.REGISTER, Dataset.OVERSTYRT, Dataset.INNTEKTSMELDING);
     /**
      * Saksnummer alle grunnlag og koblinger er linket til.
      */
@@ -33,41 +36,33 @@ public class KopierGrunnlagRequest {
     @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'")
     @Valid
     private String saksnummer;
-
     @JsonProperty(value = "nyReferanse", required = true)
     @Valid
     @NotNull
     private UUID nyReferanse;
-
     @JsonProperty(value = "ytelseType", required = true)
     @NotNull
     private YtelseType ytelseType;
-
     @JsonProperty(value = "opplysningsperiode")
     @Valid
     private Periode opplysningsperiode;
-
+    @JsonProperty(value = "opplysningsperiodeSkattegrunnlag")
+    @Valid
+    private Periode opplysningsperiodeSkattegrunnlag;
     @JsonProperty(value = "aktør", required = true)
     @NotNull
     @Valid
     private PersonIdent aktør;
-
     @JsonProperty(value = "annenPartAktør")
     @Valid
     private PersonIdent annenPartAktør;
-
     @JsonProperty(value = "opptjeningsperiode")
     @Valid
     private Periode opptjeningsperiode;
-
     @JsonProperty(value = "gammelReferanse", required = true)
     @Valid
     @NotNull
     private UUID gammelReferanse;
-
-    @JsonProperty("dataset")
-    @Valid
-    public Set<Dataset> dataset = EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.REGISTER, Dataset.OVERSTYRT, Dataset.INNTEKTSMELDING);
 
     @JsonCreator
     public KopierGrunnlagRequest(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
@@ -106,6 +101,14 @@ public class KopierGrunnlagRequest {
 
     public void setOpplysningsperiode(Periode opplysningsperiode) {
         this.opplysningsperiode = opplysningsperiode;
+    }
+
+    public Periode getOpplysningsperiodeSkattegrunnlag() {
+        return opplysningsperiodeSkattegrunnlag;
+    }
+
+    public void setOpplysningsperiodeSkattegrunnlag(Periode opplysningsperiodeSkattegrunnlag) {
+        this.opplysningsperiodeSkattegrunnlag = opplysningsperiodeSkattegrunnlag;
     }
 
     public Periode getOpptjeningsperiode() {

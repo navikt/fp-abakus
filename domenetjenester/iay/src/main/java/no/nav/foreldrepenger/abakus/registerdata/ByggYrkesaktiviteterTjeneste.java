@@ -9,9 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtaleBuilder;
@@ -28,8 +25,6 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdId
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
 class ByggYrkesaktiviteterTjeneste {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ByggYrkesaktiviteterTjeneste.class);
 
     YrkesaktivitetBuilder byggYrkesaktivitetForSøker(Map.Entry<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold,
                                                      Arbeidsgiver arbeidsgiver,
@@ -66,15 +61,12 @@ class ByggYrkesaktiviteterTjeneste {
     }
 
     private void sammenstillAktivitetsavtaler(List<Arbeidsforhold> arbeidsforhold, YrkesaktivitetBuilder builder, LocalDate fom) {
-        finnSisteArbeidsavtale(arbeidsforhold)
-            .ifPresent(arbeidsavtale -> builder
-                .leggTilAktivitetsAvtale(lagAktivitetsavtale(builder, fom, arbeidsavtale))
-            );
+        finnSisteArbeidsavtale(arbeidsforhold).ifPresent(
+            arbeidsavtale -> builder.leggTilAktivitetsAvtale(lagAktivitetsavtale(builder, fom, arbeidsavtale)));
     }
 
     private AktivitetsAvtaleBuilder lagAktivitetsavtale(YrkesaktivitetBuilder builder, LocalDate fom, Arbeidsavtale arbeidsavtale) {
-        return builder
-            .getAktivitetsAvtaleBuilder()
+        return builder.getAktivitetsAvtaleBuilder()
             .medProsentsats(arbeidsavtale.getStillingsprosent())
             .medSisteLønnsendringsdato(arbeidsavtale.getSisteLønnsendringsdato() != null ? arbeidsavtale.getSisteLønnsendringsdato() : fom)
             .medPeriode(IntervallEntitet.fraOgMed(fom));
@@ -91,13 +83,12 @@ class ByggYrkesaktiviteterTjeneste {
         return arbeidsforhold.stream()
             .flatMap(arbeid -> arbeid.getArbeidsavtaler().stream())
             .map(Arbeidsavtale::getArbeidsavtaleFom)
-            .min(LocalDate::compareTo).orElse(TIDENES_BEGYNNELSE);
+            .min(LocalDate::compareTo)
+            .orElse(TIDENES_BEGYNNELSE);
     }
 
     private AktivitetsAvtaleBuilder byggAnsettelsesPeriode(YrkesaktivitetBuilder builder, LocalDate fom) {
-        return builder
-            .getAktivitetsAvtaleBuilder()
-            .medPeriode(IntervallEntitet.fraOgMed(fom));
+        return builder.getAktivitetsAvtaleBuilder().medPeriode(IntervallEntitet.fraOgMed(fom));
     }
 
     private void byggPermisjoner(YrkesaktivitetBuilder builder, Arbeidsforhold arbeidsforhold1) {
@@ -112,21 +103,18 @@ class ByggYrkesaktiviteterTjeneste {
 
     private void byggYrkesaktivitetForVirksomhet(List<Arbeidsforhold> arbeidsforhold, YrkesaktivitetBuilder builder) {
         for (Arbeidsforhold arbeid : arbeidsforhold) {
-            arbeid.getArbeidsavtaler()
-                .stream()
-                .map(a -> opprettAktivitetsAvtaler(a, builder))
-                .forEach(builder::leggTilAktivitetsAvtale);
+            arbeid.getArbeidsavtaler().stream().map(a -> opprettAktivitetsAvtaler(a, builder)).forEach(builder::leggTilAktivitetsAvtale);
 
             byggPermisjoner(builder, arbeid);
         }
     }
 
     private Permisjon opprettPermisjoner(no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Permisjon permisjon,
-                                         YrkesaktivitetBuilder yrkesaktivitetBuilder, LocalDate arbeidsforholdTom) {
+                                         YrkesaktivitetBuilder yrkesaktivitetBuilder,
+                                         LocalDate arbeidsforholdTom) {
         PermisjonBuilder permisjonBuilder = yrkesaktivitetBuilder.getPermisjonBuilder();
         LocalDate permisjonTom = permisjon.getPermisjonTom() == null ? arbeidsforholdTom : permisjon.getPermisjonTom();
-        return permisjonBuilder
-            .medProsentsats(permisjon.getPermisjonsprosent())
+        return permisjonBuilder.medProsentsats(permisjon.getPermisjonsprosent())
             .medPeriode(permisjon.getPermisjonFom(), permisjonTom)
             .medPermisjonsbeskrivelseType(PermisjonsbeskrivelseType.finnForKodeverkEiersKode(permisjon.getPermisjonsÅrsak()))
             .build();
@@ -136,25 +124,24 @@ class ByggYrkesaktiviteterTjeneste {
                                               Arbeidsgiver arbeidsgiver,
                                               InternArbeidsforholdRef internReferanse,
                                               YrkesaktivitetBuilder yrkesaktivitetBuilder) {
-        yrkesaktivitetBuilder
-            .medArbeidType(ArbeidType.finnForKodeverkEiersKode(arbeidsforhold.getType()))
+        yrkesaktivitetBuilder.medArbeidType(ArbeidType.finnForKodeverkEiersKode(arbeidsforhold.getType()))
             .medArbeidsforholdId(internReferanse)
             .medArbeidsgiver(arbeidsgiver);
     }
 
 
-    private AktivitetsAvtaleBuilder opprettAktivitetsAvtaler(Arbeidsavtale arbeidsavtale,
-                                                             YrkesaktivitetBuilder yrkesaktivitetBuilder) {
+    private AktivitetsAvtaleBuilder opprettAktivitetsAvtaler(Arbeidsavtale arbeidsavtale, YrkesaktivitetBuilder yrkesaktivitetBuilder) {
         IntervallEntitet periode;
         if (arbeidsavtale.getArbeidsavtaleTom() == null) {
             periode = IntervallEntitet.fraOgMed(arbeidsavtale.getArbeidsavtaleFom());
         } else {
             periode = IntervallEntitet.fraOgMedTilOgMed(arbeidsavtale.getArbeidsavtaleFom(), arbeidsavtale.getArbeidsavtaleTom());
         }
-        AktivitetsAvtaleBuilder aktivitetsAvtaleBuilder = yrkesaktivitetBuilder.getAktivitetsAvtaleBuilder(periode, arbeidsavtale.getErAnsettelsesPerioden());
-        aktivitetsAvtaleBuilder
-            .medProsentsats(arbeidsavtale.getStillingsprosent())
-            .medSisteLønnsendringsdato(arbeidsavtale.getSisteLønnsendringsdato() != null || arbeidsavtale.getErAnsettelsesPerioden() ? arbeidsavtale.getSisteLønnsendringsdato() : periode.getFomDato())
+        AktivitetsAvtaleBuilder aktivitetsAvtaleBuilder = yrkesaktivitetBuilder.getAktivitetsAvtaleBuilder(periode,
+            arbeidsavtale.getErAnsettelsesPerioden());
+        aktivitetsAvtaleBuilder.medProsentsats(arbeidsavtale.getStillingsprosent())
+            .medSisteLønnsendringsdato(arbeidsavtale.getSisteLønnsendringsdato() != null
+                || arbeidsavtale.getErAnsettelsesPerioden() ? arbeidsavtale.getSisteLønnsendringsdato() : periode.getFomDato())
             .medPeriode(periode);
 
         return aktivitetsAvtaleBuilder;

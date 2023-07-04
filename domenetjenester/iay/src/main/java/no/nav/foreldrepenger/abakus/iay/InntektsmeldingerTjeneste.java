@@ -29,7 +29,9 @@ public class InntektsmeldingerTjeneste {
         return repository.hentArbeidsforholdInformasjonForBehandling(koblingReferanse).orElseGet(ArbeidsforholdInformasjon::new);
     }
 
-    public GrunnlagReferanse lagre(KoblingReferanse koblingReferanse, ArbeidsforholdInformasjonBuilder informasjonBuilder, List<Inntektsmelding> alleInntektsmeldinger) {
+    public GrunnlagReferanse lagre(KoblingReferanse koblingReferanse,
+                                   ArbeidsforholdInformasjonBuilder informasjonBuilder,
+                                   List<Inntektsmelding> alleInntektsmeldinger) {
         return repository.lagre(koblingReferanse, informasjonBuilder, alleInntektsmeldinger);
     }
 

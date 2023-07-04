@@ -44,7 +44,8 @@ public class ArbeidsforholdDtoTjeneste {
     public List<ArbeidsforholdDto> mapFor(AktørId aktørId, LocalDate fom, LocalDate tom, YtelseType ytelse) {
         var ident = aktørConsumer.hentIdentForAktør(aktørId, ytelse).orElseThrow();
         var intervall = tom == null ? IntervallEntitet.fraOgMed(fom) : IntervallEntitet.fraOgMedTilOgMed(fom, tom);
-        Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident, aktørId, intervall);
+        Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident,
+            aktørId, intervall);
 
         return arbeidsforhold.entrySet().stream().map(this::mapTilArbeidsforhold).collect(Collectors.toList());
     }

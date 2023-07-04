@@ -25,7 +25,7 @@ class ListPositionEquality {
         int getPos() {
             return pos;
         }
-        
+
         Node getRoot() {
             return root;
         }

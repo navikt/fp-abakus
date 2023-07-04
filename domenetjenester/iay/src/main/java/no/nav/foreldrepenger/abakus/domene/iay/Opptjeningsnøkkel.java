@@ -20,11 +20,10 @@ public class Opptjeningsnøkkel {
     }
 
     public Opptjeningsnøkkel(InternArbeidsforholdRef arbeidsforholdId, Arbeidsgiver arbeidsgiver) {
-        this(arbeidsforholdId,
-            arbeidsgiver.getErVirksomhet() ? arbeidsgiver.getIdentifikator() : null,
+        this(arbeidsforholdId, arbeidsgiver.getErVirksomhet() ? arbeidsgiver.getIdentifikator() : null,
             arbeidsgiver.getErVirksomhet() ? null : arbeidsgiver.getIdentifikator());
     }
-    
+
     public Opptjeningsnøkkel(InternArbeidsforholdRef internArbeidsforholdRef, String orgNummer, String aktørId) {
         if (internArbeidsforholdRef == null && orgNummer == null && aktørId == null) {
             throw new IllegalArgumentException("Minst en av internArbeidsforholdRef, orgnummer og aktørId må vere ulik null");
@@ -57,9 +56,9 @@ public class Opptjeningsnøkkel {
      * 3) AktørDto id er iden til en person som fungere som arbeidsgiver
      */
     public String getVerdi() {
-        if (harArbeidsforholdId())
+        if (harArbeidsforholdId()) {
             return this.arbeidsforholdId.getReferanse();
-        else if (this.orgNummer != null) {
+        } else if (this.orgNummer != null) {
             return this.orgNummer;
         } else if (this.aktørId != null) {
             return this.aktørId;
@@ -90,9 +89,9 @@ public class Opptjeningsnøkkel {
     }
 
     public Type getType() {
-        if (harArbeidsforholdId())
+        if (harArbeidsforholdId()) {
             return Type.ARBEIDSFORHOLD_ID;
-        else if (this.orgNummer != null) {
+        } else if (this.orgNummer != null) {
             return Type.ORG_NUMMER;
         } else if (this.aktørId != null) {
             return Type.AKTØR_ID;
@@ -130,8 +129,8 @@ public class Opptjeningsnøkkel {
             }
             return likArbeidsforholdsId && likArbeidsgiver;
         } else {
-            if ((Type.ORG_NUMMER.equals(other.getType()) || Type.ORG_NUMMER.equals(this.getType()))
-                && (!other.harArbeidsforholdId() || !this.harArbeidsforholdId())) {
+            if ((Type.ORG_NUMMER.equals(other.getType()) || Type.ORG_NUMMER.equals(this.getType())) && (!other.harArbeidsforholdId()
+                || !this.harArbeidsforholdId())) {
                 return other.orgNummer != null && other.orgNummer.equals(this.orgNummer);
             }
             return Objects.equals(other.aktørId, this.aktørId);
@@ -146,9 +145,8 @@ public class Opptjeningsnøkkel {
             return false;
         }
         Opptjeningsnøkkel other = (Opptjeningsnøkkel) obj;
-        return Objects.equals(aktørId, other.aktørId)
-            && Objects.equals(orgNummer, other.orgNummer)
-            && Objects.equals(arbeidsforholdId, other.arbeidsforholdId);
+        return Objects.equals(aktørId, other.aktørId) && Objects.equals(orgNummer, other.orgNummer) && Objects.equals(arbeidsforholdId,
+            other.arbeidsforholdId);
     }
 
     @Override
@@ -158,10 +156,7 @@ public class Opptjeningsnøkkel {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<"
-            + "type=" + getType()
-            + ", key=" + getVerdi()
-            + ">";
+        return getClass().getSimpleName() + "<" + "type=" + getType() + ", key=" + getVerdi() + ">";
     }
 
     public boolean harType(Type type) {

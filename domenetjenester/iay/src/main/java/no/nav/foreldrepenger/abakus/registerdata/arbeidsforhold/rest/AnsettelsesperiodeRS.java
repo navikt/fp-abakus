@@ -19,8 +19,6 @@ public class AnsettelsesperiodeRS {
 
     @Override
     public String toString() {
-        return "AnsettelsesperiodeRS{" +
-                "periode=" + periode +
-                '}';
+        return "AnsettelsesperiodeRS{" + "periode=" + periode + '}';
     }
 }

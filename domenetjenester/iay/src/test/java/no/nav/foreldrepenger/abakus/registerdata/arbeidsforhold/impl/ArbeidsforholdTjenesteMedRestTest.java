@@ -27,47 +27,50 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.Arbeidsforh
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 
-public class ArbeidsforholdTjenesteMedRestTest {
+class ArbeidsforholdTjenesteMedRestTest {
 
     private static final String ORGNR = "973093681";
-    private static final String ULL = "8629102";
     private static final AktørId AKTØR_ID = new AktørId("1231231231223");
     private static final PersonIdent FNR = new PersonIdent("12312312312");
     private static final LocalDate FOM = LocalDate.now().minusYears(1L);
-
+    private static final String json = """
+        {
+          "arbeidsforholdId": "990983666",
+          "navArbeidsforholdId": "1234565",
+          "type": "ordinaertArbeidsforhold",
+          "registrert": "2020-02-23",
+          "ansettelsesperiode": {
+            "periode": {
+              "fom": "2018-02-23",
+              "tom": "2029-02-23"
+            }
+          },
+          "arbeidsgiver": {
+            "type": "Organisasjon",
+            "organisasjonsnummer": "973093681"
+          },
+          "arbeidsavtaler": [
+              {
+                "stillingsprosent": "100.0",
+                "antallTimerPrUke": "37.5",
+                "beregnetAntallTimerPrUke": "37.5",
+                "yrke": "8629102",
+                "gyldighetsperiode": {
+                  "fom": "2018-02-23",
+                  "tom": "2029-02-23"
+                }
+              }
+            ]
+        }
+        """;
     private static ObjectMapper mapper = JsonObjectMapper.getMapper();
 
-    private static final String json = "{\n" +
-        "  \"arbeidsforholdId\": \"990983666\",\n" +
-        "  \"navArbeidsforholdId\": \"1234565\",\n" +
-        "  \"type\": \"ordinaertArbeidsforhold\",\n" +
-        "  \"registrert\": \"2020-02-23\",\n" +
-        "  \"ansettelsesperiode\": {\n" +
-        "    \"periode\": {\n" +
-        "      \"fom\": \"2018-02-23\",\n" +
-        "      \"tom\": \"2029-02-23\"\n" +
-        "    }\n" +
-        "  },\n" +
-        "  \"arbeidsgiver\": {\n" +
-        "    \"type\": \"Organisasjon\",\n" +
-        "    \"organisasjonsnummer\": \"" + ORGNR +"\"\n" +
-        "  },\n" +
-        "  \"arbeidsavtaler\": [\n" +
-        "      {\n" +
-        "        \"stillingsprosent\": \"100.0\",\n" +
-        "        \"antallTimerPrUke\": \"37.5\",\n" +
-        "        \"beregnetAntallTimerPrUke\": \"37.5\",\n" +
-        "        \"yrke\": \"" + ULL + "\",\n" +
-        "        \"gyldighetsperiode\": {\n" +
-            "      \"fom\": \"2018-02-23\",\n" +
-            "      \"tom\": \"2029-02-23\"\n" +
-            "    }\n" +
-        "      }\n" +
-        "    ]\n" +
-        "}";
+    private static <T> T fromJson(String json, Class<T> clazz) throws IOException {
+        return mapper.readerFor(clazz).readValue(json);
+    }
 
     @Test
-    public void mapping_organisasjon() throws IOException {
+    void mapping_organisasjon() throws IOException {
         var arbeidsforhold = fromJson(json, ArbeidsforholdRS.class);
 
         assertThat(arbeidsforhold.getArbeidsgiver().getOrganisasjonsnummer()).isEqualTo(ORGNR);
@@ -75,14 +78,15 @@ public class ArbeidsforholdTjenesteMedRestTest {
     }
 
     @Test
-    public void skal_kalle_consumer_og_oversette_response() throws Exception {
+    void skal_kalle_consumer_og_oversette_response() throws Exception {
         // Arrange
         AaregRestKlient aaregRestKlient = mock(AaregRestKlient.class);
         when(aaregRestKlient.finnArbeidsforholdForArbeidstaker(any(), any(), any())).thenReturn(List.of(fromJson(json, ArbeidsforholdRS.class)));
         ArbeidsforholdTjeneste arbeidsforholdTjeneste = new ArbeidsforholdTjeneste(aaregRestKlient);
 
         // Act
-        Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(FNR, AKTØR_ID, IntervallEntitet.fraOgMedTilOgMed(FOM, LocalDate.now()));
+        Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(FNR,
+            AKTØR_ID, IntervallEntitet.fraOgMedTilOgMed(FOM, LocalDate.now()));
 
         // Assert
         assertThat(((Organisasjon) arbeidsforhold.values().iterator().next().get(0).getArbeidsgiver()).getOrgNummer()).isEqualTo(ORGNR);
@@ -99,10 +103,5 @@ public class ArbeidsforholdTjenesteMedRestTest {
             }
         });
 
-    }
-
-
-    private static <T> T fromJson(String json, Class<T> clazz) throws IOException {
-        return mapper.readerFor(clazz).readValue(json);
     }
 }

@@ -69,7 +69,7 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
 
     /**
      * Kjært navn for arbeidsgiver angitt av Saksbehandler (normalt kun ekstra arbeidsforhold lagt til). Ingen garanti for at dette matcher noe offisielt registrert navn.
-     *
+     * <p>
      * Settes normalt kun for arbeidsforhold lagt til ekstra. Ellers hent fra
      * {@link no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet#getAktivitetsAvtalerForArbeid()}.
      */
@@ -78,7 +78,7 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
 
     /**
      * Stillingsprosent angitt av saksbehandler.
-     *
+     * <p>
      * Settes normalt kun for arbeidsforhold lagt til ekstra. Ellers hent fra
      * {@link no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet#getAktivitetsAvtalerForArbeid()}.
      */
@@ -105,6 +105,7 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
     private long versjon;
 
     ArbeidsforholdOverstyring() {
+        // Plattform (CDI, Hibernate, Jackson)
     }
 
     ArbeidsforholdOverstyring(ArbeidsforholdOverstyring kopierFra) {
@@ -125,7 +126,7 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { arbeidsgiver, arbeidsforholdRef };
+        Object[] keyParts = {arbeidsgiver, arbeidsforholdRef};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -188,12 +189,20 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
         return arbeidsgiverNavn;
     }
 
+    void setArbeidsgiverNavn(String arbeidsgiverNavn) {
+        this.arbeidsgiverNavn = arbeidsgiverNavn;
+    }
+
     public Stillingsprosent getStillingsprosent() {
         return stillingsprosent;
     }
 
+    void setStillingsprosent(Stillingsprosent stillingsprosent) {
+        this.stillingsprosent = stillingsprosent;
+    }
+
     public Optional<BekreftetPermisjon> getBekreftetPermisjon() {
-        if (bekreftetPermisjon.getStatus().equals(BekreftetPermisjonStatus.UDEFINERT)){
+        if (bekreftetPermisjon.getStatus().equals(BekreftetPermisjonStatus.UDEFINERT)) {
             return Optional.empty();
         }
         return Optional.of(bekreftetPermisjon);
@@ -203,36 +212,26 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
         this.bekreftetPermisjon = bekreftetPermisjon;
     }
 
-    public boolean erOverstyrt(){
-        return !Objects.equals(ArbeidsforholdHandlingType.BRUK, handling)
-            || ( Objects.equals(ArbeidsforholdHandlingType.BRUK, handling) &&
-            !Objects.equals(bekreftetPermisjon.getStatus(), BekreftetPermisjonStatus.UDEFINERT) );
+    public boolean erOverstyrt() {
+        return !Objects.equals(ArbeidsforholdHandlingType.BRUK, handling) || (Objects.equals(ArbeidsforholdHandlingType.BRUK, handling)
+            && !Objects.equals(bekreftetPermisjon.getStatus(), BekreftetPermisjonStatus.UDEFINERT));
     }
 
     public boolean kreverIkkeInntektsmelding() {
-        return Set.of(ArbeidsforholdHandlingType.LAGT_TIL_AV_SAKSBEHANDLER,
-            ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING,
-            ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE,
-            ArbeidsforholdHandlingType.INNTEKT_IKKE_MED_I_BG).contains(handling);
-    }
-
-    void setArbeidsgiverNavn(String arbeidsgiverNavn) {
-        this.arbeidsgiverNavn = arbeidsgiverNavn;
-    }
-
-    void setStillingsprosent(Stillingsprosent stillingsprosent) {
-        this.stillingsprosent = stillingsprosent;
+        return Set.of(ArbeidsforholdHandlingType.LAGT_TIL_AV_SAKSBEHANDLER, ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING,
+            ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE, ArbeidsforholdHandlingType.INNTEKT_IKKE_MED_I_BG).contains(handling);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null ||!(o instanceof ArbeidsforholdOverstyring))
+        }
+        if (o == null || !(o instanceof ArbeidsforholdOverstyring)) {
             return false;
+        }
         var that = (ArbeidsforholdOverstyring) o;
-        return Objects.equals(arbeidsgiver, that.arbeidsgiver) &&
-            Objects.equals(arbeidsforholdRef, that.arbeidsforholdRef);
+        return Objects.equals(arbeidsgiver, that.arbeidsgiver) && Objects.equals(arbeidsforholdRef, that.arbeidsforholdRef);
     }
 
     @Override
@@ -242,10 +241,7 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()+
-            "<arbeidsgiver=" + arbeidsgiver +
-            ", arbeidsforholdRef=" + arbeidsforholdRef +
-            ", handling=" + handling +
-            '>';
+        return getClass().getSimpleName() + "<arbeidsgiver=" + arbeidsgiver + ", arbeidsforholdRef=" + arbeidsforholdRef + ", handling=" + handling
+            + '>';
     }
 }

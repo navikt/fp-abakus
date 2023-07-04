@@ -19,9 +19,8 @@ public enum VirksomhetType implements Kodeverdi {
     UDEFINERT("-", "Ikke definert"),
     ;
 
-    private static final Map<String, VirksomhetType> KODER = new LinkedHashMap<>();
-
     public static final String KODEVERK = "VIRKSOMHET_TYPE";
+    private static final Map<String, VirksomhetType> KODER = new LinkedHashMap<>();
 
     static {
         for (var v : values()) {
@@ -45,8 +44,7 @@ public enum VirksomhetType implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent VirksomhetType: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent VirksomhetType: " + kode));
     }
 
     public static Map<String, VirksomhetType> kodeMap() {

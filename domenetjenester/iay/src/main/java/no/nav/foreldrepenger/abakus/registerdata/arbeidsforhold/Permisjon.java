@@ -36,13 +36,15 @@ public class Permisjon {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Permisjon permisjon = (Permisjon) o;
-        return Objects.equals(permisjonFom, permisjon.permisjonFom) &&
-            Objects.equals(permisjonTom, permisjon.permisjonTom) &&
-            Objects.equals(permisjonsprosent, permisjon.permisjonsprosent) &&
-            Objects.equals(permisjonsÅrsak, permisjon.permisjonsÅrsak);
+        return Objects.equals(permisjonFom, permisjon.permisjonFom) && Objects.equals(permisjonTom, permisjon.permisjonTom) && Objects.equals(
+            permisjonsprosent, permisjon.permisjonsprosent) && Objects.equals(permisjonsÅrsak, permisjon.permisjonsÅrsak);
     }
 
     @Override
@@ -52,12 +54,8 @@ public class Permisjon {
 
     @Override
     public String toString() {
-        return "Permisjon{" +
-            "permisjonFom=" + permisjonFom +
-            ", permisjonTom=" + permisjonTom +
-            ", permisjonsprosent=" + permisjonsprosent +
-            ", permisjonsÅrsak='" + permisjonsÅrsak + '\'' +
-            '}';
+        return "Permisjon{" + "permisjonFom=" + permisjonFom + ", permisjonTom=" + permisjonTom + ", permisjonsprosent=" + permisjonsprosent
+            + ", permisjonsÅrsak='" + permisjonsÅrsak + '\'' + '}';
     }
 
     public static class Builder {
@@ -85,6 +83,7 @@ public class Permisjon {
             this.permisjonsÅrsak = permisjonsÅrsak;
             return this;
         }
+
         public Permisjon build() {
             return new Permisjon(permisjonFom, permisjonTom, permisjonsprosent, permisjonsÅrsak);
         }

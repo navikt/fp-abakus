@@ -5,14 +5,12 @@ import org.flywaydb.core.api.FlywayException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.foreldrepenger.abakus.jetty.db.DatasourceRole;
-import no.nav.foreldrepenger.abakus.jetty.db.DatasourceUtil;
 import no.nav.foreldrepenger.konfig.Environment;
 
 public class JettyDevServer extends JettyServer {
 
     private static final Environment ENV = Environment.current();
-    private static final Logger log = LoggerFactory.getLogger(JettyDevServer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JettyDevServer.class);
 
     private JettyDevServer(int serverPort) {
         super(serverPort);
@@ -34,7 +32,7 @@ public class JettyDevServer extends JettyServer {
         try {
             super.migrerDatabaser();
         } catch (Exception e) {
-            log.info("Migreringer feilet, cleaner og prøver på nytt for lokal db.");
+            LOG.info("Migreringer feilet, cleaner og prøver på nytt for lokal db.");
             try (var migreringDs = DatasourceUtil.createDatasource(DatasourceRole.ADMIN, 2)) {
                 var flyway = Flyway.configure()
                     .dataSource(migreringDs)

@@ -18,17 +18,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 
 @Entity(name = "OppgittOpptjeningAggregat")
 @Table(name = "IAY_OPPGITTE_OPPTJENINGER")
 public class OppgittOpptjeningAggregat extends BaseEntitet {
-
-    private static final Logger logger = LoggerFactory.getLogger(OppgittOpptjeningAggregat.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_IAY_OPPGITTE_OPPTJENINGER")
@@ -45,30 +40,30 @@ public class OppgittOpptjeningAggregat extends BaseEntitet {
     public OppgittOpptjeningAggregat() {
     }
 
+    private OppgittOpptjeningAggregat(Collection<OppgittOpptjening> oppgitteOpptjeninger) {
+        this.oppgitteOpptjeninger.addAll(oppgitteOpptjeninger.stream().map(oppgittOpptjening -> {
+            var kopi = new OppgittOpptjening(oppgittOpptjening);
+            kopi.setOppgitteOpptjeninger(this);
+            return kopi;
+        }).collect(Collectors.toList()));
+    }
+
     public static OppgittOpptjeningAggregat ny(OppgittOpptjening oppgittOpptjening) {
         return new OppgittOpptjeningAggregat(List.of(oppgittOpptjening));
     }
 
     public static OppgittOpptjeningAggregat oppdater(OppgittOpptjeningAggregat gammel, OppgittOpptjening oppgittOpptjening) {
-        if (gammel.getOppgitteOpptjeninger().stream()
+        if (gammel.getOppgitteOpptjeninger()
+            .stream()
             .map(OppgittOpptjening::getJournalpostId)
             .anyMatch(o -> o.equals(oppgittOpptjening.getJournalpostId()))) {
-            throw new IllegalArgumentException("Har allerede journalpostId " + oppgittOpptjening.getJournalpostId() + " registrert, kan ikke legge til");
+            throw new IllegalArgumentException(
+                "Har allerede journalpostId " + oppgittOpptjening.getJournalpostId() + " registrert, kan ikke legge til");
         }
         List<OppgittOpptjening> opptjeninger = new ArrayList<>();
         opptjeninger.addAll(gammel.oppgitteOpptjeninger);
         opptjeninger.add(oppgittOpptjening);
         return new OppgittOpptjeningAggregat(opptjeninger);
-    }
-
-    private OppgittOpptjeningAggregat(Collection<OppgittOpptjening> oppgitteOpptjeninger) {
-        this.oppgitteOpptjeninger.addAll(oppgitteOpptjeninger.stream()
-            .map(oppgittOpptjening -> {
-                var kopi = new OppgittOpptjening(oppgittOpptjening);
-                kopi.setOppgitteOpptjeninger(this);
-                return kopi;
-            })
-            .collect(Collectors.toList()));
     }
 
     /**
@@ -87,10 +82,12 @@ public class OppgittOpptjeningAggregat extends BaseEntitet {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || !(o instanceof OppgittOpptjeningAggregat))
+        }
+        if (o == null || !(o instanceof OppgittOpptjeningAggregat)) {
             return false;
+        }
         var that = (OppgittOpptjeningAggregat) o;
         return Objects.equals(oppgitteOpptjeninger, that.oppgitteOpptjeninger);
     }
@@ -102,8 +99,6 @@ public class OppgittOpptjeningAggregat extends BaseEntitet {
 
     @Override
     public String toString() {
-        return "OppgittOpptjeningAggregat{" +
-            "oppgitteOpptjeninger=" + oppgitteOpptjeninger +
-            '}';
+        return "OppgittOpptjeningAggregat{" + "oppgitteOpptjeninger=" + oppgitteOpptjeninger + '}';
     }
 }

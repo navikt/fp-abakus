@@ -29,10 +29,10 @@ import no.nav.foreldrepenger.abakus.registerdata.IAYRegisterInnhentingFellesTjen
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AaregRestKlient;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FinnInntektRequest;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjeneste;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.felles.InfotrygdGrunnlagAggregator;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
 import no.nav.vedtak.felles.integrasjon.spokelse.Spøkelse;
 
 @ApplicationScoped
@@ -40,15 +40,12 @@ import no.nav.vedtak.felles.integrasjon.spokelse.Spøkelse;
 public class RegisterInnhentingDump implements DebugDump {
 
     private static final Collection<InntektskildeType> INNTEKTSKILDER = IAYRegisterInnhentingFellesTjenesteImpl.ELEMENT_TIL_INNTEKTS_KILDE_MAP.values();
-
+    private static final String PREFIKS = "register-innhenting";
     private InntektTjeneste inntektTjeneste;
-    private MeldekortTjeneste meldekortTjeneste; // TODO
-
     private AaregRestKlient aaregKlient;
     private InfotrygdGrunnlagAggregator infotrygdGrunnlag;
     private Spøkelse spokelseKlient;
     private ObjectWriter writer;
-    private final String prefiks = "register-innhenting";
 
     public RegisterInnhentingDump() {
         //
@@ -57,12 +54,10 @@ public class RegisterInnhentingDump implements DebugDump {
     @Inject
     public RegisterInnhentingDump(AaregRestKlient aaregKlient,
                                   InntektTjeneste inntektTjeneste,
-                                  MeldekortTjeneste meldekortTjeneste,
                                   InfotrygdGrunnlagAggregator infotrygdGrunnlag,
                                   Spøkelse spokelseKlient) {
         this.aaregKlient = aaregKlient;
         this.inntektTjeneste = inntektTjeneste;
-        this.meldekortTjeneste = meldekortTjeneste;
         this.infotrygdGrunnlag = infotrygdGrunnlag;
         this.spokelseKlient = spokelseKlient;
         this.writer = new JacksonJsonConfig().getObjectMapper().writerWithDefaultPrettyPrinter();
@@ -71,14 +66,21 @@ public class RegisterInnhentingDump implements DebugDump {
     @Override
     public List<DumpOutput> dump(DumpKontekst dumpKontekst) {
         try {
-            Future<List<DumpOutput>> future = submit(dumpKontekst, k -> dumpRegister(k));
-            return future.get(20, TimeUnit.SECONDS);
+            var future = submit(dumpKontekst, this::dumpRegister);
+            return future.get(120, TimeUnit.SECONDS);
+        }  catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return lagOutputForException(e);
         } catch (Exception e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            return List.of(new DumpOutput(prefiks + "-" + e.getClass().getSimpleName() + "-ERROR.txt", sw.toString()));
+            return lagOutputForException(e);
         }
+    }
+
+    private static List<DumpOutput> lagOutputForException(Exception e) {
+        var sw = new StringWriter();
+        var pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        return List.of(new DumpOutput(PREFIKS + "-" + e.getClass().getSimpleName() + "-ERROR.txt", sw.toString()));
     }
 
     private List<DumpOutput> dumpRegister(DumpKontekst kontekst) {
@@ -103,11 +105,9 @@ public class RegisterInnhentingDump implements DebugDump {
         var fom = periode.getFomDato();
         var tom = periode.getTomDato();
         INNTEKTSKILDER.forEach(inntektsKilde -> {
-            var request = FinnInntektRequest.builder(YearMonth.from(fom), YearMonth.from(tom))
-                .medAktørId(aktørId.getId())
-                .build();
+            var request = FinnInntektRequest.builder(YearMonth.from(fom), YearMonth.from(tom)).medAktørId(aktørId.getId()).build();
 
-            dumps.add(dumpJsonOutput(prefiks + "-inntekt-" + inntektsKilde.getKode(), () -> inntektTjeneste.finnInntektRaw(request, inntektsKilde)));
+            dumps.add(dumpJsonOutput(PREFIKS + "-inntekt-" + inntektsKilde.getKode(), () -> inntektTjeneste.finnInntektRaw(request, inntektsKilde)));
         });
         return dumps;
     }
@@ -116,19 +116,19 @@ public class RegisterInnhentingDump implements DebugDump {
         var dumps = new ArrayList<DumpOutput>();
         var fom = periode.getFomDato();
         var tom = periode.getTomDato();
-        dumps.add(dumpJsonOutput(prefiks + "-aareg-arbeid", () -> aaregKlient.finnArbeidsforholdForArbeidstaker(ident.getIdent(), fom, tom)));
-        dumps.add(dumpJsonOutput(prefiks + "-aareg-frilans", () -> aaregKlient.finnArbeidsforholdForFrilanser(ident.getIdent(), fom, tom)));
+        dumps.add(dumpJsonOutput(PREFIKS + "-aareg-arbeid", () -> aaregKlient.finnArbeidsforholdForArbeidstaker(ident.getIdent(), fom, tom)));
+        dumps.add(dumpJsonOutput(PREFIKS + "-aareg-frilans", () -> aaregKlient.finnArbeidsforholdForFrilanser(ident.getIdent(), fom, tom)));
         return dumps;
     }
 
     private List<DumpOutput> innhentYtelser(PersonIdent ident, LocalDate fom, LocalDate tom) {
         var dumps = new ArrayList<DumpOutput>();
-        dumps.add(dumpJsonOutput(prefiks + "-sp", () -> spokelseKlient.hentGrunnlag(ident.getIdent())));
+        dumps.add(dumpJsonOutput(PREFIKS + "-sp", () -> spokelseKlient.hentGrunnlag(ident.getIdent())));
 
-        infotrygdGrunnlag.hentAggregertGrunnlag(ident.getIdent(), fom, tom)
-            .forEach(g -> {
-                dumps.add(dumpJsonOutput(prefiks + "-infotrygd-" + g.getTema() + "-" + g.getBehandlingsTema(), () -> g));
-            });
+        var løpenummer = 1;
+        for (Grunnlag g : infotrygdGrunnlag.hentAggregertGrunnlag(ident.getIdent(), fom, tom)) {
+            dumps.add(dumpJsonOutput(PREFIKS + "-infotrygd-" + g.tema() + "-" + g.behandlingstema() + "-" + løpenummer++, () -> g));
+        }
         return dumps;
     }
 

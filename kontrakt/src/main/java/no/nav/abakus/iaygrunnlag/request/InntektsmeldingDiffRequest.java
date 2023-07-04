@@ -1,5 +1,12 @@
 package no.nav.abakus.iaygrunnlag.request;
 
+import java.util.Objects;
+import java.util.UUID;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -7,14 +14,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import java.util.Objects;
-import java.util.UUID;
 
 /**
  * Spesifikasjon for å hvilke
@@ -25,7 +27,9 @@ import java.util.UUID;
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
 public class InntektsmeldingDiffRequest {
 
-    /** Angi hvem grunnlaget hentes for. */
+    /**
+     * Angi hvem grunnlaget hentes for.
+     */
     @JsonProperty(value = "personIdent", required = true)
     @Valid
     @NotNull
@@ -34,19 +38,25 @@ public class InntektsmeldingDiffRequest {
     @JsonProperty(value = "ytelseType")
     private YtelseType ytelseType;
 
-    /** Angi hvilken sak det gjelder. */
+    /**
+     * Angi hvilken sak det gjelder.
+     */
     @JsonProperty(value = "saksnummer")
     @Valid
     @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'")
     private String saksnummer;
 
-    /** Referanse én som skal brukes til sammenligning. */
+    /**
+     * Referanse én som skal brukes til sammenligning.
+     */
     @JsonProperty(value = "eksternRefEn")
     @Valid
     @NotNull
     private UUID eksternRefEn;
 
-    /** Referanse to som skal brukes til sammenligning. */
+    /**
+     * Referanse to som skal brukes til sammenligning.
+     */
     @JsonProperty(value = "eksternRefTo")
     @Valid
     @NotNull
@@ -70,10 +80,12 @@ public class InntektsmeldingDiffRequest {
         return ytelseType;
     }
 
-    public UUID getEksternRefEn() { return eksternRefEn; }
-
     public void setYtelseType(YtelseType ytelseType) {
         this.ytelseType = ytelseType;
+    }
+
+    public UUID getEksternRefEn() {
+        return eksternRefEn;
     }
 
     public void setEksternRefEn(UUID eksternRefEn) {

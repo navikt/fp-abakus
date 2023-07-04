@@ -38,13 +38,14 @@ public class JournalpostId implements Serializable, IndexKey {
         Objects.requireNonNull(journalpostId, "journalpostId");
         if (!VALID.matcher(journalpostId).matches()) {
             // skal ikke skje, funksjonelle feilmeldinger håndteres ikke her.
-            throw new IllegalArgumentException("Ugyldig aktørId, støtter kun A-Z/0-9/:/-/_ tegn. Var: " + journalpostId.replaceAll(INVALID.pattern(), "?") + " (vasket)");
+            throw new IllegalArgumentException(
+                "Ugyldig aktørId, støtter kun A-Z/0-9/:/-/_ tegn. Var: " + journalpostId.replaceAll(INVALID.pattern(), "?") + " (vasket)");
         }
         this.journalpostId = journalpostId;
     }
 
     public static boolean erGyldig(String input) {
-        return input != null && !(input = input.trim()).isEmpty() && VALID.matcher(input).matches();  // NOSONAR
+        return input != null && !input.isEmpty() && VALID.matcher(input.trim()).matches();
     }
 
     @Override

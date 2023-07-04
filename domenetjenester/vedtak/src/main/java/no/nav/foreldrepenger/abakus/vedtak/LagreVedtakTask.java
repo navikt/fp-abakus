@@ -47,7 +47,7 @@ public class LagreVedtakTask implements ProsessTaskHandler {
         String payload = data.getPayloadAsString();
 
         Ytelse mottattVedtak;
-        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()){
+        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
             mottattVedtak = OBJECT_MAPPER.readValue(payload, Ytelse.class);
             Validator validator = factory.getValidator();
             Set<ConstraintViolation<Ytelse>> violations = validator.validate(mottattVedtak);
@@ -57,8 +57,7 @@ public class LagreVedtakTask implements ProsessTaskHandler {
                 throw new IllegalArgumentException("Vedtatt-ytelse valideringsfeil :: \n " + allErrors);
             }
         } catch (IOException e) {
-            throw new TekniskException("FP-328773",
-                String.format("Feil under parsing av vedtak. key={%s} payload={%s}", key, payload), e);
+            throw new TekniskException("FP-328773", String.format("Feil under parsing av vedtak. key={%s} payload={%s}", key, payload), e);
         }
         if (mottattVedtak != null) {
             // TODO: Gjør generisk

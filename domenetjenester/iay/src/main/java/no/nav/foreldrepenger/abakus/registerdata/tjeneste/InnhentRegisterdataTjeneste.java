@@ -46,20 +46,16 @@ public class InnhentRegisterdataTjeneste {
     }
 
     @Inject
-    public InnhentRegisterdataTjeneste(InntektArbeidYtelseTjeneste iayTjeneste,
-                                       KoblingTjeneste koblingTjeneste,
-                                       ProsessTaskTjeneste taskTjeneste) {
+    public InnhentRegisterdataTjeneste(InntektArbeidYtelseTjeneste iayTjeneste, KoblingTjeneste koblingTjeneste, ProsessTaskTjeneste taskTjeneste) {
         this.iayTjeneste = iayTjeneste;
         this.koblingTjeneste = koblingTjeneste;
         this.taskTjeneste = taskTjeneste;
     }
 
     private static Map<RegisterdataType, RegisterdataElement> initMapping() {
-        return Map.of(RegisterdataType.ARBEIDSFORHOLD, RegisterdataElement.ARBEIDSFORHOLD,
-            RegisterdataType.YTELSE, RegisterdataElement.YTELSE,
-            RegisterdataType.LIGNET_NÆRING, RegisterdataElement.LIGNET_NÆRING,
-            RegisterdataType.INNTEKT_PENSJONSGIVENDE, RegisterdataElement.INNTEKT_PENSJONSGIVENDE,
-            RegisterdataType.INNTEKT_BEREGNINGSGRUNNLAG, RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG,
+        return Map.of(RegisterdataType.ARBEIDSFORHOLD, RegisterdataElement.ARBEIDSFORHOLD, RegisterdataType.YTELSE, RegisterdataElement.YTELSE,
+            RegisterdataType.LIGNET_NÆRING, RegisterdataElement.LIGNET_NÆRING, RegisterdataType.INNTEKT_PENSJONSGIVENDE,
+            RegisterdataElement.INNTEKT_PENSJONSGIVENDE, RegisterdataType.INNTEKT_BEREGNINGSGRUNNLAG, RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG,
             RegisterdataType.INNTEKT_SAMMENLIGNINGSGRUNNLAG, RegisterdataElement.INNTEKT_SAMMENLIGNINGSGRUNNLAG);
     }
 
@@ -70,9 +66,7 @@ public class InnhentRegisterdataTjeneste {
             return Set.of();
         }
 
-        return elementer.stream()
-            .map(registerdataMapping::get)
-            .collect(Collectors.toSet());
+        return elementer.stream().map(registerdataMapping::get).collect(Collectors.toSet());
     }
 
     private Kobling oppdaterKobling(InnhentRegisterdataRequest dto) {
@@ -94,20 +88,20 @@ public class InnhentRegisterdataTjeneste {
             }
         }
 
-        // Oppdater kobling
-        Periode opplysningsperiode = dto.getOpplysningsperiode();
-        if (opplysningsperiode != null) {
-            kobling.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(opplysningsperiode.getFom(), opplysningsperiode.getTom()));
-        }
-        Periode opptjeningsperiode = dto.getOpptjeningsperiode();
-        if (opptjeningsperiode != null) {
-            kobling.setOpptjeningsperiode(IntervallEntitet.fraOgMedTilOgMed(opptjeningsperiode.getFom(), opptjeningsperiode.getTom()));
-        }
+        // Oppdater kobling med perioder
+        mapPeriodeTilIntervall(dto.getOpplysningsperiode()).ifPresent(kobling::setOpplysningsperiode);
+        mapPeriodeTilIntervall(dto.getOpplysningsperiodeSkattegrunnlag()).ifPresent(kobling::setOpplysningsperiodeSkattegrunnlag);
+        mapPeriodeTilIntervall(dto.getOpptjeningsperiode()).ifPresent(kobling::setOpptjeningsperiode);
+
         // Diff & log endringer
         koblingTjeneste.lagre(kobling);
         koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
 
         return kobling;
+    }
+
+    private Optional<IntervallEntitet> mapPeriodeTilIntervall(Periode periode) {
+        return Optional.ofNullable(periode == null ? null : IntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom()));
     }
 
     public String triggAsyncInnhent(InnhentRegisterdataRequest dto) {
@@ -117,21 +111,25 @@ public class InnhentRegisterdataTjeneste {
         var innhentingTask = ProsessTaskData.forProsessTask(RegisterdataInnhentingTask.class);
         var callbackTask = ProsessTaskData.forProsessTask(CallbackTask.class);
         innhentingTask.setAktørId(kobling.getAktørId().getId());
-        innhentingTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
+        innhentingTask.setProperty(TaskConstants.GAMMEL_KOBLING_ID, kobling.getId().toString());
+        innhentingTask.setProperty(TaskConstants.NY_KOBLING_ID, kobling.getId().toString());
         try {
             innhentingTask.setPayload(JsonObjectMapper.getMapper().writeValueAsString(dto));
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Feil i serialisering av innhentingrequest", e);
         }
         callbackTask.setAktørId(kobling.getAktørId().getId());
-        callbackTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
+        callbackTask.setProperty(TaskConstants.GAMMEL_KOBLING_ID, kobling.getId().toString());
+        callbackTask.setProperty(TaskConstants.NY_KOBLING_ID, kobling.getId().toString());
 
         Optional<GrunnlagReferanse> eksisterendeGrunnlagRef = hentSisteReferanseFor(kobling.getKoblingReferanse());
-        eksisterendeGrunnlagRef.map(GrunnlagReferanse::getReferanse).ifPresent(ref -> callbackTask.setProperty(EKSISTERENDE_GRUNNLAG_REF, ref.toString()));
+        eksisterendeGrunnlagRef.map(GrunnlagReferanse::getReferanse)
+            .ifPresent(ref -> callbackTask.setProperty(EKSISTERENDE_GRUNNLAG_REF, ref.toString()));
 
         if (dto.getCallbackUrl() != null) {
             innhentingTask.setProperty(TaskConstants.CALLBACK_URL, dto.getCallbackUrl());
             callbackTask.setProperty(TaskConstants.CALLBACK_URL, dto.getCallbackUrl());
+            Optional.ofNullable(dto.getCallbackScope()).ifPresent(s -> callbackTask.setProperty(TaskConstants.CALLBACK_SCOPE, s));
         }
         taskGruppe.addNesteSekvensiell(innhentingTask);
         taskGruppe.addNesteSekvensiell(callbackTask);

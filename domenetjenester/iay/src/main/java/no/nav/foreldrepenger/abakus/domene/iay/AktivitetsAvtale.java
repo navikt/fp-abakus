@@ -104,7 +104,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { periode, sisteLønnsendringsdato };
+        Object[] keyParts = {periode, sisteLønnsendringsdato};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -121,7 +121,9 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
         this.prosentsats = prosentsats;
     }
 
-    /** Returner {@link #getProsentsats()} (skalert) eller null. */
+    /**
+     * Returner {@link #getProsentsats()} (skalert) eller null.
+     */
     public BigDecimal getProsentsatsVerdi() {
         return prosentsats == null ? null : prosentsats.getVerdi();
     }
@@ -130,7 +132,6 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
      * For timelønnede så vil antallet timer i arbeidsavtalen være satt her
      *
      * @return antall timer
-     *
      */
     public AntallTimer getAntallTimer() {
         return antallTimer;
@@ -169,7 +170,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
     /**
      * Perioden til aktivitetsavtalen.
      * Tar Ikke hensyn til overstyring gjort i 5080.
-     *
+     * <p>
      * Henter kun den originale perioden, ikke den overstyrte perioden.
      * Bruk heller {@link #getPeriode} i de fleste tilfeller
      *
@@ -184,7 +185,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
      *
      * @return boolean, true hvis overstyrt, false hvis ikke.
      * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient overstyrt periode. Legg heller til egen Decorator
-     *             klasse som filtrerer output fra entitet
+     * klasse som filtrerer output fra entitet
      */
     @Deprecated
     public boolean erOverstyrtPeriode() {
@@ -231,18 +232,16 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || !(o instanceof AktivitetsAvtale))
+        }
+        if (o == null || !(o instanceof AktivitetsAvtale)) {
             return false;
+        }
         AktivitetsAvtale that = (AktivitetsAvtale) o;
-        return Objects.equals(antallTimer, that.antallTimer) &&
-            Objects.equals(antallTimerFulltid, that.antallTimerFulltid) &&
-            Objects.equals(beskrivelse, that.beskrivelse) &&
-            Objects.equals(prosentsats, that.prosentsats) &&
-            Objects.equals(periode, that.periode) &&
-            Objects.equals(overstyrtPeriode, that.overstyrtPeriode) &&
-            Objects.equals(sisteLønnsendringsdato, that.sisteLønnsendringsdato);
+        return Objects.equals(antallTimer, that.antallTimer) && Objects.equals(antallTimerFulltid, that.antallTimerFulltid) && Objects.equals(
+            beskrivelse, that.beskrivelse) && Objects.equals(prosentsats, that.prosentsats) && Objects.equals(periode, that.periode)
+            && Objects.equals(overstyrtPeriode, that.overstyrtPeriode) && Objects.equals(sisteLønnsendringsdato, that.sisteLønnsendringsdato);
     }
 
     @Override
@@ -252,14 +251,14 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" + //$NON-NLS-1$
-            "antallTimer=" + antallTimer + //$NON-NLS-1$
-            ", antallTimerFulltid=" + antallTimerFulltid + //$NON-NLS-1$
-            ", periode=" + periode + //$NON-NLS-1$
-            ", overstyrtPeriode=" + overstyrtPeriode + //$NON-NLS-1$
-            ", prosentsats=" + prosentsats + //$NON-NLS-1$
-            ", beskrivelse=" + beskrivelse + //$NON-NLS-1$
-            ", sisteLønnsendringsdato=" + sisteLønnsendringsdato + //$NON-NLS-1$
+        return getClass().getSimpleName() + "<" +
+            "antallTimer=" + antallTimer +
+            ", antallTimerFulltid=" + antallTimerFulltid +
+            ", periode=" + periode +
+            ", overstyrtPeriode=" + overstyrtPeriode +
+            ", prosentsats=" + prosentsats +
+            ", beskrivelse=" + beskrivelse +
+            ", sisteLønnsendringsdato=" + sisteLønnsendringsdato +
             '>';
     }
 
@@ -268,9 +267,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
     }
 
     public boolean erAnsettelsesPeriode() {
-        return (antallTimer == null || antallTimer.getVerdi() == null)
-            && (antallTimerFulltid == null || antallTimerFulltid.getVerdi() == null)
-            && (prosentsats == null || prosentsats.getVerdi() == null || prosentsats.erNulltall())
-            && sisteLønnsendringsdato == null;
+        return (antallTimer == null || antallTimer.getVerdi() == null) && (antallTimerFulltid == null || antallTimerFulltid.getVerdi() == null) && (
+            prosentsats == null || prosentsats.getVerdi() == null || prosentsats.erNulltall()) && sisteLønnsendringsdato == null;
     }
 }

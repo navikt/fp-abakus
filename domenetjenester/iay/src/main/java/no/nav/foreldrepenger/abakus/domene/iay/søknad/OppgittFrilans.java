@@ -58,24 +58,25 @@ public class OppgittFrilans extends BaseEntitet {
         harInntektFraFosterhjem = orginal.getHarInntektFraFosterhjem();
         erNyoppstartet = orginal.getErNyoppstartet();
         harNærRelasjon = orginal.getHarNærRelasjon();
-        frilansoppdrag = orginal.getFrilansoppdrag().stream()
-            .map(orginalFrilansoppdrag -> {
-                OppgittFrilansoppdrag kopi = new OppgittFrilansoppdrag(orginalFrilansoppdrag);
-                kopi.setFrilans(this);
-                return kopi;
-            }).collect(Collectors.toList());
+        frilansoppdrag = orginal.getFrilansoppdrag().stream().map(orginalFrilansoppdrag -> {
+            OppgittFrilansoppdrag kopi = new OppgittFrilansoppdrag(orginalFrilansoppdrag);
+            kopi.setFrilans(this);
+            return kopi;
+        }).collect(Collectors.toList());
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof OppgittFrilans)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !(o instanceof OppgittFrilans)) {
+            return false;
+        }
         var that = (OppgittFrilans) o;
-        return harInntektFraFosterhjem == that.harInntektFraFosterhjem &&
-            erNyoppstartet == that.erNyoppstartet &&
-            harNærRelasjon == that.harNærRelasjon &&
-            Objects.equals(oppgittOpptjening, that.oppgittOpptjening) &&
-            Objects.equals(frilansoppdrag, that.frilansoppdrag);
+        return harInntektFraFosterhjem == that.harInntektFraFosterhjem && erNyoppstartet == that.erNyoppstartet
+            && harNærRelasjon == that.harNærRelasjon && Objects.equals(oppgittOpptjening, that.oppgittOpptjening) && Objects.equals(frilansoppdrag,
+            that.frilansoppdrag);
     }
 
     @Override
@@ -85,13 +86,8 @@ public class OppgittFrilans extends BaseEntitet {
 
     @Override
     public String toString() {
-        return "OppgittFrilans{" +
-            "oppgittOpptjening=" + oppgittOpptjening +
-            ", harInntektFraFosterhjem=" + harInntektFraFosterhjem +
-            ", erNyoppstartet=" + erNyoppstartet +
-            ", harNærRelasjon=" + harNærRelasjon +
-            ", frilansoppdrag=" + frilansoppdrag +
-            '}';
+        return "OppgittFrilans{" + "oppgittOpptjening=" + oppgittOpptjening + ", harInntektFraFosterhjem=" + harInntektFraFosterhjem
+            + ", erNyoppstartet=" + erNyoppstartet + ", harNærRelasjon=" + harNærRelasjon + ", frilansoppdrag=" + frilansoppdrag + '}';
     }
 
     public void setOppgittOpptjening(OppgittOpptjening oppgittOpptjening) {
@@ -130,8 +126,6 @@ public class OppgittFrilans extends BaseEntitet {
     }
 
     public void setFrilansoppdrag(List<OppgittFrilansoppdrag> frilansoppdrag) {
-        this.frilansoppdrag = frilansoppdrag.stream()
-            .peek(it -> it.setFrilans(this))
-            .collect(Collectors.toList());
+        this.frilansoppdrag = frilansoppdrag.stream().peek(it -> it.setFrilans(this)).collect(Collectors.toList());
     }
 }

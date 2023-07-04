@@ -36,12 +36,12 @@ public class OppgittOpptjeningBuilder {
             new OppgittOpptjening(eksternReferanse, opprettetTidspunktOriginalt.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()));
     }
 
-    public OppgittOpptjeningBuilder medJournalpostId(JournalpostId journalpostId){
+    public OppgittOpptjeningBuilder medJournalpostId(JournalpostId journalpostId) {
         this.kladd.setJournalpostId(journalpostId);
         return this;
     }
 
-    public OppgittOpptjeningBuilder medInnsendingstidspuntk(LocalDateTime innsendingstidspunkt){
+    public OppgittOpptjeningBuilder medInnsendingstidspuntk(LocalDateTime innsendingstidspunkt) {
         this.kladd.setInnsendingstidspunkt(innsendingstidspunkt);
         return this;
     }

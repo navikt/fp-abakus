@@ -13,10 +13,10 @@ import no.nav.abakus.iaygrunnlag.request.Dataset;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 
-public class InntektArbeidYtelseGrunnlagBuilderTest {
+class InntektArbeidYtelseGrunnlagBuilderTest {
 
     @Test
-    public void kopier_deler_test() {
+    void kopier_deler_test() {
         final var gr = new InntektArbeidYtelseGrunnlag(UUID.randomUUID(), LocalDateTime.now());
         gr.setOppgittOpptjening(OppgittOpptjeningBuilder.ny().build());
         gr.setOverstyrtOppgittOpptjening(OppgittOpptjeningBuilder.ny().build());
@@ -30,7 +30,9 @@ public class InntektArbeidYtelseGrunnlagBuilderTest {
         assertThat(gr.getSaksbehandletVersjon()).isPresent();
         assertThat(gr.getInntektsmeldinger()).isPresent();
 
-        var nyttGrunnlag = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(gr, EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.OVERSTYRT_OPPGITT_OPPTJENING, Dataset.INNTEKTSMELDING, Dataset.REGISTER, Dataset.OVERSTYRT)).build();
+        var nyttGrunnlag = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(gr,
+            EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.OVERSTYRT_OPPGITT_OPPTJENING, Dataset.INNTEKTSMELDING, Dataset.REGISTER,
+                Dataset.OVERSTYRT)).build();
 
         assertThat(nyttGrunnlag.getOppgittOpptjening()).isPresent();
         assertThat(nyttGrunnlag.getOverstyrtOppgittOpptjening()).isPresent();
@@ -38,7 +40,8 @@ public class InntektArbeidYtelseGrunnlagBuilderTest {
         assertThat(nyttGrunnlag.getSaksbehandletVersjon()).isPresent();
         assertThat(nyttGrunnlag.getInntektsmeldinger()).isPresent();
 
-        nyttGrunnlag = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(gr, EnumSet.of(Dataset.INNTEKTSMELDING, Dataset.REGISTER, Dataset.OVERSTYRT)).build();
+        nyttGrunnlag = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(gr, EnumSet.of(Dataset.INNTEKTSMELDING, Dataset.REGISTER, Dataset.OVERSTYRT))
+            .build();
 
         assertThat(nyttGrunnlag.getOppgittOpptjening()).isNotPresent();
         assertThat(nyttGrunnlag.getOverstyrtOppgittOpptjening()).isNotPresent();

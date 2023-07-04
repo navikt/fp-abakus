@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.felles.jpa;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -9,7 +10,8 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
-import no.nav.vedtak.sikkerhet.context.SubjectHandler;
+import no.nav.vedtak.sikkerhet.kontekst.Kontekst;
+import no.nav.vedtak.sikkerhet.kontekst.KontekstHolder;
 
 /**
  * En basis {@link Entity} klasse som håndtere felles standarder for utformign av tabeller (eks. sporing av hvem som har
@@ -26,7 +28,7 @@ public class BaseEntitet implements Serializable {
 
     @DiffIgnore
     @Column(name = "opprettet_tid", nullable = false, insertable = true, updatable = false)
-    private LocalDateTime opprettetTidspunkt; // NOSONAR
+    private LocalDateTime opprettetTidspunkt;
 
     @DiffIgnore
     @Column(name = "endret_av", insertable = false, updatable = true)
@@ -34,11 +36,11 @@ public class BaseEntitet implements Serializable {
 
     @DiffIgnore
     @Column(name = "endret_tid", insertable = false, updatable = true)
-    private LocalDateTime endretTidspunkt; // NOSONAR
+    private LocalDateTime endretTidspunkt;
 
     private static String finnBrukernavn() {
-        String brukerident = SubjectHandler.getSubjectHandler().getUid();
-        return brukerident != null ? brukerident : BRUKERNAVN_NÅR_SIKKERHETSKONTEKST_IKKE_FINNES;
+        return Optional.ofNullable(KontekstHolder.getKontekst()).map(Kontekst::getKompaktUid)
+            .orElse(BRUKERNAVN_NÅR_SIKKERHETSKONTEKST_IKKE_FINNES);
     }
 
     @PrePersist
@@ -61,19 +63,19 @@ public class BaseEntitet implements Serializable {
         return opprettetTidspunkt;
     }
 
-    public String getEndretAv() {
-        return endretAv;
-    }
-
-    public LocalDateTime getEndretTidspunkt() {
-        return endretTidspunkt;
-    }
-
     /**
      * Kan brukes til å eksplisitt sette opprettet tidspunkt, f.eks. ved migrering av data fra et annet system. Ivaretar da opprinnelig
      * tidspunkt istdf å sette likt now().
      */
     protected void setOpprettetTidspunkt(LocalDateTime opprettetTidspunkt) {
         this.opprettetTidspunkt = opprettetTidspunkt;
+    }
+
+    public String getEndretAv() {
+        return endretAv;
+    }
+
+    public LocalDateTime getEndretTidspunkt() {
+        return endretTidspunkt;
     }
 }

@@ -1,13 +1,5 @@
 package no.nav.foreldrepenger.abakus.app.vedlikehold;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
-import javax.validation.Valid;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -16,6 +8,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.UuidDto;
 
+import javax.validation.Valid;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 /**
  * Input request for å bytte en utgått aktørid med en aktiv
@@ -45,6 +44,7 @@ public class VarigEndringRequest {
     private String endringBegrunnelse;
 
     public VarigEndringRequest() {
+        // Jackson
     }
 
     public UuidDto getEksternReferanse() {

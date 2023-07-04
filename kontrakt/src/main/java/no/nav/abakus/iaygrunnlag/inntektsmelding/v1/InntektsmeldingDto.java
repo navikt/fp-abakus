@@ -1,20 +1,5 @@
 package no.nav.abakus.iaygrunnlag.inntektsmelding.v1;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
-import javax.validation.Valid;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -25,6 +10,21 @@ import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
 import no.nav.abakus.iaygrunnlag.JournalpostId;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType;
+
+import javax.validation.Valid;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -77,23 +77,29 @@ public class InntektsmeldingDto {
     @JsonProperty(value = "erNærRelasjon")
     private Boolean erNærRelasjon;
 
-    /** Tillater kun positive verdier.  Max verdi håndteres av mottager. */
+    /**
+     * Tillater kun positive verdier.  Max verdi håndteres av mottager.
+     */
     @JsonProperty("inntektBeløp")
     @DecimalMin(value = "0.00", message = "beløp [${validatedValue}] må være >= {value}")
     private BigDecimal inntektBeløp;
 
-    /** Tillater kun positive verdier.  Max verdi håndteres av mottager. */
+    /**
+     * Tillater kun positive verdier.  Max verdi håndteres av mottager.
+     */
     @JsonProperty("refusjonsBeløpPerMnd")
     @DecimalMin(value = "0.00", message = "beløp [${validatedValue}] må være >= {value}")
     private BigDecimal refusjonsBeløpPerMnd;
 
     @JsonProperty(value = "kanalreferanse")
-    @Pattern(regexp = "^[\\p{Graph}\\s\\t\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message="Inntektsmelding kanalreferanse [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Pattern(regexp = "^[\\p{Graph}\\s\\t\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Inntektsmelding kanalreferanse [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String kanalreferanse;
 
-    /** NB: tilsvarer avsendersystem i Inntektsmelding skjema. */
+    /**
+     * NB: tilsvarer avsendersystem i Inntektsmelding skjema.
+     */
     @JsonProperty(value = "kildesystem")
-    @Pattern(regexp = "^[\\p{Graph}\\s\\t\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message="Inntektsmelding kildeSystem [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Pattern(regexp = "^[\\p{Graph}\\s\\t\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Inntektsmelding kildeSystem [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String kildesystem;
 
     @JsonProperty(value = "refusjonOpphører")
@@ -125,6 +131,10 @@ public class InntektsmeldingDto {
         return arbeidsforholdRef;
     }
 
+    public void setArbeidsforholdRef(ArbeidsforholdRefDto arbeidsforholdRef) {
+        this.arbeidsforholdRef = arbeidsforholdRef;
+    }
+
     public Aktør getArbeidsgiver() {
         return arbeidsgiver;
     }
@@ -133,8 +143,16 @@ public class InntektsmeldingDto {
         return refusjonEndringer == null ? Collections.emptyList() : List.copyOf(refusjonEndringer);
     }
 
+    public void setEndringerRefusjon(List<RefusjonDto> endringerRefusjon) {
+        this.refusjonEndringer = endringerRefusjon;
+    }
+
     public List<GraderingDto> getGraderinger() {
         return graderinger == null ? Collections.emptyList() : List.copyOf(graderinger);
+    }
+
+    public void setGraderinger(List<GraderingDto> graderinger) {
+        this.graderinger = graderinger;
     }
 
     public OffsetDateTime getInnsendingstidspunkt() {
@@ -145,8 +163,16 @@ public class InntektsmeldingDto {
         return innsendingsårsak;
     }
 
+    public void setInnsendingsårsak(InntektsmeldingInnsendingsårsakType innsendingsårsak) {
+        this.innsendingsårsak = innsendingsårsak;
+    }
+
     public BigDecimal getInntektBeløp() {
         return inntektBeløp;
+    }
+
+    public void setInntektBeløp(BigDecimal inntektBeløp) {
+        this.inntektBeløp = inntektBeløp == null ? null : inntektBeløp.setScale(2, RoundingMode.HALF_UP);
     }
 
     public JournalpostId getJournalpostId() {
@@ -157,36 +183,72 @@ public class InntektsmeldingDto {
         return kanalreferanse;
     }
 
+    public void setKanalreferanse(String kanalreferanse) {
+        this.kanalreferanse = kanalreferanse;
+    }
+
     public String getKildesystem() {
         return kildesystem;
+    }
+
+    public void setKildesystem(String kildesystem) {
+        this.kildesystem = kildesystem;
     }
 
     public LocalDate getMottattDato() {
         return mottattDato;
     }
 
+    public void setMottattDato(LocalDate mottattDato) {
+        this.mottattDato = mottattDato;
+    }
+
     public List<FraværDto> getOppgittFravær() {
-        return oppgittFravær == null ? Collections.emptyList(): List.copyOf(oppgittFravær);
+        return oppgittFravær == null ? Collections.emptyList() : List.copyOf(oppgittFravær);
+    }
+
+    public void setOppgittFravær(List<FraværDto> fravær) {
+        this.oppgittFravær = fravær;
     }
 
     public List<NaturalytelseDto> getNaturalytelser() {
-        return naturalytelser == null ? Collections.emptyList(): List.copyOf(naturalytelser);
+        return naturalytelser == null ? Collections.emptyList() : List.copyOf(naturalytelser);
+    }
+
+    public void setNaturalytelser(List<NaturalytelseDto> naturalytelser) {
+        this.naturalytelser = naturalytelser;
     }
 
     public LocalDate getRefusjonOpphører() {
         return refusjonOpphører;
     }
 
+    public void setRefusjonOpphører(LocalDate refusjonOpphører) {
+        this.refusjonOpphører = refusjonOpphører;
+    }
+
     public BigDecimal getRefusjonsBeløpPerMnd() {
         return refusjonsBeløpPerMnd;
+    }
+
+    public void setRefusjonsBeløpPerMnd(BigDecimal refusjonsBeløpPerMnd) {
+        this.refusjonsBeløpPerMnd = refusjonsBeløpPerMnd == null ? null : refusjonsBeløpPerMnd.setScale(2, RoundingMode.HALF_UP);
     }
 
     public LocalDate getStartDatoPermisjon() {
         return startdatoPermisjon;
     }
 
+    public void setStartDatoPermisjon(LocalDate startDatoPermisjon) {
+        this.startdatoPermisjon = startDatoPermisjon;
+    }
+
     public List<UtsettelsePeriodeDto> getUtsettelsePerioder() {
         return utsettelsePerioder == null ? Collections.emptyList() : List.copyOf(utsettelsePerioder);
+    }
+
+    public void setUtsettelsePerioder(List<UtsettelsePeriodeDto> utsettelsePerioder) {
+        this.utsettelsePerioder = utsettelsePerioder;
     }
 
     public Boolean isNærRelasjon() {
@@ -278,64 +340,8 @@ public class InntektsmeldingDto {
         return this;
     }
 
-    public void setArbeidsforholdRef(ArbeidsforholdRefDto arbeidsforholdRef) {
-        this.arbeidsforholdRef = arbeidsforholdRef;
-    }
-
-    public void setEndringerRefusjon(List<RefusjonDto> endringerRefusjon) {
-        this.refusjonEndringer = endringerRefusjon;
-    }
-
-    public void setGraderinger(List<GraderingDto> graderinger) {
-        this.graderinger = graderinger;
-    }
-
-    public void setInnsendingsårsak(InntektsmeldingInnsendingsårsakType innsendingsårsak) {
-        this.innsendingsårsak = innsendingsårsak;
-    }
-
-    public void setInntektBeløp(BigDecimal inntektBeløp) {
-        this.inntektBeløp = inntektBeløp == null ? null : inntektBeløp.setScale(2, RoundingMode.HALF_UP);
-    }
-
-    public void setKanalreferanse(String kanalreferanse) {
-        this.kanalreferanse = kanalreferanse;
-    }
-
-    public void setKildesystem(String kildesystem) {
-        this.kildesystem = kildesystem;
-    }
-
-    public void setMottattDato(LocalDate mottattDato) {
-        this.mottattDato = mottattDato;
-    }
-
-    public void setNaturalytelser(List<NaturalytelseDto> naturalytelser) {
-        this.naturalytelser = naturalytelser;
-    }
-    
-    public void setOppgittFravær(List<FraværDto> fravær) {
-        this.oppgittFravær = fravær;
-    }
-
     public void setNærRelasjon(boolean naerRelasjon) {
         this.erNærRelasjon = naerRelasjon;
-    }
-
-    public void setRefusjonOpphører(LocalDate refusjonOpphører) {
-        this.refusjonOpphører = refusjonOpphører;
-    }
-
-    public void setRefusjonsBeløpPerMnd(BigDecimal refusjonsBeløpPerMnd) {
-        this.refusjonsBeløpPerMnd = refusjonsBeløpPerMnd == null ? null : refusjonsBeløpPerMnd.setScale(2, RoundingMode.HALF_UP);
-    }
-
-    public void setStartDatoPermisjon(LocalDate startDatoPermisjon) {
-        this.startdatoPermisjon = startDatoPermisjon;
-    }
-
-    public void setUtsettelsePerioder(List<UtsettelsePeriodeDto> utsettelsePerioder) {
-        this.utsettelsePerioder = utsettelsePerioder;
     }
 
 }

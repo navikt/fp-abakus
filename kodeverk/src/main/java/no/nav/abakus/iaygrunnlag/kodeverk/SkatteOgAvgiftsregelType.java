@@ -25,12 +25,10 @@ public enum SkatteOgAvgiftsregelType implements Kodeverdi {
     UDEFINERT("-", "Udefinert", "Ikke definert"),
     ;
 
-    private static final Map<String, SkatteOgAvgiftsregelType> KODER = new LinkedHashMap<>();
-
     public static final String KODEVERK = "SKATTE_OG_AVGIFTSREGEL";
-
     @Deprecated
     public static final String DISCRIMINATOR = "SKATTE_OG_AVGIFTSREGEL";
+    private static final Map<String, SkatteOgAvgiftsregelType> KODER = new LinkedHashMap<>();
 
     static {
         for (var v : values()) {
@@ -61,12 +59,15 @@ public enum SkatteOgAvgiftsregelType implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent SkatteOgAvgiftsregelType: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent SkatteOgAvgiftsregelType: " + kode));
     }
 
     public static Map<String, SkatteOgAvgiftsregelType> kodeMap() {
         return Collections.unmodifiableMap(KODER);
+    }
+
+    public static SkatteOgAvgiftsregelType finnForKodeverkEiersKode(String offisiellDokumentType) {
+        return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
     @Override
@@ -87,10 +88,6 @@ public enum SkatteOgAvgiftsregelType implements Kodeverdi {
     @Override
     public String getOffisiellKode() {
         return offisiellKode;
-    }
-
-    public static SkatteOgAvgiftsregelType finnForKodeverkEiersKode(String offisiellDokumentType) {
-        return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
 }

@@ -60,7 +60,7 @@ public class OppgittFrilansoppdrag extends BaseEntitet implements IndexKey {
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = { periode, oppdragsgiver };
+        Object[] keyParts = {periode, oppdragsgiver};
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -68,20 +68,17 @@ public class OppgittFrilansoppdrag extends BaseEntitet implements IndexKey {
         this.frilans = frilans;
     }
 
-    void setPeriode(IntervallEntitet periode) {
-        this.periode = periode;
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof OppgittFrilansoppdrag)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !(o instanceof OppgittFrilansoppdrag)) {
+            return false;
+        }
         OppgittFrilansoppdrag that = (OppgittFrilansoppdrag) o;
-        return Objects.equals(frilans, that.frilans) &&
-            Objects.equals(oppdragsgiver, that.oppdragsgiver) &&
-            Objects.equals(periode, that.periode);
+        return Objects.equals(frilans, that.frilans) && Objects.equals(oppdragsgiver, that.oppdragsgiver) && Objects.equals(periode, that.periode);
     }
-
 
     @Override
     public int hashCode() {
@@ -90,15 +87,15 @@ public class OppgittFrilansoppdrag extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "OppgittFrilansoppdrag{" +
-            "frilans=" + frilans +
-            ", oppdragsgiver='" + oppdragsgiver + '\'' +
-            ", periode=" + periode +
-            '}';
+        return "OppgittFrilansoppdrag{" + "frilans=" + frilans + ", oppdragsgiver='" + oppdragsgiver + '\'' + ", periode=" + periode + '}';
     }
 
     public IntervallEntitet getPeriode() {
         return periode;
+    }
+
+    void setPeriode(IntervallEntitet periode) {
+        this.periode = periode;
     }
 
     public String getOppdragsgiver() {

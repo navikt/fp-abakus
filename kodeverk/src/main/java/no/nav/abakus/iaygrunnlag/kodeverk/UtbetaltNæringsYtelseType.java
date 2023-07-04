@@ -29,13 +29,13 @@ public enum UtbetaltNæringsYtelseType implements UtbetaltYtelseType {
     DAGPENGER_VED_ARBEIDSLØSHET("DAGPENGER_VED_ARBEIDSLØSHET", "Dagpenger ved arbeidsløshet", "dagpengerVedArbeidsloeshet"),
     DAGPENGER_TIL_FISKER("DAGPENGER_TIL_FISKER", "Dagpenger til fisker", "dagpengerTilFisker"),
     ANNET("ANNET", "Annet", "annet"),
-    KOMPENSASJON_FOR_TAPT_PERSONINNTEKT("KOMPENSASJON_FOR_TAPT_PERSONINNTEKT", "Kompensasjon for tapt personinntekt", "kompensasjonForTaptPersoninntekt"),
+    KOMPENSASJON_FOR_TAPT_PERSONINNTEKT("KOMPENSASJON_FOR_TAPT_PERSONINNTEKT", "Kompensasjon for tapt personinntekt",
+        "kompensasjonForTaptPersoninntekt"),
     UDEFINERT("-", "Udefinert", null),
     ;
 
-    private static final Map<String, UtbetaltNæringsYtelseType> KODER = new LinkedHashMap<>();
-
     public static final String KODEVERK = "NÆRINGSINNTEKT_TYPE";
+    private static final Map<String, UtbetaltNæringsYtelseType> KODER = new LinkedHashMap<>();
 
     static {
         for (var v : values()) {
@@ -61,12 +61,15 @@ public enum UtbetaltNæringsYtelseType implements UtbetaltYtelseType {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent NæringsinntektType: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent NæringsinntektType: " + kode));
     }
 
     public static Map<String, UtbetaltNæringsYtelseType> kodeMap() {
         return Collections.unmodifiableMap(KODER);
+    }
+
+    public static UtbetaltNæringsYtelseType finnForKodeverkEiersKode(String offisiellDokumentType) {
+        return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
     @Override
@@ -87,10 +90,6 @@ public enum UtbetaltNæringsYtelseType implements UtbetaltYtelseType {
     @Override
     public String getKode() {
         return kode;
-    }
-
-    public static UtbetaltNæringsYtelseType finnForKodeverkEiersKode(String offisiellDokumentType) {
-        return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
     @Override

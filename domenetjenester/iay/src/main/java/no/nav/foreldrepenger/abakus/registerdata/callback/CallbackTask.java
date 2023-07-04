@@ -21,6 +21,7 @@ import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.TaskConstants;
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.integrasjon.rest.RestClient;
+import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
@@ -32,19 +33,18 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
 public class CallbackTask implements ProsessTaskHandler {
 
     public static final String EKSISTERENDE_GRUNNLAG_REF = "grunnlag.ref.old";
-    private static final Logger log = LoggerFactory.getLogger(CallbackTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CallbackTask.class);
 
     private RestClient restClient;
     private KoblingTjeneste koblingTjeneste;
     private InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste;
 
-    CallbackTask() {}
+    CallbackTask() {
+    }
 
     @Inject
-    public CallbackTask(RestClient restClient,
-                        KoblingTjeneste koblingTjeneste,
-                        InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste) {
-        this.restClient = restClient;
+    public CallbackTask(KoblingTjeneste koblingTjeneste, InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste) {
+        this.restClient = RestClient.client();
         this.koblingTjeneste = koblingTjeneste;
         this.inntektArbeidYtelseTjeneste = inntektArbeidYtelseTjeneste;
     }
@@ -52,9 +52,12 @@ public class CallbackTask implements ProsessTaskHandler {
     @Override
     public void doTask(ProsessTaskData data) {
         String callbackUrl = data.getPropertyValue(TaskConstants.CALLBACK_URL);
-        Kobling kobling = koblingTjeneste.hent(Long.valueOf(data.getBehandlingId()));
+        String callbackScope = data.getPropertyValue(TaskConstants.CALLBACK_SCOPE);
+        String nyKoblingId = data.getPropertyValue(TaskConstants.NY_KOBLING_ID);
+        Long koblingId = nyKoblingId != null ? Long.valueOf(nyKoblingId) : Long.valueOf(data.getBehandlingId());
+        Kobling kobling = koblingTjeneste.hent(koblingId);
         if (callbackUrl == null || callbackUrl.isEmpty()) {
-            log.info("Prøver callback uten url for kobling: {} ... Ignorerer", kobling);
+            LOG.info("Prøver callback uten url for kobling: {} ... Ignorerer", kobling);
             return;
         }
         CallbackDto callbackDto = new CallbackDto();
@@ -70,9 +73,9 @@ public class CallbackTask implements ProsessTaskHandler {
         } catch (URISyntaxException e) {
             throw new TekniskException("FP-349977", String.format("Ugyldig callback url ved callback etter registerinnhenting: %s", callbackUrl));
         }
-        String post = restClient.send(RestRequest.newPOSTJson(callbackDto, uri, TokenFlow.CONTEXT, null), String.class);
-
-        log.info("Callback success, mottok respons: " + post);
+        var restConfig = callbackScope == null ? new RestConfig(TokenFlow.STS_CC, uri, null, null) : // Må legge til abakus i k9/inbound + ha callback-scope
+            new RestConfig(TokenFlow.ADAPTIVE, uri, callbackScope, null);
+        var post = restClient.sendReturnOptional(RestRequest.newPOSTJson(callbackDto, uri, restConfig), String.class);
     }
 
     private void setInformasjonOmAvsenderRef(Kobling kobling, CallbackDto callbackDto) {

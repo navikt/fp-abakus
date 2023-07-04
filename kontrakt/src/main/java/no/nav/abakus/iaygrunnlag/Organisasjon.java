@@ -15,14 +15,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class Organisasjon extends Aktør {
     static final String IDENT_TYPE = "ORGNUMMER";
-    
+
     @JsonProperty(value = "ident", required = true)
     @NotNull
     @Pattern(regexp = "^\\d{9}+$", message = "orgnr [${validatedValue}] har ikke gyldig verdi (9 siffer)")
     private String ident;
 
     @JsonCreator
-    public Organisasjon(@JsonProperty(value = "ident", required=true) String kode) {
+    public Organisasjon(@JsonProperty(value = "ident", required = true) String kode) {
         this.ident = kode;
     }
 
@@ -35,12 +35,12 @@ public class Organisasjon extends Aktør {
     public String getIdentType() {
         return IDENT_TYPE;
     }
-    
+
     @Override
     public boolean getErOrganisasjon() {
         return true;
     }
-    
+
     @Override
     public boolean getErPerson() {
         return false;

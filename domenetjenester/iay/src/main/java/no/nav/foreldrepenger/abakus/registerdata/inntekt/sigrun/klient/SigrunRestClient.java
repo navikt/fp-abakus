@@ -21,61 +21,30 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertsk
 import no.nav.vedtak.exception.IntegrasjonException;
 import no.nav.vedtak.exception.ManglerTilgangException;
 import no.nav.vedtak.felles.integrasjon.rest.NavHeaders;
+import no.nav.vedtak.felles.integrasjon.rest.OidcContextSupplier;
 import no.nav.vedtak.felles.integrasjon.rest.RestClient;
 import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 import no.nav.vedtak.mapper.json.DefaultJsonMapper;
-import no.nav.vedtak.sikkerhet.context.SubjectHandler;
 
-@RestClientConfig(tokenConfig = TokenFlow.CONTEXT, endpointProperty = "SigrunRestBeregnetSkatt.url", endpointDefault = "https://sigrun.nais.adeo.no")
+@RestClientConfig(tokenConfig = TokenFlow.AZUREAD_CC, endpointProperty = "sigrunrestberegnetskatt.url", endpointDefault = "http://sigrun.team-inntekt",
+    scopesProperty = "sigrunrestberegnetskatt.scopes", scopesDefault = "api://prod-fss.team-inntekt.sigrun/.default")
 public class SigrunRestClient {
     private static final Logger LOG = LoggerFactory.getLogger(SigrunRestClient.class);
-    private RestClient client;
-    private URI endpointBS;
-    private URI endpointSSG;
+    private final OidcContextSupplier CONTEXT_SUPPLIER = new OidcContextSupplier();
+    private final RestClient client;
+    private final RestConfig restConfig;
+    private final URI endpointBS;
+    private final URI endpointSSG;
 
 
     SigrunRestClient(RestClient client) {
         this.client = client;
-        var endpoint = RestConfig.endpointFromAnnotation(this.getClass());
-        this.endpointBS = endpoint.resolve(endpoint.getPath() + PATH_BS);
-        this.endpointSSG = endpoint.resolve(endpoint.getPath() + PATH_SSG);
-    }
-
-    List<BeregnetSkatt> hentBeregnetSkattForAktørOgÅr(long aktørId, String år) {
-        var request = RestRequest.newGET(endpointBS, SigrunConsumerImpl.class)
-            .header(SigrunRestConfig.X_FILTER, SigrunRestConfig.FILTER)
-            .header(SigrunRestConfig.X_AKTØRID, String.valueOf(aktørId))
-            .header(SigrunRestConfig.X_INNTEKTSÅR, år)
-            .otherCallId(X_CALL_ID)
-            .otherCallId(SigrunRestConfig.NYE_HEADER_CALL_ID)
-            .header(SigrunRestConfig.CONSUMER_ID, SubjectHandler.getSubjectHandler().getConsumerId())
-            .header(SigrunRestConfig.NYE_HEADER_CONSUMER_ID, SubjectHandler.getSubjectHandler().getConsumerId());
-
-        HttpResponse<String> response = client.sendReturnUnhandled(request);
-        return handleResponse(response)
-            .map(r -> Arrays.asList(DefaultJsonMapper.fromJson(r, BeregnetSkatt[].class)))
-            .orElse(new ArrayList<>());
-    }
-
-    //api/v1/summertskattegrunnlag
-    Optional<SSGResponse> hentSummertskattegrunnlag(long aktørId, String år) {
-        var uri = UriBuilder.fromUri(endpointSSG)
-            .queryParam(SigrunRestConfig.INNTEKTSAAR, år)
-            .queryParam(SigrunRestConfig.INNTEKTSFILTER, SigrunRestConfig.FILTER_SSG)
-            .build();
-
-        var request = RestRequest.newGET(uri, SigrunConsumerImpl.class)
-            .header(NavHeaders.HEADER_NAV_PERSONIDENT, String.valueOf(aktørId))
-            .otherCallId(X_CALL_ID)
-            .otherCallId(SigrunRestConfig.NYE_HEADER_CALL_ID)
-            .header(SigrunRestConfig.CONSUMER_ID, SubjectHandler.getSubjectHandler().getConsumerId())
-            .header(SigrunRestConfig.NYE_HEADER_CONSUMER_ID, SubjectHandler.getSubjectHandler().getConsumerId());
-
-        HttpResponse<String> response = client.sendReturnUnhandled(request);
-        return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, SSGResponse.class));
+        this.restConfig = RestConfig.forClient(SigrunRestClient.class);
+        this.endpointBS = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_BS);
+        this.endpointSSG = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_SSG);
     }
 
     private static Optional<String> handleResponse(HttpResponse<String> response) {
@@ -93,9 +62,40 @@ public class SigrunRestClient {
                 var challenge = response.headers().allValues("WWW-Authenticate");
                 LOG.info("Sigrun unauth: {}", challenge);
             }
-            throw new IntegrasjonException("F-016912",
-                String.format("Server svarte med feilkode http-kode '%s' og response var '%s'", status, body));
+            throw new IntegrasjonException("F-016912", String.format("Server svarte med feilkode http-kode '%s' og response var '%s'", status, body));
         }
+    }
+
+    List<BeregnetSkatt> hentBeregnetSkattForAktørOgÅr(long aktørId, String år) {
+        var request = RestRequest.newGET(endpointBS, restConfig)
+            .header(SigrunRestConfig.X_FILTER, SigrunRestConfig.FILTER)
+            .header(SigrunRestConfig.X_AKTØRID, String.valueOf(aktørId))
+            .header(SigrunRestConfig.X_INNTEKTSÅR, år)
+            .otherCallId(X_CALL_ID)
+            .otherCallId(SigrunRestConfig.NYE_HEADER_CALL_ID)
+            .header(SigrunRestConfig.CONSUMER_ID, CONTEXT_SUPPLIER.consumerIdForCurrentKontekst().get())
+            .header(SigrunRestConfig.NYE_HEADER_CONSUMER_ID, CONTEXT_SUPPLIER.consumerIdForCurrentKontekst().get());
+
+        HttpResponse<String> response = client.sendReturnUnhandled(request);
+        return handleResponse(response).map(r -> Arrays.asList(DefaultJsonMapper.fromJson(r, BeregnetSkatt[].class))).orElse(new ArrayList<>());
+    }
+
+    //api/v1/summertskattegrunnlag
+    Optional<SSGResponse> hentSummertskattegrunnlag(long aktørId, String år) {
+        var uri = UriBuilder.fromUri(endpointSSG)
+            .queryParam(SigrunRestConfig.INNTEKTSAAR, år)
+            .queryParam(SigrunRestConfig.INNTEKTSFILTER, SigrunRestConfig.FILTER_SSG)
+            .build();
+
+        var request = RestRequest.newGET(uri, restConfig)
+            .header(NavHeaders.HEADER_NAV_PERSONIDENT, String.valueOf(aktørId))
+            .otherCallId(X_CALL_ID)
+            .otherCallId(SigrunRestConfig.NYE_HEADER_CALL_ID)
+            .header(SigrunRestConfig.CONSUMER_ID, CONTEXT_SUPPLIER.consumerIdForCurrentKontekst().get())
+            .header(SigrunRestConfig.NYE_HEADER_CONSUMER_ID, CONTEXT_SUPPLIER.consumerIdForCurrentKontekst().get());
+
+        HttpResponse<String> response = client.sendReturnUnhandled(request);
+        return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, SSGResponse.class));
     }
 
 }

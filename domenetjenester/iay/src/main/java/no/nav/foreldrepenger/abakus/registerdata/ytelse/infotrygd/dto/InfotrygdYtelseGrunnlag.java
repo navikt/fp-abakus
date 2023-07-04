@@ -33,6 +33,10 @@ public class InfotrygdYtelseGrunnlag {
     public InfotrygdYtelseGrunnlag() {
     }
 
+    public static Builder getBuilder() {
+        return new Builder();
+    }
+
     public LocalDateTime getVedtattTidspunkt() {
         return vedtattTidspunkt;
     }
@@ -91,50 +95,34 @@ public class InfotrygdYtelseGrunnlag {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         InfotrygdYtelseGrunnlag that = (InfotrygdYtelseGrunnlag) o;
-        return Objects.equals(vedtattTidspunkt, that.vedtattTidspunkt) &&
-            Objects.equals(ytelseType, that.ytelseType) &&
-            Objects.equals(temaUnderkategori, that.temaUnderkategori) &&
-            Objects.equals(ytelseStatus, that.ytelseStatus) &&
-            Objects.equals(utbetaltePerioder, that.utbetaltePerioder) &&
-            Objects.equals(vedtaksPeriodeFom, that.vedtaksPeriodeFom) &&
-            Objects.equals(vedtaksPeriodeTom, that.vedtaksPeriodeTom) &&
-            Objects.equals(kategori, that.kategori) &&
-            Objects.equals(arbeidsforhold, that.arbeidsforhold) &&
-            Objects.equals(dekningsgrad, that.dekningsgrad) &&
-            Objects.equals(gradering, that.gradering) &&
-            Objects.equals(fødselsdatoBarn, that.fødselsdatoBarn) &&
-            Objects.equals(opprinneligIdentdato, that.opprinneligIdentdato);
+        return Objects.equals(vedtattTidspunkt, that.vedtattTidspunkt) && Objects.equals(ytelseType, that.ytelseType) && Objects.equals(
+            temaUnderkategori, that.temaUnderkategori) && Objects.equals(ytelseStatus, that.ytelseStatus) && Objects.equals(utbetaltePerioder,
+            that.utbetaltePerioder) && Objects.equals(vedtaksPeriodeFom, that.vedtaksPeriodeFom) && Objects.equals(vedtaksPeriodeTom,
+            that.vedtaksPeriodeTom) && Objects.equals(kategori, that.kategori) && Objects.equals(arbeidsforhold, that.arbeidsforhold)
+            && Objects.equals(dekningsgrad, that.dekningsgrad) && Objects.equals(gradering, that.gradering) && Objects.equals(fødselsdatoBarn,
+            that.fødselsdatoBarn) && Objects.equals(opprinneligIdentdato, that.opprinneligIdentdato);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(vedtattTidspunkt, ytelseType, temaUnderkategori, ytelseStatus, utbetaltePerioder, vedtaksPeriodeFom, vedtaksPeriodeTom, kategori, arbeidsforhold, dekningsgrad, gradering, fødselsdatoBarn, opprinneligIdentdato);
+        return Objects.hash(vedtattTidspunkt, ytelseType, temaUnderkategori, ytelseStatus, utbetaltePerioder, vedtaksPeriodeFom, vedtaksPeriodeTom,
+            kategori, arbeidsforhold, dekningsgrad, gradering, fødselsdatoBarn, opprinneligIdentdato);
     }
 
     @Override
     public String toString() {
-        return "InfotrygdYtelseGrunnlag{" +
-            "identdato=" + vedtattTidspunkt +
-            ", ytelseType=" + ytelseType +
-            ", temaUnderkategori=" + temaUnderkategori +
-            ", ytelseStatus=" + ytelseStatus +
-            ", utbetaltePerioder=" + utbetaltePerioder +
-            ", vedtaksPeriodeFom=" + vedtaksPeriodeFom +
-            ", vedtaksPeriodeTom=" + vedtaksPeriodeTom +
-            ", kategori=" + kategori +
-            ", arbeidsforhold=" + arbeidsforhold +
-            ", dekningsgrad=" + dekningsgrad +
-            ", gradering=" + gradering +
-            ", fødselsdatoBarn=" + fødselsdatoBarn +
-            ", opprinneligIdentdato=" + opprinneligIdentdato +
-            '}';
-    }
-
-    public static Builder getBuilder() {
-        return new Builder();
+        return "InfotrygdYtelseGrunnlag{" + "identdato=" + vedtattTidspunkt + ", ytelseType=" + ytelseType + ", temaUnderkategori="
+            + temaUnderkategori + ", ytelseStatus=" + ytelseStatus + ", utbetaltePerioder=" + utbetaltePerioder + ", vedtaksPeriodeFom="
+            + vedtaksPeriodeFom + ", vedtaksPeriodeTom=" + vedtaksPeriodeTom + ", kategori=" + kategori + ", arbeidsforhold=" + arbeidsforhold
+            + ", dekningsgrad=" + dekningsgrad + ", gradering=" + gradering + ", fødselsdatoBarn=" + fødselsdatoBarn + ", opprinneligIdentdato="
+            + opprinneligIdentdato + '}';
     }
 
     public static class Builder {

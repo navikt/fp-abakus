@@ -27,11 +27,7 @@ public class PeriodeRS {
     }
 
     @Override
-    public String
-    toString() {
-        return "PeriodeRS{" +
-                "fom=" + fom +
-                ", tom=" + tom +
-                '}';
+    public String toString() {
+        return "PeriodeRS{" + "fom=" + fom + ", tom=" + tom + '}';
     }
 }

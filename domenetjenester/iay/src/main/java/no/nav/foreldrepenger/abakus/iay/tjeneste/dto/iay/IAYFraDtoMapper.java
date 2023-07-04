@@ -1,9 +1,5 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
-import java.time.ZoneId;
-import java.util.Objects;
-import java.util.Optional;
-
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseAggregatOverstyrtDto;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat;
@@ -13,6 +9,10 @@ import no.nav.foreldrepenger.abakus.domene.iay.VersjonType;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+
+import java.time.ZoneId;
+import java.util.Objects;
+import java.util.Optional;
 
 public class IAYFraDtoMapper {
 
@@ -30,10 +30,12 @@ public class IAYFraDtoMapper {
      * Mapper oppdaterte data til grunnlag. Kan oppdatere tidligere grunnlag eller siste grunnlag på en kobling. Merk at det ikke nødvendigvis
      * er tillatt å oppdatere tidliger grunnlag alltid (eks. OppgittOpptjening kan kun settes en gang).
      */
-    public void mapOverstyringerTilGrunnlagBuilder(InntektArbeidYtelseAggregatOverstyrtDto overstyrt, ArbeidsforholdInformasjon arbeidsforholdInformasjon, InntektArbeidYtelseGrunnlagBuilder builder) {
+    public void mapOverstyringerTilGrunnlagBuilder(InntektArbeidYtelseAggregatOverstyrtDto overstyrt,
+                                                   ArbeidsforholdInformasjon arbeidsforholdInformasjon,
+                                                   InntektArbeidYtelseGrunnlagBuilder builder) {
         var arbeidsforholdInformasjonBuilder = new MapArbeidsforholdInformasjon.MapFraDto(builder).map(arbeidsforholdInformasjon);
         builder.medInformasjon(arbeidsforholdInformasjonBuilder.build());
-        
+
         if (overstyrt != null) {
             Optional<InntektArbeidYtelseAggregat> aggregatEntitet = iayTjeneste.hentIAYAggregatFor(koblingReferanse, overstyrt.getEksternReferanse());
             if (aggregatEntitet.isPresent()) {
@@ -41,7 +43,8 @@ public class IAYFraDtoMapper {
                 builder.medSaksbehandlet(aggregatBuilder);
             } else {
                 var tidspunkt = overstyrt.getOpprettetTidspunkt().atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
-                var saksbehandlerOverstyringer = iayTjeneste.opprettBuilderForSaksbehandlet(koblingReferanse, overstyrt.getEksternReferanse(), tidspunkt);
+                var saksbehandlerOverstyringer = iayTjeneste.opprettBuilderForSaksbehandlet(koblingReferanse, overstyrt.getEksternReferanse(),
+                    tidspunkt);
                 var overstyrtAktørArbeid = new MapAktørArbeid.MapFraDto(aktørId, saksbehandlerOverstyringer).map(overstyrt.getArbeid());
                 overstyrtAktørArbeid.forEach(saksbehandlerOverstyringer::leggTilAktørArbeid);
                 builder.medSaksbehandlet(saksbehandlerOverstyringer);

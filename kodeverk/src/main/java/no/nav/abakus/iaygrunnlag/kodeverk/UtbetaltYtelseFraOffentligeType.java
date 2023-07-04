@@ -18,7 +18,8 @@ public enum UtbetaltYtelseFraOffentligeType implements UtbetaltYtelseType {
     DAGPENGER_FISKER("DAGPENGER_FISKER", "Dagpenger til fisker som bare har hyre", "dagpengerTilFiskerSomBareHarHyre"),
     DAGPENGER_ARBEIDSLØS("DAGPENGER_ARBEIDSLØS", "Dagpenger ved arbeidsløshet", "dagpengerVedArbeidsloeshet"),
     FORELDREPENGER("FORELDREPENGER", "Foreldrepenger", "foreldrepenger"),
-    OVERGANGSSTØNAD_ENSLIG("OVERGANGSSTØNAD_ENSLIG", "Overgangsstønad til enslig mor eller far", "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere"),
+    OVERGANGSSTØNAD_ENSLIG("OVERGANGSSTØNAD_ENSLIG", "Overgangsstønad til enslig mor eller far",
+        "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere"),
     SVANGERSKAPSPENGER("SVANGERSKAPSPENGER", "Svangerskapspenger", "svangerskapspenger"),
     SYKEPENGER("SYKEPENGER", "Sykepenger", "sykepenger"),
     SYKEPENGER_FISKER("SYKEPENGER_FISKER", "Sykepenger fisker", "sykepengerTilFiskerSomBareHarHyre"),
@@ -31,9 +32,8 @@ public enum UtbetaltYtelseFraOffentligeType implements UtbetaltYtelseType {
     UDEFINERT("-", "UNDEFINED", null),
     ;
 
-    private static final Map<String, UtbetaltYtelseFraOffentligeType> KODER = new LinkedHashMap<>();
-
     public static final String KODEVERK = "YTELSE_FRA_OFFENTLIGE";
+    private static final Map<String, UtbetaltYtelseFraOffentligeType> KODER = new LinkedHashMap<>();
 
     static {
         for (var v : values()) {
@@ -64,12 +64,15 @@ public enum UtbetaltYtelseFraOffentligeType implements UtbetaltYtelseType {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent OffentligYtelseType: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent OffentligYtelseType: " + kode));
     }
 
     public static Map<String, UtbetaltYtelseFraOffentligeType> kodeMap() {
         return Collections.unmodifiableMap(KODER);
+    }
+
+    public static UtbetaltYtelseFraOffentligeType finnForKodeverkEiersKode(String offisiellDokumentType) {
+        return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
     @Override
@@ -90,10 +93,6 @@ public enum UtbetaltYtelseFraOffentligeType implements UtbetaltYtelseType {
     @Override
     public String getOffisiellKode() {
         return offisiellKode;
-    }
-
-    public static UtbetaltYtelseFraOffentligeType finnForKodeverkEiersKode(String offisiellDokumentType) {
-        return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
     @Override

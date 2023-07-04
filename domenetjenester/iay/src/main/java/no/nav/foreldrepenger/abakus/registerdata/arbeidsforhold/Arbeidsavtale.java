@@ -13,7 +13,13 @@ public class Arbeidsavtale {
     private LocalDate sisteLønnsendringsdato;
     private boolean erAnsettelsesPerioden;
 
-    private Arbeidsavtale(LocalDate arbeidsavtaleFom, LocalDate arbeidsavtaleTom, BigDecimal stillingsprosent, BigDecimal beregnetAntallTimerPrUke, BigDecimal avtaltArbeidstimerPerUke, LocalDate sisteLønnsendringsdato, boolean erAnsettelsesPerioden) {
+    private Arbeidsavtale(LocalDate arbeidsavtaleFom,
+                          LocalDate arbeidsavtaleTom,
+                          BigDecimal stillingsprosent,
+                          BigDecimal beregnetAntallTimerPrUke,
+                          BigDecimal avtaltArbeidstimerPerUke,
+                          LocalDate sisteLønnsendringsdato,
+                          boolean erAnsettelsesPerioden) {
         this.arbeidsavtaleFom = arbeidsavtaleFom;
         this.arbeidsavtaleTom = arbeidsavtaleTom;
         this.stillingsprosent = stillingsprosent;
@@ -44,7 +50,7 @@ public class Arbeidsavtale {
     }
 
     public LocalDate getSisteLønnsendringsdato() {
-       return sisteLønnsendringsdato;
+        return sisteLønnsendringsdato;
     }
 
     public boolean getErAnsettelsesPerioden() {
@@ -53,42 +59,34 @@ public class Arbeidsavtale {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Arbeidsavtale that = (Arbeidsavtale) o;
-        return erAnsettelsesPerioden == that.erAnsettelsesPerioden &&
-            Objects.equals(arbeidsavtaleFom, that.arbeidsavtaleFom) &&
-            Objects.equals(arbeidsavtaleTom, that.arbeidsavtaleTom) &&
-            Objects.equals(stillingsprosent, that.stillingsprosent) &&
-            Objects.equals(beregnetAntallTimerPrUke, that.beregnetAntallTimerPrUke) &&
-            Objects.equals(avtaltArbeidstimerPerUke, that.avtaltArbeidstimerPerUke) &&
-            Objects.equals(sisteLønnsendringsdato, that.sisteLønnsendringsdato);
+        return erAnsettelsesPerioden == that.erAnsettelsesPerioden && Objects.equals(arbeidsavtaleFom, that.arbeidsavtaleFom) && Objects.equals(
+            arbeidsavtaleTom, that.arbeidsavtaleTom) && Objects.equals(stillingsprosent, that.stillingsprosent) && Objects.equals(
+            beregnetAntallTimerPrUke, that.beregnetAntallTimerPrUke) && Objects.equals(avtaltArbeidstimerPerUke, that.avtaltArbeidstimerPerUke)
+            && Objects.equals(sisteLønnsendringsdato, that.sisteLønnsendringsdato);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(arbeidsavtaleFom, arbeidsavtaleTom, stillingsprosent, beregnetAntallTimerPrUke, avtaltArbeidstimerPerUke, sisteLønnsendringsdato, erAnsettelsesPerioden);
+        return Objects.hash(arbeidsavtaleFom, arbeidsavtaleTom, stillingsprosent, beregnetAntallTimerPrUke, avtaltArbeidstimerPerUke,
+            sisteLønnsendringsdato, erAnsettelsesPerioden);
     }
 
     @Override
     public String toString() {
-        return "Arbeidsavtale{" +
-            "arbeidsavtaleFom=" + arbeidsavtaleFom +
-            ", arbeidsavtaleTom=" + arbeidsavtaleTom +
-            ", stillingsprosent=" + stillingsprosent +
-            ", beregnetAntallTimerPrUke=" + beregnetAntallTimerPrUke +
-            ", avtaltArbeidstimerPerUke=" + avtaltArbeidstimerPerUke +
-            ", sisteLønnsendringsdato=" + sisteLønnsendringsdato +
-            ", erAnsettelsesPerioden=" + erAnsettelsesPerioden +
-            '}';
+        return "Arbeidsavtale{" + "arbeidsavtaleFom=" + arbeidsavtaleFom + ", arbeidsavtaleTom=" + arbeidsavtaleTom + ", stillingsprosent="
+            + stillingsprosent + ", beregnetAntallTimerPrUke=" + beregnetAntallTimerPrUke + ", avtaltArbeidstimerPerUke=" + avtaltArbeidstimerPerUke
+            + ", sisteLønnsendringsdato=" + sisteLønnsendringsdato + ", erAnsettelsesPerioden=" + erAnsettelsesPerioden + '}';
     }
 
     public String toStringCompact() {
-        return "Avtale{" +
-            "fom=" + arbeidsavtaleFom +
-            ", tom=" + arbeidsavtaleTom +
-            ", erAnsperiode=" + erAnsettelsesPerioden +
-            '}';
+        return "Avtale{" + "fom=" + arbeidsavtaleFom + ", tom=" + arbeidsavtaleTom + ", erAnsperiode=" + erAnsettelsesPerioden + '}';
     }
 
     public static class Builder {
@@ -136,7 +134,8 @@ public class Arbeidsavtale {
         }
 
         public Arbeidsavtale build() {
-            return new Arbeidsavtale(arbeidsavtaleFom, arbeidsavtaleTom, stillingsprosent, beregnetAntallTimerPrUke, avtaltArbeidstimerPerUke, sisteLønnsendringsdato, erAnsettelsesPerioden);
+            return new Arbeidsavtale(arbeidsavtaleFom, arbeidsavtaleTom, stillingsprosent, beregnetAntallTimerPrUke, avtaltArbeidstimerPerUke,
+                sisteLønnsendringsdato, erAnsettelsesPerioden);
         }
     }
 }

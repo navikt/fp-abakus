@@ -5,7 +5,6 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
@@ -81,7 +80,7 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
             .medDagsats(andel.getDagsats().getVerdi())
             .medUtbetalingsgrad(andel.getUtbetalingsgrad().getVerdi())
             .medRefusjonsgrad(andel.getRefusjonsgrad().getVerdi())
-            .medArbeidsgiver(mapArbeidsgiver(andel.getArbeidsgiver()))
+            .medArbeidsgiver(mapArbeidsgiver(andel))
             .medArbeidsforholdId(andel.getArbeidsforholdId());
     }
 
@@ -104,11 +103,13 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
         };
     }
 
-    private Arbeidsgiver mapArbeidsgiver(Aktør arbeidsgiver) {
-        if (arbeidsgiver == null) {
+    private Arbeidsgiver mapArbeidsgiver(AnvistAndel andel) {
+        var arbeidsgiverIdent = andel.getArbeidsgiverIdent();
+        if (arbeidsgiverIdent == null) {
             return null;
         }
-        return arbeidsgiver.getErOrganisasjon() ? Arbeidsgiver.virksomhet(arbeidsgiver.getIdent()) : Arbeidsgiver.person(arbeidsgiver.getIdent());
+        return arbeidsgiverIdent.erOrganisasjon() ? Arbeidsgiver.virksomhet(arbeidsgiverIdent.ident()) : Arbeidsgiver.person(
+            arbeidsgiverIdent.ident());
     }
 
     private IntervallEntitet mapTilEntitet(Periode periode) {

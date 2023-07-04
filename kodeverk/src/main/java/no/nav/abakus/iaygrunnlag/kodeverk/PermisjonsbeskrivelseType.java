@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -18,21 +17,20 @@ public enum PermisjonsbeskrivelseType implements Kodeverdi {
 
     UDEFINERT("-", "Ikke definert", null),
     PERMISJON("PERMISJON", "Permisjon", "permisjon"),
-    UTDANNINGSPERMISJON("UTDANNINGSPERMISJON", "Utdanningspermisjon", "utdanningspermisjon"),
-    VELFERDSPERMISJON("VELFERDSPERMISJON", "Velferdspermisjon", "velferdspermisjon"),
+    UTDANNINGSPERMISJON("UTDANNINGSPERMISJON", "Utdanningspermisjon", "utdanningspermisjon"), // Utgår 31/12-2022
+    UTDANNINGSPERMISJON_IKKE_LOVFESTET("UTDANNINGSPERMISJON_IKKE_LOVFESTET", "Utdanningspermisjon (Ikke lovfestet)",
+        "utdanningspermisjonIkkeLovfestet"),
+    UTDANNINGSPERMISJON_LOVFESTET("UTDANNINGSPERMISJON_LOVFESTET", "Utdanningspermisjon (Lovfestet)", "utdanningspermisjonLovfestet"),
+    VELFERDSPERMISJON("VELFERDSPERMISJON", "Velferdspermisjon", "velferdspermisjon"), // Utgår 31/12-2022
+    ANNEN_PERMISJON_IKKE_LOVFESTET("ANNEN_PERMISJON_IKKE_LOVFESTET", "Andre ikke-lovfestede permisjoner", "andreIkkeLovfestedePermisjoner"),
+    ANNEN_PERMISJON_LOVFESTET("ANNEN_PERMISJON_LOVFESTET", "Andre lovfestede permisjoner", "andreLovfestedePermisjoner"),
     PERMISJON_MED_FORELDREPENGER("PERMISJON_MED_FORELDREPENGER", "Permisjon med foreldrepenger", "permisjonMedForeldrepenger"),
     PERMITTERING("PERMITTERING", "Permittering", "permittering"),
     PERMISJON_VED_MILITÆRTJENESTE("PERMISJON_VED_MILITÆRTJENESTE", "Permisjon ved militærtjeneste", "permisjonVedMilitaertjeneste"),
     ;
 
-    private static final Set<PermisjonsbeskrivelseType> PERMISJON_IKKE_RELEVANT_FOR_AVKLAR_ARBEIDSFORHOLD = Set.of(
-        PermisjonsbeskrivelseType.UTDANNINGSPERMISJON,
-        PermisjonsbeskrivelseType.PERMISJON_MED_FORELDREPENGER
-    );
-
-    private static final Map<String, PermisjonsbeskrivelseType> KODER = new LinkedHashMap<>();
-
     public static final String KODEVERK = "PERMISJONSBESKRIVELSE_TYPE";
+    private static final Map<String, PermisjonsbeskrivelseType> KODER = new LinkedHashMap<>();
 
     static {
         for (var v : values()) {
@@ -63,12 +61,15 @@ public enum PermisjonsbeskrivelseType implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent PermisjonsbeskrivelseType: " + kode));
+        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent PermisjonsbeskrivelseType: " + kode));
     }
 
     public static Map<String, PermisjonsbeskrivelseType> kodeMap() {
         return Collections.unmodifiableMap(KODER);
+    }
+
+    public static PermisjonsbeskrivelseType finnForKodeverkEiersKode(String offisiellDokumentType) {
+        return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
     @Override
@@ -89,14 +90,6 @@ public enum PermisjonsbeskrivelseType implements Kodeverdi {
     @Override
     public String getOffisiellKode() {
         return offisiellKode;
-    }
-
-    public boolean erRelevantForAvklarArbeidsforhold() {
-        return !PERMISJON_IKKE_RELEVANT_FOR_AVKLAR_ARBEIDSFORHOLD.contains(this);
-    }
-
-    public static PermisjonsbeskrivelseType finnForKodeverkEiersKode(String offisiellDokumentType) {
-        return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
 

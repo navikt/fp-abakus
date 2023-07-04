@@ -20,7 +20,9 @@ import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class UtbetalingDto {
 
-    /** Arbeidsgiver for utbetaling. Kan være null . */
+    /**
+     * Arbeidsgiver for utbetaling. Kan være null .
+     */
     @JsonProperty(value = "arbeidsgiver")
     @Valid
     private Aktør arbeidsgiver;
@@ -79,14 +81,15 @@ public class UtbetalingDto {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this)
+        if (obj == this) {
             return true;
-        if (obj == null || obj.getClass() != this.getClass())
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
             return false;
+        }
         var other = this.getClass().cast(obj);
 
-        return Objects.equals(this.kilde, other.kilde)
-            && Objects.equals(arbeidsgiver, other.arbeidsgiver);
+        return Objects.equals(this.kilde, other.kilde) && Objects.equals(arbeidsgiver, other.arbeidsgiver);
     }
 
     @Override

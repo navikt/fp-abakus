@@ -17,10 +17,11 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 @Transactional
 public class VedtaksHendelseHåndterer {
 
-    private static final Logger log = LoggerFactory.getLogger(VedtaksHendelseHåndterer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(VedtaksHendelseHåndterer.class);
     private ProsessTaskTjeneste taskTjeneste;
 
     public VedtaksHendelseHåndterer() {
+        // CDI
     }
 
     @Inject
@@ -29,10 +30,8 @@ public class VedtaksHendelseHåndterer {
     }
 
     void handleMessage(String key, String payload) {
-        log.debug("Mottatt ytelse-vedtatt hendelse med key='{}', payload={}", key, payload);
-        var data = ProsessTaskDataBuilder.forProsessTask(LagreVedtakTask.class)
-            .medProperty(LagreVedtakTask.KEY, key)
-            .medPayload(payload);
+        LOG.debug("Mottatt ytelse-vedtatt hendelse med key='{}', payload={}", key, payload);
+        var data = ProsessTaskDataBuilder.forProsessTask(LagreVedtakTask.class).medProperty(LagreVedtakTask.KEY, key).medPayload(payload);
 
         taskTjeneste.lagre(data.build());
     }

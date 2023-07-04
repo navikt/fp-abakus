@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test;
 
 import no.nav.abakus.callback.registerdata.ReferanseDto;
 
-public class ReferanseDtoTest {
+class ReferanseDtoTest {
 
     @Test
-    public void skal_validere_UUID_med_regex() {
+    void skal_validere_UUID_med_regex() {
 
         UUID uuid = UUID.randomUUID();
 

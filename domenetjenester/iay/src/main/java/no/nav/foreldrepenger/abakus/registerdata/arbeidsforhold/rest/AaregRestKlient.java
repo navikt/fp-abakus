@@ -1,12 +1,10 @@
 package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest;
 
-import java.net.URI;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
@@ -19,47 +17,47 @@ import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 
 /*
  * Dokumentasjon https://confluence.adeo.no/display/FEL/AAREG+-+Tjeneste+REST+aareg.api
- * Swagger https://modapp-q1.adeo.no/aareg-services/api/swagger-ui.html
+ * Swagger https://aareg-services-q2.dev.intern.nav.no/swagger-ui/index.html?urls.primaryName=aareg.api.v1#/arbeidstaker/finnArbeidsforholdPrArbeidstaker
+ * Swagger V2 https://aareg-services-q2.dev.intern.nav.no/swagger-ui/index.html?urls.primaryName=aareg.api.v2#/arbeidstaker/finnArbeidsforholdPrArbeidstaker
  */
 
 @ApplicationScoped
-@RestClientConfig(tokenConfig = TokenFlow.CONTEXT_ADD_CONSUMER, endpointProperty = "aareg.rs.url", endpointDefault = "https://modapp.adeo.no/aareg-services/api/v1/arbeidstaker")
+@RestClientConfig(tokenConfig = TokenFlow.ADAPTIVE_ADD_CONSUMER, endpointProperty = "aareg.rs.url",
+    endpointDefault = "http://aareg-services-nais.arbeidsforhold/api/v1/arbeidstaker",
+    scopesProperty = "aareg.scopes", scopesDefault = "api://prod-fss.arbeidsforhold.aareg-services-nais/.default")
 public class AaregRestKlient {
 
 
-    private RestClient restClient; // Setter på consumer-token fra STS
-    private URI endpoint;
+    private final RestClient restClient; // Setter på consumer-token fra STS
+    private final RestConfig restConfig;
 
     public AaregRestKlient() {
-    }
-
-    @Inject
-    public AaregRestKlient(RestClient restClient) {
-        this.restClient = restClient;
-        this.endpoint = RestConfig.endpointFromAnnotation(AaregRestKlient.class);
+        this.restClient = RestClient.client();
+        this.restConfig = RestConfig.forClient(AaregRestKlient.class);
     }
 
     public List<ArbeidsforholdRS> finnArbeidsforholdForArbeidstaker(String ident, LocalDate qfom, LocalDate qtom) {
         try {
-            var target = UriBuilder.fromUri(endpoint).path("arbeidsforhold")
-                    .queryParam("ansettelsesperiodeFom", String.valueOf(qfom))
-                    .queryParam("ansettelsesperiodeTom", String.valueOf(qtom))
-                    .queryParam("regelverk", "A_ORDNINGEN")
-                    .queryParam("historikk", "true")
-                    .queryParam("sporingsinformasjon", "false")
-                    .build();
-            var request = RestRequest.newGET(target, AaregRestKlient.class)
-                .header(NavHeaders.HEADER_NAV_PERSONIDENT, ident);
+            var target = UriBuilder.fromUri(restConfig.endpoint())
+                .path("arbeidsforhold")
+                .queryParam("ansettelsesperiodeFom", String.valueOf(qfom))
+                .queryParam("ansettelsesperiodeTom", String.valueOf(qtom))
+                .queryParam("regelverk", "A_ORDNINGEN")
+                .queryParam("historikk", "true")
+                .queryParam("sporingsinformasjon", "false")
+                .build();
+            var request = RestRequest.newGET(target, restConfig).header(NavHeaders.HEADER_NAV_PERSONIDENT, ident);
             var result = restClient.send(request, ArbeidsforholdRS[].class);
             return Arrays.asList(result);
-        } catch (UriBuilderException|IllegalArgumentException e) {
+        } catch (UriBuilderException | IllegalArgumentException e) {
             throw new IllegalArgumentException("Utviklerfeil syntax-exception for finnArbeidsforholdForArbeidstaker");
         }
     }
 
     public List<ArbeidsforholdRS> finnArbeidsforholdForFrilanser(String ident, LocalDate qfom, LocalDate qtom) {
         try {
-            var target = UriBuilder.fromUri(endpoint).path("arbeidsforhold")
+            var target = UriBuilder.fromUri(restConfig.endpoint())
+                .path("arbeidsforhold")
                 .queryParam("ansettelsesperiodeFom", String.valueOf(qfom))
                 .queryParam("ansettelsesperiodeTom", String.valueOf(qtom))
                 .queryParam("arbeidsforholdtype", "frilanserOppdragstakerHonorarPersonerMm")
@@ -67,11 +65,10 @@ public class AaregRestKlient {
                 .queryParam("historikk", "true")
                 .queryParam("sporingsinformasjon", "false")
                 .build();
-            var request = RestRequest.newGET(target, AaregRestKlient.class)
-                .header(NavHeaders.HEADER_NAV_PERSONIDENT, ident);
+            var request = RestRequest.newGET(target, restConfig).header(NavHeaders.HEADER_NAV_PERSONIDENT, ident);
             var result = restClient.send(request, ArbeidsforholdRS[].class);
             return Arrays.asList(result);
-        } catch (UriBuilderException|IllegalArgumentException e) {
+        } catch (UriBuilderException | IllegalArgumentException e) {
             throw new IllegalArgumentException("Utviklerfeil syntax-exception for finnArbeidsforholdForArbeidstaker");
         }
     }

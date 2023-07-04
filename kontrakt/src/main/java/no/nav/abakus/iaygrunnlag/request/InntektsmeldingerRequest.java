@@ -1,21 +1,17 @@
 package no.nav.abakus.iaygrunnlag.request;
 
-import java.util.Objects;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import java.util.Objects;
 
 /**
  * Spesifikasjon for å hente opp et InntektArbeidYtelseGrunnlag.
@@ -27,7 +23,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
 public class InntektsmeldingerRequest {
 
-    /** Angi hvem grunnlaget hentes for. */
+    /**
+     * Angi hvem grunnlaget hentes for.
+     */
     @JsonProperty(value = "personIdent", required = true)
     @Valid
     @NotNull
@@ -36,7 +34,9 @@ public class InntektsmeldingerRequest {
     @JsonProperty(value = "ytelseType")
     private YtelseType ytelseType;
 
-    /** Angi hvilken sak det gjelder. */
+    /**
+     * Angi hvilken sak det gjelder.
+     */
     @JsonProperty(value = "saksnummer")
     @Valid
     @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'")
@@ -59,10 +59,12 @@ public class InntektsmeldingerRequest {
         return ytelseType;
     }
 
-    public String getSaksnummer() { return saksnummer; }
-
     public void setYtelseType(YtelseType ytelseType) {
         this.ytelseType = ytelseType;
+    }
+
+    public String getSaksnummer() {
+        return saksnummer;
     }
 
     public void setSaksnummer(String saksnummer) {

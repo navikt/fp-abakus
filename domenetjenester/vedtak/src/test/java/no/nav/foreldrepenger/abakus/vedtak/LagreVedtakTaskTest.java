@@ -16,7 +16,7 @@ import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskDataBuilder;
 
-public class LagreVedtakTaskTest {
+class LagreVedtakTaskTest {
 
     @RegisterExtension
     public static JpaExtension extension = new JpaExtension();
@@ -26,7 +26,7 @@ public class LagreVedtakTaskTest {
     private LagreVedtakTask task = new LagreVedtakTask(repository, extractor);
 
     @Test
-    public void skal_feile_ved_valideringsfeil() {
+    void skal_feile_ved_valideringsfeil() {
         String payload = """
             {
               "version": "1.0",
@@ -87,12 +87,12 @@ public class LagreVedtakTaskTest {
             .medProperty(LagreVedtakTask.KEY, UUID.randomUUID().toString())
             .build();
 
-        assertThrows(IllegalArgumentException.class, () ->task.doTask(data));
+        assertThrows(IllegalArgumentException.class, () -> task.doTask(data));
     }
 
 
     @Test
-    public void skal_ikke_feile_uten_valideringsfeil() {
+    void skal_ikke_feile_uten_valideringsfeil() {
         String payload = """
             {
               "version" : "1.0",
@@ -127,6 +127,9 @@ public class LagreVedtakTaskTest {
                     "identType" : "ORGNUMMER",
                     "ident" : "972674818"
                   },
+                  "arbeidsgiverIdent" : {
+                    "ident" : "972674818"
+                  },
                   "arbeidsforholdId" : "1",
                   "dagsats" : {
                     "verdi" : 1846.00
@@ -154,6 +157,9 @@ public class LagreVedtakTaskTest {
                 "andeler" : [ {
                   "arbeidsgiver" : {
                     "identType" : "ORGNUMMER",
+                    "ident" : "972674818"
+                  },
+                  "arbeidsgiverIdent" : {
                     "ident" : "972674818"
                   },
                   "arbeidsforholdId" : "1",
@@ -210,9 +216,7 @@ public class LagreVedtakTaskTest {
 
         extension.getEntityManager().flush();
 
-        var vedtakYtelser = repository.hentYtelserForIPeriode(new AktørId("1293528970663"),
-            LocalDate.of(2021, 11, 1),
-            LocalDate.of(2021, 11, 19));
+        var vedtakYtelser = repository.hentYtelserForIPeriode(new AktørId("1293528970663"), LocalDate.of(2021, 11, 1), LocalDate.of(2021, 11, 19));
 
         assertThat(vedtakYtelser.size()).isEqualTo(1);
         assertThat(vedtakYtelser.get(0).getYtelseAnvist().size()).isEqualTo(3);

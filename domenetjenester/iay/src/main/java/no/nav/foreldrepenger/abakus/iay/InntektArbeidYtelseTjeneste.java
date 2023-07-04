@@ -88,7 +88,7 @@ public class InntektArbeidYtelseTjeneste {
      * Hent alle grunnlag for angitt saksnummer
      *
      * @param saksnummer
-     * @param boolean kunAktive - hvis true henter kun aktive grunnlag (ikke historiske versjoner)
+     * @param boolean    kunAktive - hvis true henter kun aktive grunnlag (ikke historiske versjoner)
      * @return henter optional aggregat
      */
     public List<InntektArbeidYtelseGrunnlag> hentAlleGrunnlagFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType, boolean kunAktive) {
@@ -99,15 +99,21 @@ public class InntektArbeidYtelseTjeneste {
         return repository.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
     }
 
-    public Map<Inntektsmelding, ArbeidsforholdInformasjon> hentAlleInntektsmeldingerForEksternRef(AktørId aktørId, Saksnummer saksnummer, KoblingReferanse ref, YtelseType ytelseType) {
+    public Map<Inntektsmelding, ArbeidsforholdInformasjon> hentAlleInntektsmeldingerForEksternRef(AktørId aktørId,
+                                                                                                  Saksnummer saksnummer,
+                                                                                                  KoblingReferanse ref,
+                                                                                                  YtelseType ytelseType) {
         return repository.hentArbeidsforholdInfoInntektsmeldingerMapFor(aktørId, saksnummer, ref, ytelseType);
     }
 
-    public Map<Inntektsmelding, ArbeidsforholdInformasjon> utledInntektsmeldingDiff(Map<Inntektsmelding, ArbeidsforholdInformasjon> førsteSet, Map<Inntektsmelding, ArbeidsforholdInformasjon> andreSet) {
+    public Map<Inntektsmelding, ArbeidsforholdInformasjon> utledInntektsmeldingDiff(Map<Inntektsmelding, ArbeidsforholdInformasjon> førsteSet,
+                                                                                    Map<Inntektsmelding, ArbeidsforholdInformasjon> andreSet) {
         return InntektsmeldingDiffTjeneste.utledDifferanseIInntektsmeldinger(førsteSet, andreSet);
     }
 
-    public Map<Inntektsmelding, ArbeidsforholdInformasjon> hentArbeidsforholdinfoInntektsmeldingerMapFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
+    public Map<Inntektsmelding, ArbeidsforholdInformasjon> hentArbeidsforholdinfoInntektsmeldingerMapFor(AktørId aktørId,
+                                                                                                         Saksnummer saksnummer,
+                                                                                                         YtelseType ytelseType) {
         return repository.hentArbeidsforholdInfoInntektsmeldingerMapFor(aktørId, saksnummer, ytelseType);
     }
 
@@ -123,10 +129,10 @@ public class InntektArbeidYtelseTjeneste {
         boolean kunAktive = GrunnlagVersjon.SISTE.equals(grunnlagVersjon); // shortcutter litt opphenting
         var grunnlag = hentAlleGrunnlagFor(aktørId, saksnummer, ytelseType, kunAktive);
 
-        var grunnlagByKobling = grunnlag.stream()
-            .collect(Collectors.groupingBy(InntektArbeidYtelseGrunnlag::getKoblingId));
+        var grunnlagByKobling = grunnlag.stream().collect(Collectors.groupingBy(InntektArbeidYtelseGrunnlag::getKoblingId));
 
-        var grunnlagEtterspurt = grunnlagByKobling.entrySet().stream()
+        var grunnlagEtterspurt = grunnlagByKobling.entrySet()
+            .stream()
             .flatMap(e -> filterGrunnlag(e.getKey(), e.getValue(), grunnlagVersjon).stream());
 
         return grunnlagEtterspurt.collect(Collectors.toList());
@@ -146,7 +152,8 @@ public class InntektArbeidYtelseTjeneste {
      * @param koblingReferanse
      * @return Saksbehandlers overstyringer av IAY (primært {@link no.nav.foreldrepenger.abakus.domene.iay.AktørArbeid}).
      */
-    public InntektArbeidYtelseAggregatBuilder opprettBuilderForSaksbehandlet(KoblingReferanse koblingReferanse, UUID angittReferanse,
+    public InntektArbeidYtelseAggregatBuilder opprettBuilderForSaksbehandlet(KoblingReferanse koblingReferanse,
+                                                                             UUID angittReferanse,
                                                                              LocalDateTime angittOpprettetTidspunkt) {
         return repository.opprettBuilderFor(koblingReferanse, angittReferanse, angittOpprettetTidspunkt, VersjonType.SAKSBEHANDLET);
     }
@@ -178,8 +185,12 @@ public class InntektArbeidYtelseTjeneste {
      * @param ytelseType
      * @param dataset
      */
-    public void kopierGrunnlagFraEksisterendeBehandling(YtelseType ytelseType, AktørId aktørId, Saksnummer saksnummer, KoblingReferanse fraKobling,
-                                                        KoblingReferanse tilKobling, Set<Dataset> dataset) {
+    public void kopierGrunnlagFraEksisterendeBehandling(YtelseType ytelseType,
+                                                        AktørId aktørId,
+                                                        Saksnummer saksnummer,
+                                                        KoblingReferanse fraKobling,
+                                                        KoblingReferanse tilKobling,
+                                                        Set<Dataset> dataset) {
         var origAggregat = hentGrunnlagFor(fraKobling);
         if (origAggregat.isPresent()) {
             kopierGrunnlagPlussNyereInntektsmeldingerForFagsak(tilKobling, ytelseType, aktørId, saksnummer, origAggregat.get(), dataset);
@@ -196,7 +207,8 @@ public class InntektArbeidYtelseTjeneste {
      * @param dataset
      * @return
      */
-    private InntektArbeidYtelseGrunnlagBuilder kopierGrunnlagPlussNyereInntektsmeldingerForFagsak(KoblingReferanse tilKobling, YtelseType ytelseType,
+    private InntektArbeidYtelseGrunnlagBuilder kopierGrunnlagPlussNyereInntektsmeldingerForFagsak(KoblingReferanse tilKobling,
+                                                                                                  YtelseType ytelseType,
                                                                                                   AktørId aktørId,
                                                                                                   Saksnummer saksnummer,
                                                                                                   InntektArbeidYtelseGrunnlag original,
@@ -213,7 +225,8 @@ public class InntektArbeidYtelseTjeneste {
             var alleInntektsmeldingerForSaksummer = hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, ytelseType);
 
             var eksisterendeGrunnlagRef = original.getGrunnlagReferanse().getReferanse();
-            var kopierInntektsmeldingerEtterNyeste = alleInntektsmeldingerForSaksummer.entrySet().stream()
+            var kopierInntektsmeldingerEtterNyeste = alleInntektsmeldingerForSaksummer.entrySet()
+                .stream()
                 .filter(im -> (Inntektsmelding.COMP_REKKEFØLGE.compare(im.getKey(), sisteEksisterendeInntektsmelding) > 0))
                 .map(entry -> {
                     Inntektsmelding nyInntektsmelding = entry.getKey();
@@ -221,7 +234,8 @@ public class InntektArbeidYtelseTjeneste {
 
                     var arbeidsgiver = nyInntektsmelding.getArbeidsgiver();
                     var internRef = nyInntektsmelding.getArbeidsforholdRef();
-                    var eksternRef = arbForholdInformasjon.finnEkstern(eksisterendeGrunnlagRef, arbeidsgiver, nyInntektsmelding.getArbeidsforholdRef());
+                    var eksternRef = arbForholdInformasjon.finnEkstern(eksisterendeGrunnlagRef, arbeidsgiver,
+                        nyInntektsmelding.getArbeidsforholdRef());
 
                     InntektsmeldingBuilder inntektsmeldingBuilder = InntektsmeldingBuilder.kopi(nyInntektsmelding);
 
@@ -247,16 +261,15 @@ public class InntektArbeidYtelseTjeneste {
     }
 
     private Inntektsmelding finnSisteEksisterendeInntektsmelding(Collection<Inntektsmelding> inntektsmeldinger) {
-        return inntektsmeldinger.stream()
-            .max(Inntektsmelding.COMP_REKKEFØLGE)
-            .orElse(null);
+        return inntektsmeldinger.stream().max(Inntektsmelding.COMP_REKKEFØLGE).orElse(null);
     }
 
     public KoblingReferanse hentKoblingReferanse(GrunnlagReferanse grunnlagReferanse) {
         return repository.hentKoblingReferanseFor(grunnlagReferanse);
     }
 
-    private List<InntektArbeidYtelseGrunnlag> filterGrunnlag(Long koblingId, List<InntektArbeidYtelseGrunnlag> grunnlagPerKobling,
+    private List<InntektArbeidYtelseGrunnlag> filterGrunnlag(Long koblingId,
+                                                             List<InntektArbeidYtelseGrunnlag> grunnlagPerKobling,
                                                              GrunnlagVersjon grunnlagVersjon) {
         if (!grunnlagPerKobling.stream().allMatch(g -> Objects.equals(koblingId, g.getKoblingId()))) {
             throw new IllegalArgumentException("Utvikler-feil: Fikk grunnlag som ikke har riktig koblingId: " + koblingId);

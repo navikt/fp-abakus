@@ -15,14 +15,13 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType;
 import no.nav.abakus.iaygrunnlag.kodeverk.BekreftetPermisjonStatus;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Angir overstyringer satt av saksbehandler for arbeidsforhold (eks. arbeidsgiver navn, permisjon, ny arbeidsforhold referanse, etc.)
@@ -37,12 +36,16 @@ public class ArbeidsforholdOverstyringDto {
     @NotNull
     private Aktør arbeidsgiver;
 
-    /** Hvis overstyring er relatert til et bestemt arbeidsforhold, null hvis gjelder alle (for samme arbeidsgiver). */
+    /**
+     * Hvis overstyring er relatert til et bestemt arbeidsforhold, null hvis gjelder alle (for samme arbeidsgiver).
+     */
     @JsonProperty(value = "arbeidsforholdReferanse")
     @Valid
     private ArbeidsforholdRefDto arbeidsforholdRef;
 
-    /** Hvorvidt arbeidsforhold er tildelt en ny referanse. Null ellers. */
+    /**
+     * Hvorvidt arbeidsforhold er tildelt en ny referanse. Null ellers.
+     */
     @JsonProperty(value = "nyArbeidsforholdReferanse")
     @Valid
     private ArbeidsforholdRefDto nyArbeidsforholdRef;
@@ -54,7 +57,9 @@ public class ArbeidsforholdOverstyringDto {
     @JsonProperty(value = "overstyringBegrunnelse")
     private String begrunnelse;
 
-    /** Angitt overstyrt navn på arbeidsgiver (tildelt av saksbehandler). */
+    /**
+     * Angitt overstyrt navn på arbeidsgiver (tildelt av saksbehandler).
+     */
     @JsonProperty(value = "arbeidsgiverNavn")
     @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Arbeidsgivernavn [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String arbeidsgiverNavn;
@@ -71,7 +76,9 @@ public class ArbeidsforholdOverstyringDto {
     @Valid
     private List<Periode> arbeidsforholdOverstyrtePerioder;
 
-    /** Saksbehandler har angitt permisjon. */
+    /**
+     * Saksbehandler har angitt permisjon.
+     */
     @JsonProperty(value = "bekreftetPermisjon")
     @Valid
     private BekreftetPermisjon bekreftetPermisjon;

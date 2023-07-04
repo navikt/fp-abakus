@@ -21,7 +21,7 @@
 		</dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-            <artifactId>pdl-klient</artifactId>
+            <artifactId>person-klient</artifactId>
         </dependency>
 		<dependency>
 			<groupId>no.nav.foreldrepenger.felles</groupId>
