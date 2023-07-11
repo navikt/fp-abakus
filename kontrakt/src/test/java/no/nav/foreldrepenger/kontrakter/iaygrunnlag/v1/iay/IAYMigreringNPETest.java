@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
@@ -26,7 +27,7 @@ class IAYMigreringNPETest {
 
     @ParameterizedTest
     @MethodSource("provideArguments")
-    public void test_file(String fileName) throws Exception {
+    void test_file(String fileName) throws Exception {
         var reader = JsonObjectMapper.getMapper().readerFor(InntektArbeidYtelseGrunnlagDto.class);
 
         String str = readTestCase(fileName);
@@ -41,8 +42,7 @@ class IAYMigreringNPETest {
 
     private String readTestCase(String fileName) throws IOException {
         String str = null;
-        try (var is = getClass().getResourceAsStream(fileName); java.util.Scanner s = new java.util.Scanner(is,
-            Charset.forName("UTF-8")); Scanner s2 = s.useDelimiter("\\A")) {
+        try (var is = getClass().getResourceAsStream(fileName); var s = new java.util.Scanner(is, StandardCharsets.UTF_8); Scanner s2 = s.useDelimiter("\\A")) {
 
             str = s2.hasNext() ? s2.next() : "";
         }

@@ -37,8 +37,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
-import org.jboss.weld.exceptions.IllegalStateException;
-import org.jboss.weld.exceptions.UnsupportedOperationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
