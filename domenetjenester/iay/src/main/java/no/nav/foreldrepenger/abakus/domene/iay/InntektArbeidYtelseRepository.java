@@ -14,14 +14,13 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.hibernate.jpa.HibernateHints;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
-
-import org.hibernate.jpa.QueryHints;
-
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.diff.RegisterdataDiffsjekker;
@@ -713,7 +712,7 @@ public class InntektArbeidYtelseRepository {
         final TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery(
             "FROM InntektArbeidGrunnlag gr " + " WHERE gr.grunnlagReferanse = :ref ", InntektArbeidYtelseGrunnlag.class);
         query.setParameter("ref", grunnlagReferanse);
-        query.setHint(QueryHints.HINT_CACHE_MODE, "IGNORE");
+        query.setHint(HibernateHints.HINT_CACHE_MODE, "IGNORE");
         Optional<InntektArbeidYtelseGrunnlag> grunnlagOpt = query.getResultList().stream().findFirst();
 
         if (grunnlagOpt.isPresent()) {
@@ -741,7 +740,7 @@ public class InntektArbeidYtelseRepository {
             "SELECT gr.aktiv FROM InntektArbeidGrunnlag gr JOIN Kobling k ON gr.koblingId=k.id "
                 + " WHERE gr.grunnlagReferanse = :ref AND k.aktiv = true ", Boolean.class);
         query.setParameter("ref", new GrunnlagReferanse(eksternReferanse));
-        query.setHint(QueryHints.HINT_CACHE_MODE, "IGNORE");
+        query.setHint(HibernateHints.HINT_CACHE_MODE, "IGNORE");
         Optional<Boolean> grunnlagOpt = query.getResultList().stream().findFirst();
         return grunnlagOpt.orElse(false);
     }

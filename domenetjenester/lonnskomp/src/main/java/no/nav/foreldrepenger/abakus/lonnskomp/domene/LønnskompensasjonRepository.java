@@ -6,13 +6,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import org.hibernate.jpa.HibernateHints;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-
-import org.hibernate.jpa.QueryHints;
-
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 
@@ -64,7 +63,7 @@ public class LønnskompensasjonRepository {
         query.setParameter("aktørId", aktørId);
         query.setParameter("fom", fom);
         query.setParameter("tom", tom);
-        query.setHint(QueryHints.HINT_READONLY, true);
+        query.setHint(HibernateHints.HINT_READ_ONLY, true);
 
         Set<LønnskompensasjonVedtak> resultat = new LinkedHashSet<>();
         var allevedtak = query.getResultList();

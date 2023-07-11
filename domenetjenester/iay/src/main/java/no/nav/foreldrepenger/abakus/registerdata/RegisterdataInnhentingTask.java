@@ -52,7 +52,7 @@ public class RegisterdataInnhentingTask extends KoblingTask {
     }
 
     private IAYRegisterInnhentingTjeneste finnInnhenter(YtelseType ytelseType) {
-        return YtelseTypeRef.Lookup.find(innhentTjenester, ytelseType).get();
+        return YtelseTypeRef.Lookup.find(innhentTjenester, ytelseType).orElseThrow();
     }
 
     @Override
