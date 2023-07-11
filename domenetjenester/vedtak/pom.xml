@@ -16,9 +16,25 @@
 
 	<dependencies>
 		<dependency>
+            <!-- for Bean validation -->
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
+        <dependency>
+            <!-- for Bean validation -->
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.el</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-micrometer</artifactId>
+        </dependency>
+
 		<dependency>
 			<groupId>no.nav.foreldrepenger.abakus</groupId>
 			<artifactId>prosesstask</artifactId>
@@ -40,10 +56,6 @@
             <artifactId>kafka-properties</artifactId>
         </dependency>
 		<dependency>
-			<groupId>org.glassfish</groupId>
-			<artifactId>jakarta.el</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>no.nav.foreldrepenger.abakus</groupId>
 			<artifactId>abakus-vedtak</artifactId>
 		</dependency>
@@ -56,32 +68,5 @@
             <artifactId>felles-abac-kontekst</artifactId>
         </dependency>
 
-		<!-- TEST -->
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.felles</groupId>
-			<artifactId>felles-testutilities</artifactId>
-			<scope>test</scope>
-		</dependency>
-        <dependency>
-            <groupId>no.nav.foreldrepenger.abakus</groupId>
-            <artifactId>migreringer</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-plus</artifactId>
-            <scope>test</scope>
-        </dependency>
 	</dependencies>
 </project>
