@@ -1,7 +1,9 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
+import java.sql.Types;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -16,7 +18,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -26,6 +27,8 @@ import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.foreldrepenger.abakus.vedtak.domene.InntektskategoriKodeverdiConverter;
+
+import org.hibernate.annotations.JdbcTypeCode;
 
 
 @Entity(name = "YtelseAnvistAndel")
@@ -44,9 +47,15 @@ public class YtelseAnvistAndel extends BaseEntitet implements IndexKey {
     @ChangeTracked
     private Arbeidsgiver arbeidsgiver;
 
-    @Embedded
-    private InternArbeidsforholdRef arbeidsforholdRef;
-
+    // TODO: må fikses i databasen siden det brukes VARCHAR(100) der.
+    // Kolonnen bør være av type UUID i postgres, jeg klarte dessverre ikke å finne ut om det er mulig å overskrive @JdbcTypeCode av en @Embedded entitet.
+    // Om man endrer i databasen vil utkommentert kode virke igjen.
+    // Se f.eks i Inntektsmelding hvor riktig UUID type brukes i databasen.
+    //@Embedded
+    //private InternArbeidsforholdRef arbeidsforholdRef;
+    @JdbcTypeCode(Types.VARCHAR) // Trenges for å kunne mappe til VARCHAR i database.
+    @Column(name = "arbeidsforhold_intern_id")
+    private UUID arbeidsforholdRef;
     /**
      * Netto dagsats som tilsvarer grunnlagsdagsats * utbetalingsgrad
      */
@@ -84,7 +93,8 @@ public class YtelseAnvistAndel extends BaseEntitet implements IndexKey {
         this.inntektskategori = ytelseAnvistAndel.getInntektskategori();
         this.refusjonsgradProsent = ytelseAnvistAndel.getRefusjonsgradProsent();
         this.utbetalingsgradProsent = ytelseAnvistAndel.getUtbetalingsgradProsent();
-        this.arbeidsforholdRef = ytelseAnvistAndel.getArbeidsforholdRef();
+        //this.arbeidsforholdRef = ytelseAnvistAndel.getArbeidsforholdRef();
+        this.arbeidsforholdRef = ytelseAnvistAndel.getArbeidsforholdRef().getUUIDReferanse();
     }
 
     public Optional<Arbeidsgiver> getArbeidsgiver() {
@@ -97,11 +107,13 @@ public class YtelseAnvistAndel extends BaseEntitet implements IndexKey {
 
 
     public InternArbeidsforholdRef getArbeidsforholdRef() {
-        return arbeidsforholdRef != null ? arbeidsforholdRef : InternArbeidsforholdRef.nullRef();
+        //return arbeidsforholdRef != null ? arbeidsforholdRef : InternArbeidsforholdRef.nullRef();
+        return InternArbeidsforholdRef.ref(arbeidsforholdRef);
     }
 
     void setArbeidsforholdRef(InternArbeidsforholdRef arbeidsforholdRef) {
-        this.arbeidsforholdRef = arbeidsforholdRef;
+        //this.arbeidsforholdRef = arbeidsforholdRef;
+        this.arbeidsforholdRef = (arbeidsforholdRef != null ? arbeidsforholdRef.getUUIDReferanse() : null);
     }
 
     public Beløp getDagsats() {
