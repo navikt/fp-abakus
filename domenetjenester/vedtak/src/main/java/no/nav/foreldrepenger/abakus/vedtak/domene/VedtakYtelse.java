@@ -13,11 +13,13 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
+import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -67,8 +69,7 @@ public class VedtakYtelse extends BaseEntitet implements IndexKey {
     @Column(name = "kilde", nullable = false)
     private Fagsystem kilde;
 
-    @Lob
-    @Type(type = "org.hibernate.type.TextType")
+    @JdbcTypeCode(Types.LONGVARCHAR)
     @Column(name = "tilleggsopplysninger")
     private String tilleggsopplysninger;
 
