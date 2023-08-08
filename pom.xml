@@ -36,7 +36,7 @@
 
         <kontrakt.java.version>17</kontrakt.java.version>
 
-		<felles.version>4.4.2</felles.version>
+		<felles.version>4.4.3.1-jakarta</felles.version>
 		<prosesstask.version>3.2.5</prosesstask.version>
 		<kontrakter.version>6.3.0</kontrakter.version>
 
