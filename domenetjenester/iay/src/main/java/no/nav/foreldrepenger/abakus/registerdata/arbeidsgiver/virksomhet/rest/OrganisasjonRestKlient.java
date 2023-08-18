@@ -8,7 +8,7 @@ import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 
 /*
  * Dokumentasjon https://confluence.adeo.no/display/FEL/EREG+-+Tjeneste+REST+ereg.api
- * Swagger https://modapp-q1.adeo.no/ereg/api/swagger-ui.html#/
+ * Swagger https://modapp.adeo.no/ereg/api/swagger-ui.html#/
  */
 
 @Dependent
