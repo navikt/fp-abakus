@@ -1,22 +1,25 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
+import java.sql.Types;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Version;
+import org.hibernate.annotations.JdbcTypeCode;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -44,9 +47,17 @@ public class YtelseAnvistAndel extends BaseEntitet implements IndexKey {
     @ChangeTracked
     private Arbeidsgiver arbeidsgiver;
 
-    @Embedded
-    private InternArbeidsforholdRef arbeidsforholdRef;
 
+    /* TODO: må fikses i databasen siden det brukes VARCHAR(100) der. //NOSONAR
+        Kolonnen bør være av type UUID i postgres, jeg klarte dessverre ikke å finne ut om det er mulig å overskrive @JdbcTypeCode av en @Embedded entitet.
+        Om man endrer i databasen vil utkommentert kode virke igjen.
+        Se f.eks i Inntektsmelding hvor riktig UUID type brukes i databasen.
+    @Embedded //NOSONAR
+    private InternArbeidsforholdRef arbeidsforholdRef; //NOSONAR
+    */
+    @JdbcTypeCode(Types.VARCHAR) // Trenges for å kunne mappe til VARCHAR i database.
+    @Column(name = "arbeidsforhold_intern_id")
+    private UUID arbeidsforholdRef;
     /**
      * Netto dagsats som tilsvarer grunnlagsdagsats * utbetalingsgrad
      */
@@ -84,7 +95,8 @@ public class YtelseAnvistAndel extends BaseEntitet implements IndexKey {
         this.inntektskategori = ytelseAnvistAndel.getInntektskategori();
         this.refusjonsgradProsent = ytelseAnvistAndel.getRefusjonsgradProsent();
         this.utbetalingsgradProsent = ytelseAnvistAndel.getUtbetalingsgradProsent();
-        this.arbeidsforholdRef = ytelseAnvistAndel.getArbeidsforholdRef();
+        //this.arbeidsforholdRef = ytelseAnvistAndel.getArbeidsforholdRef(); //NOSONAR
+        this.arbeidsforholdRef = ytelseAnvistAndel.getArbeidsforholdRef().getUUIDReferanse();
     }
 
     public Optional<Arbeidsgiver> getArbeidsgiver() {
@@ -97,11 +109,13 @@ public class YtelseAnvistAndel extends BaseEntitet implements IndexKey {
 
 
     public InternArbeidsforholdRef getArbeidsforholdRef() {
-        return arbeidsforholdRef != null ? arbeidsforholdRef : InternArbeidsforholdRef.nullRef();
+        //return arbeidsforholdRef != null ? arbeidsforholdRef : InternArbeidsforholdRef.nullRef(); //NOSONAR
+        return InternArbeidsforholdRef.ref(arbeidsforholdRef);
     }
 
     void setArbeidsforholdRef(InternArbeidsforholdRef arbeidsforholdRef) {
-        this.arbeidsforholdRef = arbeidsforholdRef;
+        //this.arbeidsforholdRef = arbeidsforholdRef; //NOSONAR
+        this.arbeidsforholdRef = (arbeidsforholdRef != null ? arbeidsforholdRef.getUUIDReferanse() : null);
     }
 
     public Beløp getDagsats() {

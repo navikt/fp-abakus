@@ -2,7 +2,7 @@ package no.nav.foreldrepenger.abakus.app.diagnostikk;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
 
-import javax.persistence.Tuple;
+import jakarta.persistence.Tuple;
 
 import java.util.*;
 import java.util.function.Consumer;

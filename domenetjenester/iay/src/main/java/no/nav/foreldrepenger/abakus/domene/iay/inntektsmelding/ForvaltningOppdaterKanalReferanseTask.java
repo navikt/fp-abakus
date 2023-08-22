@@ -3,10 +3,10 @@ package no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Tuple;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Tuple;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

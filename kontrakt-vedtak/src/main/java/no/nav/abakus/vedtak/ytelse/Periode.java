@@ -2,7 +2,7 @@ package no.nav.abakus.vedtak.ytelse;
 
 import java.time.LocalDate;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

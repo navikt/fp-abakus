@@ -1,6 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.rest;
 
-import javax.enterprise.context.Dependent;
+import jakarta.enterprise.context.Dependent;
 
 import no.nav.vedtak.felles.integrasjon.organisasjon.AbstractOrganisasjonKlient;
 import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;

@@ -3,8 +3,8 @@ package no.nav.abakus.iaygrunnlag.v1;
 import java.util.Objects;
 import java.util.UUID;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;

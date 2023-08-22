@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriBuilderException;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilderException;
 
 import no.nav.vedtak.felles.integrasjon.rest.NavHeaders;
 import no.nav.vedtak.felles.integrasjon.rest.RestClient;

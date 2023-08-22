@@ -2,8 +2,8 @@ package no.nav.foreldrepenger.abakus.felles.jpa;
 
 import java.time.LocalDate;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 import no.nav.abakus.iaygrunnlag.Periode;
 

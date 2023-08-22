@@ -2,7 +2,7 @@ package no.nav.foreldrepenger.abakus.felles.sikkerhet;
 
 import java.util.List;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import no.nav.foreldrepenger.konfig.Cluster;
 import no.nav.foreldrepenger.konfig.Environment;

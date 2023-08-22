@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Request;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.Request;
 
 import org.junit.jupiter.api.Test;
 
