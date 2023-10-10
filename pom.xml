@@ -7,7 +7,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.felles</groupId>
         <artifactId>fp-bom</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
     </parent>
 
 	<groupId>no.nav.foreldrepenger.abakus</groupId>
@@ -36,9 +36,9 @@
 
         <kontrakt.java.version>17</kontrakt.java.version>
 
-		<felles.version>5.1.0</felles.version>
+		<felles.version>5.1.2</felles.version>
 		<prosesstask.version>4.0.0</prosesstask.version>
-		<kontrakter.version>7.0.1</kontrakter.version>
+		<kontrakter.version>7.1.1</kontrakter.version>
 
         <!-- Forteller til maven-deploy-plugin at artefaktet ikke skal deployes.
         Arves og overstyrres i de enkelte artefakter. -->
@@ -54,7 +54,7 @@
             <dependency>
                 <groupId>no.nav.foreldrepenger.felles</groupId>
                 <artifactId>fp-bom</artifactId>
-                <version>1.0.1</version>
+                <version>1.0.2</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
