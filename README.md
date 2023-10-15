@@ -1,8 +1,6 @@
 FP-ABAKUS
 ================
 [![Bygg og deploy](https://github.com/navikt/fp-abakus/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/navikt/fp-abakus/actions/workflows/build.yml)
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/navikt/fp-abakus)](https://github.com/navikt/fp-abakus/releases)
-![GitHub](https://img.shields.io/github/license/navikt/fp-abakus)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=navikt_fp-abakus&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=navikt_fp-abakus)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=navikt_fp-abakus&metric=coverage)](https://sonarcloud.io/summary/new_code?id=navikt_fp-abakus)
 
@@ -12,6 +10,10 @@ FP-ABAKUS
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=navikt_fp-abakus&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=navikt_fp-abakus)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=navikt_fp-abakus&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=navikt_fp-abakus)
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=navikt_fp-abakus&metric=sqale_index)](https://sonarcloud.io/dashboard?id=navikt_fp-abakus)
+
+### Abakus kontrakt
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/navikt/fp-abakus)](https://github.com/navikt/fp-abakus/releases)
+![GitHub](https://img.shields.io/github/license/navikt/fp-abakus)
 
 Dette er repository for kildkode som dekker innhenting og etablering av grunnlag for IAY(inntekt, arbeid & ytelse). Grunnlaget består av registrerte
 inntekter, arbeidsgivere og arbeidsforhold, etablerte ytelser, oppgitt opptjening, og saksbehandlers merknader og evt. bekreftede/skjønnsmessig

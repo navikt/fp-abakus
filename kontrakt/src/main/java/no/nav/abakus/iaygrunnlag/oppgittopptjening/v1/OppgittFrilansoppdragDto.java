@@ -8,10 +8,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Periode;
 
-import javax.validation.Valid;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import java.math.BigDecimal;
 import java.util.Objects;

@@ -222,6 +222,5 @@ class LagreVedtakTaskTest {
         assertThat(vedtakYtelser.get(0).getYtelseAnvist().size()).isEqualTo(3);
         assertThat(vedtakYtelser.get(0).getYtelseAnvist().iterator().next().getAndeler().size()).isEqualTo(1);
 
-
     }
 }

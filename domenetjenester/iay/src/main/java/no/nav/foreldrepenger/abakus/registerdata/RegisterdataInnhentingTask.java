@@ -2,10 +2,10 @@ package no.nav.foreldrepenger.abakus.registerdata;
 
 import java.util.Set;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ public class RegisterdataInnhentingTask extends KoblingTask {
     }
 
     private IAYRegisterInnhentingTjeneste finnInnhenter(YtelseType ytelseType) {
-        return YtelseTypeRef.Lookup.find(innhentTjenester, ytelseType).get();
+        return YtelseTypeRef.Lookup.find(innhentTjenester, ytelseType).orElseThrow();
     }
 
     @Override

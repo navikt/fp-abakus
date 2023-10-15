@@ -10,7 +10,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
-import javax.validation.Validation;
+import jakarta.validation.Validation;
 
 import org.junit.jupiter.api.Test;
 

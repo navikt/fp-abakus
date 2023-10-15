@@ -6,15 +6,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-
-import org.hibernate.jpa.QueryHints;
+import org.hibernate.jpa.HibernateHints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
@@ -109,7 +108,7 @@ public class VedtakYtelseRepository {
         query.setParameter("aktørId", aktørId);
         query.setParameter("fom", fom);
         query.setParameter("tom", tom);
-        query.setHint(QueryHints.HINT_READONLY, true);
+        query.setHint(HibernateHints.HINT_READ_ONLY, true);
 
         return new ArrayList<>(query.getResultList());
     }

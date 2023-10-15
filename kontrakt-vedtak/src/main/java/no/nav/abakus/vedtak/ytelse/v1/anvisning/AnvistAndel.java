@@ -3,7 +3,7 @@ package no.nav.abakus.vedtak.ytelse.v1.anvisning;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;

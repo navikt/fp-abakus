@@ -8,7 +8,7 @@ import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

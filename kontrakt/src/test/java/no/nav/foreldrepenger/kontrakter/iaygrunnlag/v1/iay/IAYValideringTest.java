@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import javax.validation.Validation;
+import jakarta.validation.Validation;
 
 import org.junit.jupiter.api.Test;
 

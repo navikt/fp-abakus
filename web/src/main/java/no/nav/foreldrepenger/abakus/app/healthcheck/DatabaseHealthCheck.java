@@ -2,8 +2,8 @@ package no.nav.foreldrepenger.abakus.app.healthcheck;
 
 import java.sql.SQLException;
 
-import javax.annotation.Resource;
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.annotation.Resource;
+import jakarta.enterprise.context.ApplicationScoped;
 import javax.sql.DataSource;
 
 import org.slf4j.Logger;

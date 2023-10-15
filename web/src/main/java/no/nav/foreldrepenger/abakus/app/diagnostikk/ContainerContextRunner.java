@@ -5,10 +5,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.spi.CDI;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 import org.jboss.weld.context.RequestContext;
 import org.jboss.weld.context.unbound.UnboundLiteral;

@@ -7,10 +7,10 @@ import io.prometheus.client.exporter.common.TextFormat;
 import io.swagger.v3.oas.annotations.Operation;
 import no.nav.vedtak.felles.prosesstask.api.TaskMonitor;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Response;
 
 import java.io.IOException;
 import java.io.StringWriter;

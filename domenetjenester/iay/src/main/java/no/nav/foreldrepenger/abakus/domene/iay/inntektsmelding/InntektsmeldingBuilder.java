@@ -7,7 +7,6 @@ import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.jboss.weld.exceptions.IllegalArgumentException;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;

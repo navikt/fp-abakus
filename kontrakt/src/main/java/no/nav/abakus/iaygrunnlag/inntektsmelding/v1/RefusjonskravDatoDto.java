@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import no.nav.abakus.iaygrunnlag.Aktør;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.util.Objects;

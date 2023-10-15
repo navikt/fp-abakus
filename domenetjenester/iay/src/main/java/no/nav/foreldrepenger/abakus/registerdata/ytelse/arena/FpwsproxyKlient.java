@@ -5,9 +5,9 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriBuilderException;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilderException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 
 @ApplicationScoped
-@RestClientConfig(tokenConfig = TokenFlow.STS_CC, application = FpApplication.FPWSPROXY)
+@RestClientConfig(tokenConfig = TokenFlow.AZUREAD_CC, application = FpApplication.FPWSPROXY)
 public class FpwsproxyKlient {
 
     private static final Logger LOG = LoggerFactory.getLogger(FpwsproxyKlient.class);

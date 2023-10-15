@@ -6,8 +6,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.function.Function;
 
-import javax.validation.Valid;
-import javax.ws.rs.core.Context;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.core.Context;
 
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +30,7 @@ class RestApiInputValideringAnnoteringTest extends RestApiTester {
                     continue;
                 }
                 assertThat(method.getParameterTypes()[i].isAssignableFrom(String.class) && !parameter.isAnnotationPresent(
-                    javax.validation.constraints.Pattern.class)).as(
+                    jakarta.validation.constraints.Pattern.class)).as(
                     "REST-metoder skal ikke har parameter som er String eller mer generelt uten at @Pattern brukes. Bruk DTO-er og valider. "
                         + printKlasseOgMetodeNavn.apply(method)).isFalse();
                 assertThat(isRequiredAnnotationPresent(parameter)).as(

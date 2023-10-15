@@ -9,8 +9,8 @@ import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.SigrunTjeneste;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import java.util.Optional;
 

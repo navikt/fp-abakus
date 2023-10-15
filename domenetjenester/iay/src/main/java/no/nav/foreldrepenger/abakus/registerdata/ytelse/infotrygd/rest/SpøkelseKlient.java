@@ -1,6 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest;
 
-import javax.enterprise.context.Dependent;
+import jakarta.enterprise.context.Dependent;
 
 import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;

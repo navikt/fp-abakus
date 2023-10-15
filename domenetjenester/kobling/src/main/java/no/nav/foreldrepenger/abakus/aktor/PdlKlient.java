@@ -6,9 +6,9 @@ import no.nav.vedtak.felles.integrasjon.rest.RestClient;
 import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 
-import javax.enterprise.context.Dependent;
+import jakarta.enterprise.context.Dependent;
 
-@RestClientConfig(tokenConfig = TokenFlow.ADAPTIVE_ADD_CONSUMER, endpointProperty = "pdl.base.url", endpointDefault = "http://pdl-api.pdl/graphql", scopesProperty = "pdl.scopes", scopesDefault = "api://prod-fss.pdl.pdl-api/.default")
+@RestClientConfig(tokenConfig = TokenFlow.ADAPTIVE, endpointProperty = "pdl.base.url", endpointDefault = "http://pdl-api.pdl/graphql", scopesProperty = "pdl.scopes", scopesDefault = "api://prod-fss.pdl.pdl-api/.default")
 @Dependent
 public class PdlKlient extends AbstractPersonKlient {
 

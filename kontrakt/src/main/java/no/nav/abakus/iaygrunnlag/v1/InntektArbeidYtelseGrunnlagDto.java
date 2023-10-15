@@ -11,8 +11,8 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningDto;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgitteOpptjeningerDto;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;

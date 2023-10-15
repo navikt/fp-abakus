@@ -1,7 +1,7 @@
 package no.nav.foreldrepenger.abakus.registerdata.fagsakytelser.k9;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;

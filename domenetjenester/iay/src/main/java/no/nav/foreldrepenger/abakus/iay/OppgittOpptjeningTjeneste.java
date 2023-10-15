@@ -5,8 +5,8 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class OppgittOpptjeningTjeneste {
