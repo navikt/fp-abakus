@@ -38,7 +38,7 @@
 
 		<felles.version>5.1.2</felles.version>
 		<prosesstask.version>4.0.0</prosesstask.version>
-		<kontrakter.version>7.1.2</kontrakter.version>
+		<kontrakter.version>7.1.3</kontrakter.version>
 
         <!-- Forteller til maven-deploy-plugin at artefaktet ikke skal deployes.
         Arves og overstyrres i de enkelte artefakter. -->
