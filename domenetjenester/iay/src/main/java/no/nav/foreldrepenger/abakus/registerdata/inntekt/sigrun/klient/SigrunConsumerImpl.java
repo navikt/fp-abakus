@@ -2,18 +2,19 @@ package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient;
 
 import static java.util.Arrays.asList;
 
-import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
-
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.PgiFolketrygdenResponse;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.SigrunPgiFolketrygdenResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
 import no.nav.foreldrepenger.konfig.Environment;
@@ -52,6 +53,13 @@ public class SigrunConsumerImpl implements SigrunConsumer {
         Map<Year, Optional<SSGResponse>> summertskattegrunnlagMap = hentÅrsListeForSummertskattegrunnlag(aktørId, opplysningsperiode).stream()
             .collect(Collectors.toMap(år -> år, år -> client.hentSummertskattegrunnlag(aktørId, år.toString())));
         return new SigrunSummertSkattegrunnlagResponse(summertskattegrunnlagMap);
+    }
+
+    @Override
+    public SigrunPgiFolketrygdenResponse pgiFolketrygden(String fnr, IntervallEntitet opplysningsperiode) {
+        Map<Year, Optional<PgiFolketrygdenResponse>> funnet = hentÅrsListeForPgiFolketrygden(fnr, opplysningsperiode).stream()
+            .collect(Collectors.toMap(år -> år, år -> client.hentPgiForFolketrygden(fnr, år.toString())));
+        return new SigrunPgiFolketrygdenResponse(funnet);
     }
 
     @Override
@@ -116,6 +124,39 @@ public class SigrunConsumerImpl implements SigrunConsumer {
             år++;
         }
         return årsListe;
+    }
+
+    List<Year> hentÅrsListeForPgiFolketrygden(String fnr, IntervallEntitet opplysningsperiode) {
+        if (opplysningsperiode != null) {
+            return pgiFolketrygdenÅrslisteFraOpplysningsperiode(opplysningsperiode);
+        } else {
+            return ferdiglignedePgiFolketrygdenÅr(fnr);
+        }
+    }
+
+    private List<Year> pgiFolketrygdenÅrslisteFraOpplysningsperiode(IntervallEntitet opplysningsperiode) {
+        var fomÅr = opplysningsperiode.getFomDato().getYear();
+        var tomÅr = opplysningsperiode.getTomDato().getYear();
+        var år = fomÅr;
+        var årsListe = new HashSet<Year>();
+        while (år <= tomÅr) {
+            // PGI-FT fom 2017
+            if (år >= 2017) {
+                årsListe.add(Year.of(år));
+            }
+            år++;
+        }
+        return new ArrayList<>(årsListe);
+    }
+
+    private List<Year> ferdiglignedePgiFolketrygdenÅr(String fnr) {
+        Year iFjor = Year.now().minusYears(1L);
+        if (client.hentPgiForFolketrygden(fnr, iFjor.toString()).isPresent()) {
+            return asList(iFjor, iFjor.minusYears(1L), iFjor.minusYears(2L));
+        } else {
+            Year iForifjor = iFjor.minusYears(1L);
+            return asList(iForifjor, iForifjor.minusYears(1L), iForifjor.minusYears(2L));
+        }
     }
 
 

@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient;
 
 import static no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestConfig.PATH_BS;
+import static no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestConfig.PATH_PGI_FT;
 import static no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestConfig.PATH_SSG;
 import static no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestConfig.X_CALL_ID;
 
@@ -12,11 +13,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import jakarta.ws.rs.core.UriBuilder;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.ws.rs.core.UriBuilder;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.PgiFolketrygdenResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
 import no.nav.vedtak.exception.IntegrasjonException;
 import no.nav.vedtak.exception.ManglerTilgangException;
@@ -38,6 +39,7 @@ public class SigrunRestClient {
     private final RestConfig restConfig;
     private final URI endpointBS;
     private final URI endpointSSG;
+    private final URI endpointPgiFT;
 
 
     SigrunRestClient(RestClient client) {
@@ -45,6 +47,7 @@ public class SigrunRestClient {
         this.restConfig = RestConfig.forClient(SigrunRestClient.class);
         this.endpointBS = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_BS);
         this.endpointSSG = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_SSG);
+        this.endpointPgiFT = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_PGI_FT);
     }
 
     private static Optional<String> handleResponse(HttpResponse<String> response) {
@@ -96,6 +99,21 @@ public class SigrunRestClient {
 
         HttpResponse<String> response = client.sendReturnUnhandled(request);
         return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, SSGResponse.class));
+    }
+
+    //api/v1/pensjonsgivendeinntektforfolketrygden
+    Optional<PgiFolketrygdenResponse> hentPgiForFolketrygden(String fnr, String år) {
+        if (år.compareTo("2017") < 0) {
+            return Optional.empty();
+        }
+        var request = RestRequest.newGET(endpointPgiFT, restConfig)
+            .header(NavHeaders.HEADER_NAV_PERSONIDENT, String.valueOf(fnr))
+            .header(SigrunRestConfig.INNTEKTSAAR, år)
+            .otherCallId(X_CALL_ID)
+            .header(SigrunRestConfig.CONSUMER_ID, CONTEXT_SUPPLIER.consumerIdForCurrentKontekst().get());
+
+        HttpResponse<String> response = client.sendReturnUnhandled(request);
+        return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, PgiFolketrygdenResponse.class));
     }
 
 }
