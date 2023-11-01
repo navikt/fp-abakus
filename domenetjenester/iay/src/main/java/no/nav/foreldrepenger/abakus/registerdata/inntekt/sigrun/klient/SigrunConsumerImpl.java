@@ -77,10 +77,12 @@ public class SigrunConsumerImpl implements SigrunConsumer {
     private List<Year> beregnetSkattÅrslisteFraOpplysningsperiode(Long aktørId, IntervallEntitet opplysningsperiode) {
         var fomÅr = opplysningsperiode.getFomDato().getYear();
         var tomÅr = opplysningsperiode.getTomDato().getYear();
-        if (!erÅretFerdiglignet(aktørId, Year.of(tomÅr))) {
+        var tomYearValue = Year.of(tomÅr);
+        var fjorÅret = Year.now().minusYears(1);
+        if (tomYearValue.equals(fjorÅret) && !erÅretFerdiglignet(aktørId, tomYearValue)) {
             tomÅr = tomÅr - 1; // innskrenker innhenting til ferdiglignede år
         }
-        
+
         var år = fomÅr;
         var årsListe = new ArrayList<Year>();
         while (år <= tomÅr) {
