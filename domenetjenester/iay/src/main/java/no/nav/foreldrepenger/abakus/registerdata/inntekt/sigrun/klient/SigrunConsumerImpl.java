@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient;
 
 import static java.util.Arrays.asList;
 
-import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.Year;
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
-
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
@@ -64,7 +62,7 @@ public class SigrunConsumerImpl implements SigrunConsumer {
 
     private List<Year> ferdiglignedeBeregnetSkattÅr(Long aktørId, IntervallEntitet opplysningsperiode) {
         if (opplysningsperiode != null) {
-            return beregnetSkattÅrslisteFraOpplysningsperiode(opplysningsperiode);
+            return beregnetSkattÅrslisteFraOpplysningsperiode(aktørId, opplysningsperiode);
         } else {
             Year iFjor = Year.now().minusYears(1L);
             if (erÅretFerdiglignet(aktørId, iFjor)) {
@@ -76,9 +74,13 @@ public class SigrunConsumerImpl implements SigrunConsumer {
         }
     }
 
-    private List<Year> beregnetSkattÅrslisteFraOpplysningsperiode(IntervallEntitet opplysningsperiode) {
+    private List<Year> beregnetSkattÅrslisteFraOpplysningsperiode(Long aktørId, IntervallEntitet opplysningsperiode) {
         var fomÅr = opplysningsperiode.getFomDato().getYear();
         var tomÅr = opplysningsperiode.getTomDato().getYear();
+        if (!erÅretFerdiglignet(aktørId, Year.of(tomÅr))) {
+            tomÅr = tomÅr - 1; // innskrenker innhenting til ferdiglignede år
+        }
+        
         var år = fomÅr;
         var årsListe = new ArrayList<Year>();
         while (år <= tomÅr) {
