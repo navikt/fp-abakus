@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import jakarta.ws.rs.core.UriBuilder;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.PgiFolketrygdenResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
+import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.vedtak.exception.IntegrasjonException;
 import no.nav.vedtak.exception.ManglerTilgangException;
 import no.nav.vedtak.felles.integrasjon.rest.NavHeaders;
@@ -33,6 +34,9 @@ import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 @RestClientConfig(tokenConfig = TokenFlow.AZUREAD_CC, endpointProperty = "sigrunrestberegnetskatt.url", endpointDefault = "http://sigrun.team-inntekt",
     scopesProperty = "sigrunrestberegnetskatt.scopes", scopesDefault = "api://prod-fss.team-inntekt.sigrun/.default")
 public class SigrunRestClient {
+
+    private static final boolean IS_DEV = Environment.current().isDev();
+
     private static final Logger LOG = LoggerFactory.getLogger(SigrunRestClient.class);
     private final OidcContextSupplier CONTEXT_SUPPLIER = new OidcContextSupplier();
     private final RestClient client;
@@ -47,7 +51,11 @@ public class SigrunRestClient {
         this.restConfig = RestConfig.forClient(SigrunRestClient.class);
         this.endpointBS = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_BS);
         this.endpointSSG = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_SSG);
-        this.endpointPgiFT = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_PGI_FT);
+        if (IS_DEV) {
+            this.endpointPgiFT = URI.create("https://sigrun-skd-stub.dev.adeo.no" + PATH_PGI_FT);
+        } else {
+            this.endpointPgiFT = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_PGI_FT);
+        }
     }
 
     private static Optional<String> handleResponse(HttpResponse<String> response) {
@@ -107,7 +115,8 @@ public class SigrunRestClient {
             return Optional.empty();
         }
         var request = RestRequest.newGET(endpointPgiFT, restConfig)
-            .header(NavHeaders.HEADER_NAV_PERSONIDENT, String.valueOf(fnr))
+            .header(NavHeaders.HEADER_NAV_PERSONIDENT, fnr)
+            .header("norskident", fnr)
             .header(SigrunRestConfig.INNTEKTSAAR, år)
             .otherCallId(X_CALL_ID)
             .header(SigrunRestConfig.CONSUMER_ID, CONTEXT_SUPPLIER.consumerIdForCurrentKontekst().get());
