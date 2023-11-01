@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.PgiFolketrygdenResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.SigrunPgiFolketrygdenResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
@@ -57,7 +56,7 @@ public class SigrunConsumerImpl implements SigrunConsumer {
 
     @Override
     public SigrunPgiFolketrygdenResponse pgiFolketrygden(String fnr, IntervallEntitet opplysningsperiode) {
-        Map<Year, Optional<PgiFolketrygdenResponse>> funnet = hentÅrsListeForPgiFolketrygden(fnr, opplysningsperiode).stream()
+        var funnet = hentÅrsListeForPgiFolketrygden(fnr, opplysningsperiode).stream()
             .collect(Collectors.toMap(år -> år, år -> client.hentPgiForFolketrygden(fnr, år.toString())));
         return new SigrunPgiFolketrygdenResponse(funnet);
     }
@@ -151,7 +150,7 @@ public class SigrunConsumerImpl implements SigrunConsumer {
 
     private List<Year> ferdiglignedePgiFolketrygdenÅr(String fnr) {
         Year iFjor = Year.now().minusYears(1L);
-        if (client.hentPgiForFolketrygden(fnr, iFjor.toString()).isPresent()) {
+        if (!client.hentPgiForFolketrygden(fnr, iFjor.toString()).isEmpty()) {
             return asList(iFjor, iFjor.minusYears(1L), iFjor.minusYears(2L));
         } else {
             Year iForifjor = iFjor.minusYears(1L);

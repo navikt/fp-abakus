@@ -110,9 +110,9 @@ public class SigrunRestClient {
     }
 
     //api/v1/pensjonsgivendeinntektforfolketrygden
-    Optional<PgiFolketrygdenResponse> hentPgiForFolketrygden(String fnr, String år) {
+    List<PgiFolketrygdenResponse> hentPgiForFolketrygden(String fnr, String år) {
         if (år.compareTo("2017") < 0) {
-            return Optional.empty();
+            return List.of();
         }
         var request = RestRequest.newGET(endpointPgiFT, restConfig)
             .header(NavHeaders.HEADER_NAV_PERSONIDENT, fnr)
@@ -122,7 +122,8 @@ public class SigrunRestClient {
             .header(SigrunRestConfig.CONSUMER_ID, CONTEXT_SUPPLIER.consumerIdForCurrentKontekst().get());
 
         HttpResponse<String> response = client.sendReturnUnhandled(request);
-        return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, PgiFolketrygdenResponse.class));
+        return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, PgiFolketrygdenResponse[].class))
+            .map(Arrays::asList).orElseGet(List::of);
     }
 
 }
