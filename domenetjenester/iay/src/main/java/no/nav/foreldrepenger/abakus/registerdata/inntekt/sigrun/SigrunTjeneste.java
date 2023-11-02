@@ -60,10 +60,14 @@ public class SigrunTjeneste {
         try {
             var pgiMap = sigrunConsumer.pgiFolketrygden(pi.getIdent(), opplysningsperiode);
             var pgiIntern = SigrunPgiFolketrygdenMapper.mapFraSigrunTilIntern(pgiMap);
-            if (sammenlignMaps(bs, pgiIntern)) {
-                LOG.info("SIGRUN PGI: sammenlignet OK");
+            if (!pgiIntern.values().isEmpty() && pgiIntern.values().stream().anyMatch(v -> !v.values().isEmpty())) {
+                if (sammenlignMaps(bs, pgiIntern)) {
+                    LOG.info("SIGRUN PGI: sammenlignet OK");
+                } else {
+                    LOG.info("SIGRUN PGI: sammenlignet diff bs {} pgi {} kilde {}", bs, pgiIntern, pgiMap);
+                }
             } else {
-                LOG.info("SIGRUN PGI: diff bs {} pgi {} kilde {}", bs, pgiIntern, pgiMap);
+                LOG.info("SIGRUN PGI: tomt svar fra PGI");
             }
         } catch (Exception e) {
             LOG.info("SIGRUN PGI: noe gikk veldig galt", e);

@@ -121,9 +121,15 @@ public class SigrunRestClient {
             .otherCallId(X_CALL_ID)
             .header(SigrunRestConfig.CONSUMER_ID, CONTEXT_SUPPLIER.consumerIdForCurrentKontekst().get());
 
-        HttpResponse<String> response = client.sendReturnUnhandled(request);
-        return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, PgiFolketrygdenResponse[].class))
-            .map(Arrays::asList).orElseGet(List::of);
+        try {
+            HttpResponse<String> response = client.sendReturnUnhandled(request);
+            LOG.info("SIGRUN PGI: svar for aar {}", år);
+            return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, PgiFolketrygdenResponse[].class))
+                .map(Arrays::asList).orElseGet(List::of);
+        } catch (Exception e) {
+            LOG.info("SIGRUN PGI: noe gikk galt for aar {}", år, e);
+            return List.of();
+        }
     }
 
 }
