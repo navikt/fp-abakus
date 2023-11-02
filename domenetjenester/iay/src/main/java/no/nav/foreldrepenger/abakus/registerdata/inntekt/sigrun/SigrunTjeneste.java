@@ -74,10 +74,16 @@ public class SigrunTjeneste {
         }
     }
 
-    private boolean sammenlignMaps(Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> bs, Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> pgi) {
-        return bs.keySet() == pgi.keySet() && pgi.entrySet().stream()
-            .allMatch(e -> e.getValue().keySet() == bs.get(e.getKey()).keySet() &&
-                e.getValue().entrySet().stream().allMatch(e2 -> Objects.equals(e2.getValue(), bs.get(e.getKey()).get(e2.getKey()))));
+    private static boolean sammenlignMaps(Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> bs, Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> pgi) {
+        return Objects.equals(bs.keySet(), pgi.keySet()) && pgi.entrySet().stream().allMatch(e -> sammenlignSubMaps(bs.get(e.getKey()), e.getValue()));
+    }
+
+    private static boolean sammenlignSubMaps(Map<InntektspostType, BigDecimal> bs, Map<InntektspostType, BigDecimal> pgi) {
+        return bs != null && Objects.equals(bs.keySet(), pgi.keySet()) && pgi.entrySet().stream().allMatch(e -> sammenlignSubMapVerdier(bs.get(e.getKey()), e.getValue()));
+    }
+
+    private static boolean sammenlignSubMapVerdier(BigDecimal bs, BigDecimal pgi) {
+        return Objects.equals(bs, pgi) || (bs != null && pgi.compareTo(bs) == 0);
     }
 
     IntervallEntitet justerOpplysningsperiodeNårSisteÅrIkkeErFerdiglignet(Long aktørId, IntervallEntitet opplysningsperiode) {
