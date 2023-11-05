@@ -123,10 +123,9 @@ public class SigrunRestClient {
 
         try {
             HttpResponse<String> response = client.sendReturnUnhandled(request);
-            return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, PgiFolketrygdenResponse[].class))
-                .map(Arrays::asList).orElseGet(List::of);
+            return handleResponse(response).map(r -> DefaultJsonMapper.listFromJson(r, PgiFolketrygdenResponse.class)).orElse(List.of());
         } catch (Exception e) {
-            LOG.trace("SIGRUN PGI: noe gikk galt for aar {}", år, e);
+            LOG.info("SIGRUN PGI: noe gikk galt for aar {}", år, e);
             return List.of();
         }
     }
