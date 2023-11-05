@@ -25,7 +25,7 @@ public class SigrunConsumerImpl implements SigrunConsumer {
     private static final String TEKNISK_NAVN = "skatteoppgjoersdato";
 
     private static final MonthDay TIDLIGSTE_SJEKK_FJOR = MonthDay.of(5, 1);
-    private static final boolean isProd = Environment.current().isProd();
+    private static final boolean IS_PROD = Environment.current().isProd();
     private final SigrunRestClient client;
 
 
@@ -63,7 +63,7 @@ public class SigrunConsumerImpl implements SigrunConsumer {
 
     @Override
     public boolean erÅretFerdiglignet(Long aktørId, Year år) {
-        if (isProd && Year.now().minusYears(1).equals(år) && MonthDay.now().isBefore(TIDLIGSTE_SJEKK_FJOR)) {
+        if (IS_PROD && Year.now().minusYears(1).equals(år) && MonthDay.now().isBefore(TIDLIGSTE_SJEKK_FJOR)) {
             return false;
         }
         return client.hentBeregnetSkattForAktørOgÅr(aktørId, år.toString()).stream().anyMatch(l -> l.tekniskNavn().equals(TEKNISK_NAVN));

@@ -2,8 +2,10 @@ package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun;
 
 import java.math.BigDecimal;
 import java.time.Year;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.slf4j.Logger;
@@ -15,7 +17,9 @@ import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunConsumer;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunResponse;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.PgiFolketrygdenResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.SigrunPgiFolketrygdenMapper;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
@@ -26,7 +30,7 @@ import no.nav.foreldrepenger.konfig.Environment;
 public class SigrunTjeneste {
     private static final Logger LOG = LoggerFactory.getLogger(SigrunTjeneste.class);
 
-    private static final boolean SAMMENLIGN_PGI = Environment.current().isDev();
+    private static final boolean SAMMENLIGN_PGI = !Environment.current().isLocal();
 
     private SigrunConsumer sigrunConsumer;
 
@@ -50,24 +54,36 @@ public class SigrunTjeneste {
         if (SAMMENLIGN_PGI) {
             var fnr = fnrSupplier.get();
             if (fnr != null) {
-                sammenlignPGI(fnr, justertOpplysningsperiode, resultat);
+                sammenlignPGI(fnr, justertOpplysningsperiode, resultat, summertSkattegrunnlag);
             }
         }
         return resultat;
     }
 
-    private void sammenlignPGI(PersonIdent pi, IntervallEntitet opplysningsperiode, Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> bs) {
+    private void sammenlignPGI(PersonIdent pi, IntervallEntitet opplysningsperiode,
+                               Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> bs,
+                               SigrunSummertSkattegrunnlagResponse summertSkattegrunnlag) {
         try {
+            var harSvalbardSSG = summertSkattegrunnlag.summertskattegrunnlagMap().values().stream()
+                .flatMap(Optional::stream)
+                .map(SSGResponse::svalbardGrunnlag)
+                .mapToLong(Collection::size)
+                .sum() > 0 ? "SvalbardSSG" : "";
             var pgiMap = sigrunConsumer.pgiFolketrygden(pi.getIdent(), opplysningsperiode);
+            var harSvalbardPGI = pgiMap.pgiFolketrygdenMap().values().stream()
+                .flatMap(Collection::stream)
+                .map(PgiFolketrygdenResponse::pensjonsgivendeInntekt)
+                .flatMap(Collection::stream)
+                .anyMatch(v -> PgiFolketrygdenResponse.Skatteordning.SVALBARD.equals(v.skatteordning())) ? "SvalbardPGI" : "";
             var pgiIntern = SigrunPgiFolketrygdenMapper.mapFraSigrunTilIntern(pgiMap);
             if (!pgiIntern.values().isEmpty() && pgiIntern.values().stream().anyMatch(v -> !v.values().isEmpty())) {
                 if (sammenlignMaps(bs, pgiIntern)) {
-                    LOG.info("SIGRUN PGI: sammenlignet OK");
+                    LOG.info("SIGRUN PGI: sammenlignet OK {} {}", harSvalbardSSG, harSvalbardPGI);
                 } else {
-                    LOG.info("SIGRUN PGI: sammenlignet diff bs {} pgi {} kilde {}", bs, pgiIntern, pgiMap);
+                    LOG.info("SIGRUN PGI: sammenlignet DIFF {} {} bs {} pgi {} kilde {}", harSvalbardSSG, harSvalbardPGI, bs, pgiIntern, pgiMap);
                 }
             } else {
-                LOG.info("SIGRUN PGI: tomt svar fra PGI");
+                LOG.info("SIGRUN PGI: tomt svar fra PGI {} {}", harSvalbardSSG, harSvalbardPGI);
             }
         } catch (Exception e) {
             LOG.info("SIGRUN PGI: noe gikk veldig galt", e);
