@@ -70,8 +70,7 @@ public class SigrunRestClient {
             return Optional.empty();
         } else {
             if (status == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                var challenge = response.headers().allValues("WWW-Authenticate");
-                LOG.info("Sigrun unauth: {}", challenge);
+                LOG.info("Sigrun unauth");
             }
             throw new IntegrasjonException("F-016912", String.format("Server svarte med feilkode http-kode '%s' og response var '%s'", status, body));
         }
@@ -123,7 +122,12 @@ public class SigrunRestClient {
 
         try {
             HttpResponse<String> response = client.sendReturnUnhandled(request);
-            return handleResponse(response).map(r -> DefaultJsonMapper.listFromJson(r, PgiFolketrygdenResponse.class)).orElse(List.of());
+            // Sigrun-skd-stub i DEV returnerer en liste, mens ekte Sigrun returnerer objekt.
+            if (IS_DEV) {
+                return handleResponse(response).map(r -> DefaultJsonMapper.listFromJson(r, PgiFolketrygdenResponse.class)).orElseGet(List::of);
+            } else {
+                return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, PgiFolketrygdenResponse.class)).map(List::of).orElseGet(List::of);
+            }
         } catch (Exception e) {
             LOG.info("SIGRUN PGI: noe gikk galt for aar {}", år, e);
             return List.of();
