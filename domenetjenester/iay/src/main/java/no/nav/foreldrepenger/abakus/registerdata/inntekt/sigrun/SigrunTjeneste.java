@@ -80,10 +80,12 @@ public class SigrunTjeneste {
                 if (sammenlignMaps(bs, pgiIntern)) {
                     LOG.info("SIGRUN PGI: sammenlignet OK {} {}", harSvalbardSSG, harSvalbardPGI);
                 } else {
-                    LOG.info("SIGRUN PGI: sammenlignet DIFF {} {} bs {} pgi {} kilde {}", harSvalbardSSG, harSvalbardPGI, bs, pgiIntern, pgiMap);
+                    LOG.info("SIGRUN PGI: sammenlignet DIFF {} {} BS/SSG {} PGI {} kilde {}", harSvalbardSSG, harSvalbardPGI, bs, pgiIntern, pgiMap);
                 }
+            } else if (!bs.values().isEmpty() && bs.values().stream().anyMatch(v -> !v.values().isEmpty())) {
+                LOG.info("SIGRUN PGI: tomt svar fra PGI {} {} BS//SG {} kilde {}", harSvalbardSSG, harSvalbardPGI, bs, pgiMap);
             } else {
-                LOG.info("SIGRUN PGI: tomt svar fra PGI {} {}", harSvalbardSSG, harSvalbardPGI);
+                LOG.info("SIGRUN PGI: tomme svar fra BS//SG {} kilde {}", bs, pgiMap);
             }
         } catch (Exception e) {
             LOG.info("SIGRUN PGI: noe gikk veldig galt", e);
