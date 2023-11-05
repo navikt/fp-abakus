@@ -52,7 +52,7 @@ public class SigrunRestClient {
         this.endpointBS = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_BS);
         this.endpointSSG = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_SSG);
         if (IS_DEV) {
-            this.endpointPgiFT = URI.create("https://sigrun-skd-stub.dev.adeo.no" + PATH_PGI_FT);
+            this.endpointPgiFT = URI.create("https://sigrun-skd-stub.dev.adeo.no" + PATH_PGI_FT); // Til det legges om til vanlig Sigrun for PGI
         } else {
             this.endpointPgiFT = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_PGI_FT);
         }
@@ -116,18 +116,17 @@ public class SigrunRestClient {
         }
         var request = RestRequest.newGET(endpointPgiFT, restConfig)
             .header(NavHeaders.HEADER_NAV_PERSONIDENT, fnr)
-            .header("norskident", fnr)
+            .header("norskident", fnr) // PGA skd-stub i dev
             .header(SigrunRestConfig.INNTEKTSAAR, år)
             .otherCallId(X_CALL_ID)
             .header(SigrunRestConfig.CONSUMER_ID, CONTEXT_SUPPLIER.consumerIdForCurrentKontekst().get());
 
         try {
             HttpResponse<String> response = client.sendReturnUnhandled(request);
-            LOG.info("SIGRUN PGI: svar for aar {}", år);
             return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, PgiFolketrygdenResponse[].class))
                 .map(Arrays::asList).orElseGet(List::of);
         } catch (Exception e) {
-            LOG.info("SIGRUN PGI: noe gikk galt for aar {}", år, e);
+            LOG.trace("SIGRUN PGI: noe gikk galt for aar {}", år, e);
             return List.of();
         }
     }
