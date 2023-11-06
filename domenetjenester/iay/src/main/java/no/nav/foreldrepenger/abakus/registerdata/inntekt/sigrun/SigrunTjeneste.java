@@ -3,10 +3,12 @@ package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun;
 import java.math.BigDecimal;
 import java.time.Year;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,25 +66,30 @@ public class SigrunTjeneste {
                                Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> bs,
                                SigrunSummertSkattegrunnlagResponse summertSkattegrunnlag) {
         try {
+            var nettoBs = bs.entrySet().stream().filter(e -> !e.getValue().isEmpty()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             var harSvalbardSSG = summertSkattegrunnlag.summertskattegrunnlagMap().values().stream()
                 .flatMap(Optional::stream)
                 .map(SSGResponse::svalbardGrunnlag)
                 .mapToLong(Collection::size)
-                .sum() > 0 ? "SvalbardSSG" : "";
+                .sum() > 0 ? "Svalbard SSG" : "";
             var pgiMap = sigrunConsumer.pgiFolketrygden(pi.getIdent(), opplysningsperiode);
             var harSvalbardPGI = pgiMap.pgiFolketrygdenMap().values().stream()
                 .flatMap(Collection::stream)
                 .map(PgiFolketrygdenResponse::pensjonsgivendeInntekt)
                 .flatMap(Collection::stream)
-                .anyMatch(v -> PgiFolketrygdenResponse.Skatteordning.SVALBARD.equals(v.skatteordning())) ? "SvalbardPGI" : "";
-            var pgiIntern = SigrunPgiFolketrygdenMapper.mapFraSigrunTilIntern(pgiMap);
-            if (!pgiIntern.values().isEmpty() && pgiIntern.values().stream().anyMatch(v -> !v.values().isEmpty())) {
-                if (sammenlignMaps(bs, pgiIntern)) {
+                .anyMatch(v -> PgiFolketrygdenResponse.Skatteordning.SVALBARD.equals(v.skatteordning())) ? "Svalbard PGI" : "";
+            var nettoPgi = SigrunPgiFolketrygdenMapper.mapFraSigrunTilIntern(pgiMap).entrySet().stream()
+                .filter(e -> !e.getValue().isEmpty())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            if (nettoBs.isEmpty() && nettoPgi.isEmpty()) {
+                LOG.info("SIGRUN PGI: sammenlignet OK tomme svar fra begge {} {}", harSvalbardSSG, harSvalbardPGI);
+            } else if (!nettoPgi.values().isEmpty() && nettoPgi.values().stream().anyMatch(v -> !v.values().isEmpty())) {
+                if (sammenlignMaps(nettoBs, nettoPgi)) {
                     LOG.info("SIGRUN PGI: sammenlignet OK {} {}", harSvalbardSSG, harSvalbardPGI);
                 } else {
-                    LOG.info("SIGRUN PGI: sammenlignet DIFF {} {} BS/SSG {} PGI {} kilde {}", harSvalbardSSG, harSvalbardPGI, bs, pgiIntern, pgiMap);
+                    LOG.info("SIGRUN PGI: sammenlignet DIFF {} {} BS/SSG {} PGI {} kilde {}", harSvalbardSSG, harSvalbardPGI, bs, nettoPgi, pgiMap);
                 }
-            } else if (!bs.values().isEmpty() && bs.values().stream().anyMatch(v -> !v.values().isEmpty())) {
+            } else if (!nettoBs.values().isEmpty() && nettoBs.values().stream().anyMatch(v -> !v.values().isEmpty())) {
                 LOG.info("SIGRUN PGI: tomt svar fra PGI {} {} BS//SG {} kilde {}", harSvalbardSSG, harSvalbardPGI, bs, pgiMap);
             } else {
                 LOG.info("SIGRUN PGI: tomme svar fra BS//SG {} kilde {}", bs, pgiMap);
