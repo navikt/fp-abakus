@@ -9,7 +9,7 @@ public record PgiFolketrygdenResponse(String norskPersonidentifikator, Integer i
                 Long pensjonsgivendeInntektAvNaeringsinntektFraFiskeFangstEllerFamiliebarnehage) {}
 
     public enum Skatteordning {
-        FASTLAND, SVALBARD
+        FASTLAND, SVALBARD, KILDESKATT_PAA_LOENN
     }
 
     @Override
