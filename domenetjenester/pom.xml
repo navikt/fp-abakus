@@ -7,7 +7,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.abakus</groupId>
         <artifactId>fpabakus</artifactId>
-        <version>${revision}</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>domenetjenester</artifactId>
@@ -30,7 +30,7 @@
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
+            <artifactId>flyway-database-postgresql</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
