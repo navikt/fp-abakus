@@ -94,7 +94,7 @@ jobs:
           -d '{"ref":"master",
                   "inputs":{
                       "trigger": "${{ github.repository }}",
-                      "version": "${{ needs.build-app.outputs.build-version }}"
+                      "version": "latest"
                   }}'
 
   release-drafter:
