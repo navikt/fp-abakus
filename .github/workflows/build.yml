@@ -32,8 +32,8 @@ jobs:
       push-image: ${{ github.ref_name == 'master' }} # default: false
     secrets: inherit
 
-  build-push-docker-image-ghcr:
-    name: Build og push til ghcr
+  build-push-docker-image-ghcr-k9-verdikjede:
+    name: Build og push til ghcr og trigg k9-verdikjede
     permissions:
       contents: read
       packages: write
@@ -80,23 +80,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-  release-drafter:
-    name: Update
-    if: github.ref_name == 'master'
-    needs: build-app
-    permissions:
-      contents: write
-      pull-requests: read
-    uses: navikt/fp-gha-workflows/.github/workflows/release-drafter.yml@main
-    secrets: inherit
-
-  trigger-autotest-k9:
-    name: Autotest K9
-    if: github.ref_name == 'master'
-    needs: [build-app, build-push-docker-image-ghcr]
-    runs-on: ubuntu-latest
-    steps:
       - uses: navikt/github-app-token-generator@v1
         id: get-token
         with:
@@ -113,6 +96,16 @@ jobs:
                       "trigger": "${{ github.repository }}",
                       "version": "${{ needs.build-app.outputs.build-version }}"
                   }}'
+
+  release-drafter:
+    name: Update
+    if: github.ref_name == 'master'
+    needs: build-app
+    permissions:
+      contents: write
+      pull-requests: read
+    uses: navikt/fp-gha-workflows/.github/workflows/release-drafter.yml@main
+    secrets: inherit
 
   fpsak-tester:
     name: Fpsak tester
