@@ -2,11 +2,8 @@ package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun;
 
 import java.math.BigDecimal;
 import java.time.Year;
-import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -19,9 +16,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunConsumer;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunResponse;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.PgiFolketrygdenResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.SigrunPgiFolketrygdenMapper;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
@@ -46,6 +41,18 @@ public class SigrunTjeneste {
     }
 
 
+    public Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> hentPensjonsgivende(Supplier<PersonIdent> fnrSupplier, IntervallEntitet opplysningsperiodeSkattegrunnlag) {
+        var fnr = fnrSupplier.get();
+        if (fnr == null || fnr.getIdent() == null) {
+            LOG.info("SIGRUN PGI: fant ikke fnr for aktørid");
+            return Map.of();
+        }
+        var svarene = sigrunConsumer.pensjonsgivendeInntektForFolketrygden(fnr.getIdent(), opplysningsperiodeSkattegrunnlag);
+        return SigrunPgiFolketrygdenMapper.mapFraPgiResponseTilIntern(svarene).entrySet().stream()
+            .filter(e -> !e.getValue().isEmpty())
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
     public Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> beregnetSkatt(AktørId aktørId, Supplier<PersonIdent> fnrSupplier, IntervallEntitet opplysningsperiodeSkattegrunnlag) {
 
         var justertOpplysningsperiode = justerOpplysningsperiodeNårSisteÅrIkkeErFerdiglignet(Long.valueOf(aktørId.getId()), opplysningsperiodeSkattegrunnlag);
@@ -54,45 +61,28 @@ public class SigrunTjeneste {
             opplysningsperiodeSkattegrunnlag);
         var resultat = SigrunTilInternMapper.mapFraSigrunTilIntern(beregnetskatt.beregnetSkatt(), summertSkattegrunnlag.summertskattegrunnlagMap());
         if (SAMMENLIGN_PGI) {
-            var fnr = fnrSupplier.get();
-            if (fnr != null) {
-                sammenlignPGI(fnr, justertOpplysningsperiode, resultat, summertSkattegrunnlag);
-            }
+            sammenlignPGI(fnrSupplier, justertOpplysningsperiode, resultat);
         }
         return resultat;
     }
 
-    private void sammenlignPGI(PersonIdent pi, IntervallEntitet opplysningsperiode,
-                               Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> bs,
-                               SigrunSummertSkattegrunnlagResponse summertSkattegrunnlag) {
+    private void sammenlignPGI(Supplier<PersonIdent> fnrSupplier, IntervallEntitet opplysningsperiode,
+                               Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> bs) {
         try {
             var nettoBs = bs.entrySet().stream().filter(e -> !e.getValue().isEmpty()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-            var harSvalbardSSG = summertSkattegrunnlag.summertskattegrunnlagMap().values().stream()
-                .flatMap(Optional::stream)
-                .map(SSGResponse::svalbardGrunnlag)
-                .mapToLong(Collection::size)
-                .sum() > 0 ? "Svalbard SSG" : "";
-            var pgiMap = sigrunConsumer.pgiFolketrygden(pi.getIdent(), opplysningsperiode);
-            var harSvalbardPGI = pgiMap.pgiFolketrygdenMap().values().stream()
-                .flatMap(Collection::stream)
-                .map(PgiFolketrygdenResponse::pensjonsgivendeInntekt)
-                .flatMap(Collection::stream)
-                .anyMatch(v -> PgiFolketrygdenResponse.Skatteordning.SVALBARD.equals(v.skatteordning())) ? "Svalbard PGI" : "";
-            var nettoPgi = SigrunPgiFolketrygdenMapper.mapFraSigrunTilIntern(pgiMap).entrySet().stream()
-                .filter(e -> !e.getValue().isEmpty())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            var nettoPgi = hentPensjonsgivende(fnrSupplier, opplysningsperiode);
             if (nettoBs.isEmpty() && nettoPgi.isEmpty()) {
-                LOG.info("SIGRUN PGI: sammenlignet OK tomme svar fra begge {} {}", harSvalbardSSG, harSvalbardPGI);
+                LOG.info("SIGRUN PGI: sammenlignet OK tomme svar fra begge");
             } else if (!nettoPgi.values().isEmpty() && nettoPgi.values().stream().anyMatch(v -> !v.values().isEmpty())) {
                 if (sammenlignMaps(nettoBs, nettoPgi)) {
-                    LOG.info("SIGRUN PGI: sammenlignet OK {} {}", harSvalbardSSG, harSvalbardPGI);
+                    LOG.info("SIGRUN PGI: sammenlignet OK");
                 } else {
-                    LOG.info("SIGRUN PGI: sammenlignet DIFF {} {} BS/SSG {} PGI {} kilde {}", harSvalbardSSG, harSvalbardPGI, bs, nettoPgi, pgiMap);
+                    LOG.info("SIGRUN PGI: sammenlignet DIFF BS/SSG {} PGI {}", bs, nettoPgi);
                 }
             } else if (!nettoBs.values().isEmpty() && nettoBs.values().stream().anyMatch(v -> !v.values().isEmpty())) {
-                LOG.info("SIGRUN PGI: tomt svar fra PGI {} {} BS//SG {} kilde {}", harSvalbardSSG, harSvalbardPGI, bs, pgiMap);
+                LOG.info("SIGRUN PGI: tomt svar fra PGI BS//SG {}", bs);
             } else {
-                LOG.info("SIGRUN PGI: tomme svar fra BS//SG {} kilde {}", bs, pgiMap);
+                LOG.info("SIGRUN PGI: tomme svar fra BS//SG {}", bs);
             }
         } catch (Exception e) {
             LOG.info("SIGRUN PGI: noe gikk veldig galt", e);

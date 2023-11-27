@@ -8,6 +8,7 @@ import static no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.Si
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.http.HttpResponse;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,6 +37,8 @@ import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 public class SigrunRestClient {
 
     private static final boolean IS_DEV = Environment.current().isDev();
+
+    private static final Year FØRSTE_PGI = Year.of(2017);
 
     private static final Logger LOG = LoggerFactory.getLogger(SigrunRestClient.class);
     private final OidcContextSupplier CONTEXT_SUPPLIER = new OidcContextSupplier();
@@ -131,6 +134,28 @@ public class SigrunRestClient {
         } catch (Exception e) {
             LOG.info("SIGRUN PGI: noe gikk galt for aar {}", år, e);
             return List.of();
+        }
+    }
+
+    //api/v1/pensjonsgivendeinntektforfolketrygden
+    PgiFolketrygdenResponse hentPensjonsgivendeInntektForFolketrygden(String fnr, Year år) {
+        if (år.isBefore(FØRSTE_PGI)) {
+            return null;
+        }
+        var request = RestRequest.newGET(endpointPgiFT, restConfig)
+            .header(NavHeaders.HEADER_NAV_PERSONIDENT, fnr)
+            .header("norskident", fnr) // PGA skd-stub i dev
+            .header(SigrunRestConfig.INNTEKTSAAR, år.toString())
+            .otherCallId(X_CALL_ID)
+            .header(SigrunRestConfig.CONSUMER_ID, CONTEXT_SUPPLIER.consumerIdForCurrentKontekst().get());
+
+        HttpResponse<String> response = client.sendReturnUnhandled(request);
+        // Sigrun-skd-stub i DEV returnerer en liste, mens ekte Sigrun returnerer objekt.
+        if (IS_DEV) {
+            return handleResponse(response).map(r -> DefaultJsonMapper.listFromJson(r, PgiFolketrygdenResponse.class))
+                    .flatMap(l -> l.stream().findFirst()).orElse(null);
+        } else {
+            return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, PgiFolketrygdenResponse.class)).orElse(null);
         }
     }
 

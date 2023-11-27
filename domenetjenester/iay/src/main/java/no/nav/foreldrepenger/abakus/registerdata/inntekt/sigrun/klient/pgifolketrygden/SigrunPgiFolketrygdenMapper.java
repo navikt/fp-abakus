@@ -14,6 +14,16 @@ import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 public final class SigrunPgiFolketrygdenMapper {
 
+    public static Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> mapFraPgiResponseTilIntern(List<PgiFolketrygdenResponse> response) {
+        Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> resultat = new LinkedHashMap<>();
+        response.stream()
+            .collect(Collectors.groupingBy(PgiFolketrygdenResponse::inntektsaar))
+            .values().stream()
+            .map(SigrunPgiFolketrygdenMapper::mapPgiFolketrygden)
+            .forEach(resultat::putAll);
+        return resultat;
+    }
+
     public static Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> mapFraSigrunTilIntern(SigrunPgiFolketrygdenResponse response) {
         Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> resultat = new LinkedHashMap<>();
         response.pgiFolketrygdenMap().values().stream()
@@ -28,7 +38,7 @@ public final class SigrunPgiFolketrygdenMapper {
         }
         var inntektBeløp = new ArrayList<InntektBeløp>();
         for (var responselement : response) {
-            for (var pgi : responselement.pensjonsgivendeInntekt()) {
+            for (var pgi : responselement.pgiSomSikkertKanBrukes()) {
                 leggTilHvisVerdi(pgi.pensjonsgivendeInntektAvLoennsinntekt(), InntektspostType.LØNN, inntektBeløp);
                 leggTilHvisVerdi(pgi.pensjonsgivendeInntektAvLoennsinntektBarePensjonsdel(), InntektspostType.LØNN, inntektBeløp);
                 leggTilHvisVerdi(pgi.pensjonsgivendeInntektAvNaeringsinntekt(), InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE, inntektBeløp);
