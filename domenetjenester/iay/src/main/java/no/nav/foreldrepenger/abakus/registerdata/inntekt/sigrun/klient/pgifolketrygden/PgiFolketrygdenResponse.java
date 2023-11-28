@@ -12,6 +12,13 @@ public record PgiFolketrygdenResponse(String norskPersonidentifikator, Integer i
         FASTLAND, SVALBARD, KILDESKATT_PAA_LOENN
     }
 
+    // Mens vi venter på avklaring rundt kildeskatt
+    public List<Pgi> pgiSomSikkertKanBrukes() {
+        return pensjonsgivendeInntekt().stream()
+            .filter(p -> !Skatteordning.KILDESKATT_PAA_LOENN.equals(p.skatteordning()))
+            .toList();
+    }
+
     @Override
     public String toString() {
         return "PgiFolketrygdenResponse{" + "inntektsaar=" + inntektsaar + ", pensjonsgivendeInntekt=" + pensjonsgivendeInntekt + '}';

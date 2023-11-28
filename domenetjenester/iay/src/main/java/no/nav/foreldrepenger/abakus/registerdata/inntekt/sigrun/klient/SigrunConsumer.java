@@ -1,8 +1,10 @@
 package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient;
 
 import java.time.Year;
+import java.util.List;
 
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.PgiFolketrygdenResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.SigrunPgiFolketrygdenResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
 
@@ -13,6 +15,8 @@ public interface SigrunConsumer {
     SigrunSummertSkattegrunnlagResponse summertSkattegrunnlag(Long aktørId, IntervallEntitet opplysningsperiode);
 
     SigrunPgiFolketrygdenResponse pgiFolketrygden(String fnr, IntervallEntitet opplysningsperiode);
+
+    List<PgiFolketrygdenResponse> pensjonsgivendeInntektForFolketrygden(String fnr, IntervallEntitet opplysningsperiode);
 
     boolean erÅretFerdiglignet(Long aktørId, Year år);
 
