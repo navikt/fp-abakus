@@ -27,7 +27,7 @@ import no.nav.foreldrepenger.konfig.Environment;
 public class SigrunTjeneste {
     private static final Logger LOG = LoggerFactory.getLogger(SigrunTjeneste.class);
 
-    private static final boolean SAMMENLIGN_PGI = !Environment.current().isLocal();
+    private static final boolean SAMMENLIGN_PGI = false;
 
     private SigrunConsumer sigrunConsumer;
 
