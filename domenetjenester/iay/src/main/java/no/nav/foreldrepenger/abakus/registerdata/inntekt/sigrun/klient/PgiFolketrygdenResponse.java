@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden;
+package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -1,10 +1,13 @@
 package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun;
 
 import java.math.BigDecimal;
+import java.time.MonthDay;
 import java.time.Year;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.function.Supplier;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -14,110 +17,75 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunConsumer;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunResponse;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.SigrunPgiFolketrygdenMapper;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.PgiFolketrygdenResponse;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunPgiFolketrygdenMapper;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestClient;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+
+import static java.time.temporal.ChronoUnit.YEARS;
 
 
 @ApplicationScoped
 public class SigrunTjeneste {
     private static final Logger LOG = LoggerFactory.getLogger(SigrunTjeneste.class);
 
-    private static final boolean SAMMENLIGN_PGI = true;
+    private static final MonthDay TIDLIGSTE_SJEKK_FJOR = MonthDay.of(5, 1);
 
-    private SigrunConsumer sigrunConsumer;
+    private static final Year FØRSTE_PGI = Year.of(2017);
+    private static final boolean IS_PROD = Environment.current().isProd();
+    private SigrunRestClient sigrunConsumer;
 
     SigrunTjeneste() {
         //CDI
     }
 
     @Inject
-    public SigrunTjeneste(SigrunConsumer sigrunConsumer) {
+    public SigrunTjeneste(SigrunRestClient sigrunConsumer) {
         this.sigrunConsumer = sigrunConsumer;
     }
 
 
-    public Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> hentPensjonsgivende(Supplier<PersonIdent> fnrSupplier, IntervallEntitet opplysningsperiodeSkattegrunnlag) {
-        var fnr = fnrSupplier.get();
-        if (fnr == null || fnr.getIdent() == null) {
-            LOG.info("SIGRUN PGI: fant ikke fnr for aktørid");
-            return Map.of();
-        }
-        var svarene = sigrunConsumer.pensjonsgivendeInntektForFolketrygden(fnr.getIdent(), opplysningsperiodeSkattegrunnlag);
+    public Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> hentPensjonsgivende(PersonIdent fnr, IntervallEntitet opplysningsperiodeSkattegrunnlag) {
+        var svarene = pensjonsgivendeInntektForFolketrygden(fnr.getIdent(), opplysningsperiodeSkattegrunnlag);
         return SigrunPgiFolketrygdenMapper.mapFraPgiResponseTilIntern(svarene).entrySet().stream()
             .filter(e -> !e.getValue().isEmpty())
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    public Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> beregnetSkatt(AktørId aktørId, Supplier<PersonIdent> fnrSupplier, IntervallEntitet opplysningsperiodeSkattegrunnlag) {
+    private List<PgiFolketrygdenResponse> pensjonsgivendeInntektForFolketrygden(String fnr, IntervallEntitet opplysningsperiode) {
+        var senesteÅr = utledSenesteÅr(opplysningsperiode);
+        List<PgiFolketrygdenResponse> svarene = new ArrayList<>();
+        var svarSenesteÅr = kanVenteFerdiglignetFor(senesteÅr) ?
+            sigrunConsumer.hentPensjonsgivendeInntektForFolketrygden(fnr, senesteÅr) : null;
+        Optional.ofNullable(svarSenesteÅr).ifPresent(svarene::add);
+        utledTidligereÅr(opplysningsperiode, senesteÅr, svarSenesteÅr != null)
+            .forEach(år -> Optional.ofNullable(sigrunConsumer.hentPensjonsgivendeInntektForFolketrygden(fnr, år)).ifPresent(svarene::add));
+        return svarene;
+    }
 
-        var justertOpplysningsperiode = justerOpplysningsperiodeNårSisteÅrIkkeErFerdiglignet(Long.valueOf(aktørId.getId()), opplysningsperiodeSkattegrunnlag);
-        SigrunResponse beregnetskatt = sigrunConsumer.beregnetskatt(Long.valueOf(aktørId.getId()), justertOpplysningsperiode);
-        SigrunSummertSkattegrunnlagResponse summertSkattegrunnlag = sigrunConsumer.summertSkattegrunnlag(Long.valueOf(aktørId.getId()),
-            opplysningsperiodeSkattegrunnlag);
-        var resultat = SigrunTilInternMapper.mapFraSigrunTilIntern(beregnetskatt.beregnetSkatt(), summertSkattegrunnlag.summertskattegrunnlagMap());
-        if (SAMMENLIGN_PGI) {
-            sammenlignPGI(fnrSupplier, justertOpplysningsperiode, resultat);
+    private boolean kanVenteFerdiglignetFor(Year år) {
+        return !(IS_PROD && Year.now().minusYears(1).equals(år) && MonthDay.now().isBefore(TIDLIGSTE_SJEKK_FJOR));
+    }
+
+    private Year utledSenesteÅr(IntervallEntitet opplysningsperiode) {
+        var ifjor = Year.now().minusYears(1);
+        var oppgitt = opplysningsperiode != null ? Year.from(opplysningsperiode.getTomDato()) : ifjor;
+        return oppgitt.isAfter(ifjor) ? ifjor : oppgitt;
+    }
+
+    private List<Year> utledTidligereÅr(IntervallEntitet opplysningsperiode, Year senesteÅr, boolean harDataSenesteÅr) {
+        long periodeLengde = opplysningsperiode != null ? YEARS.between(opplysningsperiode.getFomDato(), opplysningsperiode.getTomDato()) : 2L;
+        var tidligsteÅr = opplysningsperiode != null ? Year.from(opplysningsperiode.getFomDato()) : senesteÅr.minusYears(2);
+        var fraTidligsteÅr = harDataSenesteÅr || periodeLengde > 2L ? tidligsteÅr : tidligsteÅr.minusYears(1);
+        if (fraTidligsteÅr.isBefore(FØRSTE_PGI)) {
+            fraTidligsteÅr = FØRSTE_PGI;
         }
-        return resultat;
-    }
-
-    private void sammenlignPGI(Supplier<PersonIdent> fnrSupplier, IntervallEntitet opplysningsperiode,
-                               Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> bs) {
-        try {
-            var nettoBs = bs.entrySet().stream().filter(e -> !e.getValue().isEmpty()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-            var nettoPgi = hentPensjonsgivende(fnrSupplier, opplysningsperiode);
-            if (nettoBs.isEmpty() && nettoPgi.isEmpty()) {
-                LOG.info("SIGRUN PGI: sammenlignet OK tomme svar fra begge");
-            } else if (!nettoPgi.values().isEmpty() && nettoPgi.values().stream().anyMatch(v -> !v.values().isEmpty())) {
-                if (sammenlignMaps(nettoBs, nettoPgi)) {
-                    LOG.info("SIGRUN PGI: sammenlignet OK");
-                } else {
-                    LOG.info("SIGRUN PGI: sammenlignet DIFF BS/SSG {} PGI {}", bs, nettoPgi);
-                }
-            } else if (!nettoBs.values().isEmpty() && nettoBs.values().stream().anyMatch(v -> !v.values().isEmpty())) {
-                LOG.info("SIGRUN PGI: tomt svar fra PGI BS//SG {}", bs);
-            } else {
-                LOG.info("SIGRUN PGI: tomme svar fra BS//SG {}", bs);
-            }
-        } catch (Exception e) {
-            LOG.info("SIGRUN PGI: noe gikk veldig galt", e);
+        List<Year> årene = new ArrayList<>();
+        while (fraTidligsteÅr.isBefore(senesteÅr)) {
+            årene.add(fraTidligsteÅr);
+            fraTidligsteÅr = fraTidligsteÅr.plusYears(1);
         }
-    }
-
-    private static boolean sammenlignMaps(Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> bs, Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> pgi) {
-        return Objects.equals(bs.keySet(), pgi.keySet()) && pgi.entrySet().stream().allMatch(e -> sammenlignSubMaps(bs.get(e.getKey()), e.getValue()));
-    }
-
-    private static boolean sammenlignSubMaps(Map<InntektspostType, BigDecimal> bs, Map<InntektspostType, BigDecimal> pgi) {
-        return bs != null && Objects.equals(bs.keySet(), pgi.keySet()) && pgi.entrySet().stream().allMatch(e -> sammenlignSubMapVerdier(bs.get(e.getKey()), e.getValue()));
-    }
-
-    private static boolean sammenlignSubMapVerdier(BigDecimal bs, BigDecimal pgi) {
-        return Objects.equals(bs, pgi) || (bs != null && pgi.compareTo(bs) == 0);
-    }
-
-    IntervallEntitet justerOpplysningsperiodeNårSisteÅrIkkeErFerdiglignet(Long aktørId, IntervallEntitet opplysningsperiode) {
-        if (opplysningsperiode == null){
-            return null; //fpsak spør unten å oppgi periode
-        }
-        // justerer slik at vi henter ett å eldre data når siste år som etterspørs ikke er ferdiglignet enda
-        int fomÅr = opplysningsperiode.getFomDato().getYear();
-        int tomÅr = opplysningsperiode.getTomDato().getYear();
-        Year iFjor = Year.now().minusYears(1);
-        LOG.info("Opprinnelig opplysningsperiode er fom {} tom {}", fomÅr, tomÅr);
-        if (opplysningsperiode.getTomDato().getYear() == iFjor.getValue()) {
-            boolean fjoråretFerdiglignet = sigrunConsumer.erÅretFerdiglignet(aktørId, iFjor);
-            LOG.info("Ferdiglignet {}", fjoråretFerdiglignet);
-            if (!fjoråretFerdiglignet && tomÅr - fomÅr < 3) { //dataminimering, ikke behov for data ut over 3 hele år før første stp
-                LOG.info("Utvider opplysningsperioden med ett år pga ikke-ferdiglignet år");
-                return IntervallEntitet.fraOgMedTilOgMed(opplysningsperiode.getFomDato().minusYears(1), opplysningsperiode.getTomDato());
-            }
-        }
-        return opplysningsperiode;
+        return årene.stream().sorted(Comparator.reverseOrder()).toList();
     }
 
 }
