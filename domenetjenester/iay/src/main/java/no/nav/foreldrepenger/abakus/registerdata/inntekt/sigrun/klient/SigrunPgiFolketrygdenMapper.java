@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden;
+package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -24,15 +24,7 @@ public final class SigrunPgiFolketrygdenMapper {
         return resultat;
     }
 
-    public static Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> mapFraSigrunTilIntern(SigrunPgiFolketrygdenResponse response) {
-        Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> resultat = new LinkedHashMap<>();
-        response.pgiFolketrygdenMap().values().stream()
-            .map(SigrunPgiFolketrygdenMapper::mapPgiFolketrygden)
-            .forEach(resultat::putAll);
-        return resultat;
-    }
-
-    public static Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> mapPgiFolketrygden(List<PgiFolketrygdenResponse> response) {
+    private static Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> mapPgiFolketrygden(List<PgiFolketrygdenResponse> response) {
         if (response == null || response.isEmpty()) {
             return Map.of();
         }
