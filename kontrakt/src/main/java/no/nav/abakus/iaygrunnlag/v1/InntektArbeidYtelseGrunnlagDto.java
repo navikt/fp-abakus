@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -191,6 +192,10 @@ public class InntektArbeidYtelseGrunnlagDto {
                 "Skal ikke bruke både ny (oppgitt opptjening pr journalpostId) og gammel (en oppgitt opptjening) i samme sak.");
         }
         this.overstyrtOppgittOpptjening = overstyrtOppgittOpptjening;
+    }
+
+    public OppgittOpptjeningDto getGjeldendeOppgittOpptjening() {
+        return Optional.ofNullable(getOverstyrtOppgittOpptjening()).orElseGet(this::getOppgittOpptjening);
     }
 
     public OppgitteOpptjeningerDto getOppgitteOpptjeninger() {
