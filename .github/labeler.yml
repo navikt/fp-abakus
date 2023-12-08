@@ -1,14 +1,22 @@
 kontrakt:
-  - kontrakt/src/main/java/**/*
-  - kontrakt-vedtak/src/main/java/**/*
-  - kodeverk/src/main/java/**/*
+- any:
+  - changed-files:
+    - any-glob-to-any-file: "kontrakt/src/main/java/**/*"
+    - any-glob-to-any-file: "kontrakt-vedtak/src/main/java/**/*"
+    - any-glob-to-any-file: "kodeverk/src/main/java/**/*"
 
 migreringer:
-  - migreringer/src/main/resources/**/*
+- any:
+  - changed-files:
+    - any-glob-to-any-file: "migreringer/src/main/resources/**/*"
 
 web:
-  - web/src/main/java/**/*
+- any:
+  - changed-files:
+    - any-glob-to-any-file: "web/src/main/java/**/*"
 
 pom:
-  - '**/*/pom.xml'
-  - pom.xml
+- any:
+  - changed-files:
+    - any-glob-to-any-file: "**/*/pom.xml"
+    - any-glob-to-any-file: "pom.xml"
