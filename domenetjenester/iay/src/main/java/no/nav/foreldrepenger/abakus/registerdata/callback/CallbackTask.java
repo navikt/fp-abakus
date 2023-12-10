@@ -57,8 +57,11 @@ public class CallbackTask implements ProsessTaskHandler {
         Long koblingId = nyKoblingId != null ? Long.valueOf(nyKoblingId) : Long.valueOf(data.getBehandlingId());
         Kobling kobling = koblingTjeneste.hent(koblingId);
         if (callbackUrl == null || callbackUrl.isEmpty()) {
-            LOG.info("Prøver callback uten url for kobling: {} ... Ignorerer", kobling);
+            LOG.info("FPABAKUS callback: Prøver callback uten url for kobling: {} ... Ignorerer", kobling);
             return;
+        }
+        if (callbackScope == null) {
+            LOG.info("FPABAKUS callback: Mangler scope for sak {} url {}", kobling.getSaksnummer().getVerdi(), callbackUrl);
         }
         CallbackDto callbackDto = new CallbackDto();
         callbackDto.setGrunnlagType(Grunnlag.IAY);
