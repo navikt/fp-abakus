@@ -36,6 +36,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import java.net.HttpURLConnection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -69,6 +70,9 @@ public class RegisterdataRestTjeneste {
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response innhentOgLagreRegisterdataAsync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
         Response response;
+        if (dto.getCallbackUrl() == null || dto.getCallbackScope() == null) {
+            return Response.status(HttpURLConnection.HTTP_FORBIDDEN).build();
+        }
         LoggUtil.setupLogMdc(dto.getYtelseType(), dto.getSaksnummer());
         String taskGruppe = innhentTjeneste.triggAsyncInnhent(dto);
         if (taskGruppe != null) {
