@@ -32,8 +32,3 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:8060/rest/isReady"]
       interval: 30s
       timeout: 5s
-  azure-mock:
-    image: $AZURE_MOCK_IMAGE
-    container_name: azure-mock
-    ports:
-      - "8100:8100"
