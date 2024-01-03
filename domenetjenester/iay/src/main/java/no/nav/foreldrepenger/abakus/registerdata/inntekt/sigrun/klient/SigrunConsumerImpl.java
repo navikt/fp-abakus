@@ -2,18 +2,20 @@ package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient;
 
 import static java.util.Arrays.asList;
 
-import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.enterprise.context.ApplicationScoped;
-
+import jakarta.enterprise.context.ApplicationScoped;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.PgiFolketrygdenResponse;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.SigrunPgiFolketrygdenResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
 import no.nav.foreldrepenger.konfig.Environment;
@@ -25,7 +27,9 @@ public class SigrunConsumerImpl implements SigrunConsumer {
     private static final String TEKNISK_NAVN = "skatteoppgjoersdato";
 
     private static final MonthDay TIDLIGSTE_SJEKK_FJOR = MonthDay.of(5, 1);
-    private static final boolean isProd = Environment.current().isProd();
+
+    private static final Year FØRSTE_PGI = Year.of(2017);
+    private static final boolean IS_PROD = Environment.current().isProd();
     private final SigrunRestClient client;
 
 
@@ -55,8 +59,50 @@ public class SigrunConsumerImpl implements SigrunConsumer {
     }
 
     @Override
+    public SigrunPgiFolketrygdenResponse pgiFolketrygden(String fnr, IntervallEntitet opplysningsperiode) {
+        var funnet = hentÅrsListeForPgiFolketrygden(fnr, opplysningsperiode).stream()
+            .collect(Collectors.toMap(år -> år, år -> client.hentPgiForFolketrygden(fnr, år.toString())));
+        return new SigrunPgiFolketrygdenResponse(funnet);
+    }
+
+    @Override
+    public List<PgiFolketrygdenResponse> pensjonsgivendeInntektForFolketrygden(String fnr, IntervallEntitet opplysningsperiode) {
+        var senesteÅr = utledSenesteÅr(opplysningsperiode);
+        List<PgiFolketrygdenResponse> svarene = new ArrayList<>();
+        var svarSenesteÅr = kanVenteFerdiglignetFor(senesteÅr) ? client.hentPensjonsgivendeInntektForFolketrygden(fnr, senesteÅr) : null;
+        Optional.ofNullable(svarSenesteÅr).ifPresent(svarene::add);
+        utledTidligereÅr(opplysningsperiode, senesteÅr, senesteÅr != null)
+            .forEach(år -> Optional.ofNullable(client.hentPensjonsgivendeInntektForFolketrygden(fnr, år)).ifPresent(svarene::add));
+        return svarene;
+    }
+
+    public boolean kanVenteFerdiglignetFor(Year år) {
+        return !(IS_PROD && Year.now().minusYears(1).equals(år) && MonthDay.now().isBefore(TIDLIGSTE_SJEKK_FJOR));
+    }
+
+    private Year utledSenesteÅr(IntervallEntitet opplysningsperiode) {
+        var ifjor = Year.now().minusYears(1);
+        var oppgitt = opplysningsperiode != null ? Year.from(opplysningsperiode.getTomDato()) : ifjor;
+        return oppgitt.isAfter(ifjor) ? ifjor : oppgitt;
+    }
+
+    private List<Year> utledTidligereÅr(IntervallEntitet opplysningsperiode, Year senesteÅr, boolean harDataSenesteÅr) {
+        var tidligsteÅr = opplysningsperiode != null ? Year.from(opplysningsperiode.getFomDato()) : senesteÅr.minusYears(2);
+        var fraTidligsteÅr = harDataSenesteÅr ? tidligsteÅr : tidligsteÅr.minusYears(1);
+        if (fraTidligsteÅr.isBefore(FØRSTE_PGI)) {
+            fraTidligsteÅr = FØRSTE_PGI;
+        }
+        List<Year> årene = new ArrayList<>();
+        while (fraTidligsteÅr.isBefore(senesteÅr)) {
+            årene.add(fraTidligsteÅr);
+            fraTidligsteÅr = fraTidligsteÅr.plusYears(1);
+        }
+        return årene.stream().sorted(Comparator.reverseOrder()).toList();
+    }
+
+    @Override
     public boolean erÅretFerdiglignet(Long aktørId, Year år) {
-        if (isProd && Year.now().minusYears(1).equals(år) && MonthDay.now().isBefore(TIDLIGSTE_SJEKK_FJOR)) {
+        if (IS_PROD && Year.now().minusYears(1).equals(år) && MonthDay.now().isBefore(TIDLIGSTE_SJEKK_FJOR)) {
             return false;
         }
         return client.hentBeregnetSkattForAktørOgÅr(aktørId, år.toString()).stream().anyMatch(l -> l.tekniskNavn().equals(TEKNISK_NAVN));
@@ -116,6 +162,39 @@ public class SigrunConsumerImpl implements SigrunConsumer {
             år++;
         }
         return årsListe;
+    }
+
+    List<Year> hentÅrsListeForPgiFolketrygden(String fnr, IntervallEntitet opplysningsperiode) {
+        if (opplysningsperiode != null) {
+            return pgiFolketrygdenÅrslisteFraOpplysningsperiode(opplysningsperiode);
+        } else {
+            return ferdiglignedePgiFolketrygdenÅr(fnr);
+        }
+    }
+
+    private List<Year> pgiFolketrygdenÅrslisteFraOpplysningsperiode(IntervallEntitet opplysningsperiode) {
+        var fomÅr = opplysningsperiode.getFomDato().getYear();
+        var tomÅr = opplysningsperiode.getTomDato().getYear();
+        var år = fomÅr;
+        var årsListe = new HashSet<Year>();
+        while (år <= tomÅr) {
+            // PGI-FT fom 2017
+            if (år >= 2017) {
+                årsListe.add(Year.of(år));
+            }
+            år++;
+        }
+        return new ArrayList<>(årsListe);
+    }
+
+    private List<Year> ferdiglignedePgiFolketrygdenÅr(String fnr) {
+        Year iFjor = Year.now().minusYears(1L);
+        if (!client.hentPgiForFolketrygden(fnr, iFjor.toString()).isEmpty()) {
+            return asList(iFjor, iFjor.minusYears(1L), iFjor.minusYears(2L));
+        } else {
+            Year iForifjor = iFjor.minusYears(1L);
+            return asList(iForifjor, iForifjor.minusYears(1L), iForifjor.minusYears(2L));
+        }
     }
 
 

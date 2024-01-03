@@ -7,7 +7,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.abakus</groupId>
         <artifactId>fpabakus</artifactId>
-        <version>${revision}</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>felles</artifactId>
@@ -50,6 +50,10 @@
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
         </dependency>
     </dependencies>
 

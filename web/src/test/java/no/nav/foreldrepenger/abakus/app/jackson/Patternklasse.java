@@ -1,6 +1,6 @@
 package no.nav.foreldrepenger.abakus.app.jackson;
 
-import javax.validation.constraints.Pattern;
+import jakarta.validation.constraints.Pattern;
 
 class Patternklasse {
 

@@ -6,16 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.model.relational.Database;
@@ -29,6 +23,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import no.nav.foreldrepenger.abakus.dbstoette.Databaseskjemainitialisering;
 
 /**
@@ -117,10 +113,7 @@ class RapporterUnmappedKolonnerIDatabaseTest {
                     continue;
                 }
 
-                var columns = StreamSupport.stream(Spliterators.spliteratorUnknownSize(table.getColumnIterator(), Spliterator.ORDERED),
-                    false).toList();
-
-                var columnNames = columns.stream().map(c -> c.getName().toUpperCase()).collect(Collectors.toCollection(TreeSet::new));
+                var columnNames = table.getColumns().stream().map(c -> c.getName().toUpperCase()).collect(Collectors.toCollection(TreeSet::new));
                 if (dbColumns.containsKey(tableName)) {
                     var unmapped = new TreeSet<>(whitelistColumns(tableName, dbColumns.get(tableName)));
                     unmapped.removeAll(columnNames);

@@ -20,4 +20,7 @@ class SigrunRestConfig {
     static final String INNTEKTSFILTER = "inntektsfilter";
     static final String PATH_SSG = "/api/v1/summertskattegrunnlag";
     static final String FILTER_SSG = "SummertSkattegrunnlagForeldrepenger";
+
+    //api/v1/pensjonsgivendeinntektforfolketrygden
+    static final String PATH_PGI_FT = "/api/v1/pensjonsgivendeinntektforfolketrygden";
 }

@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>no.nav.foreldrepenger.abakus</groupId>
 		<artifactId>domenetjenester</artifactId>
-		<version>${revision}</version>
+		<version>1.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>iay</artifactId>
@@ -20,6 +20,11 @@
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
+        <dependency>
+            <!-- for Bean validation -->
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.el</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>no.nav.fpsak.tidsserie</groupId>
@@ -94,35 +99,8 @@
 
 		<dependency>
 			<groupId>io.swagger.core.v3</groupId>
-			<artifactId>swagger-annotations</artifactId>
+			<artifactId>swagger-annotations-jakarta</artifactId>
 		</dependency>
 
-		<!-- TEST -->
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.abakus</groupId>
-			<artifactId>migreringer</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.felles</groupId>
-			<artifactId>felles-testutilities</artifactId>
-			<scope>test</scope>
-		</dependency>
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-plus</artifactId>
-            <scope>test</scope>
-        </dependency>
 	</dependencies>
 </project>

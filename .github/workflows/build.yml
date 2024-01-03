@@ -24,6 +24,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
     uses: navikt/fp-gha-workflows/.github/workflows/build-app-postgres.yml@main
     with:
       postgres-user: fpabakus_unit
@@ -31,22 +32,54 @@ jobs:
       push-image: ${{ github.ref_name == 'master' }} # default: false
     secrets: inherit
 
-  release-drafter:
-    name: Update
-    if: github.ref_name == 'master'
-    needs: build-app
+  build-push-docker-image-ghcr-k9-verdikjede:
+    name: Build og push til ghcr og trigg k9-verdikjede
     permissions:
-      contents: write
-      pull-requests: read
-    uses: navikt/fp-gha-workflows/.github/workflows/release-drafter.yml@main
-    secrets: inherit
-
-  trigger-autotest-k9:
-    name: Autotest K9
-    if: github.ref_name == 'master'
-    needs: build-app
+      contents: read
+      packages: write
     runs-on: ubuntu-latest
+    needs: build-app
+    if: github.ref_name == 'master'
     steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # ratchet:actions/checkout@v4
+      - name: Setup java and maven
+        uses: navikt/fp-gha-workflows/.github/actions/setup-java-and-maven@main # ratchet:exclude
+        with:
+          github-token: ${{ (github.actor != 'dependabot[bot]' && secrets.READER_TOKEN) || secrets.GITHUB_TOKEN }}
+      - name: Maven install and test
+        id: build-and-test
+        uses: navikt/fp-gha-workflows/.github/actions/build-maven-application@main # ratchet:exclude
+        with:
+          skip-tests: 'true'
+      - name: Login to GitHub Packages Docker Registry
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # ratchet:docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # ratchet:docker/setup-buildx-action@v2
+      - name: Docker meta
+        uses: docker/metadata-action@9dc751fe249ad99385a2583ee0d084c400eee04e # ratchet:docker/metadata-action@v4
+        id: meta
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: type=raw,value=latest,enable={{is_default_branch}}
+      - name: Bygg og push docker image
+        uses: docker/build-push-action@4a13e500e55cf31b7a5d59a38ab2040ab0f42f56 # ratchet:docker/build-push-action@v4
+        id: build_push
+        with:
+          context: "."
+          file: "Dockerfile"
+          platforms: "linux/amd64"
+          pull: true
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
       - uses: navikt/github-app-token-generator@v1
         id: get-token
         with:
@@ -61,26 +94,44 @@ jobs:
           -d '{"ref":"master",
                   "inputs":{
                       "trigger": "${{ github.repository }}",
-                      "version": "${{ needs.build-app.outputs.build-version }}"
+                      "version": "latest"
                   }}'
+
+  release-drafter:
+    name: Update
+    if: github.ref_name == 'master'
+    needs: build-app
+    permissions:
+      contents: write
+      pull-requests: read
+    uses: navikt/fp-gha-workflows/.github/workflows/release-drafter.yml@main
+    secrets: inherit
 
   fpsak-tester:
     name: Fpsak tester
+    permissions:
+      contents: read
+      id-token: write
     if: github.ref_name == 'master'
     needs: build-app
     uses: navikt/fp-autotest/.github/workflows/autotest.yml@master
     with:
       build-version: ${{ needs.build-app.outputs.build-version }}
       test-suite: fpsak
+    secrets: inherit
 
   verdikjede-tester:
     name: Verdikjedetester
+    permissions:
+      contents: read
+      id-token: write
     if: github.ref_name == 'master'
     needs: build-app
     uses: navikt/fp-autotest/.github/workflows/autotest.yml@master
     with:
       build-version: ${{ needs.build-app.outputs.build-version }}
       test-suite: verdikjede
+    secrets: inherit
 
   notify:
     name: Notify
@@ -95,21 +146,27 @@ jobs:
 
   deploy-dev:
     name: Deploy dev
+    permissions:
+      id-token: write
     if: github.ref_name == 'master'
     needs: [build-app, fpsak-tester, verdikjede-tester]
     uses: navikt/fp-gha-workflows/.github/workflows/deploy.yml@main
     with:
-      image: ghcr.io/${{ github.repository }}:${{ needs.build-app.outputs.build-version }}
+      gar: true
+      image: ${{ needs.build-app.outputs.build-version }}
       cluster: dev-fss
     secrets: inherit
 
   deploy-prod:
     name: Deploy prod
+    permissions:
+      id-token: write
     if: github.ref_name == 'master'
     needs: [build-app, fpsak-tester, verdikjede-tester, deploy-dev]
     uses: navikt/fp-gha-workflows/.github/workflows/deploy.yml@main
     with:
-      image: ghcr.io/${{ github.repository }}:${{ needs.build-app.outputs.build-version }}
+      gar: true
+      image: ${{ needs.build-app.outputs.build-version }}
       cluster: prod-fss
     secrets: inherit
 

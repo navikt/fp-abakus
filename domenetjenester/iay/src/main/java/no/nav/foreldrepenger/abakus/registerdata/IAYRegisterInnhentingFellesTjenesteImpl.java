@@ -94,7 +94,9 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
     private void innhentNæringsOpplysninger(Kobling kobling, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder) {
         LOG.info("Henter lignet inntekt for sak=[{}, {}] med behandling='{}'", kobling.getSaksnummer(), kobling.getYtelseType(),
             kobling.getKoblingReferanse());
-        var map = sigrunTjeneste.beregnetSkatt(kobling.getAktørId(), kobling.getOpplysningsperiodeSkattegrunnlag());
+
+        var map = sigrunTjeneste.beregnetSkatt(kobling.getAktørId(), new FnrSupplier(kobling.getAktørId(), kobling.getYtelseType())::tilPersonIdent,
+            kobling.getOpplysningsperiodeSkattegrunnlag());
         var aktørInntektBuilder = inntektArbeidYtelseAggregatBuilder.getAktørInntektBuilder(kobling.getAktørId());
 
         var inntektBuilder = aktørInntektBuilder.getInntektBuilder(InntektskildeType.SIGRUN, null);
@@ -113,6 +115,25 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
         }
         aktørInntektBuilder.leggTilInntekt(inntektBuilder);
         inntektArbeidYtelseAggregatBuilder.leggTilAktørInntekt(aktørInntektBuilder);
+    }
+
+    private class FnrSupplier {
+
+        private final AktørId aktørId;
+        private final YtelseType ytelseType;
+
+        public FnrSupplier(AktørId aktørId, YtelseType ytelseType) {
+            this.aktørId = aktørId;
+            this.ytelseType = ytelseType;
+        }
+
+        private PersonIdent tilPersonIdent() {
+            try {
+                return aktørConsumer.hentIdentForAktør(this.aktørId, this.ytelseType).orElse(null);
+            } catch (Exception e) {
+                return null;
+            }
+        }
     }
 
     @Override

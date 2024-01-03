@@ -7,8 +7,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -126,11 +126,9 @@ public class InnhentRegisterdataTjeneste {
         eksisterendeGrunnlagRef.map(GrunnlagReferanse::getReferanse)
             .ifPresent(ref -> callbackTask.setProperty(EKSISTERENDE_GRUNNLAG_REF, ref.toString()));
 
-        if (dto.getCallbackUrl() != null) {
-            innhentingTask.setProperty(TaskConstants.CALLBACK_URL, dto.getCallbackUrl());
-            callbackTask.setProperty(TaskConstants.CALLBACK_URL, dto.getCallbackUrl());
-            Optional.ofNullable(dto.getCallbackScope()).ifPresent(s -> callbackTask.setProperty(TaskConstants.CALLBACK_SCOPE, s));
-        }
+        callbackTask.setProperty(TaskConstants.CALLBACK_URL, dto.getCallbackUrl());
+        callbackTask.setProperty(TaskConstants.CALLBACK_SCOPE, dto.getCallbackScope());
+
         taskGruppe.addNesteSekvensiell(innhentingTask);
         taskGruppe.addNesteSekvensiell(callbackTask);
         taskGruppe.setCallIdFraEksisterende();

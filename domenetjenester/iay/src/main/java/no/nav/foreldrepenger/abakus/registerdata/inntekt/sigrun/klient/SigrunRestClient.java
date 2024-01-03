@@ -1,23 +1,26 @@
 package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient;
 
 import static no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestConfig.PATH_BS;
+import static no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestConfig.PATH_PGI_FT;
 import static no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestConfig.PATH_SSG;
 import static no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestConfig.X_CALL_ID;
 
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.http.HttpResponse;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import javax.ws.rs.core.UriBuilder;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.ws.rs.core.UriBuilder;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.PgiFolketrygdenResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
+import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.vedtak.exception.IntegrasjonException;
 import no.nav.vedtak.exception.ManglerTilgangException;
 import no.nav.vedtak.felles.integrasjon.rest.NavHeaders;
@@ -32,12 +35,18 @@ import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 @RestClientConfig(tokenConfig = TokenFlow.AZUREAD_CC, endpointProperty = "sigrunrestberegnetskatt.url", endpointDefault = "http://sigrun.team-inntekt",
     scopesProperty = "sigrunrestberegnetskatt.scopes", scopesDefault = "api://prod-fss.team-inntekt.sigrun/.default")
 public class SigrunRestClient {
+
+    private static final boolean IS_DEV = Environment.current().isDev();
+
+    private static final Year FØRSTE_PGI = Year.of(2017);
+
     private static final Logger LOG = LoggerFactory.getLogger(SigrunRestClient.class);
     private final OidcContextSupplier CONTEXT_SUPPLIER = new OidcContextSupplier();
     private final RestClient client;
     private final RestConfig restConfig;
     private final URI endpointBS;
     private final URI endpointSSG;
+    private final URI endpointPgiFT;
 
 
     SigrunRestClient(RestClient client) {
@@ -45,6 +54,11 @@ public class SigrunRestClient {
         this.restConfig = RestConfig.forClient(SigrunRestClient.class);
         this.endpointBS = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_BS);
         this.endpointSSG = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_SSG);
+        if (IS_DEV) {
+            this.endpointPgiFT = URI.create("https://sigrun-skd-stub.dev.adeo.no" + PATH_PGI_FT); // Til det legges om til vanlig Sigrun for PGI
+        } else {
+            this.endpointPgiFT = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_PGI_FT);
+        }
     }
 
     private static Optional<String> handleResponse(HttpResponse<String> response) {
@@ -59,8 +73,7 @@ public class SigrunRestClient {
             return Optional.empty();
         } else {
             if (status == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                var challenge = response.headers().allValues("WWW-Authenticate");
-                LOG.info("Sigrun unauth: {}", challenge);
+                LOG.info("Sigrun unauth");
             }
             throw new IntegrasjonException("F-016912", String.format("Server svarte med feilkode http-kode '%s' og response var '%s'", status, body));
         }
@@ -96,6 +109,54 @@ public class SigrunRestClient {
 
         HttpResponse<String> response = client.sendReturnUnhandled(request);
         return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, SSGResponse.class));
+    }
+
+    //api/v1/pensjonsgivendeinntektforfolketrygden
+    List<PgiFolketrygdenResponse> hentPgiForFolketrygden(String fnr, String år) {
+        if (år.compareTo("2017") < 0) {
+            return List.of();
+        }
+        var request = RestRequest.newGET(endpointPgiFT, restConfig)
+            .header(NavHeaders.HEADER_NAV_PERSONIDENT, fnr)
+            .header("norskident", fnr) // PGA skd-stub i dev
+            .header(SigrunRestConfig.INNTEKTSAAR, år)
+            .otherCallId(X_CALL_ID)
+            .header(SigrunRestConfig.CONSUMER_ID, CONTEXT_SUPPLIER.consumerIdForCurrentKontekst().get());
+
+        try {
+            HttpResponse<String> response = client.sendReturnUnhandled(request);
+            // Sigrun-skd-stub i DEV returnerer en liste, mens ekte Sigrun returnerer objekt.
+            if (IS_DEV) {
+                return handleResponse(response).map(r -> DefaultJsonMapper.listFromJson(r, PgiFolketrygdenResponse.class)).orElseGet(List::of);
+            } else {
+                return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, PgiFolketrygdenResponse.class)).map(List::of).orElseGet(List::of);
+            }
+        } catch (Exception e) {
+            LOG.info("SIGRUN PGI: noe gikk galt for aar {}", år, e);
+            return List.of();
+        }
+    }
+
+    //api/v1/pensjonsgivendeinntektforfolketrygden
+    PgiFolketrygdenResponse hentPensjonsgivendeInntektForFolketrygden(String fnr, Year år) {
+        if (år.isBefore(FØRSTE_PGI)) {
+            return null;
+        }
+        var request = RestRequest.newGET(endpointPgiFT, restConfig)
+            .header(NavHeaders.HEADER_NAV_PERSONIDENT, fnr)
+            .header("norskident", fnr) // PGA skd-stub i dev
+            .header(SigrunRestConfig.INNTEKTSAAR, år.toString())
+            .otherCallId(X_CALL_ID)
+            .header(SigrunRestConfig.CONSUMER_ID, CONTEXT_SUPPLIER.consumerIdForCurrentKontekst().get());
+
+        HttpResponse<String> response = client.sendReturnUnhandled(request);
+        // Sigrun-skd-stub i DEV returnerer en liste, mens ekte Sigrun returnerer objekt.
+        if (IS_DEV) {
+            return handleResponse(response).map(r -> DefaultJsonMapper.listFromJson(r, PgiFolketrygdenResponse.class))
+                    .flatMap(l -> l.stream().findFirst()).orElse(null);
+        } else {
+            return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, PgiFolketrygdenResponse.class)).orElse(null);
+        }
     }
 
 }

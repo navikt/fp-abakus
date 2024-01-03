@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>no.nav.foreldrepenger.abakus</groupId>
 		<artifactId>domenetjenester</artifactId>
-		<version>${revision}</version>
+		<version>1.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>kobling</artifactId>
@@ -36,32 +36,5 @@
 			<artifactId>felles</artifactId>
 		</dependency>
 
-		<!-- Test dependencies -->
-		<dependency>
-			<groupId>no.nav.foreldrepenger.abakus</groupId>
-			<artifactId>migreringer</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.felles</groupId>
-			<artifactId>felles-testutilities</artifactId>
-			<scope>test</scope>
-		</dependency>
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-plus</artifactId>
-            <scope>test</scope>
-        </dependency>
 	</dependencies>
 </project>
