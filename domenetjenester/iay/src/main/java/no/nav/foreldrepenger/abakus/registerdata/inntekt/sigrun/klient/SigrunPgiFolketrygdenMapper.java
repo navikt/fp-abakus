@@ -30,7 +30,7 @@ public final class SigrunPgiFolketrygdenMapper {
         }
         var inntektBeløp = new ArrayList<InntektBeløp>();
         for (var responselement : response) {
-            for (var pgi : responselement.pgiSomSikkertKanBrukes()) {
+            for (var pgi : responselement.safePensjonsgivendeInntekt()) {
                 leggTilHvisVerdi(pgi.pensjonsgivendeInntektAvLoennsinntekt(), InntektspostType.LØNN, inntektBeløp);
                 leggTilHvisVerdi(pgi.pensjonsgivendeInntektAvLoennsinntektBarePensjonsdel(), InntektspostType.LØNN, inntektBeløp);
                 leggTilHvisVerdi(pgi.pensjonsgivendeInntektAvNaeringsinntekt(), InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE, inntektBeløp);
