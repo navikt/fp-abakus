@@ -63,8 +63,7 @@ class SigrunTjenesteTest {
         var inntekter = TJENESTE.hentPensjonsgivende(PERSONIDENT, null);
         assertThat(inntekter.keySet()).hasSize(3);
         assertThat(inntekter.get(intervallFor(IFJOR))).isNull();
-        // TODO: kildeskatt - øke FJOR-2, LØNN til 1000 dersom kildeskatt skal med
-        assertThat(inntekter.get(intervallFor(IFJOR.minusYears(2))).get(InntektspostType.LØNN).compareTo(new BigDecimal(500L))).isZero();
+        assertThat(inntekter.get(intervallFor(IFJOR.minusYears(2))).get(InntektspostType.LØNN).compareTo(new BigDecimal(1000L))).isZero();
         assertThat(inntekter.get(intervallFor(IFJOR.minusYears(2))).get(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE).compareTo(new BigDecimal(500L))).isZero();
         assertThat(inntekter.get(intervallFor(IFJOR.minusYears(3))).get(InntektspostType.LØNN).compareTo(new BigDecimal(1000L))).isZero();
     }
