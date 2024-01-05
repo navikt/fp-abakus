@@ -10,6 +10,7 @@ import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -55,12 +56,14 @@ public class ArbeidsforholdOverstyringDto {
     private ArbeidsforholdHandlingType handling;
 
     @JsonProperty(value = "overstyringBegrunnelse")
+    @Size(max=10000)
     private String begrunnelse;
 
     /**
      * Angitt overstyrt navn på arbeidsgiver (tildelt av saksbehandler).
      */
     @JsonProperty(value = "arbeidsgiverNavn")
+    @Size(max=500)
     @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Arbeidsgivernavn [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String arbeidsgiverNavn;
 
