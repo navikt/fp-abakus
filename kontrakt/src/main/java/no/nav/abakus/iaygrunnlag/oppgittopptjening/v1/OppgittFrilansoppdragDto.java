@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -27,11 +28,12 @@ public class OppgittFrilansoppdragDto {
     private Periode periode;
 
     @JsonProperty(value = "oppdragsgiver")
+    @Size(max = 100)
     @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String oppdragsgiver;
 
     /**
-     * Tillater kun positive verdier.  Max verdi håndteres av mottager.
+     * Tillater kun positive verdier. Max verdi håndteres av mottager.
      */
     @JsonProperty("inntekt")
     @DecimalMin(value = "0.00", message = "beløp [${validatedValue}] må være >= {value}")

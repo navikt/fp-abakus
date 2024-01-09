@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -64,6 +65,7 @@ public class AktivitetsAvtaleDto {
     private LocalDate sistLønnsendring;
 
     @JsonProperty("beskrivelse")
+    @Size(max = 10000)
     @Valid
     private String beskrivelse;
 

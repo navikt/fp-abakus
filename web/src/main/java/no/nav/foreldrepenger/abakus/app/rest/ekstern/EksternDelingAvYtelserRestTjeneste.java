@@ -138,7 +138,7 @@ public class EksternDelingAvYtelserRestTjeneste {
         var periode = IntervallEntitet.fraOgMedTilOgMed(request.getPeriode().getFom(), request.getPeriode().getTom());
         var ytelser = new ArrayList<Ytelse>();
         for (var ident : identer) {
-            var infotrygdYtelser = infotrygdPSGrunnlag.hentGrunnlag(ident.getIdent(), periode.getFomDato(), periode.getTomDato());
+            var infotrygdYtelser = infotrygdPSGrunnlag.hentGrunnlagFailSoft(ident.getIdent(), periode.getFomDato(), periode.getTomDato());
             var mappedYtelser =  InnhentingInfotrygdTjeneste.mapTilInfotrygdYtelseGrunnlag(infotrygdYtelser, periode.getFomDato());
             ytelser.addAll(mappedYtelser.stream()
                 .map(InfotrygdgrunnlagYtelseMapper::oversettInfotrygdYtelseGrunnlagTilYtelse)

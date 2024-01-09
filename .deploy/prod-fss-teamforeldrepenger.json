@@ -2,7 +2,7 @@
   "environment": "prod",
   "kafkaPool": "nav-prod",
   "serviceuserkv": "serviceuser/data/prod/srvfpabakus",
-  "minReplicas": "4",
+  "minReplicas": "2",
   "maxReplicas": "6",
   "limits": {
     "cpu": "2",
@@ -13,7 +13,6 @@
     "mem": "1024Mi"
   },
   "ingresses": [
-    "https://fpabakus.intern.nav.no",
     "https://fpabakus.prod-fss-pub.nais.io"
   ],
   "env": {

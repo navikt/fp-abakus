@@ -33,7 +33,9 @@ spec:
   replicas:
     min: {{minReplicas}}
     max: {{maxReplicas}}
-    cpuThresholdPercentage: 80
+    scalingStrategy:
+      cpu:
+        thresholdPercentage: 80
   resources:
     limits:
       cpu: "{{limits.cpu}}"
@@ -50,8 +52,6 @@ spec:
     paths:
       - mountPath: /var/run/secrets/nais.io/serviceuser
         kvPath: {{serviceuserkv}}
-      - mountPath: /var/run/secrets/nais.io/appdynamics
-        kvPath: /apikey/appdynamics/{{environment}}
   env:
   {{#each env}}
    - name: {{@key}}

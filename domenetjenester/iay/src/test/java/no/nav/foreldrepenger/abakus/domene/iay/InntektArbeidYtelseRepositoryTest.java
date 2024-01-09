@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -145,6 +146,72 @@ class InntektArbeidYtelseRepositoryTest {
 
         assertThat(inntektsposter).hasSize(1);
         assertThat(inntektsposter.get(0).getBeløp()).isEqualTo(new Beløp(BigDecimal.ONE));
+    }
+
+    @Test
+    void skal_beholde_data_som_ikke_kommer_fra_sigrun() {
+        var aktør = new AktørId("1231231231223");
+        var ko = new Kobling(YtelseType.FORELDREPENGER, new Saksnummer("12341234"), new KoblingReferanse(UUID.randomUUID()), aktør);
+        ko.setOpplysningsperiode(IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusYears(2), LocalDate.now()));
+        koblingRepository.lagre(ko);
+
+        var grunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.nytt();
+        var gb = grunnlagBuilder.getRegisterBuilder();
+
+        var aib = gb.getAktørInntektBuilder(aktør);
+        var ib = aib.getInntektBuilder(InntektskildeType.SIGRUN, null);
+        for (int y = -1; y<3; y++) {
+            var periodeFom = LocalDate.of(2020 + y, 1, 1);
+            var periodeTom = periodeFom.plusYears(1).minusDays(1);
+            var ipb = ib.getInntektspostBuilder().medInntektspostType(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE).medBeløp(BigDecimal.TEN).medPeriode(periodeFom, periodeTom);
+            var ipba = ib.getInntektspostBuilder().medInntektspostType(InntektspostType.LØNN).medBeløp(BigDecimal.TEN).medPeriode(periodeFom, periodeTom);
+            ib.leggTilInntektspost(ipb);
+            ib.leggTilInntektspost(ipba);
+        }
+        aib.leggTilInntekt(ib);
+        gb.leggTilAktørInntekt(aib);
+        grunnlagBuilder.medRegister(gb);
+
+        repository.lagre(ko.getKoblingReferanse(), grunnlagBuilder);
+
+        var perioderFraSigrun = new HashSet<IntervallEntitet>();
+        for (int y = 0; y<3; y++) {
+            var periodeFom = LocalDate.of(2020 + y, 1, 1);
+            var periodeTom = periodeFom.plusYears(1).minusDays(1);
+            perioderFraSigrun.add(IntervallEntitet.fraOgMedTilOgMed(periodeFom, periodeTom));
+        }
+        var grunnlagBuilder2 = InntektArbeidYtelseGrunnlagBuilder.oppdatere(
+            repository.hentInntektArbeidYtelseGrunnlagForBehandling(ko.getKoblingReferanse()));
+        var gb2 = grunnlagBuilder2.getRegisterBuilder();
+        var aib2 = gb2.getAktørInntektBuilder(aktør);
+        var ib2 = aib2.getInntektBuilder(InntektskildeType.SIGRUN, null);
+        ib2.tilbakestillInntektsposterForPerioder(perioderFraSigrun);
+        for (int y = 0; y<3; y++) {
+            var periodeFom = LocalDate.of(2020 + y, 1, 1);
+            var periodeTom = periodeFom.plusYears(1).minusDays(1);
+            var ipb = ib.getInntektspostBuilder().medInntektspostType(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE).medBeløp(BigDecimal.ONE).medPeriode(periodeFom, periodeTom);
+            var ipba = ib.getInntektspostBuilder().medInntektspostType(InntektspostType.LØNN).medBeløp(BigDecimal.TEN).medPeriode(periodeFom, periodeTom);
+            ib2.leggTilInntektspost(ipba);
+            ib2.leggTilInntektspost(ipb);
+        }
+
+        aib2.leggTilInntekt(ib2);
+        gb2.leggTilAktørInntekt(aib2);
+        grunnlagBuilder2.medRegister(gb2);
+
+        repository.lagre(ko.getKoblingReferanse(), grunnlagBuilder2);
+
+        var g3 = repository.hentInntektArbeidYtelseGrunnlagForBehandling(ko.getKoblingReferanse()).orElseThrow();
+
+        var aktørInntekt = g3.getRegisterVersjon().flatMap(a -> a.getAktørInntekt().stream().filter(ai -> ai.getAktørId().equals(aktør)).findFirst());
+        List<Inntekt> inntekter = aktørInntekt.stream().flatMap(ai -> ai.getInntekt().stream()).toList();
+        List<Inntektspost> inntektsposter = inntekter.stream()
+            .flatMap(
+                i -> i.getAlleInntektsposter().stream().filter(ip -> ip.getInntektspostType().equals(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE)))
+            .toList();
+
+        assertThat(inntektsposter).hasSize(4);
+        assertThat(inntektsposter.stream().map(Inntektspost::getBeløp).map(Beløp::getVerdi).reduce(BigDecimal.ZERO, BigDecimal::add)).isEqualTo(new BigDecimal(13));
     }
 
     @Test
