@@ -13,7 +13,6 @@
     "mem": "1024Mi"
   },
   "ingresses": [
-    "https://fpabakus.dev.intern.nav.no",
     "https://fpabakus.dev-fss-pub.nais.io"
   ],
   "env": {
