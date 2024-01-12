@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Objects;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
-import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
@@ -16,7 +15,6 @@ public class InfotrygdYtelseGrunnlag {
 
     private LocalDateTime vedtattTidspunkt;
     private YtelseType ytelseType = YtelseType.UDEFINERT;
-    private TemaUnderkategori temaUnderkategori = TemaUnderkategori.UDEFINERT;
     private YtelseStatus ytelseStatus = YtelseStatus.AVSLUTTET;
     private List<InfotrygdYtelseAnvist> utbetaltePerioder;
     private LocalDate vedtaksPeriodeFom;
@@ -43,10 +41,6 @@ public class InfotrygdYtelseGrunnlag {
 
     public YtelseType getYtelseType() {
         return ytelseType;
-    }
-
-    public TemaUnderkategori getTemaUnderkategori() {
-        return temaUnderkategori;
     }
 
     public YtelseStatus getYtelseStatus() {
@@ -102,8 +96,8 @@ public class InfotrygdYtelseGrunnlag {
             return false;
         }
         InfotrygdYtelseGrunnlag that = (InfotrygdYtelseGrunnlag) o;
-        return Objects.equals(vedtattTidspunkt, that.vedtattTidspunkt) && Objects.equals(ytelseType, that.ytelseType) && Objects.equals(
-            temaUnderkategori, that.temaUnderkategori) && Objects.equals(ytelseStatus, that.ytelseStatus) && Objects.equals(utbetaltePerioder,
+        return Objects.equals(vedtattTidspunkt, that.vedtattTidspunkt) && Objects.equals(ytelseType, that.ytelseType)
+            && Objects.equals(ytelseStatus, that.ytelseStatus) && Objects.equals(utbetaltePerioder,
             that.utbetaltePerioder) && Objects.equals(vedtaksPeriodeFom, that.vedtaksPeriodeFom) && Objects.equals(vedtaksPeriodeTom,
             that.vedtaksPeriodeTom) && Objects.equals(kategori, that.kategori) && Objects.equals(arbeidsforhold, that.arbeidsforhold)
             && Objects.equals(dekningsgrad, that.dekningsgrad) && Objects.equals(gradering, that.gradering) && Objects.equals(fødselsdatoBarn,
@@ -112,21 +106,21 @@ public class InfotrygdYtelseGrunnlag {
 
     @Override
     public int hashCode() {
-        return Objects.hash(vedtattTidspunkt, ytelseType, temaUnderkategori, ytelseStatus, utbetaltePerioder, vedtaksPeriodeFom, vedtaksPeriodeTom,
+        return Objects.hash(vedtattTidspunkt, ytelseType, ytelseStatus, utbetaltePerioder, vedtaksPeriodeFom, vedtaksPeriodeTom,
             kategori, arbeidsforhold, dekningsgrad, gradering, fødselsdatoBarn, opprinneligIdentdato);
     }
 
     @Override
     public String toString() {
-        return "InfotrygdYtelseGrunnlag{" + "identdato=" + vedtattTidspunkt + ", ytelseType=" + ytelseType + ", temaUnderkategori="
-            + temaUnderkategori + ", ytelseStatus=" + ytelseStatus + ", utbetaltePerioder=" + utbetaltePerioder + ", vedtaksPeriodeFom="
+        return "InfotrygdYtelseGrunnlag{" + "identdato=" + vedtattTidspunkt + ", ytelseType=" + ytelseType +
+            ", ytelseStatus=" + ytelseStatus + ", utbetaltePerioder=" + utbetaltePerioder + ", vedtaksPeriodeFom="
             + vedtaksPeriodeFom + ", vedtaksPeriodeTom=" + vedtaksPeriodeTom + ", kategori=" + kategori + ", arbeidsforhold=" + arbeidsforhold
             + ", dekningsgrad=" + dekningsgrad + ", gradering=" + gradering + ", fødselsdatoBarn=" + fødselsdatoBarn + ", opprinneligIdentdato="
             + opprinneligIdentdato + '}';
     }
 
     public static class Builder {
-        private InfotrygdYtelseGrunnlag grunnlag;
+        private final InfotrygdYtelseGrunnlag grunnlag;
 
         Builder() {
             grunnlag = new InfotrygdYtelseGrunnlag();
@@ -141,11 +135,6 @@ public class InfotrygdYtelseGrunnlag {
 
         public Builder medYtelseType(YtelseType ytelseType) {
             grunnlag.ytelseType = ytelseType;
-            return this;
-        }
-
-        public Builder medTemaUnderkategori(TemaUnderkategori temaUnderkategori) {
-            grunnlag.temaUnderkategori = temaUnderkategori;
             return this;
         }
 
@@ -217,7 +206,6 @@ public class InfotrygdYtelseGrunnlag {
 
         public InfotrygdYtelseGrunnlag build() {
             Objects.requireNonNull(grunnlag.ytelseType);
-            Objects.requireNonNull(grunnlag.temaUnderkategori);
             Objects.requireNonNull(grunnlag.vedtattTidspunkt);
             Objects.requireNonNull(grunnlag.vedtaksPeriodeFom);
             return grunnlag;

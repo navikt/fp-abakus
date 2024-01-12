@@ -593,10 +593,6 @@
                 "kodeverk": "YTELSE_STATUS",
                 "kode": "LOP"
               },
-              "temaUnderkategori": {
-                "kodeverk": "TemaUnderkategori",
-                "kode": "SP"
-              },
               "anvisninger": [
                 {
                   "periode": {

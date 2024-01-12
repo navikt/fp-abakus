@@ -10,13 +10,12 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
-import jakarta.validation.Validation;
-
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import jakarta.validation.Validation;
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
 import no.nav.abakus.iaygrunnlag.FnrPersonident;
@@ -54,7 +53,6 @@ import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
 import no.nav.abakus.iaygrunnlag.kodeverk.NaturalytelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
-import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseFraOffentligeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtsettelseÅrsakType;
 import no.nav.abakus.iaygrunnlag.kodeverk.VirksomhetType;
@@ -149,7 +147,6 @@ class IayGrunnlagTest {
             .medYtelse(List.of(new YtelserDto(fnr).medYtelser(List.of(
                 new YtelseDto(Fagsystem.FPSAK, ytelseType, periode, YtelseStatus.LØPENDE).medSaksnummer("1234")
                     .medVedtattTidspunkt(LocalDateTime.now().minusDays(1))
-                    .medTemaUnderkategori(TemaUnderkategori.FORELDREPENGER_FODSEL)
                     .medGrunnlag(new YtelseGrunnlagDto().medArbeidskategoriDto(Arbeidskategori.ARBEIDSTAKER)
                         .medOpprinneligIdentDato(fom)
                         .medDekningsgradProsent(100)

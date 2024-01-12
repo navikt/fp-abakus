@@ -24,17 +24,14 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
-import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.iay.jpa.TemaUnderkategoriKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.iay.jpa.YtelseStatusKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.iay.jpa.YtelseTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
@@ -81,11 +78,6 @@ public class Ytelse extends BaseEntitet implements IndexKey {
     @Column(name = "kilde", nullable = false)
     private Fagsystem kilde;
 
-    @Convert(converter = TemaUnderkategoriKodeverdiConverter.class)
-    @Column(name = "temaUnderkategori", nullable = false)
-    @ChangeTracked
-    private TemaUnderkategori temaUnderkategori = TemaUnderkategori.UDEFINERT;
-
     @OneToMany(mappedBy = "ytelse")
     @ChangeTracked
     private Set<YtelseAnvist> ytelseAnvist = new LinkedHashSet<>();
@@ -108,7 +100,6 @@ public class Ytelse extends BaseEntitet implements IndexKey {
         this.vedtattTidspunkt = ytelse.getVedtattTidspunkt();
         this.periode = ytelse.getPeriode();
         this.saksreferanse = ytelse.getSaksreferanse();
-        this.temaUnderkategori = ytelse.getBehandlingsTema();
         this.kilde = ytelse.getKilde();
         ytelse.getYtelseGrunnlag().ifPresent(yg -> {
             YtelseGrunnlag ygn = new YtelseGrunnlag(yg);
@@ -138,14 +129,6 @@ public class Ytelse extends BaseEntitet implements IndexKey {
 
     void setRelatertYtelseType(YtelseType relatertYtelseType) {
         this.relatertYtelseType = relatertYtelseType;
-    }
-
-    public TemaUnderkategori getBehandlingsTema() {
-        return temaUnderkategori;
-    }
-
-    void setBehandlingsTema(TemaUnderkategori behandlingsTema) {
-        this.temaUnderkategori = behandlingsTema;
     }
 
     public YtelseStatus getStatus() {
@@ -222,21 +205,19 @@ public class Ytelse extends BaseEntitet implements IndexKey {
             return false;
         }
         var that = (Ytelse) o;
-        return Objects.equals(relatertYtelseType, that.relatertYtelseType) && Objects.equals(temaUnderkategori, that.temaUnderkategori) && (
-            Objects.equals(periode, that.periode) || Objects.equals(periode.getFomDato(), that.periode.getFomDato())) && Objects.equals(saksreferanse,
-            that.saksreferanse);
+        return Objects.equals(relatertYtelseType, that.relatertYtelseType) && Objects.equals(saksreferanse, that.saksreferanse) &&
+            (Objects.equals(periode, that.periode) || Objects.equals(periode.getFomDato(), that.periode.getFomDato()));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(relatertYtelseType, temaUnderkategori, periode, saksreferanse);
+        return Objects.hash(relatertYtelseType, periode, saksreferanse);
     }
 
     @Override
     public String toString() {
         return "YtelseEntitet{" +
             "relatertYtelseType=" + relatertYtelseType +
-            ", typeUnderkategori=" + temaUnderkategori +
             ", periode=" + periode +
             ", relatertYtelseStatus=" + status +
             ", vedtattTidspunkt=" + vedtattTidspunkt +

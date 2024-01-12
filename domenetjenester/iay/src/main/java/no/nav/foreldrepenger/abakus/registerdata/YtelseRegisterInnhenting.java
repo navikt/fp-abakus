@@ -63,7 +63,6 @@ public class YtelseRegisterInnhenting {
         IntervallEntitet periode = utledPeriodeNårTomMuligFørFom(grunnlag.getVedtaksPeriodeFom(), grunnlag.getVedtaksPeriodeTom());
         var saksnummer = new Saksnummer(grunnlag.getVedtaksreferanse());
         YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.VLSP, grunnlag.getYtelseType(), saksnummer)
-            .medBehandlingsTema(grunnlag.getTemaUnderkategori())
             .medVedtattTidspunkt(grunnlag.getVedtattTidspunkt())
             .medPeriode(periode)
             .medStatus(grunnlag.getYtelseStatus());
