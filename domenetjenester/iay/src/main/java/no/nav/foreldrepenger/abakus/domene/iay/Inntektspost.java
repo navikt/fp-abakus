@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Objects;
 
 import jakarta.persistence.AttributeOverride;
@@ -16,11 +17,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektYtelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.abakus.iaygrunnlag.kodeverk.LønnsinntektBeskrivelse;
 import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
+import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltNæringsYtelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseFraOffentligeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -218,6 +220,35 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
     public boolean hasValues() {
         return (ytelse != null || !Objects.equals(ytelse, "-")) || inntektspostType != null || periode.getFomDato() != null
             || periode.getTomDato() != null || beløp != null;
+    }
+
+    private static final Map<String, InntektYtelseType> LEGACY_NÆRING = Map.of(
+        UtbetaltNæringsYtelseType.SYKEPENGER.getKode(), InntektYtelseType.SYKEPENGER_NÆRING,
+        UtbetaltNæringsYtelseType.SYKEPENGER_TIL_DAGMAMMA.getKode(), InntektYtelseType.SYKEPENGER_NÆRING,
+        UtbetaltNæringsYtelseType.SYKEPENGER_TIL_FISKER.getKode(), InntektYtelseType.SYKEPENGER_NÆRING,
+        UtbetaltNæringsYtelseType.SYKEPENGER_TIL_JORD_OG_SKOGBRUKERE.getKode(), InntektYtelseType.SYKEPENGER_NÆRING,
+        UtbetaltNæringsYtelseType.DAGPENGER_TIL_FISKER.getKode(), InntektYtelseType.DAGPENGER_NÆRING,
+        UtbetaltNæringsYtelseType.DAGPENGER_VED_ARBEIDSLØSHET.getKode(), InntektYtelseType.DAGPENGER_NÆRING,
+        UtbetaltNæringsYtelseType.VEDERLAG_DAGMAMMA_I_EGETHJEM.getKode(), InntektYtelseType.VEDERLAG
+    );
+
+    private static final Map<String, InntektYtelseType> LEGACY_YTELSE = Map.of(
+        UtbetaltYtelseFraOffentligeType.SYKEPENGER_FISKER.getKode(), InntektYtelseType.SYKEPENGER,
+        UtbetaltYtelseFraOffentligeType.DAGPENGER_ARBEIDSLØS.getKode(), InntektYtelseType.DAGPENGER,
+        UtbetaltYtelseFraOffentligeType.DAGPENGER_FISKER.getKode(), InntektYtelseType.DAGPENGER
+    );
+
+    public InntektYtelseType getInntektYtelseType() {
+        if (ytelse == null || UtbetaltYtelseFraOffentligeType.UDEFINERT.getKode().equals(ytelse)) {
+            return null;
+        }
+        if (UtbetaltNæringsYtelseType.KODEVERK.equals(this.ytelseType) && LEGACY_NÆRING.get(ytelse) != null) {
+            return LEGACY_NÆRING.get(ytelse);
+        }
+        if (UtbetaltYtelseFraOffentligeType.KODEVERK.equals(this.ytelseType) && LEGACY_YTELSE.get(ytelse) != null) {
+            return LEGACY_YTELSE.get(ytelse);
+        }
+        return InntektYtelseType.fraKode(ytelse);
     }
 
 }

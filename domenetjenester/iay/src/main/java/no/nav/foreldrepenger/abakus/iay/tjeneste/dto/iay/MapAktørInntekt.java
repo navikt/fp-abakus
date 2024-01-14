@@ -1,16 +1,30 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
-import no.nav.abakus.iaygrunnlag.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import no.nav.abakus.iaygrunnlag.Aktør;
+import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
+import no.nav.abakus.iaygrunnlag.Organisasjon;
+import no.nav.abakus.iaygrunnlag.Periode;
+import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.inntekt.v1.InntekterDto;
 import no.nav.abakus.iaygrunnlag.inntekt.v1.UtbetalingDto;
 import no.nav.abakus.iaygrunnlag.inntekt.v1.UtbetalingsPostDto;
-import no.nav.foreldrepenger.abakus.domene.iay.*;
+import no.nav.foreldrepenger.abakus.domene.iay.AktørInntekt;
+import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.domene.iay.Inntekt;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.Inntektspost;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektspostBuilder;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class MapAktørInntekt {
 
@@ -138,6 +152,7 @@ public class MapAktørInntekt {
             var skattOgAvgiftType = inntektspost.getSkatteOgAvgiftsregelType();
 
             UtbetalingsPostDto dto = new UtbetalingsPostDto(periode, inntektspostType).medUtbetaltYtelseType(ytelseType)
+                .medInntektYtelseType(inntektspost.getInntektYtelseType())
                 .medSkattAvgiftType(skattOgAvgiftType)
                 .medLønnsinntektbeskrivelse(inntektspost.getLønnsinntektBeskrivelse())
                 .medBeløp(inntektspost.getBeløp().getVerdi());

@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -21,10 +23,9 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import no.nav.abakus.iaygrunnlag.UuidDto;
+import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltNæringsYtelseType;
+import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseFraOffentligeType;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
@@ -173,6 +174,57 @@ public class ForvaltningRestTjeneste {
         var kobling = koblingTjeneste.hentFor(new KoblingReferanse(koblingReferanse.getReferanse()));
         migrerAlleGrunnlagPåKobling(kobling.orElseThrow(), feilTilRiktigMap);
         return Response.ok().build();
+    }
+
+    @POST
+    @Path("/migrerInntektspostNæring")
+    @Consumes(APPLICATION_JSON)
+    @Produces(APPLICATION_JSON)
+    @Operation(description = "UPDATE: Endrer referanser på IM til referanse som finnes i aareg ved match med ignore case", tags = "FORVALTNING")
+    @BeskyttetRessurs(actionType = ActionType.CREATE, resource = DRIFT)
+    public Response migrerInntektspostNæring() {
+        Map<UtbetaltNæringsYtelseType, List<UtbetaltNæringsYtelseType>> mapNæring = Map.of(
+            UtbetaltNæringsYtelseType.SYKEPENGER_NÆRING, List.of(UtbetaltNæringsYtelseType.SYKEPENGER, UtbetaltNæringsYtelseType.SYKEPENGER_TIL_FISKER, UtbetaltNæringsYtelseType.SYKEPENGER_TIL_DAGMAMMA, UtbetaltNæringsYtelseType.SYKEPENGER_TIL_JORD_OG_SKOGBRUKERE),
+            UtbetaltNæringsYtelseType.DAGPENGER_NÆRING, List.of(UtbetaltNæringsYtelseType.DAGPENGER_TIL_FISKER, UtbetaltNæringsYtelseType.DAGPENGER_VED_ARBEIDSLØSHET),
+            UtbetaltNæringsYtelseType.VEDERLAG, List.of(UtbetaltNæringsYtelseType.VEDERLAG_DAGMAMMA_I_EGETHJEM)
+        );
+        int antall = 0;
+        for (var e : mapNæring.entrySet()) {
+            var key = e.getKey();
+            for (var l : e.getValue()) {
+                antall += oppdaterInntektsPost(l.getKodeverk(), l.getKode(), key.getKode());
+            }
+        }
+        return Response.ok(antall).build();
+    }
+
+    @POST
+    @Path("/migrerInntektspostYtelse")
+    @Consumes(APPLICATION_JSON)
+    @Produces(APPLICATION_JSON)
+    @Operation(description = "UPDATE: Endrer referanser på IM til referanse som finnes i aareg ved match med ignore case", tags = "FORVALTNING")
+    @BeskyttetRessurs(actionType = ActionType.CREATE, resource = DRIFT)
+    public Response migrerInntektspostYtelse() {
+        Map<UtbetaltYtelseFraOffentligeType, List<UtbetaltYtelseFraOffentligeType>> mapYtelse = Map.of(
+            UtbetaltYtelseFraOffentligeType.SYKEPENGER, List.of(UtbetaltYtelseFraOffentligeType.SYKEPENGER_FISKER),
+            UtbetaltYtelseFraOffentligeType.DAGPENGER, List.of(UtbetaltYtelseFraOffentligeType.DAGPENGER_ARBEIDSLØS, UtbetaltYtelseFraOffentligeType.DAGPENGER_FISKER)
+        );
+        int antall = 0;
+        for (var e : mapYtelse.entrySet()) {
+            var key = e.getKey();
+            for (var l : e.getValue()) {
+                antall += oppdaterInntektsPost(l.getKodeverk(), l.getKode(), key.getKode());
+            }
+        }
+        return Response.ok(antall).build();
+    }
+
+    private int oppdaterInntektsPost(String kodeverk, String gammel, String nykode) {
+        return entityManager.createNativeQuery("UPDATE IAY_INNTEKTSPOST SET ytelse_type = :nykode WHERE KL_ytelse_type = :kodeverk and ytelse_type = :gammelkode")
+            .setParameter("kodeverk", kodeverk)
+            .setParameter("gammelkode", gammel)
+            .setParameter("nykode", nykode)
+            .executeUpdate();
     }
 
     private Map<String, ArbeidsforholdReferanse> finnMappingFraGammelTilNyReferanse(UuidDto koblingReferanse) {

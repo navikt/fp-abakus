@@ -46,6 +46,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.BekreftetPermisjonStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektYtelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
@@ -141,7 +142,9 @@ class IayGrunnlagTest {
                         List.of(new AktivitetsAvtaleDto(periode).medSistLønnsendring(fom).medBeskrivelse("beskrivelse").medStillingsprosent(50)))))))
             .medInntekt(List.of(new InntekterDto(fnr).medUtbetalinger(List.of(
                 new UtbetalingDto(InntektskildeType.INNTEKT_SAMMENLIGNING).medArbeidsgiver(org)
-                    .medPoster(List.of(new UtbetalingsPostDto(periode, InntektspostType.LØNN).medUtbetaltYtelseType(utbetaltYtelse)
+                    .medPoster(List.of(new UtbetalingsPostDto(periode, InntektspostType.LØNN)
+                        .medUtbetaltYtelseType(utbetaltYtelse)
+                        .medInntektYtelseType(InntektYtelseType.FORELDREPENGER)
                         .medBeløp(100)
                         .medSkattAvgiftType(SkatteOgAvgiftsregelType.NETTOLØNN)))))))
             .medYtelse(List.of(new YtelserDto(fnr).medYtelser(List.of(
