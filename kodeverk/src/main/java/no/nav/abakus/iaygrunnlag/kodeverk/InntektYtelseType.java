@@ -59,7 +59,7 @@ public enum InntektYtelseType implements Kodeverdi {
     ANNET("Annet", Kategori.NÆRING, YtelseType.UDEFINERT, "annet"),
     VEDERLAG("Vederlag", Kategori.NÆRING, YtelseType.UDEFINERT, List.of("vederlag", "vederlagDagmammaIEgetHjem")),
     LOTT_KUN_TRYGDEAVGIFT("Lott kun trygdeavgift", Kategori.NÆRING, YtelseType.UDEFINERT, "lottKunTrygdeavgift"),
-    KOMPENSASJON_FOR_TAPT_PERSONINNTEKT("Kompensasjon for tapt personinntekt", Kategori.NÆRING, YtelseType.UDEFINERT, "kompensasjonForTaptPersoninntekt")
+    KOMPENSASJON_FOR_TAPT_PERSONINNTEKT("Kompensasjon for tapt personinntekt", Kategori.NÆRING, YtelseType.FRISINN, "kompensasjonForTaptPersoninntekt")
     ;
 
     public static final String KODEVERK = "INNTEKT_YTELSE_TYPE";
