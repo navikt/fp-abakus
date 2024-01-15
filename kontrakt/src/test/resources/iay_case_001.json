@@ -1701,7 +1701,6 @@
           "tom" : "2018-05-10"
         },
         "status" : "AVSLU",
-        "temaUnderkategori" : "FØ",
         "anvisninger" : [ {
           "periode" : {
             "fom" : "2017-11-10",
@@ -1742,7 +1741,6 @@
           "tom" : "2017-11-09"
         },
         "status" : "AVSLU",
-        "temaUnderkategori" : "FØ",
         "anvisninger" : [ {
           "periode" : {
             "fom" : "2017-09-01",
@@ -1789,7 +1787,6 @@
           "tom" : "2018-11-01"
         },
         "status" : "AVSLU",
-        "temaUnderkategori" : "FØ",
         "anvisninger" : [ ]
       }, {
         "fagsystem" : "INFOTRYGD",
@@ -1799,7 +1796,6 @@
           "tom" : "2019-03-21"
         },
         "status" : "AVSLU",
-        "temaUnderkategori" : "FØ",
         "anvisninger" : [ ]
       } ]
     } ]

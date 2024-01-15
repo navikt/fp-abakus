@@ -37,11 +37,6 @@ public enum YtelseType implements Kodeverdi {
     OPPLÆRINGSPENGER("OLP", "Opplæringspenger"),
 
     /**
-     * @deprecated Legacy infotrygd K9 ytelse type (må tolkes sammen med TemaUnderkategori).
-     */
-    PÅRØRENDESYKDOM("PS", "Pårørende sykdom"),
-
-    /**
      * Folketrygdloven K11 ytelser.
      */
     ARBEIDSAVKLARINGSPENGER("AAP"),

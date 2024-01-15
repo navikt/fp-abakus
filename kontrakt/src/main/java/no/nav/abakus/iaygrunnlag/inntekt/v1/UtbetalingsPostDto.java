@@ -4,11 +4,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -16,7 +11,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import no.nav.abakus.iaygrunnlag.Periode;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektYtelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.abakus.iaygrunnlag.kodeverk.LønnsinntektBeskrivelse;
 import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
@@ -56,6 +56,13 @@ public class UtbetalingsPostDto {
     @JsonProperty(value = "ytelseType")
     @Valid
     private WrapUtbetaltYtelse ytelseType;
+
+    /**
+     * Satt dersom dette gjelder en ytelse, ellers ikke (henger sammen med {@link UtbetalingDto#getKilde()})
+     */
+    @JsonProperty(value = "inntektYtelseType")
+    @Valid
+    private InntektYtelseType inntektYtelseType;
 
     protected UtbetalingsPostDto() {
     }
@@ -136,6 +143,20 @@ public class UtbetalingsPostDto {
         }
         UtbetaltYtelseType utbetaltYtelseType = ytelseType.getUtbetaltYtelseType();
         return utbetaltYtelseType == null || utbetaltYtelseType.erUdefinert() ? null : ytelseType.getUtbetaltYtelseType();
+    }
+
+    public InntektYtelseType getInntektYtelseType() {
+        return inntektYtelseType;
+    }
+
+
+    public void setInntektYtelseType(InntektYtelseType ytelseType) {
+        this.ytelseType = ytelseType == null ? null : new WrapUtbetaltYtelse(ytelseType.getKode(), ytelseType.getKodeverk());
+    }
+
+    public UtbetalingsPostDto medInntektYtelseType(InntektYtelseType ytelseType) {
+        setInntektYtelseType(ytelseType);
+        return this;
     }
 
     @Override

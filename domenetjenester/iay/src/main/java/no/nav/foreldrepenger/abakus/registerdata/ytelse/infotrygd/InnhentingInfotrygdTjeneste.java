@@ -12,15 +12,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
-import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
@@ -31,7 +29,6 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.Arbei
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.InntektPeriodeReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.RelatertYtelseStatusReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.TemaReverse;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps.TemaUnderkategoriReverse;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.felles.InfotrygdGrunnlagAggregator;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Arbeidsforhold;
@@ -125,8 +122,6 @@ public class InnhentingInfotrygdTjeneste {
         Integer dekningsgrad = grunnlag.dekningsgrad() != null ? grunnlag.dekningsgrad().prosent() : null;
         Arbeidskategori arbeidskategori =
             grunnlag.kategori() == null ? Arbeidskategori.UGYLDIG : ArbeidskategoriReverse.reverseMap(grunnlag.kategori().kode().getKode(), LOG);
-        TemaUnderkategori tuk = grunnlag.behandlingstema() == null ? TemaUnderkategori.UDEFINERT : TemaUnderkategoriReverse.reverseMap(
-            grunnlag.behandlingstema().kode().name());
         YtelseStatus brukStatus = mapYtelseStatus(grunnlag);
         // Ignorer gamle vedtak
         if (brukPeriode.tom().isBefore(innhentFom) && grunnlag.vedtak()
@@ -139,7 +134,6 @@ public class InnhentingInfotrygdTjeneste {
 
         var grunnlagBuilder = InfotrygdYtelseGrunnlag.getBuilder()
             .medYtelseType(bestemYtelseType(grunnlag))
-            .medTemaUnderkategori(tuk)
             .medYtelseStatus(brukStatus)
             .medVedtattTidspunkt(brukIdentdato.atStartOfDay())
             .medVedtaksPeriodeFom(brukPeriode.fom())
@@ -277,7 +271,6 @@ public class InnhentingInfotrygdTjeneste {
 
         var grunnlagBuilder = InfotrygdYtelseGrunnlag.getBuilder()
             .medYtelseType(YtelseType.SYKEPENGER)
-            .medTemaUnderkategori(TemaUnderkategori.SYKEPENGER_SYKEPENGER)
             .medYtelseStatus(YtelseStatus.AVSLUTTET)
             .medVedtaksreferanse(grunnlag.vedtaksreferanse().trim())
             .medVedtattTidspunkt(grunnlag.vedtattTidspunkt() != null ? grunnlag.vedtattTidspunkt() : LocalDateTime.now())

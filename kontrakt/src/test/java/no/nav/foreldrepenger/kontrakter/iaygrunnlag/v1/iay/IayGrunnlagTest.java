@@ -10,13 +10,12 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
-import jakarta.validation.Validation;
-
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import jakarta.validation.Validation;
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
 import no.nav.abakus.iaygrunnlag.FnrPersonident;
@@ -47,6 +46,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.BekreftetPermisjonStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektYtelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
@@ -54,7 +54,6 @@ import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
 import no.nav.abakus.iaygrunnlag.kodeverk.NaturalytelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
-import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseFraOffentligeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtsettelseÅrsakType;
 import no.nav.abakus.iaygrunnlag.kodeverk.VirksomhetType;
@@ -143,13 +142,14 @@ class IayGrunnlagTest {
                         List.of(new AktivitetsAvtaleDto(periode).medSistLønnsendring(fom).medBeskrivelse("beskrivelse").medStillingsprosent(50)))))))
             .medInntekt(List.of(new InntekterDto(fnr).medUtbetalinger(List.of(
                 new UtbetalingDto(InntektskildeType.INNTEKT_SAMMENLIGNING).medArbeidsgiver(org)
-                    .medPoster(List.of(new UtbetalingsPostDto(periode, InntektspostType.LØNN).medUtbetaltYtelseType(utbetaltYtelse)
+                    .medPoster(List.of(new UtbetalingsPostDto(periode, InntektspostType.LØNN)
+                        .medUtbetaltYtelseType(utbetaltYtelse)
+                        .medInntektYtelseType(InntektYtelseType.FORELDREPENGER)
                         .medBeløp(100)
                         .medSkattAvgiftType(SkatteOgAvgiftsregelType.NETTOLØNN)))))))
             .medYtelse(List.of(new YtelserDto(fnr).medYtelser(List.of(
                 new YtelseDto(Fagsystem.FPSAK, ytelseType, periode, YtelseStatus.LØPENDE).medSaksnummer("1234")
                     .medVedtattTidspunkt(LocalDateTime.now().minusDays(1))
-                    .medTemaUnderkategori(TemaUnderkategori.FORELDREPENGER_FODSEL)
                     .medGrunnlag(new YtelseGrunnlagDto().medArbeidskategoriDto(Arbeidskategori.ARBEIDSTAKER)
                         .medOpprinneligIdentDato(fom)
                         .medDekningsgradProsent(100)

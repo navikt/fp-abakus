@@ -1,15 +1,15 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import java.util.Map;
 
 import org.slf4j.Logger;
 
-import java.util.Map;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
 public class TemaReverse {
 
     private static final Map<String, YtelseType> TEMA_MAP = Map.ofEntries(Map.entry("FA", YtelseType.FORELDREPENGER),
-        Map.entry("BS", YtelseType.PÅRØRENDESYKDOM), Map.entry("SP", YtelseType.SYKEPENGER));
+        Map.entry("BS", YtelseType.OMSORGSPENGER), Map.entry("SP", YtelseType.SYKEPENGER));
 
 
     public static YtelseType reverseMap(String kode, Logger logger) {

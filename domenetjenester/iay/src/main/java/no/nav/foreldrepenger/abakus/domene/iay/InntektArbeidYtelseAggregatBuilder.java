@@ -1,16 +1,24 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+
+import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanse;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.*;
 
 /**
  * Builder for å håndtere en gitt versjon {@link VersjonType} av grunnlaget.
@@ -342,11 +350,9 @@ public class InntektArbeidYtelseAggregatBuilder {
         }
 
         public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem,
-                                                        YtelseType type,
-                                                        TemaUnderkategori typeKategori,
-                                                        IntervallEntitet periode,
+                                                        YtelseType type, IntervallEntitet periode,
                                                         Optional<LocalDate> tidligsteAnvistFom) {
-            return kladd.getYtelseBuilderForType(fagsystem, type, typeKategori, periode, tidligsteAnvistFom);
+            return kladd.getYtelseBuilderForType(fagsystem, type, periode, tidligsteAnvistFom);
         }
 
         public void tilbakestillYtelser() {

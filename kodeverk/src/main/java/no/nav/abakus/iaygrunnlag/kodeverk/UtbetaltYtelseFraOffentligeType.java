@@ -15,18 +15,18 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum UtbetaltYtelseFraOffentligeType implements UtbetaltYtelseType {
 
     AAP("AAP", "Arbeidsavklaringspenger", "arbeidsavklaringspenger"),
+    @Deprecated(forRemoval = true) // På vei til DAGPENGER
     DAGPENGER_FISKER("DAGPENGER_FISKER", "Dagpenger til fisker som bare har hyre", "dagpengerTilFiskerSomBareHarHyre"),
+    @Deprecated(forRemoval = true) // På vei til DAGPENGER
     DAGPENGER_ARBEIDSLØS("DAGPENGER_ARBEIDSLØS", "Dagpenger ved arbeidsløshet", "dagpengerVedArbeidsloeshet"),
+    DAGPENGER("DAGPENGER", "Dagpenger arbeid og hyre", null),
     FORELDREPENGER("FORELDREPENGER", "Foreldrepenger", "foreldrepenger"),
     OVERGANGSSTØNAD_ENSLIG("OVERGANGSSTØNAD_ENSLIG", "Overgangsstønad til enslig mor eller far",
         "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere"),
     SVANGERSKAPSPENGER("SVANGERSKAPSPENGER", "Svangerskapspenger", "svangerskapspenger"),
     SYKEPENGER("SYKEPENGER", "Sykepenger", "sykepenger"),
+    @Deprecated(forRemoval = true) // På vei til SYKEPENGER
     SYKEPENGER_FISKER("SYKEPENGER_FISKER", "Sykepenger fisker", "sykepengerTilFiskerSomBareHarHyre"),
-    UFØRETRYGD("UFØRETRYGD", "Uføretrygd", "ufoeretrygd"),
-    UFØRETRYGD_ETTEROPPGJØR("UFØRETRYGD_ETTEROPPGJØR", "Uføretrygd etteroppgjør", "ufoereytelseEtteroppgjoer"),
-    UNDERHOLDNINGSBIDRAG_BARN("UNDERHOLDNINGSBIDRAG_BARN", "Underholdningsbidrag til barn", "underholdsbidragTilBarn"),
-    EKTEFELLE_UFØRE("EKTEFELLE_UFØRE", "Ektefelletillegg Uføretrygd", "ektefelletilleggUfoeretrygd"),
     VENTELØNN("VENTELØNN", "Ventelønn", "venteloenn"),
 
     UDEFINERT("-", "UNDEFINED", null),

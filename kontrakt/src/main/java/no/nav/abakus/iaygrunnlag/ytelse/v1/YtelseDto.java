@@ -1,24 +1,22 @@
 package no.nav.abakus.iaygrunnlag.ytelse.v1;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import no.nav.abakus.iaygrunnlag.Periode;
-import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
-import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
+import no.nav.abakus.iaygrunnlag.Periode;
+import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -49,9 +47,6 @@ public class YtelseDto {
 
     @JsonProperty(value = "vedtattTidspunkt")
     private LocalDateTime vedtattTidspunkt;
-
-    @JsonProperty(value = "temaUnderkategori")
-    private TemaUnderkategori temaUnderkategori;
 
     @JsonProperty(value = "anvisninger")
     @Valid
@@ -132,15 +127,6 @@ public class YtelseDto {
 
     public YtelseStatus getStatus() {
         return status;
-    }
-
-    public TemaUnderkategori getTemaUnderkategori() {
-        return temaUnderkategori;
-    }
-
-    public YtelseDto medTemaUnderkategori(TemaUnderkategori temaUnderkategori) {
-        this.temaUnderkategori = temaUnderkategori == null || TemaUnderkategori.UDEFINERT.equals(temaUnderkategori) ? null : temaUnderkategori;
-        return this;
     }
 
     public YtelseDto medSaksnummer(String saksnummer) {

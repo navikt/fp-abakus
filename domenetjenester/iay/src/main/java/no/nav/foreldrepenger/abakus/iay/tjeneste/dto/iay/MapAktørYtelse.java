@@ -30,8 +30,6 @@ public class MapAktørYtelse {
     private static final Comparator<YtelseDto> COMP_YTELSE = Comparator.comparing(YtelseDto::getSaksnummer,
             Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getYtelseType() == null ? null : dto.getYtelseType().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
-        .thenComparing(dto -> dto.getTemaUnderkategori() == null ? null : dto.getTemaUnderkategori().getKode(),
-            Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
 
@@ -85,11 +83,8 @@ public class MapAktørYtelse {
             var periode = new Periode(ytelse.getPeriode().getFomDato(), ytelse.getPeriode().getTomDato());
             var ytelseType = ytelse.getRelatertYtelseType();
             var ytelseStatus = ytelse.getStatus();
-            var temaUnderkategori = ytelse.getBehandlingsTema();
             var dto = new YtelseDto(fagsystem, ytelseType, periode, ytelseStatus).medSaksnummer(
                 ytelse.getSaksreferanse() == null ? null : ytelse.getSaksreferanse().getVerdi()).medVedtattTidspunkt(ytelse.getVedtattTidspunkt());
-
-            dto.medTemaUnderkategori(temaUnderkategori);
 
             ytelse.getYtelseGrunnlag().ifPresent(gr -> dto.setGrunnlag(mapYtelseGrunnlag(gr)));
 

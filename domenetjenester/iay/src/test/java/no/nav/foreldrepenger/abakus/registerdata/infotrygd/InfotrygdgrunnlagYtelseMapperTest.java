@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
-import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseAnvist;
@@ -31,7 +30,6 @@ class InfotrygdgrunnlagYtelseMapperTest {
         var builder = InfotrygdYtelseGrunnlag.getBuilder()
             .medGradering(utbetalingsgrad)
             .medYtelseType(YtelseType.PLEIEPENGER_SYKT_BARN)
-            .medTemaUnderkategori(TemaUnderkategori.PÅRØRENDE_PLEIEPENGER)
             .medArbeidskategori(Arbeidskategori.KOMBINASJON_ARBEIDSTAKER_OG_DAGPENGER)
             .medVedtaksPeriodeFom(fom)
             .medVedtaksPeriodeTom(tom)
@@ -84,7 +82,6 @@ class InfotrygdgrunnlagYtelseMapperTest {
         var builder = InfotrygdYtelseGrunnlag.getBuilder()
             .medGradering(utbetalingsgrad)
             .medYtelseType(YtelseType.PLEIEPENGER_SYKT_BARN)
-            .medTemaUnderkategori(TemaUnderkategori.PÅRØRENDE_PLEIEPENGER)
             .medArbeidskategori(Arbeidskategori.ARBEIDSTAKER)
             .medVedtaksPeriodeFom(fom)
             .medVedtaksPeriodeTom(tom)

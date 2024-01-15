@@ -19,18 +19,29 @@ import com.fasterxml.jackson.annotation.JsonValue;
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum UtbetaltNæringsYtelseType implements UtbetaltYtelseType {
 
+    @Deprecated(forRemoval = true) // Bruk VEDERLAG
     VEDERLAG_DAGMAMMA_I_EGETHJEM("VEDERLAG_DAGMAMMA_I_EGETHJEM", "Vederlag dagmamma i egethjem", "vederlagDagmammaIEgetHjem"),
     VEDERLAG("VEDERLAG", "Vederlag", "vederlag"),
+    @Deprecated(forRemoval = true) // Bruk SYKEPENGER_NÆRING
     SYKEPENGER_TIL_JORD_OG_SKOGBRUKERE("SYKEPENGER_TIL_JORD_OG_SKOGBRUKERE", "Sykepenger til jord og skogbrukere", "sykepengerTilJordOgSkogbrukere"),
+    @Deprecated(forRemoval = true) // Bruk SYKEPENGER_NÆRING
     SYKEPENGER_TIL_FISKER("SYKEPENGER_TIL_FISKER", "Sykepenger til fisker", "sykepengerTilFisker"),
+    @Deprecated(forRemoval = true) // Bruk SYKEPENGER_NÆRING
     SYKEPENGER_TIL_DAGMAMMA("SYKEPENGER_TIL_DAGMAMMA", "Sykepenger til dagmamma", "sykepengerTilDagmamma"),
+    @Deprecated(forRemoval = true) // Bruk SYKEPENGER_NÆRING
     SYKEPENGER("SYKEPENGER", "Sykepenger (næringsinntekt)", "sykepenger"),
     LOTT_KUN_TRYGDEAVGIFT("LOTT_KUN_TRYGDEAVGIFT", "Lott kun trygdeavgift", "lottKunTrygdeavgift"),
+    @Deprecated(forRemoval = true) // Bruk DAGPENGER_NÆRING
     DAGPENGER_VED_ARBEIDSLØSHET("DAGPENGER_VED_ARBEIDSLØSHET", "Dagpenger ved arbeidsløshet", "dagpengerVedArbeidsloeshet"),
+    @Deprecated(forRemoval = true) // Bruk DAGPENGER_NÆRING
     DAGPENGER_TIL_FISKER("DAGPENGER_TIL_FISKER", "Dagpenger til fisker", "dagpengerTilFisker"),
     ANNET("ANNET", "Annet", "annet"),
     KOMPENSASJON_FOR_TAPT_PERSONINNTEKT("KOMPENSASJON_FOR_TAPT_PERSONINNTEKT", "Kompensasjon for tapt personinntekt",
         "kompensasjonForTaptPersoninntekt"),
+
+    SYKEPENGER_NÆRING("SYKEPENGER_NÆRING", "Sykepenger næring", null),
+    DAGPENGER_NÆRING("DAGPENGER_NÆRING", "Dagpenger næring", null),
+
     UDEFINERT("-", "Udefinert", null),
     ;
 

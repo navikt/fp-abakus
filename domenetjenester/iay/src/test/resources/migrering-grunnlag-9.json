@@ -1778,10 +1778,6 @@
           "kodeverk" : "YTELSE_STATUS",
           "kode" : "AVSLU"
         },
-        "temaUnderkategori" : {
-          "kodeverk" : "TemaUnderkategori",
-          "kode" : "SP"
-        },
         "anvisninger" : [ {
           "periode" : {
             "fom" : "2018-10-17",
@@ -1828,10 +1824,6 @@
         "status" : {
           "kodeverk" : "YTELSE_STATUS",
           "kode" : "AVSLU"
-        },
-        "temaUnderkategori" : {
-          "kodeverk" : "TemaUnderkategori",
-          "kode" : "SP"
         },
         "anvisninger" : [ {
           "periode" : {

@@ -22,10 +22,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
-import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -148,13 +146,11 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
     }
 
     YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem,
-                                          YtelseType type,
-                                          TemaUnderkategori typeKategori,
-                                          IntervallEntitet periode,
+                                          YtelseType type, IntervallEntitet periode,
                                           Optional<LocalDate> tidligsteAnvistFom) {
         // OBS kan være flere med samme Tema/TUK+FOM: Konvensjon ifm rammevedtak BS
         List<Ytelse> aktuelleYtelser = getAlleYtelser().stream()
-            .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type) && ya.getBehandlingsTema().equals(typeKategori)
+            .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type)
                 && (periode.getFomDato().equals(ya.getPeriode().getFomDato())))
             .collect(Collectors.toList());
         Optional<Ytelse> ytelse = aktuelleYtelser.stream().filter(ya -> periode.equals(ya.getPeriode())).findFirst();
@@ -169,7 +165,7 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
                 ytelse = aktuelleYtelser.stream().filter(yt -> yt.getYtelseAnvist().isEmpty()).findFirst();
             }
         }
-        return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medPeriode(periode).medBehandlingsTema(typeKategori);
+        return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medPeriode(periode);
     }
 
     void leggTilYtelse(Ytelse ytelse) {

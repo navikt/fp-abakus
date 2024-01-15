@@ -863,7 +863,6 @@
           "tom" : "2018-12-17"
         },
         "status" : "AVSLU",
-        "temaUnderkategori" : "SP",
         "anvisninger" : [ {
           "periode" : {
             "fom" : "2018-11-08",
@@ -932,7 +931,6 @@
           "tom" : "2018-11-07"
         },
         "status" : "AVSLU",
-        "temaUnderkategori" : "SV",
         "anvisninger" : [ {
           "periode" : {
             "fom" : "2018-10-18",
@@ -961,7 +959,6 @@
           "tom" : "2018-07-23"
         },
         "status" : "AVSLU",
-        "temaUnderkategori" : "SP",
         "anvisninger" : [ {
           "periode" : {
             "fom" : "2018-07-03",
@@ -989,7 +986,6 @@
           "tom" : "2019-01-18"
         },
         "status" : "AVSLU",
-        "temaUnderkategori" : "SV",
         "anvisninger" : [ {
           "periode" : {
             "fom" : "2018-12-18",

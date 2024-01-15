@@ -261,10 +261,6 @@
                 "kodeverk": "YTELSE_STATUS",
                 "kode": "AVSLU"
               },
-              "temaUnderkategori": {
-                "kodeverk": "TemaUnderkategori",
-                "kode": "FØ"
-              },
               "anvisninger": []
             }
           ]

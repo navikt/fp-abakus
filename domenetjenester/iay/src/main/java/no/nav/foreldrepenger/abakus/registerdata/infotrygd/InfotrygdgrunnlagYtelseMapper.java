@@ -33,9 +33,7 @@ public class InfotrygdgrunnlagYtelseMapper {
                                                                 InfotrygdYtelseGrunnlag grunnlag) {
         IntervallEntitet periode = utledPeriodeNårTomMuligFørFom(grunnlag.getVedtaksPeriodeFom(), grunnlag.getVedtaksPeriodeTom());
         var tidligsteAnvist = grunnlag.getUtbetaltePerioder().stream().map(InfotrygdYtelseAnvist::getUtbetaltFom).min(Comparator.naturalOrder());
-        YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.INFOTRYGD, grunnlag.getYtelseType(),
-                grunnlag.getTemaUnderkategori(), periode, tidligsteAnvist)
-            .medBehandlingsTema(grunnlag.getTemaUnderkategori())
+        YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.INFOTRYGD, grunnlag.getYtelseType(), periode, tidligsteAnvist)
             .medVedtattTidspunkt(grunnlag.getVedtattTidspunkt())
             .medStatus(grunnlag.getYtelseStatus());
         var segmenter = grunnlag.getUtbetaltePerioder().stream().map(v -> {
@@ -61,8 +59,7 @@ public class InfotrygdgrunnlagYtelseMapper {
         IntervallEntitet periode = utledPeriodeNårTomMuligFørFom(grunnlag.getVedtaksPeriodeFom(), grunnlag.getVedtaksPeriodeTom());
         var tidligsteAnvist = grunnlag.getUtbetaltePerioder().stream().map(InfotrygdYtelseAnvist::getUtbetaltFom).min(Comparator.naturalOrder());
         YtelseBuilder ytelseBuilder = InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder.oppdatere(Optional.empty())
-            .getYtelselseBuilderForType(Fagsystem.INFOTRYGD, grunnlag.getYtelseType(), grunnlag.getTemaUnderkategori(), periode, tidligsteAnvist)
-            .medBehandlingsTema(grunnlag.getTemaUnderkategori())
+            .getYtelselseBuilderForType(Fagsystem.INFOTRYGD, grunnlag.getYtelseType(), periode, tidligsteAnvist)
             .medVedtattTidspunkt(grunnlag.getVedtattTidspunkt())
             .medStatus(grunnlag.getYtelseStatus());
         var unikePerioder = grunnlag.getUtbetaltePerioder()

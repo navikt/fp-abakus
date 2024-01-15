@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
-import no.nav.abakus.iaygrunnlag.kodeverk.TemaUnderkategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
@@ -72,11 +71,6 @@ public class YtelseBuilder {
         return this;
     }
 
-    public YtelseBuilder medBehandlingsTema(TemaUnderkategori behandlingsTema) {
-        ytelse.setBehandlingsTema(behandlingsTema);
-        return this;
-    }
-
     public IntervallEntitet getPeriode() {
         return ytelse.getPeriode();
     }
@@ -86,17 +80,7 @@ public class YtelseBuilder {
     }
 
     public Ytelse build() {
-        verifiserTemaOgUnderkategori(ytelse.getRelatertYtelseType(), ytelse.getBehandlingsTema());
         return ytelse;
-    }
-
-    private void verifiserTemaOgUnderkategori(YtelseType relatertYtelseType, TemaUnderkategori behandlingsTema) {
-        if (YtelseType.PÅRØRENDESYKDOM.equals(relatertYtelseType)) {
-            // Må ha tema underkategori når ytelsetypen er pleiepenger
-            if (TemaUnderkategori.UDEFINERT.equals(behandlingsTema)) {
-                throw new IllegalStateException("Må han tema underkategori når yteletype er pleiepenger");
-            }
-        }
     }
 
     public YtelseAnvistBuilder getAnvistBuilder() {
