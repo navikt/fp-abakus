@@ -151,7 +151,7 @@ public class UtbetalingsPostDto {
 
 
     public void setInntektYtelseType(InntektYtelseType ytelseType) {
-        this.ytelseType = ytelseType == null ? null : new WrapUtbetaltYtelse(ytelseType.getKode(), ytelseType.getKodeverk());
+        this.inntektYtelseType = ytelseType;
     }
 
     public UtbetalingsPostDto medInntektYtelseType(InntektYtelseType ytelseType) {
