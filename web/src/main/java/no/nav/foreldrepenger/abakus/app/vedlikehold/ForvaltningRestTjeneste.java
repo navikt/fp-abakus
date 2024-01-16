@@ -4,11 +4,9 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.DRIFT;
 import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.GRUNNLAG;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,21 +24,12 @@ import jakarta.ws.rs.core.Response;
 import no.nav.abakus.iaygrunnlag.UuidDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltNæringsYtelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseFraOffentligeType;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanse;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ForvaltningReferanseTjeneste;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.ForvaltningEndreInternReferanse;
-import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittEgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
-import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
-import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
-import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
@@ -58,7 +47,6 @@ public class ForvaltningRestTjeneste {
     private static final String GJELDENDE = "gjeldende";
 
     private InntektArbeidYtelseTjeneste iayTjeneste;
-    private KoblingTjeneste koblingTjeneste;
 
     private EntityManager entityManager;
 
@@ -67,10 +55,9 @@ public class ForvaltningRestTjeneste {
     }
 
     @Inject
-    public ForvaltningRestTjeneste(EntityManager entityManager, InntektArbeidYtelseTjeneste iayTjeneste, KoblingTjeneste koblingTjeneste) {
+    public ForvaltningRestTjeneste(EntityManager entityManager, InntektArbeidYtelseTjeneste iayTjeneste) {
         this.entityManager = entityManager;
         this.iayTjeneste = iayTjeneste;
-        this.koblingTjeneste = koblingTjeneste;
     }
 
     @POST
@@ -164,19 +151,6 @@ public class ForvaltningRestTjeneste {
     }
 
     @POST
-    @Path("/migrerArbeidsforholdRefForSak")
-    @Consumes(APPLICATION_JSON)
-    @Produces(APPLICATION_JSON)
-    @Operation(description = "UPDATE: Endrer referanser på IM til referanse som finnes i aareg ved match med ignore case", tags = "FORVALTNING")
-    @BeskyttetRessurs(actionType = ActionType.CREATE, resource = DRIFT)
-    public Response migrerArbeidsforholdRefForSak(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AbacDataSupplier.class) @NotNull @Valid UuidDto koblingReferanse) {
-        var feilTilRiktigMap = finnMappingFraGammelTilNyReferanse(koblingReferanse);
-        var kobling = koblingTjeneste.hentFor(new KoblingReferanse(koblingReferanse.getReferanse()));
-        migrerAlleGrunnlagPåKobling(kobling.orElseThrow(), feilTilRiktigMap);
-        return Response.ok().build();
-    }
-
-    @POST
     @Path("/migrerInntektspostNæring")
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
@@ -219,6 +193,18 @@ public class ForvaltningRestTjeneste {
         return Response.ok(antall).build();
     }
 
+    @POST
+    @Path("/slettInntektspostUføre")
+    @Consumes(APPLICATION_JSON)
+    @Produces(APPLICATION_JSON)
+    @Operation(description = "UPDATE: Endrer referanser på IM til referanse som finnes i aareg ved match med ignore case", tags = "FORVALTNING")
+    @BeskyttetRessurs(actionType = ActionType.CREATE, resource = DRIFT)
+    public Response slettInntektspostUføre() {
+        int antall = entityManager.createNativeQuery("DELETE FROM IAY_INNTEKTSPOST WHERE ytelse_type in  ('UFØRETRYGD','UFØRETRYGD_ETTEROPPGJØR')")
+            .executeUpdate();
+        return Response.ok(antall).build();
+    }
+
     private int oppdaterInntektsPost(String kodeverk, String gammel, String nykode) {
         return entityManager.createNativeQuery("UPDATE IAY_INNTEKTSPOST SET ytelse_type = :nykode WHERE KL_ytelse_type = :kodeverk and ytelse_type = :gammelkode")
             .setParameter("kodeverk", kodeverk)
@@ -226,120 +212,6 @@ public class ForvaltningRestTjeneste {
             .setParameter("nykode", nykode)
             .executeUpdate();
     }
-
-    private Map<String, ArbeidsforholdReferanse> finnMappingFraGammelTilNyReferanse(UuidDto koblingReferanse) {
-        var inntektArbeidYtelseGrunnlag = iayTjeneste.hentAggregat(new KoblingReferanse(koblingReferanse.getReferanse()));
-        var arbeidsforholdInformasjonOpt = inntektArbeidYtelseGrunnlag.getArbeidsforholdInformasjon();
-        var arbeidsforholdInformasjon = arbeidsforholdInformasjonOpt.orElseThrow();
-        var referanserForKobling = arbeidsforholdInformasjon.getArbeidsforholdReferanser();
-        var referansePrArbeidsgiverMap = referanserForKobling.stream().collect(Collectors.groupingBy(ArbeidsforholdReferanse::getArbeidsgiver));
-
-        var likeReferanserIgnoreCase = referanserForKobling.stream()
-            .filter(r -> referansePrArbeidsgiverMap.get(r.getArbeidsgiver()).stream().anyMatch(r2 -> likeHvisIgnoreCaseEllersIkke(r, r2)))
-            .collect(Collectors.toSet());
-
-        var alleYrkesaktiviteter = inntektArbeidYtelseGrunnlag.getRegisterVersjon()
-            .stream()
-            .flatMap(i -> i.getAktørArbeid().stream())
-            .flatMap(a -> a.hentAlleYrkesaktiviteter().stream())
-            .collect(Collectors.toSet());
-
-        var alleInntektsmeldinger = inntektArbeidYtelseGrunnlag.getInntektsmeldinger()
-            .map(InntektsmeldingAggregat::getInntektsmeldinger)
-            .orElse(Collections.emptyList());
-
-        var referanserFraInntektsmelding = likeReferanserIgnoreCase.stream()
-            .filter(r -> alleInntektsmeldinger.stream()
-                .anyMatch(im -> im.getArbeidsforholdRef().getReferanse() != null && im.getArbeidsforholdRef()
-                    .getReferanse()
-                    .equals(r.getInternReferanse().getReferanse())))
-            .collect(Collectors.toSet());
-
-        var referanserFraAareg = likeReferanserIgnoreCase.stream()
-            .filter(r -> alleYrkesaktiviteter.stream()
-                .anyMatch(y -> y.getArbeidsforholdRef().getReferanse() != null && y.getArbeidsforholdRef()
-                    .getReferanse()
-                    .equals(r.getInternReferanse().getReferanse())))
-            .collect(Collectors.toSet());
-
-        var referanserFraInntektsmeldingSomIkkeErIAareg = referanserFraInntektsmelding.stream()
-            .filter(r -> referanserFraAareg.stream()
-                .noneMatch(r2 -> r2.getEksternReferanse().getReferanse().equals(r.getEksternReferanse().getReferanse())))
-            .collect(Collectors.toSet());
-
-        return referanserFraInntektsmeldingSomIkkeErIAareg.stream()
-            .collect(Collectors.toMap(r -> r.getInternReferanse().getReferanse(),
-                r -> referanserFraAareg.stream().filter(r2 -> likeHvisIgnoreCaseEllersIkke(r, r2)).findFirst().orElseThrow()));
-    }
-
-    private void migrerAlleGrunnlagPåKobling(Kobling kobling, Map<String, ArbeidsforholdReferanse> feilTilRiktigMap) {
-        var alleIayGrunnlag = iayTjeneste.hentAlleGrunnlagFor(kobling.getAktørId(), kobling.getSaksnummer(), kobling.getYtelseType(), false);
-        for (var gr : alleIayGrunnlag) {
-            migrerGrunnlag(feilTilRiktigMap, gr);
-        }
-    }
-
-    private void migrerGrunnlag(Map<String, ArbeidsforholdReferanse> feilTilRiktigMap, InntektArbeidYtelseGrunnlag gr) {
-        var inntektsmeldinger = gr.getInntektsmeldinger().stream().flatMap(im -> im.getInntektsmeldinger().stream()).toList();
-        var informasjonOpt = gr.getArbeidsforholdInformasjon();
-        inntektsmeldinger.forEach(im -> fjernFeilReferanseDersomEksisterer(feilTilRiktigMap, im));
-        if (informasjonOpt.isPresent()) {
-            // Fjerner referanse fra informasjon
-            var informasjon = informasjonOpt.get();
-            fjernFeilOgLeggTilRiktig(feilTilRiktigMap, informasjon);
-        }
-    }
-
-    private void fjernFeilReferanseDersomEksisterer(Map<String, ArbeidsforholdReferanse> feilTilRiktigMap, Inntektsmelding im) {
-        if (harFeilInternReferanse(feilTilRiktigMap, im)) {
-            var feilReferanse = im.getArbeidsforholdRef();
-            var riktigReferanse = feilTilRiktigMap.get(feilReferanse.getReferanse());
-            // Endrer referanse for IM
-            ForvaltningEndreInternReferanse.endreReferanse(im, riktigReferanse.getInternReferanse());
-            entityManager.persist(im);
-        }
-    }
-
-    private void fjernFeilOgLeggTilRiktig(Map<String, ArbeidsforholdReferanse> feilTilRiktigMap, ArbeidsforholdInformasjon informasjon) {
-        if (harFeilReferanse(feilTilRiktigMap, informasjon)) {
-            informasjon.getArbeidsforholdReferanser()
-                .stream()
-                .filter(r -> feilTilRiktigMap.containsKey(r.getInternReferanse().getReferanse()))
-                .forEach(ref -> {
-                    var riktigReferanse = feilTilRiktigMap.get(ref.getInternReferanse().getReferanse());
-                    var deleteQuery = entityManager.createNativeQuery("DELETE FROM IAY_ARBEIDSFORHOLD_REFER WHERE ID = :sletteId")
-                        .setParameter("sletteId", ref.getId());
-                    deleteQuery.executeUpdate();
-                    if (!harInformasjonRiktigReferanse(informasjon, riktigReferanse.getInternReferanse())) {
-                        var kopi = new ArbeidsforholdReferanse(riktigReferanse.getArbeidsgiver(), riktigReferanse.getInternReferanse(),
-                            riktigReferanse.getEksternReferanse());
-                        ForvaltningReferanseTjeneste.leggTilReferanse(informasjon, kopi);
-                    }
-                });
-            entityManager.persist(informasjon);
-        }
-    }
-
-    private boolean harFeilReferanse(Map<String, ArbeidsforholdReferanse> feilTilRiktigMap, ArbeidsforholdInformasjon informasjon) {
-        return informasjon.getArbeidsforholdReferanser().stream().anyMatch(r -> feilTilRiktigMap.containsKey(r.getInternReferanse().getReferanse()));
-    }
-
-    private boolean harInformasjonRiktigReferanse(ArbeidsforholdInformasjon informasjon, InternArbeidsforholdRef riktigReferanse) {
-        return informasjon.getArbeidsforholdReferanser().stream().anyMatch(r -> r.getInternReferanse().equals(riktigReferanse));
-    }
-
-    private boolean harFeilInternReferanse(Map<String, ArbeidsforholdReferanse> feilTilRiktigMap, Inntektsmelding im) {
-        return im.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold() && feilTilRiktigMap.keySet()
-            .stream()
-            .anyMatch(r -> r.equals(im.getArbeidsforholdRef().getReferanse()));
-    }
-
-    private boolean likeHvisIgnoreCaseEllersIkke(ArbeidsforholdReferanse r, ArbeidsforholdReferanse r2) {
-        return !r2.getEksternReferanse().getReferanse().equals(r.getEksternReferanse().getReferanse()) && r2.getEksternReferanse()
-            .getReferanse()
-            .equalsIgnoreCase(r.getEksternReferanse().getReferanse());
-    }
-
 
     private int oppdaterAktørIdFor(String gammel, String gjeldende) {
         int antall = 0;
