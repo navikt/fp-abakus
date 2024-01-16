@@ -19,12 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektYtelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
-import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltNæringsYtelseType;
-import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltPensjonTrygdType;
-import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseFraOffentligeType;
-import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtaleBuilder;
@@ -431,15 +428,15 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
     }
 
 
-    private UtbetaltYtelseType mapTilKodeliste(Månedsinntekt månedsinntekt) {
+    private InntektYtelseType mapTilKodeliste(Månedsinntekt månedsinntekt) {
         if (månedsinntekt.getPensjonKode() != null) {
-            return UtbetaltPensjonTrygdType.finnForKodeverkEiersKode(månedsinntekt.getPensjonKode());
+            return InntektYtelseType.finnForKodeverkEiersKode(InntektYtelseType.Kategori.TRYGD, månedsinntekt.getPensjonKode());
         } else if (månedsinntekt.getYtelseKode() != null) {
-            return UtbetaltYtelseFraOffentligeType.finnForKodeverkEiersKode(månedsinntekt.getYtelseKode());
+            return InntektYtelseType.finnForKodeverkEiersKode(InntektYtelseType.Kategori.YTELSE, månedsinntekt.getYtelseKode());
         } else if (månedsinntekt.getNæringsinntektKode() != null) {
-            return UtbetaltNæringsYtelseType.finnForKodeverkEiersKode(månedsinntekt.getNæringsinntektKode());
+            return InntektYtelseType.finnForKodeverkEiersKode(InntektYtelseType.Kategori.NÆRING, månedsinntekt.getNæringsinntektKode());
         }
-        return UtbetaltYtelseFraOffentligeType.UDEFINERT;
+        return null;
     }
 
 
