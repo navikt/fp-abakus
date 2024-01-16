@@ -17,7 +17,6 @@ public enum InntektsmeldingInnsendingsårsakType implements Kodeverdi {
     UDEFINERT("-", "UDEFINERT"),
     ;
 
-    public static final String KODEVERK = "INNTEKTSMELDING_INNSENDINGSAARSAK";
     private static final Map<String, InntektsmeldingInnsendingsårsakType> KODER = new LinkedHashMap<>();
 
     static {
@@ -28,12 +27,12 @@ public enum InntektsmeldingInnsendingsårsakType implements Kodeverdi {
         }
     }
 
-    private String navn;
+    private final String navn;
 
     @JsonValue
-    private String kode;
+    private final String kode;
 
-    private InntektsmeldingInnsendingsårsakType(String kode, String navn) {
+    InntektsmeldingInnsendingsårsakType(String kode, String navn) {
         this.kode = kode;
         this.navn = navn;
     }
@@ -50,14 +49,8 @@ public enum InntektsmeldingInnsendingsårsakType implements Kodeverdi {
         return Collections.unmodifiableMap(KODER);
     }
 
-    @Override
     public String getNavn() {
         return navn;
-    }
-
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
     }
 
     @Override

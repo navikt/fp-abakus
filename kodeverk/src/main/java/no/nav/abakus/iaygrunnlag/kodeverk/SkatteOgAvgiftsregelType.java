@@ -25,9 +25,6 @@ public enum SkatteOgAvgiftsregelType implements Kodeverdi {
     UDEFINERT("-", "Udefinert", "Ikke definert"),
     ;
 
-    public static final String KODEVERK = "SKATTE_OG_AVGIFTSREGEL";
-    @Deprecated
-    public static final String DISCRIMINATOR = "SKATTE_OG_AVGIFTSREGEL";
     private static final Map<String, SkatteOgAvgiftsregelType> KODER = new LinkedHashMap<>();
 
     static {
@@ -38,18 +35,14 @@ public enum SkatteOgAvgiftsregelType implements Kodeverdi {
         }
     }
 
-    private String navn;
+    private final String navn;
 
     @JsonValue
-    private String kode;
+    private final String kode;
 
-    private String offisiellKode;
+    private final String offisiellKode;
 
-    private SkatteOgAvgiftsregelType(String kode) {
-        this.kode = kode;
-    }
-
-    private SkatteOgAvgiftsregelType(String kode, String navn, String offisiellKode) {
+    SkatteOgAvgiftsregelType(String kode, String navn, String offisiellKode) {
         this.kode = kode;
         this.navn = navn;
         this.offisiellKode = offisiellKode;
@@ -70,14 +63,8 @@ public enum SkatteOgAvgiftsregelType implements Kodeverdi {
         return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
-    @Override
     public String getNavn() {
         return navn;
-    }
-
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
     }
 
     @Override

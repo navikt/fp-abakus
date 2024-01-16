@@ -7,18 +7,16 @@ import java.util.Locale.IsoCountryCode;
 import java.util.Map;
 import java.util.Objects;
 
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public class Landkode implements Kodeverdi {
-    private static final String KODEVERK = "LANDKODER";
-
     private static final Map<String, Landkode> KODER = initKoder();
 
     public static final Landkode NOR = fraKode("NOR");
@@ -37,9 +35,6 @@ public class Landkode implements Kodeverdi {
     @Size(max = 3)
     @Pattern(regexp = "^[\\p{Alnum}]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String kode;
-
-    Landkode() {
-    }
 
     private Landkode(String kode) {
         this.kode = kode;
@@ -84,11 +79,6 @@ public class Landkode implements Kodeverdi {
     @Override
     public String getKode() {
         return kode;
-    }
-
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
     }
 
     @Override

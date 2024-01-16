@@ -2,10 +2,10 @@ package no.nav.abakus.iaygrunnlag.kodeverk;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -37,7 +37,6 @@ public enum NaturalytelseType implements Kodeverdi {
     UDEFINERT("-", "Ikke definert", null),
     ;
 
-    public static final String KODEVERK = "NATURAL_YTELSE_TYPE";
     private static final Map<String, NaturalytelseType> KODER = new LinkedHashMap<>();
 
     static {
@@ -49,18 +48,14 @@ public enum NaturalytelseType implements Kodeverdi {
     }
 
 
-    private String navn;
+    private final String navn;
 
     @JsonValue
-    private String kode;
+    private final String kode;
 
-    private String offisiellKode;
+    private final String offisiellKode;
 
-    private NaturalytelseType(String kode) {
-        this.kode = kode;
-    }
-
-    private NaturalytelseType(String kode, String navn, String offisiellKode) {
+    NaturalytelseType(String kode, String navn, String offisiellKode) {
         this.kode = kode;
         this.navn = navn;
         this.offisiellKode = offisiellKode;
@@ -78,17 +73,11 @@ public enum NaturalytelseType implements Kodeverdi {
     }
 
     public static NaturalytelseType finnForKodeverkEiersKode(String offisiellDokumentType) {
-        return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
+        return Stream.of(values()).filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
-    @Override
     public String getNavn() {
         return navn;
-    }
-
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
     }
 
     @Override

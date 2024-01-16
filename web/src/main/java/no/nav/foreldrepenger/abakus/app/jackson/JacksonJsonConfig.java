@@ -4,18 +4,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import jakarta.ws.rs.ext.ContextResolver;
-import jakarta.ws.rs.ext.Provider;
-
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.KodeValidator;
+import jakarta.ws.rs.ext.ContextResolver;
+import jakarta.ws.rs.ext.Provider;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 import no.nav.foreldrepenger.abakus.app.IndexClasses;
 
@@ -36,9 +33,6 @@ public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {
         // TODO (u139158): PK-44270 Diskutere med Front-end, ønsker i utgangpunktet å fjerne null, men hva med Javascript
         // KodelisteSerializer og KodeverkSerializer bør i tilfelle også støtte JsonInclude.Include.*
         // objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-        var std = new InjectableValues.Std();
-        std.addValue(KodeValidator.class, KodeValidator.HAPPY_VALIDATOR);
-        objectMapper.setInjectableValues(std);
 
         registerSubTypesDynamically();
     }

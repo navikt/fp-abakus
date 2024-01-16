@@ -39,7 +39,7 @@ public enum YtelseType implements Kodeverdi {
     /**
      * Folketrygdloven K11 ytelser.
      */
-    ARBEIDSAVKLARINGSPENGER("AAP"),
+    ARBEIDSAVKLARINGSPENGER("AAP", "Arbeidsavklaringspenger"),
 
     /**
      * Folketrygdloven K14 ytelser.
@@ -56,8 +56,6 @@ public enum YtelseType implements Kodeverdi {
     UDEFINERT("-", "Ikke definert"),
     ;
 
-    public static final String KODEVERK = "FAGSAK_YTELSE_TYPE";
-
     private static final Map<String, YtelseType> KODER = new LinkedHashMap<>();
 
     static {
@@ -68,16 +66,12 @@ public enum YtelseType implements Kodeverdi {
         }
     }
 
-    private String navn;
+    private final String navn;
 
     @JsonValue
-    private String kode;
+    private final String kode;
 
-    private YtelseType(String kode) {
-        this.kode = kode;
-    }
-
-    private YtelseType(String kode, String navn) {
+    YtelseType(String kode, String navn) {
         this.kode = kode;
         this.navn = navn;
     }
@@ -103,12 +97,6 @@ public enum YtelseType implements Kodeverdi {
         return kode;
     }
 
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
-    }
-
-    @Override
     public String getNavn() {
         return navn;
     }

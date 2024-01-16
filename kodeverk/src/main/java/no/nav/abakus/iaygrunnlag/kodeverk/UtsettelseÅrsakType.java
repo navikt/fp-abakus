@@ -20,7 +20,6 @@ public enum UtsettelseÅrsakType implements Kodeverdi {
     UDEFINERT("-", "Ikke satt eller valgt kode"),
     ;
 
-    public static final String KODEVERK = "UTSETTELSE_AARSAK_TYPE";
     private static final Map<String, UtsettelseÅrsakType> KODER = new LinkedHashMap<>();
 
     static {
@@ -32,9 +31,9 @@ public enum UtsettelseÅrsakType implements Kodeverdi {
     }
 
 
-    private String navn;
+    private final String navn;
     @JsonValue
-    private String kode;
+    private final String kode;
 
     UtsettelseÅrsakType(String kode, String navn) {
         this.kode = kode;
@@ -52,14 +51,8 @@ public enum UtsettelseÅrsakType implements Kodeverdi {
         return Collections.unmodifiableMap(KODER);
     }
 
-    @Override
     public String getNavn() {
         return navn;
-    }
-
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
     }
 
     @Override

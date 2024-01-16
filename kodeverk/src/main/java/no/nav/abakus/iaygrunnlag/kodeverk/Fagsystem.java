@@ -43,8 +43,6 @@ public enum Fagsystem implements Kodeverdi {
     UDEFINERT("-", "Ikke definert", null),
     ;
 
-    public static final String KODEVERK = "FAGSYSTEM";
-
     private static final Map<String, Fagsystem> KODER = new LinkedHashMap<>();
 
     static {
@@ -55,20 +53,12 @@ public enum Fagsystem implements Kodeverdi {
         }
     }
 
-    private String navn;
-    private String offisiellKode;
+    private final String navn;
+    private final String offisiellKode;
     @JsonValue
-    private String kode;
+    private final String kode;
 
-    Fagsystem() {
-        // Hibernate trenger den
-    }
-
-    private Fagsystem(String kode) {
-        this.kode = kode;
-    }
-
-    private Fagsystem(String kode, String navn, String offisiellKode) {
+    Fagsystem(String kode, String navn, String offisiellKode) {
         this.kode = kode;
         this.navn = navn;
         this.offisiellKode = offisiellKode;
@@ -85,7 +75,6 @@ public enum Fagsystem implements Kodeverdi {
         return Collections.unmodifiableMap(KODER);
     }
 
-    @Override
     public String getNavn() {
         return navn;
     }
@@ -93,11 +82,6 @@ public enum Fagsystem implements Kodeverdi {
     @Override
     public String getOffisiellKode() {
         return offisiellKode;
-    }
-
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
     }
 
     @Override

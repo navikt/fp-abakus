@@ -13,7 +13,6 @@ import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
@@ -36,7 +35,6 @@ public enum ArbeidsforholdHandlingType implements Kodeverdi {
     INNTEKT_IKKE_MED_I_BG("INNTEKT_IKKE_MED_I_BG", "Inntekten til arbeidsforholdet skal ikke være med i beregningsgrunnlaget", false),
     ;
 
-    public static final String KODEVERK = "ARBEIDSFORHOLD_HANDLING_TYPE";
     private static final Map<String, ArbeidsforholdHandlingType> KODER = new LinkedHashMap<>();
 
     static {
@@ -47,15 +45,14 @@ public enum ArbeidsforholdHandlingType implements Kodeverdi {
         }
     }
 
-    private String navn;
+    private final String navn;
 
-    @JsonIgnore
-    private boolean readOnly;
+    private final boolean readOnly;
 
     @JsonValue
-    private String kode;
+    private final String kode;
 
-    private ArbeidsforholdHandlingType(String kode, String navn, boolean readOnly) {
+    ArbeidsforholdHandlingType(String kode, String navn, boolean readOnly) {
         this.kode = kode;
         this.navn = navn;
         this.readOnly = readOnly;
@@ -72,14 +69,8 @@ public enum ArbeidsforholdHandlingType implements Kodeverdi {
         return Collections.unmodifiableMap(KODER);
     }
 
-    @Override
     public String getNavn() {
         return navn;
-    }
-
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
     }
 
     @Override
