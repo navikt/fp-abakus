@@ -436,8 +436,10 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
             return UtbetaltPensjonTrygdType.finnForKodeverkEiersKode(månedsinntekt.getPensjonKode());
         } else if (månedsinntekt.getYtelseKode() != null) {
             return UtbetaltYtelseFraOffentligeType.finnForKodeverkEiersKode(månedsinntekt.getYtelseKode());
+        } else if (månedsinntekt.getNæringsinntektKode() != null) {
+            return UtbetaltNæringsYtelseType.finnForKodeverkEiersKode(månedsinntekt.getNæringsinntektKode());
         }
-        return UtbetaltNæringsYtelseType.finnForKodeverkEiersKode(månedsinntekt.getNæringsinntektKode());
+        return UtbetaltYtelseFraOffentligeType.UDEFINERT;
     }
 
 
