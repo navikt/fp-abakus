@@ -20,29 +20,29 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum UtbetaltNæringsYtelseType implements UtbetaltYtelseType {
 
     @Deprecated(forRemoval = true) // Bruk VEDERLAG
-    VEDERLAG_DAGMAMMA_I_EGETHJEM("VEDERLAG_DAGMAMMA_I_EGETHJEM", "Vederlag dagmamma i egethjem", "vederlagDagmammaIEgetHjem"),
-    VEDERLAG("VEDERLAG", "Vederlag", "vederlag"),
+    VEDERLAG_DAGMAMMA_I_EGETHJEM("VEDERLAG_DAGMAMMA_I_EGETHJEM", "Vederlag dagmamma i egethjem", List.of()),
+    VEDERLAG("VEDERLAG", "Vederlag", List.of("vederlag", "vederlagDagmammaIEgetHjem")),
     @Deprecated(forRemoval = true) // Bruk SYKEPENGER_NÆRING
-    SYKEPENGER_TIL_JORD_OG_SKOGBRUKERE("SYKEPENGER_TIL_JORD_OG_SKOGBRUKERE", "Sykepenger til jord og skogbrukere", "sykepengerTilJordOgSkogbrukere"),
+    SYKEPENGER_TIL_JORD_OG_SKOGBRUKERE("SYKEPENGER_TIL_JORD_OG_SKOGBRUKERE", "Sykepenger til jord og skogbrukere", List.of()),
     @Deprecated(forRemoval = true) // Bruk SYKEPENGER_NÆRING
-    SYKEPENGER_TIL_FISKER("SYKEPENGER_TIL_FISKER", "Sykepenger til fisker", "sykepengerTilFisker"),
+    SYKEPENGER_TIL_FISKER("SYKEPENGER_TIL_FISKER", "Sykepenger til fisker", List.of()),
     @Deprecated(forRemoval = true) // Bruk SYKEPENGER_NÆRING
-    SYKEPENGER_TIL_DAGMAMMA("SYKEPENGER_TIL_DAGMAMMA", "Sykepenger til dagmamma", "sykepengerTilDagmamma"),
+    SYKEPENGER_TIL_DAGMAMMA("SYKEPENGER_TIL_DAGMAMMA", "Sykepenger til dagmamma", List.of()),
     @Deprecated(forRemoval = true) // Bruk SYKEPENGER_NÆRING
-    SYKEPENGER("SYKEPENGER", "Sykepenger (næringsinntekt)", "sykepenger"),
+    SYKEPENGER("SYKEPENGER", "Sykepenger (næringsinntekt)", List.of()),
     LOTT_KUN_TRYGDEAVGIFT("LOTT_KUN_TRYGDEAVGIFT", "Lott kun trygdeavgift", "lottKunTrygdeavgift"),
     @Deprecated(forRemoval = true) // Bruk DAGPENGER_NÆRING
-    DAGPENGER_VED_ARBEIDSLØSHET("DAGPENGER_VED_ARBEIDSLØSHET", "Dagpenger ved arbeidsløshet", "dagpengerVedArbeidsloeshet"),
+    DAGPENGER_VED_ARBEIDSLØSHET("DAGPENGER_VED_ARBEIDSLØSHET", "Dagpenger ved arbeidsløshet", List.of()),
     @Deprecated(forRemoval = true) // Bruk DAGPENGER_NÆRING
-    DAGPENGER_TIL_FISKER("DAGPENGER_TIL_FISKER", "Dagpenger til fisker", "dagpengerTilFisker"),
+    DAGPENGER_TIL_FISKER("DAGPENGER_TIL_FISKER", "Dagpenger til fisker", List.of()),
     ANNET("ANNET", "Annet", "annet"),
     KOMPENSASJON_FOR_TAPT_PERSONINNTEKT("KOMPENSASJON_FOR_TAPT_PERSONINNTEKT", "Kompensasjon for tapt personinntekt",
         "kompensasjonForTaptPersoninntekt"),
 
-    SYKEPENGER_NÆRING("SYKEPENGER_NÆRING", "Sykepenger næring", null),
-    DAGPENGER_NÆRING("DAGPENGER_NÆRING", "Dagpenger næring", null),
+    SYKEPENGER_NÆRING("SYKEPENGER_NÆRING", "Sykepenger næring", List.of("sykepengerTilJordOgSkogbrukere", "sykepengerTilFisker", "sykepengerTilDagmamma", "sykepenger")),
+    DAGPENGER_NÆRING("DAGPENGER_NÆRING", "Dagpenger næring", List.of("dagpengerVedArbeidsloeshet", "dagpengerTilFisker")),
 
-    UDEFINERT("-", "Udefinert", null),
+    UDEFINERT("-", "Udefinert", List.of()),
     ;
 
     public static final String KODEVERK = "NÆRINGSINNTEKT_TYPE";
@@ -57,12 +57,16 @@ public enum UtbetaltNæringsYtelseType implements UtbetaltYtelseType {
     }
 
     private String navn;
-    private String offisiellKode;
+    private List<String> offisiellKode;
 
     @JsonValue
     private String kode;
 
     private UtbetaltNæringsYtelseType(String kode, String navn, String offisiellKode) {
+        this(kode, navn, List.of(offisiellKode));
+    }
+
+    private UtbetaltNæringsYtelseType(String kode, String navn, List<String> offisiellKode) {
         this.kode = kode;
         this.navn = navn;
         this.offisiellKode = offisiellKode;
@@ -80,12 +84,12 @@ public enum UtbetaltNæringsYtelseType implements UtbetaltYtelseType {
     }
 
     public static UtbetaltNæringsYtelseType finnForKodeverkEiersKode(String offisiellDokumentType) {
-        return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
+        return List.of(values()).stream().filter(k -> k.offisiellKode.contains(offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
     @Override
     public String getOffisiellKode() {
-        return offisiellKode;
+        return offisiellKode.stream().findFirst().orElse(null);
     }
 
     @Override
