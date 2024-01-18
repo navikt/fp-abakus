@@ -16,20 +16,20 @@ public enum UtbetaltYtelseFraOffentligeType implements UtbetaltYtelseType {
 
     AAP("AAP", "Arbeidsavklaringspenger", "arbeidsavklaringspenger"),
     @Deprecated(forRemoval = true) // På vei til DAGPENGER
-    DAGPENGER_FISKER("DAGPENGER_FISKER", "Dagpenger til fisker som bare har hyre", "dagpengerTilFiskerSomBareHarHyre"),
+    DAGPENGER_FISKER("DAGPENGER_FISKER", "Dagpenger til fisker som bare har hyre", List.of()),
     @Deprecated(forRemoval = true) // På vei til DAGPENGER
-    DAGPENGER_ARBEIDSLØS("DAGPENGER_ARBEIDSLØS", "Dagpenger ved arbeidsløshet", "dagpengerVedArbeidsloeshet"),
-    DAGPENGER("DAGPENGER", "Dagpenger arbeid og hyre", null),
+    DAGPENGER_ARBEIDSLØS("DAGPENGER_ARBEIDSLØS", "Dagpenger ved arbeidsløshet", List.of()),
+    DAGPENGER("DAGPENGER", "Dagpenger arbeid og hyre", List.of("dagpengerTilFiskerSomBareHarHyre", "dagpengerVedArbeidsloeshet")),
     FORELDREPENGER("FORELDREPENGER", "Foreldrepenger", "foreldrepenger"),
     OVERGANGSSTØNAD_ENSLIG("OVERGANGSSTØNAD_ENSLIG", "Overgangsstønad til enslig mor eller far",
         "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere"),
     SVANGERSKAPSPENGER("SVANGERSKAPSPENGER", "Svangerskapspenger", "svangerskapspenger"),
-    SYKEPENGER("SYKEPENGER", "Sykepenger", "sykepenger"),
+    SYKEPENGER("SYKEPENGER", "Sykepenger", List.of("sykepenger", "sykepengerTilFiskerSomBareHarHyre")),
     @Deprecated(forRemoval = true) // På vei til SYKEPENGER
-    SYKEPENGER_FISKER("SYKEPENGER_FISKER", "Sykepenger fisker", "sykepengerTilFiskerSomBareHarHyre"),
+    SYKEPENGER_FISKER("SYKEPENGER_FISKER", "Sykepenger fisker", List.of()),
     VENTELØNN("VENTELØNN", "Ventelønn", "venteloenn"),
 
-    UDEFINERT("-", "UNDEFINED", null),
+    UDEFINERT("-", "UNDEFINED", List.of()),
     ;
 
     public static final String KODEVERK = "YTELSE_FRA_OFFENTLIGE";
@@ -48,13 +48,17 @@ public enum UtbetaltYtelseFraOffentligeType implements UtbetaltYtelseType {
     @JsonValue
     private String kode;
 
-    private String offisiellKode;
+    private List<String> offisiellKode;
 
     private UtbetaltYtelseFraOffentligeType(String kode) {
-        this.kode = kode;
+        this(kode, null, List.of());
     }
 
     private UtbetaltYtelseFraOffentligeType(String kode, String navn, String offisiellKode) {
+        this(kode, navn, List.of(offisiellKode));
+    }
+
+    private UtbetaltYtelseFraOffentligeType(String kode, String navn, List<String> offisiellKode) {
         this.kode = kode;
         this.navn = navn;
         this.offisiellKode = offisiellKode;
@@ -72,7 +76,7 @@ public enum UtbetaltYtelseFraOffentligeType implements UtbetaltYtelseType {
     }
 
     public static UtbetaltYtelseFraOffentligeType finnForKodeverkEiersKode(String offisiellDokumentType) {
-        return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
+        return List.of(values()).stream().filter(k -> k.offisiellKode.contains(offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
     @Override
@@ -92,7 +96,7 @@ public enum UtbetaltYtelseFraOffentligeType implements UtbetaltYtelseType {
 
     @Override
     public String getOffisiellKode() {
-        return offisiellKode;
+        return offisiellKode.stream().findFirst().orElse(null);
     }
 
     @Override
