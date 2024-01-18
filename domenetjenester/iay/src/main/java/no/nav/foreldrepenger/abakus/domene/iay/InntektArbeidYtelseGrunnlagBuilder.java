@@ -13,7 +13,11 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class InntektArbeidYtelseGrunnlagBuilder {
+    private static final Logger LOG = LoggerFactory.getLogger(InntektArbeidYtelseGrunnlagBuilder.class);
 
     private InntektArbeidYtelseGrunnlag kladd;
 
@@ -137,8 +141,9 @@ public class InntektArbeidYtelseGrunnlagBuilder {
 
     public InntektArbeidYtelseGrunnlagBuilder medOppgittOpptjening(OppgittOpptjeningBuilder builder) {
         if (builder != null) {
+            LOG.info("Erstatter eksisterende oppgitt opptjening");
             if (kladd.getOppgittOpptjening().isPresent()) {
-                throw new IllegalStateException("Utviklerfeil: Er ikke lov å endre oppgitt opptjening!");
+                LOG.info("Erstatter eksisterende oppgitt opptjening");
             }
             if (kladd.getOppgittOpptjeningAggregat().isPresent()) {
                 throw new IllegalStateException(
