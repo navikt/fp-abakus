@@ -24,7 +24,6 @@ public enum BekreftetPermisjonStatus implements Kodeverdi {
     UGYLDIGE_PERIODER("UGYLDIGE_PERIODER", "Arbeidsforholdet inneholder permisjoner med ugyldige perioder"),
     ;
 
-    public static final String KODEVERK = "BEKREFTET_PERMISJON_STATUS";
     private static final Map<String, BekreftetPermisjonStatus> KODER = new LinkedHashMap<>();
 
     static {
@@ -35,16 +34,12 @@ public enum BekreftetPermisjonStatus implements Kodeverdi {
         }
     }
 
-    private String navn;
+    private final String navn;
 
     @JsonValue
-    private String kode;
+    private final String kode;
 
-    private BekreftetPermisjonStatus(String kode) {
-        this.kode = kode;
-    }
-
-    private BekreftetPermisjonStatus(String kode, String navn) {
+    BekreftetPermisjonStatus(String kode, String navn) {
         this.kode = kode;
         this.navn = navn;
     }
@@ -60,14 +55,8 @@ public enum BekreftetPermisjonStatus implements Kodeverdi {
         return Collections.unmodifiableMap(KODER);
     }
 
-    @Override
     public String getNavn() {
         return navn;
-    }
-
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
     }
 
     @Override

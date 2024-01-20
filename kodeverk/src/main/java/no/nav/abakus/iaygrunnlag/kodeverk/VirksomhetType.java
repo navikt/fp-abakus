@@ -19,7 +19,6 @@ public enum VirksomhetType implements Kodeverdi {
     UDEFINERT("-", "Ikke definert"),
     ;
 
-    public static final String KODEVERK = "VIRKSOMHET_TYPE";
     private static final Map<String, VirksomhetType> KODER = new LinkedHashMap<>();
 
     static {
@@ -30,10 +29,10 @@ public enum VirksomhetType implements Kodeverdi {
         }
     }
 
-    private String navn;
+    private final String navn;
 
     @JsonValue
-    private String kode;
+    private final String kode;
 
     VirksomhetType(String kode, String navn) {
         this.kode = kode;
@@ -51,14 +50,8 @@ public enum VirksomhetType implements Kodeverdi {
         return Collections.unmodifiableMap(KODER);
     }
 
-    @Override
     public String getNavn() {
         return navn;
-    }
-
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
     }
 
     @Override

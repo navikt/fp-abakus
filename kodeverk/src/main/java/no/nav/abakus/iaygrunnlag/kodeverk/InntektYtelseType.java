@@ -62,8 +62,6 @@ public enum InntektYtelseType implements Kodeverdi {
     KOMPENSASJON_FOR_TAPT_PERSONINNTEKT("Kompensasjon for tapt personinntekt", Kategori.NÆRING, YtelseType.FRISINN, "kompensasjonForTaptPersoninntekt")
     ;
 
-    public static final String KODEVERK = "INNTEKT_YTELSE_TYPE";
-
     private final String navn;
     private final YtelseType ytelseType;
 
@@ -90,14 +88,8 @@ public enum InntektYtelseType implements Kodeverdi {
             .orElseThrow(() -> new IllegalArgumentException("Ukjent YtelseInntektType: " + kode + " kategori " + kategori));
     }
 
-    @Override
     public String getNavn() {
         return navn;
-    }
-
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
     }
 
     @Override

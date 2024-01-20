@@ -34,7 +34,7 @@ public class MapAktørInntekt {
 
     private static final Comparator<UtbetalingsPostDto> COMP_UTBETALINGSPOST = Comparator.comparing(
             (UtbetalingsPostDto dto) -> dto.getInntektspostType().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
-        .thenComparing((UtbetalingsPostDto dto) -> dto.getYtelseType() == null ? null : dto.getYtelseType().getKode(),
+        .thenComparing((UtbetalingsPostDto dto) -> dto.getInntektYtelseType() == null ? null : dto.getInntektYtelseType().getKode(),
             Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getFom(), Comparator.nullsFirst(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getPeriode().getTom(), Comparator.nullsLast(Comparator.naturalOrder()));
@@ -88,7 +88,7 @@ public class MapAktørInntekt {
                 .medPeriode(post.getPeriode().getFom(), post.getPeriode().getTom())
                 .medSkatteOgAvgiftsregelType(post.getSkattAvgiftType())
                 .medLønnsinntektBeskrivelse(post.getLønnsinntektBeskrivelse())
-                .medYtelse(post.getYtelseType());
+                .medYtelse(post.getInntektYtelseType());
         }
 
         private Arbeidsgiver mapArbeidsgiver(Aktør arbeidsgiver) {
@@ -148,10 +148,9 @@ public class MapAktørInntekt {
         private UtbetalingsPostDto tilPost(Inntektspost inntektspost) {
             var periode = new Periode(inntektspost.getPeriode().getFomDato(), inntektspost.getPeriode().getTomDato());
             var inntektspostType = inntektspost.getInntektspostType();
-            var ytelseType = inntektspost.getYtelseType();
             var skattOgAvgiftType = inntektspost.getSkatteOgAvgiftsregelType();
 
-            UtbetalingsPostDto dto = new UtbetalingsPostDto(periode, inntektspostType).medUtbetaltYtelseType(ytelseType)
+            UtbetalingsPostDto dto = new UtbetalingsPostDto(periode, inntektspostType)
                 .medInntektYtelseType(inntektspost.getInntektYtelseType())
                 .medSkattAvgiftType(skattOgAvgiftType)
                 .medLønnsinntektbeskrivelse(inntektspost.getLønnsinntektBeskrivelse())

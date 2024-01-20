@@ -7,10 +7,6 @@ public interface Kodeverdi extends IndexKey {
 
     String getKode();
 
-    String getKodeverk();
-
-    String getNavn();
-
     @Override
     default String getIndexKey() {
         return getKode();

@@ -3,10 +3,10 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektYtelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.abakus.iaygrunnlag.kodeverk.LønnsinntektBeskrivelse;
 import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
-import no.nav.abakus.iaygrunnlag.kodeverk.UtbetaltYtelseType;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 
 public class InntektspostBuilder {
@@ -45,8 +45,8 @@ public class InntektspostBuilder {
         return this;
     }
 
-    public InntektspostBuilder medYtelse(UtbetaltYtelseType offentligYtelseType) {
-        this.inntektspost.setYtelse(offentligYtelseType);
+    public InntektspostBuilder medYtelse(InntektYtelseType inntektYtelseType) {
+        this.inntektspost.setYtelse(inntektYtelseType);
         return this;
     }
 

@@ -46,7 +46,6 @@ public enum ArbeidType implements Kodeverdi {
     UDEFINERT("-", "Ikke definert", null, false),
     ;
 
-    public static final String KODEVERK = "ARBEID_TYPE";
     private static final Set<ArbeidType> AA_REGISTER_TYPER = Set.of(ArbeidType.ORDINÆRT_ARBEIDSFORHOLD, ArbeidType.MARITIMT_ARBEIDSFORHOLD,
         ArbeidType.FORENKLET_OPPGJØRSORDNING, ArbeidType.FRILANSER_OPPDRAGSTAKER_MED_MER);
     private static final Set<ArbeidType> AA_REGISTER_ARBEID_TYPER = Set.of(ArbeidType.ORDINÆRT_ARBEIDSFORHOLD, ArbeidType.MARITIMT_ARBEIDSFORHOLD,
@@ -66,19 +65,15 @@ public enum ArbeidType implements Kodeverdi {
     }
 
     @JsonValue
-    private String kode;
+    private final String kode;
 
-    private String navn;
+    private final String navn;
 
-    private String offisiellKode;
+    private final String offisiellKode;
 
-    private boolean visGui;
+    private final boolean visGui;
 
-    private ArbeidType(String kode) {
-        this.kode = kode;
-    }
-
-    private ArbeidType(String kode, String navn, String offisiellKode, boolean visGui) {
+    ArbeidType(String kode, String navn, String offisiellKode, boolean visGui) {
         this.kode = kode;
         this.navn = navn;
         this.visGui = visGui;
@@ -117,12 +112,6 @@ public enum ArbeidType implements Kodeverdi {
         return kode;
     }
 
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
-    }
-
-    @Override
     public String getNavn() {
         return navn;
     }

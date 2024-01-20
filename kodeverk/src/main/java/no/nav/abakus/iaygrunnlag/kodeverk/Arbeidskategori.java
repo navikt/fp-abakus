@@ -32,7 +32,6 @@ public enum Arbeidskategori implements Kodeverdi {
     UDEFINERT("-", "Ingen inntektskategori (default)"),
     ;
 
-    public static final String KODEVERK = "ARBEIDSKATEGORI";
     private static final Map<String, Arbeidskategori> KODER = new LinkedHashMap<>();
 
     static {
@@ -44,16 +43,12 @@ public enum Arbeidskategori implements Kodeverdi {
     }
 
 
-    private String navn;
+    private final String navn;
 
     @JsonValue
-    private String kode;
+    private final String kode;
 
-    private Arbeidskategori(String kode) {
-        this.kode = kode;
-    }
-
-    private Arbeidskategori(String kode, String navn) {
+    Arbeidskategori(String kode, String navn) {
         this.kode = kode;
         this.navn = navn;
     }
@@ -69,14 +64,8 @@ public enum Arbeidskategori implements Kodeverdi {
         return Collections.unmodifiableMap(KODER);
     }
 
-    @Override
     public String getNavn() {
         return navn;
-    }
-
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
     }
 
     @Override

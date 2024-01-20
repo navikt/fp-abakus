@@ -20,7 +20,6 @@ public enum InntektspostType implements Kodeverdi {
         "personinntektFiskeFangstFamilebarnehage"),
     ;
 
-    public static final String KODEVERK = "INNTEKTSPOST_TYPE";
     private static final Map<String, InntektspostType> KODER = new LinkedHashMap<>();
 
     static {
@@ -31,18 +30,14 @@ public enum InntektspostType implements Kodeverdi {
         }
     }
 
-    private String navn;
+    private final String navn;
 
     @JsonValue
-    private String kode;
+    private final String kode;
 
-    private String offisiellKode;
+    private final String offisiellKode;
 
-    private InntektspostType(String kode) {
-        this.kode = kode;
-    }
-
-    private InntektspostType(String kode, String navn, String offisiellKode) {
+    InntektspostType(String kode, String navn, String offisiellKode) {
         this.kode = kode;
         this.navn = navn;
         this.offisiellKode = offisiellKode;
@@ -59,14 +54,8 @@ public enum InntektspostType implements Kodeverdi {
         return Collections.unmodifiableMap(KODER);
     }
 
-    @Override
     public String getNavn() {
         return navn;
-    }
-
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
     }
 
     @Override

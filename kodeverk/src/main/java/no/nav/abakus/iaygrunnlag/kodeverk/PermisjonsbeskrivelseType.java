@@ -3,10 +3,10 @@ package no.nav.abakus.iaygrunnlag.kodeverk;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -29,7 +29,6 @@ public enum PermisjonsbeskrivelseType implements Kodeverdi {
     PERMISJON_VED_MILITÆRTJENESTE("PERMISJON_VED_MILITÆRTJENESTE", "Permisjon ved militærtjeneste", "permisjonVedMilitaertjeneste"),
     ;
 
-    public static final String KODEVERK = "PERMISJONSBESKRIVELSE_TYPE";
     private static final Map<String, PermisjonsbeskrivelseType> KODER = new LinkedHashMap<>();
 
     static {
@@ -40,18 +39,14 @@ public enum PermisjonsbeskrivelseType implements Kodeverdi {
         }
     }
 
-    private String navn;
+    private final String navn;
 
     @JsonValue
-    private String kode;
+    private final String kode;
 
-    private String offisiellKode;
+    private final String offisiellKode;
 
-    private PermisjonsbeskrivelseType(String kode) {
-        this.kode = kode;
-    }
-
-    private PermisjonsbeskrivelseType(String kode, String navn, String offisiellKode) {
+    PermisjonsbeskrivelseType(String kode, String navn, String offisiellKode) {
         this.kode = kode;
         this.navn = navn;
         this.offisiellKode = offisiellKode;
@@ -69,17 +64,11 @@ public enum PermisjonsbeskrivelseType implements Kodeverdi {
     }
 
     public static PermisjonsbeskrivelseType finnForKodeverkEiersKode(String offisiellDokumentType) {
-        return List.of(values()).stream().filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
+        return Stream.of(values()).filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
-    @Override
     public String getNavn() {
         return navn;
-    }
-
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
     }
 
     @Override

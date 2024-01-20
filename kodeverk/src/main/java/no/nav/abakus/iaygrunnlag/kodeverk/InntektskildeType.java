@@ -20,7 +20,6 @@ public enum InntektskildeType implements Kodeverdi {
     VANLIG("VANLIG", "Vanlig"),
     ;
 
-    public static final String KODEVERK = "INNTEKTS_KILDE";
     private static final Map<String, InntektskildeType> KODER = new LinkedHashMap<>();
 
     static {
@@ -31,16 +30,12 @@ public enum InntektskildeType implements Kodeverdi {
         }
     }
 
-    private String navn;
+    private final String navn;
 
     @JsonValue
-    private String kode;
+    private final String kode;
 
-    private InntektskildeType(String kode) {
-        this.kode = kode;
-    }
-
-    private InntektskildeType(String kode, String navn) {
+    InntektskildeType(String kode, String navn) {
         this.kode = kode;
         this.navn = navn;
     }
@@ -56,14 +51,8 @@ public enum InntektskildeType implements Kodeverdi {
         return Collections.unmodifiableMap(KODER);
     }
 
-    @Override
     public String getNavn() {
         return navn;
-    }
-
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
     }
 
     @Override

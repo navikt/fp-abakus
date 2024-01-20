@@ -1,13 +1,13 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonValue;
-
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum Inntektskategori implements Kodeverdi {
@@ -25,7 +25,6 @@ public enum Inntektskategori implements Kodeverdi {
     UDEFINERT("-", "Ingen inntektskategori (default)"),
     ;
 
-    public static final String KODEVERK = "INNTEKTSKATEGORI";
     private static final Map<String, Inntektskategori> KODER = new LinkedHashMap<>();
 
     static {
@@ -36,10 +35,10 @@ public enum Inntektskategori implements Kodeverdi {
         }
     }
 
-    private String navn;
+    private final String navn;
 
     @JsonValue
-    private String kode;
+    private final String kode;
 
     Inntektskategori(String kode, String navn) {
         this.kode = kode;
@@ -57,14 +56,8 @@ public enum Inntektskategori implements Kodeverdi {
         return Collections.unmodifiableMap(KODER);
     }
 
-    @Override
     public String getNavn() {
         return navn;
-    }
-
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
     }
 
     @Override

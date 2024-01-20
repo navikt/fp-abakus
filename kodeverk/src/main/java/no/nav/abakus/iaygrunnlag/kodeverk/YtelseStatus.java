@@ -20,8 +20,6 @@ public enum YtelseStatus implements Kodeverdi {
     UDEFINERT("-", "Ikke definert"),
     ;
 
-    public static final YtelseStatus DEFAULT = OPPRETTET;
-    public static final String KODEVERK = "YTELSE_STATUS";
     private static final Map<String, YtelseStatus> KODER = new LinkedHashMap<>();
 
     static {
@@ -33,16 +31,12 @@ public enum YtelseStatus implements Kodeverdi {
     }
 
 
-    private String navn;
+    private final String navn;
 
     @JsonValue
-    private String kode;
+    private final String kode;
 
-    private YtelseStatus(String kode) {
-        this.kode = kode;
-    }
-
-    private YtelseStatus(String kode, String navn) {
+    YtelseStatus(String kode, String navn) {
         this.kode = kode;
         this.navn = navn;
     }
@@ -58,7 +52,6 @@ public enum YtelseStatus implements Kodeverdi {
         return Collections.unmodifiableMap(KODER);
     }
 
-    @Override
     public String getNavn() {
         return navn;
     }
@@ -66,11 +59,6 @@ public enum YtelseStatus implements Kodeverdi {
     @Override
     public String getKode() {
         return kode;
-    }
-
-    @Override
-    public String getKodeverk() {
-        return KODEVERK;
     }
 
 }
