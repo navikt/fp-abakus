@@ -25,6 +25,10 @@ public class OppgittOpptjeningTjeneste {
         return repository.lagre(koblingReferanse, builder);
     }
 
+    public GrunnlagReferanse lagreOgNullstillOverstyring(KoblingReferanse koblingReferanse, OppgittOpptjeningBuilder builder) {
+        return repository.lagreOgNullstillOverstyring(koblingReferanse, builder);
+    }
+
     public GrunnlagReferanse lagreOverstyring(KoblingReferanse koblingReferanse, OppgittOpptjeningBuilder builder) {
         return repository.lagreOverstyring(koblingReferanse, builder);
     }

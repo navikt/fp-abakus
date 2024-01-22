@@ -121,6 +121,35 @@ public class OppgittOpptjeningRestTjeneste {
         return response;
     }
 
+    @POST
+    @Path("/motta-og-nullstill-overstyring")
+    @Operation(description = "Lagrer ned mottatt oppgitt opptjening og fjerner overstyring om den finnes", tags = "oppgitt opptjening", responses = {@ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))})
+    @BeskyttetRessurs(actionType = ActionType.UPDATE, resource = GRUNNLAG)
+    @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
+    public Response lagreOppgittOpptjeningOgNullstillOverstyring(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
+        Response response;
+        LoggUtil.setupLogMdc(mottattRequest.getYtelseType(), mottattRequest.getSaksnummer(), mottattRequest.getKoblingReferanse());
+        var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
+        var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
+        var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
+        var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId,
+            new Saksnummer(mottattRequest.getSaksnummer()));
+
+        OppgittOpptjeningBuilder builder = new MapOppgittOpptjening().mapFraDto(mottattRequest.getOppgittOpptjening());
+        GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagreOgNullstillOverstyring(koblingReferanse, builder);
+
+        koblingTjeneste.lagre(kobling);
+        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
+
+        if (grunnlagReferanse != null) {
+            response = Response.ok(new UuidDto(grunnlagReferanse.getReferanse())).build();
+        } else {
+            response = Response.noContent().build();
+        }
+
+        return response;
+    }
+
     public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         @Override

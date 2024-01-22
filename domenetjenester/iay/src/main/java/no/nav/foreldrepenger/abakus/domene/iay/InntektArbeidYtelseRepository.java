@@ -288,6 +288,21 @@ public class InntektArbeidYtelseRepository {
         return build.getGrunnlagReferanse();
     }
 
+    public GrunnlagReferanse lagreOgNullstillOverstyring(KoblingReferanse koblingReferanse, OppgittOpptjeningBuilder oppgittOpptjening) {
+        if (oppgittOpptjening == null) {
+            return null;
+        }
+        Optional<InntektArbeidYtelseGrunnlag> iayGrunnlag = hentInntektArbeidYtelseGrunnlagForBehandling(koblingReferanse);
+
+        InntektArbeidYtelseGrunnlagBuilder grunnlag = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayGrunnlag);
+        grunnlag.medOppgittOpptjening(oppgittOpptjening)
+            .fjernOverstyrtOppgittOpptjening();
+
+        InntektArbeidYtelseGrunnlag build = grunnlag.build();
+        lagreOgFlush(koblingReferanse, build);
+        return build.getGrunnlagReferanse();
+    }
+
     public GrunnlagReferanse lagrePrJournalpostId(KoblingReferanse koblingReferanse, OppgittOpptjeningBuilder oppgittOpptjening) {
         if (oppgittOpptjening == null) {
             return null;
