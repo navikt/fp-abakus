@@ -184,6 +184,15 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         return this;
     }
 
+    public InntektArbeidYtelseGrunnlagBuilder fjernOverstyrtOppgittOpptjening() {
+        if (kladd.getOppgittOpptjeningAggregat().isPresent()) {
+            throw new IllegalStateException(
+                "Sanity check: Har allerede lagt inn oppgitt oppptjening på aggregat. Du vil da sannsynligvis ikke overstyre slik.");
+        }
+        kladd.setOverstyrtOppgittOpptjening(null);
+        return this;
+    }
+
     public InntektArbeidYtelseGrunnlagBuilder medDeaktivert() {
         kladd.setAktivt(false);
         return this;
