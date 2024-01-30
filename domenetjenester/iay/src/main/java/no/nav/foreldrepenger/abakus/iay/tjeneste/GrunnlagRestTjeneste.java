@@ -37,9 +37,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Request;
 import jakarta.ws.rs.core.Response;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -91,7 +88,6 @@ import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 @Transactional
 public class GrunnlagRestTjeneste {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GrunnlagRestTjeneste.class);
     private InntektArbeidYtelseTjeneste iayTjeneste;
     private KoblingTjeneste koblingTjeneste;
 
@@ -273,35 +269,6 @@ public class GrunnlagRestTjeneste {
         iayTjeneste.lagre(koblingReferanse, nyttGrunnlagBuilder);
 
         return Response.ok().build();
-    }
-
-    /**
-     * @deprecated bytt til {@link #oppdaterOgLagreOverstyring(OverstyrtInntektArbeidYtelseDto)} .
-     */
-    @Deprecated(forRemoval = true)
-    @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Lagrer siste versjon", tags = "iay-grunnlag", responses = {@ApiResponse(responseCode = "200", description = "Mottatt grunnlaget")})
-    @BeskyttetRessurs(actionType = ActionType.UPDATE, resource = GRUNNLAG)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response oppdaterOgLagreGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagAbacDto dto) {
-
-        var aktørId = new AktørId(dto.getPerson().getIdent());
-        var koblingReferanse = getKoblingReferanse(aktørId, dto);
-
-        setupLogMdcFraKoblingReferanse(koblingReferanse);
-
-        LOG.warn("Kall på deprecated tjeneste PUT /iay/grunnlag/v1: ytelse={}, kobling={}", dto.getYtelseType(), dto.getKoblingReferanse());
-
-        var dtoMapper = new IAYFraDtoMapper(iayTjeneste, aktørId, koblingReferanse);
-        var nyttGrunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayTjeneste.hentGrunnlagFor(koblingReferanse));
-        dtoMapper.mapOverstyringerTilGrunnlagBuilder(dto.getOverstyrt(), dto.getArbeidsforholdInformasjon(), nyttGrunnlagBuilder);
-
-        iayTjeneste.lagre(koblingReferanse, nyttGrunnlagBuilder);
-        Response response = Response.ok().build();
-
-        return response;
     }
 
     @POST

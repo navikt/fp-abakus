@@ -73,6 +73,9 @@ public class RegisterdataRestTjeneste {
         if (dto.getCallbackUrl() == null || dto.getCallbackScope() == null) {
             return Response.status(HttpURLConnection.HTTP_FORBIDDEN).build();
         }
+        if (!YtelseType.abakusYtelser().contains(dto.getYtelseType())) {
+            return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
+        }
         LoggUtil.setupLogMdc(dto.getYtelseType(), dto.getSaksnummer());
         String taskGruppe = innhentTjeneste.triggAsyncInnhent(dto);
         if (taskGruppe != null) {
