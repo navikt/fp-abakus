@@ -237,17 +237,6 @@ public class InnhentingInfotrygdTjeneste {
         return List.of();
     }
 
-    public List<InfotrygdYtelseGrunnlag> getSPøkelseYtelserFailSoft(PersonIdent ident, LocalDate fom) {
-        try {
-            List<SykepengeVedtak> rest = spøkelse.hentGrunnlagFailSoft(ident.getIdent(), fom);
-
-            return mapSpøkelseTilInfotrygdYtelseGrunnlag(rest);
-        } catch (Exception e) {
-            LOG.info("abakus spokelse noe gikk feil", e);
-            return Collections.emptyList();
-        }
-    }
-
     private List<InfotrygdYtelseGrunnlag> mapSpøkelseTilInfotrygdYtelseGrunnlag(List<SykepengeVedtak> rest) {
         return rest.stream().map(this::spokelseTilInfotrygdYtelseGrunnlag).filter(Objects::nonNull).collect(Collectors.toList());
     }

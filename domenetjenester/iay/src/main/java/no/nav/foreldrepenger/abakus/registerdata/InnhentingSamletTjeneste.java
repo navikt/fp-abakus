@@ -125,12 +125,6 @@ public class InnhentingSamletTjeneste {
     }
 
     public List<InfotrygdYtelseGrunnlag> innhentSpokelseGrunnlag(PersonIdent ident, @SuppressWarnings("unused") IntervallEntitet periode) {
-        if (isLocal) {
-            return Collections.emptyList();
-        }
-        if (isDev) {
-            return innhentingInfotrygdTjeneste.getSPøkelseYtelserFailSoft(ident, periode.getFomDato());
-        }
         return innhentingInfotrygdTjeneste.getSPøkelseYtelser(ident, periode.getFomDato());
     }
 
