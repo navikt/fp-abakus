@@ -61,7 +61,7 @@ class InntektArbeidYtelseTjenesteTest {
         var iayt = new InntektArbeidYtelseTjeneste(iayr);
         iayt.kopierGrunnlagFraEksisterendeBehandling(null, null, null, new KoblingReferanse(UUID.randomUUID()),
             new KoblingReferanse(UUID.randomUUID()),
-            EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.INNTEKTSMELDING, Dataset.REGISTER, Dataset.OVERSTYRT));
+            EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.INNTEKTSMELDING, Dataset.REGISTER, Dataset.OVERSTYRT), false);
 
         // Assert
         ArgumentCaptor<InntektArbeidYtelseGrunnlagBuilder> iaygBuilderCaptor = ArgumentCaptor.forClass(InntektArbeidYtelseGrunnlagBuilder.class);
@@ -75,6 +75,47 @@ class InntektArbeidYtelseTjenesteTest {
         var sisteIms = sisteInntektsmeldinger.get(0);
         //Assert skal kun ha siste inntektsmelding siden alle 3 hadde samme arbeidsgiver
         assertThat(sisteIms.getInnsendingstidspunkt()).isEqualTo(ny.getInnsendingstidspunkt());
+    }
+
+    @Test
+    void skal_kopiere_iay_grunnlag_og_beholde_opprinnelige_inntektsmeldinger() {
+
+        // Arrange
+        LocalDateTime innsendingstidspunkt = LocalDateTime.now().minusDays(10);
+        var nå = nyInntektsmelding(innsendingstidspunkt, "1");
+        var ny = nyInntektsmelding(innsendingstidspunkt.plusDays(1), "2");
+        var gammel = nyInntektsmelding(innsendingstidspunkt.minusDays(1), "3");
+
+        var iaygBuilder = InntektArbeidYtelseGrunnlagBuilder.nytt();
+        iaygBuilder.setInntektsmeldinger(new InntektsmeldingAggregat(List.of(gammel, nå)));
+
+        var iayr = Mockito.spy(new InntektArbeidYtelseRepository(Mockito.mock(EntityManager.class)));
+        Mockito.doNothing().when(iayr).lagre(any(KoblingReferanse.class), any(InntektArbeidYtelseGrunnlagBuilder.class));
+
+        Mockito.doAnswer(i -> Optional.of(iaygBuilder.build())).when(iayr).hentInntektArbeidYtelseGrunnlagForBehandling(any());
+        Mockito.doReturn(Map.of(gammel, nyArbeidsforholdInformasjon(), ny, nyArbeidsforholdInformasjon()))
+            .when(iayr)
+            .hentArbeidsforholdInfoInntektsmeldingerMapFor(any(), any(), any());
+
+        // Act
+        var iayt = new InntektArbeidYtelseTjeneste(iayr);
+        iayt.kopierGrunnlagFraEksisterendeBehandling(null, null, null, new KoblingReferanse(UUID.randomUUID()),
+            new KoblingReferanse(UUID.randomUUID()),
+            EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.INNTEKTSMELDING, Dataset.REGISTER, Dataset.OVERSTYRT), true);
+
+        // Assert
+        ArgumentCaptor<InntektArbeidYtelseGrunnlagBuilder> iaygBuilderCaptor = ArgumentCaptor.forClass(InntektArbeidYtelseGrunnlagBuilder.class);
+        Mockito.verify(iayr).lagre(any(KoblingReferanse.class), iaygBuilderCaptor.capture());
+        var lagret = iaygBuilderCaptor.getValue();
+        var nyIay = lagret.build(); // denne skal aldri ha vært kalt siden vi stubbet ut
+        assertThat(nyIay).isNotNull();
+        assertThat(nyIay.getInntektsmeldinger()).isPresent();
+        var sisteInntektsmeldinger = nyIay.getInntektsmeldinger().get().getInntektsmeldinger();
+        assertThat(sisteInntektsmeldinger).hasSize(2);
+
+        //Assert skal kun ha siste inntektsmelding siden alle 3 hadde samme arbeidsgiver
+        assertThat(sisteInntektsmeldinger.stream().map(Inntektsmelding::getJournalpostId).anyMatch(journalpostId -> "1".equals(journalpostId.getVerdi()))).isTrue();
+        assertThat(sisteInntektsmeldinger.stream().map(Inntektsmelding::getJournalpostId).anyMatch(journalpostId -> "3".equals(journalpostId.getVerdi()))).isTrue();
     }
 
     @Test
@@ -101,7 +142,7 @@ class InntektArbeidYtelseTjenesteTest {
         var iayt = new InntektArbeidYtelseTjeneste(iayr);
         iayt.kopierGrunnlagFraEksisterendeBehandling(null, null, null, new KoblingReferanse(UUID.randomUUID()),
             new KoblingReferanse(UUID.randomUUID()),
-            EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.INNTEKTSMELDING, Dataset.REGISTER, Dataset.OVERSTYRT));
+            EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.INNTEKTSMELDING, Dataset.REGISTER, Dataset.OVERSTYRT), false);
 
         // Assert
         ArgumentCaptor<InntektArbeidYtelseGrunnlagBuilder> iaygBuilderCaptor = ArgumentCaptor.forClass(InntektArbeidYtelseGrunnlagBuilder.class);
@@ -142,7 +183,7 @@ class InntektArbeidYtelseTjenesteTest {
         var iayt = new InntektArbeidYtelseTjeneste(iayr);
         iayt.kopierGrunnlagFraEksisterendeBehandling(null, null, null, new KoblingReferanse(UUID.randomUUID()),
             new KoblingReferanse(UUID.randomUUID()),
-            EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.INNTEKTSMELDING, Dataset.REGISTER, Dataset.OVERSTYRT));
+            EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.INNTEKTSMELDING, Dataset.REGISTER, Dataset.OVERSTYRT), false);
 
         // Assert
         ArgumentCaptor<InntektArbeidYtelseGrunnlagBuilder> iaygBuilderCaptor = ArgumentCaptor.forClass(InntektArbeidYtelseGrunnlagBuilder.class);
