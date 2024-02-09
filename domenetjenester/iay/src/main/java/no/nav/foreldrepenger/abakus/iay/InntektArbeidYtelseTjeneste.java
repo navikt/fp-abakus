@@ -184,16 +184,23 @@ public class InntektArbeidYtelseTjeneste {
      *
      * @param ytelseType
      * @param dataset
+     * @param beholdOpprinngeligeIM
      */
     public void kopierGrunnlagFraEksisterendeBehandling(YtelseType ytelseType,
                                                         AktørId aktørId,
                                                         Saksnummer saksnummer,
                                                         KoblingReferanse fraKobling,
                                                         KoblingReferanse tilKobling,
-                                                        Set<Dataset> dataset) {
+                                                        Set<Dataset> dataset,
+                                                        boolean beholdOpprinngeligeIM) {
         var origAggregat = hentGrunnlagFor(fraKobling);
         if (origAggregat.isPresent()) {
-            kopierGrunnlagPlussNyereInntektsmeldingerForFagsak(tilKobling, ytelseType, aktørId, saksnummer, origAggregat.get(), dataset);
+            if (beholdOpprinngeligeIM) {
+                //gjelder spesialbehandlinger(berørt, feriepenger og utsatt start)
+                kopierGrunnlagBeholdInntektsmeldinger(tilKobling, origAggregat.get(), dataset);
+            } else {
+                kopierGrunnlagPlussNyereInntektsmeldingerForFagsak(tilKobling, ytelseType, aktørId, saksnummer, origAggregat.get(), dataset);
+            }
         }
     }
 
@@ -257,7 +264,14 @@ public class InntektArbeidYtelseTjeneste {
         }
         lagre(tilKobling, builder);
         return builder;
+    }
 
+    private InntektArbeidYtelseGrunnlagBuilder kopierGrunnlagBeholdInntektsmeldinger(KoblingReferanse tilKobling,
+                                                                                     InntektArbeidYtelseGrunnlag original,
+                                                                                     Set<Dataset> dataset) {
+        var builder = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(original, dataset);
+        lagre(tilKobling, builder);
+        return builder;
     }
 
     private Inntektsmelding finnSisteEksisterendeInntektsmelding(Collection<Inntektsmelding> inntektsmeldinger) {
