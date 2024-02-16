@@ -41,7 +41,7 @@ public class DefaultIAYRegisterInnhentingTjenesteImpl extends IAYRegisterInnhent
         Optional<InntektArbeidYtelseGrunnlag> grunnlag = inntektArbeidYtelseTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse());
 
         //FP,SVP,FRISINN bruker ikke aggregat for oppgitt opptjening (støtter kun en pr behandling)
-        boolean harOppgittSNOpptjeningUtenAggregat = grunnlag.flatMap(InntektArbeidYtelseGrunnlag::getGjeldendeOppgittOpptjening)
+        boolean harOppgittSNOpptjeningUtenAggregat = grunnlag.flatMap(InntektArbeidYtelseGrunnlag::getOppgittOpptjening)
             .map(oppgittOpptjening -> !oppgittOpptjening.getEgenNæring().isEmpty())
             .orElse(false);
 
