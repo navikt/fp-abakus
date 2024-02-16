@@ -196,7 +196,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
      * Returnerer overstyrt oppgitt opptjening hvis det finnes, eller vanlig oppgitt opptjening
      */
     public Optional<OppgittOpptjening> getGjeldendeOppgittOpptjening() {
-        return Optional.ofNullable(getOverstyrtOppgittOpptjening()).orElseGet(this::getOppgittOpptjening);
+        return getOverstyrtOppgittOpptjening().or(this::getOppgittOpptjening);
     }
 
     void setOverstyrtOppgittOpptjening(OppgittOpptjening overstyrtOppgittOpptjening) {
