@@ -1,10 +1,10 @@
 kind: Application
 apiVersion: nais.io/v1alpha1
 metadata:
-  name: fpabakus
-  namespace: teamforeldrepenger
+  name: k9-abakus
+  namespace: k9saksbehandling
   labels:
-    team: teamforeldrepenger
+    team: k9saksbehandling
 spec:
   image: {{image}}
   port: 8080
@@ -13,23 +13,23 @@ spec:
     - {{url}}
   {{/each}}
   liveness:
-    path: /fpabakus/internal/health/isAlive
+    path: /k9/abakus/internal/health/isAlive
     initialDelay: 10
     periodSeconds: 10
     failureThreshold: 20
     timeout: 3
   readiness:
-    path: /fpabakus/internal/health/isReady
+    path: /k9/abakus/internal/health/isReady
     initialDelay: 10
     periodSeconds: 10
     failureThreshold: 20
     timeout: 3
   preStopHook:
     http:
-      path: /fpabakus/internal/health/preStop
+      path: /k9/abakus/internal/health/preStop
   prometheus:
     enabled: true
-    path: /fpabakus/internal/metrics/prometheus
+    path: /k9/abakus/internal/metrics/prometheus
   replicas:
     min: {{minReplicas}}
     max: {{maxReplicas}}

@@ -46,7 +46,7 @@ public class JettyServer {
     private static final Environment ENV = Environment.current();
     private static final Logger LOG = LoggerFactory.getLogger(JettyServer.class);
 
-    private static final String CONTEXT_PATH = ENV.getProperty("context.path", "/fpabakus");
+    private static final String CONTEXT_PATH = ENV.getProperty("context.path", "/k9/abakus");
     private static final String JETTY_SCAN_LOCATIONS = "^.*jersey-.*\\.jar$|^.*felles-.*\\.jar$|^.*/app\\.jar$";
     private static final String JETTY_LOCAL_CLASSES = "^.*/target/classes/|";
     private final Integer serverPort;

@@ -20,7 +20,7 @@ import no.nav.vedtak.sikkerhet.abac.pipdata.PipFagsakStatus;
 public class PdpRequestBuilderImpl implements PdpRequestBuilder {
 
     private static final Cluster CLUSTER = Environment.current().getCluster();
-    private static final String ABAC_DOMAIN = "duplo";
+    private static final String ABAC_DOMAIN = "k9";
     private static final List<String> INTERNAL_CLUSTER_NAMESPACE = List.of(CLUSTER.clusterName() + ":k9saksbehandling",
         CLUSTER.clusterName() + ":teamforeldrepenger");
 

@@ -39,7 +39,7 @@ public class EksternApiConfig extends Application {
             .version("1.0")
             .description("Ekstern REST grensesnitt for Abakus. Alle kall må authentiseres med en gyldig Azure OBO eller CC token.");
 
-        oas.info(info).addServersItem(new Server().url(ENV.getProperty("context.path", "/fpabakus")));
+        oas.info(info).addServersItem(new Server().url(ENV.getProperty("context.path", "/k9/abakus")));
         var oasConfig = new SwaggerConfiguration().id(ID_PREFIX + EksternApiConfig.class.getName())
             .openAPI(oas)
             .prettyPrint(true)

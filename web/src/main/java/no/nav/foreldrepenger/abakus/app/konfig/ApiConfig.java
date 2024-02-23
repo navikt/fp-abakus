@@ -48,7 +48,7 @@ public class ApiConfig extends Application {
         OpenAPI oas = new OpenAPI();
         Info info = new Info().title("Vedtaksløsningen - Abakus").version("1.0").description("REST grensesnitt for Vedtaksløsningen.");
 
-        oas.info(info).addServersItem(new Server().url(ENV.getProperty("context.path", "/fpabakus")));
+        oas.info(info).addServersItem(new Server().url(ENV.getProperty("context.path", "/k9/abakus")));
         var oasConfig = new SwaggerConfiguration().id(ID_PREFIX + ApiConfig.class.getName())
             .openAPI(oas)
             .prettyPrint(true)
