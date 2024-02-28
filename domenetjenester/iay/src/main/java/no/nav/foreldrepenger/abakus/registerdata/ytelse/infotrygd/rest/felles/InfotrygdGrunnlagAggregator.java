@@ -11,7 +11,10 @@ import org.slf4j.LoggerFactory;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.ps.InfotrygdPSGrunnlag;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.ps.PS;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sp.InfotrygdSPGrunnlag;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sp.SP;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sp.TSP;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sp.TestInfotrygdSPGrunnlag;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.InfotrygdGrunnlag;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
@@ -27,7 +30,7 @@ public class InfotrygdGrunnlagAggregator {
     }
 
     @Inject
-    public InfotrygdGrunnlagAggregator(InfotrygdPSGrunnlag ps, InfotrygdSPGrunnlag sp, TestInfotrygdSPGrunnlag tsp) {
+    public InfotrygdGrunnlagAggregator(@PS InfotrygdPSGrunnlag ps, @SP InfotrygdSPGrunnlag sp, @TSP TestInfotrygdSPGrunnlag tsp) {
         this.tjenester = List.of(ps, sp);
         this.sykepenger = sp;
         this.testSykepenger = tsp;
