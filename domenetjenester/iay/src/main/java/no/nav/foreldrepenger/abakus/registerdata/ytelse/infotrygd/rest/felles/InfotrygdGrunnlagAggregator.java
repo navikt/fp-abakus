@@ -110,7 +110,7 @@ public class InfotrygdGrunnlagAggregator {
     private record SammenV(Periode periode, int utbetalingsgrad, String arbeidsgiverOrgnr, Boolean erRefusjon, Integer dagsats) {
 
         public SammenV(Vedtak v) {
-            this(v.periode(), v.utbetalingsgrad(), v.arbeidsgiverOrgnr() == null || Objects.equals(v.arbeidsgiverOrgnr(), "0") ? null : v.arbeidsgiverOrgnr()  , v.erRefusjon(), v.dagsats())
+            this(v.periode(), v.utbetalingsgrad(), v.arbeidsgiverOrgnr() == null || Objects.equals(v.arbeidsgiverOrgnr(), "0") ? null : v.arbeidsgiverOrgnr()  , v.erRefusjon(), v.dagsats());
         }
     }
 
