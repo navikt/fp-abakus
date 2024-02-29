@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,7 @@ public class InfotrygdGrunnlagAggregator {
         try {
             var gs = sykepenger.hentGrunnlagFailSoft(fnr, fom, tom);
             var gt = testSykepenger.hentGrunnlagFailSoft(fnr, fom, tom);
-            if (gs.size() == gt.size() && gs.containsAll(gt)) {
+            if (erLike(gs, gt)) {
                 LOG.info("ABAKUS-SYKEPENGER like svar");
             } else {
                 LOG.info("ABAKUS-SYKEPENGER ulike svar gamle {} nye {}", gs, gt);
@@ -64,5 +65,29 @@ public class InfotrygdGrunnlagAggregator {
     public String toString() {
         return getClass().getSimpleName() + "[tjenester=" + tjenester + "]";
     }
+
+    private boolean erLike(List<Grunnlag> g1, List<Grunnlag> g2) {
+        return g1.size() == g2.size() && g1.stream().allMatch(g -> inneholder(g2, g));
+    }
+
+    private boolean inneholder(List<Grunnlag> g2, Grunnlag gr) {
+        return g2.stream().anyMatch(g -> erLik(g, gr));
+    }
+
+    private boolean erLik(Grunnlag g1, Grunnlag g2) {
+        return Objects.equals(g1.status(), g2.status()) &&
+            Objects.equals(g1.tema(), g2.tema()) &&
+            Objects.equals(g1.kategori(), g2.kategori()) &&
+            Objects.equals(g1.periode(), g2.periode()) &&
+            Objects.equals(g1.behandlingstema(), g2.behandlingstema()) &&
+            Objects.equals(g1.identdato(), g2.identdato()) &&
+            Objects.equals(g1.opphørFom(), g2.opphørFom()) &&
+            Objects.equals(g1.gradering(), g2.gradering()) &&
+            g1.arbeidsforhold().size() == g2.arbeidsforhold().size() && g1.arbeidsforhold().containsAll(g2.arbeidsforhold()) &&
+            g1.vedtak().size() == g2.vedtak().size() && g1.vedtak().containsAll(g2.vedtak());
+    }
+
+
+
 
 }
