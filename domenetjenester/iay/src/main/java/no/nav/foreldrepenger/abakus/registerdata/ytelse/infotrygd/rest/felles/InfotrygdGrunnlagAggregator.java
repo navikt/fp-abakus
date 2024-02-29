@@ -18,7 +18,16 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sp.SP;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sp.TSP;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.sp.TestInfotrygdSPGrunnlag;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.InfotrygdGrunnlag;
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Arbeidsforhold;
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Arbeidskategori;
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Behandlingstema;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Inntektsperiode;
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Orgnummer;
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Periode;
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Status;
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Tema;
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Vedtak;
 
 @ApplicationScoped
 public class InfotrygdGrunnlagAggregator {
@@ -67,27 +76,49 @@ public class InfotrygdGrunnlagAggregator {
     }
 
     private boolean erLike(List<Grunnlag> g1, List<Grunnlag> g2) {
-        return g1.size() == g2.size() && g1.stream().allMatch(g -> inneholder(g2, g));
+        var g1s = g1.stream().map(g -> new SammenG(g)).toList();
+        var g2s = g2.stream().map(g -> new SammenG(g)).toList();
+
+        return g1s.size() == g2s.size() && g1s.containsAll(g2s);
     }
 
-    private boolean inneholder(List<Grunnlag> g2, Grunnlag gr) {
-        return g2.stream().anyMatch(g -> erLik(g, gr));
+    private record SammenG(Status status, Tema tema, Arbeidskategori kategori, List<Arbeidsforhold> arbeidsforhold, Periode periode, Behandlingstema behandlingstema, LocalDate identdato, LocalDate opphørFom, List<Vedtak> vedtak) {
+        public SammenG(Grunnlag g) {
+            this(g.status(), g.tema(), g.kategori(), g.arbeidsforhold(), g.periode(), g.behandlingstema(), g.identdato(), g.opphørFom(), g.vedtak());
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+            SammenG sammenG = (SammenG) o;
+            return Objects.equals(status, sammenG.status) && Objects.equals(tema, sammenG.tema) && Objects.equals(kategori, sammenG.kategori)
+                &&  Objects.equals(periode, sammenG.periode) && Objects.equals(
+                behandlingstema, sammenG.behandlingstema) && Objects.equals(identdato, sammenG.identdato) && Objects.equals(opphørFom,
+                sammenG.opphørFom) && vedtak.size() == sammenG.vedtak.size() && vedtak.containsAll(sammenG.vedtak) &&
+                arbeidsforhold.size() == sammenG.arbeidsforhold.size() && arbeidsforhold.containsAll(sammenG.arbeidsforhold);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(status, tema, kategori, arbeidsforhold, periode, behandlingstema, identdato, opphørFom, vedtak);
+        }
     }
 
-    private boolean erLik(Grunnlag g1, Grunnlag g2) {
-        return Objects.equals(g1.status(), g2.status()) &&
-            Objects.equals(g1.tema(), g2.tema()) &&
-            Objects.equals(g1.kategori(), g2.kategori()) &&
-            Objects.equals(g1.periode(), g2.periode()) &&
-            Objects.equals(g1.behandlingstema(), g2.behandlingstema()) &&
-            Objects.equals(g1.identdato(), g2.identdato()) &&
-            Objects.equals(g1.opphørFom(), g2.opphørFom()) &&
-            Objects.equals(g1.gradering(), g2.gradering()) &&
-            g1.arbeidsforhold().size() == g2.arbeidsforhold().size() && g1.arbeidsforhold().containsAll(g2.arbeidsforhold()) &&
-            g1.vedtak().size() == g2.vedtak().size() && g1.vedtak().containsAll(g2.vedtak());
+    private record SammenV(Periode periode, int utbetalingsgrad, String arbeidsgiverOrgnr, Boolean erRefusjon, Integer dagsats) {
+
+        public SammenV(Vedtak v) {
+            this(v.periode(), v.utbetalingsgrad(), Objects.equals(v.arbeidsgiverOrgnr(), "0") ? null : v.arbeidsgiverOrgnr()  , v.erRefusjon(), v.dagsats())
+        }
     }
 
+    private record SammenA(Orgnummer orgnr, Integer inntekt, Inntektsperiode inntektsperiode, Boolean refusjon, LocalDate refusjonTom) {
 
-
+        public SammenA(Arbeidsforhold a) {
+            this(Objects.equals(a.orgnr().orgnr(), "0") ? null : a.orgnr(), a.inntekt(), a.inntektsperiode(), a.refusjon(), a.refusjonTom());
+        }
+    }
 
 }
