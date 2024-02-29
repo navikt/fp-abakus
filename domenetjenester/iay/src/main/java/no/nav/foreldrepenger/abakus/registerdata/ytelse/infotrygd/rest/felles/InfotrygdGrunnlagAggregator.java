@@ -76,15 +76,15 @@ public class InfotrygdGrunnlagAggregator {
     }
 
     private boolean erLike(List<Grunnlag> g1, List<Grunnlag> g2) {
-        var g1s = g1.stream().map(g -> new SammenG(g)).toList();
-        var g2s = g2.stream().map(g -> new SammenG(g)).toList();
+        var g1s = g1.stream().map(SammenG::new).toList();
+        var g2s = g2.stream().map(SammenG::new).toList();
 
         return g1s.size() == g2s.size() && g1s.containsAll(g2s);
     }
 
-    private record SammenG(Status status, Tema tema, Arbeidskategori kategori, List<Arbeidsforhold> arbeidsforhold, Periode periode, Behandlingstema behandlingstema, LocalDate identdato, LocalDate opphørFom, List<Vedtak> vedtak) {
+    private record SammenG(Status status, Tema tema, Arbeidskategori kategori, List<SammenA> arbeidsforhold, Periode periode, Behandlingstema behandlingstema, LocalDate identdato, LocalDate opphørFom, List<SammenV> vedtak) {
         public SammenG(Grunnlag g) {
-            this(g.status(), g.tema(), g.kategori(), g.arbeidsforhold(), g.periode(), g.behandlingstema(), g.identdato(), g.opphørFom(), g.vedtak());
+            this(g.status(), g.tema(), g.kategori(), g.arbeidsforhold().stream().map(SammenA::new).toList(), g.periode(), g.behandlingstema(), g.identdato(), g.opphørFom(), g.vedtak().stream().map(SammenV::new).toList());
         }
 
         @Override
@@ -94,10 +94,14 @@ public class InfotrygdGrunnlagAggregator {
             if (o == null || getClass() != o.getClass())
                 return false;
             SammenG sammenG = (SammenG) o;
-            return Objects.equals(status, sammenG.status) && Objects.equals(tema, sammenG.tema) && Objects.equals(kategori, sammenG.kategori)
-                &&  Objects.equals(periode, sammenG.periode) && Objects.equals(
-                behandlingstema, sammenG.behandlingstema) && Objects.equals(identdato, sammenG.identdato) && Objects.equals(opphørFom,
-                sammenG.opphørFom) && vedtak.size() == sammenG.vedtak.size() && vedtak.containsAll(sammenG.vedtak) &&
+            return Objects.equals(status, sammenG.status) &&
+                Objects.equals(tema, sammenG.tema) &&
+                Objects.equals(kategori, sammenG.kategori) &&
+                Objects.equals(periode, sammenG.periode) &&
+                Objects.equals(behandlingstema, sammenG.behandlingstema) &&
+                Objects.equals(identdato, sammenG.identdato) &&
+                Objects.equals(opphørFom, sammenG.opphørFom) &&
+                vedtak.size() == sammenG.vedtak.size() && vedtak.containsAll(sammenG.vedtak) &&
                 arbeidsforhold.size() == sammenG.arbeidsforhold.size() && arbeidsforhold.containsAll(sammenG.arbeidsforhold);
         }
 
