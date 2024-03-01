@@ -35,7 +35,7 @@
 
         <kontrakt.java.version>21</kontrakt.java.version>
 
-		<felles.version>7.0.5</felles.version>
+		<felles.version>7.0.6</felles.version>
 		<prosesstask.version>5.0.5</prosesstask.version>
 		<kontrakter.version>9.1.5</kontrakter.version>
         <tidsserie.version>2.7.1</tidsserie.version>

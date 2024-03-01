@@ -9,9 +9,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
-
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.GrunnlagRequest;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.InfotrygdGrunnlag;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
+import no.nav.vedtak.konfig.Tid;
 
 @ApplicationScoped
 public class InfotrygdGrunnlagAggregator {
@@ -27,11 +28,13 @@ public class InfotrygdGrunnlagAggregator {
     }
 
     public List<Grunnlag> hentAggregertGrunnlag(String fnr, LocalDate fom, LocalDate tom) {
-        return tjenester.stream().map(t -> t.hentGrunnlag(fnr, fom, tom)).flatMap(List::stream).collect(toList());
+        var request = new GrunnlagRequest(fnr, Tid.fomEllerBegynnelse(fom), Tid.tomEllerEndetid(tom));
+        return tjenester.stream().map(t -> t.hentGrunnlag(request)).flatMap(List::stream).collect(toList());
     }
 
     public List<Grunnlag> hentAggregertGrunnlagFailSoft(String fnr, LocalDate fom, LocalDate tom) {
-        return tjenester.stream().map(t -> t.hentGrunnlagFailSoft(fnr, fom, tom)).flatMap(List::stream).collect(toList());
+        var request = new GrunnlagRequest(fnr, Tid.fomEllerBegynnelse(fom), Tid.tomEllerEndetid(tom));
+        return tjenester.stream().map(t -> t.hentGrunnlagFailSoft(request)).flatMap(List::stream).collect(toList());
     }
 
     @Override
