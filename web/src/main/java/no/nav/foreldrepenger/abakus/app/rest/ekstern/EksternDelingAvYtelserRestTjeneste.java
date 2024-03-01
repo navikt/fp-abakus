@@ -11,6 +11,13 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -21,14 +28,6 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.vedtak.ytelse.Aktør;
 import no.nav.abakus.vedtak.ytelse.Desimaltall;
@@ -53,6 +52,8 @@ import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ConvertToYtelseV1;
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.GrunnlagRequest;
+import no.nav.vedtak.konfig.Tid;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
@@ -136,17 +137,15 @@ public class EksternDelingAvYtelserRestTjeneste {
         var aktørId = aktørIdOpt.orElseThrow();
         var identer = utledPersonIdentFraRequest(request.getIdent(), utledTemaFraYtelser(request.getYtelser()));
         var periode = IntervallEntitet.fraOgMedTilOgMed(request.getPeriode().getFom(), request.getPeriode().getTom());
-        var ytelser = new ArrayList<Ytelse>();
-        for (var ident : identer) {
-            var infotrygdYtelser = infotrygdPSGrunnlag.hentGrunnlagFailSoft(ident.getIdent(), periode.getFomDato(), periode.getTomDato());
-            var mappedYtelser =  InnhentingInfotrygdTjeneste.mapTilInfotrygdYtelseGrunnlag(infotrygdYtelser, periode.getFomDato());
-            ytelser.addAll(mappedYtelser.stream()
-                .map(InfotrygdgrunnlagYtelseMapper::oversettInfotrygdYtelseGrunnlagTilYtelse)
-                .map(it -> ytelseTilYtelse(aktørId, it))
-                .filter(it -> request.getYtelser().contains(it.getYtelse()))
-                .toList());
-        }
-
+        var fnr = identer.stream().map(PersonIdent::getIdent).toList();
+        var inforequest = new GrunnlagRequest(fnr, Tid.fomEllerBegynnelse(periode.getFomDato()), Tid.tomEllerEndetid(periode.getTomDato()));
+        var infotrygdYtelser = infotrygdPSGrunnlag.hentGrunnlagFailSoft(inforequest);
+        var mappedYtelser =  InnhentingInfotrygdTjeneste.mapTilInfotrygdYtelseGrunnlag(infotrygdYtelser, periode.getFomDato()).stream()
+            .map(InfotrygdgrunnlagYtelseMapper::oversettInfotrygdYtelseGrunnlagTilYtelse)
+            .map(it -> ytelseTilYtelse(aktørId, it))
+            .filter(it -> request.getYtelser().contains(it.getYtelse()))
+            .toList();
+        var ytelser = new ArrayList<Ytelse>(mappedYtelser);
         return ytelser;
     }
 
