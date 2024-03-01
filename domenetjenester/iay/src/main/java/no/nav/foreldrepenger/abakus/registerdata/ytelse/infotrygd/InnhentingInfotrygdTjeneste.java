@@ -5,11 +5,11 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -33,6 +33,7 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.felles.In
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Arbeidsforhold;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Orgnummer;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Periode;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Vedtak;
 import no.nav.vedtak.felles.integrasjon.spokelse.Spøkelse;
@@ -173,7 +174,7 @@ public class InnhentingInfotrygdTjeneste {
             arbeidsforhold.inntektsperiode() == null ? InntektPeriodeType.UDEFINERT : InntektPeriodeReverse.reverseMap(
                 arbeidsforhold.inntektsperiode().kode().name(), LOG);
         BigDecimal inntekt = arbeidsforhold.inntekt() != null ? new BigDecimal(arbeidsforhold.inntekt()) : null;
-        return new InfotrygdYtelseArbeid(arbeidsforhold.orgnr().orgnr(), inntekt, inntektPeriode, arbeidsforhold.refusjon(),
+        return new InfotrygdYtelseArbeid(Optional.ofNullable(arbeidsforhold.orgnr()).map(Orgnummer::orgnr).orElse(null), inntekt, inntektPeriode, arbeidsforhold.refusjon(),
             arbeidsforhold.refusjonTom());
     }
 
