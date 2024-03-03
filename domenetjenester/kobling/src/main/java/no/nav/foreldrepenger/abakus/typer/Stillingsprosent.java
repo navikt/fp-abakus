@@ -5,12 +5,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -25,7 +24,7 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
 
     private static final RoundingMode AVRUNDINGSMODUS = RoundingMode.HALF_EVEN;
 
-    private static final BigDecimal MAX_VERDI = new BigDecimal(500);
+    private static final BigDecimal MAX_VERDI = BigDecimal.valueOf(109.99d); // Bør være 100 men vil dobbelsjekke avrunding i noen tilfelle
 
     private static final Stillingsprosent NULL_PROSENT = new Stillingsprosent(null);
 
@@ -38,7 +37,7 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
     }
 
     public Stillingsprosent(BigDecimal verdi) {
-        this.verdi = verdi == null ? null : fiksNegativOgMax(verdi);
+        this.verdi = fiksNegativOgMax(verdi);
         validerRange(this.verdi);
     }
 
@@ -68,15 +67,16 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
     }
 
     private BigDecimal fiksNegativOgMax(BigDecimal verdi) {
-        if (null != verdi && verdi.compareTo(BigDecimal.ZERO) < 0) {
-            LOG.info("[IAY] Prosent (yrkesaktivitet, permisjon) kan ikke være mindre enn 0, absolutt verdi brukes isteden. Verdi fra AA-reg: {}",
-                verdi);
+        if (verdi == null) {
+            return null;
+        }
+        if (verdi.compareTo(BigDecimal.ZERO) < 0) {
+            LOG.info("[IAY] Prosent (yrkesaktivitet, permisjon) mindre enn 0, absolutt verdi brukes isteden. Verdi fra AA-reg: {}", verdi);
             verdi = verdi.abs();
         }
-        if (null != verdi && verdi.compareTo(MAX_VERDI) > 0) {
-            LOG.info("[IAY] Prosent (yrkesaktivitet, permisjon) kan ikke være mer enn 500, avkortet verdi brukes isteden. Verdi fra AA-reg: {}",
-                verdi);
-            verdi = MAX_VERDI;
+        while (verdi.compareTo(MAX_VERDI) > 0) {
+            LOG.info("[IAY] Prosent (yrkesaktivitet, permisjon) mer enn 109,99, justert verdi brukes isteden. Verdi fra AA-reg: {}", verdi);
+            verdi = verdi.divide(BigDecimal.TEN, 2, AVRUNDINGSMODUS);
         }
         return verdi;
     }
