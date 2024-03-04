@@ -17,14 +17,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.persistence.Version;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
-import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.typer.AntallTimer;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 import no.nav.vedtak.konfig.Tid;
 
@@ -39,22 +36,6 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
     @ManyToOne(optional = false)
     @JoinColumn(name = "yrkesaktivitet_id", nullable = false, updatable = false, unique = true)
     private Yrkesaktivitet yrkesaktivitet;
-
-    /**
-     * TODO (FC): Se om vi kan bli kvitt antallTimer. Brukes bare til å sjekke om det finnes verdi i {@link #erAnsettelsesPeriode()}.
-     */
-    @DiffIgnore
-    @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "antall_timer")))
-    private AntallTimer antallTimer;
-
-    /**
-     * TODO (FC): Se om vi kan bli kvitt antallTimerFulltid. Brukes bare til å sjekke om det finnes verdi i {@link #erAnsettelsesPeriode()}.
-     */
-    @DiffIgnore
-    @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "antall_timer_fulltid")))
-    private AntallTimer antallTimerFulltid;
 
     @ChangeTracked
     @Embedded
@@ -126,32 +107,6 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
      */
     public BigDecimal getProsentsatsVerdi() {
         return prosentsats == null ? null : prosentsats.getVerdi();
-    }
-
-    /**
-     * For timelønnede så vil antallet timer i arbeidsavtalen være satt her
-     *
-     * @return antall timer
-     */
-    public AntallTimer getAntallTimer() {
-        return antallTimer;
-    }
-
-    void setAntallTimer(AntallTimer antallTimer) {
-        this.antallTimer = antallTimer;
-    }
-
-    /**
-     * Antall timer som tilsvarer fulltid (f.eks 40 timer)
-     *
-     * @return antall timer
-     */
-    public AntallTimer getAntallTimerFulltid() {
-        return antallTimerFulltid;
-    }
-
-    void setAntallTimerFulltid(AntallTimer antallTimerFulltid) {
-        this.antallTimerFulltid = antallTimerFulltid;
     }
 
     /**
@@ -239,22 +194,19 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
             return false;
         }
         AktivitetsAvtale that = (AktivitetsAvtale) o;
-        return Objects.equals(antallTimer, that.antallTimer) && Objects.equals(antallTimerFulltid, that.antallTimerFulltid) && Objects.equals(
-            beskrivelse, that.beskrivelse) && Objects.equals(prosentsats, that.prosentsats) && Objects.equals(periode, that.periode)
+        return Objects.equals(beskrivelse, that.beskrivelse) && Objects.equals(prosentsats, that.prosentsats) && Objects.equals(periode, that.periode)
             && Objects.equals(overstyrtPeriode, that.overstyrtPeriode) && Objects.equals(sisteLønnsendringsdato, that.sisteLønnsendringsdato);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(antallTimer, antallTimerFulltid, beskrivelse, prosentsats, periode, overstyrtPeriode, sisteLønnsendringsdato);
+        return Objects.hash(beskrivelse, prosentsats, periode, overstyrtPeriode, sisteLønnsendringsdato);
     }
 
     @Override
     public String toString() {
         return getClass().getSimpleName() + "<" +
-            "antallTimer=" + antallTimer +
-            ", antallTimerFulltid=" + antallTimerFulltid +
-            ", periode=" + periode +
+            "periode=" + periode +
             ", overstyrtPeriode=" + overstyrtPeriode +
             ", prosentsats=" + prosentsats +
             ", beskrivelse=" + beskrivelse +
@@ -267,7 +219,6 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
     }
 
     public boolean erAnsettelsesPeriode() {
-        return (antallTimer == null || antallTimer.getVerdi() == null) && (antallTimerFulltid == null || antallTimerFulltid.getVerdi() == null) && (
-            prosentsats == null || prosentsats.getVerdi() == null || prosentsats.erNulltall()) && sisteLønnsendringsdato == null;
+        return (prosentsats == null || prosentsats.getVerdi() == null || prosentsats.erNulltall()) && sisteLønnsendringsdato == null;
     }
 }

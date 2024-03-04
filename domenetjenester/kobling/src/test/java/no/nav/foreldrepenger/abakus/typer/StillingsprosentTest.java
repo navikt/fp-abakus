@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.typer;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import org.junit.jupiter.api.Test;
 
@@ -17,17 +18,17 @@ class StillingsprosentTest {
     }
 
     @Test
-    void skalReturnere500VerdiHvisStørrereEn500() {
+    void skalReturnereTidelVerdiHvisStørrereEn500() {
         Stillingsprosent minus = new Stillingsprosent(BigDecimal.valueOf(600));
 
-        assertThat(minus.getVerdi()).isEqualTo(BigDecimal.valueOf(500));
+        assertThat(minus.getVerdi()).isEqualByComparingTo(BigDecimal.valueOf(60));
     }
 
     @Test
-    void skalReturnere500HvisMinusOgStørrereEn500() {
+    void skalReturnereTidelHvisMinusOgStørrereEn500() {
         Stillingsprosent minus = new Stillingsprosent(BigDecimal.valueOf(-600));
 
-        assertThat(minus.getVerdi()).isEqualTo(BigDecimal.valueOf(500));
+        assertThat(minus.getVerdi()).isEqualByComparingTo(BigDecimal.valueOf(60));
     }
 
     @Test
