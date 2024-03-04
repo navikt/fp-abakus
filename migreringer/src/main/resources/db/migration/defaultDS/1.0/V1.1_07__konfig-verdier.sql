@@ -1,2 +1,0 @@
-insert into KONFIG_VERDI_KODE (kode, navn, konfig_gruppe, konfig_type, beskrivelse) values ('inntektskomponent.tidligste.dato', 'Dato for eldste request til inntk', 'INGEN', 'DATE', 'Dato for tidligst mulig request til inntekt');
-insert into KONFIG_VERDI (id, konfig_kode, konfig_gruppe, konfig_verdi, gyldig_fom) values (nextval(('SEQ_KONFIG_VERDI')), 'inntektskomponent.tidligste.dato', 'INGEN', '2015-07-01', to_date('01.01.2019', 'dd.mm.yyyy'));

@@ -1,1 +1,0 @@
-ALTER TABLE iay_relatert_ytelse ALTER COLUMN status SET DEFAULT 'YTELSE_STATUS';

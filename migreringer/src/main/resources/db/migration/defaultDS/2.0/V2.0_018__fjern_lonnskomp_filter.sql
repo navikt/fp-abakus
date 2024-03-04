@@ -1,2 +1,0 @@
-drop table LONNSKOMP_FILTER;
-drop sequence SEQ_LONNSKOMP_FILTER;

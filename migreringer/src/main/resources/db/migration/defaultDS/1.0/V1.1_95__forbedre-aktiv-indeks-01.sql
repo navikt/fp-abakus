@@ -1,1 +1,0 @@
-create unique index if not exists uidx_gr_arbeid_inntekt_02 on gr_arbeid_inntekt(kobling_id) where aktiv='J';
