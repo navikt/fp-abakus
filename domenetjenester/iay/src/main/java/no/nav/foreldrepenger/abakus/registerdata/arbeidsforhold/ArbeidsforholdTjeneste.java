@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,7 +128,9 @@ public class ArbeidsforholdTjeneste {
     }
 
     private Arbeidsavtale byggArbeidsavtaleRS(ArbeidsavtaleRS arbeidsavtale, ArbeidsforholdRS arbeidsforhold) {
-        Arbeidsavtale.Builder builder = new Arbeidsavtale.Builder().medStillingsprosent(arbeidsavtale.getStillingsprosent())
+        var stillingsprosent = Stillingsprosent.normaliserData(arbeidsavtale.getStillingsprosent());
+
+        Arbeidsavtale.Builder builder = new Arbeidsavtale.Builder().medStillingsprosent(stillingsprosent)
             .medBeregnetAntallTimerPrUke(arbeidsavtale.getBeregnetAntallTimerPrUke())
             .medAvtaltArbeidstimerPerUke(arbeidsavtale.getAntallTimerPrUke())
             .medSisteLønnsendringsdato(arbeidsavtale.getSistLoennsendring());

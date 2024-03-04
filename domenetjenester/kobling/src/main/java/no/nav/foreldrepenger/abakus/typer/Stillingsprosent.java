@@ -37,7 +37,7 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
     }
 
     public Stillingsprosent(BigDecimal verdi) {
-        this.verdi = fiksNegativOgMax(verdi);
+        this.verdi = normaliserData(verdi);
         validerRange(this.verdi);
     }
 
@@ -66,7 +66,7 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
         return verdi == null ? null : verdi.setScale(2, AVRUNDINGSMODUS);
     }
 
-    private BigDecimal fiksNegativOgMax(BigDecimal verdi) {
+    public static BigDecimal normaliserData(BigDecimal verdi) {
         if (verdi == null) {
             return null;
         }
