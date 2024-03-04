@@ -15,14 +15,9 @@
   "ingresses": [
     "https://fpabakus.dev-fss-pub.nais.io"
   ],
-  "env": {
-    "APPD_ENABLED": "false"
-  },
   "groups": [
     "27e77109-fef2-48ce-a174-269074490353",
     "8cddda87-0a22-4d35-9186-a2c32a6ab450",
-    "93e8903d-5c3f-4cbe-929e-0afeb22dec73",
-    "5bc5cae2-3ef9-4897-9828-766757299de8",
     "5a7b4d5e-f80b-451c-aae2-2ab1c90f039d"
   ],
   "AZURE_IAC_RULES": [
@@ -37,21 +32,6 @@
     {
       "app": "fpsak",
       "namespace": "teamforeldrepenger",
-      "cluster": "dev-fss"
-    },
-    {
-      "app": "k9-sak",
-      "namespace": "k9saksbehandling",
-      "cluster": "dev-fss"
-    },
-    {
-      "app": "k9-klage",
-      "namespace": "k9saksbehandling",
-      "cluster": "dev-fss"
-    },
-    {
-      "app": "k9-formidling",
-      "namespace": "k9saksbehandling",
       "cluster": "dev-fss"
     },
     {

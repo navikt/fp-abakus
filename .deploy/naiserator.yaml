@@ -52,11 +52,6 @@ spec:
     paths:
       - mountPath: /var/run/secrets/nais.io/serviceuser
         kvPath: {{serviceuserkv}}
-  env:
-  {{#each env}}
-   - name: {{@key}}
-     value: "{{this}}"
-  {{/each}}
   azure:
     application:
       enabled: true
