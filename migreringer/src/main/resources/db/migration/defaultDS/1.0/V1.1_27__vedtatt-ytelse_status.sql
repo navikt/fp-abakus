@@ -1,2 +1,0 @@
-ALTER TABLE vedtak_ytelse
-    ALTER COLUMN kl_status SET DEFAULT 'YTELSE_STATUS';

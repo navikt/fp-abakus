@@ -1,1 +1,0 @@
-create unique index if not exists uidx_vedtak_ytelse_02 on vedtak_ytelse(saksnummer, aktoer_id, kilde, ytelse_type) where aktiv='J';

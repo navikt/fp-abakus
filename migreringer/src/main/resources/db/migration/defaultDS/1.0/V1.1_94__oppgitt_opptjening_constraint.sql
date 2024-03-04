@@ -1,2 +1,0 @@
-drop index UIDX_IAY_OPPGITT_OPPTJE_01;
-create unique index UIDX_IAY_OPPGITT_OPPTJE_01 ON IAY_OPPGITT_OPPTJENING (oppgitte_opptjeninger_id, ekstern_referanse);
