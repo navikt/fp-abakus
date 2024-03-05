@@ -1,8 +1,6 @@
 package no.nav.foreldrepenger.abakus.app.vedlikehold;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
-import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.DRIFT;
-import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.GRUNNLAG;
 
 import java.util.List;
 import java.util.function.Function;
@@ -34,6 +32,7 @@ import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
+import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 
 @Path("/forvaltning")
 @ApplicationScoped
@@ -62,7 +61,7 @@ public class ForvaltningRestTjeneste {
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
     @Operation(description = "Vasker begrunnelse for ugyldige tegn", tags = "FORVALTNING", responses = {@ApiResponse(responseCode = "200", description = "Forekomster av egen næring med vasket begrunnelse")})
-    @BeskyttetRessurs(actionType = ActionType.CREATE, resource = DRIFT)
+    @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.DRIFT)
     public Response vaskBegrunnelse(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AbacDataSupplier.class) @NotNull @Valid UuidDto eksternReferanse) {
         var iayAggregat = iayTjeneste.hentAggregat(new KoblingReferanse(eksternReferanse.getReferanse()));
         var oppgittOpptjening = iayAggregat.getOppgittOpptjeningAggregat().stream().flatMap(oo -> oo.getOppgitteOpptjeninger().stream()).toList();
@@ -85,7 +84,7 @@ public class ForvaltningRestTjeneste {
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
     @Operation(description = "Setter oppgitt opptjening til å være varig endring", tags = "FORVALTNING", responses = {@ApiResponse(responseCode = "200", description = "Forekomster av utgått aktørid erstattet.")})
-    @BeskyttetRessurs(actionType = ActionType.UPDATE, resource = GRUNNLAG)
+    @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
     public Response setVarigEndring(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AbacDataSupplier.class) @NotNull @Valid VarigEndringRequest request) {
         var oppgittOpptjeningEksternReferanse = request.getEksternReferanse().toUuidReferanse();
         var org = new OrgNummer(request.getOrgnummer());
@@ -109,7 +108,7 @@ public class ForvaltningRestTjeneste {
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
     @Operation(description = "Fjerner angitt inntektsmelding/journalpost fra grunnlag", tags = "FORVALTNING", responses = {@ApiResponse(responseCode = "200", description = "Inntektsmelding eliminert.")})
-    @BeskyttetRessurs(actionType = ActionType.UPDATE, resource = GRUNNLAG)
+    @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
     public Response eliminerInntektsmelding(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AbacDataSupplier.class) @NotNull @Valid EliminerInntektsmeldingRequest request) {
         var koblingReferanse = new KoblingReferanse(request.getEksternReferanse().toUuidReferanse());
         var journalpost = new JournalpostId(request.getJournalpostId());
@@ -141,7 +140,7 @@ public class ForvaltningRestTjeneste {
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
     @Operation(description = "MERGE: Oppdaterer aktørid for bruker i nødvendige tabeller", tags = "FORVALTNING", responses = {@ApiResponse(responseCode = "200", description = "Forekomster av utgått aktørid erstattet.")})
-    @BeskyttetRessurs(actionType = ActionType.CREATE, resource = DRIFT)
+    @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.DRIFT)
     public Response oppdaterAktoerId(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AktørRequestAbacDataSupplier.class) @NotNull @Valid ByttAktørRequest request) {
         int antall = oppdaterAktørIdFor(request.getUtgåttAktør().getVerdi(), request.getGyldigAktør().getVerdi());
         return Response.ok(antall).build();
