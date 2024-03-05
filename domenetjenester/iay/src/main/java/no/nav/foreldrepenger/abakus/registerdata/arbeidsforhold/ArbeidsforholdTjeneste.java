@@ -41,9 +41,7 @@ public class ArbeidsforholdTjeneste {
         this.aaregRestKlient = aaregRestKlient;
     }
 
-    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> finnArbeidsforholdForIdentIPerioden(PersonIdent ident,
-                                                                                                      AktørId aktørId,
-                                                                                                      IntervallEntitet interval) {
+    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> finnArbeidsforholdForIdentIPerioden(PersonIdent ident, IntervallEntitet interval) {
         // TODO: kall med aktørid når register har fikset ytelsesproblemer
         List<ArbeidsforholdRS> response = aaregRestKlient.finnArbeidsforholdForArbeidstaker(ident.getIdent(), interval.getFomDato(),
             interval.getTomDato());
@@ -59,7 +57,7 @@ public class ArbeidsforholdTjeneste {
     private void valider(Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> mapArbeidsforhold) {
         var gruppert = mapArbeidsforhold.keySet().stream().collect(Collectors.groupingBy(r -> new Key(r.getArbeidsgiver(), r.getArbeidsforholdId())));
         var dups = gruppert.entrySet().stream().filter(e -> e.getValue().size() > 1) // duplikater
-            .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         if (!dups.isEmpty()) {
             String msg = "Mottatt duplikater for arbeidsforhold fra AAreg: " + dups;
             LOG.warn(msg);
@@ -83,9 +81,9 @@ public class ArbeidsforholdTjeneste {
 
         utledArbeidsgiverRS(arbeidsforhold, builder);
 
-        builder.medArbeidFom(arbeidsforhold.getAnsettelsesperiode().getPeriode().getFom());
-        if (arbeidsforhold.getAnsettelsesperiode().getPeriode().getTom() != null) {
-            builder.medArbeidTom(arbeidsforhold.getAnsettelsesperiode().getPeriode().getTom());
+        builder.medArbeidFom(arbeidsforhold.getAnsettelsesperiode().periode().fom());
+        if (arbeidsforhold.getAnsettelsesperiode().periode().tom() != null) {
+            builder.medArbeidTom(arbeidsforhold.getAnsettelsesperiode().periode().tom());
         }
 
         builder.medArbeidsavtaler(arbeidsforhold.getArbeidsavtaler()
@@ -101,16 +99,16 @@ public class ArbeidsforholdTjeneste {
     }
 
     private void utledArbeidsgiverRS(ArbeidsforholdRS arbeidsforhold, Arbeidsforhold.Builder builder) {
-        if (OpplysningspliktigArbeidsgiverRS.Type.Person.equals(arbeidsforhold.getArbeidsgiver().getType())) {
-            AktørId arbeidsgiver = new AktørId(arbeidsforhold.getArbeidsgiver().getAktoerId());
-            no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Person person = new no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Person.Builder().medAktørId(
+        if (OpplysningspliktigArbeidsgiverRS.Type.Person.equals(arbeidsforhold.getArbeidsgiver().type())) {
+            AktørId arbeidsgiver = new AktørId(arbeidsforhold.getArbeidsgiver().aktoerId());
+            Person person = new Person.Builder().medAktørId(
                 arbeidsgiver).build();
             builder.medArbeidsgiver(person);
             final var uuid = UUID.nameUUIDFromBytes(arbeidsforhold.getType().getBytes(StandardCharsets.UTF_8));
             builder.medArbeidsforholdId(uuid.toString());
-        } else if (OpplysningspliktigArbeidsgiverRS.Type.Organisasjon.equals(arbeidsforhold.getArbeidsgiver().getType())) {
-            no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Organisasjon organisasjon = new no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Organisasjon.Builder().medOrgNummer(
-                arbeidsforhold.getArbeidsgiver().getOrganisasjonsnummer()).build();
+        } else if (OpplysningspliktigArbeidsgiverRS.Type.Organisasjon.equals(arbeidsforhold.getArbeidsgiver().type())) {
+            Organisasjon organisasjon = new Organisasjon.Builder().medOrgNummer(
+                arbeidsforhold.getArbeidsgiver().organisasjonsnummer()).build();
             builder.medArbeidsgiver(organisasjon);
             builder.medArbeidsforholdId(arbeidsforhold.getArbeidsforholdId());
         }
@@ -119,30 +117,29 @@ public class ArbeidsforholdTjeneste {
     private Arbeidsavtale byggAnsettelsesPeriodeRS(ArbeidsforholdRS arbeidsforhold) {
         Arbeidsavtale.Builder builder = new Arbeidsavtale.Builder();
 
-        builder.medArbeidsavtaleFom(arbeidsforhold.getAnsettelsesperiode().getPeriode().getFom());
-        if (arbeidsforhold.getAnsettelsesperiode().getPeriode().getTom() != null) {
-            builder.medArbeidsavtaleTom(arbeidsforhold.getAnsettelsesperiode().getPeriode().getTom());
+        builder.medArbeidsavtaleFom(arbeidsforhold.getAnsettelsesperiode().periode().fom());
+        if (arbeidsforhold.getAnsettelsesperiode().periode().tom() != null) {
+            builder.medArbeidsavtaleTom(arbeidsforhold.getAnsettelsesperiode().periode().tom());
         }
         builder.erAnsettelsesPerioden();
         return builder.build();
     }
 
     private Arbeidsavtale byggArbeidsavtaleRS(ArbeidsavtaleRS arbeidsavtale, ArbeidsforholdRS arbeidsforhold) {
-        var stillingsprosent = Stillingsprosent.normaliserData(arbeidsavtale.getStillingsprosent());
+        var stillingsprosent = Stillingsprosent.normaliserData(arbeidsavtale.stillingsprosent());
+        Arbeidsavtale.Builder builder = new Arbeidsavtale.Builder().medStillingsprosent(arbeidsavtale.stillingsprosent())
+            .medBeregnetAntallTimerPrUke(arbeidsavtale.beregnetAntallTimerPrUke())
+            .medAvtaltArbeidstimerPerUke(arbeidsavtale.antallTimerPrUke())
+            .medSisteLønnsendringsdato(arbeidsavtale.sistLoennsendring());
 
-        Arbeidsavtale.Builder builder = new Arbeidsavtale.Builder().medStillingsprosent(stillingsprosent)
-            .medBeregnetAntallTimerPrUke(arbeidsavtale.getBeregnetAntallTimerPrUke())
-            .medAvtaltArbeidstimerPerUke(arbeidsavtale.getAntallTimerPrUke())
-            .medSisteLønnsendringsdato(arbeidsavtale.getSistLoennsendring());
-
-        PeriodeRS ansettelsesPeriode = arbeidsforhold.getAnsettelsesperiode().getPeriode();
-        LocalDate arbeidsavtaleFom = arbeidsavtale.getGyldighetsperiode().getFom();
-        LocalDate arbeidsavtaleTom = arbeidsavtale.getGyldighetsperiode().getTom();
+        PeriodeRS ansettelsesPeriode = arbeidsforhold.getAnsettelsesperiode().periode();
+        LocalDate arbeidsavtaleFom = arbeidsavtale.gyldighetsperiode().fom();
+        LocalDate arbeidsavtaleTom = arbeidsavtale.gyldighetsperiode().tom();
         builder.medArbeidsavtaleFom(arbeidsavtaleFom);
         builder.medArbeidsavtaleTom(arbeidsavtaleTom);
 
-        var ansettelseIntervall = ansettelsesPeriode.getTom() != null ? IntervallEntitet.fraOgMedTilOgMed(ansettelsesPeriode.getFom(),
-            ansettelsesPeriode.getTom()) : IntervallEntitet.fraOgMed(ansettelsesPeriode.getFom());
+        var ansettelseIntervall = ansettelsesPeriode.tom() != null ? IntervallEntitet.fraOgMedTilOgMed(ansettelsesPeriode.fom(),
+            ansettelsesPeriode.tom()) : IntervallEntitet.fraOgMed(ansettelsesPeriode.fom());
 
         if (!ansettelseIntervall.inkluderer(arbeidsavtaleFom)) {
             LOG.info("Arbeidsavtale fom={} ligger utenfor ansettelsesPeriode={}", arbeidsavtaleFom, ansettelseIntervall);
@@ -150,7 +147,7 @@ public class ArbeidsforholdTjeneste {
 
         if (arbeidsavtaleTom != null && arbeidsavtaleTom.isBefore(arbeidsavtaleFom)) {
             LOG.warn("Arbeidsavtale tom={} er før fom={} for orgnr={}, navArbeidsforholdId={}", arbeidsavtaleTom, arbeidsavtaleFom,
-                getIdentifikatorString(arbeidsforhold.getArbeidsgiver().getOrganisasjonsnummer()), arbeidsforhold.getNavArbeidsforholdId());
+                getIdentifikatorString(arbeidsforhold.getArbeidsgiver().organisasjonsnummer()), arbeidsforhold.getNavArbeidsforholdId());
         }
 
         return builder.build();
@@ -168,10 +165,10 @@ public class ArbeidsforholdTjeneste {
     }
 
     private Permisjon byggPermisjonRS(PermisjonPermitteringRS permisjonPermitteringRS) {
-        return new Permisjon.Builder().medPermisjonFom(permisjonPermitteringRS.getPeriode().getFom())
-            .medPermisjonTom(permisjonPermitteringRS.getPeriode().getTom())
-            .medPermisjonsprosent(permisjonPermitteringRS.getProsent())
-            .medPermisjonsÅrsak(permisjonPermitteringRS.getType())
+        return new Permisjon.Builder().medPermisjonFom(permisjonPermitteringRS.periode().fom())
+            .medPermisjonTom(permisjonPermitteringRS.periode().tom())
+            .medPermisjonsprosent(permisjonPermitteringRS.prosent())
+            .medPermisjonsÅrsak(permisjonPermitteringRS.type())
             .build();
     }
 
@@ -182,6 +179,6 @@ public class ArbeidsforholdTjeneste {
         return interval.overlapper(interval1);
     }
 
-    static record Key(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef arbeidsforholdId) {
+    record Key(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef arbeidsforholdId) {
     }
 }

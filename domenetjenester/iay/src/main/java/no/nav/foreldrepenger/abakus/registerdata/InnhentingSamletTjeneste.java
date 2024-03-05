@@ -3,7 +3,6 @@ package no.nav.foreldrepenger.abakus.registerdata;
 import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -108,7 +107,7 @@ public class InnhentingSamletTjeneste {
     public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> getArbeidsforhold(AktørId aktørId,
                                                                                     PersonIdent ident,
                                                                                     IntervallEntitet opplysningsPeriode) {
-        return arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident, aktørId, opplysningsPeriode);
+        return arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident, opplysningsPeriode);
     }
 
     public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> getArbeidsforholdFrilans(AktørId aktørId,

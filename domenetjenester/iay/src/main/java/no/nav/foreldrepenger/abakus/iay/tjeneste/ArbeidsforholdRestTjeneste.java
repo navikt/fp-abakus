@@ -98,6 +98,28 @@ public class ArbeidsforholdRestTjeneste {
     }
 
     @POST
+    @Path("/arbeidstakerMedPermisjoner")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Gir ut alle arbeidsforhold og permisjoner i en gitt periode/dato for en gitt aktør. NB! Proxyer direkte til aa-registeret / ingen bruk av sak/kobling i abakus", tags = "arbeidsforhold")
+    @BeskyttetRessurs(actionType = ActionType.READ, resource = ARBEIDSFORHOLD)
+    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    public Response hentArbeidsforholdOgPermisjonerForEnPeriode(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
+        AktørId aktørId = new AktørId(request.getAktør().getIdent());
+        Periode periode = request.getPeriode();
+        YtelseType ytelse = request.getYtelse() != null ? request.getYtelse() : YtelseType.UDEFINERT;
+        LOG_CONTEXT.add("ytelseType", request.getYtelse().getKode());
+        LOG_CONTEXT.add("periode", periode);
+
+        LocalDate fom = periode.getFom();
+        LocalDate tom = Objects.equals(fom, periode.getTom()) ? fom.plusDays(1) // enkel dato søk
+            : periode.getTom(); // periode søk
+        LOG.info("ABAKUS arbeidstaker - sjekk consumers for ytelse {}", ytelse);
+        var arbeidstakersArbeidsforhold = dtoTjeneste.mapArbForholdOgPermisjoner(aktørId, fom, tom, ytelse);
+        return Response.ok(arbeidstakersArbeidsforhold).build();
+    }
+
+    @POST
     @Path("/referanse")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

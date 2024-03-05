@@ -30,7 +30,6 @@ import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 class ArbeidsforholdTjenesteMedRestTest {
 
     private static final String ORGNR = "973093681";
-    private static final AktørId AKTØR_ID = new AktørId("1231231231223");
     private static final PersonIdent FNR = new PersonIdent("12312312312");
     private static final LocalDate FOM = LocalDate.now().minusYears(1L);
     private static final String json = """
@@ -73,8 +72,8 @@ class ArbeidsforholdTjenesteMedRestTest {
     void mapping_organisasjon() throws IOException {
         var arbeidsforhold = fromJson(json, ArbeidsforholdRS.class);
 
-        assertThat(arbeidsforhold.getArbeidsgiver().getOrganisasjonsnummer()).isEqualTo(ORGNR);
-        assertThat(arbeidsforhold.getArbeidsavtaler().get(0).getAntallTimerPrUke()).isEqualTo(new BigDecimal("37.5"));
+        assertThat(arbeidsforhold.getArbeidsgiver().organisasjonsnummer()).isEqualTo(ORGNR);
+        assertThat(arbeidsforhold.getArbeidsavtaler().get(0).antallTimerPrUke()).isEqualTo(new BigDecimal("37.5"));
     }
 
     @Test
@@ -86,7 +85,7 @@ class ArbeidsforholdTjenesteMedRestTest {
 
         // Act
         Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(FNR,
-            AKTØR_ID, IntervallEntitet.fraOgMedTilOgMed(FOM, LocalDate.now()));
+            IntervallEntitet.fraOgMedTilOgMed(FOM, LocalDate.now()));
 
         // Assert
         assertThat(((Organisasjon) arbeidsforhold.values().iterator().next().get(0).getArbeidsgiver()).getOrgNummer()).isEqualTo(ORGNR);
