@@ -41,7 +41,8 @@ public class ArbeidsforholdTjeneste {
         this.aaregRestKlient = aaregRestKlient;
     }
 
-    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> finnArbeidsforholdForIdentIPerioden(PersonIdent ident, IntervallEntitet interval) {
+    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> finnArbeidsforholdForIdentIPerioden(PersonIdent ident, IntervallEntitet interval,
+                                                                                                      AktørId aktørId) {
         // TODO: kall med aktørid når register har fikset ytelsesproblemer
         List<ArbeidsforholdRS> response = aaregRestKlient.finnArbeidsforholdForArbeidstaker(ident.getIdent(), interval.getFomDato(),
             interval.getTomDato());
@@ -127,9 +128,7 @@ public class ArbeidsforholdTjeneste {
 
     private Arbeidsavtale byggArbeidsavtaleRS(ArbeidsavtaleRS arbeidsavtale, ArbeidsforholdRS arbeidsforhold) {
         var stillingsprosent = Stillingsprosent.normaliserData(arbeidsavtale.stillingsprosent());
-        Arbeidsavtale.Builder builder = new Arbeidsavtale.Builder().medStillingsprosent(arbeidsavtale.stillingsprosent())
-            .medBeregnetAntallTimerPrUke(arbeidsavtale.beregnetAntallTimerPrUke())
-            .medAvtaltArbeidstimerPerUke(arbeidsavtale.antallTimerPrUke())
+        Arbeidsavtale.Builder builder = new Arbeidsavtale.Builder().medStillingsprosent(stillingsprosent)
             .medSisteLønnsendringsdato(arbeidsavtale.sistLoennsendring());
 
         PeriodeRS ansettelsesPeriode = arbeidsforhold.getAnsettelsesperiode().periode();

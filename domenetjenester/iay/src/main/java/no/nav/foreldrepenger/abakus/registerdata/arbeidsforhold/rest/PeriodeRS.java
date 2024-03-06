@@ -9,9 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hibernate.mapping.List;
 
-public record PeriodeRS (@JsonProperty("fom") LocalDate fom, @JsonProperty("tom") LocalDate tom) {
-    @Override
-    public String toString() {
-        return "PeriodeRS{" + "fom=" + fom + ", tom=" + tom + '}';
-    }
+public record PeriodeRS(LocalDate fom, LocalDate tom) {
+
 }

@@ -107,7 +107,7 @@ public class InnhentingSamletTjeneste {
     public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> getArbeidsforhold(AktørId aktørId,
                                                                                     PersonIdent ident,
                                                                                     IntervallEntitet opplysningsPeriode) {
-        return arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident, opplysningsPeriode);
+        return arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident, opplysningsPeriode, aktørId );
     }
 
     public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> getArbeidsforholdFrilans(AktørId aktørId,

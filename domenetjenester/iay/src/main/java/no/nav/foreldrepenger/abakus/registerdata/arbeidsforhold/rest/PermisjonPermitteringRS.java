@@ -4,9 +4,6 @@ import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record PermisjonPermitteringRS (@JsonProperty("periode") PeriodeRS periode, @JsonProperty("prosent") BigDecimal prosent, @JsonProperty("type") String type) {
-    @Override
-    public String toString() {
-        return "PermisjonPermitteringRS{" + "periode=" + periode + ", prosent=" + prosent + ", type='" + type + '\'' + '}';
-    }
+public record PermisjonPermitteringRS(PeriodeRS periode, BigDecimal prosent, String type) {
+
 }

@@ -11,6 +11,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import no.nav.foreldrepenger.abakus.typer.AktørId;
+
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,13 +26,13 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdTj
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Organisasjon;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AaregRestKlient;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.ArbeidsforholdRS;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 
 class ArbeidsforholdTjenesteMedRestTest {
 
     private static final String ORGNR = "973093681";
     private static final PersonIdent FNR = new PersonIdent("12312312312");
+    private static final AktørId AKTØR_ID = new AktørId("1231231231223");
     private static final LocalDate FOM = LocalDate.now().minusYears(1L);
     private static final String json = """
         {
@@ -71,9 +73,7 @@ class ArbeidsforholdTjenesteMedRestTest {
     @Test
     void mapping_organisasjon() throws IOException {
         var arbeidsforhold = fromJson(json, ArbeidsforholdRS.class);
-
         assertThat(arbeidsforhold.getArbeidsgiver().organisasjonsnummer()).isEqualTo(ORGNR);
-        assertThat(arbeidsforhold.getArbeidsavtaler().get(0).antallTimerPrUke()).isEqualTo(new BigDecimal("37.5"));
     }
 
     @Test
@@ -85,7 +85,7 @@ class ArbeidsforholdTjenesteMedRestTest {
 
         // Act
         Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(FNR,
-            IntervallEntitet.fraOgMedTilOgMed(FOM, LocalDate.now()));
+            IntervallEntitet.fraOgMedTilOgMed(FOM, LocalDate.now()), AKTØR_ID);
 
         // Assert
         assertThat(((Organisasjon) arbeidsforhold.values().iterator().next().get(0).getArbeidsgiver()).getOrgNummer()).isEqualTo(ORGNR);
@@ -96,11 +96,8 @@ class ArbeidsforholdTjenesteMedRestTest {
         arbeidsavtaler.forEach(avtale -> {
             assertThat(avtale.getArbeidsavtaleFom()).isNotNull();
             if (!avtale.getErAnsettelsesPerioden()) {
-                assertThat(avtale.getAvtaltArbeidstimerPerUke()).isNotNull();
-                assertThat(avtale.getBeregnetAntallTimerPrUke()).isNotNull();
                 assertThat(avtale.getStillingsprosent()).isNotNull();
             }
         });
-
     }
 }

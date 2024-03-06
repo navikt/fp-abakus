@@ -54,7 +54,7 @@ public class ArbeidsforholdDtoTjeneste {
         var ident = aktørConsumer.hentIdentForAktør(aktørId, ytelse).orElseThrow();
         var intervall = tom == null ? IntervallEntitet.fraOgMed(fom) : IntervallEntitet.fraOgMedTilOgMed(fom, tom);
         Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident,
-            intervall);
+            intervall, aktørId);
 
         return arbeidsforhold.entrySet().stream().map(this::mapTilArbeidsforhold).collect(Collectors.toList());
     }
@@ -63,7 +63,7 @@ public class ArbeidsforholdDtoTjeneste {
         var ident = aktørConsumer.hentIdentForAktør(aktørId, ytelse).orElseThrow();
         var intervall = tom == null ? IntervallEntitet.fraOgMed(fom) : IntervallEntitet.fraOgMedTilOgMed(fom, tom);
         Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident,
-            intervall);
+            intervall, aktørId);
 
         return arbeidsforhold.entrySet().stream().map(this::mapTilArbeidsforholdMedPermisjoner).collect(Collectors.toList());
     }
@@ -83,6 +83,7 @@ public class ArbeidsforholdDtoTjeneste {
     private List<ArbeidsavtaleDto> mapArbeidsavtaler(Arbeidsforhold arbeidsforhold) {
         LocalDateInterval ansettelse = new LocalDateInterval(arbeidsforhold.getArbeidFom(), arbeidsforhold.getArbeidTom());
         var tidslinje = arbeidsforhold.getArbeidsavtaler().stream()
+            .filter(arbeidsavtale -> !arbeidsavtale.getErAnsettelsesPerioden())
             .filter(arbeidsavtale -> arbeidsavtale.getStillingsprosent() != null)
             .map(a -> new LocalDateSegment<>(a.getArbeidsavtaleFom(), a.getArbeidsavtaleTom(), a.getStillingsprosent()))
             .collect(Collectors.collectingAndThen(Collectors.toList(), LocalDateTimeline::new));

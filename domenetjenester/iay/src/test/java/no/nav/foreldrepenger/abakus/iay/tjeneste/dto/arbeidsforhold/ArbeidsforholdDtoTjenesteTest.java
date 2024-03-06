@@ -34,12 +34,6 @@ import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AaregRestKlient;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AnsettelsesperiodeRS;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.ArbeidsavtaleRS;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.ArbeidsforholdRS;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.OpplysningspliktigArbeidsgiverRS;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.PeriodeRS;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.PermisjonPermitteringRS;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 
@@ -51,8 +45,6 @@ class ArbeidsforholdDtoTjenesteTest {
     private ArbeidsforholdTjeneste arbeidsforholdTjeneste;
     @Mock
     private AktørTjeneste aktørConsumer;
-    @Mock
-    private AaregRestKlient aaregRestKlient;
     private ArbeidsforholdDtoTjeneste arbeidsforholdDtoTjeneste;
     private static final LocalDate FRA_DATO = LocalDate.now().minusWeeks(2);
     private static final LocalDate TIL_DATO = LocalDate.now().plusWeeks(2);
@@ -86,7 +78,7 @@ void setUp() {
         var arbeidsforhold = List.of(lagArbeidsforhold(arbeidsgiver, arbeidsavtalerTilMap, permisjonerTilMap));
 
         when(aktørConsumer.hentIdentForAktør(any(), any())).thenReturn(Optional.of(personIdent));
-        when(arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(personIdent, intervall)).thenReturn(Map.of(arbeidsgiverIdentifikator, arbeidsforhold));
+        when(arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(personIdent, intervall, aktørId )).thenReturn(Map.of(arbeidsgiverIdentifikator, arbeidsforhold));
 
         var arbeidsforholdDto = arbeidsforholdDtoTjeneste.mapArbForholdOgPermisjoner(aktørId, FRA_DATO, TIL_DATO, YtelseType.FORELDREPENGER);
 
@@ -132,7 +124,7 @@ void setUp() {
         var arbeidsforhold = List.of(lagArbeidsforhold(arbeidsgiver, arbeidsavtalerTilMap, Collections.emptyList()));
 
         when(aktørConsumer.hentIdentForAktør(any(), any())).thenReturn(Optional.of(personIdent));
-        when(arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(personIdent, intervall)).thenReturn(Map.of(arbeidsgiverIdentifikator, arbeidsforhold));
+        when(arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(personIdent, intervall, aktørId)).thenReturn(Map.of(arbeidsgiverIdentifikator, arbeidsforhold));
 
         var arbeidsforholdDto = arbeidsforholdDtoTjeneste.mapArbForholdOgPermisjoner(aktørId, FRA_DATO, TIL_DATO, YtelseType.FORELDREPENGER);
 

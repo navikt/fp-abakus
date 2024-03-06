@@ -5,11 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record OpplysningspliktigArbeidsgiverRS (@JsonProperty("type") Type type,
-                                                @JsonProperty("organisasjonsnummer") String organisasjonsnummer,
-                                                @JsonProperty("aktoerId") String aktoerId,
-                                                @JsonProperty("offentligIdent")
-                                                String offentligIdent) {
+public record OpplysningspliktigArbeidsgiverRS(Type type, String organisasjonsnummer, String aktoerId, String offentligIdent) {
 
     @Override
     public String toString() {
