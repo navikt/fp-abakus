@@ -1,5 +1,9 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
+import java.time.ZoneId;
+import java.util.Objects;
+import java.util.Optional;
+
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseAggregatOverstyrtDto;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat;
@@ -9,10 +13,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.VersjonType;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-
-import java.time.ZoneId;
-import java.util.Objects;
-import java.util.Optional;
 
 public class IAYFraDtoMapper {
 
