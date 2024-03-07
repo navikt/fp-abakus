@@ -78,7 +78,7 @@ void setUp() {
         var arbeidsforhold = List.of(lagArbeidsforhold(arbeidsgiver, arbeidsavtalerTilMap, permisjonerTilMap));
 
         when(aktørConsumer.hentIdentForAktør(any(), any())).thenReturn(Optional.of(personIdent));
-        when(arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(personIdent, intervall, aktørId )).thenReturn(Map.of(arbeidsgiverIdentifikator, arbeidsforhold));
+        when(arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(personIdent, aktørId, intervall )).thenReturn(Map.of(arbeidsgiverIdentifikator, arbeidsforhold));
 
         var arbeidsforholdDto = arbeidsforholdDtoTjeneste.mapArbForholdOgPermisjoner(aktørId, FRA_DATO, TIL_DATO, YtelseType.FORELDREPENGER);
 
@@ -124,7 +124,7 @@ void setUp() {
         var arbeidsforhold = List.of(lagArbeidsforhold(arbeidsgiver, arbeidsavtalerTilMap, Collections.emptyList()));
 
         when(aktørConsumer.hentIdentForAktør(any(), any())).thenReturn(Optional.of(personIdent));
-        when(arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(personIdent, intervall, aktørId)).thenReturn(Map.of(arbeidsgiverIdentifikator, arbeidsforhold));
+        when(arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(personIdent, aktørId, intervall)).thenReturn(Map.of(arbeidsgiverIdentifikator, arbeidsforhold));
 
         var arbeidsforholdDto = arbeidsforholdDtoTjeneste.mapArbForholdOgPermisjoner(aktørId, FRA_DATO, TIL_DATO, YtelseType.FORELDREPENGER);
 

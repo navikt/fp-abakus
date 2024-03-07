@@ -53,7 +53,7 @@ public class ArbeidsforholdDtoTjeneste {
         var ident = aktørConsumer.hentIdentForAktør(aktørId, ytelse).orElseThrow();
         var intervall = tom == null ? IntervallEntitet.fraOgMed(fom) : IntervallEntitet.fraOgMedTilOgMed(fom, tom);
         Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident,
-            intervall, aktørId);
+            aktørId, intervall);
 
         return arbeidsforhold.entrySet().stream().map(this::mapTilArbeidsforhold).collect(Collectors.toList());
     }
@@ -62,7 +62,7 @@ public class ArbeidsforholdDtoTjeneste {
         var ident = aktørConsumer.hentIdentForAktør(aktørId, ytelse).orElseThrow();
         var intervall = tom == null ? IntervallEntitet.fraOgMed(fom) : IntervallEntitet.fraOgMedTilOgMed(fom, tom);
         Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident,
-            intervall, aktørId);
+            aktørId, intervall);
 
         return arbeidsforhold.entrySet().stream().map(this::mapTilArbeidsforholdMedPermisjoner).collect(Collectors.toList());
     }
