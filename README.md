@@ -50,7 +50,5 @@ Det er mulig å kalle tjenesten med bruk av følgende tokens
 - Azure OBO med følgende rettigheter:
     - fpsak-saksbehandler
     - fpsak-veileder
-    - k9-saksbehandler
-    - k9-veileder
     - abakus-drift
 - STS (fases ut)

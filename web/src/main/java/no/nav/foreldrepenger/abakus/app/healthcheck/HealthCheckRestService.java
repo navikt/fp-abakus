@@ -23,7 +23,7 @@ import no.nav.foreldrepenger.abakus.app.tjenester.ApplicationServiceStarter;
 import no.nav.vedtak.log.metrics.LivenessAware;
 import no.nav.vedtak.log.metrics.ReadinessAware;
 
-@Path("/")
+@Path("/health")
 @Produces(TEXT_PLAIN)
 @RequestScoped
 public class HealthCheckRestService {
@@ -62,7 +62,7 @@ public class HealthCheckRestService {
     }
 
     @GET
-    @Path("/health/isAlive")
+    @Path("/isAlive")
     @Operation(description = "Sjekker om poden lever", tags = "nais", hidden = true)
     public Response isAlive() {
         if (live.stream().allMatch(LivenessAware::isAlive)) {
@@ -72,19 +72,8 @@ public class HealthCheckRestService {
         return Response.serverError().cacheControl(CC).build();
     }
 
-    /**
-     * @deprecated Både k9-verdikjede og fpsak-autotest trenger å bytte til det nye endepunkt /internal/health/isAlive
-     */
-    @Deprecated(since = "03.2023", forRemoval = true)
     @GET
-    @Path("/isAlive")
-    @Operation(description = "Sjekker om poden lever", tags = "nais", hidden = true)
-    public Response isAliveDeprecated() {
-        return isAlive();
-    }
-
-    @GET
-    @Path("/health/isReady")
+    @Path("/isReady")
     @Operation(description = "sjekker om poden er klar", tags = "nais", hidden = true)
     public Response isReady() {
         if (ready.stream().allMatch(ReadinessAware::isReady)) {
@@ -94,19 +83,8 @@ public class HealthCheckRestService {
         return Response.status(SERVICE_UNAVAILABLE).cacheControl(CC).build();
     }
 
-    /**
-     * @deprecated Både k9-verdikjede og fpsak-autotest trenger å bytte til det nye endepunkt /internal/health/isReady
-     */
-    @Deprecated(since = "03.2023", forRemoval = true)
     @GET
-    @Path("/isReady")
-    @Operation(description = "sjekker om poden er klar", tags = "nais", hidden = true)
-    public Response isReadyDeprecated() {
-        return isReady();
-    }
-
-    @GET
-    @Path("/health/preStop")
+    @Path("/preStop")
     @Operation(description = "Kalles på før stopp", tags = "nais", hidden = true)
     public Response preStop() {
         LOG.info("/preStop endepunkt kalt.");
