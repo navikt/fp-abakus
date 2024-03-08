@@ -7,27 +7,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, fieldVisibility = JsonAutoDetect.Visibility.ANY)
-public class PeriodeRS {
+import org.hibernate.mapping.List;
 
-    @JsonProperty("fom")
-    private LocalDate fom;
+public record PeriodeRS(LocalDate fom, LocalDate tom) {
 
-    @JsonProperty("tom")
-    private LocalDate tom;
-
-    public LocalDate getFom() {
-        return fom;
-    }
-
-    public LocalDate getTom() {
-        return tom;
-    }
-
-    @Override
-    public String toString() {
-        return "PeriodeRS{" + "fom=" + fom + ", tom=" + tom + '}';
-    }
 }

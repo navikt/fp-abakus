@@ -8,6 +8,12 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -19,13 +25,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdReferanse;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
@@ -95,6 +94,28 @@ public class ArbeidsforholdRestTjeneste {
         var arbeidstakersArbeidsforhold = dtoTjeneste.mapFor(aktørId, fom, tom, ytelse);
         final Response response = Response.ok(arbeidstakersArbeidsforhold).build();
         return response;
+    }
+
+    @POST
+    @Path("/arbeidstakerMedPermisjoner")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Gir ut alle arbeidsforhold og permisjoner i en gitt periode/dato for en gitt aktør. NB! Proxyer direkte til aa-registeret / ingen bruk av sak/kobling i abakus", tags = "arbeidsforhold")
+    @BeskyttetRessurs(actionType = ActionType.READ, resource = ARBEIDSFORHOLD)
+    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    public Response hentArbeidsforholdOgPermisjonerForEnPeriode(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
+        AktørId aktørId = new AktørId(request.getAktør().getIdent());
+        Periode periode = request.getPeriode();
+        YtelseType ytelse = request.getYtelse() != null ? request.getYtelse() : YtelseType.UDEFINERT;
+        LOG_CONTEXT.add("ytelseType", request.getYtelse().getKode());
+        LOG_CONTEXT.add("periode", periode);
+
+        LocalDate fom = periode.getFom();
+        LocalDate tom = Objects.equals(fom, periode.getTom()) ? fom.plusDays(1) // enkel dato søk
+            : periode.getTom(); // periode søk
+        LOG.info("ABAKUS arbeidstaker - sjekk consumers for ytelse {}", ytelse);
+        var arbeidstakersArbeidsforhold = dtoTjeneste.mapArbForholdOgPermisjoner(aktørId, fom, tom, ytelse);
+        return Response.ok(arbeidstakersArbeidsforhold).build();
     }
 
     @POST

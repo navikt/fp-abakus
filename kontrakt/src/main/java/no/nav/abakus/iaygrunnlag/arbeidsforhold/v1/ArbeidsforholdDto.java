@@ -14,6 +14,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
 import no.nav.abakus.iaygrunnlag.Periode;
+import no.nav.abakus.iaygrunnlag.arbeid.v1.AktivitetsAvtaleDto;
+import no.nav.abakus.iaygrunnlag.arbeid.v1.PermisjonDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -37,6 +39,12 @@ public class ArbeidsforholdDto {
     @JsonProperty("ansettelsePerioder")
     @Valid
     private List<Periode> ansettelsesperiode;
+    @JsonProperty("arbeidsavtaler")
+    @Valid
+    private List<ArbeidsavtaleDto> arbeidsavtaler;
+    @JsonProperty("permisjoner")
+    @Valid
+    private List<PermisjonDto> permisjoner;
 
     protected ArbeidsforholdDto() {
     }
@@ -65,8 +73,20 @@ public class ArbeidsforholdDto {
     public List<Periode> getAnsettelsesperiode() {
         return ansettelsesperiode;
     }
+    public List<PermisjonDto> getPermisjoner() {
+        return permisjoner;
+    }
+    public List<ArbeidsavtaleDto> getArbeidsavtaler() {
+        return arbeidsavtaler;
+    }
 
     public void setAnsettelsesperiode(List<Periode> ansettelsesperiode) {
         this.ansettelsesperiode = ansettelsesperiode;
+    }
+    public void setArbeidsavtaler(List<ArbeidsavtaleDto> arbeidsavtaler) {
+        this.arbeidsavtaler = arbeidsavtaler;
+    }
+    public void setPermisjoner(List<PermisjonDto> permisjoner) {
+        this.permisjoner = permisjoner;
     }
 }
