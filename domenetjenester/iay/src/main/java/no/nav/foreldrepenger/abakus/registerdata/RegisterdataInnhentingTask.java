@@ -57,8 +57,7 @@ public class RegisterdataInnhentingTask extends KoblingTask {
 
     @Override
     protected void prosesser(ProsessTaskData prosessTaskData) {
-        String nyKoblingId = prosessTaskData.getPropertyValue(TaskConstants.NY_KOBLING_ID);
-        Long koblingId = nyKoblingId != null ? Long.valueOf(nyKoblingId) : Long.valueOf(prosessTaskData.getBehandlingId());
+        Long koblingId = Long.valueOf(prosessTaskData.getPropertyValue(TaskConstants.KOBLING_ID));
         Kobling kobling = koblingTjeneste.hent(koblingId);
         LOG.info("Starter registerinnhenting for sak=[{}, {}] med behandling='{}'", kobling.getSaksnummer(), kobling.getYtelseType(),
             kobling.getKoblingReferanse());
@@ -80,4 +79,5 @@ public class RegisterdataInnhentingTask extends KoblingTask {
         InntektArbeidYtelseGrunnlagBuilder builder = finnInnhenter(kobling.getYtelseType()).innhentRegisterdata(kobling, informasjonsElementer);
         iayTjeneste.lagre(kobling.getKoblingReferanse(), builder);
     }
+
 }

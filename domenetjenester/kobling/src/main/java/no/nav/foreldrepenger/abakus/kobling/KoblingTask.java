@@ -7,6 +7,8 @@ import no.nav.vedtak.log.mdc.MdcExtendedLogContext;
 
 public abstract class KoblingTask implements ProsessTaskHandler {
 
+    private static final MdcExtendedLogContext LOG_CONTEXT = MdcExtendedLogContext.getContext("prosess");
+
     private LåsRepository låsRepository;
 
     public KoblingTask() {
@@ -18,8 +20,8 @@ public abstract class KoblingTask implements ProsessTaskHandler {
 
     @Override
     public void doTask(ProsessTaskData prosessTaskData) {
-        String nyKoblingId = prosessTaskData.getPropertyValue(TaskConstants.NY_KOBLING_ID);
-        Long koblingId = nyKoblingId != null ? Long.valueOf(nyKoblingId) : Long.valueOf(prosessTaskData.getBehandlingId());
+        Long koblingId = Long.valueOf(prosessTaskData.getPropertyValue(TaskConstants.KOBLING_ID));
+        LOG_CONTEXT.add("koblingId", koblingId);
 
         KoblingLås koblingLås = låsRepository.taLås(koblingId);
 
