@@ -18,6 +18,8 @@ import no.nav.foreldrepenger.abakus.felles.LoggUtil;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.TaskResponsDto;
+import no.nav.foreldrepenger.konfig.Environment;
+import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
@@ -69,6 +71,11 @@ public class RegisterdataRestTjeneste {
     @BeskyttetRessurs(actionType = ActionType.CREATE, resource = REGISTERDATA)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response innhentOgLagreRegisterdataAsync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
+        if (Environment.current().isProd()) {
+            // Vil ikke kaste TekniskException pga at taskene skal feile uten retry.
+            throw new IllegalStateException("TEKNISK-VEDLIKEHOLD: Applikasjonen er midlertidig utilgjengelig på grunn av planlagt vedlikehold.");
+        }
+
         Response response;
         if (dto.getCallbackUrl() == null || dto.getCallbackScope() == null) {
             return Response.status(HttpURLConnection.HTTP_FORBIDDEN).build();
