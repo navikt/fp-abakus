@@ -138,7 +138,7 @@ public class EksternDelingAvYtelserRestTjeneste {
         var identer = utledPersonIdentFraRequest(request.getIdent(), utledTemaFraYtelser(request.getYtelser()));
         var periode = IntervallEntitet.fraOgMedTilOgMed(request.getPeriode().getFom(), request.getPeriode().getTom());
         var fnr = identer.stream().map(PersonIdent::getIdent).toList();
-        var inforequest = new GrunnlagRequest(fnr, Tid.fomEllerBegynnelse(periode.getFomDato()), Tid.tomEllerEndetid(periode.getTomDato()));
+        var inforequest = new GrunnlagRequest(fnr, Tid.fomEllerMin(periode.getFomDato()), Tid.tomEllerMax(periode.getTomDato()));
         var infotrygdYtelser = infotrygdPSGrunnlag.hentGrunnlagFailSoft(inforequest);
         var mappedYtelser =  InnhentingInfotrygdTjeneste.mapTilInfotrygdYtelseGrunnlag(infotrygdYtelser, periode.getFomDato()).stream()
             .map(InfotrygdgrunnlagYtelseMapper::oversettInfotrygdYtelseGrunnlagTilYtelse)
