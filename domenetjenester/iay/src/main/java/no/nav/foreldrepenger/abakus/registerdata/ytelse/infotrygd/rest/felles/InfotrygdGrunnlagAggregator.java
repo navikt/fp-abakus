@@ -28,12 +28,12 @@ public class InfotrygdGrunnlagAggregator {
     }
 
     public List<Grunnlag> hentAggregertGrunnlag(String fnr, LocalDate fom, LocalDate tom) {
-        var request = new GrunnlagRequest(fnr, Tid.fomEllerBegynnelse(fom), Tid.tomEllerEndetid(tom));
+        var request = new GrunnlagRequest(fnr, Tid.fomEllerMin(fom), Tid.tomEllerMax(tom));
         return tjenester.stream().map(t -> t.hentGrunnlag(request)).flatMap(List::stream).collect(toList());
     }
 
     public List<Grunnlag> hentAggregertGrunnlagFailSoft(String fnr, LocalDate fom, LocalDate tom) {
-        var request = new GrunnlagRequest(fnr, Tid.fomEllerBegynnelse(fom), Tid.tomEllerEndetid(tom));
+        var request = new GrunnlagRequest(fnr, Tid.fomEllerMin(fom), Tid.tomEllerMax(tom));
         return tjenester.stream().map(t -> t.hentGrunnlagFailSoft(request)).flatMap(List::stream).collect(toList());
     }
 
