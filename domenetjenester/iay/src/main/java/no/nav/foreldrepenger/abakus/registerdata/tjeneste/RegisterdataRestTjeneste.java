@@ -1,29 +1,24 @@
 package no.nav.foreldrepenger.abakus.registerdata.tjeneste;
 
-import com.fasterxml.jackson.annotation.*;
+import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.REGISTERDATA;
+
+import java.net.HttpURLConnection;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import no.nav.abakus.iaygrunnlag.*;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
-import no.nav.abakus.iaygrunnlag.request.RegisterdataType;
-import no.nav.abakus.iaygrunnlag.request.SjekkStatusRequest;
-import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
-import no.nav.foreldrepenger.abakus.felles.LoggUtil;
-import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
-import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
-import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.TaskResponsDto;
-import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
-import no.nav.vedtak.sikkerhet.abac.AbacDto;
-import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
-import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
-import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -35,13 +30,26 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-
-import java.net.HttpURLConnection;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-
-import static no.nav.foreldrepenger.abakus.felles.sikkerhet.AbakusBeskyttetRessursAttributt.REGISTERDATA;
+import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
+import no.nav.abakus.iaygrunnlag.FnrPersonident;
+import no.nav.abakus.iaygrunnlag.Periode;
+import no.nav.abakus.iaygrunnlag.PersonIdent;
+import no.nav.abakus.iaygrunnlag.UuidDto;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
+import no.nav.abakus.iaygrunnlag.request.RegisterdataType;
+import no.nav.abakus.iaygrunnlag.request.SjekkStatusRequest;
+import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
+import no.nav.foreldrepenger.abakus.felles.LoggUtil;
+import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
+import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
+import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.TaskResponsDto;
+import no.nav.foreldrepenger.konfig.Environment;
+import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
+import no.nav.vedtak.sikkerhet.abac.AbacDto;
+import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
+import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
+import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 
 @OpenAPIDefinition(tags = @Tag(name = "registerinnhenting"))
 @Path("/registerdata/v1")
@@ -69,6 +77,11 @@ public class RegisterdataRestTjeneste {
     @BeskyttetRessurs(actionType = ActionType.CREATE, resource = REGISTERDATA)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response innhentOgLagreRegisterdataAsync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
+        if (Environment.current().isProd()) {
+            // Vil ikke kaste TekniskException pga at taskene skal feile uten retry.
+            throw new IllegalStateException("TEKNISK-VEDLIKEHOLD: Applikasjonen er midlertidig utilgjengelig på grunn av planlagt vedlikehold.");
+        }
+
         Response response;
         if (dto.getCallbackUrl() == null || dto.getCallbackScope() == null) {
             return Response.status(HttpURLConnection.HTTP_FORBIDDEN).build();
