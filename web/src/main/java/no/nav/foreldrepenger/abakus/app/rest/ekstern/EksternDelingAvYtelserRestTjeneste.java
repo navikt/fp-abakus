@@ -26,7 +26,6 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.vedtak.ytelse.Aktør;
 import no.nav.abakus.vedtak.ytelse.Desimaltall;
 import no.nav.abakus.vedtak.ytelse.Periode;
@@ -107,7 +106,7 @@ public class EksternDelingAvYtelserRestTjeneste {
             return List.of();
         }
 
-        Set<AktørId> aktørIder = utledAktørIdFraRequest(request.getIdent(), utledTemaFraYtelser(request.getYtelser()));
+        Set<AktørId> aktørIder = utledAktørIdFraRequest(request.getIdent());
         var periode = IntervallEntitet.fraOgMedTilOgMed(request.getPeriode().getFom(), request.getPeriode().getTom());
         var ytelser = new ArrayList<Ytelse>();
         for (AktørId aktørId : aktørIder) {
@@ -128,13 +127,13 @@ public class EksternDelingAvYtelserRestTjeneste {
             return List.of();
         }
 
-        var aktørIdOpt = utledEnkeltAktørIdFraRequest(request.getIdent(), utledTemaFraYtelser(request.getYtelser()));
+        var aktørIdOpt = utledEnkeltAktørIdFraRequest(request.getIdent());
         if (aktørIdOpt.isEmpty()) {
             return List.of();
         }
 
         var aktørId = aktørIdOpt.orElseThrow();
-        var identer = utledPersonIdentFraRequest(request.getIdent(), utledTemaFraYtelser(request.getYtelser()));
+        var identer = utledPersonIdentFraRequest(request.getIdent());
         var periode = IntervallEntitet.fraOgMedTilOgMed(request.getPeriode().getFom(), request.getPeriode().getTom());
         var fnr = identer.stream().map(PersonIdent::getIdent).toList();
         var inforequest = new GrunnlagRequest(fnr, Tid.fomEllerMin(periode.getFomDato()), Tid.tomEllerMax(periode.getTomDato()));
@@ -148,34 +147,26 @@ public class EksternDelingAvYtelserRestTjeneste {
         return ytelser;
     }
 
-    private Set<AktørId> utledAktørIdFraRequest(Aktør aktør, YtelseType tema) {
+    private Set<AktørId> utledAktørIdFraRequest(Aktør aktør) {
         if (aktør.erAktørId()) {
             return Set.of(new AktørId(aktør.getVerdi()));
         }
-        return aktørTjeneste.hentAktørIderForIdent(new PersonIdent(aktør.getVerdi()), tema);
+        return aktørTjeneste.hentAktørIderForIdent(new PersonIdent(aktør.getVerdi()));
     }
 
-    private Optional<AktørId> utledEnkeltAktørIdFraRequest(Aktør aktør, YtelseType tema) {
+    private Optional<AktørId> utledEnkeltAktørIdFraRequest(Aktør aktør) {
         if (aktør.erAktørId()) {
             return Optional.of(new AktørId(aktør.getVerdi()));
         }
-        return aktørTjeneste.hentAktørForIdent(new PersonIdent(aktør.getVerdi()), tema);
+        return aktørTjeneste.hentAktørForIdent(new PersonIdent(aktør.getVerdi()));
     }
 
-    private Set<PersonIdent> utledPersonIdentFraRequest(Aktør aktør, YtelseType tema) {
+    private Set<PersonIdent> utledPersonIdentFraRequest(Aktør aktør) {
         if (aktør.erAktørId()) {
-            return aktørTjeneste.hentPersonIdenterForAktør(new AktørId(aktør.getVerdi()), tema);
+            return aktørTjeneste.hentPersonIdenterForAktør(new AktørId(aktør.getVerdi()));
 
         }
         return Set.of(new PersonIdent(aktør.getVerdi()));
-    }
-
-    private YtelseType utledTemaFraYtelser(Set<Ytelser> request) {
-        if (request.contains(Ytelser.FORELDREPENGER)) {
-            return YtelseType.FORELDREPENGER;
-        }
-
-        return YtelseType.OMSORGSPENGER;
     }
 
     private YtelseV1 ytelseTilYtelse(AktørId aktørId, no.nav.foreldrepenger.abakus.domene.iay.Ytelse vedtak) {
