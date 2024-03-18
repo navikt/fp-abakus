@@ -111,23 +111,18 @@ public class InnhentRegisterdataTjeneste {
         var innhentingTask = ProsessTaskData.forProsessTask(RegisterdataInnhentingTask.class);
         var callbackTask = ProsessTaskData.forProsessTask(CallbackTask.class);
         innhentingTask.setAktørId(kobling.getAktørId().getId());
-        innhentingTask.setProperty(TaskConstants.GAMMEL_KOBLING_ID, kobling.getId().toString());
-        innhentingTask.setProperty(TaskConstants.NY_KOBLING_ID, kobling.getId().toString());
+        innhentingTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
         try {
             innhentingTask.setPayload(JsonObjectMapper.getMapper().writeValueAsString(dto));
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Feil i serialisering av innhentingrequest", e);
         }
         callbackTask.setAktørId(kobling.getAktørId().getId());
-        callbackTask.setProperty(TaskConstants.GAMMEL_KOBLING_ID, kobling.getId().toString());
-        callbackTask.setProperty(TaskConstants.NY_KOBLING_ID, kobling.getId().toString());
+        callbackTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
 
         Optional<GrunnlagReferanse> eksisterendeGrunnlagRef = hentSisteReferanseFor(kobling.getKoblingReferanse());
         eksisterendeGrunnlagRef.map(GrunnlagReferanse::getReferanse)
             .ifPresent(ref -> callbackTask.setProperty(EKSISTERENDE_GRUNNLAG_REF, ref.toString()));
-
-        callbackTask.setProperty(TaskConstants.CALLBACK_URL, dto.getCallbackUrl());
-        callbackTask.setProperty(TaskConstants.CALLBACK_SCOPE, dto.getCallbackScope());
 
         taskGruppe.addNesteSekvensiell(innhentingTask);
         taskGruppe.addNesteSekvensiell(callbackTask);

@@ -1,10 +1,5 @@
 package no.nav.foreldrepenger.abakus.registerdata.callback;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -12,16 +7,10 @@ import jakarta.inject.Inject;
 import no.nav.abakus.callback.registerdata.CallbackDto;
 import no.nav.abakus.callback.registerdata.Grunnlag;
 import no.nav.abakus.callback.registerdata.ReferanseDto;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.TaskConstants;
-import no.nav.vedtak.exception.TekniskException;
-import no.nav.vedtak.felles.integrasjon.rest.RestClient;
-import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
-import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
-import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
@@ -32,9 +21,7 @@ public class CallbackTask implements ProsessTaskHandler {
 
     public static final String EKSISTERENDE_GRUNNLAG_REF = "grunnlag.ref.old";
 
-    private static final Map<String, RestConfig> CALLBACK_MAP = new LinkedHashMap<>(2);
-
-    private RestClient restClient;
+    private FpsakKlient fpsakKlient;
     private KoblingTjeneste koblingTjeneste;
     private InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste;
 
@@ -42,17 +29,15 @@ public class CallbackTask implements ProsessTaskHandler {
     }
 
     @Inject
-    public CallbackTask(KoblingTjeneste koblingTjeneste, InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste) {
-        this.restClient = RestClient.client();
+    public CallbackTask(FpsakKlient fpsakKlient, KoblingTjeneste koblingTjeneste, InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste) {
+        this.fpsakKlient = fpsakKlient;
         this.koblingTjeneste = koblingTjeneste;
         this.inntektArbeidYtelseTjeneste = inntektArbeidYtelseTjeneste;
     }
 
     @Override
     public void doTask(ProsessTaskData data) {
-        String callbackUrl = data.getPropertyValue(TaskConstants.CALLBACK_URL);
-        String callbackScope = data.getPropertyValue(TaskConstants.CALLBACK_SCOPE);
-        String nyKoblingId = data.getPropertyValue(TaskConstants.NY_KOBLING_ID);
+        String nyKoblingId = data.getPropertyValue(TaskConstants.KOBLING_ID);
         Long koblingId = nyKoblingId != null ? Long.valueOf(nyKoblingId) : Long.valueOf(data.getBehandlingId());
         Kobling kobling = koblingTjeneste.hent(koblingId);
 
@@ -63,8 +48,7 @@ public class CallbackTask implements ProsessTaskHandler {
         setInformasjonOmEksisterendeGrunnlag(data, callbackDto);
         setInformasjonOmNyttGrunnlag(kobling, data, callbackDto);
 
-        var restConfig = getRestConfigFor(callbackUrl, callbackScope);
-        restClient.sendReturnOptional(RestRequest.newPOSTJson(callbackDto, restConfig.endpoint(), restConfig), String.class);
+        fpsakKlient.sendCallback(callbackDto);
     }
 
     private void setInformasjonOmAvsenderRef(Kobling kobling, CallbackDto callbackDto) {
@@ -84,7 +68,7 @@ public class CallbackTask implements ProsessTaskHandler {
     }
 
     private void setInformasjonOmNyttGrunnlag(Kobling kobling, ProsessTaskData data, CallbackDto callbackDto) {
-        Optional<InntektArbeidYtelseGrunnlag> grunnlag = inntektArbeidYtelseTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse());
+        var grunnlag = inntektArbeidYtelseTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse());
         grunnlag.ifPresent(gr -> {
             ReferanseDto grunnlagRef = new ReferanseDto();
             grunnlagRef.setReferanse(gr.getGrunnlagReferanse().getReferanse());
@@ -96,17 +80,4 @@ public class CallbackTask implements ProsessTaskHandler {
         }
     }
 
-    private RestConfig getRestConfigFor(String url, String scope) {
-        var key = url + scope;
-        if (CALLBACK_MAP.get(key) == null) {
-            try {
-                var uri = new URI(url);
-                var restConfig = new RestConfig(TokenFlow.ADAPTIVE, uri, scope, null);
-                CALLBACK_MAP.put(key, restConfig);
-            } catch (URISyntaxException e) {
-                throw new TekniskException("FP-349977", String.format("Ugyldig callback url ved callback etter registerinnhenting: %s", url));
-            }
-        }
-        return CALLBACK_MAP.get(key);
-    }
 }
