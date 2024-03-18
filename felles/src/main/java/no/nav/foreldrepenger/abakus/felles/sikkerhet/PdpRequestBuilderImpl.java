@@ -16,11 +16,6 @@ import static no.nav.vedtak.sikkerhet.abac.pdp.ForeldrepengerDataKeys.FAGSAK_STA
  */
 @ApplicationScoped
 public class PdpRequestBuilderImpl implements PdpRequestBuilder {
-    private static final String ABAC_DOMAIN = "foreldrepenger";
-    @Override
-    public String abacDomene() {
-        return ABAC_DOMAIN;
-    }
 
     @Override
     public AppRessursData lagAppRessursData(AbacDataAttributter dataAttributter) {
