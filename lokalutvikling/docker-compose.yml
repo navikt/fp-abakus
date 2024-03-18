@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   postgres:
-    image: $POSTGRES_IMAGE
+    image: postgres:16
     environment:
       - POSTGRES_PASSWORD=admin
       - POSTGRES_USER=admin
@@ -11,7 +11,7 @@ services:
       - ./postgres-init:/docker-entrypoint-initdb.d/
     container_name: postgres
   vtp:
-    image: $VTP_IMAGE
+    image: europe-north1-docker.pkg.dev/nais-management-233d/teamforeldrepenger/navikt/vtp:latest
     environment:
       TZ: Europe/Oslo
       NO_NAV_MODIG_SECURITY_APPCERT_KEYSTORE: /app/.modig/keystore.jks
