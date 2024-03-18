@@ -77,9 +77,6 @@ public class RegisterdataRestTjeneste {
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response innhentOgLagreRegisterdataAsync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
         Response response;
-        if (dto.getCallbackUrl() == null || dto.getCallbackScope() == null) {
-            return Response.status(HttpURLConnection.HTTP_FORBIDDEN).build();
-        }
         if (!YtelseType.abakusYtelser().contains(dto.getYtelseType())) {
             return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
         }

@@ -3,10 +3,6 @@ package no.nav.abakus.iaygrunnlag.request;
 import java.util.Set;
 import java.util.UUID;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -15,6 +11,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
@@ -71,16 +70,6 @@ public class InnhentRegisterdataRequest {
     @Valid
     private Set<RegisterdataType> elementer = Set.of(RegisterdataType.ARBEIDSFORHOLD, RegisterdataType.INNTEKT_PENSJONSGIVENDE,
         RegisterdataType.YTELSE);
-
-    @JsonProperty(value = "callbackUrl")
-    @Valid
-    @Pattern(regexp = URL_PATTERN, message = "callbackUrl [${validatedValue}] matcher ikke tillatt url pattern [{regexp}]")
-    private String callbackUrl;
-
-    @JsonProperty(value = "callbackScope")
-    @Valid
-    @Pattern(regexp = SCOPE_PATTERN, message = "callbackScope [${validatedValue}] matcher ikke tillatt scope pattern [{regexp}]")
-    private String callbackScope;
 
     public InnhentRegisterdataRequest(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
                                       @JsonProperty(value = "referanse", required = true) @Valid @NotNull UUID referanse,
@@ -139,22 +128,6 @@ public class InnhentRegisterdataRequest {
 
     public void setOpptjeningsperiode(Periode opptjeningsperiode) {
         this.opptjeningsperiode = opptjeningsperiode;
-    }
-
-    public String getCallbackUrl() {
-        return callbackUrl;
-    }
-
-    public void setCallbackUrl(String callbackUrl) {
-        this.callbackUrl = callbackUrl;
-    }
-
-    public String getCallbackScope() {
-        return callbackScope;
-    }
-
-    public void setCallbackScope(String callbackScope) {
-        this.callbackScope = callbackScope;
     }
 
     public Set<RegisterdataType> getElementer() {
