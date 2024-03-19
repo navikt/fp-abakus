@@ -5,6 +5,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.hibernate.annotations.NaturalId;
+
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -18,9 +20,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
-import org.hibernate.annotations.NaturalId;
-
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningAggregat;
@@ -83,7 +82,6 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     @JoinColumn(name = "informasjon_id", updatable = false, unique = true)
     private ArbeidsforholdInformasjon arbeidsforholdInformasjon;
 
-    // Kun for Frisinn
     @OneToOne
     @JoinColumn(name = "overstyrt_oppgitt_opptjening_id", updatable = false, unique = true)
     @ChangeTracked

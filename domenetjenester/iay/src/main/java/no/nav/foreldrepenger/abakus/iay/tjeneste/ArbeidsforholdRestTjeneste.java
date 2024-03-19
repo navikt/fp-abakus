@@ -1,6 +1,5 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste;
 
-import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,8 +23,6 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdReferanse;
-import no.nav.abakus.iaygrunnlag.Periode;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.AktørDatoRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
@@ -80,17 +77,15 @@ public class ArbeidsforholdRestTjeneste {
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentArbeidsforhold(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
-        AktørId aktørId = new AktørId(request.getAktør().getIdent());
-        Periode periode = request.getPeriode();
-        YtelseType ytelse = request.getYtelse() != null ? request.getYtelse() : YtelseType.UDEFINERT;
+        var aktørId = new AktørId(request.getAktør().getIdent());
+        var periode = request.getPeriode();
         LOG_CONTEXT.add("ytelseType", request.getYtelse().getKode());
         LOG_CONTEXT.add("periode", periode);
 
-        LocalDate fom = periode.getFom();
-        LocalDate tom = Objects.equals(fom, periode.getTom()) ? fom.plusDays(1) // enkel dato søk
+        var fom = periode.getFom();
+        var tom = Objects.equals(fom, periode.getTom()) ? fom.plusDays(1) // enkel dato søk
             : periode.getTom(); // periode søk
-        LOG.info("ABAKUS arbeidstaker - sjekk consumers for ytelse {}", ytelse);
-        var arbeidstakersArbeidsforhold = dtoTjeneste.mapFor(aktørId, fom, tom, ytelse);
+        var arbeidstakersArbeidsforhold = dtoTjeneste.mapFor(aktørId, fom, tom);
         final Response response = Response.ok(arbeidstakersArbeidsforhold).build();
         return response;
     }
@@ -103,17 +98,15 @@ public class ArbeidsforholdRestTjeneste {
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentArbeidsforholdOgPermisjonerForEnPeriode(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
-        AktørId aktørId = new AktørId(request.getAktør().getIdent());
-        Periode periode = request.getPeriode();
-        YtelseType ytelse = request.getYtelse() != null ? request.getYtelse() : YtelseType.UDEFINERT;
+        var aktørId = new AktørId(request.getAktør().getIdent());
+        var periode = request.getPeriode();
         LOG_CONTEXT.add("ytelseType", request.getYtelse().getKode());
         LOG_CONTEXT.add("periode", periode);
 
-        LocalDate fom = periode.getFom();
-        LocalDate tom = Objects.equals(fom, periode.getTom()) ? fom.plusDays(1) // enkel dato søk
+        var fom = periode.getFom();
+        var tom = Objects.equals(fom, periode.getTom()) ? fom.plusDays(1) // enkel dato søk
             : periode.getTom(); // periode søk
-        LOG.info("ABAKUS arbeidstaker - sjekk consumers for ytelse {}", ytelse);
-        var arbeidstakersArbeidsforhold = dtoTjeneste.mapArbForholdOgPermisjoner(aktørId, fom, tom, ytelse);
+        var arbeidstakersArbeidsforhold = dtoTjeneste.mapArbForholdOgPermisjoner(aktørId, fom, tom);
         return Response.ok(arbeidstakersArbeidsforhold).build();
     }
 

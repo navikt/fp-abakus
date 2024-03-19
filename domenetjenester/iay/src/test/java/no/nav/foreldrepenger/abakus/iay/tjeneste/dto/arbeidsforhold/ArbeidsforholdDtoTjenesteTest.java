@@ -1,4 +1,5 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.arbeidsforhold;
+
 import static no.nav.foreldrepenger.abakus.typer.OrgNummer.KUNSTIG_ORG;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -11,33 +12,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsavtale;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
-
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsgiver;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Organisasjon;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Permisjon;
-import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.typer.OrgNummer;
-
-import no.nav.vedtak.konfig.Tid;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsavtale;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdTjeneste;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AaregRestKlient;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsgiver;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Organisasjon;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Permisjon;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
+import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-
-import org.mockito.junit.jupiter.MockitoExtension;
+import no.nav.vedtak.konfig.Tid;
 
 @ExtendWith(MockitoExtension.class)
 class ArbeidsforholdDtoTjenesteTest {
@@ -77,10 +72,10 @@ void setUp() {
         );
         var arbeidsforhold = List.of(lagArbeidsforhold(arbeidsgiver, arbeidsavtalerTilMap, permisjonerTilMap));
 
-        when(aktørConsumer.hentIdentForAktør(any(), any())).thenReturn(Optional.of(personIdent));
+        when(aktørConsumer.hentIdentForAktør(any())).thenReturn(Optional.of(personIdent));
         when(arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(personIdent, aktørId, intervall )).thenReturn(Map.of(arbeidsgiverIdentifikator, arbeidsforhold));
 
-        var arbeidsforholdDto = arbeidsforholdDtoTjeneste.mapArbForholdOgPermisjoner(aktørId, FRA_DATO, TIL_DATO, YtelseType.FORELDREPENGER);
+        var arbeidsforholdDto = arbeidsforholdDtoTjeneste.mapArbForholdOgPermisjoner(aktørId, FRA_DATO, TIL_DATO);
 
         assertThat(arbeidsforholdDto).hasSize(1);
         assertThat(arbeidsforholdDto.getFirst().getType()).isEqualTo(ArbeidType.ORDINÆRT_ARBEIDSFORHOLD);
@@ -123,10 +118,10 @@ void setUp() {
         );
         var arbeidsforhold = List.of(lagArbeidsforhold(arbeidsgiver, arbeidsavtalerTilMap, Collections.emptyList()));
 
-        when(aktørConsumer.hentIdentForAktør(any(), any())).thenReturn(Optional.of(personIdent));
+        when(aktørConsumer.hentIdentForAktør(any())).thenReturn(Optional.of(personIdent));
         when(arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(personIdent, aktørId, intervall)).thenReturn(Map.of(arbeidsgiverIdentifikator, arbeidsforhold));
 
-        var arbeidsforholdDto = arbeidsforholdDtoTjeneste.mapArbForholdOgPermisjoner(aktørId, FRA_DATO, TIL_DATO, YtelseType.FORELDREPENGER);
+        var arbeidsforholdDto = arbeidsforholdDtoTjeneste.mapArbForholdOgPermisjoner(aktørId, FRA_DATO, TIL_DATO);
 
         assertThat(arbeidsforholdDto).hasSize(1);
         assertThat(arbeidsforholdDto.getFirst().getType()).isEqualTo(ArbeidType.ORDINÆRT_ARBEIDSFORHOLD);

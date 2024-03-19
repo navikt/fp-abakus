@@ -109,8 +109,7 @@ class InntektTjenesteImplTest {
         FinnInntektRequest finnInntektRequest = FinnInntektRequest.builder(GJELDENDE_MÅNED.minusMonths(3), GJELDENDE_MÅNED).medFnr(FNR).build();
 
         // Act
-        InntektsInformasjon inntektsInformasjon = inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING,
-            YtelseType.FORELDREPENGER);
+        InntektsInformasjon inntektsInformasjon = inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING);
 
         // Assert
         verify(restKlient, times(1)).send(any(), eq(HentInntektListeBolkResponse.class));
@@ -142,8 +141,7 @@ class InntektTjenesteImplTest {
         FinnInntektRequest finnInntektRequest = FinnInntektRequest.builder(tidligst.minusMonths(3), tidligst.plusMonths(3)).medFnr(FNR).build();
 
         // Act
-        final InntektsInformasjon inntektsInformasjon = inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING,
-            YtelseType.OMSORGSPENGER);
+        final InntektsInformasjon inntektsInformasjon = inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING);
 
         // Assert
         verify(restKlient, times(1)).send(any(), eq(HentInntektListeBolkResponse.class));
@@ -168,7 +166,7 @@ class InntektTjenesteImplTest {
 
         try {
             // Act
-            inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING, YtelseType.SVANGERSKAPSPENGER);
+            inntektTjeneste.finnInntekt(finnInntektRequest, InntektskildeType.INNTEKT_OPPTJENING);
             fail("Forventet VLException");
         } catch (VLException e) {
             // Assert

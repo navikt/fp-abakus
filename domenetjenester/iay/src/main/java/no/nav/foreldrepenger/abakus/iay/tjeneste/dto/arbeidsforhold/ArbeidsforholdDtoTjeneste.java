@@ -19,7 +19,6 @@ import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdDto;
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdReferanseDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
@@ -49,8 +48,8 @@ public class ArbeidsforholdDtoTjeneste {
         this.aktørConsumer = aktørConsumer;
     }
 
-    public List<ArbeidsforholdDto> mapFor(AktørId aktørId, LocalDate fom, LocalDate tom, YtelseType ytelse) {
-        var ident = aktørConsumer.hentIdentForAktør(aktørId, ytelse).orElseThrow();
+    public List<ArbeidsforholdDto> mapFor(AktørId aktørId, LocalDate fom, LocalDate tom) {
+        var ident = aktørConsumer.hentIdentForAktør(aktørId).orElseThrow();
         var intervall = tom == null ? IntervallEntitet.fraOgMed(fom) : IntervallEntitet.fraOgMedTilOgMed(fom, tom);
         Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident,
             aktørId, intervall);
@@ -58,8 +57,8 @@ public class ArbeidsforholdDtoTjeneste {
         return arbeidsforhold.entrySet().stream().map(this::mapTilArbeidsforhold).collect(Collectors.toList());
     }
 
-    public List<ArbeidsforholdDto> mapArbForholdOgPermisjoner(AktørId aktørId, LocalDate fom, LocalDate tom, YtelseType ytelse) {
-        var ident = aktørConsumer.hentIdentForAktør(aktørId, ytelse).orElseThrow();
+    public List<ArbeidsforholdDto> mapArbForholdOgPermisjoner(AktørId aktørId, LocalDate fom, LocalDate tom) {
+        var ident = aktørConsumer.hentIdentForAktør(aktørId).orElseThrow();
         var intervall = tom == null ? IntervallEntitet.fraOgMed(fom) : IntervallEntitet.fraOgMedTilOgMed(fom, tom);
         Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident,
             aktørId, intervall);

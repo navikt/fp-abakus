@@ -18,10 +18,8 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.vedtak.ytelse.Aktør;
 import no.nav.abakus.vedtak.ytelse.Ytelse;
-import no.nav.abakus.vedtak.ytelse.Ytelser;
 import no.nav.abakus.vedtak.ytelse.request.VedtakForPeriodeRequest;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
@@ -70,7 +68,7 @@ public class YtelseRestTjeneste {
             return List.of();
         }
 
-        Set<AktørId> aktørIder = utledAktørIdFraRequest(request.getIdent(), utledTemaFraYtelser(request.getYtelser()));
+        Set<AktørId> aktørIder = utledAktørIdFraRequest(request.getIdent());
         var periode = IntervallEntitet.fraOgMedTilOgMed(request.getPeriode().getFom(), request.getPeriode().getTom());
         var ytelser = new ArrayList<Ytelse>();
         for (AktørId aktørId : aktørIder) {
@@ -84,19 +82,11 @@ public class YtelseRestTjeneste {
         return ytelser;
     }
 
-    private Set<AktørId> utledAktørIdFraRequest(Aktør aktør, YtelseType tema) {
+    private Set<AktørId> utledAktørIdFraRequest(Aktør aktør) {
         if (aktør.erAktørId()) {
             return Set.of(new AktørId(aktør.getVerdi()));
         }
-        return aktørTjeneste.hentAktørIderForIdent(new PersonIdent(aktør.getVerdi()), tema);
-    }
-
-    private YtelseType utledTemaFraYtelser(Set<Ytelser> request) {
-        if (request.contains(Ytelser.FORELDREPENGER)) {
-            return YtelseType.FORELDREPENGER;
-        }
-
-        return YtelseType.OMSORGSPENGER;
+        return aktørTjeneste.hentAktørIderForIdent(new PersonIdent(aktør.getVerdi()));
     }
 
     public static class VedtakForPeriodeRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {

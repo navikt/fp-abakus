@@ -69,7 +69,7 @@ public class DiagnostikkRestTjeneste {
         var kobling = koblingRepository.hentSisteKoblingReferanseFor(aktørId, saksnummer, ytelseType)
             .orElseThrow(
                 () -> new IllegalArgumentException("Fant ikke kobling for saksnummer=" + saksnummer + ", aktørId og ytelseType=" + ytelseType));
-        var ident = aktørTjeneste.hentIdentForAktør(aktørId, ytelseType).orElseThrow(); // skal ikke komme hit, bør feile forrige linje
+        var ident = aktørTjeneste.hentIdentForAktør(aktørId).orElseThrow(); // skal ikke komme hit, bør feile forrige linje
 
         /*
          * logg tilgang til tabell - må gjøres før dumps (siden StreamingOutput ikke kjører i scope av denne metoden på stacken,
