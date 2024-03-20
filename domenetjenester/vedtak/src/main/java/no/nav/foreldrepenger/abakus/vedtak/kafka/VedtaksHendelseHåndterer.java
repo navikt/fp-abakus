@@ -5,6 +5,10 @@ import jakarta.enterprise.context.control.ActivateRequestContext;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import no.nav.foreldrepenger.konfig.KonfigVerdi;
+
+import no.nav.vedtak.felles.integrasjon.kafka.KafkaMessageHandler;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,24 +19,38 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 @ApplicationScoped
 @ActivateRequestContext
 @Transactional
-public class VedtaksHendelseHåndterer {
+public class VedtaksHendelseHåndterer implements KafkaMessageHandler.KafkaStringMessageHandler{
 
     private static final Logger LOG = LoggerFactory.getLogger(VedtaksHendelseHåndterer.class);
     private ProsessTaskTjeneste taskTjeneste;
+    private String topicName;
 
     public VedtaksHendelseHåndterer() {
         // CDI
     }
 
     @Inject
-    public VedtaksHendelseHåndterer(ProsessTaskTjeneste taskTjeneste) {
+    public VedtaksHendelseHåndterer(@KonfigVerdi(value = "kafka.fattevedtak.topic", defaultVerdi = "teamforeldrepenger.familie-vedtakfattet-v1") String topicName,
+                                    ProsessTaskTjeneste taskTjeneste) {
+        this.topicName = topicName;
         this.taskTjeneste = taskTjeneste;
     }
 
-    void handleMessage(String key, String payload) {
-        LOG.debug("Mottatt ytelse-vedtatt hendelse med key='{}', payload={}", key, payload);
-        var data = ProsessTaskDataBuilder.forProsessTask(LagreVedtakTask.class).medProperty(LagreVedtakTask.KEY, key).medPayload(payload);
+    @Override
+    public void handleRecord(String key, String value) {
+        LOG.debug("Mottatt ytelse-vedtatt hendelse med key='{}', payload={}", key, value);
+        var data = ProsessTaskDataBuilder.forProsessTask(LagreVedtakTask.class).medProperty(LagreVedtakTask.KEY, key).medPayload(value);
 
         taskTjeneste.lagre(data.build());
+    }
+
+    @Override
+    public String topic() {
+        return topicName;
+    }
+
+    @Override
+    public String groupId() {
+        return "fpabakus"; // Hold konstant pga offset commit
     }
 }
