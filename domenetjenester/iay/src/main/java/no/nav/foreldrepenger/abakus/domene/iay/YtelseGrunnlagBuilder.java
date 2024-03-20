@@ -24,17 +24,17 @@ public class YtelseGrunnlagBuilder {
     }
 
     public YtelseGrunnlagBuilder medDekningsgradProsent(BigDecimal prosent) {
-        this.ytelseGrunnlag.setDekningsgradProsent(new Stillingsprosent(prosent));
+        this.ytelseGrunnlag.setDekningsgradProsent(Stillingsprosent.utbetalingsgrad(prosent));
         return this;
     }
 
     public YtelseGrunnlagBuilder medGraderingProsent(BigDecimal prosent) {
-        this.ytelseGrunnlag.setGraderingProsent(new Stillingsprosent(prosent));
+        this.ytelseGrunnlag.setGraderingProsent(Stillingsprosent.utbetalingsgrad(prosent));
         return this;
     }
 
     public YtelseGrunnlagBuilder medInntektsgrunnlagProsent(BigDecimal prosent) {
-        this.ytelseGrunnlag.setInntektsgrunnlagProsent(new Stillingsprosent(prosent));
+        this.ytelseGrunnlag.setInntektsgrunnlagProsent(Stillingsprosent.utbetalingsgrad(prosent));
         return this;
     }
 

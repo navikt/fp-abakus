@@ -26,14 +26,14 @@ public class VedtakYtelseAndelBuilder {
 
     public VedtakYtelseAndelBuilder medUtbetalingsgrad(BigDecimal verdi) {
         if (verdi != null) {
-            this.vedtakYtelseAndel.setUtbetalingsgradProsent(new Stillingsprosent(verdi));
+            this.vedtakYtelseAndel.setUtbetalingsgradProsent(Stillingsprosent.utbetalingsgrad(verdi));
         }
         return this;
     }
 
     public VedtakYtelseAndelBuilder medRefusjonsgrad(BigDecimal verdi) {
         if (verdi != null) {
-            this.vedtakYtelseAndel.setRefusjonsgradProsent(new Stillingsprosent(verdi));
+            this.vedtakYtelseAndel.setRefusjonsgradProsent(Stillingsprosent.utbetalingsgrad(verdi));
         }
         return this;
     }

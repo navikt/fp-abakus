@@ -43,7 +43,7 @@ public class YtelseAnvistBuilder {
 
     public YtelseAnvistBuilder medUtbetalingsgradProsent(BigDecimal utbetalingsgradProsent) {
         if (utbetalingsgradProsent != null) {
-            this.ytelseAnvist.setUtbetalingsgradProsent(new Stillingsprosent(utbetalingsgradProsent));
+            this.ytelseAnvist.setUtbetalingsgradProsent(Stillingsprosent.utbetalingsgrad(utbetalingsgradProsent));
         }
         return this;
     }
