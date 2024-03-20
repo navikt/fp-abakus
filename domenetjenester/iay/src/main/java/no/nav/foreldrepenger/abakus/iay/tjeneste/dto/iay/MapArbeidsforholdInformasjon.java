@@ -82,7 +82,7 @@ class MapArbeidsforholdInformasjon {
                 .medNyArbeidsforholdRef(nyArbeidsgiverRef)
                 .medHandling(ov.getHandling())
                 .medAngittArbeidsgiverNavn(ov.getAngittArbeidsgiverNavn())
-                .medAngittStillingsprosent(new Stillingsprosent(ov.getStillingsprosent()));
+                .medAngittStillingsprosent(Stillingsprosent.arbeid(ov.getStillingsprosent()));
 
             ov.getBekreftetPermisjon().ifPresent(bp -> {
                 BekreftetPermisjonStatus bekreftetPermisjonStatus = bp.getBekreftetPermisjonStatus();

@@ -1,10 +1,10 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
-import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
+import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
+import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
 public class PermisjonBuilder {
     private final Permisjon permisjon;
@@ -23,7 +23,7 @@ public class PermisjonBuilder {
     }
 
     public PermisjonBuilder medProsentsats(BigDecimal prosentsats) {
-        this.permisjon.setProsentsats(new Stillingsprosent(prosentsats));
+        this.permisjon.setProsentsats(Stillingsprosent.arbeid(prosentsats));
         return this;
     }
 
