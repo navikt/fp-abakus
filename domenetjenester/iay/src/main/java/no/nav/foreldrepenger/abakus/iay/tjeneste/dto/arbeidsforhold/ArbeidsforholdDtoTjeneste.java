@@ -24,6 +24,7 @@ import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdTjeneste;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Organisasjon;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Person;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -126,7 +127,7 @@ public class ArbeidsforholdDtoTjeneste {
     }
 
     private List<Periode> mapAnsettelsesPerioder(List<Arbeidsforhold> arbeidsforhold) {
-        return arbeidsforhold.stream().map(it -> new Periode(it.getArbeidFom(), it.getArbeidTom())).collect(Collectors.toList());
+        return arbeidsforhold.stream().map(af -> new Periode(af.getArbeidFom(), af.getArbeidTom())).collect(Collectors.toList());
     }
 
     private ArbeidsforholdRefDto mapArbeidsforholdId(EksternArbeidsforholdRef arbeidsforholdId) {
@@ -136,7 +137,7 @@ public class ArbeidsforholdDtoTjeneste {
         return new ArbeidsforholdRefDto(null, arbeidsforholdId.getReferanse());
     }
 
-    private Aktør mapArbeidsgiver(no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsgiver arbeidsgiver) {
+    private Aktør mapArbeidsgiver(Arbeidsgiver arbeidsgiver) {
         if (arbeidsgiver instanceof Person person) {
             return new AktørIdPersonident(person.getAktørId());
         } else if (arbeidsgiver instanceof Organisasjon organisasjon) {
