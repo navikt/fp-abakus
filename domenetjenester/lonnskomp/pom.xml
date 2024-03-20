@@ -39,18 +39,6 @@
             <artifactId>vedtak</artifactId>
         </dependency>
 		<dependency>
-			<groupId>io.swagger.core.v3</groupId>
-			<artifactId>swagger-annotations-jakarta</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.kafka</groupId>
-			<artifactId>kafka-streams</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.abakus</groupId>
-			<artifactId>abakus-kontrakt</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>no.nav.foreldrepenger.abakus</groupId>
 			<artifactId>felles</artifactId>
 		</dependency>
