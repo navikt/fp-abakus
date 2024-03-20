@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsavtale;
@@ -95,9 +96,11 @@ void setUp() {
         assertThat(permisjoner.getFirst().getPeriode().getFom()).isEqualTo(permisjonerTilMap.getFirst().getPermisjonFom());
         assertThat(permisjoner.getFirst().getPeriode().getTom()).isEqualTo(permisjonerTilMap.getFirst().getPermisjonTom());
         assertThat(permisjoner.getFirst().getProsentsats()).isEqualByComparingTo(permisjonerTilMap.getFirst().getPermisjonsprosent());
+        assertThat(permisjoner.getFirst().getType()).isEqualTo(PermisjonsbeskrivelseType.PERMISJON_MED_FORELDREPENGER);
         assertThat(permisjoner.get(1).getPeriode().getFom()).isEqualTo(permisjonerTilMap.get(1).getPermisjonFom());
         assertThat(permisjoner.get(1).getPeriode().getTom()).isEqualTo(TIL_DATO);
         assertThat(permisjoner.get(1).getProsentsats()).isEqualByComparingTo(permisjonerTilMap.get(1).getPermisjonsprosent());
+        assertThat(permisjoner.get(1).getType()).isEqualTo(PermisjonsbeskrivelseType.PERMISJON_MED_FORELDREPENGER);
 
     }
 
@@ -139,7 +142,7 @@ void setUp() {
 
     private Permisjon lagPermisjon(LocalDate fraDato, LocalDate tilDato, BigDecimal permisjonProsent) {
         return new Permisjon.Builder()
-            .medPermisjonsÅrsak("PERMISJON_MED_FORELDREPENGER")
+            .medPermisjonsÅrsak(PermisjonsbeskrivelseType.PERMISJON_MED_FORELDREPENGER.getOffisiellKode())
             .medPermisjonFom(fraDato)
             .medPermisjonTom(tilDato)
             .medPermisjonsprosent(permisjonProsent)
