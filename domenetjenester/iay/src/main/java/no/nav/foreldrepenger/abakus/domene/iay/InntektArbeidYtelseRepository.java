@@ -30,7 +30,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittEgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittFrilansoppdrag;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffResult;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
@@ -303,20 +302,6 @@ public class InntektArbeidYtelseRepository {
         return build.getGrunnlagReferanse();
     }
 
-    public GrunnlagReferanse lagrePrJournalpostId(KoblingReferanse koblingReferanse, OppgittOpptjeningBuilder oppgittOpptjening) {
-        if (oppgittOpptjening == null) {
-            return null;
-        }
-        Optional<InntektArbeidYtelseGrunnlag> iayGrunnlag = hentInntektArbeidYtelseGrunnlagForBehandling(koblingReferanse);
-
-        InntektArbeidYtelseGrunnlagBuilder grunnlag = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayGrunnlag);
-        grunnlag.leggTilOppgittOpptjening(oppgittOpptjening);
-
-        InntektArbeidYtelseGrunnlag build = grunnlag.build();
-        lagreOgFlush(koblingReferanse, build);
-        return build.getGrunnlagReferanse();
-    }
-
     public GrunnlagReferanse lagreOverstyring(KoblingReferanse koblingReferanse, OppgittOpptjeningBuilder overstyrOppgittOpptjening) {
         if (overstyrOppgittOpptjening == null) {
             return null;
@@ -421,13 +406,6 @@ public class InntektArbeidYtelseRepository {
         return utdaterteInntektsmeldinger;
     }
 
-    private InntektArbeidYtelseGrunnlagBuilder getGrunnlagBuilder(KoblingReferanse koblingReferanse, InntektArbeidYtelseAggregatBuilder builder) {
-        Objects.requireNonNull(builder, "inntektArbeidYtelserBuilder");
-        InntektArbeidYtelseGrunnlagBuilder opptjeningAggregatBuilder = opprettGrunnlagBuilderFor(koblingReferanse);
-        opptjeningAggregatBuilder.medData(builder);
-        return opptjeningAggregatBuilder;
-    }
-
     private InntektArbeidYtelseGrunnlagBuilder opprettGrunnlagBuilderFor(KoblingReferanse koblingReferanse) {
         Optional<InntektArbeidYtelseGrunnlag> inntektArbeidAggregat = hentInntektArbeidYtelseGrunnlagForBehandling(koblingReferanse);
         return InntektArbeidYtelseGrunnlagBuilder.oppdatere(inntektArbeidAggregat);
@@ -520,7 +498,6 @@ public class InntektArbeidYtelseRepository {
 
         nyttGrunnlag.getOppgittOpptjening().ifPresent(this::lagreOppgittOpptjening);
         nyttGrunnlag.getOverstyrtOppgittOpptjening().ifPresent(this::lagreOppgittOpptjening);
-        nyttGrunnlag.getOppgittOpptjeningAggregat().ifPresent(this::lagreOppgitteOpptjeninger);
 
         var registerVersjon = entitet.getRegisterVersjon();
         registerVersjon.ifPresent(this::lagreInntektArbeid);
@@ -532,11 +509,6 @@ public class InntektArbeidYtelseRepository {
 
         entitet.getArbeidsforholdInformasjon().ifPresent(this::lagreInformasjon);
         entityManager.persist(nyttGrunnlag);
-    }
-
-    private void lagreOppgitteOpptjeninger(OppgittOpptjeningAggregat oppgittOpptjeningAggregat) {
-        entityManager.persist(oppgittOpptjeningAggregat);
-        oppgittOpptjeningAggregat.getOppgitteOpptjeninger().forEach(this::lagreOppgittOpptjening);
     }
 
     private void lagreInformasjon(ArbeidsforholdInformasjon data) {

@@ -22,7 +22,6 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningAggregat;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -64,14 +63,6 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     @ChangeTracked
     private OppgittOpptjening oppgittOpptjening;
 
-    /**
-     * versjon 2 - støtter å lagre flere oppgitt opptjening på en behandling
-     */
-    @OneToOne
-    @JoinColumn(name = "oppgitte_opptjeninger_id", updatable = false, unique = true)
-    @ChangeTracked
-    private OppgittOpptjeningAggregat oppgittOpptjeningAggregat;
-
     @OneToOne
     @ChangeTracked
     @JoinColumn(name = "inntektsmeldinger_id", updatable = false, unique = true)
@@ -105,7 +96,6 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
 
         // NB! skal ikke lage ny versjon av oppgitt opptjening! Lenker bare inn
         grunnlag.getOppgittOpptjening().ifPresent(kopiAvOppgittOpptjening -> this.setOppgittOpptjening(kopiAvOppgittOpptjening));
-        grunnlag.getOppgittOpptjeningAggregat().ifPresent(kopiAvAggregat -> this.setOppgittOpptjeningAggregat(kopiAvAggregat));
 
         grunnlag.getOverstyrtOppgittOpptjening().ifPresent(this::setOverstyrtOppgittOpptjening);
         grunnlag.getRegisterVersjon().ifPresent(nyRegisterVerson -> this.setRegister(nyRegisterVerson));
@@ -199,14 +189,6 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
 
     void setOverstyrtOppgittOpptjening(OppgittOpptjening overstyrtOppgittOpptjening) {
         this.overstyrtOppgittOpptjening = overstyrtOppgittOpptjening;
-    }
-
-    public Optional<OppgittOpptjeningAggregat> getOppgittOpptjeningAggregat() {
-        return Optional.ofNullable(oppgittOpptjeningAggregat);
-    }
-
-    void setOppgittOpptjeningAggregat(OppgittOpptjeningAggregat oppgittOpptjeningAggregat) {
-        this.oppgittOpptjeningAggregat = oppgittOpptjeningAggregat;
     }
 
     void setKobling(Long koblingId) {

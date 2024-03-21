@@ -5,9 +5,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import jakarta.ws.rs.ApplicationPath;
-import jakarta.ws.rs.core.Application;
-
 import org.glassfish.jersey.server.ServerProperties;
 
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
@@ -17,6 +14,8 @@ import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
 import no.nav.foreldrepenger.abakus.app.diagnostikk.DiagnostikkRestTjeneste;
 import no.nav.foreldrepenger.abakus.app.diagnostikk.rapportering.RapporteringRestTjeneste;
 import no.nav.foreldrepenger.abakus.app.exceptions.ConstraintViolationMapper;
@@ -29,7 +28,6 @@ import no.nav.foreldrepenger.abakus.iay.tjeneste.ArbeidsforholdRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.GrunnlagRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.InntektsmeldingerRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.OppgittOpptjeningRestTjeneste;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.OppgittOpptjeningV2RestTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataRestTjeneste;
 import no.nav.foreldrepenger.abakus.vedtak.tjeneste.YtelseRestTjeneste;
 import no.nav.foreldrepenger.konfig.Environment;
@@ -72,7 +70,7 @@ public class ApiConfig extends Application {
         // eksponert grensesnitt
 
         return Set.of(ProsessTaskRestTjeneste.class, RegisterdataRestTjeneste.class, InntektsmeldingerRestTjeneste.class,
-            OppgittOpptjeningRestTjeneste.class, OppgittOpptjeningV2RestTjeneste.class, GrunnlagRestTjeneste.class, ArbeidsforholdRestTjeneste.class,
+            OppgittOpptjeningRestTjeneste.class, GrunnlagRestTjeneste.class, ArbeidsforholdRestTjeneste.class,
             YtelseRestTjeneste.class,
 
             ForvaltningRestTjeneste.class, DiagnostikkRestTjeneste.class, RapporteringRestTjeneste.class,
