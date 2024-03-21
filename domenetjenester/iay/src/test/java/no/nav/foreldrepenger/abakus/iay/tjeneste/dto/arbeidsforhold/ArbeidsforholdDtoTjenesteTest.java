@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -101,6 +102,55 @@ void setUp() {
         assertThat(permisjoner.get(1).getPeriode().getTom()).isEqualTo(TIL_DATO);
         assertThat(permisjoner.get(1).getProsentsats()).isEqualByComparingTo(permisjonerTilMap.get(1).getPermisjonsprosent());
         assertThat(permisjoner.get(1).getType()).isEqualTo(PermisjonsbeskrivelseType.PERMISJON_MED_FORELDREPENGER);
+
+    }
+
+    @Test
+    void mapArbeidsforholdMedOverlappendePermisjoner() {
+
+        var personIdent = new PersonIdent("12345678");
+        var aktørId = AktørId.dummy();
+        var intervall = IntervallEntitet.fraOgMedTilOgMed(FRA_DATO, TIL_DATO);
+        var eksternRef = EksternArbeidsforholdRef.ref("eksternRef");
+        var orgnr = new OrgNummer(KUNSTIG_ORG);
+        var arbeidsgiver = new Organisasjon(orgnr.getId());
+
+        var arbeidsgiverIdentifikator = new ArbeidsforholdIdentifikator(arbeidsgiver, eksternRef, ArbeidType.ORDINÆRT_ARBEIDSFORHOLD.getOffisiellKode());
+
+        var arbeidsavtalerTilMap = List.of(
+            lagArbeidsavtale(FRA_DATO, FRA_DATO.plusWeeks(2).minusDays(1), BigDecimal.valueOf(30)),
+            lagArbeidsavtale(FRA_DATO.plusWeeks(2), null, BigDecimal.valueOf(70))
+        );
+        var permisjonerTilMap = List.of(
+            lagPermisjon(FRA_DATO, FRA_DATO.plusWeeks(1), BigDecimal.ZERO),
+            lagPermisjon(FRA_DATO.plusDays(1), FRA_DATO.plusDays(5), BigDecimal.valueOf(100)),
+            lagPermisjon(FRA_DATO.plusWeeks(2), Tid.TIDENES_ENDE, BigDecimal.valueOf(20))
+        );
+        var arbeidsforhold = List.of(lagArbeidsforhold(arbeidsgiver, arbeidsavtalerTilMap, permisjonerTilMap));
+
+        when(aktørConsumer.hentIdentForAktør(any())).thenReturn(Optional.of(personIdent));
+        when(arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(personIdent, aktørId, intervall )).thenReturn(Map.of(arbeidsgiverIdentifikator, arbeidsforhold));
+
+        var arbeidsforholdDto = arbeidsforholdDtoTjeneste.mapArbForholdOgPermisjoner(aktørId, FRA_DATO, TIL_DATO);
+
+        assertThat(arbeidsforholdDto).hasSize(1);
+        assertThat(arbeidsforholdDto.getFirst().getType()).isEqualTo(ArbeidType.ORDINÆRT_ARBEIDSFORHOLD);
+        assertThat(arbeidsforholdDto.getFirst().getArbeidsforholdId().getEksternReferanse()).isEqualTo(eksternRef.getReferanse());
+        assertThat(arbeidsforholdDto.getFirst().getArbeidsgiver().getIdent()).isEqualTo(KUNSTIG_ORG);
+        assertThat(arbeidsforholdDto.getFirst().getArbeidsavtaler()).hasSize(2);
+
+        var arbeidsavtaler = arbeidsforholdDto.getFirst().getArbeidsavtaler();
+        assertThat(arbeidsavtaler.getFirst().periode().getFom()).isEqualTo(arbeidsavtalerTilMap.getFirst().getArbeidsavtaleFom());
+        assertThat(arbeidsavtaler.getFirst().periode().getTom()).isEqualTo(arbeidsavtalerTilMap.getFirst().getArbeidsavtaleTom());
+        assertThat(arbeidsavtaler.getFirst().stillingsprosent()).isEqualByComparingTo(arbeidsavtalerTilMap.getFirst().getStillingsprosent());
+        assertThat(arbeidsavtaler.get(1).periode().getFom()).isEqualTo(arbeidsavtalerTilMap.get(1).getArbeidsavtaleFom());
+        assertThat(arbeidsavtaler.get(1).periode().getTom()).isEqualTo(TIL_DATO);
+        assertThat(arbeidsavtaler.get(1).stillingsprosent()).isEqualByComparingTo(arbeidsavtalerTilMap.get(1).getStillingsprosent());
+
+        var permisjoner = arbeidsforholdDto.getFirst().getPermisjoner();
+        assertThat(permisjoner).hasSize(5);
+        assertThat(permisjoner.getFirst().getPeriode().getFom()).isEqualTo(permisjonerTilMap.getFirst().getPermisjonFom());
+        assertThat(permisjoner.get(4).getPeriode().getTom()).isEqualTo(TIL_DATO);
 
     }
 
