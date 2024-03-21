@@ -16,7 +16,6 @@
     <sequence-generator name="IAY_OPPGITTE_OPPTJENINGER" allocation-size="50" sequence-name="IAY_OPPGITTE_OPPTJENINGER" />
 
     <!-- Oppgitt opptjening fra søknad-->
-    <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningAggregat"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittArbeidsforhold"/>
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittEgenNæring"/>

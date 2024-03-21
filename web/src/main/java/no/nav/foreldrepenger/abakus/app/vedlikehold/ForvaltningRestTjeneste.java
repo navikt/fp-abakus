@@ -18,10 +18,8 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
-import no.nav.abakus.iaygrunnlag.UuidDto;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittEgenNæring;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
@@ -54,29 +52,6 @@ public class ForvaltningRestTjeneste {
     public ForvaltningRestTjeneste(EntityManager entityManager, InntektArbeidYtelseTjeneste iayTjeneste) {
         this.entityManager = entityManager;
         this.iayTjeneste = iayTjeneste;
-    }
-
-    @POST
-    @Path("/vaskBegrunnelse")
-    @Consumes(APPLICATION_JSON)
-    @Produces(APPLICATION_JSON)
-    @Operation(description = "Vasker begrunnelse for ugyldige tegn", tags = "FORVALTNING", responses = {@ApiResponse(responseCode = "200", description = "Forekomster av egen næring med vasket begrunnelse")})
-    @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.DRIFT)
-    public Response vaskBegrunnelse(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AbacDataSupplier.class) @NotNull @Valid UuidDto eksternReferanse) {
-        var iayAggregat = iayTjeneste.hentAggregat(new KoblingReferanse(eksternReferanse.getReferanse()));
-        var oppgittOpptjening = iayAggregat.getOppgittOpptjeningAggregat().stream().flatMap(oo -> oo.getOppgitteOpptjeninger().stream()).toList();
-        var næringer = oppgittOpptjening.stream().flatMap(oo -> oo.getEgenNæring().stream().filter(OppgittEgenNæring::getVarigEndring)).toList();
-        var antall = næringer.stream().map(næring -> {
-            var begrunnelse = BegrunnelseVasker.vask(næring.getBegrunnelse());
-            if (!begrunnelse.equals(næring.getBegrunnelse())) {
-                return entityManager.createNativeQuery("UPDATE iay_egen_naering SET begrunnelse = :begr WHERE id = :enid")
-                    .setParameter("begr", begrunnelse)
-                    .setParameter("enid", næring.getId())
-                    .executeUpdate();
-            }
-            return 0;
-        }).reduce(Integer::sum).orElse(0);
-        return Response.ok(antall).build();
     }
 
     @POST

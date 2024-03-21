@@ -28,7 +28,6 @@ import no.nav.foreldrepenger.abakus.iay.tjeneste.ArbeidsforholdRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.GrunnlagRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.InntektsmeldingerRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.OppgittOpptjeningRestTjeneste;
-import no.nav.foreldrepenger.abakus.iay.tjeneste.OppgittOpptjeningV2RestTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataRestTjeneste;
 import no.nav.foreldrepenger.abakus.vedtak.tjeneste.YtelseRestTjeneste;
 import no.nav.foreldrepenger.konfig.Environment;
@@ -71,7 +70,7 @@ public class ApiConfig extends Application {
         // eksponert grensesnitt
 
         return Set.of(ProsessTaskRestTjeneste.class, RegisterdataRestTjeneste.class, InntektsmeldingerRestTjeneste.class,
-            OppgittOpptjeningRestTjeneste.class, OppgittOpptjeningV2RestTjeneste.class, GrunnlagRestTjeneste.class, ArbeidsforholdRestTjeneste.class,
+            OppgittOpptjeningRestTjeneste.class, GrunnlagRestTjeneste.class, ArbeidsforholdRestTjeneste.class,
             YtelseRestTjeneste.class,
 
             ForvaltningRestTjeneste.class, DiagnostikkRestTjeneste.class, RapporteringRestTjeneste.class,
