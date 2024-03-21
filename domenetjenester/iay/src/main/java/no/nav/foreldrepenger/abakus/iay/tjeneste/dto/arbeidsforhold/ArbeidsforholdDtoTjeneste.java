@@ -31,7 +31,9 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.fpsak.tidsserie.LocalDateInterval;
 import no.nav.fpsak.tidsserie.LocalDateSegment;
+import no.nav.fpsak.tidsserie.LocalDateSegmentCombinator;
 import no.nav.fpsak.tidsserie.LocalDateTimeline;
+import no.nav.fpsak.tidsserie.StandardCombinators;
 import no.nav.vedtak.konfig.Tid;
 
 import static no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType.finnForKodeverkEiersKode;
@@ -103,21 +105,24 @@ public class ArbeidsforholdDtoTjeneste {
 
     private List<PermisjonDto> mapPermisjoner(Arbeidsforhold arbeidsforhold) {
         var ansettelse = new LocalDateInterval(arbeidsforhold.getArbeidFom(), arbeidsforhold.getArbeidTom());
+
         var permisjonTidslinje = arbeidsforhold.getPermisjoner().stream()
             .filter(permisjon -> permisjon.getPermisjonsprosent() != null)
             .map(p -> new LocalDateSegment<>(safeFom(p.getPermisjonFom()), safeTom(p.getPermisjonTom()),
-                new PermisjonTidslinjeObjekt(p.getPermisjonsprosent(), p.getPermisjonsÅrsak())))
-            .collect(Collectors.collectingAndThen(Collectors.toList(), LocalDateTimeline::new));
+                List.of(new PermisjonTidslinjeObjekt(p.getPermisjonsprosent(), p.getPermisjonsÅrsak()))))
+            .collect(Collectors.collectingAndThen(Collectors.toList(), datoSegmenter -> new LocalDateTimeline<>(datoSegmenter,
+                StandardCombinators::concatLists)));
 
         return permisjonTidslinje.intersection(ansettelse)
             .stream()
             .map(ArbeidsforholdDtoTjeneste::tilPermisjonDto)
+            .flatMap(Collection::stream)
             .toList();
     }
 
-    private static PermisjonDto tilPermisjonDto(LocalDateSegment<PermisjonTidslinjeObjekt> s) {
-        return new PermisjonDto(new Periode(s.getFom(), s.getTom()), finnForKodeverkEiersKode(s.getValue().permisjonsÅrsak))
-            .medProsentsats(s.getValue().permisjonsprosent());
+    private static List<PermisjonDto> tilPermisjonDto(LocalDateSegment<List<PermisjonTidslinjeObjekt>> s) {
+        return s.getValue().stream().map(permisjon -> new PermisjonDto(new Periode(s.getFom(), s.getTom()), finnForKodeverkEiersKode(permisjon.permisjonsÅrsak()))
+            .medProsentsats(permisjon.permisjonsprosent())).toList();
     }
 
     private static LocalDate safeFom(LocalDate fom) {
