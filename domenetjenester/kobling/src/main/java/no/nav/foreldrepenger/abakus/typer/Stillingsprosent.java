@@ -24,7 +24,9 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
 
     private static final RoundingMode AVRUNDINGSMODUS = RoundingMode.HALF_EVEN;
 
-    private static final BigDecimal MAX_VERDI = BigDecimal.valueOf(109.99d); // Bør være 100 men vil dobbelsjekke avrunding i noen tilfelle
+    private static final BigDecimal UTBETALING_MAX_VERDI = BigDecimal.valueOf(499.99d); // Historisk absurd max
+
+    private static final BigDecimal ARBEID_MAX_VERDI = BigDecimal.valueOf(109.99d); // Bør være 100 men vil dobbelsjekke avrunding i noen tilfelle
 
     private static final Stillingsprosent NULL_PROSENT = new Stillingsprosent(null);
 
@@ -36,10 +38,19 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
         // for hibernate
     }
 
-    public Stillingsprosent(BigDecimal verdi) {
-        this.verdi = normaliserData(verdi);
+    Stillingsprosent(BigDecimal verdi) {
+        this.verdi = absolutt(verdi);
         validerRange(this.verdi);
     }
+
+    public static Stillingsprosent arbeid(BigDecimal verdi) {
+        return new Stillingsprosent(normaliserData(verdi, ARBEID_MAX_VERDI));
+    }
+
+    public static Stillingsprosent utbetalingsgrad(BigDecimal verdi) {
+        return new Stillingsprosent(normaliserData(verdi, UTBETALING_MAX_VERDI));
+    }
+
 
     public static Stillingsprosent nullProsent() {
         return NULL_PROSENT;
@@ -66,17 +77,29 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
         return verdi == null ? null : verdi.setScale(2, AVRUNDINGSMODUS);
     }
 
-    public static BigDecimal normaliserData(BigDecimal verdi) {
+    public static BigDecimal normaliserStillingsprosentArbeid(BigDecimal verdi) {
+        return normaliserData(verdi, ARBEID_MAX_VERDI);
+    }
+
+    private static BigDecimal normaliserData(BigDecimal verdi, BigDecimal max) {
+        verdi = absolutt(verdi);
+        if (verdi == null) {
+            return null;
+        }
+        while (verdi.compareTo(max) > 0) {
+            LOG.info("[IAY] Prosent mer enn {}, justert verdi brukes isteden. Verdi fra AA-reg: {}", max, verdi);
+            verdi = verdi.divide(BigDecimal.TEN, 2, AVRUNDINGSMODUS);
+        }
+        return verdi;
+    }
+
+    private static BigDecimal absolutt(BigDecimal verdi) {
         if (verdi == null) {
             return null;
         }
         if (verdi.compareTo(BigDecimal.ZERO) < 0) {
-            LOG.info("[IAY] Prosent (yrkesaktivitet, permisjon) mindre enn 0, absolutt verdi brukes isteden. Verdi fra AA-reg: {}", verdi);
+            LOG.info("[IAY] Prosent mindre enn 0, absolutt verdi brukes isteden. Verdi fra AA-reg: {}", verdi);
             verdi = verdi.abs();
-        }
-        while (verdi.compareTo(MAX_VERDI) > 0) {
-            LOG.info("[IAY] Prosent (yrkesaktivitet, permisjon) mer enn 109,99, justert verdi brukes isteden. Verdi fra AA-reg: {}", verdi);
-            verdi = verdi.divide(BigDecimal.TEN, 2, AVRUNDINGSMODUS);
         }
         return verdi;
     }

@@ -19,12 +19,12 @@ import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdDto;
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdReferanseDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdTjeneste;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Organisasjon;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Person;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -33,6 +33,8 @@ import no.nav.fpsak.tidsserie.LocalDateInterval;
 import no.nav.fpsak.tidsserie.LocalDateSegment;
 import no.nav.fpsak.tidsserie.LocalDateTimeline;
 import no.nav.vedtak.konfig.Tid;
+
+import static no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType.finnForKodeverkEiersKode;
 
 @ApplicationScoped
 public class ArbeidsforholdDtoTjeneste {
@@ -49,8 +51,8 @@ public class ArbeidsforholdDtoTjeneste {
         this.aktørConsumer = aktørConsumer;
     }
 
-    public List<ArbeidsforholdDto> mapFor(AktørId aktørId, LocalDate fom, LocalDate tom, YtelseType ytelse) {
-        var ident = aktørConsumer.hentIdentForAktør(aktørId, ytelse).orElseThrow();
+    public List<ArbeidsforholdDto> mapFor(AktørId aktørId, LocalDate fom, LocalDate tom) {
+        var ident = aktørConsumer.hentIdentForAktør(aktørId).orElseThrow();
         var intervall = tom == null ? IntervallEntitet.fraOgMed(fom) : IntervallEntitet.fraOgMedTilOgMed(fom, tom);
         Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident,
             aktørId, intervall);
@@ -58,8 +60,8 @@ public class ArbeidsforholdDtoTjeneste {
         return arbeidsforhold.entrySet().stream().map(this::mapTilArbeidsforhold).collect(Collectors.toList());
     }
 
-    public List<ArbeidsforholdDto> mapArbForholdOgPermisjoner(AktørId aktørId, LocalDate fom, LocalDate tom, YtelseType ytelse) {
-        var ident = aktørConsumer.hentIdentForAktør(aktørId, ytelse).orElseThrow();
+    public List<ArbeidsforholdDto> mapArbForholdOgPermisjoner(AktørId aktørId, LocalDate fom, LocalDate tom) {
+        var ident = aktørConsumer.hentIdentForAktør(aktørId).orElseThrow();
         var intervall = tom == null ? IntervallEntitet.fraOgMed(fom) : IntervallEntitet.fraOgMedTilOgMed(fom, tom);
         Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident,
             aktørId, intervall);
@@ -74,36 +76,48 @@ public class ArbeidsforholdDtoTjeneste {
         ArbeidsforholdDto dto = new ArbeidsforholdDto(arbeidsgiver, arbeidType);
         dto.setArbeidsforholdId(mapArbeidsforholdId(key.getArbeidsforholdId()));
         dto.setAnsettelsesperiode(mapAnsettelsesPerioder(arbeidsforholdEntry.getValue()));
-        dto.setArbeidsavtaler(arbeidsforholdEntry.getValue().stream().map(this::mapArbeidsavtaler).flatMap(Collection::stream).toList());
-        dto.setPermisjoner(arbeidsforholdEntry.getValue().stream().map(this::mapPermisjoner).flatMap(Collection::stream).toList());
+        dto.setArbeidsavtaler(tilArbeidsavtaler(arbeidsforholdEntry.getValue()));
+        dto.setPermisjoner(tilPermisjoner(arbeidsforholdEntry.getValue()));
         return dto;
     }
 
+    private List<PermisjonDto> tilPermisjoner(List<Arbeidsforhold> arbeidsforhold) {
+        return arbeidsforhold.stream().map(this::mapPermisjoner).flatMap(Collection::stream).toList();
+    }
+
+    private List<ArbeidsavtaleDto> tilArbeidsavtaler(List<Arbeidsforhold> arbeidsforhold) {
+        return arbeidsforhold.stream().map(this::mapArbeidsavtaler).flatMap(Collection::stream).toList();
+    }
+
     private List<ArbeidsavtaleDto> mapArbeidsavtaler(Arbeidsforhold arbeidsforhold) {
-        LocalDateInterval ansettelse = new LocalDateInterval(arbeidsforhold.getArbeidFom(), arbeidsforhold.getArbeidTom());
-        var tidslinje = arbeidsforhold.getArbeidsavtaler().stream()
+        var ansettelse = new LocalDateInterval(arbeidsforhold.getArbeidFom(), arbeidsforhold.getArbeidTom());
+        var arbeidsavtalerTidlinje = arbeidsforhold.getArbeidsavtaler().stream()
             .filter(arbeidsavtale -> !arbeidsavtale.getErAnsettelsesPerioden())
             .filter(arbeidsavtale -> arbeidsavtale.getStillingsprosent() != null)
-            .map(a -> new LocalDateSegment<>(a.getArbeidsavtaleFom(), a.getArbeidsavtaleTom(), a.getStillingsprosent()))
+            .map(a -> new LocalDateSegment<>(safeFom(a.getArbeidsavtaleFom()), safeTom(a.getArbeidsavtaleTom()), a.getStillingsprosent()))
             .collect(Collectors.collectingAndThen(Collectors.toList(), LocalDateTimeline::new));
-        return tidslinje.intersection(ansettelse).stream().map(s -> new ArbeidsavtaleDto(new Periode(safeFom(s.getFom()), safeTom(s.getTom())), s.getValue())).toList();
+        return arbeidsavtalerTidlinje.intersection(ansettelse).stream()
+            .map(s -> new ArbeidsavtaleDto(new Periode(s.getFom(), s.getTom()), s.getValue()))
+            .toList();
     }
 
     private List<PermisjonDto> mapPermisjoner(Arbeidsforhold arbeidsforhold) {
-        LocalDateInterval ansettelse = new LocalDateInterval(arbeidsforhold.getArbeidFom(), arbeidsforhold.getArbeidTom());
-        var tidslinje = arbeidsforhold.getPermisjoner()
-            .stream()
+        var ansettelse = new LocalDateInterval(arbeidsforhold.getArbeidFom(), arbeidsforhold.getArbeidTom());
+        var permisjonTidslinje = arbeidsforhold.getPermisjoner().stream()
             .filter(permisjon -> permisjon.getPermisjonsprosent() != null)
-            .map(p -> new LocalDateSegment<>(p.getPermisjonFom(), p.getPermisjonTom(),
+            .map(p -> new LocalDateSegment<>(safeFom(p.getPermisjonFom()), safeTom(p.getPermisjonTom()),
                 new PermisjonTidslinjeObjekt(p.getPermisjonsprosent(), p.getPermisjonsÅrsak())))
             .collect(Collectors.collectingAndThen(Collectors.toList(), LocalDateTimeline::new));
 
-        return tidslinje.intersection(ansettelse)
+        return permisjonTidslinje.intersection(ansettelse)
             .stream()
-            .map(s -> new PermisjonDto(new Periode(safeFom(s.getFom()), safeTom(s.getTom())),
-                PermisjonsbeskrivelseType.finnForKodeverkEiersKode(s.getValue().permisjonsÅrsak))
-                .medProsentsats(s.getValue().permisjonsprosent()))
+            .map(ArbeidsforholdDtoTjeneste::tilPermisjonDto)
             .toList();
+    }
+
+    private static PermisjonDto tilPermisjonDto(LocalDateSegment<PermisjonTidslinjeObjekt> s) {
+        return new PermisjonDto(new Periode(s.getFom(), s.getTom()), finnForKodeverkEiersKode(s.getValue().permisjonsÅrsak))
+            .medProsentsats(s.getValue().permisjonsprosent());
     }
 
     private static LocalDate safeFom(LocalDate fom) {
@@ -127,7 +141,7 @@ public class ArbeidsforholdDtoTjeneste {
     }
 
     private List<Periode> mapAnsettelsesPerioder(List<Arbeidsforhold> arbeidsforhold) {
-        return arbeidsforhold.stream().map(it -> new Periode(it.getArbeidFom(), it.getArbeidTom())).collect(Collectors.toList());
+        return arbeidsforhold.stream().map(af -> new Periode(af.getArbeidFom(), af.getArbeidTom())).collect(Collectors.toList());
     }
 
     private ArbeidsforholdRefDto mapArbeidsforholdId(EksternArbeidsforholdRef arbeidsforholdId) {
@@ -137,7 +151,7 @@ public class ArbeidsforholdDtoTjeneste {
         return new ArbeidsforholdRefDto(null, arbeidsforholdId.getReferanse());
     }
 
-    private Aktør mapArbeidsgiver(no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsgiver arbeidsgiver) {
+    private Aktør mapArbeidsgiver(Arbeidsgiver arbeidsgiver) {
         if (arbeidsgiver instanceof Person person) {
             return new AktørIdPersonident(person.getAktørId());
         } else if (arbeidsgiver instanceof Organisasjon organisasjon) {

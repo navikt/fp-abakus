@@ -16,7 +16,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -58,7 +57,7 @@ public class Gradering extends BaseEntitet implements IndexKey {
     }
 
     public Gradering(LocalDate fom, LocalDate tom, BigDecimal arbeidstidProsent) {
-        this(tom == null ? IntervallEntitet.fraOgMed(fom) : IntervallEntitet.fraOgMedTilOgMed(fom, tom), new Stillingsprosent(arbeidstidProsent));
+        this(tom == null ? IntervallEntitet.fraOgMed(fom) : IntervallEntitet.fraOgMedTilOgMed(fom, tom), Stillingsprosent.arbeid(arbeidstidProsent));
     }
 
     Gradering(Gradering gradering) {

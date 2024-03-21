@@ -7,14 +7,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-
-import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AaregRestKlient;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.ArbeidsavtaleRS;
@@ -25,6 +22,7 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.PermisjonPe
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
 @ApplicationScoped
 public class ArbeidsforholdTjeneste {
@@ -126,7 +124,7 @@ public class ArbeidsforholdTjeneste {
     }
 
     private Arbeidsavtale byggArbeidsavtaleRS(ArbeidsavtaleRS arbeidsavtale, ArbeidsforholdRS arbeidsforhold) {
-        var stillingsprosent = Stillingsprosent.normaliserData(arbeidsavtale.stillingsprosent());
+        var stillingsprosent = Stillingsprosent.normaliserStillingsprosentArbeid(arbeidsavtale.stillingsprosent());
         Arbeidsavtale.Builder builder = new Arbeidsavtale.Builder().medStillingsprosent(stillingsprosent)
             .medSisteLønnsendringsdato(arbeidsavtale.sistLoennsendring());
 

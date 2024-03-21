@@ -1,11 +1,11 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
+import java.math.BigDecimal;
+
 import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-
-import java.math.BigDecimal;
 
 public class YtelseAnvistAndelBuilder {
     private final YtelseAnvistAndel ytelseAnvistAndel;
@@ -27,14 +27,14 @@ public class YtelseAnvistAndelBuilder {
 
     public YtelseAnvistAndelBuilder medUtbetalingsgrad(BigDecimal verdi) {
         if (verdi != null) {
-            this.ytelseAnvistAndel.setUtbetalingsgradProsent(new Stillingsprosent(verdi));
+            this.ytelseAnvistAndel.setUtbetalingsgradProsent(Stillingsprosent.utbetalingsgrad(verdi));
         }
         return this;
     }
 
     public YtelseAnvistAndelBuilder medRefusjonsgrad(BigDecimal verdi) {
         if (verdi != null) {
-            this.ytelseAnvistAndel.setRefusjonsgradProsent(new Stillingsprosent(verdi));
+            this.ytelseAnvistAndel.setRefusjonsgradProsent(Stillingsprosent.utbetalingsgrad(verdi));
         }
         return this;
     }

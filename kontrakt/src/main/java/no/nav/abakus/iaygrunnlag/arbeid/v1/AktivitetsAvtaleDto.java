@@ -4,18 +4,17 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import no.nav.abakus.iaygrunnlag.Periode;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -38,27 +37,6 @@ public class AktivitetsAvtaleDto {
     @DecimalMin(value = "0.00", message = "stillingsprosent [${validatedValue}] må være >= {value}")
     @DecimalMax(value = "1000.00", message = "stillingsprosent [${validatedValue}] må være <= {value}")
     private BigDecimal stillingsprosent;
-
-    /**
-     * For timelønnede så vil antallet timer i arbeidsavtalen være satt her.
-     * Merk her er registrert mye søppel i Aareg, så brukes først og fremst til kontroll når det er en verdi. Eks.kan være registrert antall
-     * timer per år (men skal være per uke)
-     */
-    @JsonProperty("antallTimer")
-    @DecimalMin(value = "0.00", message = "antallTimer [${validatedValue}] må være >= {value}")
-    @DecimalMax(value = "2000.00", message = "antallTimer [${validatedValue}] må være <= {value}")
-    private BigDecimal antallTimer;
-
-    /**
-     * Antall timer som tilsvarer fulltid (f.eks 40 timer). Merk her er registrert mye søppel ved input fra Aareg. Bruker derfor først og fremst
-     * til kontroll når det er satt en verdi.
-     * Eks. kan være registrert antall timer full tid per år (når det skal være per uke), eller antall timer per uke totalt (eks. 168 timers
-     * arbeidsuker).
-     */
-    @JsonProperty("antallTimerFulltid")
-    @DecimalMin(value = "0.00", message = "antallTimerFulltid [${validatedValue}] må være >= {value}")
-    @DecimalMax(value = "2000.00", message = "antallTimerFulltid [${validatedValue}] må være <= {value}")
-    private BigDecimal antallTimerFulltid;
 
     @JsonProperty("sistLønnsendring")
     @Valid
@@ -109,30 +87,6 @@ public class AktivitetsAvtaleDto {
         this.stillingsprosent = stillingsprosent == null ? null : stillingsprosent.setScale(2, RoundingMode.HALF_UP);
     }
 
-    public BigDecimal getAntallTimer() {
-        return antallTimer;
-    }
-
-    public void setAntallTimer(BigDecimal antallTimer) {
-        this.antallTimer = antallTimer == null ? null : antallTimer.setScale(2, RoundingMode.HALF_UP);
-    }
-
-    public void setAntallTimer(int timer) {
-        this.setAntallTimer(BigDecimal.valueOf(timer));
-    }
-
-    public BigDecimal getAntallTimerFulltid() {
-        return antallTimerFulltid;
-    }
-
-    public void setAntallTimerFulltid(BigDecimal antallTimerFulltid) {
-        this.antallTimerFulltid = antallTimerFulltid == null ? null : antallTimerFulltid.setScale(2, RoundingMode.HALF_UP);
-    }
-
-    public void setAntallTimerFulltid(int timer) {
-        this.setAntallTimerFulltid(BigDecimal.valueOf(timer));
-    }
-
     public AktivitetsAvtaleDto medStillingsprosent(BigDecimal stillingsprosent) {
         setStillingsprosent(stillingsprosent);
         return this;
@@ -140,26 +94,6 @@ public class AktivitetsAvtaleDto {
 
     public AktivitetsAvtaleDto medStillingsprosent(int prosentHeltall) {
         setStillingsprosent(BigDecimal.valueOf(prosentHeltall));
-        return this;
-    }
-
-    public AktivitetsAvtaleDto medAntallTimer(BigDecimal timer) {
-        setAntallTimer(timer);
-        return this;
-    }
-
-    public AktivitetsAvtaleDto medAntallTimer(int timer) {
-        setAntallTimer(timer);
-        return this;
-    }
-
-    public AktivitetsAvtaleDto medAntallTimerFulltid(BigDecimal timer) {
-        setAntallTimerFulltid(timer);
-        return this;
-    }
-
-    public AktivitetsAvtaleDto medAntallTimerFulltid(int timer) {
-        setAntallTimerFulltid(timer);
         return this;
     }
 

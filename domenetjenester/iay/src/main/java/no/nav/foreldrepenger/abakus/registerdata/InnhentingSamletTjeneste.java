@@ -67,13 +67,13 @@ public class InnhentingSamletTjeneste {
         this.lønnskompensasjonRepository = lønnskompensasjonRepository;
     }
 
-    public InntektsInformasjon getInntektsInformasjon(AktørId aktørId, IntervallEntitet periode, InntektskildeType kilde, YtelseType ytelse) {
+    public InntektsInformasjon getInntektsInformasjon(AktørId aktørId, IntervallEntitet periode, InntektskildeType kilde) {
         FinnInntektRequest.FinnInntektRequestBuilder builder = FinnInntektRequest.builder(YearMonth.from(periode.getFomDato()),
             YearMonth.from(periode.getTomDato()));
 
         builder.medAktørId(aktørId.getId());
 
-        return inntektTjeneste.finnInntekt(builder.build(), kilde, ytelse);
+        return inntektTjeneste.finnInntekt(builder.build(), kilde);
     }
 
     public boolean skalInnhenteLønnskompensasjon(Kobling kobling, @SuppressWarnings("unused") InntektskildeType kilde) {

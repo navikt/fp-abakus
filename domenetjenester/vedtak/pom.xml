@@ -51,7 +51,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
-			<artifactId>kafka-streams</artifactId>
+			<artifactId>kafka-clients</artifactId>
 		</dependency>
 
         <dependency>

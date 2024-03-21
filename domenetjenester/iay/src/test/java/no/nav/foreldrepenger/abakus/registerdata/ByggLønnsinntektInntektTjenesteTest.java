@@ -34,7 +34,7 @@ class ByggLønnsinntektInntektTjenesteTest {
             .medLønnsbeskrivelseKode(null)
             .medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.SVALBARD.getOffisiellKode())
             .build();
-        var inntektsInformasjon = new InntektsInformasjon(List.of(svalbardinntekt), List.of(), InntektskildeType.INNTEKT_BEREGNING);
+        var inntektsInformasjon = new InntektsInformasjon(List.of(svalbardinntekt), InntektskildeType.INNTEKT_BEREGNING);
         var arbeidsgivereLookup = Map.of(ORGNR, Arbeidsgiver.virksomhet(new OrgNummer(ORGNR)));
 
         // Act
@@ -76,7 +76,7 @@ class ByggLønnsinntektInntektTjenesteTest {
             .medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.NETTOLØNN_FOR_SJØFOLK.getOffisiellKode())
             .build();
 
-        var inntektsInformasjon = new InntektsInformasjon(List.of(svalbardinntekt, særskiltFradrag), List.of(), InntektskildeType.INNTEKT_BEREGNING);
+        var inntektsInformasjon = new InntektsInformasjon(List.of(svalbardinntekt, særskiltFradrag), InntektskildeType.INNTEKT_BEREGNING);
         var arbeidsgivereLookup = Map.of(ORGNR, Arbeidsgiver.virksomhet(new OrgNummer(ORGNR)));
 
         // Act
@@ -117,7 +117,7 @@ class ByggLønnsinntektInntektTjenesteTest {
             .medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.SÆRSKILT_FRADRAG_FOR_SJØFOLK.getOffisiellKode())
             .build();
 
-        var inntektsInformasjon = new InntektsInformasjon(List.of(svalbardinntekt, særskiltFradrag), List.of(), InntektskildeType.INNTEKT_BEREGNING);
+        var inntektsInformasjon = new InntektsInformasjon(List.of(svalbardinntekt, særskiltFradrag), InntektskildeType.INNTEKT_BEREGNING);
         var arbeidsgivereLookup = Map.of(ORGNR, Arbeidsgiver.virksomhet(new OrgNummer(ORGNR)));
 
         // Act
@@ -158,7 +158,7 @@ class ByggLønnsinntektInntektTjenesteTest {
             .medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.SÆRSKILT_FRADRAG_FOR_SJØFOLK.getOffisiellKode())
             .build();
 
-        var inntektsInformasjon = new InntektsInformasjon(List.of(svalbardinntekt, særskiltFradrag), List.of(), InntektskildeType.INNTEKT_BEREGNING);
+        var inntektsInformasjon = new InntektsInformasjon(List.of(svalbardinntekt, særskiltFradrag), InntektskildeType.INNTEKT_BEREGNING);
         var arbeidsgivereLookup = Map.of(ORGNR, Arbeidsgiver.virksomhet(new OrgNummer(ORGNR)));
 
         // Act
@@ -195,7 +195,7 @@ class ByggLønnsinntektInntektTjenesteTest {
             .medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.NETTOLØNN.getOffisiellKode())
             .build();
 
-        var inntektsInformasjon = new InntektsInformasjon(List.of(omsorgsstønad), List.of(), InntektskildeType.INNTEKT_BEREGNING);
+        var inntektsInformasjon = new InntektsInformasjon(List.of(omsorgsstønad), InntektskildeType.INNTEKT_BEREGNING);
         var arbeidsgivereLookup = Map.of(ORGNR, Arbeidsgiver.virksomhet(new OrgNummer(ORGNR)));
 
         // Act
@@ -241,7 +241,7 @@ class ByggLønnsinntektInntektTjenesteTest {
             .build();
 
 
-        var inntektsInformasjon = new InntektsInformasjon(List.of(omsorgsstønad, ukjentLønn), List.of(), InntektskildeType.INNTEKT_BEREGNING);
+        var inntektsInformasjon = new InntektsInformasjon(List.of(omsorgsstønad, ukjentLønn), InntektskildeType.INNTEKT_BEREGNING);
         var arbeidsgivereLookup = Map.of(ORGNR, Arbeidsgiver.virksomhet(new OrgNummer(ORGNR)));
 
         // Act
@@ -278,7 +278,7 @@ class ByggLønnsinntektInntektTjenesteTest {
             .medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.NETTOLØNN.getOffisiellKode())
             .build();
 
-        var inntektsInformasjon = new InntektsInformasjon(List.of(ukjentLønn), List.of(), InntektskildeType.INNTEKT_BEREGNING);
+        var inntektsInformasjon = new InntektsInformasjon(List.of(ukjentLønn), InntektskildeType.INNTEKT_BEREGNING);
         var arbeidsgivereLookup = Map.of(ORGNR, Arbeidsgiver.virksomhet(new OrgNummer(ORGNR)));
 
         // Act

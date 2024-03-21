@@ -73,7 +73,6 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     @JoinColumn(name = "informasjon_id", updatable = false, unique = true)
     private ArbeidsforholdInformasjon arbeidsforholdInformasjon;
 
-    // Kun for Frisinn
     @OneToOne
     @JoinColumn(name = "overstyrt_oppgitt_opptjening_id", updatable = false, unique = true)
     @ChangeTracked
