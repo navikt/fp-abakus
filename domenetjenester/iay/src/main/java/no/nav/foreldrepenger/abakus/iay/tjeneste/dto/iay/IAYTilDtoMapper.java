@@ -74,13 +74,6 @@ public class IAYTilDtoMapper {
                 dto.medOverstyrtOppgittOpptjening(mapper);
             });
         }
-
-        if (dataset.contains(Dataset.OPPGITT_OPPTJENING_V2)) {
-            grunnlag.getOppgittOpptjeningAggregat().ifPresent(aggregat -> {
-                var mapper = new MapOppgittOpptjening().mapTilDto(aggregat.getOppgitteOpptjeninger());
-                dto.medOppgittOpptjeninger(mapper);
-            });
-        }
         return dto;
     }
 

@@ -9,21 +9,18 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.NaturalId;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-
-import org.hibernate.annotations.Immutable;
-import org.hibernate.annotations.NaturalId;
-
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -37,13 +34,6 @@ public class OppgittOpptjening extends BaseEntitet {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SO_OPPGITT_OPPTJENING")
     private Long id;
-
-    /**
-     * nullable - denne er kun i bruk når det lagres på aggregat ( se /v2/motta-endepunktet )
-     */
-    @ManyToOne
-    @JoinColumn(name = "oppgitte_opptjeninger_id", updatable = false)
-    private OppgittOpptjeningAggregat oppgitteOpptjeninger;
 
     @NaturalId
     @DiffIgnore
@@ -111,10 +101,6 @@ public class OppgittOpptjening extends BaseEntitet {
             kopi.setOppgittOpptjening(this);
             return kopi;
         }).orElse(null);
-    }
-
-    void setOppgitteOpptjeninger(OppgittOpptjeningAggregat oppgitteOpptjeninger) {
-        this.oppgitteOpptjeninger = oppgitteOpptjeninger;
     }
 
     public List<OppgittArbeidsforhold> getOppgittArbeidsforhold() {
