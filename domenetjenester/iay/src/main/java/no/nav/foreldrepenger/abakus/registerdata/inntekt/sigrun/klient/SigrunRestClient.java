@@ -54,11 +54,7 @@ public class SigrunRestClient {
         this.restConfig = RestConfig.forClient(SigrunRestClient.class);
         this.endpointBS = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_BS);
         this.endpointSSG = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_SSG);
-        if (IS_DEV) {
-            this.endpointPgiFT = URI.create("https://sigrun-skd-stub.dev.adeo.no" + PATH_PGI_FT); // Til det legges om til vanlig Sigrun for PGI
-        } else {
-            this.endpointPgiFT = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_PGI_FT);
-        }
+        this.endpointPgiFT = restConfig.endpoint().resolve(restConfig.endpoint().getPath() + PATH_PGI_FT);
     }
 
     private static Optional<String> handleResponse(HttpResponse<String> response) {
@@ -118,19 +114,15 @@ public class SigrunRestClient {
         }
         var request = RestRequest.newGET(endpointPgiFT, restConfig)
             .header(NavHeaders.HEADER_NAV_PERSONIDENT, fnr)
-            .header("norskident", fnr) // PGA skd-stub i dev
+            //.header("norskident", fnr) // PGA skd-stub i dev
+            .header("rettighetspakke", "navForeldrepenger")
             .header(SigrunRestConfig.INNTEKTSAAR, år)
             .otherCallId(X_CALL_ID)
             .header(SigrunRestConfig.CONSUMER_ID, CONTEXT_SUPPLIER.consumerIdForCurrentKontekst().get());
 
         try {
             HttpResponse<String> response = client.sendReturnUnhandled(request);
-            // Sigrun-skd-stub i DEV returnerer en liste, mens ekte Sigrun returnerer objekt.
-            if (IS_DEV) {
-                return handleResponse(response).map(r -> DefaultJsonMapper.listFromJson(r, PgiFolketrygdenResponse.class)).orElseGet(List::of);
-            } else {
-                return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, PgiFolketrygdenResponse.class)).map(List::of).orElseGet(List::of);
-            }
+            return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, PgiFolketrygdenResponse.class)).map(List::of).orElseGet(List::of);
         } catch (Exception e) {
             LOG.info("SIGRUN PGI: noe gikk galt for aar {}", år, e);
             return List.of();
@@ -144,19 +136,14 @@ public class SigrunRestClient {
         }
         var request = RestRequest.newGET(endpointPgiFT, restConfig)
             .header(NavHeaders.HEADER_NAV_PERSONIDENT, fnr)
-            .header("norskident", fnr) // PGA skd-stub i dev
+            //.header("norskident", fnr) // PGA skd-stub i dev
+            .header("rettighetspakke", "navForeldrepenger")
             .header(SigrunRestConfig.INNTEKTSAAR, år.toString())
             .otherCallId(X_CALL_ID)
             .header(SigrunRestConfig.CONSUMER_ID, CONTEXT_SUPPLIER.consumerIdForCurrentKontekst().get());
 
         HttpResponse<String> response = client.sendReturnUnhandled(request);
-        // Sigrun-skd-stub i DEV returnerer en liste, mens ekte Sigrun returnerer objekt.
-        if (IS_DEV) {
-            return handleResponse(response).map(r -> DefaultJsonMapper.listFromJson(r, PgiFolketrygdenResponse.class))
-                    .flatMap(l -> l.stream().findFirst()).orElse(null);
-        } else {
-            return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, PgiFolketrygdenResponse.class)).orElse(null);
-        }
+        return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, PgiFolketrygdenResponse.class)).orElse(null);
     }
 
 }
