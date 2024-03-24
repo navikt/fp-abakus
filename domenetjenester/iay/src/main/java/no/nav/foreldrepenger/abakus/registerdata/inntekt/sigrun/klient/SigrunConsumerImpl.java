@@ -69,15 +69,23 @@ public class SigrunConsumerImpl implements SigrunConsumer {
     public List<PgiFolketrygdenResponse> pensjonsgivendeInntektForFolketrygden(String fnr, IntervallEntitet opplysningsperiode) {
         var senesteÅr = utledSenesteÅr(opplysningsperiode);
         List<PgiFolketrygdenResponse> svarene = new ArrayList<>();
-        var svarSenesteÅr = kanVenteFerdiglignetFor(senesteÅr) ? client.hentPensjonsgivendeInntektForFolketrygden(fnr, senesteÅr) : null;
-        Optional.ofNullable(svarSenesteÅr).ifPresent(svarene::add);
-        utledTidligereÅr(opplysningsperiode, senesteÅr, senesteÅr != null)
+        var svarSenesteÅr = svarForSenesteÅr(fnr, senesteÅr);
+        svarSenesteÅr.ifPresent(svarene::add);
+        utledTidligereÅr(opplysningsperiode, senesteÅr, svarSenesteÅr.isPresent())
             .forEach(år -> Optional.ofNullable(client.hentPensjonsgivendeInntektForFolketrygden(fnr, år)).ifPresent(svarene::add));
         return svarene;
     }
 
-    public boolean kanVenteFerdiglignetFor(Year år) {
-        return !(IS_PROD && Year.now().minusYears(1).equals(år) && MonthDay.now().isBefore(TIDLIGSTE_SJEKK_FJOR));
+    public Optional<PgiFolketrygdenResponse> svarForSenesteÅr(String fnr, Year senesteÅr) {
+        if (Year.now().minusYears(1).equals(senesteÅr) && MonthDay.now().isBefore(TIDLIGSTE_SJEKK_FJOR)) {
+            return Optional.empty();
+        }
+        try {
+            var svar = client.hentPensjonsgivendeInntektForFolketrygden(fnr, senesteÅr);
+            return Optional.ofNullable(svar);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     private Year utledSenesteÅr(IntervallEntitet opplysningsperiode) {
