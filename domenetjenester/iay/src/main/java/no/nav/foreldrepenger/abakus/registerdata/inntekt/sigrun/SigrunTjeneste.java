@@ -1,5 +1,7 @@
 package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun;
 
+import static java.time.temporal.ChronoUnit.YEARS;
+
 import java.math.BigDecimal;
 import java.time.MonthDay;
 import java.time.Year;
@@ -22,8 +24,6 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunPgi
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestClient;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 
-import static java.time.temporal.ChronoUnit.YEARS;
-
 
 @ApplicationScoped
 public class SigrunTjeneste {
@@ -32,7 +32,6 @@ public class SigrunTjeneste {
     private static final MonthDay TIDLIGSTE_SJEKK_FJOR = MonthDay.of(5, 1);
 
     private static final Year FØRSTE_PGI = Year.of(2017);
-    private static final boolean IS_PROD = Environment.current().isProd();
     private SigrunRestClient sigrunConsumer;
 
     SigrunTjeneste() {
@@ -55,22 +54,28 @@ public class SigrunTjeneste {
     private List<PgiFolketrygdenResponse> pensjonsgivendeInntektForFolketrygden(String fnr, IntervallEntitet opplysningsperiode) {
         var senesteÅr = utledSenesteÅr(opplysningsperiode);
         List<PgiFolketrygdenResponse> svarene = new ArrayList<>();
-        var svarSenesteÅr = kanVenteFerdiglignetFor(senesteÅr) ?
-            sigrunConsumer.hentPensjonsgivendeInntektForFolketrygden(fnr, senesteÅr) : null;
-        Optional.ofNullable(svarSenesteÅr).ifPresent(svarene::add);
-        utledTidligereÅr(opplysningsperiode, senesteÅr, svarSenesteÅr != null)
-            .forEach(år -> Optional.ofNullable(sigrunConsumer.hentPensjonsgivendeInntektForFolketrygden(fnr, år)).ifPresent(svarene::add));
+        var svarSenesteÅr = svarForSenesteÅr(fnr, senesteÅr);
+        svarSenesteÅr.ifPresent(svarene::add);
+        utledTidligereÅr(opplysningsperiode, senesteÅr, svarSenesteÅr.isPresent())
+            .forEach(år -> sigrunConsumer.hentPensjonsgivendeInntektForFolketrygden(fnr, år).ifPresent(svarene::add));
         return svarene;
-    }
-
-    private boolean kanVenteFerdiglignetFor(Year år) {
-        return !(IS_PROD && Year.now().minusYears(1).equals(år) && MonthDay.now().isBefore(TIDLIGSTE_SJEKK_FJOR));
     }
 
     private Year utledSenesteÅr(IntervallEntitet opplysningsperiode) {
         var ifjor = Year.now().minusYears(1);
         var oppgitt = opplysningsperiode != null ? Year.from(opplysningsperiode.getTomDato()) : ifjor;
         return oppgitt.isAfter(ifjor) ? ifjor : oppgitt;
+    }
+
+    public Optional<PgiFolketrygdenResponse> svarForSenesteÅr(String fnr, Year senesteÅr) {
+        if (Year.now().minusYears(1).equals(senesteÅr) && MonthDay.now().isBefore(TIDLIGSTE_SJEKK_FJOR)) {
+            return Optional.empty();
+        }
+        try {
+            return sigrunConsumer.hentPensjonsgivendeInntektForFolketrygden(fnr, senesteÅr);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     private List<Year> utledTidligereÅr(IntervallEntitet opplysningsperiode, Year senesteÅr, boolean harDataSenesteÅr) {
