@@ -15,6 +15,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import jakarta.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,10 +72,12 @@ public class IAYRegisterInnhentingTjeneste {
     private AktørTjeneste aktørConsumer;
     private SigrunTjeneste sigrunTjeneste;
 
-    protected IAYRegisterInnhentingTjeneste() {
+    IAYRegisterInnhentingTjeneste() {
+        // CDI
     }
 
-    protected IAYRegisterInnhentingTjeneste(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
+    @Inject
+    public IAYRegisterInnhentingTjeneste(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
                                             VirksomhetTjeneste virksomhetTjeneste,
                                             InnhentingSamletTjeneste innhentingSamletTjeneste,
                                             AktørTjeneste aktørConsumer,
