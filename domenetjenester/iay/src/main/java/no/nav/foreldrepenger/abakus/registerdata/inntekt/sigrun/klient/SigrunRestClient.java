@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import jakarta.ws.rs.core.UriBuilder;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.PgiFolketrygdenResponse;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SSGResponse;
-import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.vedtak.exception.IntegrasjonException;
 import no.nav.vedtak.exception.ManglerTilgangException;
 import no.nav.vedtak.felles.integrasjon.rest.NavHeaders;
@@ -35,8 +34,6 @@ import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 @RestClientConfig(tokenConfig = TokenFlow.AZUREAD_CC, endpointProperty = "sigrunrestberegnetskatt.url", endpointDefault = "http://sigrun.team-inntekt",
     scopesProperty = "sigrunrestberegnetskatt.scopes", scopesDefault = "api://prod-fss.team-inntekt.sigrun/.default")
 public class SigrunRestClient {
-
-    private static final boolean IS_DEV = Environment.current().isDev();
 
     private static final Year FØRSTE_PGI = Year.of(2017);
 

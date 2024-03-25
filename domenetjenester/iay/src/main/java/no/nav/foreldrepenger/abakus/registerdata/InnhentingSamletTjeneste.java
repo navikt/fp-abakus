@@ -42,7 +42,7 @@ public class InnhentingSamletTjeneste {
 
     private static final Logger LOG = LoggerFactory.getLogger(InnhentingSamletTjeneste.class);
     private static final Set<YtelseType> LØNNSKOMP_FOR_YTELSER = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER);
-    private final boolean isDev = Environment.current().isDev();
+    private static final boolean FAILSOFT_DEV = Environment.current().isDev();
     private ArbeidsforholdTjeneste arbeidsforholdTjeneste;
     private InntektTjeneste inntektTjeneste;
     private FpwsproxyKlient fpwsproxyKlient;
@@ -114,7 +114,7 @@ public class InnhentingSamletTjeneste {
     }
 
     public List<InfotrygdYtelseGrunnlag> innhentInfotrygdGrunnlag(PersonIdent ident, IntervallEntitet periode) {
-        if (isDev) {
+        if (FAILSOFT_DEV) {
             return innhentingInfotrygdTjeneste.getInfotrygdYtelserFailSoft(ident, periode);
         }
         return innhentingInfotrygdTjeneste.getInfotrygdYtelser(ident, periode);
