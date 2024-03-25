@@ -11,9 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
-import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.tjenester.aordningen.inntektsinformasjon.Aktoer;
 import no.nav.tjenester.aordningen.inntektsinformasjon.ArbeidsInntektIdent;
 import no.nav.tjenester.aordningen.inntektsinformasjon.ArbeidsInntektMaaned;
@@ -44,24 +42,17 @@ public class InntektTjeneste {
 
     private static final Logger LOG = LoggerFactory.getLogger(InntektTjeneste.class);
 
-    private RestClient restClient;
-    private RestConfig restConfig;
-    private AktørTjeneste aktørConsumer;
-    private Map<InntektskildeType, InntektsFilter> kildeTilFilter;
+    private final RestClient restClient;
+    private final RestConfig restConfig;
+    private final Map<InntektskildeType, InntektsFilter> kildeTilFilter;
 
-    InntektTjeneste() {
-        // For CDI proxy
+    public InntektTjeneste() {
+        this(RestClient.client());
     }
 
-    @Inject
-    public InntektTjeneste(AktørTjeneste aktørConsumer) {
-        this(RestClient.client(), aktørConsumer);
-    }
-
-    public InntektTjeneste(RestClient restClient, AktørTjeneste aktørConsumer) {
+    public InntektTjeneste(RestClient restClient) {
         this.restClient = restClient;
         this.restConfig = RestConfig.forClient(InntektTjeneste.class);
-        this.aktørConsumer = aktørConsumer;
         this.kildeTilFilter = Map.of(InntektskildeType.INNTEKT_OPPTJENING, InntektsFilter.OPPTJENINGSGRUNNLAG, InntektskildeType.INNTEKT_BEREGNING,
             InntektsFilter.BEREGNINGSGRUNNLAG, InntektskildeType.INNTEKT_SAMMENLIGNING, InntektsFilter.SAMMENLIGNINGSGRUNNLAG);
     }

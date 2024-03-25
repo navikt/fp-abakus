@@ -24,7 +24,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FinnInntektRequest;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
@@ -56,7 +55,7 @@ class InntektTjenesteImplTest {
 
     @BeforeEach
     public void before() {
-        inntektTjeneste = new InntektTjeneste(restKlient, null);
+        inntektTjeneste = new InntektTjeneste(restKlient);
     }
 
     @SuppressWarnings("resource")

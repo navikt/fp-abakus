@@ -20,7 +20,6 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolket
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-import no.nav.foreldrepenger.konfig.Environment;
 
 
 @ApplicationScoped
