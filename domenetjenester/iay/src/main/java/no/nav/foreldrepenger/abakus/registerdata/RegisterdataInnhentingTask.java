@@ -2,18 +2,14 @@ package no.nav.foreldrepenger.abakus.registerdata;
 
 import java.util.Set;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Any;
-import jakarta.enterprise.inject.Instance;
-import jakarta.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
@@ -21,7 +17,6 @@ import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTask;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.TaskConstants;
-import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
 import no.nav.foreldrepenger.abakus.kobling.repository.LåsRepository;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.InnhentRegisterdataTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataElement;
@@ -35,7 +30,7 @@ public class RegisterdataInnhentingTask extends KoblingTask {
     private static final Logger LOG = LoggerFactory.getLogger(RegisterdataInnhentingTask.class);
     private KoblingTjeneste koblingTjeneste;
     private InntektArbeidYtelseTjeneste iayTjeneste;
-    private Instance<IAYRegisterInnhentingTjeneste> innhentTjenester;
+    private IAYRegisterInnhentingTjeneste innhentTjeneste;
 
     RegisterdataInnhentingTask() {
     }
@@ -44,15 +39,11 @@ public class RegisterdataInnhentingTask extends KoblingTask {
     public RegisterdataInnhentingTask(LåsRepository låsRepository,
                                       KoblingTjeneste koblingTjeneste,
                                       InntektArbeidYtelseTjeneste iayTjeneste,
-                                      @Any Instance<IAYRegisterInnhentingTjeneste> innhentingTjeneste) {
+                                      IAYRegisterInnhentingFellesTjenesteImpl innhentingTjeneste) {
         super(låsRepository);
         this.koblingTjeneste = koblingTjeneste;
         this.iayTjeneste = iayTjeneste;
-        this.innhentTjenester = innhentingTjeneste;
-    }
-
-    private IAYRegisterInnhentingTjeneste finnInnhenter(YtelseType ytelseType) {
-        return YtelseTypeRef.Lookup.find(innhentTjenester, ytelseType).orElseThrow();
+        this.innhentTjeneste = innhentingTjeneste;
     }
 
     @Override
@@ -77,7 +68,7 @@ public class RegisterdataInnhentingTask extends KoblingTask {
         }
         LOG.info("Registerdataelementer for sak=[{}, {}] med behandling='{}' er: {} ", kobling.getSaksnummer(), kobling.getYtelseType(),
             kobling.getKoblingReferanse(), informasjonsElementer);
-        InntektArbeidYtelseGrunnlagBuilder builder = finnInnhenter(kobling.getYtelseType()).innhentRegisterdata(kobling, informasjonsElementer);
+        InntektArbeidYtelseGrunnlagBuilder builder = innhentTjeneste.innhentRegisterdata(kobling, informasjonsElementer);
         iayTjeneste.lagre(kobling.getKoblingReferanse(), builder);
     }
 }

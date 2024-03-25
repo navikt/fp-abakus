@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektYtelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
@@ -34,6 +35,7 @@ import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
+import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Organisasjon;
@@ -50,7 +52,12 @@ import no.nav.foreldrepenger.abakus.typer.OrganisasjonsNummerValidator;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.vedtak.exception.TekniskException;
 
-public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInnhentingTjeneste {
+/**
+ * Standard IAY register innhenter.
+ */
+@ApplicationScoped
+@YtelseTypeRef
+public class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegisterInnhentingTjeneste {
 
     public static final Map<RegisterdataElement, InntektskildeType> ELEMENT_TIL_INNTEKTS_KILDE_MAP = Map.of(
         RegisterdataElement.INNTEKT_PENSJONSGIVENDE, InntektskildeType.INNTEKT_OPPTJENING, RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG,
@@ -158,7 +165,7 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
 
     private void innhentYtelser(Kobling kobling, InntektArbeidYtelseAggregatBuilder builder) {
         ytelseRegisterInnhenting.byggYtelser(kobling, kobling.getAktørId(), getFnrFraAktørId(kobling.getAktørId()),
-            kobling.getOpplysningsperiode(), builder, skalInnhenteYtelseGrunnlag(kobling));
+            kobling.getOpplysningsperiode(), builder);
     }
 
     private Set<ArbeidsforholdIdentifikator> innhentArbeidsforhold(Kobling kobling,
@@ -373,6 +380,15 @@ public abstract class IAYRegisterInnhentingFellesTjenesteImpl implements IAYRegi
             return InntektYtelseType.finnForKodeverkEiersKode(InntektYtelseType.Kategori.NÆRING, månedsinntekt.getNæringsinntektKode());
         }
         return null;
+    }
+
+    private boolean skalInnhenteNæringsInntekterFor(Kobling kobling) {
+        Optional<InntektArbeidYtelseGrunnlag> grunnlag = inntektArbeidYtelseTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse());
+
+        // FP, SVP bruker ikke aggregat for oppgitt opptjening (støtter kun en pr behandling)
+        return grunnlag.flatMap(InntektArbeidYtelseGrunnlag::getGjeldendeOppgittOpptjening)
+            .map(oppgittOpptjening -> !oppgittOpptjening.getEgenNæring().isEmpty())
+            .orElse(false);
     }
 
 

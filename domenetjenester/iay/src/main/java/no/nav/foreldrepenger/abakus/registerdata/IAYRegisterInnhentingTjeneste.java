@@ -8,10 +8,6 @@ import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataElement;
 
 public interface IAYRegisterInnhentingTjeneste {
 
-    boolean skalInnhenteNæringsInntekterFor(Kobling behandling);
-
-    boolean skalInnhenteYtelseGrunnlag(Kobling kobling);
-
     InntektArbeidYtelseGrunnlagBuilder innhentRegisterdata(Kobling kobling, Set<RegisterdataElement> informasjonsElementer);
 
 }

@@ -30,19 +30,12 @@ public class YtelseRegisterInnhenting {
                      AktørId aktørId,
                      PersonIdent ident,
                      IntervallEntitet opplysningsPeriode,
-                     InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder,
-                     boolean medGrunnlag) {
+                     InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder) {
 
         InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder = inntektArbeidYtelseAggregatBuilder.getAktørYtelseBuilder(aktørId);
         aktørYtelseBuilder.tilbakestillYtelser();
 
         vedtattYtelseInnhentingTjeneste.innhentFraYtelsesRegister(aktørId, behandling, aktørYtelseBuilder);
-
-        if (!medGrunnlag) {
-            // Ikke lenger relevant å hente eksternt for 2part eller engangsstønad
-            inntektArbeidYtelseAggregatBuilder.leggTilAktørYtelse(aktørYtelseBuilder);
-            return;
-        }
 
         List<InfotrygdYtelseGrunnlag> alleGrunnlag = innhentingSamletTjeneste.innhentInfotrygdGrunnlag(ident, opplysningsPeriode);
         alleGrunnlag.forEach(grunnlag -> InfotrygdgrunnlagYtelseMapper.oversettInfotrygdYtelseGrunnlagTilYtelse(aktørYtelseBuilder, grunnlag));
