@@ -39,7 +39,7 @@ public class RegisterdataInnhentingTask extends KoblingTask {
     public RegisterdataInnhentingTask(LåsRepository låsRepository,
                                       KoblingTjeneste koblingTjeneste,
                                       InntektArbeidYtelseTjeneste iayTjeneste,
-                                      IAYRegisterInnhentingFellesTjenesteImpl innhentingTjeneste) {
+                                      IAYRegisterInnhentingTjeneste innhentingTjeneste) {
         super(låsRepository);
         this.koblingTjeneste = koblingTjeneste;
         this.iayTjeneste = iayTjeneste;
