@@ -5,21 +5,22 @@ import java.net.http.HttpResponse;
 import java.time.Year;
 import java.util.Optional;
 
+import no.nav.vedtak.exception.IntegrasjonException;
+import no.nav.vedtak.exception.ManglerTilgangException;
+
+import no.nav.vedtak.mapper.json.DefaultJsonMapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AaregRestKlient;
-import no.nav.vedtak.exception.IntegrasjonException;
-import no.nav.vedtak.exception.ManglerTilgangException;
 import no.nav.vedtak.felles.integrasjon.rest.NavHeaders;
-import no.nav.vedtak.felles.integrasjon.rest.OidcContextSupplier;
 import no.nav.vedtak.felles.integrasjon.rest.RestClient;
 import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
-import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 @ApplicationScoped
 @RestClientConfig(tokenConfig = TokenFlow.AZUREAD_CC, endpointProperty = "sigrunpgi.rs.url",
@@ -27,13 +28,13 @@ import no.nav.vedtak.mapper.json.DefaultJsonMapper;
     scopesProperty = "sigrunpgi.scopes", scopesDefault = "api://prod-fss.team-inntekt.sigrun/.default")
 public class SigrunRestClient {
 
-    private static final String CONSUMER_ID = "x-consumer-id";
-    private static final String X_CALL_ID = "x-call-id";
     private static final String INNTEKTSAAR = "inntektsaar";
+    private static final String RETTIGHETSPAKKE = "rettighetspakke";
+    private static final String FORELDREPENGER = "navForeldrepenger";
 
     private static final Year FØRSTE_PGI = Year.of(2017);
     private static final Logger LOG = LoggerFactory.getLogger(SigrunRestClient.class);
-    private final OidcContextSupplier CONTEXT_SUPPLIER = new OidcContextSupplier();
+
     private final RestClient client;
     private final RestConfig restConfig;
 
@@ -43,21 +44,20 @@ public class SigrunRestClient {
     }
 
     //api/v1/pensjonsgivendeinntektforfolketrygden
-    public PgiFolketrygdenResponse hentPensjonsgivendeInntektForFolketrygden(String fnr, Year år) {
+    public Optional<PgiFolketrygdenResponse> hentPensjonsgivendeInntektForFolketrygden(String fnr, Year år) {
         if (år.isBefore(FØRSTE_PGI)) {
-            return null;
+            return Optional.empty();
         }
         var request = RestRequest.newGET(restConfig.endpoint(), restConfig)
             .header(NavHeaders.HEADER_NAV_PERSONIDENT, fnr)
-            .header("rettighetspakke", "navForeldrepenger")
-            .header(INNTEKTSAAR, år.toString())
-            .otherCallId(X_CALL_ID)
-            .header(CONSUMER_ID, CONTEXT_SUPPLIER.consumerIdForCurrentKontekst().get());
+            .header(RETTIGHETSPAKKE, FORELDREPENGER)
+            .header(INNTEKTSAAR, år.toString());
 
         HttpResponse<String> response = client.sendReturnUnhandled(request);
-        return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, PgiFolketrygdenResponse.class)).orElse(null);
+        return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, PgiFolketrygdenResponse.class));
     }
 
+    // Håndtere konvensjon om 404 for tilfelle som ikke finnes hos SKE.
     private static Optional<String> handleResponse(HttpResponse<String> response) {
         int status = response.statusCode();
         if (status >= HttpURLConnection.HTTP_OK && status < HttpURLConnection.HTTP_MULT_CHOICE) {
