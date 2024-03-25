@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun;
 import static java.time.temporal.ChronoUnit.YEARS;
 
 import java.math.BigDecimal;
+import java.time.Month;
 import java.time.MonthDay;
 import java.time.Year;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 public class SigrunTjeneste {
     private static final Logger LOG = LoggerFactory.getLogger(SigrunTjeneste.class);
 
-    private static final MonthDay TIDLIGSTE_SJEKK_FJOR = MonthDay.of(5, 1);
+    private static final MonthDay TIDLIGSTE_SJEKK_FJOR = MonthDay.of(Month.MAY, 1);
 
     private static final Year FØRSTE_PGI = Year.of(2017);
     private SigrunRestClient sigrunConsumer;

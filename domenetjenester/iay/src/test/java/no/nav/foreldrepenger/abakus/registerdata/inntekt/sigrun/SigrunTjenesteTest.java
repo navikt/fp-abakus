@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.MonthDay;
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +24,8 @@ class SigrunTjenesteTest {
     private static final String FNR = "12345678910";
     private static final PersonIdent PERSONIDENT = new PersonIdent(FNR);
 
-    private static final Year IFJOR = Year.now().minusYears(1);
+    private static final Year IFJOR = MonthDay.now().isBefore(MonthDay.of(Month.MAY, 1)) ?
+        Year.now().minusYears(2) : Year.now().minusYears(1);
 
     private static final SigrunRestClient CONSUMER = Mockito.mock(SigrunRestClient.class);
 
@@ -48,7 +51,7 @@ class SigrunTjenesteTest {
     void skal_hente_data_for_forifjor_når_skatteoppgjoer_mangler_for_ifjor() {
 
         Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR))
-            .thenReturn(null);
+            .thenReturn(Optional.empty());
         Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(1)))
             .thenReturn(lagResponsFor(IFJOR.minusYears(1)));
         Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(2)))
@@ -58,11 +61,11 @@ class SigrunTjenesteTest {
 
 
         var inntekter = TJENESTE.hentPensjonsgivende(PERSONIDENT, null);
-        assertThat(inntekter.keySet()).hasSize(3);
+        assertThat(inntekter.keySet()).hasSize(2);
         assertThat(inntekter.get(intervallFor(IFJOR))).isNull();
-        assertThat(inntekter.get(intervallFor(IFJOR.minusYears(2))).get(InntektspostType.LØNN).compareTo(new BigDecimal(1000L))).isZero();
+        assertThat(inntekter.get(intervallFor(IFJOR.minusYears(1))).get(InntektspostType.LØNN).compareTo(new BigDecimal(1000L))).isZero();
         assertThat(inntekter.get(intervallFor(IFJOR.minusYears(2))).get(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE).compareTo(new BigDecimal(500L))).isZero();
-        assertThat(inntekter.get(intervallFor(IFJOR.minusYears(3))).get(InntektspostType.LØNN).compareTo(new BigDecimal(1000L))).isZero();
+        assertThat(inntekter.get(intervallFor(IFJOR.minusYears(2))).get(InntektspostType.LØNN).compareTo(new BigDecimal(1000L))).isZero();
     }
 
     @Test
@@ -84,7 +87,7 @@ class SigrunTjenesteTest {
     @Test
     void skal_hente_data_for_forifjor_når_skatteoppgjoer_mangler_for_ifjor_opplysiningsperiode() {
         Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR))
-            .thenReturn(null);
+            .thenReturn(Optional.empty());
         Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(1)))
             .thenReturn(lagResponsFor(IFJOR.minusYears(1)));
         Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(2)))
@@ -102,7 +105,7 @@ class SigrunTjenesteTest {
     @Test
     void skal_hente_data_for_inntil_tre_år_når_skatteoppgjoer_mangler_for_ifjor_opplysiningsperiode() {
         Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR))
-            .thenReturn(null);
+            .thenReturn(Optional.empty());
         Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(1)))
             .thenReturn(lagResponsFor(IFJOR.minusYears(1)));
         Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(2)))
