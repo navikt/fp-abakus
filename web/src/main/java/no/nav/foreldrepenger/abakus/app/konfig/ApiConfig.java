@@ -75,7 +75,7 @@ public class ApiConfig extends Application {
 
             ForvaltningRestTjeneste.class, DiagnostikkRestTjeneste.class, RapporteringRestTjeneste.class,
 
-            OpenApiResource.class, JacksonJsonConfig.class, ConstraintViolationMapper.class, JsonMappingExceptionMapper.class,
+            AuthenticationFilter.class, OpenApiResource.class, JacksonJsonConfig.class, ConstraintViolationMapper.class, JsonMappingExceptionMapper.class,
             JsonParseExceptionMapper.class, GeneralRestExceptionMapper.class);
     }
 
