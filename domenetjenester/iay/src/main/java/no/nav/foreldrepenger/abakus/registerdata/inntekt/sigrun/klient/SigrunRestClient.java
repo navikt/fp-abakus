@@ -64,6 +64,9 @@ public class SigrunRestClient {
         } else if (status == HttpURLConnection.HTTP_NOT_FOUND) {
             LOG.trace("Sigrun: {}", body);
             return Optional.empty();
+        } else if (status == HttpURLConnection.HTTP_INTERNAL_ERROR && body != null && body.contains("PGIF-008")) {
+            LOG.trace("Sigrun: {}", body);
+            return Optional.empty();
         } else {
             if (status == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 LOG.info("Sigrun unauth");
