@@ -12,11 +12,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.foreldrepenger.abakus.app.diagnostikk.ContainerContextRunner;
 import no.nav.foreldrepenger.abakus.app.diagnostikk.DebugDump;
@@ -25,7 +24,7 @@ import no.nav.foreldrepenger.abakus.app.diagnostikk.DumpOutput;
 import no.nav.foreldrepenger.abakus.app.jackson.JacksonJsonConfig;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
-import no.nav.foreldrepenger.abakus.registerdata.IAYRegisterInnhentingFellesTjenesteImpl;
+import no.nav.foreldrepenger.abakus.registerdata.IAYRegisterInnhentingTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AaregRestKlient;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FinnInntektRequest;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjeneste;
@@ -39,7 +38,7 @@ import no.nav.vedtak.felles.integrasjon.spokelse.Spøkelse;
 @YtelseTypeRef
 public class RegisterInnhentingDump implements DebugDump {
 
-    private static final Collection<InntektskildeType> INNTEKTSKILDER = IAYRegisterInnhentingFellesTjenesteImpl.ELEMENT_TIL_INNTEKTS_KILDE_MAP.values();
+    private static final Collection<InntektskildeType> INNTEKTSKILDER = IAYRegisterInnhentingTjeneste.ELEMENT_TIL_INNTEKTS_KILDE_MAP.values();
     private static final String PREFIKS = "register-innhenting";
     private InntektTjeneste inntektTjeneste;
     private AaregRestKlient aaregKlient;

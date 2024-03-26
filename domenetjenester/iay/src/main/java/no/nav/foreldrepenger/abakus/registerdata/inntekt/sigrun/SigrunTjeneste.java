@@ -20,14 +20,13 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolket
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.summertskattegrunnlag.SigrunSummertSkattegrunnlagResponse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-import no.nav.foreldrepenger.konfig.Environment;
 
 
 @ApplicationScoped
 public class SigrunTjeneste {
     private static final Logger LOG = LoggerFactory.getLogger(SigrunTjeneste.class);
 
-    private static final boolean SAMMENLIGN_PGI = false;
+    private static final boolean SAMMENLIGN_PGI = true;
 
     private SigrunConsumer sigrunConsumer;
 

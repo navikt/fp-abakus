@@ -1,7 +1,5 @@
 package no.nav.foreldrepenger.abakus.vedtak.kafka;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +22,7 @@ public class VedtakConsumer implements LiveAndReadinessAware, Controllable {
 
     @Inject
     public VedtakConsumer(VedtaksHendelseHåndterer vedtaksHendelseHåndterer) {
-        this.kcm = new KafkaConsumerManager<>(List.of(vedtaksHendelseHåndterer));
+        this.kcm = new KafkaConsumerManager<>(vedtaksHendelseHåndterer);
     }
 
     @Override
