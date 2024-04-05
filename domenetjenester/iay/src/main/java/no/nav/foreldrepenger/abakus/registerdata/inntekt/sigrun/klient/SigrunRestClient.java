@@ -5,22 +5,19 @@ import java.net.http.HttpResponse;
 import java.time.Year;
 import java.util.Optional;
 
-import no.nav.vedtak.exception.IntegrasjonException;
-import no.nav.vedtak.exception.ManglerTilgangException;
-
-import no.nav.vedtak.mapper.json.DefaultJsonMapper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AaregRestKlient;
+import no.nav.vedtak.exception.IntegrasjonException;
+import no.nav.vedtak.exception.ManglerTilgangException;
 import no.nav.vedtak.felles.integrasjon.rest.NavHeaders;
 import no.nav.vedtak.felles.integrasjon.rest.RestClient;
 import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
+import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 @ApplicationScoped
 @RestClientConfig(tokenConfig = TokenFlow.AZUREAD_CC, endpointProperty = "sigrunpgi.rs.url",
@@ -40,7 +37,7 @@ public class SigrunRestClient {
 
     public SigrunRestClient() {
         this.client = RestClient.client();
-        this.restConfig = RestConfig.forClient(AaregRestKlient.class);
+        this.restConfig = RestConfig.forClient(this.getClass());
     }
 
     //api/v1/pensjonsgivendeinntektforfolketrygden
