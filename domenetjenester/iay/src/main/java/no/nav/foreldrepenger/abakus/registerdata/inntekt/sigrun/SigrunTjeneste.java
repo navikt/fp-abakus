@@ -13,11 +13,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import no.nav.foreldrepenger.konfig.Environment;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
@@ -30,9 +25,6 @@ import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 
 @ApplicationScoped
 public class SigrunTjeneste {
-    private static final Logger LOG = LoggerFactory.getLogger(SigrunTjeneste.class);
-    private static final boolean LOCAL = Environment.current().isLocal();
-
     private static final MonthDay TIDLIGSTE_SJEKK_FJOR = MonthDay.of(Month.MAY, 1);
 
     private static final Year FØRSTE_PGI = Year.of(2017);
@@ -50,14 +42,9 @@ public class SigrunTjeneste {
 
     public Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> hentPensjonsgivende(PersonIdent fnr, IntervallEntitet opplysningsperiodeSkattegrunnlag) {
         var svarene = pensjonsgivendeInntektForFolketrygden(fnr.getIdent(), opplysningsperiodeSkattegrunnlag);
-        var mapped = SigrunPgiFolketrygdenMapper.mapFraPgiResponseTilIntern(svarene).entrySet().stream()
+        return SigrunPgiFolketrygdenMapper.mapFraPgiResponseTilIntern(svarene).entrySet().stream()
             .filter(e -> !e.getValue().isEmpty())
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        if (LOCAL) {
-            LOG.info("SIGRUN PGI-svar: {}", svarene);
-            LOG.info("SIGRUN PGI-mapped: {}", mapped);
-        }
-        return mapped;
     }
 
     private List<PgiFolketrygdenResponse> pensjonsgivendeInntektForFolketrygden(String fnr, IntervallEntitet opplysningsperiode) {

@@ -52,7 +52,7 @@ public class InntektTjeneste {
 
     public InntektTjeneste(RestClient restClient) {
         this.restClient = restClient;
-        this.restConfig = RestConfig.forClient(InntektTjeneste.class);
+        this.restConfig = RestConfig.forClient(this.getClass());
         this.kildeTilFilter = Map.of(InntektskildeType.INNTEKT_OPPTJENING, InntektsFilter.OPPTJENINGSGRUNNLAG, InntektskildeType.INNTEKT_BEREGNING,
             InntektsFilter.BEREGNINGSGRUNNLAG, InntektskildeType.INNTEKT_SAMMENLIGNING, InntektsFilter.SAMMENLIGNINGSGRUNNLAG);
     }

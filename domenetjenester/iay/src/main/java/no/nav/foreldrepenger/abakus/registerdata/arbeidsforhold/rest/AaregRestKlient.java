@@ -7,7 +7,6 @@ import java.util.List;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriBuilderException;
-
 import no.nav.vedtak.felles.integrasjon.rest.NavHeaders;
 import no.nav.vedtak.felles.integrasjon.rest.RestClient;
 import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
@@ -33,7 +32,7 @@ public class AaregRestKlient {
 
     public AaregRestKlient() {
         this.restClient = RestClient.client();
-        this.restConfig = RestConfig.forClient(AaregRestKlient.class);
+        this.restConfig = RestConfig.forClient(this.getClass());
     }
 
     public List<ArbeidsforholdRS> finnArbeidsforholdForArbeidstaker(String ident, LocalDate qfom, LocalDate qtom) {
