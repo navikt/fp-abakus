@@ -4,7 +4,6 @@ package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -56,48 +55,28 @@ class PgiFolketrygdenResponseTest {
         assertThat(intern.values().stream().findFirst().map(m -> m.get(InntektspostType.NÆRING_FISKE_FANGST_FAMBARNEHAGE))).isEmpty();
     }
 
-    // Litt fiktiv ettersom det ikke skal komme flere element med samme inntektsår og det kun hentes ett inntektsår av gangen
-    private static final String DOLLY_RESPONSE = """
-        [
-          {
-             "norskPersonidentifikator": "24909099443",
-             "inntektsaar": 2022,
-             "pensjonsgivendeInntekt": [
-               {
-                  "skatteordning": "FASTLAND",
-                  "datoForFastsetting": "2023-05-01T19:58:17",
-                  "pensjonsgivendeInntektAvLoennsinntekt": "",
-                  "pensjonsgivendeInntektAvLoennsinntektBarePensjonsdel": null,
-                  "pensjonsgivendeInntektAvNaeringsinntekt": "80000",
-                  "pensjonsgivendeInntektAvNaeringsinntektFraFiskeFangstEllerFamiliebarnehage": null
-               }
-             ]
-          },
-          {
-             "norskPersonidentifikator": "24909099443",
-             "inntektsaar": 2022,
-             "pensjonsgivendeInntekt": [
-               {
-                  "skatteordning": "FASTLAND",
-                  "datoForFastsetting": "2023-05-01T19:58:17",
-                  "pensjonsgivendeInntektAvLoennsinntekt": "",
-                  "pensjonsgivendeInntektAvLoennsinntektBarePensjonsdel": null,
-                  "pensjonsgivendeInntektAvNaeringsinntekt": "100000",
-                  "pensjonsgivendeInntektAvNaeringsinntektFraFiskeFangstEllerFamiliebarnehage": null
-               }
-             ]
-          }
-        ]
+    private static final String VTP_RESPONSE = """
+        {
+          "norskPersonidentifikator": "24909099443",
+          "inntektsaar": 2019,
+          "pensjonsgivendeInntekt": [
+            {
+               "skatteordning": "FASTLAND",
+               "datoForFastsetting": "2020-05-17",
+               "pensjonsgivendeInntektAvNaeringsinntekt": 200000
+            }
+          ]
+        }
         """;
 
     @Test
     void skal_mappe_og_beregne_lønn_fra_dolly_med_lønn_fra_pensjonsgivendeinntektforfolketrygden() {
-        var responseStub = DefaultJsonMapper.fromJson(DOLLY_RESPONSE, PgiFolketrygdenResponse[].class);
+        var responseStub = DefaultJsonMapper.fromJson(VTP_RESPONSE, PgiFolketrygdenResponse.class);
 
-        var intern = SigrunPgiFolketrygdenMapper.mapFraPgiResponseTilIntern(Arrays.stream(responseStub).toList());
+        var intern = SigrunPgiFolketrygdenMapper.mapFraPgiResponseTilIntern(List.of(responseStub));
 
         assertThat(intern.values().stream().findFirst().map(m -> m.get(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE)))
-            .hasValueSatisfying(v -> assertThat(v).isEqualByComparingTo(BigDecimal.valueOf(180000)));
+            .hasValueSatisfying(v -> assertThat(v).isEqualByComparingTo(BigDecimal.valueOf(200000)));
         assertThat(intern.values().stream().findFirst().map(m -> m.get(InntektspostType.LØNN))).isEmpty();
         assertThat(intern.values().stream().findFirst().map(m -> m.get(InntektspostType.NÆRING_FISKE_FANGST_FAMBARNEHAGE))).isEmpty();
     }
