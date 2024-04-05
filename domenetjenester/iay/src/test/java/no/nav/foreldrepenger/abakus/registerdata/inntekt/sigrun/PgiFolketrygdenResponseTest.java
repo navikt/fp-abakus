@@ -4,18 +4,14 @@ package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
-import java.time.Year;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.PgiFolketrygdenResponse;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.SigrunPgiFolketrygdenMapper;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.pgifolketrygden.SigrunPgiFolketrygdenResponse;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.PgiFolketrygdenResponse;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunPgiFolketrygdenMapper;
 import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 class PgiFolketrygdenResponseTest {
@@ -51,9 +47,7 @@ class PgiFolketrygdenResponseTest {
     void skal_mappe_og_beregne_slå_sammen_lønn_fra_offisiell_fra_pensjonsgivendeinntektforfolketrygden() {
         var respons = DefaultJsonMapper.fromJson(SKATT_EKSEMPEL, PgiFolketrygdenResponse.class);
 
-        var sigrunMap = new SigrunPgiFolketrygdenResponse(Map.of(Year.of(respons.inntektsaar()), List.of(respons)));
-
-        var intern = SigrunPgiFolketrygdenMapper.mapFraSigrunTilIntern(sigrunMap);
+        var intern = SigrunPgiFolketrygdenMapper.mapFraPgiResponseTilIntern(List.of(respons));
 
         assertThat(intern.values().stream().findFirst().map(m -> m.get(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE)))
             .hasValueSatisfying(v -> assertThat(v).isEqualByComparingTo(BigDecimal.valueOf(2680000)));
@@ -100,12 +94,7 @@ class PgiFolketrygdenResponseTest {
     void skal_mappe_og_beregne_lønn_fra_dolly_med_lønn_fra_pensjonsgivendeinntektforfolketrygden() {
         var responseStub = DefaultJsonMapper.fromJson(DOLLY_RESPONSE, PgiFolketrygdenResponse[].class);
 
-        var responsMap = Arrays.stream(responseStub)
-            .collect(Collectors.groupingBy(r -> Year.of(r.inntektsaar())));
-
-        var sigrunMap = new SigrunPgiFolketrygdenResponse(responsMap);
-
-        var intern = SigrunPgiFolketrygdenMapper.mapFraSigrunTilIntern(sigrunMap);
+        var intern = SigrunPgiFolketrygdenMapper.mapFraPgiResponseTilIntern(Arrays.stream(responseStub).toList());
 
         assertThat(intern.values().stream().findFirst().map(m -> m.get(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE)))
             .hasValueSatisfying(v -> assertThat(v).isEqualByComparingTo(BigDecimal.valueOf(180000)));
