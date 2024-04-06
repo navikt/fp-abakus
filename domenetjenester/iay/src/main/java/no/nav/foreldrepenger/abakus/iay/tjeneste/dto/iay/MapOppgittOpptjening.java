@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
 import java.time.ZoneId;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -20,7 +19,6 @@ import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittEgenNæringDto;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittFrilansDto;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittFrilansoppdragDto;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningDto;
-import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgitteOpptjeningerDto;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittAnnenAktivitet;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittArbeidsforhold;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittEgenNæring;
@@ -63,10 +61,6 @@ public class MapOppgittOpptjening {
         .thenComparing(dto -> dto.getVirksomhet() == null ? null : dto.getVirksomhet().getIdent(), Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(dto -> dto.getLandkode() == null ? null : dto.getLandkode().getKode(), Comparator.nullsLast(Comparator.naturalOrder()))
         .thenComparing(OppgittEgenNæringDto::getVirksomhetNavn, Comparator.nullsLast(Comparator.naturalOrder()));
-
-    public OppgitteOpptjeningerDto mapTilDto(Collection<OppgittOpptjening> oppgittOpptjeninger) {
-        return new OppgitteOpptjeningerDto().medOppgitteOpptjeninger(oppgittOpptjeninger.stream().map(this::mapTilDto).collect(Collectors.toList()));
-    }
 
     public OppgittOpptjeningDto mapTilDto(OppgittOpptjening oppgittOpptjening) {
         return new MapTilDto().map(oppgittOpptjening);

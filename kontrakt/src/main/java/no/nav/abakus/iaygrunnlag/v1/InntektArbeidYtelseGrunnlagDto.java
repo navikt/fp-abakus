@@ -1,25 +1,27 @@
 package no.nav.abakus.iaygrunnlag.v1;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import no.nav.abakus.iaygrunnlag.PersonIdent;
-import no.nav.abakus.iaygrunnlag.UuidDto;
-import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon;
-import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningDto;
-import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgitteOpptjeningerDto;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import no.nav.abakus.iaygrunnlag.PersonIdent;
+import no.nav.abakus.iaygrunnlag.UuidDto;
+import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon;
+import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningDto;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -85,13 +87,6 @@ public class InntektArbeidYtelseGrunnlagDto {
     @JsonProperty(value = "overstyrtOppgittOpptjening")
     @Valid
     private OppgittOpptjeningDto overstyrtOppgittOpptjening;
-
-    /**
-     * Variant som støtter mer enn en oppgitt opptjening. Den støtter oppgitt opptjening pr. journalpost
-     */
-    @JsonProperty(value = "oppgitteOpptjeninger")
-    @Valid
-    private OppgitteOpptjeningerDto oppgitteOpptjeninger;
 
     @JsonProperty(value = "arbeidsforholdInformasjon")
     @Valid
@@ -175,10 +170,6 @@ public class InntektArbeidYtelseGrunnlagDto {
     }
 
     public void setOppgittOpptjening(OppgittOpptjeningDto oppgittOpptjening) {
-        if (oppgitteOpptjeninger != null) {
-            throw new IllegalArgumentException(
-                "Skal ikke bruke både ny (oppgitt opptjening pr journalpostId) og gammel (en oppgitt opptjening) i samme sak.");
-        }
         this.oppgittOpptjening = oppgittOpptjening;
     }
 
@@ -187,19 +178,11 @@ public class InntektArbeidYtelseGrunnlagDto {
     }
 
     public void setOverstyrtOppgittOpptjening(OppgittOpptjeningDto overstyrtOppgittOpptjening) {
-        if (oppgitteOpptjeninger != null) {
-            throw new IllegalArgumentException(
-                "Skal ikke bruke både ny (oppgitt opptjening pr journalpostId) og gammel (en oppgitt opptjening) i samme sak.");
-        }
         this.overstyrtOppgittOpptjening = overstyrtOppgittOpptjening;
     }
 
     public OppgittOpptjeningDto getGjeldendeOppgittOpptjening() {
         return Optional.ofNullable(getOverstyrtOppgittOpptjening()).orElseGet(this::getOppgittOpptjening);
-    }
-
-    public OppgitteOpptjeningerDto getOppgitteOpptjeninger() {
-        return oppgitteOpptjeninger;
     }
 
     public InntektArbeidYtelseAggregatOverstyrtDto getOverstyrt() {
@@ -246,11 +229,6 @@ public class InntektArbeidYtelseGrunnlagDto {
         return this;
     }
 
-    public InntektArbeidYtelseGrunnlagDto medOppgittOpptjeninger(OppgitteOpptjeningerDto oppgitteOpptjeninger) {
-        setOppgittOpptjeningPrDokument(oppgitteOpptjeninger);
-        return this;
-    }
-
     public InntektArbeidYtelseGrunnlagDto medOverstyrtOppgittOpptjening(OppgittOpptjeningDto overstyrtOppgittOpptjening) {
         setOverstyrtOppgittOpptjening(overstyrtOppgittOpptjening);
         return this;
@@ -264,14 +242,6 @@ public class InntektArbeidYtelseGrunnlagDto {
     public InntektArbeidYtelseGrunnlagDto medRegister(InntektArbeidYtelseAggregatRegisterDto register) {
         setRegister(register);
         return this;
-    }
-
-    public void setOppgittOpptjeningPrDokument(OppgitteOpptjeningerDto oppgitteOpptjeninger) {
-        if (oppgittOpptjening != null || overstyrtOppgittOpptjening != null) {
-            throw new IllegalArgumentException(
-                "Skal ikke bruke både ny (oppgitt opptjening pr journalpostId) og gammel (en oppgitt opptjening) i samme sak.");
-        }
-        this.oppgitteOpptjeninger = oppgitteOpptjeninger;
     }
 
 }
