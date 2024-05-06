@@ -24,7 +24,9 @@ class SigrunTjenesteTest {
     private static final String FNR = "12345678910";
     private static final PersonIdent PERSONIDENT = new PersonIdent(FNR);
 
-    private static final Year IFJOR = MonthDay.now().isBefore(MonthDay.of(Month.MAY, 1)) ?
+    private static final MonthDay TIDLIGSTE_SJEKK_FJOR = MonthDay.of(Month.MAY, 1);
+
+    private static final Year IFJOR = MonthDay.now().isBefore(TIDLIGSTE_SJEKK_FJOR) ?
         Year.now().minusYears(2) : Year.now().minusYears(1);
 
     private static final SigrunRestClient CONSUMER = Mockito.mock(SigrunRestClient.class);
@@ -61,7 +63,11 @@ class SigrunTjenesteTest {
 
 
         var inntekter = TJENESTE.hentPensjonsgivende(PERSONIDENT, null);
-        assertThat(inntekter.keySet()).hasSize(2);
+        if (MonthDay.now().isBefore(TIDLIGSTE_SJEKK_FJOR)) {
+            assertThat(inntekter.keySet()).hasSize(2);
+        } else {
+            assertThat(inntekter.keySet()).hasSize(3);
+        }
         assertThat(inntekter.get(intervallFor(IFJOR))).isNull();
         assertThat(inntekter.get(intervallFor(IFJOR.minusYears(1))).get(InntektspostType.LØNN).compareTo(new BigDecimal(1000L))).isZero();
         assertThat(inntekter.get(intervallFor(IFJOR.minusYears(2))).get(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE).compareTo(new BigDecimal(500L))).isZero();
