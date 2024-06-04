@@ -23,7 +23,7 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
 
-@ProsessTask("vedtakEvent.lagre")
+@ProsessTask(value = "vedtakEvent.lagre", prioritet = 2)
 public class LagreVedtakTask implements ProsessTaskHandler {
 
     public static final String KEY = "kafka.key";

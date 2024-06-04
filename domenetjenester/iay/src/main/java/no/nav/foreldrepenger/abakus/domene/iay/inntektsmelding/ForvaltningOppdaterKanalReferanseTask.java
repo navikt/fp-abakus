@@ -16,7 +16,7 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
 
 @ApplicationScoped
-@ProsessTask(value = "forvaltning.oppdaterKanalreferanse", maxFailedRuns = 50)
+@ProsessTask(value = "forvaltning.oppdaterKanalreferanse", prioritet = 3, maxFailedRuns = 50)
 public class ForvaltningOppdaterKanalReferanseTask implements ProsessTaskHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(ForvaltningOppdaterKanalReferanseTask.class);
