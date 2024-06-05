@@ -37,7 +37,7 @@
 
 		<felles.version>7.2.0</felles.version>
 		<prosesstask.version>5.0.9</prosesstask.version>
-		<kontrakter.version>9.1.12</kontrakter.version>
+		<kontrakter.version>9.1.15</kontrakter.version>
         <tidsserie.version>2.7.1</tidsserie.version>
 
         <!-- Forteller til maven-deploy-plugin at artefaktet ikke skal deployes.
