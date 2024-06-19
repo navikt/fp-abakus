@@ -1,22 +1,23 @@
 package no.nav.abakus.iaygrunnlag;
 
-import java.time.LocalDate;
-import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.time.LocalDate;
+import java.util.Objects;
 
-/**
- * Periode med fom/tom dato.
- */
-
+/** Periode med fom/tom dato. */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.ALWAYS)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class Periode {
 
     @JsonProperty(value = "fom")
@@ -31,7 +32,6 @@ public class Periode {
             throw new IllegalArgumentException("Både fom og tom er null");
         } else if (fom != null && tom != null && fom.isAfter(tom)) {
             throw new IllegalArgumentException("Input data gir umulig periode (fom > tom): [" + fom + ", " + tom + "]");
-
         }
         this.fom = fom;
         this.tom = tom;
@@ -66,5 +66,4 @@ public class Periode {
     public int hashCode() {
         return Objects.hash(getFom(), getTom());
     }
-
 }

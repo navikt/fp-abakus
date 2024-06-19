@@ -1,21 +1,19 @@
 package no.nav.foreldrepenger.abakus.app.diagnostikk;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
-
 import jakarta.persistence.Tuple;
-
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
 
 public class CsvOutput {
 
-    private CsvOutput() {
-    }
+    private CsvOutput() {}
 
-    public static <V> DumpOutput dumpAsCsv(boolean includeHeader, List<V> input, String path, Map<String, Function<V, ?>> valueMapper) {
+    public static <V> DumpOutput dumpAsCsv(
+            boolean includeHeader, List<V> input, String path, Map<String, Function<V, ?>> valueMapper) {
         var sb = new StringBuilder(500);
         if (includeHeader) {
             sb.append(csvHeader(valueMapper));
@@ -26,7 +24,8 @@ public class CsvOutput {
         return new DumpOutput(path, sb.toString());
     }
 
-    public static <V> DumpOutput dumpAsCsvSingleInput(boolean includeHeader, V input, String path, Map<String, Function<V, ?>> valueMapper) {
+    public static <V> DumpOutput dumpAsCsvSingleInput(
+            boolean includeHeader, V input, String path, Map<String, Function<V, ?>> valueMapper) {
         var sb = new StringBuilder(500);
         if (includeHeader) {
             sb.append(csvHeader(valueMapper));
@@ -36,11 +35,15 @@ public class CsvOutput {
     }
 
     private static <V> String csvValueRow(V input, Map<String, Function<V, ?>> valueMapper) {
-        return valueMapper.values().stream().map(v -> {
-            var s = v.apply(input);
-            var obj = transformValue(s);
-            return s == null || "null".equals(s) ? "" : "\"" + String.valueOf(obj).replace("\"", "\"\"") + "\""; // csv escape and quoting
-        }).collect(Collectors.joining(","));
+        return valueMapper.values().stream()
+                .map(v -> {
+                    var s = v.apply(input);
+                    var obj = transformValue(s);
+                    return s == null || "null".equals(s)
+                            ? ""
+                            : "\"" + String.valueOf(obj).replace("\"", "\"\"") + "\""; // csv escape and quoting
+                })
+                .collect(Collectors.joining(","));
     }
 
     private static <V> String csvHeader(Map<String, Function<V, ?>> valueMapper) {
@@ -86,9 +89,7 @@ public class CsvOutput {
         return Optional.of(dumpAsCsv(true, results, path, toCsv));
     }
 
-    /**
-     * Muliggjør mer effektiv bruk av minne enn å ta en Liste av tuple.
-     */
+    /** Muliggjør mer effektiv bruk av minne enn å ta en Liste av tuple. */
     public static Optional<DumpOutput> dumpResultSetToCsv(String path, Stream<Tuple> results) {
 
         class CsvCollector implements Consumer<Tuple> {
@@ -123,5 +124,4 @@ public class CsvOutput {
             return Optional.of(new DumpOutput(path, collector.sb.toString()));
         }
     }
-
 }

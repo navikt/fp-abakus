@@ -1,12 +1,5 @@
 package no.nav.abakus.iaygrunnlag.request;
 
-import java.util.Objects;
-import java.util.UUID;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -14,22 +7,28 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import java.util.Objects;
+import java.util.UUID;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
 /**
- * Spesifikasjon for å hvilke
- * Må minimum angi personident og en eller flere referanser (grunnlag, kobling, saksnummer)
+ * Spesifikasjon for å hvilke Må minimum angi personident og en eller flere referanser (grunnlag, kobling, saksnummer)
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = Visibility.NONE,
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE,
+        isGetterVisibility = Visibility.NONE,
+        creatorVisibility = Visibility.NONE)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
 public class InntektsmeldingDiffRequest {
 
-    /**
-     * Angi hvem grunnlaget hentes for.
-     */
+    /** Angi hvem grunnlaget hentes for. */
     @JsonProperty(value = "personIdent", required = true)
     @Valid
     @NotNull
@@ -38,37 +37,31 @@ public class InntektsmeldingDiffRequest {
     @JsonProperty(value = "ytelseType")
     private YtelseType ytelseType;
 
-    /**
-     * Angi hvilken sak det gjelder.
-     */
+    /** Angi hvilken sak det gjelder. */
     @JsonProperty(value = "saksnummer")
     @Valid
     @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'")
     private String saksnummer;
 
-    /**
-     * Referanse én som skal brukes til sammenligning.
-     */
+    /** Referanse én som skal brukes til sammenligning. */
     @JsonProperty(value = "eksternRefEn")
     @Valid
     @NotNull
     private UUID eksternRefEn;
 
-    /**
-     * Referanse to som skal brukes til sammenligning.
-     */
+    /** Referanse to som skal brukes til sammenligning. */
     @JsonProperty(value = "eksternRefTo")
     @Valid
     @NotNull
     private UUID eksternRefTo;
-
 
     protected InntektsmeldingDiffRequest() {
         // default ctor.
     }
 
     @JsonCreator
-    public InntektsmeldingDiffRequest(@JsonProperty(value = "personIdent", required = true) @Valid @NotNull PersonIdent person) {
+    public InntektsmeldingDiffRequest(
+            @JsonProperty(value = "personIdent", required = true) @Valid @NotNull PersonIdent person) {
         this.person = Objects.requireNonNull(person, "person");
     }
 

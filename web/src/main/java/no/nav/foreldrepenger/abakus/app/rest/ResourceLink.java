@@ -1,14 +1,12 @@
 package no.nav.foreldrepenger.abakus.app.rest;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Objects;
-
-import jakarta.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Objects;
 
 /**
  * Representerer en link til en resource/action i en HATEOAS response.
@@ -16,23 +14,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @see https://restfulapi.net/hateoas/
  * @see https://tools.ietf.org/html/rfc5988
  */
-@JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
+@JsonAutoDetect(
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE,
+        fieldVisibility = Visibility.ANY)
 public class ResourceLink {
 
     @JsonProperty("href")
     @NotNull
     private URI href;
 
-    /**
-     * Link relationship type.
-     */
+    /** Link relationship type. */
     @JsonProperty("rel")
     @NotNull
     private String rel;
 
-    /**
-     * Http Method type.
-     */
+    /** Http Method type. */
     @JsonProperty("type")
     @NotNull
     private HttpMethod type;
@@ -66,9 +63,7 @@ public class ResourceLink {
         this.requestPayload = requestPayload;
     }
 
-    /**
-     * Ctor lager default GET link.
-     */
+    /** Ctor lager default GET link. */
     public ResourceLink(String href, String rel) {
         this(href, rel, HttpMethod.GET);
     }
@@ -105,7 +100,9 @@ public class ResourceLink {
             return false;
         }
         ResourceLink other = (ResourceLink) obj;
-        return Objects.equals(this.href, other.href) && Objects.equals(this.rel, other.rel) && Objects.equals(this.type, other.type);
+        return Objects.equals(this.href, other.href)
+                && Objects.equals(this.rel, other.rel)
+                && Objects.equals(this.type, other.type);
     }
 
     @Override

@@ -1,34 +1,27 @@
 package no.nav.foreldrepenger.abakus.typer;
 
-import java.io.Serializable;
-import java.util.Objects;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-
+import java.io.Serializable;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 
 /**
- * Ekstern arbeidsforhold referanse.
- * Mottatt fra inntektsmelding eller AARegisteret.
- * <p>
- * Hvis null gjelder det flere arbeidsforhold, ellers for et spesifikt forhold
+ * Ekstern arbeidsforhold referanse. Mottatt fra inntektsmelding eller AARegisteret.
+ *
+ * <p>Hvis null gjelder det flere arbeidsforhold, ellers for et spesifikt forhold
  */
-
 @Embeddable
 public class EksternArbeidsforholdRef implements IndexKey, Serializable {
 
-    /**
-     * Representerer alle arbeidsforhold for en arbeidsgiver.
-     */
+    /** Representerer alle arbeidsforhold for en arbeidsgiver. */
     private static final EksternArbeidsforholdRef NULL_OBJECT = new EksternArbeidsforholdRef(null);
 
     @Column(name = "arbeidsforhold_id")
     private String referanse;
 
-    EksternArbeidsforholdRef() {
-    }
+    EksternArbeidsforholdRef() {}
 
     private EksternArbeidsforholdRef(String referanse) {
         this.referanse = referanse == null ? null : referanse.trim();

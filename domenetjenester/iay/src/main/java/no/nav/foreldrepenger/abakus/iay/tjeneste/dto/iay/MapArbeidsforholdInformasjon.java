@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
@@ -32,17 +31,25 @@ import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 class MapArbeidsforholdInformasjon {
 
     private static final Comparator<ArbeidsforholdReferanseDto> COMP_ARBEIDSFORHOLD_REFERANSE = Comparator.comparing(
-            (ArbeidsforholdReferanseDto ref) -> ref.getArbeidsgiver().getIdent())
-        .thenComparing(ref -> ref.getArbeidsforholdReferanse() == null ? null : ref.getArbeidsforholdReferanse().getAbakusReferanse(),
-            Comparator.nullsLast(Comparator.naturalOrder()));
+                    (ArbeidsforholdReferanseDto ref) -> ref.getArbeidsgiver().getIdent())
+            .thenComparing(
+                    ref -> ref.getArbeidsforholdReferanse() == null
+                            ? null
+                            : ref.getArbeidsforholdReferanse().getAbakusReferanse(),
+                    Comparator.nullsLast(Comparator.naturalOrder()));
 
-    private static final Comparator<ArbeidsforholdOverstyringDto> COMP_ARBEIDSFORHOLD_OVERSTYRING = Comparator.comparing(
-            (ArbeidsforholdOverstyringDto ov) -> ov.getArbeidsgiver().getIdent())
-        .thenComparing(ov -> ov.getArbeidsforholdRef() == null ? null : ov.getArbeidsforholdRef().getAbakusReferanse(),
-            Comparator.nullsLast(Comparator.naturalOrder()));
+    private static final Comparator<ArbeidsforholdOverstyringDto> COMP_ARBEIDSFORHOLD_OVERSTYRING =
+            Comparator.comparing((ArbeidsforholdOverstyringDto ov) ->
+                            ov.getArbeidsgiver().getIdent())
+                    .thenComparing(
+                            ov -> ov.getArbeidsforholdRef() == null
+                                    ? null
+                                    : ov.getArbeidsforholdRef().getAbakusReferanse(),
+                            Comparator.nullsLast(Comparator.naturalOrder()));
 
-    private static final Comparator<Periode> COMP_PERIODE = Comparator.comparing(Periode::getFom, Comparator.nullsFirst(Comparator.naturalOrder()))
-        .thenComparing(Periode::getTom, Comparator.nullsLast(Comparator.naturalOrder()));
+    private static final Comparator<Periode> COMP_PERIODE = Comparator.comparing(
+                    Periode::getFom, Comparator.nullsFirst(Comparator.naturalOrder()))
+            .thenComparing(Periode::getTom, Comparator.nullsLast(Comparator.naturalOrder()));
 
     static class MapFraDto {
         private InntektArbeidYtelseGrunnlagBuilder grunnlagBuilder;
@@ -56,15 +63,21 @@ class MapArbeidsforholdInformasjon {
             var builder = ArbeidsforholdInformasjonBuilder.builder(eksisterende);
             if (dto != null) {
                 builder.fjernAlleOverstyringer();
-                dto.getOverstyringer().stream().map(this::mapArbeidsforholdOverstyring).forEach(builder::leggTil);
-                dto.getReferanser().stream().map(this::mapArbeidsforholdReferanse).forEach(builder::leggTilNyReferanse);
+                dto.getOverstyringer().stream()
+                        .map(this::mapArbeidsforholdOverstyring)
+                        .forEach(builder::leggTil);
+                dto.getReferanser().stream()
+                        .map(this::mapArbeidsforholdReferanse)
+                        .forEach(builder::leggTilNyReferanse);
             }
             return builder;
         }
 
         private ArbeidsforholdReferanse mapArbeidsforholdReferanse(ArbeidsforholdReferanseDto r) {
-            var internRef = InternArbeidsforholdRef.ref(r.getArbeidsforholdReferanse().getAbakusReferanse());
-            var eksternRef = EksternArbeidsforholdRef.ref(r.getArbeidsforholdReferanse().getEksternReferanse());
+            var internRef =
+                    InternArbeidsforholdRef.ref(r.getArbeidsforholdReferanse().getAbakusReferanse());
+            var eksternRef =
+                    EksternArbeidsforholdRef.ref(r.getArbeidsforholdReferanse().getEksternReferanse());
             var arbeidsgiver = mapArbeidsgiver(r.getArbeidsgiver());
             return new ArbeidsforholdReferanse(arbeidsgiver, internRef, eksternRef);
         }
@@ -76,22 +89,25 @@ class MapArbeidsforholdInformasjon {
 
             var overstyringBuilder = ArbeidsforholdOverstyringBuilder.oppdatere(Optional.empty());
 
-            overstyringBuilder.medBeskrivelse(ov.getBegrunnelse())
-                .medArbeidsgiver(arbeidsgiver)
-                .medArbeidsforholdRef(arbeidsgiverRef)
-                .medNyArbeidsforholdRef(nyArbeidsgiverRef)
-                .medHandling(ov.getHandling())
-                .medAngittArbeidsgiverNavn(ov.getAngittArbeidsgiverNavn())
-                .medAngittStillingsprosent(Stillingsprosent.arbeid(ov.getStillingsprosent()));
+            overstyringBuilder
+                    .medBeskrivelse(ov.getBegrunnelse())
+                    .medArbeidsgiver(arbeidsgiver)
+                    .medArbeidsforholdRef(arbeidsgiverRef)
+                    .medNyArbeidsforholdRef(nyArbeidsgiverRef)
+                    .medHandling(ov.getHandling())
+                    .medAngittArbeidsgiverNavn(ov.getAngittArbeidsgiverNavn())
+                    .medAngittStillingsprosent(Stillingsprosent.arbeid(ov.getStillingsprosent()));
 
             ov.getBekreftetPermisjon().ifPresent(bp -> {
                 BekreftetPermisjonStatus bekreftetPermisjonStatus = bp.getBekreftetPermisjonStatus();
-                var bekreftetPermisjon = new BekreftetPermisjon(bp.getPeriode().getFom(), bp.getPeriode().getTom(), bekreftetPermisjonStatus);
+                var bekreftetPermisjon = new BekreftetPermisjon(
+                        bp.getPeriode().getFom(), bp.getPeriode().getTom(), bekreftetPermisjonStatus);
                 overstyringBuilder.medBekreftetPermisjon(bekreftetPermisjon);
             });
 
             // overstyrte perioder
-            ov.getArbeidsforholdOverstyrtePerioder().forEach(p -> overstyringBuilder.leggTilOverstyrtPeriode(p.getFom(), p.getTom()));
+            ov.getArbeidsforholdOverstyrtePerioder()
+                    .forEach(p -> overstyringBuilder.leggTilOverstyrtPeriode(p.getFom(), p.getTom()));
 
             return overstyringBuilder;
         }
@@ -114,51 +130,70 @@ class MapArbeidsforholdInformasjon {
 
     static class MapTilDto {
 
-        ArbeidsforholdInformasjon map(UUID grunnlagRef, no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon entitet) {
+        ArbeidsforholdInformasjon map(
+                UUID grunnlagRef,
+                no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon entitet) {
             if (entitet == null) {
                 return null;
             }
 
             var arbeidsforholdInformasjon = new ArbeidsforholdInformasjon(grunnlagRef);
-            var overstyringer = entitet.getOverstyringer().stream().map(ao -> {
-                var dto = new ArbeidsforholdOverstyringDto(mapAktør(ao.getArbeidsgiver()),
-                    mapArbeidsforholdsId(entitet, grunnlagRef, ao.getArbeidsgiver(), ao.getArbeidsforholdRef())).medBegrunnelse(ao.getBegrunnelse())
-                    .medBekreftetPermisjon(mapBekreftetPermisjon(ao.getBekreftetPermisjon()))
-                    .medHandling(ao.getHandling())
-                    .medNavn(ao.getArbeidsgiverNavn())
-                    .medStillingsprosent(ao.getStillingsprosent() == null ? null : ao.getStillingsprosent().getVerdi())
-                    .medNyArbeidsforholdRef(
-                        ao.getNyArbeidsforholdRef() == null ? null : mapArbeidsforholdsId(entitet, grunnlagRef, ao.getArbeidsgiver(),
-                            ao.getNyArbeidsforholdRef()))
-                    .medArbeidsforholdOverstyrtePerioder(map(ao.getArbeidsforholdOverstyrtePerioder()));
-                return dto;
-            }).sorted(COMP_ARBEIDSFORHOLD_OVERSTYRING).collect(Collectors.toList());
+            var overstyringer = entitet.getOverstyringer().stream()
+                    .map(ao -> {
+                        var dto = new ArbeidsforholdOverstyringDto(
+                                        mapAktør(ao.getArbeidsgiver()),
+                                        mapArbeidsforholdsId(
+                                                entitet, grunnlagRef, ao.getArbeidsgiver(), ao.getArbeidsforholdRef()))
+                                .medBegrunnelse(ao.getBegrunnelse())
+                                .medBekreftetPermisjon(mapBekreftetPermisjon(ao.getBekreftetPermisjon()))
+                                .medHandling(ao.getHandling())
+                                .medNavn(ao.getArbeidsgiverNavn())
+                                .medStillingsprosent(
+                                        ao.getStillingsprosent() == null
+                                                ? null
+                                                : ao.getStillingsprosent().getVerdi())
+                                .medNyArbeidsforholdRef(
+                                        ao.getNyArbeidsforholdRef() == null
+                                                ? null
+                                                : mapArbeidsforholdsId(
+                                                        entitet,
+                                                        grunnlagRef,
+                                                        ao.getArbeidsgiver(),
+                                                        ao.getNyArbeidsforholdRef()))
+                                .medArbeidsforholdOverstyrtePerioder(map(ao.getArbeidsforholdOverstyrtePerioder()));
+                        return dto;
+                    })
+                    .sorted(COMP_ARBEIDSFORHOLD_OVERSTYRING)
+                    .collect(Collectors.toList());
 
-            var referanser = entitet.getArbeidsforholdReferanser()
-                .stream()
-                .map(this::mapArbeidsforholdReferanse)
-                .sorted(COMP_ARBEIDSFORHOLD_REFERANSE)
-                .collect(Collectors.toList());
+            var referanser = entitet.getArbeidsforholdReferanser().stream()
+                    .map(this::mapArbeidsforholdReferanse)
+                    .sorted(COMP_ARBEIDSFORHOLD_REFERANSE)
+                    .collect(Collectors.toList());
 
             return arbeidsforholdInformasjon.medOverstyringer(overstyringer).medReferanser(referanser);
         }
 
         private List<Periode> map(List<ArbeidsforholdOverstyrtePerioder> perioder) {
-            return perioder == null ? null : perioder.stream()
-                .map(ArbeidsforholdOverstyrtePerioder::getOverstyrtePeriode)
-                .map(this::mapPeriode)
-                .sorted(COMP_PERIODE)
-                .collect(Collectors.toList());
+            return perioder == null
+                    ? null
+                    : perioder.stream()
+                            .map(ArbeidsforholdOverstyrtePerioder::getOverstyrtePeriode)
+                            .map(this::mapPeriode)
+                            .sorted(COMP_PERIODE)
+                            .collect(Collectors.toList());
         }
 
-        private no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.BekreftetPermisjon mapBekreftetPermisjon(Optional<BekreftetPermisjon> entitet) {
+        private no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.BekreftetPermisjon mapBekreftetPermisjon(
+                Optional<BekreftetPermisjon> entitet) {
             if (entitet.isEmpty()) {
                 return null;
             }
             var bekreftetPermisjon = entitet.get();
             var periode = mapPeriode(bekreftetPermisjon.getPeriode());
             var bekreftetPermisjonStatus = bekreftetPermisjon.getStatus();
-            return new no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.BekreftetPermisjon(periode, bekreftetPermisjonStatus);
+            return new no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.BekreftetPermisjon(
+                    periode, bekreftetPermisjonStatus);
         }
 
         private Periode mapPeriode(IntervallEntitet periode) {
@@ -169,13 +204,16 @@ class MapArbeidsforholdInformasjon {
             var arbeidsgiver = mapAktør(ref.getArbeidsgiver());
             var internReferanse = ref.getInternReferanse().getReferanse();
             var eksternReferanse = ref.getEksternReferanse().getReferanse();
-            return new ArbeidsforholdReferanseDto(arbeidsgiver, new ArbeidsforholdRefDto(internReferanse, eksternReferanse));
+            return new ArbeidsforholdReferanseDto(
+                    arbeidsgiver, new ArbeidsforholdRefDto(internReferanse, eksternReferanse));
         }
 
-        private ArbeidsforholdRefDto mapArbeidsforholdsId(no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon arbeidsforholdInformasjon,
-                                                          UUID grunnlagRef,
-                                                          Arbeidsgiver arbeidsgiver,
-                                                          InternArbeidsforholdRef ref) {
+        private ArbeidsforholdRefDto mapArbeidsforholdsId(
+                no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon
+                        arbeidsforholdInformasjon,
+                UUID grunnlagRef,
+                Arbeidsgiver arbeidsgiver,
+                InternArbeidsforholdRef ref) {
             if (ref == null) {
                 return null;
             }
@@ -187,7 +225,8 @@ class MapArbeidsforholdInformasjon {
              */
             String internId = ref.getReferanse();
             if (internId != null) {
-                EksternArbeidsforholdRef eksternReferanse = arbeidsforholdInformasjon.finnEksternRaw(grunnlagRef, arbeidsgiver, ref);
+                EksternArbeidsforholdRef eksternReferanse =
+                        arbeidsforholdInformasjon.finnEksternRaw(grunnlagRef, arbeidsgiver, ref);
                 if (eksternReferanse == null || eksternReferanse.getReferanse() == null) {
                     throw new IllegalStateException("Mangler eksternReferanse for internReferanse=" + ref);
                 }
@@ -197,8 +236,9 @@ class MapArbeidsforholdInformasjon {
         }
 
         private Aktør mapAktør(Arbeidsgiver arbeidsgiver) {
-            return arbeidsgiver.erAktørId() ? new AktørIdPersonident(arbeidsgiver.getAktørId().getId()) : new Organisasjon(
-                arbeidsgiver.getOrgnr().getId());
+            return arbeidsgiver.erAktørId()
+                    ? new AktørIdPersonident(arbeidsgiver.getAktørId().getId())
+                    : new Organisasjon(arbeidsgiver.getOrgnr().getId());
         }
     }
 }

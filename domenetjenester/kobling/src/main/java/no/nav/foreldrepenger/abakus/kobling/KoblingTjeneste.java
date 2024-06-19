@@ -1,11 +1,9 @@
 package no.nav.foreldrepenger.abakus.kobling;
 
-import java.util.List;
-import java.util.Optional;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-
+import java.util.List;
+import java.util.Optional;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.kobling.repository.KoblingRepository;
 import no.nav.foreldrepenger.abakus.kobling.repository.LåsRepository;
@@ -18,8 +16,7 @@ public class KoblingTjeneste {
     private KoblingRepository repository;
     private LåsRepository låsRepository;
 
-    KoblingTjeneste() {
-    }
+    KoblingTjeneste() {}
 
     @Inject
     public KoblingTjeneste(KoblingRepository repository, LåsRepository låsRepository) {
@@ -27,9 +24,11 @@ public class KoblingTjeneste {
         this.låsRepository = låsRepository;
     }
 
-    public Kobling finnEllerOpprett(YtelseType ytelseType, KoblingReferanse referanse, AktørId aktørId, Saksnummer saksnummer) {
-        Kobling kobling = repository.hentForKoblingReferanse(referanse, true)
-            .orElseGet(() -> new Kobling(ytelseType, saksnummer, referanse, aktørId));
+    public Kobling finnEllerOpprett(
+            YtelseType ytelseType, KoblingReferanse referanse, AktørId aktørId, Saksnummer saksnummer) {
+        Kobling kobling = repository
+                .hentForKoblingReferanse(referanse, true)
+                .orElseGet(() -> new Kobling(ytelseType, saksnummer, referanse, aktørId));
         repository.lagre(kobling);
         return kobling;
     }
@@ -51,7 +50,11 @@ public class KoblingTjeneste {
     }
 
     public KoblingLås taSkrivesLås(KoblingReferanse referanse) {
-        return repository.hentForKoblingReferanse(referanse, true).map(Kobling::getId).map(KoblingLås::new).orElse(null);
+        return repository
+                .hentForKoblingReferanse(referanse, true)
+                .map(Kobling::getId)
+                .map(KoblingLås::new)
+                .orElse(null);
     }
 
     public void oppdaterLåsVersjon(KoblingLås lås) {

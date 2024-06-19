@@ -22,5 +22,4 @@ public record FeilDto(FeilType type, String feilmelding, Collection<FeltFeilDto>
     public FeilDto(String feilmelding) {
         this(GENERELL_FEIL, feilmelding, emptyList());
     }
-
 }

@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay.diff;
 
 import java.util.function.Function;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraph;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraphConfig;
@@ -13,8 +12,7 @@ import no.nav.foreldrepenger.abakus.kobling.Kobling;
  * Legger denne sammen med RootClass
  */
 public final class TraverseEntityGraphFactory {
-    private TraverseEntityGraphFactory() {
-    }
+    private TraverseEntityGraphFactory() {}
 
     public static TraverseGraph build(boolean medChangedTrackedOnly) {
         return build(medChangedTrackedOnly, TraverseGraphConfig.NO_FILTER);

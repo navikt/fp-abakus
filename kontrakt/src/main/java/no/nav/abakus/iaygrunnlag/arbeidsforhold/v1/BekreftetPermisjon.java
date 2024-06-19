@@ -1,24 +1,26 @@
 package no.nav.abakus.iaygrunnlag.arbeidsforhold.v1;
 
-import java.time.LocalDate;
-import java.util.Objects;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.BekreftetPermisjonStatus;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class BekreftetPermisjon {
 
     @JsonProperty(value = "status")
@@ -31,8 +33,9 @@ public class BekreftetPermisjon {
     private Periode periode;
 
     @JsonCreator
-    public BekreftetPermisjon(@JsonProperty("periode") @Valid @NotNull Periode periode,
-                              @JsonProperty(value = "status") @NotNull BekreftetPermisjonStatus status) {
+    public BekreftetPermisjon(
+            @JsonProperty("periode") @Valid @NotNull Periode periode,
+            @JsonProperty(value = "status") @NotNull BekreftetPermisjonStatus status) {
         Objects.requireNonNull(periode, "periode");
         this.periode = periode;
         this.status = status;
@@ -71,5 +74,4 @@ public class BekreftetPermisjon {
     public String toString() {
         return getClass().getSimpleName() + "<" + "periode=" + periode + ", status=" + status + '>';
     }
-
 }

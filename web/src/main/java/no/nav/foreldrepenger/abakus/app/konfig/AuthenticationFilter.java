@@ -31,5 +31,4 @@ public class AuthenticationFilter implements ContainerRequestFilter, ContainerRe
     public void filter(ContainerRequestContext req) {
         AuthenticationFilterDelegate.validerSettKontekst(resourceinfo, req);
     }
-
 }

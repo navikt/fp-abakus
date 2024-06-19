@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt.YtelseNøkkel;
 
@@ -35,13 +34,14 @@ public class InntektsInformasjon {
 
     public List<Månedsinntekt> getYtelsesTrygdEllerPensjonInntektSummert() {
         Map<YtelseNøkkel, List<Månedsinntekt>> ytelseNøkkel = månedsinntekter.stream()
-            .filter(Månedsinntekt::isYtelse)
-            .collect(Collectors.groupingBy(Månedsinntekt::getNøkkel));
+                .filter(Månedsinntekt::isYtelse)
+                .collect(Collectors.groupingBy(Månedsinntekt::getNøkkel));
 
         List<Månedsinntekt> summert = new ArrayList<>();
 
         for (Map.Entry<YtelseNøkkel, List<Månedsinntekt>> entry : ytelseNøkkel.entrySet()) {
-            BigDecimal sum = entry.getValue().stream().map(Månedsinntekt::getBeløp).reduce(BigDecimal.ZERO, BigDecimal::add);
+            BigDecimal sum =
+                    entry.getValue().stream().map(Månedsinntekt::getBeløp).reduce(BigDecimal.ZERO, BigDecimal::add);
             Månedsinntekt.Builder builder = new Månedsinntekt.Builder();
             YtelseNøkkel nøkkel = entry.getKey();
             builder.medBeløp(sum);
@@ -58,5 +58,4 @@ public class InntektsInformasjon {
     public InntektskildeType getKilde() {
         return kilde;
     }
-
 }

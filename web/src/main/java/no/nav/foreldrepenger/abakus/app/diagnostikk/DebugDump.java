@@ -5,5 +5,4 @@ import java.util.List;
 public interface DebugDump {
 
     List<DumpOutput> dump(DumpKontekst dumpKontekst);
-
 }

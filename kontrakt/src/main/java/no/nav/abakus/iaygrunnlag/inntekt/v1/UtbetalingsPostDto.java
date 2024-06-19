@@ -1,17 +1,15 @@
 package no.nav.abakus.iaygrunnlag.inntekt.v1;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektYtelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
@@ -20,7 +18,12 @@ import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class UtbetalingsPostDto {
 
     @JsonProperty(value = "inntektspostType", required = true)
@@ -38,23 +41,18 @@ public class UtbetalingsPostDto {
     @JsonProperty("lønnsinntektBeskrivelse")
     private LønnsinntektBeskrivelse lønnsinntektBeskrivelse;
 
-    /**
-     * Tillater her både positive og negative beløp (korreksjoner). Min/max verdi håndteres av mottager og avsender.
-     */
+    /** Tillater her både positive og negative beløp (korreksjoner). Min/max verdi håndteres av mottager og avsender. */
     @JsonProperty("beløp")
     @Valid
     @NotNull
     private BigDecimal beløp;
 
-    /**
-     * Satt dersom dette gjelder en ytelse, ellers ikke (henger sammen med {@link UtbetalingDto#getKilde()})
-     */
+    /** Satt dersom dette gjelder en ytelse, ellers ikke (henger sammen med {@link UtbetalingDto#getKilde()}) */
     @JsonProperty(value = "inntektYtelseType")
     @Valid
     private InntektYtelseType inntektYtelseType;
 
-    protected UtbetalingsPostDto() {
-    }
+    protected UtbetalingsPostDto() {}
 
     public UtbetalingsPostDto(Periode periode, InntektspostType inntektspostType) {
         Objects.requireNonNull(periode, "periode");
@@ -89,10 +87,10 @@ public class UtbetalingsPostDto {
     }
 
     public UtbetalingsPostDto medLønnsinntektbeskrivelse(LønnsinntektBeskrivelse lønnsinntektBeskrivelse) {
-        setLønnsinntektBeskrivelse(LønnsinntektBeskrivelse.UDEFINERT.equals(lønnsinntektBeskrivelse) ? null : lønnsinntektBeskrivelse);
+        setLønnsinntektBeskrivelse(
+                LønnsinntektBeskrivelse.UDEFINERT.equals(lønnsinntektBeskrivelse) ? null : lønnsinntektBeskrivelse);
         return this;
     }
-
 
     public Periode getPeriode() {
         return periode;
@@ -140,13 +138,13 @@ public class UtbetalingsPostDto {
         }
         var other = this.getClass().cast(obj);
 
-        return Objects.equals(inntektspostType, other.inntektspostType) && Objects.equals(periode, other.periode) &&
-            Objects.equals(inntektYtelseType, other.inntektYtelseType);
+        return Objects.equals(inntektspostType, other.inntektspostType)
+                && Objects.equals(periode, other.periode)
+                && Objects.equals(inntektYtelseType, other.inntektYtelseType);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(inntektspostType, periode, inntektYtelseType);
     }
-
 }

@@ -6,9 +6,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.naming.NamingException;
-
+import no.nav.foreldrepenger.abakus.app.konfig.ApiConfig;
+import no.nav.foreldrepenger.abakus.app.konfig.EksternApiConfig;
+import no.nav.foreldrepenger.abakus.app.konfig.InternalApiConfig;
+import no.nav.foreldrepenger.konfig.Environment;
 import org.eclipse.jetty.ee10.cdi.CdiDecoratingListener;
 import org.eclipse.jetty.ee10.cdi.CdiServletContainerInitializer;
 import org.eclipse.jetty.ee10.servlet.ErrorPageErrorHandler;
@@ -29,11 +31,6 @@ import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import no.nav.foreldrepenger.abakus.app.konfig.ApiConfig;
-import no.nav.foreldrepenger.abakus.app.konfig.EksternApiConfig;
-import no.nav.foreldrepenger.abakus.app.konfig.InternalApiConfig;
-import no.nav.foreldrepenger.konfig.Environment;
 
 public class JettyServer {
 
@@ -69,8 +66,9 @@ public class JettyServer {
         var storeFile = new File(storePath);
         if (!storeFile.exists()) {
             throw new IllegalStateException(
-                "Finner ikke truststore i " + storePath + "\n\tKonfrigurer enten som System property '" + trustStorePathProp
-                    + "' eller environment variabel '" + trustStorePathProp.toUpperCase().replace('.', '_') + "'");
+                    "Finner ikke truststore i " + storePath + "\n\tKonfrigurer enten som System property '"
+                            + trustStorePathProp + "' eller environment variabel '"
+                            + trustStorePathProp.toUpperCase().replace('.', '_') + "'");
         }
         var password = ENV.getProperty(trustStorePasswordProp, "changeit");
         System.setProperty(trustStorePathProp, storeFile.getAbsolutePath());
@@ -78,8 +76,13 @@ public class JettyServer {
     }
 
     private ContextHandler createContext() throws IOException {
-        var ctx = new WebAppContext(CONTEXT_PATH, null, simpleConstraints(), null,
-            new ErrorPageErrorHandler(), ServletContextHandler.NO_SESSIONS);
+        var ctx = new WebAppContext(
+                CONTEXT_PATH,
+                null,
+                simpleConstraints(),
+                null,
+                new ErrorPageErrorHandler(),
+                ServletContextHandler.NO_SESSIONS);
 
         ctx.setParentLoaderPriority(true);
 
@@ -94,7 +97,9 @@ public class JettyServer {
         ctx.setInitParameter("pathInfoOnly", "true");
 
         // Scanns the CLASSPATH for classes and jars.
-        ctx.setAttribute(CONTAINER_JAR_PATTERN, String.format("%s%s", ENV.isLocal() ? JETTY_LOCAL_CLASSES : "", JETTY_SCAN_LOCATIONS));
+        ctx.setAttribute(
+                CONTAINER_JAR_PATTERN,
+                String.format("%s%s", ENV.isLocal() ? JETTY_LOCAL_CLASSES : "", JETTY_SCAN_LOCATIONS));
 
         // Enable Weld + CDI
         ctx.setInitParameter(CdiServletContainerInitializer.CDI_INTEGRATION_ATTRIBUTE, CdiDecoratingListener.MODE);
@@ -112,7 +117,6 @@ public class JettyServer {
         // Add support for X-Forwarded headers
         httpConfig.addCustomizer(new org.eclipse.jetty.server.ForwardedRequestCustomizer());
         return httpConfig;
-
     }
 
     void bootStrap() throws Exception {
@@ -136,7 +140,10 @@ public class JettyServer {
 
     void migrerDatabaser() {
         try (var dataSource = DatasourceUtil.createDatasource(DatasourceRole.ADMIN, 2)) {
-            var flyway = Flyway.configure().dataSource(dataSource).locations("classpath:/db/migration/defaultDS").baselineOnMigrate(true);
+            var flyway = Flyway.configure()
+                    .dataSource(dataSource)
+                    .locations("classpath:/db/migration/defaultDS")
+                    .baselineOnMigrate(true);
             if (ENV.isProd() || ENV.isDev()) {
                 flyway.initSql(String.format("SET ROLE \"%s\"", DatasourceUtil.getRole(DatasourceRole.ADMIN)));
             }
@@ -149,7 +156,7 @@ public class JettyServer {
 
     private void start() throws Exception {
         var server = new Server(getServerPort());
-        server.setConnectors(createConnectors(server).toArray(new Connector[]{}));
+        server.setConnectors(createConnectors(server).toArray(new Connector[] {}));
         server.setHandler(createContext());
         server.start();
         server.join();
@@ -186,5 +193,4 @@ public class JettyServer {
     private Integer getServerPort() {
         return this.serverPort;
     }
-
 }

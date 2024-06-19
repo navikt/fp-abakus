@@ -7,7 +7,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
 import no.nav.abakus.iaygrunnlag.kodeverk.VirksomhetType;
@@ -32,8 +31,11 @@ public class OppgittOpptjeningBuilder {
     }
 
     public static OppgittOpptjeningBuilder ny(UUID eksternReferanse, OffsetDateTime opprettetTidspunktOriginalt) {
-        return new OppgittOpptjeningBuilder(
-            new OppgittOpptjening(eksternReferanse, opprettetTidspunktOriginalt.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()));
+        return new OppgittOpptjeningBuilder(new OppgittOpptjening(
+                eksternReferanse,
+                opprettetTidspunktOriginalt
+                        .atZoneSameInstant(ZoneId.systemDefault())
+                        .toLocalDateTime()));
     }
 
     public OppgittOpptjeningBuilder medJournalpostId(JournalpostId journalpostId) {
@@ -153,7 +155,6 @@ public class OppgittOpptjeningBuilder {
         public EgenNæringBuilder medNyIArbeidslivet(boolean nyIArbeidslivet) {
             this.entitet.setNyIArbeidslivet(nyIArbeidslivet);
             return this;
-
         }
 
         public EgenNæringBuilder medLandkode(Landkode landkode) {
@@ -193,7 +194,8 @@ public class OppgittOpptjeningBuilder {
             return this;
         }
 
-        public OppgittArbeidsforholdBuilder medUtenlandskVirksomhet(Landkode landkode, String utenlandskVirksomhetNavn) {
+        public OppgittArbeidsforholdBuilder medUtenlandskVirksomhet(
+                Landkode landkode, String utenlandskVirksomhetNavn) {
             this.entitet.setLandkode(landkode);
             if (utenlandskVirksomhetNavn != null) {
                 this.entitet.setUtenlandskVirksomhetNavn(utenlandskVirksomhetNavn);

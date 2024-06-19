@@ -1,21 +1,19 @@
 package no.nav.abakus.iaygrunnlag.v1;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.UuidDto;
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon;
@@ -25,18 +23,26 @@ import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningDto;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class InntektArbeidYtelseGrunnlagDto {
 
     private static final ZoneId DEFAULT_ZONE = ZoneId.systemDefault();
 
     /**
      * Unk referanse for grunnlaget. Hver versjon av grunnlaget vil få en ny grunnlagReferanse.
+     *
      * <p>
-     * <h3>Ved skriving</h3> - Hvis referanse ikke finnes fra før vil data skrives ned på nytt og få denne referanse. Hvis de finnes fra før vil
-     * det
-     * opprettes nytt grunnlag (med ny grunnlagreferanse) der data som sendes ned skrives sammen med data som henger på angitt
-     * grunnlagReferanse.
+     *
+     * <h3>Ved skriving</h3>
+     *
+     * - Hvis referanse ikke finnes fra før vil data skrives ned på nytt og få denne referanse. Hvis de finnes fra før
+     * vil det opprettes nytt grunnlag (med ny grunnlagreferanse) der data som sendes ned skrives sammen med data som
+     * henger på angitt grunnlagReferanse.
      */
     @JsonProperty(value = "grunnlagReferanse", required = true)
     @Valid
@@ -44,8 +50,8 @@ public class InntektArbeidYtelseGrunnlagDto {
     private UuidDto grunnlagReferanse;
 
     /**
-     * Brukes til å koble sammen flere grunnlag (der kun siste er aktivt). Normalt behandlingUuid. En koblingReferanse kan spenne over flere
-     * grunnlagReferanser. Brukes f.eks. til å finne siste grunnlag på angitt kobling.
+     * Brukes til å koble sammen flere grunnlag (der kun siste er aktivt). Normalt behandlingUuid. En koblingReferanse
+     * kan spenne over flere grunnlagReferanser. Brukes f.eks. til å finne siste grunnlag på angitt kobling.
      */
     @JsonProperty(value = "koblingReferanse", required = true)
     @Valid
@@ -77,9 +83,7 @@ public class InntektArbeidYtelseGrunnlagDto {
     @Valid
     private InntektsmeldingerDto inntektsmeldinger;
 
-    /**
-     * Opptjening bruker har oppgitt selv.
-     */
+    /** Opptjening bruker har oppgitt selv. */
     @JsonProperty(value = "oppgittOpptjening")
     @Valid
     private OppgittOpptjeningDto oppgittOpptjening;
@@ -93,11 +97,13 @@ public class InntektArbeidYtelseGrunnlagDto {
     private ArbeidsforholdInformasjon arbeidsforholdInformasjon;
 
     @JsonCreator
-    public InntektArbeidYtelseGrunnlagDto(@JsonProperty(value = "person", required = true) @Valid @NotNull PersonIdent person,
-                                          @JsonProperty(value = "grunnlagTidspunkt", required = true) @Valid @NotNull OffsetDateTime grunnlagTidspunkt,
-                                          @JsonProperty(value = "grunnlagReferanse", required = true) @Valid @NotNull UUID grunnlagReferanse,
-                                          @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UUID koblingReferanse,
-                                          @JsonProperty(value = "ytelseType") YtelseType ytelseType) {
+    public InntektArbeidYtelseGrunnlagDto(
+            @JsonProperty(value = "person", required = true) @Valid @NotNull PersonIdent person,
+            @JsonProperty(value = "grunnlagTidspunkt", required = true) @Valid @NotNull
+                    OffsetDateTime grunnlagTidspunkt,
+            @JsonProperty(value = "grunnlagReferanse", required = true) @Valid @NotNull UUID grunnlagReferanse,
+            @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UUID koblingReferanse,
+            @JsonProperty(value = "ytelseType") YtelseType ytelseType) {
         Objects.requireNonNull(person, "person");
         Objects.requireNonNull(grunnlagTidspunkt, "grunnlagTidspunkt");
         Objects.requireNonNull(grunnlagReferanse, "grunnlagReferanse");
@@ -109,11 +115,12 @@ public class InntektArbeidYtelseGrunnlagDto {
         this.ytelseType = ytelseType;
     }
 
-    public InntektArbeidYtelseGrunnlagDto(@JsonProperty(value = "person", required = true) @Valid @NotNull PersonIdent person,
-                                          @JsonProperty(value = "grunnlagTidspunkt", required = true) @Valid @NotNull LocalDateTime grunnlagTidspunkt,
-                                          @JsonProperty(value = "grunnlagReferanse", required = true) @Valid @NotNull UuidDto grunnlagReferanse,
-                                          @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UuidDto koblingReferanse,
-                                          @JsonProperty(value = "ytelseType") YtelseType ytelseType) {
+    public InntektArbeidYtelseGrunnlagDto(
+            @JsonProperty(value = "person", required = true) @Valid @NotNull PersonIdent person,
+            @JsonProperty(value = "grunnlagTidspunkt", required = true) @Valid @NotNull LocalDateTime grunnlagTidspunkt,
+            @JsonProperty(value = "grunnlagReferanse", required = true) @Valid @NotNull UuidDto grunnlagReferanse,
+            @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UuidDto koblingReferanse,
+            @JsonProperty(value = "ytelseType") YtelseType ytelseType) {
         Objects.requireNonNull(person, "person");
         Objects.requireNonNull(grunnlagTidspunkt, "grunnlagTidspunkt");
         Objects.requireNonNull(grunnlagReferanse, "grunnlagReferanse");
@@ -137,8 +144,11 @@ public class InntektArbeidYtelseGrunnlagDto {
             return false;
         }
         InntektArbeidYtelseGrunnlagDto other = (InntektArbeidYtelseGrunnlagDto) obj;
-        //TODO bør sammenligne alle feltene, eller ha en kommentar som sier hvorfor kun utvalgte felt brukes i equals-metoden
-        return Objects.equals(person, other.person) && Objects.equals(register, other.register) && Objects.equals(overstyrt, other.overstyrt);
+        // TODO bør sammenligne alle feltene, eller ha en kommentar som sier hvorfor kun utvalgte felt brukes i
+        // equals-metoden
+        return Objects.equals(person, other.person)
+                && Objects.equals(register, other.register)
+                && Objects.equals(overstyrt, other.overstyrt);
     }
 
     public ArbeidsforholdInformasjon getArbeidsforholdInformasjon() {
@@ -214,7 +224,8 @@ public class InntektArbeidYtelseGrunnlagDto {
         return Objects.hash(person, register, overstyrt);
     }
 
-    public InntektArbeidYtelseGrunnlagDto medArbeidsforholdInformasjon(ArbeidsforholdInformasjon arbeidsforholdInformasjon) {
+    public InntektArbeidYtelseGrunnlagDto medArbeidsforholdInformasjon(
+            ArbeidsforholdInformasjon arbeidsforholdInformasjon) {
         setArbeidsforholdInformasjon(arbeidsforholdInformasjon);
         return this;
     }
@@ -229,7 +240,8 @@ public class InntektArbeidYtelseGrunnlagDto {
         return this;
     }
 
-    public InntektArbeidYtelseGrunnlagDto medOverstyrtOppgittOpptjening(OppgittOpptjeningDto overstyrtOppgittOpptjening) {
+    public InntektArbeidYtelseGrunnlagDto medOverstyrtOppgittOpptjening(
+            OppgittOpptjeningDto overstyrtOppgittOpptjening) {
         setOverstyrtOppgittOpptjening(overstyrtOppgittOpptjening);
         return this;
     }
@@ -243,5 +255,4 @@ public class InntektArbeidYtelseGrunnlagDto {
         setRegister(register);
         return this;
     }
-
 }

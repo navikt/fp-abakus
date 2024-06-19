@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.vedtak.domene;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 
 @Converter(autoApply = true)

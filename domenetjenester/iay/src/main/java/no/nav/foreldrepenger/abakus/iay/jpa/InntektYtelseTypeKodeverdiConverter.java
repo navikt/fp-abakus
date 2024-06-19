@@ -4,7 +4,6 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektYtelseType;
 
-
 @Converter(autoApply = true)
 public class InntektYtelseTypeKodeverdiConverter implements AttributeConverter<InntektYtelseType, String> {
 

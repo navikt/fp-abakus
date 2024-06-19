@@ -2,13 +2,12 @@ package no.nav.foreldrepenger.abakus.app.tjenester;
 
 import static org.mockito.Mockito.verify;
 
+import no.nav.vedtak.log.metrics.Controllable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import no.nav.vedtak.log.metrics.Controllable;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationServiceStarterTest {

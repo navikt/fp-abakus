@@ -3,14 +3,10 @@ package no.nav.foreldrepenger.abakus.kobling;
 import java.util.Objects;
 
 public class KoblingLås {
-    /**
-     * brukes kun for nye behandlinger som dummy.
-     */
+    /** brukes kun for nye behandlinger som dummy. */
     private Long koblingId;
 
-    /**
-     * protected, unngå å opprette utenfor denne pakken. Kan overstyres kun til test
-     */
+    /** protected, unngå å opprette utenfor denne pakken. Kan overstyres kun til test */
     public KoblingLås(Long koblingId) {
         this.koblingId = koblingId;
     }
@@ -21,9 +17,9 @@ public class KoblingLås {
 
     void setKoblingId(long koblingId) {
         if (this.koblingId != null && !Objects.equals(koblingId, this.koblingId)) {
-            throw new IllegalStateException("Kan ikke endre koblingId til annen verdi, var [" +
-                this.koblingId + "], forsøkte å sette til [" +
-                koblingId + "]");
+            throw new IllegalStateException("Kan ikke endre koblingId til annen verdi, var [" + this.koblingId
+                    + "], forsøkte å sette til [" + koblingId
+                    + "]");
         }
         this.koblingId = koblingId;
     }
@@ -46,7 +42,6 @@ public class KoblingLås {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<koblingId=" + getKoblingId() +
-            ">";
+        return getClass().getSimpleName() + "<koblingId=" + getKoblingId() + ">";
     }
 }

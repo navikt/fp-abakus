@@ -1,14 +1,12 @@
 package no.nav.foreldrepenger.abakus.app.diagnostikk.rapportering;
 
+import jakarta.ws.rs.core.StreamingOutput;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import jakarta.ws.rs.core.StreamingOutput;
-
 import no.nav.foreldrepenger.abakus.app.diagnostikk.DumpOutput;
 
 class ZipOutput {
@@ -26,7 +24,7 @@ class ZipOutput {
 
     StreamingOutput dump(List<DumpOutput> outputs) {
         return outputStream -> {
-            try (var zipOut = new ZipOutputStream(new BufferedOutputStream(outputStream));) {
+            try (var zipOut = new ZipOutputStream(new BufferedOutputStream(outputStream)); ) {
                 outputs.forEach(dump -> addToZip(zipOut, dump));
             } finally {
                 outputStream.flush();

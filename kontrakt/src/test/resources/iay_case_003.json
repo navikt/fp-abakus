@@ -1,693 +1,693 @@
 {
-  "person" : {
-    "identType" : "AKTØRID",
-    "ident" : "1000016519934"
-  },
-  "grunnlagTidspunkt" : "2019-02-11T09:39:32.557Z",
-  "grunnlagReferanse" : "8abb7315-b003-0abc-e053-2880340a57a0",
-  "koblingReferanse" : "88487f4b-f4df-2133-e053-2880340a6560",
-  "registerGrunnlag" : {
-    "opprettetTidspunkt" : "2019-02-11T09:39:32.555Z",
-    "eksternReferanse" : "8a6bc441-d26e-1f94-e053-2880340a2b28",
-    "arbeid" : [ {
-      "person" : {
-        "identType" : "AKTØRID",
-        "ident" : "1000016519934"
+  "oppgittOpptjening": {
+    "annenAktivitet": [ ],
+    "arbeidsforhold": [ ],
+    "opprettetTidspunkt": "2019-01-02T15:30:13.228Z",
+    "egenNæring": [ {
+      "regnskapsførerNavn": null,
+      "virksomhetNavn": null,
+      "regnskapsførerTlf": null,
+      "erNyIArbeidslivet": false,
+      "virksomhet": {
+        "identType": "ORGNUMMER",
+        "ident": "992254025"
       },
-      "yrkesaktiviteter" : [ {
-        "arbeidsgiver" : {
-          "identType" : "ORGNUMMER",
-          "ident" : "974610752"
-        },
-        "arbeidsforholdId" : {
-          "abakusReferanse" : "400b5897-b5e9-468d-99b2-c94f57bbddc8",
-          "eksternReferanse" : "0001-0001-20100801",
-          "eksternReferanseSystem" : "AAREGISTERET"
-        },
-        "arbeidType" : "ORDINÆRT_ARBEIDSFORHOLD",
-        "aktivitetsAvtaler" : [ {
-          "periode" : {
-            "fom" : "2018-06-01",
-            "tom" : "9999-12-31"
-          },
-          "stillingsprosent" : 100.00,
-          "sistLønnsendring" : "2018-06-01"
-        }, {
-          "periode" : {
-            "fom" : "2017-06-01",
-            "tom" : "2017-09-30"
-          },
-          "stillingsprosent" : 100.00,
-          "sistLønnsendring" : "2017-07-01"
-        }, {
-          "periode" : {
-            "fom" : "2010-08-01",
-            "tom" : "9999-12-31"
-          },
-          "stillingsprosent" : 0.00
-        }, {
-          "periode" : {
-            "fom" : "2017-10-01",
-            "tom" : "2017-12-31"
-          },
-          "stillingsprosent" : 100.00,
-          "sistLønnsendring" : "2017-08-01"
-        }, {
-          "periode" : {
-            "fom" : "2018-01-01",
-            "tom" : "2018-05-31"
-          },
-          "stillingsprosent" : 100.00,
-          "sistLønnsendring" : "2017-08-01"
-        } ],
-        "permisjoner" : [ ]
-      } ]
-    }, {
-      "person" : {
-        "identType" : "AKTØRID",
-        "ident" : "1000047286886"
+      "virksomhetType": "ANNEN",
+      "periode": {
+        "tom": "9999-12-31",
+        "fom": "2008-02-16"
       },
-      "yrkesaktiviteter" : [ {
-        "arbeidsgiver" : {
-          "identType" : "ORGNUMMER",
-          "ident" : "973857622"
-        },
-        "arbeidsforholdId" : {
-          "abakusReferanse" : "4fcb64d4-7733-4a19-b9a7-95ea128f2255",
-          "eksternReferanse" : "0001-0001-20180801",
-          "eksternReferanseSystem" : "AAREGISTERET"
-        },
-        "arbeidType" : "ORDINÆRT_ARBEIDSFORHOLD",
-        "aktivitetsAvtaler" : [ {
-          "periode" : {
-            "fom" : "2018-10-01",
-            "tom" : "9999-12-31"
-          },
-          "stillingsprosent" : 100.00,
-          "sistLønnsendring" : "2018-11-01"
-        }, {
-          "periode" : {
-            "fom" : "2018-07-01",
-            "tom" : "2018-09-30"
-          },
-          "stillingsprosent" : 100.00,
-          "sistLønnsendring" : "2018-08-01"
-        }, {
-          "periode" : {
-            "fom" : "2018-08-01",
-            "tom" : "9999-12-31"
-          },
-          "stillingsprosent" : 0.00
-        } ],
-        "permisjoner" : [ ]
-      }, {
-        "arbeidsgiver" : {
-          "identType" : "ORGNUMMER",
-          "ident" : "981598482"
-        },
-        "arbeidsforholdId" : {
-          "abakusReferanse" : "f12bcc10-584a-4e0d-9849-24b4e42c5d59",
-          "eksternReferanse" : "975577414001169208",
-          "eksternReferanseSystem" : "AAREGISTERET"
-        },
-        "arbeidType" : "ORDINÆRT_ARBEIDSFORHOLD",
-        "aktivitetsAvtaler" : [ {
-          "periode" : {
-            "fom" : "2011-09-01",
-            "tom" : "2018-06-30"
-          },
-          "stillingsprosent" : 0.00
-        }, {
-          "periode" : {
-            "fom" : "2017-01-01",
-            "tom" : "2017-12-31"
-          },
-          "stillingsprosent" : 50.00,
-          "sistLønnsendring" : "2016-05-01"
-        }, {
-          "periode" : {
-            "fom" : "2018-01-01",
-            "tom" : "9999-12-31"
-          },
-          "stillingsprosent" : 50.00,
-          "sistLønnsendring" : "2016-05-01"
-        } ],
-        "permisjoner" : [ ]
-      }, {
-        "arbeidsgiver" : {
-          "identType" : "ORGNUMMER",
-          "ident" : "974595060"
-        },
-        "arbeidsforholdId" : {
-          "abakusReferanse" : "05290652-4a6a-4f94-9491-7eb61138df7e",
-          "eksternReferanse" : "V974595060R89887S25107962L0002",
-          "eksternReferanseSystem" : "AAREGISTERET"
-        },
-        "arbeidType" : "ORDINÆRT_ARBEIDSFORHOLD",
-        "aktivitetsAvtaler" : [ {
-          "periode" : {
-            "fom" : "2017-06-01",
-            "tom" : "9999-12-31"
-          },
-          "stillingsprosent" : 40.00,
-          "sistLønnsendring" : "2017-08-01"
-        }, {
-          "periode" : {
-            "fom" : "2017-08-01",
-            "tom" : "2018-07-31"
-          },
-          "stillingsprosent" : 0.00
-        } ],
-        "permisjoner" : [ ]
-      } ]
+      "bruttoInntekt": 0,
+      "landkode": "NOR",
+      "erNyoppstartet": false,
+      "erVarigEndring": false,
+      "erNærRelasjon": false,
+      "endringBegrunnelse": null,
+      "endringDato": null
     } ],
-    "inntekter" : [ {
-      "person" : {
-        "identType" : "AKTØRID",
-        "ident" : "1000016519934"
-      },
-      "utbetalinger" : [ {
-        "arbeidsgiver" : {
-          "identType" : "ORGNUMMER",
-          "ident" : "974610752"
-        },
-        "inntektsKilde" : "INNTEKT_OPPTJENING",
-        "utbetalingsPoster" : [ {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2019-01-01",
-            "tom" : "2019-01-31"
-          },
-          "beløp" : 41291.19
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-10-01",
-            "tom" : "2018-10-31"
-          },
-          "beløp" : 41291.19
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-11-01",
-            "tom" : "2018-11-30"
-          },
-          "beløp" : 41291.19
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2017-11-01",
-            "tom" : "2017-11-30"
-          },
-          "beløp" : 40541.19
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-09-01",
-            "tom" : "2018-09-30"
-          },
-          "beløp" : 41291.19
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-12-01",
-            "tom" : "2018-12-31"
-          },
-          "beløp" : 42161.43
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2017-10-01",
-            "tom" : "2017-10-31"
-          },
-          "beløp" : 39401.51
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2017-09-01",
-            "tom" : "2017-09-30"
-          },
-          "beløp" : 88476.77
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2017-12-01",
-            "tom" : "2017-12-31"
-          },
-          "beløp" : 40541.19
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-04-01",
-            "tom" : "2018-04-30"
-          },
-          "beløp" : 40541.19
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-01-01",
-            "tom" : "2018-01-31"
-          },
-          "beløp" : 40840.66
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-03-01",
-            "tom" : "2018-03-31"
-          },
-          "beløp" : 40541.19
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-05-01",
-            "tom" : "2018-05-31"
-          },
-          "beløp" : 40541.19
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-02-01",
-            "tom" : "2018-02-28"
-          },
-          "beløp" : 40541.19
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-08-01",
-            "tom" : "2018-08-31"
-          },
-          "beløp" : 41291.19
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-07-01",
-            "tom" : "2018-07-31"
-          },
-          "beløp" : 42679.64
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-06-01",
-            "tom" : "2018-06-30"
-          },
-          "beløp" : 41333.77
-        } ]
-      }, {
-        "arbeidsgiver" : null,
-        "inntektsKilde" : "SIGRUN",
-        "utbetalingsPoster" : [ {
-          "inntektspostType" : "SELVSTENDIG_NÆRINGSDRIVENDE",
-          "periode" : {
-            "fom" : "2017-01-01",
-            "tom" : "2017-12-31"
-          },
-          "beløp" : 3203.00
-        }, {
-          "inntektspostType" : "SELVSTENDIG_NÆRINGSDRIVENDE",
-          "periode" : {
-            "fom" : "2016-01-01",
-            "tom" : "2016-12-31"
-          },
-          "beløp" : 2930.00
-        }, {
-          "inntektspostType" : "SELVSTENDIG_NÆRINGSDRIVENDE",
-          "periode" : {
-            "fom" : "2015-01-01",
-            "tom" : "2015-12-31"
-          },
-          "beløp" : 9078.00
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2016-01-01",
-            "tom" : "2016-12-31"
-          },
-          "beløp" : 537604.00
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2017-01-01",
-            "tom" : "2017-12-31"
-          },
-          "beløp" : 499003.00
-        }, {
-          "inntektspostType" : "NÆRING_FISKE_FANGST_FAMBARNEHAGE",
-          "periode" : {
-            "fom" : "2016-01-01",
-            "tom" : "2016-12-31"
-          },
-          "beløp" : 0.00
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2015-01-01",
-            "tom" : "2015-12-31"
-          },
-          "beløp" : 468875.00
-        }, {
-          "inntektspostType" : "NÆRING_FISKE_FANGST_FAMBARNEHAGE",
-          "periode" : {
-            "fom" : "2015-01-01",
-            "tom" : "2015-12-31"
-          },
-          "beløp" : 0.00
-        } ]
-      } ]
-    }, {
-      "person" : {
-        "identType" : "AKTØRID",
-        "ident" : "1000047286886"
-      },
-      "utbetalinger" : [ {
-        "arbeidsgiver" : {
-          "identType" : "ORGNUMMER",
-          "ident" : "974595060"
-        },
-        "inntektsKilde" : "INNTEKT_OPPTJENING",
-        "utbetalingsPoster" : [ {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2017-11-01",
-            "tom" : "2017-11-30"
-          },
-          "beløp" : 14725.13
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2017-10-01",
-            "tom" : "2017-10-31"
-          },
-          "beløp" : 19118.94
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2017-09-01",
-            "tom" : "2017-09-30"
-          },
-          "beløp" : 13305.13
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2017-12-01",
-            "tom" : "2017-12-31"
-          },
-          "beløp" : 14725.13
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-04-01",
-            "tom" : "2018-04-30"
-          },
-          "beløp" : 14701.93
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-01-01",
-            "tom" : "2018-01-31"
-          },
-          "beløp" : 14701.93
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-03-01",
-            "tom" : "2018-03-31"
-          },
-          "beløp" : 14701.93
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-05-01",
-            "tom" : "2018-05-31"
-          },
-          "beløp" : 14701.93
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-02-01",
-            "tom" : "2018-02-28"
-          },
-          "beløp" : 14701.93
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-06-01",
-            "tom" : "2018-06-30"
-          },
-          "beløp" : 15446.61
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-07-01",
-            "tom" : "2018-07-31"
-          },
-          "beløp" : 15068.60
-        } ]
-      }, {
-        "arbeidsgiver" : {
-          "identType" : "ORGNUMMER",
-          "ident" : "981598482"
-        },
-        "inntektsKilde" : "INNTEKT_OPPTJENING",
-        "utbetalingsPoster" : [ {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2017-11-01",
-            "tom" : "2017-11-30"
-          },
-          "beløp" : 18809.00
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2017-10-01",
-            "tom" : "2017-10-31"
-          },
-          "beløp" : 18809.00
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2017-09-01",
-            "tom" : "2017-09-30"
-          },
-          "beløp" : 18809.00
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2017-12-01",
-            "tom" : "2017-12-31"
-          },
-          "beløp" : 18965.00
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-04-01",
-            "tom" : "2018-04-30"
-          },
-          "beløp" : 18809.00
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-01-01",
-            "tom" : "2018-01-31"
-          },
-          "beløp" : 18809.00
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-03-01",
-            "tom" : "2018-03-31"
-          },
-          "beløp" : 18809.00
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-05-01",
-            "tom" : "2018-05-31"
-          },
-          "beløp" : 18809.00
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-02-01",
-            "tom" : "2018-02-28"
-          },
-          "beløp" : 18809.00
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-06-01",
-            "tom" : "2018-06-30"
-          },
-          "beløp" : 18809.00
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-07-01",
-            "tom" : "2018-07-31"
-          },
-          "beløp" : 34651.00
-        } ]
-      }, {
-        "arbeidsgiver" : {
-          "identType" : "ORGNUMMER",
-          "ident" : "973857622"
-        },
-        "inntektsKilde" : "INNTEKT_OPPTJENING",
-        "utbetalingsPoster" : [ {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-10-01",
-            "tom" : "2018-10-31"
-          },
-          "beløp" : 40440.37
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-11-01",
-            "tom" : "2018-11-30"
-          },
-          "beløp" : 41731.58
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-09-01",
-            "tom" : "2018-09-30"
-          },
-          "beløp" : 44661.61
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-12-01",
-            "tom" : "2018-12-31"
-          },
-          "beløp" : 41406.88
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2019-01-01",
-            "tom" : "2019-01-31"
-          },
-          "beløp" : 40823.70
-        }, {
-          "inntektspostType" : "LØNN",
-          "periode" : {
-            "fom" : "2018-08-01",
-            "tom" : "2018-08-31"
-          },
-          "beløp" : 36257.03
-        } ]
-      } ]
-    } ],
-    "ytelser" : [ {
-      "person" : {
-        "identType" : "AKTØRID",
-        "ident" : "1000016519934"
-      },
-      "ytelser" : [ ]
-    }, {
-      "person" : {
-        "identType" : "AKTØRID",
-        "ident" : "1000047286886"
-      },
-      "ytelser" : [ ]
-    } ]
+    "eksternReferanse": "8a6bc443-6f65-1f94-e053-2880340a2b28"
   },
-  "inntektsmeldinger" : {
-    "inntektsmeldinger" : [ {
-      "arbeidsgiver" : {
-        "identType" : "ORGNUMMER",
-        "ident" : "974610752"
+  "inntektsmeldinger": {
+    "inntektsmeldinger": [ {
+      "graderinger": [ ],
+      "mottattDato": "2019-02-04",
+      "refusjonEndringer": [ ],
+      "innsendingstidspunkt": "2019-02-04T15:20:56Z",
+      "refusjonsBeløpPerMnd": 41217.49,
+      "naturalytelser": [ ],
+      "arbeidsgiver": {
+        "identType": "ORGNUMMER",
+        "ident": "974610752"
       },
-      "journalpostId" : "444526385",
-      "innsendingstidspunkt" : "2019-02-04T15:20:56Z",
-      "mottattDato" : "2019-02-04",
-      "graderinger" : [ ],
-      "naturalytelser" : [ ],
-      "utsettelsePerioder" : [ {
-        "periode" : {
-          "fom" : "2019-07-01",
-          "tom" : "2019-07-29"
-        },
-        "utsettelseÅrsak" : "LOVBESTEMT_FERIE"
+      "erNærRelasjon": false,
+      "utsettelsePerioder": [ {
+        "utsettelseÅrsak": "LOVBESTEMT_FERIE",
+        "periode": {
+          "tom": "2019-07-29",
+          "fom": "2019-07-01"
+        }
       } ],
-      "startdatoPermisjon" : "2019-02-28",
-      "erNærRelasjon" : false,
-      "inntektBeløp" : 41507.57,
-      "refusjonsBeløpPerMnd" : 41217.49,
-      "refusjonOpphører" : "9999-12-31",
-      "refusjonEndringer" : [ ],
-      "innsendingsårsak" : "NY"
+      "inntektBeløp": 41507.57,
+      "startdatoPermisjon": "2019-02-28",
+      "refusjonOpphører": "9999-12-31",
+      "journalpostId": "444526385",
+      "innsendingsårsak": "NY"
     } ]
   },
-  "oppgittOpptjening" : {
-    "eksternReferanse" : "8a6bc443-6f65-1f94-e053-2880340a2b28",
-    "opprettetTidspunkt" : "2019-01-02T15:30:13.228Z",
-    "arbeidsforhold" : [ ],
-    "egenNæring" : [ {
-      "periode" : {
-        "fom" : "2008-02-16",
-        "tom" : "9999-12-31"
-      },
-      "virksomhet" : {
-        "identType" : "ORGNUMMER",
-        "ident" : "992254025"
-      },
-      "virksomhetType" : "ANNEN",
-      "regnskapsførerNavn" : null,
-      "regnskapsførerTlf" : null,
-      "virksomhetNavn" : null,
-      "landkode" : "NOR",
-      "endringDato" : null,
-      "erVarigEndring" : false,
-      "endringBegrunnelse" : null,
-      "bruttoInntekt" : 0.00,
-      "erNyoppstartet" : false,
-      "erNærRelasjon" : false,
-      "erNyIArbeidslivet" : false
-    } ],
-    "annenAktivitet" : [ ]
+  "person": {
+    "identType": "AKTØRID",
+    "ident": "1000016519934"
   },
-  "arbeidsforholdInformasjon" : {
-    "referanser" : [ {
-      "arbeidsgiver" : {
-        "identType" : "ORGNUMMER",
-        "ident" : "974610752"
+  "grunnlagTidspunkt": "2019-02-11T09:39:32.557Z",
+  "grunnlagReferanse": "8abb7315-b003-0abc-e053-2880340a57a0",
+  "registerGrunnlag": {
+    "inntekter": [ {
+      "person": {
+        "identType": "AKTØRID",
+        "ident": "1000016519934"
       },
-      "arbeidsforholdId" : {
-        "abakusReferanse" : "400b5897-b5e9-468d-99b2-c94f57bbddc8",
-        "eksternReferanse" : "0001-0001-20100801",
-        "eksternReferanseSystem" : "AAREGISTERET"
+      "utbetalinger": [ {
+        "inntektsKilde": "INNTEKT_OPPTJENING",
+        "arbeidsgiver": {
+          "identType": "ORGNUMMER",
+          "ident": "974610752"
+        },
+        "utbetalingsPoster": [ {
+          "inntektspostType": "LØNN",
+          "beløp": 41291.19,
+          "periode": {
+            "tom": "2019-01-31",
+            "fom": "2019-01-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 41291.19,
+          "periode": {
+            "tom": "2018-10-31",
+            "fom": "2018-10-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 41291.19,
+          "periode": {
+            "tom": "2018-11-30",
+            "fom": "2018-11-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 40541.19,
+          "periode": {
+            "tom": "2017-11-30",
+            "fom": "2017-11-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 41291.19,
+          "periode": {
+            "tom": "2018-09-30",
+            "fom": "2018-09-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 42161.43,
+          "periode": {
+            "tom": "2018-12-31",
+            "fom": "2018-12-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 39401.51,
+          "periode": {
+            "tom": "2017-10-31",
+            "fom": "2017-10-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 88476.77,
+          "periode": {
+            "tom": "2017-09-30",
+            "fom": "2017-09-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 40541.19,
+          "periode": {
+            "tom": "2017-12-31",
+            "fom": "2017-12-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 40541.19,
+          "periode": {
+            "tom": "2018-04-30",
+            "fom": "2018-04-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 40840.66,
+          "periode": {
+            "tom": "2018-01-31",
+            "fom": "2018-01-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 40541.19,
+          "periode": {
+            "tom": "2018-03-31",
+            "fom": "2018-03-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 40541.19,
+          "periode": {
+            "tom": "2018-05-31",
+            "fom": "2018-05-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 40541.19,
+          "periode": {
+            "tom": "2018-02-28",
+            "fom": "2018-02-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 41291.19,
+          "periode": {
+            "tom": "2018-08-31",
+            "fom": "2018-08-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 42679.64,
+          "periode": {
+            "tom": "2018-07-31",
+            "fom": "2018-07-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 41333.77,
+          "periode": {
+            "tom": "2018-06-30",
+            "fom": "2018-06-01"
+          }
+        } ]
+      }, {
+        "inntektsKilde": "SIGRUN",
+        "arbeidsgiver": null,
+        "utbetalingsPoster": [ {
+          "inntektspostType": "SELVSTENDIG_NÆRINGSDRIVENDE",
+          "beløp": 3203,
+          "periode": {
+            "tom": "2017-12-31",
+            "fom": "2017-01-01"
+          }
+        }, {
+          "inntektspostType": "SELVSTENDIG_NÆRINGSDRIVENDE",
+          "beløp": 2930,
+          "periode": {
+            "tom": "2016-12-31",
+            "fom": "2016-01-01"
+          }
+        }, {
+          "inntektspostType": "SELVSTENDIG_NÆRINGSDRIVENDE",
+          "beløp": 9078,
+          "periode": {
+            "tom": "2015-12-31",
+            "fom": "2015-01-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 537604,
+          "periode": {
+            "tom": "2016-12-31",
+            "fom": "2016-01-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 499003,
+          "periode": {
+            "tom": "2017-12-31",
+            "fom": "2017-01-01"
+          }
+        }, {
+          "inntektspostType": "NÆRING_FISKE_FANGST_FAMBARNEHAGE",
+          "beløp": 0,
+          "periode": {
+            "tom": "2016-12-31",
+            "fom": "2016-01-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 468875,
+          "periode": {
+            "tom": "2015-12-31",
+            "fom": "2015-01-01"
+          }
+        }, {
+          "inntektspostType": "NÆRING_FISKE_FANGST_FAMBARNEHAGE",
+          "beløp": 0,
+          "periode": {
+            "tom": "2015-12-31",
+            "fom": "2015-01-01"
+          }
+        } ]
+      } ]
+    }, {
+      "person": {
+        "identType": "AKTØRID",
+        "ident": "1000047286886"
+      },
+      "utbetalinger": [ {
+        "inntektsKilde": "INNTEKT_OPPTJENING",
+        "arbeidsgiver": {
+          "identType": "ORGNUMMER",
+          "ident": "974595060"
+        },
+        "utbetalingsPoster": [ {
+          "inntektspostType": "LØNN",
+          "beløp": 14725.13,
+          "periode": {
+            "tom": "2017-11-30",
+            "fom": "2017-11-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 19118.94,
+          "periode": {
+            "tom": "2017-10-31",
+            "fom": "2017-10-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 13305.13,
+          "periode": {
+            "tom": "2017-09-30",
+            "fom": "2017-09-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 14725.13,
+          "periode": {
+            "tom": "2017-12-31",
+            "fom": "2017-12-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 14701.93,
+          "periode": {
+            "tom": "2018-04-30",
+            "fom": "2018-04-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 14701.93,
+          "periode": {
+            "tom": "2018-01-31",
+            "fom": "2018-01-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 14701.93,
+          "periode": {
+            "tom": "2018-03-31",
+            "fom": "2018-03-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 14701.93,
+          "periode": {
+            "tom": "2018-05-31",
+            "fom": "2018-05-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 14701.93,
+          "periode": {
+            "tom": "2018-02-28",
+            "fom": "2018-02-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 15446.61,
+          "periode": {
+            "tom": "2018-06-30",
+            "fom": "2018-06-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 15068.6,
+          "periode": {
+            "tom": "2018-07-31",
+            "fom": "2018-07-01"
+          }
+        } ]
+      }, {
+        "inntektsKilde": "INNTEKT_OPPTJENING",
+        "arbeidsgiver": {
+          "identType": "ORGNUMMER",
+          "ident": "981598482"
+        },
+        "utbetalingsPoster": [ {
+          "inntektspostType": "LØNN",
+          "beløp": 18809,
+          "periode": {
+            "tom": "2017-11-30",
+            "fom": "2017-11-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 18809,
+          "periode": {
+            "tom": "2017-10-31",
+            "fom": "2017-10-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 18809,
+          "periode": {
+            "tom": "2017-09-30",
+            "fom": "2017-09-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 18965,
+          "periode": {
+            "tom": "2017-12-31",
+            "fom": "2017-12-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 18809,
+          "periode": {
+            "tom": "2018-04-30",
+            "fom": "2018-04-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 18809,
+          "periode": {
+            "tom": "2018-01-31",
+            "fom": "2018-01-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 18809,
+          "periode": {
+            "tom": "2018-03-31",
+            "fom": "2018-03-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 18809,
+          "periode": {
+            "tom": "2018-05-31",
+            "fom": "2018-05-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 18809,
+          "periode": {
+            "tom": "2018-02-28",
+            "fom": "2018-02-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 18809,
+          "periode": {
+            "tom": "2018-06-30",
+            "fom": "2018-06-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 34651,
+          "periode": {
+            "tom": "2018-07-31",
+            "fom": "2018-07-01"
+          }
+        } ]
+      }, {
+        "inntektsKilde": "INNTEKT_OPPTJENING",
+        "arbeidsgiver": {
+          "identType": "ORGNUMMER",
+          "ident": "973857622"
+        },
+        "utbetalingsPoster": [ {
+          "inntektspostType": "LØNN",
+          "beløp": 40440.37,
+          "periode": {
+            "tom": "2018-10-31",
+            "fom": "2018-10-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 41731.58,
+          "periode": {
+            "tom": "2018-11-30",
+            "fom": "2018-11-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 44661.61,
+          "periode": {
+            "tom": "2018-09-30",
+            "fom": "2018-09-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 41406.88,
+          "periode": {
+            "tom": "2018-12-31",
+            "fom": "2018-12-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 40823.7,
+          "periode": {
+            "tom": "2019-01-31",
+            "fom": "2019-01-01"
+          }
+        }, {
+          "inntektspostType": "LØNN",
+          "beløp": 36257.03,
+          "periode": {
+            "tom": "2018-08-31",
+            "fom": "2018-08-01"
+          }
+        } ]
+      } ]
+    } ],
+    "arbeid": [ {
+      "yrkesaktiviteter": [ {
+        "arbeidType": "ORDINÆRT_ARBEIDSFORHOLD",
+        "arbeidsgiver": {
+          "identType": "ORGNUMMER",
+          "ident": "974610752"
+        },
+        "arbeidsforholdId": {
+          "abakusReferanse": "400b5897-b5e9-468d-99b2-c94f57bbddc8",
+          "eksternReferanseSystem": "AAREGISTERET",
+          "eksternReferanse": "0001-0001-20100801"
+        },
+        "aktivitetsAvtaler": [ {
+          "sistLønnsendring": "2018-06-01",
+          "periode": {
+            "tom": "9999-12-31",
+            "fom": "2018-06-01"
+          },
+          "stillingsprosent": 100
+        }, {
+          "sistLønnsendring": "2017-07-01",
+          "periode": {
+            "tom": "2017-09-30",
+            "fom": "2017-06-01"
+          },
+          "stillingsprosent": 100
+        }, {
+          "periode": {
+            "tom": "9999-12-31",
+            "fom": "2010-08-01"
+          },
+          "stillingsprosent": 0
+        }, {
+          "sistLønnsendring": "2017-08-01",
+          "periode": {
+            "tom": "2017-12-31",
+            "fom": "2017-10-01"
+          },
+          "stillingsprosent": 100
+        }, {
+          "sistLønnsendring": "2017-08-01",
+          "periode": {
+            "tom": "2018-05-31",
+            "fom": "2018-01-01"
+          },
+          "stillingsprosent": 100
+        } ],
+        "permisjoner": [ ]
+      } ],
+      "person": {
+        "identType": "AKTØRID",
+        "ident": "1000016519934"
       }
     }, {
-      "arbeidsgiver" : {
-        "identType" : "ORGNUMMER",
-        "ident" : "973857622"
-      },
-      "arbeidsforholdId" : {
-        "abakusReferanse" : "4fcb64d4-7733-4a19-b9a7-95ea128f2255",
-        "eksternReferanse" : "0001-0001-20180801",
-        "eksternReferanseSystem" : "AAREGISTERET"
-      }
-    }, {
-      "arbeidsgiver" : {
-        "identType" : "ORGNUMMER",
-        "ident" : "974595060"
-      },
-      "arbeidsforholdId" : {
-        "abakusReferanse" : "05290652-4a6a-4f94-9491-7eb61138df7e",
-        "eksternReferanse" : "V974595060R89887S25107962L0002",
-        "eksternReferanseSystem" : "AAREGISTERET"
-      }
-    }, {
-      "arbeidsgiver" : {
-        "identType" : "ORGNUMMER",
-        "ident" : "981598482"
-      },
-      "arbeidsforholdId" : {
-        "abakusReferanse" : "f12bcc10-584a-4e0d-9849-24b4e42c5d59",
-        "eksternReferanse" : "975577414001169208",
-        "eksternReferanseSystem" : "AAREGISTERET"
+      "yrkesaktiviteter": [ {
+        "arbeidType": "ORDINÆRT_ARBEIDSFORHOLD",
+        "arbeidsgiver": {
+          "identType": "ORGNUMMER",
+          "ident": "973857622"
+        },
+        "arbeidsforholdId": {
+          "abakusReferanse": "4fcb64d4-7733-4a19-b9a7-95ea128f2255",
+          "eksternReferanseSystem": "AAREGISTERET",
+          "eksternReferanse": "0001-0001-20180801"
+        },
+        "aktivitetsAvtaler": [ {
+          "sistLønnsendring": "2018-11-01",
+          "periode": {
+            "tom": "9999-12-31",
+            "fom": "2018-10-01"
+          },
+          "stillingsprosent": 100
+        }, {
+          "sistLønnsendring": "2018-08-01",
+          "periode": {
+            "tom": "2018-09-30",
+            "fom": "2018-07-01"
+          },
+          "stillingsprosent": 100
+        }, {
+          "periode": {
+            "tom": "9999-12-31",
+            "fom": "2018-08-01"
+          },
+          "stillingsprosent": 0
+        } ],
+        "permisjoner": [ ]
+      }, {
+        "arbeidType": "ORDINÆRT_ARBEIDSFORHOLD",
+        "arbeidsgiver": {
+          "identType": "ORGNUMMER",
+          "ident": "981598482"
+        },
+        "arbeidsforholdId": {
+          "abakusReferanse": "f12bcc10-584a-4e0d-9849-24b4e42c5d59",
+          "eksternReferanseSystem": "AAREGISTERET",
+          "eksternReferanse": "975577414001169208"
+        },
+        "aktivitetsAvtaler": [ {
+          "periode": {
+            "tom": "2018-06-30",
+            "fom": "2011-09-01"
+          },
+          "stillingsprosent": 0
+        }, {
+          "sistLønnsendring": "2016-05-01",
+          "periode": {
+            "tom": "2017-12-31",
+            "fom": "2017-01-01"
+          },
+          "stillingsprosent": 50
+        }, {
+          "sistLønnsendring": "2016-05-01",
+          "periode": {
+            "tom": "9999-12-31",
+            "fom": "2018-01-01"
+          },
+          "stillingsprosent": 50
+        } ],
+        "permisjoner": [ ]
+      }, {
+        "arbeidType": "ORDINÆRT_ARBEIDSFORHOLD",
+        "arbeidsgiver": {
+          "identType": "ORGNUMMER",
+          "ident": "974595060"
+        },
+        "arbeidsforholdId": {
+          "abakusReferanse": "05290652-4a6a-4f94-9491-7eb61138df7e",
+          "eksternReferanseSystem": "AAREGISTERET",
+          "eksternReferanse": "V974595060R89887S25107962L0002"
+        },
+        "aktivitetsAvtaler": [ {
+          "sistLønnsendring": "2017-08-01",
+          "periode": {
+            "tom": "9999-12-31",
+            "fom": "2017-06-01"
+          },
+          "stillingsprosent": 40
+        }, {
+          "periode": {
+            "tom": "2018-07-31",
+            "fom": "2017-08-01"
+          },
+          "stillingsprosent": 0
+        } ],
+        "permisjoner": [ ]
+      } ],
+      "person": {
+        "identType": "AKTØRID",
+        "ident": "1000047286886"
       }
     } ],
-    "overstyringer" : [ ]
+    "ytelser": [ {
+      "person": {
+        "identType": "AKTØRID",
+        "ident": "1000016519934"
+      },
+      "ytelser": [ ]
+    }, {
+      "person": {
+        "identType": "AKTØRID",
+        "ident": "1000047286886"
+      },
+      "ytelser": [ ]
+    } ],
+    "opprettetTidspunkt": "2019-02-11T09:39:32.555Z",
+    "eksternReferanse": "8a6bc441-d26e-1f94-e053-2880340a2b28"
+  },
+  "koblingReferanse": "88487f4b-f4df-2133-e053-2880340a6560",
+  "arbeidsforholdInformasjon": {
+    "referanser": [ {
+      "arbeidsgiver": {
+        "identType": "ORGNUMMER",
+        "ident": "974610752"
+      },
+      "arbeidsforholdId": {
+        "abakusReferanse": "400b5897-b5e9-468d-99b2-c94f57bbddc8",
+        "eksternReferanseSystem": "AAREGISTERET",
+        "eksternReferanse": "0001-0001-20100801"
+      }
+    }, {
+      "arbeidsgiver": {
+        "identType": "ORGNUMMER",
+        "ident": "973857622"
+      },
+      "arbeidsforholdId": {
+        "abakusReferanse": "4fcb64d4-7733-4a19-b9a7-95ea128f2255",
+        "eksternReferanseSystem": "AAREGISTERET",
+        "eksternReferanse": "0001-0001-20180801"
+      }
+    }, {
+      "arbeidsgiver": {
+        "identType": "ORGNUMMER",
+        "ident": "974595060"
+      },
+      "arbeidsforholdId": {
+        "abakusReferanse": "05290652-4a6a-4f94-9491-7eb61138df7e",
+        "eksternReferanseSystem": "AAREGISTERET",
+        "eksternReferanse": "V974595060R89887S25107962L0002"
+      }
+    }, {
+      "arbeidsgiver": {
+        "identType": "ORGNUMMER",
+        "ident": "981598482"
+      },
+      "arbeidsforholdId": {
+        "abakusReferanse": "f12bcc10-584a-4e0d-9849-24b4e42c5d59",
+        "eksternReferanseSystem": "AAREGISTERET",
+        "eksternReferanse": "975577414001169208"
+      }
+    } ],
+    "overstyringer": [ ]
   }
 }

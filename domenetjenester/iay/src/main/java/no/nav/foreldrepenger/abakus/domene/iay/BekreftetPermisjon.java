@@ -1,15 +1,13 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.time.LocalDate;
-import java.util.Objects;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
-
+import java.time.LocalDate;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.kodeverk.BekreftetPermisjonStatus;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.jpa.BekreftetPermisjonStatusKodeverdiConverter;
@@ -22,7 +20,10 @@ public class BekreftetPermisjon {
     private BekreftetPermisjonStatus status = BekreftetPermisjonStatus.UDEFINERT;
 
     @Embedded
-    @AttributeOverrides({@AttributeOverride(name = "fomDato", column = @Column(name = "bekreftet_permisjon_fom")), @AttributeOverride(name = "tomDato", column = @Column(name = "bekreftet_permisjon_tom"))})
+    @AttributeOverrides({
+        @AttributeOverride(name = "fomDato", column = @Column(name = "bekreftet_permisjon_fom")),
+        @AttributeOverride(name = "tomDato", column = @Column(name = "bekreftet_permisjon_tom"))
+    })
     private IntervallEntitet periode;
 
     public BekreftetPermisjon() {
@@ -68,5 +69,4 @@ public class BekreftetPermisjon {
     public String toString() {
         return getClass().getSimpleName() + "<" + "periode=" + periode + ", status=" + status + '>';
     }
-
 }

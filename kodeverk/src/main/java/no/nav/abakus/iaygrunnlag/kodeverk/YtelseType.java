@@ -1,56 +1,44 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-@JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
+@JsonAutoDetect(
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE,
+        fieldVisibility = Visibility.ANY)
 public enum YtelseType implements Kodeverdi {
 
-    /**
-     * Folketrygdloven K4 ytelser.
-     */
+    /** Folketrygdloven K4 ytelser. */
     DAGPENGER("DAG", "Dagpenger"),
 
-    /**
-     * Ny ytelse for kompenasasjon for koronatiltak for Selvstendig næringsdrivende og Frilansere (Anmodning 10).
-     */
+    /** Ny ytelse for kompenasasjon for koronatiltak for Selvstendig næringsdrivende og Frilansere (Anmodning 10). */
     FRISINN("FRISINN", "FRISINN"),
 
-    /**
-     * Folketrygdloven K8 ytelser.
-     */
+    /** Folketrygdloven K8 ytelser. */
     SYKEPENGER("SP", "Sykepenger"),
 
-    /**
-     * Folketrygdloven K9 ytelser.
-     */
+    /** Folketrygdloven K9 ytelser. */
     PLEIEPENGER_SYKT_BARN("PSB", "Pleiepenger sykt barn"),
     PLEIEPENGER_NÆRSTÅENDE("PPN", "Pleiepenger nærstående"),
     OMSORGSPENGER("OMP", "Omsorgspenger"),
     OPPLÆRINGSPENGER("OLP", "Opplæringspenger"),
 
-    /**
-     * Folketrygdloven K11 ytelser.
-     */
+    /** Folketrygdloven K11 ytelser. */
     ARBEIDSAVKLARINGSPENGER("AAP", "Arbeidsavklaringspenger"),
 
-    /**
-     * Folketrygdloven K14 ytelser.
-     */
+    /** Folketrygdloven K14 ytelser. */
     ENGANGSTØNAD("ES", "Engangsstønad"),
     FORELDREPENGER("FP", "Foreldrepenger"),
     SVANGERSKAPSPENGER("SVP", "Svangerskapspenger"),
 
-    /**
-     * Folketrygdloven K15 ytelser.
-     */
+    /** Folketrygdloven K15 ytelser. */
     ENSLIG_FORSØRGER("EF", "Enslig forsørger"),
 
     UDEFINERT("-", "Ikke definert"),
@@ -80,7 +68,8 @@ public enum YtelseType implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent YtelseType: " + kode));
+        return Optional.ofNullable(KODER.get(kode))
+                .orElseThrow(() -> new IllegalArgumentException("Ukjent YtelseType: " + kode));
     }
 
     public static Map<String, YtelseType> kodeMap() {
@@ -88,8 +77,14 @@ public enum YtelseType implements Kodeverdi {
     }
 
     public static List<YtelseType> abakusYtelser() {
-        return List.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER, YtelseType.OMSORGSPENGER, YtelseType.PLEIEPENGER_SYKT_BARN,
-            YtelseType.PLEIEPENGER_NÆRSTÅENDE, YtelseType.OPPLÆRINGSPENGER, YtelseType.FRISINN);
+        return List.of(
+                YtelseType.FORELDREPENGER,
+                YtelseType.SVANGERSKAPSPENGER,
+                YtelseType.OMSORGSPENGER,
+                YtelseType.PLEIEPENGER_SYKT_BARN,
+                YtelseType.PLEIEPENGER_NÆRSTÅENDE,
+                YtelseType.OPPLÆRINGSPENGER,
+                YtelseType.FRISINN);
     }
 
     @Override
@@ -100,5 +95,4 @@ public enum YtelseType implements Kodeverdi {
     public String getNavn() {
         return navn;
     }
-
 }

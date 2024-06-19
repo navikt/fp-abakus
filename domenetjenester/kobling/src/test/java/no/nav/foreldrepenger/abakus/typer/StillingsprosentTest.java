@@ -3,9 +3,7 @@ package no.nav.foreldrepenger.abakus.typer;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
-
 import org.junit.jupiter.api.Test;
-
 
 class StillingsprosentTest {
 

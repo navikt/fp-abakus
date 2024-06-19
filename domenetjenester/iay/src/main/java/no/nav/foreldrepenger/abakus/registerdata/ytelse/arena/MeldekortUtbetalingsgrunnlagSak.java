@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
@@ -27,8 +26,7 @@ public class MeldekortUtbetalingsgrunnlagSak {
     private LocalDate vedtaksPeriodeTom;
     private Beløp vedtaksDagsats;
 
-    private MeldekortUtbetalingsgrunnlagSak() {
-    }
+    private MeldekortUtbetalingsgrunnlagSak() {}
 
     public YtelseType getYtelseType() {
         return type;
@@ -87,14 +85,22 @@ public class MeldekortUtbetalingsgrunnlagSak {
             return false;
         }
         MeldekortUtbetalingsgrunnlagSak that = (MeldekortUtbetalingsgrunnlagSak) o;
-        return erLikeMeldekort(meldekortene, that.meldekortene) && type == that.type && tilstand == that.tilstand && kilde == that.kilde
-            && Objects.equals(saksnummer, that.saksnummer) && Objects.equals(sakStatus, that.sakStatus) && Objects.equals(vedtakStatus,
-            that.vedtakStatus) && Objects.equals(kravMottattDato, that.kravMottattDato) && Objects.equals(vedtattDato, that.vedtattDato)
-            && Objects.equals(vedtaksPeriodeFom, that.vedtaksPeriodeFom) && Objects.equals(vedtaksPeriodeTom, that.vedtaksPeriodeTom)
-            && Objects.equals(vedtaksDagsats, that.vedtaksDagsats);
+        return erLikeMeldekort(meldekortene, that.meldekortene)
+                && type == that.type
+                && tilstand == that.tilstand
+                && kilde == that.kilde
+                && Objects.equals(saksnummer, that.saksnummer)
+                && Objects.equals(sakStatus, that.sakStatus)
+                && Objects.equals(vedtakStatus, that.vedtakStatus)
+                && Objects.equals(kravMottattDato, that.kravMottattDato)
+                && Objects.equals(vedtattDato, that.vedtattDato)
+                && Objects.equals(vedtaksPeriodeFom, that.vedtaksPeriodeFom)
+                && Objects.equals(vedtaksPeriodeTom, that.vedtaksPeriodeTom)
+                && Objects.equals(vedtaksDagsats, that.vedtaksDagsats);
     }
 
-    private boolean erLikeMeldekort(List<MeldekortUtbetalingsgrunnlagMeldekort> l1, List<MeldekortUtbetalingsgrunnlagMeldekort> l2) {
+    private boolean erLikeMeldekort(
+            List<MeldekortUtbetalingsgrunnlagMeldekort> l1, List<MeldekortUtbetalingsgrunnlagMeldekort> l2) {
         if (l1 == null && l2 == null) {
             return true;
         }
@@ -106,16 +112,30 @@ public class MeldekortUtbetalingsgrunnlagSak {
 
     @Override
     public int hashCode() {
-        return Objects.hash(meldekortene, type, tilstand, kilde, saksnummer, sakStatus, vedtakStatus, kravMottattDato, vedtattDato, vedtaksPeriodeFom,
-            vedtaksPeriodeTom, vedtaksDagsats);
+        return Objects.hash(
+                meldekortene,
+                type,
+                tilstand,
+                kilde,
+                saksnummer,
+                sakStatus,
+                vedtakStatus,
+                kravMottattDato,
+                vedtattDato,
+                vedtaksPeriodeFom,
+                vedtaksPeriodeTom,
+                vedtaksDagsats);
     }
 
     @Override
     public String toString() {
-        return "MeldekortUtbetalingsgrunnlagSak{" + "meldekortene=" + meldekortene + ", type=" + type + ", tilstand=" + tilstand + ", kilde=" + kilde
-            + ", saksnummer=" + saksnummer + ", sakStatus='" + sakStatus + '\'' + ", vedtakStatus='" + vedtakStatus + '\'' + ", kravMottattDato="
-            + kravMottattDato + ", vedtattDato=" + vedtattDato + ", vedtaksPeriodeFom=" + vedtaksPeriodeFom + ", vedtaksPeriodeTom="
-            + vedtaksPeriodeTom + ", vedtaksDagsats=" + vedtaksDagsats + '}';
+        return "MeldekortUtbetalingsgrunnlagSak{" + "meldekortene=" + meldekortene + ", type=" + type + ", tilstand="
+                + tilstand + ", kilde=" + kilde
+                + ", saksnummer=" + saksnummer + ", sakStatus='" + sakStatus + '\'' + ", vedtakStatus='" + vedtakStatus
+                + '\'' + ", kravMottattDato="
+                + kravMottattDato + ", vedtattDato=" + vedtattDato + ", vedtaksPeriodeFom=" + vedtaksPeriodeFom
+                + ", vedtaksPeriodeTom="
+                + vedtaksPeriodeTom + ", vedtaksDagsats=" + vedtaksDagsats + '}';
     }
 
     public static class MeldekortSakBuilder {
@@ -195,10 +215,8 @@ public class MeldekortUtbetalingsgrunnlagSak {
             return this;
         }
 
-
         public MeldekortUtbetalingsgrunnlagSak build() {
             return this.sak;
         }
-
     }
 }

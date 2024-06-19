@@ -1,9 +1,8 @@
 package no.nav.foreldrepenger.abakus.app.diagnostikk;
 
+import jakarta.persistence.*;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-
-import jakarta.persistence.*;
 
 @Entity(name = "DiagnostikkLogg")
 @Table(name = "DIAGNOSTIKK_LOGG")

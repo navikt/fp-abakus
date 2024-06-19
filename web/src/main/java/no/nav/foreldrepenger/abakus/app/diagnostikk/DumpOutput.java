@@ -22,6 +22,7 @@ public class DumpOutput {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" + relativePath + ", size=" + (content == null ? "(null)" : content.length()) + ">";
+        return getClass().getSimpleName() + "<" + relativePath + ", size="
+                + (content == null ? "(null)" : content.length()) + ">";
     }
 }

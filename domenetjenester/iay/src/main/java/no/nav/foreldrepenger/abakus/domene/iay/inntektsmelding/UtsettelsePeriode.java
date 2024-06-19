@@ -1,8 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding;
 
-import java.time.LocalDate;
-import java.util.Objects;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -14,7 +11,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
+import java.time.LocalDate;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtsettelseÅrsakType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -58,8 +56,7 @@ public class UtsettelsePeriode extends BaseEntitet implements IndexKey {
         this.periode = IntervallEntitet.fraOgMedTilOgMed(fom, tom);
     }
 
-    UtsettelsePeriode() {
-    }
+    UtsettelsePeriode() {}
 
     UtsettelsePeriode(UtsettelsePeriode utsettelsePeriode) {
         this.periode = utsettelsePeriode.getPeriode();
