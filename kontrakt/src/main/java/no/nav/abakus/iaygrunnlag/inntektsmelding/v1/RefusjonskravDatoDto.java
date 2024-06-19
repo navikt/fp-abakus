@@ -5,18 +5,20 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import no.nav.abakus.iaygrunnlag.Aktør;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDate;
 import java.util.Objects;
+import no.nav.abakus.iaygrunnlag.Aktør;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class RefusjonskravDatoDto {
 
     @JsonProperty(value = "arbeidsgiver", required = true)
@@ -39,11 +41,11 @@ public class RefusjonskravDatoDto {
     @Valid
     private LocalDate førsteInnsendingAvRefusjonskrav;
 
-
-    public RefusjonskravDatoDto(Aktør arbeidsgiver,
-                                LocalDate førsteInnsendingAvRefusjonskrav,
-                                LocalDate førsteDagMedRefusjonskrav,
-                                boolean harRefusjonFraStart) {
+    public RefusjonskravDatoDto(
+            Aktør arbeidsgiver,
+            LocalDate førsteInnsendingAvRefusjonskrav,
+            LocalDate førsteDagMedRefusjonskrav,
+            boolean harRefusjonFraStart) {
         Objects.requireNonNull(arbeidsgiver, "arbeidsgiver");
         Objects.requireNonNull(arbeidsgiver, "førsteInnsendingAvRefusjonskrav");
         Objects.requireNonNull(arbeidsgiver, "førsteDagMedRefusjonskrav");
@@ -75,7 +77,8 @@ public class RefusjonskravDatoDto {
 
     @Override
     public String toString() {
-        return "RefusjonskravDatoDto{" + "arbeidsgiver=" + arbeidsgiver + ", førsteDagMedRefusjonskrav=" + førsteDagMedRefusjonskrav
-            + ", harRefusjonFraStart=" + harRefusjonFraStart + ", førsteInnsendingAvRefusjonskrav=" + førsteInnsendingAvRefusjonskrav + '}';
+        return "RefusjonskravDatoDto{" + "arbeidsgiver=" + arbeidsgiver + ", førsteDagMedRefusjonskrav="
+                + førsteDagMedRefusjonskrav + ", harRefusjonFraStart=" + harRefusjonFraStart
+                + ", førsteInnsendingAvRefusjonskrav=" + førsteInnsendingAvRefusjonskrav + '}';
     }
 }

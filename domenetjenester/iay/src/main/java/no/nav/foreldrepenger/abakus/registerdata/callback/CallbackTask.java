@@ -1,9 +1,8 @@
 package no.nav.foreldrepenger.abakus.registerdata.callback;
 
-import java.util.UUID;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.util.UUID;
 import no.nav.abakus.callback.registerdata.CallbackDto;
 import no.nav.abakus.callback.registerdata.Grunnlag;
 import no.nav.abakus.callback.registerdata.ReferanseDto;
@@ -25,11 +24,13 @@ public class CallbackTask implements ProsessTaskHandler {
     private KoblingTjeneste koblingTjeneste;
     private InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste;
 
-    CallbackTask() {
-    }
+    CallbackTask() {}
 
     @Inject
-    public CallbackTask(FpsakKlient fpsakKlient, KoblingTjeneste koblingTjeneste, InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste) {
+    public CallbackTask(
+            FpsakKlient fpsakKlient,
+            KoblingTjeneste koblingTjeneste,
+            InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste) {
         this.fpsakKlient = fpsakKlient;
         this.koblingTjeneste = koblingTjeneste;
         this.inntektArbeidYtelseTjeneste = inntektArbeidYtelseTjeneste;
@@ -79,5 +80,4 @@ public class CallbackTask implements ProsessTaskHandler {
             callbackDto.setOpprettetTidspunkt(data.getSistKjørt());
         }
     }
-
 }

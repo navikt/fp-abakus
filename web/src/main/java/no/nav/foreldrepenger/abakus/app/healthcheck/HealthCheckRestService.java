@@ -3,8 +3,7 @@ package no.nav.foreldrepenger.abakus.app.healthcheck;
 import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
 import static jakarta.ws.rs.core.Response.Status.SERVICE_UNAVAILABLE;
 
-import java.util.List;
-
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
@@ -14,14 +13,12 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.CacheControl;
 import jakarta.ws.rs.core.Response;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import io.swagger.v3.oas.annotations.Operation;
+import java.util.List;
 import no.nav.foreldrepenger.abakus.app.tjenester.ApplicationServiceStarter;
 import no.nav.vedtak.log.metrics.LivenessAware;
 import no.nav.vedtak.log.metrics.ReadinessAware;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Path("/health")
 @Produces(TEXT_PLAIN)
@@ -41,13 +38,15 @@ public class HealthCheckRestService {
     }
 
     @Inject
-    public HealthCheckRestService(ApplicationServiceStarter starter,
-                                  @Any Instance<LivenessAware> livenessAware,
-                                  @Any Instance<ReadinessAware> readinessAware) {
+    public HealthCheckRestService(
+            ApplicationServiceStarter starter,
+            @Any Instance<LivenessAware> livenessAware,
+            @Any Instance<ReadinessAware> readinessAware) {
         this(starter, livenessAware.stream().toList(), readinessAware.stream().toList());
     }
 
-    public HealthCheckRestService(ApplicationServiceStarter starter, List<LivenessAware> live, List<ReadinessAware> ready) {
+    public HealthCheckRestService(
+            ApplicationServiceStarter starter, List<LivenessAware> live, List<ReadinessAware> ready) {
         this.starter = starter;
         this.live = live;
         this.ready = ready;

@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.vedtak.domene;
 
 import java.math.BigDecimal;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
@@ -50,7 +49,6 @@ public class VedtakYtelseAndelBuilder {
         return this;
     }
 
-
     public VedtakYtelseAndelBuilder medInntektskategori(Inntektskategori inntektskategori) {
         if (inntektskategori != null) {
             this.vedtakYtelseAndel.setInntektskategori(inntektskategori);
@@ -61,5 +59,4 @@ public class VedtakYtelseAndelBuilder {
     public VedtakYtelseAndel build() {
         return vedtakYtelseAndel;
     }
-
 }

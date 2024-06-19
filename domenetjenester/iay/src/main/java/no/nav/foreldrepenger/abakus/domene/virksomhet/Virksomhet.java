@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.domene.virksomhet;
 
 import java.time.LocalDate;
 import java.util.Objects;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.OrganisasjonType;
 
 public class Virksomhet {
@@ -14,8 +13,7 @@ public class Virksomhet {
     private LocalDate oppstart;
     private OrganisasjonType organisasjonType = OrganisasjonType.UDEFINERT;
 
-    public Virksomhet() {
-    }
+    public Virksomhet() {}
 
     public String getOrgnr() {
         return orgnr;
@@ -41,7 +39,6 @@ public class Virksomhet {
         return organisasjonType;
     }
 
-
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {
@@ -64,11 +61,9 @@ public class Virksomhet {
     }
 
     public static class Builder {
-        final private Virksomhet mal;
+        private final Virksomhet mal;
 
-        /**
-         * For oppretting av
-         */
+        /** For oppretting av */
         public Builder() {
             this.mal = new Virksomhet();
         }

@@ -1,27 +1,24 @@
 package no.nav.foreldrepenger.abakus.app.diagnostikk;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
 import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
-import org.jboss.weld.context.RequestContext;
-import org.jboss.weld.context.unbound.UnboundLiteral;
-
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import no.nav.foreldrepenger.abakus.app.diagnostikk.dumps.RegisterInnhentingDump;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.vedtak.log.mdc.MdcExtendedLogContext;
 import no.nav.vedtak.sikkerhet.kontekst.BasisKontekst;
 import no.nav.vedtak.sikkerhet.kontekst.KontekstHolder;
+import org.jboss.weld.context.RequestContext;
+import org.jboss.weld.context.unbound.UnboundLiteral;
 
 /**
- * Kjører et kall på en egen tråd med Kontekst som en prosesstask. Kan benyttes til å kalle med system kontekst videre internt.
- * NB: ikke bruk som convenience utenfor dump.
+ * Kjører et kall på en egen tråd med Kontekst som en prosesstask. Kan benyttes til å kalle med system kontekst videre
+ * internt. NB: ikke bruk som convenience utenfor dump.
  */
 @Dependent
 public class ContainerContextRunner {
@@ -49,7 +46,9 @@ public class ContainerContextRunner {
 
         return EXECUTOR.submit((() -> {
             T result;
-            var requestContext = CDI.current().select(RequestContext.class, UnboundLiteral.INSTANCE).get();
+            var requestContext = CDI.current()
+                    .select(RequestContext.class, UnboundLiteral.INSTANCE)
+                    .get();
             requestContext.activate();
             var runner = ContainerContextRunner.createRunner();
             try {
@@ -62,7 +61,6 @@ public class ContainerContextRunner {
             }
             return result;
         }));
-
     }
 
     @Transactional
@@ -72,5 +70,4 @@ public class ContainerContextRunner {
         KontekstHolder.fjernKontekst();
         return result;
     }
-
 }

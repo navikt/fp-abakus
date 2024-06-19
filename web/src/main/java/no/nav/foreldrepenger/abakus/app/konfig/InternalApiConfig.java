@@ -1,9 +1,8 @@
 package no.nav.foreldrepenger.abakus.app.konfig;
 
-import java.util.Set;
-
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
+import java.util.Set;
 import no.nav.foreldrepenger.abakus.app.healthcheck.HealthCheckRestService;
 import no.nav.foreldrepenger.abakus.app.metrics.PrometheusRestService;
 
@@ -20,5 +19,4 @@ public class InternalApiConfig extends Application {
     public Set<Class<?>> getClasses() {
         return Set.of(PrometheusRestService.class, HealthCheckRestService.class);
     }
-
 }

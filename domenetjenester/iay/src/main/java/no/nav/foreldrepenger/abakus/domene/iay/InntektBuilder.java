@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.util.Optional;
 import java.util.Set;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 

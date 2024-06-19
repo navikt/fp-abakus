@@ -1,10 +1,5 @@
 package no.nav.foreldrepenger.abakus.lonnskomp.domene;
 
-import java.time.LocalDate;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -16,7 +11,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
+import java.time.LocalDate;
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Set;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -36,7 +34,7 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
 
     @ChangeTracked
     @Column(name = "sakid", nullable = false, updatable = false)
-    private String sakId;  // Eg en ULID
+    private String sakId; // Eg en ULID
 
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id")))
@@ -96,13 +94,17 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
         if (v1 == null || v2 == null) {
             return false;
         }
-        return Objects.equals(v1.aktørId, v2.aktørId) && Objects.equals(v1.orgNummer, v2.orgNummer) && Objects.equals(v1.periode, v2.periode)
-            && Objects.equals(v1.beløp, v2.beløp);
+        return Objects.equals(v1.aktørId, v2.aktørId)
+                && Objects.equals(v1.orgNummer, v2.orgNummer)
+                && Objects.equals(v1.periode, v2.periode)
+                && Objects.equals(v1.beløp, v2.beløp);
     }
 
     @Override
     public String getIndexKey() {
-        Object[] keyParts = {periode, aktørId, sakId,};
+        Object[] keyParts = {
+            periode, aktørId, sakId,
+        };
         return IndexKeyComposer.createKey(keyParts);
     }
 
@@ -181,7 +183,6 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
     public void leggTilAnvistPeriode(LønnskompensasjonAnvist anvist) {
         anvist.setVedtak(this);
         this.anvistePerioder.add(anvist);
-
     }
 
     @Override
@@ -193,9 +194,13 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
             return false;
         }
         LønnskompensasjonVedtak that = (LønnskompensasjonVedtak) o;
-        return Objects.equals(sakId, that.sakId) && Objects.equals(fnr, that.fnr) && Objects.equals(orgNummer, that.orgNummer) && Objects.equals(
-            periode, that.periode) && Objects.equals(beløp, that.beløp) && anvistePerioder.size() == that.anvistePerioder.size()
-            && anvistePerioder.containsAll(that.anvistePerioder);
+        return Objects.equals(sakId, that.sakId)
+                && Objects.equals(fnr, that.fnr)
+                && Objects.equals(orgNummer, that.orgNummer)
+                && Objects.equals(periode, that.periode)
+                && Objects.equals(beløp, that.beløp)
+                && anvistePerioder.size() == that.anvistePerioder.size()
+                && anvistePerioder.containsAll(that.anvistePerioder);
     }
 
     @Override
@@ -205,7 +210,7 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "LønnskompensasjonVedtak{" + "sakId='" + sakId + '\'' + ", orgNummer=" + orgNummer + ", forrigeVedtakDato=" + forrigeVedtakDato
-            + ", periode=" + periode + ", beløp=" + beløp + '}';
+        return "LønnskompensasjonVedtak{" + "sakId='" + sakId + '\'' + ", orgNummer=" + orgNummer
+                + ", forrigeVedtakDato=" + forrigeVedtakDato + ", periode=" + periode + ", beløp=" + beløp + '}';
     }
 }

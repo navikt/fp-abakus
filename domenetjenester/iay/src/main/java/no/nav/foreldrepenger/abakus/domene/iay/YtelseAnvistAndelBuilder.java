@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.math.BigDecimal;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
@@ -51,7 +50,6 @@ public class YtelseAnvistAndelBuilder {
         return this;
     }
 
-
     public YtelseAnvistAndelBuilder medInntektskategori(Inntektskategori inntektskategori) {
         if (inntektskategori != null) {
             this.ytelseAnvistAndel.setInntektskategori(inntektskategori);
@@ -62,5 +60,4 @@ public class YtelseAnvistAndelBuilder {
     public YtelseAnvistAndel build() {
         return ytelseAnvistAndel;
     }
-
 }

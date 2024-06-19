@@ -1,5 +1,9 @@
 package no.nav.foreldrepenger.abakus.app.diagnostikk.rapportering;
 
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.Stereotype;
+import jakarta.enterprise.util.AnnotationLiteral;
+import jakarta.inject.Qualifier;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -12,16 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
-
-import jakarta.enterprise.inject.Instance;
-import jakarta.enterprise.inject.Stereotype;
-import jakarta.enterprise.util.AnnotationLiteral;
-import jakarta.inject.Qualifier;
-
 import no.nav.foreldrepenger.abakus.app.diagnostikk.rapportering.RapportTypeRef.ContainerOfRapportTypeRef;
 
 /**
- * Marker type som implementerer interface {@link RapportGenerator} for å skille ulike implementasjoner av samme steg for ulike rapportTyper
+ * Marker type som implementerer interface {@link RapportGenerator} for å skille ulike implementasjoner av samme steg
+ * for ulike rapportTyper
  */
 @Repeatable(ContainerOfRapportTypeRef.class)
 @Qualifier
@@ -32,9 +31,7 @@ import no.nav.foreldrepenger.abakus.app.diagnostikk.rapportering.RapportTypeRef.
 @Documented
 public @interface RapportTypeRef {
 
-    /**
-     * Kode-verdi som skiller ulike implementasjoner for ulike rapport typer.
-     */
+    /** Kode-verdi som skiller ulike implementasjoner for ulike rapport typer. */
     RapportType value();
 
     /**
@@ -50,9 +47,7 @@ public @interface RapportTypeRef {
         RapportTypeRef[] value();
     }
 
-    /**
-     * AnnotationLiteral som kan brukes ved CDI søk.
-     */
+    /** AnnotationLiteral som kan brukes ved CDI søk. */
     public static class RapportTypeRefLiteral extends AnnotationLiteral<RapportTypeRef> implements RapportTypeRef {
 
         private RapportType navn;
@@ -68,12 +63,9 @@ public @interface RapportTypeRef {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-            if (!super.equals(o))
-                return false;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            if (!super.equals(o)) return false;
             var that = (RapportTypeRefLiteral) o;
             return navn == that.navn;
         }
@@ -86,8 +78,7 @@ public @interface RapportTypeRef {
 
     public static final class Lookup {
 
-        private Lookup() {
-        }
+        private Lookup() {}
 
         public static <I> List<Instance<I>> list(Class<I> cls, Instance<I> instances, RapportType rapportType) {
             Objects.requireNonNull(instances);

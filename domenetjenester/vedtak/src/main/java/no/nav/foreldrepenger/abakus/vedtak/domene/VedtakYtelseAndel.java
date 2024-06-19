@@ -1,8 +1,5 @@
 package no.nav.foreldrepenger.abakus.vedtak.domene;
 
-import java.util.Objects;
-import java.util.Optional;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -16,7 +13,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
+import java.util.Objects;
+import java.util.Optional;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -62,7 +60,6 @@ public class VedtakYtelseAndel extends BaseEntitet implements IndexKey {
     @Convert(converter = InntektskategoriKodeverdiConverter.class)
     @Column(name = "inntektskategori", nullable = false, updatable = false)
     private Inntektskategori inntektskategori = Inntektskategori.UDEFINERT;
-
 
     @Version
     @Column(name = "versjon", nullable = false)
@@ -139,8 +136,10 @@ public class VedtakYtelseAndel extends BaseEntitet implements IndexKey {
             return false;
         }
         VedtakYtelseAndel that = (VedtakYtelseAndel) o;
-        return ytelseAnvist.equals(that.ytelseAnvist) && Objects.equals(arbeidsgiver, that.arbeidsgiver) && dagsats.equals(that.dagsats)
-            && inntektskategori == that.inntektskategori;
+        return ytelseAnvist.equals(that.ytelseAnvist)
+                && Objects.equals(arbeidsgiver, that.arbeidsgiver)
+                && dagsats.equals(that.dagsats)
+                && inntektskategori == that.inntektskategori;
     }
 
     @Override
@@ -150,8 +149,9 @@ public class VedtakYtelseAndel extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "VedtakYtelseFordeling{" + "id=" + id + ", ytelseAnvist=" + ytelseAnvist + ", arbeidsgiver=" + arbeidsgiver + ", dagsats=" + dagsats
-            + ", inntektskategori=" + inntektskategori + ", versjon=" + versjon + '}';
+        return "VedtakYtelseFordeling{" + "id=" + id + ", ytelseAnvist=" + ytelseAnvist + ", arbeidsgiver="
+                + arbeidsgiver + ", dagsats=" + dagsats + ", inntektskategori=" + inntektskategori + ", versjon="
+                + versjon + '}';
     }
 
     @Override

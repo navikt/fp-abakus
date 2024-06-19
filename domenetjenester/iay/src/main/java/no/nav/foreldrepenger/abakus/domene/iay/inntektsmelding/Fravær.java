@@ -1,9 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding;
 
-import java.time.Duration;
-import java.time.LocalDate;
-import java.util.Objects;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -14,7 +10,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
+import java.time.Duration;
+import java.time.LocalDate;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -37,9 +35,7 @@ public class Fravær extends BaseEntitet implements IndexKey {
     @ChangeTracked
     private IntervallEntitet periode;
 
-    /**
-     * tid oppgittFravær per dag. Hvis ikke oppgitt antas hele dagen å telle med.
-     */
+    /** tid oppgittFravær per dag. Hvis ikke oppgitt antas hele dagen å telle med. */
     @ChangeTracked
     @Column(name = "varighet_per_dag", nullable = true)
     private Duration varighetPerDag;
@@ -103,6 +99,7 @@ public class Fravær extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "NaturalYtelseEntitet{" + "id=" + id + ", periode=" + periode + ", varighetPerDag=" + varighetPerDag + '}';
+        return "NaturalYtelseEntitet{" + "id=" + id + ", periode=" + periode + ", varighetPerDag=" + varighetPerDag
+                + '}';
     }
 }

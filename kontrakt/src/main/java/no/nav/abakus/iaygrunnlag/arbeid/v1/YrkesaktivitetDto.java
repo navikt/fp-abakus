@@ -1,27 +1,29 @@
 package no.nav.abakus.iaygrunnlag.arbeid.v1;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class YrkesaktivitetDto {
 
     @JsonProperty("arbeidsgiver")
@@ -45,7 +47,10 @@ public class YrkesaktivitetDto {
     private List<PermisjonDto> permisjoner;
 
     @JsonProperty("navnArbeidsgiverUtland")
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Yrkesaktivitet#navnArbeidsgiverUtland [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Pattern(
+            regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$",
+            message =
+                    "Yrkesaktivitet#navnArbeidsgiverUtland [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     @Valid
     private String navnArbeidsgiverUtland;
 
@@ -64,7 +69,8 @@ public class YrkesaktivitetDto {
 
     @AssertTrue(message = "Må ha minst en av aktivitetsAvtaler eller permisjoner")
     private boolean isOk() {
-        boolean ok = (aktivitetsAvtaler != null && !aktivitetsAvtaler.isEmpty()) || (permisjoner != null && !permisjoner.isEmpty());
+        boolean ok = (aktivitetsAvtaler != null && !aktivitetsAvtaler.isEmpty())
+                || (permisjoner != null && !permisjoner.isEmpty());
         return ok;
     }
 

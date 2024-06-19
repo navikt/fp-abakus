@@ -8,23 +8,22 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 public final class SigrunPgiFolketrygdenMapper {
 
-    public static Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> mapFraPgiResponseTilIntern(List<PgiFolketrygdenResponse> response) {
+    public static Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> mapFraPgiResponseTilIntern(
+            List<PgiFolketrygdenResponse> response) {
         Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> resultat = new LinkedHashMap<>();
-        response.stream()
-            .collect(Collectors.groupingBy(PgiFolketrygdenResponse::inntektsaar))
-            .values().stream()
-            .map(SigrunPgiFolketrygdenMapper::mapPgiFolketrygden)
-            .forEach(resultat::putAll);
+        response.stream().collect(Collectors.groupingBy(PgiFolketrygdenResponse::inntektsaar)).values().stream()
+                .map(SigrunPgiFolketrygdenMapper::mapPgiFolketrygden)
+                .forEach(resultat::putAll);
         return resultat;
     }
 
-    private static Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> mapPgiFolketrygden(List<PgiFolketrygdenResponse> response) {
+    private static Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> mapPgiFolketrygden(
+            List<PgiFolketrygdenResponse> response) {
         if (response == null || response.isEmpty()) {
             return Map.of();
         }
@@ -32,13 +31,24 @@ public final class SigrunPgiFolketrygdenMapper {
         for (var responselement : response) {
             for (var pgi : responselement.safePensjonsgivendeInntekt()) {
                 leggTilHvisVerdi(pgi.pensjonsgivendeInntektAvLoennsinntekt(), InntektspostType.LØNN, inntektBeløp);
-                leggTilHvisVerdi(pgi.pensjonsgivendeInntektAvLoennsinntektBarePensjonsdel(), InntektspostType.LØNN, inntektBeløp);
-                leggTilHvisVerdi(pgi.pensjonsgivendeInntektAvNaeringsinntekt(), InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE, inntektBeløp);
-                leggTilHvisVerdi(pgi.pensjonsgivendeInntektAvNaeringsinntektFraFiskeFangstEllerFamiliebarnehage(), InntektspostType.NÆRING_FISKE_FANGST_FAMBARNEHAGE, inntektBeløp);
+                leggTilHvisVerdi(
+                        pgi.pensjonsgivendeInntektAvLoennsinntektBarePensjonsdel(),
+                        InntektspostType.LØNN,
+                        inntektBeløp);
+                leggTilHvisVerdi(
+                        pgi.pensjonsgivendeInntektAvNaeringsinntekt(),
+                        InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE,
+                        inntektBeløp);
+                leggTilHvisVerdi(
+                        pgi.pensjonsgivendeInntektAvNaeringsinntektFraFiskeFangstEllerFamiliebarnehage(),
+                        InntektspostType.NÆRING_FISKE_FANGST_FAMBARNEHAGE,
+                        inntektBeløp);
             }
         }
         var inntektBeløpMap = inntektBeløp.stream()
-            .collect(Collectors.groupingBy(InntektBeløp::inntektspostType, Collectors.reducing(BigDecimal.ZERO, InntektBeløp::beløp, BigDecimal::add)));
+                .collect(Collectors.groupingBy(
+                        InntektBeløp::inntektspostType,
+                        Collectors.reducing(BigDecimal.ZERO, InntektBeløp::beløp, BigDecimal::add)));
         var år = Year.of(response.get(0).inntektsaar());
         var førsteDagIÅret = LocalDate.now().with(år).withDayOfYear(1);
         var sisteDagIÅret = LocalDate.now().with(år).withDayOfYear(år.length());
@@ -52,6 +62,5 @@ public final class SigrunPgiFolketrygdenMapper {
         }
     }
 
-    private record InntektBeløp(InntektspostType inntektspostType, BigDecimal beløp) { }
-
+    private record InntektBeløp(InntektspostType inntektspostType, BigDecimal beløp) {}
 }

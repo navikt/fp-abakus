@@ -6,882 +6,784 @@
     },
     "grunnlagTidspunkt": "2019-01-03T14:04:42.77Z",
     "grunnlagReferanse": "8abb7314-a936-0abc-e053-2880340a57a0",
-    "koblingReferanse": "88487f4b-f876-2133-e053-2880340a6560",
     "registerGrunnlag": {
-      "opprettetTidspunkt": "2019-01-03T13:11:04.528Z",
-      "eksternReferanse": "8a6bc440-eb04-1f94-e053-2880340a2b28",
-      "arbeid": [
-        {
-          "person": {
-            "identType": "AKTØRID",
-            "ident": "1000026107933"
-          },
-          "yrkesaktiviteter": [
-            {
-              "arbeidsgiver": {
-                "identType": "ORGNUMMER",
-                "ident": "975270815"
-              },
-              "arbeidsforholdId": {
-                "abakusReferanse": "496c923b-e8d0-4ae4-bda9-c9c34f3fc6a3",
-                "eksternReferanse": "V975270815R512846S201L0001",
-                "eksternReferanseSystem": {
-                  "kodeverk": "FAGSYSTEM",
-                  "kode": "AAREGISTERET"
-                }
-              },
-              "arbeidType": {
-                "kodeverk": "ARBEID_TYPE",
-                "kode": "ORDINÆRT_ARBEIDSFORHOLD"
-              },
-              "aktivitetsAvtaler": [
-                {
-                  "periode": {
-                    "fom": "2017-07-01",
-                    "tom": "9999-12-31"
-                  },
-                  "stillingsprosent": 0.00,
-                  "sistLønnsendring": "2017-07-01"
-                },
-                {
-                  "periode": {
-                    "fom": "2017-05-01",
-                    "tom": "2018-03-31"
-                  },
-                  "stillingsprosent": 0.00
-                }
-              ],
-              "permisjoner": []
-            },
-            {
-              "arbeidsgiver": {
-                "identType": "ORGNUMMER",
-                "ident": "989644017"
-              },
-              "arbeidsforholdId": {
-                "abakusReferanse": "e2b8c890-0416-4bc2-a791-36d0d32c0ee6",
-                "eksternReferanse": "974975587592000015673",
-                "eksternReferanseSystem": {
-                  "kodeverk": "FAGSYSTEM",
-                  "kode": "AAREGISTERET"
-                }
-              },
-              "arbeidType": {
-                "kodeverk": "ARBEID_TYPE",
-                "kode": "FRILANSER_OPPDRAGSTAKER"
-              },
-              "aktivitetsAvtaler": [
-                {
-                  "periode": {
-                    "fom": "2017-10-01",
-                    "tom": "9999-12-31"
-                  }
-                }
-              ],
-              "permisjoner": []
-            },
-            {
-              "arbeidsgiver": {
-                "identType": "ORGNUMMER",
-                "ident": "975587592"
-              },
-              "arbeidsforholdId": {
-                "abakusReferanse": "b4aa73f8-bed1-4918-8f5e-bebaf3c24ef9",
-                "eksternReferanse": "143975587592000015858",
-                "eksternReferanseSystem": {
-                  "kodeverk": "FAGSYSTEM",
-                  "kode": "AAREGISTERET"
-                }
-              },
-              "arbeidType": {
-                "kodeverk": "ARBEID_TYPE",
-                "kode": "FRILANSER_OPPDRAGSTAKER"
-              },
-              "aktivitetsAvtaler": [
-                {
-                  "periode": {
-                    "fom": "2016-09-01",
-                    "tom": "2017-09-30"
-                  }
-                }
-              ],
-              "permisjoner": []
-            }
-          ]
+      "inntekter": [ {
+        "person": {
+          "identType": "AKTØRID",
+          "ident": "1000098325347"
         },
-        {
-          "person": {
-            "identType": "AKTØRID",
-            "ident": "1000098325347"
+        "utbetalinger": [ {
+          "inntektsKilde": {
+            "kodeverk": "INNTEKTS_KILDE",
+            "kode": "INNTEKT_OPPTJENING"
           },
-          "yrkesaktiviteter": [
-            {
-              "arbeidsgiver": {
-                "identType": "ORGNUMMER",
-                "ident": "971715723"
-              },
-              "arbeidsforholdId": {
-                "abakusReferanse": "dfe43528-b517-408d-8d3b-a8e97259da40",
-                "eksternReferanse": "900935721652000223420",
-                "eksternReferanseSystem": {
-                  "kodeverk": "FAGSYSTEM",
-                  "kode": "AAREGISTERET"
-                }
-              },
-              "arbeidType": {
-                "kodeverk": "ARBEID_TYPE",
-                "kode": "ORDINÆRT_ARBEIDSFORHOLD"
-              },
-              "aktivitetsAvtaler": [
-                {
-                  "periode": {
-                    "fom": "2018-01-01",
-                    "tom": "2018-04-30"
-                  },
-                  "stillingsprosent": 100.00,
-                  "sistLønnsendring": "2017-08-01"
-                },
-                {
-                  "periode": {
-                    "fom": "2014-11-17",
-                    "tom": "9999-12-31"
-                  },
-                  "stillingsprosent": 0.00
-                },
-                {
-                  "periode": {
-                    "fom": "2018-08-01",
-                    "tom": "9999-12-31"
-                  },
-                  "stillingsprosent": 100.00,
-                  "sistLønnsendring": "2018-08-01"
-                },
-                {
-                  "periode": {
-                    "fom": "2018-05-01",
-                    "tom": "2018-07-31"
-                  },
-                  "stillingsprosent": 100.00,
-                  "sistLønnsendring": "2018-04-01"
-                },
-                {
-                  "periode": {
-                    "fom": "2017-08-01",
-                    "tom": "2017-12-31"
-                  },
-                  "stillingsprosent": 100.00,
-                  "sistLønnsendring": "2017-08-01"
-                }
-              ],
-              "permisjoner": [
-                {
-                  "periode": {
-                    "fom": "2017-10-02",
-                    "tom": "2017-10-02"
-                  },
-                  "type": {
-                    "kodeverk": "PERMISJONSBESKRIVELSE_TYPE",
-                    "kode": "PERMISJON"
-                  },
-                  "prosentsats": 100.00
-                },
-                {
-                  "periode": {
-                    "fom": "2017-10-09",
-                    "tom": "2017-10-09"
-                  },
-                  "type": {
-                    "kodeverk": "PERMISJONSBESKRIVELSE_TYPE",
-                    "kode": "PERMISJON"
-                  },
-                  "prosentsats": 100.00
-                },
-                {
-                  "periode": {
-                    "fom": "2018-10-03",
-                    "tom": "2018-10-03"
-                  },
-                  "type": {
-                    "kodeverk": "PERMISJONSBESKRIVELSE_TYPE",
-                    "kode": "VELFERDSPERMISJON"
-                  },
-                  "prosentsats": 100.00
-                },
-                {
-                  "periode": {
-                    "fom": "2018-08-24",
-                    "tom": "2018-08-24"
-                  },
-                  "type": {
-                    "kodeverk": "PERMISJONSBESKRIVELSE_TYPE",
-                    "kode": "VELFERDSPERMISJON"
-                  },
-                  "prosentsats": 100.00
-                },
-                {
-                  "periode": {
-                    "fom": "2018-01-23",
-                    "tom": "2018-01-24"
-                  },
-                  "type": {
-                    "kodeverk": "PERMISJONSBESKRIVELSE_TYPE",
-                    "kode": "VELFERDSPERMISJON"
-                  },
-                  "prosentsats": 100.00
-                },
-                {
-                  "periode": {
-                    "fom": "2018-02-15",
-                    "tom": "2018-02-16"
-                  },
-                  "type": {
-                    "kodeverk": "PERMISJONSBESKRIVELSE_TYPE",
-                    "kode": "VELFERDSPERMISJON"
-                  },
-                  "prosentsats": 100.00
-                },
-                {
-                  "periode": {
-                    "fom": "2018-11-26",
-                    "tom": "2018-11-28"
-                  },
-                  "type": {
-                    "kodeverk": "PERMISJONSBESKRIVELSE_TYPE",
-                    "kode": "VELFERDSPERMISJON"
-                  },
-                  "prosentsats": 100.00
-                },
-                {
-                  "periode": {
-                    "fom": "2015-09-07",
-                    "tom": "2015-09-18"
-                  },
-                  "type": {
-                    "kodeverk": "PERMISJONSBESKRIVELSE_TYPE",
-                    "kode": "PERMISJON"
-                  },
-                  "prosentsats": 100.00
-                },
-                {
-                  "periode": {
-                    "fom": "2016-08-08",
-                    "tom": "2016-10-17"
-                  },
-                  "type": {
-                    "kodeverk": "PERMISJONSBESKRIVELSE_TYPE",
-                    "kode": "PERMISJON"
-                  },
-                  "prosentsats": 100.00
-                }
-              ]
-            }
-          ]
-        }
-      ],
-      "inntekter": [
-        {
-          "person": {
-            "identType": "AKTØRID",
-            "ident": "1000098325347"
+          "arbeidsgiver": {
+            "identType": "ORGNUMMER",
+            "ident": "971715723"
           },
-          "utbetalinger": [
-            {
-              "arbeidsgiver": {
-                "identType": "ORGNUMMER",
-                "ident": "971715723"
-              },
-              "inntektsKilde": {
-                "kodeverk": "INNTEKTS_KILDE",
-                "kode": "INNTEKT_OPPTJENING"
-              },
-              "utbetalingsPoster": [
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2018-11-01",
-                    "tom": "2018-11-30"
-                  },
-                  "beløp": 37136.80
-                },
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2018-10-01",
-                    "tom": "2018-10-31"
-                  },
-                  "beløp": 49730.20
-                },
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2017-11-01",
-                    "tom": "2017-11-30"
-                  },
-                  "beløp": 36482.10
-                },
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2017-08-01",
-                    "tom": "2017-08-31"
-                  },
-                  "beløp": 34636.50
-                },
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2018-09-01",
-                    "tom": "2018-09-30"
-                  },
-                  "beløp": 72091.00
-                },
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2018-12-01",
-                    "tom": "2018-12-31"
-                  },
-                  "beløp": 38461.25
-                },
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2017-09-01",
-                    "tom": "2017-09-30"
-                  },
-                  "beløp": 37071.10
-                },
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2017-10-01",
-                    "tom": "2017-10-31"
-                  },
-                  "beløp": 35179.20
-                },
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2017-12-01",
-                    "tom": "2017-12-31"
-                  },
-                  "beløp": 55100.00
-                },
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2018-04-01",
-                    "tom": "2018-04-30"
-                  },
-                  "beløp": 28798.50
-                },
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2018-01-01",
-                    "tom": "2018-01-31"
-                  },
-                  "beløp": 34173.00
-                },
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2018-03-01",
-                    "tom": "2018-03-31"
-                  },
-                  "beløp": 32412.00
-                },
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2018-05-01",
-                    "tom": "2018-05-31"
-                  },
-                  "beløp": 39156.40
-                },
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2018-02-01",
-                    "tom": "2018-02-28"
-                  },
-                  "beløp": 35689.50
-                },
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2018-08-01",
-                    "tom": "2018-08-31"
-                  },
-                  "beløp": 36671.00
-                },
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2018-06-01",
-                    "tom": "2018-06-30"
-                  },
-                  "beløp": 78326.96
-                },
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2018-07-01",
-                    "tom": "2018-07-31"
-                  },
-                  "beløp": 13765.60
-                }
-              ]
+          "utbetalingsPoster": [ {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 37136.8,
+            "periode": {
+              "tom": "2018-11-30",
+              "fom": "2018-11-01"
             }
-          ]
+          }, {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 49730.2,
+            "periode": {
+              "tom": "2018-10-31",
+              "fom": "2018-10-01"
+            }
+          }, {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 36482.1,
+            "periode": {
+              "tom": "2017-11-30",
+              "fom": "2017-11-01"
+            }
+          }, {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 34636.5,
+            "periode": {
+              "tom": "2017-08-31",
+              "fom": "2017-08-01"
+            }
+          }, {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 72091,
+            "periode": {
+              "tom": "2018-09-30",
+              "fom": "2018-09-01"
+            }
+          }, {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 38461.25,
+            "periode": {
+              "tom": "2018-12-31",
+              "fom": "2018-12-01"
+            }
+          }, {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 37071.1,
+            "periode": {
+              "tom": "2017-09-30",
+              "fom": "2017-09-01"
+            }
+          }, {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 35179.2,
+            "periode": {
+              "tom": "2017-10-31",
+              "fom": "2017-10-01"
+            }
+          }, {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 55100,
+            "periode": {
+              "tom": "2017-12-31",
+              "fom": "2017-12-01"
+            }
+          }, {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 28798.5,
+            "periode": {
+              "tom": "2018-04-30",
+              "fom": "2018-04-01"
+            }
+          }, {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 34173,
+            "periode": {
+              "tom": "2018-01-31",
+              "fom": "2018-01-01"
+            }
+          }, {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 32412,
+            "periode": {
+              "tom": "2018-03-31",
+              "fom": "2018-03-01"
+            }
+          }, {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 39156.4,
+            "periode": {
+              "tom": "2018-05-31",
+              "fom": "2018-05-01"
+            }
+          }, {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 35689.5,
+            "periode": {
+              "tom": "2018-02-28",
+              "fom": "2018-02-01"
+            }
+          }, {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 36671,
+            "periode": {
+              "tom": "2018-08-31",
+              "fom": "2018-08-01"
+            }
+          }, {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 78326.96,
+            "periode": {
+              "tom": "2018-06-30",
+              "fom": "2018-06-01"
+            }
+          }, {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 13765.6,
+            "periode": {
+              "tom": "2018-07-31",
+              "fom": "2018-07-01"
+            }
+          } ]
+        } ]
+      }, {
+        "person": {
+          "identType": "AKTØRID",
+          "ident": "1000026107933"
         },
-        {
-          "person": {
-            "identType": "AKTØRID",
-            "ident": "1000026107933"
+        "utbetalinger": [ {
+          "inntektsKilde": {
+            "kodeverk": "INNTEKTS_KILDE",
+            "kode": "INNTEKT_OPPTJENING"
           },
-          "utbetalinger": [
-            {
-              "arbeidsgiver": {
-                "identType": "ORGNUMMER",
-                "ident": "974571900"
-              },
-              "inntektsKilde": {
-                "kodeverk": "INNTEKTS_KILDE",
-                "kode": "INNTEKT_OPPTJENING"
-              },
-              "utbetalingsPoster": [
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2018-06-01",
-                    "tom": "2018-06-30"
-                  },
-                  "beløp": 429.21
-                }
-              ]
+          "arbeidsgiver": {
+            "identType": "ORGNUMMER",
+            "ident": "974571900"
+          },
+          "utbetalingsPoster": [ {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
             },
-            {
-              "arbeidsgiver": null,
-              "inntektsKilde": {
-                "kodeverk": "INNTEKTS_KILDE",
-                "kode": "INNTEKT_OPPTJENING"
-              },
-              "utbetalingsPoster": [
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "YTELSE"
-                  },
-                  "periode": {
-                    "fom": "2018-12-01",
-                    "tom": "2018-12-31"
-                  },
-                  "beløp": 7720.00,
-                  "ytelseType": {
-                    "kodeverk": "YTELSE_FRA_OFFENTLIGE",
-                    "kode": "AAP"
-                  }
-                }
-              ]
-            },
-            {
-              "arbeidsgiver": {
-                "identType": "ORGNUMMER",
-                "ident": "975270815"
-              },
-              "inntektsKilde": {
-                "kodeverk": "INNTEKTS_KILDE",
-                "kode": "INNTEKT_OPPTJENING"
-              },
-              "utbetalingsPoster": [
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2017-11-01",
-                    "tom": "2017-11-30"
-                  },
-                  "beløp": 2229.29
-                },
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2018-06-01",
-                    "tom": "2018-06-30"
-                  },
-                  "beløp": 427.82
-                }
-              ]
-            },
-            {
-              "arbeidsgiver": {
-                "identType": "ORGNUMMER",
-                "ident": "989644017"
-              },
-              "inntektsKilde": {
-                "kodeverk": "INNTEKTS_KILDE",
-                "kode": "INNTEKT_OPPTJENING"
-              },
-              "utbetalingsPoster": [
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2018-10-01",
-                    "tom": "2018-10-31"
-                  },
-                  "beløp": 2300.00
-                },
-                {
-                  "inntektspostType": {
-                    "kodeverk": "INNTEKTSPOST_TYPE",
-                    "kode": "LØNN"
-                  },
-                  "periode": {
-                    "fom": "2018-12-01",
-                    "tom": "2018-12-31"
-                  },
-                  "beløp": 2800.00
-                }
-              ]
+            "beløp": 429.21,
+            "periode": {
+              "tom": "2018-06-30",
+              "fom": "2018-06-01"
             }
-          ]
-        }
-      ],
-      "ytelser": [
-        {
-          "person": {
-            "identType": "AKTØRID",
-            "ident": "1000026107933"
+          } ]
+        }, {
+          "inntektsKilde": {
+            "kodeverk": "INNTEKTS_KILDE",
+            "kode": "INNTEKT_OPPTJENING"
           },
-          "ytelser": [
-            {
-              "fagsystem": {
-                "kodeverk": "FAGSYSTEM",
-                "kode": "ARENA"
-              },
-              "ytelseType": {
-                "kodeverk": "YTELSE_TYPE",
-                "kode": "AAP"
-              },
-              "periode": {
-                "fom": "2018-11-30",
-                "tom": "2019-06-30"
-              },
-              "status": {
-                "kodeverk": "YTELSE_STATUS",
-                "kode": "LOP"
-              },
-              "saksnummer": "2018462694",
-              "anvisninger": [
-                {
-                  "periode": {
-                    "fom": "2018-12-03",
-                    "tom": "2018-12-16"
-                  },
-                  "beløp": 7720.00,
-                  "dagsats": 772.00,
-                  "utbetalingsgrad": 200.00
-                },
-                {
-                  "periode": {
-                    "fom": "2018-11-19",
-                    "tom": "2018-12-02"
-                  },
-                  "beløp": 772.00,
-                  "dagsats": 772.00,
-                  "utbetalingsgrad": 20.00
-                },
-                {
-                  "periode": {
-                    "fom": "2018-12-17",
-                    "tom": "2018-12-30"
-                  },
-                  "beløp": 7720.00,
-                  "dagsats": 772.00,
-                  "utbetalingsgrad": 200.00
-                }
-              ],
-              "ytelseGrunnlag": {
-                "opprinneligIdentDato": "2018-11-22",
-                "fordeling": []
-              }
+          "arbeidsgiver": null,
+          "utbetalingsPoster": [ {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "YTELSE"
             },
-            {
-              "fagsystem": {
-                "kodeverk": "FAGSYSTEM",
-                "kode": "ARENA"
-              },
-              "ytelseType": {
-                "kodeverk": "YTELSE_TYPE",
-                "kode": "AAP"
-              },
-              "periode": {
-                "fom": "2018-07-02",
-                "tom": "2018-11-29"
-              },
-              "status": {
-                "kodeverk": "YTELSE_STATUS",
-                "kode": "AVSLU"
-              },
-              "saksnummer": "2018462694",
-              "anvisninger": [
-                {
-                  "periode": {
-                    "fom": "2018-08-13",
-                    "tom": "2018-08-26"
-                  },
-                  "beløp": 3088.00,
-                  "dagsats": 772.00,
-                  "utbetalingsgrad": 80.00
-                },
-                {
-                  "periode": {
-                    "fom": "2018-09-24",
-                    "tom": "2018-10-07"
-                  },
-                  "beløp": 7720.00,
-                  "dagsats": 772.00,
-                  "utbetalingsgrad": 200.00
-                },
-                {
-                  "periode": {
-                    "fom": "2018-07-02",
-                    "tom": "2018-07-15"
-                  },
-                  "beløp": 7720.00,
-                  "dagsats": 772.00,
-                  "utbetalingsgrad": 200.00
-                },
-                {
-                  "periode": {
-                    "fom": "2018-10-08",
-                    "tom": "2018-10-21"
-                  },
-                  "beløp": 7720.00,
-                  "dagsats": 772.00,
-                  "utbetalingsgrad": 200.00
-                },
-                {
-                  "periode": {
-                    "fom": "2018-07-16",
-                    "tom": "2018-07-29"
-                  },
-                  "beløp": 7720.00,
-                  "dagsats": 772.00,
-                  "utbetalingsgrad": 200.00
-                },
-                {
-                  "periode": {
-                    "fom": "2018-07-30",
-                    "tom": "2018-08-12"
-                  },
-                  "beløp": 7720.00,
-                  "dagsats": 772.00,
-                  "utbetalingsgrad": 200.00
-                },
-                {
-                  "periode": {
-                    "fom": "2018-08-27",
-                    "tom": "2018-09-09"
-                  },
-                  "beløp": 7720.00,
-                  "dagsats": 772.00,
-                  "utbetalingsgrad": 200.00
-                },
-                {
-                  "periode": {
-                    "fom": "2018-11-19",
-                    "tom": "2018-12-02"
-                  },
-                  "beløp": 6948.00,
-                  "dagsats": 772.00,
-                  "utbetalingsgrad": 180.00
-                },
-                {
-                  "periode": {
-                    "fom": "2018-11-05",
-                    "tom": "2018-11-18"
-                  },
-                  "beløp": 7720.00,
-                  "dagsats": 772.00,
-                  "utbetalingsgrad": 200.00
-                }
-              ],
-              "ytelseGrunnlag": {
-                "opprinneligIdentDato": "2018-11-30",
-                "fordeling": []
-              }
+            "beløp": 7720,
+            "ytelseType": {
+              "kodeverk": "YTELSE_FRA_OFFENTLIGE",
+              "kode": "AAP"
+            },
+            "periode": {
+              "tom": "2018-12-31",
+              "fom": "2018-12-01"
             }
-          ]
-        },
-        {
-          "person": {
-            "identType": "AKTØRID",
-            "ident": "1000098325347"
+          } ]
+        }, {
+          "inntektsKilde": {
+            "kodeverk": "INNTEKTS_KILDE",
+            "kode": "INNTEKT_OPPTJENING"
           },
-          "ytelser": []
-        }
-      ]
-    },
-    "arbeidsforholdInformasjon": {
-      "referanser": [
-        {
+          "arbeidsgiver": {
+            "identType": "ORGNUMMER",
+            "ident": "975270815"
+          },
+          "utbetalingsPoster": [ {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 2229.29,
+            "periode": {
+              "tom": "2017-11-30",
+              "fom": "2017-11-01"
+            }
+          }, {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 427.82,
+            "periode": {
+              "tom": "2018-06-30",
+              "fom": "2018-06-01"
+            }
+          } ]
+        }, {
+          "inntektsKilde": {
+            "kodeverk": "INNTEKTS_KILDE",
+            "kode": "INNTEKT_OPPTJENING"
+          },
+          "arbeidsgiver": {
+            "identType": "ORGNUMMER",
+            "ident": "989644017"
+          },
+          "utbetalingsPoster": [ {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 2300,
+            "periode": {
+              "tom": "2018-10-31",
+              "fom": "2018-10-01"
+            }
+          }, {
+            "inntektspostType": {
+              "kodeverk": "INNTEKTSPOST_TYPE",
+              "kode": "LØNN"
+            },
+            "beløp": 2800,
+            "periode": {
+              "tom": "2018-12-31",
+              "fom": "2018-12-01"
+            }
+          } ]
+        } ]
+      } ],
+      "arbeid": [ {
+        "yrkesaktiviteter": [ {
+          "arbeidType": {
+            "kodeverk": "ARBEID_TYPE",
+            "kode": "ORDINÆRT_ARBEIDSFORHOLD"
+          },
+          "arbeidsgiver": {
+            "identType": "ORGNUMMER",
+            "ident": "975270815"
+          },
+          "arbeidsforholdId": {
+            "abakusReferanse": "496c923b-e8d0-4ae4-bda9-c9c34f3fc6a3",
+            "eksternReferanseSystem": {
+              "kodeverk": "FAGSYSTEM",
+              "kode": "AAREGISTERET"
+            },
+            "eksternReferanse": "V975270815R512846S201L0001"
+          },
+          "aktivitetsAvtaler": [ {
+            "sistLønnsendring": "2017-07-01",
+            "periode": {
+              "tom": "9999-12-31",
+              "fom": "2017-07-01"
+            },
+            "stillingsprosent": 0
+          }, {
+            "periode": {
+              "tom": "2018-03-31",
+              "fom": "2017-05-01"
+            },
+            "stillingsprosent": 0
+          } ],
+          "permisjoner": [ ]
+        }, {
+          "arbeidType": {
+            "kodeverk": "ARBEID_TYPE",
+            "kode": "FRILANSER_OPPDRAGSTAKER"
+          },
           "arbeidsgiver": {
             "identType": "ORGNUMMER",
             "ident": "989644017"
           },
           "arbeidsforholdId": {
             "abakusReferanse": "e2b8c890-0416-4bc2-a791-36d0d32c0ee6",
-            "eksternReferanse": "974975587592000015673",
             "eksternReferanseSystem": {
               "kodeverk": "FAGSYSTEM",
               "kode": "AAREGISTERET"
+            },
+            "eksternReferanse": "974975587592000015673"
+          },
+          "aktivitetsAvtaler": [ {
+            "periode": {
+              "tom": "9999-12-31",
+              "fom": "2017-10-01"
             }
-          }
-        },
-        {
+          } ],
+          "permisjoner": [ ]
+        }, {
+          "arbeidType": {
+            "kodeverk": "ARBEID_TYPE",
+            "kode": "FRILANSER_OPPDRAGSTAKER"
+          },
           "arbeidsgiver": {
             "identType": "ORGNUMMER",
             "ident": "975587592"
           },
           "arbeidsforholdId": {
             "abakusReferanse": "b4aa73f8-bed1-4918-8f5e-bebaf3c24ef9",
-            "eksternReferanse": "143975587592000015858",
             "eksternReferanseSystem": {
               "kodeverk": "FAGSYSTEM",
               "kode": "AAREGISTERET"
+            },
+            "eksternReferanse": "143975587592000015858"
+          },
+          "aktivitetsAvtaler": [ {
+            "periode": {
+              "tom": "2017-09-30",
+              "fom": "2016-09-01"
             }
-          }
-        },
-        {
+          } ],
+          "permisjoner": [ ]
+        } ],
+        "person": {
+          "identType": "AKTØRID",
+          "ident": "1000026107933"
+        }
+      }, {
+        "yrkesaktiviteter": [ {
+          "arbeidType": {
+            "kodeverk": "ARBEID_TYPE",
+            "kode": "ORDINÆRT_ARBEIDSFORHOLD"
+          },
           "arbeidsgiver": {
             "identType": "ORGNUMMER",
             "ident": "971715723"
           },
           "arbeidsforholdId": {
             "abakusReferanse": "dfe43528-b517-408d-8d3b-a8e97259da40",
-            "eksternReferanse": "900935721652000223420",
             "eksternReferanseSystem": {
               "kodeverk": "FAGSYSTEM",
               "kode": "AAREGISTERET"
-            }
-          }
-        },
-        {
-          "arbeidsgiver": {
-            "identType": "ORGNUMMER",
-            "ident": "975270815"
+            },
+            "eksternReferanse": "900935721652000223420"
           },
-          "arbeidsforholdId": {
-            "abakusReferanse": "496c923b-e8d0-4ae4-bda9-c9c34f3fc6a3",
-            "eksternReferanse": "V975270815R512846S201L0001",
-            "eksternReferanseSystem": {
-              "kodeverk": "FAGSYSTEM",
-              "kode": "AAREGISTERET"
+          "aktivitetsAvtaler": [ {
+            "sistLønnsendring": "2017-08-01",
+            "periode": {
+              "tom": "2018-04-30",
+              "fom": "2018-01-01"
+            },
+            "stillingsprosent": 100
+          }, {
+            "periode": {
+              "tom": "9999-12-31",
+              "fom": "2014-11-17"
+            },
+            "stillingsprosent": 0
+          }, {
+            "sistLønnsendring": "2018-08-01",
+            "periode": {
+              "tom": "9999-12-31",
+              "fom": "2018-08-01"
+            },
+            "stillingsprosent": 100
+          }, {
+            "sistLønnsendring": "2018-04-01",
+            "periode": {
+              "tom": "2018-07-31",
+              "fom": "2018-05-01"
+            },
+            "stillingsprosent": 100
+          }, {
+            "sistLønnsendring": "2017-08-01",
+            "periode": {
+              "tom": "2017-12-31",
+              "fom": "2017-08-01"
+            },
+            "stillingsprosent": 100
+          } ],
+          "permisjoner": [ {
+            "prosentsats": 100,
+            "type": {
+              "kodeverk": "PERMISJONSBESKRIVELSE_TYPE",
+              "kode": "PERMISJON"
+            },
+            "periode": {
+              "tom": "2017-10-02",
+              "fom": "2017-10-02"
             }
-          }
+          }, {
+            "prosentsats": 100,
+            "type": {
+              "kodeverk": "PERMISJONSBESKRIVELSE_TYPE",
+              "kode": "PERMISJON"
+            },
+            "periode": {
+              "tom": "2017-10-09",
+              "fom": "2017-10-09"
+            }
+          }, {
+            "prosentsats": 100,
+            "type": {
+              "kodeverk": "PERMISJONSBESKRIVELSE_TYPE",
+              "kode": "VELFERDSPERMISJON"
+            },
+            "periode": {
+              "tom": "2018-10-03",
+              "fom": "2018-10-03"
+            }
+          }, {
+            "prosentsats": 100,
+            "type": {
+              "kodeverk": "PERMISJONSBESKRIVELSE_TYPE",
+              "kode": "VELFERDSPERMISJON"
+            },
+            "periode": {
+              "tom": "2018-08-24",
+              "fom": "2018-08-24"
+            }
+          }, {
+            "prosentsats": 100,
+            "type": {
+              "kodeverk": "PERMISJONSBESKRIVELSE_TYPE",
+              "kode": "VELFERDSPERMISJON"
+            },
+            "periode": {
+              "tom": "2018-01-24",
+              "fom": "2018-01-23"
+            }
+          }, {
+            "prosentsats": 100,
+            "type": {
+              "kodeverk": "PERMISJONSBESKRIVELSE_TYPE",
+              "kode": "VELFERDSPERMISJON"
+            },
+            "periode": {
+              "tom": "2018-02-16",
+              "fom": "2018-02-15"
+            }
+          }, {
+            "prosentsats": 100,
+            "type": {
+              "kodeverk": "PERMISJONSBESKRIVELSE_TYPE",
+              "kode": "VELFERDSPERMISJON"
+            },
+            "periode": {
+              "tom": "2018-11-28",
+              "fom": "2018-11-26"
+            }
+          }, {
+            "prosentsats": 100,
+            "type": {
+              "kodeverk": "PERMISJONSBESKRIVELSE_TYPE",
+              "kode": "PERMISJON"
+            },
+            "periode": {
+              "tom": "2015-09-18",
+              "fom": "2015-09-07"
+            }
+          }, {
+            "prosentsats": 100,
+            "type": {
+              "kodeverk": "PERMISJONSBESKRIVELSE_TYPE",
+              "kode": "PERMISJON"
+            },
+            "periode": {
+              "tom": "2016-10-17",
+              "fom": "2016-08-08"
+            }
+          } ]
+        } ],
+        "person": {
+          "identType": "AKTØRID",
+          "ident": "1000098325347"
         }
-      ],
-      "overstyringer": [
-        {
-          "arbeidsgiver": {
-            "identType": "ORGNUMMER",
-            "ident": "974571900"
-          },
-          "arbeidsforholdHandlingType": {
-            "kodeverk": "ARBEIDSFORHOLD_HANDLING_TYPE",
-            "kode": "BRUK_UTEN_INNTEKTSMELDING"
-          },
-          "overstyrtePerioder": []
+      } ],
+      "ytelser": [ {
+        "person": {
+          "identType": "AKTØRID",
+          "ident": "1000026107933"
         },
-        {
-          "arbeidsgiver": {
-            "identType": "ORGNUMMER",
-            "ident": "975270815"
+        "ytelser": [ {
+          "saksnummer": "2018462694",
+          "ytelseGrunnlag": {
+            "fordeling": [ ],
+            "opprinneligIdentDato": "2018-11-22"
           },
-          "arbeidsforholdReferanse": {
-            "abakusReferanse": "496c923b-e8d0-4ae4-bda9-c9c34f3fc6a3",
-            "eksternReferanse": "V975270815R512846S201L0001",
-            "eksternReferanseSystem": {
-              "kodeverk": "FAGSYSTEM",
-              "kode": "AAREGISTERET"
+          "ytelseType": {
+            "kodeverk": "YTELSE_TYPE",
+            "kode": "AAP"
+          },
+          "anvisninger": [ {
+            "dagsats": 772,
+            "beløp": 7720,
+            "utbetalingsgrad": 200,
+            "periode": {
+              "tom": "2018-12-16",
+              "fom": "2018-12-03"
             }
+          }, {
+            "dagsats": 772,
+            "beløp": 772,
+            "utbetalingsgrad": 20,
+            "periode": {
+              "tom": "2018-12-02",
+              "fom": "2018-11-19"
+            }
+          }, {
+            "dagsats": 772,
+            "beløp": 7720,
+            "utbetalingsgrad": 200,
+            "periode": {
+              "tom": "2018-12-30",
+              "fom": "2018-12-17"
+            }
+          } ],
+          "fagsystem": {
+            "kodeverk": "FAGSYSTEM",
+            "kode": "ARENA"
           },
-          "arbeidsforholdHandlingType": {
-            "kodeverk": "ARBEIDSFORHOLD_HANDLING_TYPE",
-            "kode": "BRUK"
+          "periode": {
+            "tom": "2019-06-30",
+            "fom": "2018-11-30"
           },
-          "overstyrtePerioder": []
+          "status": {
+            "kodeverk": "YTELSE_STATUS",
+            "kode": "LOP"
+          }
+        }, {
+          "saksnummer": "2018462694",
+          "ytelseGrunnlag": {
+            "fordeling": [ ],
+            "opprinneligIdentDato": "2018-11-30"
+          },
+          "ytelseType": {
+            "kodeverk": "YTELSE_TYPE",
+            "kode": "AAP"
+          },
+          "anvisninger": [ {
+            "dagsats": 772,
+            "beløp": 3088,
+            "utbetalingsgrad": 80,
+            "periode": {
+              "tom": "2018-08-26",
+              "fom": "2018-08-13"
+            }
+          }, {
+            "dagsats": 772,
+            "beløp": 7720,
+            "utbetalingsgrad": 200,
+            "periode": {
+              "tom": "2018-10-07",
+              "fom": "2018-09-24"
+            }
+          }, {
+            "dagsats": 772,
+            "beløp": 7720,
+            "utbetalingsgrad": 200,
+            "periode": {
+              "tom": "2018-07-15",
+              "fom": "2018-07-02"
+            }
+          }, {
+            "dagsats": 772,
+            "beløp": 7720,
+            "utbetalingsgrad": 200,
+            "periode": {
+              "tom": "2018-10-21",
+              "fom": "2018-10-08"
+            }
+          }, {
+            "dagsats": 772,
+            "beløp": 7720,
+            "utbetalingsgrad": 200,
+            "periode": {
+              "tom": "2018-07-29",
+              "fom": "2018-07-16"
+            }
+          }, {
+            "dagsats": 772,
+            "beløp": 7720,
+            "utbetalingsgrad": 200,
+            "periode": {
+              "tom": "2018-08-12",
+              "fom": "2018-07-30"
+            }
+          }, {
+            "dagsats": 772,
+            "beløp": 7720,
+            "utbetalingsgrad": 200,
+            "periode": {
+              "tom": "2018-09-09",
+              "fom": "2018-08-27"
+            }
+          }, {
+            "dagsats": 772,
+            "beløp": 6948,
+            "utbetalingsgrad": 180,
+            "periode": {
+              "tom": "2018-12-02",
+              "fom": "2018-11-19"
+            }
+          }, {
+            "dagsats": 772,
+            "beløp": 7720,
+            "utbetalingsgrad": 200,
+            "periode": {
+              "tom": "2018-11-18",
+              "fom": "2018-11-05"
+            }
+          } ],
+          "fagsystem": {
+            "kodeverk": "FAGSYSTEM",
+            "kode": "ARENA"
+          },
+          "periode": {
+            "tom": "2018-11-29",
+            "fom": "2018-07-02"
+          },
+          "status": {
+            "kodeverk": "YTELSE_STATUS",
+            "kode": "AVSLU"
+          }
+        } ]
+      }, {
+        "person": {
+          "identType": "AKTØRID",
+          "ident": "1000098325347"
+        },
+        "ytelser": [ ]
+      } ],
+      "opprettetTidspunkt": "2019-01-03T13:11:04.528Z",
+      "eksternReferanse": "8a6bc440-eb04-1f94-e053-2880340a2b28"
+    },
+    "koblingReferanse": "88487f4b-f876-2133-e053-2880340a6560",
+    "arbeidsforholdInformasjon": {
+      "referanser": [ {
+        "arbeidsgiver": {
+          "identType": "ORGNUMMER",
+          "ident": "989644017"
+        },
+        "arbeidsforholdId": {
+          "abakusReferanse": "e2b8c890-0416-4bc2-a791-36d0d32c0ee6",
+          "eksternReferanseSystem": {
+            "kodeverk": "FAGSYSTEM",
+            "kode": "AAREGISTERET"
+          },
+          "eksternReferanse": "974975587592000015673"
         }
-      ]
+      }, {
+        "arbeidsgiver": {
+          "identType": "ORGNUMMER",
+          "ident": "975587592"
+        },
+        "arbeidsforholdId": {
+          "abakusReferanse": "b4aa73f8-bed1-4918-8f5e-bebaf3c24ef9",
+          "eksternReferanseSystem": {
+            "kodeverk": "FAGSYSTEM",
+            "kode": "AAREGISTERET"
+          },
+          "eksternReferanse": "143975587592000015858"
+        }
+      }, {
+        "arbeidsgiver": {
+          "identType": "ORGNUMMER",
+          "ident": "971715723"
+        },
+        "arbeidsforholdId": {
+          "abakusReferanse": "dfe43528-b517-408d-8d3b-a8e97259da40",
+          "eksternReferanseSystem": {
+            "kodeverk": "FAGSYSTEM",
+            "kode": "AAREGISTERET"
+          },
+          "eksternReferanse": "900935721652000223420"
+        }
+      }, {
+        "arbeidsgiver": {
+          "identType": "ORGNUMMER",
+          "ident": "975270815"
+        },
+        "arbeidsforholdId": {
+          "abakusReferanse": "496c923b-e8d0-4ae4-bda9-c9c34f3fc6a3",
+          "eksternReferanseSystem": {
+            "kodeverk": "FAGSYSTEM",
+            "kode": "AAREGISTERET"
+          },
+          "eksternReferanse": "V975270815R512846S201L0001"
+        }
+      } ],
+      "overstyringer": [ {
+        "overstyrtePerioder": [ ],
+        "arbeidsgiver": {
+          "identType": "ORGNUMMER",
+          "ident": "974571900"
+        },
+        "arbeidsforholdHandlingType": {
+          "kodeverk": "ARBEIDSFORHOLD_HANDLING_TYPE",
+          "kode": "BRUK_UTEN_INNTEKTSMELDING"
+        }
+      }, {
+        "overstyrtePerioder": [ ],
+        "arbeidsforholdReferanse": {
+          "abakusReferanse": "496c923b-e8d0-4ae4-bda9-c9c34f3fc6a3",
+          "eksternReferanseSystem": {
+            "kodeverk": "FAGSYSTEM",
+            "kode": "AAREGISTERET"
+          },
+          "eksternReferanse": "V975270815R512846S201L0001"
+        },
+        "arbeidsgiver": {
+          "identType": "ORGNUMMER",
+          "ident": "975270815"
+        },
+        "arbeidsforholdHandlingType": {
+          "kodeverk": "ARBEIDSFORHOLD_HANDLING_TYPE",
+          "kode": "BRUK"
+        }
+      } ]
     }
   },
-  "aktiv": false,
   "opplysningsperiode": {
-    "fom": "2017-08-25",
-    "tom": "2023-01-25"
-  }
+    "tom": "2023-01-25",
+    "fom": "2017-08-25"
+  },
+  "aktiv": false
 }

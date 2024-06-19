@@ -5,17 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import no.nav.abakus.iaygrunnlag.Aktør;
-import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
-import no.nav.abakus.iaygrunnlag.JournalpostId;
-import no.nav.abakus.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -25,10 +18,19 @@ import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import no.nav.abakus.iaygrunnlag.Aktør;
+import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
+import no.nav.abakus.iaygrunnlag.JournalpostId;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class InntektsmeldingDto {
 
     @JsonProperty(value = "arbeidsgiver", required = true)
@@ -77,29 +79,27 @@ public class InntektsmeldingDto {
     @JsonProperty(value = "erNærRelasjon")
     private Boolean erNærRelasjon;
 
-    /**
-     * Tillater kun positive verdier.  Max verdi håndteres av mottager.
-     */
+    /** Tillater kun positive verdier. Max verdi håndteres av mottager. */
     @JsonProperty("inntektBeløp")
     @DecimalMin(value = "0.00", message = "beløp [${validatedValue}] må være >= {value}")
     private BigDecimal inntektBeløp;
 
-    /**
-     * Tillater kun positive verdier.  Max verdi håndteres av mottager.
-     */
+    /** Tillater kun positive verdier. Max verdi håndteres av mottager. */
     @JsonProperty("refusjonsBeløpPerMnd")
     @DecimalMin(value = "0.00", message = "beløp [${validatedValue}] må være >= {value}")
     private BigDecimal refusjonsBeløpPerMnd;
 
     @JsonProperty(value = "kanalreferanse")
-    @Pattern(regexp = "^[\\p{Graph}\\s\\t\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Inntektsmelding kanalreferanse [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Pattern(
+            regexp = "^[\\p{Graph}\\s\\t\\p{Sc}\\p{L}\\p{M}\\p{N}]+$",
+            message = "Inntektsmelding kanalreferanse [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String kanalreferanse;
 
-    /**
-     * NB: tilsvarer avsendersystem i Inntektsmelding skjema.
-     */
+    /** NB: tilsvarer avsendersystem i Inntektsmelding skjema. */
     @JsonProperty(value = "kildesystem")
-    @Pattern(regexp = "^[\\p{Graph}\\s\\t\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Inntektsmelding kildeSystem [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Pattern(
+            regexp = "^[\\p{Graph}\\s\\t\\p{Sc}\\p{L}\\p{M}\\p{N}]+$",
+            message = "Inntektsmelding kildeSystem [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String kildesystem;
 
     @JsonProperty(value = "refusjonOpphører")
@@ -112,7 +112,11 @@ public class InntektsmeldingDto {
     @NotNull
     private InntektsmeldingInnsendingsårsakType innsendingsårsak;
 
-    public InntektsmeldingDto(Aktør arbeidsgiver, JournalpostId journalpostId, LocalDateTime innsendingstidspunkt, LocalDate mottattDato) {
+    public InntektsmeldingDto(
+            Aktør arbeidsgiver,
+            JournalpostId journalpostId,
+            LocalDateTime innsendingstidspunkt,
+            LocalDate mottattDato) {
         Objects.requireNonNull(arbeidsgiver, "arbeidsgiver");
         Objects.requireNonNull(journalpostId, "journalpostId");
         Objects.requireNonNull(innsendingstidspunkt, "innsendingstidspunkt");
@@ -120,7 +124,8 @@ public class InntektsmeldingDto {
         this.arbeidsgiver = arbeidsgiver;
         this.journalpostId = journalpostId;
         this.mottattDato = mottattDato;
-        this.innsendingstidspunkt = innsendingstidspunkt.atZone(ZoneId.systemDefault()).toOffsetDateTime();
+        this.innsendingstidspunkt =
+                innsendingstidspunkt.atZone(ZoneId.systemDefault()).toOffsetDateTime();
     }
 
     protected InntektsmeldingDto() {
@@ -232,7 +237,8 @@ public class InntektsmeldingDto {
     }
 
     public void setRefusjonsBeløpPerMnd(BigDecimal refusjonsBeløpPerMnd) {
-        this.refusjonsBeløpPerMnd = refusjonsBeløpPerMnd == null ? null : refusjonsBeløpPerMnd.setScale(2, RoundingMode.HALF_UP);
+        this.refusjonsBeløpPerMnd =
+                refusjonsBeløpPerMnd == null ? null : refusjonsBeløpPerMnd.setScale(2, RoundingMode.HALF_UP);
     }
 
     public LocalDate getStartDatoPermisjon() {
@@ -343,5 +349,4 @@ public class InntektsmeldingDto {
     public void setNærRelasjon(boolean naerRelasjon) {
         this.erNærRelasjon = naerRelasjon;
     }
-
 }

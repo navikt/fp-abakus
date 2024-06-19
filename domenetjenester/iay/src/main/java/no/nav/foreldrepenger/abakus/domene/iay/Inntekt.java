@@ -1,12 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -19,7 +12,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -60,17 +58,17 @@ public class Inntekt extends BaseEntitet implements IndexKey {
         // hibernate
     }
 
-    /**
-     * Deep copy.
-     */
+    /** Deep copy. */
     Inntekt(Inntekt inntektMal) {
         this.inntektskildeType = inntektMal.getInntektsKilde();
         this.arbeidsgiver = inntektMal.getArbeidsgiver();
-        this.inntektspost = inntektMal.getAlleInntektsposter().stream().map(ip -> {
-            Inntektspost inntektspostEntitet = new Inntektspost(ip);
-            inntektspostEntitet.setInntekt(this);
-            return inntektspostEntitet;
-        }).collect(Collectors.toCollection(LinkedHashSet::new));
+        this.inntektspost = inntektMal.getAlleInntektsposter().stream()
+                .map(ip -> {
+                    Inntektspost inntektspostEntitet = new Inntektspost(ip);
+                    inntektspostEntitet.setInntekt(this);
+                    return inntektspostEntitet;
+                })
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
@@ -87,7 +85,8 @@ public class Inntekt extends BaseEntitet implements IndexKey {
             return false;
         }
         Inntekt other = (Inntekt) obj;
-        return Objects.equals(this.getInntektsKilde(), other.getInntektsKilde()) && Objects.equals(this.getArbeidsgiver(), other.getArbeidsgiver());
+        return Objects.equals(this.getInntektsKilde(), other.getInntektsKilde())
+                && Objects.equals(this.getArbeidsgiver(), other.getArbeidsgiver());
     }
 
     @Override
@@ -121,9 +120,7 @@ public class Inntekt extends BaseEntitet implements IndexKey {
         this.arbeidsgiver = arbeidsgiver;
     }
 
-    /**
-     * Hent alle utbetalinger (ufiltrert).
-     */
+    /** Hent alle utbetalinger (ufiltrert). */
     public Collection<Inntektspost> getAlleInntektsposter() {
         return Collections.unmodifiableSet(inntektspost);
     }
@@ -150,12 +147,14 @@ public class Inntekt extends BaseEntitet implements IndexKey {
     }
 
     void tilbakestillInntektsposterForPerioder(Set<IntervallEntitet> perioder) {
-        this.inntektspost = inntektspost.stream().filter(ip -> !perioder.contains(ip.getPeriode())).collect(Collectors.toSet());
+        this.inntektspost = inntektspost.stream()
+                .filter(ip -> !perioder.contains(ip.getPeriode()))
+                .collect(Collectors.toSet());
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<arbeidsgiver=" + arbeidsgiver + ", inntektskildeType=" + inntektskildeType + ", inntektspost=[" + (
-            inntektspost == null ? 0 : inntektspost.size()) + "]" + ">";
+        return getClass().getSimpleName() + "<arbeidsgiver=" + arbeidsgiver + ", inntektskildeType=" + inntektskildeType
+                + ", inntektspost=[" + (inntektspost == null ? 0 : inntektspost.size()) + "]" + ">";
     }
 }

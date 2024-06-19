@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten;
 
 public enum InntektsFormål {
-
     FORMAAL_FORELDREPENGER("Foreldrepenger"),
     FORMAAL_PGI("PensjonsgivendeA-inntekt");
 

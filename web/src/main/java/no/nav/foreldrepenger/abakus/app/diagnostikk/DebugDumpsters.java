@@ -1,5 +1,10 @@
 package no.nav.foreldrepenger.abakus.app.diagnostikk;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.StreamingOutput;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -9,19 +14,11 @@ import java.util.List;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Any;
-import jakarta.enterprise.inject.Instance;
-import jakarta.inject.Inject;
-import jakarta.ws.rs.core.StreamingOutput;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.kobling.kontroll.YtelseTypeRef;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class DebugDumpsters {
@@ -43,7 +40,7 @@ public class DebugDumpsters {
         var ytelseType = kobling.getYtelseType();
         var saksnummer = kobling.getSaksnummer();
         return outputStream -> {
-            try (var zipOut = new ZipOutputStream(new BufferedOutputStream(outputStream));) {
+            try (var zipOut = new ZipOutputStream(new BufferedOutputStream(outputStream)); ) {
                 var dumpsters = findDumpsters(ytelseType);
                 var allDumps = dumpOutput(kobling, dumpsters);
                 allDumps.forEach(dump -> addToZip(saksnummer, zipOut, dump));
@@ -52,7 +49,6 @@ public class DebugDumpsters {
                 outputStream.close();
             }
         };
-
     }
 
     private List<Instance<DebugDump>> findDumpsters(YtelseType ytelseType) {
@@ -75,16 +71,17 @@ public class DebugDumpsters {
         var dumperNames = dumpers.stream().map(d -> d.getClass().getName()).toList();
         LOG.info("Dumper fra: {}", dumperNames);
 
-        return dumpers.stream().flatMap(ddp -> {
-            try {
-                return ddp.dump(kobling).stream();
-            } catch (Exception e) {
-                var sw = new StringWriter();
-                var pw = new PrintWriter(sw);
-                e.printStackTrace(pw);
-                return Stream.of(new DumpOutput(ddp.getClass().getSimpleName() + "-ERROR.txt", sw.toString()));
-            }
-        }).toList();
+        return dumpers.stream()
+                .flatMap(ddp -> {
+                    try {
+                        return ddp.dump(kobling).stream();
+                    } catch (Exception e) {
+                        var sw = new StringWriter();
+                        var pw = new PrintWriter(sw);
+                        e.printStackTrace(pw);
+                        return Stream.of(new DumpOutput(ddp.getClass().getSimpleName() + "-ERROR.txt", sw.toString()));
+                    }
+                })
+                .toList();
     }
-
 }

@@ -1,8 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.time.LocalDate;
-import java.util.Objects;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -16,7 +13,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
+import java.time.LocalDate;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -58,9 +56,7 @@ public class Permisjon extends BaseEntitet implements IndexKey {
         // hibernate
     }
 
-    /**
-     * Deep copy ctor
-     */
+    /** Deep copy ctor */
     Permisjon(Permisjon permisjon) {
         this.permisjonsbeskrivelseType = permisjon.getPermisjonsbeskrivelseType();
         this.periode = IntervallEntitet.fraOgMedTilOgMed(permisjon.getFraOgMed(), permisjon.getTilOgMed());
@@ -132,8 +128,9 @@ public class Permisjon extends BaseEntitet implements IndexKey {
             return false;
         }
         Permisjon other = (Permisjon) obj;
-        return Objects.equals(this.permisjonsbeskrivelseType, other.permisjonsbeskrivelseType) && Objects.equals(this.periode, other.periode)
-            && Objects.equals(this.prosentsats, other.prosentsats);
+        return Objects.equals(this.permisjonsbeskrivelseType, other.permisjonsbeskrivelseType)
+                && Objects.equals(this.periode, other.periode)
+                && Objects.equals(this.prosentsats, other.prosentsats);
     }
 
     @Override
@@ -143,8 +140,8 @@ public class Permisjon extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" + "permisjonsbeskrivelseType=" + permisjonsbeskrivelseType + ", periode=" + periode + ", prosentsats="
-            + prosentsats + '>';
+        return getClass().getSimpleName() + "<" + "permisjonsbeskrivelseType=" + permisjonsbeskrivelseType
+                + ", periode=" + periode + ", prosentsats=" + prosentsats + '>';
     }
 
     public Yrkesaktivitet getYrkesaktivitet() {

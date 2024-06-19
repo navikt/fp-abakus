@@ -1,10 +1,8 @@
 package no.nav.foreldrepenger.abakus.vedtak.extract.v1;
 
-import java.util.UUID;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-
+import java.util.UUID;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
@@ -32,8 +30,7 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
 
     private VedtakYtelseRepository repository;
 
-    ExtractFromYtelseV1() {
-    }
+    ExtractFromYtelseV1() {}
 
     @Inject
     public ExtractFromYtelseV1(VedtakYtelseRepository repository) {
@@ -49,15 +46,15 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
 
         VedtakYtelseBuilder builder = repository.opprettBuilderFor(aktørId, saksnummer, fagsystem, ytelseType);
         builder.medAktør(aktørId)
-            .medVedtakReferanse(UUID.fromString(ytelse.getVedtakReferanse()))
-            .medVedtattTidspunkt(ytelse.getVedtattTidspunkt())
-            .medSaksnummer(saksnummer)
-            .medKilde(fagsystem)
-            .medYtelseType(ytelseType)
-            .medPeriode(mapTilEntitet(ytelse.getPeriode()))
-            .medStatus(mapStatus(ytelse.getYtelseStatus()))
-            .medTilleggsopplysninger(ytelse.getTilleggsopplysninger())
-            .tilbakestillAnvisteYtelser();
+                .medVedtakReferanse(UUID.fromString(ytelse.getVedtakReferanse()))
+                .medVedtattTidspunkt(ytelse.getVedtattTidspunkt())
+                .medSaksnummer(saksnummer)
+                .medKilde(fagsystem)
+                .medYtelseType(ytelseType)
+                .medPeriode(mapTilEntitet(ytelse.getPeriode()))
+                .medStatus(mapStatus(ytelse.getYtelseStatus()))
+                .medTilleggsopplysninger(ytelse.getTilleggsopplysninger())
+                .tilbakestillAnvisteYtelser();
 
         ytelse.getAnvist().forEach(anv -> mapAnvisning(builder, anv));
 
@@ -66,22 +63,26 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
 
     private void mapAnvisning(VedtakYtelseBuilder builder, Anvisning anv) {
         YtelseAnvistBuilder anvistBuilder = builder.getAnvistBuilder();
-        anvistBuilder.medAnvistPeriode(mapTilEntitet(anv.getPeriode()))
-            .medBeløp(anv.getBeløp() != null ? anv.getBeløp().getVerdi() : null)
-            .medDagsats(anv.getDagsats() != null ? anv.getDagsats().getVerdi() : null)
-            .medUtbetalingsgradProsent(anv.getUtbetalingsgrad() != null ? anv.getUtbetalingsgrad().getVerdi() : null);
+        anvistBuilder
+                .medAnvistPeriode(mapTilEntitet(anv.getPeriode()))
+                .medBeløp(anv.getBeløp() != null ? anv.getBeløp().getVerdi() : null)
+                .medDagsats(anv.getDagsats() != null ? anv.getDagsats().getVerdi() : null)
+                .medUtbetalingsgradProsent(
+                        anv.getUtbetalingsgrad() != null
+                                ? anv.getUtbetalingsgrad().getVerdi()
+                                : null);
         anv.getAndeler().stream().map(this::mapFordeling).forEach(anvistBuilder::leggTilFordeling);
         builder.leggTil(anvistBuilder);
     }
 
     private VedtakYtelseAndelBuilder mapFordeling(AnvistAndel andel) {
         return VedtakYtelseAndelBuilder.ny()
-            .medInntektskategori(mapInntektsklasse(andel.getInntektklasse()))
-            .medDagsats(andel.getDagsats().getVerdi())
-            .medUtbetalingsgrad(andel.getUtbetalingsgrad().getVerdi())
-            .medRefusjonsgrad(andel.getRefusjonsgrad().getVerdi())
-            .medArbeidsgiver(mapArbeidsgiver(andel))
-            .medArbeidsforholdId(andel.getArbeidsforholdId());
+                .medInntektskategori(mapInntektsklasse(andel.getInntektklasse()))
+                .medDagsats(andel.getDagsats().getVerdi())
+                .medUtbetalingsgrad(andel.getUtbetalingsgrad().getVerdi())
+                .medRefusjonsgrad(andel.getRefusjonsgrad().getVerdi())
+                .medArbeidsgiver(mapArbeidsgiver(andel))
+                .medArbeidsforholdId(andel.getArbeidsforholdId());
     }
 
     private Fagsystem mapKildesystem(Kildesystem kildesystem) {
@@ -108,8 +109,9 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
         if (arbeidsgiverIdent == null) {
             return null;
         }
-        return arbeidsgiverIdent.erOrganisasjon() ? Arbeidsgiver.virksomhet(arbeidsgiverIdent.ident()) : Arbeidsgiver.person(
-            arbeidsgiverIdent.ident());
+        return arbeidsgiverIdent.erOrganisasjon()
+                ? Arbeidsgiver.virksomhet(arbeidsgiverIdent.ident())
+                : Arbeidsgiver.person(arbeidsgiverIdent.ident());
     }
 
     private IntervallEntitet mapTilEntitet(Periode periode) {
@@ -152,5 +154,4 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
             default -> Inntektskategori.UDEFINERT;
         };
     }
-
 }

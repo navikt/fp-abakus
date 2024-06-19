@@ -1,21 +1,16 @@
 package no.nav.foreldrepenger.abakus.dbstoette;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-
 import org.eclipse.jetty.plus.jndi.EnvEntry;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-
-/**
- * Initielt skjemaoppsett + migrering av unittest-skjemaer
- */
+/** Initielt skjemaoppsett + migrering av unittest-skjemaer */
 public final class Databaseskjemainitialisering {
     private static final AtomicBoolean GUARD_UNIT_TEST_SKJEMAER = new AtomicBoolean();
 
@@ -32,11 +27,11 @@ public final class Databaseskjemainitialisering {
     public static void migrerUnittestSkjemaer() {
         if (GUARD_UNIT_TEST_SKJEMAER.compareAndSet(false, true)) {
             Flyway flyway = Flyway.configure()
-                .dataSource(createDs(USER))
-                .locations(DB_SCRIPT_LOCATION)
-                .baselineOnMigrate(true)
-                .cleanDisabled(false)
-                .load();
+                    .dataSource(createDs(USER))
+                    .locations(DB_SCRIPT_LOCATION)
+                    .baselineOnMigrate(true)
+                    .cleanDisabled(false)
+                    .load();
             try {
                 flyway.migrate();
             } catch (FlywayException fwe) {
@@ -67,8 +62,9 @@ public final class Databaseskjemainitialisering {
     private static HikariDataSource createDs(String user) {
         Objects.requireNonNull(user, "user");
         var cfg = new HikariConfig();
-        cfg.setJdbcUrl(
-            System.getProperty("datasource.defaultDS.url", String.format("jdbc:postgresql://127.0.0.1:5432/%s?reWriteBatchedInserts=true", USER)));
+        cfg.setJdbcUrl(System.getProperty(
+                "datasource.defaultDS.url",
+                String.format("jdbc:postgresql://127.0.0.1:5432/%s?reWriteBatchedInserts=true", USER)));
         cfg.setUsername(USER);
         cfg.setPassword(USER);
         cfg.setConnectionTimeout(1500);
@@ -93,5 +89,4 @@ public final class Databaseskjemainitialisering {
         settJdniOppslag(USER);
         return DS;
     }
-
 }

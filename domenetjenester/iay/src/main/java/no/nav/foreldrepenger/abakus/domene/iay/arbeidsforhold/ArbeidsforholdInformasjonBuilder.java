@@ -3,7 +3,6 @@ package no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
@@ -22,8 +21,11 @@ public class ArbeidsforholdInformasjonBuilder {
         return new ArbeidsforholdInformasjonBuilder(new ArbeidsforholdInformasjon(oppdatere));
     }
 
-    public static ArbeidsforholdInformasjonBuilder builder(Optional<ArbeidsforholdInformasjon> arbeidsforholdInformasjon) {
-        var arbeidInfo = arbeidsforholdInformasjon.map(ai -> new ArbeidsforholdInformasjon(ai)).orElseGet(ArbeidsforholdInformasjon::new);
+    public static ArbeidsforholdInformasjonBuilder builder(
+            Optional<ArbeidsforholdInformasjon> arbeidsforholdInformasjon) {
+        var arbeidInfo = arbeidsforholdInformasjon
+                .map(ai -> new ArbeidsforholdInformasjon(ai))
+                .orElseGet(ArbeidsforholdInformasjon::new);
         return new ArbeidsforholdInformasjonBuilder(arbeidInfo);
     }
 
@@ -32,19 +34,21 @@ public class ArbeidsforholdInformasjonBuilder {
         return this;
     }
 
-    public InternArbeidsforholdRef finnEllerOpprett(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef eksternArbeidsforholdRef) {
-        InternArbeidsforholdRef internArbeidsforholdRef = kladd.finnEllerOpprett(arbeidsgiver, eksternArbeidsforholdRef);
+    public InternArbeidsforholdRef finnEllerOpprett(
+            Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef eksternArbeidsforholdRef) {
+        InternArbeidsforholdRef internArbeidsforholdRef =
+                kladd.finnEllerOpprett(arbeidsgiver, eksternArbeidsforholdRef);
         if (erUkjentReferanse(arbeidsgiver, internArbeidsforholdRef)) {
-            leggTilNyReferanse(new ArbeidsforholdReferanse(arbeidsgiver, internArbeidsforholdRef, eksternArbeidsforholdRef));
+            leggTilNyReferanse(
+                    new ArbeidsforholdReferanse(arbeidsgiver, internArbeidsforholdRef, eksternArbeidsforholdRef));
         }
         return internArbeidsforholdRef;
     }
 
     public boolean erUkjentReferanse(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef internArbeidsforholdRef) {
-        return kladd.getArbeidsforholdReferanser()
-            .stream()
-            .noneMatch(
-                referanse -> referanse.getArbeidsgiver().equals(arbeidsgiver) && referanse.getInternReferanse().equals(internArbeidsforholdRef));
+        return kladd.getArbeidsforholdReferanser().stream()
+                .noneMatch(referanse -> referanse.getArbeidsgiver().equals(arbeidsgiver)
+                        && referanse.getInternReferanse().equals(internArbeidsforholdRef));
     }
 
     public ArbeidsforholdInformasjonBuilder leggTil(ArbeidsforholdOverstyringBuilder overstyringBuilder) {
@@ -64,7 +68,8 @@ public class ArbeidsforholdInformasjonBuilder {
         return this;
     }
 
-    public ArbeidsforholdInformasjonBuilder fjernOverstyringVedrørende(Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef arbeidsforholdRef) {
+    public ArbeidsforholdInformasjonBuilder fjernOverstyringVedrørende(
+            Arbeidsgiver arbeidsgiver, InternArbeidsforholdRef arbeidsforholdRef) {
         kladd.fjernOverstyringVedrørende(arbeidsgiver, arbeidsforholdRef);
         return this;
     }
@@ -77,24 +82,25 @@ public class ArbeidsforholdInformasjonBuilder {
         kladd.leggTilNyReferanse(arbeidsforholdReferanse);
     }
 
-    public boolean kommetInntektsmeldingPåArbeidsforholdHvorViTidligereBehandletUtenInntektsmelding(Inntektsmelding inntektsmelding) {
-        return kladd.getOverstyringer()
-            .stream()
-            .anyMatch(ov ->
-                (Objects.equals(ov.getHandling(), ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING) || Objects.equals(ov.getHandling(),
-                    ArbeidsforholdHandlingType.IKKE_BRUK) || Objects.equals(ov.getHandling(), ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE))
-                    && ov.getArbeidsgiver().getErVirksomhet() && ov.getArbeidsgiver().equals(inntektsmelding.getArbeidsgiver())
-                    && ov.getArbeidsforholdRef().gjelderFor(inntektsmelding.getArbeidsforholdRef()));
+    public boolean kommetInntektsmeldingPåArbeidsforholdHvorViTidligereBehandletUtenInntektsmelding(
+            Inntektsmelding inntektsmelding) {
+        return kladd.getOverstyringer().stream()
+                .anyMatch(ov -> (Objects.equals(ov.getHandling(), ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING)
+                                || Objects.equals(ov.getHandling(), ArbeidsforholdHandlingType.IKKE_BRUK)
+                                || Objects.equals(
+                                        ov.getHandling(), ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE))
+                        && ov.getArbeidsgiver().getErVirksomhet()
+                        && ov.getArbeidsgiver().equals(inntektsmelding.getArbeidsgiver())
+                        && ov.getArbeidsforholdRef().gjelderFor(inntektsmelding.getArbeidsforholdRef()));
     }
 
     public Optional<Arbeidsgiver> utledeArbeidsgiverSomMåTilbakestilles(Inntektsmelding inntektsmelding) {
         if (inntektsmelding.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold()) {
-            return kladd.getOverstyringer()
-                .stream()
-                .filter(o -> o.getArbeidsgiver().equals(inntektsmelding.getArbeidsgiver()) && !o.getArbeidsforholdRef()
-                    .gjelderForSpesifiktArbeidsforhold())
-                .map(ArbeidsforholdOverstyring::getArbeidsgiver)
-                .findFirst();
+            return kladd.getOverstyringer().stream()
+                    .filter(o -> o.getArbeidsgiver().equals(inntektsmelding.getArbeidsgiver())
+                            && !o.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold())
+                    .map(ArbeidsforholdOverstyring::getArbeidsgiver)
+                    .findFirst();
         }
         return Optional.empty();
     }

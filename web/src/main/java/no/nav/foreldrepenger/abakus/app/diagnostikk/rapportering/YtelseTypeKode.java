@@ -1,8 +1,6 @@
 package no.nav.foreldrepenger.abakus.app.diagnostikk.rapportering;
 
-/**
- * Mapper tilgjengelige ytelsetype koder for rapportering.
- */
+/** Mapper tilgjengelige ytelsetype koder for rapportering. */
 public enum YtelseTypeKode {
     OMP,
     PSB,
@@ -11,5 +9,4 @@ public enum YtelseTypeKode {
     FORELDREPENGER,
     SVANGERSKAPSPENGER,
     FRISINN;
-
 }

@@ -1,19 +1,16 @@
 package no.nav.abakus.iaygrunnlag.ytelse.v1;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDate;
-import java.util.List;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.List;
 import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -49,16 +46,13 @@ public class YtelseGrunnlagDto {
     @Valid
     private List<FordelingDto> fordeling;
 
-    /**
-     * Beløp i hele kroner (currency major unit). Tillater kun positive verdier.  Max verdi håndteres av mottager.
-     */
+    /** Beløp i hele kroner (currency major unit). Tillater kun positive verdier. Max verdi håndteres av mottager. */
     @JsonProperty(value = "dagsats")
     @Valid
     @DecimalMin(value = "0.00", message = "[${validatedValue}] må være >= {value}")
     private BigDecimal vedtaksDagsats;
 
-    public YtelseGrunnlagDto() {
-    }
+    public YtelseGrunnlagDto() {}
 
     public Arbeidskategori getArbeidskategoriDto() {
         return arbeidskategoriDto;
@@ -91,7 +85,8 @@ public class YtelseGrunnlagDto {
     }
 
     public void setDekningsgradProsent(BigDecimal dekningsgradProsent) {
-        this.dekningsgradProsent = dekningsgradProsent == null ? null : dekningsgradProsent.setScale(2, RoundingMode.HALF_UP);
+        this.dekningsgradProsent =
+                dekningsgradProsent == null ? null : dekningsgradProsent.setScale(2, RoundingMode.HALF_UP);
     }
 
     public YtelseGrunnlagDto medDekningsgradProsent(BigDecimal dekningsgradProsent) {
@@ -127,7 +122,8 @@ public class YtelseGrunnlagDto {
     }
 
     public void setInntektsgrunnlagProsent(BigDecimal inntektsgrunnlagProsent) {
-        this.inntektsgrunnlagProsent = inntektsgrunnlagProsent == null ? null : inntektsgrunnlagProsent.setScale(2, RoundingMode.HALF_UP);
+        this.inntektsgrunnlagProsent =
+                inntektsgrunnlagProsent == null ? null : inntektsgrunnlagProsent.setScale(2, RoundingMode.HALF_UP);
     }
 
     public YtelseGrunnlagDto medInntektsgrunnlagProsent(BigDecimal inntektsgrunnlagProsent) {

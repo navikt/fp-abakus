@@ -1,17 +1,10 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,6 +22,11 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.FnrPersonident;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
@@ -69,13 +67,13 @@ public class InntektsmeldingerRestTjeneste {
     private KoblingTjeneste koblingTjeneste;
     private InntektArbeidYtelseTjeneste iayTjeneste;
 
-    public InntektsmeldingerRestTjeneste() {
-    } // CDI Ctor
+    public InntektsmeldingerRestTjeneste() {} // CDI Ctor
 
     @Inject
-    public InntektsmeldingerRestTjeneste(InntektsmeldingerTjeneste imTjeneste,
-                                         KoblingTjeneste koblingTjeneste,
-                                         InntektArbeidYtelseTjeneste iayTjeneste) {
+    public InntektsmeldingerRestTjeneste(
+            InntektsmeldingerTjeneste imTjeneste,
+            KoblingTjeneste koblingTjeneste,
+            InntektArbeidYtelseTjeneste iayTjeneste) {
         this.imTjeneste = imTjeneste;
         this.koblingTjeneste = koblingTjeneste;
         this.iayTjeneste = iayTjeneste;
@@ -94,8 +92,10 @@ public class InntektsmeldingerRestTjeneste {
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
         var ytelseType = spesifikasjon.getYtelseType();
-        var inntektsmeldingerMap = iayTjeneste.hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, ytelseType);
-        InntektsmeldingerDto inntektsmeldingerDto = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(inntektsmeldingerMap);
+        var inntektsmeldingerMap =
+                iayTjeneste.hentArbeidsforholdinfoInntektsmeldingerMapFor(aktørId, saksnummer, ytelseType);
+        InntektsmeldingerDto inntektsmeldingerDto =
+                MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(inntektsmeldingerMap);
         final Response build = Response.ok(inntektsmeldingerDto).build();
 
         return build;
@@ -105,7 +105,9 @@ public class InntektsmeldingerRestTjeneste {
     @Path("/hentRefusjonskravDatoer")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Hent refusjonskrav fra inntektsmeldinger for angitt søke spesifikasjon", tags = "inntektsmelding")
+    @Operation(
+            description = "Hent refusjonskrav fra inntektsmeldinger for angitt søke spesifikasjon",
+            tags = "inntektsmelding")
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response hentRefusjonskravDatoForSak(@NotNull @Valid InntektsmeldingerRequestAbacDto spesifikasjon) {
@@ -117,11 +119,17 @@ public class InntektsmeldingerRestTjeneste {
         var inntektsmeldinger = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
         var kobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType);
         if (kobling.isEmpty()) {
-            response = Response.ok(new InntektsmeldingerDto().medInntektsmeldinger(Collections.emptyList())).build();
+            response = Response.ok(new InntektsmeldingerDto().medInntektsmeldinger(Collections.emptyList()))
+                    .build();
         } else {
-            LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer(), kobling.get().getKoblingReferanse().asString());
-            InntektArbeidYtelseGrunnlag nyesteGrunnlag = iayTjeneste.hentAggregat(kobling.get().getKoblingReferanse());
-            RefusjonskravDatoerDto refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(inntektsmeldinger, nyesteGrunnlag);
+            LoggUtil.setupLogMdc(
+                    spesifikasjon.getYtelseType(),
+                    spesifikasjon.getSaksnummer(),
+                    kobling.get().getKoblingReferanse().asString());
+            InntektArbeidYtelseGrunnlag nyesteGrunnlag =
+                    iayTjeneste.hentAggregat(kobling.get().getKoblingReferanse());
+            RefusjonskravDatoerDto refusjonskravDatoerDto =
+                    MapInntektsmeldinger.mapRefusjonskravdatoer(inntektsmeldinger, nyesteGrunnlag);
             response = Response.ok(refusjonskravDatoerDto).build();
         }
         return response;
@@ -129,23 +137,43 @@ public class InntektsmeldingerRestTjeneste {
 
     @POST
     @Path("/motta")
-    @Operation(description = "Motta og lagre inntektsmelding(er)", tags = "inntektsmelding", responses = {@ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))})
+    @Operation(
+            description = "Motta og lagre inntektsmelding(er)",
+            tags = "inntektsmelding",
+            responses = {
+                @ApiResponse(
+                        description = "Oppdatert grunnlagreferanse",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = UuidDto.class)))
+            })
     @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public UuidDto lagreInntektsmeldinger(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid InntektsmeldingerMottattRequest mottattRequest) {
+    public UuidDto lagreInntektsmeldinger(
+            @NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid
+                    InntektsmeldingerMottattRequest mottattRequest) {
         UuidDto resultat = null;
-        LoggUtil.setupLogMdc(mottattRequest.getYtelseType(), mottattRequest.getSaksnummer(), mottattRequest.getKoblingReferanse().toString());
+        LoggUtil.setupLogMdc(
+                mottattRequest.getYtelseType(),
+                mottattRequest.getSaksnummer(),
+                mottattRequest.getKoblingReferanse().toString());
 
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
 
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
         var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
-        var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId,
-            new Saksnummer(mottattRequest.getSaksnummer()));
+        var kobling = koblingTjeneste.finnEllerOpprett(
+                mottattRequest.getYtelseType(),
+                koblingReferanse,
+                aktørId,
+                new Saksnummer(mottattRequest.getSaksnummer()));
 
-        var informasjonBuilder = ArbeidsforholdInformasjonBuilder.oppdatere(imTjeneste.hentArbeidsforholdInformasjonForKobling(koblingReferanse));
+        var informasjonBuilder = ArbeidsforholdInformasjonBuilder.oppdatere(
+                imTjeneste.hentArbeidsforholdInformasjonForKobling(koblingReferanse));
 
-        var inntektsmeldingerAggregat = new MapInntektsmeldinger.MapFraDto().map(informasjonBuilder, mottattRequest.getInntektsmeldinger());
+        var inntektsmeldingerAggregat =
+                new MapInntektsmeldinger.MapFraDto().map(informasjonBuilder, mottattRequest.getInntektsmeldinger());
 
         List<Inntektsmelding> inntektsmeldinger = inntektsmeldingerAggregat.getInntektsmeldinger();
         valider(kobling.getYtelseType(), inntektsmeldinger);
@@ -167,10 +195,13 @@ public class InntektsmeldingerRestTjeneste {
             case FORELDREPENGER:
             case SVANGERSKAPSPENGER:
             case UDEFINERT:
-                // har ikke validering på Kapittel 14 ytelser her ennå pga feil i Gosys kopiering ved journalføring på annen sak.
+                // har ikke validering på Kapittel 14 ytelser her ennå pga feil i Gosys kopiering ved journalføring på
+                // annen sak.
                 return;
             default:
-                var feil = inntektsmeldinger.stream().filter(im -> im.getKanalreferanse() == null).findFirst();
+                var feil = inntektsmeldinger.stream()
+                        .filter(im -> im.getKanalreferanse() == null)
+                        .findFirst();
                 if (feil.isPresent()) {
                     throw new IllegalArgumentException("Inntektsmelding mangler kanalreferanse: " + feil);
                 }
@@ -184,17 +215,20 @@ public class InntektsmeldingerRestTjeneste {
     @Operation(description = "Hent inntektsmeldinger for angitt søke spesifikasjon", tags = "inntektsmelding")
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response hentDifferanseMellomToReferanserPåSak(@NotNull @Valid InntektsmeldingDiffRequestAbacDto spesifikasjon) {
-        LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer(),
-            spesifikasjon.getEksternRefEn() + "/" + spesifikasjon.getEksternRefTo());
+    public Response hentDifferanseMellomToReferanserPåSak(
+            @NotNull @Valid InntektsmeldingDiffRequestAbacDto spesifikasjon) {
+        LoggUtil.setupLogMdc(
+                spesifikasjon.getYtelseType(),
+                spesifikasjon.getSaksnummer(),
+                spesifikasjon.getEksternRefEn() + "/" + spesifikasjon.getEksternRefTo());
 
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
         var ytelseType = spesifikasjon.getYtelseType();
-        Map<Inntektsmelding, ArbeidsforholdInformasjon> førsteMap = iayTjeneste.hentAlleInntektsmeldingerForEksternRef(aktørId, saksnummer,
-            new KoblingReferanse(spesifikasjon.getEksternRefEn()), ytelseType);
-        Map<Inntektsmelding, ArbeidsforholdInformasjon> andreMap = iayTjeneste.hentAlleInntektsmeldingerForEksternRef(aktørId, saksnummer,
-            new KoblingReferanse(spesifikasjon.getEksternRefTo()), ytelseType);
+        Map<Inntektsmelding, ArbeidsforholdInformasjon> førsteMap = iayTjeneste.hentAlleInntektsmeldingerForEksternRef(
+                aktørId, saksnummer, new KoblingReferanse(spesifikasjon.getEksternRefEn()), ytelseType);
+        Map<Inntektsmelding, ArbeidsforholdInformasjon> andreMap = iayTjeneste.hentAlleInntektsmeldingerForEksternRef(
+                aktørId, saksnummer, new KoblingReferanse(spesifikasjon.getEksternRefTo()), ytelseType);
 
         var diffMap = iayTjeneste.utledInntektsmeldingDiff(førsteMap, andreMap);
         InntektsmeldingerDto imDiffListe = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(diffMap);
@@ -205,27 +239,30 @@ public class InntektsmeldingerRestTjeneste {
 
     public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
-        public AbacDataSupplier() {
-        }
+        public AbacDataSupplier() {}
 
         @Override
         public AbacDataAttributter apply(Object obj) {
             var req = (InntektsmeldingerMottattRequest) obj;
-            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, req.getAktør().getIdent());
+            return AbacDataAttributter.opprett()
+                    .leggTil(StandardAbacAttributtType.AKTØR_ID, req.getAktør().getIdent());
         }
-
     }
 
-    /**
-     * Json bean med Abac.
-     */
+    /** Json bean med Abac. */
     @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+    @JsonAutoDetect(
+            fieldVisibility = JsonAutoDetect.Visibility.NONE,
+            getterVisibility = JsonAutoDetect.Visibility.NONE,
+            setterVisibility = JsonAutoDetect.Visibility.NONE,
+            isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+            creatorVisibility = JsonAutoDetect.Visibility.NONE)
     @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
     public static class InntektsmeldingerRequestAbacDto extends InntektsmeldingerRequest implements AbacDto {
 
         @JsonCreator
-        public InntektsmeldingerRequestAbacDto(@JsonProperty(value = "personIdent", required = true) @Valid @NotNull PersonIdent person) {
+        public InntektsmeldingerRequestAbacDto(
+                @JsonProperty(value = "personIdent", required = true) @Valid @NotNull PersonIdent person) {
             super(person);
         }
 
@@ -233,25 +270,31 @@ public class InntektsmeldingerRestTjeneste {
         public AbacDataAttributter abacAttributter() {
             final var abacDataAttributter = AbacDataAttributter.opprett();
             if (FnrPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
-                return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, getPerson().getIdent());
+                return abacDataAttributter.leggTil(
+                        StandardAbacAttributtType.FNR, getPerson().getIdent());
             } else if (AktørIdPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
-                return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, getPerson().getIdent());
+                return abacDataAttributter.leggTil(
+                        StandardAbacAttributtType.AKTØR_ID, getPerson().getIdent());
             }
-            throw new java.lang.IllegalArgumentException("Ukjent identtype: " + getPerson().getIdentType());
+            throw new java.lang.IllegalArgumentException(
+                    "Ukjent identtype: " + getPerson().getIdentType());
         }
-
     }
 
-    /**
-     * Json bean med Abac.
-     */
+    /** Json bean med Abac. */
     @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+    @JsonAutoDetect(
+            fieldVisibility = JsonAutoDetect.Visibility.NONE,
+            getterVisibility = JsonAutoDetect.Visibility.NONE,
+            setterVisibility = JsonAutoDetect.Visibility.NONE,
+            isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+            creatorVisibility = JsonAutoDetect.Visibility.NONE)
     @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
     public static class InntektsmeldingDiffRequestAbacDto extends InntektsmeldingDiffRequest implements AbacDto {
 
         @JsonCreator
-        public InntektsmeldingDiffRequestAbacDto(@JsonProperty(value = "personIdent", required = true) @Valid @NotNull PersonIdent person) {
+        public InntektsmeldingDiffRequestAbacDto(
+                @JsonProperty(value = "personIdent", required = true) @Valid @NotNull PersonIdent person) {
             super(person);
         }
 
@@ -259,13 +302,14 @@ public class InntektsmeldingerRestTjeneste {
         public AbacDataAttributter abacAttributter() {
             final var abacDataAttributter = AbacDataAttributter.opprett();
             if (FnrPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
-                return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, getPerson().getIdent());
+                return abacDataAttributter.leggTil(
+                        StandardAbacAttributtType.FNR, getPerson().getIdent());
             } else if (AktørIdPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
-                return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, getPerson().getIdent());
+                return abacDataAttributter.leggTil(
+                        StandardAbacAttributtType.AKTØR_ID, getPerson().getIdent());
             }
-            throw new java.lang.IllegalArgumentException("Ukjent identtype: " + getPerson().getIdentType());
+            throw new java.lang.IllegalArgumentException(
+                    "Ukjent identtype: " + getPerson().getIdentType());
         }
-
     }
-
 }

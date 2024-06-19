@@ -1,35 +1,29 @@
 package no.nav.foreldrepenger.abakus.typer;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.UUID;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 
 /**
  * Intern arbeidsforhold referanse.
- * <p>
- * Hvis null gjelder det flere arbeidsforhold, ellers for et spesifikt forhold
+ *
+ * <p>Hvis null gjelder det flere arbeidsforhold, ellers for et spesifikt forhold
  */
-
 @Embeddable
 public class InternArbeidsforholdRef implements IndexKey, Serializable {
 
-    /**
-     * Instans som representerer alle arbeidsforhold (for en arbeidsgiver).
-     */
+    /** Instans som representerer alle arbeidsforhold (for en arbeidsgiver). */
     private static final InternArbeidsforholdRef NULL_OBJECT = new InternArbeidsforholdRef(null);
 
     @Column(name = "arbeidsforhold_intern_id")
     private UUID referanse;
 
-    InternArbeidsforholdRef() {
-    }
+    InternArbeidsforholdRef() {}
 
     private InternArbeidsforholdRef(UUID referanse) {
         this.referanse = referanse;
@@ -51,9 +45,7 @@ public class InternArbeidsforholdRef implements IndexKey, Serializable {
         return ref(UUID.randomUUID().toString());
     }
 
-    /**
-     * Genererer en UUID type 3 basert på angitt seed. Gir konsekvente UUIDer
-     */
+    /** Genererer en UUID type 3 basert på angitt seed. Gir konsekvente UUIDer */
     public static InternArbeidsforholdRef namedRef(String seed) {
         return ref(UUID.nameUUIDFromBytes(seed.getBytes(StandardCharsets.UTF_8)).toString());
     }
