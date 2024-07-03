@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -64,6 +67,7 @@ import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 @ApplicationScoped
 @Transactional
 public class InntektsmeldingerRestTjeneste {
+    private static final Logger LOG = LoggerFactory.getLogger(InntektsmeldingerRestTjeneste.class);
 
     private InntektsmeldingerTjeneste imTjeneste;
     private KoblingTjeneste koblingTjeneste;
@@ -185,6 +189,7 @@ public class InntektsmeldingerRestTjeneste {
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentDifferanseMellomToReferanserPåSak(@NotNull @Valid InntektsmeldingDiffRequestAbacDto spesifikasjon) {
+        LOG.info("Kall på deprekert endepunkt /hentDiff med spesifikasjon " + spesifikasjon.getSaksnummer());
         LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer(),
             spesifikasjon.getEksternRefEn() + "/" + spesifikasjon.getEksternRefTo());
 
