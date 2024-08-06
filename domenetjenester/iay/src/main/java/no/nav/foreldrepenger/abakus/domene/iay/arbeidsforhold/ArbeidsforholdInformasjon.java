@@ -288,7 +288,7 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
         for (var e : gruppertArbeidsforhold.entrySet()) {
             if (e.getValue().size() > 1) {
                 String msg = String.format("Duplikat internref for %s=%s", e.getKey(), e.getValue());
-                LOG.warn(msg);
+                LOG.info(msg);
                 //throw new IllegalStateException(msg);
             }
         }
