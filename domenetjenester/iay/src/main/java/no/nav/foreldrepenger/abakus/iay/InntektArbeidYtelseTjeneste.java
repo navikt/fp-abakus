@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.Dataset;
 import no.nav.abakus.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest.GrunnlagVersjon;
@@ -32,7 +31,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdRefe
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.InntektsmeldingBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
-import no.nav.foreldrepenger.abakus.iay.impl.InntektsmeldingDiffTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
@@ -105,12 +103,7 @@ public class InntektArbeidYtelseTjeneste {
                                                                                                   YtelseType ytelseType) {
         return repository.hentArbeidsforholdInfoInntektsmeldingerMapFor(aktørId, saksnummer, ref, ytelseType);
     }
-
-    public Map<Inntektsmelding, ArbeidsforholdInformasjon> utledInntektsmeldingDiff(Map<Inntektsmelding, ArbeidsforholdInformasjon> førsteSet,
-                                                                                    Map<Inntektsmelding, ArbeidsforholdInformasjon> andreSet) {
-        return InntektsmeldingDiffTjeneste.utledDifferanseIInntektsmeldinger(førsteSet, andreSet);
-    }
-
+    
     public Map<Inntektsmelding, ArbeidsforholdInformasjon> hentArbeidsforholdinfoInntektsmeldingerMapFor(AktørId aktørId,
                                                                                                          Saksnummer saksnummer,
                                                                                                          YtelseType ytelseType) {
