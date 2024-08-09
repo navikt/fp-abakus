@@ -2,12 +2,8 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -39,11 +35,9 @@ import no.nav.abakus.iaygrunnlag.UuidDto;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.RefusjonskravDatoerDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-import no.nav.abakus.iaygrunnlag.request.InntektsmeldingDiffRequest;
 import no.nav.abakus.iaygrunnlag.request.InntektsmeldingerMottattRequest;
 import no.nav.abakus.iaygrunnlag.request.InntektsmeldingerRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.felles.LoggUtil;
@@ -67,7 +61,6 @@ import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 @ApplicationScoped
 @Transactional
 public class InntektsmeldingerRestTjeneste {
-    private static final Logger LOG = LoggerFactory.getLogger(InntektsmeldingerRestTjeneste.class);
 
     private InntektsmeldingerTjeneste imTjeneste;
     private KoblingTjeneste koblingTjeneste;
@@ -181,33 +174,6 @@ public class InntektsmeldingerRestTjeneste {
         }
     }
 
-    @POST
-    @Path("/hentDiff")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Hent inntektsmeldinger for angitt søke spesifikasjon", tags = "inntektsmelding")
-    @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response hentDifferanseMellomToReferanserPåSak(@NotNull @Valid InntektsmeldingDiffRequestAbacDto spesifikasjon) {
-        LOG.info("Kall på deprekert endepunkt /hentDiff med spesifikasjon " + spesifikasjon.getSaksnummer());
-        LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer(),
-            spesifikasjon.getEksternRefEn() + "/" + spesifikasjon.getEksternRefTo());
-
-        var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
-        var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
-        var ytelseType = spesifikasjon.getYtelseType();
-        Map<Inntektsmelding, ArbeidsforholdInformasjon> førsteMap = iayTjeneste.hentAlleInntektsmeldingerForEksternRef(aktørId, saksnummer,
-            new KoblingReferanse(spesifikasjon.getEksternRefEn()), ytelseType);
-        Map<Inntektsmelding, ArbeidsforholdInformasjon> andreMap = iayTjeneste.hentAlleInntektsmeldingerForEksternRef(aktørId, saksnummer,
-            new KoblingReferanse(spesifikasjon.getEksternRefTo()), ytelseType);
-
-        var diffMap = iayTjeneste.utledInntektsmeldingDiff(førsteMap, andreMap);
-        InntektsmeldingerDto imDiffListe = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(diffMap);
-        final Response response = Response.ok(imDiffListe).build();
-
-        return response;
-    }
-
     public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         public AbacDataSupplier() {
@@ -246,31 +212,4 @@ public class InntektsmeldingerRestTjeneste {
         }
 
     }
-
-    /**
-     * Json bean med Abac.
-     */
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
-    @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
-    public static class InntektsmeldingDiffRequestAbacDto extends InntektsmeldingDiffRequest implements AbacDto {
-
-        @JsonCreator
-        public InntektsmeldingDiffRequestAbacDto(@JsonProperty(value = "personIdent", required = true) @Valid @NotNull PersonIdent person) {
-            super(person);
-        }
-
-        @Override
-        public AbacDataAttributter abacAttributter() {
-            final var abacDataAttributter = AbacDataAttributter.opprett();
-            if (FnrPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
-                return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, getPerson().getIdent());
-            } else if (AktørIdPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
-                return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, getPerson().getIdent());
-            }
-            throw new java.lang.IllegalArgumentException("Ukjent identtype: " + getPerson().getIdentType());
-        }
-
-    }
-
 }
