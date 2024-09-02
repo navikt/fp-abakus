@@ -35,9 +35,9 @@
       "cluster": "dev-fss"
     },
     {
-      "app": "tiltakspenger-fp",
-      "namespace": "tpts",
-      "cluster": "dev-fss",
+      "app": "behandlingsflyt",
+      "namespace": "aap",
+      "cluster": "dev-gcp",
       "roles": [
         "ekstern"
       ]
