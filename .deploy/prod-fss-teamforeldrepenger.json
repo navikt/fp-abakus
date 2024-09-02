@@ -35,14 +35,6 @@
       "cluster": "prod-fss"
     },
     {
-      "app": "tiltakspenger-fp",
-      "namespace": "tpts",
-      "cluster": "prod-fss",
-      "roles": [
-        "ekstern"
-      ]
-    },
-    {
       "app": "sparkel-sputnik",
       "namespace": "tbd",
       "cluster": "prod-gcp",
