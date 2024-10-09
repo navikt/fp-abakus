@@ -122,6 +122,10 @@ public class InntektsmeldingAggregat extends BaseEntitet {
 
     private boolean skalFjerneInntektsmelding(Inntektsmelding gammel, Inntektsmelding ny) {
         if (gammel.gjelderSammeArbeidsforhold(ny)) {
+            // Arbeidsgiverportalen har ikke løpenummer delt med altinn, så her må vi sammenligne innsendingstidspunktet.
+            if ("NAV_NO".equals(ny.getKildesystem()) || "NAV_NO".equals(gammel.getKildesystem())) {
+                return gammel.getInnsendingstidspunkt().compareTo(ny.getInnsendingstidspunkt()) <= 0;
+            }
             if (gammel.getKanalreferanse() != null && ny.getKanalreferanse() != null) {
                 return ny.getKanalreferanse().compareTo(gammel.getKanalreferanse()) > 0;
             }
