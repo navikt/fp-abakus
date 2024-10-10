@@ -405,6 +405,10 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
         return Collections.unmodifiableList(endringerRefusjon);
     }
 
+    public boolean erSendtFraFpinntektsmelding() {
+        return ("NAV_NO").equals(getKildesystem()) || "OVERSTYRING_FPSAK".equals(getKildesystem());
+    }
+
     void leggTil(Gradering gradering) {
         this.graderinger.add(gradering);
         gradering.setInntektsmelding(this);
