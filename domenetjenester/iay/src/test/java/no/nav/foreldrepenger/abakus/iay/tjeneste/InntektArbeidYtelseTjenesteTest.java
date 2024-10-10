@@ -202,6 +202,7 @@ class InntektArbeidYtelseTjenesteTest {
     private Inntektsmelding nyInntektsmeldingMedReferanse(LocalDateTime innsendingstidspunkt, String journalpostId) {
         return InntektsmeldingBuilder.builder()
             .medInnsendingstidspunkt(innsendingstidspunkt)
+            .medMottattDato(innsendingstidspunkt.toLocalDate())
             .medJournalpostId(journalpostId)
             .medArbeidsgiver(arbeidsgiver)
             .medArbeidsforholdId(internRef)
@@ -212,6 +213,7 @@ class InntektArbeidYtelseTjenesteTest {
     private Inntektsmelding nyInntektsmelding(LocalDateTime innsendingstidspunkt, String journalpostId) {
         return InntektsmeldingBuilder.builder()
             .medInnsendingstidspunkt(innsendingstidspunkt)
+            .medMottattDato(innsendingstidspunkt.toLocalDate())
             .medJournalpostId(journalpostId)
             .medArbeidsgiver(arbeidsgiver)
             .build();
