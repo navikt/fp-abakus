@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun;
 import static java.time.temporal.ChronoUnit.YEARS;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.Month;
 import java.time.MonthDay;
 import java.time.Year;
@@ -48,23 +49,26 @@ public class SigrunTjeneste {
     }
 
     private List<PgiFolketrygdenResponse> pensjonsgivendeInntektForFolketrygden(String fnr, IntervallEntitet opplysningsperiode) {
-        var senesteÅr = utledSenesteÅr(opplysningsperiode);
+        var senesteDato = utledSeneste(opplysningsperiode);
         List<PgiFolketrygdenResponse> svarene = new ArrayList<>();
-        var svarSenesteÅr = svarForSenesteÅr(fnr, senesteÅr);
+        var svarSenesteÅr = svarForSenesteÅr(fnr, Year.from(senesteDato));
         svarSenesteÅr.ifPresent(svarene::add);
-        utledTidligereÅr(opplysningsperiode, senesteÅr, svarSenesteÅr.isPresent())
+        utledTidligereÅr(opplysningsperiode, senesteDato, svarSenesteÅr.isPresent())
             .forEach(år -> sigrunConsumer.hentPensjonsgivendeInntektForFolketrygden(fnr, år).ifPresent(svarene::add));
         return svarene;
     }
 
-    private Year utledSenesteÅr(IntervallEntitet opplysningsperiode) {
-        var ifjor = Year.now().minusYears(1);
-        var oppgitt = opplysningsperiode != null ? Year.from(opplysningsperiode.getTomDato()) : ifjor;
-        return oppgitt.isAfter(ifjor) ? ifjor : oppgitt;
+    private LocalDate utledSeneste(IntervallEntitet opplysningsperiode) {
+        var ifjor = LocalDate.now().minusYears(1);
+        var oppgitt = opplysningsperiode != null ? opplysningsperiode.getTomDato() : ifjor;
+        // Ikke senere år enn i fjor
+        return oppgitt.getYear() > ifjor.getYear() ? ifjor : oppgitt;
     }
 
     public Optional<PgiFolketrygdenResponse> svarForSenesteÅr(String fnr, Year senesteÅr) {
-        if (Year.now().minusYears(1).equals(senesteÅr) && MonthDay.now().isBefore(TIDLIGSTE_SJEKK_FJOR)) {
+        // Venter ikke svar før i fjor og ikke før etter TIDLIGSTE_SJEKK_FJOR
+        var ifjor = Year.now().minusYears(1);
+        if (senesteÅr.isAfter(ifjor) || (ifjor.equals(senesteÅr) && MonthDay.now().isBefore(TIDLIGSTE_SJEKK_FJOR))) {
             return Optional.empty();
         }
         try {
@@ -74,8 +78,9 @@ public class SigrunTjeneste {
         }
     }
 
-    private List<Year> utledTidligereÅr(IntervallEntitet opplysningsperiode, Year senesteÅr, boolean harDataSenesteÅr) {
-        long periodeLengde = opplysningsperiode != null ? YEARS.between(opplysningsperiode.getFomDato(), opplysningsperiode.getTomDato()) : 2L;
+    private List<Year> utledTidligereÅr(IntervallEntitet opplysningsperiode, LocalDate senesteDato, boolean harDataSenesteÅr) {
+        var senesteÅr = Year.from(senesteDato);
+        long periodeLengde = opplysningsperiode != null ? periodeLengde(opplysningsperiode, senesteDato) : 2L;
         var tidligsteÅr = opplysningsperiode != null ? Year.from(opplysningsperiode.getFomDato()) : senesteÅr.minusYears(2);
         var fraTidligsteÅr = harDataSenesteÅr || periodeLengde > 2L ? tidligsteÅr : tidligsteÅr.minusYears(1);
         if (fraTidligsteÅr.isBefore(FØRSTE_PGI)) {
@@ -87,6 +92,11 @@ public class SigrunTjeneste {
             fraTidligsteÅr = fraTidligsteÅr.plusYears(1);
         }
         return årene.stream().sorted(Comparator.reverseOrder()).toList();
+    }
+
+    private long periodeLengde(IntervallEntitet opplysningsperiode, LocalDate senesteDato) {
+        var lengde = YEARS.between(opplysningsperiode.getFomDato(), senesteDato);
+        return lengde >= 2 ? lengde : 2;
     }
 
 }
