@@ -67,7 +67,7 @@ public class ContainerContextRunner {
 
     @Transactional
     private <T> T submit(Callable<T> call) throws Exception {
-        KontekstHolder.setKontekst(BasisKontekst.forProsesstask());
+        KontekstHolder.setKontekst(BasisKontekst.forProsesstaskUtenSystembruker());
         var result = call.call();
         KontekstHolder.fjernKontekst();
         return result;
