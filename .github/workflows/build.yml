@@ -31,6 +31,7 @@ jobs:
       postgres-user: fpabakus_unit
       build-image: ${{ github.ref_name == 'master' }} # default: true
       push-image: ${{ github.ref_name == 'master' }} # default: false
+      postgres-port: 5999
     secrets: inherit
 
   release-drafter:

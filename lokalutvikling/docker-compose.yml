@@ -3,10 +3,11 @@ services:
   postgres:
     image: postgres:16
     environment:
-      - POSTGRES_PASSWORD=admin
-      - POSTGRES_USER=admin
+      PGPORT: 5999
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: admin
     ports:
-      - "5432:5432"
+      - "5999:5999"
     volumes:
       - ./postgres-init:/docker-entrypoint-initdb.d/
     container_name: postgres
