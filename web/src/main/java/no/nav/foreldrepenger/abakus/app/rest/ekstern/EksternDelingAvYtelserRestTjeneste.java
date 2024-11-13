@@ -59,7 +59,7 @@ import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.AvailabilityType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 
-@OpenAPIDefinition(tags = @Tag(name = "ekstern"), servers = @Server())
+@OpenAPIDefinition(tags = @Tag(name = "ytelse"), servers = @Server())
 @Path("/ytelse/v1")
 @ApplicationScoped
 @Transactional

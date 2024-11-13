@@ -49,6 +49,14 @@
       "roles": [
         "ekstern"
       ]
+    },
+    {
+      "app": "dp-oppslag-ytelser",
+      "namespace": "teamdagpenger",
+      "cluster": "dev-gcp",
+      "roles": [
+        "ekstern"
+      ]
     }
   ]
 }
