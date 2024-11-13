@@ -26,12 +26,10 @@ jobs:
       packages: write
       id-token: write
       pull-requests: read
-    uses: navikt/fp-gha-workflows/.github/workflows/build-app-postgres.yml@main
+    uses: navikt/fp-gha-workflows/.github/workflows/build-app-no-db.yml@main
     with:
-      postgres-user: fpabakus_unit
       build-image: ${{ github.ref_name == 'master' }} # default: true
       push-image: ${{ github.ref_name == 'master' }} # default: false
-      postgres-port: 5999
     secrets: inherit
 
   release-drafter:

@@ -89,12 +89,12 @@
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
+
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
                 <artifactId>fp-ws-proxy-v1</artifactId>
                 <version>${kontrakter.version}</version>
             </dependency>
-
 
             <dependency>
                 <groupId>no.nav.fpsak.tidsserie</groupId>
@@ -200,6 +200,22 @@
 			</dependency>
         </dependencies>
 	</dependencyManagement>
+
+    <dependencies>
+        <!-- Testcontainer og sec update -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <scope>test</scope>
+            <version>[1.26.0,)</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- /Testcontainer og sec update -->
+    </dependencies>
 
     <repositories>
         <repository>
