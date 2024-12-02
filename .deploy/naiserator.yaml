@@ -59,6 +59,8 @@ spec:
     paths:
       - mountPath: /var/run/secrets/nais.io/serviceuser
         kvPath: {{serviceuserkv}}
+  envFrom:
+    - secret: fpabakus
   azure:
     application:
       enabled: true
