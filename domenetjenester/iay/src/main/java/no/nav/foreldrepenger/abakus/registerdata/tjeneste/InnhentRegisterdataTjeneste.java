@@ -126,7 +126,6 @@ public class InnhentRegisterdataTjeneste {
 
         taskGruppe.addNesteSekvensiell(innhentingTask);
         taskGruppe.addNesteSekvensiell(callbackTask);
-        taskGruppe.setCallIdFraEksisterende();
 
         return taskTjeneste.lagre(taskGruppe);
     }
