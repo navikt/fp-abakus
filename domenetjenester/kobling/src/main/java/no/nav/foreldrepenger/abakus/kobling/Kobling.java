@@ -2,12 +2,10 @@ package no.nav.foreldrepenger.abakus.kobling;
 
 import java.time.LocalDate;
 import java.util.Objects;
-import java.util.Set;
 
 import org.hibernate.annotations.NaturalId;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -17,7 +15,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -41,7 +38,7 @@ public class Kobling extends BaseEntitet implements IndexKey {
      * Saksnummer (gruppererer alle koblinger under samme saksnummer - typisk generert av FPSAK, eller annet saksbehandlingsystem)
      */
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "saksnummer", column = @Column(name = "saksnummer")))
+    @AttributeOverride(name = "saksnummer", column = @Column(name = "saksnummer"))
     private Saksnummer saksnummer;
 
     /**
@@ -49,7 +46,7 @@ public class Kobling extends BaseEntitet implements IndexKey {
      */
     @NaturalId
     @Embedded
-    @AttributeOverrides({@AttributeOverride(name = "referanse", column = @Column(name = "kobling_referanse", updatable = false, unique = true))})
+    @AttributeOverride(name = "referanse", column = @Column(name = "kobling_referanse", updatable = false, unique = true))
     private KoblingReferanse koblingReferanse;
 
     @Convert(converter = YtelseTypeKodeverdiConverter.class)
@@ -57,28 +54,31 @@ public class Kobling extends BaseEntitet implements IndexKey {
     private YtelseType ytelseType = YtelseType.UDEFINERT;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "bruker_aktoer_id", nullable = false, updatable = false)))
+    @AttributeOverride(name = "aktørId", column = @Column(name = "bruker_aktoer_id", nullable = false, updatable = false))
     private AktørId aktørId;
 
     @Embedded
     @ChangeTracked
-    @AttributeOverrides({@AttributeOverride(name = "fomDato", column = @Column(name = "opplysning_periode_fom")), @AttributeOverride(name = "tomDato", column = @Column(name = "opplysning_periode_tom"))})
+    @AttributeOverride(name = "fomDato", column = @Column(name = "opplysning_periode_fom"))
+    @AttributeOverride(name = "tomDato", column = @Column(name = "opplysning_periode_tom"))
     private IntervallEntitet opplysningsperiode;
 
     @Embedded
     @ChangeTracked
-    @AttributeOverrides({@AttributeOverride(name = "fomDato", column = @Column(name = "opplysning_periode_skattegrunnlag_fom")), @AttributeOverride(name = "tomDato", column = @Column(name = "opplysning_periode_skattegrunnlag_tom"))})
+    @AttributeOverride(name = "fomDato", column = @Column(name = "opplysning_periode_skattegrunnlag_fom"))
+    @AttributeOverride(name = "tomDato", column = @Column(name = "opplysning_periode_skattegrunnlag_tom"))
     private IntervallEntitet opplysningsperiodeSkattegrunnlag;
 
+    @Embedded
+    @AttributeOverride(name = "fomDato", column = @Column(name = "opptjening_periode_fom"))
+    @AttributeOverride(name = "tomDato", column = @Column(name = "opptjening_periode_tom"))
+    private IntervallEntitet opptjeningsperiode;
+
     /**
-     * inaktive koblinger skal ikke brukes. må filtreres vekk.
+     * Inaktive koblinger skal ikke kunne endres. Det betyr oftest at koblingsreferansen er avsluttet i fagsystemet også.
      */
     @Column(name = "aktiv", nullable = false)
     private Boolean aktiv = true;
-
-    @Embedded
-    @AttributeOverrides({@AttributeOverride(name = "fomDato", column = @Column(name = "opptjening_periode_fom")), @AttributeOverride(name = "tomDato", column = @Column(name = "opptjening_periode_tom"))})
-    private IntervallEntitet opptjeningsperiode;
 
     @Version
     @Column(name = "versjon", nullable = false)
@@ -92,11 +92,6 @@ public class Kobling extends BaseEntitet implements IndexKey {
         this.koblingReferanse = Objects.requireNonNull(koblingReferanse, "koblingReferanse");
         this.aktørId = Objects.requireNonNull(aktørId, "aktørId");
         this.ytelseType = ytelseType == null ? YtelseType.UDEFINERT : ytelseType;
-    }
-
-    public static Fagsystem gjelderFagsystem(Kobling k) {
-        return Set.of(YtelseType.ENGANGSTØNAD, YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER)
-            .contains(k.getYtelseType()) ? Fagsystem.FPSAK : Fagsystem.K9SAK;
     }
 
     @Override
