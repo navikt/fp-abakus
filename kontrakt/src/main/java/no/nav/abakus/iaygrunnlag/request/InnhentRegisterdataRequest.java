@@ -23,9 +23,6 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 @JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE)
 public class InnhentRegisterdataRequest {
 
-    private static final String URL_PATTERN = "^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
-    private static final String SCOPE_PATTERN = "^(api?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
-
     /**
      * Saksnummer alle grunnlag og koblinger er linket til.
      */
