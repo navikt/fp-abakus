@@ -14,6 +14,12 @@ import org.slf4j.LoggerFactory;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -67,7 +73,8 @@ public class EksternDelingAvYtelserRestTjeneste {
 
     private static final Logger LOG = LoggerFactory.getLogger(EksternDelingAvYtelserRestTjeneste.class);
 
-    private static final Set<Ytelser> K9_INFOTRYGD_YTELSER = Set.of(Ytelser.PLEIEPENGER_NÆRSTÅENDE, Ytelser.OPPLÆRINGSPENGER, Ytelser.PLEIEPENGER_SYKT_BARN);
+    private static final Set<Ytelser> K9_INFOTRYGD_YTELSER = Set.of(Ytelser.PLEIEPENGER_NÆRSTÅENDE, Ytelser.OPPLÆRINGSPENGER,
+        Ytelser.PLEIEPENGER_SYKT_BARN);
 
     private VedtakYtelseRepository ytelseRepository;
     private AktørTjeneste aktørTjeneste;
@@ -96,7 +103,16 @@ public class EksternDelingAvYtelserRestTjeneste {
     @Path("/hent-ytelse-vedtak")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Henter alle vedtak for en gitt person, evt med periode etter en fom", tags = "ytelse")
+    @Operation(tags = "ytelse",
+        description = "Henter alle vedtak for en gitt person, evt med periode etter en fom"
+    )
+    @RequestBody(required = true, description = "Vi godkjenner både aktørid og fnr som gyldig ident.", content = @Content(schema = @Schema(implementation = VedtakForPeriodeRequest.class)))
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Liste med vedtak som matcher kriteriene.",
+            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = YtelseV1.class))))}
+    )
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.APPLIKASJON, availabilityType = AvailabilityType.ALL)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public List<Ytelse> hentVedtakYtelse(@NotNull @TilpassetAbacAttributt(supplierClass = EksternDelingAvYtelserRestTjeneste.VedtakForPeriodeRequestAbacDataSupplier.class) @Valid VedtakForPeriodeRequest request) {
@@ -138,7 +154,8 @@ public class EksternDelingAvYtelserRestTjeneste {
         var fnr = identer.stream().map(PersonIdent::getIdent).toList();
         var inforequest = new GrunnlagRequest(fnr, Tid.fomEllerMin(periode.getFomDato()), Tid.tomEllerMax(periode.getTomDato()));
         var infotrygdYtelser = infotrygdPSGrunnlag.hentGrunnlagFailSoft(inforequest);
-        var mappedYtelser =  InnhentingInfotrygdTjeneste.mapTilInfotrygdYtelseGrunnlag(infotrygdYtelser, periode.getFomDato()).stream()
+        var mappedYtelser = InnhentingInfotrygdTjeneste.mapTilInfotrygdYtelseGrunnlag(infotrygdYtelser, periode.getFomDato())
+            .stream()
             .map(InfotrygdgrunnlagYtelseMapper::oversettInfotrygdYtelseGrunnlagTilYtelse)
             .map(it -> ytelseTilYtelse(aktørId, it))
             .filter(it -> request.getYtelser().contains(it.getYtelse()))
