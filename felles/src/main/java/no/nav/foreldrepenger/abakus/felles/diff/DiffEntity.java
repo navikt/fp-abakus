@@ -15,8 +15,8 @@ public class DiffEntity {
     }
 
     public <V> DiffResult diff(V entity1, V entity2) {
-        TraverseResult entity1Result = traverser.traverse(entity1);
-        TraverseResult entity2Result = traverser.traverse(entity2);
+        var entity1Result = traverser.traverse(entity1);
+        var entity2Result = traverser.traverse(entity2);
 
         return new DiffResult(this.traverser, entity1Result, entity2Result);
     }

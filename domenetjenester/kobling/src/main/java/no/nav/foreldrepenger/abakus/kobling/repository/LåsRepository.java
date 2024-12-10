@@ -30,41 +30,27 @@ public class LåsRepository {
      */
     public KoblingLås taLås(Long koblingId) {
         if (koblingId != null) {
-            final LockModeType lockModeType = LockModeType.PESSIMISTIC_WRITE;
-            lås(koblingId, lockModeType);
-            KoblingLås lås = new KoblingLås(koblingId);
-            return lås;
-        } else {
-            return new KoblingLås(null);
+            entityManager.createQuery("from Kobling k where k.id = :id and k.aktiv = true")
+                .setParameter("id", koblingId)
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                .getSingleResult();
         }
-
-    }
-
-    private Long lås(final Long behandlingId, LockModeType lockModeType) {
-        Object[] result = (Object[]) entityManager.createQuery("select k.id, k.versjon from Kobling k where k.id=:id and k.aktiv=true")
-            .setParameter("id", behandlingId)
-            .setLockMode(lockModeType).getSingleResult();
-        return (Long) result[0];
+        return new KoblingLås(koblingId);
     }
 
     /**
      * Verifiser lås ved å sjekke mot underliggende lager.
      */
     public void oppdaterLåsVersjon(KoblingLås lås) {
-        if (lås.getKoblingId() != null) {
-            verifisertLås(lås.getKoblingId());
-        } // else NO-OP (for ny behandling uten id)
-    }
-
-    private Object verifisertLås(Long id) {
-        LockModeType lockMode = LockModeType.PESSIMISTIC_FORCE_INCREMENT;
-        Object entity = entityManager.find(Kobling.class, id);
-        if (entity == null) {
-            throw new TekniskException("FP-131239", String.format("Fant ikke entitet for låsing [%s], id=%s.", Kobling.class.getSimpleName(), id));
-        } else {
-            entityManager.lock(entity, lockMode);
+        if (lås.koblingId() != null) {
+            var koblingId = lås.koblingId();
+            var kobling = entityManager.find(Kobling.class, koblingId);
+            if (kobling == null) {
+                throw new TekniskException("FP-131239", String.format("Fant ikke entitet for låsing [%s], koblingId=%s.", Kobling.class.getSimpleName(), koblingId));
+            } else {
+                entityManager.lock(kobling, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
+            }
         }
-        return entity;
     }
 
 }
