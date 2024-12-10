@@ -11,20 +11,21 @@ public abstract class KoblingTask implements ProsessTaskHandler {
 
     private LåsRepository låsRepository;
 
-    public KoblingTask() {
+    protected KoblingTask() {
+        // CDI proxy
     }
 
-    public KoblingTask(LåsRepository låsRepository) {
+    protected KoblingTask(LåsRepository låsRepository) {
         this.låsRepository = låsRepository;
     }
 
     @Override
     public void doTask(ProsessTaskData prosessTaskData) {
-        String nyKoblingId = prosessTaskData.getPropertyValue(TaskConstants.KOBLING_ID);
-        Long koblingId = nyKoblingId != null ? Long.valueOf(nyKoblingId) : Long.valueOf(prosessTaskData.getBehandlingId());
+        var nyKoblingId = prosessTaskData.getPropertyValue(TaskConstants.KOBLING_ID);
+        var koblingId = nyKoblingId != null ? Long.valueOf(nyKoblingId) : prosessTaskData.getBehandlingIdAsLong();
         LOG_CONTEXT.add("koblingId", koblingId);
 
-        KoblingLås koblingLås = låsRepository.taLås(koblingId);
+        var koblingLås = låsRepository.taLås(koblingId);
 
         prosesser(prosessTaskData);
 

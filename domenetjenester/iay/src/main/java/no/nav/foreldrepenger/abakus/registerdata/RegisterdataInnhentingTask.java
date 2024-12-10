@@ -33,6 +33,7 @@ public class RegisterdataInnhentingTask extends KoblingTask {
     private IAYRegisterInnhentingTjeneste innhentTjeneste;
 
     RegisterdataInnhentingTask() {
+        // CDI proxy
     }
 
     @Inject

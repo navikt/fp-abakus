@@ -1,11 +1,9 @@
 package no.nav.foreldrepenger.abakus.kobling;
 
-import java.util.List;
 import java.util.Optional;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.kobling.repository.KoblingRepository;
 import no.nav.foreldrepenger.abakus.kobling.repository.LåsRepository;
@@ -19,6 +17,7 @@ public class KoblingTjeneste {
     private LåsRepository låsRepository;
 
     KoblingTjeneste() {
+        // CDI proxy
     }
 
     @Inject
@@ -58,7 +57,4 @@ public class KoblingTjeneste {
         låsRepository.oppdaterLåsVersjon(lås);
     }
 
-    public List<Saksnummer> hentAlleSaksnummer() {
-        return repository.hentAlleSaksnummer();
-    }
 }
