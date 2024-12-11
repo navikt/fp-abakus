@@ -9,7 +9,7 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.vedtak.log.metrics.LiveAndReadinessAware;
+import no.nav.vedtak.server.LiveAndReadinessAware;
 
 @ApplicationScoped
 public class DatabaseHealthCheck implements LiveAndReadinessAware {
