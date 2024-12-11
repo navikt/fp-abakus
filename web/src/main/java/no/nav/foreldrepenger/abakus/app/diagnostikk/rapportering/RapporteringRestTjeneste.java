@@ -68,7 +68,7 @@ public class RapporteringRestTjeneste {
                                             @NotNull @FormParam("rapport") @Parameter(description = "rapport", required = true) @Valid @TilpassetAbacAttributt(supplierClass = AbacEmptySupplier.class) RapportType rapportType,
                                             @NotNull @FormParam("periode") @Parameter(description = "periode", required = true, example = "2020-01-01/2020-12-31") @Valid @TilpassetAbacAttributt(supplierClass = AbacEmptySupplier.class) IsoPeriode periode) {
 
-        var ytelseType = YtelseType.fraKode(ytelseTypeKode.name());
+        var ytelseType = mapYtelseType(ytelseTypeKode);
         rapportType.valider(ytelseType);
 
         var generators = RapportTypeRef.Lookup.list(RapportGenerator.class, rapportGenerators, rapportType);
@@ -89,6 +89,18 @@ public class RapporteringRestTjeneste {
                 LocalDateTime.now().format(DT_FORMAT)))
             .build();
 
+    }
+
+    private YtelseType mapYtelseType(YtelseTypeKode ytelseTypeKode) {
+        return switch (ytelseTypeKode) {
+            case OLP -> YtelseType.OPPLÆRINGSPENGER;
+            case OMP -> YtelseType.OMSORGSPENGER;
+            case PPN -> YtelseType.PLEIEPENGER_NÆRSTÅENDE;
+            case PSB -> YtelseType.PLEIEPENGER_SYKT_BARN;
+            case FRISINN -> YtelseType.FRISINN;
+            case FORELDREPENGER -> YtelseType.FORELDREPENGER;
+            case SVANGERSKAPSPENGER -> YtelseType.SVANGERSKAPSPENGER;
+        };
     }
 
     public static class IsoPeriode {

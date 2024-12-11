@@ -3,84 +3,65 @@ package no.nav.foreldrepenger.abakus.app.konfig;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
-import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
-import io.swagger.v3.oas.integration.OpenApiConfigurationException;
-import io.swagger.v3.oas.integration.SwaggerConfiguration;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.servers.Server;
 import jakarta.ws.rs.ApplicationPath;
-import jakarta.ws.rs.core.Application;
-import no.nav.foreldrepenger.abakus.app.diagnostikk.DiagnostikkRestTjeneste;
-import no.nav.foreldrepenger.abakus.app.diagnostikk.rapportering.RapporteringRestTjeneste;
 import no.nav.foreldrepenger.abakus.app.exceptions.ConstraintViolationMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.GeneralRestExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.JsonMappingExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.JsonParseExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.jackson.JacksonJsonConfig;
-import no.nav.foreldrepenger.abakus.app.vedlikehold.ForvaltningRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.ArbeidsforholdRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.GrunnlagRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.InntektsmeldingerRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.OppgittOpptjeningRestTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataRestTjeneste;
 import no.nav.foreldrepenger.abakus.vedtak.tjeneste.YtelseRestTjeneste;
-import no.nav.foreldrepenger.konfig.Environment;
-import no.nav.vedtak.exception.TekniskException;
-import no.nav.vedtak.felles.prosesstask.rest.ProsessTaskRestTjeneste;
 
 @ApplicationPath(ApiConfig.API_URI)
-public class ApiConfig extends Application {
+public class ApiConfig extends ResourceConfig {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ApiConfig.class);
     public static final String API_URI = "/api";
-    private static final Environment ENV = Environment.current();
-    private static final String ID_PREFIX = "openapi.context.id.servlet.";
-
 
     public ApiConfig() {
-        OpenAPI oas = new OpenAPI();
-        Info info = new Info().title("Vedtaksløsningen - Abakus").version("1.0").description("REST grensesnitt for Vedtaksløsningen.");
+        LOG.info("Initialiserer: {}", API_URI);
+        setApplicationName(ApiConfig.class.getSimpleName());
+        // Sikkerhet
+        register(AuthenticationFilter.class);
 
-        oas.info(info).addServersItem(new Server().url(ENV.getProperty("context.path", "/fpabakus")));
-        var oasConfig = new SwaggerConfiguration().id(ID_PREFIX + ApiConfig.class.getName())
-            .openAPI(oas)
-            .prettyPrint(true)
-            .resourceClasses(getClasses().stream().map(Class::getName).collect(Collectors.toSet()))
-            .ignoredRoutes(Set.of("/api/ytelse/v1/hent-vedtatte/for-ident/k9", "/api/ytelse/v1/hent-vedtatte-og-historiske/for-ident/k9",
-                "/api/ytelse/v1/hent-vedtatte/for-ident"));
+        // REST
+        registerClasses(getApplicationClasses());
 
-        try {
-            new JaxrsOpenApiContextBuilder<>().ctxId(ID_PREFIX + ApiConfig.class.getName())
-                .application(this)
-                .openApiConfiguration(oasConfig)
-                .buildContext(true)
-                .read();
-        } catch (OpenApiConfigurationException e) {
-            throw new TekniskException("OPEN-API", e.getMessage(), e);
-        }
+        registerExceptionMappers();
+        register(JacksonJsonConfig.class);
+
+        setProperties(getApplicationProperties());
+        LOG.info("Ferdig med initialisering av {}", API_URI);
     }
 
-    @Override
-    public Set<Class<?>> getClasses() {
+    private Set<Class<?>> getApplicationClasses() {
         // eksponert grensesnitt
-
-        return Set.of(ProsessTaskRestTjeneste.class, RegisterdataRestTjeneste.class, InntektsmeldingerRestTjeneste.class,
-            OppgittOpptjeningRestTjeneste.class, GrunnlagRestTjeneste.class, ArbeidsforholdRestTjeneste.class,
-            YtelseRestTjeneste.class,
-
-            ForvaltningRestTjeneste.class, DiagnostikkRestTjeneste.class, RapporteringRestTjeneste.class,
-
-            AuthenticationFilter.class, OpenApiResource.class, JacksonJsonConfig.class, ConstraintViolationMapper.class, JsonMappingExceptionMapper.class,
-            JsonParseExceptionMapper.class, GeneralRestExceptionMapper.class);
+        return Set.of(RegisterdataRestTjeneste.class,
+            InntektsmeldingerRestTjeneste.class,
+            OppgittOpptjeningRestTjeneste.class,
+            GrunnlagRestTjeneste.class,
+            ArbeidsforholdRestTjeneste.class,
+            YtelseRestTjeneste.class);
     }
 
-    @Override
-    public Map<String, Object> getProperties() {
+    void registerExceptionMappers() {
+        register(GeneralRestExceptionMapper.class);
+        register(ConstraintViolationMapper.class);
+        register(JsonMappingExceptionMapper.class);
+        register(JsonParseExceptionMapper.class);
+    }
+
+    private Map<String, Object> getApplicationProperties() {
         Map<String, Object> properties = new HashMap<>();
         // Ref Jersey doc
         properties.put(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true);

@@ -3,76 +3,55 @@ package no.nav.foreldrepenger.abakus.app.konfig;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
-import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
-import io.swagger.v3.oas.integration.OpenApiConfigurationException;
-import io.swagger.v3.oas.integration.SwaggerConfiguration;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.servers.Server;
 import jakarta.ws.rs.ApplicationPath;
-import jakarta.ws.rs.core.Application;
 import no.nav.foreldrepenger.abakus.app.exceptions.ConstraintViolationMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.GeneralRestExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.JsonMappingExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.JsonParseExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.jackson.JacksonJsonConfig;
 import no.nav.foreldrepenger.abakus.app.rest.ekstern.EksternDelingAvYtelserRestTjeneste;
-import no.nav.foreldrepenger.konfig.Environment;
-import no.nav.vedtak.exception.TekniskException;
 
 @ApplicationPath(EksternApiConfig.API_URI)
-public class EksternApiConfig extends Application {
+public class EksternApiConfig extends ResourceConfig {
 
+    private static final Logger LOG = LoggerFactory.getLogger(EksternApiConfig.class);
     public static final String API_URI = "/ekstern/api";
-    private static final Environment ENV = Environment.current();
-    private static final String ID_PREFIX = "openapi.context.id.servlet.";
 
     public EksternApiConfig() {
-        var oas = new OpenAPI();
-        var info = new Info().title("Vedtaksløsningen - Abakus - Ekstern")
-            .version("1.0")
-            .description("Ekstern REST grensesnitt for Abakus. Alle kall må authentiseres med en gyldig Azure on-behalf-of (OBO) eller client credentials (CC) token.");
+        LOG.info("Initialiserer: {}", API_URI);
+        setApplicationName(EksternApiConfig.class.getSimpleName());
+        // Sikkerhet
+        register(AuthenticationFilter.class);
 
-        oas.info(info).addServersItem(new Server().url(ENV.getProperty("context.path", "/fpabakus")));
-        var oasConfig = new SwaggerConfiguration().id(ID_PREFIX + EksternApiConfig.class.getName())
-            .openAPI(oas)
-            .prettyPrint(true)
-            .resourceClasses(getClasses().stream().map(Class::getName).collect(Collectors.toSet()));
+        // REST
+        registerClasses(getEksternalApplicationClasses());
 
-        try {
-            new JaxrsOpenApiContextBuilder<>().ctxId(ID_PREFIX + EksternApiConfig.class.getName())
-                .application(this)
-                .openApiConfiguration(oasConfig)
-                .buildContext(true)
-                .read();
-        } catch (OpenApiConfigurationException e) {
-            throw new TekniskException("OPEN-API", e.getMessage(), e);
-        }
+        registerExceptionMappers();
+        register(JacksonJsonConfig.class);
+
+        setProperties(getApplicationProperties());
+        LOG.info("Ferdig med initialisering av {}", API_URI);
     }
 
-    @Override
-    public Set<Class<?>> getClasses() {
+    void registerExceptionMappers() {
+        register(GeneralRestExceptionMapper.class);
+        register(ConstraintViolationMapper.class);
+        register(JsonMappingExceptionMapper.class);
+        register(JsonParseExceptionMapper.class);
+    }
+
+    private Set<Class<?>> getEksternalApplicationClasses() {
         // eksponert grensesnitt
-
-        return Set.of(EksternDelingAvYtelserRestTjeneste.class,
-            // Applikasjonsoppsett
-            AuthenticationFilter.class,
-            JacksonJsonConfig.class,
-            // Swagger
-            OpenApiResource.class,
-            // ExceptionMappers pga de som finnes i Jackson+Jersey-media
-            ConstraintViolationMapper.class, JsonMappingExceptionMapper.class, JsonParseExceptionMapper.class,
-            // Generell exceptionmapper m/logging for øvrige tilfelle
-            GeneralRestExceptionMapper.class);
+        return Set.of(EksternDelingAvYtelserRestTjeneste.class);
     }
 
-    @Override
-    public Map<String, Object> getProperties() {
+    private Map<String, Object> getApplicationProperties() {
         Map<String, Object> properties = new HashMap<>();
         // Ref Jersey doc
         properties.put(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true);
