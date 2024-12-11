@@ -1,26 +1,21 @@
 package no.nav.foreldrepenger.abakus.app.tjenester;
 
-import jakarta.inject.Inject;
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
-import jakarta.servlet.annotation.WebListener;
 
 /**
  * Starter interne applikasjontjenester
  */
-@WebListener
 public class ServiceStarterListener implements ServletContextListener {
-
-    @Inject
-    private ApplicationServiceStarter applicationServiceStarter;
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        applicationServiceStarter.startServices();
+        CDI.current().select(ApplicationServiceStarter.class).get().startServices();
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        applicationServiceStarter.stopServices();
+        CDI.current().select(ApplicationServiceStarter.class).get().stopServices();
     }
 }
