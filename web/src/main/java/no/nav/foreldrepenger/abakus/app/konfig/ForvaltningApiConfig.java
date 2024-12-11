@@ -20,8 +20,6 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
 import jakarta.ws.rs.ApplicationPath;
-import no.nav.foreldrepenger.abakus.app.diagnostikk.DiagnostikkRestTjeneste;
-import no.nav.foreldrepenger.abakus.app.diagnostikk.rapportering.RapporteringRestTjeneste;
 import no.nav.foreldrepenger.abakus.app.exceptions.ConstraintViolationMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.GeneralRestExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.JsonMappingExceptionMapper;
@@ -83,7 +81,7 @@ public class ForvaltningApiConfig extends ResourceConfig {
     }
 
     private Set<Class<?>> getApplicationClasses() {
-        return Set.of(ProsessTaskRestTjeneste.class, ForvaltningRestTjeneste.class, DiagnostikkRestTjeneste.class, RapporteringRestTjeneste.class);
+        return Set.of(ProsessTaskRestTjeneste.class, ForvaltningRestTjeneste.class);
     }
 
     private Map<String, Object> getApplicationProperties() {
