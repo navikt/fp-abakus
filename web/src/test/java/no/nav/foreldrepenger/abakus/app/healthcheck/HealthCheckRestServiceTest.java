@@ -8,14 +8,16 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import no.nav.vedtak.server.LivenessAware;
+
+import no.nav.vedtak.server.ReadinessAware;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 
 import no.nav.foreldrepenger.abakus.app.tjenester.ApplicationServiceStarter;
-import no.nav.vedtak.log.metrics.LivenessAware;
-import no.nav.vedtak.log.metrics.ReadinessAware;
 
 import org.mockito.junit.jupiter.MockitoExtension;
 
