@@ -16,6 +16,7 @@ public class InternalApiConfig extends ResourceConfig {
 
     public InternalApiConfig() {
         LOG.info("Initialiserer: {}", API_URI);
+        setApplicationName(InternalApiConfig.class.getSimpleName());
         register(HealthCheckRestService.class);
         register(PrometheusRestService.class);
         LOG.info("Ferdig med initialisering av {}", API_URI);
