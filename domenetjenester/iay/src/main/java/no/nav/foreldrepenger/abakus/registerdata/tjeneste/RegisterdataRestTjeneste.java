@@ -50,6 +50,8 @@ public class RegisterdataRestTjeneste {
 
     private InnhentRegisterdataTjeneste innhentTjeneste;
 
+
+
     public RegisterdataRestTjeneste() {
     } // CDI ctor
 
