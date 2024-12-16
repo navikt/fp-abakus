@@ -49,6 +49,12 @@ public class KoblingTjeneste {
         return repository.hentForKoblingId(koblingId);
     }
 
+    public void deaktiver(KoblingReferanse referanse) {
+        var kobling = repository.hentForKoblingReferanse(referanse, true).orElseThrow();
+        kobling.deaktiver();
+        repository.lagre(kobling);
+    }
+
     public KoblingLås taSkrivesLås(KoblingReferanse referanse) {
         return repository.hentForKoblingReferanse(referanse, true).map(Kobling::getId).map(KoblingLås::new).orElse(null);
     }

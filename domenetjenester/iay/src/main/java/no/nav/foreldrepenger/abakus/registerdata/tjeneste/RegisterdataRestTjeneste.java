@@ -34,7 +34,6 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.abakus.iaygrunnlag.request.RegisterdataType;
 import no.nav.foreldrepenger.abakus.felles.LoggUtil;
-import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.TaskResponsDto;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
@@ -51,15 +50,14 @@ public class RegisterdataRestTjeneste {
 
     private InnhentRegisterdataTjeneste innhentTjeneste;
 
-    private KoblingTjeneste koblingTjeneste;
+
 
     public RegisterdataRestTjeneste() {
     } // CDI ctor
 
     @Inject
-    public RegisterdataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste, KoblingTjeneste koblingTjeneste) {
+    public RegisterdataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste) {
         this.innhentTjeneste = innhentTjeneste;
-        this.koblingTjeneste = koblingTjeneste;
     }
 
     @POST
