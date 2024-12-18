@@ -1,9 +1,9 @@
 package no.nav.abakus.callback.registerdata;
 
+import java.time.LocalDateTime;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-
-import java.time.LocalDateTime;
 
 /**
  * Metadata for callback
@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
  * - avsenderRef: avsenderRef til behandlingen
  * - opprinneligGrunnlagRef: tilstand før registerinnhenting, referanse til opprinnelig grunnlag
  * - oppdatertGrunnlagRef: resultatet av registerinnhenting, referanse til nytt grunnlag
- * - grunnlagType: datastrukturen callbacket omhandler
  */
 public class CallbackDto {
 
@@ -30,9 +29,6 @@ public class CallbackDto {
     @Valid
     private ReferanseDto oppdatertGrunnlagRef;
 
-    @Valid
-    private Grunnlag grunnlagType;
-
     public ReferanseDto getAvsenderRef() {
         return avsenderRef;
     }
@@ -47,14 +43,6 @@ public class CallbackDto {
 
     public void setOppdatertGrunnlagRef(ReferanseDto oppdatertGrunnlagRef) {
         this.oppdatertGrunnlagRef = oppdatertGrunnlagRef;
-    }
-
-    public Grunnlag getGrunnlagType() {
-        return grunnlagType;
-    }
-
-    public void setGrunnlagType(Grunnlag grunnlagType) {
-        this.grunnlagType = grunnlagType;
     }
 
     public ReferanseDto getOpprinneligGrunnlagRef() {
