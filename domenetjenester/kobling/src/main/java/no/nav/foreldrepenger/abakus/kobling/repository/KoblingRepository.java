@@ -82,7 +82,7 @@ public class KoblingRepository {
         var eksisterendeKobling = hentForKoblingReferanse(nyKobling.getKoblingReferanse());
 
         validerErAktiv(eksisterendeKobling);
-        validerLikKoblingReferanse(nyKobling, eksisterendeKobling);
+        validerLikKobling(nyKobling, eksisterendeKobling);
 
         var diff = getDiff(eksisterendeKobling.orElse(null), nyKobling);
         if (!diff.isEmpty()) {
@@ -92,7 +92,7 @@ public class KoblingRepository {
         }
     }
 
-    private static void validerLikKoblingReferanse(Kobling nyKobling, Optional<Kobling> eksisterendeKobling) {
+    private static void validerLikKobling(Kobling nyKobling, Optional<Kobling> eksisterendeKobling) {
         var eksisterendeKoblingId = eksisterendeKobling.map(Kobling::getId).orElse(null);
         if (!Objects.equals(eksisterendeKoblingId, nyKobling.getId())) { // for nye koblinger bør både eksisterende og ny være null.
             throw new IllegalStateException("Utviklerfeil: Kan ikke lagre en ny kobling for eksisterende kobling referanse.");

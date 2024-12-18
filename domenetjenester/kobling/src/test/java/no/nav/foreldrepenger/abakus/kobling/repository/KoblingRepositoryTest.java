@@ -18,13 +18,8 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.testutilities.db.EntityManagerAwareTest;
 
-import org.mockito.Mock;
-
 @ExtendWith(JpaExtension.class)
 class KoblingRepositoryTest extends EntityManagerAwareTest {
-
-    @Mock
-    private KoblingRepository mockKoblingRepository;
 
     private KoblingRepository koblingRepository;
 
@@ -52,5 +47,17 @@ class KoblingRepositoryTest extends EntityManagerAwareTest {
         var ex = assertThrows(IllegalStateException.class, () -> koblingRepository.lagre(nyereKobling));
 
         assertThat(ex.getMessage()).startsWith("Utviklerfeil: Kan ikke lagre en ny kobling for eksisterende kobling referanse.");
+    }
+
+    @Test
+    void lagre_ny_kobling_som_er_deaktivert_nok() {
+        var referanse = UUID.randomUUID();
+        var koblingReferanse = new KoblingReferanse(referanse);
+        var nyKobling = new Kobling(YtelseType.FORELDREPENGER, new Saksnummer("23234234"), koblingReferanse, new AktørId(1232123343423L));
+        assertDoesNotThrow(() -> koblingRepository.lagre(nyKobling));
+        var kobling = koblingRepository.hentForKoblingReferanse(koblingReferanse, true).orElseThrow();
+        kobling.deaktiver();
+        var ex = assertThrows(IllegalStateException.class, () -> koblingRepository.lagre(kobling));
+        assertThat(ex.getMessage()).startsWith("Etterspør kobling:").contains(referanse.toString()).endsWith("men denne er ikke aktiv") ;
     }
 }

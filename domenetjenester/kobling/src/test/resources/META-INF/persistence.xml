@@ -12,6 +12,9 @@
             <property name="hibernate.connection.autocommit" value="false"/>
             <property name="hibernate.jdbc.use_get_generated_keys" value="true"/>
             <property name="org.hibernate.flushMode" value="COMMIT"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.use_sql_comments" value="true"/>
         </properties>
     </persistence-unit>
 

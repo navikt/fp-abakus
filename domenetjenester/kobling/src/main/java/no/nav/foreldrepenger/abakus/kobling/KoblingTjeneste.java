@@ -29,7 +29,10 @@ public class KoblingTjeneste {
     public Kobling finnEllerOpprett(YtelseType ytelseType, KoblingReferanse referanse, AktørId aktørId, Saksnummer saksnummer) {
         Kobling kobling = repository.hentForKoblingReferanse(referanse, true)
             .orElseGet(() -> new Kobling(ytelseType, saksnummer, referanse, aktørId));
-        repository.lagre(kobling);
+        // Lagre kun hvis ny
+        if (kobling.getId() == null) {
+            repository.lagre(kobling);
+        }
         return kobling;
     }
 
