@@ -21,7 +21,7 @@ import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 public class FpsakKlient {
 
     private static final Logger LOG = LoggerFactory.getLogger(FpsakKlient.class);
-    protected static final String CALLBACK_PATH = "/api/registerdata/iay/callback";
+    protected static final String CALLBACK_PATH = "/api/registerdata/iay/callback/v2";
 
     private final RestClient restClient;
     private final RestConfig restConfig;
