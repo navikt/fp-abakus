@@ -30,7 +30,6 @@ public class CallbackDto {
     @Valid
     private ReferanseDto oppdatertGrunnlagRef;
 
-    @NotNull
     @Valid
     private Grunnlag grunnlagType;
 
