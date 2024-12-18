@@ -42,7 +42,6 @@ public class CallbackTask implements ProsessTaskHandler {
         Kobling kobling = koblingTjeneste.hent(koblingId);
 
         CallbackDto callbackDto = new CallbackDto();
-        callbackDto.setGrunnlagType(Grunnlag.IAY);
 
         setInformasjonOmAvsenderRef(kobling, callbackDto);
         setInformasjonOmEksisterendeGrunnlag(data, callbackDto);

@@ -8,6 +8,7 @@ jobs:
     name: Kontrakt
     permissions:
       packages: write
+      contents: read
     uses: navikt/fp-gha-workflows/.github/workflows/release-feature.yml@main
     with:
       release-version: ${{ github.event.release.tag_name }}
