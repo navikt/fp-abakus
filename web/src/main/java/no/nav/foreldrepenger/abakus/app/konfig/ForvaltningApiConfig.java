@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import no.nav.foreldrepenger.abakus.kobling.KoblingRestTjeneste;
+
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.slf4j.Logger;
@@ -81,7 +83,7 @@ public class ForvaltningApiConfig extends ResourceConfig {
     }
 
     private Set<Class<?>> getApplicationClasses() {
-        return Set.of(ProsessTaskRestTjeneste.class, ForvaltningRestTjeneste.class);
+        return Set.of(ProsessTaskRestTjeneste.class, ForvaltningRestTjeneste.class, KoblingRestTjeneste.class);
     }
 
     private Map<String, Object> getApplicationProperties() {

@@ -130,10 +130,6 @@ public class InnhentRegisterdataTjeneste {
         return taskTjeneste.lagre(taskGruppe);
     }
 
-    public boolean innhentingFerdig(String taskReferanse) {
-        return taskTjeneste.finnUferdigForGruppe(taskReferanse).isEmpty();
-    }
-
     public Optional<GrunnlagReferanse> hentSisteReferanseFor(KoblingReferanse koblingRef) {
         Optional<Kobling> kobling = koblingTjeneste.hentFor(koblingRef);
         if (kobling.isEmpty()) {
