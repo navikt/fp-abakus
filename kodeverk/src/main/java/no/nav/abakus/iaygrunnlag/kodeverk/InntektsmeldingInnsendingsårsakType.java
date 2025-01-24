@@ -1,17 +1,18 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-@JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
+@JsonAutoDetect(
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE,
+        fieldVisibility = Visibility.ANY)
 public enum InntektsmeldingInnsendingsårsakType implements Kodeverdi {
-
     NY("NY", "NY"),
     ENDRING("ENDRING", "ENDRING"),
     UDEFINERT("-", "UDEFINERT"),
@@ -42,7 +43,7 @@ public enum InntektsmeldingInnsendingsårsakType implements Kodeverdi {
             return null;
         }
         return Optional.ofNullable(KODER.get(kode))
-            .orElseThrow(() -> new IllegalArgumentException("Ukjent InntektsmeldingInnsendingsårsak: " + kode));
+                .orElseThrow(() -> new IllegalArgumentException("Ukjent InntektsmeldingInnsendingsårsak: " + kode));
     }
 
     public static Map<String, InntektsmeldingInnsendingsårsakType> kodeMap() {
@@ -57,5 +58,4 @@ public enum InntektsmeldingInnsendingsårsakType implements Kodeverdi {
     public String getKode() {
         return kode;
     }
-
 }

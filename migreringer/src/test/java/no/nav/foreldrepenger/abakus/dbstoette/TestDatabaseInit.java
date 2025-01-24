@@ -1,25 +1,17 @@
 package no.nav.foreldrepenger.abakus.dbstoette;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import java.io.File;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-
-import no.nav.foreldrepenger.konfig.Environment;
-
 import org.eclipse.jetty.plus.jndi.EnvEntry;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-
-/**
- * Initielt skjemaoppsett + migrering av unittest-skjemaer
- */
+/** Initielt skjemaoppsett + migrering av unittest-skjemaer */
 public final class TestDatabaseInit {
     private static final AtomicBoolean GUARD_UNIT_TEST_SKJEMAER = new AtomicBoolean();
     private static final String DB_SCRIPT_LOCATION = "/db/migration/defaultDS/";
@@ -29,11 +21,11 @@ public final class TestDatabaseInit {
         settJdniOppslag(ds);
         if (GUARD_UNIT_TEST_SKJEMAER.compareAndSet(false, true)) {
             var flyway = Flyway.configure()
-                .dataSource(ds)
-                .locations(getScriptLocation())
-                .baselineOnMigrate(true)
-                .cleanDisabled(false)
-                .load();
+                    .dataSource(ds)
+                    .locations(getScriptLocation())
+                    .baselineOnMigrate(true)
+                    .cleanDisabled(false)
+                    .load();
             try {
                 flyway.migrate();
             } catch (FlywayException fwe) {
@@ -70,7 +62,8 @@ public final class TestDatabaseInit {
         try {
             new EnvEntry("jdbc/defaultDS", dataSource); // NOSONAR
         } catch (NamingException e) {
-            throw new IllegalStateException("Feil under registrering av JDNI-entry for default datasource", e); // NOSONAR
+            throw new IllegalStateException(
+                    "Feil under registrering av JDNI-entry for default datasource", e); // NOSONAR
         }
     }
 

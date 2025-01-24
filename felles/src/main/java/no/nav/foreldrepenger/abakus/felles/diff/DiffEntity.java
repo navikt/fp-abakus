@@ -1,7 +1,5 @@
 package no.nav.foreldrepenger.abakus.felles.diff;
 
-import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraph.TraverseResult;
-
 public class DiffEntity {
 
     private TraverseGraph traverser;
@@ -24,5 +22,4 @@ public class DiffEntity {
     public <V> boolean areDifferent(V entity1, V entity2) {
         return !diff(entity1, entity2).getLeafDifferences().isEmpty();
     }
-
 }

@@ -1,18 +1,19 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.time.Period;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-@JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
+@JsonAutoDetect(
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE,
+        fieldVisibility = Visibility.ANY)
 public enum InntektPeriodeType implements Kodeverdi {
-
     DAGLIG("DAGLG", "Daglig", "D", Period.ofDays(1)),
     UKENTLIG("UKNLG", "Ukentlig", "U", Period.ofWeeks(1)),
     BIUKENTLIG("14DLG", "Fjorten-daglig", "F", Period.ofWeeks(2)),
@@ -53,7 +54,8 @@ public enum InntektPeriodeType implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent InntektPeriodeType: " + kode));
+        return Optional.ofNullable(KODER.get(kode))
+                .orElseThrow(() -> new IllegalArgumentException("Ukjent InntektPeriodeType: " + kode));
     }
 
     public static Map<String, InntektPeriodeType> kodeMap() {
@@ -77,5 +79,4 @@ public enum InntektPeriodeType implements Kodeverdi {
     public String getOffisiellKode() {
         return offisiellKode;
     }
-
 }

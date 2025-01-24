@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.util.Objects;
 import java.util.Optional;
-
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
 public class Opptjeningsnøkkel {
@@ -20,13 +19,16 @@ public class Opptjeningsnøkkel {
     }
 
     public Opptjeningsnøkkel(InternArbeidsforholdRef arbeidsforholdId, Arbeidsgiver arbeidsgiver) {
-        this(arbeidsforholdId, arbeidsgiver.getErVirksomhet() ? arbeidsgiver.getIdentifikator() : null,
-            arbeidsgiver.getErVirksomhet() ? null : arbeidsgiver.getIdentifikator());
+        this(
+                arbeidsforholdId,
+                arbeidsgiver.getErVirksomhet() ? arbeidsgiver.getIdentifikator() : null,
+                arbeidsgiver.getErVirksomhet() ? null : arbeidsgiver.getIdentifikator());
     }
 
     public Opptjeningsnøkkel(InternArbeidsforholdRef internArbeidsforholdRef, String orgNummer, String aktørId) {
         if (internArbeidsforholdRef == null && orgNummer == null && aktørId == null) {
-            throw new IllegalArgumentException("Minst en av internArbeidsforholdRef, orgnummer og aktørId må vere ulik null");
+            throw new IllegalArgumentException(
+                    "Minst en av internArbeidsforholdRef, orgnummer og aktørId må vere ulik null");
         }
         this.arbeidsforholdId = internArbeidsforholdRef;
         this.orgNummer = orgNummer;
@@ -41,7 +43,8 @@ public class Opptjeningsnøkkel {
         return new Opptjeningsnøkkel(arbeidsgiver);
     }
 
-    public static Opptjeningsnøkkel forArbeidsforholdIdMedArbeidgiver(InternArbeidsforholdRef arbeidsforholdId, Arbeidsgiver arbeidsgiver) {
+    public static Opptjeningsnøkkel forArbeidsforholdIdMedArbeidgiver(
+            InternArbeidsforholdRef arbeidsforholdId, Arbeidsgiver arbeidsgiver) {
         return new Opptjeningsnøkkel(arbeidsforholdId, arbeidsgiver);
     }
 
@@ -50,10 +53,9 @@ public class Opptjeningsnøkkel {
     }
 
     /**
-     * Gir en opptjeningsnøkkel basert på følgende rank
-     * 1) ArbeidsforholdId er en unik id fra AAreg
-     * 2) Org nummer er iden til en virksomhet som fungere som arbeidsgiver
-     * 3) AktørDto id er iden til en person som fungere som arbeidsgiver
+     * Gir en opptjeningsnøkkel basert på følgende rank 1) ArbeidsforholdId er en unik id fra AAreg 2) Org nummer er
+     * iden til en virksomhet som fungere som arbeidsgiver 3) AktørDto id er iden til en person som fungere som
+     * arbeidsgiver
      */
     public String getVerdi() {
         if (harArbeidsforholdId()) {
@@ -112,7 +114,7 @@ public class Opptjeningsnøkkel {
         }
     }
 
-    //TODO(OJR) håndter ikke frilans?
+    // TODO(OJR) håndter ikke frilans?
     public boolean matcher(Opptjeningsnøkkel other) {
         if (other == null) {
             return false;
@@ -129,8 +131,8 @@ public class Opptjeningsnøkkel {
             }
             return likArbeidsforholdsId && likArbeidsgiver;
         } else {
-            if ((Type.ORG_NUMMER.equals(other.getType()) || Type.ORG_NUMMER.equals(this.getType())) && (!other.harArbeidsforholdId()
-                || !this.harArbeidsforholdId())) {
+            if ((Type.ORG_NUMMER.equals(other.getType()) || Type.ORG_NUMMER.equals(this.getType()))
+                    && (!other.harArbeidsforholdId() || !this.harArbeidsforholdId())) {
                 return other.orgNummer != null && other.orgNummer.equals(this.orgNummer);
             }
             return Objects.equals(other.aktørId, this.aktørId);
@@ -145,8 +147,9 @@ public class Opptjeningsnøkkel {
             return false;
         }
         Opptjeningsnøkkel other = (Opptjeningsnøkkel) obj;
-        return Objects.equals(aktørId, other.aktørId) && Objects.equals(orgNummer, other.orgNummer) && Objects.equals(arbeidsforholdId,
-            other.arbeidsforholdId);
+        return Objects.equals(aktørId, other.aktørId)
+                && Objects.equals(orgNummer, other.orgNummer)
+                && Objects.equals(arbeidsforholdId, other.arbeidsforholdId);
     }
 
     @Override

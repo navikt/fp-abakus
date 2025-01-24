@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
@@ -19,7 +18,8 @@ public class VedtakYtelseBuilder {
 
     private VedtakYtelseBuilder(VedtakYtelse ytelseEntitet) {
         this.ytelse = ytelseEntitet;
-        this.originalVedtattTidspunkt = ytelseEntitet.getVedtattTidspunkt() != null ? ytelseEntitet.getVedtattTidspunkt() : LocalDateTime.MIN;
+        this.originalVedtattTidspunkt =
+                ytelseEntitet.getVedtattTidspunkt() != null ? ytelseEntitet.getVedtattTidspunkt() : LocalDateTime.MIN;
     }
 
     private static VedtakYtelseBuilder ny() {
@@ -104,7 +104,8 @@ public class VedtakYtelseBuilder {
      * @return true / false avhengig av tidsstempel
      */
     boolean erOppdatering() {
-        return originalVedtattTidspunkt != null && ytelse.getVedtattTidspunkt() != null && originalVedtattTidspunkt.isBefore(
-            ytelse.getVedtattTidspunkt());
+        return originalVedtattTidspunkt != null
+                && ytelse.getVedtattTidspunkt() != null
+                && originalVedtattTidspunkt.isBefore(ytelse.getVedtattTidspunkt());
     }
 }

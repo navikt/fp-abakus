@@ -1,5 +1,11 @@
 package no.nav.foreldrepenger.abakus.kobling.kontroll;
 
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.Stereotype;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.enterprise.util.AnnotationLiteral;
+import jakarta.inject.Qualifier;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -15,19 +21,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import jakarta.enterprise.context.Dependent;
-import jakarta.enterprise.inject.Instance;
-import jakarta.enterprise.inject.Stereotype;
-import jakarta.enterprise.inject.spi.CDI;
-import jakarta.enterprise.util.AnnotationLiteral;
-import jakarta.inject.Qualifier;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
-/**
- * For å skille på implementasjoner av forskjellige
- */
+/** For å skille på implementasjoner av forskjellige */
 @Repeatable(YtelseTypeRef.ContainerOfYtelseTypeRef.class)
 @Qualifier
 @Stereotype
@@ -39,8 +35,8 @@ public @interface YtelseTypeRef {
 
     /**
      * Kode-verdi som skiller ulike implementasjoner for ulike behandling typer.
-     * <p>
-     * Må matche ett innslag i <code>FAGSAK_YTELSE_TYPE</code> tabell for å kunne kjøres.
+     *
+     * <p>Må matche ett innslag i <code>FAGSAK_YTELSE_TYPE</code> tabell for å kunne kjøres.
      *
      * @see no.nav.abakus.iaygrunnlag.kodeverk.YtelseType
      */
@@ -59,9 +55,7 @@ public @interface YtelseTypeRef {
         YtelseTypeRef[] value();
     }
 
-    /**
-     * AnnotationLiteral som kan brukes ved CDI søk.
-     */
+    /** AnnotationLiteral som kan brukes ved CDI søk. */
     class YtelseTypeRefLiteral extends AnnotationLiteral<YtelseTypeRef> implements YtelseTypeRef {
 
         private YtelseType navn;
@@ -74,22 +68,20 @@ public @interface YtelseTypeRef {
         public YtelseType value() {
             return navn == null ? YtelseType.UDEFINERT : navn;
         }
-
     }
 
     @SuppressWarnings("unchecked")
     public static final class Lookup {
 
-        private Lookup() {
-        }
+        private Lookup() {}
 
         public static <I> Optional<I> find(Class<I> cls, YtelseType ytelseTypeKode) {
             return find(cls, (CDI<I>) CDI.current(), ytelseTypeKode);
         }
 
         /**
-         * Kan brukes til å finne instanser blant angitte som matcher følgende kode, eller default '*' implementasjon. Merk at Instance bør være
-         * injected med riktig forventet klassetype og @Any qualifier.
+         * Kan brukes til å finne instanser blant angitte som matcher følgende kode, eller default '*' implementasjon.
+         * Merk at Instance bør være injected med riktig forventet klassetype og @Any qualifier.
          */
         public static <I> Optional<I> find(Instance<I> instances, YtelseType ytelseTypeKode) {
             return find(null, instances, ytelseTypeKode);
@@ -121,8 +113,8 @@ public @interface YtelseTypeRef {
                     return Optional.of(getInstance(inst));
                 } else {
                     if (inst.isAmbiguous()) {
-                        throw new IllegalStateException(
-                            "Har flere matchende instanser for klasse : " + cls.getName() + ", fagsakType=" + fagsakLiteral);
+                        throw new IllegalStateException("Har flere matchende instanser for klasse : " + cls.getName()
+                                + ", fagsakType=" + fagsakLiteral);
                     }
                 }
             }
@@ -138,7 +130,8 @@ public @interface YtelseTypeRef {
             var i = inst.get();
             if (i.getClass().isAnnotationPresent(Dependent.class)) {
                 throw new IllegalStateException(
-                    "Kan ikke ha @Dependent scope bean ved Instance lookup dersom en ikke også håndtere lifecycle selv: " + i.getClass());
+                        "Kan ikke ha @Dependent scope bean ved Instance lookup dersom en ikke også håndtere lifecycle selv: "
+                                + i.getClass());
             }
             return i;
         }
@@ -147,5 +140,4 @@ public @interface YtelseTypeRef {
             return Arrays.stream(vals).filter(Objects::nonNull).distinct().collect(Collectors.toList());
         }
     }
-
 }

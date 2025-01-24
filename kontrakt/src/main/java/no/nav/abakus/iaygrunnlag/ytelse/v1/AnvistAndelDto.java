@@ -1,29 +1,22 @@
 package no.nav.abakus.iaygrunnlag.ytelse.v1;
 
-import java.math.BigDecimal;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import java.math.BigDecimal;
 import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
 
-/**
- * Angir størrelse for ytelse på arbeidsforholdnivå.
- */
+/** Angir størrelse for ytelse på arbeidsforholdnivå. */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.ALWAYS)
 public class AnvistAndelDto {
 
-    /**
-     * Kan være null.
-     */
+    /** Kan være null. */
     @JsonProperty(value = "arbeidsgiver")
     @Valid
     private Aktør arbeidsgiver;
@@ -51,16 +44,15 @@ public class AnvistAndelDto {
     @Valid
     private Inntektskategori inntektskategori;
 
-    protected AnvistAndelDto() {
-    }
+    protected AnvistAndelDto() {}
 
-
-    public AnvistAndelDto(Aktør arbeidsgiver,
-                          String arbeidsforholdId,
-                          BigDecimal dagsats,
-                          BigDecimal utbetalingsgrad,
-                          BigDecimal refusjonsgrad,
-                          Inntektskategori inntektskategori) {
+    public AnvistAndelDto(
+            Aktør arbeidsgiver,
+            String arbeidsforholdId,
+            BigDecimal dagsats,
+            BigDecimal utbetalingsgrad,
+            BigDecimal refusjonsgrad,
+            Inntektskategori inntektskategori) {
         this.arbeidsgiver = arbeidsgiver;
         this.arbeidsforholdId = arbeidsforholdId;
         this.dagsats = dagsats;

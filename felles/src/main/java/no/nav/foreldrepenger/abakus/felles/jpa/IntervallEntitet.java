@@ -1,15 +1,12 @@
 package no.nav.foreldrepenger.abakus.felles.jpa;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-
+import java.time.LocalDate;
 import no.nav.abakus.iaygrunnlag.Periode;
 
 @Embeddable
 public class IntervallEntitet extends AbstractIntervall {
-
 
     @Column(name = "fom")
     private LocalDate fomDato;
@@ -17,9 +14,8 @@ public class IntervallEntitet extends AbstractIntervall {
     @Column(name = "tom")
     private LocalDate tomDato;
 
-
     public IntervallEntitet() {
-        //hibernate
+        // hibernate
     }
 
     private IntervallEntitet(LocalDate fomDato, LocalDate tomDato) {

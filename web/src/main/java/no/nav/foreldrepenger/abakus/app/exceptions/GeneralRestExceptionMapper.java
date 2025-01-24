@@ -4,16 +4,14 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
-
 import no.nav.vedtak.exception.FunksjonellException;
 import no.nav.vedtak.exception.ManglerTilgangException;
 import no.nav.vedtak.felles.jpa.TomtResultatException;
 import no.nav.vedtak.log.mdc.MDCOperations;
 import no.nav.vedtak.log.util.LoggerUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 @Provider
 public class GeneralRestExceptionMapper implements ExceptionMapper<Throwable> {
@@ -22,20 +20,23 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<Throwable> {
 
     private static Response handleTomtResultatFeil(String feilmelding) {
         return Response.status(Response.Status.NOT_FOUND)
-            .entity(new FeilDto(FeilType.TOMT_RESULTAT_FEIL, feilmelding))
-            .type(MediaType.APPLICATION_JSON)
-            .build();
+                .entity(new FeilDto(FeilType.TOMT_RESULTAT_FEIL, feilmelding))
+                .type(MediaType.APPLICATION_JSON)
+                .build();
     }
 
     private static Response serverError(String feilmelding) {
-        return Response.serverError().entity(new FeilDto(FeilType.GENERELL_FEIL, feilmelding)).type(MediaType.APPLICATION_JSON).build();
+        return Response.serverError()
+                .entity(new FeilDto(FeilType.GENERELL_FEIL, feilmelding))
+                .type(MediaType.APPLICATION_JSON)
+                .build();
     }
 
     private static Response ikkeTilgang(String feilmelding) {
         return Response.status(Response.Status.FORBIDDEN)
-            .entity(new FeilDto(FeilType.MANGLER_TILGANG_FEIL, feilmelding))
-            .type(MediaType.APPLICATION_JSON)
-            .build();
+                .entity(new FeilDto(FeilType.MANGLER_TILGANG_FEIL, feilmelding))
+                .type(MediaType.APPLICATION_JSON)
+                .build();
     }
 
     private static String getExceptionFullFeilmelding(Throwable feil) {
@@ -43,9 +44,11 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<Throwable> {
         var feilbeskrivelse = getExceptionMelding(feil);
         if (feil instanceof FunksjonellException fe) {
             var løsningsforslag = getTextForField(fe.getLøsningsforslag());
-            return String.format("Det oppstod en feil: %s - %s. Referanse-id: %s", feilbeskrivelse, løsningsforslag, callId);
+            return String.format(
+                    "Det oppstod en feil: %s - %s. Referanse-id: %s", feilbeskrivelse, løsningsforslag, callId);
         }
-        return String.format("Det oppstod en serverfeil: %s. Meld til support med referanse-id: %s", feilbeskrivelse, callId);
+        return String.format(
+                "Det oppstod en serverfeil: %s. Meld til support med referanse-id: %s", feilbeskrivelse, callId);
     }
 
     private static void loggTilApplikasjonslogg(Throwable feil) {
@@ -76,5 +79,4 @@ public class GeneralRestExceptionMapper implements ExceptionMapper<Throwable> {
             MDC.remove("prosess");
         }
     }
-
 }

@@ -4,13 +4,20 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public record PgiFolketrygdenResponse(String norskPersonidentifikator, Integer inntektsaar, List<Pgi> pensjonsgivendeInntekt) {
-    public record Pgi(Skatteordning skatteordning, LocalDate datoForFastsetting, Long pensjonsgivendeInntektAvLoennsinntekt,
-                Long pensjonsgivendeInntektAvLoennsinntektBarePensjonsdel, Long pensjonsgivendeInntektAvNaeringsinntekt,
-                Long pensjonsgivendeInntektAvNaeringsinntektFraFiskeFangstEllerFamiliebarnehage) {}
+public record PgiFolketrygdenResponse(
+        String norskPersonidentifikator, Integer inntektsaar, List<Pgi> pensjonsgivendeInntekt) {
+    public record Pgi(
+            Skatteordning skatteordning,
+            LocalDate datoForFastsetting,
+            Long pensjonsgivendeInntektAvLoennsinntekt,
+            Long pensjonsgivendeInntektAvLoennsinntektBarePensjonsdel,
+            Long pensjonsgivendeInntektAvNaeringsinntekt,
+            Long pensjonsgivendeInntektAvNaeringsinntektFraFiskeFangstEllerFamiliebarnehage) {}
 
     public enum Skatteordning {
-        FASTLAND, SVALBARD, KILDESKATT_PAA_LOENN
+        FASTLAND,
+        SVALBARD,
+        KILDESKATT_PAA_LOENN
     }
 
     public List<Pgi> safePensjonsgivendeInntekt() {
@@ -19,6 +26,7 @@ public record PgiFolketrygdenResponse(String norskPersonidentifikator, Integer i
 
     @Override
     public String toString() {
-        return "PgiFolketrygdenResponse{" + "inntektsaar=" + inntektsaar + ", pensjonsgivendeInntekt=" + pensjonsgivendeInntekt + '}';
+        return "PgiFolketrygdenResponse{" + "inntektsaar=" + inntektsaar + ", pensjonsgivendeInntekt="
+                + pensjonsgivendeInntekt + '}';
     }
 }

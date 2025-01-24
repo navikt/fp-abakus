@@ -2,9 +2,7 @@ package no.nav.foreldrepenger.abakus.iay.jpa;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.LønnsinntektBeskrivelse;
-
 
 @Converter(autoApply = true)
 public class LønnsbeskrivelseKodeverdiConverter implements AttributeConverter<LønnsinntektBeskrivelse, String> {

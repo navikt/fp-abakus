@@ -1,7 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold;
 
-import java.util.Objects;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -14,7 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
+import java.util.Objects;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
@@ -27,7 +25,10 @@ public class ArbeidsforholdOverstyrtePerioder extends BaseEntitet {
     private Long id;
 
     @Embedded
-    @AttributeOverrides({@AttributeOverride(name = "fomDato", column = @Column(name = "FOM")), @AttributeOverride(name = "tomDato", column = @Column(name = "TOM"))})
+    @AttributeOverrides({
+        @AttributeOverride(name = "fomDato", column = @Column(name = "FOM")),
+        @AttributeOverride(name = "tomDato", column = @Column(name = "TOM"))
+    })
     private IntervallEntitet periode;
 
     @ManyToOne(optional = false)
@@ -38,9 +39,7 @@ public class ArbeidsforholdOverstyrtePerioder extends BaseEntitet {
     @Column(name = "versjon", nullable = false)
     private Long versjon;
 
-    ArbeidsforholdOverstyrtePerioder() {
-
-    }
+    ArbeidsforholdOverstyrtePerioder() {}
 
     ArbeidsforholdOverstyrtePerioder(ArbeidsforholdOverstyrtePerioder arbeidsforholdOverstyrtePerioder) {
         this.periode = arbeidsforholdOverstyrtePerioder.getOverstyrtePeriode();
@@ -63,7 +62,8 @@ public class ArbeidsforholdOverstyrtePerioder extends BaseEntitet {
             return false;
         }
         var that = (ArbeidsforholdOverstyrtePerioder) o;
-        return Objects.equals(periode, that.periode) && Objects.equals(arbeidsforholdOverstyring, that.arbeidsforholdOverstyring);
+        return Objects.equals(periode, that.periode)
+                && Objects.equals(arbeidsforholdOverstyring, that.arbeidsforholdOverstyring);
     }
 
     @Override
@@ -73,7 +73,8 @@ public class ArbeidsforholdOverstyrtePerioder extends BaseEntitet {
 
     @Override
     public String toString() {
-        return "ArbeidsforholdOverstyrtePerioderEntitet{" + "periode=" + periode + ", arbeidsforholdOverstyring=" + arbeidsforholdOverstyring + '}';
+        return "ArbeidsforholdOverstyrtePerioderEntitet{" + "periode=" + periode + ", arbeidsforholdOverstyring="
+                + arbeidsforholdOverstyring + '}';
     }
 
     public IntervallEntitet getOverstyrtePeriode() {

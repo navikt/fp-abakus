@@ -1,10 +1,8 @@
 package no.nav.foreldrepenger.abakus.iay;
 
-import java.util.List;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-
+import java.util.List;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseRepository;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
@@ -17,8 +15,7 @@ public class InntektsmeldingerTjeneste {
 
     private InntektArbeidYtelseRepository repository;
 
-    public InntektsmeldingerTjeneste() {
-    }
+    public InntektsmeldingerTjeneste() {}
 
     @Inject
     public InntektsmeldingerTjeneste(InntektArbeidYtelseRepository repository) {
@@ -26,14 +23,15 @@ public class InntektsmeldingerTjeneste {
     }
 
     public ArbeidsforholdInformasjon hentArbeidsforholdInformasjonForKobling(KoblingReferanse koblingReferanse) {
-        return repository.hentArbeidsforholdInformasjonForBehandling(koblingReferanse).orElseGet(ArbeidsforholdInformasjon::new);
+        return repository
+                .hentArbeidsforholdInformasjonForBehandling(koblingReferanse)
+                .orElseGet(ArbeidsforholdInformasjon::new);
     }
 
-    public GrunnlagReferanse lagre(KoblingReferanse koblingReferanse,
-                                   ArbeidsforholdInformasjonBuilder informasjonBuilder,
-                                   List<Inntektsmelding> alleInntektsmeldinger) {
+    public GrunnlagReferanse lagre(
+            KoblingReferanse koblingReferanse,
+            ArbeidsforholdInformasjonBuilder informasjonBuilder,
+            List<Inntektsmelding> alleInntektsmeldinger) {
         return repository.lagre(koblingReferanse, informasjonBuilder, alleInntektsmeldinger);
     }
-
-
 }

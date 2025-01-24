@@ -5,21 +5,23 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import no.nav.abakus.iaygrunnlag.Periode;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-
 import java.math.BigDecimal;
 import java.util.Objects;
+import no.nav.abakus.iaygrunnlag.Periode;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.ALWAYS)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class OppgittFrilansoppdragDto {
 
     @JsonProperty(value = "periode", required = true)
@@ -29,18 +31,17 @@ public class OppgittFrilansoppdragDto {
 
     @JsonProperty(value = "oppdragsgiver")
     @Size(max = 100)
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Pattern(
+            regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$",
+            message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String oppdragsgiver;
 
-    /**
-     * Tillater kun positive verdier. Max verdi håndteres av mottager.
-     */
+    /** Tillater kun positive verdier. Max verdi håndteres av mottager. */
     @JsonProperty("inntekt")
     @DecimalMin(value = "0.00", message = "beløp [${validatedValue}] må være >= {value}")
     private BigDecimal inntekt;
 
-    protected OppgittFrilansoppdragDto() {
-    }
+    protected OppgittFrilansoppdragDto() {}
 
     public OppgittFrilansoppdragDto(Periode periode, String oppdragsgiver) {
         Objects.requireNonNull(periode, "periode");

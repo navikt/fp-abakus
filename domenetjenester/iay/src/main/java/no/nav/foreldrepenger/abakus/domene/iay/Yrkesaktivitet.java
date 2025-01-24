@@ -1,13 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -20,7 +12,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -39,33 +37,39 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
      * For Yrkesaktivitet gjelder dette frilansaktiviteter innhentet fra Inntektskomponenten
      */
     static final LocalDate CUTOFF_FRILANS_AAREG = LocalDate.of(2020, 1, 1);
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_YRKESAKTIVITET")
     private Long id;
+
     @OneToMany(mappedBy = "yrkesaktivitet")
     @ChangeTracked
     private Set<AktivitetsAvtale> aktivitetsAvtale = new LinkedHashSet<>();
+
     @OneToMany(mappedBy = "yrkesaktivitet")
     @ChangeTracked
     private Set<Permisjon> permisjon = new LinkedHashSet<>();
+
     @Column(name = "NAVN_ARBEIDSGIVER_UTLAND")
     @ChangeTracked
     private String navnArbeidsgiverUtland;
-    /**
-     * Kan være privat eller virksomhet som arbeidsgiver. Dersom {@link #arbeidType} = 'NÆRING', er denne null.
-     */
+    /** Kan være privat eller virksomhet som arbeidsgiver. Dersom {@link #arbeidType} = 'NÆRING', er denne null. */
     @Embedded
     @ChangeTracked
     private Arbeidsgiver arbeidsgiver;
+
     @Embedded
     private InternArbeidsforholdRef arbeidsforholdRef;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "aktoer_arbeid_id", nullable = false, updatable = false)
     private AktørArbeid aktørArbeid;
+
     @ChangeTracked
     @Convert(converter = ArbeidTypeKodeverdiConverter.class)
     @Column(name = "arbeid_type", nullable = false, updatable = false)
     private ArbeidType arbeidType;
+
     @Version
     @Column(name = "versjon", nullable = false)
     private long versjon;
@@ -80,18 +84,21 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
         this.arbeidsforholdRef = yrkesaktivitet.getArbeidsforholdRef();
         this.navnArbeidsgiverUtland = yrkesaktivitet.getNavnArbeidsgiverUtland();
 
-        this.aktivitetsAvtale = yrkesaktivitet.aktivitetsAvtale.stream().map(aa -> {
-            AktivitetsAvtale aktivitetsAvtaleEntitet = new AktivitetsAvtale(aa);
-            aktivitetsAvtaleEntitet.setYrkesaktivitet(this);
-            return aktivitetsAvtaleEntitet;
-        }).collect(Collectors.toCollection(LinkedHashSet::new));
+        this.aktivitetsAvtale = yrkesaktivitet.aktivitetsAvtale.stream()
+                .map(aa -> {
+                    AktivitetsAvtale aktivitetsAvtaleEntitet = new AktivitetsAvtale(aa);
+                    aktivitetsAvtaleEntitet.setYrkesaktivitet(this);
+                    return aktivitetsAvtaleEntitet;
+                })
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        this.permisjon = yrkesaktivitet.permisjon.stream().map(p -> {
-            Permisjon permisjon = new Permisjon(p);
-            permisjon.setYrkesaktivitet(this);
-            return permisjon;
-        }).collect(Collectors.toCollection(LinkedHashSet::new));
-
+        this.permisjon = yrkesaktivitet.permisjon.stream()
+                .map(p -> {
+                    Permisjon permisjon = new Permisjon(p);
+                    permisjon.setYrkesaktivitet(this);
+                    return permisjon;
+                })
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
@@ -106,20 +113,22 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
 
     /**
      * Kategorisering av aktivitet som er enten pensjonsgivende inntekt eller likestilt med pensjonsgivende inntekt
-     * <p>
-     * Fra aa-reg
+     *
+     * <p>Fra aa-reg
+     *
      * <ul>
-     * <li>{@value ArbeidType#ORDINÆRT_ARBEIDSFORHOLD}</li>
-     * <li>{@value ArbeidType#MARITIMT_ARBEIDSFORHOLD}</li>
-     * <li>{@value ArbeidType#FORENKLET_OPPGJØRSORDNING}</li>
+     *   <li>{@value ArbeidType#ORDINÆRT_ARBEIDSFORHOLD}
+     *   <li>{@value ArbeidType#MARITIMT_ARBEIDSFORHOLD}
+     *   <li>{@value ArbeidType#FORENKLET_OPPGJØRSORDNING}
      * </ul>
-     * <p>
-     * Fra inntektskomponenten
+     *
+     * <p>Fra inntektskomponenten
+     *
      * <ul>
-     * <li>{@value ArbeidType#FRILANSER_OPPDRAGSTAKER_MED_MER}</li>
+     *   <li>{@value ArbeidType#FRILANSER_OPPDRAGSTAKER_MED_MER}
      * </ul>
-     * <p>
-     * De resterende kommer fra søknaden
+     *
+     * <p>De resterende kommer fra søknaden
      *
      * @return {@link ArbeidType}
      */
@@ -132,9 +141,10 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
     }
 
     /**
-     * Unik identifikator for arbeidsforholdet til aktøren i bedriften. Selve nøkkelen er ikke unik, men er unik for arbeidstaker hos arbeidsgiver.
-     * <p>
-     * NB! Vil kun forekomme i aktiviteter som er hentet inn fra aa-reg
+     * Unik identifikator for arbeidsforholdet til aktøren i bedriften. Selve nøkkelen er ikke unik, men er unik for
+     * arbeidstaker hos arbeidsgiver.
+     *
+     * <p>NB! Vil kun forekomme i aktiviteter som er hentet inn fra aa-reg
      *
      * @return referanse
      */
@@ -148,8 +158,8 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
 
     /**
      * Liste over fremtidige / historiske permisjoner hos arbeidsgiver.
-     * <p>
-     * NB! Vil kun forekomme i aktiviteter som er hentet inn fra aa-reg
+     *
+     * <p>NB! Vil kun forekomme i aktiviteter som er hentet inn fra aa-reg
      *
      * @return liste med permisjoner
      */
@@ -162,9 +172,7 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
         permisjon.setYrkesaktivitet(this);
     }
 
-    /**
-     * Alle aktivitetsavtaler
-     */
+    /** Alle aktivitetsavtaler */
     public Collection<AktivitetsAvtale> getAlleAktivitetsAvtaler() {
         return Collections.unmodifiableSet(aktivitetsAvtale);
     }
@@ -177,8 +185,8 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
 
     /**
      * ArbeidsgiverEntitet
-     * <p>
-     * NB! Vil kun forekomme i aktiviteter som er hentet inn fra aa-reg
+     *
+     * <p>NB! Vil kun forekomme i aktiviteter som er hentet inn fra aa-reg
      *
      * @return {@link ArbeidsgiverEntitet}
      */
@@ -206,7 +214,7 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
     /**
      * Identifiser om yrkesaktiviteten gjelder for arbeidsgiver og arbeidsforholdRef.
      *
-     * @param arbeidsgiver      en {@link Arbeidsgiver}
+     * @param arbeidsgiver en {@link Arbeidsgiver}
      * @param arbeidsforholdRef et {@link InternArbeidsforholdRef}
      * @return true hvis arbeidsgiver og arbeidsforholdRef macther
      */
@@ -226,18 +234,22 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
 
     void tilbakestillAvtaler() {
         if (erYrkesaktivitetMedLegacyInnhold()) {
-            this.aktivitetsAvtale = aktivitetsAvtale.stream().filter(this::erLegacyAktivitetsAvtale).collect(Collectors.toSet());
+            this.aktivitetsAvtale = aktivitetsAvtale.stream()
+                    .filter(this::erLegacyAktivitetsAvtale)
+                    .collect(Collectors.toSet());
         } else {
             aktivitetsAvtale.clear();
         }
     }
 
     boolean erYrkesaktivitetMedLegacyInnhold() {
-        return ArbeidType.FRILANSER_OPPDRAGSTAKER_MED_MER.equals(arbeidType) && aktivitetsAvtale.stream().anyMatch(this::erLegacyAktivitetsAvtale);
+        return ArbeidType.FRILANSER_OPPDRAGSTAKER_MED_MER.equals(arbeidType)
+                && aktivitetsAvtale.stream().anyMatch(this::erLegacyAktivitetsAvtale);
     }
 
     private boolean erLegacyAktivitetsAvtale(AktivitetsAvtale avtale) {
-        return avtale.getPeriode().getTomDato() != null && CUTOFF_FRILANS_AAREG.isAfter(avtale.getPeriode().getTomDato());
+        return avtale.getPeriode().getTomDato() != null
+                && CUTOFF_FRILANS_AAREG.isAfter(avtale.getPeriode().getTomDato());
     }
 
     void tilbakestillAvtalerInklusiveInntektFrilans() {
@@ -252,24 +264,25 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
             return false;
         }
         Yrkesaktivitet other = (Yrkesaktivitet) obj;
-        return Objects.equals(this.getArbeidsforholdRef(), other.getArbeidsforholdRef()) && Objects.equals(this.getNavnArbeidsgiverUtland(),
-            other.getNavnArbeidsgiverUtland()) && Objects.equals(this.getArbeidType(), other.getArbeidType()) && Objects.equals(
-            this.getArbeidsgiver(), other.getArbeidsgiver());
+        return Objects.equals(this.getArbeidsforholdRef(), other.getArbeidsforholdRef())
+                && Objects.equals(this.getNavnArbeidsgiverUtland(), other.getNavnArbeidsgiverUtland())
+                && Objects.equals(this.getArbeidType(), other.getArbeidType())
+                && Objects.equals(this.getArbeidsgiver(), other.getArbeidsgiver());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getArbeidsforholdRef(), getNavnArbeidsgiverUtland(), getArbeidType(), getArbeidsgiver());
+        return Objects.hash(
+                this.getArbeidsforholdRef(), getNavnArbeidsgiverUtland(), getArbeidType(), getArbeidsgiver());
     }
 
     @Override
     public String toString() {
-        return "YrkesaktivitetEntitet{" + "id=" + id + ", arbeidsgiver=" + arbeidsgiver + ", arbeidsforholdRef=" + arbeidsforholdRef + ", arbeidType="
-            + arbeidType + '}';
+        return "YrkesaktivitetEntitet{" + "id=" + id + ", arbeidsgiver=" + arbeidsgiver + ", arbeidsforholdRef="
+                + arbeidsforholdRef + ", arbeidType=" + arbeidType + '}';
     }
 
     void fjernPeriode(IntervallEntitet aktivitetsPeriode) {
         aktivitetsAvtale.removeIf(aa -> aa.matcherPeriode(aktivitetsPeriode));
     }
-
 }

@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.vedtak.extract.v1;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
@@ -27,8 +26,7 @@ import no.nav.foreldrepenger.abakus.vedtak.domene.YtelseAnvist;
 
 public final class ConvertToYtelseV1 {
 
-    private ConvertToYtelseV1() {
-    }
+    private ConvertToYtelseV1() {}
 
     public static Ytelse convert(VedtakYtelse vedtak) {
         var ytelse = new YtelseV1();
@@ -46,11 +44,12 @@ public final class ConvertToYtelseV1 {
         periode.setFom(vedtak.getPeriode().getFomDato());
         periode.setTom(vedtak.getPeriode().getTomDato());
         ytelse.setPeriode(periode);
-        var anvist = vedtak.getYtelseAnvist().stream().map(ConvertToYtelseV1::mapLagretAnvist).collect(Collectors.toList());
+        var anvist = vedtak.getYtelseAnvist().stream()
+                .map(ConvertToYtelseV1::mapLagretAnvist)
+                .collect(Collectors.toList());
         ytelse.setAnvist(anvist);
         return ytelse;
     }
-
 
     private static Anvisning mapLagretAnvist(YtelseAnvist anvist) {
         var anvisning = new Anvisning();
@@ -60,23 +59,32 @@ public final class ConvertToYtelseV1 {
         anvisning.setPeriode(periode);
         anvist.getBeløp().map(Beløp::getVerdi).map(Desimaltall::new).ifPresent(anvisning::setBeløp);
         anvist.getDagsats().map(Beløp::getVerdi).map(Desimaltall::new).ifPresent(anvisning::setDagsats);
-        anvist.getUtbetalingsgradProsent().map(Stillingsprosent::getVerdi).map(Desimaltall::new).ifPresent(anvisning::setUtbetalingsgrad);
+        anvist.getUtbetalingsgradProsent()
+                .map(Stillingsprosent::getVerdi)
+                .map(Desimaltall::new)
+                .ifPresent(anvisning::setUtbetalingsgrad);
         anvisning.setAndeler(mapAndeler(anvist));
 
         return anvisning;
     }
 
     private static List<AnvistAndel> mapAndeler(YtelseAnvist anvist) {
-        return anvist.getAndeler()
-            .stream()
-            .map(a -> new AnvistAndel(a.getArbeidsgiver().map(ConvertToYtelseV1::mapArbeidsgiverIdent).orElse(null), a.getArbeidsforholdId(),
-                new Desimaltall(a.getDagsats().getVerdi()),
-                a.getUtbetalingsgradProsent() == null ? null : new Desimaltall(a.getUtbetalingsgradProsent().getVerdi()),
-                a.getRefusjonsgradProsent() == null ? null : new Desimaltall(a.getRefusjonsgradProsent().getVerdi()),
-                fraInntektskategori(a.getInntektskategori())))
-            .collect(Collectors.toList());
+        return anvist.getAndeler().stream()
+                .map(a -> new AnvistAndel(
+                        a.getArbeidsgiver()
+                                .map(ConvertToYtelseV1::mapArbeidsgiverIdent)
+                                .orElse(null),
+                        a.getArbeidsforholdId(),
+                        new Desimaltall(a.getDagsats().getVerdi()),
+                        a.getUtbetalingsgradProsent() == null
+                                ? null
+                                : new Desimaltall(a.getUtbetalingsgradProsent().getVerdi()),
+                        a.getRefusjonsgradProsent() == null
+                                ? null
+                                : new Desimaltall(a.getRefusjonsgradProsent().getVerdi()),
+                        fraInntektskategori(a.getInntektskategori())))
+                .collect(Collectors.toList());
     }
-
 
     private static ArbeidsgiverIdent mapArbeidsgiverIdent(Arbeidsgiver arbeidsgiver) {
         if (arbeidsgiver == null) {

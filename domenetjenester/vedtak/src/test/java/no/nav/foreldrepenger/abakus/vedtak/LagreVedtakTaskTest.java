@@ -5,16 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
 import java.util.UUID;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-
 import no.nav.foreldrepenger.abakus.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskDataBuilder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 class LagreVedtakTaskTest {
 
@@ -27,7 +25,8 @@ class LagreVedtakTaskTest {
 
     @Test
     void skal_feile_ved_valideringsfeil() {
-        String payload = """
+        String payload =
+                """
             {
               "version": "1.0",
               "aktør": {
@@ -83,17 +82,17 @@ class LagreVedtakTaskTest {
             """;
 
         ProsessTaskData data = ProsessTaskDataBuilder.forProsessTask(LagreVedtakTask.class)
-            .medPayload(payload)
-            .medProperty(LagreVedtakTask.KEY, UUID.randomUUID().toString())
-            .build();
+                .medPayload(payload)
+                .medProperty(LagreVedtakTask.KEY, UUID.randomUUID().toString())
+                .build();
 
         assertThrows(IllegalArgumentException.class, () -> task.doTask(data));
     }
 
-
     @Test
     void skal_ikke_feile_uten_valideringsfeil() {
-        String payload = """
+        String payload =
+                """
             {
               "version" : "1.0",
               "aktør" : {
@@ -208,19 +207,26 @@ class LagreVedtakTaskTest {
             """;
 
         ProsessTaskData data = ProsessTaskDataBuilder.forProsessTask(LagreVedtakTask.class)
-            .medPayload(payload)
-            .medProperty(LagreVedtakTask.KEY, UUID.randomUUID().toString())
-            .build();
+                .medPayload(payload)
+                .medProperty(LagreVedtakTask.KEY, UUID.randomUUID().toString())
+                .build();
 
         task.doTask(data);
 
         extension.getEntityManager().flush();
 
-        var vedtakYtelser = repository.hentYtelserForIPeriode(new AktørId("1293528970663"), LocalDate.of(2021, 11, 1), LocalDate.of(2021, 11, 19));
+        var vedtakYtelser = repository.hentYtelserForIPeriode(
+                new AktørId("1293528970663"), LocalDate.of(2021, 11, 1), LocalDate.of(2021, 11, 19));
 
         assertThat(vedtakYtelser.size()).isEqualTo(1);
         assertThat(vedtakYtelser.get(0).getYtelseAnvist().size()).isEqualTo(3);
-        assertThat(vedtakYtelser.get(0).getYtelseAnvist().iterator().next().getAndeler().size()).isEqualTo(1);
-
+        assertThat(vedtakYtelser
+                        .get(0)
+                        .getYtelseAnvist()
+                        .iterator()
+                        .next()
+                        .getAndeler()
+                        .size())
+                .isEqualTo(1);
     }
 }

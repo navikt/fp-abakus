@@ -1,15 +1,12 @@
 package no.nav.abakus.vedtak.ytelse.v1;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import no.nav.abakus.vedtak.ytelse.Aktør;
 import no.nav.abakus.vedtak.ytelse.Kildesystem;
 import no.nav.abakus.vedtak.ytelse.Periode;
@@ -34,7 +31,9 @@ public class YtelseV1 extends Ytelse {
     @JsonProperty("ytelse")
     private Ytelser ytelse;
 
-    @Pattern(regexp = "^(-?[1-9]|[a-z0])[a-z0-9_:-]*$", flags = {Pattern.Flag.CASE_INSENSITIVE})
+    @Pattern(
+            regexp = "^(-?[1-9]|[a-z0])[a-z0-9_:-]*$",
+            flags = {Pattern.Flag.CASE_INSENSITIVE})
     @JsonProperty("saksnummer")
     private String saksnummer;
 
@@ -64,8 +63,7 @@ public class YtelseV1 extends Ytelse {
     @JsonProperty("anvist")
     private List<Anvisning> anvist = new ArrayList<>();
 
-    public YtelseV1() {
-    }
+    public YtelseV1() {}
 
     @Override
     public Ytelser getYtelse() {
@@ -152,8 +150,10 @@ public class YtelseV1 extends Ytelse {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[aktør=" + aktør + ", vedtattTidspunkt=" + vedtattTidspunkt + ", ytelse=" + ytelse + ", saksnummer="
-            + saksnummer + ", vedtakReferanse=" + vedtakReferanse + ", status=" + ytelseStatus + ", kildesystem=" + kildesystem + ", periode="
-            + periode + ", anvist=" + anvist + "]";
+        return getClass().getSimpleName() + "[aktør=" + aktør + ", vedtattTidspunkt=" + vedtattTidspunkt + ", ytelse="
+                + ytelse + ", saksnummer="
+                + saksnummer + ", vedtakReferanse=" + vedtakReferanse + ", status=" + ytelseStatus + ", kildesystem="
+                + kildesystem + ", periode="
+                + periode + ", anvist=" + anvist + "]";
     }
 }

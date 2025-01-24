@@ -13,12 +13,13 @@ public class InfotrygdYtelseAnvist {
     private Boolean erRefusjon;
     private BigDecimal dagsats;
 
-    public InfotrygdYtelseAnvist(LocalDate utbetaltFom,
-                                 LocalDate utbetaltTom,
-                                 BigDecimal utbetalingsgrad,
-                                 String orgnr,
-                                 Boolean erRefusjon,
-                                 BigDecimal dagsats) {
+    public InfotrygdYtelseAnvist(
+            LocalDate utbetaltFom,
+            LocalDate utbetaltTom,
+            BigDecimal utbetalingsgrad,
+            String orgnr,
+            Boolean erRefusjon,
+            BigDecimal dagsats) {
         this.utbetaltFom = utbetaltFom;
         this.utbetaltTom = utbetaltTom;
         this.utbetalingsgrad = utbetalingsgrad;
@@ -26,7 +27,6 @@ public class InfotrygdYtelseAnvist {
         this.erRefusjon = erRefusjon;
         this.dagsats = dagsats;
     }
-
 
     public LocalDate getUtbetaltFom() {
         return utbetaltFom;
@@ -61,9 +61,12 @@ public class InfotrygdYtelseAnvist {
             return false;
         }
         InfotrygdYtelseAnvist that = (InfotrygdYtelseAnvist) o;
-        return Objects.equals(utbetaltFom, that.utbetaltFom) && Objects.equals(utbetaltTom, that.utbetaltTom) && Objects.equals(utbetalingsgrad,
-            that.utbetalingsgrad) && Objects.equals(orgnr, that.orgnr) && Objects.equals(erRefusjon, that.erRefusjon) && Objects.equals(dagsats,
-            that.dagsats);
+        return Objects.equals(utbetaltFom, that.utbetaltFom)
+                && Objects.equals(utbetaltTom, that.utbetaltTom)
+                && Objects.equals(utbetalingsgrad, that.utbetalingsgrad)
+                && Objects.equals(orgnr, that.orgnr)
+                && Objects.equals(erRefusjon, that.erRefusjon)
+                && Objects.equals(dagsats, that.dagsats);
     }
 
     @Override
@@ -73,10 +76,9 @@ public class InfotrygdYtelseAnvist {
 
     @Override
     public String toString() {
-        return "InfotrygdYtelseAnvist{" + "utbetaltFom=" + utbetaltFom + ", utbetaltTom=" + utbetaltTom + ", utbetalingsgrad=" + utbetalingsgrad
-            + ", orgnr=" + getOrgnrString() + ", erRefusjon=" + erRefusjon + ", dagsats=" + dagsats +
-
-            '}';
+        return "InfotrygdYtelseAnvist{" + "utbetaltFom=" + utbetaltFom + ", utbetaltTom=" + utbetaltTom
+                + ", utbetalingsgrad=" + utbetalingsgrad
+                + ", orgnr=" + getOrgnrString() + ", erRefusjon=" + erRefusjon + ", dagsats=" + dagsats + '}';
     }
 
     private String getOrgnrString() {
@@ -89,5 +91,4 @@ public class InfotrygdYtelseAnvist {
         }
         return "*".repeat(length - 4) + orgnr.substring(length - 4);
     }
-
 }

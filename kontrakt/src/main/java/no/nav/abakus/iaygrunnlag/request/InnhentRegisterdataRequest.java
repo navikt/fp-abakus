@@ -1,8 +1,5 @@
 package no.nav.abakus.iaygrunnlag.request;
 
-import java.util.Set;
-import java.util.UUID;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -10,22 +7,26 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import java.util.Set;
+import java.util.UUID;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
-@JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = Visibility.NONE,
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE,
+        isGetterVisibility = Visibility.NONE,
+        creatorVisibility = Visibility.NONE)
 public class InnhentRegisterdataRequest {
 
-    /**
-     * Saksnummer alle grunnlag og koblinger er linket til.
-     */
+    /** Saksnummer alle grunnlag og koblinger er linket til. */
     @JsonProperty(value = "saksnummer", required = true)
     @NotNull
     @Pattern(regexp = "^[A-Za-z0-9_\\.\\-]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'")
@@ -65,14 +66,15 @@ public class InnhentRegisterdataRequest {
 
     @JsonProperty(value = "elementer")
     @Valid
-    private Set<RegisterdataType> elementer = Set.of(RegisterdataType.ARBEIDSFORHOLD, RegisterdataType.INNTEKT_PENSJONSGIVENDE,
-        RegisterdataType.YTELSE);
+    private Set<RegisterdataType> elementer =
+            Set.of(RegisterdataType.ARBEIDSFORHOLD, RegisterdataType.INNTEKT_PENSJONSGIVENDE, RegisterdataType.YTELSE);
 
-    public InnhentRegisterdataRequest(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
-                                      @JsonProperty(value = "referanse", required = true) @Valid @NotNull UUID referanse,
-                                      @JsonProperty(value = "ytelseType", required = true) @NotNull YtelseType ytelseType,
-                                      @JsonProperty(value = "opplysningsperiode", required = true) @NotNull @Valid Periode opplysningsperiode,
-                                      @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør) {
+    public InnhentRegisterdataRequest(
+            @JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
+            @JsonProperty(value = "referanse", required = true) @Valid @NotNull UUID referanse,
+            @JsonProperty(value = "ytelseType", required = true) @NotNull YtelseType ytelseType,
+            @JsonProperty(value = "opplysningsperiode", required = true) @NotNull @Valid Periode opplysningsperiode,
+            @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør) {
         this.saksnummer = saksnummer;
         this.referanse = referanse;
         this.ytelseType = ytelseType;
@@ -81,12 +83,13 @@ public class InnhentRegisterdataRequest {
     }
 
     @JsonCreator
-    public InnhentRegisterdataRequest(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
-                                      @JsonProperty(value = "referanse", required = true) @Valid @NotNull UUID referanse,
-                                      @JsonProperty(value = "ytelseType", required = true) @NotNull YtelseType ytelseType,
-                                      @JsonProperty(value = "opplysningsperiode", required = true) @NotNull @Valid Periode opplysningsperiode,
-                                      @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
-                                      @JsonProperty(value = "elementer", required = true) @NotNull @Valid Set<RegisterdataType> elementer) {
+    public InnhentRegisterdataRequest(
+            @JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
+            @JsonProperty(value = "referanse", required = true) @Valid @NotNull UUID referanse,
+            @JsonProperty(value = "ytelseType", required = true) @NotNull YtelseType ytelseType,
+            @JsonProperty(value = "opplysningsperiode", required = true) @NotNull @Valid Periode opplysningsperiode,
+            @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
+            @JsonProperty(value = "elementer", required = true) @NotNull @Valid Set<RegisterdataType> elementer) {
         this(saksnummer, referanse, ytelseType, opplysningsperiode, aktør);
         this.elementer = elementer;
     }

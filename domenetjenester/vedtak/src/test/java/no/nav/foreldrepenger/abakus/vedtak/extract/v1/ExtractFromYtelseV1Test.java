@@ -6,10 +6,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
@@ -26,6 +22,8 @@ import no.nav.abakus.vedtak.ytelse.v1.anvisning.Inntektklasse;
 import no.nav.foreldrepenger.abakus.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 class ExtractFromYtelseV1Test {
 
@@ -56,7 +54,8 @@ class ExtractFromYtelseV1Test {
 
         Anvisning anvisning = new Anvisning();
         anvisning.setPeriode(periode);
-        anvisning.setAndeler(List.of(new AnvistAndel(new ArbeidsgiverIdent("999999999"), 1236, 100, 100, Inntektklasse.ARBEIDSTAKER, "ehuif2897")));
+        anvisning.setAndeler(List.of(new AnvistAndel(
+                new ArbeidsgiverIdent("999999999"), 1236, 100, 100, Inntektklasse.ARBEIDSTAKER, "ehuif2897")));
         ytelseV1.setAnvist(List.of(anvisning));
 
         VedtakYtelseBuilder builder = extractor.extractFrom(ytelseV1);
@@ -96,7 +95,8 @@ class ExtractFromYtelseV1Test {
 
         Anvisning anvisning = new Anvisning();
         anvisning.setPeriode(periode);
-        anvisning.setAndeler(List.of(new AnvistAndel(new ArbeidsgiverIdent("999999999"), 1236, 100, 100, Inntektklasse.ARBEIDSTAKER, "ehuif2897")));
+        anvisning.setAndeler(List.of(new AnvistAndel(
+                new ArbeidsgiverIdent("999999999"), 1236, 100, 100, Inntektklasse.ARBEIDSTAKER, "ehuif2897")));
         ytelseV1.setAnvist(List.of(anvisning));
 
         VedtakYtelseBuilder builder = extractor.extractFrom(ytelseV1);

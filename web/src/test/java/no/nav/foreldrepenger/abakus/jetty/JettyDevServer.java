@@ -1,13 +1,11 @@
 package no.nav.foreldrepenger.abakus.jetty;
 
+import javax.naming.NamingException;
+import no.nav.foreldrepenger.konfig.Environment;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import no.nav.foreldrepenger.konfig.Environment;
-
-import javax.naming.NamingException;
 
 public class JettyDevServer extends JettyServer {
 
@@ -37,11 +35,11 @@ public class JettyDevServer extends JettyServer {
             LOG.info("Migreringer feilet, cleaner og prøver på nytt for lokal db.");
             try (var migreringDs = DatasourceUtil.createDatasource(DatasourceRole.ADMIN, 2)) {
                 var flyway = Flyway.configure()
-                    .dataSource(migreringDs)
-                    .locations("classpath:/db/migration/")
-                    .baselineOnMigrate(true)
-                    .cleanDisabled(false)
-                    .load();
+                        .dataSource(migreringDs)
+                        .locations("classpath:/db/migration/")
+                        .baselineOnMigrate(true)
+                        .cleanDisabled(false)
+                        .load();
                 flyway.clean();
             } catch (FlywayException fwe) {
                 throw new IllegalStateException("Migrering feiler.", fwe);

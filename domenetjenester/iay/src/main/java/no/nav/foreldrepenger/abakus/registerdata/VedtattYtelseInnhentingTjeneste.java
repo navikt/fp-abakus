@@ -1,11 +1,9 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
-import java.time.LocalDate;
-import java.util.List;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-
+import java.time.LocalDate;
+import java.util.List;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
@@ -32,82 +30,99 @@ public class VedtattYtelseInnhentingTjeneste {
     private VedtakYtelseRepository vedtakYtelseRepository;
     private InntektArbeidYtelseRepository inntektArbeidYtelseRepository;
 
-    protected VedtattYtelseInnhentingTjeneste() {
-    }
+    protected VedtattYtelseInnhentingTjeneste() {}
 
     @Inject
-    public VedtattYtelseInnhentingTjeneste(VedtakYtelseRepository vedtakYtelseRepository,
-                                           InntektArbeidYtelseRepository inntektArbeidYtelseRepository) {
+    public VedtattYtelseInnhentingTjeneste(
+            VedtakYtelseRepository vedtakYtelseRepository,
+            InntektArbeidYtelseRepository inntektArbeidYtelseRepository) {
         this.vedtakYtelseRepository = vedtakYtelseRepository;
         this.inntektArbeidYtelseRepository = inntektArbeidYtelseRepository;
     }
 
-    void innhentFraYtelsesRegister(AktørId aktørId, Kobling kobling, InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder builder) {
+    void innhentFraYtelsesRegister(
+            AktørId aktørId, Kobling kobling, InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder builder) {
         IntervallEntitet opplysningsperiode = kobling.getOpplysningsperiode();
-        List<VedtakYtelse> vedtatteYtelser = vedtakYtelseRepository.hentYtelserForIPeriode(aktørId, opplysningsperiode.getFomDato(),
-            opplysningsperiode.getTomDato());
+        List<VedtakYtelse> vedtatteYtelser = vedtakYtelseRepository.hentYtelserForIPeriode(
+                aktørId, opplysningsperiode.getFomDato(), opplysningsperiode.getTomDato());
 
-        var arbeidsforholdInformasjon = inntektArbeidYtelseRepository.hentArbeidsforholdInformasjonForBehandling(kobling.getKoblingReferanse());
+        var arbeidsforholdInformasjon =
+                inntektArbeidYtelseRepository.hentArbeidsforholdInformasjonForBehandling(kobling.getKoblingReferanse());
         var arbeidsforholdInformasjonBuilder = ArbeidsforholdInformasjonBuilder.builder(arbeidsforholdInformasjon);
         for (var vedtattYtelse : vedtatteYtelser) {
-            YtelseBuilder ytelseBuilder = builder.getYtelselseBuilderForType(vedtattYtelse.getKilde(), vedtattYtelse.getYtelseType(),
-                vedtattYtelse.getSaksnummer());
-            ytelseBuilder.medPeriode(vedtattYtelse.getPeriode())
-                .medStatus(vedtattYtelse.getStatus())
-                .medVedtattTidspunkt(vedtattYtelse.getVedtattTidspunkt());
+            YtelseBuilder ytelseBuilder = builder.getYtelselseBuilderForType(
+                    vedtattYtelse.getKilde(), vedtattYtelse.getYtelseType(), vedtattYtelse.getSaksnummer());
+            ytelseBuilder
+                    .medPeriode(vedtattYtelse.getPeriode())
+                    .medStatus(vedtattYtelse.getStatus())
+                    .medVedtattTidspunkt(vedtattYtelse.getVedtattTidspunkt());
 
             mapAnvisninger(vedtattYtelse, ytelseBuilder, arbeidsforholdInformasjonBuilder);
             builder.leggTilYtelse(ytelseBuilder);
         }
-        var inntektArbeidYtelseGrunnlag = inntektArbeidYtelseRepository.hentInntektArbeidYtelseGrunnlagForBehandling(kobling.getKoblingReferanse());
+        var inntektArbeidYtelseGrunnlag = inntektArbeidYtelseRepository.hentInntektArbeidYtelseGrunnlagForBehandling(
+                kobling.getKoblingReferanse());
         var nyttGrunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(inntektArbeidYtelseGrunnlag);
         nyttGrunnlagBuilder.medInformasjon(arbeidsforholdInformasjonBuilder.build());
         inntektArbeidYtelseRepository.lagre(kobling.getKoblingReferanse(), nyttGrunnlagBuilder);
     }
 
-
-    private void mapAnvisninger(VedtakYtelse vedtattYtelse,
-                                YtelseBuilder ytelseBuilder,
-                                ArbeidsforholdInformasjonBuilder arbeidsforholdInformasjonBuilder) {
+    private void mapAnvisninger(
+            VedtakYtelse vedtattYtelse,
+            YtelseBuilder ytelseBuilder,
+            ArbeidsforholdInformasjonBuilder arbeidsforholdInformasjonBuilder) {
         vedtattYtelse.getYtelseAnvist().forEach(anvisning -> {
             YtelseAnvistBuilder anvistBuilder = ytelseBuilder.getAnvistBuilder();
-            IntervallEntitet periode = utledPeriodeNårTomMuligFørFom(anvisning.getAnvistFom(), anvisning.getAnvistTom());
-            anvistBuilder.medAnvistPeriode(periode)
-                .medBeløp(anvisning.getBeløp().map(Beløp::getVerdi).orElse(null))
-                .medDagsats(anvisning.getDagsats().map(Beløp::getVerdi).orElse(null))
-                .medUtbetalingsgradProsent(anvisning.getUtbetalingsgradProsent().map(Stillingsprosent::getVerdi).orElse(null));
+            IntervallEntitet periode =
+                    utledPeriodeNårTomMuligFørFom(anvisning.getAnvistFom(), anvisning.getAnvistTom());
+            anvistBuilder
+                    .medAnvistPeriode(periode)
+                    .medBeløp(anvisning.getBeløp().map(Beløp::getVerdi).orElse(null))
+                    .medDagsats(anvisning.getDagsats().map(Beløp::getVerdi).orElse(null))
+                    .medUtbetalingsgradProsent(anvisning
+                            .getUtbetalingsgradProsent()
+                            .map(Stillingsprosent::getVerdi)
+                            .orElse(null));
             if (anvisning.getAndeler() != null) {
-                anvisning.getAndeler().forEach(andel -> anvistBuilder.leggTilYtelseAnvistAndel(mapAndel(arbeidsforholdInformasjonBuilder, andel)));
+                anvisning
+                        .getAndeler()
+                        .forEach(andel -> anvistBuilder.leggTilYtelseAnvistAndel(
+                                mapAndel(arbeidsforholdInformasjonBuilder, andel)));
             }
             ytelseBuilder.leggtilYtelseAnvist(anvistBuilder.build());
         });
     }
 
-    private YtelseAnvistAndel mapAndel(ArbeidsforholdInformasjonBuilder arbeidsforholdInformasjonBuilder, VedtakYtelseAndel andel) {
+    private YtelseAnvistAndel mapAndel(
+            ArbeidsforholdInformasjonBuilder arbeidsforholdInformasjonBuilder, VedtakYtelseAndel andel) {
         var arbeidsgiver = mapArbeidsgiver(andel);
         return YtelseAnvistAndelBuilder.ny()
-            .medArbeidsgiver(arbeidsgiver)
-            .medArbeidsforholdRef(mapInternArbeidsforholdRef(arbeidsforholdInformasjonBuilder, andel, arbeidsgiver))
-            .medInntektskategori(andel.getInntektskategori())
-            .medRefusjonsgrad(andel.getRefusjonsgradProsent().getVerdi())
-            .medUtbetalingsgrad(andel.getUtbetalingsgradProsent().getVerdi())
-            .medDagsats(andel.getDagsats().getVerdi())
-            .build();
+                .medArbeidsgiver(arbeidsgiver)
+                .medArbeidsforholdRef(mapInternArbeidsforholdRef(arbeidsforholdInformasjonBuilder, andel, arbeidsgiver))
+                .medInntektskategori(andel.getInntektskategori())
+                .medRefusjonsgrad(andel.getRefusjonsgradProsent().getVerdi())
+                .medUtbetalingsgrad(andel.getUtbetalingsgradProsent().getVerdi())
+                .medDagsats(andel.getDagsats().getVerdi())
+                .build();
     }
 
-    private InternArbeidsforholdRef mapInternArbeidsforholdRef(ArbeidsforholdInformasjonBuilder arbeidsforholdInformasjonBuilder,
-                                                               VedtakYtelseAndel andel,
-                                                               Arbeidsgiver arbeidsgiver) {
+    private InternArbeidsforholdRef mapInternArbeidsforholdRef(
+            ArbeidsforholdInformasjonBuilder arbeidsforholdInformasjonBuilder,
+            VedtakYtelseAndel andel,
+            Arbeidsgiver arbeidsgiver) {
         if (andel.getArbeidsforholdId() != null) {
-            return arbeidsforholdInformasjonBuilder.finnEllerOpprett(arbeidsgiver, EksternArbeidsforholdRef.ref(andel.getArbeidsforholdId()));
+            return arbeidsforholdInformasjonBuilder.finnEllerOpprett(
+                    arbeidsgiver, EksternArbeidsforholdRef.ref(andel.getArbeidsforholdId()));
         }
         return null;
     }
 
     private Arbeidsgiver mapArbeidsgiver(VedtakYtelseAndel andel) {
         return andel.getArbeidsgiver()
-            .map(a -> a.getOrgnr() != null ? Arbeidsgiver.virksomhet(a.getOrgnr()) : Arbeidsgiver.person(a.getAktørId()))
-            .orElse(null);
+                .map(a -> a.getOrgnr() != null
+                        ? Arbeidsgiver.virksomhet(a.getOrgnr())
+                        : Arbeidsgiver.person(a.getAktørId()))
+                .orElse(null);
     }
 
     private IntervallEntitet utledPeriodeNårTomMuligFørFom(LocalDate fom, LocalDate tom) {
@@ -119,6 +134,4 @@ public class VedtattYtelseInnhentingTjeneste {
         }
         return IntervallEntitet.fraOgMedTilOgMed(fom, tom);
     }
-
-
 }

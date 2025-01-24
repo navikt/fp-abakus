@@ -10,10 +10,6 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Set;
 import java.util.UUID;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonAnvist;
 import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonRepository;
@@ -21,9 +17,10 @@ import no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonVedtak;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class InnhentingSamletTjenesteTest {
-
 
     private LønnskompensasjonRepository repository = mock(LønnskompensasjonRepository.class);
 
@@ -46,21 +43,27 @@ class InnhentingSamletTjenesteTest {
         lk.setBeløp(new Beløp(new BigDecimal(30000L)));
         lk.setPeriode(IntervallEntitet.fraOgMedTilOgMed(fom, tom));
         lk.leggTilAnvistPeriode(LønnskompensasjonAnvist.LønnskompensasjonAnvistBuilder.ny()
-            .medBeløp(new BigDecimal(16000))
-            .medAnvistPeriode(IntervallEntitet.fraOgMedTilOgMed(YearMonth.from(fom).atDay(1), YearMonth.from(fom).atEndOfMonth()))
-            .build());
+                .medBeløp(new BigDecimal(16000))
+                .medAnvistPeriode(IntervallEntitet.fraOgMedTilOgMed(
+                        YearMonth.from(fom).atDay(1), YearMonth.from(fom).atEndOfMonth()))
+                .build());
         lk.leggTilAnvistPeriode(LønnskompensasjonAnvist.LønnskompensasjonAnvistBuilder.ny()
-            .medBeløp(new BigDecimal(14000))
-            .medAnvistPeriode(IntervallEntitet.fraOgMedTilOgMed(YearMonth.from(tom).atDay(1), YearMonth.from(tom).atEndOfMonth()))
-            .build());
+                .medBeløp(new BigDecimal(14000))
+                .medAnvistPeriode(IntervallEntitet.fraOgMedTilOgMed(
+                        YearMonth.from(tom).atDay(1), YearMonth.from(tom).atEndOfMonth()))
+                .build());
 
         when(repository.hentLønnskompensasjonForIPeriode(any(), any(), any())).thenReturn(Set.of(lk));
         // Act
-        var mi = samletTjeneste.getLønnskompensasjon(lk.getAktørId(),
-            IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusMonths(17), LocalDate.now()));
+        var mi = samletTjeneste.getLønnskompensasjon(
+                lk.getAktørId(),
+                IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusMonths(17), LocalDate.now()));
         assertThat(mi.size()).isEqualTo(2);
-        assertThat(mi.stream().filter(i -> i.getMåned().equals(YearMonth.from(tom))).findAny().orElse(null).getBeløp()).isEqualTo(
-            new BigDecimal(14000));
+        assertThat(mi.stream()
+                        .filter(i -> i.getMåned().equals(YearMonth.from(tom)))
+                        .findAny()
+                        .orElse(null)
+                        .getBeløp())
+                .isEqualTo(new BigDecimal(14000));
     }
-
 }

@@ -1,5 +1,6 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -7,12 +8,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 public enum LønnsinntektBeskrivelse implements Kodeverdi {
-    KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE("KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE", "Kommunal omsorgslønn og fosterhjemsgodtgjørelse", "kommunalOmsorgsloennOgFosterhjemsgodtgjoerelse"),
+    KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE(
+            "KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE",
+            "Kommunal omsorgslønn og fosterhjemsgodtgjørelse",
+            "kommunalOmsorgsloennOgFosterhjemsgodtgjoerelse"),
     UDEFINERT("-", "Udefinert", null),
-        ;
+    ;
     private static final Map<String, LønnsinntektBeskrivelse> KODER = new LinkedHashMap<>();
 
     static {
@@ -39,7 +41,8 @@ public enum LønnsinntektBeskrivelse implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent LønnsinntektBeskrivelse: " + kode));
+        return Optional.ofNullable(KODER.get(kode))
+                .orElseThrow(() -> new IllegalArgumentException("Ukjent LønnsinntektBeskrivelse: " + kode));
     }
 
     public static Map<String, LønnsinntektBeskrivelse> kodeMap() {
@@ -47,7 +50,10 @@ public enum LønnsinntektBeskrivelse implements Kodeverdi {
     }
 
     public static LønnsinntektBeskrivelse finnForKodeverkEiersKode(String offisiellDokumentType) {
-        return Stream.of(values()).filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
+        return Stream.of(values())
+                .filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType))
+                .findFirst()
+                .orElse(UDEFINERT);
     }
 
     @Override
@@ -63,5 +69,4 @@ public enum LønnsinntektBeskrivelse implements Kodeverdi {
     public String getKode() {
         return kode;
     }
-
 }

@@ -1,7 +1,5 @@
 package no.nav.foreldrepenger.abakus.felles.diff;
 
-import java.lang.reflect.Field;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
@@ -15,11 +13,10 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Transient;
 import jakarta.persistence.Version;
+import java.lang.reflect.Field;
 import javassist.Modifier;
 
-/**
- * Konfig for å scanne JPA klasser.
- */
+/** Konfig for å scanne JPA klasser. */
 public class TraverseJpaEntityGraphConfig extends TraverseGraphConfig {
 
     @Override
@@ -29,20 +26,30 @@ public class TraverseJpaEntityGraphConfig extends TraverseGraphConfig {
 
     protected boolean isExpectedField(Field fld) {
         int mods = fld.getModifiers();
-        if (Modifier.isFinal(mods) || Modifier.isStatic(mods) || Modifier.isTransient(mods) || Modifier.isVolatile(mods)) {
+        if (Modifier.isFinal(mods)
+                || Modifier.isStatic(mods)
+                || Modifier.isTransient(mods)
+                || Modifier.isVolatile(mods)) {
             // her kan final felter skippes, da disse må være i løvnøder
             return false;
         }
 
         // følger bare standard, mappede felter i Entity grafen
-        return fld.isAnnotationPresent(Column.class) || fld.isAnnotationPresent(JoinColumn.class) || fld.isAnnotationPresent(OneToOne.class)
-            || fld.isAnnotationPresent(ManyToOne.class) || fld.isAnnotationPresent(OneToMany.class) || fld.isAnnotationPresent(ManyToMany.class)
-            || fld.isAnnotationPresent(Embedded.class);
+        return fld.isAnnotationPresent(Column.class)
+                || fld.isAnnotationPresent(JoinColumn.class)
+                || fld.isAnnotationPresent(OneToOne.class)
+                || fld.isAnnotationPresent(ManyToOne.class)
+                || fld.isAnnotationPresent(OneToMany.class)
+                || fld.isAnnotationPresent(ManyToMany.class)
+                || fld.isAnnotationPresent(Embedded.class);
     }
 
     protected boolean isSkippedFields(Field fld) {
-        return fld.isAnnotationPresent(DiffIgnore.class) || (fld.isAnnotationPresent(Id.class) && fld.isAnnotationPresent(GeneratedValue.class))
-            || fld.isAnnotationPresent(Version.class) || fld.isAnnotationPresent(GeneratedValue.class) || fld.isAnnotationPresent(Transient.class);
+        return fld.isAnnotationPresent(DiffIgnore.class)
+                || (fld.isAnnotationPresent(Id.class) && fld.isAnnotationPresent(GeneratedValue.class))
+                || fld.isAnnotationPresent(Version.class)
+                || fld.isAnnotationPresent(GeneratedValue.class)
+                || fld.isAnnotationPresent(Transient.class);
     }
 
     @Override
@@ -51,9 +58,8 @@ public class TraverseJpaEntityGraphConfig extends TraverseGraphConfig {
 
         boolean ok = targetClass.isAnnotationPresent(Entity.class) || targetClass.isAnnotationPresent(Embeddable.class);
         if (!ok) {
-            throw new IllegalArgumentException("target [" + targetClass + "] er ikke en Entity eller Embeddable (mangler annotation):" + currentPath);
+            throw new IllegalArgumentException("target [" + targetClass
+                    + "] er ikke en Entity eller Embeddable (mangler annotation):" + currentPath);
         }
-
     }
-
 }

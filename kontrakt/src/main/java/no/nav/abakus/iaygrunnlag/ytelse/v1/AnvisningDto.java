@@ -1,21 +1,18 @@
 package no.nav.abakus.iaygrunnlag.ytelse.v1;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 import no.nav.abakus.iaygrunnlag.Periode;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -27,25 +24,19 @@ public class AnvisningDto {
     @Valid
     private Periode periode;
 
-    /**
-     * Beløp i hele kroner (currency major unit). Tillater kun positive verdier.  Max verdi håndteres av mottager.
-     */
+    /** Beløp i hele kroner (currency major unit). Tillater kun positive verdier. Max verdi håndteres av mottager. */
     @JsonProperty(value = "beløp")
     @Valid
     @DecimalMin(value = "0.00", message = "beløp [${validatedValue}] må være >= {value}")
     private BigDecimal beløp;
 
-    /**
-     * Beløp i hele kroner (currency major unit). Tillater kun positive verdier.  Max verdi håndteres av mottager.
-     */
+    /** Beløp i hele kroner (currency major unit). Tillater kun positive verdier. Max verdi håndteres av mottager. */
     @JsonProperty(value = "dagsats")
     @Valid
     @DecimalMin(value = "0.00", message = "beløp [${validatedValue}] må være >= {value}")
     private BigDecimal dagsats;
 
-    /**
-     * Maks utbetalingsgrad er 200% (forekommer i meldekort fra Arena).
-     */
+    /** Maks utbetalingsgrad er 200% (forekommer i meldekort fra Arena). */
     @JsonProperty(value = "utbetalingsgrad")
     @Valid
     @DecimalMin(value = "0.00", message = "prosentsats [${validatedValue}] må være >= {value}")
@@ -56,7 +47,6 @@ public class AnvisningDto {
     @Valid
     @Size
     private List<AnvistAndelDto> andeler = new ArrayList<>();
-
 
     protected AnvisningDto() {
         // default ctor
@@ -130,5 +120,4 @@ public class AnvisningDto {
         setUtbetalingsgrad(BigDecimal.valueOf(utbetalingsgrad));
         return this;
     }
-
 }
