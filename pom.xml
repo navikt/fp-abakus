@@ -40,6 +40,8 @@
 		<kontrakter.version>9.2.2</kontrakter.version>
         <tidsserie.version>2.7.1</tidsserie.version>
 
+        <spotless.version>2.43.0</spotless.version>
+
         <!-- Forteller til maven-deploy-plugin at artefaktet ikke skal deployes.
         Arves og overstyrres i de enkelte artefakter. -->
         <maven.deploy.skip>true</maven.deploy.skip>
@@ -224,19 +226,60 @@
             <url>https://maven.pkg.github.com/navikt/fp-abakus/</url>
         </repository>
     </repositories>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless.version}</version>
+                <configuration>
+                    <java>
+                        <cleanthat/>
+                        <palantirJavaFormat>
+                            <version>2.39.0</version>
+                            <style>PALANTIR</style>
+                            <formatJavadoc>true</formatJavadoc>
+                        </palantirJavaFormat>
+                        <importOrder/>
+                    </java>
 
-	<scm>
-		<connection>scm:git:https://github.com/navikt/fp-abakus.git</connection>
-		<developerConnection>scm:git:https://github.com/navikt/fp-abakus.git</developerConnection>
-		<url>https://github.com/navikt/fp-abakus</url>
-		<tag>HEAD</tag>
-	</scm>
+                    <pom>
+                        <sortPom>
+                            <expandEmptyElements>false</expandEmptyElements>
+                            <nrOfIndentSpace>4</nrOfIndentSpace>
+                        </sortPom>
+                    </pom>
+                    <json>
+                        <includes>
+                            <include>src/**/*.json</include>
+                        </includes>
+                        <simple/>
+                        <jackson/>
+                    </json>
 
-	<distributionManagement>
-		<repository>
-			<id>github</id>
-			<name>Github navikt Maven Packages</name>
-			<url>https://maven.pkg.github.com/navikt/fp-abakus</url>
-		</repository>
-	</distributionManagement>
+                    <markdown>
+                        <includes>
+                            <include>**/*.md</include>
+                        </includes>
+                        <flexmark/>
+                    </markdown>
+                    <yaml>
+                        <includes>
+                            <include>src/**/*.yaml</include>
+                            <include>src/**/*.yml</include>
+                        </includes>
+                        <jackson/>
+                        <prettier/>
+                    </yaml>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
