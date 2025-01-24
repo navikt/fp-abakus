@@ -7,9 +7,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-
 import org.junit.jupiter.api.Test;
-
 
 class DatoTidkonverteringTest {
 
@@ -31,13 +29,10 @@ class DatoTidkonverteringTest {
         var zulu1 = zulu0.atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
         System.out.println(zulu1);
 
-
         // zulu til localdatetime
         var ts1_1 = zulu1.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
         System.out.println(ts1_1);
 
         assertThat(ts1).isEqualTo(ts1_1);
-
     }
-
 }

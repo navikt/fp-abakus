@@ -1,15 +1,9 @@
 package no.nav.foreldrepenger.abakus.app.konfig;
 
+import jakarta.ws.rs.ApplicationPath;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.server.ServerProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import jakarta.ws.rs.ApplicationPath;
 import no.nav.foreldrepenger.abakus.app.exceptions.ConstraintViolationMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.GeneralRestExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.JsonMappingExceptionMapper;
@@ -21,6 +15,10 @@ import no.nav.foreldrepenger.abakus.iay.tjeneste.InntektsmeldingerRestTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.OppgittOpptjeningRestTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataRestTjeneste;
 import no.nav.foreldrepenger.abakus.vedtak.tjeneste.YtelseRestTjeneste;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.ServerProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationPath(ApiConfig.API_URI)
 public class ApiConfig extends ResourceConfig {
@@ -46,12 +44,13 @@ public class ApiConfig extends ResourceConfig {
 
     private Set<Class<?>> getApplicationClasses() {
         // eksponert grensesnitt
-        return Set.of(RegisterdataRestTjeneste.class,
-            InntektsmeldingerRestTjeneste.class,
-            OppgittOpptjeningRestTjeneste.class,
-            GrunnlagRestTjeneste.class,
-            ArbeidsforholdRestTjeneste.class,
-            YtelseRestTjeneste.class);
+        return Set.of(
+                RegisterdataRestTjeneste.class,
+                InntektsmeldingerRestTjeneste.class,
+                OppgittOpptjeningRestTjeneste.class,
+                GrunnlagRestTjeneste.class,
+                ArbeidsforholdRestTjeneste.class,
+                YtelseRestTjeneste.class);
     }
 
     void registerExceptionMappers() {
@@ -68,5 +67,4 @@ public class ApiConfig extends ResourceConfig {
         properties.put(ServerProperties.PROCESSING_RESPONSE_ERRORS_ENABLED, true);
         return properties;
     }
-
 }

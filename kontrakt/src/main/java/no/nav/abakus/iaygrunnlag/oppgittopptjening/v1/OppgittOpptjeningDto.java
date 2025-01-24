@@ -1,28 +1,30 @@
 package no.nav.abakus.iaygrunnlag.oppgittopptjening.v1;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.AssertTrue;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import no.nav.abakus.iaygrunnlag.JournalpostId;
 import no.nav.abakus.iaygrunnlag.UuidDto;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class OppgittOpptjeningDto {
 
     @JsonProperty(value = "journalpostId")
@@ -49,9 +51,7 @@ public class OppgittOpptjeningDto {
     @Valid
     private OppgittFrilansDto frilans;
 
-    /**
-     * Unik referanse for dette aggregatet. Kan benyttes f.eks. til å de-duplisere overførte data.
-     */
+    /** Unik referanse for dette aggregatet. Kan benyttes f.eks. til å de-duplisere overførte data. */
     @JsonProperty(value = "eksternReferanse", required = true)
     @Valid
     private UuidDto eksternReferanse;
@@ -65,10 +65,11 @@ public class OppgittOpptjeningDto {
     }
 
     @JsonCreator
-    public OppgittOpptjeningDto(@JsonProperty(value = "journalpostId") @Valid JournalpostId journalpostId,
-                                @JsonProperty(value = "innsendingstidspunkt") @Valid OffsetDateTime innsendingstidspunkt,
-                                @JsonProperty(value = "eksternReferanse", required = true) @Valid UUID eksternReferanse,
-                                @JsonProperty(value = "opprettetTidspunkt", required = true) @Valid OffsetDateTime tidspunkt) {
+    public OppgittOpptjeningDto(
+            @JsonProperty(value = "journalpostId") @Valid JournalpostId journalpostId,
+            @JsonProperty(value = "innsendingstidspunkt") @Valid OffsetDateTime innsendingstidspunkt,
+            @JsonProperty(value = "eksternReferanse", required = true) @Valid UUID eksternReferanse,
+            @JsonProperty(value = "opprettetTidspunkt", required = true) @Valid OffsetDateTime tidspunkt) {
         Objects.requireNonNull(eksternReferanse, "eksternReferanse");
         Objects.requireNonNull(tidspunkt, "tidspunkt");
         this.journalpostId = journalpostId;
@@ -77,8 +78,9 @@ public class OppgittOpptjeningDto {
         this.opprettetTidspunkt = tidspunkt;
     }
 
-    public OppgittOpptjeningDto(@JsonProperty(value = "eksternReferanse", required = true) @Valid UUID eksternReferanse,
-                                @JsonProperty(value = "opprettetTidspunkt", required = true) @Valid LocalDateTime tidspunkt) {
+    public OppgittOpptjeningDto(
+            @JsonProperty(value = "eksternReferanse", required = true) @Valid UUID eksternReferanse,
+            @JsonProperty(value = "opprettetTidspunkt", required = true) @Valid LocalDateTime tidspunkt) {
         Objects.requireNonNull(eksternReferanse, "eksternReferanse");
         Objects.requireNonNull(tidspunkt, "tidspunkt");
         this.eksternReferanse = new UuidDto(eksternReferanse);
@@ -87,8 +89,10 @@ public class OppgittOpptjeningDto {
 
     @AssertTrue(message = "Må oppgi minst en av arbeidsforhold, egenNæring, annenAktivitet eller frilans")
     private boolean isOk() {
-        return (arbeidsforhold != null && !arbeidsforhold.isEmpty()) || (egenNæring != null && !egenNæring.isEmpty()) || (annenAktivitet != null
-            && !annenAktivitet.isEmpty()) || (frilans != null);
+        return (arbeidsforhold != null && !arbeidsforhold.isEmpty())
+                || (egenNæring != null && !egenNæring.isEmpty())
+                || (annenAktivitet != null && !annenAktivitet.isEmpty())
+                || (frilans != null);
     }
 
     public List<OppgittArbeidsforholdDto> getArbeidsforhold() {

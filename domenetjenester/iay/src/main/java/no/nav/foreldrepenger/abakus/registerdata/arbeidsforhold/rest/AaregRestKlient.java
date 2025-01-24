@@ -1,12 +1,11 @@
 package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest;
 
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriBuilderException;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 import no.nav.vedtak.felles.integrasjon.rest.NavHeaders;
 import no.nav.vedtak.felles.integrasjon.rest.RestClient;
 import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
@@ -21,11 +20,13 @@ import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
  */
 
 @ApplicationScoped
-@RestClientConfig(tokenConfig = TokenFlow.ADAPTIVE, endpointProperty = "aareg.rs.url",
-    endpointDefault = "http://aareg-services-nais.arbeidsforhold/api/v1/arbeidstaker",
-    scopesProperty = "aareg.scopes", scopesDefault = "api://prod-fss.arbeidsforhold.aareg-services-nais/.default")
+@RestClientConfig(
+        tokenConfig = TokenFlow.ADAPTIVE,
+        endpointProperty = "aareg.rs.url",
+        endpointDefault = "http://aareg-services-nais.arbeidsforhold/api/v1/arbeidstaker",
+        scopesProperty = "aareg.scopes",
+        scopesDefault = "api://prod-fss.arbeidsforhold.aareg-services-nais/.default")
 public class AaregRestKlient {
-
 
     private final RestClient restClient; // Setter på consumer-token fra STS
     private final RestConfig restConfig;
@@ -38,13 +39,13 @@ public class AaregRestKlient {
     public List<ArbeidsforholdRS> finnArbeidsforholdForArbeidstaker(String ident, LocalDate qfom, LocalDate qtom) {
         try {
             var target = UriBuilder.fromUri(restConfig.endpoint())
-                .path("arbeidsforhold")
-                .queryParam("ansettelsesperiodeFom", String.valueOf(qfom))
-                .queryParam("ansettelsesperiodeTom", String.valueOf(qtom))
-                .queryParam("regelverk", "A_ORDNINGEN")
-                .queryParam("historikk", "true")
-                .queryParam("sporingsinformasjon", "false")
-                .build();
+                    .path("arbeidsforhold")
+                    .queryParam("ansettelsesperiodeFom", String.valueOf(qfom))
+                    .queryParam("ansettelsesperiodeTom", String.valueOf(qtom))
+                    .queryParam("regelverk", "A_ORDNINGEN")
+                    .queryParam("historikk", "true")
+                    .queryParam("sporingsinformasjon", "false")
+                    .build();
             var request = RestRequest.newGET(target, restConfig).header(NavHeaders.HEADER_NAV_PERSONIDENT, ident);
             var result = restClient.send(request, ArbeidsforholdRS[].class);
             return Arrays.asList(result);
@@ -56,14 +57,14 @@ public class AaregRestKlient {
     public List<ArbeidsforholdRS> finnArbeidsforholdForFrilanser(String ident, LocalDate qfom, LocalDate qtom) {
         try {
             var target = UriBuilder.fromUri(restConfig.endpoint())
-                .path("arbeidsforhold")
-                .queryParam("ansettelsesperiodeFom", String.valueOf(qfom))
-                .queryParam("ansettelsesperiodeTom", String.valueOf(qtom))
-                .queryParam("arbeidsforholdtype", "frilanserOppdragstakerHonorarPersonerMm")
-                .queryParam("regelverk", "A_ORDNINGEN")
-                .queryParam("historikk", "true")
-                .queryParam("sporingsinformasjon", "false")
-                .build();
+                    .path("arbeidsforhold")
+                    .queryParam("ansettelsesperiodeFom", String.valueOf(qfom))
+                    .queryParam("ansettelsesperiodeTom", String.valueOf(qtom))
+                    .queryParam("arbeidsforholdtype", "frilanserOppdragstakerHonorarPersonerMm")
+                    .queryParam("regelverk", "A_ORDNINGEN")
+                    .queryParam("historikk", "true")
+                    .queryParam("sporingsinformasjon", "false")
+                    .build();
             var request = RestRequest.newGET(target, restConfig).header(NavHeaders.HEADER_NAV_PERSONIDENT, ident);
             var result = restClient.send(request, ArbeidsforholdRS[].class);
             return Arrays.asList(result);

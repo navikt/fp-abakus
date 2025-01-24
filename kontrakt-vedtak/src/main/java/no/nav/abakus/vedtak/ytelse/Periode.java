@@ -1,22 +1,20 @@
 package no.nav.abakus.vedtak.ytelse;
 
-import java.time.LocalDate;
-
-import jakarta.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 public class Periode {
 
     @NotNull
     @JsonProperty("fom")
     private LocalDate fom;
+
     @NotNull
     @JsonProperty("tom")
     private LocalDate tom;
 
-    public Periode() {
-    }
+    public Periode() {}
 
     public LocalDate getFom() {
         return fom;

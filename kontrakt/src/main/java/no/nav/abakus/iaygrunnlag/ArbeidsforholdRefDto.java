@@ -1,24 +1,27 @@
 package no.nav.abakus.iaygrunnlag;
 
-import java.util.Objects;
-
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class ArbeidsforholdRefDto {
 
-
     @JsonProperty(value = "eksternReferanse", required = true)
-    @Pattern(regexp = "^[\\p{Graph}\\s\\t\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Eksternreferanse [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Pattern(
+            regexp = "^[\\p{Graph}\\s\\t\\p{Sc}\\p{L}\\p{M}\\p{N}]+$",
+            message = "Eksternreferanse [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     @NotNull
     private String eksternReferanse;
 
@@ -27,23 +30,25 @@ public class ArbeidsforholdRefDto {
     private Fagsystem eksternReferanseSystem;
 
     @JsonProperty(value = "abakusReferanse")
-    @Pattern(regexp = "^[\\p{L}\\p{N}_\\.\\-]+$", message = "Abakusreferanse [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Pattern(
+            regexp = "^[\\p{L}\\p{N}_\\.\\-]+$",
+            message = "Abakusreferanse [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String abakusReferanse;
 
     @JsonCreator
-    public ArbeidsforholdRefDto(@JsonProperty(value = "abakusReferanse") String internReferanse,
-                                @JsonProperty(value = "eksternReferanse", required = true) String eksternReferanse,
-                                @JsonProperty(value = "eksternReferanseSystem") Fagsystem eksternReferanseSystem) {
+    public ArbeidsforholdRefDto(
+            @JsonProperty(value = "abakusReferanse") String internReferanse,
+            @JsonProperty(value = "eksternReferanse", required = true) String eksternReferanse,
+            @JsonProperty(value = "eksternReferanseSystem") Fagsystem eksternReferanseSystem) {
         this.abakusReferanse = internReferanse; // kan sende null, abakus må da generere.
         this.eksternReferanse = Objects.requireNonNull(eksternReferanse, "eksternReferanse");
         this.eksternReferanseSystem = Objects.requireNonNull(eksternReferanseSystem, "eksternReferanseSystem");
     }
 
-    /**
-     * Hjelpe ctor -default ekstern system er AAREGISTERET inntil videre.
-     */
-    public ArbeidsforholdRefDto(@JsonProperty(value = "abakusReferanse") String internReferanse,
-                                @JsonProperty(value = "eksternReferanse", required = true) String eksternReferanse) {
+    /** Hjelpe ctor -default ekstern system er AAREGISTERET inntil videre. */
+    public ArbeidsforholdRefDto(
+            @JsonProperty(value = "abakusReferanse") String internReferanse,
+            @JsonProperty(value = "eksternReferanse", required = true) String eksternReferanse) {
         this(internReferanse, eksternReferanse, Fagsystem.AAREGISTERET);
     }
 
@@ -61,8 +66,8 @@ public class ArbeidsforholdRefDto {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<abakusRef=" + getAbakusReferanse() + ", eksternRef=" + getEksternReferanse() + " ("
-            + getEksternReferanseSystem() + ")>";
+        return getClass().getSimpleName() + "<abakusRef=" + getAbakusReferanse() + ", eksternRef="
+                + getEksternReferanse() + " (" + getEksternReferanseSystem() + ")>";
     }
 
     @Override
@@ -74,13 +79,13 @@ public class ArbeidsforholdRefDto {
             return false;
         }
         var other = getClass().cast(obj);
-        return Objects.equals(this.abakusReferanse, other.abakusReferanse) && Objects.equals(this.eksternReferanse, other.eksternReferanse)
-            && Objects.equals(this.eksternReferanseSystem, other.eksternReferanseSystem);
+        return Objects.equals(this.abakusReferanse, other.abakusReferanse)
+                && Objects.equals(this.eksternReferanse, other.eksternReferanse)
+                && Objects.equals(this.eksternReferanseSystem, other.eksternReferanseSystem);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(abakusReferanse, eksternReferanse, eksternReferanseSystem);
     }
-
 }

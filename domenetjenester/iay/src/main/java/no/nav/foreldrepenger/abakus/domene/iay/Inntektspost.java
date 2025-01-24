@@ -1,8 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.time.LocalDate;
-import java.util.Objects;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -16,6 +13,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import java.time.LocalDate;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektYtelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
@@ -47,12 +46,11 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
     @Column(name = "skatte_og_avgiftsregel_type", nullable = false, updatable = false)
     private SkatteOgAvgiftsregelType skatteOgAvgiftsregelType = SkatteOgAvgiftsregelType.UDEFINERT;
 
-    /**
-     * Beskriver hva inntekten gjelder dersom den er av typen LØNN
-     */
+    /** Beskriver hva inntekten gjelder dersom den er av typen LØNN */
     @Convert(converter = LønnsbeskrivelseKodeverdiConverter.class)
     @Column(name = "lonnsinntekt_beskrivelse", nullable = false, updatable = false)
     private LønnsinntektBeskrivelse lønnsinntektBeskrivelse = LønnsinntektBeskrivelse.UDEFINERT;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "inntekt_id", nullable = false, updatable = false, unique = true)
     private Inntekt inntekt;
@@ -77,9 +75,7 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
         // hibernate
     }
 
-    /**
-     * Deep copy.
-     */
+    /** Deep copy. */
     Inntektspost(Inntektspost inntektspost) {
         this.inntektspostType = inntektspost.getInntektspostType();
         this.skatteOgAvgiftsregelType = inntektspost.getSkatteOgAvgiftsregelType();
@@ -97,12 +93,13 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
 
     /**
      * Underkategori av utbetaling
-     * <p>
-     * F.eks
+     *
+     * <p>F.eks
+     *
      * <ul>
-     * <li>Lønn</li>
-     * <li>Ytelse</li>
-     * <li>Næringsinntekt</li>
+     *   <li>Lønn
+     *   <li>Ytelse
+     *   <li>Næringsinntekt
      * </ul>
      *
      * @return {@link InntektspostType}
@@ -116,8 +113,7 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
     }
 
     /**
-     * En kodeverksverdi som angir særskilt beskatningsregel.
-     * Den er ikke alltid satt, og kommer fra inntektskomponenten
+     * En kodeverksverdi som angir særskilt beskatningsregel. Den er ikke alltid satt, og kommer fra inntektskomponenten
      *
      * @return {@link SkatteOgAvgiftsregelType}
      */
@@ -187,9 +183,10 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
             return false;
         }
         Inntektspost other = (Inntektspost) obj;
-        return Objects.equals(this.inntektspostType, other.inntektspostType) && Objects.equals(
-            this.ytelse, other.ytelse) && Objects.equals(this.skatteOgAvgiftsregelType, other.skatteOgAvgiftsregelType) && Objects.equals(
-            this.periode, other.periode);
+        return Objects.equals(this.inntektspostType, other.inntektspostType)
+                && Objects.equals(this.ytelse, other.ytelse)
+                && Objects.equals(this.skatteOgAvgiftsregelType, other.skatteOgAvgiftsregelType)
+                && Objects.equals(this.periode, other.periode);
     }
 
     @Override
@@ -200,12 +197,15 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "<" + ", ytelse=" + ytelse + ", inntektspostType=" + inntektspostType
-            + ", skatteOgAvgiftsregelType=" + skatteOgAvgiftsregelType + ", periode=" + periode + ", beløp=" + beløp + '>';
+                + ", skatteOgAvgiftsregelType=" + skatteOgAvgiftsregelType + ", periode=" + periode + ", beløp=" + beløp
+                + '>';
     }
 
     public boolean hasValues() {
-        return (ytelse != null || !Objects.equals(ytelse, "-")) || inntektspostType != null || periode.getFomDato() != null
-            || periode.getTomDato() != null || beløp != null;
+        return (ytelse != null || !Objects.equals(ytelse, "-"))
+                || inntektspostType != null
+                || periode.getFomDato() != null
+                || periode.getTomDato() != null
+                || beløp != null;
     }
-
 }

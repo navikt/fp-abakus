@@ -36,5 +36,4 @@ public enum RelatertYtelseStatus {
     public String getKode() {
         return kode;
     }
-
 }

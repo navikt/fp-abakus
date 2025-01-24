@@ -1,34 +1,32 @@
 package no.nav.foreldrepenger.abakus.typer;
 
-import java.io.Serializable;
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-
-import com.fasterxml.jackson.annotation.JsonValue;
-
+import java.io.Serializable;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseValue;
 
 /**
- * Id som genereres fra NAV Aktør Register. Denne iden benyttes til interne forhold i Nav og vil ikke endres f.eks. dersom bruker går fra
- * DNR til FNR i Folkeregisteret. Tilsvarende vil den kunne referere personer som har ident fra et utenlandsk system.
- * <p>
- * Støtter også kunstige orgnummer (internt definert konstant i fp - orgnummer=342352362)
+ * Id som genereres fra NAV Aktør Register. Denne iden benyttes til interne forhold i Nav og vil ikke endres f.eks.
+ * dersom bruker går fra DNR til FNR i Folkeregisteret. Tilsvarende vil den kunne referere personer som har ident fra et
+ * utenlandsk system.
+ *
+ * <p>Støtter også kunstige orgnummer (internt definert konstant i fp - orgnummer=342352362)
  */
 @Embeddable
 public class OrgNummer implements Serializable, Comparable<OrgNummer>, IndexKey, TraverseValue {
 
     /**
-     * Orgnr for KUNSTIG organisasjoner. Går sammen med OrganisasjonType#KUNSTIG.
-     * (p.t. kun en kunstig organisasjon som holder på arbeidsforhold lagt til av saksbehandler.)
+     * Orgnr for KUNSTIG organisasjoner. Går sammen med OrganisasjonType#KUNSTIG. (p.t. kun en kunstig organisasjon som
+     * holder på arbeidsforhold lagt til av saksbehandler.)
      */
-    public static final String KUNSTIG_ORG = "342352362";  // magic constant
+    public static final String KUNSTIG_ORG = "342352362"; // magic constant
 
     @JsonValue
     @Column(name = "org_nummer", updatable = false, length = 50)
-    private String orgNummer;  // NOSONAR
+    private String orgNummer; // NOSONAR
 
     public OrgNummer(String orgNummer) {
         Objects.requireNonNull(orgNummer, "orgNummer");
@@ -86,5 +84,4 @@ public class OrgNummer implements Serializable, Comparable<OrgNummer>, IndexKey,
     public String toString() {
         return getClass().getSimpleName() + "<********>";
     }
-
 }

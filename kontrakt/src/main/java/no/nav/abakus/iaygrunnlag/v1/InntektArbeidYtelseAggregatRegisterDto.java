@@ -4,22 +4,20 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import no.nav.abakus.iaygrunnlag.UuidDto;
-import no.nav.abakus.iaygrunnlag.inntekt.v1.InntekterDto;
-import no.nav.abakus.iaygrunnlag.ytelse.v1.YtelserDto;
-
 import jakarta.validation.Valid;
-
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import no.nav.abakus.iaygrunnlag.UuidDto;
+import no.nav.abakus.iaygrunnlag.inntekt.v1.InntekterDto;
+import no.nav.abakus.iaygrunnlag.ytelse.v1.YtelserDto;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
-public class InntektArbeidYtelseAggregatRegisterDto extends InntektArbeidYtelseAggregatDto<InntektArbeidYtelseAggregatRegisterDto> {
+public class InntektArbeidYtelseAggregatRegisterDto
+        extends InntektArbeidYtelseAggregatDto<InntektArbeidYtelseAggregatRegisterDto> {
 
     @JsonProperty(value = "inntekter")
     @Valid

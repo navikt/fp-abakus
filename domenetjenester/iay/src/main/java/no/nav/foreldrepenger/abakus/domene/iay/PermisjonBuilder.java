@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
@@ -38,5 +37,4 @@ public class PermisjonBuilder {
         }
         throw new IllegalStateException();
     }
-
 }

@@ -3,7 +3,6 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 import java.time.ZoneId;
 import java.util.Set;
 import java.util.UUID;
-
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.Dataset;
@@ -30,19 +29,28 @@ public class IAYTilDtoMapper {
         this.koblingReferanse = koblingReferanse;
     }
 
-    public InntektArbeidYtelseGrunnlagDto mapTilDto(InntektArbeidYtelseGrunnlag grunnlag, YtelseType ytelseType, Set<Dataset> dataset) {
+    public InntektArbeidYtelseGrunnlagDto mapTilDto(
+            InntektArbeidYtelseGrunnlag grunnlag, YtelseType ytelseType, Set<Dataset> dataset) {
         if (grunnlag == null) {
             return null;
         }
-        var grunnlagTidspunkt = grunnlag.getOpprettetTidspunkt().atZone(ZoneId.systemDefault()).toOffsetDateTime();
-        UUID denneGrunnlagRef = grunnlagReferanse != null ? grunnlagReferanse.getReferanse() : grunnlag.getGrunnlagReferanse().getReferanse();
-        var dto = new InntektArbeidYtelseGrunnlagDto(new AktørIdPersonident(aktørId.getId()), grunnlagTidspunkt, denneGrunnlagRef,
-            koblingReferanse.getReferanse(), ytelseType);
+        var grunnlagTidspunkt =
+                grunnlag.getOpprettetTidspunkt().atZone(ZoneId.systemDefault()).toOffsetDateTime();
+        UUID denneGrunnlagRef = grunnlagReferanse != null
+                ? grunnlagReferanse.getReferanse()
+                : grunnlag.getGrunnlagReferanse().getReferanse();
+        var dto = new InntektArbeidYtelseGrunnlagDto(
+                new AktørIdPersonident(aktørId.getId()),
+                grunnlagTidspunkt,
+                denneGrunnlagRef,
+                koblingReferanse.getReferanse(),
+                ytelseType);
 
         // Selektiv mapping avhengig av hva som er forspurt av data
 
         if (dataset.contains(Dataset.REGISTER)) {
-            grunnlag.getRegisterVersjon().ifPresent(a -> mapRegisterOpplysninger(a, getArbeidsforholdInformasjon(grunnlag), dto));
+            grunnlag.getRegisterVersjon()
+                    .ifPresent(a -> mapRegisterOpplysninger(a, getArbeidsforholdInformasjon(grunnlag), dto));
         }
 
         if (dataset.contains(Dataset.OVERSTYRT)) {
@@ -50,7 +58,9 @@ public class IAYTilDtoMapper {
                 var arbeidsforholdInformasjon = mapArbeidsforholdInformasjon(denneGrunnlagRef, ai);
                 dto.medArbeidsforholdInformasjon(arbeidsforholdInformasjon);
             });
-            grunnlag.getSaksbehandletVersjon().ifPresent(a -> mapSaksbehandlerOverstyrteOpplysninger(a, getArbeidsforholdInformasjon(grunnlag), dto));
+            grunnlag.getSaksbehandletVersjon()
+                    .ifPresent(a ->
+                            mapSaksbehandlerOverstyrteOpplysninger(a, getArbeidsforholdInformasjon(grunnlag), dto));
         }
 
         if (dataset.contains(Dataset.INNTEKTSMELDING)) {
@@ -77,33 +87,37 @@ public class IAYTilDtoMapper {
         return dto;
     }
 
-    public no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon mapArbeidsforholdInformasjon(UUID grunnlagRef,
-                                                                                                              ArbeidsforholdInformasjon ai) {
+    public no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon mapArbeidsforholdInformasjon(
+            UUID grunnlagRef, ArbeidsforholdInformasjon ai) {
         return new MapArbeidsforholdInformasjon.MapTilDto().map(grunnlagRef, ai);
     }
 
     private ArbeidsforholdInformasjon getArbeidsforholdInformasjon(InntektArbeidYtelseGrunnlag grunnlag) {
         return grunnlag.getArbeidsforholdInformasjon()
-            .orElseThrow(
-                () -> new IllegalStateException("Mangler ArbeidsforholdInformasjon i grunnlag (påkrevd her): " + grunnlag.getGrunnlagReferanse()));
+                .orElseThrow(
+                        () -> new IllegalStateException("Mangler ArbeidsforholdInformasjon i grunnlag (påkrevd her): "
+                                + grunnlag.getGrunnlagReferanse()));
     }
 
-    private void mapRegisterOpplysninger(InntektArbeidYtelseAggregat aggregat,
-                                         ArbeidsforholdInformasjon arbeidsforholdInfo,
-                                         InntektArbeidYtelseGrunnlagDto dto) {
+    private void mapRegisterOpplysninger(
+            InntektArbeidYtelseAggregat aggregat,
+            ArbeidsforholdInformasjon arbeidsforholdInfo,
+            InntektArbeidYtelseGrunnlagDto dto) {
         var tidspunkt = aggregat.getOpprettetTidspunkt();
         var arbeid = new MapAktørArbeid.MapTilDto(arbeidsforholdInfo).map(aggregat.getAktørArbeid());
         var inntekter = new MapTilDto().map(aggregat.getAktørInntekt());
         var ytelser = new MapAktørYtelse.MapTilDto().map(aggregat.getAktørYtelse());
 
-        dto.medRegister(new InntektArbeidYtelseAggregatRegisterDto(tidspunkt, aggregat.getEksternReferanse()).medArbeid(arbeid)
-            .medInntekt(inntekter)
-            .medYtelse(ytelser));
+        dto.medRegister(new InntektArbeidYtelseAggregatRegisterDto(tidspunkt, aggregat.getEksternReferanse())
+                .medArbeid(arbeid)
+                .medInntekt(inntekter)
+                .medYtelse(ytelser));
     }
 
-    private void mapSaksbehandlerOverstyrteOpplysninger(InntektArbeidYtelseAggregat aggregat,
-                                                        ArbeidsforholdInformasjon arbeidsforholdInfo,
-                                                        InntektArbeidYtelseGrunnlagDto dto) {
+    private void mapSaksbehandlerOverstyrteOpplysninger(
+            InntektArbeidYtelseAggregat aggregat,
+            ArbeidsforholdInformasjon arbeidsforholdInfo,
+            InntektArbeidYtelseGrunnlagDto dto) {
         var tidspunkt = aggregat.getOpprettetTidspunkt();
         var aktørArbeid = aggregat.getAktørArbeid();
         var arbeid = new MapAktørArbeid.MapTilDto(arbeidsforholdInfo).map(aktørArbeid);
@@ -112,5 +126,4 @@ public class IAYTilDtoMapper {
 
         dto.medOverstyrt(overstyrt);
     }
-
 }

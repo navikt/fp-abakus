@@ -1,10 +1,5 @@
 package no.nav.foreldrepenger.abakus.registerdata.tjeneste;
 
-import java.net.HttpURLConnection;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -12,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -28,6 +22,10 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.net.HttpURLConnection;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.FnrPersonident;
 import no.nav.abakus.iaygrunnlag.Periode;
@@ -59,8 +57,7 @@ public class RegisterdataRestTjeneste {
 
     private KoblingTjeneste koblingTjeneste;
 
-    public RegisterdataRestTjeneste() {
-    } // CDI ctor
+    public RegisterdataRestTjeneste() {} // CDI ctor
 
     @Inject
     public RegisterdataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste, KoblingTjeneste koblingTjeneste) {
@@ -74,7 +71,8 @@ public class RegisterdataRestTjeneste {
     @Operation(description = "Trigger registerinnhenting for en gitt id", tags = "registerinnhenting")
     @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.APPLIKASJON)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
-    public Response innhentOgLagreRegisterdataAsync(@Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
+    public Response innhentOgLagreRegisterdataAsync(
+            @Parameter(name = "innhent") @Valid InnhentRegisterdataAbacDto dto) {
         Response response;
         if (!YtelseType.abakusYtelser().contains(dto.getYtelseType())) {
             return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
@@ -92,8 +90,11 @@ public class RegisterdataRestTjeneste {
     @POST
     @Path("/innhent/status")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(description = "Sjekker innhentingFerdig på async innhenting og gir siste referanseid på grunnlaget når tasken er ferdig. "
-        + "Hvis ikke innhentingFerdig", tags = "registerinnhenting")
+    @Operation(
+            description =
+                    "Sjekker innhentingFerdig på async innhenting og gir siste referanseid på grunnlaget når tasken er ferdig. "
+                            + "Hvis ikke innhentingFerdig",
+            tags = "registerinnhenting")
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.APPLIKASJON)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response innhentAsyncStatus(@Parameter(name = "status") @Valid SjekkStatusAbacDto dto) {
@@ -103,7 +104,8 @@ public class RegisterdataRestTjeneste {
         if (innhentTjeneste.innhentingFerdig(dto.getTaskReferanse())) {
             Optional<GrunnlagReferanse> grunnlagReferanse = innhentTjeneste.hentSisteReferanseFor(koblingRef);
             if (grunnlagReferanse.isPresent()) {
-                response = Response.ok(new UuidDto(grunnlagReferanse.get().toString())).build();
+                response = Response.ok(new UuidDto(grunnlagReferanse.get().toString()))
+                        .build();
             } else {
                 response = Response.noContent().build();
             }
@@ -116,25 +118,31 @@ public class RegisterdataRestTjeneste {
     private void setupLogMdcFraKoblingReferanse(KoblingReferanse koblingReferanse) {
         var kobling = koblingTjeneste.hentFor(koblingReferanse);
         kobling.filter(k -> k.getSaksnummer() != null)
-            .ifPresent(k -> LoggUtil.setupLogMdc(k.getYtelseType(), kobling.get().getSaksnummer().getVerdi(),
-                koblingReferanse.getReferanse())); // legger til saksnummer i MDC
+                .ifPresent(k -> LoggUtil.setupLogMdc(
+                        k.getYtelseType(),
+                        kobling.get().getSaksnummer().getVerdi(),
+                        koblingReferanse.getReferanse())); // legger til saksnummer i MDC
     }
 
-    /**
-     * Json bean med Abac.
-     */
+    /** Json bean med Abac. */
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
-    @JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE)
+    @JsonAutoDetect(
+            fieldVisibility = Visibility.NONE,
+            getterVisibility = Visibility.NONE,
+            setterVisibility = Visibility.NONE,
+            isGetterVisibility = Visibility.NONE,
+            creatorVisibility = Visibility.NONE)
     public static class InnhentRegisterdataAbacDto extends InnhentRegisterdataRequest implements AbacDto {
 
         @JsonCreator
-        public InnhentRegisterdataAbacDto(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
-                                          @JsonProperty(value = "referanse", required = true) @Valid @NotNull UUID referanse,
-                                          @JsonProperty(value = "ytelseType", required = true) @Valid @NotNull YtelseType ytelseType,
-                                          @JsonProperty(value = "opplysningsperiode", required = true) @NotNull @Valid Periode opplysningsperiode,
-                                          @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
-                                          @JsonProperty(value = "elementer", required = true) @NotNull @Valid Set<RegisterdataType> elementer) {
+        public InnhentRegisterdataAbacDto(
+                @JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
+                @JsonProperty(value = "referanse", required = true) @Valid @NotNull UUID referanse,
+                @JsonProperty(value = "ytelseType", required = true) @Valid @NotNull YtelseType ytelseType,
+                @JsonProperty(value = "opplysningsperiode", required = true) @NotNull @Valid Periode opplysningsperiode,
+                @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
+                @JsonProperty(value = "elementer", required = true) @NotNull @Valid Set<RegisterdataType> elementer) {
             super(saksnummer, referanse, ytelseType, opplysningsperiode, aktør, elementer);
         }
 
@@ -157,20 +165,24 @@ public class RegisterdataRestTjeneste {
                 }
             }
         }
-
     }
 
-    /**
-     * Json bean med Abac.
-     */
+    /** Json bean med Abac. */
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
-    @JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE)
+    @JsonAutoDetect(
+            fieldVisibility = Visibility.NONE,
+            getterVisibility = Visibility.NONE,
+            setterVisibility = Visibility.NONE,
+            isGetterVisibility = Visibility.NONE,
+            creatorVisibility = Visibility.NONE)
     public static class SjekkStatusAbacDto extends SjekkStatusRequest implements AbacDto {
 
         @JsonCreator
-        public SjekkStatusAbacDto(@JsonProperty(value = "referanse", required = true) @Valid @NotNull UuidDto referanse,
-                                  @JsonProperty(value = "taskReferanse", required = true) @NotNull @Pattern(regexp = "\\d+") String taskReferanse) {
+        public SjekkStatusAbacDto(
+                @JsonProperty(value = "referanse", required = true) @Valid @NotNull UuidDto referanse,
+                @JsonProperty(value = "taskReferanse", required = true) @NotNull @Pattern(regexp = "\\d+")
+                        String taskReferanse) {
             super(referanse, taskReferanse);
         }
 

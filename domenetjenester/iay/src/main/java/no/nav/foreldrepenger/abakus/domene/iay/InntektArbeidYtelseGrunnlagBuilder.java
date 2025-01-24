@@ -5,14 +5,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import no.nav.abakus.iaygrunnlag.request.Dataset;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InntektArbeidYtelseGrunnlagBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(InntektArbeidYtelseGrunnlagBuilder.class);
@@ -27,11 +25,10 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         return ny(UUID.randomUUID(), LocalDateTime.now());
     }
 
-    /**
-     * Brukes ved migrering.
-     */
+    /** Brukes ved migrering. */
     public static InntektArbeidYtelseGrunnlagBuilder ny(UUID grunnlagReferanse, LocalDateTime opprettetTidspunkt) {
-        return new InntektArbeidYtelseGrunnlagBuilder(new InntektArbeidYtelseGrunnlag(grunnlagReferanse, opprettetTidspunkt));
+        return new InntektArbeidYtelseGrunnlagBuilder(
+                new InntektArbeidYtelseGrunnlag(grunnlagReferanse, opprettetTidspunkt));
     }
 
     public static InntektArbeidYtelseGrunnlagBuilder oppdatere(InntektArbeidYtelseGrunnlag kladd) {
@@ -39,10 +36,12 @@ public class InntektArbeidYtelseGrunnlagBuilder {
     }
 
     public static InntektArbeidYtelseGrunnlagBuilder oppdatere(Optional<InntektArbeidYtelseGrunnlag> kladd) {
-        return kladd.map(InntektArbeidYtelseGrunnlagBuilder::oppdatere).orElseGet(InntektArbeidYtelseGrunnlagBuilder::nytt);
+        return kladd.map(InntektArbeidYtelseGrunnlagBuilder::oppdatere)
+                .orElseGet(InntektArbeidYtelseGrunnlagBuilder::nytt);
     }
 
-    public static InntektArbeidYtelseGrunnlagBuilder kopierDeler(InntektArbeidYtelseGrunnlag original, Set<Dataset> dataset) {
+    public static InntektArbeidYtelseGrunnlagBuilder kopierDeler(
+            InntektArbeidYtelseGrunnlag original, Set<Dataset> dataset) {
         final var kladd = new InntektArbeidYtelseGrunnlag(original);
 
         if (skalIkkeKopierMed(dataset, Dataset.OPPGITT_OPPTJENING)) {
@@ -59,7 +58,8 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         }
         if (skalIkkeKopierMed(dataset, Dataset.OVERSTYRT)) {
             kladd.getArbeidsforholdInformasjon().ifPresent(it -> {
-                final var informasjonBuilder = ArbeidsforholdInformasjonBuilder.oppdatere(it).tilbakestillOverstyringer();
+                final var informasjonBuilder =
+                        ArbeidsforholdInformasjonBuilder.oppdatere(it).tilbakestillOverstyringer();
                 kladd.setInformasjon(informasjonBuilder.build());
             });
             kladd.setSaksbehandlet(null);
@@ -95,15 +95,17 @@ public class InntektArbeidYtelseGrunnlagBuilder {
     public ArbeidsforholdInformasjon getInformasjon() {
         var informasjon = kladd.getArbeidsforholdInformasjon();
 
-        var informasjonEntitet = informasjon.map(it -> {
-            var entitet = it;
-            if (entitet.getId() == null) {
-                // ulagret, med preparert, returner her istdf å lage nye hver gang.
-                return entitet;
-            } else {
-                return new ArbeidsforholdInformasjon(it);
-            }
-        }).orElseGet(() -> new ArbeidsforholdInformasjon());
+        var informasjonEntitet = informasjon
+                .map(it -> {
+                    var entitet = it;
+                    if (entitet.getId() == null) {
+                        // ulagret, med preparert, returner her istdf å lage nye hver gang.
+                        return entitet;
+                    } else {
+                        return new ArbeidsforholdInformasjon(it);
+                    }
+                })
+                .orElseGet(() -> new ArbeidsforholdInformasjon());
         kladd.setInformasjon(informasjonEntitet);
         return informasjonEntitet;
     }
@@ -182,5 +184,4 @@ public class InntektArbeidYtelseGrunnlagBuilder {
     public Optional<ArbeidsforholdInformasjon> getArbeidsforholdInformasjon() {
         return kladd.getArbeidsforholdInformasjon();
     }
-
 }

@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.felles;
 
 import java.util.UUID;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.vedtak.log.mdc.MdcExtendedLogContext;
 

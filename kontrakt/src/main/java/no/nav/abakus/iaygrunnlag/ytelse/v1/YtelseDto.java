@@ -1,18 +1,16 @@
 package no.nav.abakus.iaygrunnlag.ytelse.v1;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
@@ -30,7 +28,6 @@ public class YtelseDto {
     @NotNull
     private YtelseType ytelseType;
 
-
     @JsonProperty(value = "periode", required = true)
     @Valid
     @NotNull
@@ -42,7 +39,9 @@ public class YtelseDto {
 
     @JsonProperty(value = "saksnummer")
     @Valid
-    @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "Saksnummer [${validatedValue}] matcher ikke tillatt pattern '{value}'")
+    @Pattern(
+            regexp = "^[A-Za-z0-9_\\.\\-:]+$",
+            message = "Saksnummer [${validatedValue}] matcher ikke tillatt pattern '{value}'")
     private String saksnummer;
 
     @JsonProperty(value = "vedtattTidspunkt")
@@ -57,10 +56,11 @@ public class YtelseDto {
     private YtelseGrunnlagDto grunnlag;
 
     @JsonCreator
-    public YtelseDto(@JsonProperty(value = "fagsystem", required = true) @NotNull Fagsystem fagsystem,
-                     @JsonProperty(value = "ytelseType", required = true) @NotNull YtelseType ytelseType,
-                     @JsonProperty(value = "periode", required = true) @Valid @NotNull Periode periode,
-                     @JsonProperty(value = "status", required = true) @NotNull YtelseStatus status) {
+    public YtelseDto(
+            @JsonProperty(value = "fagsystem", required = true) @NotNull Fagsystem fagsystem,
+            @JsonProperty(value = "ytelseType", required = true) @NotNull YtelseType ytelseType,
+            @JsonProperty(value = "periode", required = true) @Valid @NotNull Periode periode,
+            @JsonProperty(value = "status", required = true) @NotNull YtelseStatus status) {
         Objects.requireNonNull(fagsystem, "fagsystem");
         Objects.requireNonNull(ytelseType, "ytelseType");
         Objects.requireNonNull(periode, "periode");

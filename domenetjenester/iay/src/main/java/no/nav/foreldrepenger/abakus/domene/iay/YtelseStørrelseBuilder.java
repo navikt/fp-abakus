@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.math.BigDecimal;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
@@ -44,5 +43,4 @@ public class YtelseStørrelseBuilder {
         }
         throw new IllegalStateException();
     }
-
 }

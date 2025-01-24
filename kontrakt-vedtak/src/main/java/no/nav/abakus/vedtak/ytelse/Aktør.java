@@ -1,9 +1,8 @@
 package no.nav.abakus.vedtak.ytelse;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Aktør {
 
@@ -12,8 +11,7 @@ public class Aktør {
     @Pattern(regexp = "\\d{11}|\\d{13}") // Fnr / aktørid
     private String verdi;
 
-    public Aktør() {
-    }
+    public Aktør() {}
 
     public String getVerdi() {
         return verdi;

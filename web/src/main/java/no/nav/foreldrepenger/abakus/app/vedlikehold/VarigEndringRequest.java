@@ -5,23 +5,23 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import no.nav.abakus.iaygrunnlag.UuidDto;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import no.nav.abakus.iaygrunnlag.UuidDto;
 
-/**
- * Input request for å bytte en utgått aktørid med en aktiv
- */
+/** Input request for å bytte en utgått aktørid med en aktiv */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class VarigEndringRequest {
 
     @JsonProperty(value = "eksternReferanse", required = true)
@@ -66,5 +66,4 @@ public class VarigEndringRequest {
     public String getEndringBegrunnelse() {
         return endringBegrunnelse;
     }
-
 }

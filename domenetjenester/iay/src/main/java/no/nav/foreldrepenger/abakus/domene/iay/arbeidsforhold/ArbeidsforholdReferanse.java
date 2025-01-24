@@ -1,7 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold;
 
-import java.util.Objects;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -13,7 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -36,11 +34,15 @@ public class ArbeidsforholdReferanse extends BaseEntitet implements IndexKey, Tr
     private Arbeidsgiver arbeidsgiverEntitet;
 
     @Embedded
-    @AttributeOverrides({@AttributeOverride(name = "referanse", column = @Column(name = "intern_referanse", nullable = false))})
+    @AttributeOverrides({
+        @AttributeOverride(name = "referanse", column = @Column(name = "intern_referanse", nullable = false))
+    })
     private InternArbeidsforholdRef internReferanse;
 
     @Embedded
-    @AttributeOverrides({@AttributeOverride(name = "referanse", column = @Column(name = "ekstern_referanse", nullable = false))})
+    @AttributeOverrides({
+        @AttributeOverride(name = "referanse", column = @Column(name = "ekstern_referanse", nullable = false))
+    })
     private EksternArbeidsforholdRef eksternReferanse;
 
     @ManyToOne
@@ -51,17 +53,20 @@ public class ArbeidsforholdReferanse extends BaseEntitet implements IndexKey, Tr
         // Plattform (CDI, Hibernate, Jackson)
     }
 
-    public ArbeidsforholdReferanse(Arbeidsgiver arbeidsgiverEntitet,
-                                   InternArbeidsforholdRef internReferanse,
-                                   EksternArbeidsforholdRef eksternReferanse) {
+    public ArbeidsforholdReferanse(
+            Arbeidsgiver arbeidsgiverEntitet,
+            InternArbeidsforholdRef internReferanse,
+            EksternArbeidsforholdRef eksternReferanse) {
         this.arbeidsgiverEntitet = arbeidsgiverEntitet;
         this.internReferanse = internReferanse;
         this.eksternReferanse = eksternReferanse;
     }
 
     ArbeidsforholdReferanse(ArbeidsforholdReferanse arbeidsforholdInformasjonEntitet) {
-        this(arbeidsforholdInformasjonEntitet.arbeidsgiverEntitet, arbeidsforholdInformasjonEntitet.internReferanse,
-            arbeidsforholdInformasjonEntitet.eksternReferanse);
+        this(
+                arbeidsforholdInformasjonEntitet.arbeidsgiverEntitet,
+                arbeidsforholdInformasjonEntitet.internReferanse,
+                arbeidsforholdInformasjonEntitet.eksternReferanse);
     }
 
     public Long getId() {
@@ -99,8 +104,9 @@ public class ArbeidsforholdReferanse extends BaseEntitet implements IndexKey, Tr
             return false;
         }
         var that = (ArbeidsforholdReferanse) o;
-        return Objects.equals(arbeidsgiverEntitet, that.arbeidsgiverEntitet) && Objects.equals(internReferanse, that.internReferanse)
-            && Objects.equals(eksternReferanse, that.eksternReferanse);
+        return Objects.equals(arbeidsgiverEntitet, that.arbeidsgiverEntitet)
+                && Objects.equals(internReferanse, that.internReferanse)
+                && Objects.equals(eksternReferanse, that.eksternReferanse);
     }
 
     @Override
@@ -110,7 +116,7 @@ public class ArbeidsforholdReferanse extends BaseEntitet implements IndexKey, Tr
 
     @Override
     public String toString() {
-        return "ArbeidsforholdReferanseEntitet{" + "ArbeidsgiverEntitet=" + arbeidsgiverEntitet + ", internReferanse=" + internReferanse
-            + ", eksternReferanse=" + eksternReferanse + '}';
+        return "ArbeidsforholdReferanseEntitet{" + "ArbeidsgiverEntitet=" + arbeidsgiverEntitet + ", internReferanse="
+                + internReferanse + ", eksternReferanse=" + eksternReferanse + '}';
     }
 }

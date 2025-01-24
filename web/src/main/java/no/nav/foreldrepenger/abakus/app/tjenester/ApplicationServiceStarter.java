@@ -2,24 +2,19 @@ package no.nav.foreldrepenger.abakus.app.tjenester;
 
 import static java.util.concurrent.CompletableFuture.runAsync;
 
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import no.nav.vedtak.server.Controllable;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import no.nav.vedtak.server.Controllable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * Initialiserer applikasjontjenester som implementer AppServiceHandler
- */
+/** Initialiserer applikasjontjenester som implementer AppServiceHandler */
 @ApplicationScoped
 public class ApplicationServiceStarter {
 
@@ -46,23 +41,29 @@ public class ApplicationServiceStarter {
     public void startServices() {
         // Services
         LOGGER.info("Starter {} services", services.size());
-        CompletableFuture.allOf(services.stream().map(service -> runAsync(service::start)).toArray(CompletableFuture[]::new)).join();
+        CompletableFuture.allOf(services.stream()
+                        .map(service -> runAsync(service::start))
+                        .toArray(CompletableFuture[]::new))
+                .join();
         LOGGER.info("Startet {} services", services.size());
     }
 
     public void stopServices() {
         LOGGER.info("Stopper {} services", services.size());
-        CompletableFuture.allOf(services.stream().map(service -> runAsync(service::stop)).toArray(CompletableFuture[]::new))
-            .orTimeout(31, TimeUnit.SECONDS)
-            .join();
+        CompletableFuture.allOf(services.stream()
+                        .map(service -> runAsync(service::stop))
+                        .toArray(CompletableFuture[]::new))
+                .orTimeout(31, TimeUnit.SECONDS)
+                .join();
         LOGGER.info("Stoppet {} services", services.size());
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " [services=" + services.stream()
-            .map(Object::getClass)
-            .map(Class::getSimpleName)
-            .collect(Collectors.joining(", ")) + "]";
+        return getClass().getSimpleName() + " [services="
+                + services.stream()
+                        .map(Object::getClass)
+                        .map(Class::getSimpleName)
+                        .collect(Collectors.joining(", ")) + "]";
     }
 }

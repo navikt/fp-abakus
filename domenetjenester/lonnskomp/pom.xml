@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>no.nav.foreldrepenger.abakus</groupId>
-		<artifactId>domenetjenester</artifactId>
-		<version>1.0-SNAPSHOT</version>
-	</parent>
+    <parent>
+        <groupId>no.nav.foreldrepenger.abakus</groupId>
+        <artifactId>domenetjenester</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
 
-	<artifactId>lonnskomp</artifactId>
-	<packaging>jar</packaging>
-	<name>Abakus :: Domenetjeneste :: Lønnskompensasjon</name>
+    <artifactId>lonnskomp</artifactId>
+    <packaging>jar</packaging>
+    <name>Abakus :: Domenetjeneste :: Lønnskompensasjon</name>
 
-	<dependencies>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.abakus</groupId>
-			<artifactId>prosesstask</artifactId>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.abakus</groupId>
+            <artifactId>prosesstask</artifactId>
+        </dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.abakus</groupId>
             <artifactId>kobling</artifactId>
@@ -27,10 +25,10 @@
             <groupId>no.nav.foreldrepenger.abakus</groupId>
             <artifactId>vedtak</artifactId>
         </dependency>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.abakus</groupId>
-			<artifactId>felles</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.abakus</groupId>
+            <artifactId>felles</artifactId>
+        </dependency>
 
     </dependencies>
 </project>

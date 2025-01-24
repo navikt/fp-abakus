@@ -1,23 +1,19 @@
 package no.nav.foreldrepenger.abakus.typer;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * Stillingsprosent slik det er oppgitt i arbeidsavtalen
- */
+/** Stillingsprosent slik det er oppgitt i arbeidsavtalen */
 @Embeddable
 public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
     private static final Logger LOG = LoggerFactory.getLogger(Stillingsprosent.class);
@@ -26,7 +22,8 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
 
     private static final BigDecimal UTBETALING_MAX_VERDI = BigDecimal.valueOf(499.99d); // Historisk absurd max
 
-    private static final BigDecimal ARBEID_MAX_VERDI = BigDecimal.valueOf(109.99d); // Bør være 100 men vil dobbelsjekke avrunding i noen tilfelle
+    private static final BigDecimal ARBEID_MAX_VERDI =
+            BigDecimal.valueOf(109.99d); // Bør være 100 men vil dobbelsjekke avrunding i noen tilfelle
 
     private static final Stillingsprosent NULL_PROSENT = new Stillingsprosent(null);
 
@@ -50,7 +47,6 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
     public static Stillingsprosent utbetalingsgrad(BigDecimal verdi) {
         return new Stillingsprosent(normaliserData(verdi, UTBETALING_MAX_VERDI));
     }
-
 
     public static Stillingsprosent nullProsent() {
         return NULL_PROSENT;

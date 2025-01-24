@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -50,7 +49,6 @@
             <groupId>no.nav.foreldrepenger.felles</groupId>
             <artifactId>felles-abac-kontekst</artifactId>
         </dependency>
-
 
         <!-- NAV -->
 
@@ -191,7 +189,8 @@
             <artifactId>jandex</artifactId>
         </dependency>
 
-        <!-- Jandex index --><!-- Test avhengigheter -->
+        <!-- Jandex index -->
+        <!-- Test avhengigheter -->
         <dependency>
             <groupId>no.nav.foreldrepenger.abakus</groupId>
             <artifactId>migreringer</artifactId>
@@ -236,10 +235,10 @@
                 <executions>
                     <execution>
                         <id>copy-dependencies</id>
-                        <phase>package</phase>
                         <goals>
                             <goal>copy-dependencies</goal>
                         </goals>
+                        <phase>package</phase>
                         <configuration>
                             <outputDirectory>${project.basedir}/target/lib/</outputDirectory>
                             <includeScope>runtime</includeScope>

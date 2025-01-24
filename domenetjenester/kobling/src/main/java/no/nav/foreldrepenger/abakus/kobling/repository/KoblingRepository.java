@@ -1,15 +1,11 @@
 package no.nav.foreldrepenger.abakus.kobling.repository;
 
-import java.util.Objects;
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
+import java.util.Objects;
+import java.util.Optional;
 import no.nav.abakus.iaygrunnlag.kodeverk.Kodeverdi;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffEntity;
@@ -22,6 +18,8 @@ import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class KoblingRepository {
@@ -55,13 +53,16 @@ public class KoblingRepository {
         return k;
     }
 
-    public Optional<Kobling> hentSisteKoblingReferanseFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
-        var query = entityManager.createQuery("""
+    public Optional<Kobling> hentSisteKoblingReferanseFor(
+            AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
+        var query = entityManager.createQuery(
+                """
             FROM Kobling k
             WHERE k.saksnummer = :ref
                 AND k.ytelseType = :ytelse
                 AND k.aktørId = :aktørId
-            ORDER BY k.opprettetTidspunkt desc, k.id desc""", Kobling.class);
+            ORDER BY k.opprettetTidspunkt desc, k.id desc""",
+                Kobling.class);
 
         query.setParameter("ref", saksnummer);
         query.setParameter("ytelse", ytelseType);
@@ -74,7 +75,8 @@ public class KoblingRepository {
 
     private void validerErAktiv(Optional<Kobling> kobling) {
         if (kobling.isPresent() && !kobling.get().erAktiv()) {
-            throw new IllegalStateException("Etterspør kobling: " + kobling.get().getKoblingReferanse() + ", men denne er ikke aktiv");
+            throw new IllegalStateException(
+                    "Etterspør kobling: " + kobling.get().getKoblingReferanse() + ", men denne er ikke aktiv");
         }
     }
 
@@ -86,7 +88,10 @@ public class KoblingRepository {
 
         var diff = getDiff(eksisterendeKobling.orElse(null), nyKobling);
         if (!diff.isEmpty()) {
-            LOG.info("Detekterte endringer på kobling med referanse={}, endringer={}", nyKobling.getId(), diff.getLeafDifferences());
+            LOG.info(
+                    "Detekterte endringer på kobling med referanse={}, endringer={}",
+                    nyKobling.getId(),
+                    diff.getLeafDifferences());
             entityManager.persist(nyKobling);
             entityManager.flush();
         }
@@ -94,8 +99,10 @@ public class KoblingRepository {
 
     private static void validerLikKoblingReferanse(Kobling nyKobling, Optional<Kobling> eksisterendeKobling) {
         var eksisterendeKoblingId = eksisterendeKobling.map(Kobling::getId).orElse(null);
-        if (!Objects.equals(eksisterendeKoblingId, nyKobling.getId())) { // for nye koblinger bør både eksisterende og ny være null.
-            throw new IllegalStateException("Utviklerfeil: Kan ikke lagre en ny kobling for eksisterende kobling referanse.");
+        if (!Objects.equals(
+                eksisterendeKoblingId, nyKobling.getId())) { // for nye koblinger bør både eksisterende og ny være null.
+            throw new IllegalStateException(
+                    "Utviklerfeil: Kan ikke lagre en ny kobling for eksisterende kobling referanse.");
         }
     }
 
@@ -113,5 +120,4 @@ public class KoblingRepository {
     public Kobling hentForKoblingId(Long koblingId) {
         return entityManager.find(Kobling.class, koblingId);
     }
-
 }

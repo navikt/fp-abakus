@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>no.nav.foreldrepenger.felles</groupId>
@@ -10,24 +8,24 @@
         <version>3.6.3</version>
     </parent>
 
-	<groupId>no.nav.foreldrepenger.abakus</groupId>
-	<artifactId>fpabakus</artifactId>
-	<version>1.0-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<name>Abakus :: Root</name>
+    <groupId>no.nav.foreldrepenger.abakus</groupId>
+    <artifactId>fpabakus</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Abakus :: Root</name>
 
-	<modules>
-		<module>felles</module>
-		<module>prosesstask</module>
-		<module>migreringer</module>
-		<module>kodeverk</module>
-		<module>kontrakt</module>
+    <modules>
+        <module>felles</module>
+        <module>prosesstask</module>
+        <module>migreringer</module>
+        <module>kodeverk</module>
+        <module>kontrakt</module>
         <module>kontrakt-vedtak</module>
-		<module>domenetjenester</module>
-		<module>web</module>
+        <module>domenetjenester</module>
+        <module>web</module>
     </modules>
 
-	<properties>
+    <properties>
 
         <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
         <sonar.projectName>fp-abakus</sonar.projectName>
@@ -35,9 +33,9 @@
 
         <kontrakt.java.version>21</kontrakt.java.version>
 
-		<felles.version>7.4.9</felles.version>
-		<prosesstask.version>5.1.2</prosesstask.version>
-		<kontrakter.version>9.2.2</kontrakter.version>
+        <felles.version>7.4.9</felles.version>
+        <prosesstask.version>5.1.2</prosesstask.version>
+        <kontrakter.version>9.2.2</kontrakter.version>
         <tidsserie.version>2.7.1</tidsserie.version>
 
         <spotless.version>2.43.0</spotless.version>
@@ -45,52 +43,52 @@
         <!-- Forteller til maven-deploy-plugin at artefaktet ikke skal deployes.
         Arves og overstyrres i de enkelte artefakter. -->
         <maven.deploy.skip>true</maven.deploy.skip>
-	</properties>
+    </properties>
 
-	<!-- NB: Unngå å put scope (test, provided) i dependency management. Det
+    <!-- NB: Unngå å put scope (test, provided) i dependency management. Det
 		har uheldige virkninger ved bruk av import og dependency (bruk composition
 		over arv) da de overstyrer andre scope definisjoner. Sett det heller der
 		det brukes. -->
-	<dependencyManagement>
-		<dependencies>
+    <dependencyManagement>
+        <dependencies>
             <dependency>
                 <groupId>no.nav.foreldrepenger.felles</groupId>
                 <artifactId>fp-bom</artifactId>
                 <version>3.6.3</version>
-                <scope>import</scope>
                 <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
-			<dependency>
-				<groupId>no.nav.foreldrepenger.felles</groupId>
-				<artifactId>felles</artifactId>
-				<version>${felles.version}</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
-				<artifactId>felles-integrasjon-pom</artifactId>
-				<version>${felles.version}</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.felles</groupId>
+                <artifactId>felles</artifactId>
+                <version>${felles.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
+                <artifactId>felles-integrasjon-pom</artifactId>
+                <version>${felles.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <!-- Importeres etter felles-root og felles for å sikre samme avhengigheter gjennom hele! -->
                 <groupId>no.nav.vedtak.prosesstask</groupId>
                 <artifactId>prosesstask-root</artifactId>
                 <version>${prosesstask.version}</version>
-                <scope>import</scope>
                 <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
-			<dependency>
-				<groupId>no.nav.foreldrepenger.kontrakter</groupId>
-				<artifactId>fp-kontrakter-root</artifactId>
-				<version>${kontrakter.version}</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.kontrakter</groupId>
+                <artifactId>fp-kontrakter-root</artifactId>
+                <version>${kontrakter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
@@ -104,68 +102,67 @@
                 <version>${tidsserie.version}</version>
             </dependency>
 
-
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>felles</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>abakus-kodeverk</artifactId>
-				<version>${project.version}</version>
-			</dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.abakus</groupId>
+                <artifactId>felles</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.abakus</groupId>
+                <artifactId>abakus-kodeverk</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>no.nav.foreldrepenger.abakus</groupId>
                 <artifactId>abakus-vedtak</artifactId>
                 <version>${project.version}</version>
             </dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>abakus-kontrakt</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>kobling</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>iay</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>prosesstask</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>vedtak</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>lonnskomp</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>migreringer</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>migreringer</artifactId>
-				<version>${project.version}</version>
-				<type>test-jar</type>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>web</artifactId>
-				<version>${project.version}</version>
-			</dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.abakus</groupId>
+                <artifactId>abakus-kontrakt</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.abakus</groupId>
+                <artifactId>kobling</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.abakus</groupId>
+                <artifactId>iay</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.abakus</groupId>
+                <artifactId>prosesstask</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.abakus</groupId>
+                <artifactId>vedtak</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.abakus</groupId>
+                <artifactId>lonnskomp</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.abakus</groupId>
+                <artifactId>migreringer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.abakus</groupId>
+                <artifactId>migreringer</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+            </dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.abakus</groupId>
+                <artifactId>web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- Komponenter fra Felles Integrasjon -->
             <dependency>
@@ -194,22 +191,22 @@
                 <version>${felles.version}</version>
             </dependency>
 
-			<!-- NAV tjenestespesifikasjoner -->
-			<dependency>
-				<groupId>no.nav.tjenester</groupId>
-				<artifactId>aordningen-inntektsinformasjon-v1</artifactId>
-				<version>1.7</version>
-			</dependency>
+            <!-- NAV tjenestespesifikasjoner -->
+            <dependency>
+                <groupId>no.nav.tjenester</groupId>
+                <artifactId>aordningen-inntektsinformasjon-v1</artifactId>
+                <version>1.7</version>
+            </dependency>
         </dependencies>
-	</dependencyManagement>
+    </dependencyManagement>
 
     <dependencies>
         <!-- Testcontainer og sec update -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <scope>test</scope>
             <version>[1.26.0,)</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>

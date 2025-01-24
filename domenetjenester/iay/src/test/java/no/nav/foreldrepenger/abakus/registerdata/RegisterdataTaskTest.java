@@ -5,15 +5,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.UUID;
-
-import org.junit.jupiter.api.Test;
-
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
+import org.junit.jupiter.api.Test;
 
 class RegisterdataTaskTest {
 
@@ -21,8 +19,12 @@ class RegisterdataTaskTest {
 
     private static final LocalDate PERIODE_BASE = LocalDate.of(2022, 8, 11);
 
-    private static final InnhentRegisterdataRequest REQUEST = new InnhentRegisterdataRequest("saksnummer", UUID.fromString(INPUT_UUID),
-        YtelseType.FORELDREPENGER, new Periode(PERIODE_BASE.minusYears(2), PERIODE_BASE.plusYears(1)), new AktørIdPersonident("0000000000000"));
+    private static final InnhentRegisterdataRequest REQUEST = new InnhentRegisterdataRequest(
+            "saksnummer",
+            UUID.fromString(INPUT_UUID),
+            YtelseType.FORELDREPENGER,
+            new Periode(PERIODE_BASE.minusYears(2), PERIODE_BASE.plusYears(1)),
+            new AktørIdPersonident("0000000000000"));
 
     @Test
     void roundtrip_payload() throws IOException {
@@ -31,7 +33,8 @@ class RegisterdataTaskTest {
         var innhentingTask = ProsessTaskData.forProsessTask(RegisterdataInnhentingTask.class);
         innhentingTask.setPayload(JsonObjectMapper.getMapper().writeValueAsString(REQUEST));
 
-        var roundtripped = JsonObjectMapper.getMapper().readValue(innhentingTask.getPayloadAsString(), InnhentRegisterdataRequest.class);
+        var roundtripped = JsonObjectMapper.getMapper()
+                .readValue(innhentingTask.getPayloadAsString(), InnhentRegisterdataRequest.class);
 
         assertThat(roundtripped.getSaksnummer()).isEqualTo(REQUEST.getSaksnummer());
         assertThat(roundtripped.getOpplysningsperiode()).isEqualTo(REQUEST.getOpplysningsperiode());
@@ -40,6 +43,4 @@ class RegisterdataTaskTest {
         assertThat(roundtripped.getYtelseType()).isEqualTo(REQUEST.getYtelseType());
         assertThat(roundtripped.getElementer()).containsAll(REQUEST.getElementer());
     }
-
-
 }

@@ -1,12 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.hibernate.annotations.NaturalId;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -20,12 +13,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
+import org.hibernate.annotations.NaturalId;
 
 @Entity(name = "InntektArbeidGrunnlag")
 @Table(name = "GR_ARBEID_INNTEKT")
@@ -42,7 +40,11 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     @NaturalId
     @DiffIgnore
     @Embedded
-    @AttributeOverrides({@AttributeOverride(name = "referanse", column = @Column(name = "grunnlag_referanse", updatable = false, unique = true))})
+    @AttributeOverrides({
+        @AttributeOverride(
+                name = "referanse",
+                column = @Column(name = "grunnlag_referanse", updatable = false, unique = true))
+    })
     private GrunnlagReferanse grunnlagReferanse;
 
     @OneToOne
@@ -55,9 +57,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     @ChangeTracked
     private InntektArbeidYtelseAggregat saksbehandlet;
 
-    /**
-     * versjon 1 - støtter kun en oppgitt opptjening på en behandling, kan heller ikke oppdateres
-     */
+    /** versjon 1 - støtter kun en oppgitt opptjening på en behandling, kan heller ikke oppdateres */
     @OneToOne
     @JoinColumn(name = "oppgitt_opptjening_id", updatable = false, unique = true)
     @ChangeTracked
@@ -95,12 +95,14 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
         this(UUID.randomUUID(), grunnlag.getOpprettetTidspunkt());
 
         // NB! skal ikke lage ny versjon av oppgitt opptjening! Lenker bare inn
-        grunnlag.getOppgittOpptjening().ifPresent(kopiAvOppgittOpptjening -> this.setOppgittOpptjening(kopiAvOppgittOpptjening));
+        grunnlag.getOppgittOpptjening()
+                .ifPresent(kopiAvOppgittOpptjening -> this.setOppgittOpptjening(kopiAvOppgittOpptjening));
 
         grunnlag.getOverstyrtOppgittOpptjening().ifPresent(this::setOverstyrtOppgittOpptjening);
         grunnlag.getRegisterVersjon().ifPresent(nyRegisterVerson -> this.setRegister(nyRegisterVerson));
 
-        grunnlag.getSaksbehandletVersjon().ifPresent(nySaksbehandletFørVersjon -> this.setSaksbehandlet(nySaksbehandletFørVersjon));
+        grunnlag.getSaksbehandletVersjon()
+                .ifPresent(nySaksbehandletFørVersjon -> this.setSaksbehandlet(nySaksbehandletFørVersjon));
 
         grunnlag.getInntektsmeldinger().ifPresent(this::setInntektsmeldinger);
 
@@ -126,14 +128,16 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
 
     void setGrunnlagReferanse(GrunnlagReferanse grunnlagReferanse) {
         if (this.koblingId != null && !Objects.equals(this.grunnlagReferanse, grunnlagReferanse)) {
-            throw new IllegalStateException(String.format("Kan ikke overskrive grunnlagReferanse %s: %s", this.grunnlagReferanse, grunnlagReferanse));
+            throw new IllegalStateException(String.format(
+                    "Kan ikke overskrive grunnlagReferanse %s: %s", this.grunnlagReferanse, grunnlagReferanse));
         }
         this.grunnlagReferanse = grunnlagReferanse;
     }
 
     /**
      * Returnerer en overstyrt versjon av aggregat. Hvis saksbehandler har løst et aksjonspunkt i forbindele med
-     * opptjening vil det finnes et overstyrt aggregat, gjelder for FØR første dag i permisjonsuttaket (skjæringstidspunktet)
+     * opptjening vil det finnes et overstyrt aggregat, gjelder for FØR første dag i permisjonsuttaket
+     * (skjæringstidspunktet)
      */
     public Optional<InntektArbeidYtelseAggregat> getSaksbehandletVersjon() {
         return Optional.ofNullable(saksbehandlet);
@@ -151,9 +155,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
         return Optional.ofNullable(register);
     }
 
-    /**
-     * Returnerer aggregat som holder alle inntektsmeldingene som benyttes i behandlingen.
-     */
+    /** Returnerer aggregat som holder alle inntektsmeldingene som benyttes i behandlingen. */
     public Optional<InntektsmeldingAggregat> getInntektsmeldinger() {
         return Optional.ofNullable(inntektsmeldinger);
     }
@@ -162,9 +164,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
         this.inntektsmeldinger = inntektsmeldingAggregat;
     }
 
-    /**
-     * Returnerer oppgitt opptjening hvis det finnes. (Inneholder opplysninger søker opplyser om i søknaden)
-     */
+    /** Returnerer oppgitt opptjening hvis det finnes. (Inneholder opplysninger søker opplyser om i søknaden) */
     public Optional<OppgittOpptjening> getOppgittOpptjening() {
         return Optional.ofNullable(oppgittOpptjening);
     }
@@ -180,9 +180,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
         return Optional.ofNullable(overstyrtOppgittOpptjening);
     }
 
-    /**
-     * Returnerer overstyrt oppgitt opptjening hvis det finnes, eller vanlig oppgitt opptjening
-     */
+    /** Returnerer overstyrt oppgitt opptjening hvis det finnes, eller vanlig oppgitt opptjening */
     public Optional<OppgittOpptjening> getGjeldendeOppgittOpptjening() {
         return getOverstyrtOppgittOpptjening().or(this::getOppgittOpptjening);
     }
@@ -193,7 +191,8 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
 
     void setKobling(Long koblingId) {
         if (this.koblingId != null && !Objects.equals(this.koblingId, koblingId)) {
-            throw new IllegalStateException(String.format("Kan ikke overskrive koblingId %s: %s", this.koblingId, koblingId));
+            throw new IllegalStateException(
+                    String.format("Kan ikke overskrive koblingId %s: %s", this.koblingId, koblingId));
         }
         this.koblingId = koblingId;
     }
@@ -202,16 +201,12 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
         this.aktiv = aktiv;
     }
 
-    /**
-     * Hvorvidt dette er det siste (aktive grunnlaget) for en behandling.
-     */
+    /** Hvorvidt dette er det siste (aktive grunnlaget) for en behandling. */
     public boolean isAktiv() {
         return aktiv;
     }
 
-    /**
-     * Unik id for dette grunnlaget.
-     */
+    /** Unik id for dette grunnlaget. */
     public Long getId() {
         return id;
     }
@@ -237,7 +232,9 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
             return false;
         }
         var that = (InntektArbeidYtelseGrunnlag) o;
-        return aktiv == that.aktiv && Objects.equals(register, that.register) && Objects.equals(saksbehandlet, that.saksbehandlet);
+        return aktiv == that.aktiv
+                && Objects.equals(register, that.register)
+                && Objects.equals(saksbehandlet, that.saksbehandlet);
     }
 
     @Override
@@ -248,5 +245,4 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     void fjernSaksbehandlet() {
         saksbehandlet = null;
     }
-
 }

@@ -1,17 +1,18 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-@JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
+@JsonAutoDetect(
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE,
+        fieldVisibility = Visibility.ANY)
 public enum InntektskildeType implements Kodeverdi {
-
     UDEFINERT("-", "Ikke definert"),
     INNTEKT_OPPTJENING("INNTEKT_OPPTJENING", "INNTEKT_OPPTJENING"),
     INNTEKT_BEREGNING("INNTEKT_BEREGNING", "INNTEKT_BEREGNING"),
@@ -44,7 +45,8 @@ public enum InntektskildeType implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent InntektsKilde: " + kode));
+        return Optional.ofNullable(KODER.get(kode))
+                .orElseThrow(() -> new IllegalArgumentException("Ukjent InntektsKilde: " + kode));
     }
 
     public static Map<String, InntektskildeType> kodeMap() {
@@ -59,5 +61,4 @@ public enum InntektskildeType implements Kodeverdi {
     public String getKode() {
         return kode;
     }
-
 }

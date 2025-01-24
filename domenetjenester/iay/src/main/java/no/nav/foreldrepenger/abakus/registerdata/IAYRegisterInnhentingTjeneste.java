@@ -2,6 +2,8 @@ package no.nav.foreldrepenger.abakus.registerdata;
 
 import static no.nav.foreldrepenger.abakus.registerdata.ByggLønnsinntektInntektTjeneste.mapLønnsinntekter;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -14,13 +16,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import jakarta.inject.Inject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import jakarta.enterprise.context.ApplicationScoped;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektYtelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
@@ -52,16 +47,20 @@ import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrganisasjonsNummerValidator;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.vedtak.exception.TekniskException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * Standard IAY register innhenter.
- */
+/** Standard IAY register innhenter. */
 @ApplicationScoped
 public class IAYRegisterInnhentingTjeneste {
 
     public static final Map<RegisterdataElement, InntektskildeType> ELEMENT_TIL_INNTEKTS_KILDE_MAP = Map.of(
-        RegisterdataElement.INNTEKT_PENSJONSGIVENDE, InntektskildeType.INNTEKT_OPPTJENING, RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG,
-        InntektskildeType.INNTEKT_BEREGNING, RegisterdataElement.INNTEKT_SAMMENLIGNINGSGRUNNLAG, InntektskildeType.INNTEKT_SAMMENLIGNING);
+            RegisterdataElement.INNTEKT_PENSJONSGIVENDE,
+            InntektskildeType.INNTEKT_OPPTJENING,
+            RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG,
+            InntektskildeType.INNTEKT_BEREGNING,
+            RegisterdataElement.INNTEKT_SAMMENLIGNINGSGRUNNLAG,
+            InntektskildeType.INNTEKT_SAMMENLIGNING);
     private static final Logger LOG = LoggerFactory.getLogger(IAYRegisterInnhentingTjeneste.class);
 
     protected InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste;
@@ -77,24 +76,30 @@ public class IAYRegisterInnhentingTjeneste {
     }
 
     @Inject
-    public IAYRegisterInnhentingTjeneste(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
-                                            VirksomhetTjeneste virksomhetTjeneste,
-                                            InnhentingSamletTjeneste innhentingSamletTjeneste,
-                                            AktørTjeneste aktørConsumer,
-                                            SigrunTjeneste sigrunTjeneste,
-                                            VedtattYtelseInnhentingTjeneste vedtattYtelseInnhentingTjeneste) {
+    public IAYRegisterInnhentingTjeneste(
+            InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
+            VirksomhetTjeneste virksomhetTjeneste,
+            InnhentingSamletTjeneste innhentingSamletTjeneste,
+            AktørTjeneste aktørConsumer,
+            SigrunTjeneste sigrunTjeneste,
+            VedtattYtelseInnhentingTjeneste vedtattYtelseInnhentingTjeneste) {
         this.inntektArbeidYtelseTjeneste = inntektArbeidYtelseTjeneste;
         this.virksomhetTjeneste = virksomhetTjeneste;
         this.innhentingSamletTjeneste = innhentingSamletTjeneste;
         this.aktørConsumer = aktørConsumer;
         this.sigrunTjeneste = sigrunTjeneste;
-        this.ytelseRegisterInnhenting = new YtelseRegisterInnhenting(innhentingSamletTjeneste, vedtattYtelseInnhentingTjeneste);
+        this.ytelseRegisterInnhenting =
+                new YtelseRegisterInnhenting(innhentingSamletTjeneste, vedtattYtelseInnhentingTjeneste);
         this.byggYrkesaktiviteterTjeneste = new ByggYrkesaktiviteterTjeneste();
     }
 
-    private void innhentNæringsOpplysninger(Kobling kobling, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder) {
-        LOG.info("Henter lignet inntekt for sak=[{}, {}] med behandling='{}'", kobling.getSaksnummer(), kobling.getYtelseType(),
-            kobling.getKoblingReferanse());
+    private void innhentNæringsOpplysninger(
+            Kobling kobling, InntektArbeidYtelseAggregatBuilder inntektArbeidYtelseAggregatBuilder) {
+        LOG.info(
+                "Henter lignet inntekt for sak=[{}, {}] med behandling='{}'",
+                kobling.getSaksnummer(),
+                kobling.getYtelseType(),
+                kobling.getKoblingReferanse());
 
         var personIdent = getFnrFraAktørId(kobling.getAktørId());
 
@@ -105,13 +110,18 @@ public class IAYRegisterInnhentingTjeneste {
         inntektBuilder.tilbakestillInntektsposterForPerioder(map.keySet());
 
         for (var entry : map.entrySet()) {
-            LOG.info("Fant lignet inntekt for periode {} for sak=[{}, {}] med behandling='{}'", entry.getKey(), kobling.getSaksnummer(),
-                kobling.getYtelseType(), kobling.getKoblingReferanse());
+            LOG.info(
+                    "Fant lignet inntekt for periode {} for sak=[{}, {}] med behandling='{}'",
+                    entry.getKey(),
+                    kobling.getSaksnummer(),
+                    kobling.getYtelseType(),
+                    kobling.getKoblingReferanse());
             for (Map.Entry<InntektspostType, BigDecimal> type : entry.getValue().entrySet()) {
                 InntektspostBuilder inntektspostBuilder = inntektBuilder.getInntektspostBuilder();
-                inntektspostBuilder.medInntektspostType(type.getKey())
-                    .medBeløp(type.getValue())
-                    .medPeriode(entry.getKey().getFomDato(), entry.getKey().getTomDato());
+                inntektspostBuilder
+                        .medInntektspostType(type.getKey())
+                        .medBeløp(type.getValue())
+                        .medPeriode(entry.getKey().getFomDato(), entry.getKey().getTomDato());
                 inntektBuilder.leggTilInntektspost(inntektspostBuilder);
             }
         }
@@ -122,6 +132,7 @@ public class IAYRegisterInnhentingTjeneste {
     private class FnrSupplier {
 
         private final AktørId aktørId;
+
         public FnrSupplier(AktørId aktørId) {
             this.aktørId = aktørId;
         }
@@ -135,15 +146,18 @@ public class IAYRegisterInnhentingTjeneste {
         }
     }
 
-    public InntektArbeidYtelseGrunnlagBuilder innhentRegisterdata(Kobling kobling, Set<RegisterdataElement> informasjonsElementer) {
+    public InntektArbeidYtelseGrunnlagBuilder innhentRegisterdata(
+            Kobling kobling, Set<RegisterdataElement> informasjonsElementer) {
         var grunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(
-            inntektArbeidYtelseTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse()));
+                inntektArbeidYtelseTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse()));
         var builder = grunnlagBuilder.getRegisterBuilder();
 
         // Arbeidsforhold & inntekter
-        Set<ArbeidsforholdIdentifikator> innhentetArbeidsforhold = innhentArbeidsforhold(kobling, builder, informasjonsElementer);
+        Set<ArbeidsforholdIdentifikator> innhentetArbeidsforhold =
+                innhentArbeidsforhold(kobling, builder, informasjonsElementer);
 
-        if (informasjonsElementer.contains(RegisterdataElement.LIGNET_NÆRING) && skalInnhenteNæringsInntekterFor(kobling)) {
+        if (informasjonsElementer.contains(RegisterdataElement.LIGNET_NÆRING)
+                && skalInnhenteNæringsInntekterFor(kobling)) {
             innhentNæringsOpplysninger(kobling, builder);
         }
         // Ytelser
@@ -152,7 +166,8 @@ public class IAYRegisterInnhentingTjeneste {
         }
 
         // Fjerner overstyringer for bortfalte arbeidsforhold (f.eks. grunnet endringer i aareg)
-        var informasjonBuilder = FjernOverstyringerForBortfalteArbeidsforhold.fjern(grunnlagBuilder, innhentetArbeidsforhold);
+        var informasjonBuilder =
+                FjernOverstyringerForBortfalteArbeidsforhold.fjern(grunnlagBuilder, innhentetArbeidsforhold);
 
         builder.getNyeInternArbeidsforholdReferanser().forEach(informasjonBuilder::leggTilNyReferanse);
 
@@ -166,19 +181,24 @@ public class IAYRegisterInnhentingTjeneste {
     }
 
     private void innhentYtelser(Kobling kobling, InntektArbeidYtelseAggregatBuilder builder) {
-        ytelseRegisterInnhenting.byggYtelser(kobling, kobling.getAktørId(), getFnrFraAktørId(kobling.getAktørId()),
-            kobling.getOpplysningsperiode(), builder);
+        ytelseRegisterInnhenting.byggYtelser(
+                kobling,
+                kobling.getAktørId(),
+                getFnrFraAktørId(kobling.getAktørId()),
+                kobling.getOpplysningsperiode(),
+                builder);
     }
 
-    private Set<ArbeidsforholdIdentifikator> innhentArbeidsforhold(Kobling kobling,
-                                                                   InntektArbeidYtelseAggregatBuilder builder,
-                                                                   Set<RegisterdataElement> informasjonsElementer) {
-        return byggOpptjeningOpplysningene(kobling, kobling.getAktørId(), kobling.getOpplysningsperiode(), builder, informasjonsElementer);
+    private Set<ArbeidsforholdIdentifikator> innhentArbeidsforhold(
+            Kobling kobling,
+            InntektArbeidYtelseAggregatBuilder builder,
+            Set<RegisterdataElement> informasjonsElementer) {
+        return byggOpptjeningOpplysningene(
+                kobling, kobling.getAktørId(), kobling.getOpplysningsperiode(), builder, informasjonsElementer);
     }
 
-    private void leggTilInntekter(AktørId aktørId,
-                                  InntektArbeidYtelseAggregatBuilder builder,
-                                  InntektsInformasjon inntektsInformasjon) {
+    private void leggTilInntekter(
+            AktørId aktørId, InntektArbeidYtelseAggregatBuilder builder, InntektsInformasjon inntektsInformasjon) {
         var aktørInntektBuilder = builder.getAktørInntektBuilder(aktørId);
         InntektskildeType kilde = inntektsInformasjon.getKilde();
         aktørInntektBuilder.fjernInntekterFraKilde(kilde);
@@ -188,26 +208,31 @@ public class IAYRegisterInnhentingTjeneste {
         mapLønnsinntekter(inntektsInformasjon, aktørInntektBuilder, arbeidsgivereLookup);
         builder.leggTilAktørInntekt(aktørInntektBuilder);
 
-        List<Månedsinntekt> ytelsesTrygdEllerPensjonInntekt = inntektsInformasjon.getYtelsesTrygdEllerPensjonInntektSummert();
+        List<Månedsinntekt> ytelsesTrygdEllerPensjonInntekt =
+                inntektsInformasjon.getYtelsesTrygdEllerPensjonInntektSummert();
         if (!ytelsesTrygdEllerPensjonInntekt.isEmpty()) {
             leggTilYtelseInntekter(ytelsesTrygdEllerPensjonInntekt, builder, aktørId, kilde);
         }
     }
 
     private Map<String, Arbeidsgiver> lagArbeidsgiverLookup(InntektsInformasjon inntektsInformasjon) {
-        Map<String, Set<YearMonth>> alleArbeidsgivereMedMåneder = inntektsInformasjon.getMånedsinntekterUtenomYtelser()
-            .stream()
-            .collect(Collectors.groupingBy(Månedsinntekt::getArbeidsgiver, Collectors.mapping(Månedsinntekt::getMåned, Collectors.toSet())));
+        Map<String, Set<YearMonth>> alleArbeidsgivereMedMåneder =
+                inntektsInformasjon.getMånedsinntekterUtenomYtelser().stream()
+                        .collect(Collectors.groupingBy(
+                                Månedsinntekt::getArbeidsgiver,
+                                Collectors.mapping(Månedsinntekt::getMåned, Collectors.toSet())));
         Map<String, Arbeidsgiver> arbeidsgivereLookup = new HashMap<>();
-        alleArbeidsgivereMedMåneder.forEach((agString, måneder) -> Optional.ofNullable(finnArbeidsgiverForInntektsData(agString, måneder))
-            .ifPresent(ag -> arbeidsgivereLookup.put(agString, ag)));
+        alleArbeidsgivereMedMåneder.forEach(
+                (agString, måneder) -> Optional.ofNullable(finnArbeidsgiverForInntektsData(agString, måneder))
+                        .ifPresent(ag -> arbeidsgivereLookup.put(agString, ag)));
         return arbeidsgivereLookup;
     }
 
-    private void leggTilYtelseInntekter(List<Månedsinntekt> ytelsesTrygdEllerPensjonInntekt,
-                                        InntektArbeidYtelseAggregatBuilder builder,
-                                        AktørId aktørId,
-                                        InntektskildeType inntektOpptjening) {
+    private void leggTilYtelseInntekter(
+            List<Månedsinntekt> ytelsesTrygdEllerPensjonInntekt,
+            InntektArbeidYtelseAggregatBuilder builder,
+            AktørId aktørId,
+            InntektskildeType inntektOpptjening) {
         var aktørInntektBuilder = builder.getAktørInntektBuilder(aktørId);
         var inntektBuilderForYtelser = aktørInntektBuilder.getInntektBuilderForYtelser(inntektOpptjening);
         ytelsesTrygdEllerPensjonInntekt.forEach(mi -> lagInntektsposterYtelse(mi, inntektBuilderForYtelser));
@@ -216,22 +241,29 @@ public class IAYRegisterInnhentingTjeneste {
         builder.leggTilAktørInntekt(aktørInntektBuilder);
     }
 
-    private Arbeidsgiver finnArbeidsgiverForInntektsData(String arbeidsgiverString, Set<YearMonth> inntekterForMåneder) {
+    private Arbeidsgiver finnArbeidsgiverForInntektsData(
+            String arbeidsgiverString, Set<YearMonth> inntekterForMåneder) {
 
         if (OrganisasjonsNummerValidator.erGyldig(arbeidsgiverString)) {
             boolean orgledd = virksomhetTjeneste.sjekkOmOrganisasjonErOrgledd(arbeidsgiverString);
             if (!orgledd) {
                 LocalDate hentedato = finnHentedatoForJuridisk(inntekterForMåneder);
-                return Arbeidsgiver.virksomhet(virksomhetTjeneste.hentOrganisasjonMedHensynTilJuridisk(arbeidsgiverString, hentedato));
+                return Arbeidsgiver.virksomhet(
+                        virksomhetTjeneste.hentOrganisasjonMedHensynTilJuridisk(arbeidsgiverString, hentedato));
             } else {
-                LOG.info("Inntekter rapportert på orgledd({}), blir IKKE lagret", getIdentifikatorString(arbeidsgiverString));
+                LOG.info(
+                        "Inntekter rapportert på orgledd({}), blir IKKE lagret",
+                        getIdentifikatorString(arbeidsgiverString));
                 return null;
             }
         } else {
             if (PersonIdent.erGyldigFnr(arbeidsgiverString)) {
-                var arbeidsgiverAktørId = aktørConsumer.hentAktørForIdent(new PersonIdent(arbeidsgiverString))
-                    .orElseThrow(() -> new TekniskException("FP-464378",
-                        "Feil ved oppslag av aktørID for en arbeidgiver som er en privatperson registrert med fnr/dnr"));
+                var arbeidsgiverAktørId = aktørConsumer
+                        .hentAktørForIdent(new PersonIdent(arbeidsgiverString))
+                        .orElseThrow(
+                                () -> new TekniskException(
+                                        "FP-464378",
+                                        "Feil ved oppslag av aktørID for en arbeidgiver som er en privatperson registrert med fnr/dnr"));
                 return Arbeidsgiver.person(arbeidsgiverAktørId);
             } else {
                 return Arbeidsgiver.person(new AktørId(arbeidsgiverString));
@@ -252,78 +284,92 @@ public class IAYRegisterInnhentingTjeneste {
 
     private LocalDate finnHentedatoForJuridisk(Set<YearMonth> inntekterForMåneder) {
         return inntekterForMåneder.stream()
-            .map(m -> LocalDate.of(m.getYear(), m.getMonth(), 1))
-            .max(Comparator.naturalOrder())
-            .orElse(LocalDate.now());
+                .map(m -> LocalDate.of(m.getYear(), m.getMonth(), 1))
+                .max(Comparator.naturalOrder())
+                .orElse(LocalDate.now());
     }
 
-    private Set<ArbeidsforholdIdentifikator> byggOpptjeningOpplysningene(Kobling kobling,
-                                                                         AktørId aktørId,
-                                                                         IntervallEntitet opplysningsPeriode,
-                                                                         InntektArbeidYtelseAggregatBuilder builder,
-                                                                         Set<RegisterdataElement> informasjonsElementer) {
-        var inntektselementer = Set.of(RegisterdataElement.INNTEKT_PENSJONSGIVENDE, RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG,
-            RegisterdataElement.INNTEKT_SAMMENLIGNINGSGRUNNLAG);
+    private Set<ArbeidsforholdIdentifikator> byggOpptjeningOpplysningene(
+            Kobling kobling,
+            AktørId aktørId,
+            IntervallEntitet opplysningsPeriode,
+            InntektArbeidYtelseAggregatBuilder builder,
+            Set<RegisterdataElement> informasjonsElementer) {
+        var inntektselementer = Set.of(
+                RegisterdataElement.INNTEKT_PENSJONSGIVENDE,
+                RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG,
+                RegisterdataElement.INNTEKT_SAMMENLIGNINGSGRUNNLAG);
 
-        if (informasjonsElementer.stream().noneMatch(inntektselementer::contains) && !informasjonsElementer.contains(
-            RegisterdataElement.ARBEIDSFORHOLD)) {
+        if (informasjonsElementer.stream().noneMatch(inntektselementer::contains)
+                && !informasjonsElementer.contains(RegisterdataElement.ARBEIDSFORHOLD)) {
             return Collections.emptySet();
         }
 
         Set<ArbeidsforholdIdentifikator> arbeidsforholdList = new HashSet<>();
 
         if (informasjonsElementer.contains(RegisterdataElement.ARBEIDSFORHOLD)) {
-            InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder aktørArbeidBuilder = builder.getAktørArbeidBuilder(aktørId);
+            InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder aktørArbeidBuilder =
+                    builder.getAktørArbeidBuilder(aktørId);
             aktørArbeidBuilder.tilbakestillYrkesaktiviteter();
-            // Hvis/Når AAREG en gang i framtiden gir frilans som del av default arbeidsforholdtype - så kan følgende kuttes
-            Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforholdFrilans = innhentingSamletTjeneste.getArbeidsforholdFrilans(
-                aktørId, getFnrFraAktørId(aktørId), opplysningsPeriode);
-            arbeidsforholdFrilans.entrySet()
-                .forEach(forholdet -> oversettArbeidsforholdTilYrkesaktivitet(kobling, builder, forholdet, aktørArbeidBuilder));
+            // Hvis/Når AAREG en gang i framtiden gir frilans som del av default arbeidsforholdtype - så kan følgende
+            // kuttes
+            Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforholdFrilans =
+                    innhentingSamletTjeneste.getArbeidsforholdFrilans(
+                            aktørId, getFnrFraAktørId(aktørId), opplysningsPeriode);
+            arbeidsforholdFrilans
+                    .entrySet()
+                    .forEach(forholdet ->
+                            oversettArbeidsforholdTilYrkesaktivitet(kobling, builder, forholdet, aktørArbeidBuilder));
             arbeidsforholdList.addAll(arbeidsforholdFrilans.keySet());
 
-            Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = innhentingSamletTjeneste.getArbeidsforhold(aktørId,
-                getFnrFraAktørId(aktørId), opplysningsPeriode);
-            arbeidsforhold.entrySet().forEach(forholdet -> oversettArbeidsforholdTilYrkesaktivitet(kobling, builder, forholdet, aktørArbeidBuilder));
+            Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold =
+                    innhentingSamletTjeneste.getArbeidsforhold(aktørId, getFnrFraAktørId(aktørId), opplysningsPeriode);
+            arbeidsforhold
+                    .entrySet()
+                    .forEach(forholdet ->
+                            oversettArbeidsforholdTilYrkesaktivitet(kobling, builder, forholdet, aktørArbeidBuilder));
             arbeidsforholdList.addAll(arbeidsforhold.keySet());
         }
 
         if (informasjonsElementer.stream().anyMatch(inntektselementer::contains)) {
             informasjonsElementer.stream()
-                .filter(ELEMENT_TIL_INNTEKTS_KILDE_MAP::containsKey)
-                .forEach(registerdataElement -> innhentInntektsopplysningFor(kobling, aktørId, opplysningsPeriode, builder, informasjonsElementer,
-                    registerdataElement));
+                    .filter(ELEMENT_TIL_INNTEKTS_KILDE_MAP::containsKey)
+                    .forEach(registerdataElement -> innhentInntektsopplysningFor(
+                            kobling, aktørId, opplysningsPeriode, builder, informasjonsElementer, registerdataElement));
         } else {
             Set.of(RegisterdataElement.INNTEKT_PENSJONSGIVENDE)
-                .forEach(registerdataElement -> innhentInntektsopplysningFor(kobling, aktørId, opplysningsPeriode, builder, informasjonsElementer,
-                    registerdataElement));
+                    .forEach(registerdataElement -> innhentInntektsopplysningFor(
+                            kobling, aktørId, opplysningsPeriode, builder, informasjonsElementer, registerdataElement));
         }
         return arbeidsforholdList;
     }
 
-    private void innhentInntektsopplysningFor(Kobling kobling,
-                                              AktørId aktørId,
-                                              IntervallEntitet opplysningsPeriode,
-                                              InntektArbeidYtelseAggregatBuilder builder,
-                                              Set<RegisterdataElement> informasjonsElementer,
-                                              RegisterdataElement registerdataElement) {
+    private void innhentInntektsopplysningFor(
+            Kobling kobling,
+            AktørId aktørId,
+            IntervallEntitet opplysningsPeriode,
+            InntektArbeidYtelseAggregatBuilder builder,
+            Set<RegisterdataElement> informasjonsElementer,
+            RegisterdataElement registerdataElement) {
         var inntektsKilde = ELEMENT_TIL_INNTEKTS_KILDE_MAP.get(registerdataElement);
-        var inntektsInformasjon = innhentingSamletTjeneste.getInntektsInformasjon(aktørId, opplysningsPeriode, inntektsKilde);
+        var inntektsInformasjon =
+                innhentingSamletTjeneste.getInntektsInformasjon(aktørId, opplysningsPeriode, inntektsKilde);
 
         // En slags ytelse som er utbetalt fra NAV til bruker som LØNN ...
         if (innhentingSamletTjeneste.skalInnhenteLønnskompensasjon(kobling, inntektsKilde)) {
-            inntektsInformasjon.leggTilMånedsinntekter(innhentingSamletTjeneste.getLønnskompensasjon(aktørId, opplysningsPeriode));
+            inntektsInformasjon.leggTilMånedsinntekter(
+                    innhentingSamletTjeneste.getLønnskompensasjon(aktørId, opplysningsPeriode));
         }
         if (informasjonsElementer.contains(registerdataElement)) {
             leggTilInntekter(aktørId, builder, inntektsInformasjon);
         }
     }
 
-    private Optional<InternArbeidsforholdRef> finnReferanseFor(KoblingReferanse koblingReferanse,
-                                                               Arbeidsgiver arbeidsgiver,
-                                                               EksternArbeidsforholdRef arbeidsforholdRef) {
-        Optional<ArbeidsforholdInformasjon> arbeidsforholdInformasjon = inntektArbeidYtelseTjeneste.hentGrunnlagFor(koblingReferanse)
-            .flatMap(InntektArbeidYtelseGrunnlag::getArbeidsforholdInformasjon);
+    private Optional<InternArbeidsforholdRef> finnReferanseFor(
+            KoblingReferanse koblingReferanse, Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef arbeidsforholdRef) {
+        Optional<ArbeidsforholdInformasjon> arbeidsforholdInformasjon = inntektArbeidYtelseTjeneste
+                .hentGrunnlagFor(koblingReferanse)
+                .flatMap(InntektArbeidYtelseGrunnlag::getArbeidsforholdInformasjon);
         if (arbeidsforholdInformasjon.isPresent()) {
             final ArbeidsforholdInformasjon informasjon = arbeidsforholdInformasjon.get();
             return informasjon.finnForEksternBeholdHistoriskReferanse(arbeidsgiver, arbeidsforholdRef);
@@ -331,26 +377,30 @@ public class IAYRegisterInnhentingTjeneste {
         return Optional.empty();
     }
 
-    private void oversettArbeidsforholdTilYrkesaktivitet(Kobling kobling,
-                                                         InntektArbeidYtelseAggregatBuilder builder,
-                                                         Map.Entry<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold,
-                                                         InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder aktørArbeidBuilder) {
+    private void oversettArbeidsforholdTilYrkesaktivitet(
+            Kobling kobling,
+            InntektArbeidYtelseAggregatBuilder builder,
+            Map.Entry<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold,
+            InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder aktørArbeidBuilder) {
 
         var koblingReferanse = kobling.getKoblingReferanse();
         ArbeidsforholdIdentifikator arbeidsgiverIdent = arbeidsforhold.getKey();
         Arbeidsgiver arbeidsgiver = mapArbeidsgiver(arbeidsgiverIdent);
-        String arbeidsforholdId = arbeidsgiverIdent.harArbeidsforholdRef() ? arbeidsgiverIdent.getArbeidsforholdId().getReferanse() : null;
+        String arbeidsforholdId = arbeidsgiverIdent.harArbeidsforholdRef()
+                ? arbeidsgiverIdent.getArbeidsforholdId().getReferanse()
+                : null;
         var eksternReferanse = EksternArbeidsforholdRef.ref(arbeidsforholdId);
         var arbeidsforholdRef = finnReferanseFor(koblingReferanse, arbeidsgiver, eksternReferanse);
-        var internReferanse = arbeidsforholdRef.orElseGet(() -> builder.medNyInternArbeidsforholdRef(arbeidsgiver, eksternReferanse));
+        var internReferanse =
+                arbeidsforholdRef.orElseGet(() -> builder.medNyInternArbeidsforholdRef(arbeidsgiver, eksternReferanse));
 
-        YrkesaktivitetBuilder yrkesaktivitetBuilder = byggYrkesaktiviteterTjeneste.byggYrkesaktivitetForSøker(arbeidsforhold, arbeidsgiver,
-            internReferanse, aktørArbeidBuilder);
+        YrkesaktivitetBuilder yrkesaktivitetBuilder = byggYrkesaktiviteterTjeneste.byggYrkesaktivitetForSøker(
+                arbeidsforhold, arbeidsgiver, internReferanse, aktørArbeidBuilder);
 
-        InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder aktørArbeid = aktørArbeidBuilder.leggTilYrkesaktivitet(yrkesaktivitetBuilder);
+        InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder aktørArbeid =
+                aktørArbeidBuilder.leggTilYrkesaktivitet(yrkesaktivitetBuilder);
 
         builder.leggTilAktørArbeid(aktørArbeid);
-
     }
 
     private Arbeidsgiver mapArbeidsgiver(ArbeidsforholdIdentifikator arbeidsforhold) {
@@ -365,33 +415,37 @@ public class IAYRegisterInnhentingTjeneste {
     }
 
     private void lagInntektsposterYtelse(Månedsinntekt månedsinntekt, InntektBuilder inntektBuilder) {
-        inntektBuilder.leggTilInntektspost(inntektBuilder.getInntektspostBuilder()
-            .medBeløp(månedsinntekt.getBeløp())
-            .medPeriode(månedsinntekt.getMåned().atDay(1), månedsinntekt.getMåned().atEndOfMonth())
-            .medInntektspostType(InntektspostType.YTELSE)
-            .medYtelse(mapTilKodeliste(månedsinntekt)));
+        inntektBuilder.leggTilInntektspost(inntektBuilder
+                .getInntektspostBuilder()
+                .medBeløp(månedsinntekt.getBeløp())
+                .medPeriode(
+                        månedsinntekt.getMåned().atDay(1),
+                        månedsinntekt.getMåned().atEndOfMonth())
+                .medInntektspostType(InntektspostType.YTELSE)
+                .medYtelse(mapTilKodeliste(månedsinntekt)));
     }
-
 
     private InntektYtelseType mapTilKodeliste(Månedsinntekt månedsinntekt) {
         if (månedsinntekt.getPensjonKode() != null) {
-            return InntektYtelseType.finnForKodeverkEiersKode(InntektYtelseType.Kategori.TRYGD, månedsinntekt.getPensjonKode());
+            return InntektYtelseType.finnForKodeverkEiersKode(
+                    InntektYtelseType.Kategori.TRYGD, månedsinntekt.getPensjonKode());
         } else if (månedsinntekt.getYtelseKode() != null) {
-            return InntektYtelseType.finnForKodeverkEiersKode(InntektYtelseType.Kategori.YTELSE, månedsinntekt.getYtelseKode());
+            return InntektYtelseType.finnForKodeverkEiersKode(
+                    InntektYtelseType.Kategori.YTELSE, månedsinntekt.getYtelseKode());
         } else if (månedsinntekt.getNæringsinntektKode() != null) {
-            return InntektYtelseType.finnForKodeverkEiersKode(InntektYtelseType.Kategori.NÆRING, månedsinntekt.getNæringsinntektKode());
+            return InntektYtelseType.finnForKodeverkEiersKode(
+                    InntektYtelseType.Kategori.NÆRING, månedsinntekt.getNæringsinntektKode());
         }
         return null;
     }
 
     private boolean skalInnhenteNæringsInntekterFor(Kobling kobling) {
-        Optional<InntektArbeidYtelseGrunnlag> grunnlag = inntektArbeidYtelseTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse());
+        Optional<InntektArbeidYtelseGrunnlag> grunnlag =
+                inntektArbeidYtelseTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse());
 
         // FP, SVP bruker ikke aggregat for oppgitt opptjening (støtter kun en pr behandling)
         return grunnlag.flatMap(InntektArbeidYtelseGrunnlag::getGjeldendeOppgittOpptjening)
-            .map(oppgittOpptjening -> !oppgittOpptjening.getEgenNæring().isEmpty())
-            .orElse(false);
+                .map(oppgittOpptjening -> !oppgittOpptjening.getEgenNæring().isEmpty())
+                .orElse(false);
     }
-
-
 }

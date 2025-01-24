@@ -1,8 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.util.Objects;
-import java.util.Optional;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -16,7 +13,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
+import java.util.Objects;
+import java.util.Optional;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -121,7 +119,9 @@ public class YtelseStørrelse extends BaseEntitet implements IndexKey {
             return false;
         }
         var that = (YtelseStørrelse) o;
-        return Objects.equals(orgNummer, that.orgNummer) && Objects.equals(beløp, that.beløp) && Objects.equals(hyppighet, that.hyppighet);
+        return Objects.equals(orgNummer, that.orgNummer)
+                && Objects.equals(beløp, that.beløp)
+                && Objects.equals(hyppighet, that.hyppighet);
     }
 
     @Override
@@ -132,7 +132,8 @@ public class YtelseStørrelse extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" + "virksomhet=" + orgNummer + ", beløp=" + beløp + ", hyppighet=" + hyppighet + '>';
+        return getClass().getSimpleName() + "<" + "virksomhet=" + orgNummer + ", beløp=" + beløp + ", hyppighet="
+                + hyppighet + '>';
     }
 
     boolean hasValues() {

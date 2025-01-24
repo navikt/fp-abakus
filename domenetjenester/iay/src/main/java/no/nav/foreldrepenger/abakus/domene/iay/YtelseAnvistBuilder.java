@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.math.BigDecimal;
-
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
@@ -48,9 +47,7 @@ public class YtelseAnvistBuilder {
         return this;
     }
 
-
     public YtelseAnvist build() {
         return ytelseAnvist;
     }
-
 }

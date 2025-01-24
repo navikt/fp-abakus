@@ -1,17 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay.søknad;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.hibernate.annotations.Immutable;
-import org.hibernate.annotations.NaturalId;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -21,10 +9,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.JournalpostId;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.NaturalId;
 
 @Immutable
 @Entity(name = "OppgittOpptjening")
@@ -81,26 +79,34 @@ public class OppgittOpptjening extends BaseEntitet {
         this.eksternReferanse = orginal.getEksternReferanse();
         this.journalpostId = orginal.getJournalpostId();
         this.innsendingstidspunkt = orginal.getInnsendingstidspunkt();
-        this.oppgittArbeidsforhold = orginal.getOppgittArbeidsforhold().stream().map(oppgittArbeidsforhold -> {
-            OppgittArbeidsforhold kopi = new OppgittArbeidsforhold(oppgittArbeidsforhold);
-            kopi.setOppgittOpptjening(this);
-            return kopi;
-        }).collect(Collectors.toList());
-        this.egenNæring = orginal.getEgenNæring().stream().map(egenNæring -> {
-            OppgittEgenNæring kopi = new OppgittEgenNæring(egenNæring);
-            kopi.setOppgittOpptjening(this);
-            return kopi;
-        }).collect(Collectors.toList());
-        this.annenAktivitet = orginal.getAnnenAktivitet().stream().map(annenAktivitet -> {
-            OppgittAnnenAktivitet kopi = new OppgittAnnenAktivitet(annenAktivitet);
-            kopi.setOppgittOpptjening(this);
-            return kopi;
-        }).collect(Collectors.toList());
-        this.frilans = orginal.getFrilans().map(frilans -> {
-            var kopi = new OppgittFrilans(frilans);
-            kopi.setOppgittOpptjening(this);
-            return kopi;
-        }).orElse(null);
+        this.oppgittArbeidsforhold = orginal.getOppgittArbeidsforhold().stream()
+                .map(oppgittArbeidsforhold -> {
+                    OppgittArbeidsforhold kopi = new OppgittArbeidsforhold(oppgittArbeidsforhold);
+                    kopi.setOppgittOpptjening(this);
+                    return kopi;
+                })
+                .collect(Collectors.toList());
+        this.egenNæring = orginal.getEgenNæring().stream()
+                .map(egenNæring -> {
+                    OppgittEgenNæring kopi = new OppgittEgenNæring(egenNæring);
+                    kopi.setOppgittOpptjening(this);
+                    return kopi;
+                })
+                .collect(Collectors.toList());
+        this.annenAktivitet = orginal.getAnnenAktivitet().stream()
+                .map(annenAktivitet -> {
+                    OppgittAnnenAktivitet kopi = new OppgittAnnenAktivitet(annenAktivitet);
+                    kopi.setOppgittOpptjening(this);
+                    return kopi;
+                })
+                .collect(Collectors.toList());
+        this.frilans = orginal.getFrilans()
+                .map(frilans -> {
+                    var kopi = new OppgittFrilans(frilans);
+                    kopi.setOppgittOpptjening(this);
+                    return kopi;
+                })
+                .orElse(null);
     }
 
     public List<OppgittArbeidsforhold> getOppgittArbeidsforhold() {
@@ -200,8 +206,10 @@ public class OppgittOpptjening extends BaseEntitet {
             return false;
         }
         var that = (OppgittOpptjening) o;
-        return Objects.equals(oppgittArbeidsforhold, that.oppgittArbeidsforhold) && Objects.equals(egenNæring, that.egenNæring) && Objects.equals(
-            annenAktivitet, that.annenAktivitet) && Objects.equals(journalpostId, that.journalpostId);
+        return Objects.equals(oppgittArbeidsforhold, that.oppgittArbeidsforhold)
+                && Objects.equals(egenNæring, that.egenNæring)
+                && Objects.equals(annenAktivitet, that.annenAktivitet)
+                && Objects.equals(journalpostId, that.journalpostId);
     }
 
     @Override
@@ -211,17 +219,17 @@ public class OppgittOpptjening extends BaseEntitet {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" + "id=" + id + ", oppgittArbeidsforhold=" + oppgittArbeidsforhold + ", egenNæring=" + egenNæring
-            + ", annenAktivitet=" + annenAktivitet + '>';
+        return getClass().getSimpleName() + "<" + "id=" + id + ", oppgittArbeidsforhold=" + oppgittArbeidsforhold
+                + ", egenNæring=" + egenNæring + ", annenAktivitet=" + annenAktivitet + '>';
     }
 
-    /**
-     * Nedstrippet versjon av toString, egnet for logging.
-     */
+    /** Nedstrippet versjon av toString, egnet for logging. */
     public String toStringSimple() {
-        return getClass().getSimpleName() + "<" + "id=" + id + ", eksternReferanse=" + eksternReferanse + ", oppgittArbeidsforhold=[" + (
-            oppgittArbeidsforhold == null ? "0" : oppgittArbeidsforhold.size()) + "]" + ", egenNæring=[" + (
-            egenNæring == null ? "0" : egenNæring.size()) + "]" + ", annenAktivitet=[" + (annenAktivitet == null ? "0" : annenAktivitet.size()) + "]"
-            + ", frilans=[" + (frilans == null ? "0" : frilans.getFrilansoppdrag().size()) + "]" + '>';
+        return getClass().getSimpleName() + "<" + "id=" + id + ", eksternReferanse=" + eksternReferanse
+                + ", oppgittArbeidsforhold=[" + (oppgittArbeidsforhold == null ? "0" : oppgittArbeidsforhold.size())
+                + "]" + ", egenNæring=[" + (egenNæring == null ? "0" : egenNæring.size()) + "]" + ", annenAktivitet=["
+                + (annenAktivitet == null ? "0" : annenAktivitet.size()) + "]"
+                + ", frilans=["
+                + (frilans == null ? "0" : frilans.getFrilansoppdrag().size()) + "]" + '>';
     }
 }

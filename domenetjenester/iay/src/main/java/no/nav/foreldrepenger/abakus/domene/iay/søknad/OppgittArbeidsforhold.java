@@ -1,9 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay.søknad;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Objects;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -14,7 +10,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
@@ -28,12 +26,11 @@ import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 
 /**
  * Entitetsklasse for oppgitte arbeidsforhold.
- * <p>
- * Implementert iht. builder pattern (ref. "Effective Java, 2. ed." J.Bloch).
- * Non-public constructors og setters, dvs. immutable.
- * <p>
- * OBS: Legger man til nye felter så skal dette oppdateres mange steder:
- * builder, equals, hashcode etc.
+ *
+ * <p>Implementert iht. builder pattern (ref. "Effective Java, 2. ed." J.Bloch). Non-public constructors og setters,
+ * dvs. immutable.
+ *
+ * <p>OBS: Legger man til nye felter så skal dette oppdateres mange steder: builder, equals, hashcode etc.
  */
 @Table(name = "IAY_OPPGITT_ARBEIDSFORHOLD")
 @Entity(name = "OppgittArbeidsforhold")
@@ -161,8 +158,10 @@ public class OppgittArbeidsforhold extends BaseEntitet implements IndexKey {
 
         var that = (OppgittArbeidsforhold) o;
 
-        return Objects.equals(periode, that.periode) && Objects.equals(arbeidType, that.arbeidType) && Objects.equals(utenlandskVirksomhetNavn,
-            that.utenlandskVirksomhetNavn) && Objects.equals(landkode, that.landkode);
+        return Objects.equals(periode, that.periode)
+                && Objects.equals(arbeidType, that.arbeidType)
+                && Objects.equals(utenlandskVirksomhetNavn, that.utenlandskVirksomhetNavn)
+                && Objects.equals(landkode, that.landkode);
     }
 
     @Override
@@ -172,7 +171,8 @@ public class OppgittArbeidsforhold extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" + "id=" + id + ", periode=" + periode + ", erUtenlandskInntekt=" + erUtenlandskInntekt
-            + ", arbeidType=" + arbeidType + ", landkode=" + landkode + ", utenlandskVirksomhetNavn=" + utenlandskVirksomhetNavn + '>';
+        return getClass().getSimpleName() + "<" + "id=" + id + ", periode=" + periode + ", erUtenlandskInntekt="
+                + erUtenlandskInntekt + ", arbeidType=" + arbeidType + ", landkode=" + landkode
+                + ", utenlandskVirksomhetNavn=" + utenlandskVirksomhetNavn + '>';
     }
 }

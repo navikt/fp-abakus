@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 
 public class Arbeidsforhold {
@@ -16,13 +15,14 @@ public class Arbeidsforhold {
     private List<Permisjon> permisjoner;
     private EksternArbeidsforholdRef arbeidsforholdId;
 
-    private Arbeidsforhold(Arbeidsgiver arbeidsgiver,
-                           String type,
-                           LocalDate arbeidFom,
-                           LocalDate arbeidTom,
-                           List<Arbeidsavtale> arbeidsavtaler,
-                           List<Permisjon> permisjoner,
-                           EksternArbeidsforholdRef arbeidsforholdId) {
+    private Arbeidsforhold(
+            Arbeidsgiver arbeidsgiver,
+            String type,
+            LocalDate arbeidFom,
+            LocalDate arbeidTom,
+            List<Arbeidsavtale> arbeidsavtaler,
+            List<Permisjon> permisjoner,
+            EksternArbeidsforholdRef arbeidsforholdId) {
         this.arbeidsgiver = arbeidsgiver;
         this.type = type;
         this.arbeidFom = arbeidFom;
@@ -73,10 +73,14 @@ public class Arbeidsforhold {
             return false;
         }
         Arbeidsforhold that = (Arbeidsforhold) o;
-        return Objects.equals(arbeidsgiver, that.arbeidsgiver) && Objects.equals(type, that.type) && Objects.equals(arbeidFom, that.arbeidFom)
-            && Objects.equals(arbeidTom, that.arbeidTom) && erLikeArbeidsavtaler(arbeidsavtaler, that.arbeidsavtaler) && erLikePermisjoner(
-            permisjoner, that.permisjoner) && ((arbeidsgiver instanceof Organisasjon && Objects.equals(arbeidsforholdId, that.arbeidsforholdId))
-            || arbeidsgiver instanceof Person);
+        return Objects.equals(arbeidsgiver, that.arbeidsgiver)
+                && Objects.equals(type, that.type)
+                && Objects.equals(arbeidFom, that.arbeidFom)
+                && Objects.equals(arbeidTom, that.arbeidTom)
+                && erLikeArbeidsavtaler(arbeidsavtaler, that.arbeidsavtaler)
+                && erLikePermisjoner(permisjoner, that.permisjoner)
+                && ((arbeidsgiver instanceof Organisasjon && Objects.equals(arbeidsforholdId, that.arbeidsforholdId))
+                        || arbeidsgiver instanceof Person);
     }
 
     private boolean erLikeArbeidsavtaler(List<Arbeidsavtale> l1, List<Arbeidsavtale> l2) {
@@ -106,8 +110,9 @@ public class Arbeidsforhold {
 
     @Override
     public String toString() {
-        return "Arbeidsforhold{" + "arbeidsgiver=" + arbeidsgiver + ", type='" + type + '\'' + ", arbeidFom=" + arbeidFom + ", arbeidTom=" + arbeidTom
-            + ", arbeidsavtaler=" + arbeidsavtaler + ", permisjoner=" + permisjoner + ", arbeidsforholdId=" + arbeidsforholdId + '}';
+        return "Arbeidsforhold{" + "arbeidsgiver=" + arbeidsgiver + ", type='" + type + '\'' + ", arbeidFom="
+                + arbeidFom + ", arbeidTom=" + arbeidTom + ", arbeidsavtaler=" + arbeidsavtaler + ", permisjoner="
+                + permisjoner + ", arbeidsforholdId=" + arbeidsforholdId + '}';
     }
 
     public static class Builder {
@@ -118,7 +123,6 @@ public class Arbeidsforhold {
         private List<Arbeidsavtale> arbeidsavtaler = new ArrayList<>();
         private List<Permisjon> permisjoner = new ArrayList<>();
         private EksternArbeidsforholdRef arbeidsforholdId;
-
 
         public Builder medArbeidsgiver(Arbeidsgiver arbeidsgiver) {
             this.arbeidsgiver = arbeidsgiver;
@@ -150,7 +154,6 @@ public class Arbeidsforhold {
             return this;
         }
 
-
         public Builder medAnsettelsesPeriode(Arbeidsavtale avtale) {
             this.arbeidsavtaler.add(avtale);
             return this;
@@ -162,7 +165,8 @@ public class Arbeidsforhold {
         }
 
         public Arbeidsforhold build() {
-            return new Arbeidsforhold(arbeidsgiver, type, arbeidFom, arbeidTom, arbeidsavtaler, permisjoner, arbeidsforholdId);
+            return new Arbeidsforhold(
+                    arbeidsgiver, type, arbeidFom, arbeidTom, arbeidsavtaler, permisjoner, arbeidsforholdId);
         }
     }
 }

@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-
 import no.nav.vedtak.konfig.Tid;
 
 public abstract class AbstractIntervall implements Comparable<AbstractIntervall>, Serializable {
@@ -33,7 +32,9 @@ public abstract class AbstractIntervall implements Comparable<AbstractIntervall>
     }
 
     private boolean erFørEllerLikPeriodeslutt(LocalDate dato) {
-        return getTomDato() == null || getTomDato().isAfter(dato) || getTomDato().isEqual(dato);
+        return getTomDato() == null
+                || getTomDato().isAfter(dato)
+                || getTomDato().isEqual(dato);
     }
 
     @Override
@@ -59,6 +60,7 @@ public abstract class AbstractIntervall implements Comparable<AbstractIntervall>
 
     @Override
     public String toString() {
-        return String.format("Periode[%s,%s]", getFomDato().format(FORMATTER), getTomDato().format(FORMATTER));
+        return String.format(
+                "Periode[%s,%s]", getFomDato().format(FORMATTER), getTomDato().format(FORMATTER));
     }
 }

@@ -1,6 +1,5 @@
 package no.nav.foreldrepenger.abakus.app.metrics;
 
-
 import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
 import static no.nav.vedtak.log.metrics.MetricsUtil.REGISTRY;
 

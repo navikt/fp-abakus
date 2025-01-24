@@ -1,73 +1,69 @@
 {
   "data": {
+    "oppgittOpptjening": {
+      "annenAktivitet": [ {
+        "arbeidType": {
+          "kodeverk": "ARBEID_TYPE",
+          "kode": "FRILANSER"
+        },
+        "periode": {
+          "tom": "2019-05-31",
+          "fom": "2019-01-01"
+        }
+      } ],
+      "arbeidsforhold": [ ],
+      "frilans": {
+        "frilansoppdrag": [ ],
+        "erNyoppstartet": false,
+        "erNærRelasjon": false,
+        "harInntektFraFosterhjem": false
+      },
+      "opprettetTidspunkt": "2019-06-17T06:41:14.659Z",
+      "egenNæring": [ {
+        "regnskapsførerNavn": null,
+        "virksomhetNavn": null,
+        "regnskapsførerTlf": null,
+        "erNyIArbeidslivet": false,
+        "virksomhet": {
+          "identType": "ORGNUMMER",
+          "ident": "997158768"
+        },
+        "virksomhetType": {
+          "kodeverk": "VIRKSOMHET_TYPE",
+          "kode": "JORDBRUK_SKOGBRUK"
+        },
+        "periode": {
+          "tom": "9999-12-31",
+          "fom": "2011-07-30"
+        },
+        "bruttoInntekt": 600000,
+        "landkode": {
+          "kodeverk": "LANDKODER",
+          "kode": "NOR"
+        },
+        "erNyoppstartet": true,
+        "erVarigEndring": false,
+        "erNærRelasjon": false,
+        "endringBegrunnelse": "Ny som bonde",
+        "endringDato": null
+      } ],
+      "eksternReferanse": "17989d4c-0531-4046-8c0a-da332e923d3d"
+    },
     "person": {
       "identType": "AKTØRID",
       "ident": "1546156295907"
     },
     "grunnlagTidspunkt": "2019-06-17T06:41:14.935Z",
     "grunnlagReferanse": "8b8bef23-5e4d-0773-e053-2880340a0b5a",
-    "koblingReferanse": "2af22a7e-4f1e-4bfb-b824-628c054399b9",
-    "oppgittOpptjening": {
-      "eksternReferanse": "17989d4c-0531-4046-8c0a-da332e923d3d",
-      "opprettetTidspunkt": "2019-06-17T06:41:14.659Z",
-      "arbeidsforhold": [],
-      "egenNæring": [
-        {
-          "periode": {
-            "fom": "2011-07-30",
-            "tom": "9999-12-31"
-          },
-          "virksomhet": {
-            "identType": "ORGNUMMER",
-            "ident": "997158768"
-          },
-          "virksomhetType": {
-            "kodeverk": "VIRKSOMHET_TYPE",
-            "kode": "JORDBRUK_SKOGBRUK"
-          },
-          "regnskapsførerNavn": null,
-          "regnskapsførerTlf": null,
-          "virksomhetNavn": null,
-          "landkode": {
-            "kodeverk": "LANDKODER",
-            "kode": "NOR"
-          },
-          "endringDato": null,
-          "erVarigEndring": false,
-          "endringBegrunnelse": "Ny som bonde",
-          "bruttoInntekt": 600000.00,
-          "erNyoppstartet": true,
-          "erNærRelasjon": false,
-          "erNyIArbeidslivet": false
-        }
-      ],
-      "annenAktivitet": [
-        {
-          "periode": {
-            "fom": "2019-01-01",
-            "tom": "2019-05-31"
-          },
-          "arbeidType": {
-            "kodeverk": "ARBEID_TYPE",
-            "kode": "FRILANSER"
-          }
-        }
-      ],
-      "frilans": {
-        "harInntektFraFosterhjem": false,
-        "erNyoppstartet": false,
-        "erNærRelasjon": false,
-        "frilansoppdrag": []
-      }
-    }
-  },
-  "aktiv": false,
-  "opplysningsperiode": {
-    "fom": "2017-12-01",
-    "tom": "2023-05-01"
+    "koblingReferanse": "2af22a7e-4f1e-4bfb-b824-628c054399b9"
   },
   "opptjeningsperiode": {
-    "fom": "2019-04-03",
-    "tom": "2019-04-30"
-  }
+    "tom": "2019-04-30",
+    "fom": "2019-04-03"
+  },
+  "opplysningsperiode": {
+    "tom": "2023-05-01",
+    "fom": "2017-12-01"
+  },
+  "aktiv": false
 }

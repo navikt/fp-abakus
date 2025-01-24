@@ -12,8 +12,7 @@ public class MeldekortUtbetalingsgrunnlagMeldekort {
     private BigDecimal beløp;
     private BigDecimal utbetalingsgrad;
 
-    private MeldekortUtbetalingsgrunnlagMeldekort() {
-    }
+    private MeldekortUtbetalingsgrunnlagMeldekort() {}
 
     public LocalDate getMeldekortFom() {
         return meldekortFom;
@@ -44,8 +43,11 @@ public class MeldekortUtbetalingsgrunnlagMeldekort {
             return false;
         }
         MeldekortUtbetalingsgrunnlagMeldekort that = (MeldekortUtbetalingsgrunnlagMeldekort) o;
-        return Objects.equals(meldekortFom, that.meldekortFom) && Objects.equals(meldekortTom, that.meldekortTom) && Objects.equals(dagsats,
-            that.dagsats) && Objects.equals(beløp, that.beløp) && Objects.equals(utbetalingsgrad, that.utbetalingsgrad);
+        return Objects.equals(meldekortFom, that.meldekortFom)
+                && Objects.equals(meldekortTom, that.meldekortTom)
+                && Objects.equals(dagsats, that.dagsats)
+                && Objects.equals(beløp, that.beløp)
+                && Objects.equals(utbetalingsgrad, that.utbetalingsgrad);
     }
 
     @Override
@@ -55,8 +57,9 @@ public class MeldekortUtbetalingsgrunnlagMeldekort {
 
     @Override
     public String toString() {
-        return "MeldekortUtbetalingsgrunnlagMeldekort{" + "meldekortFom=" + meldekortFom + ", meldekortTom=" + meldekortTom + ", dagsats=" + dagsats
-            + ", beløp=" + beløp + ", utbetalingsgrad=" + utbetalingsgrad + '}';
+        return "MeldekortUtbetalingsgrunnlagMeldekort{" + "meldekortFom=" + meldekortFom + ", meldekortTom="
+                + meldekortTom + ", dagsats=" + dagsats + ", beløp=" + beløp + ", utbetalingsgrad=" + utbetalingsgrad
+                + '}';
     }
 
     public static class MeldekortMeldekortBuilder {
@@ -98,6 +101,5 @@ public class MeldekortUtbetalingsgrunnlagMeldekort {
         public MeldekortUtbetalingsgrunnlagMeldekort build() {
             return this.meldekort;
         }
-
     }
 }

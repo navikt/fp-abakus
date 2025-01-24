@@ -1,26 +1,26 @@
 package no.nav.abakus.iaygrunnlag.arbeidsforhold.v1;
 
-import java.util.Objects;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
 
-/**
- * Et arbeidsforhold for en arbeidsgiver.
- */
+/** Et arbeidsforhold for en arbeidsgiver. */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class ArbeidsforholdReferanseDto {
 
     @JsonProperty(value = "arbeidsgiver", required = true)
@@ -34,8 +34,10 @@ public class ArbeidsforholdReferanseDto {
     private ArbeidsforholdRefDto arbeidsforholdId;
 
     @JsonCreator
-    public ArbeidsforholdReferanseDto(@JsonProperty(value = "arbeidsgiver", required = true) @Valid @NotNull Aktør arbeidsgiver,
-                                      @JsonProperty(value = "arbeidsforholdId", required = true) @Valid @NotNull ArbeidsforholdRefDto arbeidsforholdId) {
+    public ArbeidsforholdReferanseDto(
+            @JsonProperty(value = "arbeidsgiver", required = true) @Valid @NotNull Aktør arbeidsgiver,
+            @JsonProperty(value = "arbeidsforholdId", required = true) @Valid @NotNull
+                    ArbeidsforholdRefDto arbeidsforholdId) {
         Objects.requireNonNull(arbeidsgiver, "arbeidsgiver");
         Objects.requireNonNull(arbeidsforholdId, "arbeidsforholdId");
         this.arbeidsgiver = arbeidsgiver;
@@ -59,8 +61,8 @@ public class ArbeidsforholdReferanseDto {
             return false;
         }
         var other = getClass().cast(obj);
-        return Objects.equals(this.arbeidsgiver, other.arbeidsgiver) && Objects.equals(this.arbeidsforholdId, other.arbeidsforholdId);
-
+        return Objects.equals(this.arbeidsgiver, other.arbeidsgiver)
+                && Objects.equals(this.arbeidsforholdId, other.arbeidsforholdId);
     }
 
     @Override
@@ -70,6 +72,7 @@ public class ArbeidsforholdReferanseDto {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<arbeidsgiver =" + arbeidsgiver + ", arbeidsforholdId=" + arbeidsforholdId + ">";
+        return getClass().getSimpleName() + "<arbeidsgiver =" + arbeidsgiver + ", arbeidsforholdId=" + arbeidsforholdId
+                + ">";
     }
 }

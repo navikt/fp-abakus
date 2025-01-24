@@ -1,26 +1,28 @@
 package no.nav.abakus.iaygrunnlag.arbeid.v1;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Objects;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.ALWAYS, content = Include.NON_EMPTY)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class PermisjonDto {
 
     @JsonProperty(value = "periode", required = true)
@@ -28,24 +30,22 @@ public class PermisjonDto {
     @Valid
     private Periode periode;
 
-    /**
-     * Permisjon type, hvis oppgitt. Kan være null.
-     */
+    /** Permisjon type, hvis oppgitt. Kan være null. */
     @JsonProperty(value = "type", required = true)
     private PermisjonsbeskrivelseType type;
 
     /**
-     * Prosent sats med to desimaler - min 0.00 - 100.00.
-     * Pga inntastingfeil og manglende validering i LPS systemer og Altinn har man historisk akseptert mottatt permisjonsprosenter langt over
-     * 100%. C'est la vie.
+     * Prosent sats med to desimaler - min 0.00 - 100.00. Pga inntastingfeil og manglende validering i LPS systemer og
+     * Altinn har man historisk akseptert mottatt permisjonsprosenter langt over 100%. C'est la vie.
      */
     @JsonProperty("prosentsats")
-    @Valid @DecimalMin(value = "0.00", message = "permisjon prosentsats [${validatedValue}] må være >= {value}") @DecimalMax(value = "500.00", message = "permisjon prosentsats [${validatedValue}] må være <= {value}")
+    @Valid
+    @DecimalMin(value = "0.00", message = "permisjon prosentsats [${validatedValue}] må være >= {value}")
+    @DecimalMax(value = "500.00", message = "permisjon prosentsats [${validatedValue}] må være <= {value}")
     // insane maks verdi, men Aa-reg sier så
     private BigDecimal prosentsats;
 
-    protected PermisjonDto() {
-    }
+    protected PermisjonDto() {}
 
     public PermisjonDto(@NotNull @Valid Periode periode, @NotNull PermisjonsbeskrivelseType type) {
         Objects.requireNonNull(periode, "periode");
@@ -78,5 +78,4 @@ public class PermisjonDto {
         setProsentsats(BigDecimal.valueOf(prosentsats));
         return this;
     }
-
 }

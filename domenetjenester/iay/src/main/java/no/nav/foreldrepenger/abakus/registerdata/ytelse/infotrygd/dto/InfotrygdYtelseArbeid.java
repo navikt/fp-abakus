@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
 
 public class InfotrygdYtelseArbeid {
@@ -15,7 +14,12 @@ public class InfotrygdYtelseArbeid {
     private Boolean refusjon;
     private LocalDate refusjonTom;
 
-    public InfotrygdYtelseArbeid(String orgnr, BigDecimal inntekt, InntektPeriodeType inntektperiode, Boolean refusjon, LocalDate refusjonTom) {
+    public InfotrygdYtelseArbeid(
+            String orgnr,
+            BigDecimal inntekt,
+            InntektPeriodeType inntektperiode,
+            Boolean refusjon,
+            LocalDate refusjonTom) {
         this.orgnr = orgnr;
         this.inntekt = inntekt;
         this.inntektperiode = inntektperiode;
@@ -59,9 +63,11 @@ public class InfotrygdYtelseArbeid {
             return false;
         }
         InfotrygdYtelseArbeid that = (InfotrygdYtelseArbeid) o;
-        return Objects.equals(orgnr, that.orgnr) && Objects.equals(inntekt, that.inntekt) && Objects.equals(inntektperiode, that.inntektperiode)
-            && Objects.equals(refusjon, that.refusjon) && Objects.equals(refusjonTom, that.refusjonTom);
-
+        return Objects.equals(orgnr, that.orgnr)
+                && Objects.equals(inntekt, that.inntekt)
+                && Objects.equals(inntektperiode, that.inntektperiode)
+                && Objects.equals(refusjon, that.refusjon)
+                && Objects.equals(refusjonTom, that.refusjonTom);
     }
 
     @Override
@@ -71,8 +77,8 @@ public class InfotrygdYtelseArbeid {
 
     @Override
     public String toString() {
-        return "InfotrygdYtelseArbeid{" + "orgnr='" + getOrgnrString() + '\'' + ", inntekt=" + inntekt + ", inntektperiode=" + inntektperiode
-            + ", refusjon=" + refusjon + ", refusjon=" + refusjonTom + '}';
+        return "InfotrygdYtelseArbeid{" + "orgnr='" + getOrgnrString() + '\'' + ", inntekt=" + inntekt
+                + ", inntektperiode=" + inntektperiode + ", refusjon=" + refusjon + ", refusjon=" + refusjonTom + '}';
     }
 
     private String getOrgnrString() {
@@ -86,6 +92,3 @@ public class InfotrygdYtelseArbeid {
         return "*".repeat(length - 4) + orgnr.substring(length - 4);
     }
 }
-
-
-

@@ -1,13 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -22,7 +14,13 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -88,11 +86,13 @@ public class YtelseGrunnlag extends BaseEntitet {
         this.graderingProsent = ytelseGrunnlag.getGraderingProsent().orElse(null);
         this.inntektProsent = ytelseGrunnlag.getInntektsgrunnlagProsent().orElse(null);
         this.opprinneligIdentdato = ytelseGrunnlag.getOpprinneligIdentdato().orElse(null);
-        this.ytelseStørrelse = ytelseGrunnlag.getYtelseStørrelse().stream().map(ys -> {
-            YtelseStørrelse ytelseStørrelseEntitet = new YtelseStørrelse(ys);
-            ytelseStørrelseEntitet.setYtelseGrunnlag(this);
-            return ytelseStørrelseEntitet;
-        }).collect(Collectors.toList());
+        this.ytelseStørrelse = ytelseGrunnlag.getYtelseStørrelse().stream()
+                .map(ys -> {
+                    YtelseStørrelse ytelseStørrelseEntitet = new YtelseStørrelse(ys);
+                    ytelseStørrelseEntitet.setYtelseGrunnlag(this);
+                    return ytelseStørrelseEntitet;
+                })
+                .collect(Collectors.toList());
         this.vedtaksDagsats = ytelseGrunnlag.getVedtaksDagsats().orElse(null);
     }
 
@@ -143,13 +143,11 @@ public class YtelseGrunnlag extends BaseEntitet {
     void leggTilYtelseStørrelse(YtelseStørrelse ytelseStørrelse) {
         ytelseStørrelse.setYtelseGrunnlag(this);
         this.ytelseStørrelse.add(ytelseStørrelse);
-
     }
 
     void tilbakestillStørrelse() {
         ytelseStørrelse.clear();
     }
-
 
     void setYtelse(Ytelse ytelse) {
         this.ytelse = ytelse;
@@ -172,20 +170,31 @@ public class YtelseGrunnlag extends BaseEntitet {
             return false;
         }
         var that = (YtelseGrunnlag) o;
-        return Objects.equals(arbeidskategori, that.arbeidskategori) && Objects.equals(dekningsgradProsent, that.dekningsgradProsent)
-            && Objects.equals(graderingProsent, that.graderingProsent) && Objects.equals(inntektProsent, that.inntektProsent) && Objects.equals(
-            opprinneligIdentdato, that.opprinneligIdentdato) && Objects.equals(vedtaksDagsats, that.vedtaksDagsats);
+        return Objects.equals(arbeidskategori, that.arbeidskategori)
+                && Objects.equals(dekningsgradProsent, that.dekningsgradProsent)
+                && Objects.equals(graderingProsent, that.graderingProsent)
+                && Objects.equals(inntektProsent, that.inntektProsent)
+                && Objects.equals(opprinneligIdentdato, that.opprinneligIdentdato)
+                && Objects.equals(vedtaksDagsats, that.vedtaksDagsats);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(arbeidskategori, dekningsgradProsent, graderingProsent, inntektProsent, opprinneligIdentdato, vedtaksDagsats);
+        return Objects.hash(
+                arbeidskategori,
+                dekningsgradProsent,
+                graderingProsent,
+                inntektProsent,
+                opprinneligIdentdato,
+                vedtaksDagsats);
     }
 
     @Override
     public String toString() {
-        return "YtelseGrunnlagEntitet{" + "arbeidskategori=" + arbeidskategori + ", dekngradProsent=" + dekningsgradProsent + ", graderingProsent="
-            + graderingProsent + ", inntektProsent=" + inntektProsent + ", opprinneligIdentdato=" + opprinneligIdentdato + ", vedtaksDagsats="
-            + vedtaksDagsats + '}';
+        return "YtelseGrunnlagEntitet{" + "arbeidskategori=" + arbeidskategori + ", dekngradProsent="
+                + dekningsgradProsent + ", graderingProsent="
+                + graderingProsent + ", inntektProsent=" + inntektProsent + ", opprinneligIdentdato="
+                + opprinneligIdentdato + ", vedtaksDagsats="
+                + vedtaksDagsats + '}';
     }
 }

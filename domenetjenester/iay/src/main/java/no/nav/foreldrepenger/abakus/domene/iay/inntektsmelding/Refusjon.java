@@ -1,9 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Objects;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -15,7 +11,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -34,7 +32,8 @@ public class Refusjon extends BaseEntitet implements IndexKey {
     @JoinColumn(name = "inntektsmelding_id", nullable = false, updatable = false)
     private Inntektsmelding inntektsmelding;
 
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "refusjonsbeloep_mnd", nullable = false)))
+    @AttributeOverrides(
+            @AttributeOverride(name = "verdi", column = @Column(name = "refusjonsbeloep_mnd", nullable = false)))
     @ChangeTracked
     private Beløp refusjonsbeløpMnd;
 
@@ -46,8 +45,7 @@ public class Refusjon extends BaseEntitet implements IndexKey {
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-    public Refusjon() {
-    }
+    public Refusjon() {}
 
     public Refusjon(BigDecimal refusjonsbeløpMnd, LocalDate fom) {
         this.refusjonsbeløpMnd = refusjonsbeløpMnd == null ? null : new Beløp(refusjonsbeløpMnd);

@@ -1,5 +1,9 @@
 package no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding;
 
+import jakarta.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.NaturalytelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -8,12 +12,6 @@ import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.jpa.NaturalytelseTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
-
-import jakarta.persistence.*;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity(name = "NaturalYtelse")
 @Table(name = "IAY_NATURAL_YTELSE")
@@ -44,8 +42,7 @@ public class NaturalYtelse extends BaseEntitet implements IndexKey {
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-    NaturalYtelse() {
-    }
+    NaturalYtelse() {}
 
     public NaturalYtelse(LocalDate fom, LocalDate tom, BigDecimal beloepPerMnd, NaturalytelseType type) {
         this.beloepPerMnd = new Beløp(beloepPerMnd);
@@ -104,6 +101,7 @@ public class NaturalYtelse extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "NaturalYtelseEntitet{" + "id=" + id + ", periode=" + periode + ", beloepPerMnd=" + beloepPerMnd + ", type=" + type + '}';
+        return "NaturalYtelseEntitet{" + "id=" + id + ", periode=" + periode + ", beloepPerMnd=" + beloepPerMnd
+                + ", type=" + type + '}';
     }
 }

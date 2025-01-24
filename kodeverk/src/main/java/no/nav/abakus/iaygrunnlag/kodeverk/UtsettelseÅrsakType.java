@@ -1,17 +1,18 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-@JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
+@JsonAutoDetect(
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE,
+        fieldVisibility = Visibility.ANY)
 public enum UtsettelseÅrsakType implements Kodeverdi {
-
     ARBEID("ARBEID", "Arbeid"),
     FERIE("LOVBESTEMT_FERIE", "Lovbestemt ferie"),
     SYKDOM("SYKDOM", "Avhengig av hjelp grunnet sykdom"),
@@ -30,8 +31,8 @@ public enum UtsettelseÅrsakType implements Kodeverdi {
         }
     }
 
-
     private final String navn;
+
     @JsonValue
     private final String kode;
 
@@ -44,7 +45,8 @@ public enum UtsettelseÅrsakType implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent UtsettelseÅrsak: " + kode));
+        return Optional.ofNullable(KODER.get(kode))
+                .orElseThrow(() -> new IllegalArgumentException("Ukjent UtsettelseÅrsak: " + kode));
     }
 
     public static Map<String, UtsettelseÅrsakType> kodeMap() {

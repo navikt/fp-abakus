@@ -2,22 +2,19 @@ package no.nav.foreldrepenger.abakus.app.konfig;
 
 import static org.assertj.core.api.Fail.fail;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.Request;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.ws.rs.core.Request;
-
-import org.junit.jupiter.api.Test;
-
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
+import org.junit.jupiter.api.Test;
 
 class RestApiAbacTest {
 
@@ -25,8 +22,8 @@ class RestApiAbacTest {
 
     /**
      * IKKE ignorer denne testen, sikrer at REST-endepunkter får tilgangskontroll
-     * <p>
-     * Kontakt Team Humle hvis du trenger hjelp til å endre koden din slik at den går igjennom her *
+     *
+     * <p>Kontakt Team Humle hvis du trenger hjelp til å endre koden din slik at den går igjennom her *
      */
     @Test
     void test_at_alle_restmetoder_er_annotert_med_BeskyttetRessurs() throws Exception {
@@ -46,8 +43,8 @@ class RestApiAbacTest {
 
     /**
      * IKKE ignorer denne testen, helper til med at input til tilgangskontroll blir riktig
-     * <p>
-     * Kontakt Team Humle hvis du trenger hjelp til å endre koden din slik at den går igjennom her *
+     *
+     * <p>Kontakt Team Humle hvis du trenger hjelp til å endre koden din slik at den går igjennom her *
      */
     @Test
     void test_at_minst_en_input_parametre_til_restmetoder_implementer_AbacDto() {
@@ -59,17 +56,26 @@ class RestApiAbacTest {
 
                 if (Collection.class.isAssignableFrom(parameter.getType())) {
                     var type = (ParameterizedType) parameter.getParameterizedType();
-                    @SuppressWarnings("rawtypes") Class<?> aClass = (Class) (type.getActualTypeArguments()[0]);
-                    if (!AbacDto.class.isAssignableFrom(aClass) && !parameter.isAnnotationPresent(TilpassetAbacAttributt.class)
-                        && !IgnorerteInputTyper.ignore(aClass)) {
-                        feilmeldinger.append(String.format(feilmelding, restMethode.getDeclaringClass().getSimpleName(), restMethode.getName(),
-                            aClass.getSimpleName()));
+                    @SuppressWarnings("rawtypes")
+                    Class<?> aClass = (Class) (type.getActualTypeArguments()[0]);
+                    if (!AbacDto.class.isAssignableFrom(aClass)
+                            && !parameter.isAnnotationPresent(TilpassetAbacAttributt.class)
+                            && !IgnorerteInputTyper.ignore(aClass)) {
+                        feilmeldinger.append(String.format(
+                                feilmelding,
+                                restMethode.getDeclaringClass().getSimpleName(),
+                                restMethode.getName(),
+                                aClass.getSimpleName()));
                     }
                 } else {
-                    if (!AbacDto.class.isAssignableFrom(parameter.getType()) && !parameter.isAnnotationPresent(TilpassetAbacAttributt.class)
-                        && !IgnorerteInputTyper.ignore(parameter.getType())) {
-                        feilmeldinger.append(String.format(feilmelding, restMethode.getDeclaringClass().getSimpleName(), restMethode.getName(),
-                            parameter.getType().getSimpleName()));
+                    if (!AbacDto.class.isAssignableFrom(parameter.getType())
+                            && !parameter.isAnnotationPresent(TilpassetAbacAttributt.class)
+                            && !IgnorerteInputTyper.ignore(parameter.getType())) {
+                        feilmeldinger.append(String.format(
+                                feilmelding,
+                                restMethode.getDeclaringClass().getSimpleName(),
+                                restMethode.getName(),
+                                parameter.getType().getSimpleName()));
                     }
                 }
             }
@@ -83,15 +89,15 @@ class RestApiAbacTest {
         var klasse = metode.getDeclaringClass();
         var annotation = metode.getAnnotation(BeskyttetRessurs.class);
         if (annotation != null && annotation.actionType() == ActionType.DUMMY) {
-            fail(klasse.getSimpleName() + "." + metode.getName() + " Ikke bruk DUMMY-verdi for " + ActionType.class.getSimpleName());
-        } else if (annotation != null && annotation.resourceType() == ResourceType.DUMMY) {
+            fail(klasse.getSimpleName() + "." + metode.getName() + " Ikke bruk DUMMY-verdi for "
+                    + ActionType.class.getSimpleName());
+        } else if (annotation != null
+                && annotation.resourceType() == ResourceType.DUMMY) {
             fail(klasse.getSimpleName() + "." + metode.getName() + " En verdi for resource må være satt!");
         }
     }
 
-    /**
-     * Disse typene slipper naturligvis krav om impl av {@link AbacDto}
-     */
+    /** Disse typene slipper naturligvis krav om impl av {@link AbacDto} */
     enum IgnorerteInputTyper {
         BOOLEAN(Boolean.class),
         SERVLET(HttpServletRequest.class),

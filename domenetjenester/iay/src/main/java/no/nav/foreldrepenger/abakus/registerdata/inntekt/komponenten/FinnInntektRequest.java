@@ -45,8 +45,10 @@ public class FinnInntektRequest {
             return false;
         }
         FinnInntektRequest other = (FinnInntektRequest) obj;
-        return Objects.equals(this.fnr, other.fnr) && Objects.equals(this.aktørId, other.aktørId) && Objects.equals(this.fom, other.fom)
-            && Objects.equals(this.tom, other.tom);
+        return Objects.equals(this.fnr, other.fnr)
+                && Objects.equals(this.aktørId, other.aktørId)
+                && Objects.equals(this.fom, other.fom)
+                && Objects.equals(this.tom, other.tom);
     }
 
     @Override
@@ -58,8 +60,7 @@ public class FinnInntektRequest {
         private FinnInntektRequest kladd;
         private boolean gyldigTilstand;
 
-        private FinnInntektRequestBuilder() {
-        }
+        private FinnInntektRequestBuilder() {}
 
         public FinnInntektRequestBuilder medFnr(String fnr) {
             if (kladd.aktørId != null) {

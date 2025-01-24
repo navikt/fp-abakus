@@ -1,12 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -20,7 +13,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -56,16 +54,16 @@ public class AktørArbeid extends BaseEntitet implements IndexKey {
         // hibernate
     }
 
-    /**
-     * Deep copy ctor
-     */
+    /** Deep copy ctor */
     AktørArbeid(AktørArbeid aktørArbeid) {
         this.aktørId = aktørArbeid.getAktørId();
-        this.yrkesaktiviter = aktørArbeid.yrkesaktiviter.stream().map(yrkesaktivitet -> {
-            Yrkesaktivitet yrkes = new Yrkesaktivitet(yrkesaktivitet);
-            yrkes.setAktørArbeid(this);
-            return yrkes;
-        }).collect(Collectors.toCollection(LinkedHashSet::new));
+        this.yrkesaktiviter = aktørArbeid.yrkesaktiviter.stream()
+                .map(yrkesaktivitet -> {
+                    Yrkesaktivitet yrkes = new Yrkesaktivitet(yrkesaktivitet);
+                    yrkes.setAktørArbeid(this);
+                    return yrkes;
+                })
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
@@ -86,9 +84,7 @@ public class AktørArbeid extends BaseEntitet implements IndexKey {
         this.aktørId = aktørId;
     }
 
-    /**
-     * Alle yrkesaktiviteter (ufiltret ifht skjæringstidspunkt vurdering. )
-     */
+    /** Alle yrkesaktiviteter (ufiltret ifht skjæringstidspunkt vurdering. ) */
     public Collection<Yrkesaktivitet> hentAlleYrkesaktiviteter() {
         return Set.copyOf(yrkesaktiviter);
     }
@@ -107,17 +103,19 @@ public class AktørArbeid extends BaseEntitet implements IndexKey {
 
     YrkesaktivitetBuilder getYrkesaktivitetBuilderForNøkkel(Opptjeningsnøkkel identifikator, ArbeidType arbeidType) {
         Optional<Yrkesaktivitet> yrkesaktivitet = yrkesaktiviter.stream()
-            .filter(ya -> ya.getArbeidType().equals(arbeidType) && new Opptjeningsnøkkel(ya).equals(identifikator))
-            .findFirst();
+                .filter(ya -> ya.getArbeidType().equals(arbeidType) && new Opptjeningsnøkkel(ya).equals(identifikator))
+                .findFirst();
         final YrkesaktivitetBuilder oppdatere = YrkesaktivitetBuilder.oppdatere(yrkesaktivitet);
         oppdatere.medArbeidType(arbeidType);
         return oppdatere;
     }
 
-    YrkesaktivitetBuilder getYrkesaktivitetBuilderForNøkkel(Opptjeningsnøkkel identifikator, Set<ArbeidType> arbeidTyper) {
+    YrkesaktivitetBuilder getYrkesaktivitetBuilderForNøkkel(
+            Opptjeningsnøkkel identifikator, Set<ArbeidType> arbeidTyper) {
         Optional<Yrkesaktivitet> yrkesaktivitet = yrkesaktiviter.stream()
-            .filter(ya -> arbeidTyper.contains(ya.getArbeidType()) && new Opptjeningsnøkkel(ya).equals(identifikator))
-            .findFirst();
+                .filter(ya ->
+                        arbeidTyper.contains(ya.getArbeidType()) && new Opptjeningsnøkkel(ya).equals(identifikator))
+                .findFirst();
         final YrkesaktivitetBuilder oppdatere = YrkesaktivitetBuilder.oppdatere(yrkesaktivitet);
         if (!oppdatere.getErOppdatering()) {
             // Defaulter til ordinert arbeidsforhold hvis saksbehandler har lagt til fra GUI
@@ -133,12 +131,15 @@ public class AktørArbeid extends BaseEntitet implements IndexKey {
             yrkesaktiviter.removeIf(ya -> ya.getArbeidType().equals(arbeidType));
         } else {
             Opptjeningsnøkkel nøkkel = new Opptjeningsnøkkel(yrkesaktivitetKladd);
-            yrkesaktiviter.removeIf(ya -> ya.getArbeidType().equals(arbeidType) && new Opptjeningsnøkkel(ya).matcher(nøkkel));
+            yrkesaktiviter.removeIf(
+                    ya -> ya.getArbeidType().equals(arbeidType) && new Opptjeningsnøkkel(ya).matcher(nøkkel));
         }
     }
 
     YrkesaktivitetBuilder getYrkesaktivitetBuilderForType(ArbeidType type) {
-        Optional<Yrkesaktivitet> yrkesaktivitet = yrkesaktiviter.stream().filter(ya -> ya.getArbeidType().equals(type)).findFirst();
+        Optional<Yrkesaktivitet> yrkesaktivitet = yrkesaktiviter.stream()
+                .filter(ya -> ya.getArbeidType().equals(type))
+                .findFirst();
         final YrkesaktivitetBuilder oppdatere = YrkesaktivitetBuilder.oppdatere(yrkesaktivitet);
         oppdatere.medArbeidType(type);
         return oppdatere;
@@ -171,7 +172,9 @@ public class AktørArbeid extends BaseEntitet implements IndexKey {
     }
 
     void tilbakestillYrkesaktiviteter() {
-        this.yrkesaktiviter = yrkesaktiviter.stream().filter(Yrkesaktivitet::erYrkesaktivitetMedLegacyInnhold).collect(Collectors.toSet());
+        this.yrkesaktiviter = yrkesaktiviter.stream()
+                .filter(Yrkesaktivitet::erYrkesaktivitetMedLegacyInnhold)
+                .collect(Collectors.toSet());
     }
 
     void tilbakestillYrkesaktiviteterInklusiveInntektFrilans() {

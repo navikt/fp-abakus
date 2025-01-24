@@ -1,23 +1,19 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
-/**
- * <p>
- * Definerer statuser for bekreftet permisjoner
- * </p>
- */
-
+/** Definerer statuser for bekreftet permisjoner */
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-@JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
+@JsonAutoDetect(
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE,
+        fieldVisibility = Visibility.ANY)
 public enum BekreftetPermisjonStatus implements Kodeverdi {
-
     UDEFINERT("-", "UDEFINERT"),
     BRUK_PERMISJON("BRUK_PERMISJON", "Bruk permisjonen til arbeidsforholdet"),
     IKKE_BRUK_PERMISJON("IKKE_BRUK_PERMISJON", "Ikke bruk permisjonen til arbeidsforholdet"),
@@ -48,7 +44,8 @@ public enum BekreftetPermisjonStatus implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent BekreftetPermisjonStatus: " + kode));
+        return Optional.ofNullable(KODER.get(kode))
+                .orElseThrow(() -> new IllegalArgumentException("Ukjent BekreftetPermisjonStatus: " + kode));
     }
 
     public static Map<String, BekreftetPermisjonStatus> kodeMap() {
@@ -63,5 +60,4 @@ public enum BekreftetPermisjonStatus implements Kodeverdi {
     public String getKode() {
         return kode;
     }
-
 }

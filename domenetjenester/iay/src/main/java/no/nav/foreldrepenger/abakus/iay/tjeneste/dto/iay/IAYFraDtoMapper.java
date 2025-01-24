@@ -3,7 +3,6 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 import java.time.ZoneId;
 import java.util.Objects;
 import java.util.Optional;
-
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseAggregatOverstyrtDto;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat;
@@ -27,32 +26,39 @@ public class IAYFraDtoMapper {
     }
 
     /**
-     * Mapper oppdaterte data til grunnlag. Kan oppdatere tidligere grunnlag eller siste grunnlag på en kobling. Merk at det ikke nødvendigvis
-     * er tillatt å oppdatere tidliger grunnlag alltid (eks. OppgittOpptjening kan kun settes en gang).
+     * Mapper oppdaterte data til grunnlag. Kan oppdatere tidligere grunnlag eller siste grunnlag på en kobling. Merk at
+     * det ikke nødvendigvis er tillatt å oppdatere tidliger grunnlag alltid (eks. OppgittOpptjening kan kun settes en
+     * gang).
      */
-    public void mapOverstyringerTilGrunnlagBuilder(InntektArbeidYtelseAggregatOverstyrtDto overstyrt,
-                                                   ArbeidsforholdInformasjon arbeidsforholdInformasjon,
-                                                   InntektArbeidYtelseGrunnlagBuilder builder) {
-        var arbeidsforholdInformasjonBuilder = new MapArbeidsforholdInformasjon.MapFraDto(builder).map(arbeidsforholdInformasjon);
+    public void mapOverstyringerTilGrunnlagBuilder(
+            InntektArbeidYtelseAggregatOverstyrtDto overstyrt,
+            ArbeidsforholdInformasjon arbeidsforholdInformasjon,
+            InntektArbeidYtelseGrunnlagBuilder builder) {
+        var arbeidsforholdInformasjonBuilder =
+                new MapArbeidsforholdInformasjon.MapFraDto(builder).map(arbeidsforholdInformasjon);
         builder.medInformasjon(arbeidsforholdInformasjonBuilder.build());
 
         if (overstyrt != null) {
-            Optional<InntektArbeidYtelseAggregat> aggregatEntitet = iayTjeneste.hentIAYAggregatFor(koblingReferanse, overstyrt.getEksternReferanse());
+            Optional<InntektArbeidYtelseAggregat> aggregatEntitet =
+                    iayTjeneste.hentIAYAggregatFor(koblingReferanse, overstyrt.getEksternReferanse());
             if (aggregatEntitet.isPresent()) {
-                var aggregatBuilder = InntektArbeidYtelseAggregatBuilder.pekeTil(aggregatEntitet.get(), VersjonType.SAKSBEHANDLET);
+                var aggregatBuilder =
+                        InntektArbeidYtelseAggregatBuilder.pekeTil(aggregatEntitet.get(), VersjonType.SAKSBEHANDLET);
                 builder.medSaksbehandlet(aggregatBuilder);
             } else {
-                var tidspunkt = overstyrt.getOpprettetTidspunkt().atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
-                var saksbehandlerOverstyringer = iayTjeneste.opprettBuilderForSaksbehandlet(koblingReferanse, overstyrt.getEksternReferanse(),
-                    tidspunkt);
-                var overstyrtAktørArbeid = new MapAktørArbeid.MapFraDto(aktørId, saksbehandlerOverstyringer).map(overstyrt.getArbeid());
+                var tidspunkt = overstyrt
+                        .getOpprettetTidspunkt()
+                        .atZoneSameInstant(ZoneId.systemDefault())
+                        .toLocalDateTime();
+                var saksbehandlerOverstyringer = iayTjeneste.opprettBuilderForSaksbehandlet(
+                        koblingReferanse, overstyrt.getEksternReferanse(), tidspunkt);
+                var overstyrtAktørArbeid =
+                        new MapAktørArbeid.MapFraDto(aktørId, saksbehandlerOverstyringer).map(overstyrt.getArbeid());
                 overstyrtAktørArbeid.forEach(saksbehandlerOverstyringer::leggTilAktørArbeid);
                 builder.medSaksbehandlet(saksbehandlerOverstyringer);
             }
         } else {
-            builder.medSaksbehandlet(null);  // fjerner saksbehandlet versjon
+            builder.medSaksbehandlet(null); // fjerner saksbehandlet versjon
         }
-
     }
-
 }

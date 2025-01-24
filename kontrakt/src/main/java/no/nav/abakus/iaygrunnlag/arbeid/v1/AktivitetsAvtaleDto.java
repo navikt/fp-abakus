@@ -1,25 +1,28 @@
 package no.nav.abakus.iaygrunnlag.arbeid.v1;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDate;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
 import no.nav.abakus.iaygrunnlag.Periode;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class AktivitetsAvtaleDto {
 
     @JsonProperty("periode")
@@ -28,9 +31,9 @@ public class AktivitetsAvtaleDto {
     private Periode periode;
 
     /**
-     * Det går an å ha stillingprosent mer enn 100%, men innsendingsfeil hos LPS leverandører og manglende Altinn validering
-     * gjør at i noen historiske tilfeller har man akseptert innsending opp til 500% (typisk skjedd når man har tastet inn ett ukesverks antall
-     * timer i dag-felt i de systemene).
+     * Det går an å ha stillingprosent mer enn 100%, men innsendingsfeil hos LPS leverandører og manglende Altinn
+     * validering gjør at i noen historiske tilfeller har man akseptert innsending opp til 500% (typisk skjedd når man
+     * har tastet inn ett ukesverks antall timer i dag-felt i de systemene).
      */
     @JsonProperty("stillingsprosent")
     @Valid
@@ -47,8 +50,7 @@ public class AktivitetsAvtaleDto {
     @Valid
     private String beskrivelse;
 
-    protected AktivitetsAvtaleDto() {
-    }
+    protected AktivitetsAvtaleDto() {}
 
     public AktivitetsAvtaleDto(@Valid @NotNull Periode periode) {
         this.periode = periode;

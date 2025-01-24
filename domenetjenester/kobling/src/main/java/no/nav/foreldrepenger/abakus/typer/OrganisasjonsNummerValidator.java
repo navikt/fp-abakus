@@ -2,8 +2,7 @@ package no.nav.foreldrepenger.abakus.typer;
 
 public final class OrganisasjonsNummerValidator {
 
-    private OrganisasjonsNummerValidator() {
-    }
+    private OrganisasjonsNummerValidator() {}
 
     public static boolean erGyldig(String orgnummer) {
 

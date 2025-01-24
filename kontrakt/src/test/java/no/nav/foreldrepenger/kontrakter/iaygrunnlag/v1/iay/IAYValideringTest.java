@@ -2,15 +2,12 @@ package no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.iay;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import jakarta.validation.Validation;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
-import jakarta.validation.Validation;
-
-import org.junit.jupiter.api.Test;
-
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittEgenNæringDto;
+import org.junit.jupiter.api.Test;
 
 class IAYValideringTest {
 
@@ -37,7 +34,6 @@ class IAYValideringTest {
                 assertThat(violations).isEmpty();
             } else {
                 assertThat(violations).isNotEmpty();
-
             }
         }
     }
