@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold;
 
 import java.util.Objects;
-
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 
 public class ArbeidsforholdIdentifikator {
@@ -9,7 +8,8 @@ public class ArbeidsforholdIdentifikator {
     private EksternArbeidsforholdRef arbeidsforholdId;
     private String type;
 
-    public ArbeidsforholdIdentifikator(Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef arbeidsforholdId, String type) {
+    public ArbeidsforholdIdentifikator(
+            Arbeidsgiver arbeidsgiver, EksternArbeidsforholdRef arbeidsforholdId, String type) {
         this.arbeidsgiver = arbeidsgiver;
         this.arbeidsforholdId = arbeidsforholdId;
         this.type = type;
@@ -33,8 +33,8 @@ public class ArbeidsforholdIdentifikator {
 
     @Override
     public String toString() {
-        return "ArbeidsforholdIdentifikator{" + "arbeidsgiver=" + arbeidsgiver + ", arbeidsforholdId=" + arbeidsforholdId + ", type='" + type + '\''
-            + '}';
+        return "ArbeidsforholdIdentifikator{" + "arbeidsgiver=" + arbeidsgiver + ", arbeidsforholdId="
+                + arbeidsforholdId + ", type='" + type + '\'' + '}';
     }
 
     @Override
@@ -46,8 +46,9 @@ public class ArbeidsforholdIdentifikator {
             return false;
         }
         ArbeidsforholdIdentifikator that = (ArbeidsforholdIdentifikator) o;
-        return Objects.equals(arbeidsgiver, that.arbeidsgiver) && Objects.equals(arbeidsforholdId, that.arbeidsforholdId) && Objects.equals(type,
-            that.type);
+        return Objects.equals(arbeidsgiver, that.arbeidsgiver)
+                && Objects.equals(arbeidsforholdId, that.arbeidsforholdId)
+                && Objects.equals(type, that.type);
     }
 
     @Override

@@ -1,10 +1,5 @@
 package no.nav.foreldrepenger.abakus.vedtak.tjeneste;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
-
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +13,10 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
 import no.nav.abakus.vedtak.ytelse.Aktør;
 import no.nav.abakus.vedtak.ytelse.Ytelse;
 import no.nav.abakus.vedtak.ytelse.request.VedtakForPeriodeRequest;
@@ -43,8 +42,7 @@ public class YtelseRestTjeneste {
     private VedtakYtelseRepository ytelseRepository;
     private AktørTjeneste aktørTjeneste;
 
-    public YtelseRestTjeneste() {
-    } // CDI Ctor
+    public YtelseRestTjeneste() {} // CDI Ctor
 
     @Inject
     public YtelseRestTjeneste(VedtakYtelseRepository ytelseRepository, AktørTjeneste aktørTjeneste) {
@@ -52,9 +50,7 @@ public class YtelseRestTjeneste {
         this.aktørTjeneste = aktørTjeneste;
     }
 
-    /**
-     * Intern bruk - kun fra fpsak så langt
-     */
+    /** Intern bruk - kun fra fpsak så langt */
     @POST
     @Path("/hent-vedtak-ytelse")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -62,21 +58,23 @@ public class YtelseRestTjeneste {
     @Operation(description = "Henter alle vedtak for en gitt person, evt med periode etter en fom", tags = "ytelse")
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.APPLIKASJON)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public List<Ytelse> hentVedtakYtelse(@NotNull @TilpassetAbacAttributt(supplierClass = VedtakForPeriodeRequestAbacDataSupplier.class) @Valid VedtakForPeriodeRequest request) {
+    public List<Ytelse> hentVedtakYtelse(
+            @NotNull @TilpassetAbacAttributt(supplierClass = VedtakForPeriodeRequestAbacDataSupplier.class) @Valid
+                    VedtakForPeriodeRequest request) {
 
         if (request.getYtelser().isEmpty()) {
             return List.of();
         }
 
         Set<AktørId> aktørIder = utledAktørIdFraRequest(request.getIdent());
-        var periode = IntervallEntitet.fraOgMedTilOgMed(request.getPeriode().getFom(), request.getPeriode().getTom());
+        var periode = IntervallEntitet.fraOgMedTilOgMed(
+                request.getPeriode().getFom(), request.getPeriode().getTom());
         var ytelser = new ArrayList<Ytelse>();
         for (AktørId aktørId : aktørIder) {
-            ytelser.addAll(ytelseRepository.hentYtelserForIPeriode(aktørId, periode)
-                .stream()
-                .filter(it -> request.getYtelser().contains(ConvertToYtelseV1.mapYtelser(it.getYtelseType())))
-                .map(ConvertToYtelseV1::convert)
-                .toList());
+            ytelser.addAll(ytelseRepository.hentYtelserForIPeriode(aktørId, periode).stream()
+                    .filter(it -> request.getYtelser().contains(ConvertToYtelseV1.mapYtelser(it.getYtelseType())))
+                    .map(ConvertToYtelseV1::convert)
+                    .toList());
         }
 
         return ytelser;
@@ -91,15 +89,15 @@ public class YtelseRestTjeneste {
 
     public static class VedtakForPeriodeRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
-        public VedtakForPeriodeRequestAbacDataSupplier() {
-        }
+        public VedtakForPeriodeRequestAbacDataSupplier() {}
 
         @Override
         public AbacDataAttributter apply(Object obj) {
             var req = (VedtakForPeriodeRequest) obj;
-            var attributeType = req.getIdent().erAktørId() ? StandardAbacAttributtType.AKTØR_ID : StandardAbacAttributtType.FNR;
-            return AbacDataAttributter.opprett().leggTil(attributeType, req.getIdent().getVerdi());
+            var attributeType =
+                    req.getIdent().erAktørId() ? StandardAbacAttributtType.AKTØR_ID : StandardAbacAttributtType.FNR;
+            return AbacDataAttributter.opprett()
+                    .leggTil(attributeType, req.getIdent().getVerdi());
         }
     }
-
 }

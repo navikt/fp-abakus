@@ -1,16 +1,12 @@
 package no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import jakarta.enterprise.context.ApplicationScoped;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.tjenester.aordningen.inntektsinformasjon.Aktoer;
 import no.nav.tjenester.aordningen.inntektsinformasjon.ArbeidsInntektIdent;
@@ -29,16 +25,22 @@ import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
-@RestClientConfig(tokenConfig = TokenFlow.AZUREAD_CC, endpointProperty = "hentinntektlistebolk.url", endpointDefault = "https://app.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk",
-    scopesProperty = "hentinntektlistebolk.scopes", scopesDefault = "api://prod-fss.team-inntekt.inntektskomponenten/.default")
+@RestClientConfig(
+        tokenConfig = TokenFlow.AZUREAD_CC,
+        endpointProperty = "hentinntektlistebolk.url",
+        endpointDefault = "https://app.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk",
+        scopesProperty = "hentinntektlistebolk.scopes",
+        scopesDefault = "api://prod-fss.team-inntekt.inntektskomponenten/.default")
 public class InntektTjeneste {
 
     // Dato for eldste request til inntk - det er av og til noen ES saker som spør lenger tilbake i tid
     private static final YearMonth INNTK_TIDLIGSTE_DATO = YearMonth.of(2015, 7);
-    private static final Set<InntektskildeType> SKAL_PERIODISERE_INNTEKTSKILDE = Set.of(InntektskildeType.INNTEKT_SAMMENLIGNING,
-        InntektskildeType.INNTEKT_BEREGNING);
+    private static final Set<InntektskildeType> SKAL_PERIODISERE_INNTEKTSKILDE =
+            Set.of(InntektskildeType.INNTEKT_SAMMENLIGNING, InntektskildeType.INNTEKT_BEREGNING);
 
     private static final Logger LOG = LoggerFactory.getLogger(InntektTjeneste.class);
 
@@ -53,14 +55,18 @@ public class InntektTjeneste {
     public InntektTjeneste(RestClient restClient) {
         this.restClient = restClient;
         this.restConfig = RestConfig.forClient(this.getClass());
-        this.kildeTilFilter = Map.of(InntektskildeType.INNTEKT_OPPTJENING, InntektsFilter.OPPTJENINGSGRUNNLAG, InntektskildeType.INNTEKT_BEREGNING,
-            InntektsFilter.BEREGNINGSGRUNNLAG, InntektskildeType.INNTEKT_SAMMENLIGNING, InntektsFilter.SAMMENLIGNINGSGRUNNLAG);
+        this.kildeTilFilter = Map.of(
+                InntektskildeType.INNTEKT_OPPTJENING,
+                InntektsFilter.OPPTJENINGSGRUNNLAG,
+                InntektskildeType.INNTEKT_BEREGNING,
+                InntektsFilter.BEREGNINGSGRUNNLAG,
+                InntektskildeType.INNTEKT_SAMMENLIGNING,
+                InntektsFilter.SAMMENLIGNINGSGRUNNLAG);
     }
 
     public InntektsInformasjon finnInntekt(FinnInntektRequest finnInntektRequest, InntektskildeType kilde) {
         HentInntektListeBolkResponse response = finnInntektRaw(finnInntektRequest, kilde);
         return oversettResponse(response, kilde);
-
     }
 
     public HentInntektListeBolkResponse finnInntektRaw(FinnInntektRequest finnInntektRequest, InntektskildeType kilde) {
@@ -70,8 +76,10 @@ public class InntektTjeneste {
         try {
             response = restClient.send(request, HentInntektListeBolkResponse.class);
         } catch (RuntimeException e) {
-            throw new IntegrasjonException("FP-824246",
-                "Feil ved kall til inntektstjenesten. Meld til #team_registre og #produksjonshendelser hvis dette skjer over lengre tidsperiode.", e);
+            throw new IntegrasjonException(
+                    "FP-824246",
+                    "Feil ved kall til inntektstjenesten. Meld til #team_registre og #produksjonshendelser hvis dette skjer over lengre tidsperiode.",
+                    e);
         }
         return response;
     }
@@ -90,8 +98,14 @@ public class InntektTjeneste {
             request.setAinntektsfilter(filter.getKode());
             request.setFormaal(filter.getFormål().getKode());
         }
-        request.setMaanedFom(finnInntektRequest.getFom().isAfter(INNTK_TIDLIGSTE_DATO) ? finnInntektRequest.getFom() : INNTK_TIDLIGSTE_DATO);
-        request.setMaanedTom(finnInntektRequest.getTom().isAfter(INNTK_TIDLIGSTE_DATO) ? finnInntektRequest.getTom() : INNTK_TIDLIGSTE_DATO);
+        request.setMaanedFom(
+                finnInntektRequest.getFom().isAfter(INNTK_TIDLIGSTE_DATO)
+                        ? finnInntektRequest.getFom()
+                        : INNTK_TIDLIGSTE_DATO);
+        request.setMaanedTom(
+                finnInntektRequest.getTom().isAfter(INNTK_TIDLIGSTE_DATO)
+                        ? finnInntektRequest.getTom()
+                        : INNTK_TIDLIGSTE_DATO);
         return RestRequest.newPOSTJson(request, restConfig.endpoint(), restConfig);
     }
 
@@ -101,9 +115,13 @@ public class InntektTjeneste {
     }
 
     private InntektsInformasjon oversettResponse(HentInntektListeBolkResponse response, InntektskildeType kilde) {
-        if (response.getSikkerhetsavvikListe() != null && !response.getSikkerhetsavvikListe().isEmpty()) {
-            throw new IntegrasjonException("FP-535194",
-                String.format("Fikk følgende sikkerhetsavvik ved kall til inntektstjenesten: %s.", byggSikkerhetsavvikString(response)));
+        if (response.getSikkerhetsavvikListe() != null
+                && !response.getSikkerhetsavvikListe().isEmpty()) {
+            throw new IntegrasjonException(
+                    "FP-535194",
+                    String.format(
+                            "Fikk følgende sikkerhetsavvik ved kall til inntektstjenesten: %s.",
+                            byggSikkerhetsavvikString(response)));
         }
 
         List<Månedsinntekt> månedsinntekter = new ArrayList<>();
@@ -121,21 +139,25 @@ public class InntektTjeneste {
         return new InntektsInformasjon(månedsinntekter, kilde);
     }
 
-    private void oversettInntekter(List<Månedsinntekt> månedsinntekter,
-                                                        ArbeidsInntektMaaned arbeidsInntektMaaned,
-                                                        InntektskildeType kilde) {
+    private void oversettInntekter(
+            List<Månedsinntekt> månedsinntekter, ArbeidsInntektMaaned arbeidsInntektMaaned, InntektskildeType kilde) {
         var arbeidsInntektInformasjon = arbeidsInntektMaaned.getArbeidsInntektInformasjon();
 
         if (arbeidsInntektInformasjon != null && arbeidsInntektInformasjon.getInntektListe() != null) {
             for (var inntekt : arbeidsInntektInformasjon.getInntektListe()) {
                 var brukYM = inntekt.getUtbetaltIMaaned();
                 var tilleggsinformasjon = inntekt.getTilleggsinformasjon();
-                if (erYtelseFraOffentlig(inntekt) && erEtterbetaling(tilleggsinformasjon) && skalPeriodisereInntektsKilde(kilde)) {
+                if (erYtelseFraOffentlig(inntekt)
+                        && erEtterbetaling(tilleggsinformasjon)
+                        && skalPeriodisereInntektsKilde(kilde)) {
                     brukYM = YearMonth.from(
-                        ((Etterbetalingsperiode) tilleggsinformasjon.getTilleggsinformasjonDetaljer()).getEtterbetalingsperiodeFom().plusDays(1));
+                            ((Etterbetalingsperiode) tilleggsinformasjon.getTilleggsinformasjonDetaljer())
+                                    .getEtterbetalingsperiodeFom()
+                                    .plusDays(1));
                 }
-                var månedsinntekt = new Månedsinntekt.Builder().medBeløp(inntekt.getBeloep())
-                    .medSkatteOgAvgiftsregelType(inntekt.getSkatteOgAvgiftsregel());
+                var månedsinntekt = new Månedsinntekt.Builder()
+                        .medBeløp(inntekt.getBeloep())
+                        .medSkatteOgAvgiftsregelType(inntekt.getSkatteOgAvgiftsregel());
 
                 if (brukYM != null) {
                     månedsinntekt.medMåned(brukYM);
@@ -152,8 +174,9 @@ public class InntektTjeneste {
     }
 
     private boolean erEtterbetaling(Tilleggsinformasjon tilleggsinformasjon) {
-        return tilleggsinformasjon != null && TilleggsinformasjonDetaljerType.ETTERBETALINGSPERIODE.equals(
-            tilleggsinformasjon.getTilleggsinformasjonDetaljer().getDetaljerType());
+        return tilleggsinformasjon != null
+                && TilleggsinformasjonDetaljerType.ETTERBETALINGSPERIODE.equals(
+                        tilleggsinformasjon.getTilleggsinformasjonDetaljer().getDetaljerType());
     }
 
     private void utledOgSettUtbetalerOgYtelse(Inntekt inntekt, Månedsinntekt.Builder månedsinntekt) {
@@ -165,12 +188,16 @@ public class InntektTjeneste {
             månedsinntekt.medYtelse(true).medNæringsinntektKode(inntekt.getBeskrivelse());
         } else if (erLønn(inntekt)) {
             månedsinntekt.medYtelse(false);
-            månedsinntekt.medArbeidsgiver(inntekt.getVirksomhet().getIdentifikator()); // OK med NPE hvis inntekt.getArbeidsgiver() er null
+            månedsinntekt.medArbeidsgiver(
+                    inntekt.getVirksomhet().getIdentifikator()); // OK med NPE hvis inntekt.getArbeidsgiver() er null
             månedsinntekt.medArbeidsforholdRef(inntekt.getArbeidsforholdREF());
             månedsinntekt.medLønnsbeskrivelseKode(inntekt.getBeskrivelse());
         } else {
-            throw new TekniskException("FP-711674", String.format("Kunne ikke mappe svar fra Inntektskomponenten: virksomhet=%s, inntektType=%s",
-                inntekt.getVirksomhet().getIdentifikator(), inntekt.getInntektType()));
+            throw new TekniskException(
+                    "FP-711674",
+                    String.format(
+                            "Kunne ikke mappe svar fra Inntektskomponenten: virksomhet=%s, inntektType=%s",
+                            inntekt.getVirksomhet().getIdentifikator(), inntekt.getInntektType()));
         }
     }
 

@@ -1,5 +1,8 @@
 package no.nav.foreldrepenger.abakus.felles.diff;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Version;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,22 +11,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Version;
-
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
-
 /**
  * Denne klassen kan traverse en Entity graph og trekk ut verdier som key/value.
- * <p>
- * Genererte verdier, {@link Id}, {@link Version}, {@link GeneratedValue} vil ignoreres.
- * <p>
- * Bør opprette ny instans for hver gang det brukes til sammenligning.
+ *
+ * <p>Genererte verdier, {@link Id}, {@link Version}, {@link GeneratedValue} vil ignoreres.
+ *
+ * <p>Bør opprette ny instans for hver gang det brukes til sammenligning.
  */
 public class TraverseGraph {
 
@@ -80,7 +77,6 @@ public class TraverseGraph {
             // hånter alt annet (vanlige felter)
             doTraverseRecursiveInternal(currentPath, result, obj);
         }
-
     }
 
     private void doTraverseRecursiveInternal(Node currentPath, TraverseResult result, Object obj) {

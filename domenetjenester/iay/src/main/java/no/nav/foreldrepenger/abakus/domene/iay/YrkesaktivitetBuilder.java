@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.util.Optional;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
@@ -103,14 +102,14 @@ public class YrkesaktivitetBuilder {
         return kladd;
     }
 
-    public AktivitetsAvtaleBuilder getAktivitetsAvtaleBuilder(IntervallEntitet aktivitetsPeriode, boolean erAnsettelsesperioden) {
-        AktivitetsAvtaleBuilder oppdater = AktivitetsAvtaleBuilder.oppdater(kladd.getAlleAktivitetsAvtaler()
-            .stream()
-            .filter(aa -> aa.matcherPeriode(aktivitetsPeriode) && (!ArbeidType.erRegisterType(kladd.getArbeidType())
-                || aa.erAnsettelsesPeriode() == erAnsettelsesperioden))
-            .findFirst());
+    public AktivitetsAvtaleBuilder getAktivitetsAvtaleBuilder(
+            IntervallEntitet aktivitetsPeriode, boolean erAnsettelsesperioden) {
+        AktivitetsAvtaleBuilder oppdater = AktivitetsAvtaleBuilder.oppdater(kladd.getAlleAktivitetsAvtaler().stream()
+                .filter(aa -> aa.matcherPeriode(aktivitetsPeriode)
+                        && (!ArbeidType.erRegisterType(kladd.getArbeidType())
+                                || aa.erAnsettelsesPeriode() == erAnsettelsesperioden))
+                .findFirst());
         oppdater.medPeriode(aktivitetsPeriode);
         return oppdater;
     }
-
 }

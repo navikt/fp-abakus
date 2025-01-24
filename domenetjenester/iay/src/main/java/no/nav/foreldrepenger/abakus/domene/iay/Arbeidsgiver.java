@@ -1,14 +1,12 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.io.Serializable;
-import java.util.Objects;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
-
+import java.io.Serializable;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -20,11 +18,13 @@ import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 @Embeddable
 public class Arbeidsgiver implements IndexKey, TraverseValue, Serializable {
     /**
-     * Kun en av denne og {@link #arbeidsgiverAktørId} kan være satt. Sett denne hvis ArbeidsgiverEntitet er en Organisasjon.
+     * Kun en av denne og {@link #arbeidsgiverAktørId} kan være satt. Sett denne hvis ArbeidsgiverEntitet er en
+     * Organisasjon.
      */
     @ChangeTracked
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "orgNummer", column = @Column(name = "arbeidsgiver_orgnr", updatable = false)))
+    @AttributeOverrides(
+            @AttributeOverride(name = "orgNummer", column = @Column(name = "arbeidsgiver_orgnr", updatable = false)))
     private OrgNummer arbeidsgiverOrgnr;
 
     /**
@@ -32,7 +32,8 @@ public class Arbeidsgiver implements IndexKey, TraverseValue, Serializable {
      */
     @ChangeTracked
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "arbeidsgiver_aktor_id", updatable = false)))
+    @AttributeOverrides(
+            @AttributeOverride(name = "aktørId", column = @Column(name = "arbeidsgiver_aktor_id", updatable = false)))
     private AktørId arbeidsgiverAktørId;
 
     private Arbeidsgiver(OrgNummer arbeidsgiverOrgnr, AktørId arbeidsgiverAktørId) {
@@ -72,8 +73,8 @@ public class Arbeidsgiver implements IndexKey, TraverseValue, Serializable {
     }
 
     /**
-     * Returneer ident for ArbeidsgiverEntitet. Kan være Org nummer eller AktørDto id (dersom ArbeidsgiverEntitet er en enkelt person -
-     * f.eks. for Frilans el.)
+     * Returneer ident for ArbeidsgiverEntitet. Kan være Org nummer eller AktørDto id (dersom ArbeidsgiverEntitet er en
+     * enkelt person - f.eks. for Frilans el.)
      */
     public String getIdentifikator() {
         if (arbeidsgiverAktørId != null) {
@@ -82,16 +83,12 @@ public class Arbeidsgiver implements IndexKey, TraverseValue, Serializable {
         return arbeidsgiverOrgnr.getId();
     }
 
-    /**
-     * Return true hvis ArbeidsgiverEntitet er en {@link Virksomhet}, false hvis en Person.
-     */
+    /** Return true hvis ArbeidsgiverEntitet er en {@link Virksomhet}, false hvis en Person. */
     public boolean getErVirksomhet() {
         return this.arbeidsgiverOrgnr != null;
     }
 
-    /**
-     * Return true hvis ArbeidsgiverEntitet er en {@link AktørId}, ellers false.
-     */
+    /** Return true hvis ArbeidsgiverEntitet er en {@link AktørId}, ellers false. */
     public boolean erAktørId() {
         return this.arbeidsgiverAktørId != null;
     }
@@ -105,7 +102,8 @@ public class Arbeidsgiver implements IndexKey, TraverseValue, Serializable {
             return false;
         }
         Arbeidsgiver that = (Arbeidsgiver) o;
-        return Objects.equals(arbeidsgiverOrgnr, that.arbeidsgiverOrgnr) && Objects.equals(arbeidsgiverAktørId, that.arbeidsgiverAktørId);
+        return Objects.equals(arbeidsgiverOrgnr, that.arbeidsgiverOrgnr)
+                && Objects.equals(arbeidsgiverAktørId, that.arbeidsgiverAktørId);
     }
 
     @Override
@@ -115,7 +113,7 @@ public class Arbeidsgiver implements IndexKey, TraverseValue, Serializable {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" + "arbeidsgiverOrgnr=" + arbeidsgiverOrgnr + ", arbeidsgiverAktørId='" + arbeidsgiverAktørId + '\''
-            + '>';
+        return getClass().getSimpleName() + "<" + "arbeidsgiverOrgnr=" + arbeidsgiverOrgnr + ", arbeidsgiverAktørId='"
+                + arbeidsgiverAktørId + '\'' + '>';
     }
 }

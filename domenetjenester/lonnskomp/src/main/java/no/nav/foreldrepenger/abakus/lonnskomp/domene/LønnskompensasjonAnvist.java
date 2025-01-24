@@ -1,10 +1,5 @@
 package no.nav.foreldrepenger.abakus.lonnskomp.domene;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Objects;
-import java.util.Optional;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -17,7 +12,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Objects;
+import java.util.Optional;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -55,7 +53,8 @@ public class LønnskompensasjonAnvist extends BaseEntitet implements IndexKey {
     }
 
     public LønnskompensasjonAnvist(LønnskompensasjonAnvist ytelseAnvist) {
-        this.anvistPeriode = IntervallEntitet.fraOgMedTilOgMed(ytelseAnvist.getAnvistFom(), ytelseAnvist.getAnvistTom());
+        this.anvistPeriode =
+                IntervallEntitet.fraOgMedTilOgMed(ytelseAnvist.getAnvistFom(), ytelseAnvist.getAnvistTom());
         this.beløp = ytelseAnvist.getBeløp().orElse(null);
     }
 
@@ -137,6 +136,5 @@ public class LønnskompensasjonAnvist extends BaseEntitet implements IndexKey {
         public LønnskompensasjonAnvist build() {
             return anvist;
         }
-
     }
 }

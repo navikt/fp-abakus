@@ -2,19 +2,17 @@ package no.nav.foreldrepenger.abakus.app.exceptions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import ch.qos.logback.classic.Level;
 import jakarta.ws.rs.core.Response;
-
+import no.nav.vedtak.exception.FunksjonellException;
+import no.nav.vedtak.exception.ManglerTilgangException;
+import no.nav.vedtak.exception.TekniskException;
+import no.nav.vedtak.log.util.MemoryAppender;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-
-import ch.qos.logback.classic.Level;
-import no.nav.vedtak.exception.FunksjonellException;
-import no.nav.vedtak.exception.ManglerTilgangException;
-import no.nav.vedtak.exception.TekniskException;
-import no.nav.vedtak.log.util.MemoryAppender;
 
 @Execution(ExecutionMode.SAME_THREAD)
 class GeneralRestExceptionMapperTest {
@@ -55,7 +53,8 @@ class GeneralRestExceptionMapperTest {
 
         assertThat(feilDto.type()).isEqualTo(FeilType.MANGLER_TILGANG_FEIL);
         assertThat(feilDto.feilmelding()).contains("ManglerTilgangFeilmeldingKode");
-        assertThat(logSniffer.search("ManglerTilgangFeilmeldingKode", Level.WARN)).isEmpty();
+        assertThat(logSniffer.search("ManglerTilgangFeilmeldingKode", Level.WARN))
+                .isEmpty();
     }
 
     @Test
@@ -126,5 +125,4 @@ class GeneralRestExceptionMapperTest {
         assertThat(feilDto.feilmelding()).contains(feilmelding);
         assertThat(logSniffer.search(feilmelding, Level.WARN)).hasSize(1);
     }
-
 }

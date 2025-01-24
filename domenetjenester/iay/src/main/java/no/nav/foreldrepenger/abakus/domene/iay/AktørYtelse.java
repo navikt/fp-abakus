@@ -1,14 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -22,6 +13,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
@@ -37,24 +36,32 @@ import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 public class AktørYtelse extends BaseEntitet implements IndexKey {
 
     /**
-     * Her legger man inn ytelser/kilder som er innhentet tidligere, men som ikke blir reinnhentet etter sanering av integrasjon
-     * Nye søknader vil ikke ha disse i opptjeningen -> saner integrasjon.
-     * - SVP Siste SVP / Infotrygd ble innvilget høst 2019 og løp ut mars 2020.
-     * - FP Siste utbetaling av foreldrepenger var tom januar 2022
+     * Her legger man inn ytelser/kilder som er innhentet tidligere, men som ikke blir reinnhentet etter sanering av
+     * integrasjon Nye søknader vil ikke ha disse i opptjeningen -> saner integrasjon. - SVP Siste SVP / Infotrygd ble
+     * innvilget høst 2019 og løp ut mars 2020. - FP Siste utbetaling av foreldrepenger var tom januar 2022
      */
-    private static final Set<YtelseType> UTGÅTT_INFOTRYGD = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER);
+    private static final Set<YtelseType> UTGÅTT_INFOTRYGD =
+            Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER);
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_AKTOER_YTELSE")
     private Long id;
+
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id", nullable = false, updatable = false)))
+    @AttributeOverrides(
+            @AttributeOverride(
+                    name = "aktørId",
+                    column = @Column(name = "aktoer_id", nullable = false, updatable = false)))
     private AktørId aktørId;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "inntekt_arbeid_ytelser_id", nullable = false, updatable = false)
     private InntektArbeidYtelseAggregat inntektArbeidYtelser;
+
     @OneToMany(mappedBy = "aktørYtelse")
     @ChangeTracked
     private Set<Ytelse> ytelser = new LinkedHashSet<>();
+
     @Version
     @Column(name = "versjon", nullable = false)
     private long versjon;
@@ -63,16 +70,16 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
         // hibernate
     }
 
-    /**
-     * Deep copy ctor
-     */
+    /** Deep copy ctor */
     AktørYtelse(AktørYtelse aktørYtelse) {
         this.aktørId = aktørYtelse.getAktørId();
-        this.ytelser = aktørYtelse.getAlleYtelser().stream().map(ytelse -> {
-            Ytelse ytelseEntitet = new Ytelse(ytelse);
-            ytelseEntitet.setAktørYtelse(this);
-            return ytelseEntitet;
-        }).collect(Collectors.toCollection(LinkedHashSet::new));
+        this.ytelser = aktørYtelse.getAlleYtelser().stream()
+                .map(ytelse -> {
+                    Ytelse ytelseEntitet = new Ytelse(ytelse);
+                    ytelseEntitet.setAktørYtelse(this);
+                    return ytelseEntitet;
+                })
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     private static boolean beholdLegacyYtelseFraKilde(Ytelse y) {
@@ -98,9 +105,7 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
         this.aktørId = aktørId;
     }
 
-    /**
-     * Alle tilstøende ytelser (ufiltrert).
-     */
+    /** Alle tilstøende ytelser (ufiltrert). */
     public Collection<Ytelse> getAlleYtelser() {
         return List.copyOf(ytelser);
     }
@@ -115,57 +120,83 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
 
     YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, YtelseType type, Saksnummer saksnummer) {
         Optional<Ytelse> ytelse = getAlleYtelser().stream()
-            .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type) && ya.getSaksreferanse().equals(saksnummer))
-            .findFirst();
-        return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medSaksreferanse(saksnummer);
+                .filter(ya -> ya.getKilde().equals(fagsystem)
+                        && ya.getRelatertYtelseType().equals(type)
+                        && ya.getSaksreferanse().equals(saksnummer))
+                .findFirst();
+        return YtelseBuilder.oppdatere(ytelse)
+                .medYtelseType(type)
+                .medKilde(fagsystem)
+                .medSaksreferanse(saksnummer);
     }
 
-    YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem,
-                                          YtelseType type,
-                                          Saksnummer saksnummer,
-                                          IntervallEntitet periode,
-                                          Optional<LocalDate> tidligsteAnvistFom) {
+    YtelseBuilder getYtelseBuilderForType(
+            Fagsystem fagsystem,
+            YtelseType type,
+            Saksnummer saksnummer,
+            IntervallEntitet periode,
+            Optional<LocalDate> tidligsteAnvistFom) {
         // OBS kan være flere med samme Saksnummer+FOM: Konvensjon ifm satsjustering
         List<Ytelse> aktuelleYtelser = getAlleYtelser().stream()
-            .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type) && (saksnummer.equals(ya.getSaksreferanse())
-                && periode.getFomDato().equals(ya.getPeriode().getFomDato())))
-            .collect(Collectors.toList());
-        Optional<Ytelse> ytelse = aktuelleYtelser.stream().filter(ya -> periode.equals(ya.getPeriode())).findFirst();
+                .filter(ya -> ya.getKilde().equals(fagsystem)
+                        && ya.getRelatertYtelseType().equals(type)
+                        && (saksnummer.equals(ya.getSaksreferanse())
+                                && periode.getFomDato().equals(ya.getPeriode().getFomDato())))
+                .collect(Collectors.toList());
+        Optional<Ytelse> ytelse = aktuelleYtelser.stream()
+                .filter(ya -> periode.equals(ya.getPeriode()))
+                .findFirst();
         if (ytelse.isEmpty() && !aktuelleYtelser.isEmpty()) {
-            // Håndtere endret TOM-dato som regel ifm at ytelsen er opphørt. Hvis flere med samme FOM-dato sjekk anvist-fom
+            // Håndtere endret TOM-dato som regel ifm at ytelsen er opphørt. Hvis flere med samme FOM-dato sjekk
+            // anvist-fom
             if (tidligsteAnvistFom.isPresent()) {
                 ytelse = aktuelleYtelser.stream()
-                    .filter(yt -> yt.getYtelseAnvist().stream().anyMatch(ya -> tidligsteAnvistFom.get().equals(ya.getAnvistFOM())))
-                    .findFirst();
+                        .filter(yt -> yt.getYtelseAnvist().stream()
+                                .anyMatch(ya -> tidligsteAnvistFom.get().equals(ya.getAnvistFOM())))
+                        .findFirst();
             }
             if (ytelse.isEmpty()) {
-                ytelse = aktuelleYtelser.stream().filter(yt -> yt.getYtelseAnvist().isEmpty()).findFirst();
+                ytelse = aktuelleYtelser.stream()
+                        .filter(yt -> yt.getYtelseAnvist().isEmpty())
+                        .findFirst();
             }
         }
-        return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medSaksreferanse(saksnummer);
+        return YtelseBuilder.oppdatere(ytelse)
+                .medYtelseType(type)
+                .medKilde(fagsystem)
+                .medSaksreferanse(saksnummer);
     }
 
-    YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem,
-                                          YtelseType type, IntervallEntitet periode,
-                                          Optional<LocalDate> tidligsteAnvistFom) {
+    YtelseBuilder getYtelseBuilderForType(
+            Fagsystem fagsystem, YtelseType type, IntervallEntitet periode, Optional<LocalDate> tidligsteAnvistFom) {
         // OBS kan være flere med samme Tema/TUK+FOM: Konvensjon ifm rammevedtak BS
         List<Ytelse> aktuelleYtelser = getAlleYtelser().stream()
-            .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type)
-                && (periode.getFomDato().equals(ya.getPeriode().getFomDato())))
-            .collect(Collectors.toList());
-        Optional<Ytelse> ytelse = aktuelleYtelser.stream().filter(ya -> periode.equals(ya.getPeriode())).findFirst();
+                .filter(ya -> ya.getKilde().equals(fagsystem)
+                        && ya.getRelatertYtelseType().equals(type)
+                        && (periode.getFomDato().equals(ya.getPeriode().getFomDato())))
+                .collect(Collectors.toList());
+        Optional<Ytelse> ytelse = aktuelleYtelser.stream()
+                .filter(ya -> periode.equals(ya.getPeriode()))
+                .findFirst();
         if (ytelse.isEmpty() && !aktuelleYtelser.isEmpty()) {
-            // Håndtere endret TOM-dato som regel ifm at ytelsen er opphørt. Hvis flere med samme FOM-dato sjekk anvist-fom
+            // Håndtere endret TOM-dato som regel ifm at ytelsen er opphørt. Hvis flere med samme FOM-dato sjekk
+            // anvist-fom
             if (tidligsteAnvistFom.isPresent()) {
                 ytelse = aktuelleYtelser.stream()
-                    .filter(yt -> yt.getYtelseAnvist().stream().anyMatch(ya -> tidligsteAnvistFom.get().equals(ya.getAnvistFOM())))
-                    .findFirst();
+                        .filter(yt -> yt.getYtelseAnvist().stream()
+                                .anyMatch(ya -> tidligsteAnvistFom.get().equals(ya.getAnvistFOM())))
+                        .findFirst();
             }
             if (ytelse.isEmpty()) {
-                ytelse = aktuelleYtelser.stream().filter(yt -> yt.getYtelseAnvist().isEmpty()).findFirst();
+                ytelse = aktuelleYtelser.stream()
+                        .filter(yt -> yt.getYtelseAnvist().isEmpty())
+                        .findFirst();
             }
         }
-        return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medPeriode(periode);
+        return YtelseBuilder.oppdatere(ytelse)
+                .medYtelseType(type)
+                .medKilde(fagsystem)
+                .medPeriode(periode);
     }
 
     void leggTilYtelse(Ytelse ytelse) {
@@ -174,7 +205,8 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
     }
 
     void tilbakestillYtelser() {
-        this.ytelser = ytelser.stream().filter(AktørYtelse::beholdLegacyYtelseFraKilde).collect(Collectors.toSet());
+        this.ytelser =
+                ytelser.stream().filter(AktørYtelse::beholdLegacyYtelseFraKilde).collect(Collectors.toSet());
     }
 
     @Override
@@ -197,5 +229,4 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
     public String toString() {
         return getClass().getSimpleName() + "<" + "aktørId=" + aktørId + ", ytelser=" + ytelser + '>';
     }
-
 }

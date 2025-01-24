@@ -1,17 +1,18 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-@JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
+@JsonAutoDetect(
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE,
+        fieldVisibility = Visibility.ANY)
 public enum VirksomhetType implements Kodeverdi {
-
     DAGMAMMA("DAGMAMMA", "Dagmamma i eget hjem/familiebarnehage"),
     FISKE("FISKE", "Fiske"),
     JORDBRUK_SKOGBRUK("JORDBRUK_SKOGBRUK", "Jordbruk"),
@@ -43,7 +44,8 @@ public enum VirksomhetType implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent VirksomhetType: " + kode));
+        return Optional.ofNullable(KODER.get(kode))
+                .orElseThrow(() -> new IllegalArgumentException("Ukjent VirksomhetType: " + kode));
     }
 
     public static Map<String, VirksomhetType> kodeMap() {
@@ -58,5 +60,4 @@ public enum VirksomhetType implements Kodeverdi {
     public String getKode() {
         return kode;
     }
-
 }

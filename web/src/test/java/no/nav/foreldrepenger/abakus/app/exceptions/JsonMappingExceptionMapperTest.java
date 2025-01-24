@@ -2,9 +2,8 @@ package no.nav.foreldrepenger.abakus.app.exceptions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.jupiter.api.Test;
-
 import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
+import org.junit.jupiter.api.Test;
 
 class JsonMappingExceptionMapperTest {
 

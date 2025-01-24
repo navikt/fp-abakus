@@ -1,5 +1,11 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -7,15 +13,10 @@ import java.util.Locale.IsoCountryCode;
 import java.util.Map;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-
-@JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
+@JsonAutoDetect(
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE,
+        fieldVisibility = Visibility.ANY)
 public class Landkode implements Kodeverdi {
     private static final Map<String, Landkode> KODER = initKoder();
 
@@ -23,14 +24,10 @@ public class Landkode implements Kodeverdi {
     public static final Landkode DNK = fraKode("DNK");
     public static final Landkode SWE = fraKode("SWE");
 
-    /**
-     * Egendefinert konstant - ikke definert (null object pattern) for bruk i modeller som krever non-null.
-     */
+    /** Egendefinert konstant - ikke definert (null object pattern) for bruk i modeller som krever non-null. */
     public static final Landkode UDEFINERT = fraKode("-");
 
-    /**
-     * ISO 3166 alpha 3-letter code.
-     */
+    /** ISO 3166 alpha 3-letter code. */
     @JsonValue
     @Size(max = 3)
     @Pattern(regexp = "^[\\p{Alnum}]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")

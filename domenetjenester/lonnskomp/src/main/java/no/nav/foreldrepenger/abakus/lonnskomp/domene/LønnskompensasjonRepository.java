@@ -1,19 +1,17 @@
 package no.nav.foreldrepenger.abakus.lonnskomp.domene;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-
-import org.hibernate.jpa.HibernateHints;
-
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
+import org.hibernate.jpa.HibernateHints;
 
 @ApplicationScoped
 public class LønnskompensasjonRepository {
@@ -31,7 +29,8 @@ public class LønnskompensasjonRepository {
     }
 
     public void lagre(LønnskompensasjonVedtak vedtak) {
-        LønnskompensasjonVedtak eksisterende = hentSak(vedtak.getSakId(), vedtak.getFnr()).orElse(null);
+        LønnskompensasjonVedtak eksisterende =
+                hentSak(vedtak.getSakId(), vedtak.getFnr()).orElse(null);
         if (eksisterende != null) {
             // Deaktiver eksisterende innslag
             eksisterende.setAktiv(false);
@@ -49,17 +48,20 @@ public class LønnskompensasjonRepository {
         Objects.requireNonNull(sakId, "sakId");
 
         TypedQuery<LønnskompensasjonVedtak> query = entityManager.createQuery(
-            "SELECT v FROM LonnskompVedtakEntitet v " + "WHERE aktiv = true AND v.sakId = :sakId and v.fnr = :fnr", LønnskompensasjonVedtak.class);
+                "SELECT v FROM LonnskompVedtakEntitet v " + "WHERE aktiv = true AND v.sakId = :sakId and v.fnr = :fnr",
+                LønnskompensasjonVedtak.class);
         query.setParameter("sakId", sakId);
         query.setParameter("fnr", fnr);
 
         return HibernateVerktøy.hentUniktResultat(query);
     }
 
-    public Set<LønnskompensasjonVedtak> hentLønnskompensasjonForIPeriode(AktørId aktørId, LocalDate fom, LocalDate tom) {
+    public Set<LønnskompensasjonVedtak> hentLønnskompensasjonForIPeriode(
+            AktørId aktørId, LocalDate fom, LocalDate tom) {
         TypedQuery<LønnskompensasjonVedtak> query = entityManager.createQuery(
-            "FROM LonnskompVedtakEntitet " + "WHERE aktørId = :aktørId " + "AND periode.fomDato <= :tom AND periode.tomDato >= :fom "
-                + "AND aktiv = true", LønnskompensasjonVedtak.class);
+                "FROM LonnskompVedtakEntitet " + "WHERE aktørId = :aktørId "
+                        + "AND periode.fomDato <= :tom AND periode.tomDato >= :fom " + "AND aktiv = true",
+                LønnskompensasjonVedtak.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("fom", fom);
         query.setParameter("tom", tom);
@@ -85,5 +87,4 @@ public class LønnskompensasjonRepository {
         var likeUtenomForrigeVedtak = Objects.equals(eksisterende, vedtak);
         return !likeUtenomForrigeVedtak;
     }
-
 }

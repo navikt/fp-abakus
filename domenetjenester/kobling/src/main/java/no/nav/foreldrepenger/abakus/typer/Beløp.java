@@ -1,21 +1,17 @@
 package no.nav.foreldrepenger.abakus.typer;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseValue;
 
-/**
- * Beløp representerer kombinasjon av kroner og øre på standardisert format
- */
+/** Beløp representerer kombinasjon av kroner og øre på standardisert format */
 @Embeddable
 public class Beløp implements Serializable, IndexKey, TraverseValue {
     public static final Beløp ZERO = new Beløp(BigDecimal.ZERO);

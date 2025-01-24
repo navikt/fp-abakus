@@ -2,11 +2,11 @@ package no.nav.foreldrepenger.abakus.iay.jpa;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType;
 
 @Converter(autoApply = true)
-public class ArbeidsforholdHandlingTypeKodeverdiConverter implements AttributeConverter<ArbeidsforholdHandlingType, String> {
+public class ArbeidsforholdHandlingTypeKodeverdiConverter
+        implements AttributeConverter<ArbeidsforholdHandlingType, String> {
     @Override
     public String convertToDatabaseColumn(ArbeidsforholdHandlingType attribute) {
         return attribute == null ? null : attribute.getKode();

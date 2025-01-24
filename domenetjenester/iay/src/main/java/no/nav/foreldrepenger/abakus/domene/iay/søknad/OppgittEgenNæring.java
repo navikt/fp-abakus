@@ -1,9 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay.søknad;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Objects;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -14,7 +10,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
 import no.nav.abakus.iaygrunnlag.kodeverk.VirksomhetType;
@@ -26,7 +24,6 @@ import no.nav.foreldrepenger.abakus.iay.jpa.LandKodeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.iay.jpa.VirksomhetTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
-
 
 @Table(name = "IAY_EGEN_NAERING")
 @Entity(name = "EgenNæring")
@@ -255,24 +252,43 @@ public class OppgittEgenNæring extends BaseEntitet implements IndexKey {
             return false;
         }
         var that = (OppgittEgenNæring) o;
-        return Objects.equals(periode, that.periode) && Objects.equals(orgNummer, that.orgNummer) && Objects.equals(nyoppstartet, that.nyoppstartet)
-            && Objects.equals(virksomhetType, that.virksomhetType) && Objects.equals(regnskapsførerNavn, that.regnskapsførerNavn) && Objects.equals(
-            regnskapsførerTlf, that.regnskapsførerTlf) && Objects.equals(endringDato, that.endringDato) && Objects.equals(begrunnelse,
-            that.begrunnelse) && Objects.equals(bruttoInntekt, that.bruttoInntekt) && Objects.equals(landkode, that.landkode) && Objects.equals(
-            utenlandskVirksomhetNavn, that.utenlandskVirksomhetNavn);
+        return Objects.equals(periode, that.periode)
+                && Objects.equals(orgNummer, that.orgNummer)
+                && Objects.equals(nyoppstartet, that.nyoppstartet)
+                && Objects.equals(virksomhetType, that.virksomhetType)
+                && Objects.equals(regnskapsførerNavn, that.regnskapsførerNavn)
+                && Objects.equals(regnskapsførerTlf, that.regnskapsførerTlf)
+                && Objects.equals(endringDato, that.endringDato)
+                && Objects.equals(begrunnelse, that.begrunnelse)
+                && Objects.equals(bruttoInntekt, that.bruttoInntekt)
+                && Objects.equals(landkode, that.landkode)
+                && Objects.equals(utenlandskVirksomhetNavn, that.utenlandskVirksomhetNavn);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(periode, orgNummer, virksomhetType, nyoppstartet, regnskapsførerNavn, regnskapsførerTlf, endringDato, begrunnelse,
-            bruttoInntekt, landkode, utenlandskVirksomhetNavn);
+        return Objects.hash(
+                periode,
+                orgNummer,
+                virksomhetType,
+                nyoppstartet,
+                regnskapsførerNavn,
+                regnskapsførerTlf,
+                endringDato,
+                begrunnelse,
+                bruttoInntekt,
+                landkode,
+                utenlandskVirksomhetNavn);
     }
 
     @Override
     public String toString() {
-        return "OppgittEgenNæring{" + "id=" + id + ", periode=" + periode + ", virksomhet=" + orgNummer + ", nyoppstartet=" + nyoppstartet
-            + ", virksomhetType=" + virksomhetType + ", regnskapsførerNavn='" + regnskapsførerNavn + '\'' + ", regnskapsførerTlf='"
-            + regnskapsførerTlf + '\'' + ", endringDato=" + endringDato + ", begrunnelse='" + begrunnelse + '\'' + ", bruttoInntekt=" + bruttoInntekt
-            + ", landkode=" + landkode + ", utenlandskVirksomhetNavn=" + utenlandskVirksomhetNavn + '}';
+        return "OppgittEgenNæring{" + "id=" + id + ", periode=" + periode + ", virksomhet=" + orgNummer
+                + ", nyoppstartet=" + nyoppstartet
+                + ", virksomhetType=" + virksomhetType + ", regnskapsførerNavn='" + regnskapsførerNavn + '\''
+                + ", regnskapsførerTlf='"
+                + regnskapsførerTlf + '\'' + ", endringDato=" + endringDato + ", begrunnelse='" + begrunnelse + '\''
+                + ", bruttoInntekt=" + bruttoInntekt
+                + ", landkode=" + landkode + ", utenlandskVirksomhetNavn=" + utenlandskVirksomhetNavn + '}';
     }
 }

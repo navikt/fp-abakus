@@ -11,11 +11,12 @@ public class Arbeidsavtale {
     private LocalDate sisteLønnsendringsdato;
     private boolean erAnsettelsesPerioden;
 
-    private Arbeidsavtale(LocalDate arbeidsavtaleFom,
-                          LocalDate arbeidsavtaleTom,
-                          BigDecimal stillingsprosent,
-                          LocalDate sisteLønnsendringsdato,
-                          boolean erAnsettelsesPerioden) {
+    private Arbeidsavtale(
+            LocalDate arbeidsavtaleFom,
+            LocalDate arbeidsavtaleTom,
+            BigDecimal stillingsprosent,
+            LocalDate sisteLønnsendringsdato,
+            boolean erAnsettelsesPerioden) {
         this.arbeidsavtaleFom = arbeidsavtaleFom;
         this.arbeidsavtaleTom = arbeidsavtaleTom;
         this.stillingsprosent = stillingsprosent;
@@ -52,19 +53,24 @@ public class Arbeidsavtale {
             return false;
         }
         Arbeidsavtale that = (Arbeidsavtale) o;
-        return erAnsettelsesPerioden == that.erAnsettelsesPerioden && Objects.equals(arbeidsavtaleFom, that.arbeidsavtaleFom) && Objects.equals(
-            arbeidsavtaleTom, that.arbeidsavtaleTom) && Objects.equals(stillingsprosent, that.stillingsprosent) && Objects.equals(sisteLønnsendringsdato, that.sisteLønnsendringsdato);
+        return erAnsettelsesPerioden == that.erAnsettelsesPerioden
+                && Objects.equals(arbeidsavtaleFom, that.arbeidsavtaleFom)
+                && Objects.equals(arbeidsavtaleTom, that.arbeidsavtaleTom)
+                && Objects.equals(stillingsprosent, that.stillingsprosent)
+                && Objects.equals(sisteLønnsendringsdato, that.sisteLønnsendringsdato);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(arbeidsavtaleFom, arbeidsavtaleTom, stillingsprosent, sisteLønnsendringsdato, erAnsettelsesPerioden);
+        return Objects.hash(
+                arbeidsavtaleFom, arbeidsavtaleTom, stillingsprosent, sisteLønnsendringsdato, erAnsettelsesPerioden);
     }
 
     @Override
     public String toString() {
-        return "Arbeidsavtale{" + "arbeidsavtaleFom=" + arbeidsavtaleFom + ", arbeidsavtaleTom=" + arbeidsavtaleTom + ", stillingsprosent="
-            + stillingsprosent + ", sisteLønnsendringsdato=" + sisteLønnsendringsdato + ", erAnsettelsesPerioden=" + erAnsettelsesPerioden + '}';
+        return "Arbeidsavtale{" + "arbeidsavtaleFom=" + arbeidsavtaleFom + ", arbeidsavtaleTom=" + arbeidsavtaleTom
+                + ", stillingsprosent=" + stillingsprosent + ", sisteLønnsendringsdato=" + sisteLønnsendringsdato
+                + ", erAnsettelsesPerioden=" + erAnsettelsesPerioden + '}';
     }
 
     public static class Builder {
@@ -100,7 +106,12 @@ public class Arbeidsavtale {
         }
 
         public Arbeidsavtale build() {
-            return new Arbeidsavtale(arbeidsavtaleFom, arbeidsavtaleTom, stillingsprosent, sisteLønnsendringsdato, erAnsettelsesPerioden);
+            return new Arbeidsavtale(
+                    arbeidsavtaleFom,
+                    arbeidsavtaleTom,
+                    stillingsprosent,
+                    sisteLønnsendringsdato,
+                    erAnsettelsesPerioden);
         }
     }
 }

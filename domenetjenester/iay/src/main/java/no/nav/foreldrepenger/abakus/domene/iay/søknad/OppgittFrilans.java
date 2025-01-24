@@ -1,10 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay.søknad;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -15,11 +10,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
-
 
 @Table(name = "IAY_OPPGITT_FRILANS")
 @Entity(name = "Frilans")
@@ -49,20 +46,20 @@ public class OppgittFrilans extends BaseEntitet {
     @ChangeTracked
     private List<OppgittFrilansoppdrag> frilansoppdrag;
 
-
-    public OppgittFrilans() {
-    }
+    public OppgittFrilans() {}
 
     /* copy ctor */
     public OppgittFrilans(OppgittFrilans orginal) {
         harInntektFraFosterhjem = orginal.getHarInntektFraFosterhjem();
         erNyoppstartet = orginal.getErNyoppstartet();
         harNærRelasjon = orginal.getHarNærRelasjon();
-        frilansoppdrag = orginal.getFrilansoppdrag().stream().map(orginalFrilansoppdrag -> {
-            OppgittFrilansoppdrag kopi = new OppgittFrilansoppdrag(orginalFrilansoppdrag);
-            kopi.setFrilans(this);
-            return kopi;
-        }).collect(Collectors.toList());
+        frilansoppdrag = orginal.getFrilansoppdrag().stream()
+                .map(orginalFrilansoppdrag -> {
+                    OppgittFrilansoppdrag kopi = new OppgittFrilansoppdrag(orginalFrilansoppdrag);
+                    kopi.setFrilans(this);
+                    return kopi;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -74,9 +71,11 @@ public class OppgittFrilans extends BaseEntitet {
             return false;
         }
         var that = (OppgittFrilans) o;
-        return harInntektFraFosterhjem == that.harInntektFraFosterhjem && erNyoppstartet == that.erNyoppstartet
-            && harNærRelasjon == that.harNærRelasjon && Objects.equals(oppgittOpptjening, that.oppgittOpptjening) && Objects.equals(frilansoppdrag,
-            that.frilansoppdrag);
+        return harInntektFraFosterhjem == that.harInntektFraFosterhjem
+                && erNyoppstartet == that.erNyoppstartet
+                && harNærRelasjon == that.harNærRelasjon
+                && Objects.equals(oppgittOpptjening, that.oppgittOpptjening)
+                && Objects.equals(frilansoppdrag, that.frilansoppdrag);
     }
 
     @Override
@@ -86,8 +85,9 @@ public class OppgittFrilans extends BaseEntitet {
 
     @Override
     public String toString() {
-        return "OppgittFrilans{" + "oppgittOpptjening=" + oppgittOpptjening + ", harInntektFraFosterhjem=" + harInntektFraFosterhjem
-            + ", erNyoppstartet=" + erNyoppstartet + ", harNærRelasjon=" + harNærRelasjon + ", frilansoppdrag=" + frilansoppdrag + '}';
+        return "OppgittFrilans{" + "oppgittOpptjening=" + oppgittOpptjening + ", harInntektFraFosterhjem="
+                + harInntektFraFosterhjem + ", erNyoppstartet=" + erNyoppstartet + ", harNærRelasjon=" + harNærRelasjon
+                + ", frilansoppdrag=" + frilansoppdrag + '}';
     }
 
     public void setOppgittOpptjening(OppgittOpptjening oppgittOpptjening) {
@@ -126,6 +126,7 @@ public class OppgittFrilans extends BaseEntitet {
     }
 
     public void setFrilansoppdrag(List<OppgittFrilansoppdrag> frilansoppdrag) {
-        this.frilansoppdrag = frilansoppdrag.stream().peek(it -> it.setFrilans(this)).collect(Collectors.toList());
+        this.frilansoppdrag =
+                frilansoppdrag.stream().peek(it -> it.setFrilans(this)).collect(Collectors.toList());
     }
 }

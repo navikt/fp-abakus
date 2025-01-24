@@ -1,12 +1,10 @@
 package no.nav.foreldrepenger.abakus.kobling;
 
-import java.util.Objects;
-import java.util.UUID;
-
+import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-
-import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.Objects;
+import java.util.UUID;
 
 @Embeddable
 public class KoblingReferanse {

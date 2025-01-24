@@ -1,23 +1,21 @@
 package no.nav.foreldrepenger.abakus.typer;
 
-import java.util.Objects;
-import java.util.regex.Pattern;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-
+import java.util.Objects;
+import java.util.regex.Pattern;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 
-/**
- * Saksnummer refererer til saksnummer registret i GSAK.
- */
+/** Saksnummer refererer til saksnummer registret i GSAK. */
 @Embeddable
 public class Saksnummer implements SakId, IndexKey {
     private static final String CHARS = "a-z0-9_:-";
 
-    private static final Pattern VALID = Pattern.compile("^(-?[1-9]|[a-z0])[" + CHARS + "]*$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern INVALID = Pattern.compile("[^" + CHARS + "]+", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+    private static final Pattern VALID =
+            Pattern.compile("^(-?[1-9]|[a-z0])[" + CHARS + "]*$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern INVALID =
+            Pattern.compile("[^" + CHARS + "]+", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
     @Column(name = "saksnummer")
     private String saksnummer; // NOSONAR
@@ -30,8 +28,8 @@ public class Saksnummer implements SakId, IndexKey {
         Objects.requireNonNull(saksnummer, "saksnummer");
         if (!VALID.matcher(saksnummer).matches()) {
             // skal ikke skje, funksjonelle feilmeldinger håndteres ikke her.
-            throw new IllegalArgumentException(
-                "Ugyldig saksnummer, støtter kun A-Z/0-9/:/-/_ tegn. Var: " + saksnummer.replaceAll(INVALID.pattern(), "?") + " (vasket)");
+            throw new IllegalArgumentException("Ugyldig saksnummer, støtter kun A-Z/0-9/:/-/_ tegn. Var: "
+                    + saksnummer.replaceAll(INVALID.pattern(), "?") + " (vasket)");
         }
         this.saksnummer = saksnummer;
     }
@@ -45,7 +43,7 @@ public class Saksnummer implements SakId, IndexKey {
     public static Saksnummer infotrygd(String sakId) {
         if (sakId != null) {
             String vasketId = sakId.replaceAll(INVALID.pattern(), "").trim();
-            return vasketId.length() == 0 ? null : new Saksnummer(vasketId, Fagsystem.INFOTRYGD);
+            return vasketId.isEmpty() ? null : new Saksnummer(vasketId, Fagsystem.INFOTRYGD);
         }
         return null;
     }

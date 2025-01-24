@@ -1,17 +1,18 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-@JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
+@JsonAutoDetect(
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE,
+        fieldVisibility = Visibility.ANY)
 public enum YtelseStatus implements Kodeverdi {
-
     OPPRETTET("OPPR", "Opprettet"),
     UNDER_BEHANDLING("UBEH", "Under behandling"),
     LØPENDE("LOP", "Løpende"),
@@ -30,7 +31,6 @@ public enum YtelseStatus implements Kodeverdi {
         }
     }
 
-
     private final String navn;
 
     @JsonValue
@@ -45,7 +45,8 @@ public enum YtelseStatus implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent YtelseStatus: " + kode));
+        return Optional.ofNullable(KODER.get(kode))
+                .orElseThrow(() -> new IllegalArgumentException("Ukjent YtelseStatus: " + kode));
     }
 
     public static Map<String, YtelseStatus> kodeMap() {
@@ -60,5 +61,4 @@ public enum YtelseStatus implements Kodeverdi {
     public String getKode() {
         return kode;
     }
-
 }

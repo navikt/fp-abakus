@@ -12,8 +12,7 @@ public class OppgittOpptjeningTjeneste {
 
     private InntektArbeidYtelseRepository repository;
 
-    public OppgittOpptjeningTjeneste() {
-    }
+    public OppgittOpptjeningTjeneste() {}
 
     @Inject
     public OppgittOpptjeningTjeneste(InntektArbeidYtelseRepository repository) {
@@ -24,7 +23,8 @@ public class OppgittOpptjeningTjeneste {
         return repository.lagre(koblingReferanse, builder);
     }
 
-    public GrunnlagReferanse lagreOgNullstillOverstyring(KoblingReferanse koblingReferanse, OppgittOpptjeningBuilder builder) {
+    public GrunnlagReferanse lagreOgNullstillOverstyring(
+            KoblingReferanse koblingReferanse, OppgittOpptjeningBuilder builder) {
         return repository.lagreOgNullstillOverstyring(koblingReferanse, builder);
     }
 

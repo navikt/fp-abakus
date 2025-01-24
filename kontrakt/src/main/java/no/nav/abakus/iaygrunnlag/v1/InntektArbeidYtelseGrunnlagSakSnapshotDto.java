@@ -2,34 +2,32 @@ package no.nav.abakus.iaygrunnlag.v1;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import no.nav.abakus.iaygrunnlag.Periode;
-import no.nav.abakus.iaygrunnlag.PersonIdent;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import no.nav.abakus.iaygrunnlag.Periode;
+import no.nav.abakus.iaygrunnlag.PersonIdent;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
-/**
- * Representeer et snapshot aggregert av alle grunnlag knyttet til samme sak.
- */
+/** Representeer et snapshot aggregert av alle grunnlag knyttet til samme sak. */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class InntektArbeidYtelseGrunnlagSakSnapshotDto {
 
     private static final ZoneId DEFAULT_ZONE = ZoneId.systemDefault();
 
-    /**
-     * Saksnummer alle grunnlag og koblinger er linket til.
-     */
+    /** Saksnummer alle grunnlag og koblinger er linket til. */
     @JsonProperty(value = "saksnummer", required = true)
     @NotNull
     @Valid
@@ -50,12 +48,14 @@ public class InntektArbeidYtelseGrunnlagSakSnapshotDto {
 
     /**
      * Liste av InntektArbeidYtelseGrunnlag.
-     * <p>
-     * <b>Merk:</b><br>
+     *
+     * <p><b>Merk:</b><br>
+     *
      * <ul>
-     * <li>Det kan kun være ett aktivt grunnlag {@link Konvolutt#erAktiv()} med samme
-     * {@link InntektArbeidYtelseGrunnlagDto#getKoblingReferanse()}, men flere inaktive</li>
-     * <li>Rekkefølge gitt av {@link InntektArbeidYtelseGrunnlagDto#getGrunnlagTidspunkt()} angir historisk rekkefølge.</li>
+     *   <li>Det kan kun være ett aktivt grunnlag {@link Konvolutt#erAktiv()} med samme
+     *       {@link InntektArbeidYtelseGrunnlagDto#getKoblingReferanse()}, men flere inaktive
+     *   <li>Rekkefølge gitt av {@link InntektArbeidYtelseGrunnlagDto#getGrunnlagTidspunkt()} angir historisk
+     *       rekkefølge.
      * </ul>
      */
     @JsonProperty(value = "grunnlag", required = true)
@@ -67,15 +67,17 @@ public class InntektArbeidYtelseGrunnlagSakSnapshotDto {
     private OffsetDateTime snapshotTidspunkt = OffsetDateTime.now(DEFAULT_ZONE);
 
     @JsonCreator
-    public InntektArbeidYtelseGrunnlagSakSnapshotDto(@JsonProperty(value = "saksnummer", required = true) String saksnummer,
-                                                     @JsonProperty(value = "ytelseType", required = true) YtelseType ytelseType,
-                                                     @JsonProperty(value = "aktør", required = true) PersonIdent aktør) {
+    public InntektArbeidYtelseGrunnlagSakSnapshotDto(
+            @JsonProperty(value = "saksnummer", required = true) String saksnummer,
+            @JsonProperty(value = "ytelseType", required = true) YtelseType ytelseType,
+            @JsonProperty(value = "aktør", required = true) PersonIdent aktør) {
         this.saksnummer = saksnummer;
         this.ytelseType = ytelseType;
         this.aktør = aktør;
     }
 
-    public void leggTil(InntektArbeidYtelseGrunnlagDto dto, Boolean aktiv, Periode opplysningsperiode, Periode opptjeningsperiode) {
+    public void leggTil(
+            InntektArbeidYtelseGrunnlagDto dto, Boolean aktiv, Periode opplysningsperiode, Periode opptjeningsperiode) {
         grunnlag.add(new Konvolutt(dto, aktiv, opplysningsperiode, opptjeningsperiode));
     }
 
@@ -138,19 +140,26 @@ public class InntektArbeidYtelseGrunnlagSakSnapshotDto {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+    @JsonAutoDetect(
+            fieldVisibility = JsonAutoDetect.Visibility.NONE,
+            getterVisibility = JsonAutoDetect.Visibility.NONE,
+            setterVisibility = JsonAutoDetect.Visibility.NONE,
+            isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+            creatorVisibility = JsonAutoDetect.Visibility.NONE)
     public static class Konvolutt {
 
         /**
-         * Unik og immutable grunnlag. Data kan dedupliseres ved å se på {@link InntektArbeidYtelseGrunnlagDto#getGrunnlagReferanse()}
+         * Unik og immutable grunnlag. Data kan dedupliseres ved å se på
+         * {@link InntektArbeidYtelseGrunnlagDto#getGrunnlagReferanse()}
          */
         @JsonProperty(value = "data", required = true)
         @Valid
         private InntektArbeidYtelseGrunnlagDto data;
 
         /**
-         * Hvis satt angir at dette grunnlaget er aktivt (eller inaktivt). Hvis ikke satt - så ubestemt.
-         * Merk at dette flagget er transient og vil endre seg over tid (når nye grunnnlag blir aktive så blir gamle grunnlag inaktive)
+         * Hvis satt angir at dette grunnlaget er aktivt (eller inaktivt). Hvis ikke satt - så ubestemt. Merk at dette
+         * flagget er transient og vil endre seg over tid (når nye grunnnlag blir aktive så blir gamle grunnlag
+         * inaktive)
          */
         @JsonProperty(value = "aktiv", required = false)
         private Boolean aktiv;
@@ -165,10 +174,11 @@ public class InntektArbeidYtelseGrunnlagSakSnapshotDto {
         private Periode opptjeningsperiode;
 
         @JsonCreator
-        public Konvolutt(@JsonProperty(value = "data", required = true) @Valid InntektArbeidYtelseGrunnlagDto data,
-                         @JsonProperty(value = "aktiv", required = false) Boolean aktiv,
-                         @JsonProperty(value = "opplysningsperiode", required = true) Periode opplysningsperiode,
-                         @JsonProperty(value = "opptjeningsperiode", required = false) Periode opptjeningsperiode) {
+        public Konvolutt(
+                @JsonProperty(value = "data", required = true) @Valid InntektArbeidYtelseGrunnlagDto data,
+                @JsonProperty(value = "aktiv", required = false) Boolean aktiv,
+                @JsonProperty(value = "opplysningsperiode", required = true) Periode opplysningsperiode,
+                @JsonProperty(value = "opptjeningsperiode", required = false) Periode opptjeningsperiode) {
             this.data = data;
             this.aktiv = aktiv;
             this.opptjeningsperiode = opptjeningsperiode;
@@ -190,7 +200,5 @@ public class InntektArbeidYtelseGrunnlagSakSnapshotDto {
         public InntektArbeidYtelseGrunnlagDto getData() {
             return data;
         }
-
     }
-
 }

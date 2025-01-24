@@ -8,17 +8,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
-
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraph.TraverseResult;
 
-/**
- * Henter ut resultat fra å diffe to entitet objekter.
- * Det forventes at begge objektene har samme rot.
- */
+/** Henter ut resultat fra å diffe to entitet objekter. Det forventes at begge objektene har samme rot. */
 public class DiffResult {
 
     private TraverseResult result1;
     private TraverseResult result2;
+
     @SuppressWarnings("unused")
     private TraverseGraph traverser;
 
@@ -76,12 +73,12 @@ public class DiffResult {
 
         if (lhsSet.size() != lhsList.size()) {
             throw new IllegalArgumentException(
-                "Bad Equals eller duplikater i List.  lhsList har forskjellig størrelse fra lhsSet. Key=\"" + key
-                    + "\"\n,\"lhsList\"=" + lhsList + "\n,\"rhsList\"=" + rhsList);
+                    "Bad Equals eller duplikater i List.  lhsList har forskjellig størrelse fra lhsSet. Key=\"" + key
+                            + "\"\n,\"lhsList\"=" + lhsList + "\n,\"rhsList\"=" + rhsList);
         } else if (rhsSet.size() != rhsList.size()) {
             throw new IllegalArgumentException(
-                "Bad Equals eller duplikater i List.  rhsList har forskjellig størrelse fra rhsSet. Key=\"" + key
-                    + "\"\n,\"lhsList\"=" + lhsList + "\n,\"rhsList\"=" + rhsList);
+                    "Bad Equals eller duplikater i List.  rhsList har forskjellig størrelse fra rhsSet. Key=\"" + key
+                            + "\"\n,\"lhsList\"=" + lhsList + "\n,\"rhsList\"=" + rhsList);
         }
 
         return Objects.equals(lhsSet, rhsSet);

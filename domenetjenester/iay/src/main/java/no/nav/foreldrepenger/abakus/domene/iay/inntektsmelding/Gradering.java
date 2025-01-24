@@ -1,9 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Objects;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -16,6 +12,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -40,7 +39,10 @@ public class Gradering extends BaseEntitet implements IndexKey {
     private IntervallEntitet periode;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "arbeidstid_prosent", updatable = false, nullable = false)))
+    @AttributeOverrides(
+            @AttributeOverride(
+                    name = "verdi",
+                    column = @Column(name = "arbeidstid_prosent", updatable = false, nullable = false)))
     @ChangeTracked
     private Stillingsprosent arbeidstidProsent;
 
@@ -48,8 +50,7 @@ public class Gradering extends BaseEntitet implements IndexKey {
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-    Gradering() {
-    }
+    Gradering() {}
 
     private Gradering(IntervallEntitet periode, Stillingsprosent arbeidstidProsent) {
         this.arbeidstidProsent = arbeidstidProsent;
@@ -57,7 +58,9 @@ public class Gradering extends BaseEntitet implements IndexKey {
     }
 
     public Gradering(LocalDate fom, LocalDate tom, BigDecimal arbeidstidProsent) {
-        this(tom == null ? IntervallEntitet.fraOgMed(fom) : IntervallEntitet.fraOgMedTilOgMed(fom, tom), Stillingsprosent.arbeid(arbeidstidProsent));
+        this(
+                tom == null ? IntervallEntitet.fraOgMed(fom) : IntervallEntitet.fraOgMedTilOgMed(fom, tom),
+                Stillingsprosent.arbeid(arbeidstidProsent));
     }
 
     Gradering(Gradering gradering) {
@@ -80,16 +83,15 @@ public class Gradering extends BaseEntitet implements IndexKey {
 
     /**
      * En arbeidstaker kan kombinere foreldrepenger med deltidsarbeid.
-     * <p>
-     * Når arbeidstakeren jobber deltid, utgjør foreldrepengene differansen mellom deltidsarbeidet og en 100 prosent stilling.
-     * Det er ingen nedre eller øvre grense for hvor mye eller lite arbeidstakeren kan arbeide.
-     * <p>
-     * Eksempel
-     * Arbeidstaker A har en 100 % stilling og arbeider fem dager i uken. Arbeidstakeren ønsker å arbeide to dager i uken i foreldrepengeperioden.
-     * Arbeidstids- prosenten blir da 40 %.
-     * <p>
-     * Arbeidstaker B har en 80 % stilling og arbeider fire dager i uken. Arbeidstakeren ønsker å arbeide to dager i uken i foreldrepengeperioden.
-     * Arbeidstidprosenten blir også her 40 %.
+     *
+     * <p>Når arbeidstakeren jobber deltid, utgjør foreldrepengene differansen mellom deltidsarbeidet og en 100 prosent
+     * stilling. Det er ingen nedre eller øvre grense for hvor mye eller lite arbeidstakeren kan arbeide.
+     *
+     * <p>Eksempel Arbeidstaker A har en 100 % stilling og arbeider fem dager i uken. Arbeidstakeren ønsker å arbeide to
+     * dager i uken i foreldrepengeperioden. Arbeidstids- prosenten blir da 40 %.
+     *
+     * <p>Arbeidstaker B har en 80 % stilling og arbeider fire dager i uken. Arbeidstakeren ønsker å arbeide to dager i
+     * uken i foreldrepengeperioden. Arbeidstidprosenten blir også her 40 %.
      *
      * @return prosentsats
      */
@@ -99,7 +101,8 @@ public class Gradering extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "GraderingEntitet{" + "id=" + id + ", periode=" + periode + ", arbeidstidProsent=" + arbeidstidProsent + '}';
+        return "GraderingEntitet{" + "id=" + id + ", periode=" + periode + ", arbeidstidProsent=" + arbeidstidProsent
+                + '}';
     }
 
     @Override

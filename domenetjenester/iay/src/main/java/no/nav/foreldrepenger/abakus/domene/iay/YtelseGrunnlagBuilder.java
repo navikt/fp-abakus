@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;

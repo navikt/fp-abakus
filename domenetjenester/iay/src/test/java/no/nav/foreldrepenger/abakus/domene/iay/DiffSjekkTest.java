@@ -2,12 +2,11 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.jupiter.api.Test;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
 import no.nav.foreldrepenger.abakus.domene.iay.diff.TraverseEntityGraphFactory;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder.EgenNæringBuilder;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffEntity;
+import org.junit.jupiter.api.Test;
 
 class DiffSjekkTest {
 
@@ -22,7 +21,6 @@ class DiffSjekkTest {
 
         assertThat(differ.areDifferent(objDNK, objNOR)).isTrue();
         assertThat(differ.areDifferent(objDNK, objDNK)).isFalse();
-
     }
 
     @Test
@@ -36,6 +34,5 @@ class DiffSjekkTest {
 
         assertThat(differ.areDifferent(objDNK, objNOR)).isTrue();
         assertThat(differ.areDifferent(objDNK, objDNK)).isFalse();
-
     }
 }

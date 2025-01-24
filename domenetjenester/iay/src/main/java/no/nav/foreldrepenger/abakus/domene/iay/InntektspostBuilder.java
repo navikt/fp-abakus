@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektYtelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.abakus.iaygrunnlag.kodeverk.LønnsinntektBeskrivelse;
@@ -56,5 +55,4 @@ public class InntektspostBuilder {
         }
         throw new IllegalStateException();
     }
-
 }

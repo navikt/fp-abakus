@@ -6,12 +6,10 @@ import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.UUID;
-
-import org.junit.jupiter.api.Test;
-
 import no.nav.abakus.iaygrunnlag.request.Dataset;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
+import org.junit.jupiter.api.Test;
 
 class InntektArbeidYtelseGrunnlagBuilderTest {
 
@@ -30,9 +28,15 @@ class InntektArbeidYtelseGrunnlagBuilderTest {
         assertThat(gr.getSaksbehandletVersjon()).isPresent();
         assertThat(gr.getInntektsmeldinger()).isPresent();
 
-        var nyttGrunnlag = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(gr,
-            EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.OVERSTYRT_OPPGITT_OPPTJENING, Dataset.INNTEKTSMELDING, Dataset.REGISTER,
-                Dataset.OVERSTYRT)).build();
+        var nyttGrunnlag = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(
+                        gr,
+                        EnumSet.of(
+                                Dataset.OPPGITT_OPPTJENING,
+                                Dataset.OVERSTYRT_OPPGITT_OPPTJENING,
+                                Dataset.INNTEKTSMELDING,
+                                Dataset.REGISTER,
+                                Dataset.OVERSTYRT))
+                .build();
 
         assertThat(nyttGrunnlag.getOppgittOpptjening()).isPresent();
         assertThat(nyttGrunnlag.getOverstyrtOppgittOpptjening()).isPresent();
@@ -40,8 +44,9 @@ class InntektArbeidYtelseGrunnlagBuilderTest {
         assertThat(nyttGrunnlag.getSaksbehandletVersjon()).isPresent();
         assertThat(nyttGrunnlag.getInntektsmeldinger()).isPresent();
 
-        nyttGrunnlag = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(gr, EnumSet.of(Dataset.INNTEKTSMELDING, Dataset.REGISTER, Dataset.OVERSTYRT))
-            .build();
+        nyttGrunnlag = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(
+                        gr, EnumSet.of(Dataset.INNTEKTSMELDING, Dataset.REGISTER, Dataset.OVERSTYRT))
+                .build();
 
         assertThat(nyttGrunnlag.getOppgittOpptjening()).isNotPresent();
         assertThat(nyttGrunnlag.getOverstyrtOppgittOpptjening()).isNotPresent();
@@ -49,7 +54,9 @@ class InntektArbeidYtelseGrunnlagBuilderTest {
         assertThat(nyttGrunnlag.getSaksbehandletVersjon()).isPresent();
         assertThat(nyttGrunnlag.getInntektsmeldinger()).isPresent();
 
-        nyttGrunnlag = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(gr, EnumSet.of(Dataset.REGISTER, Dataset.OVERSTYRT)).build();
+        nyttGrunnlag = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(
+                        gr, EnumSet.of(Dataset.REGISTER, Dataset.OVERSTYRT))
+                .build();
 
         assertThat(nyttGrunnlag.getOppgittOpptjening()).isNotPresent();
         assertThat(nyttGrunnlag.getOverstyrtOppgittOpptjening()).isNotPresent();
@@ -57,7 +64,8 @@ class InntektArbeidYtelseGrunnlagBuilderTest {
         assertThat(nyttGrunnlag.getSaksbehandletVersjon()).isPresent();
         assertThat(nyttGrunnlag.getInntektsmeldinger()).isNotPresent();
 
-        nyttGrunnlag = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(gr, EnumSet.of(Dataset.REGISTER)).build();
+        nyttGrunnlag = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(gr, EnumSet.of(Dataset.REGISTER))
+                .build();
 
         assertThat(nyttGrunnlag.getOppgittOpptjening()).isNotPresent();
         assertThat(nyttGrunnlag.getOverstyrtOppgittOpptjening()).isNotPresent();
@@ -65,7 +73,8 @@ class InntektArbeidYtelseGrunnlagBuilderTest {
         assertThat(nyttGrunnlag.getSaksbehandletVersjon()).isNotPresent();
         assertThat(nyttGrunnlag.getInntektsmeldinger()).isNotPresent();
 
-        nyttGrunnlag = InntektArbeidYtelseGrunnlagBuilder.kopierDeler(gr, Set.of()).build();
+        nyttGrunnlag =
+                InntektArbeidYtelseGrunnlagBuilder.kopierDeler(gr, Set.of()).build();
 
         assertThat(nyttGrunnlag.getOppgittOpptjening()).isNotPresent();
         assertThat(nyttGrunnlag.getOverstyrtOppgittOpptjening()).isNotPresent();

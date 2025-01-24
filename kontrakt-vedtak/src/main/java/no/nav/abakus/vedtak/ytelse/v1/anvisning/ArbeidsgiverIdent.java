@@ -1,9 +1,8 @@
 package no.nav.abakus.vedtak.ytelse.v1.anvisning;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 // Orgnr / aktørid
 public record ArbeidsgiverIdent(@NotNull @JsonProperty("ident") @Pattern(regexp = "\\d{9}|\\d{13}") String ident) {
