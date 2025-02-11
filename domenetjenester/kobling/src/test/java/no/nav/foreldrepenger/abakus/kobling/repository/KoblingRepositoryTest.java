@@ -57,7 +57,11 @@ class KoblingRepositoryTest extends EntityManagerAwareTest {
         assertDoesNotThrow(() -> koblingRepository.lagre(nyKobling));
         var kobling = koblingRepository.hentForKoblingReferanse(koblingReferanse, true).orElseThrow();
         kobling.deaktiver();
-        var ex = assertThrows(IllegalStateException.class, () -> koblingRepository.lagre(kobling));
+        assertDoesNotThrow(() -> koblingRepository.lagre(kobling)); // her bør den første endringer ikke feile
+
+        var nyereKobling = koblingRepository.hentForKoblingReferanse(koblingReferanse, true).orElseThrow();
+        nyereKobling.setYtelseType(YtelseType.SVANGERSKAPSPENGER);
+        var ex = assertThrows(IllegalStateException.class, () -> koblingRepository.lagre(nyereKobling));
         assertThat(ex.getMessage()).startsWith("Etterspør kobling:").contains(referanse.toString()).endsWith("men denne er ikke aktiv") ;
     }
 }
