@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.felles.sikkerhet;
 
 import jakarta.enterprise.context.ApplicationScoped;
+
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.PdpRequestBuilder;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;

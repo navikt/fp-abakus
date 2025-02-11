@@ -350,7 +350,8 @@ public class InntektArbeidYtelseAggregatBuilder {
         }
 
         public YtelseBuilder getYtelselseBuilderForType(Fagsystem fagsystem,
-                                                        YtelseType type, IntervallEntitet periode,
+                                                        YtelseType type,
+                                                        IntervallEntitet periode,
                                                         Optional<LocalDate> tidligsteAnvistFom) {
             return kladd.getYtelseBuilderForType(fagsystem, type, periode, tidligsteAnvistFom);
         }

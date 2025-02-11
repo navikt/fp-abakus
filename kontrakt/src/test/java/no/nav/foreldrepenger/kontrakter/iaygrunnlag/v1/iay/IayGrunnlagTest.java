@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import jakarta.validation.Validation;
+
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
 import no.nav.abakus.iaygrunnlag.FnrPersonident;
@@ -140,8 +141,7 @@ class IayGrunnlagTest {
                         List.of(new AktivitetsAvtaleDto(periode).medSistLønnsendring(fom).medBeskrivelse("beskrivelse").medStillingsprosent(50)))))))
             .medInntekt(List.of(new InntekterDto(fnr).medUtbetalinger(List.of(
                 new UtbetalingDto(InntektskildeType.INNTEKT_SAMMENLIGNING).medArbeidsgiver(org)
-                    .medPoster(List.of(new UtbetalingsPostDto(periode, InntektspostType.LØNN)
-                        .medInntektYtelseType(InntektYtelseType.FORELDREPENGER)
+                    .medPoster(List.of(new UtbetalingsPostDto(periode, InntektspostType.LØNN).medInntektYtelseType(InntektYtelseType.FORELDREPENGER)
                         .medBeløp(100)
                         .medSkattAvgiftType(SkatteOgAvgiftsregelType.NETTOLØNN)))))))
             .medYtelse(List.of(new YtelserDto(fnr).medYtelser(List.of(

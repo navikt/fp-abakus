@@ -56,14 +56,14 @@ public class ArbeidsforholdOverstyringDto {
     private ArbeidsforholdHandlingType handling;
 
     @JsonProperty(value = "overstyringBegrunnelse")
-    @Size(max=10000)
+    @Size(max = 10000)
     private String begrunnelse;
 
     /**
      * Angitt overstyrt navn på arbeidsgiver (tildelt av saksbehandler).
      */
     @JsonProperty(value = "arbeidsgiverNavn")
-    @Size(max=500)
+    @Size(max = 500)
     @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Arbeidsgivernavn [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String arbeidsgiverNavn;
 

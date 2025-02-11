@@ -114,8 +114,12 @@ class InntektArbeidYtelseTjenesteTest {
         assertThat(sisteInntektsmeldinger).hasSize(2);
 
         //Assert skal kun ha siste inntektsmelding siden alle 3 hadde samme arbeidsgiver
-        assertThat(sisteInntektsmeldinger.stream().map(Inntektsmelding::getJournalpostId).anyMatch(journalpostId -> "1".equals(journalpostId.getVerdi()))).isTrue();
-        assertThat(sisteInntektsmeldinger.stream().map(Inntektsmelding::getJournalpostId).anyMatch(journalpostId -> "3".equals(journalpostId.getVerdi()))).isTrue();
+        assertThat(sisteInntektsmeldinger.stream()
+            .map(Inntektsmelding::getJournalpostId)
+            .anyMatch(journalpostId -> "1".equals(journalpostId.getVerdi()))).isTrue();
+        assertThat(sisteInntektsmeldinger.stream()
+            .map(Inntektsmelding::getJournalpostId)
+            .anyMatch(journalpostId -> "3".equals(journalpostId.getVerdi()))).isTrue();
     }
 
     @Test

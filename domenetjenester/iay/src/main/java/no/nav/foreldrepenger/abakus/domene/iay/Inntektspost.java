@@ -16,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektYtelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
@@ -187,9 +188,8 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
             return false;
         }
         Inntektspost other = (Inntektspost) obj;
-        return Objects.equals(this.inntektspostType, other.inntektspostType) && Objects.equals(
-            this.ytelse, other.ytelse) && Objects.equals(this.skatteOgAvgiftsregelType, other.skatteOgAvgiftsregelType) && Objects.equals(
-            this.periode, other.periode);
+        return Objects.equals(this.inntektspostType, other.inntektspostType) && Objects.equals(this.ytelse, other.ytelse) && Objects.equals(
+            this.skatteOgAvgiftsregelType, other.skatteOgAvgiftsregelType) && Objects.equals(this.periode, other.periode);
     }
 
     @Override
@@ -199,8 +199,8 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" + ", ytelse=" + ytelse + ", inntektspostType=" + inntektspostType
-            + ", skatteOgAvgiftsregelType=" + skatteOgAvgiftsregelType + ", periode=" + periode + ", beløp=" + beløp + '>';
+        return getClass().getSimpleName() + "<" + ", ytelse=" + ytelse + ", inntektspostType=" + inntektspostType + ", skatteOgAvgiftsregelType="
+            + skatteOgAvgiftsregelType + ", periode=" + periode + ", beløp=" + beløp + '>';
     }
 
     public boolean hasValues() {

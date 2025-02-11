@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AaregRestKlient;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.ArbeidsavtaleRS;
@@ -39,7 +40,9 @@ public class ArbeidsforholdTjeneste {
         this.aaregRestKlient = aaregRestKlient;
     }
 
-    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> finnArbeidsforholdForIdentIPerioden(PersonIdent ident, AktørId aktørId, IntervallEntitet interval) {
+    public Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> finnArbeidsforholdForIdentIPerioden(PersonIdent ident,
+                                                                                                      AktørId aktørId,
+                                                                                                      IntervallEntitet interval) {
         // TODO: kall med aktørid når register har fikset ytelsesproblemer
         List<ArbeidsforholdRS> response = aaregRestKlient.finnArbeidsforholdForArbeidstaker(ident.getIdent(), interval.getFomDato(),
             interval.getTomDato());
@@ -99,14 +102,12 @@ public class ArbeidsforholdTjeneste {
     private void utledArbeidsgiverRS(ArbeidsforholdRS arbeidsforhold, Arbeidsforhold.Builder builder) {
         if (OpplysningspliktigArbeidsgiverRS.Type.Person.equals(arbeidsforhold.getArbeidsgiver().type())) {
             AktørId arbeidsgiver = new AktørId(arbeidsforhold.getArbeidsgiver().aktoerId());
-            Person person = new Person.Builder().medAktørId(
-                arbeidsgiver).build();
+            Person person = new Person.Builder().medAktørId(arbeidsgiver).build();
             builder.medArbeidsgiver(person);
             final var uuid = UUID.nameUUIDFromBytes(arbeidsforhold.getType().getBytes(StandardCharsets.UTF_8));
             builder.medArbeidsforholdId(uuid.toString());
         } else if (OpplysningspliktigArbeidsgiverRS.Type.Organisasjon.equals(arbeidsforhold.getArbeidsgiver().type())) {
-            Organisasjon organisasjon = new Organisasjon.Builder().medOrgNummer(
-                arbeidsforhold.getArbeidsgiver().organisasjonsnummer()).build();
+            Organisasjon organisasjon = new Organisasjon.Builder().medOrgNummer(arbeidsforhold.getArbeidsgiver().organisasjonsnummer()).build();
             builder.medArbeidsgiver(organisasjon);
             builder.medArbeidsforholdId(arbeidsforhold.getArbeidsforholdId());
         }

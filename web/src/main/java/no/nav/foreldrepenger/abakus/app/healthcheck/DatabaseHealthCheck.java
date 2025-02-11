@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import jakarta.annotation.Resource;
 import jakarta.enterprise.context.ApplicationScoped;
+
 import javax.sql.DataSource;
 
 import org.slf4j.Logger;

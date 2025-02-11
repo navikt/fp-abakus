@@ -15,8 +15,7 @@ public enum InntektYtelseType implements Kodeverdi {
         List.of("dagpengerVedArbeidsloeshet", "dagpengerTilFiskerSomBareHarHyre")),
     FORELDREPENGER("Foreldrepenger", Kategori.YTELSE, YtelseType.FORELDREPENGER, "foreldrepenger"),
     SVANGERSKAPSPENGER("Svangerskapspenger", Kategori.YTELSE, YtelseType.SVANGERSKAPSPENGER, "svangerskapspenger"),
-    SYKEPENGER("Sykepenger", Kategori.YTELSE, YtelseType.SYKEPENGER,
-        List.of("sykepenger", "sykepengerTilFiskerSomBareHarHyre")),
+    SYKEPENGER("Sykepenger", Kategori.YTELSE, YtelseType.SYKEPENGER, List.of("sykepenger", "sykepengerTilFiskerSomBareHarHyre")),
     OMSORGSPENGER("Omsorgspenger", Kategori.YTELSE, YtelseType.OMSORGSPENGER, "omsorgspenger"),
     OPPLÆRINGSPENGER("Opplæringspenger", Kategori.YTELSE, YtelseType.OPPLÆRINGSPENGER, "opplaeringspenger"),
     PLEIEPENGER("Pleiepenger", Kategori.YTELSE, YtelseType.PLEIEPENGER_SYKT_BARN, "pleiepenger"),
@@ -52,15 +51,14 @@ public enum InntektYtelseType implements Kodeverdi {
         List.of("opplaeringspenger", "opplaeringspengerTilDagmamma", "opplaeringspengerTilFisker", "opplaeringspengerTilJordOgSkogbrukere")),
     PLEIEPENGER_NÆRING("Pleiepenger næring", Kategori.NÆRING, YtelseType.PLEIEPENGER_SYKT_BARN,
         List.of("pleiepenger", "pleiepengerTilDagmamma", "pleiepengerTilFisker", "pleiepengerTilJordOgSkogbrukere")),
-    DAGPENGER_NÆRING("Dagpenger næring", Kategori.NÆRING, YtelseType.DAGPENGER,
-        List.of("dagpengerVedArbeidsloeshet", "dagpengerTilFisker")),
+    DAGPENGER_NÆRING("Dagpenger næring", Kategori.NÆRING, YtelseType.DAGPENGER, List.of("dagpengerVedArbeidsloeshet", "dagpengerTilFisker")),
 
     // Annen ytelse utbetalt til person som er næringsdrivende
     ANNET("Annet", Kategori.NÆRING, YtelseType.UDEFINERT, "annet"),
     VEDERLAG("Vederlag", Kategori.NÆRING, YtelseType.UDEFINERT, List.of("vederlag", "vederlagDagmammaIEgetHjem")),
     LOTT_KUN_TRYGDEAVGIFT("Lott kun trygdeavgift", Kategori.NÆRING, YtelseType.UDEFINERT, "lottKunTrygdeavgift"),
-    KOMPENSASJON_FOR_TAPT_PERSONINNTEKT("Kompensasjon for tapt personinntekt", Kategori.NÆRING, YtelseType.FRISINN, "kompensasjonForTaptPersoninntekt")
-    ;
+    KOMPENSASJON_FOR_TAPT_PERSONINNTEKT("Kompensasjon for tapt personinntekt", Kategori.NÆRING, YtelseType.FRISINN,
+        "kompensasjonForTaptPersoninntekt");
 
     private final String navn;
     private final YtelseType ytelseType;
@@ -84,7 +82,9 @@ public enum InntektYtelseType implements Kodeverdi {
     }
 
     public static InntektYtelseType finnForKodeverkEiersKode(Kategori kategori, String kode) {
-        return Stream.of(values()).filter(k -> k.kategori == kategori && k.offisiellKode.contains(kode)).findFirst()
+        return Stream.of(values())
+            .filter(k -> k.kategori == kategori && k.offisiellKode.contains(kode))
+            .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Ukjent YtelseInntektType: " + kode + " kategori " + kategori));
     }
 
@@ -114,5 +114,9 @@ public enum InntektYtelseType implements Kodeverdi {
         return kategori == Kategori.NÆRING;
     }
 
-    public enum Kategori { YTELSE, NÆRING, TRYGD }
+    public enum Kategori {
+        YTELSE,
+        NÆRING,
+        TRYGD
+    }
 }

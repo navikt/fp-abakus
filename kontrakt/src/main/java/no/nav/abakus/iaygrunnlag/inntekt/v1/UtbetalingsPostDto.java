@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektYtelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
@@ -140,8 +141,8 @@ public class UtbetalingsPostDto {
         }
         var other = this.getClass().cast(obj);
 
-        return Objects.equals(inntektspostType, other.inntektspostType) && Objects.equals(periode, other.periode) &&
-            Objects.equals(inntektYtelseType, other.inntektYtelseType);
+        return Objects.equals(inntektspostType, other.inntektspostType) && Objects.equals(periode, other.periode) && Objects.equals(inntektYtelseType,
+            other.inntektYtelseType);
     }
 
     @Override

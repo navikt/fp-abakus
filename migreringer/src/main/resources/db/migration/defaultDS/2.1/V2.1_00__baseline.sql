@@ -168,26 +168,26 @@ create sequence seq_ytelse_anvist_andel
 
 create table kobling
 (
-    id                                    bigint                                       not null
+    id                                    bigint                              not null
         constraint pk_kobling
             primary key,
-    kobling_referanse                     uuid                                         not null
+    kobling_referanse                     uuid                                not null
         constraint uidx_kobling_1
             unique,
-    ytelse_type                           varchar(100)                                 not null,
-    bruker_aktoer_id                      varchar(50)                                  not null,
+    ytelse_type                           varchar(100)                        not null,
+    bruker_aktoer_id                      varchar(50)                         not null,
     annen_part_aktoer_id                  varchar(50),
     opplysning_periode_fom                date,
     opplysning_periode_tom                date,
     opptjening_periode_fom                date,
     opptjening_periode_tom                date,
-    versjon                               bigint       default 0                       not null,
+    versjon                               bigint       default 0              not null,
     opprettet_av                          varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid                         timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid                         timestamp(3) default LOCALTIMESTAMP not null,
     endret_av                             varchar(20),
     endret_tid                            timestamp(3),
-    saksnummer                            varchar(19)                                  not null,
-    aktiv                                 boolean      default true                    not null,
+    saksnummer                            varchar(19)                         not null,
+    aktiv                                 boolean      default true           not null,
     opplysning_periode_skattegrunnlag_fom date,
     opplysning_periode_skattegrunnlag_tom date
 );
@@ -226,12 +226,12 @@ create index idx_kobling_2
 
 create table iay_inntekt_arbeid_ytelser
 (
-    id                bigint                                       not null
+    id                bigint                              not null
         constraint pk_inntekt_arbeid_ytelser
             primary key,
-    versjon           bigint       default 0 not null,
+    versjon           bigint       default 0              not null,
     opprettet_av      varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid     timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid     timestamp(3) default LOCALTIMESTAMP not null,
     endret_av         varchar(20),
     endret_tid        timestamp(3),
     ekstern_referanse uuid
@@ -248,15 +248,15 @@ create unique index uidx_iay_01
 
 create table iay_aktoer_inntekt
 (
-    id                        bigint                                       not null
+    id                        bigint                              not null
         constraint pk_aktoer_inntekt
             primary key,
-    inntekt_arbeid_ytelser_id bigint                                       not null
+    inntekt_arbeid_ytelser_id bigint                              not null
         constraint fk_aktoer_inntekt_1
             references iay_inntekt_arbeid_ytelser,
-    versjon                   bigint       default 0                       not null,
+    versjon                   bigint       default 0              not null,
     opprettet_av              varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid             timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid             timestamp(3) default LOCALTIMESTAMP not null,
     endret_av                 varchar(20),
     endret_tid                timestamp(3),
     aktoer_id                 varchar(50)
@@ -278,20 +278,20 @@ create index idx_aktoer_inntekt_1
 
 create table iay_inntekt
 (
-    id                    bigint                                       not null
+    id                    bigint                              not null
         constraint pk_tmp_inntekt
             primary key,
-    aktoer_inntekt_id     bigint                                       not null
+    aktoer_inntekt_id     bigint                              not null
         constraint fk_inntekt_2
             references iay_aktoer_inntekt,
     kilde                 varchar(100),
     opprettet_av          varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid         timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid         timestamp(3) default LOCALTIMESTAMP not null,
     endret_av             varchar(20),
     endret_tid            timestamp(3),
     arbeidsgiver_aktor_id varchar(100),
     arbeidsgiver_orgnr    varchar(100),
-    versjon               bigint       default 0                       not null
+    versjon               bigint       default 0              not null
 );
 
 comment on table iay_inntekt is 'Inntekter per virksomhet';
@@ -318,19 +318,19 @@ create index idx_inntekt_4
 
 create table iay_inntektspost
 (
-    id                          bigint                                       not null
+    id                          bigint                              not null
         constraint pk_inntektspost
             primary key,
-    inntekt_id                  bigint                                       not null
+    inntekt_id                  bigint                              not null
         constraint fk_inntektspost_1
             references iay_inntekt,
-    inntektspost_type           varchar(100)                                 not null,
-    fom                         date                                         not null,
-    tom                         date                                         not null,
-    beloep                      numeric(19, 2)                               not null,
-    versjon                     bigint       default 0                       not null,
+    inntektspost_type           varchar(100)                        not null,
+    fom                         date                                not null,
+    tom                         date                                not null,
+    beloep                      numeric(19, 2)                      not null,
+    versjon                     bigint       default 0              not null,
     opprettet_av                varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid               timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid               timestamp(3) default LOCALTIMESTAMP not null,
     endret_av                   varchar(20),
     endret_tid                  timestamp(3),
     ytelse_type                 varchar(100),
@@ -368,15 +368,15 @@ create index idx_inntektspost_2
 
 create table iay_aktoer_arbeid
 (
-    id                        bigint                                       not null
+    id                        bigint                              not null
         constraint pk_aktoer_arbeid
             primary key,
-    inntekt_arbeid_ytelser_id bigint                                       not null
+    inntekt_arbeid_ytelser_id bigint                              not null
         constraint fk_aktoer_arbeid_1
             references iay_inntekt_arbeid_ytelser,
-    versjon                   bigint       default 0                       not null,
+    versjon                   bigint       default 0              not null,
     opprettet_av              varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid             timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid             timestamp(3) default LOCALTIMESTAMP not null,
     endret_av                 varchar(20),
     endret_tid                timestamp(3),
     aktoer_id                 varchar(50)
@@ -398,18 +398,18 @@ create index idx_aktoer_arbeid_1
 
 create table iay_yrkesaktivitet
 (
-    id                       bigint                                       not null
+    id                       bigint                              not null
         constraint pk_yrkesaktivitet
             primary key,
-    aktoer_arbeid_id         bigint                                       not null
+    aktoer_arbeid_id         bigint                              not null
         constraint fk_yrkesaktivitet_1
             references iay_aktoer_arbeid,
     arbeidsgiver_aktor_id    varchar(100),
     arbeidsgiver_orgnr       varchar(100),
-    arbeid_type              varchar(100)                                 not null,
-    versjon                  bigint       default 0                       not null,
+    arbeid_type              varchar(100)                        not null,
+    versjon                  bigint       default 0              not null,
     opprettet_av             varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid            timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid            timestamp(3) default LOCALTIMESTAMP not null,
     endret_av                varchar(20),
     endret_tid               timestamp(3),
     navn_arbeidsgiver_utland varchar(100),
@@ -452,19 +452,19 @@ create index idx_yrkesaktivitet_6
 
 create table iay_permisjon
 (
-    id                bigint                                       not null
+    id                bigint                              not null
         constraint pk_permisjon
             primary key,
-    yrkesaktivitet_id bigint                                       not null
+    yrkesaktivitet_id bigint                              not null
         constraint fk_permisjon_1
             references iay_yrkesaktivitet,
-    beskrivelse_type  varchar(100)                                 not null,
-    fom               date                                         not null,
-    tom               date                                         not null,
-    prosentsats       numeric(5, 2)                                not null,
-    versjon           bigint       default 0                       not null,
+    beskrivelse_type  varchar(100)                        not null,
+    fom               date                                not null,
+    tom               date                                not null,
+    prosentsats       numeric(5, 2)                       not null,
+    versjon           bigint       default 0              not null,
     opprettet_av      varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid     timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid     timestamp(3) default LOCALTIMESTAMP not null,
     endret_av         varchar(20),
     endret_tid        timestamp(3)
 );
@@ -487,18 +487,18 @@ create index idx_permisjon_6
 
 create table iay_aktivitets_avtale
 (
-    id                       bigint                                       not null
+    id                       bigint                              not null
         constraint pk_aktivitets_avtale
             primary key,
-    yrkesaktivitet_id        bigint                                       not null
+    yrkesaktivitet_id        bigint                              not null
         constraint fk_aktivitets_avtale_1
             references iay_yrkesaktivitet,
     prosentsats              numeric(5, 2),
-    fom                      date                                         not null,
-    tom                      date                                         not null,
-    versjon                  bigint       default 0                       not null,
+    fom                      date                                not null,
+    tom                      date                                not null,
+    versjon                  bigint       default 0              not null,
     opprettet_av             varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid            timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid            timestamp(3) default LOCALTIMESTAMP not null,
     endret_av                varchar(20),
     endret_tid               timestamp(3),
     beskrivelse              text,
@@ -522,12 +522,12 @@ create index idx_aktivitets_avtale_1
 
 create table iay_inntektsmeldinger
 (
-    id            bigint                                       not null
+    id            bigint                              not null
         constraint pk_inntektsmeldinger
             primary key,
-    versjon       bigint       default 0                       not null,
+    versjon       bigint       default 0              not null,
     opprettet_av  varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid timestamp(3) default LOCALTIMESTAMP not null,
     endret_av     varchar(20),
     endret_tid    timestamp(3)
 );
@@ -538,22 +538,23 @@ comment on column iay_inntektsmeldinger.id is 'Primærnøkkel';
 
 create table iay_inntektsmelding
 (
-    id                       bigint                                       not null
+    id                   bigint           not null
         constraint pk_inntektsmelding
             primary key,
-    inntektsmeldinger_id     bigint                                       not null
+    inntektsmeldinger_id bigint           not null
         constraint fk_inntektsmelding_1
             references iay_inntektsmeldinger,
-    journalpost_id           varchar(100)                                 not null,
-    versjon                  bigint       default 0                       not null,
-    arbeidsgiver_orgnr       varchar(100),
-    inntekt_beloep           numeric(10, 2)                               not null,
-    start_dato_permisjon     date,
-    refusjon_beloep          numeric(10, 2),
-    refusjon_opphoerer       date,
-    naer_relasjon            varchar(1)                                   not null
+    journalpost_id       varchar(100)     not null,
+    versjon              bigint default 0 not null,
+    arbeidsgiver_orgnr   varchar(100),
+    inntekt_beloep       numeric(10, 2)   not null,
+    start_dato_permisjon date,
+    refusjon_beloep      numeric(10, 2),
+    refusjon_opphoerer   date,
+    naer_relasjon        varchar(1)       not null
         constraint chk_fk_inntektsmelding_1
-            check ((naer_relasjon)::text = ANY ((ARRAY ['J'::character varying, 'N'::character varying])::text[])),
+            check ((naer_relasjon):: text = ANY ((ARRAY ['J':: character varying, 'N':: character varying]):: text [])
+) ,
     opprettet_av             varchar(20)  default 'VL'::character varying not null,
     opprettet_tid            timestamp(3) default LOCALTIMESTAMP          not null,
     endret_av                varchar(20),
@@ -616,19 +617,19 @@ create index idx_inntektsmelding_3
 
 create table iay_natural_ytelse
 (
-    id                  bigint                                       not null
+    id                  bigint                              not null
         constraint pk_natural_ytelse
             primary key,
-    inntektsmelding_id  bigint                                       not null
+    inntektsmelding_id  bigint                              not null
         constraint fk_natural_ytelse_1
             references iay_inntektsmelding,
-    natural_ytelse_type varchar(100)                                 not null,
-    beloep_mnd          numeric(10, 2)                               not null,
-    fom                 date                                         not null,
-    tom                 date                                         not null,
-    versjon             bigint       default 0                       not null,
+    natural_ytelse_type varchar(100)                        not null,
+    beloep_mnd          numeric(10, 2)                      not null,
+    fom                 date                                not null,
+    tom                 date                                not null,
+    versjon             bigint       default 0              not null,
     opprettet_av        varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid       timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid       timestamp(3) default LOCALTIMESTAMP not null,
     endret_av           varchar(20),
     endret_tid          timestamp(3)
 );
@@ -651,18 +652,18 @@ create index idx_natural_ytelse_6
 
 create table iay_gradering
 (
-    id                 bigint                                       not null
+    id                 bigint                              not null
         constraint pk_gradering
             primary key,
-    inntektsmelding_id bigint                                       not null
+    inntektsmelding_id bigint                              not null
         constraint fk_gradering_1
             references iay_inntektsmelding,
-    arbeidstid_prosent numeric(5, 2)                                not null,
-    fom                date                                         not null,
-    tom                date                                         not null,
-    versjon            bigint       default 0                       not null,
+    arbeidstid_prosent numeric(5, 2)                       not null,
+    fom                date                                not null,
+    tom                date                                not null,
+    versjon            bigint       default 0              not null,
     opprettet_av       varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid      timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid      timestamp(3) default LOCALTIMESTAMP not null,
     endret_av          varchar(20),
     endret_tid         timestamp(3)
 );
@@ -680,18 +681,18 @@ create index idx_gradering_1
 
 create table iay_utsettelse_periode
 (
-    id                     bigint                                       not null
+    id                     bigint                              not null
         constraint pk_utsettelse_periode
             primary key,
-    inntektsmelding_id     bigint                                       not null
+    inntektsmelding_id     bigint                              not null
         constraint fk_utsettelse_periode_1
             references iay_inntektsmelding,
-    utsettelse_aarsak_type varchar(100)                                 not null,
-    fom                    date                                         not null,
-    tom                    date                                         not null,
-    versjon                bigint       default 0                       not null,
+    utsettelse_aarsak_type varchar(100)                        not null,
+    fom                    date                                not null,
+    tom                    date                                not null,
+    versjon                bigint       default 0              not null,
     opprettet_av           varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid          timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid          timestamp(3) default LOCALTIMESTAMP not null,
     endret_av              varchar(20),
     endret_tid             timestamp(3)
 );
@@ -710,15 +711,15 @@ create index idx_utsettelse_periode_6
 
 create table iay_oppgitt_opptjening
 (
-    id                       bigint                                       not null
+    id                       bigint                              not null
         constraint pk_oppgitt_opptjening
             primary key,
     opprettet_av             varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid            timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid            timestamp(3) default LOCALTIMESTAMP not null,
     endret_av                varchar(20),
     endret_tid               timestamp(3),
     ekstern_referanse        uuid,
-    versjon                  bigint       default 0                       not null,
+    versjon                  bigint       default 0              not null,
     oppgitte_opptjeninger_id bigint,
     journalpost_id           varchar(100),
     innsendingstidspunkt     timestamp(6)
@@ -741,23 +742,23 @@ create unique index uidx_iay_oppgitt_opptje_01
 
 create table iay_oppgitt_arbeidsforhold
 (
-    id                         bigint                                       not null
+    id                         bigint                              not null
         constraint pk_oppgitt_arbeidsforhold
             primary key,
-    oppgitt_opptjening_id      bigint                                       not null
+    oppgitt_opptjening_id      bigint                              not null
         constraint fk_arbeidsforhold_1
             references iay_oppgitt_opptjening,
-    fom                        date                                         not null,
-    tom                        date                                         not null,
-    utenlandsk_inntekt         varchar(1)                                   not null,
-    arbeid_type                varchar(100)                                 not null,
+    fom                        date                                not null,
+    tom                        date                                not null,
+    utenlandsk_inntekt         varchar(1)                          not null,
+    arbeid_type                varchar(100)                        not null,
     utenlandsk_virksomhet_navn varchar(100),
     land                       varchar(100),
     opprettet_av               varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid              timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid              timestamp(3) default LOCALTIMESTAMP not null,
     endret_av                  varchar(20),
     endret_tid                 timestamp(3),
-    versjon                    bigint       default 0                       not null,
+    versjon                    bigint       default 0              not null,
     inntekt                    numeric(10, 2)
 );
 
@@ -786,14 +787,14 @@ create index idx_oppgitt_arbeidsforhold_4
 
 create table iay_egen_naering
 (
-    id                         bigint                                       not null
+    id                         bigint                              not null
         constraint pk_egen_naering
             primary key,
-    oppgitt_opptjening_id      bigint                                       not null
+    oppgitt_opptjening_id      bigint                              not null
         constraint fk_egen_naering_1
             references iay_oppgitt_opptjening,
-    fom                        date                                         not null,
-    tom                        date                                         not null,
+    fom                        date                                not null,
+    tom                        date                                not null,
     virksomhet_type            varchar(100),
     org_nummer                 varchar(100),
     regnskapsfoerer_navn       varchar(400),
@@ -804,14 +805,14 @@ create table iay_egen_naering
     utenlandsk_virksomhet_navn varchar(100),
     land                       varchar(100),
     opprettet_av               varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid              timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid              timestamp(3) default LOCALTIMESTAMP not null,
     endret_av                  varchar(20),
     endret_tid                 timestamp(3),
     nyoppstartet               varchar(1)   default 'N'::character varying  not null,
     varig_endring              varchar(1)   default 'N'::character varying  not null,
     ny_i_arbeidslivet          varchar(1)   default 'N'::character varying  not null,
-    naer_relasjon              varchar(1)                                   not null,
-    versjon                    bigint       default 0                       not null
+    naer_relasjon              varchar(1)                          not null,
+    versjon                    bigint       default 0              not null
 );
 
 comment on table iay_egen_naering is 'Oppgitt informasjon om egen næringsvirksomhet';
@@ -856,17 +857,17 @@ create index idx_egen_naering_6
 
 create table iay_annen_aktivitet
 (
-    id                    bigint                                       not null
+    id                    bigint                              not null
         constraint pk_annen_aktivitet
             primary key,
-    oppgitt_opptjening_id bigint                                       not null
+    oppgitt_opptjening_id bigint                              not null
         constraint fk_annen_aktivitet_1
             references iay_oppgitt_opptjening,
-    fom                   date                                         not null,
-    tom                   date                                         not null,
-    arbeid_type           varchar(100)                                 not null,
+    fom                   date                                not null,
+    tom                   date                                not null,
+    arbeid_type           varchar(100)                        not null,
     opprettet_av          varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid         timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid         timestamp(3) default LOCALTIMESTAMP not null,
     endret_av             varchar(20),
     endret_tid            timestamp(3)
 );
@@ -885,15 +886,15 @@ create index idx_annen_aktivitet_6
 
 create table iay_aktoer_ytelse
 (
-    id                        bigint                                       not null
+    id                        bigint                              not null
         constraint pk_aktoer_ytelse
             primary key,
-    inntekt_arbeid_ytelser_id bigint                                       not null
+    inntekt_arbeid_ytelser_id bigint                              not null
         constraint fk_aktoer_ytelse_1
             references iay_inntekt_arbeid_ytelser,
-    versjon                   bigint       default 0                       not null,
+    versjon                   bigint       default 0              not null,
     opprettet_av              varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid             timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid             timestamp(3) default LOCALTIMESTAMP not null,
     endret_av                 varchar(20),
     endret_tid                timestamp(3),
     aktoer_id                 varchar(50)
@@ -915,20 +916,20 @@ create index idx_aktoer_ytelse_1
 
 create table iay_relatert_ytelse
 (
-    id                bigint                                       not null
+    id                bigint                              not null
         constraint pk_ytelse
             primary key,
-    aktoer_ytelse_id  bigint                                       not null
+    aktoer_ytelse_id  bigint                              not null
         constraint fk_ytelse_4
             references iay_aktoer_ytelse,
-    ytelse_type       varchar(100)                                 not null,
-    fom               date                                         not null,
-    tom               date                                         not null,
+    ytelse_type       varchar(100)                        not null,
+    fom               date                                not null,
+    tom               date                                not null,
     status            varchar(100) default NULL::character varying not null,
-    kilde             varchar(100)                                 not null,
-    versjon           bigint       default 0                       not null,
+    kilde             varchar(100)                        not null,
+    versjon           bigint       default 0              not null,
     opprettet_av      varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid     timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid     timestamp(3) default LOCALTIMESTAMP not null,
     endret_av         varchar(20),
     endret_tid        timestamp(3),
     saksnummer        varchar(19),
@@ -972,22 +973,22 @@ create index idx_relatert_ytelse_8
 
 create table iay_ytelse_grunnlag
 (
-    id                       bigint                                       not null
+    id                       bigint                              not null
         constraint pk_ytelse_grunnlag
             primary key,
-    ytelse_id                bigint                                       not null
+    ytelse_id                bigint                              not null
         constraint fk_ytelse_grunnlag_2
             references iay_relatert_ytelse,
     opprinnelig_identdato    date,
     dekningsgrad_prosent     numeric(5, 2),
     gradering_prosent        numeric(5, 2),
     inntektsgrunnlag_prosent numeric(5, 2),
-    versjon                  bigint       default 0                       not null,
+    versjon                  bigint       default 0              not null,
     opprettet_av             varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid            timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid            timestamp(3) default LOCALTIMESTAMP not null,
     endret_av                varchar(20),
     endret_tid               timestamp(3),
-    arbeidskategori          varchar(100)                                 not null,
+    arbeidskategori          varchar(100)                        not null,
     dagsats                  numeric(19, 2)
 );
 
@@ -1014,18 +1015,18 @@ create index idx_ytelse_grunnlag_1
 
 create table iay_ytelse_stoerrelse
 (
-    id                 bigint                                       not null
+    id                 bigint                              not null
         constraint pk_ytelse_stoerrelse
             primary key,
-    ytelse_grunnlag_id bigint                                       not null
+    ytelse_grunnlag_id bigint                              not null
         constraint fk_ytelse_stoerrelse_2
             references iay_ytelse_grunnlag,
     org_nummer         varchar(100),
-    beloep             numeric(19, 2)                               not null,
-    hyppighet          varchar(100)                                 not null,
-    versjon            bigint       default 0                       not null,
+    beloep             numeric(19, 2)                      not null,
+    hyppighet          varchar(100)                        not null,
+    versjon            bigint       default 0              not null,
     opprettet_av       varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid      timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid      timestamp(3) default LOCALTIMESTAMP not null,
     endret_av          varchar(20),
     endret_tid         timestamp(3),
     er_refusjon        boolean
@@ -1056,19 +1057,19 @@ create index idx_ytelse_stoerrelse_3
 
 create table iay_ytelse_anvist
 (
-    id                      bigint                                       not null
+    id                      bigint                              not null
         constraint pk_ytelse_anvist
             primary key,
-    ytelse_id               bigint                                       not null
+    ytelse_id               bigint                              not null
         constraint fk_ytelse_anvist_1
             references iay_relatert_ytelse,
     beloep                  numeric(19, 2),
-    fom                     date                                         not null,
-    tom                     date                                         not null,
+    fom                     date                                not null,
+    tom                     date                                not null,
     utbetalingsgrad_prosent numeric(5, 2),
-    versjon                 bigint       default 0                       not null,
+    versjon                 bigint       default 0              not null,
     opprettet_av            varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid           timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid           timestamp(3) default LOCALTIMESTAMP not null,
     endret_av               varchar(20),
     endret_tid              timestamp(3),
     dagsats                 numeric(19, 2)
@@ -1095,12 +1096,12 @@ create index idx_ytelse_anvist_1
 
 create table iay_informasjon
 (
-    id            bigint                                       not null
+    id            bigint                              not null
         constraint pk_informasjon
             primary key,
-    versjon       bigint       default 0                       not null,
+    versjon       bigint       default 0              not null,
     opprettet_av  varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid timestamp(3) default LOCALTIMESTAMP not null,
     endret_av     varchar(20),
     endret_tid    timestamp(3)
 );
@@ -1109,21 +1110,21 @@ comment on table iay_informasjon is 'Mange til mange tabell for arbeidsforhold r
 
 create table iay_arbeidsforhold_refer
 (
-    id                    bigint                                       not null
+    id                    bigint                              not null
         constraint pk_arbeidsforhold_refer
             primary key,
-    informasjon_id        bigint                                       not null
+    informasjon_id        bigint                              not null
         constraint fk_arbeidsforhold_refer_1
             references iay_informasjon,
-    ekstern_referanse     varchar(100)                                 not null,
+    ekstern_referanse     varchar(100)                        not null,
     arbeidsgiver_aktor_id varchar(100),
     arbeidsgiver_orgnr    varchar(100),
-    versjon               bigint       default 0                       not null,
+    versjon               bigint       default 0              not null,
     opprettet_av          varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid         timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid         timestamp(3) default LOCALTIMESTAMP not null,
     endret_av             varchar(20),
     endret_tid            timestamp(3),
-    intern_referanse      uuid                                         not null
+    intern_referanse      uuid                                not null
 );
 
 comment on table iay_arbeidsforhold_refer is 'Kobling mellom arbeidsforhold fra aa-reg og intern nøkkel for samme representasjon';
@@ -1153,23 +1154,24 @@ create index idx_arbeidsforhold_refer_1
 
 create unique index uidx_arbeidsforhold_refer_01
     on iay_arbeidsforhold_refer (informasjon_id, ekstern_referanse, arbeidsgiver_orgnr, arbeidsgiver_aktor_id)
-    where (opprettet_tid > '2021-06-30 00:00:00'::timestamp without time zone);
+    where
+    (opprettet_tid > '2021-06-30 00:00:00':: timestamp without time zone);
 
 create table iay_arbeidsforhold
 (
-    id                          bigint                                       not null
+    id                          bigint                              not null
         constraint pk_arbeidsforhold
             primary key,
-    informasjon_id              bigint                                       not null
+    informasjon_id              bigint                              not null
         constraint fk_arbeidsforhold_1
             references iay_informasjon,
     arbeidsgiver_aktor_id       varchar(100),
     arbeidsgiver_orgnr          varchar(100),
     begrunnelse                 text,
-    handling_type               varchar(100)                                 not null,
-    versjon                     bigint       default 0                       not null,
+    handling_type               varchar(100)                        not null,
+    versjon                     bigint       default 0              not null,
     opprettet_av                varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid               timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid               timestamp(3) default LOCALTIMESTAMP not null,
     endret_av                   varchar(20),
     endret_tid                  timestamp(3),
     bekreftet_tom_dato          date,
@@ -1229,17 +1231,17 @@ create index idx_iay_arbeidsforhold_4
 
 create table iay_refusjon
 (
-    id                  bigint                                       not null
+    id                  bigint                              not null
         constraint pk_refusjon
             primary key,
-    inntektsmelding_id  bigint                                       not null
+    inntektsmelding_id  bigint                              not null
         constraint fk_refusjon_1
             references iay_inntektsmelding,
-    refusjonsbeloep_mnd numeric(10, 2)                               not null,
-    fom                 date                                         not null,
-    versjon             bigint       default 0                       not null,
+    refusjonsbeloep_mnd numeric(10, 2)                      not null,
+    fom                 date                                not null,
+    versjon             bigint       default 0              not null,
     opprettet_av        varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid       timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid       timestamp(3) default LOCALTIMESTAMP not null,
     endret_av           varchar(20),
     endret_tid          timestamp(3)
 );
@@ -1259,18 +1261,18 @@ create index idx_refusjon_1
 
 create table iay_oppgitt_frilans
 (
-    id                     bigint                                       not null
+    id                     bigint                              not null
         constraint pk_oppgitt_frilans
             primary key,
-    oppgitt_opptjening_id  bigint                                       not null
+    oppgitt_opptjening_id  bigint                              not null
         constraint fk_oppgitt_frilans
             references iay_oppgitt_opptjening,
-    inntekt_fra_fosterhjem varchar(1)                                   not null,
-    nyoppstartet           varchar(1)                                   not null,
-    naer_relasjon          varchar(1)                                   not null,
-    versjon                bigint       default 0                       not null,
+    inntekt_fra_fosterhjem varchar(1)                          not null,
+    nyoppstartet           varchar(1)                          not null,
+    naer_relasjon          varchar(1)                          not null,
+    versjon                bigint       default 0              not null,
     opprettet_av           varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid          timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid          timestamp(3) default LOCALTIMESTAMP not null,
     endret_av              varchar(20),
     endret_tid             timestamp(3)
 );
@@ -1292,18 +1294,18 @@ create index idx_oppgitt_f_1
 
 create table iay_oppgitt_frilansoppdrag
 (
-    id            bigint                                       not null
+    id            bigint                              not null
         constraint pk_oppgitt_frilansoppdrag
             primary key,
-    frilans_id    bigint                                       not null
+    frilans_id    bigint                              not null
         constraint fk_oppgitt_frilansoppdrag
             references iay_oppgitt_frilans,
-    fom           date                                         not null,
-    tom           date                                         not null,
+    fom           date                                not null,
+    tom           date                                not null,
     oppdragsgiver varchar(100),
-    versjon       bigint       default 0                       not null,
+    versjon       bigint       default 0              not null,
     opprettet_av  varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid timestamp(3) default LOCALTIMESTAMP not null,
     endret_av     varchar(20),
     endret_tid    timestamp(3),
     inntekt       numeric(10, 2)
@@ -1328,13 +1330,13 @@ create index idx_oppgitt_fo_1
 
 create table gr_arbeid_inntekt
 (
-    id                              bigint                                       not null
+    id                              bigint                              not null
         constraint pk_gr_arbeid_inntekt
             primary key,
-    kobling_id                      bigint                                       not null
+    kobling_id                      bigint                              not null
         constraint fk_gr_arbeid_inntekt_1
             references kobling,
-    grunnlag_referanse              uuid                                         not null
+    grunnlag_referanse              uuid                                not null
         constraint uidx_gr_arbeid_inntekt_3
             unique,
     register_id                     bigint
@@ -1343,9 +1345,9 @@ create table gr_arbeid_inntekt
     saksbehandlet_id                bigint
         constraint fk_gr_arbeid_inntekt_5
             references iay_inntekt_arbeid_ytelser,
-    versjon                         bigint       default 0                       not null,
+    versjon                         bigint       default 0              not null,
     opprettet_av                    varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid                   timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid                   timestamp(3) default LOCALTIMESTAMP not null,
     endret_av                       varchar(20),
     endret_tid                      timestamp(3),
     inntektsmeldinger_id            bigint
@@ -1412,24 +1414,25 @@ create index idx_gr_arbeid_inntekt_8
 
 create unique index uidx_gr_arbeid_inntekt_02
     on gr_arbeid_inntekt (kobling_id)
-    where ((aktiv)::text = 'J'::text);
+    where
+    ((aktiv):: text = 'J':: text);
 
 create table vedtak_ytelse
 (
-    id                   bigint                                       not null
+    id                   bigint                              not null
         constraint pk_vedtak_ytelse
             primary key,
-    aktoer_id            varchar(50)                                  not null,
-    ytelse_type          varchar(100)                                 not null,
-    vedtatt_tidspunkt    timestamp(3)                                 not null,
-    vedtak_referanse     uuid                                         not null,
-    fom                  date                                         not null,
-    tom                  date                                         not null,
-    status               varchar(100)                                 not null,
-    kilde                varchar(100)                                 not null,
-    versjon              bigint       default 0                       not null,
+    aktoer_id            varchar(50)                         not null,
+    ytelse_type          varchar(100)                        not null,
+    vedtatt_tidspunkt    timestamp(3)                        not null,
+    vedtak_referanse     uuid                                not null,
+    fom                  date                                not null,
+    tom                  date                                not null,
+    status               varchar(100)                        not null,
+    kilde                varchar(100)                        not null,
+    versjon              bigint       default 0              not null,
     opprettet_av         varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid        timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid        timestamp(3) default LOCALTIMESTAMP not null,
     endret_av            varchar(20),
     endret_tid           timestamp(3),
     saksnummer           varchar(19),
@@ -1485,23 +1488,24 @@ create index idx_vedtak_ytelse_11
 
 create unique index uidx_vedtak_ytelse_02
     on vedtak_ytelse (saksnummer, aktoer_id, kilde, ytelse_type)
-    where ((aktiv)::text = 'J'::text);
+    where
+    ((aktiv):: text = 'J':: text);
 
 create table ve_ytelse_anvist
 (
-    id                      bigint                                       not null
+    id                      bigint                              not null
         constraint pk_ve_ytelse_anvist
             primary key,
-    ytelse_id               bigint                                       not null
+    ytelse_id               bigint                              not null
         constraint fk_ve_ytelse_anvist_1
             references vedtak_ytelse,
     beloep                  numeric(19, 2),
-    fom                     date                                         not null,
-    tom                     date                                         not null,
+    fom                     date                                not null,
+    tom                     date                                not null,
     utbetalingsgrad_prosent numeric(5, 2),
-    versjon                 bigint       default 0                       not null,
+    versjon                 bigint       default 0              not null,
     opprettet_av            varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid           timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid           timestamp(3) default LOCALTIMESTAMP not null,
     endret_av               varchar(20),
     endret_tid              timestamp(3),
     dagsats                 numeric(19, 2)
@@ -1556,18 +1560,18 @@ create index idx_iay_overstyrte_perioder_1
 
 create table iay_fravaer
 (
-    id                 bigint                                       not null
+    id                 bigint                              not null
         constraint pk_fravaer
             primary key,
-    inntektsmelding_id bigint                                       not null
+    inntektsmelding_id bigint                              not null
         constraint fk_fravaer_1
             references iay_inntektsmelding,
-    fom                date                                         not null,
-    tom                date                                         not null,
+    fom                date                                not null,
+    tom                date                                not null,
     varighet_per_dag   varchar(20),
-    versjon            bigint       default 0                       not null,
+    versjon            bigint       default 0              not null,
     opprettet_av       varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid      timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid      timestamp(3) default LOCALTIMESTAMP not null,
     endret_av          varchar(20),
     endret_tid         timestamp(3),
     constraint iay_fravaer_valider_periode
@@ -1581,22 +1585,22 @@ create index idx_iay_fravaer_01
 
 create table lonnskomp_vedtak
 (
-    id                  bigint                                       not null
+    id                  bigint                              not null
         constraint pk_lonnskomp_vedtak
             primary key,
-    sakid               varchar(100)                                 not null,
+    sakid               varchar(100)                        not null,
     forrige_vedtak_dato date,
     aktoer_id           varchar(50),
-    org_nummer          varchar(100)                                 not null,
-    beloep              numeric(19, 2)                               not null,
-    fom                 date                                         not null,
-    tom                 date                                         not null,
-    versjon             bigint       default 0                       not null,
+    org_nummer          varchar(100)                        not null,
+    beloep              numeric(19, 2)                      not null,
+    fom                 date                                not null,
+    tom                 date                                not null,
+    versjon             bigint       default 0              not null,
     opprettet_av        varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid       timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid       timestamp(3) default LOCALTIMESTAMP not null,
     endret_av           varchar(20),
     endret_tid          timestamp(3),
-    aktiv               boolean      default true                    not null,
+    aktiv               boolean      default true           not null,
     fnr                 varchar(50)
 );
 
@@ -1634,18 +1638,18 @@ create index idx_lonnskomp_vedtak_3
 
 create table lonnskomp_anvist
 (
-    id            bigint                                       not null
+    id            bigint                              not null
         constraint pk_lonnskomp_anvist
             primary key,
-    vedtak_id     bigint                                       not null
+    vedtak_id     bigint                              not null
         constraint fk_lonnskomp_anvist_1
             references lonnskomp_vedtak,
     beloep        numeric(19, 2),
-    fom           date                                         not null,
-    tom           date                                         not null,
-    versjon       bigint       default 0                       not null,
+    fom           date                                not null,
+    tom           date                                not null,
+    versjon       bigint       default 0              not null,
     opprettet_av  varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid timestamp(3) default LOCALTIMESTAMP not null,
     endret_av     varchar(20),
     endret_tid    timestamp(3)
 );
@@ -1667,11 +1671,11 @@ create index idx_lonnskomp_anvist_1
 
 create table diagnostikk_logg
 (
-    id            bigint                                       not null
+    id            bigint                                 not null
         primary key,
-    saksnummer    varchar(20)                                  not null,
+    saksnummer    varchar(20)                            not null,
     opprettet_av  varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid timestamp(3) default CURRENT_TIMESTAMP       not null,
+    opprettet_tid timestamp(3) default CURRENT_TIMESTAMP not null,
     endret_av     varchar(20),
     endret_tid    timestamp(3)
 );
@@ -1681,12 +1685,12 @@ create index diagnostikk_logg_saksnummer_idx
 
 create table iay_oppgitte_opptjeninger
 (
-    id            bigint                                       not null
+    id            bigint                              not null
         constraint pk_iay_oppgitte_opptjeninger
             primary key,
-    versjon       bigint       default 0                       not null,
+    versjon       bigint       default 0              not null,
     opprettet_av  varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid timestamp(3) default LOCALTIMESTAMP not null,
     endret_av     varchar(20),
     endret_tid    timestamp(3)
 );
@@ -1697,10 +1701,10 @@ comment on column iay_oppgitte_opptjeninger.id is 'Primærnøkkel';
 
 create table ve_ytelse_andel
 (
-    id                      bigint                                       not null
+    id                      bigint                              not null
         constraint pk_ve_ytelse_andel
             primary key,
-    ytelse_anvist_id        bigint                                       not null
+    ytelse_anvist_id        bigint                              not null
         constraint fk_ve_ytelse_andel_1
             references ve_ytelse_anvist,
     dagsats                 numeric(19, 2),
@@ -1710,9 +1714,9 @@ create table ve_ytelse_andel
     arbeidsgiver_orgnr      varchar(100),
     arbeidsforhold_id       varchar(100),
     inntektskategori        varchar(100),
-    versjon                 bigint       default 0                       not null,
+    versjon                 bigint       default 0              not null,
     opprettet_av            varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid           timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid           timestamp(3) default LOCALTIMESTAMP not null,
     endret_av               varchar(20),
     endret_tid              timestamp(3)
 );
@@ -1742,10 +1746,10 @@ create index idx_ve_ytelse_andel_1
 
 create table iay_ytelse_anvist_andel
 (
-    id                       bigint                                       not null
+    id                       bigint                              not null
         constraint pk_iay_ytelse_anvist_andel
             primary key,
-    ytelse_anvist_id         bigint                                       not null
+    ytelse_anvist_id         bigint                              not null
         constraint fk_iay_ytelse_anvist_andel_1
             references iay_ytelse_anvist,
     dagsats                  numeric(19, 2),
@@ -1755,9 +1759,9 @@ create table iay_ytelse_anvist_andel
     arbeidsgiver_orgnr       varchar(100),
     arbeidsforhold_intern_id varchar(100),
     inntektskategori         varchar(100),
-    versjon                  bigint       default 0                       not null,
+    versjon                  bigint       default 0              not null,
     opprettet_av             varchar(20)  default 'VL'::character varying not null,
-    opprettet_tid            timestamp(3) default LOCALTIMESTAMP          not null,
+    opprettet_tid            timestamp(3) default LOCALTIMESTAMP not null,
     endret_av                varchar(20),
     endret_tid               timestamp(3)
 );
@@ -1787,15 +1791,15 @@ create index idx_iay_ytelse_anvist_andel_1
 
 create table prosess_task
 (
-    id                        numeric                                                                            not null,
-    task_type                 varchar(50)                                                                        not null,
-    prioritet                 numeric(3)   default 0                                                             not null,
+    id                        numeric                                                                             not null,
+    task_type                 varchar(50)                                                                         not null,
+    prioritet                 numeric(3)   default 0                                                              not null,
     status                    varchar(20)  default 'KLAR'::character varying                                     not null,
     task_parametere           varchar(4000),
     task_payload              text,
     task_gruppe               varchar(250),
     task_sekvens              varchar(100) default '1'::character varying                                        not null,
-    partition_key             varchar(4)   default to_char((CURRENT_DATE)::timestamp with time zone, 'MM'::text) not null,
+    partition_key             varchar(4)   default to_char((CURRENT_DATE) ::timestamp with time zone, 'MM'::text) not null,
     neste_kjoering_etter      timestamp(0) default CURRENT_TIMESTAMP,
     feilede_forsoek           numeric(5)   default 0,
     siste_kjoering_ts         timestamp(6),
@@ -1803,15 +1807,18 @@ create table prosess_task
     siste_kjoering_feil_tekst text,
     siste_kjoering_server     varchar(50),
     opprettet_av              varchar(20)  default 'VL'::character varying                                       not null,
-    opprettet_tid             timestamp(6) default CURRENT_TIMESTAMP                                             not null,
+    opprettet_tid             timestamp(6) default CURRENT_TIMESTAMP                                              not null,
     blokkert_av               numeric,
-    versjon                   numeric      default 0                                                             not null,
+    versjon                   numeric      default 0                                                              not null,
     siste_kjoering_slutt_ts   timestamp(6),
     siste_kjoering_plukk_ts   timestamp(6),
     constraint pk_prosess_task
         primary key (id, status, partition_key)
 )
-    partition by LIST (status);
+    partition by LIST
+(
+    status
+);
 
 comment on table prosess_task is 'Inneholder tasks som skal kjøres i bakgrunnen';
 

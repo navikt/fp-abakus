@@ -6,11 +6,14 @@ import java.util.Optional;
 
 public record PgiFolketrygdenResponse(String norskPersonidentifikator, Integer inntektsaar, List<Pgi> pensjonsgivendeInntekt) {
     public record Pgi(Skatteordning skatteordning, LocalDate datoForFastsetting, Long pensjonsgivendeInntektAvLoennsinntekt,
-                Long pensjonsgivendeInntektAvLoennsinntektBarePensjonsdel, Long pensjonsgivendeInntektAvNaeringsinntekt,
-                Long pensjonsgivendeInntektAvNaeringsinntektFraFiskeFangstEllerFamiliebarnehage) {}
+                      Long pensjonsgivendeInntektAvLoennsinntektBarePensjonsdel, Long pensjonsgivendeInntektAvNaeringsinntekt,
+                      Long pensjonsgivendeInntektAvNaeringsinntektFraFiskeFangstEllerFamiliebarnehage) {
+    }
 
     public enum Skatteordning {
-        FASTLAND, SVALBARD, KILDESKATT_PAA_LOENN
+        FASTLAND,
+        SVALBARD,
+        KILDESKATT_PAA_LOENN
     }
 
     public List<Pgi> safePensjonsgivendeInntekt() {

@@ -41,7 +41,8 @@ class IAYMigreringNPETest {
 
     private String readTestCase(String fileName) throws IOException {
         String str = null;
-        try (var is = getClass().getResourceAsStream(fileName); var s = new java.util.Scanner(is, StandardCharsets.UTF_8); Scanner s2 = s.useDelimiter("\\A")) {
+        try (var is = getClass().getResourceAsStream(fileName); var s = new java.util.Scanner(is,
+            StandardCharsets.UTF_8); Scanner s2 = s.useDelimiter("\\A")) {
 
             str = s2.hasNext() ? s2.next() : "";
         }

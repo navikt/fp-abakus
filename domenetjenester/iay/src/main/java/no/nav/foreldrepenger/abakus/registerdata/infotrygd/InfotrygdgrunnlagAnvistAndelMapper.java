@@ -260,8 +260,8 @@ public class InfotrygdgrunnlagAnvistAndelMapper {
         return utbetalinger.stream()
             .map(u -> new Mellomregninger(
                 OrganisasjonsNummerValidator.erGyldig(u.getOrgnr()) ? Arbeidsgiver.virksomhet(new OrgNummer(u.getOrgnr())) : null,
-                new Beløp(u.getDagsats()), Stillingsprosent.utbetalingsgrad(u.getUtbetalingsgrad()), u.getErRefusjon() != null && u.getErRefusjon(), false,
-                u.getOrgnr() != null && Arrays.stream(Nødnummer.values()).anyMatch(n -> n.getOrgnummer().equals(u.getOrgnr()))))
+                new Beløp(u.getDagsats()), Stillingsprosent.utbetalingsgrad(u.getUtbetalingsgrad()), u.getErRefusjon() != null && u.getErRefusjon(),
+                false, u.getOrgnr() != null && Arrays.stream(Nødnummer.values()).anyMatch(n -> n.getOrgnummer().equals(u.getOrgnr()))))
             .toList();
     }
 

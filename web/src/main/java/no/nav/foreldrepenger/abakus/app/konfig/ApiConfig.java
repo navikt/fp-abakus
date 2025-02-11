@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.ws.rs.ApplicationPath;
+
 import no.nav.foreldrepenger.abakus.app.exceptions.ConstraintViolationMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.GeneralRestExceptionMapper;
 import no.nav.foreldrepenger.abakus.app.exceptions.JsonMappingExceptionMapper;
@@ -46,12 +47,8 @@ public class ApiConfig extends ResourceConfig {
 
     private Set<Class<?>> getApplicationClasses() {
         // eksponert grensesnitt
-        return Set.of(RegisterdataRestTjeneste.class,
-            InntektsmeldingerRestTjeneste.class,
-            OppgittOpptjeningRestTjeneste.class,
-            GrunnlagRestTjeneste.class,
-            ArbeidsforholdRestTjeneste.class,
-            YtelseRestTjeneste.class);
+        return Set.of(RegisterdataRestTjeneste.class, InntektsmeldingerRestTjeneste.class, OppgittOpptjeningRestTjeneste.class,
+            GrunnlagRestTjeneste.class, ArbeidsforholdRestTjeneste.class, YtelseRestTjeneste.class);
     }
 
     void registerExceptionMappers() {

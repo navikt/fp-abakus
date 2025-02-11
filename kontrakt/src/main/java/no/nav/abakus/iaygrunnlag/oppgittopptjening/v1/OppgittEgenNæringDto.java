@@ -40,12 +40,12 @@ public class OppgittEgenNæringDto {
     private VirksomhetType virksomhetType;
 
     @JsonProperty(value = "regnskapsførerNavn")
-    @Size(max=400)
+    @Size(max = 400)
     @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String regnskapsførerNavn;
 
     @JsonProperty(value = "regnskapsførerTlf")
-    @Size(max=100)
+    @Size(max = 100)
     @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "[${validatedValue}] matcher ikke oppgitt pattern [{regexp}]")
     // har caser som har sluppet gjennom selvbetjening med alfa
     private String regnskapsførerTlf;
@@ -54,7 +54,7 @@ public class OppgittEgenNæringDto {
      * Oppgis normalt dersom ikke orgnr kan gis. F.eks for utlandske virsomheter, eller noen tilfeller Fiskere med Lott.
      */
     @JsonProperty(value = "virksomhetNavn", required = false)
-    @Size(max=100)
+    @Size(max = 100)
     @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String virksomhetNavn;
 
@@ -70,7 +70,7 @@ public class OppgittEgenNæringDto {
     private Boolean erVarigEndring;
 
     @JsonProperty(value = "endringBegrunnelse")
-    @Size(max=10000)
+    @Size(max = 10000)
     private String endringBegrunnelse;
 
     /**

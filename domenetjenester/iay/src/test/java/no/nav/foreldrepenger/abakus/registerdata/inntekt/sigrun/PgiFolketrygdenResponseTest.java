@@ -48,10 +48,10 @@ class PgiFolketrygdenResponseTest {
 
         var intern = SigrunPgiFolketrygdenMapper.mapFraPgiResponseTilIntern(List.of(respons));
 
-        assertThat(intern.values().stream().findFirst().map(m -> m.get(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE)))
-            .hasValueSatisfying(v -> assertThat(v).isEqualByComparingTo(BigDecimal.valueOf(2680000)));
-        assertThat(intern.values().stream().findFirst().map(m -> m.get(InntektspostType.LØNN)))
-            .hasValueSatisfying(v -> assertThat(v).isEqualByComparingTo(BigDecimal.valueOf(1190379)));
+        assertThat(intern.values().stream().findFirst().map(m -> m.get(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE))).hasValueSatisfying(
+            v -> assertThat(v).isEqualByComparingTo(BigDecimal.valueOf(2680000)));
+        assertThat(intern.values().stream().findFirst().map(m -> m.get(InntektspostType.LØNN))).hasValueSatisfying(
+            v -> assertThat(v).isEqualByComparingTo(BigDecimal.valueOf(1190379)));
         assertThat(intern.values().stream().findFirst().map(m -> m.get(InntektspostType.NÆRING_FISKE_FANGST_FAMBARNEHAGE))).isEmpty();
     }
 
@@ -75,8 +75,8 @@ class PgiFolketrygdenResponseTest {
 
         var intern = SigrunPgiFolketrygdenMapper.mapFraPgiResponseTilIntern(List.of(responseStub));
 
-        assertThat(intern.values().stream().findFirst().map(m -> m.get(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE)))
-            .hasValueSatisfying(v -> assertThat(v).isEqualByComparingTo(BigDecimal.valueOf(200000)));
+        assertThat(intern.values().stream().findFirst().map(m -> m.get(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE))).hasValueSatisfying(
+            v -> assertThat(v).isEqualByComparingTo(BigDecimal.valueOf(200000)));
         assertThat(intern.values().stream().findFirst().map(m -> m.get(InntektspostType.LØNN))).isEmpty();
         assertThat(intern.values().stream().findFirst().map(m -> m.get(InntektspostType.NÆRING_FISKE_FANGST_FAMBARNEHAGE))).isEmpty();
     }

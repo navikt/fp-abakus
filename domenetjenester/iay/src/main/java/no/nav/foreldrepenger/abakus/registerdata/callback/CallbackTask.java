@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+
 import no.nav.abakus.callback.registerdata.CallbackDto;
 import no.nav.abakus.callback.registerdata.ReferanseDto;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
