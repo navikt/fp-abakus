@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import no.nav.foreldrepenger.abakus.kobling.KoblingRestTjeneste;
+
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.slf4j.Logger;
@@ -51,7 +53,8 @@ public class ApiConfig extends ResourceConfig {
             OppgittOpptjeningRestTjeneste.class,
             GrunnlagRestTjeneste.class,
             ArbeidsforholdRestTjeneste.class,
-            YtelseRestTjeneste.class);
+            YtelseRestTjeneste.class,
+            KoblingRestTjeneste.class);
     }
 
     void registerExceptionMappers() {
