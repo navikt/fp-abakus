@@ -79,12 +79,14 @@ public class KoblingRepository {
     }
 
     public void lagre(Kobling nyKobling) {
+        // om nyKobling er persistert fra tidligere (har id != null) vil alltid eksisterendeKobling være likt nyKobling (med alle de endringene som er gjort til nyKobling underveis)
         var eksisterendeKobling = hentForKoblingReferanse(nyKobling.getKoblingReferanse());
 
         validerErAktiv(eksisterendeKobling);
         validerLikKobling(nyKobling, eksisterendeKobling);
 
         var diff = getDiff(eksisterendeKobling.orElse(null), nyKobling);
+        // Diffen blir aldri forskjellig om nyKobling er allerede persistert i databasen. Men endringen blir skrevet til databasen likevel da hele transaksjonen commites.
         if (!diff.isEmpty()) {
             LOG.info("Detekterte endringer på kobling med referanse={}, endringer={}", nyKobling.getId(), diff.getLeafDifferences());
             entityManager.persist(nyKobling);
