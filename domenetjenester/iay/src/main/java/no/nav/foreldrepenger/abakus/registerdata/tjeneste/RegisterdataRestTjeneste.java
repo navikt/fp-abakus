@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata.tjeneste;
 
 import java.net.HttpURLConnection;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -22,7 +21,6 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -32,15 +30,10 @@ import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.FnrPersonident;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
-import no.nav.abakus.iaygrunnlag.UuidDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.abakus.iaygrunnlag.request.RegisterdataType;
-import no.nav.abakus.iaygrunnlag.request.SjekkStatusRequest;
-import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.felles.LoggUtil;
-import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
-import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.TaskResponsDto;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
@@ -57,15 +50,12 @@ public class RegisterdataRestTjeneste {
 
     private InnhentRegisterdataTjeneste innhentTjeneste;
 
-    private KoblingTjeneste koblingTjeneste;
-
     public RegisterdataRestTjeneste() {
     } // CDI ctor
 
     @Inject
-    public RegisterdataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste, KoblingTjeneste koblingTjeneste) {
+    public RegisterdataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste) {
         this.innhentTjeneste = innhentTjeneste;
-        this.koblingTjeneste = koblingTjeneste;
     }
 
     @POST
@@ -87,37 +77,6 @@ public class RegisterdataRestTjeneste {
             response = Response.noContent().build();
         }
         return response;
-    }
-
-    @POST
-    @Path("/innhent/status")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(description = "Sjekker innhentingFerdig på async innhenting og gir siste referanseid på grunnlaget når tasken er ferdig. "
-        + "Hvis ikke innhentingFerdig", tags = "registerinnhenting")
-    @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.APPLIKASJON)
-    @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
-    public Response innhentAsyncStatus(@Parameter(name = "status") @Valid SjekkStatusAbacDto dto) {
-        Response response;
-        KoblingReferanse koblingRef = new KoblingReferanse(dto.getReferanse().getReferanse());
-        setupLogMdcFraKoblingReferanse(koblingRef);
-        if (innhentTjeneste.innhentingFerdig(dto.getTaskReferanse())) {
-            Optional<GrunnlagReferanse> grunnlagReferanse = innhentTjeneste.hentSisteReferanseFor(koblingRef);
-            if (grunnlagReferanse.isPresent()) {
-                response = Response.ok(new UuidDto(grunnlagReferanse.get().toString())).build();
-            } else {
-                response = Response.noContent().build();
-            }
-        } else {
-            response = Response.status(425).build();
-        }
-        return response;
-    }
-
-    private void setupLogMdcFraKoblingReferanse(KoblingReferanse koblingReferanse) {
-        var kobling = koblingTjeneste.hentFor(koblingReferanse);
-        kobling.filter(k -> k.getSaksnummer() != null)
-            .ifPresent(k -> LoggUtil.setupLogMdc(k.getYtelseType(), kobling.get().getSaksnummer().getVerdi(),
-                koblingReferanse.getReferanse())); // legger til saksnummer i MDC
     }
 
     /**
@@ -160,23 +119,4 @@ public class RegisterdataRestTjeneste {
 
     }
 
-    /**
-     * Json bean med Abac.
-     */
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
-    @JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE)
-    public static class SjekkStatusAbacDto extends SjekkStatusRequest implements AbacDto {
-
-        @JsonCreator
-        public SjekkStatusAbacDto(@JsonProperty(value = "referanse", required = true) @Valid @NotNull UuidDto referanse,
-                                  @JsonProperty(value = "taskReferanse", required = true) @NotNull @Pattern(regexp = "\\d+") String taskReferanse) {
-            super(referanse, taskReferanse);
-        }
-
-        @Override
-        public AbacDataAttributter abacAttributter() {
-            return AbacDataAttributter.opprett();
-        }
-    }
 }
