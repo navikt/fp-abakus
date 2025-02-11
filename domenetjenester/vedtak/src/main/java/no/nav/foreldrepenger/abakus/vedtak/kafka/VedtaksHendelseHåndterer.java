@@ -19,7 +19,7 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 @ApplicationScoped
 @ActivateRequestContext
 @Transactional
-public class VedtaksHendelseHåndterer implements KafkaMessageHandler.KafkaStringMessageHandler{
+public class VedtaksHendelseHåndterer implements KafkaMessageHandler.KafkaStringMessageHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(VedtaksHendelseHåndterer.class);
     private ProsessTaskTjeneste taskTjeneste;

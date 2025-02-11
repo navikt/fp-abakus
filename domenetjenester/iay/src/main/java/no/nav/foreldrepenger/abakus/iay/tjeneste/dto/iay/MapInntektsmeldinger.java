@@ -99,7 +99,8 @@ public class MapInntektsmeldinger {
                                                                                   InntektArbeidYtelseGrunnlag nyesteGrunnlag) {
         List<RefusjonskravDatoDto> refusjonskravDatoList = new ArrayList<>();
         Map<Arbeidsgiver, Optional<LocalDate>> førsteRefusjonsdatoMap = nyesteGrunnlag.getInntektsmeldinger()
-            .map(MapInntektsmeldinger::lagFørsteRefusjonsdatoMap).orElse(Map.of());
+            .map(MapInntektsmeldinger::lagFørsteRefusjonsdatoMap)
+            .orElse(Map.of());
         førsteRefusjonsdatoMap.forEach(
             (arbeidsgiver, førsteDatoMedRefusjon) -> finnFørsteDatoForInnsendelseAvRefusjonskrav(inntektsmeldinger, arbeidsgiver).ifPresent(
                 innsendingDato -> refusjonskravDatoList.add(

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.PgiFolketrygdenResponse;
@@ -41,9 +42,12 @@ public class SigrunTjeneste {
     }
 
 
-    public Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> hentPensjonsgivende(PersonIdent fnr, IntervallEntitet opplysningsperiodeSkattegrunnlag) {
+    public Map<IntervallEntitet, Map<InntektspostType, BigDecimal>> hentPensjonsgivende(PersonIdent fnr,
+                                                                                        IntervallEntitet opplysningsperiodeSkattegrunnlag) {
         var svarene = pensjonsgivendeInntektForFolketrygden(fnr.getIdent(), opplysningsperiodeSkattegrunnlag);
-        return SigrunPgiFolketrygdenMapper.mapFraPgiResponseTilIntern(svarene).entrySet().stream()
+        return SigrunPgiFolketrygdenMapper.mapFraPgiResponseTilIntern(svarene)
+            .entrySet()
+            .stream()
             .filter(e -> !e.getValue().isEmpty())
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
@@ -53,8 +57,8 @@ public class SigrunTjeneste {
         List<PgiFolketrygdenResponse> svarene = new ArrayList<>();
         var svarSenesteÅr = svarForSenesteÅr(fnr, Year.from(senesteDato));
         svarSenesteÅr.ifPresent(svarene::add);
-        utledTidligereÅr(opplysningsperiode, senesteDato, svarSenesteÅr.isPresent())
-            .forEach(år -> sigrunConsumer.hentPensjonsgivendeInntektForFolketrygden(fnr, år).ifPresent(svarene::add));
+        utledTidligereÅr(opplysningsperiode, senesteDato, svarSenesteÅr.isPresent()).forEach(
+            år -> sigrunConsumer.hentPensjonsgivendeInntektForFolketrygden(fnr, år).ifPresent(svarene::add));
         return svarene;
     }
 

@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -32,6 +33,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+
 import no.nav.abakus.vedtak.ytelse.Aktør;
 import no.nav.abakus.vedtak.ytelse.Desimaltall;
 import no.nav.abakus.vedtak.ytelse.Periode;
@@ -103,16 +105,9 @@ public class EksternDelingAvYtelserRestTjeneste {
     @Path("/hent-ytelse-vedtak")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(tags = "ytelse",
-        description = "Henter alle vedtak for en gitt person, evt med periode etter en fom"
-    )
+    @Operation(tags = "ytelse", description = "Henter alle vedtak for en gitt person, evt med periode etter en fom")
     @RequestBody(required = true, description = "Vi godkjenner både aktørid og fnr som gyldig ident.", content = @Content(schema = @Schema(implementation = VedtakForPeriodeRequest.class)))
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Liste med vedtak som matcher kriteriene.",
-            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = YtelseV1.class))))}
-    )
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Liste med vedtak som matcher kriteriene.", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = YtelseV1.class))))})
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.APPLIKASJON, availabilityType = AvailabilityType.ALL)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public List<Ytelse> hentVedtakYtelse(@NotNull @TilpassetAbacAttributt(supplierClass = EksternDelingAvYtelserRestTjeneste.VedtakForPeriodeRequestAbacDataSupplier.class) @Valid VedtakForPeriodeRequest request) {

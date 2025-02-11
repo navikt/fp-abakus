@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -22,6 +23,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdReferanse;
 import no.nav.abakus.iaygrunnlag.request.AktørDatoRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;

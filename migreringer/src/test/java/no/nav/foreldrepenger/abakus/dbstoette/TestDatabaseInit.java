@@ -28,12 +28,7 @@ public final class TestDatabaseInit {
         var ds = createDatasource(jdbcUrl, username, password);
         settJdniOppslag(ds);
         if (GUARD_UNIT_TEST_SKJEMAER.compareAndSet(false, true)) {
-            var flyway = Flyway.configure()
-                .dataSource(ds)
-                .locations(getScriptLocation())
-                .baselineOnMigrate(true)
-                .cleanDisabled(false)
-                .load();
+            var flyway = Flyway.configure().dataSource(ds).locations(getScriptLocation()).baselineOnMigrate(true).cleanDisabled(false).load();
             try {
                 flyway.migrate();
             } catch (FlywayException fwe) {

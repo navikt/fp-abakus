@@ -12,6 +12,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 

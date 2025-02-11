@@ -28,6 +28,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -47,6 +48,7 @@ import jakarta.ws.rs.core.EntityTag;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Request;
 import jakarta.ws.rs.core.Response;
+
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.FnrPersonident;
 import no.nav.abakus.iaygrunnlag.Periode;
@@ -360,7 +362,8 @@ public class GrunnlagRestTjeneste {
         final var sisteKjenteGrunnlagReferanse = spesifikasjon.getSisteKjenteGrunnlagReferanse();
         final var forespurtGrunnlagReferanse = spesifikasjon.getGrunnlagReferanse();
 
-        return forespurtGrunnlagReferanse == null || forespurtGrunnlagReferanse.equals(sisteKjenteGrunnlagReferanse) ? sisteKjenteGrunnlagReferanse : null;
+        return forespurtGrunnlagReferanse == null || forespurtGrunnlagReferanse.equals(
+            sisteKjenteGrunnlagReferanse) ? sisteKjenteGrunnlagReferanse : null;
     }
 
     private Kobling oppdaterKobling(@NotNull @Valid KopierGrunnlagRequest dto) {
@@ -441,8 +444,7 @@ public class GrunnlagRestTjeneste {
     }
 
     private InntektArbeidYtelseGrunnlag getGrunnlag(@SuppressWarnings("unused") InntektArbeidYtelseGrunnlagRequest spesifikasjon,  // NOSONAR
-                                                    GrunnlagReferanse grunnlagReferanse,
-                                                    KoblingReferanse koblingReferanse) {
+                                                    GrunnlagReferanse grunnlagReferanse, KoblingReferanse koblingReferanse) {
         if (grunnlagReferanse != null) {
             var grunnlag = iayTjeneste.hentAggregat(grunnlagReferanse);
             if (koblingReferanse != null) {

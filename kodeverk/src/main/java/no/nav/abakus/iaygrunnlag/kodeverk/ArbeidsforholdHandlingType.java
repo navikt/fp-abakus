@@ -26,8 +26,7 @@ public enum ArbeidsforholdHandlingType implements Kodeverdi {
     /**
      * @deprecated Tillater ikke nye sammenslåinger.  Logikken var del av 5080 i FP, vil fases ut. Sist brukt 2019-11, støttes for legacy grunnlag inntil videre
      */
-    @Deprecated(forRemoval = true)
-    SLÅTT_SAMMEN_MED_ANNET("SLÅTT_SAMMEN_MED_ANNET", "Arbeidsforholdet er slått sammen med et annet", true),
+    @Deprecated(forRemoval = true) SLÅTT_SAMMEN_MED_ANNET("SLÅTT_SAMMEN_MED_ANNET", "Arbeidsforholdet er slått sammen med et annet", true),
 
     LAGT_TIL_AV_SAKSBEHANDLER("LAGT_TIL_AV_SAKSBEHANDLER", "Arbeidsforhold lagt til av saksbehandler", false),
     BASERT_PÅ_INNTEKTSMELDING("BASERT_PÅ_INNTEKTSMELDING", "Arbeidsforholdet som ikke ligger i AA-reg er basert på inntektsmelding", false),

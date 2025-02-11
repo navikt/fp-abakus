@@ -10,9 +10,10 @@ import java.util.stream.Stream;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum LønnsinntektBeskrivelse implements Kodeverdi {
-    KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE("KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE", "Kommunal omsorgslønn og fosterhjemsgodtgjørelse", "kommunalOmsorgsloennOgFosterhjemsgodtgjoerelse"),
+    KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE("KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE",
+        "Kommunal omsorgslønn og fosterhjemsgodtgjørelse", "kommunalOmsorgsloennOgFosterhjemsgodtgjoerelse"),
     UDEFINERT("-", "Udefinert", null),
-        ;
+    ;
     private static final Map<String, LønnsinntektBeskrivelse> KODER = new LinkedHashMap<>();
 
     static {

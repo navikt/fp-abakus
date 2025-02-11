@@ -73,9 +73,11 @@ public class ArbeidsforholdDto {
     public List<Periode> getAnsettelsesperiode() {
         return ansettelsesperiode;
     }
+
     public List<PermisjonDto> getPermisjoner() {
         return permisjoner;
     }
+
     public List<ArbeidsavtaleDto> getArbeidsavtaler() {
         return arbeidsavtaler;
     }
@@ -83,9 +85,11 @@ public class ArbeidsforholdDto {
     public void setAnsettelsesperiode(List<Periode> ansettelsesperiode) {
         this.ansettelsesperiode = ansettelsesperiode;
     }
+
     public void setArbeidsavtaler(List<ArbeidsavtaleDto> arbeidsavtaler) {
         this.arbeidsavtaler = arbeidsavtaler;
     }
+
     public void setPermisjoner(List<PermisjonDto> permisjoner) {
         this.permisjoner = permisjoner;
     }

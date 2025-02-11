@@ -71,7 +71,7 @@ jobs:
   notify:
     name: Notify
     if: github.ref_name == 'master' && (success() || failure()) && !contains(needs.*.result, 'skipped')
-    needs: [build-app, fpsak-tester, verdikjede-tester]
+    needs: [ build-app, fpsak-tester, verdikjede-tester ]
     uses: navikt/fp-autotest/.github/workflows/report-and-notify.yml@master
     with:
       fpsak: ${{ needs.fpsak-tester.outputs.resultat }}
@@ -84,7 +84,7 @@ jobs:
     permissions:
       id-token: write
     if: github.ref_name == 'master'
-    needs: [build-app, fpsak-tester, verdikjede-tester]
+    needs: [ build-app, fpsak-tester, verdikjede-tester ]
     uses: navikt/fp-gha-workflows/.github/workflows/deploy.yml@main
     with:
       gar: true
@@ -97,7 +97,7 @@ jobs:
     permissions:
       id-token: write
     if: github.ref_name == 'master'
-    needs: [build-app, fpsak-tester, verdikjede-tester, deploy-dev]
+    needs: [ build-app, fpsak-tester, verdikjede-tester, deploy-dev ]
     uses: navikt/fp-gha-workflows/.github/workflows/deploy.yml@main
     with:
       gar: true

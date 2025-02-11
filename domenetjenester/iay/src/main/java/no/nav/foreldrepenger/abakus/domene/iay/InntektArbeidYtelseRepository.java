@@ -21,6 +21,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
+
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.diff.RegisterdataDiffsjekker;
@@ -130,7 +131,7 @@ public class InntektArbeidYtelseRepository {
              JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id
              JOIN ArbeidsforholdInformasjon arbInf on arbInf.id = gr.arbeidsforholdInformasjon.id
              WHERE k.saksnummer = :ref AND k.koblingReferanse = :eksternRef AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true and gr.aktiv=:aktiv
-             """, Object[].class);
+            """, Object[].class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("ref", saksnummer);
         query.setParameter("ytelse", ytelseType);
@@ -188,7 +189,7 @@ public class InntektArbeidYtelseRepository {
                  WHERE k.saksnummer = :saksnummer AND k.ytelseType = :ytelse and k.aktørId = :aktørId
                  AND (gr.aktiv = true AND k.aktiv=true)
                  ORDER BY gr.koblingId, gr.opprettetTidspunkt
-                 """;
+                """;
         } else {
             sql = """
                 SELECT gr
@@ -196,7 +197,7 @@ public class InntektArbeidYtelseRepository {
                  JOIN Kobling k ON k.id = gr.koblingId
                  WHERE k.saksnummer = :saksnummer AND k.ytelseType = :ytelse and k.aktørId = :aktørId
                  ORDER BY gr.koblingId, gr.opprettetTidspunkt
-                 """;
+                """;
         }
 
         final TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery(sql, InntektArbeidYtelseGrunnlag.class);
@@ -294,8 +295,7 @@ public class InntektArbeidYtelseRepository {
         Optional<InntektArbeidYtelseGrunnlag> iayGrunnlag = hentInntektArbeidYtelseGrunnlagForBehandling(koblingReferanse);
 
         InntektArbeidYtelseGrunnlagBuilder grunnlag = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayGrunnlag);
-        grunnlag.medOppgittOpptjening(oppgittOpptjening)
-            .fjernOverstyrtOppgittOpptjening();
+        grunnlag.medOppgittOpptjening(oppgittOpptjening).fjernOverstyrtOppgittOpptjening();
 
         InntektArbeidYtelseGrunnlag build = grunnlag.build();
         lagreOgFlush(koblingReferanse, build);
@@ -644,9 +644,8 @@ public class InntektArbeidYtelseRepository {
     private Optional<InntektArbeidYtelseGrunnlag> getAktivtInntektArbeidGrunnlag(KoblingReferanse koblingReferanse) {
 
         final TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery(
-            "SELECT gr FROM InntektArbeidGrunnlag gr " + " JOIN Kobling k ON k.id=gr.koblingId" +
-                " WHERE k.koblingReferanse = :ref" +
-                " AND gr.aktiv = :aktivt", InntektArbeidYtelseGrunnlag.class);
+            "SELECT gr FROM InntektArbeidGrunnlag gr " + " JOIN Kobling k ON k.id=gr.koblingId" + " WHERE k.koblingReferanse = :ref"
+                + " AND gr.aktiv = :aktivt", InntektArbeidYtelseGrunnlag.class);
         query.setParameter("ref", koblingReferanse);
         query.setParameter("aktivt", true);
         List<InntektArbeidYtelseGrunnlag> resultList = query.getResultList();
