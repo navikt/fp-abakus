@@ -20,9 +20,7 @@ import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
 import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 @ApplicationScoped
-@RestClientConfig(tokenConfig = TokenFlow.AZUREAD_CC, endpointProperty = "sigrunpgi.rs.url",
-    endpointDefault = "http://sigrun.team-inntekt/api/v1/pensjonsgivendeinntektforfolketrygden",
-    scopesProperty = "sigrunpgi.scopes", scopesDefault = "api://prod-fss.team-inntekt.sigrun/.default")
+@RestClientConfig(tokenConfig = TokenFlow.AZUREAD_CC, endpointProperty = "sigrunpgi.rs.url", endpointDefault = "http://sigrun.team-inntekt/api/v1/pensjonsgivendeinntektforfolketrygden", scopesProperty = "sigrunpgi.scopes", scopesDefault = "api://prod-fss.team-inntekt.sigrun/.default")
 public class SigrunRestClient {
 
     private static final String INNTEKTSAAR = "inntektsaar";
@@ -68,7 +66,8 @@ public class SigrunRestClient {
             if (status == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 LOG.info("Sigrun unauth");
             }
-            throw new IntegrasjonException("F-016912", String.format("Server svarte med feilkode http-kode '%s' og response var '%s'", status, response.body()));
+            throw new IntegrasjonException("F-016912",
+                String.format("Server svarte med feilkode http-kode '%s' og response var '%s'", status, response.body()));
         }
     }
 

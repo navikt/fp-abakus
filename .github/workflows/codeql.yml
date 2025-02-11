@@ -10,10 +10,10 @@ on:
 
 jobs:
   codeql:
-   name: CodeQl
-   permissions:
-     actions: read
-     contents: read
-     security-events: write
-   uses: navikt/fp-gha-workflows/.github/workflows/codeql.yml@main
-   secrets: inherit
+    name: CodeQl
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    uses: navikt/fp-gha-workflows/.github/workflows/codeql.yml@main
+    secrets: inherit

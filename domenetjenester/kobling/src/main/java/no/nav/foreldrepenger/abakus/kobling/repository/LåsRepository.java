@@ -46,7 +46,8 @@ public class LåsRepository {
             var koblingId = lås.koblingId();
             var kobling = entityManager.find(Kobling.class, koblingId);
             if (kobling == null) {
-                throw new TekniskException("FP-131239", String.format("Fant ikke entitet for låsing [%s], koblingId=%s.", Kobling.class.getSimpleName(), koblingId));
+                throw new TekniskException("FP-131239",
+                    String.format("Fant ikke entitet for låsing [%s], koblingId=%s.", Kobling.class.getSimpleName(), koblingId));
             } else {
                 entityManager.lock(kobling, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
             }

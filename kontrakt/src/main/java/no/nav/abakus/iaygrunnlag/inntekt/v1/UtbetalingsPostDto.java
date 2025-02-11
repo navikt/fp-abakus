@@ -140,8 +140,8 @@ public class UtbetalingsPostDto {
         }
         var other = this.getClass().cast(obj);
 
-        return Objects.equals(inntektspostType, other.inntektspostType) && Objects.equals(periode, other.periode) &&
-            Objects.equals(inntektYtelseType, other.inntektYtelseType);
+        return Objects.equals(inntektspostType, other.inntektspostType) && Objects.equals(periode, other.periode) && Objects.equals(inntektYtelseType,
+            other.inntektYtelseType);
     }
 
     @Override

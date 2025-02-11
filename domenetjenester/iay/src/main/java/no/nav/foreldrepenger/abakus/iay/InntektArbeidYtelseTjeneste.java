@@ -103,7 +103,7 @@ public class InntektArbeidYtelseTjeneste {
                                                                                                   YtelseType ytelseType) {
         return repository.hentArbeidsforholdInfoInntektsmeldingerMapFor(aktørId, saksnummer, ref, ytelseType);
     }
-    
+
     public Map<Inntektsmelding, ArbeidsforholdInformasjon> hentArbeidsforholdinfoInntektsmeldingerMapFor(AktørId aktørId,
                                                                                                          Saksnummer saksnummer,
                                                                                                          YtelseType ytelseType) {

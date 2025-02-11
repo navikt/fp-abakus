@@ -150,8 +150,7 @@ public class MapAktørInntekt {
             var inntektspostType = inntektspost.getInntektspostType();
             var skattOgAvgiftType = inntektspost.getSkatteOgAvgiftsregelType();
 
-            UtbetalingsPostDto dto = new UtbetalingsPostDto(periode, inntektspostType)
-                .medInntektYtelseType(inntektspost.getInntektYtelseType())
+            UtbetalingsPostDto dto = new UtbetalingsPostDto(periode, inntektspostType).medInntektYtelseType(inntektspost.getInntektYtelseType())
                 .medSkattAvgiftType(skattOgAvgiftType)
                 .medLønnsinntektbeskrivelse(inntektspost.getLønnsinntektBeskrivelse())
                 .medBeløp(inntektspost.getBeløp().getVerdi());

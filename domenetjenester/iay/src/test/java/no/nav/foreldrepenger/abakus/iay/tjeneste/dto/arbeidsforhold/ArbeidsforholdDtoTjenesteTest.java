@@ -47,10 +47,10 @@ class ArbeidsforholdDtoTjenesteTest {
     private static final LocalDate TIL_DATO = LocalDate.now().plusWeeks(2);
 
 
-@BeforeEach
-void setUp() {
-    arbeidsforholdDtoTjeneste = new ArbeidsforholdDtoTjeneste(arbeidsforholdTjeneste, aktørConsumer);
-}
+    @BeforeEach
+    void setUp() {
+        arbeidsforholdDtoTjeneste = new ArbeidsforholdDtoTjeneste(arbeidsforholdTjeneste, aktørConsumer);
+    }
 
     @Test
     void mapArbeidsforholdMedPermisjoner() {
@@ -62,20 +62,18 @@ void setUp() {
         var orgnr = new OrgNummer(KUNSTIG_ORG);
         var arbeidsgiver = new Organisasjon(orgnr.getId());
 
-        var arbeidsgiverIdentifikator = new ArbeidsforholdIdentifikator(arbeidsgiver, eksternRef, ArbeidType.ORDINÆRT_ARBEIDSFORHOLD.getOffisiellKode());
+        var arbeidsgiverIdentifikator = new ArbeidsforholdIdentifikator(arbeidsgiver, eksternRef,
+            ArbeidType.ORDINÆRT_ARBEIDSFORHOLD.getOffisiellKode());
 
-        var arbeidsavtalerTilMap = List.of(
-            lagArbeidsavtale(FRA_DATO, FRA_DATO.plusWeeks(2).minusDays(1), BigDecimal.valueOf(30)),
-            lagArbeidsavtale(FRA_DATO.plusWeeks(2), null, BigDecimal.valueOf(70))
-        );
-        var permisjonerTilMap = List.of(
-            lagPermisjon(FRA_DATO, FRA_DATO.plusWeeks(1), BigDecimal.ZERO),
-            lagPermisjon(FRA_DATO.plusWeeks(2), Tid.TIDENES_ENDE, BigDecimal.valueOf(20))
-        );
+        var arbeidsavtalerTilMap = List.of(lagArbeidsavtale(FRA_DATO, FRA_DATO.plusWeeks(2).minusDays(1), BigDecimal.valueOf(30)),
+            lagArbeidsavtale(FRA_DATO.plusWeeks(2), null, BigDecimal.valueOf(70)));
+        var permisjonerTilMap = List.of(lagPermisjon(FRA_DATO, FRA_DATO.plusWeeks(1), BigDecimal.ZERO),
+            lagPermisjon(FRA_DATO.plusWeeks(2), Tid.TIDENES_ENDE, BigDecimal.valueOf(20)));
         var arbeidsforhold = List.of(lagArbeidsforhold(arbeidsgiver, arbeidsavtalerTilMap, permisjonerTilMap));
 
         when(aktørConsumer.hentIdentForAktør(any())).thenReturn(Optional.of(personIdent));
-        when(arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(personIdent, aktørId, intervall )).thenReturn(Map.of(arbeidsgiverIdentifikator, arbeidsforhold));
+        when(arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(personIdent, aktørId, intervall)).thenReturn(
+            Map.of(arbeidsgiverIdentifikator, arbeidsforhold));
 
         var arbeidsforholdDto = arbeidsforholdDtoTjeneste.mapArbForholdOgPermisjoner(aktørId, FRA_DATO, TIL_DATO);
 
@@ -115,21 +113,19 @@ void setUp() {
         var orgnr = new OrgNummer(KUNSTIG_ORG);
         var arbeidsgiver = new Organisasjon(orgnr.getId());
 
-        var arbeidsgiverIdentifikator = new ArbeidsforholdIdentifikator(arbeidsgiver, eksternRef, ArbeidType.ORDINÆRT_ARBEIDSFORHOLD.getOffisiellKode());
+        var arbeidsgiverIdentifikator = new ArbeidsforholdIdentifikator(arbeidsgiver, eksternRef,
+            ArbeidType.ORDINÆRT_ARBEIDSFORHOLD.getOffisiellKode());
 
-        var arbeidsavtalerTilMap = List.of(
-            lagArbeidsavtale(FRA_DATO, FRA_DATO.plusWeeks(2).minusDays(1), BigDecimal.valueOf(30)),
-            lagArbeidsavtale(FRA_DATO.plusWeeks(2), null, BigDecimal.valueOf(70))
-        );
-        var permisjonerTilMap = List.of(
-            lagPermisjon(FRA_DATO, FRA_DATO.plusWeeks(1), BigDecimal.ZERO),
+        var arbeidsavtalerTilMap = List.of(lagArbeidsavtale(FRA_DATO, FRA_DATO.plusWeeks(2).minusDays(1), BigDecimal.valueOf(30)),
+            lagArbeidsavtale(FRA_DATO.plusWeeks(2), null, BigDecimal.valueOf(70)));
+        var permisjonerTilMap = List.of(lagPermisjon(FRA_DATO, FRA_DATO.plusWeeks(1), BigDecimal.ZERO),
             lagPermisjon(FRA_DATO.plusDays(1), FRA_DATO.plusDays(5), BigDecimal.valueOf(100)),
-            lagPermisjon(FRA_DATO.plusWeeks(2), Tid.TIDENES_ENDE, BigDecimal.valueOf(20))
-        );
+            lagPermisjon(FRA_DATO.plusWeeks(2), Tid.TIDENES_ENDE, BigDecimal.valueOf(20)));
         var arbeidsforhold = List.of(lagArbeidsforhold(arbeidsgiver, arbeidsavtalerTilMap, permisjonerTilMap));
 
         when(aktørConsumer.hentIdentForAktør(any())).thenReturn(Optional.of(personIdent));
-        when(arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(personIdent, aktørId, intervall )).thenReturn(Map.of(arbeidsgiverIdentifikator, arbeidsforhold));
+        when(arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(personIdent, aktørId, intervall)).thenReturn(
+            Map.of(arbeidsgiverIdentifikator, arbeidsforhold));
 
         var arbeidsforholdDto = arbeidsforholdDtoTjeneste.mapArbForholdOgPermisjoner(aktørId, FRA_DATO, TIL_DATO);
 
@@ -164,15 +160,15 @@ void setUp() {
         var orgnr = new OrgNummer(KUNSTIG_ORG);
         var arbeidsgiver = new Organisasjon(orgnr.getId());
 
-        var arbeidsgiverIdentifikator = new ArbeidsforholdIdentifikator(arbeidsgiver, eksternRef, ArbeidType.ORDINÆRT_ARBEIDSFORHOLD.getOffisiellKode());
+        var arbeidsgiverIdentifikator = new ArbeidsforholdIdentifikator(arbeidsgiver, eksternRef,
+            ArbeidType.ORDINÆRT_ARBEIDSFORHOLD.getOffisiellKode());
 
-        var arbeidsavtalerTilMap = List.of(
-            lagArbeidsavtale(FRA_DATO.minusWeeks(1), FRA_DATO.plusWeeks(2).minusDays(1), BigDecimal.valueOf(100))
-        );
+        var arbeidsavtalerTilMap = List.of(lagArbeidsavtale(FRA_DATO.minusWeeks(1), FRA_DATO.plusWeeks(2).minusDays(1), BigDecimal.valueOf(100)));
         var arbeidsforhold = List.of(lagArbeidsforhold(arbeidsgiver, arbeidsavtalerTilMap, Collections.emptyList()));
 
         when(aktørConsumer.hentIdentForAktør(any())).thenReturn(Optional.of(personIdent));
-        when(arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(personIdent, aktørId, intervall)).thenReturn(Map.of(arbeidsgiverIdentifikator, arbeidsforhold));
+        when(arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(personIdent, aktørId, intervall)).thenReturn(
+            Map.of(arbeidsgiverIdentifikator, arbeidsforhold));
 
         var arbeidsforholdDto = arbeidsforholdDtoTjeneste.mapArbForholdOgPermisjoner(aktørId, FRA_DATO, TIL_DATO);
 
@@ -191,8 +187,7 @@ void setUp() {
     }
 
     private Permisjon lagPermisjon(LocalDate fraDato, LocalDate tilDato, BigDecimal permisjonProsent) {
-        return new Permisjon.Builder()
-            .medPermisjonsÅrsak(PermisjonsbeskrivelseType.PERMISJON_MED_FORELDREPENGER.getOffisiellKode())
+        return new Permisjon.Builder().medPermisjonsÅrsak(PermisjonsbeskrivelseType.PERMISJON_MED_FORELDREPENGER.getOffisiellKode())
             .medPermisjonFom(fraDato)
             .medPermisjonTom(tilDato)
             .medPermisjonsprosent(permisjonProsent)
@@ -200,16 +195,11 @@ void setUp() {
     }
 
     private Arbeidsavtale lagArbeidsavtale(LocalDate fraDato, LocalDate tilDato, BigDecimal stillingsprosent) {
-        return new Arbeidsavtale.Builder()
-            .medArbeidsavtaleFom(fraDato)
-            .medArbeidsavtaleTom(tilDato)
-            .medStillingsprosent(stillingsprosent)
-            .build();
+        return new Arbeidsavtale.Builder().medArbeidsavtaleFom(fraDato).medArbeidsavtaleTom(tilDato).medStillingsprosent(stillingsprosent).build();
     }
 
     private Arbeidsforhold lagArbeidsforhold(Arbeidsgiver arbeidsgiver, List<Arbeidsavtale> arbeidsavtaler, List<Permisjon> permisjoner) {
-        return new Arbeidsforhold.Builder()
-            .medArbeidFom(FRA_DATO)
+        return new Arbeidsforhold.Builder().medArbeidFom(FRA_DATO)
             .medArbeidTom(TIL_DATO)
             .medType(ArbeidType.ORDINÆRT_ARBEIDSFORHOLD.getOffisiellKode())
             .medArbeidsgiver(arbeidsgiver)

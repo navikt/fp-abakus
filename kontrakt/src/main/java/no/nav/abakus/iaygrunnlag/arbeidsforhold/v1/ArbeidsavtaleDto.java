@@ -18,5 +18,5 @@ import jakarta.validation.constraints.Size;
 import no.nav.abakus.iaygrunnlag.Periode;
 
 
-public record ArbeidsavtaleDto( @Valid @NotNull Periode periode, @Valid BigDecimal stillingsprosent) {
+public record ArbeidsavtaleDto(@Valid @NotNull Periode periode, @Valid BigDecimal stillingsprosent) {
 }
