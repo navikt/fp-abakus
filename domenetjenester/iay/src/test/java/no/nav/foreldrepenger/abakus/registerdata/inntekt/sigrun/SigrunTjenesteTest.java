@@ -26,8 +26,7 @@ class SigrunTjenesteTest {
 
     private static final MonthDay TIDLIGSTE_SJEKK_FJOR = MonthDay.of(Month.MAY, 1);
 
-    private static final Year IFJOR = MonthDay.now().isBefore(TIDLIGSTE_SJEKK_FJOR) ?
-        Year.now().minusYears(2) : Year.now().minusYears(1);
+    private static final Year IFJOR = MonthDay.now().isBefore(TIDLIGSTE_SJEKK_FJOR) ? Year.now().minusYears(2) : Year.now().minusYears(1);
 
     private static final SigrunRestClient CONSUMER = Mockito.mock(SigrunRestClient.class);
 
@@ -36,10 +35,8 @@ class SigrunTjenesteTest {
 
     @Test
     void skal_hente_og_mappe_om_data_fra_sigrun() {
-        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR))
-            .thenReturn(lagResponsFor(IFJOR));
-        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(1)))
-            .thenReturn(lagResponsFor(IFJOR.minusYears(1)));
+        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR)).thenReturn(lagResponsFor(IFJOR));
+        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(1))).thenReturn(lagResponsFor(IFJOR.minusYears(1)));
         Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(2)))
             .thenReturn(lagResponsUtenInntektFor(IFJOR.minusYears(2)));
 
@@ -52,14 +49,11 @@ class SigrunTjenesteTest {
     @Test
     void skal_hente_data_for_forifjor_når_skatteoppgjoer_mangler_for_ifjor() {
 
-        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR))
-            .thenReturn(Optional.empty());
-        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(1)))
-            .thenReturn(lagResponsFor(IFJOR.minusYears(1)));
+        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR)).thenReturn(Optional.empty());
+        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(1))).thenReturn(lagResponsFor(IFJOR.minusYears(1)));
         Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(2)))
             .thenReturn(lagResponsMedNæringFor(IFJOR.minusYears(2)));
-        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(3)))
-            .thenReturn(lagResponsFor(IFJOR.minusYears(3)));
+        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(3))).thenReturn(lagResponsFor(IFJOR.minusYears(3)));
 
 
         var inntekter = TJENESTE.hentPensjonsgivende(PERSONIDENT, null);
@@ -70,18 +64,17 @@ class SigrunTjenesteTest {
         }
         assertThat(inntekter.get(intervallFor(IFJOR))).isNull();
         assertThat(inntekter.get(intervallFor(IFJOR.minusYears(1))).get(InntektspostType.LØNN).compareTo(new BigDecimal(1000L))).isZero();
-        assertThat(inntekter.get(intervallFor(IFJOR.minusYears(2))).get(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE).compareTo(new BigDecimal(500L))).isZero();
+        assertThat(inntekter.get(intervallFor(IFJOR.minusYears(2)))
+            .get(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE)
+            .compareTo(new BigDecimal(500L))).isZero();
         assertThat(inntekter.get(intervallFor(IFJOR.minusYears(2))).get(InntektspostType.LØNN).compareTo(new BigDecimal(1000L))).isZero();
     }
 
     @Test
     void skal_hente_og_mappe_om_data_fra_sigrun_opplysiningsperiode() {
-        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR))
-            .thenReturn(lagResponsFor(IFJOR));
-        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(1)))
-            .thenReturn(lagResponsFor(IFJOR.minusYears(1)));
-        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(2)))
-            .thenReturn(lagResponsFor(IFJOR.minusYears(2)));
+        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR)).thenReturn(lagResponsFor(IFJOR));
+        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(1))).thenReturn(lagResponsFor(IFJOR.minusYears(1)));
+        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(2))).thenReturn(lagResponsFor(IFJOR.minusYears(2)));
         var opplysningsperiode = IntervallEntitet.fraOgMedTilOgMed(intervallFor(IFJOR.minusYears(2)).getFomDato(), intervallFor(IFJOR).getTomDato());
 
         var inntekter = TJENESTE.hentPensjonsgivende(PERSONIDENT, opplysningsperiode);
@@ -92,14 +85,10 @@ class SigrunTjenesteTest {
 
     @Test
     void skal_hente_data_for_forifjor_når_skatteoppgjoer_mangler_for_ifjor_opplysiningsperiode() {
-        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR))
-            .thenReturn(Optional.empty());
-        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(1)))
-            .thenReturn(lagResponsFor(IFJOR.minusYears(1)));
-        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(2)))
-            .thenReturn(lagResponsFor(IFJOR.minusYears(2)));
-        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(3)))
-            .thenReturn(lagResponsFor(IFJOR.minusYears(3)));
+        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR)).thenReturn(Optional.empty());
+        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(1))).thenReturn(lagResponsFor(IFJOR.minusYears(1)));
+        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(2))).thenReturn(lagResponsFor(IFJOR.minusYears(2)));
+        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(3))).thenReturn(lagResponsFor(IFJOR.minusYears(3)));
         var opplysningsperiode = IntervallEntitet.fraOgMedTilOgMed(intervallFor(IFJOR.minusYears(2)).getFomDato(), intervallFor(IFJOR).getTomDato());
 
         var inntekter = TJENESTE.hentPensjonsgivende(PERSONIDENT, opplysningsperiode);
@@ -110,16 +99,11 @@ class SigrunTjenesteTest {
 
     @Test
     void skal_hente_data_for_inntil_tre_år_når_skatteoppgjoer_mangler_for_ifjor_opplysiningsperiode() {
-        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR))
-            .thenReturn(Optional.empty());
-        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(1)))
-            .thenReturn(lagResponsFor(IFJOR.minusYears(1)));
-        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(2)))
-            .thenReturn(lagResponsFor(IFJOR.minusYears(2)));
-        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(3)))
-            .thenReturn(lagResponsFor(IFJOR.minusYears(3)));
-        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(4)))
-            .thenReturn(lagResponsFor(IFJOR.minusYears(4)));
+        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR)).thenReturn(Optional.empty());
+        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(1))).thenReturn(lagResponsFor(IFJOR.minusYears(1)));
+        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(2))).thenReturn(lagResponsFor(IFJOR.minusYears(2)));
+        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(3))).thenReturn(lagResponsFor(IFJOR.minusYears(3)));
+        Mockito.when(CONSUMER.hentPensjonsgivendeInntektForFolketrygden(FNR, IFJOR.minusYears(4))).thenReturn(lagResponsFor(IFJOR.minusYears(4)));
         var opplysningsperiode = IntervallEntitet.fraOgMedTilOgMed(intervallFor(IFJOR.minusYears(4)).getFomDato(), intervallFor(IFJOR).getTomDato());
 
         var inntekter = TJENESTE.hentPensjonsgivende(PERSONIDENT, opplysningsperiode);
@@ -130,29 +114,24 @@ class SigrunTjenesteTest {
     }
 
     private Optional<PgiFolketrygdenResponse> lagResponsFor(Year år) {
-        var inntekt = new PgiFolketrygdenResponse.Pgi(PgiFolketrygdenResponse.Skatteordning.FASTLAND,
-            LocalDate.of(år.plusYears(1).getValue(), 6,1), 1000L ,
-            null, null, null);
+        var inntekt = new PgiFolketrygdenResponse.Pgi(PgiFolketrygdenResponse.Skatteordning.FASTLAND, LocalDate.of(år.plusYears(1).getValue(), 6, 1),
+            1000L, null, null, null);
         return Optional.of(new PgiFolketrygdenResponse(PERSONIDENT.getIdent(), år.getValue(), List.of(inntekt)));
     }
 
     private Optional<PgiFolketrygdenResponse> lagResponsMedNæringFor(Year år) {
-        var inntektF = new PgiFolketrygdenResponse.Pgi(PgiFolketrygdenResponse.Skatteordning.FASTLAND,
-            LocalDate.of(år.plusYears(1).getValue(), 6,1), 500L ,
-            null, null, null);
-        var inntektS = new PgiFolketrygdenResponse.Pgi(PgiFolketrygdenResponse.Skatteordning.SVALBARD,
-            LocalDate.of(år.plusYears(1).getValue(), 6,1), null ,
-            null, 500L, null);
+        var inntektF = new PgiFolketrygdenResponse.Pgi(PgiFolketrygdenResponse.Skatteordning.FASTLAND, LocalDate.of(år.plusYears(1).getValue(), 6, 1),
+            500L, null, null, null);
+        var inntektS = new PgiFolketrygdenResponse.Pgi(PgiFolketrygdenResponse.Skatteordning.SVALBARD, LocalDate.of(år.plusYears(1).getValue(), 6, 1),
+            null, null, 500L, null);
         var inntektK = new PgiFolketrygdenResponse.Pgi(PgiFolketrygdenResponse.Skatteordning.KILDESKATT_PAA_LOENN,
-            LocalDate.of(år.plusYears(1).getValue(), 6,1), 500L ,
-            null, null, null);
+            LocalDate.of(år.plusYears(1).getValue(), 6, 1), 500L, null, null, null);
         return Optional.of(new PgiFolketrygdenResponse(PERSONIDENT.getIdent(), år.getValue(), List.of(inntektF, inntektS, inntektK)));
     }
 
     private Optional<PgiFolketrygdenResponse> lagResponsUtenInntektFor(Year år) {
-        var inntekt = new PgiFolketrygdenResponse.Pgi(PgiFolketrygdenResponse.Skatteordning.FASTLAND,
-            LocalDate.of(år.plusYears(1).getValue(), 6,1), 0L ,
-            null, null, null);
+        var inntekt = new PgiFolketrygdenResponse.Pgi(PgiFolketrygdenResponse.Skatteordning.FASTLAND, LocalDate.of(år.plusYears(1).getValue(), 6, 1),
+            0L, null, null, null);
         return Optional.of(new PgiFolketrygdenResponse(PERSONIDENT.getIdent(), år.getValue(), List.of(inntekt)));
     }
 

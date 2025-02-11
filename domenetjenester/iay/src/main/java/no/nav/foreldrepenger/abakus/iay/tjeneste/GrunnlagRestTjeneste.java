@@ -360,7 +360,8 @@ public class GrunnlagRestTjeneste {
         final var sisteKjenteGrunnlagReferanse = spesifikasjon.getSisteKjenteGrunnlagReferanse();
         final var forespurtGrunnlagReferanse = spesifikasjon.getGrunnlagReferanse();
 
-        return forespurtGrunnlagReferanse == null || forespurtGrunnlagReferanse.equals(sisteKjenteGrunnlagReferanse) ? sisteKjenteGrunnlagReferanse : null;
+        return forespurtGrunnlagReferanse == null || forespurtGrunnlagReferanse.equals(
+            sisteKjenteGrunnlagReferanse) ? sisteKjenteGrunnlagReferanse : null;
     }
 
     private Kobling oppdaterKobling(@NotNull @Valid KopierGrunnlagRequest dto) {
@@ -441,8 +442,7 @@ public class GrunnlagRestTjeneste {
     }
 
     private InntektArbeidYtelseGrunnlag getGrunnlag(@SuppressWarnings("unused") InntektArbeidYtelseGrunnlagRequest spesifikasjon,  // NOSONAR
-                                                    GrunnlagReferanse grunnlagReferanse,
-                                                    KoblingReferanse koblingReferanse) {
+                                                    GrunnlagReferanse grunnlagReferanse, KoblingReferanse koblingReferanse) {
         if (grunnlagReferanse != null) {
             var grunnlag = iayTjeneste.hentAggregat(grunnlagReferanse);
             if (koblingReferanse != null) {

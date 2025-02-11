@@ -39,8 +39,7 @@ class ByggLønnsinntektInntektTjenesteTest {
 
         // Act
         var aktørInntektBuilder = InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder.oppdatere(Optional.empty());
-        ByggLønnsinntektInntektTjeneste.mapLønnsinntekter(inntektsInformasjon, aktørInntektBuilder,
-            arbeidsgivereLookup);
+        ByggLønnsinntektInntektTjeneste.mapLønnsinntekter(inntektsInformasjon, aktørInntektBuilder, arbeidsgivereLookup);
 
         // Assert
         var inntekter = aktørInntektBuilder.build().getInntekt();
@@ -81,8 +80,7 @@ class ByggLønnsinntektInntektTjenesteTest {
 
         // Act
         var aktørInntektBuilder = InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder.oppdatere(Optional.empty());
-        ByggLønnsinntektInntektTjeneste.mapLønnsinntekter(inntektsInformasjon, aktørInntektBuilder,
-            arbeidsgivereLookup);
+        ByggLønnsinntektInntektTjeneste.mapLønnsinntekter(inntektsInformasjon, aktørInntektBuilder, arbeidsgivereLookup);
 
         // Assert
         var inntekter = aktørInntektBuilder.build().getInntekt();
@@ -122,8 +120,7 @@ class ByggLønnsinntektInntektTjenesteTest {
 
         // Act
         var aktørInntektBuilder = InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder.oppdatere(Optional.empty());
-        ByggLønnsinntektInntektTjeneste.mapLønnsinntekter(inntektsInformasjon, aktørInntektBuilder,
-            arbeidsgivereLookup);
+        ByggLønnsinntektInntektTjeneste.mapLønnsinntekter(inntektsInformasjon, aktørInntektBuilder, arbeidsgivereLookup);
 
         // Assert
         var inntekter = aktørInntektBuilder.build().getInntekt();
@@ -163,8 +160,7 @@ class ByggLønnsinntektInntektTjenesteTest {
 
         // Act
         var aktørInntektBuilder = InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder.oppdatere(Optional.empty());
-        ByggLønnsinntektInntektTjeneste.mapLønnsinntekter(inntektsInformasjon, aktørInntektBuilder,
-            arbeidsgivereLookup);
+        ByggLønnsinntektInntektTjeneste.mapLønnsinntekter(inntektsInformasjon, aktørInntektBuilder, arbeidsgivereLookup);
 
         // Assert
         var inntekter = aktørInntektBuilder.build().getInntekt();
@@ -200,8 +196,7 @@ class ByggLønnsinntektInntektTjenesteTest {
 
         // Act
         var aktørInntektBuilder = InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder.oppdatere(Optional.empty());
-        ByggLønnsinntektInntektTjeneste.mapLønnsinntekter(inntektsInformasjon, aktørInntektBuilder,
-            arbeidsgivereLookup);
+        ByggLønnsinntektInntektTjeneste.mapLønnsinntekter(inntektsInformasjon, aktørInntektBuilder, arbeidsgivereLookup);
 
         // Assert
         var inntekter = aktørInntektBuilder.build().getInntekt();
@@ -246,8 +241,7 @@ class ByggLønnsinntektInntektTjenesteTest {
 
         // Act
         var aktørInntektBuilder = InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder.oppdatere(Optional.empty());
-        ByggLønnsinntektInntektTjeneste.mapLønnsinntekter(inntektsInformasjon, aktørInntektBuilder,
-            arbeidsgivereLookup);
+        ByggLønnsinntektInntektTjeneste.mapLønnsinntekter(inntektsInformasjon, aktørInntektBuilder, arbeidsgivereLookup);
 
         // Assert
         var inntekter = aktørInntektBuilder.build().getInntekt();
@@ -283,8 +277,7 @@ class ByggLønnsinntektInntektTjenesteTest {
 
         // Act
         var aktørInntektBuilder = InntektArbeidYtelseAggregatBuilder.AktørInntektBuilder.oppdatere(Optional.empty());
-        ByggLønnsinntektInntektTjeneste.mapLønnsinntekter(inntektsInformasjon, aktørInntektBuilder,
-            arbeidsgivereLookup);
+        ByggLønnsinntektInntektTjeneste.mapLønnsinntekter(inntektsInformasjon, aktørInntektBuilder, arbeidsgivereLookup);
 
         // Assert
         var inntekter = aktørInntektBuilder.build().getInntekt();

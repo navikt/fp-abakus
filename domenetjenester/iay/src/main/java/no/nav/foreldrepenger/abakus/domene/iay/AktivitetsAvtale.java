@@ -205,13 +205,8 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" +
-            "periode=" + periode +
-            ", overstyrtPeriode=" + overstyrtPeriode +
-            ", prosentsats=" + prosentsats +
-            ", beskrivelse=" + beskrivelse +
-            ", sisteLønnsendringsdato=" + sisteLønnsendringsdato +
-            '>';
+        return getClass().getSimpleName() + "<" + "periode=" + periode + ", overstyrtPeriode=" + overstyrtPeriode + ", prosentsats=" + prosentsats
+            + ", beskrivelse=" + beskrivelse + ", sisteLønnsendringsdato=" + sisteLønnsendringsdato + '>';
     }
 
     boolean hasValues() {

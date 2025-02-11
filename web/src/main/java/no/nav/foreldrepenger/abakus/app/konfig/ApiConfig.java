@@ -46,12 +46,8 @@ public class ApiConfig extends ResourceConfig {
 
     private Set<Class<?>> getApplicationClasses() {
         // eksponert grensesnitt
-        return Set.of(RegisterdataRestTjeneste.class,
-            InntektsmeldingerRestTjeneste.class,
-            OppgittOpptjeningRestTjeneste.class,
-            GrunnlagRestTjeneste.class,
-            ArbeidsforholdRestTjeneste.class,
-            YtelseRestTjeneste.class);
+        return Set.of(RegisterdataRestTjeneste.class, InntektsmeldingerRestTjeneste.class, OppgittOpptjeningRestTjeneste.class,
+            GrunnlagRestTjeneste.class, ArbeidsforholdRestTjeneste.class, YtelseRestTjeneste.class);
     }
 
     void registerExceptionMappers() {

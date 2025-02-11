@@ -47,8 +47,8 @@ public final class IndexKeyComposer {
             return ((IndexKey) obj).getIndexKey();
         } else if (IntervallEntitet.class.isAssignableFrom(objClass)) {
             IntervallEntitet periode = (IntervallEntitet) obj;
-            return "[" + periode.getFomDato().format(DateTimeFormatter.ISO_DATE) +
-                "," + periode.getTomDato().format(DateTimeFormatter.ISO_DATE) + "]";
+            return "[" + periode.getFomDato().format(DateTimeFormatter.ISO_DATE) + "," + periode.getTomDato().format(DateTimeFormatter.ISO_DATE)
+                + "]";
         } else if (LocalDate.class.isAssignableFrom(objClass)) {
             LocalDate dt = (LocalDate) obj;
             return dt.format(DateTimeFormatter.ISO_DATE);

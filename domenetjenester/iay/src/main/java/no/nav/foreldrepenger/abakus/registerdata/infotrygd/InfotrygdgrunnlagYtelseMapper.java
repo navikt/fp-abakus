@@ -33,9 +33,8 @@ public class InfotrygdgrunnlagYtelseMapper {
                                                                 InfotrygdYtelseGrunnlag grunnlag) {
         IntervallEntitet periode = utledPeriodeNårTomMuligFørFom(grunnlag.getVedtaksPeriodeFom(), grunnlag.getVedtaksPeriodeTom());
         var tidligsteAnvist = grunnlag.getUtbetaltePerioder().stream().map(InfotrygdYtelseAnvist::getUtbetaltFom).min(Comparator.naturalOrder());
-        YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.INFOTRYGD, grunnlag.getYtelseType(), periode, tidligsteAnvist)
-            .medVedtattTidspunkt(grunnlag.getVedtattTidspunkt())
-            .medStatus(grunnlag.getYtelseStatus());
+        YtelseBuilder ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.INFOTRYGD, grunnlag.getYtelseType(), periode,
+            tidligsteAnvist).medVedtattTidspunkt(grunnlag.getVedtattTidspunkt()).medStatus(grunnlag.getYtelseStatus());
         var segmenter = grunnlag.getUtbetaltePerioder().stream().map(v -> {
             var p = utledPeriodeNårTomMuligFørFom(v.getUtbetaltFom(), v.getUtbetaltTom());
             return new LocalDateSegment<>(p.getFomDato(), p.getTomDato(), List.of(v));

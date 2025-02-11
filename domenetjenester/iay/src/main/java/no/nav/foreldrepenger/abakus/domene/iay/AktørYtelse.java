@@ -145,13 +145,11 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
         return YtelseBuilder.oppdatere(ytelse).medYtelseType(type).medKilde(fagsystem).medSaksreferanse(saksnummer);
     }
 
-    YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem,
-                                          YtelseType type, IntervallEntitet periode,
-                                          Optional<LocalDate> tidligsteAnvistFom) {
+    YtelseBuilder getYtelseBuilderForType(Fagsystem fagsystem, YtelseType type, IntervallEntitet periode, Optional<LocalDate> tidligsteAnvistFom) {
         // OBS kan være flere med samme Tema/TUK+FOM: Konvensjon ifm rammevedtak BS
         List<Ytelse> aktuelleYtelser = getAlleYtelser().stream()
-            .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type)
-                && (periode.getFomDato().equals(ya.getPeriode().getFomDato())))
+            .filter(ya -> ya.getKilde().equals(fagsystem) && ya.getRelatertYtelseType().equals(type) && (periode.getFomDato()
+                .equals(ya.getPeriode().getFomDato())))
             .collect(Collectors.toList());
         Optional<Ytelse> ytelse = aktuelleYtelser.stream().filter(ya -> periode.equals(ya.getPeriode())).findFirst();
         if (ytelse.isEmpty() && !aktuelleYtelser.isEmpty()) {

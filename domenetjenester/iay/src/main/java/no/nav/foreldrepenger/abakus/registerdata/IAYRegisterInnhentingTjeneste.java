@@ -78,11 +78,11 @@ public class IAYRegisterInnhentingTjeneste {
 
     @Inject
     public IAYRegisterInnhentingTjeneste(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
-                                            VirksomhetTjeneste virksomhetTjeneste,
-                                            InnhentingSamletTjeneste innhentingSamletTjeneste,
-                                            AktørTjeneste aktørConsumer,
-                                            SigrunTjeneste sigrunTjeneste,
-                                            VedtattYtelseInnhentingTjeneste vedtattYtelseInnhentingTjeneste) {
+                                         VirksomhetTjeneste virksomhetTjeneste,
+                                         InnhentingSamletTjeneste innhentingSamletTjeneste,
+                                         AktørTjeneste aktørConsumer,
+                                         SigrunTjeneste sigrunTjeneste,
+                                         VedtattYtelseInnhentingTjeneste vedtattYtelseInnhentingTjeneste) {
         this.inntektArbeidYtelseTjeneste = inntektArbeidYtelseTjeneste;
         this.virksomhetTjeneste = virksomhetTjeneste;
         this.innhentingSamletTjeneste = innhentingSamletTjeneste;
@@ -122,6 +122,7 @@ public class IAYRegisterInnhentingTjeneste {
     private class FnrSupplier {
 
         private final AktørId aktørId;
+
         public FnrSupplier(AktørId aktørId) {
             this.aktørId = aktørId;
         }
@@ -166,8 +167,8 @@ public class IAYRegisterInnhentingTjeneste {
     }
 
     private void innhentYtelser(Kobling kobling, InntektArbeidYtelseAggregatBuilder builder) {
-        ytelseRegisterInnhenting.byggYtelser(kobling, kobling.getAktørId(), getFnrFraAktørId(kobling.getAktørId()),
-            kobling.getOpplysningsperiode(), builder);
+        ytelseRegisterInnhenting.byggYtelser(kobling, kobling.getAktørId(), getFnrFraAktørId(kobling.getAktørId()), kobling.getOpplysningsperiode(),
+            builder);
     }
 
     private Set<ArbeidsforholdIdentifikator> innhentArbeidsforhold(Kobling kobling,
@@ -176,9 +177,7 @@ public class IAYRegisterInnhentingTjeneste {
         return byggOpptjeningOpplysningene(kobling, kobling.getAktørId(), kobling.getOpplysningsperiode(), builder, informasjonsElementer);
     }
 
-    private void leggTilInntekter(AktørId aktørId,
-                                  InntektArbeidYtelseAggregatBuilder builder,
-                                  InntektsInformasjon inntektsInformasjon) {
+    private void leggTilInntekter(AktørId aktørId, InntektArbeidYtelseAggregatBuilder builder, InntektsInformasjon inntektsInformasjon) {
         var aktørInntektBuilder = builder.getAktørInntektBuilder(aktørId);
         InntektskildeType kilde = inntektsInformasjon.getKilde();
         aktørInntektBuilder.fjernInntekterFraKilde(kilde);
@@ -276,8 +275,8 @@ public class IAYRegisterInnhentingTjeneste {
             InntektArbeidYtelseAggregatBuilder.AktørArbeidBuilder aktørArbeidBuilder = builder.getAktørArbeidBuilder(aktørId);
             aktørArbeidBuilder.tilbakestillYrkesaktiviteter();
             // Hvis/Når AAREG en gang i framtiden gir frilans som del av default arbeidsforholdtype - så kan følgende kuttes
-            Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforholdFrilans = innhentingSamletTjeneste.getArbeidsforholdFrilans(
-                aktørId, getFnrFraAktørId(aktørId), opplysningsPeriode);
+            Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforholdFrilans = innhentingSamletTjeneste.getArbeidsforholdFrilans(aktørId,
+                getFnrFraAktørId(aktørId), opplysningsPeriode);
             arbeidsforholdFrilans.entrySet()
                 .forEach(forholdet -> oversettArbeidsforholdTilYrkesaktivitet(kobling, builder, forholdet, aktørArbeidBuilder));
             arbeidsforholdList.addAll(arbeidsforholdFrilans.keySet());

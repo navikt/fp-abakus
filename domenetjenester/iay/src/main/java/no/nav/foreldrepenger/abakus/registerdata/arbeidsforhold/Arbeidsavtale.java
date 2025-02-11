@@ -53,7 +53,8 @@ public class Arbeidsavtale {
         }
         Arbeidsavtale that = (Arbeidsavtale) o;
         return erAnsettelsesPerioden == that.erAnsettelsesPerioden && Objects.equals(arbeidsavtaleFom, that.arbeidsavtaleFom) && Objects.equals(
-            arbeidsavtaleTom, that.arbeidsavtaleTom) && Objects.equals(stillingsprosent, that.stillingsprosent) && Objects.equals(sisteLønnsendringsdato, that.sisteLønnsendringsdato);
+            arbeidsavtaleTom, that.arbeidsavtaleTom) && Objects.equals(stillingsprosent, that.stillingsprosent) && Objects.equals(
+            sisteLønnsendringsdato, that.sisteLønnsendringsdato);
     }
 
     @Override

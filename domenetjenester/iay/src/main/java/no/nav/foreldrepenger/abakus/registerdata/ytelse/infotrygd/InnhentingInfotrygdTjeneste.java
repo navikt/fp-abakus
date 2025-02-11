@@ -145,7 +145,10 @@ public class InnhentingInfotrygdTjeneste {
             .medFødselsdatoBarn(grunnlag.fødselsdatoBarn())
             .medOpprinneligIdentdato(grunnlag.opprinneligIdentdato());
 
-        grunnlag.arbeidsforhold().stream().map(InnhentingInfotrygdTjeneste::arbeidsforholdTilInfotrygdYtelseArbeid).forEach(grunnlagBuilder::leggTilArbeidsforhold);
+        grunnlag.arbeidsforhold()
+            .stream()
+            .map(InnhentingInfotrygdTjeneste::arbeidsforholdTilInfotrygdYtelseArbeid)
+            .forEach(grunnlagBuilder::leggTilArbeidsforhold);
 
         grunnlag.vedtak()
             .stream()
@@ -174,8 +177,8 @@ public class InnhentingInfotrygdTjeneste {
             arbeidsforhold.inntektsperiode() == null ? InntektPeriodeType.UDEFINERT : InntektPeriodeReverse.reverseMap(
                 arbeidsforhold.inntektsperiode().kode().name(), LOG);
         BigDecimal inntekt = arbeidsforhold.inntekt() != null ? new BigDecimal(arbeidsforhold.inntekt()) : null;
-        return new InfotrygdYtelseArbeid(Optional.ofNullable(arbeidsforhold.orgnr()).map(Orgnummer::orgnr).orElse(null), inntekt, inntektPeriode, arbeidsforhold.refusjon(),
-            arbeidsforhold.refusjonTom());
+        return new InfotrygdYtelseArbeid(Optional.ofNullable(arbeidsforhold.orgnr()).map(Orgnummer::orgnr).orElse(null), inntekt, inntektPeriode,
+            arbeidsforhold.refusjon(), arbeidsforhold.refusjonTom());
     }
 
     private static Periode utledPeriode(LocalDate iverksatt, LocalDate opphoerFomDato, LocalDate registrert) {

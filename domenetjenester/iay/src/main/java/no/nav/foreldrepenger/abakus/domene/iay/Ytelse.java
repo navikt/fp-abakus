@@ -205,8 +205,8 @@ public class Ytelse extends BaseEntitet implements IndexKey {
             return false;
         }
         var that = (Ytelse) o;
-        return Objects.equals(relatertYtelseType, that.relatertYtelseType) && Objects.equals(saksreferanse, that.saksreferanse) &&
-            (Objects.equals(periode, that.periode) || Objects.equals(periode.getFomDato(), that.periode.getFomDato()));
+        return Objects.equals(relatertYtelseType, that.relatertYtelseType) && Objects.equals(saksreferanse, that.saksreferanse) && (
+            Objects.equals(periode, that.periode) || Objects.equals(periode.getFomDato(), that.periode.getFomDato()));
     }
 
     @Override
@@ -216,12 +216,7 @@ public class Ytelse extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "YtelseEntitet{" +
-            "relatertYtelseType=" + relatertYtelseType +
-            ", periode=" + periode +
-            ", relatertYtelseStatus=" + status +
-            ", vedtattTidspunkt=" + vedtattTidspunkt +
-            ", saksReferanse='" + saksreferanse + '\'' +
-            '}';
+        return "YtelseEntitet{" + "relatertYtelseType=" + relatertYtelseType + ", periode=" + periode + ", relatertYtelseStatus=" + status
+            + ", vedtattTidspunkt=" + vedtattTidspunkt + ", saksReferanse='" + saksreferanse + '\'' + '}';
     }
 }
