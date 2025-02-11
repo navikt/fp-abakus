@@ -1,17 +1,18 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonValue;
-
-@JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
+@JsonAutoDetect(
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE,
+        fieldVisibility = Visibility.ANY)
 public enum Fagsystem implements Kodeverdi {
-
     BISYS("BISYS", "Bisys", "BID"),
     BIDRAGINNKREVING("BIDRAGINNKREVING", "Bidraginnkreving", "BII"),
     FPSAK("FPSAK", "Vedtaksløsning Foreldrepenger", "FS36"),
@@ -37,9 +38,7 @@ public enum Fagsystem implements Kodeverdi {
     ØKONOMI("ØKONOMI", "Økonomi", "OKO"),
     ØVRIG("ØVRIG", "ØVRIG", "OVR"),
 
-    /**
-     * Alle kodeverk må ha en verdi, det kan ikke være null i databasen. Denne koden gjør samme nytten.
-     */
+    /** Alle kodeverk må ha en verdi, det kan ikke være null i databasen. Denne koden gjør samme nytten. */
     UDEFINERT("-", "Ikke definert", null),
     ;
 
@@ -55,6 +54,7 @@ public enum Fagsystem implements Kodeverdi {
 
     private final String navn;
     private final String offisiellKode;
+
     @JsonValue
     private final String kode;
 
@@ -68,7 +68,8 @@ public enum Fagsystem implements Kodeverdi {
         if (kode == null) {
             return null;
         }
-        return Optional.ofNullable(KODER.get(kode)).orElseThrow(() -> new IllegalArgumentException("Ukjent Fagsystem: " + kode));
+        return Optional.ofNullable(KODER.get(kode))
+                .orElseThrow(() -> new IllegalArgumentException("Ukjent Fagsystem: " + kode));
     }
 
     public static Map<String, Fagsystem> kodeMap() {

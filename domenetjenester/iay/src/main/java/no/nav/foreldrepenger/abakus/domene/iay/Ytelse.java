@@ -1,14 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -24,6 +15,14 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
@@ -65,9 +64,7 @@ public class Ytelse extends BaseEntitet implements IndexKey {
     @Column(name = "status", nullable = false)
     private YtelseStatus status;
 
-    /**
-     * Saksnummer (fra Arena, Infotrygd, VLFP, K9, VLSP..).
-     */
+    /** Saksnummer (fra Arena, Infotrygd, VLFP, K9, VLSP..). */
     @ChangeTracked
     @Embedded
     @AttributeOverrides(@AttributeOverride(name = "saksnummer", column = @Column(name = "saksreferanse")))
@@ -106,11 +103,10 @@ public class Ytelse extends BaseEntitet implements IndexKey {
             ygn.setYtelse(this);
             this.ytelseGrunnlag = ygn;
         });
-        this.ytelseAnvist = ytelse.getYtelseAnvist()
-            .stream()
-            .map(YtelseAnvist::new)
-            .peek(it -> it.setYtelse(this))
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+        this.ytelseAnvist = ytelse.getYtelseAnvist().stream()
+                .map(YtelseAnvist::new)
+                .peek(it -> it.setYtelse(this))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
@@ -189,7 +185,6 @@ public class Ytelse extends BaseEntitet implements IndexKey {
     void leggTilYtelseAnvist(YtelseAnvist ytelseAnvist) {
         ytelseAnvist.setYtelse(this);
         this.ytelseAnvist.add(ytelseAnvist);
-
     }
 
     void tilbakestillAnvisteYtelser() {
@@ -205,8 +200,10 @@ public class Ytelse extends BaseEntitet implements IndexKey {
             return false;
         }
         var that = (Ytelse) o;
-        return Objects.equals(relatertYtelseType, that.relatertYtelseType) && Objects.equals(saksreferanse, that.saksreferanse) &&
-            (Objects.equals(periode, that.periode) || Objects.equals(periode.getFomDato(), that.periode.getFomDato()));
+        return Objects.equals(relatertYtelseType, that.relatertYtelseType)
+                && Objects.equals(saksreferanse, that.saksreferanse)
+                && (Objects.equals(periode, that.periode)
+                        || Objects.equals(periode.getFomDato(), that.periode.getFomDato()));
     }
 
     @Override
@@ -216,12 +213,11 @@ public class Ytelse extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "YtelseEntitet{" +
-            "relatertYtelseType=" + relatertYtelseType +
-            ", periode=" + periode +
-            ", relatertYtelseStatus=" + status +
-            ", vedtattTidspunkt=" + vedtattTidspunkt +
-            ", saksReferanse='" + saksreferanse + '\'' +
-            '}';
+        return "YtelseEntitet{" + "relatertYtelseType="
+                + relatertYtelseType + ", periode="
+                + periode + ", relatertYtelseStatus="
+                + status + ", vedtattTidspunkt="
+                + vedtattTidspunkt + ", saksReferanse='"
+                + saksreferanse + '\'' + '}';
     }
 }

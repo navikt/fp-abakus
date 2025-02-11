@@ -56,6 +56,5 @@ public class Organisasjon implements Arbeidsgiver {
         public Organisasjon build() {
             return new Organisasjon(orgNummer);
         }
-
     }
 }

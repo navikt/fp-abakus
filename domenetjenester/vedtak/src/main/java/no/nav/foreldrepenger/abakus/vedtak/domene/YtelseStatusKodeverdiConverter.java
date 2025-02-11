@@ -1,9 +1,8 @@
 package no.nav.foreldrepenger.abakus.vedtak.domene;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
-
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 
 @Converter(autoApply = true)
 class YtelseStatusKodeverdiConverter implements AttributeConverter<YtelseStatus, String> {

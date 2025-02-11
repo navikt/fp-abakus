@@ -1,23 +1,20 @@
 package no.nav.abakus.iaygrunnlag.arbeidsforhold.v1;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
 import no.nav.abakus.iaygrunnlag.Periode;
@@ -25,11 +22,17 @@ import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType;
 import no.nav.abakus.iaygrunnlag.kodeverk.BekreftetPermisjonStatus;
 
 /**
- * Angir overstyringer satt av saksbehandler for arbeidsforhold (eks. arbeidsgiver navn, permisjon, ny arbeidsforhold referanse, etc.)
+ * Angir overstyringer satt av saksbehandler for arbeidsforhold (eks. arbeidsgiver navn, permisjon, ny arbeidsforhold
+ * referanse, etc.)
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class ArbeidsforholdOverstyringDto {
 
     @JsonProperty(value = "arbeidsgiver", required = true)
@@ -37,16 +40,12 @@ public class ArbeidsforholdOverstyringDto {
     @NotNull
     private Aktør arbeidsgiver;
 
-    /**
-     * Hvis overstyring er relatert til et bestemt arbeidsforhold, null hvis gjelder alle (for samme arbeidsgiver).
-     */
+    /** Hvis overstyring er relatert til et bestemt arbeidsforhold, null hvis gjelder alle (for samme arbeidsgiver). */
     @JsonProperty(value = "arbeidsforholdReferanse")
     @Valid
     private ArbeidsforholdRefDto arbeidsforholdRef;
 
-    /**
-     * Hvorvidt arbeidsforhold er tildelt en ny referanse. Null ellers.
-     */
+    /** Hvorvidt arbeidsforhold er tildelt en ny referanse. Null ellers. */
     @JsonProperty(value = "nyArbeidsforholdReferanse")
     @Valid
     private ArbeidsforholdRefDto nyArbeidsforholdRef;
@@ -56,20 +55,18 @@ public class ArbeidsforholdOverstyringDto {
     private ArbeidsforholdHandlingType handling;
 
     @JsonProperty(value = "overstyringBegrunnelse")
-    @Size(max=10000)
+    @Size(max = 10000)
     private String begrunnelse;
 
-    /**
-     * Angitt overstyrt navn på arbeidsgiver (tildelt av saksbehandler).
-     */
+    /** Angitt overstyrt navn på arbeidsgiver (tildelt av saksbehandler). */
     @JsonProperty(value = "arbeidsgiverNavn")
-    @Size(max=500)
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Arbeidsgivernavn [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Size(max = 500)
+    @Pattern(
+            regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$",
+            message = "Arbeidsgivernavn [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String arbeidsgiverNavn;
 
-    /**
-     * Stillingsprosent, maks 100%
-     */
+    /** Stillingsprosent, maks 100% */
     @JsonProperty(value = "stillingsprosent")
     @DecimalMin(value = "0.00", message = "stillingsprosent [${validatedValue}] må være >= {value}")
     @DecimalMax(value = "100.00", message = "stillingsprosent [${validatedValue}] må være <= {value}")
@@ -79,9 +76,7 @@ public class ArbeidsforholdOverstyringDto {
     @Valid
     private List<Periode> arbeidsforholdOverstyrtePerioder;
 
-    /**
-     * Saksbehandler har angitt permisjon.
-     */
+    /** Saksbehandler har angitt permisjon. */
     @JsonProperty(value = "bekreftetPermisjon")
     @Valid
     private BekreftetPermisjon bekreftetPermisjon;
@@ -152,7 +147,8 @@ public class ArbeidsforholdOverstyringDto {
         this.arbeidsforholdOverstyrtePerioder = arbeidsforholdOverstyrtePerioder;
     }
 
-    public ArbeidsforholdOverstyringDto medArbeidsforholdOverstyrtePerioder(List<Periode> arbeidsforholdOverstyrtePerioder) {
+    public ArbeidsforholdOverstyringDto medArbeidsforholdOverstyrtePerioder(
+            List<Periode> arbeidsforholdOverstyrtePerioder) {
         setArbeidsforholdOverstyrtePerioder(arbeidsforholdOverstyrtePerioder);
         return this;
     }
@@ -192,7 +188,8 @@ public class ArbeidsforholdOverstyringDto {
         return this;
     }
 
-    public ArbeidsforholdOverstyringDto medBekreftetPermisjon(LocalDate fom, LocalDate tom, BekreftetPermisjonStatus status) {
+    public ArbeidsforholdOverstyringDto medBekreftetPermisjon(
+            LocalDate fom, LocalDate tom, BekreftetPermisjonStatus status) {
         if (fom == null && tom == null) {
             return this;
         } else {
@@ -203,5 +200,4 @@ public class ArbeidsforholdOverstyringDto {
     public Optional<BekreftetPermisjon> getBekreftetPermisjon() {
         return Optional.ofNullable(bekreftetPermisjon);
     }
-
 }

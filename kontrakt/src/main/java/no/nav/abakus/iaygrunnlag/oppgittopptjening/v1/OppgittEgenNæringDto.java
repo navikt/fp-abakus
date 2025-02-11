@@ -1,22 +1,19 @@
 package no.nav.abakus.iaygrunnlag.oppgittopptjening.v1;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDate;
-import java.util.Objects;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.Organisasjon;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
@@ -24,7 +21,12 @@ import no.nav.abakus.iaygrunnlag.kodeverk.VirksomhetType;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.ALWAYS, content = Include.NON_EMPTY)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class OppgittEgenNæringDto {
 
     @JsonProperty(value = "periode", required = true)
@@ -40,13 +42,17 @@ public class OppgittEgenNæringDto {
     private VirksomhetType virksomhetType;
 
     @JsonProperty(value = "regnskapsførerNavn")
-    @Size(max=400)
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Size(max = 400)
+    @Pattern(
+            regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$",
+            message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String regnskapsførerNavn;
 
     @JsonProperty(value = "regnskapsførerTlf")
-    @Size(max=100)
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "[${validatedValue}] matcher ikke oppgitt pattern [{regexp}]")
+    @Size(max = 100)
+    @Pattern(
+            regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$",
+            message = "[${validatedValue}] matcher ikke oppgitt pattern [{regexp}]")
     // har caser som har sluppet gjennom selvbetjening med alfa
     private String regnskapsførerTlf;
 
@@ -54,8 +60,10 @@ public class OppgittEgenNæringDto {
      * Oppgis normalt dersom ikke orgnr kan gis. F.eks for utlandske virsomheter, eller noen tilfeller Fiskere med Lott.
      */
     @JsonProperty(value = "virksomhetNavn", required = false)
-    @Size(max=100)
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Size(max = 100)
+    @Pattern(
+            regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$",
+            message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String virksomhetNavn;
 
     @JsonProperty(value = "landkode", required = true)
@@ -70,12 +78,10 @@ public class OppgittEgenNæringDto {
     private Boolean erVarigEndring;
 
     @JsonProperty(value = "endringBegrunnelse")
-    @Size(max=10000)
+    @Size(max = 10000)
     private String endringBegrunnelse;
 
-    /**
-     * Tillater kun positive verdier.  Max verdi håndteres av mottager.
-     */
+    /** Tillater kun positive verdier. Max verdi håndteres av mottager. */
     @JsonProperty("bruttoInntekt")
     @DecimalMin(value = "0.00", message = "beløp [${validatedValue}] må være >= {value}")
     private BigDecimal bruttoInntekt;
@@ -89,8 +95,7 @@ public class OppgittEgenNæringDto {
     @JsonProperty(value = "erNyIArbeidslivet")
     private Boolean nyIArbeidslivet;
 
-    protected OppgittEgenNæringDto() {
-    }
+    protected OppgittEgenNæringDto() {}
 
     public OppgittEgenNæringDto(Periode periode) {
         Objects.requireNonNull(periode, "periode");
@@ -278,5 +283,4 @@ public class OppgittEgenNæringDto {
         setVirksomhetNavn(virksomhetNavn);
         return this;
     }
-
 }

@@ -3,8 +3,8 @@ package no.nav.foreldrepenger.abakus.felles.diff;
 import java.util.Objects;
 
 /**
- * Representere tre-struktur vha. Lenket liste, der hver node peker tilbake mot rot av treet. Svært effektivt for
- * bygge unike stier uten å bruke mye minne eller tid.
+ * Representere tre-struktur vha. Lenket liste, der hver node peker tilbake mot rot av treet. Svært effektivt for bygge
+ * unike stier uten å bruke mye minne eller tid.
  */
 public class Node implements Comparable<Node> {
     Node parent;

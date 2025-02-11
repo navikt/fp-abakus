@@ -1,13 +1,5 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Function;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,6 +14,10 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Function;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdReferanse;
 import no.nav.abakus.iaygrunnlag.request.AktørDatoRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
@@ -41,6 +37,8 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @OpenAPIDefinition(tags = @Tag(name = "arbeidsforhold"))
 @Path("/arbeidsforhold/v1")
@@ -55,14 +53,14 @@ public class ArbeidsforholdRestTjeneste {
     private ArbeidsforholdDtoTjeneste dtoTjeneste;
     private VirksomhetTjeneste virksomhetTjeneste;
 
-    public ArbeidsforholdRestTjeneste() {
-    } // CDI Ctor
+    public ArbeidsforholdRestTjeneste() {} // CDI Ctor
 
     @Inject
-    public ArbeidsforholdRestTjeneste(KoblingTjeneste koblingTjeneste,
-                                      InntektArbeidYtelseTjeneste iayTjeneste,
-                                      ArbeidsforholdDtoTjeneste dtoTjeneste,
-                                      VirksomhetTjeneste virksomhetTjeneste) {
+    public ArbeidsforholdRestTjeneste(
+            KoblingTjeneste koblingTjeneste,
+            InntektArbeidYtelseTjeneste iayTjeneste,
+            ArbeidsforholdDtoTjeneste dtoTjeneste,
+            VirksomhetTjeneste virksomhetTjeneste) {
         this.koblingTjeneste = koblingTjeneste;
         this.iayTjeneste = iayTjeneste;
         this.dtoTjeneste = dtoTjeneste;
@@ -73,18 +71,24 @@ public class ArbeidsforholdRestTjeneste {
     @Path("/arbeidstaker")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Gir ut alle arbeidsforhold i en gitt periode/dato for en gitt aktør. NB! Proxyer direkte til aa-registeret / ingen bruk av sak/kobling i abakus", tags = "arbeidsforhold")
+    @Operation(
+            description =
+                    "Gir ut alle arbeidsforhold i en gitt periode/dato for en gitt aktør. NB! Proxyer direkte til aa-registeret / ingen bruk av sak/kobling i abakus",
+            tags = "arbeidsforhold")
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response hentArbeidsforhold(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
+    public Response hentArbeidsforhold(
+            @NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid
+                    AktørDatoRequest request) {
         var aktørId = new AktørId(request.getAktør().getIdent());
         var periode = request.getPeriode();
         LOG_CONTEXT.add("ytelseType", request.getYtelse().getKode());
         LOG_CONTEXT.add("periode", periode);
 
         var fom = periode.getFom();
-        var tom = Objects.equals(fom, periode.getTom()) ? fom.plusDays(1) // enkel dato søk
-            : periode.getTom(); // periode søk
+        var tom = Objects.equals(fom, periode.getTom())
+                ? fom.plusDays(1) // enkel dato søk
+                : periode.getTom(); // periode søk
         var arbeidstakersArbeidsforhold = dtoTjeneste.mapFor(aktørId, fom, tom);
         final Response response = Response.ok(arbeidstakersArbeidsforhold).build();
         return response;
@@ -94,18 +98,24 @@ public class ArbeidsforholdRestTjeneste {
     @Path("/arbeidstakerMedPermisjoner")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Gir ut alle arbeidsforhold og permisjoner i en gitt periode/dato for en gitt aktør. NB! Proxyer direkte til aa-registeret / ingen bruk av sak/kobling i abakus", tags = "arbeidsforhold")
+    @Operation(
+            description =
+                    "Gir ut alle arbeidsforhold og permisjoner i en gitt periode/dato for en gitt aktør. NB! Proxyer direkte til aa-registeret / ingen bruk av sak/kobling i abakus",
+            tags = "arbeidsforhold")
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response hentArbeidsforholdOgPermisjonerForEnPeriode(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
+    public Response hentArbeidsforholdOgPermisjonerForEnPeriode(
+            @NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid
+                    AktørDatoRequest request) {
         var aktørId = new AktørId(request.getAktør().getIdent());
         var periode = request.getPeriode();
         LOG_CONTEXT.add("ytelseType", request.getYtelse().getKode());
         LOG_CONTEXT.add("periode", periode);
 
         var fom = periode.getFom();
-        var tom = Objects.equals(fom, periode.getTom()) ? fom.plusDays(1) // enkel dato søk
-            : periode.getTom(); // periode søk
+        var tom = Objects.equals(fom, periode.getTom())
+                ? fom.plusDays(1) // enkel dato søk
+                : periode.getTom(); // periode søk
         var arbeidstakersArbeidsforhold = dtoTjeneste.mapArbForholdOgPermisjoner(aktørId, fom, tom);
         return Response.ok(arbeidstakersArbeidsforhold).build();
     }
@@ -114,23 +124,30 @@ public class ArbeidsforholdRestTjeneste {
     @Path("/referanse")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Finner eksisterende intern referanse for arbeidsforholdId eller lager en ny", tags = "arbeidsforhold")
+    @Operation(
+            description = "Finner eksisterende intern referanse for arbeidsforholdId eller lager en ny",
+            tags = "arbeidsforhold")
     @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response finnEllerOpprettArbeidsforholdReferanse(@NotNull @TilpassetAbacAttributt(supplierClass = ArbeidsforholdReferanseAbacDataSupplier.class) @Valid ArbeidsforholdReferanse request) {
+    public Response finnEllerOpprettArbeidsforholdReferanse(
+            @NotNull @TilpassetAbacAttributt(supplierClass = ArbeidsforholdReferanseAbacDataSupplier.class) @Valid
+                    ArbeidsforholdReferanse request) {
 
-        KoblingReferanse referanse = new KoblingReferanse(UUID.fromString(request.getKoblingReferanse().getReferanse()));
+        KoblingReferanse referanse = new KoblingReferanse(
+                UUID.fromString(request.getKoblingReferanse().getReferanse()));
         setupLogMdcFraKoblingReferanse(referanse);
 
         var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(referanse));
 
-        ArbeidsforholdInformasjon arbeidsforholdInformasjon = iayTjeneste.hentArbeidsforholdInformasjonForKobling(referanse);
+        ArbeidsforholdInformasjon arbeidsforholdInformasjon =
+                iayTjeneste.hentArbeidsforholdInformasjonForKobling(referanse);
 
         String abakusReferanse = request.getArbeidsforholdId().getAbakusReferanse();
-        InternArbeidsforholdRef arbeidsforholdRef = arbeidsforholdInformasjon.finnEllerOpprett(tilArbeidsgiver(request),
-            InternArbeidsforholdRef.ref(abakusReferanse));
+        InternArbeidsforholdRef arbeidsforholdRef = arbeidsforholdInformasjon.finnEllerOpprett(
+                tilArbeidsgiver(request), InternArbeidsforholdRef.ref(abakusReferanse));
 
-        var dto = dtoTjeneste.mapArbeidsforhold(request.getArbeidsgiver(), abakusReferanse, arbeidsforholdRef.getReferanse());
+        var dto = dtoTjeneste.mapArbeidsforhold(
+                request.getArbeidsgiver(), abakusReferanse, arbeidsforholdRef.getReferanse());
         koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
         final Response response = Response.ok(dto).build();
         return response;
@@ -147,25 +164,26 @@ public class ArbeidsforholdRestTjeneste {
     private void setupLogMdcFraKoblingReferanse(KoblingReferanse koblingReferanse) {
         var kobling = koblingTjeneste.hentFor(koblingReferanse);
         kobling.filter(k -> k.getSaksnummer() != null)
-            .ifPresent(k -> LoggUtil.setupLogMdc(k.getYtelseType(), kobling.get().getSaksnummer().getVerdi(),
-                koblingReferanse.getReferanse())); // legger til saksnummer i MDC
+                .ifPresent(k -> LoggUtil.setupLogMdc(
+                        k.getYtelseType(),
+                        kobling.get().getSaksnummer().getVerdi(),
+                        koblingReferanse.getReferanse())); // legger til saksnummer i MDC
     }
 
     public static class AktørDatoRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
-        public AktørDatoRequestAbacDataSupplier() {
-        }
+        public AktørDatoRequestAbacDataSupplier() {}
 
         @Override
         public AbacDataAttributter apply(Object obj) {
             AktørDatoRequest req = (AktørDatoRequest) obj;
-            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, req.getAktør().getIdent());
+            return AbacDataAttributter.opprett()
+                    .leggTil(StandardAbacAttributtType.AKTØR_ID, req.getAktør().getIdent());
         }
     }
 
     public static class ArbeidsforholdReferanseAbacDataSupplier implements Function<Object, AbacDataAttributter> {
-        public ArbeidsforholdReferanseAbacDataSupplier() {
-        }
+        public ArbeidsforholdReferanseAbacDataSupplier() {}
 
         @Override
         public AbacDataAttributter apply(Object obj) {

@@ -1,29 +1,31 @@
 package no.nav.abakus.iaygrunnlag.oppgittopptjening.v1;
 
-import java.math.BigDecimal;
-import java.util.Objects;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import java.math.BigDecimal;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.ALWAYS)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.NONE,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+        creatorVisibility = JsonAutoDetect.Visibility.NONE)
 public class OppgittArbeidsforholdDto {
 
     @JsonProperty(value = "periode", required = true)
@@ -43,9 +45,7 @@ public class OppgittArbeidsforholdDto {
     @NotNull
     private Landkode landkode = Landkode.NOR;
 
-    /**
-     * Tillater kun positive verdier.
-     */
+    /** Tillater kun positive verdier. */
     @JsonProperty("inntekt")
     @DecimalMin(value = "0.00", message = "beløp [${validatedValue}] må være >= {value}")
     @DecimalMax(value = "9999999999.00", message = "beløp [${validatedValue}] må være >= {value}")
@@ -56,12 +56,16 @@ public class OppgittArbeidsforholdDto {
      * Oppgis normalt dersom ikke orgnr kan gis. F.eks for utlandske virsomheter, eller noen tilfeller Fiskere med Lott.
      */
     @JsonProperty(value = "virksomhetNavn")
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Oppgitt Arbeidsforhold - Virksomhet navn [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Pattern(
+            regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$",
+            message =
+                    "Oppgitt Arbeidsforhold - Virksomhet navn [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String virksomhetNavn;
 
     @JsonCreator
-    public OppgittArbeidsforholdDto(@JsonProperty(value = "periode", required = true) Periode periode,
-                                    @JsonProperty(value = "arbeidType", required = true) ArbeidType arbeidType) {
+    public OppgittArbeidsforholdDto(
+            @JsonProperty(value = "periode", required = true) Periode periode,
+            @JsonProperty(value = "arbeidType", required = true) ArbeidType arbeidType) {
         Objects.requireNonNull(periode, "periode");
         Objects.requireNonNull(arbeidType, "arbeidType");
         this.periode = periode;

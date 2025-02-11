@@ -1,14 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -22,7 +13,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
@@ -56,20 +53,20 @@ public class AktørInntekt extends BaseEntitet implements IndexKey {
     private long versjon;
 
     AktørInntekt() {
-        //hibernate
+        // hibernate
     }
 
-    /**
-     * Deep copy ctor
-     */
+    /** Deep copy ctor */
     AktørInntekt(AktørInntekt aktørInntekt) {
         this.aktørId = aktørInntekt.getAktørId();
 
-        this.inntekt = aktørInntekt.inntekt.stream().map(i -> {
-            Inntekt inntektTmpEntitet = new Inntekt(i);
-            inntektTmpEntitet.setAktørInntekt(this);
-            return inntektTmpEntitet;
-        }).collect(Collectors.toCollection(LinkedHashSet::new));
+        this.inntekt = aktørInntekt.inntekt.stream()
+                .map(i -> {
+                    Inntekt inntektTmpEntitet = new Inntekt(i);
+                    inntektTmpEntitet.setAktørInntekt(this);
+                    return inntektTmpEntitet;
+                })
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
@@ -95,9 +92,7 @@ public class AktørInntekt extends BaseEntitet implements IndexKey {
         this.aktørId = aktørId;
     }
 
-    /**
-     * Returner alle inntekter, ufiltrert.
-     */
+    /** Returner alle inntekter, ufiltrert. */
     public Collection<Inntekt> getInntekt() {
         return Collections.unmodifiableSet(inntekt);
     }
@@ -108,10 +103,10 @@ public class AktørInntekt extends BaseEntitet implements IndexKey {
 
     public InntektBuilder getInntektBuilder(InntektskildeType inntektskildeType, Opptjeningsnøkkel nøkkel) {
         Optional<Inntekt> inntektOptional = getInntekt().stream()
-            .filter(i -> inntektskildeType.equals(i.getInntektsKilde()))
-            .filter(i -> i.getArbeidsgiver() != null && new Opptjeningsnøkkel(i.getArbeidsgiver()).matcher(nøkkel) || inntektskildeType.equals(
-                InntektskildeType.SIGRUN))
-            .findFirst();
+                .filter(i -> inntektskildeType.equals(i.getInntektsKilde()))
+                .filter(i -> i.getArbeidsgiver() != null && new Opptjeningsnøkkel(i.getArbeidsgiver()).matcher(nøkkel)
+                        || inntektskildeType.equals(InntektskildeType.SIGRUN))
+                .findFirst();
         InntektBuilder oppdatere = InntektBuilder.oppdatere(inntektOptional);
         if (!oppdatere.getErOppdatering()) {
             oppdatere.medInntektsKilde(inntektskildeType);
@@ -121,10 +116,11 @@ public class AktørInntekt extends BaseEntitet implements IndexKey {
 
     public InntektBuilder getInntektBuilderForYtelser(InntektskildeType inntektskildeType) {
         Optional<Inntekt> inntektOptional = getInntekt().stream()
-            .filter(i -> i.getArbeidsgiver() == null)
-            .filter(i -> inntektskildeType.equals(i.getInntektsKilde()))
-            .filter(i -> i.getAlleInntektsposter().stream().anyMatch(post -> post.getInntektspostType().equals(InntektspostType.YTELSE)))
-            .findFirst();
+                .filter(i -> i.getArbeidsgiver() == null)
+                .filter(i -> inntektskildeType.equals(i.getInntektsKilde()))
+                .filter(i -> i.getAlleInntektsposter().stream()
+                        .anyMatch(post -> post.getInntektspostType().equals(InntektspostType.YTELSE)))
+                .findFirst();
         InntektBuilder oppdatere = InntektBuilder.oppdatere(inntektOptional);
         if (!oppdatere.getErOppdatering()) {
             oppdatere.medInntektsKilde(inntektskildeType);

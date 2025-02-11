@@ -17,7 +17,12 @@ public class Månedsinntekt {
     private String lønnsbeskrivelseKode;
     private boolean ytelse;
 
-    private Månedsinntekt(BigDecimal beløp, YearMonth måned, String arbeidsgiver, String arbeidsforholdRef, String skatteOgAvgiftsregelType) {
+    private Månedsinntekt(
+            BigDecimal beløp,
+            YearMonth måned,
+            String arbeidsgiver,
+            String arbeidsforholdRef,
+            String skatteOgAvgiftsregelType) {
         this.beløp = beløp;
         this.måned = måned;
         this.arbeidsgiver = arbeidsgiver;
@@ -102,7 +107,6 @@ public class Månedsinntekt {
             return this;
         }
 
-
         public Builder medPensjonEllerTrygdKode(String kode) {
             this.pensjonKode = kode;
             return this;
@@ -134,7 +138,8 @@ public class Månedsinntekt {
         }
 
         public Månedsinntekt build() {
-            final Månedsinntekt månedsinntekt = new Månedsinntekt(beløp, måned, utbetaler, arbeidsforholdRef, skatteOgAvgiftsregelType);
+            final Månedsinntekt månedsinntekt =
+                    new Månedsinntekt(beløp, måned, utbetaler, arbeidsforholdRef, skatteOgAvgiftsregelType);
             månedsinntekt.ytelse = ytelse;
             månedsinntekt.pensjonKode = pensjonKode;
             månedsinntekt.ytelseKode = ytelseKode;
@@ -182,8 +187,10 @@ public class Månedsinntekt {
                 return false;
             }
             YtelseNøkkel nøkkel = (YtelseNøkkel) o;
-            return Objects.equals(måned, nøkkel.måned) && Objects.equals(ytelseKode, nøkkel.ytelseKode) && Objects.equals(pensjonKode,
-                nøkkel.pensjonKode) && Objects.equals(næringsinntektKode, nøkkel.næringsinntektKode);
+            return Objects.equals(måned, nøkkel.måned)
+                    && Objects.equals(ytelseKode, nøkkel.ytelseKode)
+                    && Objects.equals(pensjonKode, nøkkel.pensjonKode)
+                    && Objects.equals(næringsinntektKode, nøkkel.næringsinntektKode);
         }
 
         @Override

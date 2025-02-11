@@ -7,5 +7,4 @@ public class ForvaltningEndreInternReferanse {
     public static void endreReferanse(Inntektsmelding im, InternArbeidsforholdRef internArbeidsforholdRef) {
         im.setArbeidsforholdId(internArbeidsforholdRef);
     }
-
 }

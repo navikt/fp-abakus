@@ -1,5 +1,12 @@
 package no.nav.foreldrepenger.abakus.vedtak.domene;
 
+import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -7,15 +14,6 @@ import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-
-import jakarta.persistence.*;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Entity(name = "VedtakYtelseAnvistEntitet")
 @Table(name = "VE_YTELSE_ANVIST")
@@ -61,11 +59,13 @@ public class YtelseAnvist extends BaseEntitet implements IndexKey {
     }
 
     public YtelseAnvist(YtelseAnvist ytelseAnvist) {
-        this.anvistPeriode = IntervallEntitet.fraOgMedTilOgMed(ytelseAnvist.getAnvistFom(), ytelseAnvist.getAnvistTom());
+        this.anvistPeriode =
+                IntervallEntitet.fraOgMedTilOgMed(ytelseAnvist.getAnvistFom(), ytelseAnvist.getAnvistTom());
         this.beløp = ytelseAnvist.getBeløp().orElse(null);
         this.dagsats = ytelseAnvist.getDagsats().orElse(null);
         this.utbetalingsgradProsent = ytelseAnvist.getUtbetalingsgradProsent().orElse(null);
-        this.andeler = ytelseAnvist.getAndeler().stream().map(VedtakYtelseAndel::new).collect(Collectors.toList());
+        this.andeler =
+                ytelseAnvist.getAndeler().stream().map(VedtakYtelseAndel::new).collect(Collectors.toList());
         this.andeler.forEach(a -> a.setYtelseAnvist(this));
     }
 
@@ -122,7 +122,6 @@ public class YtelseAnvist extends BaseEntitet implements IndexKey {
     void leggTilFordeling(VedtakYtelseAndel vedtakYtelseAndel) {
         vedtakYtelseAndel.setYtelseAnvist(this);
         this.andeler.add(vedtakYtelseAndel);
-
     }
 
     @Override
@@ -134,8 +133,10 @@ public class YtelseAnvist extends BaseEntitet implements IndexKey {
             return false;
         }
         var that = (YtelseAnvist) o;
-        return Objects.equals(anvistPeriode, that.anvistPeriode) && Objects.equals(beløp, that.beløp) && Objects.equals(dagsats, that.dagsats)
-            && Objects.equals(utbetalingsgradProsent, that.utbetalingsgradProsent);
+        return Objects.equals(anvistPeriode, that.anvistPeriode)
+                && Objects.equals(beløp, that.beløp)
+                && Objects.equals(dagsats, that.dagsats)
+                && Objects.equals(utbetalingsgradProsent, that.utbetalingsgradProsent);
     }
 
     @Override
@@ -145,7 +146,7 @@ public class YtelseAnvist extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "YtelseAnvistEntitet{" + "periode=" + anvistPeriode + ", beløp=" + beløp + ", dagsats=" + dagsats + ", utbetalingsgradProsent="
-            + utbetalingsgradProsent + '}';
+        return "YtelseAnvistEntitet{" + "periode=" + anvistPeriode + ", beløp=" + beløp + ", dagsats=" + dagsats
+                + ", utbetalingsgradProsent=" + utbetalingsgradProsent + '}';
     }
 }

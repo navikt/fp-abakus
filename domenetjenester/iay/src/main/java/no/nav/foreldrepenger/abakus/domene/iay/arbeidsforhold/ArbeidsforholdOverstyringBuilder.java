@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold;
 
 import java.time.LocalDate;
 import java.util.Optional;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.BekreftetPermisjon;
@@ -28,7 +27,9 @@ public class ArbeidsforholdOverstyringBuilder {
     }
 
     public static ArbeidsforholdOverstyringBuilder oppdatere(Optional<ArbeidsforholdOverstyring> oppdatere) {
-        return oppdatere.map(ArbeidsforholdOverstyringBuilder::oppdatere).orElseGet(ArbeidsforholdOverstyringBuilder::ny);
+        return oppdatere
+                .map(ArbeidsforholdOverstyringBuilder::oppdatere)
+                .orElseGet(ArbeidsforholdOverstyringBuilder::ny);
     }
 
     public ArbeidsforholdOverstyringBuilder medArbeidsgiver(Arbeidsgiver arbeidsgiverEntitet) {
@@ -41,9 +42,7 @@ public class ArbeidsforholdOverstyringBuilder {
         return this;
     }
 
-    /**
-     * Angi ny arbeidsforholdreferanse som skal erstatte opprinnelig.
-     */
+    /** Angi ny arbeidsforholdreferanse som skal erstatte opprinnelig. */
     public ArbeidsforholdOverstyringBuilder medNyArbeidsforholdRef(InternArbeidsforholdRef ref) {
         kladd.setNyArbeidsforholdRef(ref);
         return this;

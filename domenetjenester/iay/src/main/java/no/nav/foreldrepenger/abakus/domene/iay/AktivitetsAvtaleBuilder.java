@@ -3,7 +3,6 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
-
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
@@ -21,7 +20,8 @@ public class AktivitetsAvtaleBuilder {
     }
 
     static AktivitetsAvtaleBuilder oppdater(Optional<AktivitetsAvtale> aktivitetsAvtale) {
-        return new AktivitetsAvtaleBuilder(aktivitetsAvtale.orElseGet(AktivitetsAvtale::new), aktivitetsAvtale.isPresent());
+        return new AktivitetsAvtaleBuilder(
+                aktivitetsAvtale.orElseGet(AktivitetsAvtale::new), aktivitetsAvtale.isPresent());
     }
 
     public AktivitetsAvtaleBuilder medProsentsats(Stillingsprosent prosentsats) {
@@ -30,7 +30,8 @@ public class AktivitetsAvtaleBuilder {
     }
 
     public AktivitetsAvtaleBuilder medProsentsats(BigDecimal prosentsats) {
-        this.aktivitetsAvtaleEntitet.setProsentsats(prosentsats == null ? Stillingsprosent.nullProsent() : Stillingsprosent.arbeid(prosentsats));
+        this.aktivitetsAvtaleEntitet.setProsentsats(
+                prosentsats == null ? Stillingsprosent.nullProsent() : Stillingsprosent.arbeid(prosentsats));
         return this;
     }
 

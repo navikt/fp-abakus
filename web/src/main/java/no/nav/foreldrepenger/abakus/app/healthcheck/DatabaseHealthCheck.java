@@ -1,15 +1,12 @@
 package no.nav.foreldrepenger.abakus.app.healthcheck;
 
-import java.sql.SQLException;
-
 import jakarta.annotation.Resource;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.sql.SQLException;
 import javax.sql.DataSource;
-
+import no.nav.vedtak.server.LiveAndReadinessAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import no.nav.vedtak.server.LiveAndReadinessAware;
 
 @ApplicationScoped
 public class DatabaseHealthCheck implements LiveAndReadinessAware {

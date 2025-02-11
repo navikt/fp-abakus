@@ -1,17 +1,5 @@
 package no.nav.foreldrepenger.abakus.app.rest.ekstern;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Function;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -32,6 +20,14 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Function;
 import no.nav.abakus.vedtak.ytelse.Aktør;
 import no.nav.abakus.vedtak.ytelse.Desimaltall;
 import no.nav.abakus.vedtak.ytelse.Periode;
@@ -64,6 +60,8 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.AvailabilityType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @OpenAPIDefinition(tags = @Tag(name = "ytelse"), servers = @Server())
 @Path("/ytelse/v1")
@@ -73,26 +71,27 @@ public class EksternDelingAvYtelserRestTjeneste {
 
     private static final Logger LOG = LoggerFactory.getLogger(EksternDelingAvYtelserRestTjeneste.class);
 
-    private static final Set<Ytelser> K9_INFOTRYGD_YTELSER = Set.of(Ytelser.PLEIEPENGER_NÆRSTÅENDE, Ytelser.OPPLÆRINGSPENGER,
-        Ytelser.PLEIEPENGER_SYKT_BARN);
+    private static final Set<Ytelser> K9_INFOTRYGD_YTELSER =
+            Set.of(Ytelser.PLEIEPENGER_NÆRSTÅENDE, Ytelser.OPPLÆRINGSPENGER, Ytelser.PLEIEPENGER_SYKT_BARN);
 
     private VedtakYtelseRepository ytelseRepository;
     private AktørTjeneste aktørTjeneste;
     private InfotrygdPSGrunnlag infotrygdPSGrunnlag;
 
-    public EksternDelingAvYtelserRestTjeneste() {
-    } // CDI Ctor
+    public EksternDelingAvYtelserRestTjeneste() {} // CDI Ctor
 
     @Inject
-    public EksternDelingAvYtelserRestTjeneste(VedtakYtelseRepository ytelseRepository,
-                                              @PS InfotrygdPSGrunnlag infotrygdPSGrunnlag,
-                                              AktørTjeneste aktørTjeneste) {
+    public EksternDelingAvYtelserRestTjeneste(
+            VedtakYtelseRepository ytelseRepository,
+            @PS InfotrygdPSGrunnlag infotrygdPSGrunnlag,
+            AktørTjeneste aktørTjeneste) {
         this.ytelseRepository = ytelseRepository;
         this.aktørTjeneste = aktørTjeneste;
         this.infotrygdPSGrunnlag = infotrygdPSGrunnlag;
     }
 
-    private static ArbeidsgiverIdent mapArbeidsgiverIdent(no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver arbeidsgiver) {
+    private static ArbeidsgiverIdent mapArbeidsgiverIdent(
+            no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver arbeidsgiver) {
         if (arbeidsgiver == null) {
             return null;
         }
@@ -103,19 +102,33 @@ public class EksternDelingAvYtelserRestTjeneste {
     @Path("/hent-ytelse-vedtak")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(tags = "ytelse",
-        description = "Henter alle vedtak for en gitt person, evt med periode etter en fom"
-    )
-    @RequestBody(required = true, description = "Vi godkjenner både aktørid og fnr som gyldig ident.", content = @Content(schema = @Schema(implementation = VedtakForPeriodeRequest.class)))
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Liste med vedtak som matcher kriteriene.",
-            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = YtelseV1.class))))}
-    )
-    @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.APPLIKASJON, availabilityType = AvailabilityType.ALL)
+    @Operation(tags = "ytelse", description = "Henter alle vedtak for en gitt person, evt med periode etter en fom")
+    @RequestBody(
+            required = true,
+            description = "Vi godkjenner både aktørid og fnr som gyldig ident.",
+            content = @Content(schema = @Schema(implementation = VedtakForPeriodeRequest.class)))
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Liste med vedtak som matcher kriteriene.",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        array = @ArraySchema(schema = @Schema(implementation = YtelseV1.class))))
+            })
+    @BeskyttetRessurs(
+            actionType = ActionType.READ,
+            resourceType = ResourceType.APPLIKASJON,
+            availabilityType = AvailabilityType.ALL)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public List<Ytelse> hentVedtakYtelse(@NotNull @TilpassetAbacAttributt(supplierClass = EksternDelingAvYtelserRestTjeneste.VedtakForPeriodeRequestAbacDataSupplier.class) @Valid VedtakForPeriodeRequest request) {
+    public List<Ytelse> hentVedtakYtelse(
+            @NotNull
+                    @TilpassetAbacAttributt(
+                            supplierClass =
+                                    EksternDelingAvYtelserRestTjeneste.VedtakForPeriodeRequestAbacDataSupplier.class)
+                    @Valid
+                    VedtakForPeriodeRequest request) {
         LOG.info("ABAKUS VEDTAK ekstern /hent-ytelse-vedtak for ytelser {}", request.getYtelser());
 
         if (request.getYtelser().isEmpty()) {
@@ -123,23 +136,24 @@ public class EksternDelingAvYtelserRestTjeneste {
         }
 
         Set<AktørId> aktørIder = utledAktørIdFraRequest(request.getIdent());
-        var periode = IntervallEntitet.fraOgMedTilOgMed(request.getPeriode().getFom(), request.getPeriode().getTom());
+        var periode = IntervallEntitet.fraOgMedTilOgMed(
+                request.getPeriode().getFom(), request.getPeriode().getTom());
         var ytelser = new ArrayList<Ytelse>();
         for (AktørId aktørId : aktørIder) {
-            ytelser.addAll(ytelseRepository.hentYtelserForIPeriode(aktørId, periode)
-                .stream()
-                .filter(it -> request.getYtelser().contains(ConvertToYtelseV1.mapYtelser(it.getYtelseType())))
-                .map(ConvertToYtelseV1::convert)
-                .toList());
+            ytelser.addAll(ytelseRepository.hentYtelserForIPeriode(aktørId, periode).stream()
+                    .filter(it -> request.getYtelser().contains(ConvertToYtelseV1.mapYtelser(it.getYtelseType())))
+                    .map(ConvertToYtelseV1::convert)
+                    .toList());
         }
         ytelser.addAll(hentVedtakYtelseInfotrygdK9Intern(request));
 
         return ytelser;
     }
 
-
     public List<Ytelse> hentVedtakYtelseInfotrygdK9Intern(VedtakForPeriodeRequest request) {
-        if (request.getYtelser().isEmpty() || K9_INFOTRYGD_YTELSER.stream().noneMatch(y -> request.getYtelser().contains(y))) {
+        if (request.getYtelser().isEmpty()
+                || K9_INFOTRYGD_YTELSER.stream()
+                        .noneMatch(y -> request.getYtelser().contains(y))) {
             return List.of();
         }
 
@@ -150,16 +164,19 @@ public class EksternDelingAvYtelserRestTjeneste {
 
         var aktørId = aktørIdOpt.orElseThrow();
         var identer = utledPersonIdentFraRequest(request.getIdent());
-        var periode = IntervallEntitet.fraOgMedTilOgMed(request.getPeriode().getFom(), request.getPeriode().getTom());
+        var periode = IntervallEntitet.fraOgMedTilOgMed(
+                request.getPeriode().getFom(), request.getPeriode().getTom());
         var fnr = identer.stream().map(PersonIdent::getIdent).toList();
-        var inforequest = new GrunnlagRequest(fnr, Tid.fomEllerMin(periode.getFomDato()), Tid.tomEllerMax(periode.getTomDato()));
+        var inforequest =
+                new GrunnlagRequest(fnr, Tid.fomEllerMin(periode.getFomDato()), Tid.tomEllerMax(periode.getTomDato()));
         var infotrygdYtelser = infotrygdPSGrunnlag.hentGrunnlagFailSoft(inforequest);
-        var mappedYtelser = InnhentingInfotrygdTjeneste.mapTilInfotrygdYtelseGrunnlag(infotrygdYtelser, periode.getFomDato())
-            .stream()
-            .map(InfotrygdgrunnlagYtelseMapper::oversettInfotrygdYtelseGrunnlagTilYtelse)
-            .map(it -> ytelseTilYtelse(aktørId, it))
-            .filter(it -> request.getYtelser().contains(it.getYtelse()))
-            .toList();
+        var mappedYtelser =
+                InnhentingInfotrygdTjeneste.mapTilInfotrygdYtelseGrunnlag(infotrygdYtelser, periode.getFomDato())
+                        .stream()
+                        .map(InfotrygdgrunnlagYtelseMapper::oversettInfotrygdYtelseGrunnlagTilYtelse)
+                        .map(it -> ytelseTilYtelse(aktørId, it))
+                        .filter(it -> request.getYtelser().contains(it.getYtelse()))
+                        .toList();
         var ytelser = new ArrayList<Ytelse>(mappedYtelser);
         return ytelser;
     }
@@ -181,7 +198,6 @@ public class EksternDelingAvYtelserRestTjeneste {
     private Set<PersonIdent> utledPersonIdentFraRequest(Aktør aktør) {
         if (aktør.erAktørId()) {
             return aktørTjeneste.hentPersonIdenterForAktør(new AktørId(aktør.getVerdi()));
-
         }
         return Set.of(new PersonIdent(aktør.getVerdi()));
     }
@@ -191,17 +207,24 @@ public class EksternDelingAvYtelserRestTjeneste {
         var aktør = new Aktør();
         aktør.setVerdi(aktørId.getId());
         ytelse.setAktør(aktør);
-        ytelse.setVedtattTidspunkt(Optional.ofNullable(vedtak.getVedtattTidspunkt()).orElseGet(LocalDateTime::now));
+        ytelse.setVedtattTidspunkt(
+                Optional.ofNullable(vedtak.getVedtattTidspunkt()).orElseGet(LocalDateTime::now));
         ytelse.setYtelse(ConvertToYtelseV1.mapYtelser(vedtak.getRelatertYtelseType()));
         Optional.ofNullable(vedtak.getSaksreferanse()).map(Saksnummer::getVerdi).ifPresent(ytelse::setSaksnummer);
         ytelse.setYtelseStatus(ConvertToYtelseV1.mapStatus(vedtak.getStatus()));
         ytelse.setKildesystem(ConvertToYtelseV1.mapKildesystem(vedtak.getKilde()));
         ytelse.setVedtakReferanse(UUID.randomUUID().toString()); // NotNull i kontrakt
         var periode = new Periode();
-        periode.setFom(Optional.ofNullable(vedtak.getPeriode()).map(IntervallEntitet::getFomDato).orElseGet(LocalDate::now));
-        periode.setTom(Optional.ofNullable(vedtak.getPeriode()).map(IntervallEntitet::getTomDato).orElseGet(LocalDate::now));
+        periode.setFom(Optional.ofNullable(vedtak.getPeriode())
+                .map(IntervallEntitet::getFomDato)
+                .orElseGet(LocalDate::now));
+        periode.setTom(Optional.ofNullable(vedtak.getPeriode())
+                .map(IntervallEntitet::getTomDato)
+                .orElseGet(LocalDate::now));
         ytelse.setPeriode(periode);
-        var anvist = vedtak.getYtelseAnvist().stream().map(this::mapLagretInfotrygdAnvist).toList();
+        var anvist = vedtak.getYtelseAnvist().stream()
+                .map(this::mapLagretInfotrygdAnvist)
+                .toList();
         ytelse.setAnvist(anvist);
         return ytelse;
     }
@@ -214,21 +237,31 @@ public class EksternDelingAvYtelserRestTjeneste {
         anvisning.setPeriode(periode);
         anvist.getBeløp().map(Beløp::getVerdi).map(Desimaltall::new).ifPresent(anvisning::setBeløp);
         anvist.getDagsats().map(Beløp::getVerdi).map(Desimaltall::new).ifPresent(anvisning::setDagsats);
-        anvist.getUtbetalingsgradProsent().map(Stillingsprosent::getVerdi).map(Desimaltall::new).ifPresent(anvisning::setUtbetalingsgrad);
+        anvist.getUtbetalingsgradProsent()
+                .map(Stillingsprosent::getVerdi)
+                .map(Desimaltall::new)
+                .ifPresent(anvisning::setUtbetalingsgrad);
         anvisning.setAndeler(mapInfotrygdAndeler(anvist));
 
         return anvisning;
     }
 
     private List<AnvistAndel> mapInfotrygdAndeler(no.nav.foreldrepenger.abakus.domene.iay.YtelseAnvist anvist) {
-        return anvist.getYtelseAnvistAndeler()
-            .stream()
-            .map(a -> new AnvistAndel(a.getArbeidsgiver().map(EksternDelingAvYtelserRestTjeneste::mapArbeidsgiverIdent).orElse(null),
-                a.getArbeidsforholdRef().getReferanse(), new Desimaltall(a.getDagsats().getVerdi()),
-                a.getUtbetalingsgradProsent() == null ? null : new Desimaltall(a.getUtbetalingsgradProsent().getVerdi()),
-                a.getRefusjonsgradProsent() == null ? null : new Desimaltall(a.getRefusjonsgradProsent().getVerdi()),
-                ConvertToYtelseV1.fraInntektskategori(a.getInntektskategori())))
-            .toList();
+        return anvist.getYtelseAnvistAndeler().stream()
+                .map(a -> new AnvistAndel(
+                        a.getArbeidsgiver()
+                                .map(EksternDelingAvYtelserRestTjeneste::mapArbeidsgiverIdent)
+                                .orElse(null),
+                        a.getArbeidsforholdRef().getReferanse(),
+                        new Desimaltall(a.getDagsats().getVerdi()),
+                        a.getUtbetalingsgradProsent() == null
+                                ? null
+                                : new Desimaltall(a.getUtbetalingsgradProsent().getVerdi()),
+                        a.getRefusjonsgradProsent() == null
+                                ? null
+                                : new Desimaltall(a.getRefusjonsgradProsent().getVerdi()),
+                        ConvertToYtelseV1.fraInntektskategori(a.getInntektskategori())))
+                .toList();
     }
 
     public static class VedtakForPeriodeRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
@@ -240,9 +273,10 @@ public class EksternDelingAvYtelserRestTjeneste {
         @Override
         public AbacDataAttributter apply(Object obj) {
             var req = (VedtakForPeriodeRequest) obj;
-            var attributeType = req.getIdent().erAktørId() ? StandardAbacAttributtType.AKTØR_ID : StandardAbacAttributtType.FNR;
-            return AbacDataAttributter.opprett().leggTil(attributeType, req.getIdent().getVerdi());
+            var attributeType =
+                    req.getIdent().erAktørId() ? StandardAbacAttributtType.AKTØR_ID : StandardAbacAttributtType.FNR;
+            return AbacDataAttributter.opprett()
+                    .leggTil(attributeType, req.getIdent().getVerdi());
         }
     }
-
 }

@@ -1,12 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,14 +8,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.typer.JournalpostId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Entity(name = "Inntektsmeldinger")
 @Table(name = "IAY_INNTEKTSMELDINGER")
@@ -51,18 +48,21 @@ public class InntektsmeldingAggregat extends BaseEntitet {
     }
 
     public InntektsmeldingAggregat(Collection<Inntektsmelding> inntektsmeldinger) {
-        this.inntektsmeldinger.addAll(inntektsmeldinger.stream().sorted(Inntektsmelding.COMP_REKKEFØLGE).map(i -> {
-            var inntektsmeldingEntitet = new Inntektsmelding(i);
-            inntektsmeldingEntitet.setInntektsmeldinger(this);
-            return inntektsmeldingEntitet;
-        }).collect(Collectors.toList()));
+        this.inntektsmeldinger.addAll(inntektsmeldinger.stream()
+                .sorted(Inntektsmelding.COMP_REKKEFØLGE)
+                .map(i -> {
+                    var inntektsmeldingEntitet = new Inntektsmelding(i);
+                    inntektsmeldingEntitet.setInntektsmeldinger(this);
+                    return inntektsmeldingEntitet;
+                })
+                .collect(Collectors.toList()));
     }
 
-    /**
-     * Get alle inntektsmeldinger (både de som skal brukes og ikke brukes).
-     */
+    /** Get alle inntektsmeldinger (både de som skal brukes og ikke brukes). */
     public List<Inntektsmelding> getInntektsmeldinger() {
-        return inntektsmeldinger.stream().sorted(Inntektsmelding.COMP_REKKEFØLGE).collect(Collectors.toUnmodifiableList());
+        return inntektsmeldinger.stream()
+                .sorted(Inntektsmelding.COMP_REKKEFØLGE)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     public Long getId() {
@@ -70,16 +70,15 @@ public class InntektsmeldingAggregat extends BaseEntitet {
     }
 
     /**
-     * Den persisterte inntektsmeldingen kan være av nyere dato, bestemmes av
-     * innsendingstidspunkt på inntektsmeldingen.
+     * Den persisterte inntektsmeldingen kan være av nyere dato, bestemmes av innsendingstidspunkt på inntektsmeldingen.
      *
      * @return lagtTilEllerIkke
      */
     public Set<JournalpostId> leggTilEllerErstattMedUtdatertForHistorikk(Inntektsmelding inntektsmelding) {
         var collect = inntektsmeldinger.stream()
-            .filter(it -> it.gjelderSammeArbeidsforhold(inntektsmelding))
-            .map(Inntektsmelding::getJournalpostId)
-            .collect(Collectors.toCollection(HashSet::new));
+                .filter(it -> it.gjelderSammeArbeidsforhold(inntektsmelding))
+                .map(Inntektsmelding::getJournalpostId)
+                .collect(Collectors.toCollection(HashSet::new));
         boolean fjernet = inntektsmeldinger.removeIf(it -> it.gjelderSammeArbeidsforhold(inntektsmelding));
 
         if (fjernet || inntektsmeldinger.stream().noneMatch(it -> it.gjelderSammeArbeidsforhold(inntektsmelding))) {
@@ -93,21 +92,25 @@ public class InntektsmeldingAggregat extends BaseEntitet {
     }
 
     /**
-     * Den persisterte inntektsmeldingen kan være av nyere dato, bestemmes av
-     * innsendingstidspunkt på inntektsmeldingen.
+     * Den persisterte inntektsmeldingen kan være av nyere dato, bestemmes av innsendingstidspunkt på inntektsmeldingen.
      *
      * @return lagtTilEllerIkke
      */
     public Set<JournalpostId> leggTilEllerErstatt(Inntektsmelding inntektsmelding) {
         var collect = inntektsmeldinger.stream()
-            .filter(it -> skalFjerneInntektsmelding(it, inntektsmelding))
-            .map(Inntektsmelding::getJournalpostId)
-            .collect(Collectors.toCollection(HashSet::new));
+                .filter(it -> skalFjerneInntektsmelding(it, inntektsmelding))
+                .map(Inntektsmelding::getJournalpostId)
+                .collect(Collectors.toCollection(HashSet::new));
         boolean fjernet = inntektsmeldinger.removeIf(it -> skalFjerneInntektsmelding(it, inntektsmelding));
-        inntektsmeldinger.stream().filter(it -> it.gjelderSammeArbeidsforhold(inntektsmelding) && !fjernet).findFirst().ifPresent(e -> {
-            LOG.info("Persistert inntektsmelding med journalpostid {} er nyere enn den mottatte med journalpostid {}. Ignoreres",
-                e.getJournalpostId(), inntektsmelding.getJournalpostId());
-        });
+        inntektsmeldinger.stream()
+                .filter(it -> it.gjelderSammeArbeidsforhold(inntektsmelding) && !fjernet)
+                .findFirst()
+                .ifPresent(e -> {
+                    LOG.info(
+                            "Persistert inntektsmelding med journalpostid {} er nyere enn den mottatte med journalpostid {}. Ignoreres",
+                            e.getJournalpostId(),
+                            inntektsmelding.getJournalpostId());
+                });
 
         if (fjernet || inntektsmeldinger.stream().noneMatch(it -> it.gjelderSammeArbeidsforhold(inntektsmelding))) {
             final Inntektsmelding entitet = inntektsmelding;

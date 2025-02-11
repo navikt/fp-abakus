@@ -5,25 +5,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import no.nav.foreldrepenger.abakus.dbstoette.JpaExtension;
-
+import no.nav.vedtak.felles.testutilities.db.EntityManagerAwareTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import no.nav.vedtak.felles.testutilities.db.EntityManagerAwareTest;
-
-/**
- * Tester at alle migreringer følger standarder for navn og god praksis.
- */
+/** Tester at alle migreringer følger standarder for navn og god praksis. */
 @ExtendWith(JpaExtension.class)
 public class SjekkDbStrukturTest extends EntityManagerAwareTest {
 
     @Test
     @DisplayName("Test at alle tabeller er kommentert.")
     void sjekk_at_alle_tabeller_er_dokumentert() {
-        var sql = """
+        var sql =
+                """
             SELECT
                 t.table_name
             FROM
@@ -45,7 +41,8 @@ public class SjekkDbStrukturTest extends EntityManagerAwareTest {
     @Test
     @DisplayName("Test at alle kolonner er kommentert. Bortsett fra PK og FK kolonner.")
     void sjekk_at_alle_relevante_kolonner_er_dokumentert() {
-        var sql = """
+        var sql =
+                """
             SELECT c.table_name||'.'||c.column_name
             FROM pg_catalog.pg_statio_all_tables as st
                    right join pg_catalog.pg_description pgd on (pgd.objoid=st.relid)
@@ -74,18 +71,22 @@ public class SjekkDbStrukturTest extends EntityManagerAwareTest {
         var query = getEntityManager().createNativeQuery(sql, String.class);
         var avvik = query.getResultStream().map(row -> "\n" + row).toList();
 
-        var hjelpetekst = """
+        var hjelpetekst =
+                """
             Du har nylig lagt til en ny tabell eller kolonne som ikke er dokumentert ihht. gjeldende regler for dokumentasjon.
             Vennligst gå over SQL-skriptene og dokumenter tabellene på korrekt måte.
             """;
 
-        assertThat(avvik).withFailMessage("Mangler dokumentasjon for %s kolonner. %s\n\n%s", avvik.size(), avvik, hjelpetekst).isEmpty();
+        assertThat(avvik)
+                .withFailMessage("Mangler dokumentasjon for %s kolonner. %s\n\n%s", avvik.size(), avvik, hjelpetekst)
+                .isEmpty();
     }
 
     @Test
     @DisplayName("Test at alle primary keys har navn med pk_ prefix.")
     void skal_ha_primary_key_i_hver_tabell_som_begynner_med_PK() {
-        var sql = """
+        var sql =
+                """
             SELECT
                 t.table_name
             FROM
@@ -110,14 +111,16 @@ public class SjekkDbStrukturTest extends EntityManagerAwareTest {
         var avvik = query.getResultList();
         var tekst = avvik.stream().collect(Collectors.joining("\n"));
         var sz = avvik.size();
-        var feilTekst = "Feil eller mangelende definisjon av primary key (skal hete 'PK_<tabell navn>'). Antall feil = %s \n\nTabell:\n%s";
+        var feilTekst =
+                "Feil eller mangelende definisjon av primary key (skal hete 'PK_<tabell navn>'). Antall feil = %s \n\nTabell:\n%s";
         assertThat(avvik).withFailMessage(feilTekst, sz, tekst).isEmpty();
     }
 
     @Test
     @DisplayName("Test at alle foreign keys har navn med fk_ prefix.")
     void skal_ha_alle_foreign_keys_begynne_med_FK() {
-        var sql = """
+        var sql =
+                """
                 SELECT
                     table_name,
                     constraint_name
@@ -132,16 +135,18 @@ public class SjekkDbStrukturTest extends EntityManagerAwareTest {
         var query = getEntityManager().createNativeQuery(sql, Object[].class);
         List<Object[]> rowList = query.getResultList();
         var tekst = rowList.stream()
-            .map(row -> Arrays.stream(row).map(String.class::cast).collect(Collectors.joining(", ")))
-            .collect(Collectors.joining("\n"));
-        var feilTekst = "Feil eller mangelende definisjon av foreign key (skal hete 'FK_<tabell navn>_<løpenummer>'). Antall feil = %s\n\nTabell, Foreign Key\n%s";
+                .map(row -> Arrays.stream(row).map(String.class::cast).collect(Collectors.joining(", ")))
+                .collect(Collectors.joining("\n"));
+        var feilTekst =
+                "Feil eller mangelende definisjon av foreign key (skal hete 'FK_<tabell navn>_<løpenummer>'). Antall feil = %s\n\nTabell, Foreign Key\n%s";
         assertThat(rowList).withFailMessage(feilTekst, rowList.size(), tekst).isEmpty();
     }
 
     @Test
     @DisplayName("Test at indexer har riktige prefix: pk_, uidx_, idx_, chk_")
     void skal_ha_korrekt_index_navn() {
-        var sql = """
+        var sql =
+                """
             SELECT
                 t.relname AS table_name,
                 i.relname AS index_name,
@@ -174,17 +179,19 @@ public class SjekkDbStrukturTest extends EntityManagerAwareTest {
         var query = getEntityManager().createNativeQuery(sql, Object[].class);
         List<Object[]> rowList = query.getResultList();
         var tekst = rowList.stream()
-            .map(row -> Arrays.stream(row).map(String.class::cast).collect(Collectors.joining(", ")))
-            .collect(Collectors.joining("\n"));
+                .map(row -> Arrays.stream(row).map(String.class::cast).collect(Collectors.joining(", ")))
+                .collect(Collectors.joining("\n"));
 
-        var feilTekst = "Feil navngiving av index. Primary Keys skal ha prefiks PK_, andre unike indekser prefiks UIDX_, vanlige indekser prefiks IDX_, unique constraints CHK_. Antall feil=%s\n\nTabell, Index, Kolonne\n%s";
+        var feilTekst =
+                "Feil navngiving av index. Primary Keys skal ha prefiks PK_, andre unike indekser prefiks UIDX_, vanlige indekser prefiks IDX_, unique constraints CHK_. Antall feil=%s\n\nTabell, Index, Kolonne\n%s";
         assertThat(rowList).withFailMessage(feilTekst, rowList.size(), tekst).isEmpty();
     }
 
     @Test
     @DisplayName("Test at alle FK har like datatype for kolonne på hver side.")
     void skal_ha_samme_data_type_for_begge_sider_av_en_FK() {
-        var sql = """
+        var sql =
+                """
             SELECT
                 t1.relname,
                 cs1.column_name,
@@ -234,19 +241,23 @@ public class SjekkDbStrukturTest extends EntityManagerAwareTest {
         var query = getEntityManager().createNativeQuery(sql, Object[].class);
         List<Object[]> rowList = query.getResultList();
         var tekst = rowList.stream()
-            .map(row -> Arrays.stream(row).map(String.class::cast).collect(Collectors.joining(", ")))
-            .collect(Collectors.joining("\n"));
+                .map(row -> Arrays.stream(row).map(String.class::cast).collect(Collectors.joining(", ")))
+                .collect(Collectors.joining("\n"));
 
         var feilTekst = "Forskjellig datatype for kolonne på hver side av en FK. Antall feil=%s";
-        var cols = ".\n\nTABELL, KOL_A, KOL_A_DATA_TYPE, KOL_A_CHAR_LENGTH, KOL_A_CHAR_USED, KOL_B, KOL_B_DATA_TYPE, KOL_B_CHAR_LENGTH, KOL_B_CHAR_USED\n%s";
+        var cols =
+                ".\n\nTABELL, KOL_A, KOL_A_DATA_TYPE, KOL_A_CHAR_LENGTH, KOL_A_CHAR_USED, KOL_B, KOL_B_DATA_TYPE, KOL_B_CHAR_LENGTH, KOL_B_CHAR_USED\n%s";
 
-        assertThat(rowList).withFailMessage(feilTekst + cols, rowList.size(), tekst).isEmpty();
+        assertThat(rowList)
+                .withFailMessage(feilTekst + cols, rowList.size(), tekst)
+                .isEmpty();
     }
 
     @Test
     @DisplayName("Test at real, float, double precision datatyper ikke brukes.")
     void skal_ikke_bruke_FLOAT_REAL_eller_DOUBLEPRECISION() {
-        var sql = """
+        var sql =
+                """
             SELECT
                 table_name,
                 column_name,
@@ -258,14 +269,14 @@ public class SjekkDbStrukturTest extends EntityManagerAwareTest {
                 AND data_type IN ('real', 'double precision', 'float');
             """;
 
-
         var query = getEntityManager().createNativeQuery(sql, Object[].class);
         List<Object[]> rowList = query.getResultList();
         var tekst = rowList.stream()
-            .map(row -> Arrays.stream(row).map(String.class::cast).collect(Collectors.joining(", ")))
-            .collect(Collectors.joining("\n"));
+                .map(row -> Arrays.stream(row).map(String.class::cast).collect(Collectors.joining(", ")))
+                .collect(Collectors.joining("\n"));
 
-        var feilTekst = "Feil bruk av datatype, skal ikke ha REAL/FLOAT eller DOUBLE PRECISION (bruk NUMBER for alle desimaltall, spesielt der penger representeres). Antall feil=%s\n\nTabell, Kolonne, Datatype\n%s";
+        var feilTekst =
+                "Feil bruk av datatype, skal ikke ha REAL/FLOAT eller DOUBLE PRECISION (bruk NUMBER for alle desimaltall, spesielt der penger representeres). Antall feil=%s\n\nTabell, Kolonne, Datatype\n%s";
 
         assertThat(rowList).withFailMessage(feilTekst, rowList.size(), tekst).isEmpty();
     }
@@ -273,7 +284,8 @@ public class SjekkDbStrukturTest extends EntityManagerAwareTest {
     @Test
     @DisplayName("Test at alle FK kolonner har en unik index.")
     void sjekk_at_alle_FK_kolonner_har_fornuftig_indekser() {
-        var sql = """
+        var sql =
+                """
               SELECT
                   uc.table_name,
                   uc.constraint_name,
@@ -315,8 +327,8 @@ public class SjekkDbStrukturTest extends EntityManagerAwareTest {
         var query = getEntityManager().createNativeQuery(sql, Object[].class);
         List<Object[]> rowList = query.getResultList();
         var tekst = rowList.stream()
-            .map(row -> Arrays.stream(row).map(String.class::cast).collect(Collectors.joining(", ")))
-            .collect(Collectors.joining("\n"));
+                .map(row -> Arrays.stream(row).map(String.class::cast).collect(Collectors.joining(", ")))
+                .collect(Collectors.joining("\n"));
 
         var feilTekst = "Kolonner som inngår i Foreign Keys skal ha indeker.\nMangler indekser for %s foreign keys\n%s";
 
@@ -326,7 +338,8 @@ public class SjekkDbStrukturTest extends EntityManagerAwareTest {
     @Test
     @DisplayName("Test at alle unike indekser har en uidx_ prefiks.")
     void sjekk_at_alle_unke_indexer_starter_med_uidx_prefiks() {
-        var sql = """
+        var sql =
+                """
             SELECT
                 tbl.relname AS table_name,
                 idx.relname AS index_name
@@ -349,13 +362,12 @@ public class SjekkDbStrukturTest extends EntityManagerAwareTest {
         var query = getEntityManager().createNativeQuery(sql, Object[].class);
         List<Object[]> rowList = query.getResultList();
         var tekst = rowList.stream()
-            .map(row -> Arrays.stream(row).map(String.class::cast).collect(Collectors.joining(", ")))
-            .collect(Collectors.joining("\n"));
+                .map(row -> Arrays.stream(row).map(String.class::cast).collect(Collectors.joining(", ")))
+                .collect(Collectors.joining("\n"));
 
-        var feilTekst = "Indekser som er unike skal ha navn som starter med uidx_. Antall feil: %s\n\nTabell, Index\n%s";
+        var feilTekst =
+                "Indekser som er unike skal ha navn som starter med uidx_. Antall feil: %s\n\nTabell, Index\n%s";
 
         assertThat(rowList).withFailMessage(feilTekst, rowList.size(), tekst).isEmpty();
     }
-
 }
-

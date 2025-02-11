@@ -6,8 +6,6 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
-
-
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
@@ -18,19 +16,18 @@ import no.nav.vedtak.konfig.Tid;
 
 public class InntektsmeldingBuilder {
 
-    public static final Comparator<? super InntektsmeldingBuilder> COMP_REKKEFØLGE = (InntektsmeldingBuilder a, InntektsmeldingBuilder b) -> {
-        if (a == b) {
-            return 0;
-        }
-        if (a.getKanalreferanse() != null && b.getKanalreferanse() != null) {
-            return a.getKanalreferanse().compareTo(b.getKanalreferanse());
-        } else {
-            // crazy fallback når mangler kanalreferanse.
-            return a.getInnsendingstidspunkt().compareTo(b.getInnsendingstidspunkt());
-        }
-
-    };
-
+    public static final Comparator<? super InntektsmeldingBuilder> COMP_REKKEFØLGE =
+            (InntektsmeldingBuilder a, InntektsmeldingBuilder b) -> {
+                if (a == b) {
+                    return 0;
+                }
+                if (a.getKanalreferanse() != null && b.getKanalreferanse() != null) {
+                    return a.getKanalreferanse().compareTo(b.getKanalreferanse());
+                } else {
+                    // crazy fallback når mangler kanalreferanse.
+                    return a.getInnsendingstidspunkt().compareTo(b.getInnsendingstidspunkt());
+                }
+            };
 
     private final Inntektsmelding kladd;
     private boolean erBygget;
@@ -170,7 +167,8 @@ public class InntektsmeldingBuilder {
         return this;
     }
 
-    public InntektsmeldingBuilder medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType inntektsmeldingInnsendingsårsakType) {
+    public InntektsmeldingBuilder medInntektsmeldingaarsak(
+            InntektsmeldingInnsendingsårsakType inntektsmeldingInnsendingsårsakType) {
         precondition();
         kladd.setInntektsmeldingInnsendingsårsak(inntektsmeldingInnsendingsårsakType);
         return this;
@@ -197,20 +195,21 @@ public class InntektsmeldingBuilder {
 
     private void sjekkArbeidsforholdKonsistens(InternArbeidsforholdRef internRef) {
         // magic - hvis har ekstern referanse må også intern referanse være spesifikk
-        if ((eksternArbeidsforholdId != null && eksternArbeidsforholdId.gjelderForSpesifiktArbeidsforhold()) && internRef.getReferanse() == null) {
-            throw new IllegalArgumentException(
-                "Begge referanser må gjelde spesifikke arbeidsforhold. " + " Ekstern: " + eksternArbeidsforholdId + ", Intern: " + internRef);
+        if ((eksternArbeidsforholdId != null && eksternArbeidsforholdId.gjelderForSpesifiktArbeidsforhold())
+                && internRef.getReferanse() == null) {
+            throw new IllegalArgumentException("Begge referanser må gjelde spesifikke arbeidsforhold. " + " Ekstern: "
+                    + eksternArbeidsforholdId + ", Intern: " + internRef);
         }
     }
 
     private void precondition() {
         if (erBygget) {
-            throw new IllegalStateException("Inntektsmelding objekt er allerede bygget, kan ikke modifisere nå. Returnerer kun : " + kladd);
+            throw new IllegalStateException(
+                    "Inntektsmelding objekt er allerede bygget, kan ikke modifisere nå. Returnerer kun : " + kladd);
         }
     }
 
     public InntektsmeldingBuilder medJournalpostId(String journalpostId) {
         return medJournalpostId(journalpostId == null ? null : new JournalpostId(journalpostId));
     }
-
 }

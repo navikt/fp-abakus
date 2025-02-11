@@ -3,13 +3,12 @@ package no.nav.foreldrepenger.abakus.felles.diff;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 /**
- * Hjelpemetoder for å raskere sette sammen en IndexKey fra flere deler.
- * Må være String, CharSequence, Number eller implementere IndexKey for hver key part.
+ * Hjelpemetoder for å raskere sette sammen en IndexKey fra flere deler. Må være String, CharSequence, Number eller
+ * implementere IndexKey for hver key part.
  */
 public final class IndexKeyComposer {
 
@@ -17,9 +16,7 @@ public final class IndexKeyComposer {
         // hidden
     }
 
-    /**
-     * Hjelpe metode for å effektivt generere keys.
-     */
+    /** Hjelpe metode for å effektivt generere keys. */
     public static String createKey(Object... keyParts) {
         StringBuilder sb = new StringBuilder(keyParts.length * 10);
         int max = keyParts.length;
@@ -31,7 +28,6 @@ public final class IndexKeyComposer {
             }
         }
         return sb.toString();
-
     }
 
     private static String toString(Object obj, int i) {
@@ -47,8 +43,8 @@ public final class IndexKeyComposer {
             return ((IndexKey) obj).getIndexKey();
         } else if (IntervallEntitet.class.isAssignableFrom(objClass)) {
             IntervallEntitet periode = (IntervallEntitet) obj;
-            return "[" + periode.getFomDato().format(DateTimeFormatter.ISO_DATE) +
-                "," + periode.getTomDato().format(DateTimeFormatter.ISO_DATE) + "]";
+            return "[" + periode.getFomDato().format(DateTimeFormatter.ISO_DATE) + ","
+                    + periode.getTomDato().format(DateTimeFormatter.ISO_DATE) + "]";
         } else if (LocalDate.class.isAssignableFrom(objClass)) {
             LocalDate dt = (LocalDate) obj;
             return dt.format(DateTimeFormatter.ISO_DATE);
@@ -56,7 +52,8 @@ public final class IndexKeyComposer {
             LocalDateTime ldt = (LocalDateTime) obj;
             return ldt.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         } else {
-            throw new IllegalArgumentException("Støtter ikke å lage IndexKey for " + objClass.getName() + "[index=" + i + "], " + obj);
+            throw new IllegalArgumentException(
+                    "Støtter ikke å lage IndexKey for " + objClass.getName() + "[index=" + i + "], " + obj);
         }
     }
 }

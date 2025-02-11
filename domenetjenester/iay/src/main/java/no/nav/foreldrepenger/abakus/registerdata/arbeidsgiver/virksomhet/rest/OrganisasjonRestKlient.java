@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.rest;
 
 import jakarta.enterprise.context.Dependent;
-
 import no.nav.vedtak.felles.integrasjon.organisasjon.AbstractOrganisasjonKlient;
 import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
@@ -12,11 +11,13 @@ import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
  */
 
 @Dependent
-@RestClientConfig(tokenConfig = TokenFlow.NO_AUTH_NEEDED, endpointProperty = "organisasjon.rs.url", endpointDefault = "https://ereg-services.intern.nav.no/api/v2/organisasjon")
+@RestClientConfig(
+        tokenConfig = TokenFlow.NO_AUTH_NEEDED,
+        endpointProperty = "organisasjon.rs.url",
+        endpointDefault = "https://ereg-services.intern.nav.no/api/v2/organisasjon")
 public class OrganisasjonRestKlient extends AbstractOrganisasjonKlient {
 
     public OrganisasjonRestKlient() {
         super();
     }
-
 }

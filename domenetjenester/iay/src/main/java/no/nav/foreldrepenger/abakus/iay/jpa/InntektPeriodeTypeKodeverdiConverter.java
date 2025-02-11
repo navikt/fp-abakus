@@ -1,9 +1,8 @@
 package no.nav.foreldrepenger.abakus.iay.jpa;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
-
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
 
 @Converter(autoApply = true)
 public class InntektPeriodeTypeKodeverdiConverter implements AttributeConverter<InntektPeriodeType, String> {

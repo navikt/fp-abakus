@@ -1,25 +1,23 @@
 package no.nav.foreldrepenger.abakus.vedtak.domene;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import org.hibernate.jpa.HibernateHints;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
+import org.hibernate.jpa.HibernateHints;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class VedtakYtelseRepository {
@@ -37,18 +35,21 @@ public class VedtakYtelseRepository {
         this.entityManager = entityManager;
     }
 
-    public VedtakYtelseBuilder opprettBuilderFor(AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, YtelseType ytelseType) {
+    public VedtakYtelseBuilder opprettBuilderFor(
+            AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, YtelseType ytelseType) {
         return VedtakYtelseBuilder.oppdatere(hentYtelseFor(aktørId, saksnummer, fagsystem, ytelseType))
-            .medAktør(aktørId)
-            .medSaksnummer(saksnummer)
-            .medKilde(fagsystem)
-            .medYtelseType(ytelseType);
+                .medAktør(aktørId)
+                .medSaksnummer(saksnummer)
+                .medKilde(fagsystem)
+                .medYtelseType(ytelseType);
     }
 
     public void lagre(VedtakYtelseBuilder builder) {
         var ytelse = builder.build();
-        Optional<VedtakYtelse> vedtakYtelse = hentYtelseFor(ytelse.getAktør(), ytelse.getSaksnummer(), ytelse.getKilde(), ytelse.getYtelseType());
-        if (vedtakYtelse.isPresent() && (builder.erOppdatering() || manglerEksisterendeVedtakAndeler(vedtakYtelse.get(), ytelse))) {
+        Optional<VedtakYtelse> vedtakYtelse =
+                hentYtelseFor(ytelse.getAktør(), ytelse.getSaksnummer(), ytelse.getKilde(), ytelse.getYtelseType());
+        if (vedtakYtelse.isPresent()
+                && (builder.erOppdatering() || manglerEksisterendeVedtakAndeler(vedtakYtelse.get(), ytelse))) {
             // Deaktiver eksisterende innslag
             VedtakYtelse ytelseEntitet = vedtakYtelse.get();
             ytelseEntitet.setAktiv(false);
@@ -71,25 +72,32 @@ public class VedtakYtelseRepository {
 
     // Lagrer vedtak med samme vedtakstidspunkt dersom ny har andeler og gammel mangler andeler
     private boolean manglerEksisterendeVedtakAndeler(VedtakYtelse eksisterende, VedtakYtelse ny) {
-        var eksisterendeHarAndeler = eksisterende.getYtelseAnvist().stream().anyMatch(a -> !a.getAndeler().isEmpty());
-        var nyHarAndeler = ny.getYtelseAnvist().stream().anyMatch(a -> !a.getAndeler().isEmpty());
-        return eksisterende.getVedtattTidspunkt().equals(ny.getVedtattTidspunkt()) && nyHarAndeler && !eksisterendeHarAndeler;
+        var eksisterendeHarAndeler = eksisterende.getYtelseAnvist().stream()
+                .anyMatch(a -> !a.getAndeler().isEmpty());
+        var nyHarAndeler =
+                ny.getYtelseAnvist().stream().anyMatch(a -> !a.getAndeler().isEmpty());
+        return eksisterende.getVedtattTidspunkt().equals(ny.getVedtattTidspunkt())
+                && nyHarAndeler
+                && !eksisterendeHarAndeler;
     }
 
-    private Optional<VedtakYtelse> hentYtelseFor(AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, YtelseType ytelseType) {
+    private Optional<VedtakYtelse> hentYtelseFor(
+            AktørId aktørId, Saksnummer saksnummer, Fagsystem fagsystem, YtelseType ytelseType) {
         Objects.requireNonNull(aktørId, "aktørId");
         Objects.requireNonNull(saksnummer, "saksnummer");
         Objects.requireNonNull(fagsystem, "fagsystem");
         Objects.requireNonNull(ytelseType, "ytelseType");
 
-        TypedQuery<VedtakYtelse> query = entityManager.createQuery("""
+        TypedQuery<VedtakYtelse> query = entityManager.createQuery(
+                """
             SELECT v FROM VedtakYtelseEntitet v
             WHERE v.aktørId = :aktørId
             AND v.saksnummer = :saksnummer
             AND v.kilde = :fagsystem
             AND v.ytelseType = :ytelse
             AND v.aktiv = true
-            """, VedtakYtelse.class);
+            """,
+                VedtakYtelse.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("saksnummer", saksnummer);
         query.setParameter("fagsystem", fagsystem);
@@ -99,12 +107,14 @@ public class VedtakYtelseRepository {
     }
 
     public List<VedtakYtelse> hentYtelserForIPeriode(AktørId aktørId, LocalDate fom, LocalDate tom) {
-        TypedQuery<VedtakYtelse> query = entityManager.createQuery("""
+        TypedQuery<VedtakYtelse> query = entityManager.createQuery(
+                """
             SELECT v FROM VedtakYtelseEntitet v
             WHERE v.aktørId = :aktørId
             AND v.periode.fomDato <= :tom AND v.periode.tomDato >= :fom
             AND v.aktiv = true
-            """, VedtakYtelse.class);
+            """,
+                VedtakYtelse.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("fom", fom);
         query.setParameter("tom", tom);

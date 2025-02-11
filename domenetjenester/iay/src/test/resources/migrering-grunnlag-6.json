@@ -1,5 +1,28 @@
 {
   "data": {
+    "inntektsmeldinger": {
+      "inntektsmeldinger": [ {
+        "graderinger": [ ],
+        "kildesystem": "FS32",
+        "mottattDato": "2019-06-19",
+        "refusjonEndringer": [ ],
+        "innsendingstidspunkt": "2019-06-19T14:27:54.636261Z",
+        "naturalytelser": [ ],
+        "arbeidsgiver": {
+          "identType": "ORGNUMMER",
+          "ident": "973135678"
+        },
+        "erNærRelasjon": true,
+        "kanalreferanse": "V33QUEHBIQHB",
+        "utsettelsePerioder": [ ],
+        "inntektBeløp": 17500,
+        "journalpostId": "448187581",
+        "innsendingsårsak": {
+          "kodeverk": "INNTEKTSMELDING_INNSENDINGSAARSAK",
+          "kode": "NY"
+        }
+      } ]
+    },
     "person": {
       "identType": "AKTØRID",
       "ident": "1198595986180"
@@ -7,39 +30,14 @@
     "grunnlagTidspunkt": "2019-06-19T14:28:00.041Z",
     "grunnlagReferanse": "f39d8acd-9bb8-4bff-a273-56833d00e622",
     "koblingReferanse": "642ed3f4-071b-490a-a5a2-1f38d59e300a",
-    "inntektsmeldinger": {
-      "inntektsmeldinger": [
-        {
-          "arbeidsgiver": {
-            "identType": "ORGNUMMER",
-            "ident": "973135678"
-          },
-          "journalpostId": "448187581",
-          "innsendingstidspunkt": "2019-06-19T14:27:54.636261Z",
-          "mottattDato": "2019-06-19",
-          "graderinger": [],
-          "naturalytelser": [],
-          "utsettelsePerioder": [],
-          "erNærRelasjon": true,
-          "inntektBeløp": 17500.00,
-          "kanalreferanse": "V33QUEHBIQHB",
-          "kildesystem": "FS32",
-          "refusjonEndringer": [],
-          "innsendingsårsak": {
-            "kodeverk": "INNTEKTSMELDING_INNSENDINGSAARSAK",
-            "kode": "NY"
-          }
-        }
-      ]
-    },
     "arbeidsforholdInformasjon": {
-      "referanser": [],
-      "overstyringer": []
+      "referanser": [ ],
+      "overstyringer": [ ]
     }
   },
-  "aktiv": true,
   "opplysningsperiode": {
-    "fom": "2018-01-26",
-    "tom": "2023-06-26"
-  }
+    "tom": "2023-06-26",
+    "fom": "2018-01-26"
+  },
+  "aktiv": true
 }

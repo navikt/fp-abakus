@@ -1,9 +1,13 @@
 package no.nav.foreldrepenger.abakus.jetty;
 
 import java.io.File;
-
 import javax.naming.NamingException;
-
+import no.nav.foreldrepenger.abakus.app.konfig.ApiConfig;
+import no.nav.foreldrepenger.abakus.app.konfig.EksternApiConfig;
+import no.nav.foreldrepenger.abakus.app.konfig.ForvaltningApiConfig;
+import no.nav.foreldrepenger.abakus.app.konfig.InternalApiConfig;
+import no.nav.foreldrepenger.abakus.app.tjenester.ServiceStarterListener;
+import no.nav.foreldrepenger.konfig.Environment;
 import org.eclipse.jetty.ee10.cdi.CdiDecoratingListener;
 import org.eclipse.jetty.ee10.cdi.CdiServletContainerInitializer;
 import org.eclipse.jetty.ee10.servlet.DefaultServlet;
@@ -20,13 +24,6 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
-
-import no.nav.foreldrepenger.abakus.app.konfig.ApiConfig;
-import no.nav.foreldrepenger.abakus.app.konfig.EksternApiConfig;
-import no.nav.foreldrepenger.abakus.app.konfig.ForvaltningApiConfig;
-import no.nav.foreldrepenger.abakus.app.konfig.InternalApiConfig;
-import no.nav.foreldrepenger.abakus.app.tjenester.ServiceStarterListener;
-import no.nav.foreldrepenger.konfig.Environment;
 
 public class JettyServer {
 
@@ -70,8 +67,9 @@ public class JettyServer {
         var storeFile = new File(storePath);
         if (!storeFile.exists()) {
             throw new IllegalStateException(
-                "Finner ikke truststore i " + storePath + "\n\tKonfrigurer enten som System property '" + trustStorePathProp
-                    + "' eller environment variabel '" + trustStorePathProp.toUpperCase().replace('.', '_') + "'");
+                    "Finner ikke truststore i " + storePath + "\n\tKonfrigurer enten som System property '"
+                            + trustStorePathProp + "' eller environment variabel '"
+                            + trustStorePathProp.toUpperCase().replace('.', '_') + "'");
         }
         var password = ENV.getProperty(trustStorePasswordProp, "changeit");
         System.setProperty(trustStorePathProp, storeFile.getAbsolutePath());
@@ -79,8 +77,8 @@ public class JettyServer {
     }
 
     /**
-     * Vi bruker SLF4J + logback, Jersey brukes JUL for logging.
-     * Setter opp en bridge til å få Jersey til å logge gjennom Logback også.
+     * Vi bruker SLF4J + logback, Jersey brukes JUL for logging. Setter opp en bridge til å få Jersey til å logge
+     * gjennom Logback også.
      */
     private static void konfigurerLogging() {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
@@ -107,7 +105,8 @@ public class JettyServer {
             context.addEventListener(new ServiceStarterListener());
 
             // Enable Weld + CDI
-            context.setInitParameter(CdiServletContainerInitializer.CDI_INTEGRATION_ATTRIBUTE, CdiDecoratingListener.MODE);
+            context.setInitParameter(
+                    CdiServletContainerInitializer.CDI_INTEGRATION_ATTRIBUTE, CdiDecoratingListener.MODE);
             context.addServletContainerInitializer(new CdiServletContainerInitializer());
             context.addServletContainerInitializer(new org.jboss.weld.environment.servlet.EnhancedListener());
 
@@ -149,7 +148,10 @@ public class JettyServer {
 
     void migrerDatabaser() {
         try (var dataSource = DatasourceUtil.createDatasource(DatasourceRole.ADMIN, 2)) {
-            var flyway = Flyway.configure().dataSource(dataSource).locations("classpath:/db/migration/defaultDS").baselineOnMigrate(true);
+            var flyway = Flyway.configure()
+                    .dataSource(dataSource)
+                    .locations("classpath:/db/migration/defaultDS")
+                    .baselineOnMigrate(true);
             if (ENV.isProd() || ENV.isDev()) {
                 flyway.initSql(String.format("SET ROLE \"%s\"", DatasourceUtil.getRole(DatasourceRole.ADMIN)));
             }
@@ -185,5 +187,4 @@ public class JettyServer {
     private Integer getServerPort() {
         return this.serverPort;
     }
-
 }

@@ -10,7 +10,9 @@ class ListPositionEquality {
 
     int getKey(Node node, Object o) {
         AtomicInteger counter = equalsNodeCounter.computeIfAbsent(node, n -> new AtomicInteger());
-        return equalsMap.computeIfAbsent(o, v -> new NodeWrap(node, counter.getAndIncrement())).getPos();
+        return equalsMap
+                .computeIfAbsent(o, v -> new NodeWrap(node, counter.getAndIncrement()))
+                .getPos();
     }
 
     static class NodeWrap {

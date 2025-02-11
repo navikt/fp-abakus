@@ -1,13 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.CascadeType;
@@ -24,7 +16,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType;
 import no.nav.abakus.iaygrunnlag.kodeverk.BekreftetPermisjonStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
@@ -38,9 +36,7 @@ import no.nav.foreldrepenger.abakus.iay.jpa.ArbeidsforholdHandlingTypeKodeverdiC
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
-/**
- * Overstyring av arbeidsforhold angitt av saksbehandler.
- */
+/** Overstyring av arbeidsforhold angitt av saksbehandler. */
 @Entity(name = "ArbeidsforholdOverstyring")
 @Table(name = "IAY_ARBEIDSFORHOLD")
 public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
@@ -56,7 +52,10 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
     private InternArbeidsforholdRef arbeidsforholdRef;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "referanse", column = @Column(name = "arbeidsforhold_intern_id_ny", updatable = false)))
+    @AttributeOverrides(
+            @AttributeOverride(
+                    name = "referanse",
+                    column = @Column(name = "arbeidsforhold_intern_id_ny", updatable = false)))
     private InternArbeidsforholdRef nyArbeidsforholdRef;
 
     @ChangeTracked
@@ -68,9 +67,10 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
     private String begrunnelse;
 
     /**
-     * Kjært navn for arbeidsgiver angitt av Saksbehandler (normalt kun ekstra arbeidsforhold lagt til). Ingen garanti for at dette matcher noe offisielt registrert navn.
-     * <p>
-     * Settes normalt kun for arbeidsforhold lagt til ekstra. Ellers hent fra
+     * Kjært navn for arbeidsgiver angitt av Saksbehandler (normalt kun ekstra arbeidsforhold lagt til). Ingen garanti
+     * for at dette matcher noe offisielt registrert navn.
+     *
+     * <p>Settes normalt kun for arbeidsforhold lagt til ekstra. Ellers hent fra
      * {@link no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet#getAktivitetsAvtalerForArbeid()}.
      */
     @Column(name = "arbeidsgiver_navn")
@@ -78,8 +78,8 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
 
     /**
      * Stillingsprosent angitt av saksbehandler.
-     * <p>
-     * Settes normalt kun for arbeidsforhold lagt til ekstra. Ellers hent fra
+     *
+     * <p>Settes normalt kun for arbeidsforhold lagt til ekstra. Ellers hent fra
      * {@link no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet#getAktivitetsAvtalerForArbeid()}.
      */
     @Embedded
@@ -116,11 +116,10 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
         this.nyArbeidsforholdRef = kopierFra.getNyArbeidsforholdRef();
         this.arbeidsgiverNavn = kopierFra.getArbeidsgiverNavn();
         this.begrunnelse = kopierFra.getBegrunnelse();
-        this.arbeidsforholdOverstyrtePerioder = kopierFra.getArbeidsforholdOverstyrtePerioder()
-            .stream()
-            .map(ArbeidsforholdOverstyrtePerioder::new)
-            .peek(it -> it.setArbeidsforholdOverstyring(this))
-            .collect(Collectors.toList());
+        this.arbeidsforholdOverstyrtePerioder = kopierFra.getArbeidsforholdOverstyrtePerioder().stream()
+                .map(ArbeidsforholdOverstyrtePerioder::new)
+                .peek(it -> it.setArbeidsforholdOverstyring(this))
+                .collect(Collectors.toList());
         this.bekreftetPermisjon = kopierFra.bekreftetPermisjon;
     }
 
@@ -155,8 +154,10 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
     }
 
     void setHandling(ArbeidsforholdHandlingType handling) {
-        if(handling.isReadOnly()) {
-            throw new UnsupportedOperationException("Kan ikke opprette grunnlag da ArbeidsforholdHandlingType ikke lenger er supportert (annet enn lesing: " + handling );
+        if (handling.isReadOnly()) {
+            throw new UnsupportedOperationException(
+                    "Kan ikke opprette grunnlag da ArbeidsforholdHandlingType ikke lenger er supportert (annet enn lesing: "
+                            + handling);
         }
         this.handling = handling;
     }
@@ -216,13 +217,18 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
     }
 
     public boolean erOverstyrt() {
-        return !Objects.equals(ArbeidsforholdHandlingType.BRUK, handling) || (Objects.equals(ArbeidsforholdHandlingType.BRUK, handling)
-            && !Objects.equals(bekreftetPermisjon.getStatus(), BekreftetPermisjonStatus.UDEFINERT));
+        return !Objects.equals(ArbeidsforholdHandlingType.BRUK, handling)
+                || (Objects.equals(ArbeidsforholdHandlingType.BRUK, handling)
+                        && !Objects.equals(bekreftetPermisjon.getStatus(), BekreftetPermisjonStatus.UDEFINERT));
     }
 
     public boolean kreverIkkeInntektsmelding() {
-        return Set.of(ArbeidsforholdHandlingType.LAGT_TIL_AV_SAKSBEHANDLER, ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING,
-            ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE, ArbeidsforholdHandlingType.INNTEKT_IKKE_MED_I_BG).contains(handling);
+        return Set.of(
+                        ArbeidsforholdHandlingType.LAGT_TIL_AV_SAKSBEHANDLER,
+                        ArbeidsforholdHandlingType.BRUK_UTEN_INNTEKTSMELDING,
+                        ArbeidsforholdHandlingType.BRUK_MED_OVERSTYRT_PERIODE,
+                        ArbeidsforholdHandlingType.INNTEKT_IKKE_MED_I_BG)
+                .contains(handling);
     }
 
     @Override
@@ -234,7 +240,8 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
             return false;
         }
         var that = (ArbeidsforholdOverstyring) o;
-        return Objects.equals(arbeidsgiver, that.arbeidsgiver) && Objects.equals(arbeidsforholdRef, that.arbeidsforholdRef);
+        return Objects.equals(arbeidsgiver, that.arbeidsgiver)
+                && Objects.equals(arbeidsforholdRef, that.arbeidsforholdRef);
     }
 
     @Override
@@ -244,7 +251,7 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<arbeidsgiver=" + arbeidsgiver + ", arbeidsforholdRef=" + arbeidsforholdRef + ", handling=" + handling
-            + '>';
+        return getClass().getSimpleName() + "<arbeidsgiver=" + arbeidsgiver + ", arbeidsforholdRef=" + arbeidsforholdRef
+                + ", handling=" + handling + '>';
     }
 }

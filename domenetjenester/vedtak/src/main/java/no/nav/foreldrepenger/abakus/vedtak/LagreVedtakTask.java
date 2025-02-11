@@ -1,17 +1,14 @@
 package no.nav.foreldrepenger.abakus.vedtak;
 
-import java.io.IOException;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
 import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.abakus.vedtak.ytelse.Ytelse;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
@@ -27,13 +24,12 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
 public class LagreVedtakTask implements ProsessTaskHandler {
 
     public static final String KEY = "kafka.key";
-    private final static ObjectMapper OBJECT_MAPPER = JsonObjectMapper.getMapper();
+    private static final ObjectMapper OBJECT_MAPPER = JsonObjectMapper.getMapper();
 
     private VedtakYtelseRepository ytelseRepository;
     private ExtractFromYtelseV1 extractor;
 
-    public LagreVedtakTask() {
-    }
+    public LagreVedtakTask() {}
 
     @Inject
     public LagreVedtakTask(VedtakYtelseRepository ytelseRepository, ExtractFromYtelseV1 extractor) {
@@ -57,7 +53,8 @@ public class LagreVedtakTask implements ProsessTaskHandler {
                 throw new IllegalArgumentException("Vedtatt-ytelse valideringsfeil :: \n " + allErrors);
             }
         } catch (IOException e) {
-            throw new TekniskException("FP-328773", String.format("Feil under parsing av vedtak. key={%s} payload={%s}", key, payload), e);
+            throw new TekniskException(
+                    "FP-328773", String.format("Feil under parsing av vedtak. key={%s} payload={%s}", key, payload), e);
         }
         if (mottattVedtak != null) {
             // TODO: Gjør generisk
@@ -65,7 +62,6 @@ public class LagreVedtakTask implements ProsessTaskHandler {
             VedtakYtelseBuilder builder = extractor.extractFrom(mottattVedtak1);
 
             ytelseRepository.lagre(builder);
-
         }
     }
 }

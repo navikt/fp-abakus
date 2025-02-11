@@ -1,12 +1,10 @@
 package no.nav.foreldrepenger.abakus.jetty;
 
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-
 import io.micrometer.core.instrument.Metrics;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil;
 import no.nav.vault.jdbc.hikaricp.VaultError;
@@ -16,8 +14,7 @@ class DatasourceUtil {
 
     private static final Environment ENV = Environment.current();
 
-    private DatasourceUtil() {
-    }
+    private DatasourceUtil() {}
 
     static HikariDataSource createDatasource(DatasourceRole role, int maxPoolSize) {
         var config = initConnectionPoolConfig(maxPoolSize);
@@ -45,10 +42,12 @@ class DatasourceUtil {
         // optimaliserer inserts for postgres
         var dsProperties = new Properties();
         dsProperties.setProperty("reWriteBatchedInserts", "true");
-        dsProperties.setProperty("logServerErrorDetail", "false"); // skrur av batch exceptions som lekker statements i åpen logg
+        dsProperties.setProperty(
+                "logServerErrorDetail", "false"); // skrur av batch exceptions som lekker statements i åpen logg
         config.setDataSourceProperties(dsProperties);
 
-        // skrur av autocommit her, da kan vi bypasse dette senere når hibernate setter opp entitymanager for bedre conn mgmt
+        // skrur av autocommit her, da kan vi bypasse dette senere når hibernate setter opp entitymanager for bedre conn
+        // mgmt
         config.setAutoCommit(false);
 
         return config;

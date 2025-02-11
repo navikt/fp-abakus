@@ -1,10 +1,7 @@
 package no.nav.foreldrepenger.abakus.registerdata.infotrygd;
 
-/**
- * Nødnummer for infotrygd. Brukt i saker med delvis refusjon. Kun til sjekk mot orgnummer.
- */
+/** Nødnummer for infotrygd. Brukt i saker med delvis refusjon. Kun til sjekk mot orgnummer. */
 public enum Nødnummer {
-
     NØDNUMMER_FOR_TRYGDEETATEN("973626108"),
     NØDNUMMER_FOR_TRYGDEETATEN_2("973626116"),
     NØDNUMMER_FOR_TRYGDEETATEN_3("971278420"),

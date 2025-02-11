@@ -1,27 +1,20 @@
 package no.nav.abakus.vedtak.ytelse.v1.anvisning;
 
-import java.math.BigDecimal;
-import java.util.Optional;
-
-import jakarta.validation.Valid;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.validation.Valid;
+import java.math.BigDecimal;
+import java.util.Optional;
 import no.nav.abakus.vedtak.ytelse.Desimaltall;
 
-/**
- * Angir størrelse for ytelse.
- */
+/** Angir størrelse for ytelse. */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
 public class AnvistAndel {
 
-    /**
-     * Kan være null.
-     */
+    /** Kan være null. */
     @JsonProperty(value = "arbeidsgiverIdent")
     @Valid
     private ArbeidsgiverIdent arbeidsgiverIdent;
@@ -44,25 +37,31 @@ public class AnvistAndel {
     @Valid
     private Inntektklasse inntektklasse;
 
-    protected AnvistAndel() {
+    protected AnvistAndel() {}
+
+    public AnvistAndel(
+            ArbeidsgiverIdent arbeidsgiverIdent,
+            int beløp,
+            int utbetalingsgrad,
+            int refusjonsgrad,
+            Inntektklasse inntektklasse,
+            String arbeidsforholdId) {
+        this(
+                arbeidsgiverIdent,
+                arbeidsforholdId,
+                new Desimaltall(BigDecimal.valueOf(beløp)),
+                new Desimaltall(BigDecimal.valueOf(utbetalingsgrad)),
+                new Desimaltall(BigDecimal.valueOf(refusjonsgrad)),
+                inntektklasse);
     }
 
-    public AnvistAndel(ArbeidsgiverIdent arbeidsgiverIdent,
-                       int beløp,
-                       int utbetalingsgrad,
-                       int refusjonsgrad,
-                       Inntektklasse inntektklasse,
-                       String arbeidsforholdId) {
-        this(arbeidsgiverIdent, arbeidsforholdId, new Desimaltall(BigDecimal.valueOf(beløp)), new Desimaltall(BigDecimal.valueOf(utbetalingsgrad)),
-            new Desimaltall(BigDecimal.valueOf(refusjonsgrad)), inntektklasse);
-    }
-
-    public AnvistAndel(ArbeidsgiverIdent arbeidsgiverIdent,
-                       String arbeidsforholdId,
-                       Desimaltall beløp,
-                       Desimaltall utbetalingsgrad,
-                       Desimaltall refusjonsgrad,
-                       Inntektklasse inntektklasse) {
+    public AnvistAndel(
+            ArbeidsgiverIdent arbeidsgiverIdent,
+            String arbeidsforholdId,
+            Desimaltall beløp,
+            Desimaltall utbetalingsgrad,
+            Desimaltall refusjonsgrad,
+            Inntektklasse inntektklasse) {
         this.arbeidsgiverIdent = arbeidsgiverIdent;
         this.arbeidsforholdId = arbeidsforholdId;
         this.dagsats = beløp;
@@ -94,5 +93,4 @@ public class AnvistAndel {
     public Inntektklasse getInntektklasse() {
         return Optional.ofNullable(inntektklasse).orElse(Inntektklasse.INGEN);
     }
-
 }

@@ -1,14 +1,15 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.arbeidsforhold;
 
+import static no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType.finnForKodeverkEiersKode;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
@@ -18,7 +19,6 @@ import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsavtaleDto;
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdDto;
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdReferanseDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
-import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
@@ -31,12 +31,9 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.fpsak.tidsserie.LocalDateInterval;
 import no.nav.fpsak.tidsserie.LocalDateSegment;
-import no.nav.fpsak.tidsserie.LocalDateSegmentCombinator;
 import no.nav.fpsak.tidsserie.LocalDateTimeline;
 import no.nav.fpsak.tidsserie.StandardCombinators;
 import no.nav.vedtak.konfig.Tid;
-
-import static no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType.finnForKodeverkEiersKode;
 
 @ApplicationScoped
 public class ArbeidsforholdDtoTjeneste {
@@ -44,8 +41,7 @@ public class ArbeidsforholdDtoTjeneste {
     private ArbeidsforholdTjeneste arbeidsforholdTjeneste;
     private AktørTjeneste aktørConsumer;
 
-    ArbeidsforholdDtoTjeneste() {
-    }
+    ArbeidsforholdDtoTjeneste() {}
 
     @Inject
     public ArbeidsforholdDtoTjeneste(ArbeidsforholdTjeneste arbeidsforholdTjeneste, AktørTjeneste aktørConsumer) {
@@ -56,22 +52,27 @@ public class ArbeidsforholdDtoTjeneste {
     public List<ArbeidsforholdDto> mapFor(AktørId aktørId, LocalDate fom, LocalDate tom) {
         var ident = aktørConsumer.hentIdentForAktør(aktørId).orElseThrow();
         var intervall = tom == null ? IntervallEntitet.fraOgMed(fom) : IntervallEntitet.fraOgMedTilOgMed(fom, tom);
-        Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident,
-            aktørId, intervall);
+        Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold =
+                arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident, aktørId, intervall);
 
-        return arbeidsforhold.entrySet().stream().map(this::mapTilArbeidsforhold).collect(Collectors.toList());
+        return arbeidsforhold.entrySet().stream()
+                .map(this::mapTilArbeidsforhold)
+                .collect(Collectors.toList());
     }
 
     public List<ArbeidsforholdDto> mapArbForholdOgPermisjoner(AktørId aktørId, LocalDate fom, LocalDate tom) {
         var ident = aktørConsumer.hentIdentForAktør(aktørId).orElseThrow();
         var intervall = tom == null ? IntervallEntitet.fraOgMed(fom) : IntervallEntitet.fraOgMedTilOgMed(fom, tom);
-        Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident,
-            aktørId, intervall);
+        Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold =
+                arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident, aktørId, intervall);
 
-        return arbeidsforhold.entrySet().stream().map(this::mapTilArbeidsforholdMedPermisjoner).collect(Collectors.toList());
+        return arbeidsforhold.entrySet().stream()
+                .map(this::mapTilArbeidsforholdMedPermisjoner)
+                .collect(Collectors.toList());
     }
 
-    private ArbeidsforholdDto mapTilArbeidsforholdMedPermisjoner(Map.Entry<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforholdEntry) {
+    private ArbeidsforholdDto mapTilArbeidsforholdMedPermisjoner(
+            Map.Entry<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforholdEntry) {
         ArbeidsforholdIdentifikator key = arbeidsforholdEntry.getKey();
         Aktør arbeidsgiver = mapArbeidsgiver(key.getArbeidsgiver());
         ArbeidType arbeidType = ArbeidType.finnForKodeverkEiersKode(key.getType());
@@ -84,45 +85,58 @@ public class ArbeidsforholdDtoTjeneste {
     }
 
     private List<PermisjonDto> tilPermisjoner(List<Arbeidsforhold> arbeidsforhold) {
-        return arbeidsforhold.stream().map(this::mapPermisjoner).flatMap(Collection::stream).toList();
+        return arbeidsforhold.stream()
+                .map(this::mapPermisjoner)
+                .flatMap(Collection::stream)
+                .toList();
     }
 
     private List<ArbeidsavtaleDto> tilArbeidsavtaler(List<Arbeidsforhold> arbeidsforhold) {
-        return arbeidsforhold.stream().map(this::mapArbeidsavtaler).flatMap(Collection::stream).toList();
+        return arbeidsforhold.stream()
+                .map(this::mapArbeidsavtaler)
+                .flatMap(Collection::stream)
+                .toList();
     }
 
     private List<ArbeidsavtaleDto> mapArbeidsavtaler(Arbeidsforhold arbeidsforhold) {
         var ansettelse = new LocalDateInterval(arbeidsforhold.getArbeidFom(), arbeidsforhold.getArbeidTom());
         var arbeidsavtalerTidlinje = arbeidsforhold.getArbeidsavtaler().stream()
-            .filter(arbeidsavtale -> !arbeidsavtale.getErAnsettelsesPerioden())
-            .filter(arbeidsavtale -> arbeidsavtale.getStillingsprosent() != null)
-            .map(a -> new LocalDateSegment<>(safeFom(a.getArbeidsavtaleFom()), safeTom(a.getArbeidsavtaleTom()), a.getStillingsprosent()))
-            .collect(Collectors.collectingAndThen(Collectors.toList(), LocalDateTimeline::new));
+                .filter(arbeidsavtale -> !arbeidsavtale.getErAnsettelsesPerioden())
+                .filter(arbeidsavtale -> arbeidsavtale.getStillingsprosent() != null)
+                .map(a -> new LocalDateSegment<>(
+                        safeFom(a.getArbeidsavtaleFom()), safeTom(a.getArbeidsavtaleTom()), a.getStillingsprosent()))
+                .collect(Collectors.collectingAndThen(Collectors.toList(), LocalDateTimeline::new));
         return arbeidsavtalerTidlinje.intersection(ansettelse).stream()
-            .map(s -> new ArbeidsavtaleDto(new Periode(s.getFom(), s.getTom()), s.getValue()))
-            .toList();
+                .map(s -> new ArbeidsavtaleDto(new Periode(s.getFom(), s.getTom()), s.getValue()))
+                .toList();
     }
 
     private List<PermisjonDto> mapPermisjoner(Arbeidsforhold arbeidsforhold) {
         var ansettelse = new LocalDateInterval(arbeidsforhold.getArbeidFom(), arbeidsforhold.getArbeidTom());
 
         var permisjonTidslinje = arbeidsforhold.getPermisjoner().stream()
-            .filter(permisjon -> permisjon.getPermisjonsprosent() != null)
-            .map(p -> new LocalDateSegment<>(safeFom(p.getPermisjonFom()), safeTom(p.getPermisjonTom()),
-                List.of(new PermisjonTidslinjeObjekt(p.getPermisjonsprosent(), p.getPermisjonsÅrsak()))))
-            .collect(Collectors.collectingAndThen(Collectors.toList(), datoSegmenter -> new LocalDateTimeline<>(datoSegmenter,
-                StandardCombinators::concatLists)));
+                .filter(permisjon -> permisjon.getPermisjonsprosent() != null)
+                .map(p -> new LocalDateSegment<>(
+                        safeFom(p.getPermisjonFom()),
+                        safeTom(p.getPermisjonTom()),
+                        List.of(new PermisjonTidslinjeObjekt(p.getPermisjonsprosent(), p.getPermisjonsÅrsak()))))
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toList(),
+                        datoSegmenter -> new LocalDateTimeline<>(datoSegmenter, StandardCombinators::concatLists)));
 
-        return permisjonTidslinje.intersection(ansettelse)
-            .stream()
-            .map(ArbeidsforholdDtoTjeneste::tilPermisjonDto)
-            .flatMap(Collection::stream)
-            .toList();
+        return permisjonTidslinje.intersection(ansettelse).stream()
+                .map(ArbeidsforholdDtoTjeneste::tilPermisjonDto)
+                .flatMap(Collection::stream)
+                .toList();
     }
 
     private static List<PermisjonDto> tilPermisjonDto(LocalDateSegment<List<PermisjonTidslinjeObjekt>> s) {
-        return s.getValue().stream().map(permisjon -> new PermisjonDto(new Periode(s.getFom(), s.getTom()), finnForKodeverkEiersKode(permisjon.permisjonsÅrsak()))
-            .medProsentsats(permisjon.permisjonsprosent())).toList();
+        return s.getValue().stream()
+                .map(permisjon -> new PermisjonDto(
+                                new Periode(s.getFom(), s.getTom()),
+                                finnForKodeverkEiersKode(permisjon.permisjonsÅrsak()))
+                        .medProsentsats(permisjon.permisjonsprosent()))
+                .toList();
     }
 
     private static LocalDate safeFom(LocalDate fom) {
@@ -130,12 +144,13 @@ public class ArbeidsforholdDtoTjeneste {
     }
 
     private static LocalDate safeTom(LocalDate tom) {
-        return tom!= null ? tom: Tid.TIDENES_ENDE;
+        return tom != null ? tom : Tid.TIDENES_ENDE;
     }
 
     private record PermisjonTidslinjeObjekt(BigDecimal permisjonsprosent, String permisjonsÅrsak) {}
 
-    private ArbeidsforholdDto mapTilArbeidsforhold(Map.Entry<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforholdEntry) {
+    private ArbeidsforholdDto mapTilArbeidsforhold(
+            Map.Entry<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforholdEntry) {
         ArbeidsforholdIdentifikator key = arbeidsforholdEntry.getKey();
         Aktør arbeidsgiver = mapArbeidsgiver(key.getArbeidsgiver());
         ArbeidType arbeidType = ArbeidType.finnForKodeverkEiersKode(key.getType());
@@ -146,11 +161,15 @@ public class ArbeidsforholdDtoTjeneste {
     }
 
     private List<Periode> mapAnsettelsesPerioder(List<Arbeidsforhold> arbeidsforhold) {
-        return arbeidsforhold.stream().map(af -> new Periode(af.getArbeidFom(), af.getArbeidTom())).collect(Collectors.toList());
+        return arbeidsforhold.stream()
+                .map(af -> new Periode(af.getArbeidFom(), af.getArbeidTom()))
+                .collect(Collectors.toList());
     }
 
     private ArbeidsforholdRefDto mapArbeidsforholdId(EksternArbeidsforholdRef arbeidsforholdId) {
-        if (arbeidsforholdId == null || arbeidsforholdId.getReferanse() == null || arbeidsforholdId.getReferanse().isEmpty()) {
+        if (arbeidsforholdId == null
+                || arbeidsforholdId.getReferanse() == null
+                || arbeidsforholdId.getReferanse().isEmpty()) {
             return null;
         }
         return new ArbeidsforholdRefDto(null, arbeidsforholdId.getReferanse());
@@ -165,7 +184,9 @@ public class ArbeidsforholdDtoTjeneste {
         throw new IllegalArgumentException("Utvikler feil: ArbeidsgiverEntitet av ukjent type.");
     }
 
-    public ArbeidsforholdReferanseDto mapArbeidsforhold(Aktør arbeidsgiver, String eksternReferanse, String internReferanse) {
-        return new ArbeidsforholdReferanseDto(arbeidsgiver, new ArbeidsforholdRefDto(internReferanse, eksternReferanse));
+    public ArbeidsforholdReferanseDto mapArbeidsforhold(
+            Aktør arbeidsgiver, String eksternReferanse, String internReferanse) {
+        return new ArbeidsforholdReferanseDto(
+                arbeidsgiver, new ArbeidsforholdRefDto(internReferanse, eksternReferanse));
     }
 }

@@ -1,13 +1,10 @@
 package no.nav.abakus.vedtak.ytelse.v1.anvisning;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import java.util.ArrayList;
+import java.util.List;
 import no.nav.abakus.vedtak.ytelse.Desimaltall;
 import no.nav.abakus.vedtak.ytelse.Periode;
 
@@ -30,8 +27,7 @@ public class Anvisning {
     @JsonProperty("andeler")
     private List<AnvistAndel> andeler = new ArrayList<>();
 
-    public Anvisning() {
-    }
+    public Anvisning() {}
 
     public Periode getPeriode() {
         return periode;
@@ -75,7 +71,7 @@ public class Anvisning {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[periode=" + periode + ", beløp=" + beløp + ", dagsats=" + dagsats + ", utbetalingsgrad="
-            + utbetalingsgrad + "]";
+        return getClass().getSimpleName() + "[periode=" + periode + ", beløp=" + beløp + ", dagsats=" + dagsats
+                + ", utbetalingsgrad=" + utbetalingsgrad + "]";
     }
 }

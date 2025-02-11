@@ -1,10 +1,5 @@
 package no.nav.foreldrepenger.abakus.kobling;
 
-import java.time.LocalDate;
-import java.util.Objects;
-
-import org.hibernate.annotations.NaturalId;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -15,6 +10,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import java.time.LocalDate;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -22,31 +19,31 @@ import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+import org.hibernate.annotations.NaturalId;
 
 @Entity(name = "Kobling")
 @Table(name = "KOBLING")
 public class Kobling extends BaseEntitet implements IndexKey {
 
-    /**
-     * Abakus intern kobling_id.
-     */
+    /** Abakus intern kobling_id. */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_KOBLING")
     private Long id;
 
     /**
-     * Saksnummer (gruppererer alle koblinger under samme saksnummer - typisk generert av FPSAK, eller annet saksbehandlingsystem)
+     * Saksnummer (gruppererer alle koblinger under samme saksnummer - typisk generert av FPSAK, eller annet
+     * saksbehandlingsystem)
      */
     @Embedded
     @AttributeOverride(name = "saksnummer", column = @Column(name = "saksnummer"))
     private Saksnummer saksnummer;
 
-    /**
-     * Ekstern Referanse (eks. behandlingUuid).
-     */
+    /** Ekstern Referanse (eks. behandlingUuid). */
     @NaturalId
     @Embedded
-    @AttributeOverride(name = "referanse", column = @Column(name = "kobling_referanse", updatable = false, unique = true))
+    @AttributeOverride(
+            name = "referanse",
+            column = @Column(name = "kobling_referanse", updatable = false, unique = true))
     private KoblingReferanse koblingReferanse;
 
     @Convert(converter = YtelseTypeKodeverdiConverter.class)
@@ -54,7 +51,9 @@ public class Kobling extends BaseEntitet implements IndexKey {
     private YtelseType ytelseType = YtelseType.UDEFINERT;
 
     @Embedded
-    @AttributeOverride(name = "aktørId", column = @Column(name = "bruker_aktoer_id", nullable = false, updatable = false))
+    @AttributeOverride(
+            name = "aktørId",
+            column = @Column(name = "bruker_aktoer_id", nullable = false, updatable = false))
     private AktørId aktørId;
 
     @Embedded
@@ -75,7 +74,8 @@ public class Kobling extends BaseEntitet implements IndexKey {
     private IntervallEntitet opptjeningsperiode;
 
     /**
-     * Inaktive koblinger skal ikke kunne endres. Det betyr oftest at koblingsreferansen er avsluttet i fagsystemet også.
+     * Inaktive koblinger skal ikke kunne endres. Det betyr oftest at koblingsreferansen er avsluttet i fagsystemet
+     * også.
      */
     @Column(name = "aktiv", nullable = false)
     private Boolean aktiv = true;
@@ -84,8 +84,7 @@ public class Kobling extends BaseEntitet implements IndexKey {
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-    public Kobling() {
-    }
+    public Kobling() {}
 
     public Kobling(YtelseType ytelseType, Saksnummer saksnummer, KoblingReferanse koblingReferanse, AktørId aktørId) {
         this.saksnummer = Objects.requireNonNull(saksnummer, "saksnummer");
@@ -157,8 +156,8 @@ public class Kobling extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return "Kobling{" + "KoblingReferanse=" + koblingReferanse + ", saksnummer = " + saksnummer + ", opplysningsperiode=" + opplysningsperiode
-            + ", opptjeningsperiode=" + opptjeningsperiode + '}';
+        return "Kobling{" + "KoblingReferanse=" + koblingReferanse + ", saksnummer = " + saksnummer
+                + ", opplysningsperiode=" + opplysningsperiode + ", opptjeningsperiode=" + opptjeningsperiode + '}';
     }
 
     public boolean erAktiv() {

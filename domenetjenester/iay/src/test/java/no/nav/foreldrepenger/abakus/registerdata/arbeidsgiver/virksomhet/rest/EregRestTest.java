@@ -2,17 +2,14 @@ package no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.time.LocalDate;
-
-import org.junit.jupiter.api.Test;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.vedtak.felles.integrasjon.organisasjon.JuridiskEnhetVirksomheter;
 import no.nav.vedtak.felles.integrasjon.organisasjon.OrganisasjonEReg;
 import no.nav.vedtak.felles.integrasjon.organisasjon.OrganisasjonstypeEReg;
+import org.junit.jupiter.api.Test;
 
 class EregRestTest {
 
@@ -25,7 +22,8 @@ class EregRestTest {
     @Test
     void mapping_dto_til_grunnlag_til_dto() throws IOException {
         // Arrange
-        String json = """
+        String json =
+                """
             {
              "organisasjonsnummer":"999999999",
              "type":"Virksomhet",
@@ -47,7 +45,8 @@ class EregRestTest {
     @Test
     void mapping_jurdisk_enhet() throws IOException {
         // Arrange
-        String json = """
+        String json =
+                """
             {
               "organisasjonsnummer": "999999999",
               "type": "JuridiskEnhet",

@@ -1,9 +1,8 @@
 package no.nav.foreldrepenger.abakus.iay.jpa;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
 @Converter(autoApply = true)
 public class YtelseTypeKodeverdiConverter implements AttributeConverter<YtelseType, String> {

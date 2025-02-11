@@ -1,15 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -24,7 +14,15 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
@@ -42,21 +40,22 @@ import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
 @Table(name = "IAY_INNTEKTSMELDING")
 public class Inntektsmelding extends BaseEntitet implements IndexKey {
 
-    public static final Comparator<? super Inntektsmelding> COMP_REKKEFØLGE = (Inntektsmelding a, Inntektsmelding b) -> {
-        if (a == b || (a == null && b == null)) {
-            return 0;
-        } else if (a == null) {
-            return -1;
-        } else if (b == null) {
-            return 1;
-        }
-        if (a.getKanalreferanse() != null && b.getKanalreferanse() != null) {
-            return a.getKanalreferanse().compareTo(b.getKanalreferanse());
-        } else {
-            // crazy fallback for manglende kanalreferanser
-            return a.getInnsendingstidspunkt().compareTo(b.getInnsendingstidspunkt());
-        }
-    };
+    public static final Comparator<? super Inntektsmelding> COMP_REKKEFØLGE =
+            (Inntektsmelding a, Inntektsmelding b) -> {
+                if (a == b || (a == null && b == null)) {
+                    return 0;
+                } else if (a == null) {
+                    return -1;
+                } else if (b == null) {
+                    return 1;
+                }
+                if (a.getKanalreferanse() != null && b.getKanalreferanse() != null) {
+                    return a.getKanalreferanse().compareTo(b.getKanalreferanse());
+                } else {
+                    // crazy fallback for manglende kanalreferanser
+                    return a.getInnsendingstidspunkt().compareTo(b.getInnsendingstidspunkt());
+                }
+            };
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_INNTEKTSMELDING")
@@ -107,7 +106,8 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
     private Beløp inntektBeløp;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "refusjon_beloep", updatable = false)))
+    @AttributeOverrides(
+            @AttributeOverride(name = "verdi", column = @Column(name = "refusjon_beloep", updatable = false)))
     @ChangeTracked
     private Beløp refusjonBeløpPerMnd;
 
@@ -140,12 +140,9 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-    Inntektsmelding() {
-    }
+    Inntektsmelding() {}
 
-    /**
-     * copy ctor.
-     */
+    /** copy ctor. */
     public Inntektsmelding(Inntektsmelding inntektsmelding) {
         this.arbeidsgiver = inntektsmelding.getArbeidsgiver();
         this.arbeidsforholdRef = inntektsmelding.getArbeidsforholdRef();
@@ -161,31 +158,41 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
         this.kildesystem = inntektsmelding.getKildesystem();
         this.mottattDato = inntektsmelding.getMottattDato();
 
-        this.graderinger = inntektsmelding.getGraderinger().stream().map(g -> {
-            var data = new Gradering(g);
-            data.setInntektsmelding(this);
-            return data;
-        }).collect(Collectors.toList());
-        this.naturalYtelser = inntektsmelding.getNaturalYtelser().stream().map(n -> {
-            var data = new NaturalYtelse(n);
-            data.setInntektsmelding(this);
-            return data;
-        }).collect(Collectors.toList());
-        this.utsettelsePerioder = inntektsmelding.getUtsettelsePerioder().stream().map(u -> {
-            var data = new UtsettelsePeriode(u);
-            data.setInntektsmelding(this);
-            return data;
-        }).collect(Collectors.toList());
-        this.endringerRefusjon = inntektsmelding.getEndringerRefusjon().stream().map(r -> {
-            var data = new Refusjon(r);
-            data.setInntektsmelding(this);
-            return data;
-        }).collect(Collectors.toList());
-        this.oppgittFravær = inntektsmelding.getOppgittFravær().stream().map(f -> {
-            var data = new Fravær(f);
-            data.setInntektsmelding(this);
-            return data;
-        }).collect(Collectors.toList());
+        this.graderinger = inntektsmelding.getGraderinger().stream()
+                .map(g -> {
+                    var data = new Gradering(g);
+                    data.setInntektsmelding(this);
+                    return data;
+                })
+                .collect(Collectors.toList());
+        this.naturalYtelser = inntektsmelding.getNaturalYtelser().stream()
+                .map(n -> {
+                    var data = new NaturalYtelse(n);
+                    data.setInntektsmelding(this);
+                    return data;
+                })
+                .collect(Collectors.toList());
+        this.utsettelsePerioder = inntektsmelding.getUtsettelsePerioder().stream()
+                .map(u -> {
+                    var data = new UtsettelsePeriode(u);
+                    data.setInntektsmelding(this);
+                    return data;
+                })
+                .collect(Collectors.toList());
+        this.endringerRefusjon = inntektsmelding.getEndringerRefusjon().stream()
+                .map(r -> {
+                    var data = new Refusjon(r);
+                    data.setInntektsmelding(this);
+                    return data;
+                })
+                .collect(Collectors.toList());
+        this.oppgittFravær = inntektsmelding.getOppgittFravær().stream()
+                .map(f -> {
+                    var data = new Fravær(f);
+                    data.setInntektsmelding(this);
+                    return data;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -235,9 +242,7 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
         this.kanalreferanse = kanalreferanse;
     }
 
-    /**
-     * Dato inntektsmelding mottatt i NAV (tilsvarer dato lagret i Joark).
-     */
+    /** Dato inntektsmelding mottatt i NAV (tilsvarer dato lagret i Joark). */
     public LocalDate getMottattDato() {
         return mottattDato;
     }
@@ -304,7 +309,8 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
     }
 
     public boolean gjelderSammeArbeidsforhold(Inntektsmelding annen) {
-        return getArbeidsgiver().equals(annen.getArbeidsgiver()) && getArbeidsforholdRef().gjelderFor(annen.getArbeidsforholdRef());
+        return getArbeidsgiver().equals(annen.getArbeidsgiver())
+                && getArbeidsforholdRef().gjelderFor(annen.getArbeidsforholdRef());
     }
 
     /**
@@ -330,8 +336,8 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
     }
 
     /**
-     * Referanse til {@link no.nav.foreldrepenger.behandlingslager.behandling.MottattDokument} som benyttes for å markere
-     * hvilke dokument som er gjeldende i behandlingen
+     * Referanse til {@link no.nav.foreldrepenger.behandlingslager.behandling.MottattDokument} som benyttes for å
+     * markere hvilke dokument som er gjeldende i behandlingen
      *
      * @return {@link Long}
      */
@@ -400,7 +406,6 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
      *
      * @return {@Link Refusjon}
      */
-
     public List<Refusjon> getEndringerRefusjon() {
         return Collections.unmodifiableList(endringerRefusjon);
     }
@@ -443,8 +448,9 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
             return false;
         }
         var entitet = (Inntektsmelding) o;
-        return Objects.equals(getArbeidsgiver(), entitet.getArbeidsgiver()) && Objects.equals(getJournalpostId(), entitet.getJournalpostId())
-            && Objects.equals(getArbeidsforholdRef(), entitet.getArbeidsforholdRef());
+        return Objects.equals(getArbeidsgiver(), entitet.getArbeidsgiver())
+                && Objects.equals(getJournalpostId(), entitet.getJournalpostId())
+                && Objects.equals(getArbeidsforholdRef(), entitet.getArbeidsforholdRef());
     }
 
     @Override
@@ -454,11 +460,14 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" + "id=" + id + ", virksomhet=" + arbeidsgiver + ", arbeidsforholdId='" + arbeidsforholdRef + '\''
-            + ", startDatoPermisjon=" + startDatoPermisjon + ", nærRelasjon=" + nærRelasjon + ", journalpostId=" + journalpostId + ", inntektBeløp="
-            + inntektBeløp + ", refusjonBeløpPerMnd=" + refusjonBeløpPerMnd + ", refusjonOpphører=" + refusjonOpphører + ", innsendingsårsak= "
-            + innsendingsårsak + ", innsendingstidspunkt= " + innsendingstidspunkt + ", kanalreferanse=" + kanalreferanse + ", kildesystem="
-            + kildesystem + ", mottattDato=" + mottattDato + '>';
+        return getClass().getSimpleName() + "<" + "id=" + id + ", virksomhet=" + arbeidsgiver + ", arbeidsforholdId='"
+                + arbeidsforholdRef + '\''
+                + ", startDatoPermisjon=" + startDatoPermisjon + ", nærRelasjon=" + nærRelasjon + ", journalpostId="
+                + journalpostId + ", inntektBeløp="
+                + inntektBeløp + ", refusjonBeløpPerMnd=" + refusjonBeløpPerMnd + ", refusjonOpphører="
+                + refusjonOpphører + ", innsendingsårsak= "
+                + innsendingsårsak + ", innsendingstidspunkt= " + innsendingstidspunkt + ", kanalreferanse="
+                + kanalreferanse + ", kildesystem="
+                + kildesystem + ", mottattDato=" + mottattDato + '>';
     }
-
 }

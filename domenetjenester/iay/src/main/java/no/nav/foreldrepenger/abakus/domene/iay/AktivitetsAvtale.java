@@ -1,9 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Objects;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -17,6 +13,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.persistence.Version;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Objects;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -58,8 +57,8 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
     private long versjon;
 
     /**
-     * Setter en periode brukt til overstyring av angitt periode (avledet fra saksbehandlers vurderinger). Benyttes kun transient (ved
-     * filtrering av modellen)
+     * Setter en periode brukt til overstyring av angitt periode (avledet fra saksbehandlers vurderinger). Benyttes kun
+     * transient (ved filtrering av modellen)
      */
     @Transient
     private IntervallEntitet overstyrtPeriode;
@@ -68,9 +67,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
         // hibernate
     }
 
-    /**
-     * Deep copy ctor
-     */
+    /** Deep copy ctor */
     AktivitetsAvtale(AktivitetsAvtale aktivitetsAvtale) {
         this.prosentsats = aktivitetsAvtale.getProsentsats();
         this.beskrivelse = aktivitetsAvtale.getBeskrivelse();
@@ -102,9 +99,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
         this.prosentsats = prosentsats;
     }
 
-    /**
-     * Returner {@link #getProsentsats()} (skalert) eller null.
-     */
+    /** Returner {@link #getProsentsats()} (skalert) eller null. */
     public BigDecimal getProsentsatsVerdi() {
         return prosentsats == null ? null : prosentsats.getVerdi();
     }
@@ -123,11 +118,10 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
     }
 
     /**
-     * Perioden til aktivitetsavtalen.
-     * Tar Ikke hensyn til overstyring gjort i 5080.
-     * <p>
-     * Henter kun den originale perioden, ikke den overstyrte perioden.
-     * Bruk heller {@link #getPeriode} i de fleste tilfeller
+     * Perioden til aktivitetsavtalen. Tar Ikke hensyn til overstyring gjort i 5080.
+     *
+     * <p>Henter kun den originale perioden, ikke den overstyrte perioden. Bruk heller {@link #getPeriode} i de fleste
+     * tilfeller
      *
      * @return Hele den originale perioden, uten overstyringer.
      */
@@ -139,8 +133,8 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
      * Hvorvidt aktivitetsavtalen har en overstyrt periode eller ikke.
      *
      * @return boolean, true hvis overstyrt, false hvis ikke.
-     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient overstyrt periode. Legg heller til egen Decorator
-     * klasse som filtrerer output fra entitet
+     * @deprecated FIXME - bør fjerne intern filtrering basert på initialisert transient overstyrt periode. Legg heller
+     *     til egen Decorator klasse som filtrerer output fra entitet
      */
     @Deprecated
     public boolean erOverstyrtPeriode() {
@@ -194,8 +188,11 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
             return false;
         }
         AktivitetsAvtale that = (AktivitetsAvtale) o;
-        return Objects.equals(beskrivelse, that.beskrivelse) && Objects.equals(prosentsats, that.prosentsats) && Objects.equals(periode, that.periode)
-            && Objects.equals(overstyrtPeriode, that.overstyrtPeriode) && Objects.equals(sisteLønnsendringsdato, that.sisteLønnsendringsdato);
+        return Objects.equals(beskrivelse, that.beskrivelse)
+                && Objects.equals(prosentsats, that.prosentsats)
+                && Objects.equals(periode, that.periode)
+                && Objects.equals(overstyrtPeriode, that.overstyrtPeriode)
+                && Objects.equals(sisteLønnsendringsdato, that.sisteLønnsendringsdato);
     }
 
     @Override
@@ -205,13 +202,12 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "<" +
-            "periode=" + periode +
-            ", overstyrtPeriode=" + overstyrtPeriode +
-            ", prosentsats=" + prosentsats +
-            ", beskrivelse=" + beskrivelse +
-            ", sisteLønnsendringsdato=" + sisteLønnsendringsdato +
-            '>';
+        return getClass().getSimpleName() + "<" + "periode="
+                + periode + ", overstyrtPeriode="
+                + overstyrtPeriode + ", prosentsats="
+                + prosentsats + ", beskrivelse="
+                + beskrivelse + ", sisteLønnsendringsdato="
+                + sisteLønnsendringsdato + '>';
     }
 
     boolean hasValues() {
@@ -219,6 +215,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
     }
 
     public boolean erAnsettelsesPeriode() {
-        return (prosentsats == null || prosentsats.getVerdi() == null || prosentsats.erNulltall()) && sisteLønnsendringsdato == null;
+        return (prosentsats == null || prosentsats.getVerdi() == null || prosentsats.erNulltall())
+                && sisteLønnsendringsdato == null;
     }
 }

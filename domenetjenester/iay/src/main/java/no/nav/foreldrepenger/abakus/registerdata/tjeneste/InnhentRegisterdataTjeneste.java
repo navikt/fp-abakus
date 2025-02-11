@@ -2,16 +2,13 @@ package no.nav.foreldrepenger.abakus.registerdata.tjeneste;
 
 import static no.nav.foreldrepenger.abakus.registerdata.callback.CallbackTask.EKSISTERENDE_GRUNNLAG_REF;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
@@ -46,17 +43,29 @@ public class InnhentRegisterdataTjeneste {
     }
 
     @Inject
-    public InnhentRegisterdataTjeneste(InntektArbeidYtelseTjeneste iayTjeneste, KoblingTjeneste koblingTjeneste, ProsessTaskTjeneste taskTjeneste) {
+    public InnhentRegisterdataTjeneste(
+            InntektArbeidYtelseTjeneste iayTjeneste,
+            KoblingTjeneste koblingTjeneste,
+            ProsessTaskTjeneste taskTjeneste) {
         this.iayTjeneste = iayTjeneste;
         this.koblingTjeneste = koblingTjeneste;
         this.taskTjeneste = taskTjeneste;
     }
 
     private static Map<RegisterdataType, RegisterdataElement> initMapping() {
-        return Map.of(RegisterdataType.ARBEIDSFORHOLD, RegisterdataElement.ARBEIDSFORHOLD, RegisterdataType.YTELSE, RegisterdataElement.YTELSE,
-            RegisterdataType.LIGNET_NÆRING, RegisterdataElement.LIGNET_NÆRING, RegisterdataType.INNTEKT_PENSJONSGIVENDE,
-            RegisterdataElement.INNTEKT_PENSJONSGIVENDE, RegisterdataType.INNTEKT_BEREGNINGSGRUNNLAG, RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG,
-            RegisterdataType.INNTEKT_SAMMENLIGNINGSGRUNNLAG, RegisterdataElement.INNTEKT_SAMMENLIGNINGSGRUNNLAG);
+        return Map.of(
+                RegisterdataType.ARBEIDSFORHOLD,
+                RegisterdataElement.ARBEIDSFORHOLD,
+                RegisterdataType.YTELSE,
+                RegisterdataElement.YTELSE,
+                RegisterdataType.LIGNET_NÆRING,
+                RegisterdataElement.LIGNET_NÆRING,
+                RegisterdataType.INNTEKT_PENSJONSGIVENDE,
+                RegisterdataElement.INNTEKT_PENSJONSGIVENDE,
+                RegisterdataType.INNTEKT_BEREGNINGSGRUNNLAG,
+                RegisterdataElement.INNTEKT_BEREGNINGSGRUNNLAG,
+                RegisterdataType.INNTEKT_SAMMENLIGNINGSGRUNNLAG,
+                RegisterdataElement.INNTEKT_SAMMENLIGNINGSGRUNNLAG);
     }
 
     public static Set<RegisterdataElement> hentUtInformasjonsElementer(InnhentRegisterdataRequest dto) {
@@ -90,7 +99,8 @@ public class InnhentRegisterdataTjeneste {
 
         // Oppdater kobling med perioder
         mapPeriodeTilIntervall(dto.getOpplysningsperiode()).ifPresent(kobling::setOpplysningsperiode);
-        mapPeriodeTilIntervall(dto.getOpplysningsperiodeSkattegrunnlag()).ifPresent(kobling::setOpplysningsperiodeSkattegrunnlag);
+        mapPeriodeTilIntervall(dto.getOpplysningsperiodeSkattegrunnlag())
+                .ifPresent(kobling::setOpplysningsperiodeSkattegrunnlag);
         mapPeriodeTilIntervall(dto.getOpptjeningsperiode()).ifPresent(kobling::setOpptjeningsperiode);
 
         // Diff & log endringer
@@ -101,7 +111,8 @@ public class InnhentRegisterdataTjeneste {
     }
 
     private Optional<IntervallEntitet> mapPeriodeTilIntervall(Periode periode) {
-        return Optional.ofNullable(periode == null ? null : IntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom()));
+        return Optional.ofNullable(
+                periode == null ? null : IntervallEntitet.fraOgMedTilOgMed(periode.getFom(), periode.getTom()));
     }
 
     public String triggAsyncInnhent(InnhentRegisterdataRequest dto) {
@@ -121,8 +132,9 @@ public class InnhentRegisterdataTjeneste {
         callbackTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
 
         Optional<GrunnlagReferanse> eksisterendeGrunnlagRef = hentSisteReferanseFor(kobling.getKoblingReferanse());
-        eksisterendeGrunnlagRef.map(GrunnlagReferanse::getReferanse)
-            .ifPresent(ref -> callbackTask.setProperty(EKSISTERENDE_GRUNNLAG_REF, ref.toString()));
+        eksisterendeGrunnlagRef
+                .map(GrunnlagReferanse::getReferanse)
+                .ifPresent(ref -> callbackTask.setProperty(EKSISTERENDE_GRUNNLAG_REF, ref.toString()));
 
         taskGruppe.addNesteSekvensiell(innhentingTask);
         taskGruppe.addNesteSekvensiell(callbackTask);
@@ -139,8 +151,8 @@ public class InnhentRegisterdataTjeneste {
         if (kobling.isEmpty()) {
             return Optional.empty();
         }
-        Optional<InntektArbeidYtelseGrunnlag> grunnlag = iayTjeneste.hentGrunnlagFor(kobling.get().getKoblingReferanse());
+        Optional<InntektArbeidYtelseGrunnlag> grunnlag =
+                iayTjeneste.hentGrunnlagFor(kobling.get().getKoblingReferanse());
         return grunnlag.map(InntektArbeidYtelseGrunnlag::getGrunnlagReferanse);
     }
-
 }

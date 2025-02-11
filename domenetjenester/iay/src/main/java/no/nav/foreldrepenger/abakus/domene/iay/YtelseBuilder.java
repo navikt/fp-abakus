@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.domene.iay;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
@@ -94,5 +93,4 @@ public class YtelseBuilder {
     public YtelseGrunnlagBuilder getGrunnlagBuilder() {
         return YtelseGrunnlagBuilder.ny();
     }
-
 }

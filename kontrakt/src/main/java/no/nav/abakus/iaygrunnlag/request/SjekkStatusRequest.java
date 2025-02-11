@@ -1,9 +1,5 @@
 package no.nav.abakus.iaygrunnlag.request;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -11,12 +7,19 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import no.nav.abakus.iaygrunnlag.UuidDto;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
-@JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE)
+@JsonAutoDetect(
+        fieldVisibility = Visibility.NONE,
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE,
+        isGetterVisibility = Visibility.NONE,
+        creatorVisibility = Visibility.NONE)
 public class SjekkStatusRequest {
 
     @JsonProperty(value = "referanse", required = true)
@@ -30,8 +33,10 @@ public class SjekkStatusRequest {
     private String taskReferanse;
 
     @JsonCreator
-    public SjekkStatusRequest(@JsonProperty(value = "referanse", required = true) @Valid @NotNull UuidDto referanse,
-                              @JsonProperty(value = "taskReferanse", required = true) @NotNull @Pattern(regexp = "\\d+") String taskReferanse) {
+    public SjekkStatusRequest(
+            @JsonProperty(value = "referanse", required = true) @Valid @NotNull UuidDto referanse,
+            @JsonProperty(value = "taskReferanse", required = true) @NotNull @Pattern(regexp = "\\d+")
+                    String taskReferanse) {
         this.referanse = referanse;
         this.taskReferanse = taskReferanse;
     }
@@ -51,5 +56,4 @@ public class SjekkStatusRequest {
     public void setTaskReferanse(String taskReferanse) {
         this.taskReferanse = taskReferanse;
     }
-
 }

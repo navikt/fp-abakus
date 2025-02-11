@@ -1,13 +1,12 @@
 package no.nav.foreldrepenger.abakus.aktor;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.pdl.HentIdenterQueryRequest;
@@ -20,15 +19,16 @@ import no.nav.vedtak.exception.VLException;
 import no.nav.vedtak.felles.integrasjon.person.Persondata;
 import no.nav.vedtak.util.LRUCache;
 
-
 @ApplicationScoped
 public class AktørTjeneste {
 
     private static final int DEFAULT_CACHE_SIZE = 1000;
     private static final long DEFAULT_CACHE_TIMEOUT = TimeUnit.MILLISECONDS.convert(8, TimeUnit.HOURS);
 
-    private static final LRUCache<AktørId, PersonIdent> CACHE_AKTØR_ID_TIL_IDENT = new LRUCache<>(DEFAULT_CACHE_SIZE, DEFAULT_CACHE_TIMEOUT);
-    private static final LRUCache<PersonIdent, AktørId> CACHE_IDENT_TIL_AKTØR_ID = new LRUCache<>(DEFAULT_CACHE_SIZE, DEFAULT_CACHE_TIMEOUT);
+    private static final LRUCache<AktørId, PersonIdent> CACHE_AKTØR_ID_TIL_IDENT =
+            new LRUCache<>(DEFAULT_CACHE_SIZE, DEFAULT_CACHE_TIMEOUT);
+    private static final LRUCache<PersonIdent, AktørId> CACHE_IDENT_TIL_AKTØR_ID =
+            new LRUCache<>(DEFAULT_CACHE_SIZE, DEFAULT_CACHE_TIMEOUT);
 
     private Persondata pdlKlient;
 
@@ -50,7 +50,10 @@ public class AktørTjeneste {
 
         try {
             var identliste = hentIdenter(request, projection);
-            var aktørId = identliste.getIdenter().stream().findFirst().map(IdentInformasjon::getIdent).map(AktørId::new);
+            var aktørId = identliste.getIdenter().stream()
+                    .findFirst()
+                    .map(IdentInformasjon::getIdent)
+                    .map(AktørId::new);
             aktørId.ifPresent(a -> CACHE_IDENT_TIL_AKTØR_ID.put(fnr, a));
             return aktørId;
         } catch (VLException v) {
@@ -70,7 +73,10 @@ public class AktørTjeneste {
 
         try {
             var identliste = hentIdenter(request, projection);
-            return identliste.getIdenter().stream().map(IdentInformasjon::getIdent).map(AktørId::new).collect(Collectors.toSet());
+            return identliste.getIdenter().stream()
+                    .map(IdentInformasjon::getIdent)
+                    .map(AktørId::new)
+                    .collect(Collectors.toSet());
         } catch (VLException v) {
             if (Persondata.PDL_KLIENT_NOT_FOUND_KODE.equals(v.getKode())) {
                 return Set.of();
@@ -94,7 +100,10 @@ public class AktørTjeneste {
 
         try {
             identliste = hentIdenter(request, projection);
-            var ident = identliste.getIdenter().stream().findFirst().map(IdentInformasjon::getIdent).map(PersonIdent::new);
+            var ident = identliste.getIdenter().stream()
+                    .findFirst()
+                    .map(IdentInformasjon::getIdent)
+                    .map(PersonIdent::new);
             ident.ifPresent(i -> CACHE_AKTØR_ID_TIL_IDENT.put(aktørId, i));
             return ident;
         } catch (VLException v) {
@@ -114,7 +123,10 @@ public class AktørTjeneste {
 
         try {
             var identliste = hentIdenter(request, projection);
-            return identliste.getIdenter().stream().map(IdentInformasjon::getIdent).map(PersonIdent::new).collect(Collectors.toSet());
+            return identliste.getIdenter().stream()
+                    .map(IdentInformasjon::getIdent)
+                    .map(PersonIdent::new)
+                    .collect(Collectors.toSet());
         } catch (VLException v) {
             if (Persondata.PDL_KLIENT_NOT_FOUND_KODE.equals(v.getKode())) {
                 return Set.of();

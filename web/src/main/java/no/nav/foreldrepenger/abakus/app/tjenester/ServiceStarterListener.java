@@ -4,9 +4,7 @@ import jakarta.enterprise.inject.spi.CDI;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 
-/**
- * Starter interne applikasjontjenester
- */
+/** Starter interne applikasjontjenester */
 public class ServiceStarterListener implements ServletContextListener {
 
     @Override
