@@ -1,22 +1,15 @@
 package no.nav.abakus.vedtak.ytelse.v1;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import no.nav.abakus.vedtak.ytelse.Aktør;
-import no.nav.abakus.vedtak.ytelse.Kildesystem;
-import no.nav.abakus.vedtak.ytelse.Periode;
-import no.nav.abakus.vedtak.ytelse.Status;
-import no.nav.abakus.vedtak.ytelse.Ytelse;
-import no.nav.abakus.vedtak.ytelse.Ytelser;
+import no.nav.abakus.vedtak.ytelse.*;
 import no.nav.abakus.vedtak.ytelse.v1.anvisning.Anvisning;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class YtelseV1 extends Ytelse {
 

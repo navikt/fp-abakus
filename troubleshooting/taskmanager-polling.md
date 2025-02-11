@@ -2,7 +2,8 @@
 
 ### SQL Error: 0, SQLState: 40001
 
-Forekommer ved polling da en rad ligger i ScrollableResults, men har blitt flyttet til en annen partisjon(partisjon per status på taskene) av en annen transaksjon(en annen pod som har prosessert tasken). 
+Forekommer ved polling da en rad ligger i ScrollableResults, men har blitt flyttet til en annen partisjon(partisjon per
+status på taskene) av en annen transaksjon(en annen pod som har prosessert tasken).
 
 ```
 org.hibernate.exception.LockAcquisitionException: could not advance using next()

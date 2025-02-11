@@ -1,11 +1,11 @@
 package no.nav.foreldrepenger.abakus.felles.jpa;
 
+import no.nav.vedtak.konfig.Tid;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-
-import no.nav.vedtak.konfig.Tid;
 
 public abstract class AbstractIntervall implements Comparable<AbstractIntervall>, Serializable {
 

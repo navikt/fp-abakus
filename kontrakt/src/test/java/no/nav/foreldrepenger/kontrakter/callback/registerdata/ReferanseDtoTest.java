@@ -1,13 +1,12 @@
 package no.nav.foreldrepenger.kontrakter.callback.registerdata;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import no.nav.abakus.callback.registerdata.ReferanseDto;
+import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import org.junit.jupiter.api.Test;
-
-import no.nav.abakus.callback.registerdata.ReferanseDto;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ReferanseDtoTest {
 

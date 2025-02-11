@@ -1,17 +1,13 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 /**
  * Filter for å hente ytelser fra grunnlag. Tilbyr håndtering av skjæringstidspunkt og filtereing på ytelser slik

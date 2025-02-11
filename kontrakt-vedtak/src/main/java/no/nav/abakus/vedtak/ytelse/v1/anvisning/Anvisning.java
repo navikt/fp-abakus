@@ -1,15 +1,13 @@
 package no.nav.abakus.vedtak.ytelse.v1.anvisning;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import no.nav.abakus.vedtak.ytelse.Desimaltall;
 import no.nav.abakus.vedtak.ytelse.Periode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Anvisning {
 

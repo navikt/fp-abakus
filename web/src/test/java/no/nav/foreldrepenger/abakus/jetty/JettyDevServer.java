@@ -1,11 +1,10 @@
 package no.nav.foreldrepenger.abakus.jetty;
 
+import no.nav.foreldrepenger.konfig.Environment;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import no.nav.foreldrepenger.konfig.Environment;
 
 import javax.naming.NamingException;
 

@@ -1,8 +1,8 @@
 package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold;
 
-import java.util.Objects;
-
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
+
+import java.util.Objects;
 
 public class ArbeidsforholdIdentifikator {
     private Arbeidsgiver arbeidsgiver;

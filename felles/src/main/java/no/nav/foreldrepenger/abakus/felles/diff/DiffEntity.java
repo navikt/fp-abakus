@@ -1,7 +1,5 @@
 package no.nav.foreldrepenger.abakus.felles.diff;
 
-import no.nav.foreldrepenger.abakus.felles.diff.TraverseGraph.TraverseResult;
-
 public class DiffEntity {
 
     private TraverseGraph traverser;

@@ -5,15 +5,18 @@
                  https://jakarta.ee/xml/ns/persistence/orm/orm_3_0.xsd"
                  version="3.0">
 
-    <sequence-generator name="SEQ_OPPTJENING" allocation-size="50" sequence-name="SEQ_OPPTJENING" />
-    <sequence-generator name="SEQ_OPPTJENING_AKTIVITET" allocation-size="50" sequence-name="SEQ_OPPTJENING_AKTIVITET" />
+    <sequence-generator name="SEQ_OPPTJENING" allocation-size="50" sequence-name="SEQ_OPPTJENING"/>
+    <sequence-generator name="SEQ_OPPTJENING_AKTIVITET" allocation-size="50" sequence-name="SEQ_OPPTJENING_AKTIVITET"/>
 
     <!-- Oppgitt opptjening fra søknad -->
-    <sequence-generator name="SEQ_SO_OPPGITT_OPPTJENING" allocation-size="50" sequence-name="SEQ_SO_OPPGITT_OPPTJENING" />
-    <sequence-generator name="SEQ_OPPGITT_ARBEIDSFORHOLD" allocation-size="50" sequence-name="SEQ_OPPGITT_ARBEIDSFORHOLD" />
-    <sequence-generator name="SEQ_EGEN_NAERING" allocation-size="50" sequence-name="SEQ_EGEN_NAERING" />
-    <sequence-generator name="SEQ_ANNEN_AKTIVITET" allocation-size="50" sequence-name="SEQ_ANNEN_AKTIVITET" />
-    <sequence-generator name="IAY_OPPGITTE_OPPTJENINGER" allocation-size="50" sequence-name="IAY_OPPGITTE_OPPTJENINGER" />
+    <sequence-generator name="SEQ_SO_OPPGITT_OPPTJENING" allocation-size="50"
+                        sequence-name="SEQ_SO_OPPGITT_OPPTJENING"/>
+    <sequence-generator name="SEQ_OPPGITT_ARBEIDSFORHOLD" allocation-size="50"
+                        sequence-name="SEQ_OPPGITT_ARBEIDSFORHOLD"/>
+    <sequence-generator name="SEQ_EGEN_NAERING" allocation-size="50" sequence-name="SEQ_EGEN_NAERING"/>
+    <sequence-generator name="SEQ_ANNEN_AKTIVITET" allocation-size="50" sequence-name="SEQ_ANNEN_AKTIVITET"/>
+    <sequence-generator name="IAY_OPPGITTE_OPPTJENINGER" allocation-size="50"
+                        sequence-name="IAY_OPPGITTE_OPPTJENINGER"/>
 
     <!-- Oppgitt opptjening fra søknad-->
     <entity class="no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening"/>

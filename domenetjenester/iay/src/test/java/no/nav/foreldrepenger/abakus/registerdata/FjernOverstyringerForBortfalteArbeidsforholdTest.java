@@ -1,28 +1,23 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
 
-import static no.nav.foreldrepenger.abakus.registerdata.FjernOverstyringerForBortfalteArbeidsforhold.fjern;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.Optional;
-import java.util.Set;
-
-import org.junit.jupiter.api.Test;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyring;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdOverstyringBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdReferanse;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.*;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Organisasjon;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
+import org.junit.jupiter.api.Test;
+
+import java.util.Optional;
+import java.util.Set;
+
+import static no.nav.foreldrepenger.abakus.registerdata.FjernOverstyringerForBortfalteArbeidsforhold.fjern;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class FjernOverstyringerForBortfalteArbeidsforholdTest {
 

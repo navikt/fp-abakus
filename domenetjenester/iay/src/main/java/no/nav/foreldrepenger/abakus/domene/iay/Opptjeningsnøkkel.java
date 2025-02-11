@@ -1,9 +1,9 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
+
 import java.util.Objects;
 import java.util.Optional;
-
-import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
 public class Opptjeningsnøkkel {
 

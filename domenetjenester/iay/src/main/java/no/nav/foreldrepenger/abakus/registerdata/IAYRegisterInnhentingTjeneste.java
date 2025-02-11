@@ -1,37 +1,12 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
-import static no.nav.foreldrepenger.abakus.registerdata.ByggLønnsinntektInntektTjeneste.mapLønnsinntekter;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import jakarta.inject.Inject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektYtelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
-import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektspostBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetBuilder;
+import no.nav.foreldrepenger.abakus.domene.iay.*;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
@@ -46,12 +21,18 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInf
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.SigrunTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataElement;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.typer.OrganisasjonsNummerValidator;
-import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import no.nav.foreldrepenger.abakus.typer.*;
 import no.nav.vedtak.exception.TekniskException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static no.nav.foreldrepenger.abakus.registerdata.ByggLønnsinntektInntektTjeneste.mapLønnsinntekter;
 
 /**
  * Standard IAY register innhenter.
@@ -78,11 +59,11 @@ public class IAYRegisterInnhentingTjeneste {
 
     @Inject
     public IAYRegisterInnhentingTjeneste(InntektArbeidYtelseTjeneste inntektArbeidYtelseTjeneste,
-                                            VirksomhetTjeneste virksomhetTjeneste,
-                                            InnhentingSamletTjeneste innhentingSamletTjeneste,
-                                            AktørTjeneste aktørConsumer,
-                                            SigrunTjeneste sigrunTjeneste,
-                                            VedtattYtelseInnhentingTjeneste vedtattYtelseInnhentingTjeneste) {
+                                         VirksomhetTjeneste virksomhetTjeneste,
+                                         InnhentingSamletTjeneste innhentingSamletTjeneste,
+                                         AktørTjeneste aktørConsumer,
+                                         SigrunTjeneste sigrunTjeneste,
+                                         VedtattYtelseInnhentingTjeneste vedtattYtelseInnhentingTjeneste) {
         this.inntektArbeidYtelseTjeneste = inntektArbeidYtelseTjeneste;
         this.virksomhetTjeneste = virksomhetTjeneste;
         this.innhentingSamletTjeneste = innhentingSamletTjeneste;
@@ -122,6 +103,7 @@ public class IAYRegisterInnhentingTjeneste {
     private class FnrSupplier {
 
         private final AktørId aktørId;
+
         public FnrSupplier(AktørId aktørId) {
             this.aktørId = aktørId;
         }

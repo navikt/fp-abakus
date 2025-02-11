@@ -1,10 +1,10 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
-import java.util.List;
-import java.util.stream.Stream;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum InntektYtelseType implements Kodeverdi {
@@ -59,8 +59,7 @@ public enum InntektYtelseType implements Kodeverdi {
     ANNET("Annet", Kategori.NÆRING, YtelseType.UDEFINERT, "annet"),
     VEDERLAG("Vederlag", Kategori.NÆRING, YtelseType.UDEFINERT, List.of("vederlag", "vederlagDagmammaIEgetHjem")),
     LOTT_KUN_TRYGDEAVGIFT("Lott kun trygdeavgift", Kategori.NÆRING, YtelseType.UDEFINERT, "lottKunTrygdeavgift"),
-    KOMPENSASJON_FOR_TAPT_PERSONINNTEKT("Kompensasjon for tapt personinntekt", Kategori.NÆRING, YtelseType.FRISINN, "kompensasjonForTaptPersoninntekt")
-    ;
+    KOMPENSASJON_FOR_TAPT_PERSONINNTEKT("Kompensasjon for tapt personinntekt", Kategori.NÆRING, YtelseType.FRISINN, "kompensasjonForTaptPersoninntekt");
 
     private final String navn;
     private final YtelseType ytelseType;
@@ -114,5 +113,5 @@ public enum InntektYtelseType implements Kodeverdi {
         return kategori == Kategori.NÆRING;
     }
 
-    public enum Kategori { YTELSE, NÆRING, TRYGD }
+    public enum Kategori {YTELSE, NÆRING, TRYGD}
 }

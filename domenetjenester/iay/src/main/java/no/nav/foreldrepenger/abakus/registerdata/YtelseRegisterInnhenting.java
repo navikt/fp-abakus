@@ -1,9 +1,5 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseBuilder;
@@ -16,6 +12,10 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdY
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 public class YtelseRegisterInnhenting {
     private final InnhentingSamletTjeneste innhentingSamletTjeneste;

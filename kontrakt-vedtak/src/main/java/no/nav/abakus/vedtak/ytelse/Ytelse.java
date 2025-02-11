@@ -2,7 +2,6 @@ package no.nav.abakus.vedtak.ytelse;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "version")

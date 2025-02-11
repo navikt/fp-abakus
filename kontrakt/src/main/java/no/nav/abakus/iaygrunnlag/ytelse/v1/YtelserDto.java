@@ -1,16 +1,14 @@
 package no.nav.abakus.iaygrunnlag.ytelse.v1;
 
-import java.util.List;
-import java.util.Objects;
-
-import jakarta.validation.Valid;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.validation.Valid;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
+
+import java.util.List;
+import java.util.Objects;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)

@@ -28,8 +28,8 @@
             <artifactId>felles-log</artifactId>
         </dependency>
         <dependency>
-        	<groupId>no.nav.foreldrepenger.abakus</groupId>
-        	<artifactId>abakus-kontrakt</artifactId>
+            <groupId>no.nav.foreldrepenger.abakus</groupId>
+            <artifactId>abakus-kontrakt</artifactId>
         </dependency>
         <dependency>
             <groupId>no.nav.vedtak.prosesstask</groupId>

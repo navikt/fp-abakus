@@ -1,20 +1,19 @@
 package no.nav.foreldrepenger.abakus.registerdata.infotrygd;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
+import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseAnvist;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseArbeid;
+import org.assertj.core.data.Offset;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.assertj.core.data.Offset;
-import org.junit.jupiter.api.Test;
-
-import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
-import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
-import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseAnvist;
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseArbeid;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 class InfotrygdgrunnlagAnvistAndelMapperTest {
 

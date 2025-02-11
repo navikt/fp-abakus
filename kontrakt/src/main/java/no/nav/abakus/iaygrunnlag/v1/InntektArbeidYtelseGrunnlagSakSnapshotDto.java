@@ -2,13 +2,11 @@ package no.nav.abakus.iaygrunnlag.v1;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;

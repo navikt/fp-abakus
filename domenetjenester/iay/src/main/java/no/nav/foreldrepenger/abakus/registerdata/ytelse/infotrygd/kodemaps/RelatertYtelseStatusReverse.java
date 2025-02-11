@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
-
 import org.slf4j.Logger;
 
 import java.util.Map;

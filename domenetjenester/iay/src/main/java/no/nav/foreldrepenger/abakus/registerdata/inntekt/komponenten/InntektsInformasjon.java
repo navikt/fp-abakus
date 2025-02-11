@@ -1,14 +1,14 @@
 package no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt.YtelseNøkkel;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt.YtelseNøkkel;
 
 public class InntektsInformasjon {
 

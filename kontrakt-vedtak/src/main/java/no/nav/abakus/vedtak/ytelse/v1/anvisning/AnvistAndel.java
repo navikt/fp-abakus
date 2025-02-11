@@ -1,16 +1,14 @@
 package no.nav.abakus.vedtak.ytelse.v1.anvisning;
 
-import java.math.BigDecimal;
-import java.util.Optional;
-
-import jakarta.validation.Valid;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.validation.Valid;
 import no.nav.abakus.vedtak.ytelse.Desimaltall;
+
+import java.math.BigDecimal;
+import java.util.Optional;
 
 /**
  * Angir størrelse for ytelse.

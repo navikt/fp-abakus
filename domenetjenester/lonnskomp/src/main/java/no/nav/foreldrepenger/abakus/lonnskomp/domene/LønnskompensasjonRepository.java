@@ -1,19 +1,18 @@
 package no.nav.foreldrepenger.abakus.lonnskomp.domene;
 
-import java.time.LocalDate;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
-import org.hibernate.jpa.HibernateHints;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
+import org.hibernate.jpa.HibernateHints;
+
+import java.time.LocalDate;
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 @ApplicationScoped
 public class LønnskompensasjonRepository {

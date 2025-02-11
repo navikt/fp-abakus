@@ -1,11 +1,11 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
-
-import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
 public class AktivitetsAvtaleBuilder {
     private final AktivitetsAvtale aktivitetsAvtaleEntitet;

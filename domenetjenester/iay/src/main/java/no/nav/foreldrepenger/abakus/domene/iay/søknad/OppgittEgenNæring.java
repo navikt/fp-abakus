@@ -1,20 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay.søknad;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Objects;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-
+import jakarta.persistence.*;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
 import no.nav.abakus.iaygrunnlag.kodeverk.VirksomhetType;
@@ -26,6 +12,10 @@ import no.nav.foreldrepenger.abakus.iay.jpa.LandKodeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.iay.jpa.VirksomhetTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.felles.jpa.converters.BooleanToStringConverter;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Objects;
 
 
 @Table(name = "IAY_EGEN_NAERING")

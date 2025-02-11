@@ -1,6 +1,11 @@
 package no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.iay;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import jakarta.validation.Validation;
+import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
+import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -8,14 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
-import jakarta.validation.Validation;
-
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
-import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class IAYMigreringNPETest {
 

@@ -1,30 +1,19 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
+import no.nav.abakus.iaygrunnlag.Aktør;
+import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
+import no.nav.abakus.iaygrunnlag.Organisasjon;
+import no.nav.abakus.iaygrunnlag.Periode;
+import no.nav.abakus.iaygrunnlag.ytelse.v1.*;
+import no.nav.foreldrepenger.abakus.domene.iay.*;
+import no.nav.foreldrepenger.abakus.typer.Beløp;
+import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import no.nav.abakus.iaygrunnlag.Aktør;
-import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
-import no.nav.abakus.iaygrunnlag.Organisasjon;
-import no.nav.abakus.iaygrunnlag.Periode;
-import no.nav.abakus.iaygrunnlag.ytelse.v1.AnvisningDto;
-import no.nav.abakus.iaygrunnlag.ytelse.v1.AnvistAndelDto;
-import no.nav.abakus.iaygrunnlag.ytelse.v1.FordelingDto;
-import no.nav.abakus.iaygrunnlag.ytelse.v1.YtelseDto;
-import no.nav.abakus.iaygrunnlag.ytelse.v1.YtelseGrunnlagDto;
-import no.nav.abakus.iaygrunnlag.ytelse.v1.YtelserDto;
-import no.nav.foreldrepenger.abakus.domene.iay.AktørYtelse;
-import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
-import no.nav.foreldrepenger.abakus.domene.iay.Ytelse;
-import no.nav.foreldrepenger.abakus.domene.iay.YtelseAnvist;
-import no.nav.foreldrepenger.abakus.domene.iay.YtelseAnvistAndel;
-import no.nav.foreldrepenger.abakus.domene.iay.YtelseGrunnlag;
-import no.nav.foreldrepenger.abakus.domene.iay.YtelseStørrelse;
-import no.nav.foreldrepenger.abakus.typer.Beløp;
-import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
 
 public class MapAktørYtelse {
     private static final Comparator<YtelseDto> COMP_YTELSE = Comparator.comparing(YtelseDto::getSaksnummer,

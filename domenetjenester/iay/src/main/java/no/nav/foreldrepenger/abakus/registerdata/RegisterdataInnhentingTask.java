@@ -1,12 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
@@ -22,6 +16,10 @@ import no.nav.foreldrepenger.abakus.registerdata.tjeneste.InnhentRegisterdataTje
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataElement;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Set;
 
 @ApplicationScoped
 @ProsessTask("registerdata.innhent")

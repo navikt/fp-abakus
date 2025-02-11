@@ -1,20 +1,14 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.*;
+import no.nav.vedtak.mapper.json.DefaultJsonMapper;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.BeløpDto;
-import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.FagsystemDto;
-import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.MeldekortUtbetalingsgrunnlagMeldekortDto;
-import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.MeldekortUtbetalingsgrunnlagSakDto;
-import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.YtelseStatusDto;
-import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.YtelseTypeDto;
-import no.nav.vedtak.mapper.json.DefaultJsonMapper;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Konsistens test for å verifiser at seralisering og deseralisering av DTO ikke endrer seg og fungere som forventet

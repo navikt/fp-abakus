@@ -1,19 +1,17 @@
 package no.nav.foreldrepenger.abakus.app.exceptions;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
-
+import no.nav.vedtak.exception.VLException;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.vedtak.exception.VLException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class ConstraintViolationMapper implements ExceptionMapper<ConstraintViolationException> {
 

@@ -30,6 +30,6 @@ services:
       - "8389:8389"
     container_name: vtp
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8060/rest/isReady"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8060/rest/isReady" ]
       interval: 30s
       timeout: 5s

@@ -1,22 +1,14 @@
 package no.nav.foreldrepenger.abakus.felles.diff;
 
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.IdentityHashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Version;
-
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+import java.lang.reflect.Field;
+import java.util.*;
 
 /**
  * Denne klassen kan traverse en Entity graph og trekk ut verdier som key/value.

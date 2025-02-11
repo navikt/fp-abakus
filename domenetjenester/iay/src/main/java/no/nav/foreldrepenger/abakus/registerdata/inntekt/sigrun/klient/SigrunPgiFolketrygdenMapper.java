@@ -1,5 +1,8 @@
 package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Year;
@@ -8,9 +11,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
-import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 public final class SigrunPgiFolketrygdenMapper {
 
@@ -52,6 +52,7 @@ public final class SigrunPgiFolketrygdenMapper {
         }
     }
 
-    private record InntektBeløp(InntektspostType inntektspostType, BigDecimal beløp) { }
+    private record InntektBeløp(InntektspostType inntektspostType, BigDecimal beløp) {
+    }
 
 }

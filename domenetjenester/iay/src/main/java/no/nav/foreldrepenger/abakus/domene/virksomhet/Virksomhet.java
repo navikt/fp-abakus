@@ -1,9 +1,9 @@
 package no.nav.foreldrepenger.abakus.domene.virksomhet;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.OrganisasjonType;
+
 import java.time.LocalDate;
 import java.util.Objects;
-
-import no.nav.abakus.iaygrunnlag.kodeverk.OrganisasjonType;
 
 public class Virksomhet {
 

@@ -1,7 +1,13 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
-import static no.nav.vedtak.konfig.Tid.TIDENES_BEGYNNELSE;
-import static no.nav.vedtak.konfig.Tid.TIDENES_ENDE;
+import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
+import no.nav.foreldrepenger.abakus.domene.iay.*;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsavtale;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
+import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
+import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -9,20 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
-import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
-import no.nav.foreldrepenger.abakus.domene.iay.AktivitetsAvtaleBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.Opptjeningsnøkkel;
-import no.nav.foreldrepenger.abakus.domene.iay.Permisjon;
-import no.nav.foreldrepenger.abakus.domene.iay.PermisjonBuilder;
-import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetBuilder;
-import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsavtale;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
-import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdIdentifikator;
-import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
+import static no.nav.vedtak.konfig.Tid.TIDENES_BEGYNNELSE;
+import static no.nav.vedtak.konfig.Tid.TIDENES_ENDE;
 
 class ByggYrkesaktiviteterTjeneste {
 

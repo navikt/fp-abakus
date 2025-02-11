@@ -1,15 +1,15 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
 public class InfotrygdYtelseGrunnlag {
 

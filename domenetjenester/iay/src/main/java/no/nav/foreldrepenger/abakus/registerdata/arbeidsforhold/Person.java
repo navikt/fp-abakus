@@ -1,8 +1,8 @@
 package no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold;
 
-import java.util.Objects;
-
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+
+import java.util.Objects;
 
 public class Person implements Arbeidsgiver {
     private AktørId aktørId;

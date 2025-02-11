@@ -1,7 +1,5 @@
 package no.nav.foreldrepenger.abakus.registerdata.callback;
 
-import java.util.UUID;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import no.nav.abakus.callback.registerdata.CallbackDto;
@@ -13,6 +11,8 @@ import no.nav.foreldrepenger.abakus.kobling.TaskConstants;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
+
+import java.util.UUID;
 
 @ApplicationScoped
 @ProsessTask("registerdata.callback")

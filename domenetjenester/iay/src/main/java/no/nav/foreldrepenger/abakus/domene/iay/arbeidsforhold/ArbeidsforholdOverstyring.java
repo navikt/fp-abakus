@@ -1,30 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Version;
-
+import jakarta.persistence.*;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType;
 import no.nav.abakus.iaygrunnlag.kodeverk.BekreftetPermisjonStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
@@ -37,6 +13,10 @@ import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.jpa.ArbeidsforholdHandlingTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
+
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Overstyring av arbeidsforhold angitt av saksbehandler.
@@ -155,8 +135,8 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
     }
 
     void setHandling(ArbeidsforholdHandlingType handling) {
-        if(handling.isReadOnly()) {
-            throw new UnsupportedOperationException("Kan ikke opprette grunnlag da ArbeidsforholdHandlingType ikke lenger er supportert (annet enn lesing: " + handling );
+        if (handling.isReadOnly()) {
+            throw new UnsupportedOperationException("Kan ikke opprette grunnlag da ArbeidsforholdHandlingType ikke lenger er supportert (annet enn lesing: " + handling);
         }
         this.handling = handling;
     }

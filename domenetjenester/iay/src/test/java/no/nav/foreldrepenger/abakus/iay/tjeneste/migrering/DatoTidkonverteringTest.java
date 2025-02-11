@@ -1,14 +1,10 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.migrering;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-
 import org.junit.jupiter.api.Test;
+
+import java.time.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 class DatoTidkonverteringTest {

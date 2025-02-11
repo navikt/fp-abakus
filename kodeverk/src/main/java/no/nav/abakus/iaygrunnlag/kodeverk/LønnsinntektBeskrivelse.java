@@ -1,18 +1,14 @@
 package no.nav.abakus.iaygrunnlag.kodeverk;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Stream;
-
 import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.*;
+import java.util.stream.Stream;
 
 public enum LønnsinntektBeskrivelse implements Kodeverdi {
     KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE("KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE", "Kommunal omsorgslønn og fosterhjemsgodtgjørelse", "kommunalOmsorgsloennOgFosterhjemsgodtgjoerelse"),
     UDEFINERT("-", "Udefinert", null),
-        ;
+    ;
     private static final Map<String, LønnsinntektBeskrivelse> KODER = new LinkedHashMap<>();
 
     static {

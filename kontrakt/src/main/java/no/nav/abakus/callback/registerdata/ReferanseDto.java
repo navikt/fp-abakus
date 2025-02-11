@@ -1,9 +1,9 @@
 package no.nav.abakus.callback.registerdata;
 
-import java.util.UUID;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+
+import java.util.UUID;
 
 /**
  * Unik referanse representert som UUID

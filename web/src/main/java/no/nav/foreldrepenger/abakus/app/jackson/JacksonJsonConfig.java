@@ -1,20 +1,19 @@
 package no.nav.foreldrepenger.abakus.app.jackson;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
 import jakarta.ws.rs.ext.ContextResolver;
 import jakarta.ws.rs.ext.Provider;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 import no.nav.foreldrepenger.abakus.app.IndexClasses;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 
 @Provider
 public class JacksonJsonConfig implements ContextResolver<ObjectMapper> {

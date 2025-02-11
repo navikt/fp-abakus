@@ -1,10 +1,6 @@
 package no.nav.foreldrepenger.abakus.app.healthcheck;
 
-import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
-import static jakarta.ws.rs.core.Response.Status.SERVICE_UNAVAILABLE;
-
-import java.util.List;
-
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
@@ -14,16 +10,16 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.CacheControl;
 import jakarta.ws.rs.core.Response;
-
+import no.nav.foreldrepenger.abakus.app.tjenester.ApplicationServiceStarter;
 import no.nav.vedtak.server.LivenessAware;
-
 import no.nav.vedtak.server.ReadinessAware;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.swagger.v3.oas.annotations.Operation;
-import no.nav.foreldrepenger.abakus.app.tjenester.ApplicationServiceStarter;
+import java.util.List;
+
+import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
+import static jakarta.ws.rs.core.Response.Status.SERVICE_UNAVAILABLE;
 
 @Path("/health")
 @Produces(TEXT_PLAIN)

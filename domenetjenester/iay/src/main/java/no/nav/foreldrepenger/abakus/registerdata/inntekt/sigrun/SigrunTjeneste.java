@@ -1,19 +1,5 @@
 package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun;
 
-import static java.time.temporal.ChronoUnit.YEARS;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.MonthDay;
-import java.time.Year;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
@@ -22,6 +8,16 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.PgiFolket
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunPgiFolketrygdenMapper;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestClient;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.MonthDay;
+import java.time.Year;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.time.temporal.ChronoUnit.YEARS;
 
 
 @ApplicationScoped

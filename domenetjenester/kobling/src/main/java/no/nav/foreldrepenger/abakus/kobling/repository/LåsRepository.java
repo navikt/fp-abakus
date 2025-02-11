@@ -1,15 +1,14 @@
 package no.nav.foreldrepenger.abakus.kobling.repository;
 
-import java.util.Objects;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
-
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingLås;
 import no.nav.vedtak.exception.TekniskException;
+
+import java.util.Objects;
 
 @ApplicationScoped
 public class LåsRepository {
