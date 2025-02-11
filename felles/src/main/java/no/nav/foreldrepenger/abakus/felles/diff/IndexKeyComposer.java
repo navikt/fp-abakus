@@ -1,11 +1,11 @@
 package no.nav.foreldrepenger.abakus.felles.diff;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
-import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 
 /**
  * Hjelpemetoder for å raskere sette sammen en IndexKey fra flere deler.

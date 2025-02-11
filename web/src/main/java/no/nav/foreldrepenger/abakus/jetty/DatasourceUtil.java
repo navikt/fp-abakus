@@ -1,16 +1,15 @@
 package no.nav.foreldrepenger.abakus.jetty;
 
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-
 import io.micrometer.core.instrument.Metrics;
 import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil;
 import no.nav.vault.jdbc.hikaricp.VaultError;
 import no.nav.vedtak.exception.TekniskException;
+
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 class DatasourceUtil {
 

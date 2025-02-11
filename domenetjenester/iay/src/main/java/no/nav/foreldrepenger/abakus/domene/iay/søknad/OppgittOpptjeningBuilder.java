@@ -1,5 +1,12 @@
 package no.nav.foreldrepenger.abakus.domene.iay.søknad;
 
+import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
+import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
+import no.nav.abakus.iaygrunnlag.kodeverk.VirksomhetType;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.typer.JournalpostId;
+import no.nav.foreldrepenger.abakus.typer.OrgNummer;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -7,13 +14,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
-
-import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
-import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
-import no.nav.abakus.iaygrunnlag.kodeverk.VirksomhetType;
-import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.typer.JournalpostId;
-import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
 public class OppgittOpptjeningBuilder {
 

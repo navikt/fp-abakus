@@ -1,26 +1,7 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.time.LocalDate;
-import java.util.Objects;
-
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Version;
-import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
-import no.nav.abakus.iaygrunnlag.kodeverk.InntektYtelseType;
-import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
-import no.nav.abakus.iaygrunnlag.kodeverk.LønnsinntektBeskrivelse;
-import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
+import jakarta.persistence.*;
+import no.nav.abakus.iaygrunnlag.kodeverk.*;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -30,6 +11,9 @@ import no.nav.foreldrepenger.abakus.iay.jpa.InntektspostTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.iay.jpa.LønnsbeskrivelseKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.iay.jpa.SkatteOgAvgiftsregelTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
+
+import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity(name = "Inntektspost")
 @Table(name = "IAY_INNTEKTSPOST")

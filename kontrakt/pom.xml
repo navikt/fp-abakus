@@ -1,58 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>no.nav.foreldrepenger.abakus</groupId>
-		<artifactId>fpabakus</artifactId>
-		<version>1.0-SNAPSHOT</version>
-	</parent>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>no.nav.foreldrepenger.abakus</groupId>
+        <artifactId>fpabakus</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
 
-	<artifactId>abakus-kontrakt</artifactId>
-	<packaging>jar</packaging>
-	<name>Abakus :: Kontrakter</name>
+    <artifactId>abakus-kontrakt</artifactId>
+    <packaging>jar</packaging>
+    <name>Abakus :: Kontrakter</name>
 
-	<properties>
+    <properties>
         <maven.deploy.skip>false</maven.deploy.skip>
     </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>no.nav.foreldrepenger.abakus</groupId>
-			<artifactId>abakus-kodeverk</artifactId>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.abakus</groupId>
+            <artifactId>abakus-kodeverk</artifactId>
+        </dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.abakus</groupId>
             <artifactId>abakus-vedtak</artifactId>
         </dependency>
 
-		<dependency>
-			<groupId>jakarta.validation</groupId>
-			<artifactId>jakarta.validation-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-			<!-- avhengighet må deklareres av bruker dersom ønsker å benytte kafka topics fra abakus  -->
-			<groupId>org.apache.kafka</groupId>
-			<artifactId>kafka-clients</artifactId>
-			<optional>true</optional>
-		</dependency>
+        <dependency>
+            <!-- avhengighet må deklareres av bruker dersom ønsker å benytte kafka topics fra abakus  -->
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <optional>true</optional>
+        </dependency>
 
-		<!-- Test -->
+        <!-- Test -->
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
             <scope>test</scope>
         </dependency>
-		<dependency>
-			<groupId>org.glassfish.expressly</groupId>
-			<artifactId>expressly</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.glassfish.expressly</groupId>
+            <artifactId>expressly</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 
     <build>
         <plugins>

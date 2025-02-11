@@ -1,10 +1,10 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.util.Optional;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
+
+import java.util.Optional;
 
 public class YrkesaktivitetBuilder {
     private final Yrkesaktivitet kladd;

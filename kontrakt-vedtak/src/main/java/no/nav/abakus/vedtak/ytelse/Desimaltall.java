@@ -1,9 +1,9 @@
 package no.nav.abakus.vedtak.ytelse;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Desimaltall {
 

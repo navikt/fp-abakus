@@ -1,16 +1,12 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena;
 
-import java.util.List;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.FagsystemDto;
-import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.MeldekortUtbetalingsgrunnlagMeldekortDto;
-import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.MeldekortUtbetalingsgrunnlagSakDto;
-import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.YtelseStatusDto;
-import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.YtelseTypeDto;
+import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.*;
+
+import java.util.List;
 
 public class MedlemskortUtbetalingsgrunnlagSakMapper {
 

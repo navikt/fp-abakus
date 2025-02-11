@@ -1,20 +1,18 @@
 package no.nav.abakus.vedtak.ytelse.request;
 
-import java.time.LocalDate;
-import java.util.Objects;
-import java.util.Set;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.vedtak.ytelse.Aktør;
 import no.nav.abakus.vedtak.ytelse.Periode;
 import no.nav.abakus.vedtak.ytelse.Ytelser;
+
+import java.time.LocalDate;
+import java.util.Objects;
+import java.util.Set;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)

@@ -1,24 +1,19 @@
 package no.nav.foreldrepenger.abakus.aktor;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import no.nav.pdl.*;
+import no.nav.vedtak.exception.VLException;
+import no.nav.vedtak.felles.integrasjon.person.Persondata;
+import no.nav.vedtak.util.LRUCache;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.PersonIdent;
-import no.nav.pdl.HentIdenterQueryRequest;
-import no.nav.pdl.IdentGruppe;
-import no.nav.pdl.IdentInformasjon;
-import no.nav.pdl.IdentInformasjonResponseProjection;
-import no.nav.pdl.Identliste;
-import no.nav.pdl.IdentlisteResponseProjection;
-import no.nav.vedtak.exception.VLException;
-import no.nav.vedtak.felles.integrasjon.person.Persondata;
-import no.nav.vedtak.util.LRUCache;
 
 
 @ApplicationScoped

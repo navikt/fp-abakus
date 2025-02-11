@@ -1,13 +1,12 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import org.junit.jupiter.api.Test;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
 import no.nav.foreldrepenger.abakus.domene.iay.diff.TraverseEntityGraphFactory;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder.EgenNæringBuilder;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffEntity;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class DiffSjekkTest {
 

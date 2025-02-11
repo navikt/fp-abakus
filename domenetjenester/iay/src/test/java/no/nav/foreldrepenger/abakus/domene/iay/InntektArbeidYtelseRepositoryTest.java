@@ -1,23 +1,5 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.extension.RegisterExtension;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
@@ -34,13 +16,20 @@ import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.repository.KoblingRepository;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.Beløp;
-import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
-import no.nav.foreldrepenger.abakus.typer.OrgNummer;
-import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+import no.nav.foreldrepenger.abakus.typer.*;
 import no.nav.vedtak.felles.testutilities.cdi.CdiAwareExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(CdiAwareExtension.class)
 class InntektArbeidYtelseRepositoryTest {
@@ -160,7 +149,7 @@ class InntektArbeidYtelseRepositoryTest {
 
         var aib = gb.getAktørInntektBuilder(aktør);
         var ib = aib.getInntektBuilder(InntektskildeType.SIGRUN, null);
-        for (int y = -1; y<3; y++) {
+        for (int y = -1; y < 3; y++) {
             var periodeFom = LocalDate.of(2020 + y, 1, 1);
             var periodeTom = periodeFom.plusYears(1).minusDays(1);
             var ipb = ib.getInntektspostBuilder().medInntektspostType(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE).medBeløp(BigDecimal.TEN).medPeriode(periodeFom, periodeTom);
@@ -175,7 +164,7 @@ class InntektArbeidYtelseRepositoryTest {
         repository.lagre(ko.getKoblingReferanse(), grunnlagBuilder);
 
         var perioderFraSigrun = new HashSet<IntervallEntitet>();
-        for (int y = 0; y<3; y++) {
+        for (int y = 0; y < 3; y++) {
             var periodeFom = LocalDate.of(2020 + y, 1, 1);
             var periodeTom = periodeFom.plusYears(1).minusDays(1);
             perioderFraSigrun.add(IntervallEntitet.fraOgMedTilOgMed(periodeFom, periodeTom));
@@ -186,7 +175,7 @@ class InntektArbeidYtelseRepositoryTest {
         var aib2 = gb2.getAktørInntektBuilder(aktør);
         var ib2 = aib2.getInntektBuilder(InntektskildeType.SIGRUN, null);
         ib2.tilbakestillInntektsposterForPerioder(perioderFraSigrun);
-        for (int y = 0; y<3; y++) {
+        for (int y = 0; y < 3; y++) {
             var periodeFom = LocalDate.of(2020 + y, 1, 1);
             var periodeTom = periodeFom.plusYears(1).minusDays(1);
             var ipb = ib.getInntektspostBuilder().medInntektspostType(InntektspostType.SELVSTENDIG_NÆRINGSDRIVENDE).medBeløp(BigDecimal.ONE).medPeriode(periodeFom, periodeTom);
@@ -630,8 +619,8 @@ class InntektArbeidYtelseRepositoryTest {
 
         assertThat(aktivtGrunnlag.getInntektsmeldinger()).isPresent();
         assertThat(aktivtGrunnlag.getInntektsmeldinger().get().getInntektsmeldinger()).hasSize(2);
-        assertThat(aktivtGrunnlag.getInntektsmeldinger().get().getInntektsmeldinger().stream().anyMatch(i-> i.getKanalreferanse().equals(inntektsmelding1.getKanalreferanse()))).isTrue();
-        assertThat(aktivtGrunnlag.getInntektsmeldinger().get().getInntektsmeldinger().stream().anyMatch(i-> i.getKanalreferanse().equals(inntektsmelding3.getKanalreferanse()))).isTrue();
+        assertThat(aktivtGrunnlag.getInntektsmeldinger().get().getInntektsmeldinger().stream().anyMatch(i -> i.getKanalreferanse().equals(inntektsmelding1.getKanalreferanse()))).isTrue();
+        assertThat(aktivtGrunnlag.getInntektsmeldinger().get().getInntektsmeldinger().stream().anyMatch(i -> i.getKanalreferanse().equals(inntektsmelding3.getKanalreferanse()))).isTrue();
 
     }
 }

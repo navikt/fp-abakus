@@ -1,10 +1,9 @@
 package no.nav.foreldrepenger.abakus.typer;
 
-import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonValue;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+
+import java.util.Objects;
 
 /**
  * Denne mapper p.t Norsk person ident (fødselsnummer, inkl F-nr, D-nr eller FDAT)

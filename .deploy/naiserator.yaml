@@ -9,8 +9,8 @@ spec:
   image: {{image}}
   port: 8080
   ingresses:
-  {{#each ingresses as |url|}}
-    - {{url}}
+  { { #each ingresses as |url|}}
+      - {{url } }
   {{/each}}
   liveness:
     path: /fpabakus/internal/health/isAlive
@@ -69,30 +69,30 @@ spec:
           - "NAVident"
           - "azp_name"
         groups:
-          {{#each groups as |group|}}
-          - id: "{{group}}"
-          {{/each}}
-  {{#if AZURE_IAC_RULES}}
-  accessPolicy:
-    inbound:
-      rules:
-      {{#each AZURE_IAC_RULES}}
-      - application: {{app}}
-        namespace: {{namespace}}
-        cluster: {{cluster}}
-        {{#if scopes}}
-        permissions:
-          scopes:
-          {{#each scopes}}
-            - "{{this}}"
-          {{/each}}
-        {{/if}}
-        {{#if roles}}
-        permissions:
-          roles:
-          {{#each roles}}
-            - "{{this}}"
-          {{/each}}
-        {{/if}}
-      {{/each}}
+          { { #each groups as |group|}}
+              - id: "{{group}}"
+                      {{/each } }
+  { { #if AZURE_IAC_RULES}}
+    accessPolicy:
+      inbound:
+        rules:
+        { { #each AZURE_IAC_RULES}}
+            - application: {{app } }
+        namespace: {{namespace } }
+  cluster: {{cluster}}
+  { { #if scopes}}
+    permissions:
+      scopes:
+      { { #each scopes}}
+          - "{{this}}"
+              {{/each } }
+      {{/if } }
+  { { #if roles}}
+    permissions:
+      roles:
+      { { #each roles}}
+          - "{{this}}"
+              {{/each } }
+      {{/if } }
+  {{/each}}
   {{/if}}

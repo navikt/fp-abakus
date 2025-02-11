@@ -1,6 +1,12 @@
 package no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
+import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.PgiFolketrygdenResponse;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestClient;
+import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -10,14 +16,7 @@ import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
-import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
-import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.PgiFolketrygdenResponse;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.sigrun.klient.SigrunRestClient;
-import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class SigrunTjenesteTest {
 
@@ -131,27 +130,27 @@ class SigrunTjenesteTest {
 
     private Optional<PgiFolketrygdenResponse> lagResponsFor(Year år) {
         var inntekt = new PgiFolketrygdenResponse.Pgi(PgiFolketrygdenResponse.Skatteordning.FASTLAND,
-            LocalDate.of(år.plusYears(1).getValue(), 6,1), 1000L ,
+            LocalDate.of(år.plusYears(1).getValue(), 6, 1), 1000L,
             null, null, null);
         return Optional.of(new PgiFolketrygdenResponse(PERSONIDENT.getIdent(), år.getValue(), List.of(inntekt)));
     }
 
     private Optional<PgiFolketrygdenResponse> lagResponsMedNæringFor(Year år) {
         var inntektF = new PgiFolketrygdenResponse.Pgi(PgiFolketrygdenResponse.Skatteordning.FASTLAND,
-            LocalDate.of(år.plusYears(1).getValue(), 6,1), 500L ,
+            LocalDate.of(år.plusYears(1).getValue(), 6, 1), 500L,
             null, null, null);
         var inntektS = new PgiFolketrygdenResponse.Pgi(PgiFolketrygdenResponse.Skatteordning.SVALBARD,
-            LocalDate.of(år.plusYears(1).getValue(), 6,1), null ,
+            LocalDate.of(år.plusYears(1).getValue(), 6, 1), null,
             null, 500L, null);
         var inntektK = new PgiFolketrygdenResponse.Pgi(PgiFolketrygdenResponse.Skatteordning.KILDESKATT_PAA_LOENN,
-            LocalDate.of(år.plusYears(1).getValue(), 6,1), 500L ,
+            LocalDate.of(år.plusYears(1).getValue(), 6, 1), 500L,
             null, null, null);
         return Optional.of(new PgiFolketrygdenResponse(PERSONIDENT.getIdent(), år.getValue(), List.of(inntektF, inntektS, inntektK)));
     }
 
     private Optional<PgiFolketrygdenResponse> lagResponsUtenInntektFor(Year år) {
         var inntekt = new PgiFolketrygdenResponse.Pgi(PgiFolketrygdenResponse.Skatteordning.FASTLAND,
-            LocalDate.of(år.plusYears(1).getValue(), 6,1), 0L ,
+            LocalDate.of(år.plusYears(1).getValue(), 6, 1), 0L,
             null, null, null);
         return Optional.of(new PgiFolketrygdenResponse(PERSONIDENT.getIdent(), år.getValue(), List.of(inntekt)));
     }

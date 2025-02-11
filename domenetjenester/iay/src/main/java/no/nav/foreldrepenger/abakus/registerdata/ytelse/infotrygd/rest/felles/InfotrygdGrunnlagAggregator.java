@@ -1,10 +1,5 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.rest.felles;
 
-import static java.util.stream.Collectors.toList;
-
-import java.time.LocalDate;
-import java.util.List;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
@@ -13,6 +8,11 @@ import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.GrunnlagRequest;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.InfotrygdGrunnlag;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
 import no.nav.vedtak.konfig.Tid;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @ApplicationScoped
 public class InfotrygdGrunnlagAggregator {

@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.kobling;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
 @Converter(autoApply = true)

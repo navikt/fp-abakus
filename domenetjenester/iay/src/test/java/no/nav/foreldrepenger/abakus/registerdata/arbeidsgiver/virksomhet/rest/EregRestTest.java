@@ -1,18 +1,16 @@
 package no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.rest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.io.IOException;
-import java.time.LocalDate;
-
-import org.junit.jupiter.api.Test;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.vedtak.felles.integrasjon.organisasjon.JuridiskEnhetVirksomheter;
 import no.nav.vedtak.felles.integrasjon.organisasjon.OrganisasjonEReg;
 import no.nav.vedtak.felles.integrasjon.organisasjon.OrganisasjonstypeEReg;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.time.LocalDate;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class EregRestTest {
 

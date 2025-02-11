@@ -1,14 +1,6 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.io.Serializable;
-import java.util.Objects;
-
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.Embedded;
-
+import jakarta.persistence.*;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -16,6 +8,9 @@ import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 import no.nav.foreldrepenger.abakus.felles.diff.TraverseValue;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
+
+import java.io.Serializable;
+import java.util.Objects;
 
 @Embeddable
 public class Arbeidsgiver implements IndexKey, TraverseValue, Serializable {

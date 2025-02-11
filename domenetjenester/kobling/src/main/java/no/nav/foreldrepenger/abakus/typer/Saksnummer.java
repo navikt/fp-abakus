@@ -1,13 +1,12 @@
 package no.nav.foreldrepenger.abakus.typer;
 
-import java.util.Objects;
-import java.util.regex.Pattern;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
+
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * Saksnummer refererer til saksnummer registret i GSAK.

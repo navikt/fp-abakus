@@ -1,13 +1,12 @@
 package no.nav.foreldrepenger.abakus.typer;
 
-import java.io.Serializable;
-import java.util.Objects;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
+
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Ekstern arbeidsforhold referanse.

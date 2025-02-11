@@ -1,17 +1,16 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import no.nav.abakus.iaygrunnlag.request.Dataset;
+import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.UUID;
 
-import org.junit.jupiter.api.Test;
-
-import no.nav.abakus.iaygrunnlag.request.Dataset;
-import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
-import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class InntektArbeidYtelseGrunnlagBuilderTest {
 

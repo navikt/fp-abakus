@@ -1,11 +1,10 @@
 package no.nav.foreldrepenger.abakus.felles.jpa;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-
 import no.nav.abakus.iaygrunnlag.Periode;
+
+import java.time.LocalDate;
 
 @Embeddable
 public class IntervallEntitet extends AbstractIntervall {

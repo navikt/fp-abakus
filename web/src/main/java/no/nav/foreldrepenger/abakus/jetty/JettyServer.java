@@ -1,9 +1,11 @@
 package no.nav.foreldrepenger.abakus.jetty;
 
-import java.io.File;
-
-import javax.naming.NamingException;
-
+import no.nav.foreldrepenger.abakus.app.konfig.ApiConfig;
+import no.nav.foreldrepenger.abakus.app.konfig.EksternApiConfig;
+import no.nav.foreldrepenger.abakus.app.konfig.ForvaltningApiConfig;
+import no.nav.foreldrepenger.abakus.app.konfig.InternalApiConfig;
+import no.nav.foreldrepenger.abakus.app.tjenester.ServiceStarterListener;
+import no.nav.foreldrepenger.konfig.Environment;
 import org.eclipse.jetty.ee10.cdi.CdiDecoratingListener;
 import org.eclipse.jetty.ee10.cdi.CdiServletContainerInitializer;
 import org.eclipse.jetty.ee10.servlet.DefaultServlet;
@@ -21,12 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import no.nav.foreldrepenger.abakus.app.konfig.ApiConfig;
-import no.nav.foreldrepenger.abakus.app.konfig.EksternApiConfig;
-import no.nav.foreldrepenger.abakus.app.konfig.ForvaltningApiConfig;
-import no.nav.foreldrepenger.abakus.app.konfig.InternalApiConfig;
-import no.nav.foreldrepenger.abakus.app.tjenester.ServiceStarterListener;
-import no.nav.foreldrepenger.konfig.Environment;
+import javax.naming.NamingException;
+import java.io.File;
 
 public class JettyServer {
 

@@ -1,22 +1,20 @@
 package no.nav.abakus.iaygrunnlag.arbeid.v1;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Objects;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.ALWAYS, content = Include.NON_EMPTY)
@@ -40,7 +38,9 @@ public class PermisjonDto {
      * 100%. C'est la vie.
      */
     @JsonProperty("prosentsats")
-    @Valid @DecimalMin(value = "0.00", message = "permisjon prosentsats [${validatedValue}] må være >= {value}") @DecimalMax(value = "500.00", message = "permisjon prosentsats [${validatedValue}] må være <= {value}")
+    @Valid
+    @DecimalMin(value = "0.00", message = "permisjon prosentsats [${validatedValue}] må være >= {value}")
+    @DecimalMax(value = "500.00", message = "permisjon prosentsats [${validatedValue}] må være <= {value}")
     // insane maks verdi, men Aa-reg sier så
     private BigDecimal prosentsats;
 

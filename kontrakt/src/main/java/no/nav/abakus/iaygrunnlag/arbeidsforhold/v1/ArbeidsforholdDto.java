@@ -1,22 +1,19 @@
 package no.nav.abakus.iaygrunnlag.arbeidsforhold.v1;
 
-import java.util.List;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
 import no.nav.abakus.iaygrunnlag.Periode;
-import no.nav.abakus.iaygrunnlag.arbeid.v1.AktivitetsAvtaleDto;
 import no.nav.abakus.iaygrunnlag.arbeid.v1.PermisjonDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
+
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
@@ -73,9 +70,11 @@ public class ArbeidsforholdDto {
     public List<Periode> getAnsettelsesperiode() {
         return ansettelsesperiode;
     }
+
     public List<PermisjonDto> getPermisjoner() {
         return permisjoner;
     }
+
     public List<ArbeidsavtaleDto> getArbeidsavtaler() {
         return arbeidsavtaler;
     }
@@ -83,9 +82,11 @@ public class ArbeidsforholdDto {
     public void setAnsettelsesperiode(List<Periode> ansettelsesperiode) {
         this.ansettelsesperiode = ansettelsesperiode;
     }
+
     public void setArbeidsavtaler(List<ArbeidsavtaleDto> arbeidsavtaler) {
         this.arbeidsavtaler = arbeidsavtaler;
     }
+
     public void setPermisjoner(List<PermisjonDto> permisjoner) {
         this.permisjoner = permisjoner;
     }

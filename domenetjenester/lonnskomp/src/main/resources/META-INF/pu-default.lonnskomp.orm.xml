@@ -5,11 +5,11 @@
                  https://jakarta.ee/xml/ns/persistence/orm/orm_3_0.xsd"
                  version="3.0">
 
-    <sequence-generator name="SEQ_LONNSKOMP_VEDTAK" allocation-size="50" sequence-name="SEQ_LONNSKOMP_VEDTAK" />
-    <sequence-generator name="SEQ_LONNSKOMP_ANVIST" allocation-size="50" sequence-name="SEQ_LONNSKOMP_ANVIST" />
+    <sequence-generator name="SEQ_LONNSKOMP_VEDTAK" allocation-size="50" sequence-name="SEQ_LONNSKOMP_VEDTAK"/>
+    <sequence-generator name="SEQ_LONNSKOMP_ANVIST" allocation-size="50" sequence-name="SEQ_LONNSKOMP_ANVIST"/>
 
     <!-- InntektArbeidYtelser aggregat og grunnlag -->
-    <entity class="no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonVedtak" />
-    <entity class="no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonAnvist" />
+    <entity class="no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonVedtak"/>
+    <entity class="no.nav.foreldrepenger.abakus.lonnskomp.domene.LønnskompensasjonAnvist"/>
 
 </entity-mappings>

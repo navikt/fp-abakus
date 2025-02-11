@@ -1,15 +1,5 @@
 package no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten;
 
-import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.tjenester.aordningen.inntektsinformasjon.Aktoer;
@@ -24,11 +14,12 @@ import no.nav.tjenester.aordningen.inntektsinformasjon.tilleggsinformasjondetalj
 import no.nav.tjenester.aordningen.inntektsinformasjon.tilleggsinformasjondetaljer.TilleggsinformasjonDetaljerType;
 import no.nav.vedtak.exception.IntegrasjonException;
 import no.nav.vedtak.exception.TekniskException;
-import no.nav.vedtak.felles.integrasjon.rest.RestClient;
-import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
-import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
-import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
-import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
+import no.nav.vedtak.felles.integrasjon.rest.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.time.YearMonth;
+import java.util.*;
 
 @ApplicationScoped
 @RestClientConfig(tokenConfig = TokenFlow.AZUREAD_CC, endpointProperty = "hentinntektlistebolk.url", endpointDefault = "https://app.adeo.no/inntektskomponenten-ws/rs/api/v1/hentinntektlistebolk",
@@ -122,8 +113,8 @@ public class InntektTjeneste {
     }
 
     private void oversettInntekter(List<Månedsinntekt> månedsinntekter,
-                                                        ArbeidsInntektMaaned arbeidsInntektMaaned,
-                                                        InntektskildeType kilde) {
+                                   ArbeidsInntektMaaned arbeidsInntektMaaned,
+                                   InntektskildeType kilde) {
         var arbeidsInntektInformasjon = arbeidsInntektMaaned.getArbeidsInntektInformasjon();
 
         if (arbeidsInntektInformasjon != null && arbeidsInntektInformasjon.getInntektListe() != null) {

@@ -1,11 +1,10 @@
 package no.nav.foreldrepenger.abakus.app.exceptions;
 
-import java.util.List;
-
 import jakarta.validation.ConstraintViolationException;
-
 import no.nav.vedtak.exception.FunksjonellException;
 import no.nav.vedtak.exception.TekniskException;
+
+import java.util.List;
 
 class FeltValideringFeil {
 

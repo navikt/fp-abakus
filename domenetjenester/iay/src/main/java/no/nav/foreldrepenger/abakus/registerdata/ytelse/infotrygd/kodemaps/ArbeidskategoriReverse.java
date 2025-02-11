@@ -1,10 +1,9 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps;
 
-import java.util.Map;
-
+import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
 import org.slf4j.Logger;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
+import java.util.Map;
 
 public class ArbeidskategoriReverse {
 

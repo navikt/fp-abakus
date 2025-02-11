@@ -1,17 +1,11 @@
 package no.nav.foreldrepenger.abakus.vedtak;
 
-import java.io.IOException;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.abakus.vedtak.ytelse.Ytelse;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
@@ -22,6 +16,10 @@ import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
+
+import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @ProsessTask(value = "vedtakEvent.lagre", prioritet = 2)
 public class LagreVedtakTask implements ProsessTaskHandler {

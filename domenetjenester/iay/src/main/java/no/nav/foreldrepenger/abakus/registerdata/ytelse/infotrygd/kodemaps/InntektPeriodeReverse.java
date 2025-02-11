@@ -1,10 +1,9 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.kodemaps;
 
-import java.util.Map;
-
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
 import org.slf4j.Logger;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
+import java.util.Map;
 
 public class InntektPeriodeReverse {
 
