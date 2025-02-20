@@ -54,6 +54,8 @@ spec:
       destinations:
         - id: "grafana-lgtm"
         - id: "elastic-apm"
+  vault:
+    enabled: true
   envFrom:
     - secret: fpabakus
   azure:
