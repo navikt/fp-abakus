@@ -19,7 +19,6 @@
     "8cddda87-0a22-4d35-9186-a2c32a6ab450",
     "5a7b4d5e-f80b-451c-aae2-2ab1c90f039d"
   ],
-  "devOnly": "true",
   "AZURE_IAC_RULES": [
     {
       "app": "fp-swagger",
