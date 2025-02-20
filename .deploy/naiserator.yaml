@@ -54,11 +54,6 @@ spec:
       destinations:
         - id: "grafana-lgtm"
         - id: "elastic-apm"
-  vault:
-    enabled: true
-    paths:
-      - mountPath: /var/run/secrets/nais.io/serviceuser
-        kvPath: {{serviceuserkv}}
   envFrom:
     - secret: fpabakus
   azure:
