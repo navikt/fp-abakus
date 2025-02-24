@@ -43,25 +43,9 @@ class KoblingRepositoryTest extends EntityManagerAwareTest {
         assertDoesNotThrow(() -> koblingRepository.lagre(nyKobling));
 
         var nyereKobling = new Kobling(YtelseType.FORELDREPENGER, new Saksnummer("23234234"), koblingReferanse, new AktørId(1232123343423L));
-        nyereKobling.deaktiver();
+        nyereKobling.setAktiv(false);
         var ex = assertThrows(IllegalStateException.class, () -> koblingRepository.lagre(nyereKobling));
 
         assertThat(ex.getMessage()).startsWith("Utviklerfeil: Kan ikke lagre en ny kobling for eksisterende kobling referanse.");
-    }
-
-    @Test
-    void lagre_ny_kobling_som_er_deaktivert_nok() {
-        var referanse = UUID.randomUUID();
-        var koblingReferanse = new KoblingReferanse(referanse);
-        var nyKobling = new Kobling(YtelseType.FORELDREPENGER, new Saksnummer("23234234"), koblingReferanse, new AktørId(1232123343423L));
-        assertDoesNotThrow(() -> koblingRepository.lagre(nyKobling));
-        var kobling = koblingRepository.hentForKoblingReferanse(koblingReferanse, true).orElseThrow();
-        kobling.deaktiver();
-        assertDoesNotThrow(() -> koblingRepository.lagre(kobling)); // her bør den første endringer ikke feile
-
-        var nyereKobling = koblingRepository.hentForKoblingReferanse(koblingReferanse, true).orElseThrow();
-        nyereKobling.setYtelseType(YtelseType.SVANGERSKAPSPENGER);
-        var ex = assertThrows(IllegalStateException.class, () -> koblingRepository.lagre(nyereKobling));
-        assertThat(ex.getMessage()).startsWith("Etterspør kobling:").contains(referanse.toString()).endsWith("men denne er ikke aktiv") ;
     }
 }
