@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -123,8 +124,7 @@ public class ArbeidsforholdRestTjeneste {
         setupLogMdcFraKoblingReferanse(referanse);
         validerIkkeAvsluttet(referanse);
 
-        // Må finnes fra før
-        var koblingLås = koblingTjeneste.taSkrivesLås(referanse);
+        var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(referanse));
 
         ArbeidsforholdInformasjon arbeidsforholdInformasjon = iayTjeneste.hentArbeidsforholdInformasjonForKobling(referanse);
 
@@ -133,7 +133,7 @@ public class ArbeidsforholdRestTjeneste {
             InternArbeidsforholdRef.ref(abakusReferanse));
 
         var dto = dtoTjeneste.mapArbeidsforhold(request.getArbeidsgiver(), abakusReferanse, arbeidsforholdRef.getReferanse());
-        koblingTjeneste.oppdaterLåsVersjon(koblingLås);
+        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
         return Response.ok(dto).build();
     }
 
