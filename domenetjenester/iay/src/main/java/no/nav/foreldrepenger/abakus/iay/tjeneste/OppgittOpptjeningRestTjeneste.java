@@ -71,8 +71,7 @@ public class OppgittOpptjeningRestTjeneste {
         }
 
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
-        // Må finnes til å kunne endre
-        var koblingLås = koblingTjeneste.taSkrivesLås(koblingReferanse);
+        var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
         var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId,
             new Saksnummer(mottattRequest.getSaksnummer()));
@@ -82,7 +81,7 @@ public class OppgittOpptjeningRestTjeneste {
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagre(koblingReferanse, builder);
 
         koblingTjeneste.lagre(kobling);
-        koblingTjeneste.oppdaterLåsVersjon(koblingLås);
+        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
 
         Response response;
         if (grunnlagReferanse != null) {
@@ -102,7 +101,7 @@ public class OppgittOpptjeningRestTjeneste {
     public Response lagreOverstyrtOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
         LoggUtil.setupLogMdc(mottattRequest.getYtelseType(), mottattRequest.getSaksnummer(), mottattRequest.getKoblingReferanse());
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
-        var koblingLås = koblingTjeneste.taSkrivesLås(koblingReferanse);
+        var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
         var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId,
             new Saksnummer(mottattRequest.getSaksnummer()));
@@ -112,7 +111,7 @@ public class OppgittOpptjeningRestTjeneste {
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagreOverstyring(koblingReferanse, builder);
 
         koblingTjeneste.lagre(kobling);
-        koblingTjeneste.oppdaterLåsVersjon(koblingLås);
+        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
 
         Response response;
         if (grunnlagReferanse != null) {
