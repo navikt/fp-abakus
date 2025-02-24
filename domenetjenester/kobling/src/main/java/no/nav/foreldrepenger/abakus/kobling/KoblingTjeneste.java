@@ -54,7 +54,7 @@ public class KoblingTjeneste {
 
     public void deaktiver(KoblingReferanse referanse) {
         var kobling = repository.hentForKoblingReferanse(referanse, true).orElseThrow();
-        kobling.deaktiver();
+        kobling.setAktiv(false);
         repository.lagre(kobling);
     }
 

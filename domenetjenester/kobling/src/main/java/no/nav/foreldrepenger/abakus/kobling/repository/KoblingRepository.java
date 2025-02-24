@@ -55,6 +55,12 @@ public class KoblingRepository {
         return k;
     }
 
+    private void validerErAktiv(Optional<Kobling> kobling) {
+        if (kobling.isPresent() && !kobling.get().erAktiv()) {
+            throw new IllegalStateException("Etterspør kobling: " + kobling.get().getKoblingReferanse() + ", men denne er ikke aktiv");
+        }
+    }
+
     public Optional<Kobling> hentSisteKoblingReferanseFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
         var query = entityManager.createQuery("""
             FROM Kobling k
@@ -67,22 +73,13 @@ public class KoblingRepository {
         query.setParameter("ytelse", ytelseType);
         query.setParameter("aktørId", aktørId);
         query.setMaxResults(1);
-        var k = query.getResultList().stream().findFirst();
-        validerErAktiv(k);
-        return k;
-    }
-
-    private void validerErAktiv(Optional<Kobling> kobling) {
-        if (kobling.isPresent() && !kobling.get().erAktiv()) {
-            throw new IllegalStateException("Etterspør kobling: " + kobling.get().getKoblingReferanse() + ", men denne er ikke aktiv");
-        }
+        return query.getResultList().stream().findFirst();
     }
 
     public void lagre(Kobling nyKobling) {
         // om nyKobling er persistert fra tidligere (har id != null) vil alltid eksisterendeKobling være likt nyKobling (med alle de endringene som er gjort til nyKobling underveis)
         var eksisterendeKobling = hentForKoblingReferanse(nyKobling.getKoblingReferanse());
 
-        validerErAktiv(eksisterendeKobling);
         validerLikKobling(nyKobling, eksisterendeKobling);
 
         var diff = getDiff(eksisterendeKobling.orElse(null), nyKobling);

@@ -25,6 +25,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 import no.nav.foreldrepenger.abakus.felles.LoggUtil;
 import no.nav.foreldrepenger.abakus.iay.OppgittOpptjeningTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapOppgittOpptjening;
+import no.nav.foreldrepenger.abakus.kobling.KoblingLås;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -35,6 +36,8 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
+
+import static no.nav.foreldrepenger.abakus.kobling.utils.KoblingUtil.validerIkkeAvsluttet;
 
 @OpenAPIDefinition(tags = @Tag(name = "oppgitt opptjening"))
 @Path("/iay/oppgitt/v1")
@@ -67,20 +70,21 @@ public class OppgittOpptjeningRestTjeneste {
                 "v1/motta skal ikke ha journalpostId eller innsendingstidspunkt. Skal du egentlig bruke /v2/motta ?").build();
         }
 
-        Response response;
-
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
-        var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
+        // Må finnes til å kunne endre
+        var koblingLås = koblingTjeneste.taSkrivesLås(koblingReferanse);
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
         var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId,
             new Saksnummer(mottattRequest.getSaksnummer()));
+        validerIkkeAvsluttet(kobling);
 
         OppgittOpptjeningBuilder builder = new MapOppgittOpptjening().mapFraDto(mottattRequest.getOppgittOpptjening());
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagre(koblingReferanse, builder);
 
         koblingTjeneste.lagre(kobling);
-        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
+        koblingTjeneste.oppdaterLåsVersjon(koblingLås);
 
+        Response response;
         if (grunnlagReferanse != null) {
             response = Response.ok(new UuidDto(grunnlagReferanse.getReferanse())).build();
         } else {
@@ -96,20 +100,21 @@ public class OppgittOpptjeningRestTjeneste {
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response lagreOverstyrtOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
-        Response response;
         LoggUtil.setupLogMdc(mottattRequest.getYtelseType(), mottattRequest.getSaksnummer(), mottattRequest.getKoblingReferanse());
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
-        var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
+        var koblingLås = koblingTjeneste.taSkrivesLås(koblingReferanse);
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
         var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId,
             new Saksnummer(mottattRequest.getSaksnummer()));
+        validerIkkeAvsluttet(kobling);
 
         OppgittOpptjeningBuilder builder = new MapOppgittOpptjening().mapFraDto(mottattRequest.getOppgittOpptjening());
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagreOverstyring(koblingReferanse, builder);
 
         koblingTjeneste.lagre(kobling);
-        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
+        koblingTjeneste.oppdaterLåsVersjon(koblingLås);
 
+        Response response;
         if (grunnlagReferanse != null) {
             response = Response.ok(new UuidDto(grunnlagReferanse.getReferanse())).build();
         } else {
@@ -125,20 +130,22 @@ public class OppgittOpptjeningRestTjeneste {
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response lagreOppgittOpptjeningOgNullstillOverstyring(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
-        Response response;
         LoggUtil.setupLogMdc(mottattRequest.getYtelseType(), mottattRequest.getSaksnummer(), mottattRequest.getKoblingReferanse());
         var koblingReferanse = new KoblingReferanse(mottattRequest.getKoblingReferanse());
-        var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
+        // Må finnes til å kunne endre
+        var koblingLås = koblingTjeneste.taSkrivesLås(koblingReferanse);
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
         var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId,
             new Saksnummer(mottattRequest.getSaksnummer()));
+        validerIkkeAvsluttet(kobling);
 
         OppgittOpptjeningBuilder builder = new MapOppgittOpptjening().mapFraDto(mottattRequest.getOppgittOpptjening());
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagreOgNullstillOverstyring(koblingReferanse, builder);
 
         koblingTjeneste.lagre(kobling);
-        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
+        koblingTjeneste.oppdaterLåsVersjon(koblingLås);
 
+        Response response;
         if (grunnlagReferanse != null) {
             response = Response.ok(new UuidDto(grunnlagReferanse.getReferanse())).build();
         } else {

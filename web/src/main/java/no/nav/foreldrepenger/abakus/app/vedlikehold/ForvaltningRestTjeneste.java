@@ -23,6 +23,8 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
+import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
+import no.nav.foreldrepenger.abakus.kobling.utils.KoblingUtil;
 import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
@@ -41,6 +43,7 @@ public class ForvaltningRestTjeneste {
     private static final String GJELDENDE = "gjeldende";
 
     private InntektArbeidYtelseTjeneste iayTjeneste;
+    private KoblingTjeneste koblingTjeneste;
 
     private EntityManager entityManager;
 
@@ -49,9 +52,12 @@ public class ForvaltningRestTjeneste {
     }
 
     @Inject
-    public ForvaltningRestTjeneste(EntityManager entityManager, InntektArbeidYtelseTjeneste iayTjeneste) {
+    public ForvaltningRestTjeneste(EntityManager entityManager,
+                                   InntektArbeidYtelseTjeneste iayTjeneste,
+                                   KoblingTjeneste koblingTjeneste) {
         this.entityManager = entityManager;
         this.iayTjeneste = iayTjeneste;
+        this.koblingTjeneste = koblingTjeneste;
     }
 
     @POST
@@ -86,6 +92,7 @@ public class ForvaltningRestTjeneste {
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
     public Response eliminerInntektsmelding(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AbacDataSupplier.class) @NotNull @Valid EliminerInntektsmeldingRequest request) {
         var koblingReferanse = new KoblingReferanse(request.getEksternReferanse().toUuidReferanse());
+        validerIkkeAvsluttet(koblingReferanse);
         var journalpost = new JournalpostId(request.getJournalpostId());
         var eksisterende = iayTjeneste.hentGrunnlagFor(koblingReferanse).orElseThrow();
         var grunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(eksisterende);
@@ -108,7 +115,6 @@ public class ForvaltningRestTjeneste {
         iayTjeneste.lagre(koblingReferanse, grunnlagBuilder);
         return Response.ok().build();
     }
-
 
     @POST
     @Path("/oppdaterAktoerId")
@@ -153,6 +159,11 @@ public class ForvaltningRestTjeneste {
             .executeUpdate();
         entityManager.flush();
         return antall;
+    }
+
+    private void validerIkkeAvsluttet(KoblingReferanse koblingReferanse) {
+        var kobling = koblingTjeneste.hentFor(koblingReferanse);
+        kobling.ifPresent(KoblingUtil::validerIkkeAvsluttet);
     }
 
     public static class AbacDataSupplier implements Function<Object, AbacDataAttributter> {

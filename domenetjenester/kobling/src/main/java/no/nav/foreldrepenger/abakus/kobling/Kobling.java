@@ -165,7 +165,7 @@ public class Kobling extends BaseEntitet implements IndexKey {
         return aktiv;
     }
 
-    public void deaktiver() {
-        this.aktiv = false;
+    public void setAktiv(boolean aktiv) {
+        this.aktiv = aktiv;
     }
 }

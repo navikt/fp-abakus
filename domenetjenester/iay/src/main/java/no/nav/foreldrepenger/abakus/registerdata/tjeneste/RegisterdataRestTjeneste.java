@@ -34,6 +34,9 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.abakus.iaygrunnlag.request.RegisterdataType;
 import no.nav.foreldrepenger.abakus.felles.LoggUtil;
+import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
+import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
+import no.nav.foreldrepenger.abakus.kobling.utils.KoblingUtil;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.TaskResponsDto;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
@@ -49,13 +52,16 @@ import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 public class RegisterdataRestTjeneste {
 
     private InnhentRegisterdataTjeneste innhentTjeneste;
+    private KoblingTjeneste koblingTjeneste;
 
     public RegisterdataRestTjeneste() {
     } // CDI ctor
 
     @Inject
-    public RegisterdataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste) {
+    public RegisterdataRestTjeneste(InnhentRegisterdataTjeneste innhentTjeneste,
+                                    KoblingTjeneste koblingTjeneste) {
         this.innhentTjeneste = innhentTjeneste;
+        this.koblingTjeneste = koblingTjeneste;
     }
 
     @POST
@@ -70,6 +76,7 @@ public class RegisterdataRestTjeneste {
             return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
         }
         LoggUtil.setupLogMdc(dto.getYtelseType(), dto.getSaksnummer());
+        validerIkkeAvsluttet(new KoblingReferanse(dto.getReferanse()));
         String taskGruppe = innhentTjeneste.triggAsyncInnhent(dto);
         if (taskGruppe != null) {
             response = Response.accepted(new TaskResponsDto(taskGruppe)).build();
@@ -77,6 +84,11 @@ public class RegisterdataRestTjeneste {
             response = Response.noContent().build();
         }
         return response;
+    }
+
+    private void validerIkkeAvsluttet(KoblingReferanse koblingReferanse) {
+        var kobling = koblingTjeneste.hentFor(koblingReferanse);
+        kobling.ifPresent(KoblingUtil::validerIkkeAvsluttet);
     }
 
     /**

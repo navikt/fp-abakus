@@ -71,6 +71,7 @@ import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYTilDtoMapper;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
+import no.nav.foreldrepenger.abakus.kobling.utils.KoblingUtil;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
@@ -80,6 +81,8 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
+
+import static no.nav.foreldrepenger.abakus.kobling.utils.KoblingUtil.validerIkkeAvsluttet;
 
 @OpenAPIDefinition(tags = {@Tag(name = "iay-grunnlag")})
 @Path("/iay/grunnlag/v1")
@@ -259,6 +262,7 @@ public class GrunnlagRestTjeneste {
         var koblingReferanse = getKoblingReferanse(aktørId, dto.getKoblingReferanse(), dto.getGrunnlagReferanse());
 
         setupLogMdcFraKoblingReferanse(koblingReferanse);
+        validerIkkeAvsluttet(koblingReferanse);
 
         var nyttGrunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayTjeneste.hentGrunnlagFor(koblingReferanse));
 
@@ -310,19 +314,8 @@ public class GrunnlagRestTjeneste {
     @Operation(description = "Kopier grunnlag", tags = "iay-grunnlag")
     @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response kopierOgLagreGrunnlag(@NotNull @Valid KopierGrunnlagRequestAbac request) {
-        var ref = new KoblingReferanse(request.getNyReferanse());
-        var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(ref)); // alltid ta lås før skrive operasjoner
-
-        setupLogMdcFraKoblingReferanse(ref);
-
-        var kobling = oppdaterKobling(request);
-
-        iayTjeneste.kopierGrunnlagFraEksisterendeBehandling(kobling.getYtelseType(), kobling.getAktørId(), new Saksnummer(request.getSaksnummer()),
-            new KoblingReferanse(request.getGammelReferanse()), new KoblingReferanse(request.getNyReferanse()), request.getDataset(), false);
-
-        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
-
+    public Response kopierOgLagreGrunnlagUtenInntektsmeldinger(@NotNull @Valid KopierGrunnlagRequestAbac request) {
+        kopierOgLagreGrunnlag(request, false);
         return Response.ok().build();
     }
 
@@ -334,19 +327,23 @@ public class GrunnlagRestTjeneste {
     @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response kopierOgLagreGrunnlagBeholdIM(@NotNull @Valid KopierGrunnlagRequestAbac request) {
-        var ref = new KoblingReferanse(request.getNyReferanse());
-        var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(ref)); // alltid ta lås før skrive operasjoner
+        kopierOgLagreGrunnlag(request, true);
+        return Response.ok().build();
+    }
 
-        setupLogMdcFraKoblingReferanse(ref);
+    private void kopierOgLagreGrunnlag(KopierGrunnlagRequestAbac request, boolean beholdInntektsmeldinger) {
+        var koblingReferanse = new KoblingReferanse(request.getNyReferanse());
+        var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
+
+        setupLogMdcFraKoblingReferanse(koblingReferanse);
+        validerIkkeAvsluttet(koblingReferanse); // denne bør egentlig aldri finnes fra før her, men det skader ikke å sjekke.
 
         var kobling = oppdaterKobling(request);
 
         iayTjeneste.kopierGrunnlagFraEksisterendeBehandling(kobling.getYtelseType(), kobling.getAktørId(), new Saksnummer(request.getSaksnummer()),
-            new KoblingReferanse(request.getGammelReferanse()), new KoblingReferanse(request.getNyReferanse()), request.getDataset(), true);
+            new KoblingReferanse(request.getGammelReferanse()), new KoblingReferanse(request.getNyReferanse()), request.getDataset(), beholdInntektsmeldinger);
 
         koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
-
-        return Response.ok().build();
     }
 
     private Date getSistOppdatert(LocalDateTime... tidspunkt) {
@@ -466,6 +463,11 @@ public class GrunnlagRestTjeneste {
         kobling.filter(k -> k.getSaksnummer() != null)
             .ifPresent(k -> LoggUtil.setupLogMdc(k.getYtelseType(), kobling.get().getSaksnummer().getVerdi(),
                 koblingReferanse.getReferanse())); // legger til saksnummer i MDC
+    }
+
+    private void validerIkkeAvsluttet(KoblingReferanse koblingReferanse) {
+        var kobling = koblingTjeneste.hentFor(koblingReferanse);
+        kobling.ifPresent(KoblingUtil::validerIkkeAvsluttet);
     }
 
     /**
