@@ -103,6 +103,11 @@ public class InntektsmeldingerRestTjeneste {
     @Operation(description = "Hent refusjonskrav fra inntektsmeldinger for angitt søke spesifikasjon", tags = "inntektsmelding")
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
+    @Deprecated(forRemoval = true)
+    /**
+     * Brukes ikke og kan antageligvis fjernes
+     * @deprecated brukes ikke noe sted, kan antageligvis fjernes.
+     */
     public Response hentRefusjonskravDatoForSak(@NotNull @Valid InntektsmeldingerRequestAbacDto spesifikasjon) {
         Response response;
         LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer());

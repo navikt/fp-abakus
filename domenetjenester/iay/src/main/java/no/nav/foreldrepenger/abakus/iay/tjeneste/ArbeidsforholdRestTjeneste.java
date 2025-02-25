@@ -76,6 +76,11 @@ public class ArbeidsforholdRestTjeneste {
     @Operation(description = "Gir ut alle arbeidsforhold i en gitt periode/dato for en gitt aktør. NB! Proxyer direkte til aa-registeret / ingen bruk av sak/kobling i abakus", tags = "arbeidsforhold")
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    @Deprecated(forRemoval = true)
+    /**
+     * Brukes ikke og kan antageligvis fjernes
+     * @deprecated brukes ikke noe sted, kan antageligvis fjernes.
+     */
     public Response hentArbeidsforhold(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
         var aktørId = new AktørId(request.getAktør().getIdent());
         var periode = request.getPeriode();
@@ -117,6 +122,11 @@ public class ArbeidsforholdRestTjeneste {
     @Operation(description = "Finner eksisterende intern referanse for arbeidsforholdId eller lager en ny", tags = "arbeidsforhold")
     @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    @Deprecated(forRemoval = true)
+    /**
+     * Brukes ikke og kan antageligvis fjernes
+     * @deprecated brukes ikke noe sted, kan antageligvis fjernes.
+     */
     public Response finnEllerOpprettArbeidsforholdReferanse(@NotNull @TilpassetAbacAttributt(supplierClass = ArbeidsforholdReferanseAbacDataSupplier.class) @Valid ArbeidsforholdReferanse request) {
 
         KoblingReferanse referanse = new KoblingReferanse(UUID.fromString(request.getKoblingReferanse().getReferanse()));

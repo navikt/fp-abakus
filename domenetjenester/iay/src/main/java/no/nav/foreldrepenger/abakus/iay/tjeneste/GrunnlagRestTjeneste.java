@@ -160,6 +160,11 @@ public class GrunnlagRestTjeneste {
     @Operation(description = "Hent aktivt arbeidsforholdinformasjon grunnlag for angitt kobling", tags = "iay-grunnlag", responses = {@ApiResponse(description = "ArbeidsforholdInformasjon", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArbeidsforholdInformasjon.class))), @ApiResponse(responseCode = "204", description = "Det finnes ikke et arbeidsforhold grunnlag for forespørselen"), @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")})
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT"})
+    @Deprecated(forRemoval = true)
+    /**
+     * Brukes ikke og kan antageligvis fjernes
+     * @deprecated brukes ikke noe sted, kan antageligvis fjernes.
+     */
     public Response hentArbeidsforholdInformasjon(@NotNull @Valid @QueryParam("ytelseType") YtelseType ytelseType,
                                                   @NotNull @Valid @TilpassetAbacAttributt(supplierClass = SaksnummerAbacDataSupplier.class) @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'") String saksnummer,
                                                   @NotNull @Valid @QueryParam("kobling") UUID koblingReferanse,
@@ -208,6 +213,11 @@ public class GrunnlagRestTjeneste {
     @Operation(description = "Hent aktivt IAY grunnlag grunnlag for angitt kobling", tags = "iay-grunnlag", responses = {@ApiResponse(description = "InntektArbeidYtelseGrunnlagDto", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArbeidsforholdInformasjon.class))), @ApiResponse(responseCode = "204", description = "Det finnes ikke et arbeidsforhold grunnlag for forespørselen"), @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")})
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT"})
+    @Deprecated(forRemoval = true)
+    /**
+     * Brukes ikke og kan antageligvis fjernes
+     * @deprecated brukes ikke noe sted, kan antageligvis fjernes. Fp-sak bruker POST utgaven.
+     */
     public Response hentSisteIayGrunnlag(@NotNull @Valid @QueryParam("ytelseType") YtelseType ytelseType,
                                          @TilpassetAbacAttributt(supplierClass = SaksnummerAbacDataSupplier.class) @NotNull @Valid @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'") String saksnummer,
                                          @NotNull @Valid @QueryParam("kobling") UUID koblingReferanse,
@@ -277,6 +287,11 @@ public class GrunnlagRestTjeneste {
     @Operation(description = "Hent IAY Grunnlag for angitt søke spesifikasjon", tags = "iay-grunnlag", responses = {@ApiResponse(description = "Grunnlaget for saken", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InntektArbeidYtelseGrunnlagSakSnapshotDto.class)))})
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
+    @Deprecated(forRemoval = true)
+    /**
+     * Brukes ikke og kan antageligvis fjernes
+     * @deprecated brukes ikke noe sted, kan antageligvis fjernes.
+     */
     public Response hentSnapshotIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
 
