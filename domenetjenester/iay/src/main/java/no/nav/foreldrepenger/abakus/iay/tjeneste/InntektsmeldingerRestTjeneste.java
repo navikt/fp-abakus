@@ -139,7 +139,6 @@ public class InntektsmeldingerRestTjeneste {
         var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
         var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId,
             new Saksnummer(mottattRequest.getSaksnummer()));
-        validerIkkeAvsluttet(kobling);
 
         var informasjonBuilder = ArbeidsforholdInformasjonBuilder.oppdatere(imTjeneste.hentArbeidsforholdInformasjonForKobling(koblingReferanse));
 

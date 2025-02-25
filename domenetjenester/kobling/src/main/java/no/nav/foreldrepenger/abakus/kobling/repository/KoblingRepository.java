@@ -48,17 +48,7 @@ public class KoblingRepository {
         if (taSkriveLås) {
             query.setLockMode(LockModeType.PESSIMISTIC_WRITE);
         }
-        var k = HibernateVerktøy.hentUniktResultat(query);
-        if (taSkriveLås) {
-            validerErAktiv(k);
-        }
-        return k;
-    }
-
-    private void validerErAktiv(Optional<Kobling> kobling) {
-        if (kobling.isPresent() && !kobling.get().erAktiv()) {
-            throw new IllegalStateException("Etterspør kobling: " + kobling.get().getKoblingReferanse() + ", men denne er ikke aktiv");
-        }
+        return HibernateVerktøy.hentUniktResultat(query);
     }
 
     public Optional<Kobling> hentSisteKoblingReferanseFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
@@ -85,9 +75,16 @@ public class KoblingRepository {
         var diff = getDiff(eksisterendeKobling.orElse(null), nyKobling);
         // Diffen blir aldri forskjellig om nyKobling er allerede persistert i databasen. Men endringen blir skrevet til databasen likevel da hele transaksjonen commites.
         if (!diff.isEmpty()) {
-            LOG.info("Detekterte endringer på kobling med referanse={}, endringer={}", nyKobling.getId(), diff.getLeafDifferences());
+            if (nyKobling.getId() != null) {
+                LOG.info("KOBLING: Lagrer en helt ny kobling med id={}, endringer={}", nyKobling.getId(), diff.getLeafDifferences());
+            } else {
+                LOG.info("KOBLING: Lagrer endringer på kobling med id={}, endringer={}", nyKobling.getId(), diff.getLeafDifferences());
+            }
+            LOG.info("KOBLING: Detekterte endringer på kobling med id={}, endringer={}", nyKobling.getId(), diff.getLeafDifferences());
             entityManager.persist(nyKobling);
             entityManager.flush();
+        } else {
+            LOG.info("KOBLING: Ingen endringer på kobling med id={}", nyKobling.getId());
         }
     }
 
