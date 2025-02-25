@@ -632,9 +632,7 @@ public class InntektArbeidYtelseRepository {
         if (resultList.isEmpty()) {
             return Optional.empty();
         } else if (resultList.size() == 1) {
-            validerKoblingErAktiv(koblingReferanse); // validerer her istdf. spørring for å avdekke om det brukes feil
-            final Optional<InntektArbeidYtelseGrunnlag> grunnlag = resultList.stream().findFirst();
-            return grunnlag;
+            return Optional.of(resultList.getFirst());
         }
         throw new IllegalStateException("Finner flere aktive grunnlag på koblingReferanse=" + koblingReferanse);
     }
@@ -679,13 +677,7 @@ public class InntektArbeidYtelseRepository {
             "FROM InntektArbeidGrunnlag gr " + " WHERE gr.grunnlagReferanse = :ref ", InntektArbeidYtelseGrunnlag.class);
         query.setParameter("ref", grunnlagReferanse);
         query.setHint(HibernateHints.HINT_CACHE_MODE, "IGNORE");
-        Optional<InntektArbeidYtelseGrunnlag> grunnlagOpt = query.getResultList().stream().findFirst();
-
-        if (grunnlagOpt.isPresent()) {
-            var kobling = koblingRepository.hentForKoblingId(grunnlagOpt.get().getKoblingId());
-            validerKoblingErAktiv(kobling.getKoblingReferanse());
-        }
-        return grunnlagOpt;
+        return Optional.ofNullable(query.getResultList().getFirst());
     }
 
     public KoblingReferanse hentKoblingReferanseFor(GrunnlagReferanse grunnlagReferanse) {
