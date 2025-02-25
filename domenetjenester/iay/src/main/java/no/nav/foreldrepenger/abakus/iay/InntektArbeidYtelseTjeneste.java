@@ -67,14 +67,6 @@ public class InntektArbeidYtelseTjeneste {
     }
 
     /**
-     * @param referanse (ekstern referanse for kobling (eks. behandlingUuid)).
-     * @return henter koblingen grunnlagsreferansen er koblet til.
-     */
-    public Long hentKoblingIdFor(GrunnlagReferanse referanse) {
-        return repository.hentKoblingIdFor(referanse);
-    }
-
-    /**
      * @param koblingReferanse
      * @return henter optional aggregat
      */
@@ -97,13 +89,6 @@ public class InntektArbeidYtelseTjeneste {
         return repository.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
     }
 
-    public Map<Inntektsmelding, ArbeidsforholdInformasjon> hentAlleInntektsmeldingerForEksternRef(AktørId aktørId,
-                                                                                                  Saksnummer saksnummer,
-                                                                                                  KoblingReferanse ref,
-                                                                                                  YtelseType ytelseType) {
-        return repository.hentArbeidsforholdInfoInntektsmeldingerMapFor(aktørId, saksnummer, ref, ytelseType);
-    }
-    
     public Map<Inntektsmelding, ArbeidsforholdInformasjon> hentArbeidsforholdinfoInntektsmeldingerMapFor(AktørId aktørId,
                                                                                                          Saksnummer saksnummer,
                                                                                                          YtelseType ytelseType) {
@@ -131,13 +116,6 @@ public class InntektArbeidYtelseTjeneste {
         return grunnlagEtterspurt.collect(Collectors.toList());
     }
 
-    /**
-     * @param grunnlagReferanse
-     * @return henter optional aggregat
-     */
-    public Optional<InntektArbeidYtelseGrunnlag> hentGrunnlagFor(GrunnlagReferanse grunnlagReferanse) {
-        return repository.hentInntektArbeidYtelseForReferanse(grunnlagReferanse);
-    }
 
     /**
      * Opprett builder for saksbehandlers overstyringer.
@@ -160,8 +138,7 @@ public class InntektArbeidYtelseTjeneste {
     }
 
     public Optional<OppgittOpptjening> hentOppgittOpptjeningFor(UUID oppgittOpptjeningEksternReferanse) {
-        var oppgittOpptjening = repository.hentOppgittOpptjeningFor(oppgittOpptjeningEksternReferanse);
-        return oppgittOpptjening;
+        return repository.hentOppgittOpptjeningFor(oppgittOpptjeningEksternReferanse);
     }
 
     public Optional<InntektArbeidYtelseAggregat> hentIAYAggregatFor(KoblingReferanse koblingReferanse, UUID eksternReferanse) {

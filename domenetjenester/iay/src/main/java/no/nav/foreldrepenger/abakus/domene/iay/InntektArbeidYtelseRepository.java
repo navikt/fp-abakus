@@ -1,7 +1,7 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,12 +14,13 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import no.nav.foreldrepenger.abakus.kobling.utils.KoblingUtil;
+
 import org.hibernate.jpa.HibernateHints;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
@@ -78,80 +79,57 @@ public class InntektArbeidYtelseRepository {
     }
 
     private void validerKoblingMatcherIayAggregat(KoblingReferanse koblingReferanse, UUID eksternReferanse) {
-        var matchKoblingIayAggregat = entityManager.createNativeQuery(
-            "select 1 from kobling k " + " where k.aktiv=true and k.kobling_referanse=:ref and " + " ("
-                + "  exists(select 1 from GR_ARBEID_INNTEKT gr inner join IAY_INNTEKT_ARBEID_YTELSER iaya on gr.register_id=iaya.id where iaya.ekstern_referanse=:eksternReferanse )"
-                + "   OR "
-                + "  exists (select 1 from GR_ARBEID_INNTEKT gr inner join IAY_INNTEKT_ARBEID_YTELSER iaya on gr.saksbehandlet_id=iaya.id where iaya.ekstern_referanse=:eksternReferanse )"
-                + " )").setParameter("ref", koblingReferanse.getReferanse()).setParameter("eksternReferanse", eksternReferanse);
+        var matchKoblingIayAggregat = entityManager.createNativeQuery("""
+            SELECT 1 FROM kobling k
+                WHERE k.kobling_referanse = :ref
+                AND (
+                    exists(SELECT 1 FROM gr_arbeid_inntekt gr INNER JOIN iay_inntekt_arbeid_ytelser iaya ON gr.register_id = iaya.id WHERE iaya.ekstern_referanse = :eksternReferanse)
+                    OR
+                    exists(SELECT 1 FROM gr_arbeid_inntekt gr INNER JOIN iay_inntekt_arbeid_ytelser iaya ON gr.saksbehandlet_id = iaya.id WHERE iaya.ekstern_referanse = :eksternReferanse)
+                    )
+                """);
+
+        matchKoblingIayAggregat.setParameter("ref", koblingReferanse.getReferanse());
+        matchKoblingIayAggregat.setParameter("eksternReferanse", eksternReferanse);
         if (matchKoblingIayAggregat.getResultStream().findFirst().isEmpty()) {
             throw new IllegalStateException(
                 "KoblingReferanse [" + koblingReferanse + "] er ikke aktiv eller er ikke knyttet til IAY aggregat [" + eksternReferanse + "]");
         }
     }
 
-    public TidssoneConfig hentKonfigurasjon() {
-        Query showTimezone = entityManager.createNativeQuery("show timezone");
-        Query currentTimestamp = entityManager.createNativeQuery("SELECT current_timestamp");
-        Object timezone = showTimezone.getSingleResult();
-        LocalDateTime tidsstempel = ((Timestamp) currentTimestamp.getSingleResult()).toLocalDateTime();
-        return new TidssoneConfig((String) timezone, tidsstempel);
-    }
-
     public Set<Inntektsmelding> hentAlleInntektsmeldingerFor(AktørId aktørId,
                                                              Saksnummer saksnummer,
                                                              no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType) {
 
-        // sjekker kun kobling.aktiv; ikke om grunnlag er aktivt eller ikke, tar alt
         final TypedQuery<Inntektsmelding> query = entityManager.createQuery("""
             SELECT DISTINCT(im)
              FROM InntektArbeidGrunnlag gr
-             JOIN Kobling k ON k.id = gr.koblingId
-             JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id
-             JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id
-             WHERE k.saksnummer = :ref AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true
+             JOIN Kobling k ON (k.id = gr.koblingId)
+             JOIN Inntektsmeldinger ims ON (ims.id = gr.inntektsmeldinger.id)
+             JOIN Inntektsmelding im ON (im.inntektsmeldinger.id = ims.id)
+             WHERE k.saksnummer = :ref
+             AND k.ytelseType = :ytelse
+             AND k.aktørId = :aktørId
             """, Inntektsmelding.class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("ref", saksnummer);
         query.setParameter("ytelse", ytelseType);
-        var inntektsmeldingSet = Set.copyOf(query.getResultList());
-        return inntektsmeldingSet;
-    }
-
-    public Map<Inntektsmelding, ArbeidsforholdInformasjon> hentArbeidsforholdInfoInntektsmeldingerMapFor(AktørId aktørId,
-                                                                                                         Saksnummer saksnummer,
-                                                                                                         KoblingReferanse ref,
-                                                                                                         no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType) {
-        final TypedQuery<Object[]> query = entityManager.createQuery("""
-            SELECT im, arbInf
-             FROM InntektArbeidGrunnlag gr
-             JOIN Kobling k ON k.id = gr.koblingId
-             JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id
-             JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id
-             JOIN ArbeidsforholdInformasjon arbInf on arbInf.id = gr.arbeidsforholdInformasjon.id
-             WHERE k.saksnummer = :ref AND k.koblingReferanse = :eksternRef AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true and gr.aktiv=:aktiv
-             """, Object[].class);
-        query.setParameter("aktørId", aktørId);
-        query.setParameter("ref", saksnummer);
-        query.setParameter("ytelse", ytelseType);
-        query.setParameter("eksternRef", ref);
-        query.setParameter("aktiv", true);
-
-        return queryTilMap(query.getResultList());
+        return Set.copyOf(query.getResultList());
     }
 
     public Map<Inntektsmelding, ArbeidsforholdInformasjon> hentArbeidsforholdInfoInntektsmeldingerMapFor(AktørId aktørId,
                                                                                                          Saksnummer saksnummer,
                                                                                                          no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType) {
-
         final TypedQuery<Object[]> query = entityManager.createQuery("""
             SELECT im, arbInf
              FROM InntektArbeidGrunnlag gr
-             JOIN Kobling k ON k.id = gr.koblingId
-             JOIN Inntektsmeldinger ims ON ims.id = gr.inntektsmeldinger.id
-             JOIN Inntektsmelding im ON im.inntektsmeldinger.id = ims.id
-             JOIN ArbeidsforholdInformasjon arbInf on arbInf.id = gr.arbeidsforholdInformasjon.id
-             WHERE k.saksnummer = :saksnummer AND k.ytelseType = :ytelse and k.aktørId = :aktørId and k.aktiv=true
+             JOIN Kobling k ON (k.id = gr.koblingId)
+             JOIN Inntektsmeldinger ims ON (ims.id = gr.inntektsmeldinger.id)
+             JOIN Inntektsmelding im ON (im.inntektsmeldinger.id = ims.id)
+             JOIN ArbeidsforholdInformasjon arbInf ON (arbInf.id = gr.arbeidsforholdInformasjon.id)
+             WHERE k.saksnummer = :saksnummer
+             AND k.ytelseType = :ytelse
+             AND k.aktørId = :aktørId
             """, Object[].class);
         query.setParameter("aktørId", aktørId);
         query.setParameter("saksnummer", saksnummer);
@@ -186,7 +164,7 @@ public class InntektArbeidYtelseRepository {
                  FROM InntektArbeidGrunnlag gr
                  JOIN Kobling k ON k.id = gr.koblingId
                  WHERE k.saksnummer = :saksnummer AND k.ytelseType = :ytelse and k.aktørId = :aktørId
-                 AND (gr.aktiv = true AND k.aktiv=true)
+                 AND gr.aktiv = true
                  ORDER BY gr.koblingId, gr.opprettetTidspunkt
                  """;
         } else {
@@ -204,13 +182,11 @@ public class InntektArbeidYtelseRepository {
         query.setParameter("saksnummer", saksnummer);
         query.setParameter("ytelse", ytelseType);
 
-        var grunnlag = query.getResultList().stream().map(g -> g).collect(Collectors.toList());
-        return grunnlag;
+        return new ArrayList<>(query.getResultList());
     }
 
     public Optional<InntektArbeidYtelseGrunnlag> hentInntektArbeidYtelseGrunnlagForBehandling(KoblingReferanse koblingReferanse) {
-        Optional<InntektArbeidYtelseGrunnlag> grunnlag = getAktivtInntektArbeidGrunnlag(koblingReferanse);
-        return grunnlag.map(InntektArbeidYtelseGrunnlag.class::cast);
+        return getAktivtInntektArbeidGrunnlag(koblingReferanse);
     }
 
     public DiffResult diffResultat(InntektArbeidYtelseGrunnlag grunnlag1, InntektArbeidYtelseGrunnlag grunnlag2, boolean onlyCheckTrackedFields) {
@@ -232,9 +208,14 @@ public class InntektArbeidYtelseRepository {
         return opprettBuilderFor(versjonType, angittAggregatReferanse, angittOpprettetTidspunkt, grunnlag);
     }
 
+    /**
+     * Metoden brukes av en forvaltningstjeneste for å opprette en builder for et nytt aggregat.
+     * @param oppgittOpptjeningEksternReferanse
+     * @return
+     */
     public Optional<OppgittOpptjening> hentOppgittOpptjeningFor(UUID oppgittOpptjeningEksternReferanse) {
         TypedQuery<OppgittOpptjening> query = entityManager.createQuery(
-            "SELECT oo " + " FROM OppgittOpptjening oo " + " WHERE oo.eksternReferanse = :eksternReferanse", OppgittOpptjening.class);
+            "SELECT oo FROM OppgittOpptjening oo WHERE oo.eksternReferanse = :eksternReferanse", OppgittOpptjening.class);
         query.setParameter("eksternReferanse", oppgittOpptjeningEksternReferanse);
         var res = HibernateVerktøy.hentUniktResultat(query);
 
@@ -242,10 +223,10 @@ public class InntektArbeidYtelseRepository {
             return Optional.empty();
         } else {
             // sjekk om opptjening finnes i noen aktivt grunnlag
-            var query2 = entityManager.createNativeQuery("select 1 from kobling k" + " inner join GR_ARBEID_INNTEKT gr on gr.kobling_id=k.id"
+            // sjekker om kobling er aktiv her siden denne metoden brukes av forvaltningstjeneste direkte
+            var query2 = entityManager.createNativeQuery("select 1 from kobling k inner join GR_ARBEID_INNTEKT gr on gr.kobling_id=k.id"
                 + " inner join oppgitt_opptjening opp on opp.id=gr.oppgitt_opptjening_id"
-                + " where k.aktiv=true and gr.aktiv=:aktiv and opp.ekstern_referanse=:ref");
-            query2.setParameter("aktiv", true);
+                + " where k.aktiv = true and gr.aktiv = true and opp.ekstern_referanse = :ref");
             query2.setParameter("ref", oppgittOpptjeningEksternReferanse);
             boolean harAktivKoblingOgGrunnlag = query.getResultStream().findAny().isPresent();
             if (harAktivKoblingOgGrunnlag) {
@@ -418,6 +399,7 @@ public class InntektArbeidYtelseRepository {
             return;
         }
 
+        validerKoblingErAktiv(koblingReferanse);
         sjekkKonsistens(nyttGrunnlag);
 
         Optional<InntektArbeidYtelseGrunnlag> tidligereAggregat = getAktivtInntektArbeidGrunnlag(koblingReferanse);
@@ -643,12 +625,11 @@ public class InntektArbeidYtelseRepository {
 
     private Optional<InntektArbeidYtelseGrunnlag> getAktivtInntektArbeidGrunnlag(KoblingReferanse koblingReferanse) {
 
-        final TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery(
-            "SELECT gr FROM InntektArbeidGrunnlag gr " + " JOIN Kobling k ON k.id=gr.koblingId" +
-                " WHERE k.koblingReferanse = :ref" +
-                " AND gr.aktiv = :aktivt", InntektArbeidYtelseGrunnlag.class);
+        final TypedQuery<InntektArbeidYtelseGrunnlag> query = entityManager.createQuery("""
+            SELECT gr FROM InntektArbeidGrunnlag gr JOIN Kobling k ON k.id = gr.koblingId
+            WHERE k.koblingReferanse = :ref
+            AND gr.aktiv = true""", InntektArbeidYtelseGrunnlag.class);
         query.setParameter("ref", koblingReferanse);
-        query.setParameter("aktivt", true);
         List<InntektArbeidYtelseGrunnlag> resultList = query.getResultList();
         if (resultList.isEmpty()) {
             return Optional.empty();
@@ -661,7 +642,9 @@ public class InntektArbeidYtelseRepository {
     }
 
     private Optional<Kobling> validerKoblingErAktiv(KoblingReferanse koblingReferanse) {
-        return koblingRepository.hentForKoblingReferanse(koblingReferanse);
+        var kobling = koblingRepository.hentForKoblingReferanse(koblingReferanse);
+        kobling.ifPresent(KoblingUtil::validerIkkeAvsluttet);
+        return kobling;
     }
 
     private Optional<ArbeidsforholdInformasjon> hentArbeidsforholdInformasjon(Optional<InntektArbeidYtelseGrunnlag> grunnlag) {
@@ -681,17 +664,7 @@ public class InntektArbeidYtelseRepository {
         if (grunnlagReferanse == null) {
             return Optional.empty();
         }
-        Optional<InntektArbeidYtelseGrunnlag> grunnlag = getVersjonAvInntektArbeidYtelseForReferanseId(grunnlagReferanse);
-        return grunnlag.map(InntektArbeidYtelseGrunnlag.class::cast);
-    }
-
-    public Long hentKoblingIdFor(GrunnlagReferanse grunnlagReferanse) {
-        var query = entityManager.createQuery(
-            "SELECT k FROM Kobling k JOIN InntektArbeidGrunnlag gr ON gr.koblingId=k.id WHERE gr.grunnlagReferanse=:ref", Kobling.class);
-        query.setParameter("ref", grunnlagReferanse);
-        Kobling kobling = HibernateVerktøy.hentEksaktResultat(query);
-        validerKoblingErAktiv(kobling.getKoblingReferanse());
-        return kobling.getId();
+        return getVersjonAvInntektArbeidYtelseForReferanseId(grunnlagReferanse);
     }
 
     private Optional<InntektArbeidYtelseGrunnlag> getVersjonAvInntektArbeidYtelseForReferanseId(GrunnlagReferanse grunnlagReferanse) {
@@ -722,10 +695,8 @@ public class InntektArbeidYtelseRepository {
     }
 
     public boolean erGrunnlagAktivt(UUID eksternReferanse) {
-        Objects.requireNonNull(eksternReferanse, "aggregatId");
-        final TypedQuery<Boolean> query = entityManager.createQuery(
-            "SELECT gr.aktiv FROM InntektArbeidGrunnlag gr JOIN Kobling k ON gr.koblingId=k.id "
-                + " WHERE gr.grunnlagReferanse = :ref AND k.aktiv = true ", Boolean.class);
+        Objects.requireNonNull(eksternReferanse, "eksternReferanse");
+        final TypedQuery<Boolean> query = entityManager.createQuery("SELECT gr.aktiv FROM InntektArbeidGrunnlag gr WHERE gr.grunnlagReferanse = :ref", Boolean.class);
         query.setParameter("ref", new GrunnlagReferanse(eksternReferanse));
         query.setHint(HibernateHints.HINT_CACHE_MODE, "IGNORE");
         Optional<Boolean> grunnlagOpt = query.getResultList().stream().findFirst();
