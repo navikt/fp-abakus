@@ -29,7 +29,10 @@ public class KoblingTjeneste {
     public Kobling finnEllerOpprett(YtelseType ytelseType, KoblingReferanse referanse, AktørId aktørId, Saksnummer saksnummer) {
         Kobling kobling = repository.hentForKoblingReferanse(referanse, true)
             .orElseGet(() -> new Kobling(ytelseType, saksnummer, referanse, aktørId));
-        repository.lagre(kobling);
+        // Lagre kun hvis ny
+        if (kobling.getId() == null) {
+            repository.lagre(kobling);
+        }
         return kobling;
     }
 
@@ -47,6 +50,12 @@ public class KoblingTjeneste {
 
     public Kobling hent(Long koblingId) {
         return repository.hentForKoblingId(koblingId);
+    }
+
+    public void deaktiver(KoblingReferanse referanse) {
+        var kobling = repository.hentForKoblingReferanse(referanse, true).orElseThrow();
+        kobling.setAktiv(false);
+        repository.lagre(kobling);
     }
 
     public KoblingLås taSkrivesLås(KoblingReferanse referanse) {

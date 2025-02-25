@@ -132,8 +132,7 @@ public class ArbeidsforholdRestTjeneste {
 
         var dto = dtoTjeneste.mapArbeidsforhold(request.getArbeidsgiver(), abakusReferanse, arbeidsforholdRef.getReferanse());
         koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
-        final Response response = Response.ok(dto).build();
-        return response;
+        return Response.ok(dto).build();
     }
 
     private Arbeidsgiver tilArbeidsgiver(@Valid @NotNull ArbeidsforholdReferanse request) {

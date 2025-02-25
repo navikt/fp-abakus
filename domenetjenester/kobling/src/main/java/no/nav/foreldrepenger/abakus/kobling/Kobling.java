@@ -78,7 +78,7 @@ public class Kobling extends BaseEntitet implements IndexKey {
      * Inaktive koblinger skal ikke kunne endres. Det betyr oftest at koblingsreferansen er avsluttet i fagsystemet også.
      */
     @Column(name = "aktiv", nullable = false)
-    private Boolean aktiv = true;
+    private boolean aktiv = true;
 
     @Version
     @Column(name = "versjon", nullable = false)
@@ -163,5 +163,9 @@ public class Kobling extends BaseEntitet implements IndexKey {
 
     public boolean erAktiv() {
         return aktiv;
+    }
+
+    public void setAktiv(boolean aktiv) {
+        this.aktiv = aktiv;
     }
 }

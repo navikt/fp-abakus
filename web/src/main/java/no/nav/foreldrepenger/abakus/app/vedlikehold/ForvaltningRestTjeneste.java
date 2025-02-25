@@ -49,7 +49,8 @@ public class ForvaltningRestTjeneste {
     }
 
     @Inject
-    public ForvaltningRestTjeneste(EntityManager entityManager, InntektArbeidYtelseTjeneste iayTjeneste) {
+    public ForvaltningRestTjeneste(EntityManager entityManager,
+                                   InntektArbeidYtelseTjeneste iayTjeneste) {
         this.entityManager = entityManager;
         this.iayTjeneste = iayTjeneste;
     }
@@ -108,7 +109,6 @@ public class ForvaltningRestTjeneste {
         iayTjeneste.lagre(koblingReferanse, grunnlagBuilder);
         return Response.ok().build();
     }
-
 
     @POST
     @Path("/oppdaterAktoerId")

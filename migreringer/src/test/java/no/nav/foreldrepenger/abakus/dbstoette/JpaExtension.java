@@ -1,11 +1,11 @@
 package no.nav.foreldrepenger.abakus.dbstoette;
 
 
-import no.nav.foreldrepenger.konfig.Environment;
-import no.nav.vedtak.felles.testutilities.db.EntityManagerAwareExtension;
-
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
+
+import no.nav.foreldrepenger.konfig.Environment;
+import no.nav.vedtak.felles.testutilities.db.EntityManagerAwareExtension;
 
 public class JpaExtension extends EntityManagerAwareExtension {
 

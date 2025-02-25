@@ -39,7 +39,7 @@ public abstract class Aktør {
 
     @Override
     public String toString() {
-        return getIdent() + "<" + getIdentType() + ">";
+        return maskertIdent() + "<" + getIdentType() + ">";
     }
 
     @Override
@@ -58,5 +58,16 @@ public abstract class Aktør {
     @Override
     public int hashCode() {
         return Objects.hash(getIdent(), getIdentType());
+    }
+
+    private String maskertIdent() {
+        if (getIdent() == null) {
+            return "";
+        }
+        var length = getIdent().length();
+        if (length <= 4) {
+            return "*".repeat(length);
+        }
+        return "*".repeat(length - 4) + getIdent().substring(length - 4);
     }
 }
