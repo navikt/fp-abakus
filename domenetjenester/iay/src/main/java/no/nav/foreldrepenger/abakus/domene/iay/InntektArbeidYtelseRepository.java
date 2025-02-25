@@ -99,6 +99,7 @@ public class InntektArbeidYtelseRepository {
                                                              Saksnummer saksnummer,
                                                              no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType) {
 
+        // sjekker ikke om grunnlag er aktivt eller ikke, tar alt
         final TypedQuery<Inntektsmelding> query = entityManager.createQuery("""
             SELECT DISTINCT(im)
              FROM InntektArbeidGrunnlag gr
