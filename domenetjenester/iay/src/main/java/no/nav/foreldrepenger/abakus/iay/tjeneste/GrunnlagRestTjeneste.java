@@ -71,7 +71,6 @@ import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYTilDtoMapper;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
-import no.nav.foreldrepenger.abakus.kobling.utils.KoblingUtil;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
@@ -81,8 +80,6 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
-
-import static no.nav.foreldrepenger.abakus.kobling.utils.KoblingUtil.validerIkkeAvsluttet;
 
 @OpenAPIDefinition(tags = {@Tag(name = "iay-grunnlag")})
 @Path("/iay/grunnlag/v1")
@@ -262,7 +259,6 @@ public class GrunnlagRestTjeneste {
         var koblingReferanse = getKoblingReferanse(aktørId, dto.getKoblingReferanse(), dto.getGrunnlagReferanse());
 
         setupLogMdcFraKoblingReferanse(koblingReferanse);
-        validerIkkeAvsluttet(koblingReferanse);
 
         var nyttGrunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayTjeneste.hentGrunnlagFor(koblingReferanse));
 
@@ -336,7 +332,6 @@ public class GrunnlagRestTjeneste {
         var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
 
         setupLogMdcFraKoblingReferanse(koblingReferanse);
-        validerIkkeAvsluttet(koblingReferanse); // denne bør egentlig aldri finnes fra før her, men det skader ikke å sjekke.
 
         var kobling = oppdaterKobling(request);
 
@@ -463,11 +458,6 @@ public class GrunnlagRestTjeneste {
         kobling.filter(k -> k.getSaksnummer() != null)
             .ifPresent(k -> LoggUtil.setupLogMdc(k.getYtelseType(), kobling.get().getSaksnummer().getVerdi(),
                 koblingReferanse.getReferanse())); // legger til saksnummer i MDC
-    }
-
-    private void validerIkkeAvsluttet(KoblingReferanse koblingReferanse) {
-        var kobling = koblingTjeneste.hentFor(koblingReferanse);
-        kobling.ifPresent(KoblingUtil::validerIkkeAvsluttet);
     }
 
     /**

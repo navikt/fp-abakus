@@ -1,10 +1,7 @@
 package no.nav.foreldrepenger.abakus.kobling;
 
 import java.net.HttpURLConnection;
-import java.util.Optional;
 import java.util.UUID;
-
-import no.nav.vedtak.exception.TekniskException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +36,6 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 
-import static no.nav.foreldrepenger.abakus.kobling.utils.KoblingUtil.validerIkkeAvsluttet;
-
 @RequestScoped
 @Transactional
 @Path("/kobling")
@@ -73,7 +68,6 @@ public class KoblingRestTjeneste {
         var koblingLås = koblingTjeneste.taSkrivesLås(koblingReferanse);
         var kobling = koblingTjeneste.hentFor(koblingReferanse)
             .orElseThrow(() -> new IllegalStateException("Kobling som skal deaktiveres finnes ikke."));
-        validerIkkeAvsluttet(kobling);
 
         if (dto.getSaksnummer().equals(kobling.getSaksnummer().getVerdi())) {
             LOG.warn("Prøver å avslutte kobling på feil saksnummer {}", dto.getSaksnummer());

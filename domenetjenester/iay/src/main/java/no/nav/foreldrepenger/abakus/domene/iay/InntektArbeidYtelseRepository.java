@@ -14,8 +14,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import no.nav.foreldrepenger.abakus.kobling.utils.KoblingUtil;
-
 import org.hibernate.jpa.HibernateHints;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -643,8 +641,16 @@ public class InntektArbeidYtelseRepository {
 
     private Optional<Kobling> validerKoblingErAktiv(KoblingReferanse koblingReferanse) {
         var kobling = koblingRepository.hentForKoblingReferanse(koblingReferanse);
-        kobling.ifPresent(KoblingUtil::validerIkkeAvsluttet);
+        kobling.ifPresent(InntektArbeidYtelseRepository::validerIkkeAvsluttet);
         return kobling;
+    }
+
+    private static void validerIkkeAvsluttet(Kobling kobling) {
+        if (!kobling.erAktiv()) {
+            throw new TekniskException("FT-49000", String.format(
+                "Ikke tillatt å gjøre endringer på en avsluttet kobling. Gjelder kobling med referanse %s",
+                kobling.getKoblingReferanse()));
+        }
     }
 
     private Optional<ArbeidsforholdInformasjon> hentArbeidsforholdInformasjon(Optional<InntektArbeidYtelseGrunnlag> grunnlag) {

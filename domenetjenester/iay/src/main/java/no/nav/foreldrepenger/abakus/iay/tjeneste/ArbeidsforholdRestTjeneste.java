@@ -31,7 +31,6 @@ import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.arbeidsforhold.ArbeidsforholdDtoTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
-import no.nav.foreldrepenger.abakus.kobling.utils.KoblingUtil;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.VirksomhetTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.InternArbeidsforholdRef;
@@ -122,7 +121,6 @@ public class ArbeidsforholdRestTjeneste {
 
         KoblingReferanse referanse = new KoblingReferanse(UUID.fromString(request.getKoblingReferanse().getReferanse()));
         setupLogMdcFraKoblingReferanse(referanse);
-        validerIkkeAvsluttet(referanse);
 
         var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(referanse));
 
@@ -150,11 +148,6 @@ public class ArbeidsforholdRestTjeneste {
         kobling.filter(k -> k.getSaksnummer() != null)
             .ifPresent(k -> LoggUtil.setupLogMdc(k.getYtelseType(), kobling.get().getSaksnummer().getVerdi(),
                 koblingReferanse.getReferanse())); // legger til saksnummer i MDC
-    }
-
-    private void validerIkkeAvsluttet(KoblingReferanse koblingReferanse) {
-        var kobling = koblingTjeneste.hentFor(koblingReferanse);
-        kobling.ifPresent(KoblingUtil::validerIkkeAvsluttet);
     }
 
     public static class AktørDatoRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {

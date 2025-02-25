@@ -25,7 +25,6 @@ import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjeningBuilder;
 import no.nav.foreldrepenger.abakus.felles.LoggUtil;
 import no.nav.foreldrepenger.abakus.iay.OppgittOpptjeningTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapOppgittOpptjening;
-import no.nav.foreldrepenger.abakus.kobling.KoblingLås;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -36,8 +35,6 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
-
-import static no.nav.foreldrepenger.abakus.kobling.utils.KoblingUtil.validerIkkeAvsluttet;
 
 @OpenAPIDefinition(tags = @Tag(name = "oppgitt opptjening"))
 @Path("/iay/oppgitt/v1")
@@ -75,7 +72,6 @@ public class OppgittOpptjeningRestTjeneste {
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
         var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId,
             new Saksnummer(mottattRequest.getSaksnummer()));
-        validerIkkeAvsluttet(kobling);
 
         OppgittOpptjeningBuilder builder = new MapOppgittOpptjening().mapFraDto(mottattRequest.getOppgittOpptjening());
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagre(koblingReferanse, builder);
@@ -105,7 +101,6 @@ public class OppgittOpptjeningRestTjeneste {
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
         var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId,
             new Saksnummer(mottattRequest.getSaksnummer()));
-        validerIkkeAvsluttet(kobling);
 
         OppgittOpptjeningBuilder builder = new MapOppgittOpptjening().mapFraDto(mottattRequest.getOppgittOpptjening());
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagreOverstyring(koblingReferanse, builder);
@@ -135,7 +130,6 @@ public class OppgittOpptjeningRestTjeneste {
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
         var kobling = koblingTjeneste.finnEllerOpprett(mottattRequest.getYtelseType(), koblingReferanse, aktørId,
             new Saksnummer(mottattRequest.getSaksnummer()));
-        validerIkkeAvsluttet(kobling);
 
         OppgittOpptjeningBuilder builder = new MapOppgittOpptjening().mapFraDto(mottattRequest.getOppgittOpptjening());
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagreOgNullstillOverstyring(koblingReferanse, builder);
