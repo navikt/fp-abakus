@@ -7,7 +7,6 @@ import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
 
-
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.typer.Beløp;

@@ -1,5 +1,7 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.arbeidsforhold;
 
+import static no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType.finnForKodeverkEiersKode;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -16,9 +18,7 @@ import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.arbeid.v1.PermisjonDto;
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsavtaleDto;
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdDto;
-import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdReferanseDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
-import no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType;
 import no.nav.foreldrepenger.abakus.aktor.AktørTjeneste;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
@@ -31,12 +31,9 @@ import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.EksternArbeidsforholdRef;
 import no.nav.fpsak.tidsserie.LocalDateInterval;
 import no.nav.fpsak.tidsserie.LocalDateSegment;
-import no.nav.fpsak.tidsserie.LocalDateSegmentCombinator;
 import no.nav.fpsak.tidsserie.LocalDateTimeline;
 import no.nav.fpsak.tidsserie.StandardCombinators;
 import no.nav.vedtak.konfig.Tid;
-
-import static no.nav.abakus.iaygrunnlag.kodeverk.PermisjonsbeskrivelseType.finnForKodeverkEiersKode;
 
 @ApplicationScoped
 public class ArbeidsforholdDtoTjeneste {
@@ -51,15 +48,6 @@ public class ArbeidsforholdDtoTjeneste {
     public ArbeidsforholdDtoTjeneste(ArbeidsforholdTjeneste arbeidsforholdTjeneste, AktørTjeneste aktørConsumer) {
         this.arbeidsforholdTjeneste = arbeidsforholdTjeneste;
         this.aktørConsumer = aktørConsumer;
-    }
-
-    public List<ArbeidsforholdDto> mapFor(AktørId aktørId, LocalDate fom, LocalDate tom) {
-        var ident = aktørConsumer.hentIdentForAktør(aktørId).orElseThrow();
-        var intervall = tom == null ? IntervallEntitet.fraOgMed(fom) : IntervallEntitet.fraOgMedTilOgMed(fom, tom);
-        Map<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforhold = arbeidsforholdTjeneste.finnArbeidsforholdForIdentIPerioden(ident,
-            aktørId, intervall);
-
-        return arbeidsforhold.entrySet().stream().map(this::mapTilArbeidsforhold).collect(Collectors.toList());
     }
 
     public List<ArbeidsforholdDto> mapArbForholdOgPermisjoner(AktørId aktørId, LocalDate fom, LocalDate tom) {
@@ -135,16 +123,6 @@ public class ArbeidsforholdDtoTjeneste {
 
     private record PermisjonTidslinjeObjekt(BigDecimal permisjonsprosent, String permisjonsÅrsak) {}
 
-    private ArbeidsforholdDto mapTilArbeidsforhold(Map.Entry<ArbeidsforholdIdentifikator, List<Arbeidsforhold>> arbeidsforholdEntry) {
-        ArbeidsforholdIdentifikator key = arbeidsforholdEntry.getKey();
-        Aktør arbeidsgiver = mapArbeidsgiver(key.getArbeidsgiver());
-        ArbeidType arbeidType = ArbeidType.finnForKodeverkEiersKode(key.getType());
-        ArbeidsforholdDto dto = new ArbeidsforholdDto(arbeidsgiver, arbeidType);
-        dto.setArbeidsforholdId(mapArbeidsforholdId(key.getArbeidsforholdId()));
-        dto.setAnsettelsesperiode(mapAnsettelsesPerioder(arbeidsforholdEntry.getValue()));
-        return dto;
-    }
-
     private List<Periode> mapAnsettelsesPerioder(List<Arbeidsforhold> arbeidsforhold) {
         return arbeidsforhold.stream().map(af -> new Periode(af.getArbeidFom(), af.getArbeidTom())).collect(Collectors.toList());
     }
@@ -163,9 +141,5 @@ public class ArbeidsforholdDtoTjeneste {
             return new no.nav.abakus.iaygrunnlag.Organisasjon(organisasjon.getOrgNummer());
         }
         throw new IllegalArgumentException("Utvikler feil: ArbeidsgiverEntitet av ukjent type.");
-    }
-
-    public ArbeidsforholdReferanseDto mapArbeidsforhold(Aktør arbeidsgiver, String eksternReferanse, String internReferanse) {
-        return new ArbeidsforholdReferanseDto(arbeidsgiver, new ArbeidsforholdRefDto(internReferanse, eksternReferanse));
     }
 }

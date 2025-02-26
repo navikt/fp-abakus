@@ -78,11 +78,6 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
         this.periode = aktivitetsAvtale.getPeriodeUtenOverstyring();
     }
 
-    public AktivitetsAvtale(AktivitetsAvtale avtale, IntervallEntitet overstyrtPeriode) {
-        this(avtale);
-        this.overstyrtPeriode = overstyrtPeriode;
-    }
-
     @Override
     public String getIndexKey() {
         Object[] keyParts = {periode, sisteLønnsendringsdato};

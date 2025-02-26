@@ -1,6 +1,5 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -94,37 +93,6 @@ public class InntektsmeldingerRestTjeneste {
         final Response build = Response.ok(inntektsmeldingerDto).build();
 
         return build;
-    }
-
-    @POST
-    @Path("/hentRefusjonskravDatoer")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Hent refusjonskrav fra inntektsmeldinger for angitt søke spesifikasjon", tags = "inntektsmelding")
-    @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
-    @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
-    @Deprecated(forRemoval = true)
-    /**
-     * Brukes ikke og kan antageligvis fjernes
-     * @deprecated brukes ikke noe sted, kan antageligvis fjernes.
-     */
-    public Response hentRefusjonskravDatoForSak(@NotNull @Valid InntektsmeldingerRequestAbacDto spesifikasjon) {
-        Response response;
-        LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer());
-        var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
-        var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
-        var ytelseType = spesifikasjon.getYtelseType();
-        var kobling = koblingTjeneste.hentSisteFor(aktørId, saksnummer, ytelseType);
-        if (kobling.isEmpty()) {
-            response = Response.ok(new InntektsmeldingerDto().medInntektsmeldinger(Collections.emptyList())).build();
-        } else {
-            LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer(), kobling.get().getKoblingReferanse().asString());
-            var inntektsmeldinger = iayTjeneste.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
-            var nyesteGrunnlag = iayTjeneste.hentAggregat(kobling.get().getKoblingReferanse());
-            var refusjonskravDatoerDto = MapInntektsmeldinger.mapRefusjonskravdatoer(inntektsmeldinger, nyesteGrunnlag);
-            response = Response.ok(refusjonskravDatoerDto).build();
-        }
-        return response;
     }
 
     @POST

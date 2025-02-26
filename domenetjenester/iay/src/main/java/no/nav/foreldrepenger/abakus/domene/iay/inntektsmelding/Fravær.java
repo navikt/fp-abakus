@@ -14,7 +14,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -60,10 +59,6 @@ public class Fravær extends BaseEntitet implements IndexKey {
     Fravær(Fravær entity) {
         this.periode = entity.getPeriode();
         this.varighetPerDag = entity.getVarighetPerDag();
-    }
-
-    public Fravær(IntervallEntitet datoIntervall, Duration varighetPerDag) {
-        this(datoIntervall.getFomDato(), datoIntervall.getTomDato(), varighetPerDag);
     }
 
     public Duration getVarighetPerDag() {

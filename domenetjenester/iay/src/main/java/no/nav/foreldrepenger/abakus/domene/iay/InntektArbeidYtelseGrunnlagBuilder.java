@@ -138,7 +138,7 @@ public class InntektArbeidYtelseGrunnlagBuilder {
         if (builder != null) {
             LOG.info("Erstatter eksisterende oppgitt opptjening");
             if (kladd.getOppgittOpptjening().isPresent()) {
-                LOG.info("Erstatter eksisterende oppgitt opptjening");
+                LOG.info("Overskriver eksisterende oppgitt opptjening");
             }
             kladd.setOppgittOpptjening(builder.build());
         }

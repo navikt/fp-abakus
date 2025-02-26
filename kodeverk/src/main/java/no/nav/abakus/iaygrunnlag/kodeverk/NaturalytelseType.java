@@ -3,9 +3,7 @@ package no.nav.abakus.iaygrunnlag.kodeverk;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -70,10 +68,6 @@ public enum NaturalytelseType implements Kodeverdi {
 
     public static Map<String, NaturalytelseType> kodeMap() {
         return Collections.unmodifiableMap(KODER);
-    }
-
-    public static NaturalytelseType finnForKodeverkEiersKode(String offisiellDokumentType) {
-        return Stream.of(values()).filter(k -> Objects.equals(k.offisiellKode, offisiellDokumentType)).findFirst().orElse(UDEFINERT);
     }
 
     public String getNavn() {

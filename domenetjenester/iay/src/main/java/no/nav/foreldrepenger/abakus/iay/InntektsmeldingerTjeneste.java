@@ -17,7 +17,8 @@ public class InntektsmeldingerTjeneste {
 
     private InntektArbeidYtelseRepository repository;
 
-    public InntektsmeldingerTjeneste() {
+    InntektsmeldingerTjeneste() {
+        // CDI
     }
 
     @Inject

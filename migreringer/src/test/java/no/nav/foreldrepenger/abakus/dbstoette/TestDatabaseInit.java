@@ -1,14 +1,11 @@
 package no.nav.foreldrepenger.abakus.dbstoette;
 
 import java.io.File;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-
-import no.nav.foreldrepenger.konfig.Environment;
 
 import org.eclipse.jetty.plus.jndi.EnvEntry;
 import org.flywaydb.core.Flyway;

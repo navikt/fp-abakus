@@ -90,11 +90,6 @@ public class YrkesaktivitetBuilder {
         return this;
     }
 
-    public YrkesaktivitetBuilder migrerFraRegisterTilOverstyrt() {
-        this.oppdaterer = false;
-        return this;
-    }
-
     public boolean getErOppdatering() {
         return this.oppdaterer;
     }
