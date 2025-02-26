@@ -29,16 +29,20 @@ public class DatabaseHealthCheck implements LiveAndReadinessAware {
         try (var connection = dataSource.getConnection()) {
             try (var statement = connection.createStatement()) {
                 if (!statement.execute(SQL_QUERY)) {
-                    LOG.warn("Feil ved SQL-spørring {} mot databasen", SQL_QUERY);
+                    logWarning();
                     return false;
                 }
             }
         } catch (SQLException e) {
-            LOG.warn("Feil ved SQL-spørring {} mot databasen", SQL_QUERY);
+            logWarning();
             return false;
         }
 
         return true;
+    }
+
+    private static void logWarning() {
+        LOG.warn("Feil ved SQL-spørring {} mot databasen", SQL_QUERY);
     }
 
     @Override

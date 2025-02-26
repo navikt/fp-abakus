@@ -1,20 +1,11 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste;
 
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -33,19 +24,12 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.core.CacheControl;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.EntityTag;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Request;
 import jakarta.ws.rs.core.Response;
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.FnrPersonident;
@@ -58,7 +42,6 @@ import no.nav.abakus.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest;
 import no.nav.abakus.iaygrunnlag.request.KopierGrunnlagRequest;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseAggregatOverstyrtDto;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
-import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagSakSnapshotDto;
 import no.nav.abakus.iaygrunnlag.v1.OverstyrtInntektArbeidYtelseDto;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
@@ -77,7 +60,6 @@ import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
-import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 
@@ -109,13 +91,6 @@ public class GrunnlagRestTjeneste {
             return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, ident);
         }
         throw new java.lang.IllegalStateException("Ukjent identtype" + identType);
-    }
-
-    private static Periode mapPeriode(IntervallEntitet datoIntervall) {
-        if (datoIntervall == null) {
-            return new Periode(LocalDate.now(), LocalDate.now());
-        }
-        return new Periode(datoIntervall.getFomDato(), datoIntervall.getTomDato());
     }
 
     @POST
@@ -154,98 +129,6 @@ public class GrunnlagRestTjeneste {
         return response;
     }
 
-    @GET
-    @Path("/arbeidsforhold-referanser")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Hent aktivt arbeidsforholdinformasjon grunnlag for angitt kobling", tags = "iay-grunnlag", responses = {@ApiResponse(description = "ArbeidsforholdInformasjon", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArbeidsforholdInformasjon.class))), @ApiResponse(responseCode = "204", description = "Det finnes ikke et arbeidsforhold grunnlag for forespørselen"), @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")})
-    @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
-    @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT"})
-    public Response hentArbeidsforholdInformasjon(@NotNull @Valid @QueryParam("ytelseType") YtelseType ytelseType,
-                                                  @NotNull @Valid @TilpassetAbacAttributt(supplierClass = SaksnummerAbacDataSupplier.class) @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'") String saksnummer,
-                                                  @NotNull @Valid @QueryParam("kobling") UUID koblingReferanse,
-                                                  @Context Request req) {
-        LoggUtil.setupLogMdc(ytelseType, saksnummer, koblingReferanse);
-
-        CacheControl cc = new CacheControl();
-        cc.setMaxAge(0);
-        cc.setProxyRevalidate(true);
-        cc.setMustRevalidate(true);
-
-        var ref = new KoblingReferanse(koblingReferanse);
-        var aktivtGrunnlag = iayTjeneste.hentAggregat(ref);
-
-        var ai = aktivtGrunnlag.getArbeidsforholdInformasjon().orElse(null);
-        if (ai == null) {
-            return Response.noContent().build();
-        }
-
-        var etag = new EntityTag(aktivtGrunnlag.getGrunnlagReferanse().getReferanse().toString());
-
-        var rb = req.evaluatePreconditions(etag);
-
-        if (rb == null) {
-            Kobling kobling = koblingTjeneste.hentFor(ref).orElseThrow(() -> new IllegalArgumentException("Har ikke kobling for " + ref));
-
-            if (!Objects.equals(kobling.getYtelseType(), ytelseType) || kobling.getSaksnummer() == null || !Objects.equals(
-                kobling.getSaksnummer().getVerdi(), saksnummer)) {
-                throw new IllegalArgumentException("Har ikke kobling for " + ref + ", for ytelse=" + ytelseType + ", saksnummer=" + saksnummer);
-            }
-            var dtoMapper = new IAYTilDtoMapper(kobling.getAktørId(), aktivtGrunnlag.getGrunnlagReferanse(), ref);
-            var aiDto = dtoMapper.mapArbeidsforholdInformasjon(aktivtGrunnlag.getGrunnlagReferanse().getReferanse(), ai);
-            return Response.ok(aiDto)
-                .tag(etag)
-                .lastModified(getSistOppdatert(aktivtGrunnlag.getOpprettetTidspunkt(), aktivtGrunnlag.getEndretTidspunkt()))
-                .cacheControl(cc)
-                .build();
-        } else {
-            return rb.cacheControl(cc).tag(etag).build();
-        }
-
-    }
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Hent aktivt IAY grunnlag grunnlag for angitt kobling", tags = "iay-grunnlag", responses = {@ApiResponse(description = "InntektArbeidYtelseGrunnlagDto", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArbeidsforholdInformasjon.class))), @ApiResponse(responseCode = "204", description = "Det finnes ikke et arbeidsforhold grunnlag for forespørselen"), @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")})
-    @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
-    @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT"})
-    public Response hentSisteIayGrunnlag(@NotNull @Valid @QueryParam("ytelseType") YtelseType ytelseType,
-                                         @TilpassetAbacAttributt(supplierClass = SaksnummerAbacDataSupplier.class) @NotNull @Valid @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'") String saksnummer,
-                                         @NotNull @Valid @QueryParam("kobling") UUID koblingReferanse,
-                                         @Context Request req) {
-
-        LoggUtil.setupLogMdc(ytelseType, saksnummer, koblingReferanse);
-
-        CacheControl cc = new CacheControl();
-        cc.setMaxAge(0);
-        cc.setProxyRevalidate(true);
-        cc.setMustRevalidate(true);
-
-        var ref = new KoblingReferanse(koblingReferanse);
-        var aktivtGrunnlag = iayTjeneste.hentAggregat(ref);
-
-        var etag = new EntityTag(aktivtGrunnlag.getGrunnlagReferanse().getReferanse().toString());
-
-        var rb = req.evaluatePreconditions(etag);
-
-        if (rb == null) {
-            Kobling kobling = koblingTjeneste.hentFor(ref).orElseThrow(() -> new IllegalArgumentException("Har ikke kobling for " + ref));
-            if (!Objects.equals(kobling.getYtelseType(), ytelseType) || kobling.getSaksnummer() == null || !Objects.equals(
-                kobling.getSaksnummer().getVerdi(), saksnummer)) {
-                throw new IllegalArgumentException("Har ikke kobling for " + ref + ", for ytelse=" + ytelseType + ", saksnummer=" + saksnummer);
-            }
-            var dtoMapper = new IAYTilDtoMapper(kobling.getAktørId(), aktivtGrunnlag.getGrunnlagReferanse(), ref);
-            var dto = dtoMapper.mapTilDto(aktivtGrunnlag, ytelseType, Set.of(Dataset.values()));
-            return Response.ok(dto)
-                .tag(etag)
-                .lastModified(getSistOppdatert(aktivtGrunnlag.getOpprettetTidspunkt(), aktivtGrunnlag.getEndretTidspunkt()))
-                .cacheControl(cc)
-                .build();
-        } else {
-            return rb.cacheControl(cc).tag(etag).build();
-        }
-
-    }
-
     @PUT
     @Path("/overstyrt")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -268,39 +151,6 @@ public class GrunnlagRestTjeneste {
         iayTjeneste.lagre(koblingReferanse, nyttGrunnlagBuilder);
 
         return Response.ok().build();
-    }
-
-    @POST
-    @Path("/snapshot")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Hent IAY Grunnlag for angitt søke spesifikasjon", tags = "iay-grunnlag", responses = {@ApiResponse(description = "Grunnlaget for saken", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InntektArbeidYtelseGrunnlagSakSnapshotDto.class)))})
-    @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response hentSnapshotIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
-        var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
-
-        var saksnummer = Objects.requireNonNull(spesifikasjon.getSaksnummer(), "saksnummer");
-        var ytelseType = Objects.requireNonNull(spesifikasjon.getYtelseType(), "ytelseType");
-
-        LoggUtil.setupLogMdc(ytelseType, saksnummer, spesifikasjon.getKoblingReferanse());
-
-        var snapshot = new InntektArbeidYtelseGrunnlagSakSnapshotDto(saksnummer, ytelseType, spesifikasjon.getPerson());
-
-        var grunnlagEtterspurt = iayTjeneste.hentGrunnlagEtterspurtFor(aktørId, new Saksnummer(saksnummer), ytelseType,
-            spesifikasjon.getGrunnlagVersjon());
-
-        grunnlagEtterspurt.forEach(g -> {
-            var kobling = koblingTjeneste.hent(g.getKoblingId());
-
-            var dtoMapper = new IAYTilDtoMapper(aktørId, g.getGrunnlagReferanse(), kobling.getKoblingReferanse());
-            var dto = dtoMapper.mapTilDto(g, spesifikasjon.getYtelseType(), spesifikasjon.getDataset());
-
-            snapshot.leggTil(dto, g.isAktiv(), mapPeriode(kobling.getOpplysningsperiode()), mapPeriode(kobling.getOpptjeningsperiode()));
-        });
-        Response response = Response.ok(snapshot).build();
-
-        return response;
     }
 
     @POST
@@ -339,12 +189,6 @@ public class GrunnlagRestTjeneste {
             new KoblingReferanse(request.getGammelReferanse()), new KoblingReferanse(request.getNyReferanse()), request.getDataset(), beholdInntektsmeldinger);
 
         koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
-    }
-
-    private Date getSistOppdatert(LocalDateTime... tidspunkt) {
-        var tid = new ArrayList<>(Arrays.asList(tidspunkt));
-        Collections.sort(tid);
-        return Date.from(tid.get(tid.size() - 1).atZone(ZoneId.systemDefault()).toInstant());
     }
 
     private UUID utledSisteKjenteGrunnlagReferanseFraSpesifikasjon(InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
@@ -391,29 +235,6 @@ public class GrunnlagRestTjeneste {
             koblingReferanse = new KoblingReferanse(koblingRef);
         } else {
             var grunnlagReferanse = new GrunnlagReferanse(grunnlagRef);
-            koblingReferanse = iayTjeneste.hentKoblingReferanse(grunnlagReferanse);
-        }
-
-        Optional<Kobling> koblingOpt = koblingTjeneste.hentFor(koblingReferanse);
-        if (koblingOpt.isEmpty()) {
-            // Har ikke fått denne opprettet enda
-            return koblingReferanse;
-        }
-        var kobling = koblingOpt.get();
-
-        if (!Objects.equals(kobling.getAktørId(), aktørId)) {
-            // post-condition sjekk at angitt person stemmer med koblingens aktør
-            throw new IllegalArgumentException("Kobling ikke knyttet til angitt aktør: " + aktørId);
-        }
-        return koblingReferanse;
-    }
-
-    private KoblingReferanse getKoblingReferanse(AktørId aktørId, InntektArbeidYtelseGrunnlagDto spesifikasjon) {
-        KoblingReferanse koblingReferanse;
-        if (spesifikasjon.getKoblingReferanse() != null) {
-            koblingReferanse = new KoblingReferanse(spesifikasjon.getKoblingReferanse());
-        } else {
-            var grunnlagReferanse = new GrunnlagReferanse(spesifikasjon.getGrunnlagReferanse());
             koblingReferanse = iayTjeneste.hentKoblingReferanse(grunnlagReferanse);
         }
 
@@ -511,29 +332,6 @@ public class GrunnlagRestTjeneste {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
-    public static class InntektArbeidYtelseGrunnlagAbacDto extends InntektArbeidYtelseGrunnlagDto implements AbacDto {
-
-        @JsonCreator
-        public InntektArbeidYtelseGrunnlagAbacDto(@JsonProperty(value = "person", required = true) @Valid @NotNull PersonIdent person,
-                                                  @JsonProperty(value = "grunnlagTidspunkt", required = true) @Valid @NotNull OffsetDateTime grunnlagTidspunkt,
-                                                  @JsonProperty(value = "grunnlagReferanse", required = true) @Valid @NotNull UUID grunnlagReferanse,
-                                                  @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UUID koblingReferanse,
-                                                  @JsonProperty(value = "ytelseType") YtelseType ytelseType) {
-            super(person, grunnlagTidspunkt, grunnlagReferanse, koblingReferanse, ytelseType);
-        }
-
-        @Override
-        public AbacDataAttributter abacAttributter() {
-            return lagAbacAttributter(getPerson());
-        }
-    }
-
-    /**
-     * Json bean med Abac.
-     */
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
     public static class OverstyrtInntektArbeidYtelseAbacDto extends OverstyrtInntektArbeidYtelseDto implements AbacDto {
 
         @JsonCreator
@@ -549,15 +347,6 @@ public class GrunnlagRestTjeneste {
         @Override
         public AbacDataAttributter abacAttributter() {
             return lagAbacAttributter(getPerson());
-        }
-    }
-
-    public static class SaksnummerAbacDataSupplier implements Function<Object, AbacDataAttributter> {
-
-        @Override
-        public AbacDataAttributter apply(Object o) {
-            var req = (String) o;
-            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.SAKSNUMMER, req);
         }
     }
 }

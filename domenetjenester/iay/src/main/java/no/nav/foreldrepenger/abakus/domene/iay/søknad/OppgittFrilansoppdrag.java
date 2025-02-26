@@ -43,6 +43,7 @@ public class OppgittFrilansoppdrag extends BaseEntitet implements IndexKey {
     private BigDecimal inntekt;
 
     OppgittFrilansoppdrag() {
+        // Hibernate
     }
 
     public OppgittFrilansoppdrag(String oppdragsgiver, IntervallEntitet periode, BigDecimal inntekt) {

@@ -12,7 +12,8 @@ public class OppgittOpptjeningTjeneste {
 
     private InntektArbeidYtelseRepository repository;
 
-    public OppgittOpptjeningTjeneste() {
+    OppgittOpptjeningTjeneste() {
+        // CDI
     }
 
     @Inject

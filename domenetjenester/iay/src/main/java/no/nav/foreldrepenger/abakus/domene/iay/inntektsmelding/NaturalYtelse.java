@@ -1,5 +1,22 @@
 package no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Objects;
+
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.NaturalytelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -8,12 +25,6 @@ import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.jpa.NaturalytelseTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
-
-import jakarta.persistence.*;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity(name = "NaturalYtelse")
 @Table(name = "IAY_NATURAL_YTELSE")
@@ -57,10 +68,6 @@ public class NaturalYtelse extends BaseEntitet implements IndexKey {
         this.periode = naturalYtelse.getPeriode();
         this.beloepPerMnd = naturalYtelse.getBeloepPerMnd();
         this.type = naturalYtelse.getType();
-    }
-
-    public NaturalYtelse(IntervallEntitet datoIntervall, BigDecimal beløpPerMnd, NaturalytelseType naturalytelseType) {
-        this(datoIntervall.getFomDato(), datoIntervall.getTomDato(), beløpPerMnd, naturalytelseType);
     }
 
     @Override

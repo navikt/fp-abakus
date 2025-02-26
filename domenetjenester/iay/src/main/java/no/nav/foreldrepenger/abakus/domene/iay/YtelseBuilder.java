@@ -86,11 +86,7 @@ public class YtelseBuilder {
     public YtelseAnvistBuilder getAnvistBuilder() {
         return YtelseAnvistBuilder.ny();
     }
-
-    public void tilbakestillAnvisninger() {
-        ytelse.tilbakestillAnvisteYtelser();
-    }
-
+    
     public YtelseGrunnlagBuilder getGrunnlagBuilder() {
         return YtelseGrunnlagBuilder.ny();
     }

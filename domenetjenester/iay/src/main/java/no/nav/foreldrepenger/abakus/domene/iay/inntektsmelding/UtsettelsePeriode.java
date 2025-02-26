@@ -14,7 +14,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtsettelseÅrsakType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -64,10 +63,6 @@ public class UtsettelsePeriode extends BaseEntitet implements IndexKey {
     UtsettelsePeriode(UtsettelsePeriode utsettelsePeriode) {
         this.periode = utsettelsePeriode.getPeriode();
         this.årsak = utsettelsePeriode.getÅrsak();
-    }
-
-    public static UtsettelsePeriode ferie(LocalDate fom, LocalDate tom) {
-        return new UtsettelsePeriode(fom, tom);
     }
 
     public static UtsettelsePeriode utsettelse(LocalDate fom, LocalDate tom, UtsettelseÅrsakType årsak) {

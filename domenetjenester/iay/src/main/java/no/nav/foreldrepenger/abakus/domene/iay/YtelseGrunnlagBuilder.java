@@ -33,11 +33,6 @@ public class YtelseGrunnlagBuilder {
         return this;
     }
 
-    public YtelseGrunnlagBuilder medInntektsgrunnlagProsent(BigDecimal prosent) {
-        this.ytelseGrunnlag.setInntektsgrunnlagProsent(Stillingsprosent.utbetalingsgrad(prosent));
-        return this;
-    }
-
     public YtelseGrunnlagBuilder medOpprinneligIdentdato(LocalDate dato) {
         this.ytelseGrunnlag.setOpprinneligIdentdato(dato);
         return this;
@@ -45,11 +40,6 @@ public class YtelseGrunnlagBuilder {
 
     public YtelseGrunnlagBuilder medYtelseStørrelse(YtelseStørrelse ytelseStørrelse) {
         this.ytelseGrunnlag.leggTilYtelseStørrelse(ytelseStørrelse);
-        return this;
-    }
-
-    public YtelseGrunnlagBuilder medVedtaksDagsats(BigDecimal vedtaksDagsats) {
-        this.ytelseGrunnlag.setVedtaksDagsats(new Beløp(vedtaksDagsats));
         return this;
     }
 
