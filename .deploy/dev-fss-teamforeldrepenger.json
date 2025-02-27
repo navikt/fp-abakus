@@ -56,6 +56,14 @@
       "roles": [
         "ekstern"
       ]
+    },
+    {
+      "app": "azure-token-generator",
+      "namespace": "aura",
+      "cluster": "dev-gcp",
+      "roles": [
+        "ekstern"
+      ]
     }
   ]
 }
