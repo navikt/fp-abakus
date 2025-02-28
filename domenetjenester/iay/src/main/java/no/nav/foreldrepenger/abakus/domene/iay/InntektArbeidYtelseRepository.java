@@ -40,8 +40,13 @@ import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @ApplicationScoped
 public class InntektArbeidYtelseRepository {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InntektArbeidYtelseRepository.class);
 
     private EntityManager entityManager;
     private KoblingRepository koblingRepository;
@@ -636,6 +641,17 @@ public class InntektArbeidYtelseRepository {
             return Optional.of(resultList.getFirst());
         }
         throw new IllegalStateException("Finner flere aktive grunnlag på koblingReferanse=" + koblingReferanse);
+    }
+
+    public void slettAlleInaktiveGrunnlagFor(KoblingReferanse koblingReferanse) {
+        final var query = entityManager.createQuery("""
+            DELETE FROM InntektArbeidGrunnlag gr
+            WHERE gr.aktiv = false
+            AND koblingId = (SELECT id FROM Kobling where koblingReferanse = :ref)
+            """);
+        query.setParameter("ref", koblingReferanse);
+        var countDelete = query.executeUpdate();
+        LOG.info("Slettet {} inaktive grunnlag for kobling {}", countDelete, koblingReferanse);
     }
 
     private Optional<Kobling> validerKoblingErAktiv(KoblingReferanse koblingReferanse) {

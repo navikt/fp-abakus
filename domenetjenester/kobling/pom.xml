@@ -43,6 +43,5 @@
 			<groupId>no.nav.foreldrepenger.abakus</groupId>
 			<artifactId>felles</artifactId>
 		</dependency>
-
 	</dependencies>
 </project>
