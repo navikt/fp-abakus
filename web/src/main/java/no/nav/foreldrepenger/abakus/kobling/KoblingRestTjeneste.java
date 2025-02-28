@@ -3,6 +3,9 @@ package no.nav.foreldrepenger.abakus.kobling;
 import java.net.HttpURLConnection;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -36,12 +39,9 @@ import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 @RequestScoped
 @Transactional
-@Path("/kobling")
+@Path("/kobling/v1")
 public class KoblingRestTjeneste {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoblingRestTjeneste.class);
