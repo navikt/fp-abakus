@@ -1,11 +1,16 @@
 package no.nav.foreldrepenger.abakus.kobling;
 
-import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
+import static no.nav.foreldrepenger.abakus.kobling.TaskConstants.KOBLING_ID;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.net.HttpURLConnection;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,17 +19,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.net.HttpURLConnection;
-import java.util.Optional;
-import java.util.UUID;
-
-import static no.nav.foreldrepenger.abakus.kobling.TaskConstants.KOBLING_ID;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
+import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 
 @ExtendWith(MockitoExtension.class)
 class KoblingRestTjenesteTest {
@@ -85,7 +85,7 @@ class KoblingRestTjenesteTest {
     }
 
     @Test
-    void opprett_sletting_av_kobling_finner_ikke_kobling_nok() {
+    void opprett_sletting_av_kobling_finner_ikke_kobling_ok() {
         var referanse = new KoblingReferanse(UUID.randomUUID());
         var saksnummer = "23234234";
         var aktørId = AktørId.dummy();
@@ -95,12 +95,10 @@ class KoblingRestTjenesteTest {
 
         // Act
         var request = new KoblingRestTjeneste.AvsluttKoblingRequestAbacDto(saksnummer, referanse.getReferanse(), ytelseType, new AktørIdPersonident(aktørId.getId()));
-
-        var ex = assertThrows(IllegalArgumentException.class, () -> koblingRestTjeneste.deaktiverKobling(request));
+        var response = koblingRestTjeneste.deaktiverKobling(request);
 
         // Assert
-        assertThat(ex.getMessage()).contains("Kobling som skal deaktiveres finnes ikke.");
-        verify(prosessTaskTjeneste, never()).lagre(any(ProsessTaskData.class));
+        assertThat(response.getStatus()).isEqualTo(HttpURLConnection.HTTP_NO_CONTENT);
     }
 
     @Test

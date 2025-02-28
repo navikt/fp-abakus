@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.kobling;
 
 import java.net.HttpURLConnection;
+import java.util.Set;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -66,39 +67,48 @@ public class KoblingRestTjeneste {
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
     public Response deaktiverKobling(@Valid @NotNull KoblingRestTjeneste.AvsluttKoblingRequestAbacDto request) {
         LoggUtil.setupLogMdc(request.getYtelseType(), request.getSaksnummer());
-        if (!YtelseType.abakusYtelser().contains(request.getYtelseType())) {
+        // Siste grunnlag for ES ble innhentet den 26.01.2024 men vi må kunne avslutte koblinger likevel.
+        // Dette kan erstattes med !YtelseType.abakusYtelser().contains(request.getYtelseType()) når migreringen i fpsak er kjørt.
+        if (!Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER, YtelseType.ENGANGSTØNAD).contains(request.getYtelseType())) {
             LOG.warn("Ugyldig ytelseType: {}", request.getYtelseType());
             return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
         }
-        var kobling = hentKoblingOgValiderRequest(request);
+        var koblingReferanse = new KoblingReferanse(request.getReferanse());
+        var koblingOptional = koblingTjeneste.hentFor(koblingReferanse);
 
-        var avsluttKoblingTask = ProsessTaskData.forProsessTask(AvsluttKoblingTask.class);
-        avsluttKoblingTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
-        avsluttKoblingTask.setSaksnummer(kobling.getSaksnummer().getVerdi()); // Kun for logging
-        avsluttKoblingTask.setBehandlingUUid(kobling.getKoblingReferanse().getReferanse()); // kun for logging
-
-        prosessTaskTjeneste.lagre(avsluttKoblingTask);
-
-        return Response.ok().build();
+        if (koblingOptional.isPresent()) {
+            var kobling = koblingOptional.get();
+            validerRequest(request, kobling);
+            opprettAvsluttKoblingTask(kobling, request.getYtelseType());
+            return Response.ok().build();
+        } else {
+            LOG.info("KOBLING. Fant ikke kobling for referanse: {}", request.getReferanse());
+            return Response.noContent().build();
+        }
     }
 
-    private Kobling hentKoblingOgValiderRequest(AvsluttKoblingRequestAbacDto request) {
-        var koblingReferanse = new KoblingReferanse(request.getReferanse());
-        var kobling = koblingTjeneste.hentFor(koblingReferanse)
-            .orElseThrow(() -> new IllegalArgumentException("Kobling som skal deaktiveres finnes ikke."));
-
+    private static void validerRequest(AvsluttKoblingRequestAbacDto request, Kobling kobling) {
         if (!request.getSaksnummer().equals(kobling.getSaksnummer().getVerdi())) {
             throw new IllegalArgumentException("Prøver å avslutte kobling på feil saksnummer");
         }
 
-        if (!request.getYtelseType().equals(kobling.getYtelseType())) {
+        // Noen koblinger fra 2019 og 2020 mangler ytelseType vi slipper de gjennom og oppdatarer ytelseType før avslutning.
+        if (!request.getYtelseType().equals(kobling.getYtelseType()) && !YtelseType.UDEFINERT.equals(kobling.getYtelseType())) {
             throw new IllegalArgumentException("Prøver å avslutte kobling på feil ytelsetype");
         }
 
         if (!request.getAktør().getIdent().equals(kobling.getAktørId().getId())) {
             throw new IllegalArgumentException("Prøver å avslutte kobling på feil aktør");
         }
-        return kobling;
+    }
+
+    private void opprettAvsluttKoblingTask(Kobling kobling, YtelseType ytelseType) {
+        var avsluttKoblingTask = ProsessTaskData.forProsessTask(AvsluttKoblingTask.class);
+        avsluttKoblingTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
+        avsluttKoblingTask.setProperty(TaskConstants.YTELSE_TYPE, ytelseType.getKode()); // For å kunne fikse manglende ytelseType hvor det er undefined.
+        avsluttKoblingTask.setSaksnummer(kobling.getSaksnummer().getVerdi()); // Kun for logging
+        avsluttKoblingTask.setBehandlingUUid(kobling.getKoblingReferanse().getReferanse()); // kun for logging
+        prosessTaskTjeneste.lagre(avsluttKoblingTask);
     }
 
     /**
