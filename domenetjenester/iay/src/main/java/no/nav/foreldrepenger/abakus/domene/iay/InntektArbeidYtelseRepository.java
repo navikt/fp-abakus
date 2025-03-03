@@ -15,6 +15,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.hibernate.jpa.HibernateHints;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -39,9 +41,6 @@ import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.jpa.HibernateVerktøy;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class InntektArbeidYtelseRepository {
@@ -426,6 +425,18 @@ public class InntektArbeidYtelseRepository {
         entityManager.flush();
     }
 
+    private void validerKoblingErAktiv(KoblingReferanse koblingReferanse) {
+        koblingRepository.hentForKoblingReferanse(koblingReferanse).ifPresent(InntektArbeidYtelseRepository::validerIkkeAvsluttet);
+    }
+
+    private static void validerIkkeAvsluttet(Kobling kobling) {
+        if (!kobling.erAktiv()) {
+            throw new TekniskException("FT-49000", String.format(
+                "Ikke tillatt å gjøre endringer på en avsluttet kobling. Gjelder kobling med referanse %s",
+                kobling.getKoblingReferanse()));
+        }
+    }
+
     /**
      * Kaster exception hvis grunnlaget er i en ugyldig tilstand
      *
@@ -441,7 +452,6 @@ public class InntektArbeidYtelseRepository {
             .ifPresent(
                 aggregat -> aggregat.getAktørArbeid().stream().map(AktørArbeid::hentAlleYrkesaktiviteter).flatMap(Collection::stream).forEach(it -> {
                     if (it.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold()) {
-                        var arRef = aggregat.getEksternReferanse();
                         arbeidsforholdInformasjon.finnEkstern(grRef, it.getArbeidsgiver(),
                             it.getArbeidsforholdRef()); // Validerer om det finnes ekstern for intern ref
                         // (kaster exception hvis ikke)
@@ -460,7 +470,6 @@ public class InntektArbeidYtelseRepository {
             .ifPresent(
                 aggregat -> aggregat.getAktørArbeid().stream().map(AktørArbeid::hentAlleYrkesaktiviteter).flatMap(Collection::stream).forEach(it -> {
                     if (it.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold()) {
-                        var arRef = aggregat.getEksternReferanse();
                         arbeidsforholdInformasjon.finnEkstern(grRef, it.getArbeidsgiver(),
                             it.getArbeidsforholdRef()); // Validerer om det finnes ekstern for intern ref
                         // (kaster exception hvis ikke)
@@ -652,20 +661,6 @@ public class InntektArbeidYtelseRepository {
         query.setParameter("ref", koblingReferanse);
         var countDelete = query.executeUpdate();
         LOG.info("Slettet {} inaktive grunnlag for kobling {}", countDelete, koblingReferanse);
-    }
-
-    private Optional<Kobling> validerKoblingErAktiv(KoblingReferanse koblingReferanse) {
-        var kobling = koblingRepository.hentForKoblingReferanse(koblingReferanse);
-        kobling.ifPresent(InntektArbeidYtelseRepository::validerIkkeAvsluttet);
-        return kobling;
-    }
-
-    private static void validerIkkeAvsluttet(Kobling kobling) {
-        if (!kobling.erAktiv()) {
-            throw new TekniskException("FT-49000", String.format(
-                "Ikke tillatt å gjøre endringer på en avsluttet kobling. Gjelder kobling med referanse %s",
-                kobling.getKoblingReferanse()));
-        }
     }
 
     private Optional<ArbeidsforholdInformasjon> hentArbeidsforholdInformasjon(Optional<InntektArbeidYtelseGrunnlag> grunnlag) {
