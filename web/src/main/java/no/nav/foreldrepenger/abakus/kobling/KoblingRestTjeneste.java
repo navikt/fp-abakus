@@ -30,9 +30,6 @@ import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.AvsluttKoblingRequest;
 import no.nav.foreldrepenger.abakus.felles.LoggUtil;
-import no.nav.foreldrepenger.abakus.kobling.task.AvsluttKoblingTask;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
@@ -47,17 +44,17 @@ public class KoblingRestTjeneste {
 
     private static final Logger LOG = LoggerFactory.getLogger(KoblingRestTjeneste.class);
 
+    private AvsluttKoblingTjeneste avsluttKoblingTjeneste;
     private KoblingTjeneste koblingTjeneste;
-    private ProsessTaskTjeneste prosessTaskTjeneste;
 
     KoblingRestTjeneste() {
         // CDI proxy
     }
 
     @Inject
-    public KoblingRestTjeneste(KoblingTjeneste koblingTjeneste, ProsessTaskTjeneste prosessTaskTjeneste) {
+    public KoblingRestTjeneste(KoblingTjeneste koblingTjeneste, AvsluttKoblingTjeneste avsluttKoblingTjeneste) {
         this.koblingTjeneste = koblingTjeneste;
-        this.prosessTaskTjeneste = prosessTaskTjeneste;
+        this.avsluttKoblingTjeneste = avsluttKoblingTjeneste;
     }
 
     @POST
@@ -66,7 +63,7 @@ public class KoblingRestTjeneste {
     @Produces(MediaType.APPLICATION_JSON)
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
     public Response deaktiverKobling(@Valid @NotNull KoblingRestTjeneste.AvsluttKoblingRequestAbacDto request) {
-        LoggUtil.setupLogMdc(request.getYtelseType(), request.getSaksnummer());
+        LoggUtil.setupLogMdc(request.getYtelseType(), request.getSaksnummer(), request.getReferanse());
         // Siste grunnlag for ES ble innhentet den 26.01.2024 men vi må kunne avslutte koblinger likevel.
         // Dette kan erstattes med !YtelseType.abakusYtelser().contains(request.getYtelseType()) når migreringen i fpsak er kjørt.
         if (!Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER, YtelseType.ENGANGSTØNAD).contains(request.getYtelseType())) {
@@ -79,7 +76,7 @@ public class KoblingRestTjeneste {
         if (koblingOptional.isPresent()) {
             var kobling = koblingOptional.get();
             validerRequest(request, kobling);
-            opprettAvsluttKoblingTask(kobling, request.getYtelseType());
+            avsluttKoblingTjeneste.avsluttKobling(kobling.getKoblingReferanse(), request.getYtelseType());
             return Response.ok().build();
         } else {
             LOG.info("KOBLING. Fant ikke kobling for referanse: {}", request.getReferanse());
@@ -100,15 +97,6 @@ public class KoblingRestTjeneste {
         if (!request.getAktør().getIdent().equals(kobling.getAktørId().getId())) {
             throw new IllegalArgumentException("Prøver å avslutte kobling på feil aktør");
         }
-    }
-
-    private void opprettAvsluttKoblingTask(Kobling kobling, YtelseType ytelseType) {
-        var avsluttKoblingTask = ProsessTaskData.forProsessTask(AvsluttKoblingTask.class);
-        avsluttKoblingTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
-        avsluttKoblingTask.setProperty(TaskConstants.YTELSE_TYPE, ytelseType.getKode()); // For å kunne fikse manglende ytelseType hvor det er undefined.
-        avsluttKoblingTask.setSaksnummer(kobling.getSaksnummer().getVerdi()); // Kun for logging
-        avsluttKoblingTask.setBehandlingUUid(kobling.getKoblingReferanse().getReferanse()); // kun for logging
-        prosessTaskTjeneste.lagre(avsluttKoblingTask);
     }
 
     /**

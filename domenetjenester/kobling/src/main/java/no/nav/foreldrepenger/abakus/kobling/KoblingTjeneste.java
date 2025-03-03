@@ -52,7 +52,6 @@ public class KoblingTjeneste {
         return repository.hentForKoblingId(koblingId);
     }
 
-    // TODO: brukes ikke helt - kun i test
     public void deaktiver(KoblingReferanse referanse) {
         var kobling = repository.hentForKoblingReferanse(referanse, true).orElseThrow();
         kobling.setAktiv(false);

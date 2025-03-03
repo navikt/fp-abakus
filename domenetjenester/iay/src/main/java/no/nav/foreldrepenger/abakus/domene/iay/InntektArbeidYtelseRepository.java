@@ -647,7 +647,7 @@ public class InntektArbeidYtelseRepository {
         final var query = entityManager.createQuery("""
             DELETE FROM InntektArbeidGrunnlag gr
             WHERE gr.aktiv = false
-            AND koblingId = (SELECT id FROM Kobling where koblingReferanse = :ref)
+            AND gr.koblingId = (SELECT k.id FROM Kobling k where k.koblingReferanse = :ref)
             """);
         query.setParameter("ref", koblingReferanse);
         var countDelete = query.executeUpdate();

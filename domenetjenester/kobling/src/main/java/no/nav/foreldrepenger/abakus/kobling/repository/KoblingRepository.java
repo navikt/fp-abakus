@@ -75,7 +75,7 @@ public class KoblingRepository {
         var diff = getDiff(eksisterendeKobling.orElse(null), nyKobling);
         // Diffen blir aldri forskjellig om nyKobling er allerede persistert i databasen. Men endringen blir skrevet til databasen likevel da hele transaksjonen commites.
         if (!diff.isEmpty()) {
-            if (nyKobling.getId() != null) {
+            if (nyKobling.getId() == null) {
                 LOG.info("KOBLING: Lagrer en helt ny kobling med id={}, endringer={}", nyKobling.getId(), diff.getLeafDifferences());
             } else {
                 LOG.info("KOBLING: Lagrer endringer på kobling med id={}, endringer={}", nyKobling.getId(), diff.getLeafDifferences());

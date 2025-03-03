@@ -1,6 +1,5 @@
 package no.nav.foreldrepenger.abakus.kobling;
 
-import static no.nav.foreldrepenger.abakus.kobling.TaskConstants.KOBLING_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -15,7 +14,6 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -23,8 +21,6 @@ import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 
 @ExtendWith(MockitoExtension.class)
 class KoblingRestTjenesteTest {
@@ -33,26 +29,23 @@ class KoblingRestTjenesteTest {
     private KoblingTjeneste koblingTjeneste;
 
     @Mock
-    private ProsessTaskTjeneste prosessTaskTjeneste;
+    private AvsluttKoblingTjeneste avsluttKobling;
 
     private KoblingRestTjeneste koblingRestTjeneste;
 
     @BeforeEach
     void setUp() {
-        koblingRestTjeneste = new KoblingRestTjeneste(koblingTjeneste, prosessTaskTjeneste);
+        koblingRestTjeneste = new KoblingRestTjeneste(koblingTjeneste, avsluttKobling);
     }
 
     @Test
-    void opprett_sletting_av_kobling_task_og_verifiser_task_parameterne_ok() {
-        var taskDataArgumentCaptor = ArgumentCaptor.forClass(ProsessTaskData.class);
-
+    void sletting_av_kobling_ok() {
         var referanse = new KoblingReferanse(UUID.randomUUID());
         var saksnummer = "23234234";
         var aktørId = AktørId.dummy();
         var ytelseType = YtelseType.FORELDREPENGER;
-        var koblingId = 1L;
 
-        when(koblingTjeneste.hentFor(referanse)).thenReturn(Optional.of(opprettKobling(koblingId, saksnummer, aktørId, ytelseType, referanse)));
+        when(koblingTjeneste.hentFor(referanse)).thenReturn(Optional.of(opprettKobling(saksnummer, aktørId, ytelseType, referanse)));
 
         // Act
         var request = new KoblingRestTjeneste.AvsluttKoblingRequestAbacDto(saksnummer, referanse.getReferanse(), ytelseType, new AktørIdPersonident(aktørId.getId()));
@@ -61,15 +54,11 @@ class KoblingRestTjenesteTest {
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(HttpURLConnection.HTTP_OK);
-        verify(prosessTaskTjeneste).lagre(taskDataArgumentCaptor.capture());
-        var taskData = taskDataArgumentCaptor.getValue();
-        assertThat(taskData.getPropertyValue(KOBLING_ID)).isEqualTo(String.valueOf(koblingId));
-        assertThat(taskData.getSaksnummer()).isEqualTo(saksnummer);
-        assertThat(taskData.getBehandlingUuid()).isEqualTo(referanse.getReferanse());
+        verify(avsluttKobling).avsluttKobling(referanse, ytelseType);
     }
 
     @Test
-    void opprett_sletting_av_kobling_task_feil_ytesletype_bad_request_nok() {
+    void sletting_av_kobling_feil_ytesletype_bad_request_nok() {
         var referanse = new KoblingReferanse(UUID.randomUUID());
         var saksnummer = "23234234";
         var aktørId = AktørId.dummy();
@@ -81,11 +70,11 @@ class KoblingRestTjenesteTest {
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(HttpURLConnection.HTTP_BAD_REQUEST);
-        verify(prosessTaskTjeneste, never()).lagre(any(ProsessTaskData.class));
+        verify(avsluttKobling, never()).avsluttKobling(any(), any());
     }
 
     @Test
-    void opprett_sletting_av_kobling_finner_ikke_kobling_ok() {
+    void sletting_av_kobling_finner_ikke_kobling_ok() {
         var referanse = new KoblingReferanse(UUID.randomUUID());
         var saksnummer = "23234234";
         var aktørId = AktørId.dummy();
@@ -102,14 +91,13 @@ class KoblingRestTjenesteTest {
     }
 
     @Test
-    void opprett_sletting_av_kobling_saksnummer_matcher_ikke_nok() {
+    void sletting_av_kobling_saksnummer_matcher_ikke_nok() {
         var referanse = new KoblingReferanse(UUID.randomUUID());
         var saksnummer = "23234234";
         var aktørId = AktørId.dummy();
         var ytelseType = YtelseType.FORELDREPENGER;
-        var koblingId = 1L;
 
-        when(koblingTjeneste.hentFor(referanse)).thenReturn(Optional.of(opprettKobling(koblingId, saksnummer, aktørId, ytelseType, referanse)));
+        when(koblingTjeneste.hentFor(referanse)).thenReturn(Optional.of(opprettKobling(saksnummer, aktørId, ytelseType, referanse)));
 
         // Act
         var request = new KoblingRestTjeneste.AvsluttKoblingRequestAbacDto("354645634", referanse.getReferanse(), ytelseType, new AktørIdPersonident(aktørId.getId()));
@@ -118,18 +106,17 @@ class KoblingRestTjenesteTest {
 
         // Assert
         assertThat(ex.getMessage()).contains("Prøver å avslutte kobling på feil saksnummer");
-        verify(prosessTaskTjeneste, never()).lagre(any(ProsessTaskData.class));
+        verify(avsluttKobling, never()).avsluttKobling(any(), any());
     }
 
     @Test
-    void opprett_sletting_av_kobling_ytelse_type_matcher_ikke_nok() {
+    void sletting_av_kobling_ytelse_type_matcher_ikke_nok() {
         var referanse = new KoblingReferanse(UUID.randomUUID());
         var saksnummer = "23234234";
         var aktørId = AktørId.dummy();
         var ytelseType = YtelseType.FORELDREPENGER;
-        var koblingId = 1L;
 
-        when(koblingTjeneste.hentFor(referanse)).thenReturn(Optional.of(opprettKobling(koblingId, saksnummer, aktørId, ytelseType, referanse)));
+        when(koblingTjeneste.hentFor(referanse)).thenReturn(Optional.of(opprettKobling(saksnummer, aktørId, ytelseType, referanse)));
 
         // Act
         var request = new KoblingRestTjeneste.AvsluttKoblingRequestAbacDto(saksnummer, referanse.getReferanse(), YtelseType.SVANGERSKAPSPENGER, new AktørIdPersonident(aktørId.getId()));
@@ -138,18 +125,17 @@ class KoblingRestTjenesteTest {
 
         // Assert
         assertThat(ex.getMessage()).contains("Prøver å avslutte kobling på feil ytelsetype");
-        verify(prosessTaskTjeneste, never()).lagre(any(ProsessTaskData.class));
+        verify(avsluttKobling, never()).avsluttKobling(any(), any());
     }
 
     @Test
-    void opprett_sletting_av_kobling_aktør_id_matcher_ikke_nok() {
+    void sletting_av_kobling_aktør_id_matcher_ikke_nok() {
         var referanse = new KoblingReferanse(UUID.randomUUID());
         var saksnummer = "23234234";
         var aktørId = AktørId.dummy();
         var ytelseType = YtelseType.FORELDREPENGER;
-        var koblingId = 1L;
 
-        when(koblingTjeneste.hentFor(referanse)).thenReturn(Optional.of(opprettKobling(koblingId, saksnummer, aktørId, ytelseType, referanse)));
+        when(koblingTjeneste.hentFor(referanse)).thenReturn(Optional.of(opprettKobling(saksnummer, aktørId, ytelseType, referanse)));
 
         // Act
         var request = new KoblingRestTjeneste.AvsluttKoblingRequestAbacDto(saksnummer, referanse.getReferanse(), ytelseType, new AktørIdPersonident(AktørId.dummy().getId()));
@@ -158,12 +144,10 @@ class KoblingRestTjenesteTest {
 
         // Assert
         assertThat(ex.getMessage()).contains("Prøver å avslutte kobling på feil aktør");
-        verify(prosessTaskTjeneste, never()).lagre(any(ProsessTaskData.class));
+        verify(avsluttKobling, never()).avsluttKobling(any(), any());
     }
 
-    private Kobling opprettKobling(Long id, String saksnummer, AktørId aktørId, YtelseType ytelseType, KoblingReferanse referanse) {
-        var kobling = new Kobling(ytelseType, new Saksnummer(saksnummer), referanse, aktørId);
-        kobling.setId(id);
-        return kobling;
+    private Kobling opprettKobling(String saksnummer, AktørId aktørId, YtelseType ytelseType, KoblingReferanse referanse) {
+        return new Kobling(ytelseType, new Saksnummer(saksnummer), referanse, aktørId);
     }
 }

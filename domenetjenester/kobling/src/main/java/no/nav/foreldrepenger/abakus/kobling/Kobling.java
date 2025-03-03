@@ -103,11 +103,6 @@ public class Kobling extends BaseEntitet implements IndexKey {
         return id;
     }
 
-    // Kun for testing
-    void setId(Long id) {
-        this.id = id;
-    }
-
     public KoblingReferanse getKoblingReferanse() {
         return koblingReferanse;
     }

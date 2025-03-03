@@ -72,15 +72,15 @@ public class InntektArbeidYtelseTjeneste {
     }
 
     /**
-     * Fjerner alle inaktive grunnlag for en kobling. Bør brukes når koblingen deaktiveres.
-     * Operasjonen sletter kun de underliggende gr_arbeid_inntekt entiteter og ikke de underliggende agregater
-     * siden disse kan gjebrukes av andre koblinger også (siden grunnlaget kopieres til nye behandlinger av saken).
+     * Fjerner alle inaktive grunnlag for en kobling og bør brukes når koblingen deaktiveres.
+     * Operasjonen sletter kun de underliggende `gr_arbeid_inntekt`-entitetene og ikke de tilhørende aggregatene,
+     * siden disse kan gjenbrukes av andre koblinger ettersom grunnlaget kopieres til nye behandlinger av saken.
+     *
      * @param koblingReferanse
      */
     public void slettInaktiveGrunnlagFor(KoblingReferanse koblingReferanse) {
         repository.slettAlleInaktiveGrunnlagFor(koblingReferanse);
     }
-
 
     public Set<Inntektsmelding> hentAlleInntektsmeldingerFor(AktørId aktørId, Saksnummer saksnummer, YtelseType ytelseType) {
         return repository.hentAlleInntektsmeldingerFor(aktørId, saksnummer, ytelseType);
