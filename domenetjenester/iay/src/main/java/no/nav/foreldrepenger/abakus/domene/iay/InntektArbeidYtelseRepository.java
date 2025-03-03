@@ -15,6 +15,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.hibernate.jpa.HibernateHints;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -42,6 +44,8 @@ import no.nav.vedtak.felles.jpa.HibernateVerktøy;
 
 @ApplicationScoped
 public class InntektArbeidYtelseRepository {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InntektArbeidYtelseRepository.class);
 
     private EntityManager entityManager;
     private KoblingRepository koblingRepository;
@@ -421,6 +425,18 @@ public class InntektArbeidYtelseRepository {
         entityManager.flush();
     }
 
+    private void validerKoblingErAktiv(KoblingReferanse koblingReferanse) {
+        koblingRepository.hentForKoblingReferanse(koblingReferanse).ifPresent(InntektArbeidYtelseRepository::validerIkkeAvsluttet);
+    }
+
+    private static void validerIkkeAvsluttet(Kobling kobling) {
+        if (!kobling.erAktiv()) {
+            throw new TekniskException("FT-49000", String.format(
+                "Ikke tillatt å gjøre endringer på en avsluttet kobling. Gjelder kobling med referanse %s",
+                kobling.getKoblingReferanse()));
+        }
+    }
+
     /**
      * Kaster exception hvis grunnlaget er i en ugyldig tilstand
      *
@@ -436,7 +452,6 @@ public class InntektArbeidYtelseRepository {
             .ifPresent(
                 aggregat -> aggregat.getAktørArbeid().stream().map(AktørArbeid::hentAlleYrkesaktiviteter).flatMap(Collection::stream).forEach(it -> {
                     if (it.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold()) {
-                        var arRef = aggregat.getEksternReferanse();
                         arbeidsforholdInformasjon.finnEkstern(grRef, it.getArbeidsgiver(),
                             it.getArbeidsforholdRef()); // Validerer om det finnes ekstern for intern ref
                         // (kaster exception hvis ikke)
@@ -455,7 +470,6 @@ public class InntektArbeidYtelseRepository {
             .ifPresent(
                 aggregat -> aggregat.getAktørArbeid().stream().map(AktørArbeid::hentAlleYrkesaktiviteter).flatMap(Collection::stream).forEach(it -> {
                     if (it.getArbeidsforholdRef().gjelderForSpesifiktArbeidsforhold()) {
-                        var arRef = aggregat.getEksternReferanse();
                         arbeidsforholdInformasjon.finnEkstern(grRef, it.getArbeidsgiver(),
                             it.getArbeidsforholdRef()); // Validerer om det finnes ekstern for intern ref
                         // (kaster exception hvis ikke)
@@ -638,18 +652,15 @@ public class InntektArbeidYtelseRepository {
         throw new IllegalStateException("Finner flere aktive grunnlag på koblingReferanse=" + koblingReferanse);
     }
 
-    private Optional<Kobling> validerKoblingErAktiv(KoblingReferanse koblingReferanse) {
-        var kobling = koblingRepository.hentForKoblingReferanse(koblingReferanse);
-        kobling.ifPresent(InntektArbeidYtelseRepository::validerIkkeAvsluttet);
-        return kobling;
-    }
-
-    private static void validerIkkeAvsluttet(Kobling kobling) {
-        if (!kobling.erAktiv()) {
-            throw new TekniskException("FT-49000", String.format(
-                "Ikke tillatt å gjøre endringer på en avsluttet kobling. Gjelder kobling med referanse %s",
-                kobling.getKoblingReferanse()));
-        }
+    public void slettAlleInaktiveGrunnlagFor(KoblingReferanse koblingReferanse) {
+        final var query = entityManager.createQuery("""
+            DELETE FROM InntektArbeidGrunnlag gr
+            WHERE gr.aktiv = false
+            AND gr.koblingId = (SELECT k.id FROM Kobling k where k.koblingReferanse = :ref)
+            """);
+        query.setParameter("ref", koblingReferanse);
+        var countDelete = query.executeUpdate();
+        LOG.info("Slettet {} inaktive grunnlag for kobling {}", countDelete, koblingReferanse);
     }
 
     private Optional<ArbeidsforholdInformasjon> hentArbeidsforholdInformasjon(Optional<InntektArbeidYtelseGrunnlag> grunnlag) {

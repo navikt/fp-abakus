@@ -15,7 +15,7 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.NON_EMPTY)
 @JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE, creatorVisibility = Visibility.NONE)
-public class AvsluttGrunnlagRequest {
+public class AvsluttKoblingRequest {
 
     /**
      * Saksnummer alle grunnlag og koblinger er linket til.
@@ -41,10 +41,10 @@ public class AvsluttGrunnlagRequest {
     private PersonIdent aktør;
 
     @JsonCreator
-    public AvsluttGrunnlagRequest(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
-                                  @JsonProperty(value = "referanse", required = true) @Valid @NotNull UUID referanse,
-                                  @JsonProperty(value = "ytelseType", required = true) @NotNull YtelseType ytelseType,
-                                  @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør) {
+    public AvsluttKoblingRequest(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
+                                 @JsonProperty(value = "referanse", required = true) @Valid @NotNull UUID referanse,
+                                 @JsonProperty(value = "ytelseType", required = true) @NotNull YtelseType ytelseType,
+                                 @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør) {
         this.saksnummer = saksnummer;
         this.referanse = referanse;
         this.ytelseType = ytelseType;
