@@ -5,6 +5,9 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import java.util.List;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -37,6 +40,8 @@ import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 @Transactional
 public class ForvaltningRestTjeneste {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ForvaltningRestTjeneste.class);
+
     private static final String GAMMEL = "gammel";
     private static final String GJELDENDE = "gjeldende";
 
@@ -60,9 +65,10 @@ public class ForvaltningRestTjeneste {
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
     @Operation(description = "Setter oppgitt opptjening til å være varig endring", tags = "FORVALTNING", responses = {@ApiResponse(responseCode = "200", description = "Forekomster av utgått aktørid erstattet.")})
-    @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
+    @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK, sporingslogg = true)
     public Response setVarigEndring(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AbacDataSupplier.class) @NotNull @Valid VarigEndringRequest request) {
         var oppgittOpptjeningEksternReferanse = request.getEksternReferanse().toUuidReferanse();
+        LOG.info("FORVALTNING ABAKUS settVarigEndring for {}", oppgittOpptjeningEksternReferanse);
         var org = new OrgNummer(request.getOrgnummer());
         OppgittOpptjening oppgittOpptjening = iayTjeneste.hentOppgittOpptjeningFor(oppgittOpptjeningEksternReferanse).orElseThrow();
         var næring = oppgittOpptjening.getEgenNæring().stream().filter(n -> n.getOrgnummer().equals(org)).findFirst().orElseThrow();
@@ -84,9 +90,10 @@ public class ForvaltningRestTjeneste {
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
     @Operation(description = "Fjerner angitt inntektsmelding/journalpost fra grunnlag", tags = "FORVALTNING", responses = {@ApiResponse(responseCode = "200", description = "Inntektsmelding eliminert.")})
-    @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK)
+    @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK, sporingslogg = true)
     public Response eliminerInntektsmelding(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AbacDataSupplier.class) @NotNull @Valid EliminerInntektsmeldingRequest request) {
         var koblingReferanse = new KoblingReferanse(request.getEksternReferanse().toUuidReferanse());
+        LOG.info("FORVALTNING ABAKUS eliminerInntektsmelding for {}", koblingReferanse);
         var journalpost = new JournalpostId(request.getJournalpostId());
         var eksisterende = iayTjeneste.hentGrunnlagFor(koblingReferanse).orElseThrow();
         var grunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(eksisterende);
@@ -115,8 +122,9 @@ public class ForvaltningRestTjeneste {
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
     @Operation(description = "MERGE: Oppdaterer aktørid for bruker i nødvendige tabeller", tags = "FORVALTNING", responses = {@ApiResponse(responseCode = "200", description = "Forekomster av utgått aktørid erstattet.")})
-    @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.DRIFT)
+    @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.DRIFT, sporingslogg = true)
     public Response oppdaterAktoerId(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AktørRequestAbacDataSupplier.class) @NotNull @Valid ByttAktørRequest request) {
+        LOG.info("FORVALTNING ABAKUS oppdaterAktoerId");
         int antall = oppdaterAktørIdFor(request.getUtgåttAktør().getVerdi(), request.getGyldigAktør().getVerdi());
         return Response.ok(antall).build();
     }

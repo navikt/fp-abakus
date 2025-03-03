@@ -113,7 +113,7 @@ public class EksternDelingAvYtelserRestTjeneste {
             description = "Liste med vedtak som matcher kriteriene.",
             content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = YtelseV1.class))))}
     )
-    @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.APPLIKASJON, availabilityType = AvailabilityType.ALL)
+    @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.APPLIKASJON, availabilityType = AvailabilityType.ALL, sporingslogg = true)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public List<Ytelse> hentVedtakYtelse(@NotNull @TilpassetAbacAttributt(supplierClass = EksternDelingAvYtelserRestTjeneste.VedtakForPeriodeRequestAbacDataSupplier.class) @Valid VedtakForPeriodeRequest request) {
         LOG.info("ABAKUS VEDTAK ekstern /hent-ytelse-vedtak for ytelser {}", request.getYtelser());
