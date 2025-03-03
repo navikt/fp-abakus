@@ -119,21 +119,21 @@ public class KoblingRestTjeneste {
         public AbacDataAttributter abacAttributter() {
             return lagAbacAttributter(this);
         }
-    }
 
-    private static AbacDataAttributter lagAbacAttributter(AvsluttKoblingRequestAbacDto dto) {
-        var abacDataAttributter = AbacDataAttributter.opprett();
+        private static AbacDataAttributter lagAbacAttributter(AvsluttKoblingRequestAbacDto dto) {
+            var abacDataAttributter = AbacDataAttributter.opprett();
 
-        abacDataAttributter.leggTil(StandardAbacAttributtType.SAKSNUMMER, dto.getSaksnummer());
-        abacDataAttributter.leggTil(StandardAbacAttributtType.BEHANDLING_UUID, dto.getReferanse());
+            abacDataAttributter.leggTil(StandardAbacAttributtType.SAKSNUMMER, dto.getSaksnummer());
+            abacDataAttributter.leggTil(StandardAbacAttributtType.BEHANDLING_UUID, dto.getReferanse());
 
-        String ident = dto.getAktør().getIdent();
-        String identType = dto.getAktør().getIdentType();
-        if (FnrPersonident.IDENT_TYPE.equals(identType)) {
-            return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, ident);
-        } else if (AktørIdPersonident.IDENT_TYPE.equals(identType)) {
-            return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, ident);
+            String ident = dto.getAktør().getIdent();
+            String identType = dto.getAktør().getIdentType();
+            if (FnrPersonident.IDENT_TYPE.equals(identType)) {
+                return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, ident);
+            } else if (AktørIdPersonident.IDENT_TYPE.equals(identType)) {
+                return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, ident);
+            }
+            throw new java.lang.IllegalStateException("Ukjent identtype" + identType);
         }
-        throw new java.lang.IllegalStateException("Ukjent identtype" + identType);
     }
 }
