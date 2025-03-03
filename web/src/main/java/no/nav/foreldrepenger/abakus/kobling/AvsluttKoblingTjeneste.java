@@ -48,12 +48,8 @@ public class AvsluttKoblingTjeneste {
             kobling.setYtelseType(ytelseType);
         }
 
-        if (!ENV.isProd()) {
-            iayTjeneste.slettInaktiveGrunnlagFor(kobling.getKoblingReferanse());
-        }
-
+        iayTjeneste.slettInaktiveGrunnlagFor(kobling.getKoblingReferanse());
         koblingTjeneste.deaktiver(kobling.getKoblingReferanse());
-
         koblingTjeneste.oppdaterLåsVersjon(koblingLås);
 
         LOG.info("Ferdig med avlutting av kobling for sak=[{}, {}] med behandling='{}'",
