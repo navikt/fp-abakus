@@ -52,7 +52,7 @@ class InntektArbeidYtelseRepositoryTest {
     private KoblingRepository koblingRepository;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         repository = new InntektArbeidYtelseRepository(jpaExtension.getEntityManager());
         koblingRepository = new KoblingRepository(jpaExtension.getEntityManager());
     }
@@ -395,7 +395,7 @@ class InntektArbeidYtelseRepositoryTest {
             .map(Optional::get)
             .map(InntektsmeldingAggregat::getInntektsmeldinger)
             .flatMap(Collection::stream)
-            .collect(Collectors.toList());
+            .toList();
         assertThat(inntektsmeldings).hasSize(4);
 
         var aktivtGrunnlag = repository.hentInntektArbeidYtelseForBehandling(koblingReferanse);
@@ -475,7 +475,7 @@ class InntektArbeidYtelseRepositoryTest {
             .map(Optional::get)
             .map(InntektsmeldingAggregat::getInntektsmeldinger)
             .flatMap(Collection::stream)
-            .collect(Collectors.toList());
+            .toList();
         assertThat(inntektsmeldings).hasSize(1);
 
         var aktivtGrunnlag = repository.hentInntektArbeidYtelseForBehandling(koblingReferanse);
@@ -552,7 +552,7 @@ class InntektArbeidYtelseRepositoryTest {
             .map(Optional::get)
             .map(InntektsmeldingAggregat::getInntektsmeldinger)
             .flatMap(Collection::stream)
-            .collect(Collectors.toList());
+            .toList();
         assertThat(inntektsmeldings).hasSize(4);
 
         var aktivtGrunnlag = repository.hentInntektArbeidYtelseForBehandling(koblingReferanse);
@@ -608,8 +608,6 @@ class InntektArbeidYtelseRepositoryTest {
             .medRefusjon(BigDecimal.ONE)
             .build();
 
-        var b = "AR122".compareTo("AR124") > 0;
-
         repository.lagre(ko.getKoblingReferanse(), ArbeidsforholdInformasjonBuilder.oppdatere(new ArbeidsforholdInformasjon()),
             List.of(inntektsmelding1, inntektsmelding2, inntektsmelding3));
 
@@ -623,7 +621,7 @@ class InntektArbeidYtelseRepositoryTest {
             .map(Optional::get)
             .map(InntektsmeldingAggregat::getInntektsmeldinger)
             .flatMap(Collection::stream)
-            .collect(Collectors.toList());
+            .toList();
         assertThat(inntektsmeldings).hasSize(2);
 
         var aktivtGrunnlag = repository.hentInntektArbeidYtelseForBehandling(koblingReferanse);

@@ -56,6 +56,24 @@ class AvsluttKoblingTjenesteTest {
     }
 
     @Test
+    void avslutt_grunnlag_oppdater_ytelse_type_mangler_i_request_ok() {
+        var referanse = new KoblingReferanse(UUID.randomUUID());
+        when(kobling.getKoblingReferanse()).thenReturn(referanse);
+        when(kobling.getYtelseType()).thenReturn(YtelseType.UDEFINERT);
+
+        when(koblingTjeneste.hentFor(referanse)).thenReturn(Optional.of(kobling));
+
+        // Act
+        avsluttKoblingTjeneste.avsluttKobling(referanse, null);
+
+        // Verify
+        verify(iayTjeneste).slettInaktiveGrunnlagFor(referanse);
+        verify(koblingTjeneste).deaktiver(referanse);
+
+        verify(kobling, never()).setYtelseType(YtelseType.FORELDREPENGER);
+    }
+
+    @Test
     void avslutt_grunnlag_oppdater_ytelse_type_ok() {
         var referanse = new KoblingReferanse(UUID.randomUUID());
         when(kobling.getKoblingReferanse()).thenReturn(referanse);
