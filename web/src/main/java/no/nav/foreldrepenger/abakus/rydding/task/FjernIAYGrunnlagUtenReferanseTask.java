@@ -27,9 +27,9 @@ public class FjernIAYGrunnlagUtenReferanseTask implements ProsessTaskHandler {
 
     @Override
     public void doTask(ProsessTaskData prosessTaskData) {
-        Set<Long> iayAggregatUtenReferanse = DefaultJsonMapper.fromJson(prosessTaskData.getPayloadAsString(), Set.class);
+        Set<Integer> iayAggregatUtenReferanse = DefaultJsonMapper.fromJson(prosessTaskData.getPayloadAsString(), Set.class);
         LOG.info("Fjerner {} IAY-aggregater uten referanse.", iayAggregatUtenReferanse.size());
-        iayAggregatUtenReferanse.forEach(iayAggregatRepository::slettIayAggregat);
-        LOG.info("Slettet {} foreldreløse IAY-aggregater.", iayAggregatUtenReferanse.size());
+        iayAggregatUtenReferanse.forEach(iayId ->  iayAggregatRepository.slettIayAggregat(iayId.longValue()));
+        LOG.info("Slettet {} IAY-aggregater uten referanse", iayAggregatUtenReferanse.size());
     }
 }

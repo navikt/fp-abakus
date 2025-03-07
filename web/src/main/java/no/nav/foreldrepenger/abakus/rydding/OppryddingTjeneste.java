@@ -1,17 +1,19 @@
 package no.nav.foreldrepenger.abakus.rydding;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import no.nav.foreldrepenger.abakus.rydding.task.FjernIAYGrunnlagUtenReferanseTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 import no.nav.vedtak.mapper.json.DefaultJsonMapper;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @ApplicationScoped
 public class OppryddingTjeneste {
@@ -35,16 +37,19 @@ public class OppryddingTjeneste {
         var iayAggregatUtenReferanse = iayOppryddingRepository.hentAlleIayAggregatUtenReferanse();
 
         LOG.info("Fjerner {} IAY-aggregater uten referanse.", iayAggregatUtenReferanse.size());
-        List<Long> partisjon = new ArrayList<>(MAX_PARTITION_SIZE);
+        partisjonerOverFlereTask(iayAggregatUtenReferanse, this::opprettFjernIayAggregatTask);
+    }
 
+    private void partisjonerOverFlereTask(Set<Long> iayAggregatUtenReferanse, Consumer<List<Long>> opprettTaskConsumer) {
+        List<Long> partisjon = new ArrayList<>(MAX_PARTITION_SIZE);
         for (var iayAggregat : iayAggregatUtenReferanse) {
             partisjon.add(iayAggregat);
             if (partisjon.size() == MAX_PARTITION_SIZE) {
-                opprettFjernIayAggregatTask(partisjon);
+                opprettTaskConsumer.accept(partisjon);
                 partisjon.clear();
             }
         }
-        // Oppretter en task for resterende iayAggregater
+        // Oppretter en task for resterende aggregater
         if (!partisjon.isEmpty()) {
             opprettFjernIayAggregatTask(partisjon);
         }

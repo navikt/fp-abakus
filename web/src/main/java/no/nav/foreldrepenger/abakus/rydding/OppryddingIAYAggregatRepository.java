@@ -38,10 +38,10 @@ public class OppryddingIAYAggregatRepository {
 
         var result = query.getResultList();
         if (result.isEmpty()) {
-            LOG.info("Fant ingen IAY-aggregater uten grunnlag referanse.");
+            LOG.info("Fant ingen IAY-aggregater uten grunnlag referanse");
             return emptySet();
         }
-        LOG.info("Fant {} IAY-aggregater uten grunnlag referanse, klart for sletting", result.size());
+        LOG.info("Fant {} IAY-aggregater uten grunnlag referanse", result.size());
         return result.stream().map(InntektArbeidYtelseAggregat::getId).collect(Collectors.toSet());
     }
 
@@ -88,7 +88,7 @@ public class OppryddingIAYAggregatRepository {
     }
 
     private List hentRelaterteYtelserFor(List aktørYtelseIdList) {
-        return entityManager.createNativeQuery("select distinct id from iay_yrkesaktivitet where aktoer_arbeid_id in (:aktoerYtelseIdList)")
+        return entityManager.createNativeQuery("select distinct id from iay_relatert_ytelse where aktoer_ytelse_id in (:aktoerYtelseIdList)")
             .setParameter("aktoerYtelseIdList", aktørYtelseIdList)
             .getResultList();
     }
