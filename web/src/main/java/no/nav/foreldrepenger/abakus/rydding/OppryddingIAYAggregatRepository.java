@@ -1,17 +1,15 @@
 package no.nav.foreldrepenger.abakus.rydding;
 
-import static java.util.Collections.emptyList;
-
-import java.util.List;
-import java.util.Objects;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Objects;
 
 @ApplicationScoped
 public class OppryddingIAYAggregatRepository {

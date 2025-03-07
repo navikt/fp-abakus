@@ -12,11 +12,12 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
-import static no.nav.foreldrepenger.abakus.rydding.task.FjernIAYGrunnlagUtenReferanseTask.MAX_PARTITION_SIZE;
 
 @ApplicationScoped
 public class OppryddingTjeneste {
+
     private static final Logger LOG = LoggerFactory.getLogger(OppryddingTjeneste.class);
+    protected static final int MAX_PARTITION_SIZE = 250;
     private OppryddingIAYAggregatRepository iayOppryddingRepository;
     private ProsessTaskTjeneste taskTjeneste;
 
