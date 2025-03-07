@@ -70,7 +70,7 @@ public class InntektArbeidYtelseRepository {
 
     public Optional<InntektArbeidYtelseAggregat> hentIAYAggregatFor(KoblingReferanse koblingReferanse, UUID eksternReferanse) {
         TypedQuery<InntektArbeidYtelseAggregat> query = entityManager.createQuery(
-            "SELECT iay " + " FROM InntektArbeidYtelser iay " + " WHERE iay.eksternReferanse = :eksternReferanse", InntektArbeidYtelseAggregat.class);
+            "SELECT iay FROM InntektArbeidYtelser iay WHERE iay.eksternReferanse = :eksternReferanse", InntektArbeidYtelseAggregat.class);
         query.setParameter("eksternReferanse", eksternReferanse);
 
         var res = HibernateVerktøy.hentUniktResultat(query);
