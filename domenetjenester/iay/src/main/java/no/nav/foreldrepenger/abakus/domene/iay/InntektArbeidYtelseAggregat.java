@@ -94,6 +94,10 @@ public class InntektArbeidYtelseAggregat extends BaseEntitet {
         this(kopierFra.getEksternReferanse(), kopierFra.getOpprettetTidspunkt(), kopierFra);
     }
 
+    public Long getId() {
+        return id;
+    }
+
     /**
      * Identifisere en immutable instans av grunnlaget unikt og er egnet for utveksling (eks. til abakus eller andre systemer)
      */

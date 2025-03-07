@@ -5,6 +5,8 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import java.util.List;
 import java.util.function.Function;
 
+import no.nav.foreldrepenger.abakus.rydding.OppryddingTjeneste;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +48,7 @@ public class ForvaltningRestTjeneste {
     private static final String GJELDENDE = "gjeldende";
 
     private InntektArbeidYtelseTjeneste iayTjeneste;
+    private OppryddingTjeneste oppryddingTjeneste;
 
     private EntityManager entityManager;
 
@@ -55,9 +58,11 @@ public class ForvaltningRestTjeneste {
 
     @Inject
     public ForvaltningRestTjeneste(EntityManager entityManager,
-                                   InntektArbeidYtelseTjeneste iayTjeneste) {
+                                   InntektArbeidYtelseTjeneste iayTjeneste,
+                                   OppryddingTjeneste oppryddingTjeneste) {
         this.entityManager = entityManager;
         this.iayTjeneste = iayTjeneste;
+        this.oppryddingTjeneste = oppryddingTjeneste;
     }
 
     @POST
@@ -127,6 +132,18 @@ public class ForvaltningRestTjeneste {
         LOG.info("FORVALTNING ABAKUS oppdaterAktoerId");
         int antall = oppdaterAktørIdFor(request.getUtgåttAktør().getVerdi(), request.getGyldigAktør().getVerdi());
         return Response.ok(antall).build();
+    }
+
+    @POST
+    @Path("/ryddOppGrunnlagUtenReferanse")
+    @Consumes(APPLICATION_JSON)
+    @Produces(APPLICATION_JSON)
+    @Operation(description = "Trigger ryddejobben som fjerner alle inaktive grunnlag uten referanse", tags = "FORVALTNING", responses = {@ApiResponse(responseCode = "200", description = "Taskene blir opprettet og grunnlag blir slettet asynkront.")})
+    @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.DRIFT)
+    public Response ryddOppGrunnlagUtenReferanse() {
+        LOG.info("FORVALTNING ABAKUS ryddOppGrunnlagUtenReferanse");
+        oppryddingTjeneste.fjernAlleIayAggregatUtenReferanse();
+        return Response.ok().build();
     }
 
     private int oppdaterAktørIdFor(String gammel, String gjeldende) {
