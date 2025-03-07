@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.rydding;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import org.slf4j.Logger;
@@ -35,14 +34,13 @@ public class OppryddingTjeneste {
 
     public void fjernAlleIayAggregatUtenReferanse() {
         var iayAggregatUtenReferanse = iayOppryddingRepository.hentAlleIayAggregatUtenReferanse();
-
         LOG.info("Fjerner {} IAY-aggregater uten referanse.", iayAggregatUtenReferanse.size());
         partisjonerOverFlereTask(iayAggregatUtenReferanse, this::opprettFjernIayAggregatTask);
     }
 
-    private void partisjonerOverFlereTask(Set<Long> iayAggregatUtenReferanse, Consumer<List<Long>> opprettTaskConsumer) {
+    private void partisjonerOverFlereTask(List<Long> aggregatUtenReferanse, Consumer<List<Long>> opprettTaskConsumer) {
         List<Long> partisjon = new ArrayList<>(MAX_PARTITION_SIZE);
-        for (var iayAggregat : iayAggregatUtenReferanse) {
+        for (var iayAggregat : aggregatUtenReferanse) {
             partisjon.add(iayAggregat);
             if (partisjon.size() == MAX_PARTITION_SIZE) {
                 opprettTaskConsumer.accept(partisjon);
@@ -51,7 +49,7 @@ public class OppryddingTjeneste {
         }
         // Oppretter en task for resterende aggregater
         if (!partisjon.isEmpty()) {
-            opprettFjernIayAggregatTask(partisjon);
+            opprettTaskConsumer.accept(partisjon);
         }
     }
 

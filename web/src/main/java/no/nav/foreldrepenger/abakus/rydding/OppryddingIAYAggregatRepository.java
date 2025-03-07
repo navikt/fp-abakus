@@ -1,11 +1,9 @@
 package no.nav.foreldrepenger.abakus.rydding;
 
-import static java.util.Collections.emptySet;
+import static java.util.Collections.emptyList;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,27 +28,24 @@ public class OppryddingIAYAggregatRepository {
         this.entityManager = entityManager;
     }
 
-    public Set<Long> hentAlleIayAggregatUtenReferanse() {
-        var query = entityManager.createQuery("""
-            from InntektArbeidYtelser iay where
-                not exists (select 1 from InntektArbeidGrunnlag gr where iay.id = gr.register.id or iay.id = gr.saksbehandlet.id)
-            """, InntektArbeidYtelseAggregat.class);
-
+    public List<Long> hentAlleIayAggregatUtenReferanse() {
+        var query = entityManager.createNativeQuery(
+            "select distinct id from iay_inntekt_arbeid_ytelser iay where not exists (select 1 from gr_arbeid_inntekt gr where iay.id = gr.register_id or iay.id = gr.saksbehandlet_id)");
         var result = query.getResultList();
         if (result.isEmpty()) {
             LOG.info("Fant ingen IAY-aggregater uten grunnlag referanse");
-            return emptySet();
+            return emptyList();
         }
         LOG.info("Fant {} IAY-aggregater uten grunnlag referanse", result.size());
-        return result.stream().map(InntektArbeidYtelseAggregat::getId).collect(Collectors.toSet());
+        return result;
     }
 
-    public void slettIayAggregat(long id) {
+    public void slettIayAggregat(Long id) {
         var iay = entityManager.find(InntektArbeidYtelseAggregat.class, id);
         if (iay != null) {
-            slettIayAktørIntekt(iay.getId());
-            slettIayAktørArbeid(iay.getId());
-            slettIayAktørYtelse(iay.getId());
+            slettIayAktørIntekt(id);
+            slettIayAktørArbeid(id);
+            slettIayAktørYtelse(id);
             entityManager.remove(iay);
         }
     }
@@ -135,7 +130,7 @@ public class OppryddingIAYAggregatRepository {
             .executeUpdate();
     }
 
-    private int fjernAktørYtelseFor(long iayIdForSletting) {
+    private int fjernAktørYtelseFor(Long iayIdForSletting) {
         return entityManager.createNativeQuery("delete from iay_aktoer_ytelse where inntekt_arbeid_ytelser_id = :iayId")
             .setParameter("iayId", iayIdForSletting)
             .executeUpdate();
@@ -189,13 +184,13 @@ public class OppryddingIAYAggregatRepository {
             .executeUpdate();
     }
 
-    private int fjernAktørArbeidFor(long iayIdForSletting) {
+    private int fjernAktørArbeidFor(Long iayIdForSletting) {
         return entityManager.createNativeQuery("delete from iay_aktoer_arbeid where inntekt_arbeid_ytelser_id = :iayId")
             .setParameter("iayId", iayIdForSletting)
             .executeUpdate();
     }
 
-    private void slettIayAktørIntekt(long iayIdForSletting) {
+    private void slettIayAktørIntekt(Long iayIdForSletting) {
         var aktørInntektIdList = hentAktørInntekterFor(iayIdForSletting);
         var inntektIdList = hentInntekterFor(aktørInntektIdList);
 
@@ -209,7 +204,7 @@ public class OppryddingIAYAggregatRepository {
         LOG.info("Fjernet {} aktør inntekter for iay-aggregat: {}", fjernAktørInntekter, iayIdForSletting);
     }
 
-    private List hentAktørInntekterFor(long iayIdForSletting) {
+    private List hentAktørInntekterFor(Long iayIdForSletting) {
         return entityManager.createNativeQuery("select distinct id from iay_aktoer_inntekt where inntekt_arbeid_ytelser_id = :iayId")
             .setParameter("iayId", iayIdForSletting)
             .getResultList();
@@ -233,7 +228,7 @@ public class OppryddingIAYAggregatRepository {
             .executeUpdate();
     }
 
-    private int fjernAktørInntektFor(long iayIdForSletting) {
+    private int fjernAktørInntektFor(Long iayIdForSletting) {
         return entityManager.createNativeQuery("delete from iay_aktoer_inntekt where inntekt_arbeid_ytelser_id = :iayId")
             .setParameter("iayId", iayIdForSletting)
             .executeUpdate();
