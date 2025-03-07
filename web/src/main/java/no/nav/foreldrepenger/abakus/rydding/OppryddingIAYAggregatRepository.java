@@ -32,15 +32,15 @@ public class OppryddingIAYAggregatRepository {
     }
 
     public List<Long> hentAlleIayAggregatUtenReferanse() {
-        var query = entityManager.createNativeQuery(
-            "select distinct id from iay_inntekt_arbeid_ytelser iay where not exists (select 1 from gr_arbeid_inntekt gr where iay.id = gr.register_id or iay.id = gr.saksbehandlet_id)");
-        var result = query.getResultList();
+        @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery(
+                "select distinct id from iay_inntekt_arbeid_ytelser iay where not exists (select 1 from gr_arbeid_inntekt gr where iay.id = gr.register_id or iay.id = gr.saksbehandlet_id)")
+            .getResultList();
         if (result.isEmpty()) {
             LOG.info("Fant ingen IAY-aggregater uten grunnlag referanse");
             return emptyList();
         }
         LOG.info("Fant {} IAY-aggregater uten grunnlag referanse", result.size());
-        return result;
+        return result.stream().map(Number::longValue).toList();
     }
 
     public void slettIayAggregat(Long id) {
@@ -80,28 +80,32 @@ public class OppryddingIAYAggregatRepository {
     }
 
     private List<Long> hentAktørYtelseFor(Long iayIdForSletting) {
-        @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery("select distinct id from iay_aktoer_ytelse where inntekt_arbeid_ytelser_id = :iayId")
+        @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery(
+                "select distinct id from iay_aktoer_ytelse where inntekt_arbeid_ytelser_id = :iayId")
             .setParameter(PARAM_IAY_ID, iayIdForSletting)
             .getResultList();
         return result.stream().map(Number::longValue).toList();
     }
 
     private List<Long> hentRelaterteYtelserFor(List<Long> aktørYtelseIdList) {
-        @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery("select distinct id from iay_relatert_ytelse where aktoer_ytelse_id in (:aktoerYtelseIdList)")
+        @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery(
+                "select distinct id from iay_relatert_ytelse where aktoer_ytelse_id in (:aktoerYtelseIdList)")
             .setParameter("aktoerYtelseIdList", aktørYtelseIdList)
             .getResultList();
         return result.stream().map(Number::longValue).toList();
     }
 
     private List<Long> hentYtelseGrunnlagFor(List<Long> relatertYtelseIdList) {
-        @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery("select distinct id from iay_ytelse_grunnlag where ytelse_id in (:relatertYtelseIdList)")
+        @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery(
+                "select distinct id from iay_ytelse_grunnlag where ytelse_id in (:relatertYtelseIdList)")
             .setParameter(PARAM_RELATERT_YTELSE_ID_LIST, relatertYtelseIdList)
             .getResultList();
         return result.stream().map(Number::longValue).toList();
     }
 
     private List<Long> hentYtelseAnvistFor(List<Long> relatertYtelseIdList) {
-        @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery("select distinct id from iay_ytelse_anvist where ytelse_id in (:relatertYtelseIdList)")
+        @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery(
+                "select distinct id from iay_ytelse_anvist where ytelse_id in (:relatertYtelseIdList)")
             .setParameter(PARAM_RELATERT_YTELSE_ID_LIST, relatertYtelseIdList)
             .getResultList();
         return result.stream().map(Number::longValue).toList();
