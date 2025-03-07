@@ -35,8 +35,7 @@ public class OppryddingTjeneste {
         var iayAggregatUtenReferanse = iayOppryddingRepository.hentIayAggregaterUtenReferanse(MAX_PARTITION_SIZE);
         if (iayAggregatUtenReferanse.isEmpty()) {
             LOG.info("Ingen IAY aggregat for sletting.");
-            return;
-        }
+            return;}
         LOG.info("Fjerner {} IAY-aggregater uten referanse.", iayAggregatUtenReferanse.size());
         opprettFjernIayAggregatTask(iayAggregatUtenReferanse);
     }
