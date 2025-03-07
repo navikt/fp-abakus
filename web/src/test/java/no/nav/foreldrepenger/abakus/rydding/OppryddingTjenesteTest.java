@@ -53,4 +53,27 @@ class OppryddingTjenesteTest {
         verify(oppryddingIAYAggregatRepository).hentIayAggregaterUtenReferanse(MAX_PARTITION_SIZE);
         verify(prosessTaskTjeneste, times(1)).lagre(any(ProsessTaskData.class));
     }
+
+    @Test
+    void testPartisjonerOverFlereTask_ok() {
+        var aggregates = rangeClosed(1, MAX_PARTITION_SIZE + 50).boxed().toList();
+        when(oppryddingIAYAggregatRepository.hentAlleIayAggregatUtenReferanse()).thenReturn(aggregates);
+
+        oppryddingTjeneste.fjernAlleIayAggregatUtenReferanse();
+
+        assertThat(aggregates).hasSize(MAX_PARTITION_SIZE + 50);
+        verify(prosessTaskTjeneste, times(2)).lagre(any(ProsessTaskData.class));
+    }
+
+    @Test
+    void testOpprettFjernIayAggregatTask_ok() {
+        var aggregates = rangeClosed(1, MAX_PARTITION_SIZE).boxed().toList();
+        when(oppryddingIAYAggregatRepository.hentAlleIayAggregatUtenReferanse()).thenReturn(aggregates);
+
+        oppryddingTjeneste.fjernAlleIayAggregatUtenReferanse();
+
+        assertThat(aggregates).hasSize(MAX_PARTITION_SIZE);
+        verify(prosessTaskTjeneste).lagre(any(ProsessTaskData.class));
+    }
+
 }
