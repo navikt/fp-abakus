@@ -16,6 +16,9 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat;
 @ApplicationScoped
 public class OppryddingIAYAggregatRepository {
     private static final Logger LOG = LoggerFactory.getLogger(OppryddingIAYAggregatRepository.class);
+    protected static final String PARAM_IAY_ID = "iayId";
+    protected static final String PARAM_RELATERT_YTELSE_ID_LIST = "relatertYtelseIdList";
+
     private EntityManager entityManager;
 
     OppryddingIAYAggregatRepository() {
@@ -76,55 +79,59 @@ public class OppryddingIAYAggregatRepository {
         LOG.info("Fjernet {} aktør ytelse for iay-aggregat: {}", fjernAktørYtelse, iayIdForSletting);
     }
 
-    private List hentAktørYtelseFor(Long iayIdForSletting) {
-        return entityManager.createNativeQuery("select distinct id from iay_aktoer_ytelse where inntekt_arbeid_ytelser_id = :iayId")
-            .setParameter("iayId", iayIdForSletting)
+    private List<Long> hentAktørYtelseFor(Long iayIdForSletting) {
+        @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery("select distinct id from iay_aktoer_ytelse where inntekt_arbeid_ytelser_id = :iayId")
+            .setParameter(PARAM_IAY_ID, iayIdForSletting)
             .getResultList();
+        return result.stream().map(Number::longValue).toList();
     }
 
-    private List hentRelaterteYtelserFor(List aktørYtelseIdList) {
-        return entityManager.createNativeQuery("select distinct id from iay_relatert_ytelse where aktoer_ytelse_id in (:aktoerYtelseIdList)")
+    private List<Long> hentRelaterteYtelserFor(List<Long> aktørYtelseIdList) {
+        @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery("select distinct id from iay_relatert_ytelse where aktoer_ytelse_id in (:aktoerYtelseIdList)")
             .setParameter("aktoerYtelseIdList", aktørYtelseIdList)
             .getResultList();
+        return result.stream().map(Number::longValue).toList();
     }
 
-    private List hentYtelseGrunnlagFor(List relatertYtelseIdList) {
-        return entityManager.createNativeQuery("select distinct id from iay_ytelse_grunnlag where ytelse_id in (:relatertYtelseIdList)")
-            .setParameter("relatertYtelseIdList", relatertYtelseIdList)
+    private List<Long> hentYtelseGrunnlagFor(List<Long> relatertYtelseIdList) {
+        @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery("select distinct id from iay_ytelse_grunnlag where ytelse_id in (:relatertYtelseIdList)")
+            .setParameter(PARAM_RELATERT_YTELSE_ID_LIST, relatertYtelseIdList)
             .getResultList();
+        return result.stream().map(Number::longValue).toList();
     }
 
-    private List hentYtelseAnvistFor(List relatertYtelseIdList) {
-        return entityManager.createNativeQuery("select distinct id from iay_ytelse_anvist where ytelse_id in (:relatertYtelseIdList)")
-            .setParameter("relatertYtelseIdList", relatertYtelseIdList)
+    private List<Long> hentYtelseAnvistFor(List<Long> relatertYtelseIdList) {
+        @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery("select distinct id from iay_ytelse_anvist where ytelse_id in (:relatertYtelseIdList)")
+            .setParameter(PARAM_RELATERT_YTELSE_ID_LIST, relatertYtelseIdList)
             .getResultList();
+        return result.stream().map(Number::longValue).toList();
     }
 
-    private int fjernYtelseStørrelseFor(List ytelseGrunnlagIdList) {
+    private int fjernYtelseStørrelseFor(List<Long> ytelseGrunnlagIdList) {
         return entityManager.createNativeQuery("delete from iay_ytelse_stoerrelse where ytelse_grunnlag_id in (:ytelseGrunnlagIdList)")
             .setParameter("ytelseGrunnlagIdList", ytelseGrunnlagIdList)
             .executeUpdate();
     }
 
-    private int fjernYtelseGrunnlagFor(List relatertYtelseIdList) {
+    private int fjernYtelseGrunnlagFor(List<Long> relatertYtelseIdList) {
         return entityManager.createNativeQuery("delete from iay_ytelse_grunnlag where ytelse_id in (:relatertYtelseIdList)")
-            .setParameter("relatertYtelseIdList", relatertYtelseIdList)
+            .setParameter(PARAM_RELATERT_YTELSE_ID_LIST, relatertYtelseIdList)
             .executeUpdate();
     }
 
-    private int fjernYtelseAnvistAndelFor(List ytelseAnvistIdList) {
+    private int fjernYtelseAnvistAndelFor(List<Long> ytelseAnvistIdList) {
         return entityManager.createNativeQuery("delete from iay_ytelse_anvist_andel where ytelse_anvist_id in (:ytelseAnvistIdList)")
             .setParameter("ytelseAnvistIdList", ytelseAnvistIdList)
             .executeUpdate();
     }
 
-    private int fjernYtelseAnvistFor(List relatertYtelseIdList) {
+    private int fjernYtelseAnvistFor(List<Long> relatertYtelseIdList) {
         return entityManager.createNativeQuery("delete from iay_ytelse_anvist where ytelse_id in (:relatertYtelseIdList)")
-            .setParameter("relatertYtelseIdList", relatertYtelseIdList)
+            .setParameter(PARAM_RELATERT_YTELSE_ID_LIST, relatertYtelseIdList)
             .executeUpdate();
     }
 
-    private int fjernRelatertYtelseFor(List aktørYtelseIdList) {
+    private int fjernRelatertYtelseFor(List<Long> aktørYtelseIdList) {
         return entityManager.createNativeQuery("delete from iay_relatert_ytelse where aktoer_ytelse_id in (:aktoerYtelseIdList)")
             .setParameter("aktoerYtelseIdList", aktørYtelseIdList)
             .executeUpdate();
@@ -132,7 +139,7 @@ public class OppryddingIAYAggregatRepository {
 
     private int fjernAktørYtelseFor(Long iayIdForSletting) {
         return entityManager.createNativeQuery("delete from iay_aktoer_ytelse where inntekt_arbeid_ytelser_id = :iayId")
-            .setParameter("iayId", iayIdForSletting)
+            .setParameter(PARAM_IAY_ID, iayIdForSletting)
             .executeUpdate();
     }
 
@@ -151,34 +158,37 @@ public class OppryddingIAYAggregatRepository {
 
         var fjernAktørArbeid = fjernAktørArbeidFor(iayIdForSletting);
         LOG.info("Fjernet {} aktør arbeid for iay-aggregat: {}", fjernAktørArbeid, iayIdForSletting);
-
     }
 
-    private List hentAktørArbeidFor(Long iayIdForSletting) {
-        return entityManager.createNativeQuery("select distinct id from iay_aktoer_arbeid where inntekt_arbeid_ytelser_id = :iayId")
-            .setParameter("iayId", iayIdForSletting)
+    private List<Long> hentAktørArbeidFor(Long iayIdForSletting) {
+        @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery(
+                "select distinct id from iay_aktoer_arbeid where inntekt_arbeid_ytelser_id = :iayId")
+            .setParameter(PARAM_IAY_ID, iayIdForSletting)
             .getResultList();
+        return result.stream().map(Number::longValue).toList();
     }
 
-    private List hentYrkesaktiviteterFor(List aktørArbeidIdList) {
-        return entityManager.createNativeQuery("select distinct id from iay_yrkesaktivitet where aktoer_arbeid_id in (:aktoerArbeidIdList)")
+    private List<Long> hentYrkesaktiviteterFor(List<Long> aktørArbeidIdList) {
+        @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery(
+                "select distinct id from iay_yrkesaktivitet where aktoer_arbeid_id in (:aktoerArbeidIdList)")
             .setParameter("aktoerArbeidIdList", aktørArbeidIdList)
             .getResultList();
+        return result.stream().map(Number::longValue).toList();
     }
 
-    private int fjernPermisjonerFor(List yrkesaktivitetIdList) {
+    private int fjernPermisjonerFor(List<Long> yrkesaktivitetIdList) {
         return entityManager.createNativeQuery("delete from iay_permisjon where yrkesaktivitet_id in (:yrkesaktivitetIdList)")
             .setParameter("yrkesaktivitetIdList", yrkesaktivitetIdList)
             .executeUpdate();
     }
 
-    private int fjernAktivitetsAvtalerFor(List yrkesaktivitetIdList) {
+    private int fjernAktivitetsAvtalerFor(List<Long> yrkesaktivitetIdList) {
         return entityManager.createNativeQuery("delete from iay_aktivitets_avtale where yrkesaktivitet_id in (:yrkesaktivitetIdList)")
             .setParameter("yrkesaktivitetIdList", yrkesaktivitetIdList)
             .executeUpdate();
     }
 
-    private int fjernYrkesaktiviteterFor(List aktørArbeidIdList) {
+    private int fjernYrkesaktiviteterFor(List<Long> aktørArbeidIdList) {
         return entityManager.createNativeQuery("delete from iay_yrkesaktivitet where aktoer_arbeid_id in (:aktoerArbeidIdList)")
             .setParameter("aktoerArbeidIdList", aktørArbeidIdList)
             .executeUpdate();
@@ -186,7 +196,7 @@ public class OppryddingIAYAggregatRepository {
 
     private int fjernAktørArbeidFor(Long iayIdForSletting) {
         return entityManager.createNativeQuery("delete from iay_aktoer_arbeid where inntekt_arbeid_ytelser_id = :iayId")
-            .setParameter("iayId", iayIdForSletting)
+            .setParameter(PARAM_IAY_ID, iayIdForSletting)
             .executeUpdate();
     }
 
@@ -204,25 +214,29 @@ public class OppryddingIAYAggregatRepository {
         LOG.info("Fjernet {} aktør inntekter for iay-aggregat: {}", fjernAktørInntekter, iayIdForSletting);
     }
 
-    private List hentAktørInntekterFor(Long iayIdForSletting) {
-        return entityManager.createNativeQuery("select distinct id from iay_aktoer_inntekt where inntekt_arbeid_ytelser_id = :iayId")
-            .setParameter("iayId", iayIdForSletting)
+    private List<Long> hentAktørInntekterFor(Long iayIdForSletting) {
+        @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery(
+                "select distinct id from iay_aktoer_inntekt where inntekt_arbeid_ytelser_id = :iayId")
+            .setParameter(PARAM_IAY_ID, iayIdForSletting)
             .getResultList();
+        return result.stream().map(Number::longValue).toList();
     }
 
-    private List hentInntekterFor(List<Long> aktørInntektIdList) {
-        return entityManager.createNativeQuery("select distinct id from iay_inntekt where aktoer_inntekt_id in (:aktoerInntektIdList)")
+    private List<Long> hentInntekterFor(List<Long> aktørInntektIdList) {
+        @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery(
+                "select distinct id from iay_inntekt where aktoer_inntekt_id in (:aktoerInntektIdList)")
             .setParameter("aktoerInntektIdList", aktørInntektIdList)
             .getResultList();
+        return result.stream().map(Number::longValue).toList();
     }
 
-    private int fjernInntektsposterFor(List inntektIdList) {
+    private int fjernInntektsposterFor(List<Long> inntektIdList) {
         return entityManager.createNativeQuery("delete from iay_inntektspost where inntekt_id in (:inntektIdList)")
             .setParameter("inntektIdList", inntektIdList)
             .executeUpdate();
     }
 
-    private int fjernInntekterFor(List aktørInntektIdList) {
+    private int fjernInntekterFor(List<Long> aktørInntektIdList) {
         return entityManager.createNativeQuery("delete from iay_inntekt where aktoer_inntekt_id in (:aktoerInntektIdList)")
             .setParameter("aktoerInntektIdList", aktørInntektIdList)
             .executeUpdate();
@@ -230,7 +244,7 @@ public class OppryddingIAYAggregatRepository {
 
     private int fjernAktørInntektFor(Long iayIdForSletting) {
         return entityManager.createNativeQuery("delete from iay_aktoer_inntekt where inntekt_arbeid_ytelser_id = :iayId")
-            .setParameter("iayId", iayIdForSletting)
+            .setParameter(PARAM_IAY_ID, iayIdForSletting)
             .executeUpdate();
     }
 }
