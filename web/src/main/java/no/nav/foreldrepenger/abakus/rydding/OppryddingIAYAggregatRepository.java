@@ -55,28 +55,36 @@ public class OppryddingIAYAggregatRepository {
 
     private void slettIayAktørYtelse(Long iayIdForSletting) {
         var aktørYtelseIdList = hentAktørYtelseFor(iayIdForSletting);
-        var relatertYtelseIdList = hentRelaterteYtelserFor(aktørYtelseIdList);
+        if (!aktørYtelseIdList.isEmpty()) {
 
-        var ytelseGrunnlagIdList = hentYtelseGrunnlagFor(relatertYtelseIdList);
-        var ytelseAnvistIdList = hentYtelseAnvistFor(relatertYtelseIdList);
+            var relatertYtelseIdList = hentRelaterteYtelserFor(aktørYtelseIdList);
+            if (!relatertYtelseIdList.isEmpty()) {
 
-        var fjernetYtelseStørrelser = fjernYtelseStørrelseFor(ytelseGrunnlagIdList);
-        LOG.info("Fjernet {} ytelse størrelser for ytelse grunnlag: {}", fjernetYtelseStørrelser, ytelseGrunnlagIdList);
+                var ytelseGrunnlagIdList = hentYtelseGrunnlagFor(relatertYtelseIdList);
+                if (!ytelseGrunnlagIdList.isEmpty()) {
+                    var fjernetYtelseStørrelser = fjernYtelseStørrelseFor(ytelseGrunnlagIdList);
+                    LOG.info("Fjernet {} ytelse størrelser for ytelse grunnlag: {}", fjernetYtelseStørrelser, ytelseGrunnlagIdList);
 
-        var fjernetYtelseGrunnlag = fjernYtelseGrunnlagFor(relatertYtelseIdList);
-        LOG.info("Fjernet {} ytelse grunnlag for relatert ytelse: {}", fjernetYtelseGrunnlag, relatertYtelseIdList);
+                    var fjernetYtelseGrunnlag = fjernYtelseGrunnlagFor(relatertYtelseIdList);
+                    LOG.info("Fjernet {} ytelse grunnlag for relatert ytelse: {}", fjernetYtelseGrunnlag, relatertYtelseIdList);
+                }
 
-        var fjernetYtelseAnvistAndeler = fjernYtelseAnvistAndelFor(ytelseAnvistIdList);
-        LOG.info("Fjernet {} ytelse anvist andeler for ytelse anvist: {}", fjernetYtelseAnvistAndeler, ytelseAnvistIdList);
+                var ytelseAnvistIdList = hentYtelseAnvistFor(relatertYtelseIdList);
+                if (!ytelseAnvistIdList.isEmpty()) {
+                    var fjernetYtelseAnvistAndeler = fjernYtelseAnvistAndelFor(ytelseAnvistIdList);
+                    LOG.info("Fjernet {} ytelse anvist andeler for ytelse anvist: {}", fjernetYtelseAnvistAndeler, ytelseAnvistIdList);
 
-        var fjernetYtelseAnvist = fjernYtelseAnvistFor(relatertYtelseIdList);
-        LOG.info("Fjernet {} ytelse anvist for relatert ytelse: {}", fjernetYtelseAnvist, relatertYtelseIdList);
+                    var fjernetYtelseAnvist = fjernYtelseAnvistFor(relatertYtelseIdList);
+                    LOG.info("Fjernet {} ytelse anvist for relatert ytelse: {}", fjernetYtelseAnvist, relatertYtelseIdList);
+                }
 
-        var fjernetRelatertYtelsere = fjernRelatertYtelseFor(aktørYtelseIdList);
-        LOG.info("Fjernet {} relatert ytelse for aktør ytelse: {}", fjernetRelatertYtelsere, aktørYtelseIdList);
+                var fjernetRelatertYtelsere = fjernRelatertYtelseFor(aktørYtelseIdList);
+                LOG.info("Fjernet {} relatert ytelse for aktør ytelse: {}", fjernetRelatertYtelsere, aktørYtelseIdList);
+            }
 
-        var fjernAktørYtelse = fjernAktørYtelseFor(iayIdForSletting);
-        LOG.info("Fjernet {} aktør ytelse for iay-aggregat: {}", fjernAktørYtelse, iayIdForSletting);
+            var fjernAktørYtelse = fjernAktørYtelseFor(iayIdForSletting);
+            LOG.info("Fjernet {} aktør ytelse for iay-aggregat: {}", fjernAktørYtelse, iayIdForSletting);
+        }
     }
 
     private List<Long> hentAktørYtelseFor(Long iayIdForSletting) {
@@ -149,19 +157,23 @@ public class OppryddingIAYAggregatRepository {
 
     private void slettIayAktørArbeid(Long iayIdForSletting) {
         var aktørArbeidIdList = hentAktørArbeidFor(iayIdForSletting);
-        var yrkesaktivitetIdList = hentYrkesaktiviteterFor(aktørArbeidIdList);
+        if (!aktørArbeidIdList.isEmpty()) {
 
-        var fjernetPermisjoner = fjernPermisjonerFor(yrkesaktivitetIdList);
-        LOG.info("Fjernet {} permisjoner for yrkesaktiviteter: {}", fjernetPermisjoner, yrkesaktivitetIdList);
+            var yrkesaktivitetIdList = hentYrkesaktiviteterFor(aktørArbeidIdList);
+            if (!yrkesaktivitetIdList.isEmpty()) {
+                var fjernetPermisjoner = fjernPermisjonerFor(yrkesaktivitetIdList);
+                LOG.info("Fjernet {} permisjoner for yrkesaktiviteter: {}", fjernetPermisjoner, yrkesaktivitetIdList);
 
-        var fjernetAktivitetsAvtaler = fjernAktivitetsAvtalerFor(yrkesaktivitetIdList);
-        LOG.info("Fjernet {} aktivitets avtaler for yrkesaktiviteter: {}", fjernetAktivitetsAvtaler, yrkesaktivitetIdList);
+                var fjernetAktivitetsAvtaler = fjernAktivitetsAvtalerFor(yrkesaktivitetIdList);
+                LOG.info("Fjernet {} aktivitets avtaler for yrkesaktiviteter: {}", fjernetAktivitetsAvtaler, yrkesaktivitetIdList);
 
-        var fjernetYrkesaktiviteter = fjernYrkesaktiviteterFor(aktørArbeidIdList);
-        LOG.info("Fjernet {} yrkesaktiviteter for aktør arbeid: {}", fjernetYrkesaktiviteter, aktørArbeidIdList);
+                var fjernetYrkesaktiviteter = fjernYrkesaktiviteterFor(aktørArbeidIdList);
+                LOG.info("Fjernet {} yrkesaktiviteter for aktør arbeid: {}", fjernetYrkesaktiviteter, aktørArbeidIdList);
+            }
 
-        var fjernAktørArbeid = fjernAktørArbeidFor(iayIdForSletting);
-        LOG.info("Fjernet {} aktør arbeid for iay-aggregat: {}", fjernAktørArbeid, iayIdForSletting);
+            var fjernAktørArbeid = fjernAktørArbeidFor(iayIdForSletting);
+            LOG.info("Fjernet {} aktør arbeid for iay-aggregat: {}", fjernAktørArbeid, iayIdForSletting);
+        }
     }
 
     private List<Long> hentAktørArbeidFor(Long iayIdForSletting) {
@@ -206,16 +218,20 @@ public class OppryddingIAYAggregatRepository {
 
     private void slettIayAktørIntekt(Long iayIdForSletting) {
         var aktørInntektIdList = hentAktørInntekterFor(iayIdForSletting);
-        var inntektIdList = hentInntekterFor(aktørInntektIdList);
+        if (!aktørInntektIdList.isEmpty()) {
 
-        var fjernetInntektsposter = fjernInntektsposterFor(inntektIdList);
-        LOG.info("Fjernet {} inntektsposter for inntekter: {}", fjernetInntektsposter, inntektIdList);
+            var inntektIdList = hentInntekterFor(aktørInntektIdList);
+            if (!inntektIdList.isEmpty()) {
+                var fjernetInntektsposter = fjernInntektsposterFor(inntektIdList);
+                LOG.info("Fjernet {} inntektsposter for inntekter: {}", fjernetInntektsposter, inntektIdList);
 
-        var fjernInntekter = fjernInntekterFor(aktørInntektIdList);
-        LOG.info("Fjernet {} inntekter for aktør inntekter: {}", fjernInntekter, aktørInntektIdList);
+                var fjernInntekter = fjernInntekterFor(aktørInntektIdList);
+                LOG.info("Fjernet {} inntekter for aktør inntekter: {}", fjernInntekter, aktørInntektIdList);
+            }
 
-        var fjernAktørInntekter = fjernAktørInntektFor(iayIdForSletting);
-        LOG.info("Fjernet {} aktør inntekter for iay-aggregat: {}", fjernAktørInntekter, iayIdForSletting);
+            var fjernAktørInntekter = fjernAktørInntektFor(iayIdForSletting);
+            LOG.info("Fjernet {} aktør inntekter for iay-aggregat: {}", fjernAktørInntekter, iayIdForSletting);
+        }
     }
 
     private List<Long> hentAktørInntekterFor(Long iayIdForSletting) {
