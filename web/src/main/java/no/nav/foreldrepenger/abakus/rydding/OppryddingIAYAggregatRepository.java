@@ -33,7 +33,8 @@ public class OppryddingIAYAggregatRepository {
 
     public List<Long> hentAlleIayAggregatUtenReferanse() {
         @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery(
-                "select distinct id from iay_inntekt_arbeid_ytelser iay where not exists (select 1 from gr_arbeid_inntekt gr where iay.id = gr.register_id or iay.id = gr.saksbehandlet_id)")
+                "select distinct id from iay_inntekt_arbeid_ytelser iay where "
+                    + "not exists (select 1 from gr_arbeid_inntekt gr where iay.id = gr.register_id or iay.id = gr.saksbehandlet_id)")
             .getResultList();
         if (result.isEmpty()) {
             LOG.info("Fant ingen IAY-aggregater uten grunnlag referanse");
@@ -56,34 +57,21 @@ public class OppryddingIAYAggregatRepository {
     private void slettIayAktørYtelse(Long iayIdForSletting) {
         var aktørYtelseIdList = hentAktørYtelseFor(iayIdForSletting);
         if (!aktørYtelseIdList.isEmpty()) {
-
             var relatertYtelseIdList = hentRelaterteYtelserFor(aktørYtelseIdList);
             if (!relatertYtelseIdList.isEmpty()) {
-
                 var ytelseGrunnlagIdList = hentYtelseGrunnlagFor(relatertYtelseIdList);
                 if (!ytelseGrunnlagIdList.isEmpty()) {
-                    var fjernetYtelseStørrelser = fjernYtelseStørrelseFor(ytelseGrunnlagIdList);
-                    LOG.info("Fjernet {} ytelse størrelser for ytelse grunnlag: {}", fjernetYtelseStørrelser, ytelseGrunnlagIdList);
-
-                    var fjernetYtelseGrunnlag = fjernYtelseGrunnlagFor(relatertYtelseIdList);
-                    LOG.info("Fjernet {} ytelse grunnlag for relatert ytelse: {}", fjernetYtelseGrunnlag, relatertYtelseIdList);
+                    fjernYtelseStørrelseFor(ytelseGrunnlagIdList);
+                    fjernYtelseGrunnlagFor(relatertYtelseIdList);
                 }
-
                 var ytelseAnvistIdList = hentYtelseAnvistFor(relatertYtelseIdList);
                 if (!ytelseAnvistIdList.isEmpty()) {
-                    var fjernetYtelseAnvistAndeler = fjernYtelseAnvistAndelFor(ytelseAnvistIdList);
-                    LOG.info("Fjernet {} ytelse anvist andeler for ytelse anvist: {}", fjernetYtelseAnvistAndeler, ytelseAnvistIdList);
-
-                    var fjernetYtelseAnvist = fjernYtelseAnvistFor(relatertYtelseIdList);
-                    LOG.info("Fjernet {} ytelse anvist for relatert ytelse: {}", fjernetYtelseAnvist, relatertYtelseIdList);
+                    fjernYtelseAnvistAndelFor(ytelseAnvistIdList);
+                    fjernYtelseAnvistFor(relatertYtelseIdList);
                 }
-
-                var fjernetRelatertYtelsere = fjernRelatertYtelseFor(aktørYtelseIdList);
-                LOG.info("Fjernet {} relatert ytelse for aktør ytelse: {}", fjernetRelatertYtelsere, aktørYtelseIdList);
+                fjernRelatertYtelseFor(aktørYtelseIdList);
             }
-
-            var fjernAktørYtelse = fjernAktørYtelseFor(iayIdForSletting);
-            LOG.info("Fjernet {} aktør ytelse for iay-aggregat: {}", fjernAktørYtelse, iayIdForSletting);
+            fjernAktørYtelseFor(iayIdForSletting);
         }
     }
 
@@ -119,60 +107,58 @@ public class OppryddingIAYAggregatRepository {
         return result.stream().map(Number::longValue).toList();
     }
 
-    private int fjernYtelseStørrelseFor(List<Long> ytelseGrunnlagIdList) {
-        return entityManager.createNativeQuery("delete from iay_ytelse_stoerrelse where ytelse_grunnlag_id in (:ytelseGrunnlagIdList)")
+    private void fjernYtelseStørrelseFor(List<Long> ytelseGrunnlagIdList) {
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_ytelse_stoerrelse where ytelse_grunnlag_id in (:ytelseGrunnlagIdList)")
             .setParameter("ytelseGrunnlagIdList", ytelseGrunnlagIdList)
             .executeUpdate();
+        LOG.info("Fjernet {} ytelse størrelser for ytelse grunnlag: {}", antallFjernet, ytelseGrunnlagIdList);
     }
 
-    private int fjernYtelseGrunnlagFor(List<Long> relatertYtelseIdList) {
-        return entityManager.createNativeQuery("delete from iay_ytelse_grunnlag where ytelse_id in (:relatertYtelseIdList)")
+    private void fjernYtelseGrunnlagFor(List<Long> relatertYtelseIdList) {
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_ytelse_grunnlag where ytelse_id in (:relatertYtelseIdList)")
             .setParameter(PARAM_RELATERT_YTELSE_ID_LIST, relatertYtelseIdList)
             .executeUpdate();
+        LOG.info("Fjernet {} ytelse grunnlag for relatert ytelse: {}", antallFjernet, relatertYtelseIdList);
     }
 
-    private int fjernYtelseAnvistAndelFor(List<Long> ytelseAnvistIdList) {
-        return entityManager.createNativeQuery("delete from iay_ytelse_anvist_andel where ytelse_anvist_id in (:ytelseAnvistIdList)")
+    private void fjernYtelseAnvistAndelFor(List<Long> ytelseAnvistIdList) {
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_ytelse_anvist_andel where ytelse_anvist_id in (:ytelseAnvistIdList)")
             .setParameter("ytelseAnvistIdList", ytelseAnvistIdList)
             .executeUpdate();
+        LOG.info("Fjernet {} ytelse anvist andeler for ytelse anvist: {}", antallFjernet, ytelseAnvistIdList);
     }
 
-    private int fjernYtelseAnvistFor(List<Long> relatertYtelseIdList) {
-        return entityManager.createNativeQuery("delete from iay_ytelse_anvist where ytelse_id in (:relatertYtelseIdList)")
+    private void fjernYtelseAnvistFor(List<Long> relatertYtelseIdList) {
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_ytelse_anvist where ytelse_id in (:relatertYtelseIdList)")
             .setParameter(PARAM_RELATERT_YTELSE_ID_LIST, relatertYtelseIdList)
             .executeUpdate();
+        LOG.info("Fjernet {} ytelse anvist for relatert ytelse: {}", antallFjernet, relatertYtelseIdList);
     }
 
-    private int fjernRelatertYtelseFor(List<Long> aktørYtelseIdList) {
-        return entityManager.createNativeQuery("delete from iay_relatert_ytelse where aktoer_ytelse_id in (:aktoerYtelseIdList)")
+    private void fjernRelatertYtelseFor(List<Long> aktørYtelseIdList) {
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_relatert_ytelse where aktoer_ytelse_id in (:aktoerYtelseIdList)")
             .setParameter("aktoerYtelseIdList", aktørYtelseIdList)
             .executeUpdate();
+        LOG.info("Fjernet {} relatert ytelse for aktør ytelse: {}", antallFjernet, aktørYtelseIdList);
     }
 
-    private int fjernAktørYtelseFor(Long iayIdForSletting) {
-        return entityManager.createNativeQuery("delete from iay_aktoer_ytelse where inntekt_arbeid_ytelser_id = :iayId")
+    private void fjernAktørYtelseFor(Long iayIdForSletting) {
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_aktoer_ytelse where inntekt_arbeid_ytelser_id = :iayId")
             .setParameter(PARAM_IAY_ID, iayIdForSletting)
             .executeUpdate();
+        LOG.info("Fjernet {} aktør ytelse for iay-aggregat: {}", antallFjernet, iayIdForSletting);
     }
 
     private void slettIayAktørArbeid(Long iayIdForSletting) {
         var aktørArbeidIdList = hentAktørArbeidFor(iayIdForSletting);
         if (!aktørArbeidIdList.isEmpty()) {
-
             var yrkesaktivitetIdList = hentYrkesaktiviteterFor(aktørArbeidIdList);
             if (!yrkesaktivitetIdList.isEmpty()) {
-                var fjernetPermisjoner = fjernPermisjonerFor(yrkesaktivitetIdList);
-                LOG.info("Fjernet {} permisjoner for yrkesaktiviteter: {}", fjernetPermisjoner, yrkesaktivitetIdList);
-
-                var fjernetAktivitetsAvtaler = fjernAktivitetsAvtalerFor(yrkesaktivitetIdList);
-                LOG.info("Fjernet {} aktivitets avtaler for yrkesaktiviteter: {}", fjernetAktivitetsAvtaler, yrkesaktivitetIdList);
-
-                var fjernetYrkesaktiviteter = fjernYrkesaktiviteterFor(aktørArbeidIdList);
-                LOG.info("Fjernet {} yrkesaktiviteter for aktør arbeid: {}", fjernetYrkesaktiviteter, aktørArbeidIdList);
+                fjernPermisjonerFor(yrkesaktivitetIdList);
+                fjernAktivitetsAvtalerFor(yrkesaktivitetIdList);
+                fjernYrkesaktiviteterFor(aktørArbeidIdList);
             }
-
-            var fjernAktørArbeid = fjernAktørArbeidFor(iayIdForSletting);
-            LOG.info("Fjernet {} aktør arbeid for iay-aggregat: {}", fjernAktørArbeid, iayIdForSletting);
+            fjernAktørArbeidFor(iayIdForSletting);
         }
     }
 
@@ -192,45 +178,44 @@ public class OppryddingIAYAggregatRepository {
         return result.stream().map(Number::longValue).toList();
     }
 
-    private int fjernPermisjonerFor(List<Long> yrkesaktivitetIdList) {
-        return entityManager.createNativeQuery("delete from iay_permisjon where yrkesaktivitet_id in (:yrkesaktivitetIdList)")
+    private void fjernPermisjonerFor(List<Long> yrkesaktivitetIdList) {
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_permisjon where yrkesaktivitet_id in (:yrkesaktivitetIdList)")
             .setParameter("yrkesaktivitetIdList", yrkesaktivitetIdList)
             .executeUpdate();
+        LOG.info("Fjernet {} permisjoner for yrkesaktiviteter: {}", antallFjernet, yrkesaktivitetIdList);
     }
 
-    private int fjernAktivitetsAvtalerFor(List<Long> yrkesaktivitetIdList) {
-        return entityManager.createNativeQuery("delete from iay_aktivitets_avtale where yrkesaktivitet_id in (:yrkesaktivitetIdList)")
+    private void fjernAktivitetsAvtalerFor(List<Long> yrkesaktivitetIdList) {
+        var antallFjernet = entityManager.createNativeQuery(
+                "delete from iay_aktivitets_avtale where yrkesaktivitet_id in (:yrkesaktivitetIdList)")
             .setParameter("yrkesaktivitetIdList", yrkesaktivitetIdList)
             .executeUpdate();
+        LOG.info("Fjernet {} aktivitets avtaler for yrkesaktiviteter: {}", antallFjernet, yrkesaktivitetIdList);
     }
 
-    private int fjernYrkesaktiviteterFor(List<Long> aktørArbeidIdList) {
-        return entityManager.createNativeQuery("delete from iay_yrkesaktivitet where aktoer_arbeid_id in (:aktoerArbeidIdList)")
+    private void fjernYrkesaktiviteterFor(List<Long> aktørArbeidIdList) {
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_yrkesaktivitet where aktoer_arbeid_id in (:aktoerArbeidIdList)")
             .setParameter("aktoerArbeidIdList", aktørArbeidIdList)
             .executeUpdate();
+        LOG.info("Fjernet {} yrkesaktiviteter for aktør arbeid: {}", antallFjernet, aktørArbeidIdList);
     }
 
-    private int fjernAktørArbeidFor(Long iayIdForSletting) {
-        return entityManager.createNativeQuery("delete from iay_aktoer_arbeid where inntekt_arbeid_ytelser_id = :iayId")
+    private void fjernAktørArbeidFor(Long iayIdForSletting) {
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_aktoer_arbeid where inntekt_arbeid_ytelser_id = :iayId")
             .setParameter(PARAM_IAY_ID, iayIdForSletting)
             .executeUpdate();
+        LOG.info("Fjernet {} aktør arbeid for iay-aggregat: {}", antallFjernet, iayIdForSletting);
     }
 
     private void slettIayAktørIntekt(Long iayIdForSletting) {
         var aktørInntektIdList = hentAktørInntekterFor(iayIdForSletting);
         if (!aktørInntektIdList.isEmpty()) {
-
             var inntektIdList = hentInntekterFor(aktørInntektIdList);
             if (!inntektIdList.isEmpty()) {
-                var fjernetInntektsposter = fjernInntektsposterFor(inntektIdList);
-                LOG.info("Fjernet {} inntektsposter for inntekter: {}", fjernetInntektsposter, inntektIdList);
-
-                var fjernInntekter = fjernInntekterFor(aktørInntektIdList);
-                LOG.info("Fjernet {} inntekter for aktør inntekter: {}", fjernInntekter, aktørInntektIdList);
+                fjernInntektsposterFor(inntektIdList);
+                fjernInntekterFor(aktørInntektIdList);
             }
-
-            var fjernAktørInntekter = fjernAktørInntektFor(iayIdForSletting);
-            LOG.info("Fjernet {} aktør inntekter for iay-aggregat: {}", fjernAktørInntekter, iayIdForSletting);
+            fjernAktørInntektFor(iayIdForSletting);
         }
     }
 
@@ -250,21 +235,25 @@ public class OppryddingIAYAggregatRepository {
         return result.stream().map(Number::longValue).toList();
     }
 
-    private int fjernInntektsposterFor(List<Long> inntektIdList) {
-        return entityManager.createNativeQuery("delete from iay_inntektspost where inntekt_id in (:inntektIdList)")
+    private void fjernInntektsposterFor(List<Long> inntektIdList) {
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_inntektspost where inntekt_id in (:inntektIdList)")
             .setParameter("inntektIdList", inntektIdList)
             .executeUpdate();
+        LOG.info("Fjernet {} inntektsposter for inntekter: {}", antallFjernet, inntektIdList);
     }
 
-    private int fjernInntekterFor(List<Long> aktørInntektIdList) {
-        return entityManager.createNativeQuery("delete from iay_inntekt where aktoer_inntekt_id in (:aktoerInntektIdList)")
+    private void fjernInntekterFor(List<Long> aktørInntektIdList) {
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_inntekt where aktoer_inntekt_id in (:aktoerInntektIdList)")
             .setParameter("aktoerInntektIdList", aktørInntektIdList)
             .executeUpdate();
+        LOG.info("Fjernet {} inntekter for aktør inntekter: {}", antallFjernet, aktørInntektIdList);
+
     }
 
-    private int fjernAktørInntektFor(Long iayIdForSletting) {
-        return entityManager.createNativeQuery("delete from iay_aktoer_inntekt where inntekt_arbeid_ytelser_id = :iayId")
+    private void fjernAktørInntektFor(Long iayIdForSletting) {
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_aktoer_inntekt where inntekt_arbeid_ytelser_id = :iayId")
             .setParameter(PARAM_IAY_ID, iayIdForSletting)
             .executeUpdate();
+        LOG.info("Fjernet {} aktør inntekter for iay-aggregat: {}", antallFjernet, iayIdForSletting);
     }
 }

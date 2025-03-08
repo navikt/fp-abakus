@@ -1,8 +1,6 @@
 package no.nav.foreldrepenger.abakus.rydding.task;
 
-import no.nav.foreldrepenger.abakus.rydding.OppryddingTjeneste;
-
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
+import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,8 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
+import no.nav.foreldrepenger.abakus.rydding.OppryddingTjeneste;
+import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 
 @ExtendWith(MockitoExtension.class)
 class FjernAlleGrunnlagUtenReferanseBatchTaskTest {
