@@ -186,7 +186,8 @@ public class OppryddingIAYAggregatRepository {
     }
 
     private void fjernAktivitetsAvtalerFor(List<Long> yrkesaktivitetIdList) {
-        var antallFjernet = entityManager.createNativeQuery("delete from iay_aktivitets_avtale where yrkesaktivitet_id in (:yrkesaktivitetIdList)")
+        var antallFjernet = entityManager.createNativeQuery(
+                "delete from iay_aktivitets_avtale where yrkesaktivitet_id in (:yrkesaktivitetIdList)")
             .setParameter("yrkesaktivitetIdList", yrkesaktivitetIdList)
             .executeUpdate();
         LOG.info("Fjernet {} aktivitets avtaler for yrkesaktiviteter: {}", antallFjernet, yrkesaktivitetIdList);
