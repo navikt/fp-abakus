@@ -15,9 +15,7 @@ import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 @ApplicationScoped
 public class OppryddingTjeneste {
-
     private static final Logger LOG = LoggerFactory.getLogger(OppryddingTjeneste.class);
-    protected static final int MAX_PARTITION_SIZE = 250;
     private OppryddingIAYAggregatRepository iayOppryddingRepository;
     private ProsessTaskTjeneste taskTjeneste;
 
