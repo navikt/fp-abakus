@@ -31,10 +31,11 @@ public class OppryddingIAYAggregatRepository {
         this.entityManager = entityManager;
     }
 
-    public List<Long> hentAlleIayAggregatUtenReferanse() {
+    public List<Long> hentIayAggregaterUtenReferanse(Integer maxResults) {
         @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery(
                 "select distinct id from iay_inntekt_arbeid_ytelser iay where "
                     + "not exists (select 1 from gr_arbeid_inntekt gr where iay.id = gr.register_id or iay.id = gr.saksbehandlet_id)")
+            .setMaxResults(maxResults)
             .getResultList();
         if (result.isEmpty()) {
             LOG.info("Fant ingen IAY-aggregater uten grunnlag referanse");
@@ -51,6 +52,7 @@ public class OppryddingIAYAggregatRepository {
             slettIayAktørArbeid(id);
             slettIayAktørYtelse(id);
             entityManager.remove(iay);
+            entityManager.flush(); // Sørger for at endringer er lagret før vi går videre
         }
     }
 
@@ -186,8 +188,7 @@ public class OppryddingIAYAggregatRepository {
     }
 
     private void fjernAktivitetsAvtalerFor(List<Long> yrkesaktivitetIdList) {
-        var antallFjernet = entityManager.createNativeQuery(
-                "delete from iay_aktivitets_avtale where yrkesaktivitet_id in (:yrkesaktivitetIdList)")
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_aktivitets_avtale where yrkesaktivitet_id in (:yrkesaktivitetIdList)")
             .setParameter("yrkesaktivitetIdList", yrkesaktivitetIdList)
             .executeUpdate();
         LOG.info("Fjernet {} aktivitets avtaler for yrkesaktiviteter: {}", antallFjernet, yrkesaktivitetIdList);

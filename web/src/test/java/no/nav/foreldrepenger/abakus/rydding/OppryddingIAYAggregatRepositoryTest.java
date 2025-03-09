@@ -25,10 +25,10 @@ class OppryddingIAYAggregatRepositoryTest extends EntityManagerAwareTest {
     }
 
     @Test
-    void hentAlleIayAggregatUtenReferanse_medReferanse_ok() {
+    void hentIayAggregaterUtenReferanse_medReferanse_ok() {
         opprettEmptyIayAggregat(VersjonType.REGISTER);
 
-        var iayAggregater = repository.hentAlleIayAggregatUtenReferanse();
+        var iayAggregater = repository.hentIayAggregaterUtenReferanse(250);
 
         assertThat(iayAggregater).hasSize(1);
     }
@@ -37,26 +37,26 @@ class OppryddingIAYAggregatRepositoryTest extends EntityManagerAwareTest {
     void slettIayAggregat_register_ok() {
         opprettEmptyIayAggregat(VersjonType.REGISTER);
 
-        var iayAggregater = repository.hentAlleIayAggregatUtenReferanse();
+        var iayAggregater = repository.hentIayAggregaterUtenReferanse(250);
         assertThat(iayAggregater).hasSize(1);
 
         repository.slettIayAggregat(iayAggregater.getFirst());
         flushAndClear();
 
-        assertThat(repository.hentAlleIayAggregatUtenReferanse()).isEmpty();
+        assertThat(repository.hentIayAggregaterUtenReferanse(250)).isEmpty();
     }
 
     @Test
     void slettIayAggregat_saksbehandlet_ok() {
         opprettEmptyIayAggregat(VersjonType.SAKSBEHANDLET);
 
-        var iayAggregater = repository.hentAlleIayAggregatUtenReferanse();
+        var iayAggregater = repository.hentIayAggregaterUtenReferanse(250);
         assertThat(iayAggregater).hasSize(1);
 
         repository.slettIayAggregat(iayAggregater.getFirst());
         flushAndClear();
 
-        assertThat(repository.hentAlleIayAggregatUtenReferanse()).isEmpty();
+        assertThat(repository.hentIayAggregaterUtenReferanse(250)).isEmpty();
     }
 
     private void opprettEmptyIayAggregat(VersjonType versjonType) {
