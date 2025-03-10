@@ -1,17 +1,17 @@
 package no.nav.foreldrepenger.abakus.rydding;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.persistence.EntityManager;
-import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.util.Collections.emptyList;
 
 import java.util.List;
 import java.util.Objects;
 
-import static java.util.Collections.emptyList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
 
 @ApplicationScoped
 public class OppryddingIayInntektsmeldingerRepository {
@@ -31,7 +31,7 @@ public class OppryddingIayInntektsmeldingerRepository {
 
     public List<Long> hentIayInntektsmeldingerUtenReferanse(Integer maxResults) {
         @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery("select distinct id from iay_inntektsmeldinger im where "
-                + "not exists (select 1 from gr_arbeid_inntekt gr where im.id = gr.inntektsmeldinger_id)").setMaxResults(maxResults).getResultList();
+            + "not exists (select 1 from gr_arbeid_inntekt gr where im.id = gr.inntektsmeldinger_id)").setMaxResults(maxResults).getResultList();
         if (result.isEmpty()) {
             LOG.debug("Fant ingen IAY-Inntektsmeldinger uten grunnlag referanse");
             return emptyList();
@@ -62,46 +62,42 @@ public class OppryddingIayInntektsmeldingerRepository {
 
     private List<Long> hentInntektsmeldingerFor(Long inntektsmeldingerId) {
         @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery(
-            "select distinct id from iay_inntektsmelding where inntektsmeldinger_id = :imId")
-            .setParameter("imId", inntektsmeldingerId).getResultList();
+                "select distinct id from iay_inntektsmelding where inntektsmeldinger_id = :imId")
+            .setParameter("imId", inntektsmeldingerId)
+            .getResultList();
         return result.stream().map(Number::longValue).toList();
     }
 
     private void fjernRefusjonFor(List<Long> inntektsmeldingIdList) {
-        var antallFjernet = entityManager.createNativeQuery(
-                "delete from iay_refusjon where inntektsmelding_id in (:inntektsmeldingIdList)")
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_refusjon where inntektsmelding_id in (:inntektsmeldingIdList)")
             .setParameter("inntektsmeldingIdList", inntektsmeldingIdList)
             .executeUpdate();
         LOG.debug("Fjernet {} refusjon for inntektsmeldinger: {}", antallFjernet, inntektsmeldingIdList);
     }
 
     private void fjernNaturalYtelseFor(List<Long> inntektsmeldingIdList) {
-        var antallFjernet = entityManager.createNativeQuery(
-                "delete from iay_natural_ytelse where inntektsmelding_id in (:inntektsmeldingIdList)")
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_natural_ytelse where inntektsmelding_id in (:inntektsmeldingIdList)")
             .setParameter("inntektsmeldingIdList", inntektsmeldingIdList)
             .executeUpdate();
         LOG.debug("Fjernet {} natural ytelse for inntektsmeldinger: {}", antallFjernet, inntektsmeldingIdList);
     }
 
     private void fjernGraderingFor(List<Long> inntektsmeldingIdList) {
-        var antallFjernet = entityManager.createNativeQuery(
-                "delete from iay_gradering where inntektsmelding_id in (:inntektsmeldingIdList)")
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_gradering where inntektsmelding_id in (:inntektsmeldingIdList)")
             .setParameter("inntektsmeldingIdList", inntektsmeldingIdList)
             .executeUpdate();
         LOG.debug("Fjernet {} gradering for inntektsmeldinger: {}", antallFjernet, inntektsmeldingIdList);
     }
 
     private void fjernFraværFor(List<Long> inntektsmeldingIdList) {
-        var antallFjernet = entityManager.createNativeQuery(
-                "delete from iay_fravaer where inntektsmelding_id in (:inntektsmeldingIdList)")
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_fravaer where inntektsmelding_id in (:inntektsmeldingIdList)")
             .setParameter("inntektsmeldingIdList", inntektsmeldingIdList)
             .executeUpdate();
         LOG.debug("Fjernet {} fravær for inntektsmeldinger: {}", antallFjernet, inntektsmeldingIdList);
     }
 
     private void fjernUtsettelsePeriodeFor(List<Long> inntektsmeldingIdList) {
-        var antallFjernet = entityManager.createNativeQuery(
-                "delete from iay_utsettelse_periode where inntektsmelding_id in (:inntektsmeldingIdList)")
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_utsettelse_periode where inntektsmelding_id in (:inntektsmeldingIdList)")
             .setParameter("inntektsmeldingIdList", inntektsmeldingIdList)
             .executeUpdate();
         LOG.debug("Fjernet {} utsettelse periode for inntektsmeldinger: {}", antallFjernet, inntektsmeldingIdList);

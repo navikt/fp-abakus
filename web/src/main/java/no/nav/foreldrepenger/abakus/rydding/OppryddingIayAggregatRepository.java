@@ -260,8 +260,8 @@ public class OppryddingIayAggregatRepository {
 
     private void fjernInntektArbeidYtelseFor(Long iayIdForSletting) {
         var antallFjernet = entityManager.createNativeQuery("delete from iay_inntekt_arbeid_ytelser where id = :iayId")
-                .setParameter(PARAM_IAY_ID, iayIdForSletting)
-                .executeUpdate();
+            .setParameter(PARAM_IAY_ID, iayIdForSletting)
+            .executeUpdate();
         LOG.debug("Fjernet {} IAY-aggregat med id: {}", antallFjernet, iayIdForSletting);
     }
 }

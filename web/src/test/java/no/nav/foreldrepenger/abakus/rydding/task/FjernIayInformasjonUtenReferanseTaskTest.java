@@ -44,7 +44,7 @@ class FjernIayInformasjonUtenReferanseTaskTest {
         when(oppryddingIayInformasjonRepository.hentIayInformasjonUtenReferanse(IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE)).thenReturn(iayIds);
 
         // Act
-        task.doTask(ProsessTaskData.forProsessTask(FjernIayGrunnlagUtenReferanseTask.class));
+        task.doTask(ProsessTaskData.forProsessTask(FjernIayInformasjonUtenReferanseTask.class));
 
         // Assert
         verifyNoInteractions(prosessTaskTjeneste);
@@ -59,7 +59,7 @@ class FjernIayInformasjonUtenReferanseTaskTest {
         when(oppryddingIayInformasjonRepository.hentIayInformasjonUtenReferanse(IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE)).thenReturn(emptyList());
 
         // Act
-        task.doTask(ProsessTaskData.forProsessTask(FjernIayGrunnlagUtenReferanseTask.class));
+        task.doTask(ProsessTaskData.forProsessTask(FjernIayInformasjonUtenReferanseTask.class));
 
         // Assert
         verify(oppryddingIayInformasjonRepository, times(1)).hentIayInformasjonUtenReferanse(anyInt());
@@ -74,7 +74,7 @@ class FjernIayInformasjonUtenReferanseTaskTest {
                 iayIds);
 
         // Act
-        task.doTask(ProsessTaskData.forProsessTask(FjernIayGrunnlagUtenReferanseTask.class));
+        task.doTask(ProsessTaskData.forProsessTask(FjernIayInformasjonUtenReferanseTask.class));
 
         // Assert
         verify(oppryddingIayInformasjonRepository, times(IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE)).slettIayInformasjon(longCaptor.capture());
