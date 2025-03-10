@@ -45,7 +45,6 @@ public class OppryddingIayInformasjonRepository {
         if (arbeidsforholdInformasjon != null) {
             slettArbeidsforholdInformasjon(id);
             fjernInformasjonFor(id);
-            //entityManager.flush(); // Sørger for at endringer er lagret før vi går videre
         }
     }
 
