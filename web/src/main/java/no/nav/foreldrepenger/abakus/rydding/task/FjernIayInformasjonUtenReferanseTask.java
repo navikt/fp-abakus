@@ -27,13 +27,13 @@ public class FjernIayInformasjonUtenReferanseTask implements ProsessTaskHandler 
     }
 
     @Override
-    public void doTask(ProsessTaskData prosessTaskData) {
+    public void doTask(ProsessTaskData unused) {
         var iayInformasjonUtenReferanse = oppryddingIayInformasjonRepository.hentIayInformasjonUtenReferanse(IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE);
         LOG.info("Fjerner {} IAY-Informasjon uten referanse.", iayInformasjonUtenReferanse.size());
         iayInformasjonUtenReferanse.forEach(oppryddingIayInformasjonRepository::slettIayInformasjon);
         LOG.info("Slettet {} IAY-Informasjon uten referanse", iayInformasjonUtenReferanse.size());
 
-        if (iayInformasjonUtenReferanse.size() == IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE) {
+        if (iayInformasjonUtenReferanse.size() >= IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE) {
             opprettFjernInformasjonAggregatTask();
         }
     }

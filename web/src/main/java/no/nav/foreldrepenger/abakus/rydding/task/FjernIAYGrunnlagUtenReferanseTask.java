@@ -34,7 +34,7 @@ public class FjernIAYGrunnlagUtenReferanseTask implements ProsessTaskHandler {
         iayAggregatUtenReferanse.forEach(iayAggregatRepository::slettIayAggregat);
         LOG.info("Slettet {} IAY-aggregater uten referanse", iayAggregatUtenReferanse.size());
 
-        if (iayAggregatUtenReferanse.size() == IAY_GRUNNLAG_BATCH_SIZE) {
+        if (iayAggregatUtenReferanse.size() >= IAY_GRUNNLAG_BATCH_SIZE) {
             opprettFjernIayAggregatTask();
         }
     }

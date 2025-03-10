@@ -52,7 +52,7 @@ public class OppryddingIAYAggregatRepository {
             slettIayAktørArbeid(id);
             slettIayAktørYtelse(id);
             fjernInntektArbeidYtelseFor(id);
-            entityManager.flush(); // Sørger for at endringer er lagret før vi går videre
+            //entityManager.flush(); // Sørger for at endringer er lagret før vi går videre
         }
     }
 
