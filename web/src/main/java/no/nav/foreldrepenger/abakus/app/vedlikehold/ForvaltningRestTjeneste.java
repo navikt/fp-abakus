@@ -5,8 +5,6 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import java.util.List;
 import java.util.function.Function;
 
-import no.nav.foreldrepenger.abakus.rydding.OppryddingTjeneste;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +26,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektsmeldingAggregat;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
+import no.nav.foreldrepenger.abakus.rydding.OppryddingTjeneste;
 import no.nav.foreldrepenger.abakus.typer.JournalpostId;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
@@ -144,6 +143,7 @@ public class ForvaltningRestTjeneste {
         LOG.info("FORVALTNING ABAKUS ryddOppGrunnlagUtenReferanse");
         oppryddingTjeneste.fjernAlleIayAggregatUtenReferanse();
         oppryddingTjeneste.fjernAlleIayInformasjontUtenReferanse();
+        oppryddingTjeneste.fjernAlleIayInntektsmeldingerUtenReferanse();
         return Response.ok().build();
     }
 

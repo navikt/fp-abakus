@@ -1,6 +1,6 @@
 package no.nav.foreldrepenger.abakus.rydding.task;
 
-import no.nav.foreldrepenger.abakus.rydding.OppryddingIAYAggregatRepository;
+import no.nav.foreldrepenger.abakus.rydding.OppryddingIayAggregatRepository;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,27 +15,27 @@ import java.util.List;
 import java.util.stream.LongStream;
 
 import static java.util.Collections.emptyList;
-import static no.nav.foreldrepenger.abakus.rydding.task.FjernIAYGrunnlagUtenReferanseTask.IAY_GRUNNLAG_BATCH_SIZE;
+import static no.nav.foreldrepenger.abakus.rydding.task.FjernIayGrunnlagUtenReferanseTask.IAY_GRUNNLAG_BATCH_SIZE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class FjernIAYGrunnlagUtenReferanseTaskTest {
+class FjernIayGrunnlagUtenReferanseTaskTest {
 
     @Mock
-    private OppryddingIAYAggregatRepository oppryddingIAYAggregatRepository;
+    private OppryddingIayAggregatRepository oppryddingIAYAggregatRepository;
     @Mock
     private ProsessTaskTjeneste prosessTaskTjeneste;
     @Captor
     private ArgumentCaptor<Long> longCaptor;
 
-    private FjernIAYGrunnlagUtenReferanseTask task;
+    private FjernIayGrunnlagUtenReferanseTask task;
 
     @BeforeEach
     void setUp() {
-        task = new FjernIAYGrunnlagUtenReferanseTask(oppryddingIAYAggregatRepository, prosessTaskTjeneste);
+        task = new FjernIayGrunnlagUtenReferanseTask(oppryddingIAYAggregatRepository, prosessTaskTjeneste);
     }
 
     @Test
@@ -44,7 +44,7 @@ class FjernIAYGrunnlagUtenReferanseTaskTest {
         when(oppryddingIAYAggregatRepository.hentIayAggregaterUtenReferanse(IAY_GRUNNLAG_BATCH_SIZE)).thenReturn(iayIds);
 
         // Act
-        task.doTask(ProsessTaskData.forProsessTask(FjernIAYGrunnlagUtenReferanseTask.class));
+        task.doTask(ProsessTaskData.forProsessTask(FjernIayGrunnlagUtenReferanseTask.class));
 
         // Assert
         verify(prosessTaskTjeneste, never()).lagre(any(ProsessTaskData.class));
@@ -59,7 +59,7 @@ class FjernIAYGrunnlagUtenReferanseTaskTest {
         when(oppryddingIAYAggregatRepository.hentIayAggregaterUtenReferanse(IAY_GRUNNLAG_BATCH_SIZE)).thenReturn(emptyList());
 
         // Act
-        task.doTask(ProsessTaskData.forProsessTask(FjernIAYGrunnlagUtenReferanseTask.class));
+        task.doTask(ProsessTaskData.forProsessTask(FjernIayGrunnlagUtenReferanseTask.class));
 
         // Assert
         verify(oppryddingIAYAggregatRepository, times(1)).hentIayAggregaterUtenReferanse(anyInt());
@@ -73,7 +73,7 @@ class FjernIAYGrunnlagUtenReferanseTaskTest {
         when(oppryddingIAYAggregatRepository.hentIayAggregaterUtenReferanse(IAY_GRUNNLAG_BATCH_SIZE)).thenReturn(iayIds);
 
         // Act
-        task.doTask(ProsessTaskData.forProsessTask(FjernIAYGrunnlagUtenReferanseTask.class));
+        task.doTask(ProsessTaskData.forProsessTask(FjernIayGrunnlagUtenReferanseTask.class));
 
         // Assert
         verify(oppryddingIAYAggregatRepository, times(IAY_GRUNNLAG_BATCH_SIZE)).slettIayAggregat(longCaptor.capture());
