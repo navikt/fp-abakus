@@ -56,6 +56,7 @@ public class OppryddingIayInntektsmeldingerRepository {
             fjernGraderingFor(inntektsmeldinger);
             fjernFraværFor(inntektsmeldinger);
             fjernUtsettelsePeriodeFor(inntektsmeldinger);
+
             fjernInntektsmeldingFor(inntektsmeldingerId);
         }
     }
@@ -104,7 +105,7 @@ public class OppryddingIayInntektsmeldingerRepository {
     }
 
     private void fjernInntektsmeldingFor(Long inntektsmeldingerId) {
-        var antallFjernet = entityManager.createNativeQuery("delete from iay_inntektsmelding where iay_inntektsmeldinger = :inntektsmeldingerId")
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_inntektsmelding where inntektsmeldinger_id = :inntektsmeldingerId")
             .setParameter("inntektsmeldingerId", inntektsmeldingerId)
             .executeUpdate();
         LOG.debug("Fjernet {} inntektsmelding for inntektsmeldinger: {}", antallFjernet, inntektsmeldingerId);
