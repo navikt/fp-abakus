@@ -139,7 +139,7 @@ public class ForvaltningRestTjeneste {
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
     @Operation(description = "Trigger ryddejobben som fjerner alle inaktive grunnlag uten referanse", tags = "FORVALTNING", responses = {@ApiResponse(responseCode = "200", description = "Taskene blir opprettet og grunnlag blir slettet asynkront.")})
-    @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.DRIFT)
+    @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.DRIFT, sporingslogg = true)
     public Response ryddOppGrunnlagUtenReferanse() {
         LOG.info("FORVALTNING ABAKUS ryddOppGrunnlagUtenReferanse");
         oppryddingTjeneste.fjernAlleIayAggregatUtenReferanse();
