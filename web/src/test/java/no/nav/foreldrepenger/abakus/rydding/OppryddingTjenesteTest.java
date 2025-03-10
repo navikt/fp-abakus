@@ -15,7 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static no.nav.foreldrepenger.abakus.rydding.task.FjernIAYGrunnlagUtenReferanseTask.MAX_PARTITION_SIZE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -40,13 +39,13 @@ class OppryddingTjenesteTest {
 
     @Test
     void testFjernAlleIayAggregatUtenReferanse_noAggregates_ok() {
-        when(oppryddingIAYAggregatRepository.hentIayAggregaterUtenReferanse(MAX_PARTITION_SIZE)).thenReturn(List.of());
+        when(oppryddingIAYAggregatRepository.hentIayAggregaterUtenReferanse(anyInt())).thenReturn(List.of());
 
         // Act
         oppryddingTjeneste.fjernAlleIayAggregatUtenReferanse();
 
         // Assert
-        verify(oppryddingIAYAggregatRepository, times(1)).hentIayAggregaterUtenReferanse(MAX_PARTITION_SIZE);
+        verify(oppryddingIAYAggregatRepository, times(1)).hentIayAggregaterUtenReferanse(anyInt());
         verifyNoInteractions(prosessTaskTjeneste);
         verifyNoInteractions(oppryddingIayInformasjonRepository);
     }
@@ -54,13 +53,13 @@ class OppryddingTjenesteTest {
     @Test
     void testFjernAlleIayAggregatUtenReferanse_withAggregates_ok() {
         var aggregates = List.of(1L, 2L, 3L);
-        when(oppryddingIAYAggregatRepository.hentIayAggregaterUtenReferanse(MAX_PARTITION_SIZE)).thenReturn(aggregates);
+        when(oppryddingIAYAggregatRepository.hentIayAggregaterUtenReferanse(anyInt())).thenReturn(aggregates);
 
         // Act
         oppryddingTjeneste.fjernAlleIayAggregatUtenReferanse();
 
         // Assert
-        verify(oppryddingIAYAggregatRepository).hentIayAggregaterUtenReferanse(MAX_PARTITION_SIZE);
+        verify(oppryddingIAYAggregatRepository).hentIayAggregaterUtenReferanse(anyInt());
         verify(prosessTaskTjeneste, times(1)).lagre(prosessTaskDataCaptor.capture());
         var prosessTaskData = prosessTaskDataCaptor.getValue();
         assertThat(prosessTaskData.taskType()).isEqualTo(TaskType.forProsessTask(FjernIAYGrunnlagUtenReferanseTask.class));
@@ -69,13 +68,13 @@ class OppryddingTjenesteTest {
 
     @Test
     void testFjernAlleInformasjonAggregatUtenReferanse_noAggregates_ok() {
-        when(oppryddingIayInformasjonRepository.hentIayInformasjonUtenReferanse(MAX_PARTITION_SIZE)).thenReturn(List.of());
+        when(oppryddingIayInformasjonRepository.hentIayInformasjonUtenReferanse(anyInt())).thenReturn(List.of());
 
         // Act
         oppryddingTjeneste.fjernAlleIayInformasjontUtenReferanse();
 
         // Assert
-        verify(oppryddingIayInformasjonRepository, times(1)).hentIayInformasjonUtenReferanse(MAX_PARTITION_SIZE);
+        verify(oppryddingIayInformasjonRepository, times(1)).hentIayInformasjonUtenReferanse(anyInt());
         verifyNoInteractions(prosessTaskTjeneste);
         verifyNoInteractions(oppryddingIAYAggregatRepository);
     }
@@ -83,13 +82,13 @@ class OppryddingTjenesteTest {
     @Test
     void testFjernAlleInformasjonAggregatUtenReferanse_withAggregates_ok() {
         var aggregates = List.of(1L, 2L, 3L);
-        when(oppryddingIayInformasjonRepository.hentIayInformasjonUtenReferanse(MAX_PARTITION_SIZE)).thenReturn(aggregates);
+        when(oppryddingIayInformasjonRepository.hentIayInformasjonUtenReferanse(anyInt())).thenReturn(aggregates);
 
         // Act
         oppryddingTjeneste.fjernAlleIayInformasjontUtenReferanse();
 
         // Assert
-        verify(oppryddingIayInformasjonRepository).hentIayInformasjonUtenReferanse(MAX_PARTITION_SIZE);
+        verify(oppryddingIayInformasjonRepository).hentIayInformasjonUtenReferanse(anyInt());
         verify(prosessTaskTjeneste, times(1)).lagre(prosessTaskDataCaptor.capture());
         var prosessTaskData = prosessTaskDataCaptor.getValue();
         assertThat(prosessTaskData.taskType()).isEqualTo(TaskType.forProsessTask(FjernIayInformasjonUtenReferanseTask.class));

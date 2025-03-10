@@ -44,7 +44,7 @@ public class OppryddingIayInformasjonRepository {
         var arbeidsforholdInformasjon = entityManager.find(ArbeidsforholdInformasjon.class, id);
         if (arbeidsforholdInformasjon != null) {
             slettArbeidsforholdInformasjon(id);
-            entityManager.remove(arbeidsforholdInformasjon);
+            fjernInformasjonFor(id);
             entityManager.flush(); // Sørger for at endringer er lagret før vi går videre
         }
     }
@@ -84,5 +84,12 @@ public class OppryddingIayInformasjonRepository {
             .setParameter("informasjonId", informasjonId)
             .executeUpdate();
         LOG.info("Fjernet {} arbeidsforhold referanser for informasjon: {}", antallFjernet, informasjonId);
+    }
+
+    private void fjernInformasjonFor(Long informasjonId) {
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_informasjon where id = :informasjonId")
+            .setParameter("informasjonId", informasjonId)
+            .executeUpdate();
+        LOG.info("Fjernet {} arbeidsforhold informasjon med id: {}", antallFjernet, informasjonId);
     }
 }

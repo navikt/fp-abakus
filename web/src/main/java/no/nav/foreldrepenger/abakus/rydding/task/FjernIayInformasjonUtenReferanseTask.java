@@ -18,7 +18,7 @@ import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 @ApplicationScoped
 @ProsessTask(value = "opprydding.iayInformasjon.uten.referanse", maxFailedRuns = 2)
 public class FjernIayInformasjonUtenReferanseTask implements ProsessTaskHandler {
-    public static final int MAX_PARTITION_SIZE = 250;
+    public static final int MAX_PARTITION_SIZE = 750;
     private static final Logger LOG = LoggerFactory.getLogger(FjernIayInformasjonUtenReferanseTask.class);
     private final OppryddingIayInformasjonRepository oppryddingIayInformasjonRepository;
     private final ProsessTaskTjeneste taskTjeneste;

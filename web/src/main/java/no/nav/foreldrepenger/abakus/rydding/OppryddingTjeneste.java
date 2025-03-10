@@ -36,7 +36,7 @@ public class OppryddingTjeneste {
     }
 
     public void fjernAlleIayAggregatUtenReferanse() {
-        var iayAggregatUtenReferanse = iayOppryddingRepository.hentIayAggregaterUtenReferanse(MAX_PARTITION_SIZE);
+        var iayAggregatUtenReferanse = iayOppryddingRepository.hentIayAggregaterUtenReferanse(1000);
         if (iayAggregatUtenReferanse.isEmpty()) {
             LOG.info("Ingen IAY aggregat for sletting.");
             return;}
@@ -45,7 +45,7 @@ public class OppryddingTjeneste {
     }
 
     public void fjernAlleIayInformasjontUtenReferanse() {
-        var informasjonUtenReferanse = informasjonOppryddingRepository.hentIayInformasjonUtenReferanse(MAX_PARTITION_SIZE);
+        var informasjonUtenReferanse = informasjonOppryddingRepository.hentIayInformasjonUtenReferanse(1500);
         if (informasjonUtenReferanse.isEmpty()) {
             LOG.info("Ingen IAY-Informasjon aggregat for sletting.");
             return;

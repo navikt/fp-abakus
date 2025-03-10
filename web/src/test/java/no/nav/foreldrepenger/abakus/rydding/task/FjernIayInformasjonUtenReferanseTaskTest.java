@@ -1,7 +1,7 @@
 package no.nav.foreldrepenger.abakus.rydding.task;
 
 import static java.util.Collections.emptySet;
-import static no.nav.foreldrepenger.abakus.rydding.task.FjernIAYGrunnlagUtenReferanseTask.MAX_PARTITION_SIZE;
+import static no.nav.foreldrepenger.abakus.rydding.task.FjernIayInformasjonUtenReferanseTask.MAX_PARTITION_SIZE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
