@@ -2,7 +2,7 @@ package no.nav.foreldrepenger.abakus.rydding;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import no.nav.foreldrepenger.abakus.rydding.task.FjernIAYGrunnlagUtenReferanseTask;
+import no.nav.foreldrepenger.abakus.rydding.task.FjernIayGrunnlagUtenReferanseTask;
 import no.nav.foreldrepenger.abakus.rydding.task.FjernIayInformasjonUtenReferanseTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
@@ -34,7 +34,7 @@ public class OppryddingTjeneste {
 
     private void opprettFjernIayAggregatTask() {
         LOG.info("Oppretter task for å fjerne IAY-aggregater uten referanse.");
-        var prosessTaskData = ProsessTaskData.forProsessTask(FjernIAYGrunnlagUtenReferanseTask.class);
+        var prosessTaskData = ProsessTaskData.forProsessTask(FjernIayGrunnlagUtenReferanseTask.class);
         taskTjeneste.lagre(prosessTaskData);
     }
 

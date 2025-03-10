@@ -2,7 +2,7 @@ package no.nav.foreldrepenger.abakus.rydding.task;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import no.nav.foreldrepenger.abakus.rydding.OppryddingIAYAggregatRepository;
+import no.nav.foreldrepenger.abakus.rydding.OppryddingIayAggregatRepository;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
@@ -12,17 +12,17 @@ import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 @ProsessTask(value = "opprydding.iayGrunnlag.uten.referanse", maxFailedRuns = 2)
-public class FjernIAYGrunnlagUtenReferanseTask implements ProsessTaskHandler {
+public class FjernIayGrunnlagUtenReferanseTask implements ProsessTaskHandler {
 
     public static final int IAY_GRUNNLAG_BATCH_SIZE = 500;
 
-    private static final Logger LOG = LoggerFactory.getLogger(FjernIAYGrunnlagUtenReferanseTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FjernIayGrunnlagUtenReferanseTask.class);
 
-    private final OppryddingIAYAggregatRepository iayAggregatRepository;
+    private final OppryddingIayAggregatRepository iayAggregatRepository;
     private final ProsessTaskTjeneste taskTjeneste;
 
     @Inject
-    public FjernIAYGrunnlagUtenReferanseTask(OppryddingIAYAggregatRepository iayAggregatRepository, ProsessTaskTjeneste taskTjeneste) {
+    public FjernIayGrunnlagUtenReferanseTask(OppryddingIayAggregatRepository iayAggregatRepository, ProsessTaskTjeneste taskTjeneste) {
         this.iayAggregatRepository = iayAggregatRepository;
         this.taskTjeneste = taskTjeneste;
     }
@@ -41,7 +41,7 @@ public class FjernIAYGrunnlagUtenReferanseTask implements ProsessTaskHandler {
 
     private void opprettFjernIayAggregatTask() {
         LOG.info("Oppretter en ny task for å fjerne IAY-aggregater uten referanse.");
-        var prosessTaskData = ProsessTaskData.forProsessTask(FjernIAYGrunnlagUtenReferanseTask.class);
+        var prosessTaskData = ProsessTaskData.forProsessTask(FjernIayGrunnlagUtenReferanseTask.class);
         taskTjeneste.lagre(prosessTaskData);
     }
 }

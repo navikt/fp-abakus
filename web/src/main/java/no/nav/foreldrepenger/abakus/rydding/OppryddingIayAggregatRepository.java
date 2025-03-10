@@ -14,19 +14,19 @@ import java.util.Objects;
 import static java.util.Collections.emptyList;
 
 @ApplicationScoped
-public class OppryddingIAYAggregatRepository {
-    private static final Logger LOG = LoggerFactory.getLogger(OppryddingIAYAggregatRepository.class);
+public class OppryddingIayAggregatRepository {
+    private static final Logger LOG = LoggerFactory.getLogger(OppryddingIayAggregatRepository.class);
     protected static final String PARAM_IAY_ID = "iayId";
     protected static final String PARAM_RELATERT_YTELSE_ID_LIST = "relatertYtelseIdList";
 
     private EntityManager entityManager;
 
-    OppryddingIAYAggregatRepository() {
+    OppryddingIayAggregatRepository() {
         // CDI proxy
     }
 
     @Inject
-    public OppryddingIAYAggregatRepository(EntityManager entityManager) {
+    public OppryddingIayAggregatRepository(EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager");
         this.entityManager = entityManager;
     }

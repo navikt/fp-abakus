@@ -1,6 +1,6 @@
 package no.nav.foreldrepenger.abakus.rydding;
 
-import no.nav.foreldrepenger.abakus.rydding.task.FjernIAYGrunnlagUtenReferanseTask;
+import no.nav.foreldrepenger.abakus.rydding.task.FjernIayGrunnlagUtenReferanseTask;
 import no.nav.foreldrepenger.abakus.rydding.task.FjernIayInformasjonUtenReferanseTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
@@ -40,7 +40,7 @@ class OppryddingTjenesteTest {
         // Assert
         verify(prosessTaskTjeneste, times(1)).lagre(prosessTaskDataCaptor.capture());
         var prosessTaskData = prosessTaskDataCaptor.getValue();
-        assertThat(prosessTaskData.taskType()).isEqualTo(TaskType.forProsessTask(FjernIAYGrunnlagUtenReferanseTask.class));
+        assertThat(prosessTaskData.taskType()).isEqualTo(TaskType.forProsessTask(FjernIayGrunnlagUtenReferanseTask.class));
     }
 
     @Test
