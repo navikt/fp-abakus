@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.rydding;
 
 import no.nav.foreldrepenger.abakus.rydding.task.FjernIayGrunnlagUtenReferanseTask;
 import no.nav.foreldrepenger.abakus.rydding.task.FjernIayInformasjonUtenReferanseTask;
+import no.nav.foreldrepenger.abakus.rydding.task.FjernIayInntektsmeldingerUtenReferanseTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 import no.nav.vedtak.felles.prosesstask.api.TaskType;
@@ -39,6 +40,7 @@ class OppryddingTjenesteTest {
 
         // Assert
         verify(prosessTaskTjeneste, times(1)).lagre(prosessTaskDataCaptor.capture());
+        verifyNoMoreInteractions(prosessTaskTjeneste);
         var prosessTaskData = prosessTaskDataCaptor.getValue();
         assertThat(prosessTaskData.taskType()).isEqualTo(TaskType.forProsessTask(FjernIayGrunnlagUtenReferanseTask.class));
     }
@@ -50,7 +52,20 @@ class OppryddingTjenesteTest {
 
         // Assert
         verify(prosessTaskTjeneste, times(1)).lagre(prosessTaskDataCaptor.capture());
+        verifyNoMoreInteractions(prosessTaskTjeneste);
         var prosessTaskData = prosessTaskDataCaptor.getValue();
         assertThat(prosessTaskData.taskType()).isEqualTo(TaskType.forProsessTask(FjernIayInformasjonUtenReferanseTask.class));
+    }
+
+    @Test
+    void testFjernAlleInntektsmeldingerUtenReferanse_ok() {
+        // Act
+        oppryddingTjeneste.fjernAlleIayInntektsmeldingerUtenReferanse();
+
+        // Assert
+        verify(prosessTaskTjeneste, times(1)).lagre(prosessTaskDataCaptor.capture());
+        verifyNoMoreInteractions(prosessTaskTjeneste);
+        var prosessTaskData = prosessTaskDataCaptor.getValue();
+        assertThat(prosessTaskData.taskType()).isEqualTo(TaskType.forProsessTask(FjernIayInntektsmeldingerUtenReferanseTask.class));
     }
 }

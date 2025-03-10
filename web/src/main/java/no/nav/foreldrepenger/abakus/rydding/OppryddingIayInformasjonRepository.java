@@ -33,10 +33,10 @@ public class OppryddingIayInformasjonRepository {
         @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery("select distinct id from iay_informasjon info where "
             + "not exists (select 1 from gr_arbeid_inntekt gr where info.id = gr.informasjon_id)").setMaxResults(maxResults).getResultList();
         if (result.isEmpty()) {
-            LOG.info("Fant ingen IAY-Informasjon uten grunnlag referanse");
+            LOG.debug("Fant ingen IAY-Informasjon uten grunnlag referanse");
             return emptyList();
         }
-        LOG.info("Fant {} IAY-Informasjon uten grunnlag referanse", result.size());
+        LOG.debug("Fant {} IAY-Informasjon uten grunnlag referanse", result.size());
         return result.stream().map(Number::longValue).toList();
     }
 
@@ -68,27 +68,27 @@ public class OppryddingIayInformasjonRepository {
                 "delete from iay_overstyrte_perioder where arbeidsforhold_id in (:overstyrteArbeidsforholdIdList)")
             .setParameter("overstyrteArbeidsforholdIdList", overstyrteArbeidsforholdIdList)
             .executeUpdate();
-        LOG.info("Fjernet {} overstyrte arbeidsforhold perioder for arbeidsforhold: {}", antallFjernet, overstyrteArbeidsforholdIdList);
+        LOG.debug("Fjernet {} overstyrte arbeidsforhold perioder for arbeidsforhold: {}", antallFjernet, overstyrteArbeidsforholdIdList);
     }
 
     private void fjernOverstyrteArbeidsforholFor(Long informasjonId) {
         var antallFjernet = entityManager.createNativeQuery("delete from iay_arbeidsforhold where informasjon_id = :informasjonId")
             .setParameter("informasjonId", informasjonId)
             .executeUpdate();
-        LOG.info("Fjernet {} overstyrte arbeidsforhold for informasjon: {}", antallFjernet, informasjonId);
+        LOG.debug("Fjernet {} overstyrte arbeidsforhold for informasjon: {}", antallFjernet, informasjonId);
     }
 
     private void fjernArbeidsforholReferanserFor(Long informasjonId) {
         var antallFjernet = entityManager.createNativeQuery("delete from iay_arbeidsforhold_refer where informasjon_id = :informasjonId")
             .setParameter("informasjonId", informasjonId)
             .executeUpdate();
-        LOG.info("Fjernet {} arbeidsforhold referanser for informasjon: {}", antallFjernet, informasjonId);
+        LOG.debug("Fjernet {} arbeidsforhold referanser for informasjon: {}", antallFjernet, informasjonId);
     }
 
     private void fjernInformasjonFor(Long informasjonId) {
         var antallFjernet = entityManager.createNativeQuery("delete from iay_informasjon where id = :informasjonId")
             .setParameter("informasjonId", informasjonId)
             .executeUpdate();
-        LOG.info("Fjernet {} arbeidsforhold informasjon med id: {}", antallFjernet, informasjonId);
+        LOG.debug("Fjernet {} arbeidsforhold informasjon med id: {}", antallFjernet, informasjonId);
     }
 }
