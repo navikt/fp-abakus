@@ -1,6 +1,5 @@
-package no.nav.foreldrepenger.abakus.rydding.task;
+package no.nav.foreldrepenger.abakus.rydding.grunnlag;
 
-import no.nav.foreldrepenger.abakus.rydding.OppryddingIayAggregatRepository;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +14,7 @@ import java.util.List;
 import java.util.stream.LongStream;
 
 import static java.util.Collections.emptyList;
-import static no.nav.foreldrepenger.abakus.rydding.task.FjernIayGrunnlagUtenReferanseTask.IAY_GRUNNLAG_BATCH_SIZE;
+import static no.nav.foreldrepenger.abakus.rydding.grunnlag.FjernIayGrunnlagUtenReferanseTask.IAY_GRUNNLAG_BATCH_SIZE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;

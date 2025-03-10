@@ -1,8 +1,7 @@
-package no.nav.foreldrepenger.abakus.rydding.task;
+package no.nav.foreldrepenger.abakus.rydding.arbeidsforhold;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import no.nav.foreldrepenger.abakus.rydding.OppryddingIayInformasjonRepository;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
@@ -13,7 +12,7 @@ import org.slf4j.LoggerFactory;
 @ApplicationScoped
 @ProsessTask(value = "opprydding.iayInformasjon.uten.referanse", maxFailedRuns = 2)
 public class FjernIayInformasjonUtenReferanseTask implements ProsessTaskHandler {
-    public static final int IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE = 750;
+    static final int IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE = 750;
 
     private static final Logger LOG = LoggerFactory.getLogger(FjernIayInformasjonUtenReferanseTask.class);
 

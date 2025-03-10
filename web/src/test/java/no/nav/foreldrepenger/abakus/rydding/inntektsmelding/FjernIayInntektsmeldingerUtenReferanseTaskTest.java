@@ -1,7 +1,7 @@
-package no.nav.foreldrepenger.abakus.rydding.task;
+package no.nav.foreldrepenger.abakus.rydding.inntektsmelding;
 
 import static java.util.Collections.emptyList;
-import static no.nav.foreldrepenger.abakus.rydding.task.FjernIayInntektsmeldingerUtenReferanseTask.IAY_INNTEKTSMELDING_BATCH_SIZE;
+import static no.nav.foreldrepenger.abakus.rydding.inntektsmelding.FjernIayInntektsmeldingerUtenReferanseTask.IAY_INNTEKTSMELDING_BATCH_SIZE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -23,7 +23,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import no.nav.foreldrepenger.abakus.rydding.OppryddingIayInntektsmeldingerRepository;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 

@@ -1,8 +1,7 @@
-package no.nav.foreldrepenger.abakus.rydding.task;
+package no.nav.foreldrepenger.abakus.rydding;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import no.nav.foreldrepenger.abakus.rydding.OppryddingTjeneste;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
@@ -23,5 +22,6 @@ public class FjernAlleGrunnlagUtenReferanseBatchTask implements ProsessTaskHandl
         oppryddingTjeneste.fjernAlleIayAggregatUtenReferanse();
         oppryddingTjeneste.fjernAlleIayInformasjontUtenReferanse();
         oppryddingTjeneste.fjernAlleIayInntektsmeldingerUtenReferanse();
+        oppryddingTjeneste.fjernAlleIayOppgittOpptjeningUtenReferanse();
     }
 }

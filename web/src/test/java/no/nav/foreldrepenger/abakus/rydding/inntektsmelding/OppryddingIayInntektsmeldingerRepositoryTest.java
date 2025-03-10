@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.rydding;
+package no.nav.foreldrepenger.abakus.rydding.inntektsmelding;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,7 +23,7 @@ class OppryddingIayInntektsmeldingerRepositoryTest extends EntityManagerAwareTes
 
     @Test
     void hentIayInformasjonUtenReferanse_medReferanse_ok() {
-        opprettEmptyArbeidsforholdInfo();
+        opprettEmptyInntektsmelding();
 
         var iayInntektsmeldingerUtenReferanse = repository.hentIayInntektsmeldingerUtenReferanse(10);
 
@@ -32,7 +32,7 @@ class OppryddingIayInntektsmeldingerRepositoryTest extends EntityManagerAwareTes
 
     @Test
     void slettIayInformasjon_ok() {
-        opprettEmptyArbeidsforholdInfo();
+        opprettEmptyInntektsmelding();
 
         var iayInntektsmeldingerUtenReferanse = repository.hentIayInntektsmeldingerUtenReferanse(10);
         assertThat(iayInntektsmeldingerUtenReferanse).hasSize(1);
@@ -42,7 +42,7 @@ class OppryddingIayInntektsmeldingerRepositoryTest extends EntityManagerAwareTes
         assertThat(repository.hentIayInntektsmeldingerUtenReferanse(10)).isEmpty();
     }
 
-    private void opprettEmptyArbeidsforholdInfo() {
+    private void opprettEmptyInntektsmelding() {
         var entity = new InntektsmeldingAggregat();
         getEntityManager().persist(entity);
         flushAndClear();

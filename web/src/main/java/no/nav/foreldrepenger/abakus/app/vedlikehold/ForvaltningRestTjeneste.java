@@ -144,6 +144,7 @@ public class ForvaltningRestTjeneste {
         oppryddingTjeneste.fjernAlleIayAggregatUtenReferanse();
         oppryddingTjeneste.fjernAlleIayInformasjontUtenReferanse();
         oppryddingTjeneste.fjernAlleIayInntektsmeldingerUtenReferanse();
+        oppryddingTjeneste.fjernAlleIayOppgittOpptjeningUtenReferanse();
         return Response.ok().build();
     }
 

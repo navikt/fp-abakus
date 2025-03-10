@@ -1,11 +1,10 @@
-package no.nav.foreldrepenger.abakus.rydding.task;
+package no.nav.foreldrepenger.abakus.rydding.grunnlag;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import no.nav.foreldrepenger.abakus.rydding.OppryddingIayAggregatRepository;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
@@ -14,8 +13,7 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 @ApplicationScoped
 @ProsessTask(value = "opprydding.iayGrunnlag.uten.referanse", maxFailedRuns = 2)
 public class FjernIayGrunnlagUtenReferanseTask implements ProsessTaskHandler {
-
-    public static final int IAY_GRUNNLAG_BATCH_SIZE = 500;
+    static final int IAY_GRUNNLAG_BATCH_SIZE = 500;
 
     private static final Logger LOG = LoggerFactory.getLogger(FjernIayGrunnlagUtenReferanseTask.class);
 
