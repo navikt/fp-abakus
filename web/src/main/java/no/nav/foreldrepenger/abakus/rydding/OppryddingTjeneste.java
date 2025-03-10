@@ -2,6 +2,8 @@ package no.nav.foreldrepenger.abakus.rydding;
 
 import java.util.List;
 
+import no.nav.foreldrepenger.abakus.rydding.task.FjernIayInformasjonUtenReferanseTask;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +19,7 @@ import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 public class OppryddingTjeneste {
     private static final Logger LOG = LoggerFactory.getLogger(OppryddingTjeneste.class);
     private OppryddingIAYAggregatRepository iayOppryddingRepository;
+    private OppryddingIayInformasjonRepository informasjonOppryddingRepository;
     private ProsessTaskTjeneste taskTjeneste;
 
     OppryddingTjeneste() {
@@ -24,8 +27,11 @@ public class OppryddingTjeneste {
     }
 
     @Inject
-    public OppryddingTjeneste(OppryddingIAYAggregatRepository iayOppryddingRepository, ProsessTaskTjeneste taskTjeneste) {
+    public OppryddingTjeneste(OppryddingIAYAggregatRepository iayOppryddingRepository,
+                              OppryddingIayInformasjonRepository informasjonOppryddingRepository,
+                              ProsessTaskTjeneste taskTjeneste) {
         this.iayOppryddingRepository = iayOppryddingRepository;
+        this.informasjonOppryddingRepository = informasjonOppryddingRepository;
         this.taskTjeneste = taskTjeneste;
     }
 
@@ -38,10 +44,27 @@ public class OppryddingTjeneste {
         opprettFjernIayAggregatTask(iayAggregatUtenReferanse);
     }
 
+    public void fjernAlleIayInformasjontUtenReferanse() {
+        var informasjonUtenReferanse = informasjonOppryddingRepository.hentIayInformasjonUtenReferanse(MAX_PARTITION_SIZE);
+        if (informasjonUtenReferanse.isEmpty()) {
+            LOG.info("Ingen IAY-Informasjon aggregat for sletting.");
+            return;
+        }
+        LOG.info("Fjerner {} IAY-Informasjon aggregater uten referanse.", informasjonUtenReferanse.size());
+        opprettFjernIayInformasjonTask(informasjonUtenReferanse);
+    }
+
     private void opprettFjernIayAggregatTask(List<Long> iayIdsList) {
         LOG.info("Oppretter task for å fjerne {} IAY-aggregater uten referanse.", iayIdsList.size());
         var prosessTaskData = ProsessTaskData.forProsessTask(FjernIAYGrunnlagUtenReferanseTask.class);
         prosessTaskData.setPayload(DefaultJsonMapper.toJson(iayIdsList));
+        taskTjeneste.lagre(prosessTaskData);
+    }
+
+    private void opprettFjernIayInformasjonTask(List<Long> informasjonIdsList) {
+        LOG.info("Oppretter task for å fjerne {} IAY-Informasjon uten referanse.", informasjonIdsList.size());
+        var prosessTaskData = ProsessTaskData.forProsessTask(FjernIayInformasjonUtenReferanseTask.class);
+        prosessTaskData.setPayload(DefaultJsonMapper.toJson(informasjonIdsList));
         taskTjeneste.lagre(prosessTaskData);
     }
 }

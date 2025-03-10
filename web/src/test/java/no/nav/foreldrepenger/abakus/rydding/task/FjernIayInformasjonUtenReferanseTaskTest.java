@@ -23,16 +23,16 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import no.nav.foreldrepenger.abakus.rydding.OppryddingIAYAggregatRepository;
+import no.nav.foreldrepenger.abakus.rydding.OppryddingIayInformasjonRepository;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 @ExtendWith(MockitoExtension.class)
-class FjernIAYGrunnlagUtenReferanseTaskTest {
+class FjernIayInformasjonUtenReferanseTaskTest {
 
     @Mock
-    private OppryddingIAYAggregatRepository oppryddingIAYAggregatRepository;
+    private OppryddingIayInformasjonRepository oppryddingIayInformasjonRepository;
     @Mock
     private ProsessTaskTjeneste prosessTaskTjeneste;
     @Captor
@@ -40,11 +40,11 @@ class FjernIAYGrunnlagUtenReferanseTaskTest {
     @Captor
     ArgumentCaptor<ProsessTaskData> prosessTaskDataCaptor;
 
-    private FjernIAYGrunnlagUtenReferanseTask task;
+    private FjernIayInformasjonUtenReferanseTask task;
 
     @BeforeEach
     void setUp() {
-        task = new FjernIAYGrunnlagUtenReferanseTask(oppryddingIAYAggregatRepository, prosessTaskTjeneste);
+        task = new FjernIayInformasjonUtenReferanseTask(oppryddingIayInformasjonRepository, prosessTaskTjeneste);
     }
 
     @Test
@@ -57,7 +57,7 @@ class FjernIAYGrunnlagUtenReferanseTaskTest {
         task.doTask(prosessTaskData);
 
         verify(prosessTaskTjeneste, never()).lagre(any(ProsessTaskData.class));
-        verify(oppryddingIAYAggregatRepository, times(3)).slettIayAggregat(longCaptor.capture());
+        verify(oppryddingIayInformasjonRepository, times(3)).slettIayInformasjon(longCaptor.capture());
         var capturedIds = Set.copyOf(longCaptor.getAllValues());
         assertEquals(iayIds, capturedIds);
     }
@@ -72,7 +72,7 @@ class FjernIAYGrunnlagUtenReferanseTaskTest {
         task.doTask(prosessTaskData);
 
         verify(prosessTaskTjeneste, never()).lagre(any(ProsessTaskData.class));
-        verify(oppryddingIAYAggregatRepository, never()).slettIayAggregat(anyLong());
+        verify(oppryddingIayInformasjonRepository, never()).slettIayInformasjon(anyLong());
     }
 
     @Test
@@ -81,11 +81,12 @@ class FjernIAYGrunnlagUtenReferanseTaskTest {
         var payload = DefaultJsonMapper.toJson(iayIds);
         var prosessTaskData = ProsessTaskData.forProsessTask(FjernIAYGrunnlagUtenReferanseTask.class);
         prosessTaskData.setPayload(payload);
-        when(oppryddingIAYAggregatRepository.hentIayAggregaterUtenReferanse(MAX_PARTITION_SIZE)).thenReturn(iayIds.subList(0, MAX_PARTITION_SIZE - 5));
+        when(oppryddingIayInformasjonRepository.hentIayInformasjonUtenReferanse(MAX_PARTITION_SIZE)).thenReturn(
+            iayIds.subList(0, MAX_PARTITION_SIZE - 5));
 
         task.doTask(prosessTaskData);
 
-        verify(oppryddingIAYAggregatRepository, times(MAX_PARTITION_SIZE)).slettIayAggregat(longCaptor.capture());
+        verify(oppryddingIayInformasjonRepository, times(MAX_PARTITION_SIZE)).slettIayInformasjon(longCaptor.capture());
         var capturedIds = List.copyOf(longCaptor.getAllValues());
         assertEquals(iayIds, capturedIds);
         verify(prosessTaskTjeneste).lagre(prosessTaskDataCaptor.capture());

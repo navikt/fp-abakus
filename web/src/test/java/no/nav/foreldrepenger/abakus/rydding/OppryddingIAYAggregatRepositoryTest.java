@@ -41,7 +41,6 @@ class OppryddingIAYAggregatRepositoryTest extends EntityManagerAwareTest {
         assertThat(iayAggregater).hasSize(1);
 
         repository.slettIayAggregat(iayAggregater.getFirst());
-        flushAndClear();
 
         assertThat(repository.hentIayAggregaterUtenReferanse(250)).isEmpty();
     }
@@ -54,7 +53,6 @@ class OppryddingIAYAggregatRepositoryTest extends EntityManagerAwareTest {
         assertThat(iayAggregater).hasSize(1);
 
         repository.slettIayAggregat(iayAggregater.getFirst());
-        flushAndClear();
 
         assertThat(repository.hentIayAggregaterUtenReferanse(250)).isEmpty();
     }
