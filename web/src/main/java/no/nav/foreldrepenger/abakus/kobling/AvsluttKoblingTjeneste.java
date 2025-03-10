@@ -7,14 +7,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
-import no.nav.foreldrepenger.konfig.Environment;
 
 @ApplicationScoped
 public class AvsluttKoblingTjeneste {
 
     private static final Logger LOG = LoggerFactory.getLogger(AvsluttKoblingTjeneste.class);
-
-    private static final Environment ENV = Environment.current();
 
     private KoblingTjeneste koblingTjeneste;
     private InntektArbeidYtelseTjeneste iayTjeneste;
