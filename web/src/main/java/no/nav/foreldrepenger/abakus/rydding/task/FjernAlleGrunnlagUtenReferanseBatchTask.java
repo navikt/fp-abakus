@@ -22,5 +22,6 @@ public class FjernAlleGrunnlagUtenReferanseBatchTask implements ProsessTaskHandl
     public void doTask(ProsessTaskData prosessTaskData) {
         oppryddingTjeneste.fjernAlleIayAggregatUtenReferanse();
         oppryddingTjeneste.fjernAlleIayInformasjontUtenReferanse();
+        oppryddingTjeneste.fjernAlleIayInntektsmeldingerUtenReferanse();
     }
 }

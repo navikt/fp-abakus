@@ -15,13 +15,13 @@ import no.nav.foreldrepenger.abakus.domene.iay.VersjonType;
 import no.nav.vedtak.felles.testutilities.db.EntityManagerAwareTest;
 
 @ExtendWith(JpaExtension.class)
-class OppryddingIAYAggregatRepositoryTest extends EntityManagerAwareTest {
+class OppryddingIayAggregatRepositoryTest extends EntityManagerAwareTest {
 
-    private OppryddingIAYAggregatRepository repository;
+    private OppryddingIayAggregatRepository repository;
 
     @BeforeEach
     void setUp(EntityManager entityManager) {
-        repository = new OppryddingIAYAggregatRepository(entityManager);
+        repository = new OppryddingIayAggregatRepository(entityManager);
     }
 
     @Test
