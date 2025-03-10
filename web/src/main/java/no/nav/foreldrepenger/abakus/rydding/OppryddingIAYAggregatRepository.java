@@ -1,17 +1,17 @@
 package no.nav.foreldrepenger.abakus.rydding;
 
-import static java.util.Collections.emptyList;
-
-import java.util.List;
-import java.util.Objects;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Objects;
+
+import static java.util.Collections.emptyList;
 
 @ApplicationScoped
 public class OppryddingIAYAggregatRepository {
@@ -51,8 +51,7 @@ public class OppryddingIAYAggregatRepository {
             slettIayAktørIntekt(id);
             slettIayAktørArbeid(id);
             slettIayAktørYtelse(id);
-            entityManager.remove(iay);
-            entityManager.flush(); // Sørger for at endringer er lagret før vi går videre
+            fjernInntektArbeidYtelseFor(id);
         }
     }
 
@@ -256,5 +255,12 @@ public class OppryddingIAYAggregatRepository {
             .setParameter(PARAM_IAY_ID, iayIdForSletting)
             .executeUpdate();
         LOG.info("Fjernet {} aktør inntekter for iay-aggregat: {}", antallFjernet, iayIdForSletting);
+    }
+
+    private void fjernInntektArbeidYtelseFor(Long iayIdForSletting) {
+        var antallFjernet = entityManager.createNativeQuery("delete from iay_inntekt_arbeid_ytelser where id = :iayId")
+                .setParameter(PARAM_IAY_ID, iayIdForSletting)
+                .executeUpdate();
+        LOG.info("Fjernet {} IAY-aggregat med id: {}", antallFjernet, iayIdForSletting);
     }
 }

@@ -143,6 +143,7 @@ public class ForvaltningRestTjeneste {
     public Response ryddOppGrunnlagUtenReferanse() {
         LOG.info("FORVALTNING ABAKUS ryddOppGrunnlagUtenReferanse");
         oppryddingTjeneste.fjernAlleIayAggregatUtenReferanse();
+        oppryddingTjeneste.fjernAlleIayInformasjontUtenReferanse();
         return Response.ok().build();
     }
 

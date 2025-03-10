@@ -1,11 +1,5 @@
 package no.nav.foreldrepenger.abakus.rydding.task;
 
-import java.util.List;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import no.nav.foreldrepenger.abakus.rydding.OppryddingIAYAggregatRepository;
@@ -13,13 +7,17 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
-import no.nav.vedtak.mapper.json.DefaultJsonMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 @ProsessTask(value = "opprydding.iayGrunnlag.uten.referanse", maxFailedRuns = 2)
 public class FjernIAYGrunnlagUtenReferanseTask implements ProsessTaskHandler {
-    public static final int MAX_PARTITION_SIZE = 250;
+
+    public static final int IAY_GRUNNLAG_BATCH_SIZE = 500;
+
     private static final Logger LOG = LoggerFactory.getLogger(FjernIAYGrunnlagUtenReferanseTask.class);
+
     private final OppryddingIAYAggregatRepository iayAggregatRepository;
     private final ProsessTaskTjeneste taskTjeneste;
 
@@ -30,22 +28,20 @@ public class FjernIAYGrunnlagUtenReferanseTask implements ProsessTaskHandler {
     }
 
     @Override
-    public void doTask(ProsessTaskData prosessTaskData) {
-        Set<Integer> iayAggregatUtenReferanse = DefaultJsonMapper.fromJson(prosessTaskData.getPayloadAsString(), Set.class);
+    public void doTask(ProsessTaskData unused) {
+        var iayAggregatUtenReferanse = iayAggregatRepository.hentIayAggregaterUtenReferanse(IAY_GRUNNLAG_BATCH_SIZE);
         LOG.info("Fjerner {} IAY-aggregater uten referanse.", iayAggregatUtenReferanse.size());
-        iayAggregatUtenReferanse.forEach(iayId ->  iayAggregatRepository.slettIayAggregat(iayId.longValue()));
+        iayAggregatUtenReferanse.forEach(iayAggregatRepository::slettIayAggregat);
         LOG.info("Slettet {} IAY-aggregater uten referanse", iayAggregatUtenReferanse.size());
 
-        var nyeAggregaterTilSletting = iayAggregatRepository.hentIayAggregaterUtenReferanse(MAX_PARTITION_SIZE);
-        if (!nyeAggregaterTilSletting.isEmpty()) {
-            opprettFjernIayAggregatTask(nyeAggregaterTilSletting);
+        if (iayAggregatUtenReferanse.size() >= IAY_GRUNNLAG_BATCH_SIZE) {
+            opprettFjernIayAggregatTask();
         }
     }
 
-    private void opprettFjernIayAggregatTask(List<Long> iayIdsList) {
-        LOG.info("Oppretter en ny task for å fjerne {} IAY-aggregater uten referanse.", iayIdsList.size());
+    private void opprettFjernIayAggregatTask() {
+        LOG.info("Oppretter en ny task for å fjerne IAY-aggregater uten referanse.");
         var prosessTaskData = ProsessTaskData.forProsessTask(FjernIAYGrunnlagUtenReferanseTask.class);
-        prosessTaskData.setPayload(DefaultJsonMapper.toJson(iayIdsList));
         taskTjeneste.lagre(prosessTaskData);
     }
 }

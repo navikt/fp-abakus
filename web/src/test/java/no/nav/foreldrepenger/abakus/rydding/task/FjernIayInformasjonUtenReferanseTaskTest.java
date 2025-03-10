@@ -1,6 +1,6 @@
 package no.nav.foreldrepenger.abakus.rydding.task;
 
-import no.nav.foreldrepenger.abakus.rydding.OppryddingIAYAggregatRepository;
+import no.nav.foreldrepenger.abakus.rydding.OppryddingIayInformasjonRepository;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,68 +15,69 @@ import java.util.List;
 import java.util.stream.LongStream;
 
 import static java.util.Collections.emptyList;
-import static no.nav.foreldrepenger.abakus.rydding.task.FjernIAYGrunnlagUtenReferanseTask.IAY_GRUNNLAG_BATCH_SIZE;
+import static no.nav.foreldrepenger.abakus.rydding.task.FjernIayInformasjonUtenReferanseTask.IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class FjernIAYGrunnlagUtenReferanseTaskTest {
+class FjernIayInformasjonUtenReferanseTaskTest {
 
     @Mock
-    private OppryddingIAYAggregatRepository oppryddingIAYAggregatRepository;
+    private OppryddingIayInformasjonRepository oppryddingIayInformasjonRepository;
     @Mock
     private ProsessTaskTjeneste prosessTaskTjeneste;
     @Captor
     private ArgumentCaptor<Long> longCaptor;
 
-    private FjernIAYGrunnlagUtenReferanseTask task;
+    private FjernIayInformasjonUtenReferanseTask task;
 
     @BeforeEach
     void setUp() {
-        task = new FjernIAYGrunnlagUtenReferanseTask(oppryddingIAYAggregatRepository, prosessTaskTjeneste);
+        task = new FjernIayInformasjonUtenReferanseTask(oppryddingIayInformasjonRepository, prosessTaskTjeneste);
     }
 
     @Test
     void testDoTask_ok() {
         var iayIds = List.of(1L, 2L, 3L);
-        when(oppryddingIAYAggregatRepository.hentIayAggregaterUtenReferanse(IAY_GRUNNLAG_BATCH_SIZE)).thenReturn(iayIds);
+        when(oppryddingIayInformasjonRepository.hentIayInformasjonUtenReferanse(IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE)).thenReturn(iayIds);
 
         // Act
         task.doTask(ProsessTaskData.forProsessTask(FjernIAYGrunnlagUtenReferanseTask.class));
 
         // Assert
-        verify(prosessTaskTjeneste, never()).lagre(any(ProsessTaskData.class));
-        verify(oppryddingIAYAggregatRepository, times(1)).hentIayAggregaterUtenReferanse(anyInt());
-        verify(oppryddingIAYAggregatRepository, times(3)).slettIayAggregat(longCaptor.capture());
+        verifyNoInteractions(prosessTaskTjeneste);
+        verify(oppryddingIayInformasjonRepository, times(1)).hentIayInformasjonUtenReferanse(anyInt());
+        verify(oppryddingIayInformasjonRepository, times(3)).slettIayInformasjon(longCaptor.capture());
         var capturedIds = List.copyOf(longCaptor.getAllValues());
         assertEquals(iayIds, capturedIds);
     }
 
     @Test
     void testDoTask_ikke_noe_til_å_slette() {
-        when(oppryddingIAYAggregatRepository.hentIayAggregaterUtenReferanse(IAY_GRUNNLAG_BATCH_SIZE)).thenReturn(emptyList());
+        when(oppryddingIayInformasjonRepository.hentIayInformasjonUtenReferanse(IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE)).thenReturn(emptyList());
 
         // Act
         task.doTask(ProsessTaskData.forProsessTask(FjernIAYGrunnlagUtenReferanseTask.class));
 
         // Assert
-        verify(oppryddingIAYAggregatRepository, times(1)).hentIayAggregaterUtenReferanse(anyInt());
+        verify(oppryddingIayInformasjonRepository, times(1)).hentIayInformasjonUtenReferanse(anyInt());
         verifyNoInteractions(prosessTaskTjeneste);
-        verify(oppryddingIAYAggregatRepository, never()).slettIayAggregat(anyLong());
+        verify(oppryddingIayInformasjonRepository, never()).slettIayInformasjon(anyLong());
     }
 
     @Test
-    void testDoTask_ok_over_max_partition_size() {
-        var iayIds = LongStream.rangeClosed(1, IAY_GRUNNLAG_BATCH_SIZE).boxed().toList();
-        when(oppryddingIAYAggregatRepository.hentIayAggregaterUtenReferanse(IAY_GRUNNLAG_BATCH_SIZE)).thenReturn(iayIds);
+    void testDoTask_withValidPayload_over_max_partition_size() {
+        var iayIds = LongStream.rangeClosed(1, IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE).boxed().toList();
+        when(oppryddingIayInformasjonRepository.hentIayInformasjonUtenReferanse(IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE)).thenReturn(
+                iayIds);
 
         // Act
         task.doTask(ProsessTaskData.forProsessTask(FjernIAYGrunnlagUtenReferanseTask.class));
 
         // Assert
-        verify(oppryddingIAYAggregatRepository, times(IAY_GRUNNLAG_BATCH_SIZE)).slettIayAggregat(longCaptor.capture());
+        verify(oppryddingIayInformasjonRepository, times(IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE)).slettIayInformasjon(longCaptor.capture());
         var capturedIds = List.copyOf(longCaptor.getAllValues());
         assertEquals(iayIds, capturedIds);
         verify(prosessTaskTjeneste).lagre(any(ProsessTaskData.class));
