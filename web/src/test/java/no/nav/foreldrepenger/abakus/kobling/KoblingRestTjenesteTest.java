@@ -58,6 +58,27 @@ class KoblingRestTjenesteTest {
     }
 
     @Test
+    void sletting_av_kobling_allerede_deaktivert_ok() {
+        var referanse = new KoblingReferanse(UUID.randomUUID());
+        var saksnummer = "23234234";
+        var aktørId = AktørId.dummy();
+        var ytelseType = YtelseType.FORELDREPENGER;
+
+        var kobling = opprettKobling(saksnummer, aktørId, ytelseType, referanse);
+        kobling.setAktiv(false);
+        when(koblingTjeneste.hentFor(referanse)).thenReturn(Optional.of(kobling));
+
+        // Act
+        var request = new KoblingRestTjeneste.AvsluttKoblingRequestAbacDto(saksnummer, referanse.getReferanse(), ytelseType, new AktørIdPersonident(aktørId.getId()));
+
+        var response = koblingRestTjeneste.deaktiverKobling(request);
+
+        // Assert
+        assertThat(response.getStatus()).isEqualTo(HttpURLConnection.HTTP_NO_CONTENT);
+        verify(avsluttKobling, never()).avsluttKobling(referanse, ytelseType);
+    }
+
+    @Test
     void sletting_av_kobling_feil_ytesletype_bad_request_nok() {
         var referanse = new KoblingReferanse(UUID.randomUUID());
         var saksnummer = "23234234";

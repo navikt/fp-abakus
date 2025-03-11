@@ -75,9 +75,14 @@ public class KoblingRestTjeneste {
 
         if (koblingOptional.isPresent()) {
             var kobling = koblingOptional.get();
-            validerRequest(request, kobling);
-            avsluttKoblingTjeneste.avsluttKobling(kobling.getKoblingReferanse(), request.getYtelseType());
-            return Response.ok().build();
+            if (kobling.erAktiv()) {
+                validerRequest(request, kobling);
+                avsluttKoblingTjeneste.avsluttKobling(kobling.getKoblingReferanse(), request.getYtelseType());
+                return Response.ok().build();
+            } else {
+                LOG.info("KOBLING. Kobling er allerede avsluttet for referanse: {}", request.getReferanse());
+                return Response.noContent().build();
+            }
         } else {
             LOG.info("KOBLING. Fant ikke kobling for referanse: {}", request.getReferanse());
             return Response.noContent().build();
