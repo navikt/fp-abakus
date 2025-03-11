@@ -7,7 +7,8 @@ import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
 
 @ApplicationScoped
-@ProsessTask(value = "opprydding.grunnlag.uten.referanse", cronExpression = "0 0 3 * * *", maxFailedRuns = 1)
+// Kjører kl 02:00 hver Søndag
+@ProsessTask(value = "opprydding.grunnlag.uten.referanse", cronExpression = "0 0 2 * * 0", maxFailedRuns = 1)
 public class FjernAlleGrunnlagUtenReferanseBatchTask implements ProsessTaskHandler {
 
     private final OppryddingTjeneste oppryddingTjeneste;
@@ -19,9 +20,6 @@ public class FjernAlleGrunnlagUtenReferanseBatchTask implements ProsessTaskHandl
 
     @Override
     public void doTask(ProsessTaskData prosessTaskData) {
-        oppryddingTjeneste.fjernAlleIayAggregatUtenReferanse();
-        oppryddingTjeneste.fjernAlleIayInformasjontUtenReferanse();
-        oppryddingTjeneste.fjernAlleIayInntektsmeldingerUtenReferanse();
-        oppryddingTjeneste.fjernAlleIayOppgittOpptjeningUtenReferanse();
+        oppryddingTjeneste.fjernAlleInaktiveAggregaterUtenReferanse();
     }
 }

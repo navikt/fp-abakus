@@ -5,10 +5,10 @@ import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import no.nav.foreldrepenger.abakus.rydding.OppryddingTjeneste;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 
 @ApplicationScoped
 @ProsessTask(value = "opprydding.iayGrunnlag.uten.referanse", maxFailedRuns = 2)
@@ -18,12 +18,12 @@ public class FjernIayGrunnlagUtenReferanseTask implements ProsessTaskHandler {
     private static final Logger LOG = LoggerFactory.getLogger(FjernIayGrunnlagUtenReferanseTask.class);
 
     private final OppryddingIayAggregatRepository iayAggregatRepository;
-    private final ProsessTaskTjeneste taskTjeneste;
+    private final OppryddingTjeneste oppryddingTjeneste;
 
     @Inject
-    public FjernIayGrunnlagUtenReferanseTask(OppryddingIayAggregatRepository iayAggregatRepository, ProsessTaskTjeneste taskTjeneste) {
+    public FjernIayGrunnlagUtenReferanseTask(OppryddingIayAggregatRepository iayAggregatRepository, OppryddingTjeneste oppryddingTjeneste) {
         this.iayAggregatRepository = iayAggregatRepository;
-        this.taskTjeneste = taskTjeneste;
+        this.oppryddingTjeneste = oppryddingTjeneste;
     }
 
     @Override
@@ -34,13 +34,7 @@ public class FjernIayGrunnlagUtenReferanseTask implements ProsessTaskHandler {
         LOG.info("Slettet {} IAY-aggregater uten referanse", iayAggregatUtenReferanse.size());
 
         if (iayAggregatUtenReferanse.size() >= IAY_GRUNNLAG_BATCH_SIZE) {
-            opprettFjernIayAggregatTask();
+            oppryddingTjeneste.opprettFjernIayInntektArbeidYtelseAggregatTask();
         }
-    }
-
-    private void opprettFjernIayAggregatTask() {
-        LOG.info("Oppretter en ny task for å fjerne IAY-aggregater uten referanse.");
-        var prosessTaskData = ProsessTaskData.forProsessTask(FjernIayGrunnlagUtenReferanseTask.class);
-        taskTjeneste.lagre(prosessTaskData);
     }
 }

@@ -26,9 +26,6 @@ class FjernAlleGrunnlagUtenReferanseBatchTaskTest {
     @Test
     void doTask() {
         task.doTask(ProsessTaskData.forProsessTask(FjernAlleGrunnlagUtenReferanseBatchTask.class));
-        verify(oppryddingTjeneste).fjernAlleIayAggregatUtenReferanse();
-        verify(oppryddingTjeneste).fjernAlleIayOppgittOpptjeningUtenReferanse();
-        verify(oppryddingTjeneste).fjernAlleIayInformasjontUtenReferanse();
-        verify(oppryddingTjeneste).fjernAlleIayInntektsmeldingerUtenReferanse();
+        verify(oppryddingTjeneste).fjernAlleInaktiveAggregaterUtenReferanse();
     }
 }

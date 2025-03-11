@@ -3,7 +3,6 @@ package no.nav.foreldrepenger.abakus.rydding.opptjening;
 import static java.util.Collections.emptyList;
 import static no.nav.foreldrepenger.abakus.rydding.opptjening.FjernIayOppgittOpptjeningUtenReferanseTask.IAY_OPPGITT_OPPTJENING_BATCH_SIZE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
@@ -23,9 +22,9 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import no.nav.foreldrepenger.abakus.rydding.OppryddingTjeneste;
 import no.nav.foreldrepenger.abakus.rydding.inntektsmelding.FjernIayInntektsmeldingerUtenReferanseTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 
 @ExtendWith(MockitoExtension.class)
 class FjernIayOppgittOpptjeningUtenReferanseTaskTest {
@@ -33,7 +32,7 @@ class FjernIayOppgittOpptjeningUtenReferanseTaskTest {
     @Mock
     private OppryddingIayOppgittOpptjeningRepository opptjeningRepository;
     @Mock
-    private ProsessTaskTjeneste prosessTaskTjeneste;
+    private OppryddingTjeneste oppryddingTjeneste;
     @Captor
     private ArgumentCaptor<Long> longCaptor;
 
@@ -41,7 +40,7 @@ class FjernIayOppgittOpptjeningUtenReferanseTaskTest {
 
     @BeforeEach
     void setUp() {
-        task = new FjernIayOppgittOpptjeningUtenReferanseTask(opptjeningRepository, prosessTaskTjeneste);
+        task = new FjernIayOppgittOpptjeningUtenReferanseTask(opptjeningRepository, oppryddingTjeneste);
     }
 
     @Test
@@ -53,7 +52,7 @@ class FjernIayOppgittOpptjeningUtenReferanseTaskTest {
         task.doTask(ProsessTaskData.forProsessTask(FjernIayInntektsmeldingerUtenReferanseTask.class));
 
         // Assert
-        verifyNoInteractions(prosessTaskTjeneste);
+        verifyNoInteractions(oppryddingTjeneste);
         verify(opptjeningRepository, times(1)).hentIayOppgittOpptjeningUtenReferanse(anyInt());
         verify(opptjeningRepository, times(3)).slettIayOppgittOpptjening(longCaptor.capture());
         var capturedIds = List.copyOf(longCaptor.getAllValues());
@@ -69,7 +68,7 @@ class FjernIayOppgittOpptjeningUtenReferanseTaskTest {
 
         // Assert
         verify(opptjeningRepository, times(1)).hentIayOppgittOpptjeningUtenReferanse(anyInt());
-        verifyNoInteractions(prosessTaskTjeneste);
+        verifyNoInteractions(oppryddingTjeneste);
         verify(opptjeningRepository, never()).slettIayOppgittOpptjening(anyLong());
     }
 
@@ -85,6 +84,6 @@ class FjernIayOppgittOpptjeningUtenReferanseTaskTest {
         verify(opptjeningRepository, times(IAY_OPPGITT_OPPTJENING_BATCH_SIZE)).slettIayOppgittOpptjening(longCaptor.capture());
         var capturedIds = List.copyOf(longCaptor.getAllValues());
         assertEquals(iayIds, capturedIds);
-        verify(prosessTaskTjeneste).lagre(any(ProsessTaskData.class));
+        verify(oppryddingTjeneste).opprettFjernIayOppgittOpptjeningTask();
     }
 }
