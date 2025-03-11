@@ -1,8 +1,19 @@
-package no.nav.foreldrepenger.abakus.rydding.task;
+package no.nav.foreldrepenger.abakus.rydding.grunnlag;
 
-import no.nav.foreldrepenger.abakus.rydding.OppryddingIayAggregatRepository;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
+import static java.util.Collections.emptyList;
+import static no.nav.foreldrepenger.abakus.rydding.grunnlag.FjernIayGrunnlagUtenReferanseTask.IAY_GRUNNLAG_BATCH_SIZE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.stream.LongStream;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,15 +22,8 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-import java.util.stream.LongStream;
-
-import static java.util.Collections.emptyList;
-import static no.nav.foreldrepenger.abakus.rydding.task.FjernIayGrunnlagUtenReferanseTask.IAY_GRUNNLAG_BATCH_SIZE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import no.nav.foreldrepenger.abakus.rydding.OppryddingTjeneste;
+import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 
 @ExtendWith(MockitoExtension.class)
 class FjernIayGrunnlagUtenReferanseTaskTest {
@@ -27,7 +31,7 @@ class FjernIayGrunnlagUtenReferanseTaskTest {
     @Mock
     private OppryddingIayAggregatRepository oppryddingIAYAggregatRepository;
     @Mock
-    private ProsessTaskTjeneste prosessTaskTjeneste;
+    private OppryddingTjeneste oppryddingTjeneste;
     @Captor
     private ArgumentCaptor<Long> longCaptor;
 
@@ -35,7 +39,7 @@ class FjernIayGrunnlagUtenReferanseTaskTest {
 
     @BeforeEach
     void setUp() {
-        task = new FjernIayGrunnlagUtenReferanseTask(oppryddingIAYAggregatRepository, prosessTaskTjeneste);
+        task = new FjernIayGrunnlagUtenReferanseTask(oppryddingIAYAggregatRepository, oppryddingTjeneste);
     }
 
     @Test
@@ -47,7 +51,7 @@ class FjernIayGrunnlagUtenReferanseTaskTest {
         task.doTask(ProsessTaskData.forProsessTask(FjernIayGrunnlagUtenReferanseTask.class));
 
         // Assert
-        verify(prosessTaskTjeneste, never()).lagre(any(ProsessTaskData.class));
+        verifyNoInteractions(oppryddingTjeneste);
         verify(oppryddingIAYAggregatRepository, times(1)).hentIayAggregaterUtenReferanse(anyInt());
         verify(oppryddingIAYAggregatRepository, times(3)).slettIayAggregat(longCaptor.capture());
         var capturedIds = List.copyOf(longCaptor.getAllValues());
@@ -63,7 +67,7 @@ class FjernIayGrunnlagUtenReferanseTaskTest {
 
         // Assert
         verify(oppryddingIAYAggregatRepository, times(1)).hentIayAggregaterUtenReferanse(anyInt());
-        verifyNoInteractions(prosessTaskTjeneste);
+        verifyNoInteractions(oppryddingTjeneste);
         verify(oppryddingIAYAggregatRepository, never()).slettIayAggregat(anyLong());
     }
 
@@ -79,6 +83,6 @@ class FjernIayGrunnlagUtenReferanseTaskTest {
         verify(oppryddingIAYAggregatRepository, times(IAY_GRUNNLAG_BATCH_SIZE)).slettIayAggregat(longCaptor.capture());
         var capturedIds = List.copyOf(longCaptor.getAllValues());
         assertEquals(iayIds, capturedIds);
-        verify(prosessTaskTjeneste).lagre(any(ProsessTaskData.class));
+        verify(oppryddingTjeneste).opprettFjernIayInntektArbeidYtelseAggregatTask();
     }
 }

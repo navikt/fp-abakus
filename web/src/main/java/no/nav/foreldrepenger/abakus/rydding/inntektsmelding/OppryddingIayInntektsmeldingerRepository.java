@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.rydding;
+package no.nav.foreldrepenger.abakus.rydding.inntektsmelding;
 
 import static java.util.Collections.emptyList;
 
@@ -29,7 +29,7 @@ public class OppryddingIayInntektsmeldingerRepository {
         this.entityManager = entityManager;
     }
 
-    public List<Long> hentIayInntektsmeldingerUtenReferanse(Integer maxResults) {
+    List<Long> hentIayInntektsmeldingerUtenReferanse(Integer maxResults) {
         @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery("select distinct id from iay_inntektsmeldinger im where "
             + "not exists (select 1 from gr_arbeid_inntekt gr where im.id = gr.inntektsmeldinger_id)").setMaxResults(maxResults).getResultList();
         if (result.isEmpty()) {
@@ -40,7 +40,7 @@ public class OppryddingIayInntektsmeldingerRepository {
         return result.stream().map(Number::longValue).toList();
     }
 
-    public void slettIayInntektsmeldinger(Long id) {
+    void slettIayInntektsmeldinger(Long id) {
         var inntektsmeldingAggregat = entityManager.find(InntektsmeldingAggregat.class, id);
         if (inntektsmeldingAggregat != null) {
             slettInntektsmeldingFor(id);

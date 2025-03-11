@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.rydding;
+package no.nav.foreldrepenger.abakus.rydding.grunnlag;
 
 
 import static java.util.Collections.emptyList;
@@ -32,7 +32,7 @@ public class OppryddingIayAggregatRepository {
         this.entityManager = entityManager;
     }
 
-    public List<Long> hentIayAggregaterUtenReferanse(Integer maxResults) {
+    List<Long> hentIayAggregaterUtenReferanse(Integer maxResults) {
         @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery(
                 "select distinct id from iay_inntekt_arbeid_ytelser iay where "
                     + "not exists (select 1 from gr_arbeid_inntekt gr where iay.id = gr.register_id or iay.id = gr.saksbehandlet_id)")
@@ -46,7 +46,7 @@ public class OppryddingIayAggregatRepository {
         return result.stream().map(Number::longValue).toList();
     }
 
-    public void slettIayAggregat(Long id) {
+    void slettIayAggregat(Long id) {
         var iay = entityManager.find(InntektArbeidYtelseAggregat.class, id);
         if (iay != null) {
             slettIayAktørIntekt(id);

@@ -1,29 +1,29 @@
-package no.nav.foreldrepenger.abakus.rydding.task;
+package no.nav.foreldrepenger.abakus.rydding.arbeidsforhold;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import no.nav.foreldrepenger.abakus.rydding.OppryddingIayInformasjonRepository;
+import no.nav.foreldrepenger.abakus.rydding.OppryddingTjeneste;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 @ProsessTask(value = "opprydding.iayInformasjon.uten.referanse", maxFailedRuns = 2)
 public class FjernIayInformasjonUtenReferanseTask implements ProsessTaskHandler {
-    public static final int IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE = 750;
+    static final int IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE = 1000;
 
     private static final Logger LOG = LoggerFactory.getLogger(FjernIayInformasjonUtenReferanseTask.class);
 
     private final OppryddingIayInformasjonRepository oppryddingIayInformasjonRepository;
-    private final ProsessTaskTjeneste taskTjeneste;
+    private final OppryddingTjeneste oppryddingTjeneste;
 
     @Inject
-    public FjernIayInformasjonUtenReferanseTask(OppryddingIayInformasjonRepository oppryddingIayInformasjonRepository, ProsessTaskTjeneste taskTjeneste) {
+    public FjernIayInformasjonUtenReferanseTask(OppryddingIayInformasjonRepository oppryddingIayInformasjonRepository, OppryddingTjeneste oppryddingTjeneste) {
         this.oppryddingIayInformasjonRepository = oppryddingIayInformasjonRepository;
-        this.taskTjeneste = taskTjeneste;
+        this.oppryddingTjeneste = oppryddingTjeneste;
     }
 
     @Override
@@ -34,13 +34,7 @@ public class FjernIayInformasjonUtenReferanseTask implements ProsessTaskHandler 
         LOG.info("Slettet {} IAY-Informasjon uten referanse", iayInformasjonUtenReferanse.size());
 
         if (iayInformasjonUtenReferanse.size() >= IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE) {
-            opprettFjernInformasjonAggregatTask();
+            oppryddingTjeneste.opprettFjernIayInformasjonTask();
         }
-    }
-
-    private void opprettFjernInformasjonAggregatTask() {
-        LOG.info("Oppretter en ny task for å fjerne IAY-Informasjon uten referanse.");
-        var prosessTaskData = ProsessTaskData.forProsessTask(FjernIayInformasjonUtenReferanseTask.class);
-        taskTjeneste.lagre(prosessTaskData);
     }
 }

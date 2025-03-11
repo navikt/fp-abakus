@@ -1,8 +1,19 @@
-package no.nav.foreldrepenger.abakus.rydding.task;
+package no.nav.foreldrepenger.abakus.rydding.arbeidsforhold;
 
-import no.nav.foreldrepenger.abakus.rydding.OppryddingIayInformasjonRepository;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
+import static java.util.Collections.emptyList;
+import static no.nav.foreldrepenger.abakus.rydding.arbeidsforhold.FjernIayInformasjonUtenReferanseTask.IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.stream.LongStream;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,15 +22,8 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-import java.util.stream.LongStream;
-
-import static java.util.Collections.emptyList;
-import static no.nav.foreldrepenger.abakus.rydding.task.FjernIayInformasjonUtenReferanseTask.IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import no.nav.foreldrepenger.abakus.rydding.OppryddingTjeneste;
+import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 
 @ExtendWith(MockitoExtension.class)
 class FjernIayInformasjonUtenReferanseTaskTest {
@@ -27,7 +31,7 @@ class FjernIayInformasjonUtenReferanseTaskTest {
     @Mock
     private OppryddingIayInformasjonRepository oppryddingIayInformasjonRepository;
     @Mock
-    private ProsessTaskTjeneste prosessTaskTjeneste;
+    private OppryddingTjeneste oppryddingTjeneste;
     @Captor
     private ArgumentCaptor<Long> longCaptor;
 
@@ -35,7 +39,7 @@ class FjernIayInformasjonUtenReferanseTaskTest {
 
     @BeforeEach
     void setUp() {
-        task = new FjernIayInformasjonUtenReferanseTask(oppryddingIayInformasjonRepository, prosessTaskTjeneste);
+        task = new FjernIayInformasjonUtenReferanseTask(oppryddingIayInformasjonRepository, oppryddingTjeneste);
     }
 
     @Test
@@ -47,7 +51,7 @@ class FjernIayInformasjonUtenReferanseTaskTest {
         task.doTask(ProsessTaskData.forProsessTask(FjernIayInformasjonUtenReferanseTask.class));
 
         // Assert
-        verifyNoInteractions(prosessTaskTjeneste);
+        verifyNoInteractions(oppryddingTjeneste);
         verify(oppryddingIayInformasjonRepository, times(1)).hentIayInformasjonUtenReferanse(anyInt());
         verify(oppryddingIayInformasjonRepository, times(3)).slettIayInformasjon(longCaptor.capture());
         var capturedIds = List.copyOf(longCaptor.getAllValues());
@@ -63,7 +67,7 @@ class FjernIayInformasjonUtenReferanseTaskTest {
 
         // Assert
         verify(oppryddingIayInformasjonRepository, times(1)).hentIayInformasjonUtenReferanse(anyInt());
-        verifyNoInteractions(prosessTaskTjeneste);
+        verifyNoInteractions(oppryddingTjeneste);
         verify(oppryddingIayInformasjonRepository, never()).slettIayInformasjon(anyLong());
     }
 
@@ -80,6 +84,6 @@ class FjernIayInformasjonUtenReferanseTaskTest {
         verify(oppryddingIayInformasjonRepository, times(IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE)).slettIayInformasjon(longCaptor.capture());
         var capturedIds = List.copyOf(longCaptor.getAllValues());
         assertEquals(iayIds, capturedIds);
-        verify(prosessTaskTjeneste).lagre(any(ProsessTaskData.class));
+        verify(oppryddingTjeneste).opprettFjernIayInformasjonTask();
     }
 }

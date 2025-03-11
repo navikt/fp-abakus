@@ -1,9 +1,8 @@
-package no.nav.foreldrepenger.abakus.rydding.task;
+package no.nav.foreldrepenger.abakus.rydding.inntektsmelding;
 
 import static java.util.Collections.emptyList;
-import static no.nav.foreldrepenger.abakus.rydding.task.FjernIayInntektsmeldingerUtenReferanseTask.IAY_INNTEKTSMELDING_BATCH_SIZE;
+import static no.nav.foreldrepenger.abakus.rydding.inntektsmelding.FjernIayInntektsmeldingerUtenReferanseTask.IAY_INNTEKTSMELDING_BATCH_SIZE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
@@ -23,9 +22,8 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import no.nav.foreldrepenger.abakus.rydding.OppryddingIayInntektsmeldingerRepository;
+import no.nav.foreldrepenger.abakus.rydding.OppryddingTjeneste;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
-import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 
 @ExtendWith(MockitoExtension.class)
 class FjernIayInntektsmeldingerUtenReferanseTaskTest {
@@ -33,7 +31,7 @@ class FjernIayInntektsmeldingerUtenReferanseTaskTest {
     @Mock
     private OppryddingIayInntektsmeldingerRepository oppryddingIayInntektsmeldingerRepository;
     @Mock
-    private ProsessTaskTjeneste prosessTaskTjeneste;
+    private OppryddingTjeneste oppryddingTjeneste;
     @Captor
     private ArgumentCaptor<Long> longCaptor;
 
@@ -41,7 +39,7 @@ class FjernIayInntektsmeldingerUtenReferanseTaskTest {
 
     @BeforeEach
     void setUp() {
-        task = new FjernIayInntektsmeldingerUtenReferanseTask(oppryddingIayInntektsmeldingerRepository, prosessTaskTjeneste);
+        task = new FjernIayInntektsmeldingerUtenReferanseTask(oppryddingIayInntektsmeldingerRepository, oppryddingTjeneste);
     }
 
     @Test
@@ -53,7 +51,7 @@ class FjernIayInntektsmeldingerUtenReferanseTaskTest {
         task.doTask(ProsessTaskData.forProsessTask(FjernIayInntektsmeldingerUtenReferanseTask.class));
 
         // Assert
-        verifyNoInteractions(prosessTaskTjeneste);
+        verifyNoInteractions(oppryddingTjeneste);
         verify(oppryddingIayInntektsmeldingerRepository, times(1)).hentIayInntektsmeldingerUtenReferanse(anyInt());
         verify(oppryddingIayInntektsmeldingerRepository, times(3)).slettIayInntektsmeldinger(longCaptor.capture());
         var capturedIds = List.copyOf(longCaptor.getAllValues());
@@ -69,7 +67,7 @@ class FjernIayInntektsmeldingerUtenReferanseTaskTest {
 
         // Assert
         verify(oppryddingIayInntektsmeldingerRepository, times(1)).hentIayInntektsmeldingerUtenReferanse(anyInt());
-        verifyNoInteractions(prosessTaskTjeneste);
+        verifyNoInteractions(oppryddingTjeneste);
         verify(oppryddingIayInntektsmeldingerRepository, never()).slettIayInntektsmeldinger(anyLong());
     }
 
@@ -86,6 +84,6 @@ class FjernIayInntektsmeldingerUtenReferanseTaskTest {
         verify(oppryddingIayInntektsmeldingerRepository, times(IAY_INNTEKTSMELDING_BATCH_SIZE)).slettIayInntektsmeldinger(longCaptor.capture());
         var capturedIds = List.copyOf(longCaptor.getAllValues());
         assertEquals(iayIds, capturedIds);
-        verify(prosessTaskTjeneste).lagre(any(ProsessTaskData.class));
+        verify(oppryddingTjeneste).opprettFjernIayInntektsmeldingerTask();
     }
 }

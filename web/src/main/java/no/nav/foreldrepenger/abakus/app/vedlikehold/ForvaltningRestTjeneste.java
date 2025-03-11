@@ -141,9 +141,7 @@ public class ForvaltningRestTjeneste {
     @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.DRIFT, sporingslogg = true)
     public Response ryddOppGrunnlagUtenReferanse() {
         LOG.info("FORVALTNING ABAKUS ryddOppGrunnlagUtenReferanse");
-        oppryddingTjeneste.fjernAlleIayAggregatUtenReferanse();
-        oppryddingTjeneste.fjernAlleIayInformasjontUtenReferanse();
-        oppryddingTjeneste.fjernAlleIayInntektsmeldingerUtenReferanse();
+        oppryddingTjeneste.fjernAlleInaktiveAggregaterUtenReferanse();
         return Response.ok().build();
     }
 

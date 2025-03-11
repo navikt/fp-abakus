@@ -1,16 +1,17 @@
-package no.nav.foreldrepenger.abakus.rydding;
+package no.nav.foreldrepenger.abakus.rydding.arbeidsforhold;
+
+import static java.util.Collections.emptyList;
+
+import java.util.List;
+import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.Objects;
-
-import static java.util.Collections.emptyList;
 
 @ApplicationScoped
 public class OppryddingIayInformasjonRepository {
@@ -28,7 +29,7 @@ public class OppryddingIayInformasjonRepository {
         this.entityManager = entityManager;
     }
 
-    public List<Long> hentIayInformasjonUtenReferanse(Integer maxResults) {
+    List<Long> hentIayInformasjonUtenReferanse(Integer maxResults) {
         @SuppressWarnings("unchecked") List<Number> result = entityManager.createNativeQuery("select distinct id from iay_informasjon info where "
                 + "not exists (select 1 from gr_arbeid_inntekt gr where info.id = gr.informasjon_id)").setMaxResults(maxResults).getResultList();
         if (result.isEmpty()) {
@@ -39,7 +40,7 @@ public class OppryddingIayInformasjonRepository {
         return result.stream().map(Number::longValue).toList();
     }
 
-    public void slettIayInformasjon(Long id) {
+    void slettIayInformasjon(Long id) {
         var arbeidsforholdInformasjon = entityManager.find(ArbeidsforholdInformasjon.class, id);
         if (arbeidsforholdInformasjon != null) {
             slettArbeidsforholdInformasjon(id);

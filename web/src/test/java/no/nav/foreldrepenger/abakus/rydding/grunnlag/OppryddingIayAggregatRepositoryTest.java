@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.abakus.rydding;
+package no.nav.foreldrepenger.abakus.rydding.grunnlag;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
