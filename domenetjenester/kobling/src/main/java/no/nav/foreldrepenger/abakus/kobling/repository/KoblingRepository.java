@@ -43,7 +43,11 @@ public class KoblingRepository {
     }
 
     public Optional<Kobling> hentForKoblingReferanse(KoblingReferanse referanse, boolean taSkriveLås) {
-        var query = entityManager.createQuery("FROM Kobling k WHERE koblingReferanse = :referanse", Kobling.class);
+        var sql = "FROM Kobling k WHERE koblingReferanse = :referanse";
+        if (taSkriveLås) {
+            sql += " and k.aktiv = true";
+        }
+        var query = entityManager.createQuery(sql, Kobling.class);
         query.setParameter("referanse", referanse);
         if (taSkriveLås) {
             query.setLockMode(LockModeType.PESSIMISTIC_WRITE);

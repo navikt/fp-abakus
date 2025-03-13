@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import no.nav.foreldrepenger.konfig.Environment;
 
-import javax.naming.NamingException;
-
 public class JettyDevServer extends JettyServer {
 
     private static final Environment ENV = Environment.current();
@@ -18,7 +16,7 @@ public class JettyDevServer extends JettyServer {
         super(serverPort);
     }
 
-    public static void main(String[] args) throws NamingException {
+    public static void main(String[] args) throws Exception {
         jettyServer(args).bootStrap();
     }
 
