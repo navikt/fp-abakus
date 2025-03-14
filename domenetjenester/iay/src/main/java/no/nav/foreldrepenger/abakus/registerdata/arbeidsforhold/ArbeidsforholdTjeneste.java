@@ -161,11 +161,9 @@ public class ArbeidsforholdTjeneste {
     }
 
     private Permisjon byggPermisjonRS(PermisjonPermitteringRS permisjonPermitteringRS) {
-        return new Permisjon.Builder().medPermisjonFom(permisjonPermitteringRS.periode().fom())
-            .medPermisjonTom(permisjonPermitteringRS.periode().tom())
-            .medPermisjonsprosent(permisjonPermitteringRS.prosent())
-            .medPermisjonsÅrsak(permisjonPermitteringRS.type())
-            .build();
+        var permisjonprosent = Stillingsprosent.normaliserStillingsprosentArbeid(permisjonPermitteringRS.prosent());
+        return new Permisjon(permisjonPermitteringRS.periode().fom(), permisjonPermitteringRS.periode().tom(),
+            permisjonprosent, permisjonPermitteringRS.type());
     }
 
     private boolean overlapperMedIntervall(Arbeidsavtale av, IntervallEntitet interval) {
