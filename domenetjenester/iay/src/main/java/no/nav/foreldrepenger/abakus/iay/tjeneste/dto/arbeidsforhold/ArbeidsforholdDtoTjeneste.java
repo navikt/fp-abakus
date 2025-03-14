@@ -95,9 +95,9 @@ public class ArbeidsforholdDtoTjeneste {
         var ansettelse = new LocalDateInterval(arbeidsforhold.getArbeidFom(), arbeidsforhold.getArbeidTom());
 
         var permisjonTidslinje = arbeidsforhold.getPermisjoner().stream()
-            .filter(permisjon -> permisjon.getPermisjonsprosent() != null)
-            .map(p -> new LocalDateSegment<>(safeFom(p.getPermisjonFom()), safeTom(p.getPermisjonTom()),
-                List.of(new PermisjonTidslinjeObjekt(p.getPermisjonsprosent(), p.getPermisjonsÅrsak()))))
+            .filter(permisjon -> permisjon.permisjonsprosent() != null)
+            .map(p -> new LocalDateSegment<>(safeFom(p.permisjonFom()), safeTom(p.permisjonTom()),
+                List.of(new PermisjonTidslinjeObjekt(p.permisjonsprosent(), p.permisjonsÅrsak()))))
             .collect(Collectors.collectingAndThen(Collectors.toList(), datoSegmenter -> new LocalDateTimeline<>(datoSegmenter,
                 StandardCombinators::concatLists)));
 

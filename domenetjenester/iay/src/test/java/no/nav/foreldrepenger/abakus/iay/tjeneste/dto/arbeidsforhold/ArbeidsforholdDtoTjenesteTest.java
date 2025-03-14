@@ -93,13 +93,13 @@ void setUp() {
         assertThat(arbeidsavtaler.get(1).stillingsprosent()).isEqualByComparingTo(arbeidsavtalerTilMap.get(1).getStillingsprosent());
 
         var permisjoner = arbeidsforholdDto.getFirst().getPermisjoner();
-        assertThat(permisjoner.getFirst().getPeriode().getFom()).isEqualTo(permisjonerTilMap.getFirst().getPermisjonFom());
-        assertThat(permisjoner.getFirst().getPeriode().getTom()).isEqualTo(permisjonerTilMap.getFirst().getPermisjonTom());
-        assertThat(permisjoner.getFirst().getProsentsats()).isEqualByComparingTo(permisjonerTilMap.getFirst().getPermisjonsprosent());
+        assertThat(permisjoner.getFirst().getPeriode().getFom()).isEqualTo(permisjonerTilMap.getFirst().permisjonFom());
+        assertThat(permisjoner.getFirst().getPeriode().getTom()).isEqualTo(permisjonerTilMap.getFirst().permisjonTom());
+        assertThat(permisjoner.getFirst().getProsentsats()).isEqualByComparingTo(permisjonerTilMap.getFirst().permisjonsprosent());
         assertThat(permisjoner.getFirst().getType()).isEqualTo(PermisjonsbeskrivelseType.PERMISJON_MED_FORELDREPENGER);
-        assertThat(permisjoner.get(1).getPeriode().getFom()).isEqualTo(permisjonerTilMap.get(1).getPermisjonFom());
+        assertThat(permisjoner.get(1).getPeriode().getFom()).isEqualTo(permisjonerTilMap.get(1).permisjonFom());
         assertThat(permisjoner.get(1).getPeriode().getTom()).isEqualTo(TIL_DATO);
-        assertThat(permisjoner.get(1).getProsentsats()).isEqualByComparingTo(permisjonerTilMap.get(1).getPermisjonsprosent());
+        assertThat(permisjoner.get(1).getProsentsats()).isEqualByComparingTo(permisjonerTilMap.get(1).permisjonsprosent());
         assertThat(permisjoner.get(1).getType()).isEqualTo(PermisjonsbeskrivelseType.PERMISJON_MED_FORELDREPENGER);
 
     }
@@ -148,7 +148,7 @@ void setUp() {
 
         var permisjoner = arbeidsforholdDto.getFirst().getPermisjoner();
         assertThat(permisjoner).hasSize(5);
-        assertThat(permisjoner.getFirst().getPeriode().getFom()).isEqualTo(permisjonerTilMap.getFirst().getPermisjonFom());
+        assertThat(permisjoner.getFirst().getPeriode().getFom()).isEqualTo(permisjonerTilMap.getFirst().permisjonFom());
         assertThat(permisjoner.get(4).getPeriode().getTom()).isEqualTo(TIL_DATO);
 
     }
@@ -190,12 +190,7 @@ void setUp() {
     }
 
     private Permisjon lagPermisjon(LocalDate fraDato, LocalDate tilDato, BigDecimal permisjonProsent) {
-        return new Permisjon.Builder()
-            .medPermisjonsÅrsak(PermisjonsbeskrivelseType.PERMISJON_MED_FORELDREPENGER.getOffisiellKode())
-            .medPermisjonFom(fraDato)
-            .medPermisjonTom(tilDato)
-            .medPermisjonsprosent(permisjonProsent)
-            .build();
+        return new Permisjon(fraDato, tilDato, permisjonProsent, PermisjonsbeskrivelseType.PERMISJON_MED_FORELDREPENGER.getOffisiellKode());
     }
 
     private Arbeidsavtale lagArbeidsavtale(LocalDate fraDato, LocalDate tilDato, BigDecimal stillingsprosent) {

@@ -96,7 +96,7 @@ class ByggYrkesaktiviteterTjeneste {
         builder.tilbakestillPermisjon();
         arbeidsforhold1.getPermisjoner()
             .stream()
-            .filter(p -> p.getPermisjonFom() != null && p.getPermisjonFom().isBefore(arbeidTom))
+            .filter(p -> p.permisjonFom() != null && p.permisjonFom().isBefore(arbeidTom))
             .map(p -> opprettPermisjoner(p, builder, arbeidTom))
             .forEach(builder::leggTilPermisjon);
     }
@@ -113,10 +113,10 @@ class ByggYrkesaktiviteterTjeneste {
                                          YrkesaktivitetBuilder yrkesaktivitetBuilder,
                                          LocalDate arbeidsforholdTom) {
         PermisjonBuilder permisjonBuilder = yrkesaktivitetBuilder.getPermisjonBuilder();
-        LocalDate permisjonTom = permisjon.getPermisjonTom() == null ? arbeidsforholdTom : permisjon.getPermisjonTom();
-        return permisjonBuilder.medProsentsats(permisjon.getPermisjonsprosent())
-            .medPeriode(permisjon.getPermisjonFom(), permisjonTom)
-            .medPermisjonsbeskrivelseType(PermisjonsbeskrivelseType.finnForKodeverkEiersKode(permisjon.getPermisjonsÅrsak()))
+        LocalDate permisjonTom = permisjon.permisjonTom() == null ? arbeidsforholdTom : permisjon.permisjonTom();
+        return permisjonBuilder.medProsentsats(permisjon.permisjonsprosent())
+            .medPeriode(permisjon.permisjonFom(), permisjonTom)
+            .medPermisjonsbeskrivelseType(PermisjonsbeskrivelseType.finnForKodeverkEiersKode(permisjon.permisjonsÅrsak()))
             .build();
     }
 
