@@ -34,6 +34,14 @@
       "cluster": "prod-fss"
     },
     {
+      "app": "behandlingsflyt",
+      "namespace": "aap",
+      "cluster": "prod-gcp",
+      "roles": [
+        "ekstern"
+      ]
+    },
+    {
       "app": "sparkel-sputnik",
       "namespace": "tbd",
       "cluster": "prod-gcp",
