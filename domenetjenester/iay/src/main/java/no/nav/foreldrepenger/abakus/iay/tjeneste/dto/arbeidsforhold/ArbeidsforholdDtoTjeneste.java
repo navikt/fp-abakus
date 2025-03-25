@@ -80,11 +80,11 @@ public class ArbeidsforholdDtoTjeneste {
     }
 
     private List<ArbeidsavtaleDto> mapArbeidsavtaler(Arbeidsforhold arbeidsforhold) {
-        var ansettelse = new LocalDateInterval(arbeidsforhold.getArbeidFom(), arbeidsforhold.getArbeidTom());
+        var ansettelse = new LocalDateInterval(Tid.fomEllerMin(arbeidsforhold.getArbeidFom()), Tid.tomEllerMax(arbeidsforhold.getArbeidTom()));
         var arbeidsavtalerTidlinje = arbeidsforhold.getArbeidsavtaler().stream()
             .filter(arbeidsavtale -> !arbeidsavtale.getErAnsettelsesPerioden())
             .filter(arbeidsavtale -> arbeidsavtale.getStillingsprosent() != null)
-            .map(a -> new LocalDateSegment<>(safeFom(a.getArbeidsavtaleFom()), safeTom(a.getArbeidsavtaleTom()), a.getStillingsprosent()))
+            .map(a -> new LocalDateSegment<>(Tid.fomEllerMin(a.getArbeidsavtaleFom()), Tid.tomEllerMax(a.getArbeidsavtaleTom()), a.getStillingsprosent()))
             .collect(Collectors.collectingAndThen(Collectors.toList(), LocalDateTimeline::new));
         return arbeidsavtalerTidlinje.intersection(ansettelse).stream()
             .map(s -> new ArbeidsavtaleDto(new Periode(s.getFom(), s.getTom()), s.getValue()))
@@ -92,11 +92,11 @@ public class ArbeidsforholdDtoTjeneste {
     }
 
     private List<PermisjonDto> mapPermisjoner(Arbeidsforhold arbeidsforhold) {
-        var ansettelse = new LocalDateInterval(arbeidsforhold.getArbeidFom(), arbeidsforhold.getArbeidTom());
+        var ansettelse = new LocalDateInterval(Tid.fomEllerMin(arbeidsforhold.getArbeidFom()), Tid.tomEllerMax(arbeidsforhold.getArbeidTom()));
 
         var permisjonTidslinje = arbeidsforhold.getPermisjoner().stream()
             .filter(permisjon -> permisjon.permisjonsprosent() != null)
-            .map(p -> new LocalDateSegment<>(safeFom(p.permisjonFom()), safeTom(p.permisjonTom()),
+            .map(p -> new LocalDateSegment<>(Tid.fomEllerMin(p.permisjonFom()), Tid.tomEllerMax(p.permisjonTom()),
                 List.of(new PermisjonTidslinjeObjekt(p.permisjonsprosent(), p.permisjonsÅrsak()))))
             .collect(Collectors.collectingAndThen(Collectors.toList(), datoSegmenter -> new LocalDateTimeline<>(datoSegmenter,
                 StandardCombinators::concatLists)));
@@ -111,14 +111,6 @@ public class ArbeidsforholdDtoTjeneste {
     private static List<PermisjonDto> tilPermisjonDto(LocalDateSegment<List<PermisjonTidslinjeObjekt>> s) {
         return s.getValue().stream().map(permisjon -> new PermisjonDto(new Periode(s.getFom(), s.getTom()), finnForKodeverkEiersKode(permisjon.permisjonsÅrsak()))
             .medProsentsats(permisjon.permisjonsprosent())).toList();
-    }
-
-    private static LocalDate safeFom(LocalDate fom) {
-        return fom != null ? fom : Tid.TIDENES_BEGYNNELSE;
-    }
-
-    private static LocalDate safeTom(LocalDate tom) {
-        return tom!= null ? tom: Tid.TIDENES_ENDE;
     }
 
     private record PermisjonTidslinjeObjekt(BigDecimal permisjonsprosent, String permisjonsÅrsak) {}
