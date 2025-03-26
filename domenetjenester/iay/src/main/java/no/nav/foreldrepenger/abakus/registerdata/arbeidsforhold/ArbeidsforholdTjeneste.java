@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import no.nav.vedtak.konfig.Tid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,9 +91,13 @@ public class ArbeidsforholdTjeneste {
             .map(aa -> byggArbeidsavtaleRS(aa, arbeidsforhold))
             .filter(av -> overlapperMedIntervall(av, intervall))
             .collect(Collectors.toList()));
+
         builder.medAnsettelsesPeriode(byggAnsettelsesPeriodeRS(arbeidsforhold));
 
-        builder.medPermisjon(arbeidsforhold.getPermisjonPermitteringer().stream().map(this::byggPermisjonRS).collect(Collectors.toList()));
+        builder.medPermisjon(arbeidsforhold.getPermisjonPermitteringer().stream()
+            .map(this::byggPermisjonRS)
+            .filter(p -> overlapperMedIntervall(p, intervall))
+            .collect(Collectors.toList()));
 
         return builder.build();
     }
@@ -170,6 +176,13 @@ public class ArbeidsforholdTjeneste {
         final var interval1 =
             av.getArbeidsavtaleTom() == null ? IntervallEntitet.fraOgMed(av.getArbeidsavtaleFom()) : IntervallEntitet.fraOgMedTilOgMed(
                 av.getArbeidsavtaleFom(), av.getArbeidsavtaleTom());
+        return interval.overlapper(interval1);
+    }
+
+    private boolean overlapperMedIntervall(Permisjon p, IntervallEntitet interval) {
+        final var interval1 = p.permisjonTom() == null
+            ? IntervallEntitet.fraOgMed(Tid.fomEllerMin(p.permisjonFom()))
+            : IntervallEntitet.fraOgMedTilOgMed(Tid.fomEllerMin(p.permisjonFom()), p.permisjonTom());
         return interval.overlapper(interval1);
     }
 
