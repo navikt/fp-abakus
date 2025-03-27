@@ -47,6 +47,7 @@ public class ArbeidsforholdTjeneste {
             interval.getTomDato());
         var mapArbeidsforhold = response.stream()
             .map(arbeidsforhold -> mapArbeidsforholdRSTilDto(arbeidsforhold, interval))
+            .filter(arbeidsforhold -> overlapperMedIntervall(arbeidsforhold, interval)) // For sikkerhets skyld
             .collect(Collectors.groupingBy(Arbeidsforhold::getIdentifikator));
 
         valider(mapArbeidsforhold);
@@ -73,6 +74,7 @@ public class ArbeidsforholdTjeneste {
             interval.getTomDato());
         return response.stream()
             .map(arbeidsforhold -> mapArbeidsforholdRSTilDto(arbeidsforhold, interval))
+            .filter(arbeidsforhold -> overlapperMedIntervall(arbeidsforhold, interval))  // For sikkerhets skyld
             .collect(Collectors.groupingBy(Arbeidsforhold::getIdentifikator));
     }
 
@@ -183,6 +185,13 @@ public class ArbeidsforholdTjeneste {
         final var interval1 = p.permisjonTom() == null
             ? IntervallEntitet.fraOgMed(Tid.fomEllerMin(p.permisjonFom()))
             : IntervallEntitet.fraOgMedTilOgMed(Tid.fomEllerMin(p.permisjonFom()), p.permisjonTom());
+        return interval.overlapper(interval1);
+    }
+
+    private boolean overlapperMedIntervall(Arbeidsforhold a, IntervallEntitet interval) {
+        final var interval1 = a.getArbeidTom() == null
+            ? IntervallEntitet.fraOgMed(Tid.fomEllerMin(a.getArbeidFom()))
+            : IntervallEntitet.fraOgMedTilOgMed(Tid.fomEllerMin(a.getArbeidFom()), a.getArbeidTom());
         return interval.overlapper(interval1);
     }
 
