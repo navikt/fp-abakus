@@ -8,9 +8,6 @@ import no.nav.vedtak.sikkerhet.abac.pdp.AppRessursData;
 import no.nav.vedtak.sikkerhet.abac.pipdata.PipBehandlingStatus;
 import no.nav.vedtak.sikkerhet.abac.pipdata.PipFagsakStatus;
 
-import static no.nav.vedtak.sikkerhet.abac.pdp.ForeldrepengerDataKeys.BEHANDLING_STATUS;
-import static no.nav.vedtak.sikkerhet.abac.pdp.ForeldrepengerDataKeys.FAGSAK_STATUS;
-
 /**
  * Implementasjon av PDP request for denne applikasjonen.
  */
@@ -18,13 +15,24 @@ import static no.nav.vedtak.sikkerhet.abac.pdp.ForeldrepengerDataKeys.FAGSAK_STA
 public class PdpRequestBuilderImpl implements PdpRequestBuilder {
 
     @Override
+    public AppRessursData lagAppRessursDataForSystembruker(AbacDataAttributter dataAttributter) {
+        return minimalbuilder().build();
+    }
+
+    @Override
     public AppRessursData lagAppRessursData(AbacDataAttributter dataAttributter) {
-        return AppRessursData.builder()
+
+        var builder = minimalbuilder()
             .leggTilAktørIdSet(dataAttributter.getVerdier(StandardAbacAttributtType.AKTØR_ID))
-            .leggTilFødselsnumre(dataAttributter.getVerdier(StandardAbacAttributtType.FNR))
-            // TODO: Hente fra pip-tjenesten? arv fra tidligere... men nå er 2 pips aktuelle ....
-            .leggTilRessurs(FAGSAK_STATUS, PipFagsakStatus.UNDER_BEHANDLING)
-            .leggTilRessurs(BEHANDLING_STATUS, PipBehandlingStatus.UTREDES)
-            .build();
+            .leggTilFødselsnumre(dataAttributter.getVerdier(StandardAbacAttributtType.FNR));
+        // TODO legg på saksnummer relevante steder (mange requests har saksnummer)
+        // Ta med denne dataAttributter.getVerdier(StandardAbacAttributtType.SAKSNUMMER).stream().findFirst().map(String::valueOf).ifPresent(builder::medSaksnummer);
+        return builder.build();
+    }
+
+    private AppRessursData.Builder minimalbuilder() {
+        return AppRessursData.builder()
+            .medFagsakStatus(PipFagsakStatus.UNDER_BEHANDLING)
+            .medBehandlingStatus(PipBehandlingStatus.UTREDES);
     }
 }

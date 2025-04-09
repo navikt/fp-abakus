@@ -24,12 +24,11 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
-import no.nav.abakus.iaygrunnlag.FnrPersonident;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.AvsluttKoblingRequest;
 import no.nav.foreldrepenger.abakus.felles.LoggUtil;
+import no.nav.foreldrepenger.abakus.felles.sikkerhet.IdentDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
@@ -126,19 +125,10 @@ public class KoblingRestTjeneste {
         }
 
         private static AbacDataAttributter lagAbacAttributter(AvsluttKoblingRequestAbacDto dto) {
-            var abacDataAttributter = AbacDataAttributter.opprett();
-
-            abacDataAttributter.leggTil(StandardAbacAttributtType.SAKSNUMMER, dto.getSaksnummer());
-            abacDataAttributter.leggTil(StandardAbacAttributtType.BEHANDLING_UUID, dto.getReferanse());
-
-            String ident = dto.getAktør().getIdent();
-            String identType = dto.getAktør().getIdentType();
-            if (FnrPersonident.IDENT_TYPE.equals(identType)) {
-                return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, ident);
-            } else if (AktørIdPersonident.IDENT_TYPE.equals(identType)) {
-                return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, ident);
-            }
-            throw new java.lang.IllegalStateException("Ukjent identtype" + identType);
+            return AbacDataAttributter.opprett()
+                .leggTil(StandardAbacAttributtType.SAKSNUMMER, dto.getSaksnummer())
+                .leggTil(StandardAbacAttributtType.BEHANDLING_UUID, dto.getReferanse())
+                .leggTil(IdentDataAttributter.abacAttributterForPersonIdent(dto.getAktør()));
         }
     }
 }

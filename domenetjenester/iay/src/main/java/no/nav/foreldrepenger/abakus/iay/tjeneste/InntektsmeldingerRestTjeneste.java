@@ -27,8 +27,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
-import no.nav.abakus.iaygrunnlag.FnrPersonident;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.UuidDto;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
@@ -38,6 +36,7 @@ import no.nav.abakus.iaygrunnlag.request.InntektsmeldingerRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
 import no.nav.foreldrepenger.abakus.felles.LoggUtil;
+import no.nav.foreldrepenger.abakus.felles.sikkerhet.IdentDataAttributter;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.InntektsmeldingerTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapInntektsmeldinger;
@@ -48,7 +47,6 @@ import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
-import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
@@ -153,7 +151,7 @@ public class InntektsmeldingerRestTjeneste {
         @Override
         public AbacDataAttributter apply(Object obj) {
             var req = (InntektsmeldingerMottattRequest) obj;
-            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, req.getAktør().getIdent());
+            return IdentDataAttributter.abacAttributterForPersonIdent(req.getAktør());
         }
 
     }
@@ -173,13 +171,7 @@ public class InntektsmeldingerRestTjeneste {
 
         @Override
         public AbacDataAttributter abacAttributter() {
-            final var abacDataAttributter = AbacDataAttributter.opprett();
-            if (FnrPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
-                return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, getPerson().getIdent());
-            } else if (AktørIdPersonident.IDENT_TYPE.equals(getPerson().getIdentType())) {
-                return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, getPerson().getIdent());
-            }
-            throw new java.lang.IllegalArgumentException("Ukjent identtype: " + getPerson().getIdentType());
+            return IdentDataAttributter.abacAttributterForPersonIdent(getPerson());
         }
 
     }

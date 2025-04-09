@@ -3,9 +3,6 @@ package no.nav.abakus.iaygrunnlag.request;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -13,7 +10,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import no.nav.abakus.iaygrunnlag.Aktør;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
@@ -54,7 +52,7 @@ public class AktørDatoRequest {
         this.ytelse = ytelse;
     }
 
-    public Aktør getAktør() {
+    public PersonIdent getAktør() {
         return aktør;
     }
 
