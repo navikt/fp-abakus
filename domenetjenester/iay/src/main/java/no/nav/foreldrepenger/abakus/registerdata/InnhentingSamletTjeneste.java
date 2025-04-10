@@ -142,9 +142,9 @@ public class InnhentingSamletTjeneste {
         if (arena.isEmpty() && kelvin.isEmpty()) {
             return;
         } else if (arena.isEmpty() || kelvin.isEmpty()) {
-            LOG.info("ARENA-KELVIN sammenligning ene er tom: arena: {} kelvin: {}", arena, kelvin);
+            LOG.info("ARENA-KELVIN sammenligning ene er tom: arena: {} {} kelvin: {} {}", arena.size(), arena, kelvin.size(), kelvin);
         } else if (arena.size() != kelvin.size()) {
-            LOG.info("ARENA-KELVIN sammenligning ulik størrelse: arena: {} kelvin: {}", arena, kelvin);
+            LOG.info("ARENA-KELVIN sammenligning ulik størrelse: arena: {} {} kelvin: {} {}", arena.size(), arena, kelvin.size(), kelvin);
         } else {
             if (!arena.containsAll(kelvin)) {
                 LOG.info("ARENA-KELVIN sammenligning ulikt innhold: arena: {} kelvin: {}", arena, kelvin);
