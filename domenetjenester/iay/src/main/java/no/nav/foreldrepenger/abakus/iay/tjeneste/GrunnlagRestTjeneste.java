@@ -31,8 +31,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
-import no.nav.abakus.iaygrunnlag.FnrPersonident;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon;
@@ -48,6 +46,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.felles.LoggUtil;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.felles.sikkerhet.IdentDataAttributter;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYFraDtoMapper;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYTilDtoMapper;
@@ -59,7 +58,6 @@ import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
-import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 
@@ -82,15 +80,7 @@ public class GrunnlagRestTjeneste {
     }
 
     private static AbacDataAttributter lagAbacAttributter(PersonIdent person) {
-        var abacDataAttributter = AbacDataAttributter.opprett();
-        String ident = person.getIdent();
-        String identType = person.getIdentType();
-        if (FnrPersonident.IDENT_TYPE.equals(identType)) {
-            return abacDataAttributter.leggTil(StandardAbacAttributtType.FNR, ident);
-        } else if (AktørIdPersonident.IDENT_TYPE.equals(identType)) {
-            return abacDataAttributter.leggTil(StandardAbacAttributtType.AKTØR_ID, ident);
-        }
-        throw new java.lang.IllegalStateException("Ukjent identtype" + identType);
+        return IdentDataAttributter.abacAttributterForPersonIdent(person);
     }
 
     @POST
