@@ -131,7 +131,7 @@ public class InnhentingSamletTjeneste {
         try {
             var fom = opplysningsPeriode.getFomDato();
             var tom = opplysningsPeriode.getTomDato();
-            var kArena = kelvinKlient.hentAAP(ident, fom, tom);
+            var kArena = kelvinKlient.hentAAP(ident, fom, tom, arena.size());
             sammenligneArenaDirekteVsKelvin(arena, kArena);
         } catch (Exception e) {
             LOG.info("Maksimum AAP feil ved kall", e);
@@ -139,15 +139,17 @@ public class InnhentingSamletTjeneste {
     }
 
     private void sammenligneArenaDirekteVsKelvin(List<MeldekortUtbetalingsgrunnlagSak> arena, List<MeldekortUtbetalingsgrunnlagSak> kelvin) {
+        var saksnummerArena = arena.stream().map(MeldekortUtbetalingsgrunnlagSak::getSaksnummer).map(Saksnummer::getVerdi).collect(Collectors.toSet());
+        var saksnummerKelvin = kelvin.stream().map(MeldekortUtbetalingsgrunnlagSak::getSaksnummer).map(Saksnummer::getVerdi).collect(Collectors.toSet());
         if (arena.isEmpty() && kelvin.isEmpty()) {
             return;
         } else if (arena.isEmpty() || kelvin.isEmpty()) {
-            LOG.info("ARENA-KELVIN sammenligning ene er tom: arena: {} {} kelvin: {} {}", arena.size(), arena, kelvin.size(), kelvin);
+            LOG.info("Maksimum AAP sammenligning ene er tom: arena: {} {} kelvin: {} {}", arena.size(), saksnummerArena, kelvin.size(), saksnummerKelvin);
         } else if (arena.size() != kelvin.size()) {
-            LOG.info("ARENA-KELVIN sammenligning ulik størrelse: arena: {} {} kelvin: {} {}", arena.size(), arena, kelvin.size(), kelvin);
+            LOG.info("Maksimum AAP sammenligning ulik størrelse: arena: {} {} kelvin: {} {}", arena.size(), saksnummerArena, kelvin.size(), saksnummerKelvin);
         } else {
             if (!arena.containsAll(kelvin)) {
-                LOG.info("ARENA-KELVIN sammenligning ulikt innhold: arena: {} kelvin: {}", arena, kelvin);
+                LOG.info("Maksimum AAP sammenligning ulikt innhold: arena: {} kelvin: {}", arena, kelvin);
             }
         }
     }

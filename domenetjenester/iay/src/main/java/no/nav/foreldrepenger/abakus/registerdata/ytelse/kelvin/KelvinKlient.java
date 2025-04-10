@@ -43,15 +43,18 @@ public class KelvinKlient {
         this.endpointHentAAP = restConfig.endpoint();
     }
 
-    public List<MeldekortUtbetalingsgrunnlagSak> hentAAP(PersonIdent ident, LocalDate fom, LocalDate tom) {
+    public List<MeldekortUtbetalingsgrunnlagSak> hentAAP(PersonIdent ident, LocalDate fom, LocalDate tom, int antallArena) {
         try {
             LOG.info("Henter dagpenger/AAP for {} i periode fom {} tom {}", ident, fom, tom);
             var body = new KelvinRequest(ident.getIdent(), fom, tom);
             var request = RestRequest.newPOSTJson(body, endpointHentAAP, restConfig);
             var result = restClient.send(request, ArbeidsavklaringspengerResponse.class);
+            var resultAntall = result.vedtak().size();
             var kelvinVedtak = result.vedtak().stream().filter(v -> ArbeidsavklaringspengerResponse.Kildesystem.KELVIN.equals(v.kildesystem())).toList();
             var arenaVedtak = result.vedtak().stream().filter(v -> ArbeidsavklaringspengerResponse.Kildesystem.ARENA.equals(v.kildesystem())).toList();
-            LOG.info("Maksimum AAP hentet {} vedtak fra Kelvin og {} vedtak fra Arena", kelvinVedtak.size(), arenaVedtak.size());
+            if (resultAntall > 0 || antallArena > 0) {
+                LOG.info("Maksimum AAP hentet {} vedtak - Kelvin {} Arena {} - mot mUG {} ", resultAntall, kelvinVedtak.size(), arenaVedtak.size(), antallArena);
+            }
             if (!kelvinVedtak.isEmpty()) {
                 LOG.warn("Merk Dem! De observerer nå et tilfelle der bruker mottar nye AAP. Meld fra til overvåkningen umiddelbart. Vedtak {}", kelvinVedtak);
             }
