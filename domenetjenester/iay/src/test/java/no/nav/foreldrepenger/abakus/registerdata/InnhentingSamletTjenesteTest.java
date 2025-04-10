@@ -31,7 +31,7 @@ class InnhentingSamletTjenesteTest {
 
     @BeforeEach
     public void before() {
-        samletTjeneste = new InnhentingSamletTjeneste(null, null, null, repository, null);
+        samletTjeneste = new InnhentingSamletTjeneste(null, null, null, repository, null, null);
     }
 
     @Test
