@@ -131,10 +131,24 @@ public class InnhentingSamletTjeneste {
         try {
             var fom = opplysningsPeriode.getFomDato();
             var tom = opplysningsPeriode.getTomDato();
-            kelvinKlient.hentAAP(ident, fom, tom);
-            // TODO få inn resultat og sammenligne med arena
+            var kArena = kelvinKlient.hentAAP(ident, fom, tom);
+            sammenligneArenaDirekteVsKelvin(arena, kArena);
         } catch (Exception e) {
             LOG.info("Maksimum AAP feil ved kall", e);
+        }
+    }
+
+    private void sammenligneArenaDirekteVsKelvin(List<MeldekortUtbetalingsgrunnlagSak> arena, List<MeldekortUtbetalingsgrunnlagSak> kelvin) {
+        if (arena.isEmpty() && kelvin.isEmpty()) {
+            return;
+        } else if (arena.isEmpty() || kelvin.isEmpty()) {
+            LOG.info("ARENA-KELVIN sammenligning ene er tom: arena: {} kelvin: {}", arena, kelvin);
+        } else if (arena.size() != kelvin.size()) {
+            LOG.info("ARENA-KELVIN sammenligning ulik størrelse: arena: {} kelvin: {}", arena, kelvin);
+        } else {
+            if (!arena.containsAll(kelvin)) {
+                LOG.info("ARENA-KELVIN sammenligning ulikt innhold: arena: {} kelvin: {}", arena, kelvin);
+            }
         }
     }
 
@@ -150,9 +164,9 @@ public class InnhentingSamletTjeneste {
         for (MeldekortUtbetalingsgrunnlagSak sak : saker) {
             if (sak.getKravMottattDato() == null) {
                 if (sak.getVedtakStatus() == null) {
-                    loggArenaIgnorert("vedtak", sak.getSaksnummer());
+                    loggArenaIgnorert("vedtak", sak.getSaksnummer(), sak.getMeldekortene().size());
                 } else {
-                    loggArenaIgnorert("kravMottattDato", sak.getSaksnummer());
+                    loggArenaIgnorert("kravMottattDato", sak.getSaksnummer(), sak.getMeldekortene().size());
                 }
             } else if (YtelseStatus.UNDER_BEHANDLING.equals(sak.getYtelseTilstand()) && sak.getMeldekortene().isEmpty()) {
                 loggArenaIgnorert("meldekort", sak.getSaksnummer());
@@ -167,6 +181,12 @@ public class InnhentingSamletTjeneste {
         }
         return filtrert;
     }
+
+    private void loggArenaIgnorert(String ignorert, Saksnummer saksnummer, int antmeldekort) {
+        // Ingen forekomster i loggen, men for sikkerhets skylt
+        LOG.info("FP-112843 Ignorerer Arena-sak uten {}, saksnummer: {} antall meldekort {}", ignorert, saksnummer, antmeldekort);
+    }
+
 
     private void loggArenaIgnorert(String ignorert, Saksnummer saksnummer) {
         LOG.info("FP-112843 Ignorerer Arena-sak uten {}, saksnummer: {}", ignorert, saksnummer);
