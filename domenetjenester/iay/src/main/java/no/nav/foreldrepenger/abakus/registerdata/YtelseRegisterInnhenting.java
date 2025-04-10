@@ -47,6 +47,7 @@ public class YtelseRegisterInnhenting {
         for (MeldekortUtbetalingsgrunnlagSak sak : arena) {
             oversettMeldekortUtbetalingsgrunnlagTilYtelse(aktørYtelseBuilder, sak);
         }
+        innhentingSamletTjeneste.innhentMaksimumAAP(ident, opplysningsPeriode, arena);  // Har try/catch
 
         inntektArbeidYtelseAggregatBuilder.leggTilAktørYtelse(aktørYtelseBuilder);
     }

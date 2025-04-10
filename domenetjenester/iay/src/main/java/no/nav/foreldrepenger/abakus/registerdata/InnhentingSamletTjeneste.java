@@ -31,6 +31,7 @@ import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.FpwsproxyKlient;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.InnhentingInfotrygdTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseGrunnlag;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.kelvin.KelvinKlient;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
@@ -48,6 +49,7 @@ public class InnhentingSamletTjeneste {
     private FpwsproxyKlient fpwsproxyKlient;
     private InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste;
     private LønnskompensasjonRepository lønnskompensasjonRepository;
+    private KelvinKlient kelvinKlient;
 
     InnhentingSamletTjeneste() {
         //CDI
@@ -55,16 +57,17 @@ public class InnhentingSamletTjeneste {
 
     @Inject
     public InnhentingSamletTjeneste(ArbeidsforholdTjeneste arbeidsforholdTjeneste,
-
                                     InntektTjeneste inntektTjeneste,
                                     InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste,
                                     LønnskompensasjonRepository lønnskompensasjonRepository,
-                                    FpwsproxyKlient fpwsproxyKlient) {
+                                    FpwsproxyKlient fpwsproxyKlient,
+                                    KelvinKlient kelvinKlient) {
         this.arbeidsforholdTjeneste = arbeidsforholdTjeneste;
         this.inntektTjeneste = inntektTjeneste;
         this.fpwsproxyKlient = fpwsproxyKlient;
         this.innhentingInfotrygdTjeneste = innhentingInfotrygdTjeneste;
         this.lønnskompensasjonRepository = lønnskompensasjonRepository;
+        this.kelvinKlient = kelvinKlient;
     }
 
     public InntektsInformasjon getInntektsInformasjon(AktørId aktørId, IntervallEntitet periode, InntektskildeType kilde) {
@@ -122,6 +125,17 @@ public class InnhentingSamletTjeneste {
 
     public List<InfotrygdYtelseGrunnlag> innhentSpokelseGrunnlag(PersonIdent ident, @SuppressWarnings("unused") IntervallEntitet periode) {
         return innhentingInfotrygdTjeneste.getSPøkelseYtelser(ident, periode.getFomDato());
+    }
+
+    public void innhentMaksimumAAP(PersonIdent ident, IntervallEntitet opplysningsPeriode, List<MeldekortUtbetalingsgrunnlagSak> arena) {
+        try {
+            var fom = opplysningsPeriode.getFomDato();
+            var tom = opplysningsPeriode.getTomDato();
+            kelvinKlient.hentAAP(ident, fom, tom);
+            // TODO få inn resultat og sammenligne med arena
+        } catch (Exception e) {
+            LOG.info("Maksimum AAP feil ved kall", e);
+        }
     }
 
     public List<MeldekortUtbetalingsgrunnlagSak> hentDagpengerAAP(PersonIdent ident, IntervallEntitet opplysningsPeriode) {
