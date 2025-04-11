@@ -97,15 +97,17 @@ public class KelvinKlient {
         if (utbetaling.barnetillegg() != null && utbetaling.barnetillegg() > 0) {
             LOG.info("Maksimum AAP har barnetillegg {}", utbetaling);
         }
-        if (utbetaling.reduksjon() != null) {
+        if (utbetaling.reduksjon() != null
+            && ((utbetaling.reduksjon().annenReduksjon() != null && utbetaling.reduksjon().annenReduksjon().compareTo(BigDecimal.ZERO) > 0)
+            || (utbetaling.reduksjon().timerArbeidet() != null && utbetaling.reduksjon().timerArbeidet().compareTo(BigDecimal.ZERO) > 0))) {
             LOG.info("Maksimum AAP har reduksjon {}", utbetaling);
         }
         return MeldekortUtbetalingsgrunnlagMeldekort.MeldekortMeldekortBuilder.ny()
             .medMeldekortFom(Tid.fomEllerMin(utbetaling.periode().fraOgMedDato()))
             .medMeldekortTom(Tid.tomEllerMax(utbetaling.periode().tilOgMedDato()))
-            .medBeløp(BigDecimal.valueOf(utbetaling.belop()))
-            .medDagsats(BigDecimal.valueOf(utbetaling.dagsats()))
-            .medUtbetalingsgrad(BigDecimal.valueOf(utbetaling.utbetalingsgrad()))
+            .medBeløp(Optional.ofNullable(utbetaling.belop()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO))
+            .medBeløp(Optional.ofNullable(utbetaling.dagsats()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO))
+            .medBeløp(Optional.ofNullable(utbetaling.utbetalingsgrad()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO))
             .build();
     }
 

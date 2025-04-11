@@ -146,10 +146,10 @@ public class InnhentingSamletTjeneste {
         } else if (arena.isEmpty() || kelvin.isEmpty()) {
             LOG.info("Maksimum AAP sammenligning ene er tom: arena: {} {} kelvin: {} {}", arena.size(), saksnummerArena, kelvin.size(), saksnummerKelvin);
         } else if (arena.size() != kelvin.size()) {
-            LOG.info("Maksimum AAP sammenligning ulik størrelse: arena: {} {} kelvin: {} {}", arena.size(), saksnummerArena, kelvin.size(), saksnummerKelvin);
+            LOG.info("Maksimum AAP sammenligning ulik størrelse: arena: {} {} kelvin: {} {}", arena.size(), arena, kelvin.size(), kelvin);
         } else {
             if (!arena.containsAll(kelvin)) {
-                LOG.info("Maksimum AAP sammenligning ulikt innhold: arena: {} kelvin: {}", arena, kelvin);
+                LOG.info("Maksimum AAP sammenligning lik størrelse ulikt innhold: arena: {} kelvin: {}", arena, kelvin);
             }
         }
     }
