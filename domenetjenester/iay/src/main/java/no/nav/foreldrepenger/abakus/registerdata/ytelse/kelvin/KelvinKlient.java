@@ -2,7 +2,9 @@ package no.nav.foreldrepenger.abakus.registerdata.ytelse.kelvin;
 
 import java.math.BigDecimal;
 import java.net.URI;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -75,7 +77,10 @@ public class KelvinKlient {
     }
 
     private static MeldekortUtbetalingsgrunnlagSak mapTilMeldekortSakAcl(ArbeidsavklaringspengerResponse.AAPVedtak vedtak) {
-        var mk = vedtak.utbetaling().stream().map(KelvinKlient::mapTilMeldekortMKAcl).sorted(Comparator.comparing(MeldekortUtbetalingsgrunnlagMeldekort::getMeldekortFom)).toList();
+        var mk = vedtak.utbetaling().stream()
+            .map(u -> KelvinKlient.mapTilMeldekortMKAcl(u, vedtak.kildesystem()))
+            .sorted(Comparator.comparing(MeldekortUtbetalingsgrunnlagMeldekort::getMeldekortFom))
+            .toList();
         return MeldekortUtbetalingsgrunnlagSak.MeldekortSakBuilder.ny()
             .leggTilMeldekort(mk)
             .medType(YtelseType.ARBEIDSAVKLARINGSPENGER)
@@ -92,7 +97,8 @@ public class KelvinKlient {
             .build();
     }
 
-    private static MeldekortUtbetalingsgrunnlagMeldekort mapTilMeldekortMKAcl(ArbeidsavklaringspengerResponse.AAPUtbetaling utbetaling) {
+    private static MeldekortUtbetalingsgrunnlagMeldekort mapTilMeldekortMKAcl(ArbeidsavklaringspengerResponse.AAPUtbetaling utbetaling,
+                                                                              ArbeidsavklaringspengerResponse.Kildesystem kildesystem) {
         // OBS utbetaling / barnetillegg
         if (utbetaling.barnetillegg() != null && utbetaling.barnetillegg() > 0) {
             LOG.info("Maksimum AAP har barnetillegg {}", utbetaling);
@@ -106,9 +112,30 @@ public class KelvinKlient {
             .medMeldekortFom(Tid.fomEllerMin(utbetaling.periode().fraOgMedDato()))
             .medMeldekortTom(Tid.tomEllerMax(utbetaling.periode().tilOgMedDato()))
             .medBeløp(Optional.ofNullable(utbetaling.belop()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO))
-            .medBeløp(Optional.ofNullable(utbetaling.dagsats()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO))
-            .medBeløp(Optional.ofNullable(utbetaling.utbetalingsgrad()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO))
+            .medDagsats(Optional.ofNullable(utbetaling.dagsats()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO))
+            .medUtbetalingsgrad(ArbeidsavklaringspengerResponse.Kildesystem.ARENA.equals(kildesystem)
+                ? regnUtArenaUtbetalingsgrad(utbetaling) : Optional.ofNullable(utbetaling.utbetalingsgrad()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO))
             .build();
+    }
+
+    private static BigDecimal regnUtArenaUtbetalingsgrad(ArbeidsavklaringspengerResponse.AAPUtbetaling utbetaling) {
+        var beløp = Optional.ofNullable(utbetaling.belop()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO);
+        var dagsats = Optional.ofNullable(utbetaling.dagsats()).map(BigDecimal::valueOf).orElse(BigDecimal.ONE);
+        var virkedager = beregnVirkedager(utbetaling.periode().fraOgMedDato(), utbetaling.periode().tilOgMedDato());
+        return beløp.multiply(BigDecimal.valueOf(200)).divide(dagsats.multiply(BigDecimal.valueOf(virkedager)), 0, BigDecimal.ROUND_HALF_UP);
+    }
+
+    private static int beregnVirkedager(LocalDate fom, LocalDate tom) {
+        try {
+            var padBefore = fom.getDayOfWeek().getValue() - DayOfWeek.MONDAY.getValue();
+            var padAfter = DayOfWeek.SUNDAY.getValue() - tom.getDayOfWeek().getValue();
+            var virkedagerPadded = Math.toIntExact(
+                ChronoUnit.WEEKS.between(fom.minusDays(padBefore), tom.plusDays(padAfter).plusDays(1L)) * 5L);
+            var virkedagerPadding = Math.min(padBefore, 5) + Math.max(padAfter - 2, 0);
+            return virkedagerPadded - virkedagerPadding;
+        } catch (ArithmeticException var6) {
+            throw new UnsupportedOperationException("Perioden er for lang til å beregne virkedager.", var6);
+        }
     }
 
 }
