@@ -44,8 +44,18 @@ public class MeldekortUtbetalingsgrunnlagMeldekort {
             return false;
         }
         MeldekortUtbetalingsgrunnlagMeldekort that = (MeldekortUtbetalingsgrunnlagMeldekort) o;
-        return Objects.equals(meldekortFom, that.meldekortFom) && Objects.equals(meldekortTom, that.meldekortTom) && Objects.equals(dagsats,
-            that.dagsats) && Objects.equals(beløp, that.beløp) && Objects.equals(utbetalingsgrad, that.utbetalingsgrad);
+        return Objects.equals(meldekortFom, that.meldekortFom) && Objects.equals(meldekortTom, that.meldekortTom)
+            && likeTallVerdier(dagsats, that.dagsats) && likeTallVerdier(beløp, that.beløp) && likeTallVerdier(utbetalingsgrad, that.utbetalingsgrad);
+    }
+
+    static boolean likeTallVerdier(BigDecimal denne, BigDecimal andre) {
+        if (denne == null && andre == null) {
+            return true;
+        }
+        if (denne == null || andre == null) {
+            return false;
+        }
+        return denne.compareTo(andre) == 0;
     }
 
     @Override
