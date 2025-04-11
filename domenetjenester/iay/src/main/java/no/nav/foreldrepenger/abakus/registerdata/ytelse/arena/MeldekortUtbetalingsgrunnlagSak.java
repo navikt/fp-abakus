@@ -91,7 +91,17 @@ public class MeldekortUtbetalingsgrunnlagSak {
             && Objects.equals(saksnummer, that.saksnummer) && Objects.equals(sakStatus, that.sakStatus) && Objects.equals(vedtakStatus,
             that.vedtakStatus) && Objects.equals(kravMottattDato, that.kravMottattDato) && Objects.equals(vedtattDato, that.vedtattDato)
             && Objects.equals(vedtaksPeriodeFom, that.vedtaksPeriodeFom) && Objects.equals(vedtaksPeriodeTom, that.vedtaksPeriodeTom)
-            && Objects.equals(vedtaksDagsats, that.vedtaksDagsats);
+            && likeTallVerdier(vedtaksDagsats, that.vedtaksDagsats);
+    }
+
+    private boolean likeTallVerdier(Beløp denne, Beløp andre) {
+        if (denne == null && andre == null) {
+            return true;
+        }
+        if (denne == null || andre == null) {
+            return false;
+        }
+        return MeldekortUtbetalingsgrunnlagMeldekort.likeTallVerdier(denne.getVerdi(), andre.getVerdi());
     }
 
     private boolean erLikeMeldekort(List<MeldekortUtbetalingsgrunnlagMeldekort> l1, List<MeldekortUtbetalingsgrunnlagMeldekort> l2) {
