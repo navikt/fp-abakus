@@ -150,6 +150,8 @@ public class InnhentingSamletTjeneste {
         } else {
             if (!arena.containsAll(kelvin)) {
                 LOG.info("Maksimum AAP sammenligning lik størrelse ulikt innhold: arena: {} kelvin: {}", arena, kelvin);
+            } else {
+                LOG.info("Maksimum AAP sammenligning likt svar fra arena og AAP-api");
             }
         }
     }

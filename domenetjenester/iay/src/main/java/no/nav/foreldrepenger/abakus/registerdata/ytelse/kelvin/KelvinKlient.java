@@ -47,7 +47,6 @@ public class KelvinKlient {
 
     public List<MeldekortUtbetalingsgrunnlagSak> hentAAP(PersonIdent ident, LocalDate fom, LocalDate tom, int antallArena) {
         try {
-            LOG.info("Henter dagpenger/AAP for {} i periode fom {} tom {}", ident, fom, tom);
             var body = new KelvinRequest(ident.getIdent(), fom, tom);
             var request = RestRequest.newPOSTJson(body, endpointHentAAP, restConfig);
             var result = restClient.send(request, ArbeidsavklaringspengerResponse.class);
@@ -55,14 +54,14 @@ public class KelvinKlient {
             var kelvinVedtak = result.vedtak().stream().filter(v -> ArbeidsavklaringspengerResponse.Kildesystem.KELVIN.equals(v.kildesystem())).toList();
             var arenaVedtak = result.vedtak().stream().filter(v -> ArbeidsavklaringspengerResponse.Kildesystem.ARENA.equals(v.kildesystem())).toList();
             if (resultAntall > 0 || antallArena > 0) {
-                LOG.info("Maksimum AAP hentet {} vedtak - Kelvin {} Arena {} - mot mUG {} ", resultAntall, kelvinVedtak.size(), arenaVedtak.size(), antallArena);
+                LOG.info("Maksimum AAP Klient hentet {} vedtak - Kelvin {} Arena {} - mot mUG {} ", resultAntall, kelvinVedtak.size(), arenaVedtak.size(), antallArena);
             }
             if (!kelvinVedtak.isEmpty()) {
                 LOG.warn("Merk Dem! De observerer nå et tilfelle der bruker mottar nye AAP. Meld fra til overvåkningen umiddelbart. Vedtak {}", kelvinVedtak);
             }
             return mapTilMeldekortAcl(result);
         } catch (Exception e) {
-            LOG.info("Maksimum AAP feil ved kall", e);
+            LOG.info("Maksimum AAP Klient feil ved kall", e);
             return List.of();
         }
     }
@@ -101,12 +100,7 @@ public class KelvinKlient {
                                                                               ArbeidsavklaringspengerResponse.Kildesystem kildesystem) {
         // OBS utbetaling / barnetillegg
         if (utbetaling.barnetillegg() != null && utbetaling.barnetillegg() > 0) {
-            LOG.info("Maksimum AAP har barnetillegg {}", utbetaling);
-        }
-        if (utbetaling.reduksjon() != null
-            && ((utbetaling.reduksjon().annenReduksjon() != null && utbetaling.reduksjon().annenReduksjon().compareTo(BigDecimal.ZERO) > 0)
-            || (utbetaling.reduksjon().timerArbeidet() != null && utbetaling.reduksjon().timerArbeidet().compareTo(BigDecimal.ZERO) > 0))) {
-            LOG.info("Maksimum AAP har reduksjon {}", utbetaling);
+            LOG.info("Maksimum AAP Klient har barnetillegg {}", utbetaling);
         }
         return MeldekortUtbetalingsgrunnlagMeldekort.MeldekortMeldekortBuilder.ny()
             .medMeldekortFom(Tid.fomEllerMin(utbetaling.periode().fraOgMedDato()))
