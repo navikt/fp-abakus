@@ -140,23 +140,27 @@ public class InnhentingSamletTjeneste {
     }
 
     private void sammenligneArenaDirekteVsKelvin(List<MeldekortUtbetalingsgrunnlagSak> arena, List<MeldekortUtbetalingsgrunnlagSak> kelvin) {
-        var saksnummerArena = arena.stream().map(MeldekortUtbetalingsgrunnlagSak::getSaksnummer).map(Saksnummer::getVerdi).collect(Collectors.toSet());
-        var saksnummerKelvin = kelvin.stream().map(MeldekortUtbetalingsgrunnlagSak::getSaksnummer).map(Saksnummer::getVerdi).collect(Collectors.toSet());
         var arenaMK = arena.stream().map(MeldekortUtbetalingsgrunnlagSak::getMeldekortene).flatMap(Collection::stream).collect(Collectors.toSet());
         var kelvinMK = arena.stream().map(MeldekortUtbetalingsgrunnlagSak::getMeldekortene).flatMap(Collection::stream).collect(Collectors.toSet());
+        var vAIkkeK = arena.stream().filter(a -> kelvin.stream().noneMatch(a::likeNokVedtak))
+            .map(MeldekortUtbetalingsgrunnlagSak::utskriftUtenMK).collect(Collectors.joining(", "));
+        var vKIkkeA = kelvin.stream().filter(a -> arena.stream().noneMatch(a::likeNokVedtak))
+            .map(MeldekortUtbetalingsgrunnlagSak::utskriftUtenMK).collect(Collectors.joining(", "));
+        var mAIkkeK = arenaMK.stream().filter(a -> !kelvinMK.contains(a)).collect(Collectors.toSet());
+        var mKIkkeA = kelvinMK.stream().filter(a -> !arenaMK.contains(a)).collect(Collectors.toSet());
         if (arena.isEmpty() && kelvin.isEmpty()) {
             return;
         } else if (arena.isEmpty() || kelvin.isEmpty()) {
-            LOG.info("Maksimum AAP sammenligning ene er tom: arena: {} {} kelvin: {} {}", arena.size(), saksnummerArena, kelvin.size(), saksnummerKelvin);
+            LOG.info("Maksimum AAP sammenligning ene er tom:  arena: {} mk {} kelvin: {} mk {}", vAIkkeK, mAIkkeK, vKIkkeA, mKIkkeA);
         } else if (arena.size() != kelvin.size() || arenaMK.size() != kelvinMK.size()) {
-            LOG.info("Maksimum AAP sammenligning ulik størrelse: arena: {} {} MK {} kelvin: {} {} MK {}", arena.size(), arena, arenaMK.size(), kelvin.size(), kelvin, kelvinMK.size());
+            LOG.info("Maksimum AAP sammenligning ulik størrelse:  arena: {} mk {} kelvin: {} mk {}", vAIkkeK, mAIkkeK, vKIkkeA, mKIkkeA);
         } else {
             var likeNokVedtak = arena.stream().allMatch(a -> kelvin.stream().anyMatch(a::likeNokVedtak));
             var likeMk = kelvinMK.containsAll(arenaMK);
             if (likeNokVedtak && likeMk) {
                 LOG.info("Maksimum AAP sammenligning likt svar fra arena og AAP-api");
             } else {
-                LOG.info("Maksimum AAP sammenligning lik størrelse ulikt innhold: arena: {} kelvin: {}", arena, kelvin);
+                LOG.info("Maksimum AAP sammenligning lik størrelse ulikt innhold: arena: {} mk {} kelvin: {} mk {}", vAIkkeK, mAIkkeK, vKIkkeA, mKIkkeA);
             }
         }
     }

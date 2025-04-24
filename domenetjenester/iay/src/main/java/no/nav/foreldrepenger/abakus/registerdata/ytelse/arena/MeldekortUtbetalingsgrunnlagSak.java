@@ -134,6 +134,13 @@ public class MeldekortUtbetalingsgrunnlagSak {
             + vedtaksPeriodeTom + ", vedtaksDagsats=" + vedtaksDagsats + '}';
     }
 
+    public String utskriftUtenMK() {
+        return "MeldekortUtbetalingsgrunnlagSak{" + "type=" + type + ", tilstand=" + tilstand + ", kilde=" + kilde
+            + ", saksnummer=" + saksnummer + ", sakStatus='" + sakStatus + '\'' + ", vedtakStatus='" + vedtakStatus + '\'' + ", kravMottattDato="
+            + kravMottattDato + ", vedtattDato=" + vedtattDato + ", vedtaksPeriodeFom=" + vedtaksPeriodeFom + ", vedtaksPeriodeTom="
+            + vedtaksPeriodeTom + ", vedtaksDagsats=" + vedtaksDagsats + '}';
+    }
+
     public static class MeldekortSakBuilder {
         private final MeldekortUtbetalingsgrunnlagSak sak;
 
