@@ -3,6 +3,7 @@ package no.nav.foreldrepenger.abakus.registerdata;
 import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -141,17 +142,21 @@ public class InnhentingSamletTjeneste {
     private void sammenligneArenaDirekteVsKelvin(List<MeldekortUtbetalingsgrunnlagSak> arena, List<MeldekortUtbetalingsgrunnlagSak> kelvin) {
         var saksnummerArena = arena.stream().map(MeldekortUtbetalingsgrunnlagSak::getSaksnummer).map(Saksnummer::getVerdi).collect(Collectors.toSet());
         var saksnummerKelvin = kelvin.stream().map(MeldekortUtbetalingsgrunnlagSak::getSaksnummer).map(Saksnummer::getVerdi).collect(Collectors.toSet());
+        var arenaMK = arena.stream().map(MeldekortUtbetalingsgrunnlagSak::getMeldekortene).flatMap(Collection::stream).collect(Collectors.toSet());
+        var kelvinMK = arena.stream().map(MeldekortUtbetalingsgrunnlagSak::getMeldekortene).flatMap(Collection::stream).collect(Collectors.toSet());
         if (arena.isEmpty() && kelvin.isEmpty()) {
             return;
         } else if (arena.isEmpty() || kelvin.isEmpty()) {
             LOG.info("Maksimum AAP sammenligning ene er tom: arena: {} {} kelvin: {} {}", arena.size(), saksnummerArena, kelvin.size(), saksnummerKelvin);
-        } else if (arena.size() != kelvin.size()) {
-            LOG.info("Maksimum AAP sammenligning ulik størrelse: arena: {} {} kelvin: {} {}", arena.size(), arena, kelvin.size(), kelvin);
+        } else if (arena.size() != kelvin.size() || arenaMK.size() != kelvinMK.size()) {
+            LOG.info("Maksimum AAP sammenligning ulik størrelse: arena: {} {} MK {} kelvin: {} {} MK {}", arena.size(), arena, arenaMK.size(), kelvin.size(), kelvin, kelvinMK.size());
         } else {
-            if (!arena.containsAll(kelvin)) {
-                LOG.info("Maksimum AAP sammenligning lik størrelse ulikt innhold: arena: {} kelvin: {}", arena, kelvin);
-            } else {
+            var likeNokVedtak = arena.stream().allMatch(a -> kelvin.stream().anyMatch(a::likeNokVedtak));
+            var likeMk = kelvinMK.containsAll(arenaMK);
+            if (likeNokVedtak && likeMk) {
                 LOG.info("Maksimum AAP sammenligning likt svar fra arena og AAP-api");
+            } else {
+                LOG.info("Maksimum AAP sammenligning lik størrelse ulikt innhold: arena: {} kelvin: {}", arena, kelvin);
             }
         }
     }

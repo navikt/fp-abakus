@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseBuilder;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
@@ -47,7 +48,8 @@ public class YtelseRegisterInnhenting {
         for (MeldekortUtbetalingsgrunnlagSak sak : arena) {
             oversettMeldekortUtbetalingsgrunnlagTilYtelse(aktørYtelseBuilder, sak);
         }
-        innhentingSamletTjeneste.innhentMaksimumAAP(ident, opplysningsPeriode, arena);  // Har try/catch
+        var aapsaker = arena.stream().filter(s -> YtelseType.ARBEIDSAVKLARINGSPENGER.equals(s.getYtelseType())).toList();
+        innhentingSamletTjeneste.innhentMaksimumAAP(ident, opplysningsPeriode, aapsaker);  // Har try/catch
 
         inntektArbeidYtelseAggregatBuilder.leggTilAktørYtelse(aktørYtelseBuilder);
     }

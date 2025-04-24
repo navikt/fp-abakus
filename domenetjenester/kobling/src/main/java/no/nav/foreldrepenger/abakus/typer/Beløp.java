@@ -7,7 +7,6 @@ import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -55,7 +54,13 @@ public class Beløp implements Serializable, IndexKey, TraverseValue {
             return false;
         }
         Beløp other = (Beløp) obj;
-        return Objects.equals(skalertVerdi(), other.skalertVerdi());
+        if (Objects.equals(verdi, other.verdi)) {
+            return true;
+        }
+        if (verdi == null || other.verdi == null) {
+            return false;
+        }
+        return skalertVerdi().compareTo(other.skalertVerdi()) == 0;
     }
 
     @Override

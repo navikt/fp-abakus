@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.registerdata.ytelse.arena;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -45,7 +46,8 @@ public class MeldekortUtbetalingsgrunnlagMeldekort {
         }
         MeldekortUtbetalingsgrunnlagMeldekort that = (MeldekortUtbetalingsgrunnlagMeldekort) o;
         return Objects.equals(meldekortFom, that.meldekortFom) && Objects.equals(meldekortTom, that.meldekortTom)
-            && likeTallVerdier(dagsats, that.dagsats) && likeTallVerdier(beløp, that.beløp) && likeTallVerdier(utbetalingsgrad, that.utbetalingsgrad);
+            && likeTallVerdier(dagsats, that.dagsats) && likeTallVerdier(beløp, that.beløp)
+            && likeTallVerdier(utbetalingsgrad, that.utbetalingsgrad);
     }
 
     static boolean likeTallVerdier(BigDecimal denne, BigDecimal andre) {
@@ -55,7 +57,7 @@ public class MeldekortUtbetalingsgrunnlagMeldekort {
         if (denne == null || andre == null) {
             return false;
         }
-        return denne.compareTo(andre) == 0;
+        return denne.setScale(1, RoundingMode.HALF_UP).compareTo(andre.setScale(1, RoundingMode.HALF_UP)) == 0;
     }
 
     @Override

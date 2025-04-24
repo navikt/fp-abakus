@@ -94,6 +94,12 @@ public class MeldekortUtbetalingsgrunnlagSak {
             && likeTallVerdier(vedtaksDagsats, that.vedtaksDagsats);
     }
 
+    public boolean likeNokVedtak(MeldekortUtbetalingsgrunnlagSak that) {
+        return type == that.type && kilde == that.kilde
+            && Objects.equals(vedtaksPeriodeFom, that.vedtaksPeriodeFom) && Objects.equals(vedtaksPeriodeTom, that.vedtaksPeriodeTom)
+            && likeTallVerdier(vedtaksDagsats, that.vedtaksDagsats);
+    }
+
     private boolean likeTallVerdier(Beløp denne, Beløp andre) {
         if (denne == null && andre == null) {
             return true;
