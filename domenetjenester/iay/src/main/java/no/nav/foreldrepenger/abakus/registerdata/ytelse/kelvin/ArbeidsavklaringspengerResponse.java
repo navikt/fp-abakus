@@ -15,7 +15,7 @@ public record ArbeidsavklaringspengerResponse(List<AAPVedtak> vedtak) {
     public record AAPPeriode(LocalDate fraOgMedDato, LocalDate tilOgMedDato) {}
 
     public record AAPUtbetaling(AAPPeriode periode, Integer belop, Integer dagsats,
-                                Integer barnetillegg, AAPReduksjon reduksjon, Integer utbetalingsgrad) {
+                                Integer barnetilegg, AAPReduksjon reduksjon, Integer utbetalingsgrad) {
     }
 
     public record AAPReduksjon(BigDecimal annenReduksjon, BigDecimal timerArbeidet) { }
