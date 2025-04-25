@@ -100,7 +100,7 @@ public class KelvinKlient {
     private static MeldekortUtbetalingsgrunnlagMeldekort mapTilMeldekortMKAcl(ArbeidsavklaringspengerResponse.AAPUtbetaling utbetaling,
                                                                               ArbeidsavklaringspengerResponse.Kildesystem kildesystem) {
         // OBS utbetaling / barnetillegg
-        if (utbetaling.barnetillegg() != null && utbetaling.barnetillegg() > 0) {
+        if (utbetaling.barnetilegg() != null && utbetaling.barnetilegg() > 0) {
             LOG.info("Maksimum AAP Klient har barnetillegg {}", utbetaling);
         }
         return MeldekortUtbetalingsgrunnlagMeldekort.MeldekortMeldekortBuilder.ny()
