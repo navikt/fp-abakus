@@ -57,12 +57,16 @@ public class MeldekortUtbetalingsgrunnlagMeldekort {
         if (denne == null || andre == null) {
             return false;
         }
-        return denne.setScale(1, RoundingMode.HALF_UP).compareTo(andre.setScale(1, RoundingMode.HALF_UP)) == 0;
+        return skalertVerdi(denne).compareTo(skalertVerdi(andre)) == 0;
+    }
+
+    private static BigDecimal skalertVerdi(BigDecimal verdi) {
+        return verdi == null ? null : verdi.setScale(1, RoundingMode.HALF_UP);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(meldekortFom, meldekortTom, dagsats, beløp, utbetalingsgrad);
+        return Objects.hash(meldekortFom, meldekortTom, skalertVerdi(dagsats), skalertVerdi(beløp), skalertVerdi(utbetalingsgrad));
     }
 
     @Override

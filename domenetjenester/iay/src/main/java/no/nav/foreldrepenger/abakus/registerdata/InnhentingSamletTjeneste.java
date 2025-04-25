@@ -146,8 +146,8 @@ public class InnhentingSamletTjeneste {
             .map(MeldekortUtbetalingsgrunnlagSak::utskriftUtenMK).collect(Collectors.joining(", "));
         var vKIkkeA = kelvin.stream().filter(a -> arena.stream().noneMatch(a::likeNokVedtak))
             .map(MeldekortUtbetalingsgrunnlagSak::utskriftUtenMK).collect(Collectors.joining(", "));
-        var mAIkkeK = arenaMK.stream().filter(a -> !kelvinMK.contains(a)).collect(Collectors.toSet());
-        var mKIkkeA = kelvinMK.stream().filter(a -> !arenaMK.contains(a)).collect(Collectors.toSet());
+        var mAIkkeK = arenaMK.stream().filter(a -> kelvinMK.stream().noneMatch(a::equals)).collect(Collectors.toSet());
+        var mKIkkeA = kelvinMK.stream().filter(a -> arenaMK.stream().noneMatch(a::equals)).collect(Collectors.toSet());
         if (arena.isEmpty() && kelvin.isEmpty()) {
             return;
         } else if (arena.isEmpty() || kelvin.isEmpty()) {
