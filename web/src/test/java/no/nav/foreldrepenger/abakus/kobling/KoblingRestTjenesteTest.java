@@ -54,7 +54,7 @@ class KoblingRestTjenesteTest {
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(HttpURLConnection.HTTP_OK);
-        verify(avsluttKobling).avsluttKobling(referanse, ytelseType);
+        verify(avsluttKobling).avsluttKobling(referanse);
     }
 
     @Test
@@ -75,7 +75,7 @@ class KoblingRestTjenesteTest {
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(HttpURLConnection.HTTP_NO_CONTENT);
-        verify(avsluttKobling, never()).avsluttKobling(referanse, ytelseType);
+        verify(avsluttKobling, never()).avsluttKobling(referanse);
     }
 
     @Test
@@ -91,7 +91,7 @@ class KoblingRestTjenesteTest {
 
         // Assert
         assertThat(response.getStatus()).isEqualTo(HttpURLConnection.HTTP_BAD_REQUEST);
-        verify(avsluttKobling, never()).avsluttKobling(any(), any());
+        verify(avsluttKobling, never()).avsluttKobling(any());
     }
 
     @Test
@@ -127,7 +127,7 @@ class KoblingRestTjenesteTest {
 
         // Assert
         assertThat(ex.getMessage()).contains("Prøver å avslutte kobling på feil saksnummer");
-        verify(avsluttKobling, never()).avsluttKobling(any(), any());
+        verify(avsluttKobling, never()).avsluttKobling(any());
     }
 
     @Test
@@ -146,7 +146,7 @@ class KoblingRestTjenesteTest {
 
         // Assert
         assertThat(ex.getMessage()).contains("Prøver å avslutte kobling på feil ytelsetype");
-        verify(avsluttKobling, never()).avsluttKobling(any(), any());
+        verify(avsluttKobling, never()).avsluttKobling(any());
     }
 
     @Test
@@ -165,7 +165,7 @@ class KoblingRestTjenesteTest {
 
         // Assert
         assertThat(ex.getMessage()).contains("Prøver å avslutte kobling på feil aktør");
-        verify(avsluttKobling, never()).avsluttKobling(any(), any());
+        verify(avsluttKobling, never()).avsluttKobling(any());
     }
 
     private Kobling opprettKobling(String saksnummer, AktørId aktørId, YtelseType ytelseType, KoblingReferanse referanse) {

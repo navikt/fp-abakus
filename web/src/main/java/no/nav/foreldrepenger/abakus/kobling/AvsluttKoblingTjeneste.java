@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 
 @ApplicationScoped
@@ -29,21 +28,15 @@ public class AvsluttKoblingTjeneste {
 
     /**
      * Avslutter kobling og sletter inaktive grunnlag. Forutsetter at kobling finnes.
+     *
      * @param koblingReferanse - referanse til kobling
-     * @param ytelseType - ytelseType for å fikse der det mangler ca 2500 koblinger fra 2018 og 2019.
      */
-    public void avsluttKobling(KoblingReferanse koblingReferanse, YtelseType ytelseType) {
+    public void avsluttKobling(KoblingReferanse koblingReferanse) {
         var koblingLås = koblingTjeneste.taSkrivesLås(koblingReferanse);
         var kobling = koblingTjeneste.hentFor(koblingReferanse).orElseThrow();
 
         LOG.info("Starter avslutting av kobling for sak=[{}, {}] med behandling='{}'", kobling.getSaksnummer(), kobling.getYtelseType(),
             kobling.getKoblingReferanse());
-
-        // Midlertidig for å kunne fikse ytelse-type UNDEFINED.
-        // Vi fikser manglende ytelseType på kobling
-        if (YtelseType.UDEFINERT.equals(kobling.getYtelseType()) && ytelseType != null) {
-            kobling.setYtelseType(ytelseType);
-        }
 
         iayTjeneste.slettInaktiveGrunnlagFor(kobling.getKoblingReferanse());
         koblingTjeneste.deaktiver(kobling.getKoblingReferanse());
