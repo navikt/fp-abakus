@@ -23,9 +23,9 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
     public AppRessursData lagAppRessursData(AbacDataAttributter dataAttributter) {
 
         var builder = minimalbuilder()
-            .leggTilAktørIdSet(dataAttributter.getVerdier(StandardAbacAttributtType.AKTØR_ID))
-            .leggTilFødselsnumre(dataAttributter.getVerdier(StandardAbacAttributtType.FNR));
-        // TODO legg på saksnummer relevante steder (mange requests har saksnummer)
+            .leggTilIdenter(dataAttributter.getVerdier(StandardAbacAttributtType.AKTØR_ID))
+            .leggTilIdenter(dataAttributter.getVerdier(StandardAbacAttributtType.FNR));
+        // TODO legg på saksnummer relevante steder (mange requests har saksnummer). Send saksnummer hvis finnes, ellers ident
         // Ta med denne dataAttributter.getVerdier(StandardAbacAttributtType.SAKSNUMMER).stream().findFirst().map(String::valueOf).ifPresent(builder::medSaksnummer);
         return builder.build();
     }
