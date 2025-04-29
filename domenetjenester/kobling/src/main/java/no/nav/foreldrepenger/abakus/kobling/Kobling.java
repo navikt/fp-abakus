@@ -147,10 +147,6 @@ public class Kobling extends BaseEntitet implements IndexKey {
         return ytelseType;
     }
 
-    public void setYtelseType(YtelseType ytelseType) {
-        this.ytelseType = ytelseType;
-    }
-
     public long getVersjon() {
         return this.versjon;
     }

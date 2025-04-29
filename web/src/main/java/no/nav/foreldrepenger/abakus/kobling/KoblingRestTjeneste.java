@@ -73,7 +73,7 @@ public class KoblingRestTjeneste {
             var kobling = koblingOptional.get();
             if (kobling.erAktiv()) {
                 validerRequest(request, kobling);
-                avsluttKoblingTjeneste.avsluttKobling(kobling.getKoblingReferanse(), request.getYtelseType());
+                avsluttKoblingTjeneste.avsluttKobling(kobling.getKoblingReferanse());
                 return Response.ok().build();
             } else {
                 LOG.info("KOBLING. Kobling er allerede avsluttet for referanse: {}", request.getReferanse());
@@ -90,8 +90,7 @@ public class KoblingRestTjeneste {
             throw new IllegalArgumentException("Prøver å avslutte kobling på feil saksnummer");
         }
 
-        // Noen koblinger fra 2019 og 2020 mangler ytelseType vi slipper de gjennom og oppdatarer ytelseType før avslutning.
-        if (!request.getYtelseType().equals(kobling.getYtelseType()) && !YtelseType.UDEFINERT.equals(kobling.getYtelseType())) {
+        if (!request.getYtelseType().equals(kobling.getYtelseType())) {
             throw new IllegalArgumentException("Prøver å avslutte kobling på feil ytelsetype");
         }
 
