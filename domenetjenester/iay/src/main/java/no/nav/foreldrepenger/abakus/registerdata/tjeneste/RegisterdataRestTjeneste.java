@@ -3,10 +3,6 @@ package no.nav.foreldrepenger.abakus.registerdata.tjeneste;
 import java.net.HttpURLConnection;
 import java.util.function.Function;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -28,7 +24,6 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 
-@OpenAPIDefinition(tags = @Tag(name = "registerinnhenting"))
 @Path("/registerdata/v1")
 @ApplicationScoped
 @Transactional
@@ -44,13 +39,17 @@ public class RegisterdataRestTjeneste {
         this.innhentTjeneste = innhentTjeneste;
     }
 
+    /**
+     * Trigger registerinnhenting for en gitt id
+     * @param dto InnhentRegisterdataRequest
+     * @return TaskResponsDto
+     */
     @POST
     @Path("/innhent/async")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(description = "Trigger registerinnhenting for en gitt id", tags = "registerinnhenting")
     @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.APPLIKASJON, sporingslogg = true)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
-    public Response innhentOgLagreRegisterdataAsync(@Parameter(name = "innhent") @Valid @TilpassetAbacAttributt(supplierClass = InnhentSupplier.class) InnhentRegisterdataRequest dto) {
+    public Response innhentOgLagreRegisterdataAsync(@Valid @TilpassetAbacAttributt(supplierClass = InnhentSupplier.class) InnhentRegisterdataRequest dto) {
         Response response;
         if (!YtelseType.abakusYtelser().contains(dto.getYtelseType())) {
             return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();

@@ -7,14 +7,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.abakus.iaygrunnlag.Periode;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.abakus.iaygrunnlag.request.RegisterdataType;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
@@ -70,23 +68,10 @@ public class InnhentRegisterdataTjeneste {
     }
 
     private Kobling oppdaterKobling(InnhentRegisterdataRequest dto) {
-        KoblingReferanse referanse = new KoblingReferanse(dto.getReferanse());
+        var referanse = new KoblingReferanse(dto.getReferanse());
         var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(referanse)); // kan bli null hvis gjelder ny
-        Optional<Kobling> koblingOpt = koblingTjeneste.hentFor(referanse);
-        Kobling kobling;
-        if (koblingOpt.isEmpty()) {
-            // Lagre kobling
-            AktørId aktørId = new AktørId(dto.getAktør().getIdent());
-            kobling = new Kobling(dto.getYtelseType(), new Saksnummer(dto.getSaksnummer()), referanse, aktørId);
-        } else {
-            kobling = koblingOpt.get();
-            if (YtelseType.UDEFINERT.equals(kobling.getYtelseType())) {
-                var ytelseType = dto.getYtelseType();
-                if (ytelseType != null) {
-                    kobling.setYtelseType(ytelseType);
-                }
-            }
-        }
+        var kobling = koblingTjeneste.hentFor(referanse)
+            .orElse(new Kobling(dto.getYtelseType(), new Saksnummer(dto.getSaksnummer()), referanse, new AktørId(dto.getAktør().getIdent())));
 
         // Oppdater kobling med perioder
         mapPeriodeTilIntervall(dto.getOpplysningsperiode()).ifPresent(kobling::setOpplysningsperiode);

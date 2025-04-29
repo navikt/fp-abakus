@@ -38,11 +38,11 @@ public final class IndexKeyComposer {
         if (obj == null) {
             return "-";
         }
-        Class<? extends Object> objClass = obj.getClass();
+        var objClass = obj.getClass();
         if (CharSequence.class.isAssignableFrom(objClass)) {
             return (String) obj;
         } else if (Number.class.isAssignableFrom(objClass)) {
-            return ((Number) obj).toString();
+            return (obj).toString();
         } else if (IndexKey.class.isAssignableFrom(objClass)) {
             return ((IndexKey) obj).getIndexKey();
         } else if (IntervallEntitet.class.isAssignableFrom(objClass)) {

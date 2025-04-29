@@ -4,12 +4,6 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste;
 import java.util.Optional;
 import java.util.function.Function;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -26,6 +20,8 @@ import no.nav.foreldrepenger.abakus.felles.LoggUtil;
 import no.nav.foreldrepenger.abakus.felles.sikkerhet.IdentDataAttributter;
 import no.nav.foreldrepenger.abakus.iay.OppgittOpptjeningTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapOppgittOpptjening;
+import no.nav.foreldrepenger.abakus.kobling.Kobling;
+import no.nav.foreldrepenger.abakus.kobling.KoblingLås;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -36,7 +32,6 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 
-@OpenAPIDefinition(tags = @Tag(name = "oppgitt opptjening"))
 @Path("/iay/oppgitt/v1")
 @ApplicationScoped
 @Transactional
@@ -54,9 +49,13 @@ public class OppgittOpptjeningRestTjeneste {
         this.oppgittOpptjeningTjeneste = oppgittOpptjeningTjeneste;
     }
 
+    /**
+     * Lagrer ned mottatt oppgitt opptjening
+     * @param mottattRequest OppgittOpptjeningMottattRequest
+     * @return UuidDto med Oppdatert grunnlagreferanse
+     */
     @POST
     @Path("/motta")
-    @Operation(description = "Lagrer ned mottatt oppgitt opptjening", tags = "oppgitt opptjening", responses = {@ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))})
     @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.FAGSAK, sporingslogg = true)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response lagreOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
@@ -76,22 +75,16 @@ public class OppgittOpptjeningRestTjeneste {
         OppgittOpptjeningBuilder builder = new MapOppgittOpptjening().mapFraDto(mottattRequest.getOppgittOpptjening());
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagre(koblingReferanse, builder);
 
-        koblingTjeneste.lagre(kobling);
-        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
-
-        Response response;
-        if (grunnlagReferanse != null) {
-            response = Response.ok(new UuidDto(grunnlagReferanse.getReferanse())).build();
-        } else {
-            response = Response.noContent().build();
-        }
-
-        return response;
+        return lagreKoblingOgSvarMedGrunnlagReferanse(koblingLås, kobling, grunnlagReferanse);
     }
 
+    /**
+     * Lagrer ned mottatt oppgitt opptjening
+     * @param mottattRequest OppgittOpptjeningMottattRequest
+     * @return UuidDto med Oppdatert grunnlagreferanse
+     */
     @POST
     @Path("/overstyr")
-    @Operation(description = "Lagrer ned mottatt oppgitt opptjening", tags = "oppgitt opptjening", responses = {@ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))})
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK, sporingslogg = true)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response lagreOverstyrtOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
@@ -105,22 +98,16 @@ public class OppgittOpptjeningRestTjeneste {
         OppgittOpptjeningBuilder builder = new MapOppgittOpptjening().mapFraDto(mottattRequest.getOppgittOpptjening());
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagreOverstyring(koblingReferanse, builder);
 
-        koblingTjeneste.lagre(kobling);
-        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
-
-        Response response;
-        if (grunnlagReferanse != null) {
-            response = Response.ok(new UuidDto(grunnlagReferanse.getReferanse())).build();
-        } else {
-            response = Response.noContent().build();
-        }
-
-        return response;
+        return lagreKoblingOgSvarMedGrunnlagReferanse(koblingLås, kobling, grunnlagReferanse);
     }
 
+    /**
+     * Lagrer ned mottatt oppgitt opptjening og fjerner overstyring om den finnes
+     * @param mottattRequest OppgittOpptjeningMottattRequest
+     * @return UuidDto med Oppdatert grunnlagreferanse
+     */
     @POST
     @Path("/motta-og-nullstill-overstyring")
-    @Operation(description = "Lagrer ned mottatt oppgitt opptjening og fjerner overstyring om den finnes", tags = "oppgitt opptjening", responses = {@ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))})
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK, sporingslogg = true)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response lagreOppgittOpptjeningOgNullstillOverstyring(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
@@ -134,6 +121,10 @@ public class OppgittOpptjeningRestTjeneste {
         OppgittOpptjeningBuilder builder = new MapOppgittOpptjening().mapFraDto(mottattRequest.getOppgittOpptjening());
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagreOgNullstillOverstyring(koblingReferanse, builder);
 
+        return lagreKoblingOgSvarMedGrunnlagReferanse(koblingLås, kobling, grunnlagReferanse);
+    }
+
+    private Response lagreKoblingOgSvarMedGrunnlagReferanse(Optional<KoblingLås> koblingLås, Kobling kobling, GrunnlagReferanse grunnlagReferanse) {
         koblingTjeneste.lagre(kobling);
         koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
 
