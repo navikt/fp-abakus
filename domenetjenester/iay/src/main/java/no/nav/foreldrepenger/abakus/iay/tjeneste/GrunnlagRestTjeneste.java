@@ -199,23 +199,10 @@ public class GrunnlagRestTjeneste {
     }
 
     private Kobling oppdaterKobling(@NotNull @Valid KopierGrunnlagRequest dto) {
-        KoblingReferanse referanse = new KoblingReferanse(dto.getNyReferanse());
-        Optional<Kobling> koblingOpt = koblingTjeneste.hentFor(referanse);
-        Kobling kobling;
-        if (koblingOpt.isEmpty()) {
-            // Lagre kobling
-            AktørId aktørId = new AktørId(dto.getAktør().getIdent());
-            kobling = new Kobling(dto.getYtelseType(), new Saksnummer(dto.getSaksnummer()), referanse, aktørId);
-        } else {
-            kobling = koblingOpt.get();
-            // TODO: Hva gjør vi med koblinger uten sak i fpsak? Det gjenstår fortsatt en par i abakus uten referanse til en sak.
-            if (YtelseType.UDEFINERT.equals(kobling.getYtelseType())) {
-                var ytelseType = dto.getYtelseType();
-                if (ytelseType != null) {
-                    kobling.setYtelseType(ytelseType);
-                }
-            }
-        }
+        var referanse = new KoblingReferanse(dto.getNyReferanse());
+        var kobling = koblingTjeneste.hentFor(referanse)
+            .orElse(new Kobling(dto.getYtelseType(), new Saksnummer(dto.getSaksnummer()), referanse, new AktørId((dto.getAktør().getIdent()))));
+
         // Oppdater kobling med perioder
         mapPeriodeTilIntervall(dto.getOpplysningsperiode()).ifPresent(kobling::setOpplysningsperiode);
         mapPeriodeTilIntervall(dto.getOpplysningsperiodeSkattegrunnlag()).ifPresent(kobling::setOpplysningsperiodeSkattegrunnlag);

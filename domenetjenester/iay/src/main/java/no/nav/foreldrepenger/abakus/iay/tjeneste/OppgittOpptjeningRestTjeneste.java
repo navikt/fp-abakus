@@ -20,6 +20,8 @@ import no.nav.foreldrepenger.abakus.felles.LoggUtil;
 import no.nav.foreldrepenger.abakus.felles.sikkerhet.IdentDataAttributter;
 import no.nav.foreldrepenger.abakus.iay.OppgittOpptjeningTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapOppgittOpptjening;
+import no.nav.foreldrepenger.abakus.kobling.Kobling;
+import no.nav.foreldrepenger.abakus.kobling.KoblingLås;
 import no.nav.foreldrepenger.abakus.kobling.KoblingReferanse;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
@@ -73,17 +75,7 @@ public class OppgittOpptjeningRestTjeneste {
         OppgittOpptjeningBuilder builder = new MapOppgittOpptjening().mapFraDto(mottattRequest.getOppgittOpptjening());
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagre(koblingReferanse, builder);
 
-        koblingTjeneste.lagre(kobling);
-        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
-
-        Response response;
-        if (grunnlagReferanse != null) {
-            response = Response.ok(new UuidDto(grunnlagReferanse.getReferanse())).build();
-        } else {
-            response = Response.noContent().build();
-        }
-
-        return response;
+        return lagreKoblingOgSvarMedGrunnlagReferanse(koblingLås, kobling, grunnlagReferanse);
     }
 
     /**
@@ -106,17 +98,7 @@ public class OppgittOpptjeningRestTjeneste {
         OppgittOpptjeningBuilder builder = new MapOppgittOpptjening().mapFraDto(mottattRequest.getOppgittOpptjening());
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagreOverstyring(koblingReferanse, builder);
 
-        koblingTjeneste.lagre(kobling);
-        koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
-
-        Response response;
-        if (grunnlagReferanse != null) {
-            response = Response.ok(new UuidDto(grunnlagReferanse.getReferanse())).build();
-        } else {
-            response = Response.noContent().build();
-        }
-
-        return response;
+        return lagreKoblingOgSvarMedGrunnlagReferanse(koblingLås, kobling, grunnlagReferanse);
     }
 
     /**
@@ -139,6 +121,10 @@ public class OppgittOpptjeningRestTjeneste {
         OppgittOpptjeningBuilder builder = new MapOppgittOpptjening().mapFraDto(mottattRequest.getOppgittOpptjening());
         GrunnlagReferanse grunnlagReferanse = oppgittOpptjeningTjeneste.lagreOgNullstillOverstyring(koblingReferanse, builder);
 
+        return lagreKoblingOgSvarMedGrunnlagReferanse(koblingLås, kobling, grunnlagReferanse);
+    }
+
+    private Response lagreKoblingOgSvarMedGrunnlagReferanse(Optional<KoblingLås> koblingLås, Kobling kobling, GrunnlagReferanse grunnlagReferanse) {
         koblingTjeneste.lagre(kobling);
         koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
 

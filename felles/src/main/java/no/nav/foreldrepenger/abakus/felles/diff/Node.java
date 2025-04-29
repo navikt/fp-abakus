@@ -24,7 +24,7 @@ public class Node implements Comparable<Node> {
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
-        } else if (obj == null || !(obj instanceof Node)) {
+        } else if (!(obj instanceof Node)) {
             return false;
         }
         Node other = (Node) obj;
