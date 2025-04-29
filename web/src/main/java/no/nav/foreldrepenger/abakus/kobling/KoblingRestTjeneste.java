@@ -1,7 +1,6 @@
 package no.nav.foreldrepenger.abakus.kobling;
 
 import java.net.HttpURLConnection;
-import java.util.Set;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -63,9 +62,7 @@ public class KoblingRestTjeneste {
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK, sporingslogg = true)
     public Response deaktiverKobling(@Valid @NotNull KoblingRestTjeneste.AvsluttKoblingRequestAbacDto request) {
         LoggUtil.setupLogMdc(request.getYtelseType(), request.getSaksnummer(), request.getReferanse());
-        // Siste grunnlag for ES ble innhentet den 26.01.2024 men vi må kunne avslutte koblinger likevel.
-        // Dette kan erstattes med !YtelseType.abakusYtelser().contains(request.getYtelseType()) når migreringen i fpsak er kjørt.
-        if (!Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER, YtelseType.ENGANGSTØNAD).contains(request.getYtelseType())) {
+        if (!YtelseType.abakusYtelser().contains(request.getYtelseType())) {
             LOG.warn("Ugyldig ytelseType: {}", request.getYtelseType());
             return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
         }

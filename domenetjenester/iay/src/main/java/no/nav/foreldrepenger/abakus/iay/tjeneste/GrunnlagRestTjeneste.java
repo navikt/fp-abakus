@@ -13,12 +13,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -39,7 +33,6 @@ import no.nav.abakus.iaygrunnlag.request.Dataset;
 import no.nav.abakus.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest;
 import no.nav.abakus.iaygrunnlag.request.KopierGrunnlagRequest;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseAggregatOverstyrtDto;
-import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 import no.nav.abakus.iaygrunnlag.v1.OverstyrtInntektArbeidYtelseDto;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
@@ -61,7 +54,6 @@ import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 
-@OpenAPIDefinition(tags = {@Tag(name = "iay-grunnlag")})
 @Path("/iay/grunnlag/v1")
 @ApplicationScoped
 @Transactional
@@ -83,10 +75,16 @@ public class GrunnlagRestTjeneste {
         return IdentDataAttributter.abacAttributterForPersonIdent(person);
     }
 
+    /**
+     * Hent ett enkelt IAY Grunnlag for angitt spesifikasjon. Spesifikasjonen kan angit hvilke data som ønskes
+     * @param spesifikasjon InntektArbeidYtelseGrunnlagRequestAbacDto
+     * @return 200 med InntektArbeidYtelseGrunnlagDto
+     *        204 hvis det ikke finnes noe grunnlag
+     *        304 hvis grunnlaget ikke har endret seg i henhold til det fagsystemet allerede kjenner
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Hent ett enkelt IAY Grunnlag for angitt spesifikasjon. Spesifikasjonen kan angit hvilke data som ønskes", tags = "iay-grunnlag", responses = {@ApiResponse(description = "InntektArbeidYtelseGrunnlagDto", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InntektArbeidYtelseGrunnlagDto.class))), @ApiResponse(responseCode = "204", description = "Det finnes ikke et grunnlag for forespørselen"), @ApiResponse(responseCode = "304", description = "Grunnlaget har ikke endret seg i henhold til det fagsystemet allerede kjenner")})
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK, sporingslogg = false)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response hentIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
@@ -119,11 +117,15 @@ public class GrunnlagRestTjeneste {
         return response;
     }
 
+    /**
+     * Lagrer siste versjon
+     * @param dto OverstyrtInntektArbeidYtelseDto
+     * @return 200 ok
+     */
     @PUT
     @Path("/overstyrt")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Lagrer siste versjon", tags = "iay-grunnlag", responses = {@ApiResponse(responseCode = "200", description = "Mottatt grunnlaget")})
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK, sporingslogg = true)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response oppdaterOgLagreOverstyring(@NotNull @Valid OverstyrtInntektArbeidYtelseAbacDto dto) {
@@ -143,11 +145,15 @@ public class GrunnlagRestTjeneste {
         return Response.ok().build();
     }
 
+    /**
+     * Koperer grunnlaget
+     * @param request KopierGrunnlagRequest
+     * @return 200 ok
+     */
     @POST
     @Path("/kopier")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Kopier grunnlag", tags = "iay-grunnlag")
     @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.FAGSAK, sporingslogg = true)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response kopierOgLagreGrunnlagUtenInntektsmeldinger(@NotNull @Valid KopierGrunnlagRequestAbac request) {
@@ -155,11 +161,15 @@ public class GrunnlagRestTjeneste {
         return Response.ok().build();
     }
 
+    /**
+     * Kopier grunnlag behold opprinnelige inntektsmeldinger
+     * @param request KopierGrunnlagRequest
+     * @return 200 ok
+     */
     @POST
     @Path("/kopier-behold-im")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Kopier grunnlag behold opprinnelige inntektsmeldinger", tags = "iay-grunnlag")
     @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.FAGSAK, sporingslogg = true)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response kopierOgLagreGrunnlagBeholdIM(@NotNull @Valid KopierGrunnlagRequestAbac request) {
@@ -198,6 +208,7 @@ public class GrunnlagRestTjeneste {
             kobling = new Kobling(dto.getYtelseType(), new Saksnummer(dto.getSaksnummer()), referanse, aktørId);
         } else {
             kobling = koblingOpt.get();
+            // TODO: Hva gjør vi med koblinger uten sak i fpsak? Det gjenstår fortsatt en par i abakus uten referanse til en sak.
             if (YtelseType.UDEFINERT.equals(kobling.getYtelseType())) {
                 var ytelseType = dto.getYtelseType();
                 if (ytelseType != null) {

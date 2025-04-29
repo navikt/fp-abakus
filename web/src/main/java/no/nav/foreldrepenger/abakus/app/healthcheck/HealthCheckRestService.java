@@ -5,6 +5,9 @@ import static jakarta.ws.rs.core.Response.Status.SERVICE_UNAVAILABLE;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
@@ -14,16 +17,9 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.CacheControl;
 import jakarta.ws.rs.core.Response;
-
-import no.nav.vedtak.server.LivenessAware;
-
-import no.nav.vedtak.server.ReadinessAware;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import io.swagger.v3.oas.annotations.Operation;
 import no.nav.foreldrepenger.abakus.app.tjenester.ApplicationServiceStarter;
+import no.nav.vedtak.server.LivenessAware;
+import no.nav.vedtak.server.ReadinessAware;
 
 @Path("/health")
 @Produces(TEXT_PLAIN)
@@ -63,9 +59,12 @@ public class HealthCheckRestService {
         return cc;
     }
 
+    /**
+     * Sjekker om poden lever
+     * @return ok or server error
+     */
     @GET
     @Path("/isAlive")
-    @Operation(description = "Sjekker om poden lever", tags = "nais", hidden = true)
     public Response isAlive() {
         if (live.stream().allMatch(LivenessAware::isAlive)) {
             return Response.ok(RESPONSE_OK).cacheControl(CC).build();
@@ -74,9 +73,12 @@ public class HealthCheckRestService {
         return Response.serverError().cacheControl(CC).build();
     }
 
+    /**
+     * Sjekker om poden er klar
+     * @return ok or service unavailable
+     */
     @GET
     @Path("/isReady")
-    @Operation(description = "sjekker om poden er klar", tags = "nais", hidden = true)
     public Response isReady() {
         if (ready.stream().allMatch(ReadinessAware::isReady)) {
             return Response.ok(RESPONSE_OK).cacheControl(CC).build();
@@ -85,9 +87,12 @@ public class HealthCheckRestService {
         return Response.status(SERVICE_UNAVAILABLE).cacheControl(CC).build();
     }
 
+    /**
+     * Kalles av kubernetes før stopp av poden - gjør mulig å initiere en graceful shutdown
+     * @return ok
+     */
     @GET
     @Path("/preStop")
-    @Operation(description = "Kalles på før stopp", tags = "nais", hidden = true)
     public Response preStop() {
         LOG.info("/preStop endepunkt kalt.");
         starter.stopServices();

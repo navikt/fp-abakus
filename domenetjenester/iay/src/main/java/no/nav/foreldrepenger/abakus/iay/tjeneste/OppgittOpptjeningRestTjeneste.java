@@ -4,12 +4,6 @@ package no.nav.foreldrepenger.abakus.iay.tjeneste;
 import java.util.Optional;
 import java.util.function.Function;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -36,7 +30,6 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 
-@OpenAPIDefinition(tags = @Tag(name = "oppgitt opptjening"))
 @Path("/iay/oppgitt/v1")
 @ApplicationScoped
 @Transactional
@@ -54,9 +47,13 @@ public class OppgittOpptjeningRestTjeneste {
         this.oppgittOpptjeningTjeneste = oppgittOpptjeningTjeneste;
     }
 
+    /**
+     * Lagrer ned mottatt oppgitt opptjening
+     * @param mottattRequest OppgittOpptjeningMottattRequest
+     * @return UuidDto med Oppdatert grunnlagreferanse
+     */
     @POST
     @Path("/motta")
-    @Operation(description = "Lagrer ned mottatt oppgitt opptjening", tags = "oppgitt opptjening", responses = {@ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))})
     @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.FAGSAK, sporingslogg = true)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response lagreOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
@@ -89,9 +86,13 @@ public class OppgittOpptjeningRestTjeneste {
         return response;
     }
 
+    /**
+     * Lagrer ned mottatt oppgitt opptjening
+     * @param mottattRequest OppgittOpptjeningMottattRequest
+     * @return UuidDto med Oppdatert grunnlagreferanse
+     */
     @POST
     @Path("/overstyr")
-    @Operation(description = "Lagrer ned mottatt oppgitt opptjening", tags = "oppgitt opptjening", responses = {@ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))})
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK, sporingslogg = true)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response lagreOverstyrtOppgittOpptjening(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {
@@ -118,9 +119,13 @@ public class OppgittOpptjeningRestTjeneste {
         return response;
     }
 
+    /**
+     * Lagrer ned mottatt oppgitt opptjening og fjerner overstyring om den finnes
+     * @param mottattRequest OppgittOpptjeningMottattRequest
+     * @return UuidDto med Oppdatert grunnlagreferanse
+     */
     @POST
     @Path("/motta-og-nullstill-overstyring")
-    @Operation(description = "Lagrer ned mottatt oppgitt opptjening og fjerner overstyring om den finnes", tags = "oppgitt opptjening", responses = {@ApiResponse(description = "Oppdatert grunnlagreferanse", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UuidDto.class)))})
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK, sporingslogg = true)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
     public Response lagreOppgittOpptjeningOgNullstillOverstyring(@NotNull @TilpassetAbacAttributt(supplierClass = AbacDataSupplier.class) @Valid OppgittOpptjeningMottattRequest mottattRequest) {

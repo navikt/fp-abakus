@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -34,7 +31,6 @@ import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 
-@OpenAPIDefinition(tags = @Tag(name = "ytelse"))
 @Path("/ytelse/v1")
 @ApplicationScoped
 @Transactional
@@ -53,13 +49,15 @@ public class YtelseRestTjeneste {
     }
 
     /**
+     * Henter alle vedtak for en gitt person, evt med periode etter en fom
      * Intern bruk - kun fra fpsak så langt
+     * @param request VedtakForPeriodeRequest
+     * @return List<Ytelse>
      */
     @POST
     @Path("/hent-vedtak-ytelse")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Henter alle vedtak for en gitt person, evt med periode etter en fom", tags = "ytelse")
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.APPLIKASJON, sporingslogg = false)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public List<Ytelse> hentVedtakYtelse(@NotNull @TilpassetAbacAttributt(supplierClass = VedtakForPeriodeRequestAbacDataSupplier.class) @Valid VedtakForPeriodeRequest request) {
