@@ -1,17 +1,20 @@
 package no.nav.abakus.iaygrunnlag.request;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import java.util.Objects;
 
-import no.nav.abakus.iaygrunnlag.PersonIdent;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-
-import java.util.Objects;
+import no.nav.abakus.iaygrunnlag.PersonIdent;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
 /**
  * Spesifikasjon for å hente opp et InntektArbeidYtelseGrunnlag.
@@ -32,12 +35,15 @@ public class InntektsmeldingerRequest {
     private PersonIdent person;
 
     @JsonProperty(value = "ytelseType")
+    @Valid
+    @NotNull
     private YtelseType ytelseType;
 
     /**
      * Angi hvilken sak det gjelder.
      */
     @JsonProperty(value = "saksnummer")
+    @NotNull
     @Valid
     @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'")
     private String saksnummer;
@@ -47,8 +53,12 @@ public class InntektsmeldingerRequest {
     }
 
     @JsonCreator
-    public InntektsmeldingerRequest(@JsonProperty(value = "personIdent", required = true) @Valid @NotNull PersonIdent person) {
+    public InntektsmeldingerRequest(@JsonProperty(value = "personIdent", required = true) @Valid @NotNull PersonIdent person,
+                                    @JsonProperty(value = "saksnummer") @Valid @NotNull String saksnummer,
+                                    @JsonProperty(value = "ytelseType") @Valid @NotNull YtelseType ytelseType) {
         this.person = Objects.requireNonNull(person, "person");
+        this.saksnummer = Objects.requireNonNull(saksnummer, "saksnummer");
+        this.ytelseType = Objects.requireNonNull(ytelseType, "ytelseType");
     }
 
     public PersonIdent getPerson() {
@@ -59,15 +69,7 @@ public class InntektsmeldingerRequest {
         return ytelseType;
     }
 
-    public void setYtelseType(YtelseType ytelseType) {
-        this.ytelseType = ytelseType;
-    }
-
     public String getSaksnummer() {
         return saksnummer;
-    }
-
-    public void setSaksnummer(String saksnummer) {
-        this.saksnummer = saksnummer;
     }
 }

@@ -1,5 +1,7 @@
 package no.nav.foreldrepenger.abakus.felles.sikkerhet;
 
+import java.util.Set;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.PdpRequestBuilder;
@@ -21,12 +23,12 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
 
     @Override
     public AppRessursData lagAppRessursData(AbacDataAttributter dataAttributter) {
+        Set<String> saksnumre = dataAttributter.getVerdier(StandardAbacAttributtType.SAKSNUMMER);
 
         var builder = minimalbuilder()
             .leggTilIdenter(dataAttributter.getVerdier(StandardAbacAttributtType.AKTØR_ID))
             .leggTilIdenter(dataAttributter.getVerdier(StandardAbacAttributtType.FNR));
-        // TODO legg på saksnummer relevante steder (mange requests har saksnummer). Send saksnummer hvis finnes, ellers ident
-        // Ta med denne dataAttributter.getVerdier(StandardAbacAttributtType.SAKSNUMMER).stream().findFirst().map(String::valueOf).ifPresent(builder::medSaksnummer);
+        saksnumre.stream().findFirst().ifPresent(builder::medSaksnummer);
         return builder.build();
     }
 
