@@ -14,13 +14,15 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
+import no.nav.abakus.iaygrunnlag.FnrPersonident;
 import no.nav.abakus.iaygrunnlag.request.AktørDatoRequest;
-import no.nav.foreldrepenger.abakus.felles.sikkerhet.IdentDataAttributter;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.arbeidsforhold.ArbeidsforholdDtoTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.vedtak.log.mdc.MdcExtendedLogContext;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
+import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
@@ -71,7 +73,14 @@ public class ArbeidsforholdRestTjeneste {
         @Override
         public AbacDataAttributter apply(Object obj) {
             AktørDatoRequest req = (AktørDatoRequest) obj;
-            return IdentDataAttributter.abacAttributterForPersonIdent(req.getAktør());
+            var person = req.getAktør();
+            if (person != null && FnrPersonident.IDENT_TYPE.equals(person.getIdentType())) {
+                return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.FNR, person.getIdent());
+            } else if (person != null && AktørIdPersonident.IDENT_TYPE.equals(person.getIdentType())) {
+                return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.AKTØR_ID, person.getIdent());
+            } else {
+                return AbacDataAttributter.opprett();
+            }
         }
     }
 }
