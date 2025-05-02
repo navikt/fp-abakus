@@ -68,9 +68,6 @@ public class ArbeidsforholdRestTjeneste {
 
     public static class AktørDatoRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
-        public AktørDatoRequestAbacDataSupplier() {
-        }
-
         @Override
         public AbacDataAttributter apply(Object obj) {
             AktørDatoRequest req = (AktørDatoRequest) obj;

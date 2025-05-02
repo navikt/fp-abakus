@@ -67,7 +67,6 @@ import no.nav.abakus.iaygrunnlag.oppgittopptjening.v1.OppgittOpptjeningDto;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseAggregatOverstyrtDto;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseAggregatRegisterDto;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
-import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagSakSnapshotDto;
 import no.nav.abakus.iaygrunnlag.ytelse.v1.AnvisningDto;
 import no.nav.abakus.iaygrunnlag.ytelse.v1.FordelingDto;
 import no.nav.abakus.iaygrunnlag.ytelse.v1.YtelseDto;
@@ -103,23 +102,6 @@ class IayGrunnlagTest {
 
         assertThat(roundTripped).isNotNull();
         assertThat(roundTripped.getPerson()).isNotNull();
-        validateResult(roundTripped);
-
-    }
-
-    @Test
-    void skal_generere_og_validere_roundtrip_mega_iaygrunnlag_snapshot_json() throws Exception {
-
-        var grunnlag = byggInntektArbeidYtelseGrunnlag();
-        var snapshot = new InntektArbeidYtelseGrunnlagSakSnapshotDto("minsak", YtelseType.FORELDREPENGER, fnr);
-
-        snapshot.leggTil(grunnlag, true, new Periode(LocalDate.now().minusMonths(17), LocalDate.now()), null);
-
-        String json = WRITER.writeValueAsString(snapshot);
-        System.out.println(json);
-
-        InntektArbeidYtelseGrunnlagSakSnapshotDto roundTripped = READER.forType(InntektArbeidYtelseGrunnlagSakSnapshotDto.class).readValue(json);
-
         validateResult(roundTripped);
 
     }

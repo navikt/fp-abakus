@@ -89,9 +89,6 @@ public class YtelseRestTjeneste {
 
     public static class VedtakForPeriodeRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
-        public VedtakForPeriodeRequestAbacDataSupplier() {
-        }
-
         @Override
         public AbacDataAttributter apply(Object obj) {
             var req = (VedtakForPeriodeRequest) obj;

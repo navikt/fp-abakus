@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
+import no.nav.abakus.iaygrunnlag.request.AvsluttKoblingRequest;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 
@@ -48,7 +49,7 @@ class KoblingRestTjenesteTest {
         when(koblingTjeneste.hentFor(referanse)).thenReturn(Optional.of(opprettKobling(saksnummer, aktørId, ytelseType, referanse)));
 
         // Act
-        var request = new KoblingRestTjeneste.AvsluttKoblingRequestAbacDto(saksnummer, referanse.getReferanse(), ytelseType, new AktørIdPersonident(aktørId.getId()));
+        var request = new AvsluttKoblingRequest(saksnummer, referanse.getReferanse(), ytelseType, new AktørIdPersonident(aktørId.getId()));
 
         var response = koblingRestTjeneste.deaktiverKobling(request);
 
@@ -69,7 +70,7 @@ class KoblingRestTjenesteTest {
         when(koblingTjeneste.hentFor(referanse)).thenReturn(Optional.of(kobling));
 
         // Act
-        var request = new KoblingRestTjeneste.AvsluttKoblingRequestAbacDto(saksnummer, referanse.getReferanse(), ytelseType, new AktørIdPersonident(aktørId.getId()));
+        var request = new AvsluttKoblingRequest(saksnummer, referanse.getReferanse(), ytelseType, new AktørIdPersonident(aktørId.getId()));
 
         var response = koblingRestTjeneste.deaktiverKobling(request);
 
@@ -85,7 +86,7 @@ class KoblingRestTjenesteTest {
         var aktørId = AktørId.dummy();
 
         // Act
-        var request = new KoblingRestTjeneste.AvsluttKoblingRequestAbacDto(saksnummer, referanse.getReferanse(), YtelseType.DAGPENGER, new AktørIdPersonident(aktørId.getId()));
+        var request = new AvsluttKoblingRequest(saksnummer, referanse.getReferanse(), YtelseType.DAGPENGER, new AktørIdPersonident(aktørId.getId()));
 
         var response = koblingRestTjeneste.deaktiverKobling(request);
 
@@ -104,7 +105,7 @@ class KoblingRestTjenesteTest {
         when(koblingTjeneste.hentFor(referanse)).thenReturn(Optional.empty());
 
         // Act
-        var request = new KoblingRestTjeneste.AvsluttKoblingRequestAbacDto(saksnummer, referanse.getReferanse(), ytelseType, new AktørIdPersonident(aktørId.getId()));
+        var request = new AvsluttKoblingRequest(saksnummer, referanse.getReferanse(), ytelseType, new AktørIdPersonident(aktørId.getId()));
         var response = koblingRestTjeneste.deaktiverKobling(request);
 
         // Assert
@@ -121,7 +122,7 @@ class KoblingRestTjenesteTest {
         when(koblingTjeneste.hentFor(referanse)).thenReturn(Optional.of(opprettKobling(saksnummer, aktørId, ytelseType, referanse)));
 
         // Act
-        var request = new KoblingRestTjeneste.AvsluttKoblingRequestAbacDto("354645634", referanse.getReferanse(), ytelseType, new AktørIdPersonident(aktørId.getId()));
+        var request = new AvsluttKoblingRequest("354645634", referanse.getReferanse(), ytelseType, new AktørIdPersonident(aktørId.getId()));
 
         var ex = assertThrows(IllegalArgumentException.class, () -> koblingRestTjeneste.deaktiverKobling(request));
 
@@ -140,7 +141,7 @@ class KoblingRestTjenesteTest {
         when(koblingTjeneste.hentFor(referanse)).thenReturn(Optional.of(opprettKobling(saksnummer, aktørId, ytelseType, referanse)));
 
         // Act
-        var request = new KoblingRestTjeneste.AvsluttKoblingRequestAbacDto(saksnummer, referanse.getReferanse(), YtelseType.SVANGERSKAPSPENGER, new AktørIdPersonident(aktørId.getId()));
+        var request = new AvsluttKoblingRequest(saksnummer, referanse.getReferanse(), YtelseType.SVANGERSKAPSPENGER, new AktørIdPersonident(aktørId.getId()));
 
         var ex = assertThrows(IllegalArgumentException.class, () -> koblingRestTjeneste.deaktiverKobling(request));
 
@@ -159,7 +160,7 @@ class KoblingRestTjenesteTest {
         when(koblingTjeneste.hentFor(referanse)).thenReturn(Optional.of(opprettKobling(saksnummer, aktørId, ytelseType, referanse)));
 
         // Act
-        var request = new KoblingRestTjeneste.AvsluttKoblingRequestAbacDto(saksnummer, referanse.getReferanse(), ytelseType, new AktørIdPersonident(AktørId.dummy().getId()));
+        var request = new AvsluttKoblingRequest(saksnummer, referanse.getReferanse(), ytelseType, new AktørIdPersonident(AktørId.dummy().getId()));
 
         var ex = assertThrows(IllegalArgumentException.class, () -> koblingRestTjeneste.deaktiverKobling(request));
 
