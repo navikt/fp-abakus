@@ -22,13 +22,11 @@ import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest;
 import no.nav.abakus.iaygrunnlag.request.KopierGrunnlagRequest;
 import no.nav.abakus.iaygrunnlag.request.OverstyrGrunnlagRequest;
-import no.nav.abakus.iaygrunnlag.v1.OverstyrtInntektArbeidYtelseDto;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.felles.LoggUtil;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.felles.sikkerhet.IdentDataAttributter;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYFraDtoMapper;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYTilDtoMapper;
@@ -102,35 +100,6 @@ public class GrunnlagRestTjeneste {
         }
 
         return response;
-    }
-
-    /**
-     * Lagrer siste versjon
-     * @param dto OverstyrtInntektArbeidYtelseDto
-     * @return 200 ok
-     */
-    @PUT
-    @Path("/overstyrt")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK, sporingslogg = true)
-    @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response oppdaterOgLagreOverstyring(@TilpassetAbacAttributt(supplierClass = OverstyrtInntektArbeidYtelseDtoAbacDataSupplier.class)
-        @NotNull @Valid OverstyrtInntektArbeidYtelseDto dto) {
-
-        var aktørId = new AktørId(dto.getPerson().getIdent());
-        var koblingReferanse = getKoblingReferanse(aktørId, dto.getKoblingReferanse(), dto.getGrunnlagReferanse());
-
-        setupLogMdcFraKoblingReferanse(koblingReferanse);
-
-        var nyttGrunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayTjeneste.hentGrunnlagFor(koblingReferanse));
-
-        new IAYFraDtoMapper(iayTjeneste, aktørId, koblingReferanse).mapOverstyringerTilGrunnlagBuilder(dto.getOverstyrt(),
-            dto.getArbeidsforholdInformasjon(), nyttGrunnlagBuilder);
-
-        iayTjeneste.lagre(koblingReferanse, nyttGrunnlagBuilder);
-
-        return Response.ok().build();
     }
 
     /**
@@ -303,15 +272,6 @@ public class GrunnlagRestTjeneste {
         public AbacDataAttributter apply(Object obj) {
             var req = (KopierGrunnlagRequest) obj;
             return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.SAKSNUMMER, req.getSaksnummer());
-        }
-    }
-
-    public static class OverstyrtInntektArbeidYtelseDtoAbacDataSupplier implements Function<Object, AbacDataAttributter> {
-
-        @Override
-        public AbacDataAttributter apply(Object obj) {
-            var req = (OverstyrtInntektArbeidYtelseDto) obj;
-            return IdentDataAttributter.abacAttributterForPersonIdent(req.getPerson());
         }
     }
 
