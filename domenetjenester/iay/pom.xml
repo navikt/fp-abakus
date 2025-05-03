@@ -63,10 +63,6 @@
             <artifactId>spokelse-klient</artifactId>
         </dependency>
 		<dependency>
-			<groupId>no.nav.foreldrepenger.kontrakter</groupId>
-			<artifactId>fp-feed-vedtak-tjenestespesifikasjon</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>no.nav.foreldrepenger.abakus</groupId>
 			<artifactId>abakus-kontrakt</artifactId>
 		</dependency>
