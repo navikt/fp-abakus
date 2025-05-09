@@ -1,17 +1,10 @@
 package no.nav.foreldrepenger.abakus.iay.tjeneste;
 
 
-import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
-
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.function.Function;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -26,20 +19,14 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import no.nav.abakus.iaygrunnlag.Periode;
-import no.nav.abakus.iaygrunnlag.PersonIdent;
-import no.nav.abakus.iaygrunnlag.arbeidsforhold.v1.ArbeidsforholdInformasjon;
-import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
-import no.nav.abakus.iaygrunnlag.request.Dataset;
 import no.nav.abakus.iaygrunnlag.request.InntektArbeidYtelseGrunnlagRequest;
 import no.nav.abakus.iaygrunnlag.request.KopierGrunnlagRequest;
-import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseAggregatOverstyrtDto;
-import no.nav.abakus.iaygrunnlag.v1.OverstyrtInntektArbeidYtelseDto;
+import no.nav.abakus.iaygrunnlag.request.OverstyrGrunnlagRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.felles.LoggUtil;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
-import no.nav.foreldrepenger.abakus.felles.sikkerhet.IdentDataAttributter;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYFraDtoMapper;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYTilDtoMapper;
@@ -49,8 +36,9 @@ import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
-import no.nav.vedtak.sikkerhet.abac.AbacDto;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
+import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
+import no.nav.vedtak.sikkerhet.abac.TilpassetAbacAttributt;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ActionType;
 import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 
@@ -71,10 +59,6 @@ public class GrunnlagRestTjeneste {
         this.koblingTjeneste = koblingTjeneste;
     }
 
-    private static AbacDataAttributter lagAbacAttributter(PersonIdent person) {
-        return IdentDataAttributter.abacAttributterForPersonIdent(person);
-    }
-
     /**
      * Hent ett enkelt IAY Grunnlag for angitt spesifikasjon. Spesifikasjonen kan angit hvilke data som ønskes
      * @param spesifikasjon InntektArbeidYtelseGrunnlagRequestAbacDto
@@ -87,7 +71,8 @@ public class GrunnlagRestTjeneste {
     @Produces(MediaType.APPLICATION_JSON)
     @BeskyttetRessurs(actionType = ActionType.READ, resourceType = ResourceType.FAGSAK, sporingslogg = false)
     @SuppressWarnings({"findsecbugs:JAXRS_ENDPOINT", "resource"})
-    public Response hentIayGrunnlag(@NotNull @Valid InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
+    public Response hentIayGrunnlag(@TilpassetAbacAttributt(supplierClass = InntektArbeidYtelseGrunnlagRequestAbacDataSupplier.class)
+        @NotNull @Valid InntektArbeidYtelseGrunnlagRequest spesifikasjon) {
         Response response;
 
         LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer(), spesifikasjon.getKoblingReferanse());
@@ -123,14 +108,15 @@ public class GrunnlagRestTjeneste {
      * @return 200 ok
      */
     @PUT
-    @Path("/overstyrt")
+    @Path("/overstyr-grunnlag")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK, sporingslogg = true)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response oppdaterOgLagreOverstyring(@NotNull @Valid OverstyrtInntektArbeidYtelseAbacDto dto) {
+    public Response overstyrGrunnlag(@TilpassetAbacAttributt(supplierClass = OverstyrGrunnlagRequestAbacDataSupplier.class)
+                                               @NotNull @Valid OverstyrGrunnlagRequest dto) {
 
-        var aktørId = new AktørId(dto.getPerson().getIdent());
+        var aktørId = new AktørId(dto.getAktør().getIdent());
         var koblingReferanse = getKoblingReferanse(aktørId, dto.getKoblingReferanse(), dto.getGrunnlagReferanse());
 
         setupLogMdcFraKoblingReferanse(koblingReferanse);
@@ -156,7 +142,8 @@ public class GrunnlagRestTjeneste {
     @Produces(MediaType.APPLICATION_JSON)
     @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.FAGSAK, sporingslogg = true)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response kopierOgLagreGrunnlagUtenInntektsmeldinger(@NotNull @Valid KopierGrunnlagRequestAbac request) {
+    public Response kopierOgLagreGrunnlagUtenInntektsmeldinger(@TilpassetAbacAttributt(supplierClass = KopierGrunnlagRequestAbacDataSupplier.class)
+        @NotNull @Valid KopierGrunnlagRequest request) {
         kopierOgLagreGrunnlag(request, false);
         return Response.ok().build();
     }
@@ -172,12 +159,13 @@ public class GrunnlagRestTjeneste {
     @Produces(MediaType.APPLICATION_JSON)
     @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.FAGSAK, sporingslogg = true)
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
-    public Response kopierOgLagreGrunnlagBeholdIM(@NotNull @Valid KopierGrunnlagRequestAbac request) {
+    public Response kopierOgLagreGrunnlagBeholdIM(@TilpassetAbacAttributt(supplierClass = KopierGrunnlagRequestAbacDataSupplier.class)
+        @NotNull @Valid KopierGrunnlagRequest request) {
         kopierOgLagreGrunnlag(request, true);
         return Response.ok().build();
     }
 
-    private void kopierOgLagreGrunnlag(KopierGrunnlagRequestAbac request, boolean beholdInntektsmeldinger) {
+    private void kopierOgLagreGrunnlag(KopierGrunnlagRequest request, boolean beholdInntektsmeldinger) {
         var koblingReferanse = new KoblingReferanse(request.getNyReferanse());
         var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
 
@@ -191,7 +179,7 @@ public class GrunnlagRestTjeneste {
         koblingLås.ifPresent(lås -> koblingTjeneste.oppdaterLåsVersjon(lås));
     }
 
-    private UUID utledSisteKjenteGrunnlagReferanseFraSpesifikasjon(InntektArbeidYtelseGrunnlagRequestAbacDto spesifikasjon) {
+    private UUID utledSisteKjenteGrunnlagReferanseFraSpesifikasjon(InntektArbeidYtelseGrunnlagRequest spesifikasjon) {
         final var sisteKjenteGrunnlagReferanse = spesifikasjon.getSisteKjenteGrunnlagReferanse();
         final var forespurtGrunnlagReferanse = spesifikasjon.getGrunnlagReferanse();
 
@@ -269,72 +257,30 @@ public class GrunnlagRestTjeneste {
                 koblingReferanse.getReferanse())); // legger til saksnummer i MDC
     }
 
-    /**
-     * Json bean med Abac.
-     */
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
-    @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
-    public static class InntektArbeidYtelseGrunnlagRequestAbacDto extends InntektArbeidYtelseGrunnlagRequest implements AbacDto {
-
-        @JsonCreator
-        public InntektArbeidYtelseGrunnlagRequestAbacDto(@JsonProperty(value = "personIdent", required = true) @Valid @NotNull PersonIdent person) {
-            super(person);
-        }
+    public static class InntektArbeidYtelseGrunnlagRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         @Override
-        public AbacDataAttributter abacAttributter() {
-            return lagAbacAttributter(getPerson());
-        }
-
-    }
-
-    /**
-     * Json bean med Abac.
-     */
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
-    @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
-    public static class KopierGrunnlagRequestAbac extends KopierGrunnlagRequest implements AbacDto {
-
-        @JsonCreator
-        public KopierGrunnlagRequestAbac(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
-                                         @JsonProperty(value = "nyReferanse", required = true) @Valid @NotNull UUID nyReferanse,
-                                         @JsonProperty(value = "gammelReferanse", required = true) @Valid @NotNull UUID gammelReferanse,
-                                         @JsonProperty(value = "ytelseType", required = true) @Valid @NotNull no.nav.abakus.iaygrunnlag.kodeverk.YtelseType ytelseType,
-                                         @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
-                                         @JsonProperty(value = "dataset", required = false) @Valid Set<Dataset> dataset) {
-
-            super(saksnummer, nyReferanse, gammelReferanse, ytelseType, aktør, dataset == null ? EnumSet.allOf(Dataset.class) : dataset);
-        }
-
-        @Override
-        public AbacDataAttributter abacAttributter() {
-            return lagAbacAttributter(getAktør());
+        public AbacDataAttributter apply(Object obj) {
+            var req = (InntektArbeidYtelseGrunnlagRequest) obj;
+            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.SAKSNUMMER, req.getSaksnummer());
         }
     }
 
-    /**
-     * Json bean med Abac.
-     */
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonInclude(value = JsonInclude.Include.NON_ABSENT, content = JsonInclude.Include.NON_EMPTY)
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.NONE)
-    public static class OverstyrtInntektArbeidYtelseAbacDto extends OverstyrtInntektArbeidYtelseDto implements AbacDto {
-
-        @JsonCreator
-        public OverstyrtInntektArbeidYtelseAbacDto(@JsonProperty(value = "personIdent", required = true) PersonIdent person,
-                                                   @JsonProperty(value = "grunnlagReferanse") @Valid @NotNull UUID grunnlagReferanse,
-                                                   @JsonProperty(value = "koblingReferanse") @Valid @NotNull UUID koblingReferanse,
-                                                   @JsonProperty(value = "ytelseType") YtelseType ytelseType,
-                                                   @JsonProperty(value = "arbeidsforholdInformasjon") ArbeidsforholdInformasjon arbeidsforholdInformasjon,
-                                                   @JsonProperty(value = "overstyrt") InntektArbeidYtelseAggregatOverstyrtDto overstyrt) {
-            super(person, grunnlagReferanse, koblingReferanse, ytelseType, arbeidsforholdInformasjon, overstyrt);
-        }
+    public static class KopierGrunnlagRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         @Override
-        public AbacDataAttributter abacAttributter() {
-            return lagAbacAttributter(getPerson());
+        public AbacDataAttributter apply(Object obj) {
+            var req = (KopierGrunnlagRequest) obj;
+            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.SAKSNUMMER, req.getSaksnummer());
+        }
+    }
+
+    public static class OverstyrGrunnlagRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
+
+        @Override
+        public AbacDataAttributter apply(Object obj) {
+            var req = (OverstyrGrunnlagRequest) obj;
+            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.SAKSNUMMER, req.getSaksnummer());
         }
     }
 }

@@ -2,16 +2,15 @@ package no.nav.abakus.iaygrunnlag.request;
 
 import java.util.UUID;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
@@ -41,17 +40,16 @@ public class InntektsmeldingerMottattRequest {
     @Valid
     private InntektsmeldingerDto inntektsmeldinger;
 
-    /**
-     * Optional - for now, gjør required når K9, FP sender.
-     */
     @JsonProperty(value = "ytelseType")
+    @NotNull
+    @Valid
     private YtelseType ytelseType = YtelseType.UDEFINERT;
 
     @JsonCreator
     public InntektsmeldingerMottattRequest(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
                                            @JsonProperty(value = "koblingReferanse", required = true) @Valid @NotNull UUID koblingReferanse,
                                            @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
-                                           @JsonProperty(value = "ytelseType") @Valid YtelseType ytelseType,
+                                           @JsonProperty(value = "ytelseType") @NotNull @Valid YtelseType ytelseType,
                                            @JsonProperty(value = "inntektsmeldinger", required = true) @NotNull @Valid InntektsmeldingerDto inntektsmeldinger) {
         this.saksnummer = saksnummer;
         this.koblingReferanse = koblingReferanse;

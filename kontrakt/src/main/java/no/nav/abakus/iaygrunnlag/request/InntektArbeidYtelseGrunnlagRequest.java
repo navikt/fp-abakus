@@ -6,11 +6,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -19,6 +14,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import no.nav.abakus.iaygrunnlag.PersonIdent;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
@@ -43,6 +42,7 @@ public class InntektArbeidYtelseGrunnlagRequest {
     @NotNull
     private PersonIdent person;
     @JsonProperty(value = "ytelseType")
+    @NotNull
     @Valid
     private YtelseType ytelseType;
     /**
@@ -68,6 +68,7 @@ public class InntektArbeidYtelseGrunnlagRequest {
      * Angi evt. hvilken sak det gjelder.
      */
     @JsonProperty(value = "saksnummer")
+    @NotNull
     @Valid
     @Pattern(regexp = "^[A-Za-z0-9_\\.\\-:]+$", message = "[${validatedValue}] matcher ikke tillatt pattern '{value}'")
     private String saksnummer;
@@ -83,8 +84,12 @@ public class InntektArbeidYtelseGrunnlagRequest {
     }
 
     @JsonCreator
-    public InntektArbeidYtelseGrunnlagRequest(@JsonProperty(value = "personIdent", required = true) @Valid @NotNull PersonIdent person) {
+    public InntektArbeidYtelseGrunnlagRequest(@JsonProperty(value = "personIdent", required = true) @Valid @NotNull PersonIdent person,
+                                              @JsonProperty(value = "saksnummer") @Valid @NotNull String saksnummer,
+                                              @JsonProperty(value = "ytelseType") @Valid @NotNull YtelseType ytelseType) {
         this.person = Objects.requireNonNull(person, "person");
+        this.saksnummer = Objects.requireNonNull(saksnummer, "saksnummer");
+        this.ytelseType = Objects.requireNonNull(ytelseType, "ytelseType");
     }
 
     @AssertTrue(message = "grunnlagReferanse eller koblingReferanse eller saksnummer må spesifiseres")
@@ -99,16 +104,6 @@ public class InntektArbeidYtelseGrunnlagRequest {
 
     public InntektArbeidYtelseGrunnlagRequest medDataset(Collection<Dataset> data) {
         this.dataset = Set.copyOf(data);
-        return this;
-    }
-
-    public InntektArbeidYtelseGrunnlagRequest medSaksnummer(String saksnummer) {
-        this.saksnummer = saksnummer;
-        return this;
-    }
-
-    public InntektArbeidYtelseGrunnlagRequest medYtelseType(YtelseType ytelseType) {
-        this.ytelseType = ytelseType;
         return this;
     }
 

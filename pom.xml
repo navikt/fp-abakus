@@ -35,9 +35,9 @@
 
         <kontrakt.java.version>21</kontrakt.java.version>
 
-		<felles.version>7.5.1</felles.version>
+		<felles.version>7.5.4</felles.version>
 		<prosesstask.version>5.1.5</prosesstask.version>
-		<kontrakter.version>9.2.7</kontrakter.version>
+		<kontrakter.version>9.3.0</kontrakter.version>
         <tidsserie.version>2.7.3</tidsserie.version>
 
         <!-- Forteller til maven-deploy-plugin at artefaktet ikke skal deployes.
@@ -81,14 +81,6 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
-
-			<dependency>
-				<groupId>no.nav.foreldrepenger.kontrakter</groupId>
-				<artifactId>fp-kontrakter-root</artifactId>
-				<version>${kontrakter.version}</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
 
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
