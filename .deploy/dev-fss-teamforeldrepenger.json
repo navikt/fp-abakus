@@ -1,5 +1,4 @@
 {
-  "environment": "dev",
   "kafkaPool": "nav-dev",
   "minReplicas": "1",
   "maxReplicas": "2",
