@@ -1,5 +1,4 @@
 {
-  "environment": "prod",
   "kafkaPool": "nav-prod",
   "minReplicas": "2",
   "maxReplicas": "6",
