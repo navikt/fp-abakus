@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <appender name="stdout_json" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="stdoutConsoleLogger" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
                 <maxLength>15000</maxLength>
@@ -25,22 +25,14 @@
         </encoder>
     </appender>
 
-    <appender name="auditLogger" class="com.papertrailapp.logback.Syslog4jAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <pattern>%m%n%xEx</pattern>
-        </layout>
-
-        <syslogConfig class="org.productivity.java.syslog4j.impl.net.tcp.TCPNetSyslogConfig">
-            <!-- remote system to log to -->
-            <host>audit.nais</host>
-            <!-- remote port to log to -->
-            <port>6514</port>
-            <ident>fpabakus</ident>
-            <!-- max log message length in bytes -->
-            <maxMessageLength>128000</maxMessageLength>
-        </syslogConfig>
+    <!-- Sporbarhetslog -->
+    <appender name="auditLogger" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>audit.nais:6514</destination>
+        <writeBufferSize>128000</writeBufferSize>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${HOSTNAME} ${NAIS_APP_NAME}: %msg%n</pattern>
+        </encoder>
     </appender>
-
 
     <logger name="no.nav" level="${log.level.no.nav:-INFO}"/>
     <logger name="no.nav.vault" level="${log.level.no.nav.vault:-WARN}"/>
@@ -56,7 +48,7 @@
     <logger name="org.flywaydb" level="${log.level.org.flywaydb:-INFO}"/>
     <logger name="org.apache" level="${log.level.org.apache:-ERROR}"/>
     <logger name="org.jboss.weld" level="${log.level.org.jboss.weld:-WARN}"/>
-    <logger name="org.glassfish.jersey" level="${log.level.org.glassfish.jersey:-WARN}" />
+    <logger name="org.glassfish.jersey" level="${log.level.org.glassfish.jersey:-WARN}"/>
 
     <!-- denne logger passord på INFO nivå! -->
     <logger name="no.nav.modig.core.test.PropertySetter"
@@ -66,12 +58,11 @@
         <appender-ref ref="auditLogger"/>
     </logger>
 
-    <logger level="OFF" name="sporing" additivity="false" />
-
-    <include optional="true" resource="logback-${NAIS_CLUSTER_NAME}.xml"/>
+    <logger name="sporing" level="OFF" additivity="false"/>
 
     <root level="${log.level.root:-INFO}">
-        <appender-ref ref="stdout_json"/>
+        <appender-ref ref="stdoutConsoleLogger"/>
     </root>
 
+    <include optional="true" resource="logback-${NAIS_CLUSTER_NAME}.xml"/>
 </configuration>
