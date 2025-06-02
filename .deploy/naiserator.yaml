@@ -46,7 +46,7 @@ spec:
   kafka:
     pool: {{kafkaPool}}
   secureLogs:
-    enabled: true
+    enabled: false
   observability:
     autoInstrumentation:
       enabled: true
@@ -54,6 +54,10 @@ spec:
       destinations:
         - id: "grafana-lgtm"
         - id: "elastic-apm"
+    logging:
+      destinations:
+        - id: loki
+        - id: elastic
   vault:
     enabled: true
   envFrom:
