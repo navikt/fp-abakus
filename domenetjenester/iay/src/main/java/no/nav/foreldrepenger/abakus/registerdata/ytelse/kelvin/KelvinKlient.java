@@ -81,6 +81,9 @@ public class KelvinKlient {
             .map(u -> KelvinKlient.mapTilMeldekortMKAcl(u, vedtak.kildesystem()))
             .sorted(Comparator.comparing(MeldekortUtbetalingsgrunnlagMeldekort::getMeldekortFom))
             .toList();
+        // Kan hende barnetillegg må ganges med barnMedStonad
+        var vedtaksdagsats = Optional.ofNullable(vedtak.dagsatsEtterUføreReduksjon()).or(() -> Optional.ofNullable(vedtak.dagsats())).orElse(0);
+        var vedtaksdagsatsMedBarnetillegg = vedtaksdagsats + Optional.ofNullable(vedtak.barnetillegg()).orElse(0);
         return MeldekortUtbetalingsgrunnlagSak.MeldekortSakBuilder.ny()
             .leggTilMeldekort(mk)
             .medType(YtelseType.ARBEIDSAVKLARINGSPENGER)
@@ -93,16 +96,12 @@ public class KelvinKlient {
             .medVedtattDato(vedtak.vedtaksdato())
             .medVedtaksPeriodeFom(Tid.fomEllerMin(vedtak.periode().fraOgMedDato()))
             .medVedtaksPeriodeTom(Tid.tomEllerMax(vedtak.periode().tilOgMedDato()))
-            .medVedtaksDagsats(vedtak.dagsats() != null ? BigDecimal.valueOf(vedtak.dagsats()) : null)
+            .medVedtaksDagsats(BigDecimal.valueOf(vedtaksdagsatsMedBarnetillegg))
             .build();
     }
 
     private static MeldekortUtbetalingsgrunnlagMeldekort mapTilMeldekortMKAcl(ArbeidsavklaringspengerResponse.AAPUtbetaling utbetaling,
                                                                               ArbeidsavklaringspengerResponse.Kildesystem kildesystem) {
-        // OBS utbetaling / barnetillegg
-        if (utbetaling.barnetilegg() != null && utbetaling.barnetilegg() > 0) {
-            LOG.info("Maksimum AAP Klient har barnetillegg {}", utbetaling);
-        }
         return MeldekortUtbetalingsgrunnlagMeldekort.MeldekortMeldekortBuilder.ny()
             .medMeldekortFom(Tid.fomEllerMin(utbetaling.periode().fraOgMedDato()))
             .medMeldekortTom(Tid.tomEllerMax(utbetaling.periode().tilOgMedDato()))
