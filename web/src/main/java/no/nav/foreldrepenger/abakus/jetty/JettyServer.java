@@ -43,13 +43,10 @@ public class JettyServer {
     }
 
     public static void main(String[] args) throws Exception {
-        jettyServer(args).bootStrap();
+        jettyServer().bootStrap();
     }
 
-    private static JettyServer jettyServer(String[] args) {
-        if (args.length > 0) {
-            return new JettyServer(Integer.parseUnsignedInt(args[0]));
-        }
+    protected static JettyServer jettyServer() {
         return new JettyServer(ENV.getProperty("server.port", Integer.class, 8080));
     }
 
