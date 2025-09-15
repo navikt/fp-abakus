@@ -55,6 +55,14 @@
       "roles": [
         "ekstern"
       ]
+    },
+    {
+      "app": "modiapersonoversikt-api",
+      "namespace": "personoversikt",
+      "cluster": "prod-gcp",
+      "roles": [
+        "ekstern"
+      ]
     }
   ]
 }
