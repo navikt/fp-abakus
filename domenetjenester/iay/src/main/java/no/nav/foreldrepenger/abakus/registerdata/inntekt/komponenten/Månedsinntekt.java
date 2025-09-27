@@ -86,7 +86,7 @@ public class Månedsinntekt {
 
     @Override
     public String toString() {
-        return "Månedsinntekt{" + "beløp=" + beløp + ", måned=" + måned + ", arbeidsgiver='" + arbeidsgiver + '\'' + ", arbeidsforholdRef='"
+        return "Månedsinntekt{" + "beløp=" + beløp + ", måned=" + måned + '\'' + ", arbeidsforholdRef='"
             + arbeidsforholdRef + '\'' + ", ytelseKode='" + ytelseKode + '\'' + ", pensjonKode='" + pensjonKode + '\''
             + ", skatteOgAvgiftsregelType='" + skatteOgAvgiftsregelType + '\'' + ", næringsinntektKode='" + næringsinntektKode + '\''
             + ", lønnsbeskrivelseKode='" + lønnsbeskrivelseKode + '\'' + ", ytelse=" + ytelse + '}';
