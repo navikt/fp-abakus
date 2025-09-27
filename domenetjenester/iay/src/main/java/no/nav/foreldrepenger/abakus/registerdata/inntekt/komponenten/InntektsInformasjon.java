@@ -59,4 +59,18 @@ public class InntektsInformasjon {
         return kilde;
     }
 
+    public static boolean erLik(InntektsInformasjon a, InntektsInformasjon b) {
+        if (a == b) {
+            return true;
+        }
+        if (a == null || b == null) {
+            return false;
+        }
+        return a.kilde == b.kilde && likeMånedsinntekter(a.månedsinntekter, b.månedsinntekter);
+    }
+
+    private static boolean likeMånedsinntekter(List<Månedsinntekt> a, List<Månedsinntekt> b) {
+        return a.size() == b.size() && a.containsAll(b);
+    }
+
 }

@@ -26,6 +26,7 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdId
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.ArbeidsforholdTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.FinnInntektRequest;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektTjeneste;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektV2Tjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.FpwsproxyKlient;
@@ -47,6 +48,7 @@ public class InnhentingSamletTjeneste {
     private static final boolean FAILSOFT_DEV = Environment.current().isDev();
     private ArbeidsforholdTjeneste arbeidsforholdTjeneste;
     private InntektTjeneste inntektTjeneste;
+    private InntektV2Tjeneste inntektV2Tjeneste;
     private FpwsproxyKlient fpwsproxyKlient;
     private InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste;
     private LønnskompensasjonRepository lønnskompensasjonRepository;
@@ -59,12 +61,14 @@ public class InnhentingSamletTjeneste {
     @Inject
     public InnhentingSamletTjeneste(ArbeidsforholdTjeneste arbeidsforholdTjeneste,
                                     InntektTjeneste inntektTjeneste,
+                                    InntektV2Tjeneste inntektV2Tjeneste,
                                     InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste,
                                     LønnskompensasjonRepository lønnskompensasjonRepository,
                                     FpwsproxyKlient fpwsproxyKlient,
                                     KelvinKlient kelvinKlient) {
         this.arbeidsforholdTjeneste = arbeidsforholdTjeneste;
         this.inntektTjeneste = inntektTjeneste;
+        this.inntektV2Tjeneste = inntektV2Tjeneste;
         this.fpwsproxyKlient = fpwsproxyKlient;
         this.innhentingInfotrygdTjeneste = innhentingInfotrygdTjeneste;
         this.lønnskompensasjonRepository = lønnskompensasjonRepository;
@@ -78,6 +82,13 @@ public class InnhentingSamletTjeneste {
         builder.medAktørId(aktørId.getId());
 
         return inntektTjeneste.finnInntekt(builder.build(), kilde);
+    }
+
+    public Map<InntektskildeType, InntektsInformasjon> getInntektsInformasjonV2(AktørId aktørId, IntervallEntitet periode, Set<InntektskildeType> kilder) {
+        var builder = FinnInntektRequest.builder(YearMonth.from(periode.getFomDato()), YearMonth.from(periode.getTomDato()))
+            .medAktørId(aktørId.getId());
+
+        return inntektV2Tjeneste.finnInntekt(builder.build(), kilder);
     }
 
     public boolean skalInnhenteLønnskompensasjon(Kobling kobling, @SuppressWarnings("unused") InntektskildeType kilde) {

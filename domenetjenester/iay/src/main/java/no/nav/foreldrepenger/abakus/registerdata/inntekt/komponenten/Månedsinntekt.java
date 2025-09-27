@@ -70,6 +70,28 @@ public class Månedsinntekt {
         return lønnsbeskrivelseKode;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Månedsinntekt that && ytelse == that.ytelse && Objects.equals(beløp, that.beløp) && Objects.equals(måned, that.måned) && Objects.equals(arbeidsgiver,
+            that.arbeidsgiver) && Objects.equals(arbeidsforholdRef, that.arbeidsforholdRef) && Objects.equals(ytelseKode, that.ytelseKode)
+            && Objects.equals(pensjonKode, that.pensjonKode) && Objects.equals(skatteOgAvgiftsregelType, that.skatteOgAvgiftsregelType)
+            && Objects.equals(næringsinntektKode, that.næringsinntektKode) && Objects.equals(lønnsbeskrivelseKode, that.lønnsbeskrivelseKode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(beløp, måned, arbeidsgiver, arbeidsforholdRef, ytelseKode, pensjonKode, skatteOgAvgiftsregelType, næringsinntektKode,
+            lønnsbeskrivelseKode, ytelse);
+    }
+
+    @Override
+    public String toString() {
+        return "Månedsinntekt{" + "beløp=" + beløp + ", måned=" + måned + ", arbeidsgiver='" + arbeidsgiver + '\'' + ", arbeidsforholdRef='"
+            + arbeidsforholdRef + '\'' + ", ytelseKode='" + ytelseKode + '\'' + ", pensjonKode='" + pensjonKode + '\''
+            + ", skatteOgAvgiftsregelType='" + skatteOgAvgiftsregelType + '\'' + ", næringsinntektKode='" + næringsinntektKode + '\''
+            + ", lønnsbeskrivelseKode='" + lønnsbeskrivelseKode + '\'' + ", ytelse=" + ytelse + '}';
+    }
+
     public static class Builder {
         private BigDecimal beløp;
         private YearMonth måned;
