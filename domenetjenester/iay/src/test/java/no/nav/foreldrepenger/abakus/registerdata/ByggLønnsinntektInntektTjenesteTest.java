@@ -17,6 +17,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.SkatteOgAvgiftsregelType;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.InntektsInformasjon;
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Inntektstype;
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 
@@ -26,14 +27,7 @@ class ByggLønnsinntektInntektTjenesteTest {
 
     @Test
     void skal_mappe_svalbarinntekt() {
-        var månedsinntektBuilder = new Månedsinntekt.Builder();
-        var svalbardinntekt = månedsinntektBuilder.medBeløp(BigDecimal.TEN)
-            .medMåned(YearMonth.now())
-            .medArbeidsgiver(ORGNR)
-            .medArbeidsforholdRef(null)
-            .medLønnsbeskrivelseKode(null)
-            .medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.SVALBARD.getOffisiellKode())
-            .build();
+        var svalbardinntekt = new Månedsinntekt(Inntektstype.LØNN, YearMonth.now(), BigDecimal.TEN, null, ORGNR, SkatteOgAvgiftsregelType.SVALBARD.getOffisiellKode());
         var inntektsInformasjon = new InntektsInformasjon(List.of(svalbardinntekt), InntektskildeType.INNTEKT_BEREGNING);
         var arbeidsgivereLookup = Map.of(ORGNR, Arbeidsgiver.virksomhet(new OrgNummer(ORGNR)));
 
@@ -59,24 +53,10 @@ class ByggLønnsinntektInntektTjenesteTest {
 
     @Test
     void skal_prioritere_NETTOLØNN_FOR_SJØFOLK() {
-        var månedsinntektBuilder = new Månedsinntekt.Builder();
-        var svalbardinntekt = månedsinntektBuilder.medBeløp(BigDecimal.TEN)
-            .medMåned(YearMonth.now())
-            .medArbeidsgiver(ORGNR)
-            .medArbeidsforholdRef(null)
-            .medLønnsbeskrivelseKode(null)
-            .medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.SVALBARD.getOffisiellKode())
-            .build();
+        var svalbardinntekt = new Månedsinntekt(Inntektstype.LØNN, YearMonth.now(), BigDecimal.TEN, null, ORGNR, SkatteOgAvgiftsregelType.SVALBARD.getOffisiellKode());
+        var nettolønn = new Månedsinntekt(Inntektstype.LØNN, YearMonth.now(), BigDecimal.TEN, null, ORGNR, SkatteOgAvgiftsregelType.NETTOLØNN_FOR_SJØFOLK.getOffisiellKode());
 
-        var særskiltFradrag = månedsinntektBuilder.medBeløp(BigDecimal.TEN)
-            .medMåned(YearMonth.now())
-            .medArbeidsgiver(ORGNR)
-            .medArbeidsforholdRef(null)
-            .medLønnsbeskrivelseKode(null)
-            .medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.NETTOLØNN_FOR_SJØFOLK.getOffisiellKode())
-            .build();
-
-        var inntektsInformasjon = new InntektsInformasjon(List.of(svalbardinntekt, særskiltFradrag), InntektskildeType.INNTEKT_BEREGNING);
+        var inntektsInformasjon = new InntektsInformasjon(List.of(svalbardinntekt, nettolønn), InntektskildeType.INNTEKT_BEREGNING);
         var arbeidsgivereLookup = Map.of(ORGNR, Arbeidsgiver.virksomhet(new OrgNummer(ORGNR)));
 
         // Act
@@ -100,22 +80,8 @@ class ByggLønnsinntektInntektTjenesteTest {
 
     @Test
     void skal_prioritere_SÆRSKILT_FRADRAG_FOR_SJØFOLK() {
-        var månedsinntektBuilder = new Månedsinntekt.Builder();
-        var svalbardinntekt = månedsinntektBuilder.medBeløp(BigDecimal.TEN)
-            .medMåned(YearMonth.now())
-            .medArbeidsgiver(ORGNR)
-            .medArbeidsforholdRef(null)
-            .medLønnsbeskrivelseKode(null)
-            .medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.SVALBARD.getOffisiellKode())
-            .build();
-
-        var særskiltFradrag = månedsinntektBuilder.medBeløp(BigDecimal.TEN)
-            .medMåned(YearMonth.now())
-            .medArbeidsgiver(ORGNR)
-            .medArbeidsforholdRef(null)
-            .medLønnsbeskrivelseKode(null)
-            .medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.SÆRSKILT_FRADRAG_FOR_SJØFOLK.getOffisiellKode())
-            .build();
+        var svalbardinntekt = new Månedsinntekt(Inntektstype.LØNN, YearMonth.now(), BigDecimal.TEN, null, ORGNR, SkatteOgAvgiftsregelType.SVALBARD.getOffisiellKode());
+        var særskiltFradrag = new Månedsinntekt(Inntektstype.LØNN, YearMonth.now(), BigDecimal.TEN, null, ORGNR, SkatteOgAvgiftsregelType.SÆRSKILT_FRADRAG_FOR_SJØFOLK.getOffisiellKode());
 
         var inntektsInformasjon = new InntektsInformasjon(List.of(svalbardinntekt, særskiltFradrag), InntektskildeType.INNTEKT_BEREGNING);
         var arbeidsgivereLookup = Map.of(ORGNR, Arbeidsgiver.virksomhet(new OrgNummer(ORGNR)));
@@ -141,24 +107,11 @@ class ByggLønnsinntektInntektTjenesteTest {
 
     @Test
     void skal_prioritere_SÆRSKILT_FRADRAG_FOR_SJØFOLK_foran_NETTOLØNN_FOR_SJØFOLK() {
-        var månedsinntektBuilder = new Månedsinntekt.Builder();
-        var svalbardinntekt = månedsinntektBuilder.medBeløp(BigDecimal.TEN)
-            .medMåned(YearMonth.now())
-            .medArbeidsgiver(ORGNR)
-            .medArbeidsforholdRef(null)
-            .medLønnsbeskrivelseKode(null)
-            .medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.NETTOLØNN_FOR_SJØFOLK.getOffisiellKode())
-            .build();
+        var nettolønn = new Månedsinntekt(Inntektstype.LØNN, YearMonth.now(), BigDecimal.TEN, null, ORGNR, SkatteOgAvgiftsregelType.NETTOLØNN_FOR_SJØFOLK.getOffisiellKode());
+        var særskiltFradrag = new Månedsinntekt(Inntektstype.LØNN, YearMonth.now(), BigDecimal.TEN, null, ORGNR, SkatteOgAvgiftsregelType.SÆRSKILT_FRADRAG_FOR_SJØFOLK.getOffisiellKode());
 
-        var særskiltFradrag = månedsinntektBuilder.medBeløp(BigDecimal.TEN)
-            .medMåned(YearMonth.now())
-            .medArbeidsgiver(ORGNR)
-            .medArbeidsforholdRef(null)
-            .medLønnsbeskrivelseKode(null)
-            .medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.SÆRSKILT_FRADRAG_FOR_SJØFOLK.getOffisiellKode())
-            .build();
 
-        var inntektsInformasjon = new InntektsInformasjon(List.of(svalbardinntekt, særskiltFradrag), InntektskildeType.INNTEKT_BEREGNING);
+        var inntektsInformasjon = new InntektsInformasjon(List.of(nettolønn, særskiltFradrag), InntektskildeType.INNTEKT_BEREGNING);
         var arbeidsgivereLookup = Map.of(ORGNR, Arbeidsgiver.virksomhet(new OrgNummer(ORGNR)));
 
         // Act
@@ -183,17 +136,7 @@ class ByggLønnsinntektInntektTjenesteTest {
 
     @Test
     void skal_mappe_omsorgsstønad() {
-        var månedsinntektBuilder = new Månedsinntekt.Builder();
-
-
-        var omsorgsstønad = månedsinntektBuilder.medBeløp(BigDecimal.TEN)
-            .medMåned(YearMonth.now())
-            .medArbeidsgiver(ORGNR)
-            .medArbeidsforholdRef(null)
-            .medLønnsbeskrivelseKode(null)
-            .medLønnsbeskrivelseKode(LønnsinntektBeskrivelse.KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE.getOffisiellKode())
-            .medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.NETTOLØNN.getOffisiellKode())
-            .build();
+        var omsorgsstønad = new Månedsinntekt(Inntektstype.LØNN, YearMonth.now(), BigDecimal.TEN, LønnsinntektBeskrivelse.KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE.getOffisiellKode(), ORGNR, SkatteOgAvgiftsregelType.NETTOLØNN.getOffisiellKode());
 
         var inntektsInformasjon = new InntektsInformasjon(List.of(omsorgsstønad), InntektskildeType.INNTEKT_BEREGNING);
         var arbeidsgivereLookup = Map.of(ORGNR, Arbeidsgiver.virksomhet(new OrgNummer(ORGNR)));
@@ -219,26 +162,8 @@ class ByggLønnsinntektInntektTjenesteTest {
 
     @Test
     void skal_mappe_omsorgsstønad_ved_fleire_beskrivelser() {
-        var månedsinntektBuilder = new Månedsinntekt.Builder();
-
-
-        var omsorgsstønad = månedsinntektBuilder.medBeløp(BigDecimal.TEN)
-            .medMåned(YearMonth.now())
-            .medArbeidsgiver(ORGNR)
-            .medArbeidsforholdRef(null)
-            .medLønnsbeskrivelseKode(null)
-            .medLønnsbeskrivelseKode(LønnsinntektBeskrivelse.KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE.getOffisiellKode())
-            .medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.NETTOLØNN.getOffisiellKode())
-            .build();
-
-        var ukjentLønn = månedsinntektBuilder.medBeløp(BigDecimal.TEN)
-            .medMåned(YearMonth.now())
-            .medArbeidsgiver(ORGNR)
-            .medArbeidsforholdRef(null)
-            .medLønnsbeskrivelseKode(null)
-            .medLønnsbeskrivelseKode("enUkjentKode")
-            .medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.NETTOLØNN.getOffisiellKode())
-            .build();
+        var omsorgsstønad = new Månedsinntekt(Inntektstype.LØNN, YearMonth.now(), BigDecimal.TEN, LønnsinntektBeskrivelse.KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE.getOffisiellKode(), ORGNR, SkatteOgAvgiftsregelType.NETTOLØNN.getOffisiellKode());
+        var ukjentLønn = new Månedsinntekt(Inntektstype.LØNN, YearMonth.now(), BigDecimal.TEN, LønnsinntektBeskrivelse.UDEFINERT.getOffisiellKode(), ORGNR, SkatteOgAvgiftsregelType.NETTOLØNN.getOffisiellKode());
 
 
         var inntektsInformasjon = new InntektsInformasjon(List.of(omsorgsstønad, ukjentLønn), InntektskildeType.INNTEKT_BEREGNING);
@@ -266,17 +191,8 @@ class ByggLønnsinntektInntektTjenesteTest {
 
     @Test
     void skal_mappe_ukjent_lønnsbeskrivelse_til_udefinert() {
-        var månedsinntektBuilder = new Månedsinntekt.Builder();
 
-
-        var ukjentLønn = månedsinntektBuilder.medBeløp(BigDecimal.TEN)
-            .medMåned(YearMonth.now())
-            .medArbeidsgiver(ORGNR)
-            .medArbeidsforholdRef(null)
-            .medLønnsbeskrivelseKode(null)
-            .medLønnsbeskrivelseKode("enUkjentKode")
-            .medSkatteOgAvgiftsregelType(SkatteOgAvgiftsregelType.NETTOLØNN.getOffisiellKode())
-            .build();
+        var ukjentLønn = new Månedsinntekt(Inntektstype.LØNN, YearMonth.now(), BigDecimal.TEN, "ukjent", ORGNR, SkatteOgAvgiftsregelType.NETTOLØNN.getOffisiellKode());
 
         var inntektsInformasjon = new InntektsInformasjon(List.of(ukjentLønn), InntektskildeType.INNTEKT_BEREGNING);
         var arbeidsgivereLookup = Map.of(ORGNR, Arbeidsgiver.virksomhet(new OrgNummer(ORGNR)));
@@ -297,7 +213,7 @@ class ByggLønnsinntektInntektTjenesteTest {
         assertThat(inntektspost.getInntektspostType()).isEqualTo(InntektspostType.LØNN);
         assertThat(inntektspost.getSkatteOgAvgiftsregelType()).isEqualTo(SkatteOgAvgiftsregelType.NETTOLØNN);
         assertThat(inntektspost.getLønnsinntektBeskrivelse()).isEqualTo(LønnsinntektBeskrivelse.UDEFINERT);
-        assertThat(inntektspost.getBeløp().getVerdi().compareTo(BigDecimal.valueOf(10))).isEqualTo(0);
+        assertThat(inntektspost.getBeløp().getVerdi().compareTo(BigDecimal.valueOf(10))).isZero();
     }
 
 

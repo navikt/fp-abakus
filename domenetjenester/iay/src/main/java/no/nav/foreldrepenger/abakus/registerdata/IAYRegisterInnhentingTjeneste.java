@@ -5,11 +5,11 @@ import static no.nav.foreldrepenger.abakus.registerdata.ByggLønnsinntektInntekt
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -119,22 +119,6 @@ public class IAYRegisterInnhentingTjeneste {
         inntektArbeidYtelseAggregatBuilder.leggTilAktørInntekt(aktørInntektBuilder);
     }
 
-    private class FnrSupplier {
-
-        private final AktørId aktørId;
-        public FnrSupplier(AktørId aktørId) {
-            this.aktørId = aktørId;
-        }
-
-        private PersonIdent tilPersonIdent() {
-            try {
-                return aktørConsumer.hentIdentForAktør(this.aktørId).orElse(null);
-            } catch (Exception e) {
-                return null;
-            }
-        }
-    }
-
     public InntektArbeidYtelseGrunnlagBuilder innhentRegisterdata(Kobling kobling, Set<RegisterdataElement> informasjonsElementer) {
         var grunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(
             inntektArbeidYtelseTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse()));
@@ -180,7 +164,7 @@ public class IAYRegisterInnhentingTjeneste {
                                   InntektArbeidYtelseAggregatBuilder builder,
                                   InntektsInformasjon inntektsInformasjon) {
         var aktørInntektBuilder = builder.getAktørInntektBuilder(aktørId);
-        InntektskildeType kilde = inntektsInformasjon.getKilde();
+        InntektskildeType kilde = inntektsInformasjon.kilde();
         aktørInntektBuilder.fjernInntekterFraKilde(kilde);
 
         Map<String, Arbeidsgiver> arbeidsgivereLookup = lagArbeidsgiverLookup(inntektsInformasjon);
@@ -194,26 +178,10 @@ public class IAYRegisterInnhentingTjeneste {
         }
     }
 
-    public void sammenlignInntekter(Kobling kobling, InntektskildeType kilde, InntektsInformasjon v1, InntektsInformasjon v2) {
-        try {
-            if (v2 == null) {
-                LOG.info("IKOMPV2: Mangler data for saksnummer {} kilde {}. Gammel: {}", kobling.getSaksnummer().getVerdi(), kilde, v1.getMånedsinntekter());
-            } else if (v2.getMånedsinntekter().size() != v1.getMånedsinntekter().size()) {
-                LOG.info("IKOMPV2: Ulik antall i inntektsinformasjon for saksnummer {} kilde {}. Gammel: {}, ny: {}", kobling.getSaksnummer().getVerdi(), kilde, v1.getMånedsinntekter(), v2.getMånedsinntekter());
-            } else if (!InntektsInformasjon.erLik(v1, v2)) {
-                LOG.info("IKOMPV2: Ulik innhold i inntektsinformasjon for saksnummer {} kilde {}. Gammel: {}, ny: {}", kobling.getSaksnummer().getVerdi(), kilde, v1.getMånedsinntekter(), v2.getMånedsinntekter());
-            } else {
-                LOG.info("IKOMPV2: like svar kilde {}", kilde);
-            }
-        } catch (Exception e) {
-            LOG.info("IKOMPV2: Feil ved sammenligning av inntektstjenester for saksnummer {} ", kobling.getSaksnummer().getVerdi(), e);
-        }
-    }
-
     private Map<String, Arbeidsgiver> lagArbeidsgiverLookup(InntektsInformasjon inntektsInformasjon) {
         Map<String, Set<YearMonth>> alleArbeidsgivereMedMåneder = inntektsInformasjon.getMånedsinntekterUtenomYtelser()
             .stream()
-            .collect(Collectors.groupingBy(Månedsinntekt::getArbeidsgiver, Collectors.mapping(Månedsinntekt::getMåned, Collectors.toSet())));
+            .collect(Collectors.groupingBy(Månedsinntekt::arbeidsgiver, Collectors.mapping(Månedsinntekt::måned, Collectors.toSet())));
         Map<String, Arbeidsgiver> arbeidsgivereLookup = new HashMap<>();
         alleArbeidsgivereMedMåneder.forEach((agString, måneder) -> Optional.ofNullable(finnArbeidsgiverForInntektsData(agString, måneder))
             .ifPresent(ag -> arbeidsgivereLookup.put(agString, ag)));
@@ -304,48 +272,25 @@ public class IAYRegisterInnhentingTjeneste {
             arbeidsforholdList.addAll(arbeidsforhold.keySet());
         }
 
-        Map<InntektskildeType, InntektsInformasjon> innhentetV2 = new LinkedHashMap<>();
-        try {
-            var kilder = informasjonsElementer.stream()
-                .filter(ELEMENT_TIL_INNTEKTS_KILDE_MAP::containsKey)
-                .map(ELEMENT_TIL_INNTEKTS_KILDE_MAP::get)
-                .collect(Collectors.toSet());
-            var brukKilder = kilder.isEmpty() ? Set.of(InntektskildeType.INNTEKT_OPPTJENING) : kilder;
-            innhentetV2.putAll(innhentingSamletTjeneste.getInntektsInformasjonV2(aktørId, opplysningsPeriode, brukKilder));
-        } catch (Exception e) {
-            LOG.info("IKOMPV2: Feil ved henting av inntektsinformasjon fra Inntekt V2 for aktørId {}. Fortsetter uten inntekter fra V2.", aktørId, e);
-        }
+        var inntektskilder = informasjonsElementer.stream()
+            .filter(ELEMENT_TIL_INNTEKTS_KILDE_MAP::containsKey)
+            .map(ELEMENT_TIL_INNTEKTS_KILDE_MAP::get)
+            .collect(Collectors.toSet());
+        var brukInntektskilder = inntektskilder.isEmpty() ? Set.of(InntektskildeType.INNTEKT_OPPTJENING) : inntektskilder;
+        var innhentetInntekt = innhentingSamletTjeneste.getInntektsInformasjon(aktørId, opplysningsPeriode, brukInntektskilder);
 
-        if (informasjonsElementer.stream().anyMatch(inntektselementer::contains)) {
-            informasjonsElementer.stream()
-                .filter(ELEMENT_TIL_INNTEKTS_KILDE_MAP::containsKey)
-                .forEach(registerdataElement -> innhentInntektsopplysningFor(kobling, aktørId, opplysningsPeriode, builder, informasjonsElementer,
-                    registerdataElement, innhentetV2));
-        } else {
-            Set.of(RegisterdataElement.INNTEKT_PENSJONSGIVENDE)
-                .forEach(registerdataElement -> innhentInntektsopplysningFor(kobling, aktørId, opplysningsPeriode, builder, informasjonsElementer,
-                    registerdataElement, innhentetV2));
-        }
+        innhentetInntekt.values().forEach(ii -> oppdatertMedLønnskompLeggtilInntekter(aktørId, opplysningsPeriode, builder, ii));
         return arbeidsforholdList;
     }
 
-    private void innhentInntektsopplysningFor(Kobling kobling,
-                                              AktørId aktørId,
-                                              IntervallEntitet opplysningsPeriode,
-                                              InntektArbeidYtelseAggregatBuilder builder,
-                                              Set<RegisterdataElement> informasjonsElementer,
-                                              RegisterdataElement registerdataElement,
-                                              Map<InntektskildeType, InntektsInformasjon> innhentetV2) {
-        var inntektsKilde = ELEMENT_TIL_INNTEKTS_KILDE_MAP.get(registerdataElement);
-        var inntektsInformasjon = innhentingSamletTjeneste.getInntektsInformasjon(aktørId, opplysningsPeriode, inntektsKilde);
-        sammenlignInntekter(kobling, inntektsKilde, inntektsInformasjon, innhentetV2.get(inntektsKilde));
-
-        // En slags ytelse som er utbetalt fra NAV til bruker som LØNN ...
-        if (innhentingSamletTjeneste.skalInnhenteLønnskompensasjon(kobling, inntektsKilde)) {
-            inntektsInformasjon.leggTilMånedsinntekter(innhentingSamletTjeneste.getLønnskompensasjon(aktørId, opplysningsPeriode));
-        }
-        if (informasjonsElementer.contains(registerdataElement)) {
-            leggTilInntekter(aktørId, builder, inntektsInformasjon);
+    private void oppdatertMedLønnskompLeggtilInntekter(AktørId aktørId, IntervallEntitet opplysningsPeriode, InntektArbeidYtelseAggregatBuilder builder, InntektsInformasjon ii) {
+        var lk = innhentingSamletTjeneste.getLønnskompensasjon(aktørId, opplysningsPeriode);
+        if (lk != null && !lk.isEmpty()) {
+            var oppdatert = new ArrayList<>(ii.månedsinntekter());
+            oppdatert.addAll(lk);
+            leggTilInntekter(aktørId, builder, new InntektsInformasjon(oppdatert, ii.kilde()));
+        } else {
+            leggTilInntekter(aktørId, builder, ii);
         }
     }
 
@@ -396,22 +341,20 @@ public class IAYRegisterInnhentingTjeneste {
 
     private void lagInntektsposterYtelse(Månedsinntekt månedsinntekt, InntektBuilder inntektBuilder) {
         inntektBuilder.leggTilInntektspost(inntektBuilder.getInntektspostBuilder()
-            .medBeløp(månedsinntekt.getBeløp())
-            .medPeriode(månedsinntekt.getMåned().atDay(1), månedsinntekt.getMåned().atEndOfMonth())
+            .medBeløp(månedsinntekt.beløp())
+            .medPeriode(månedsinntekt.måned().atDay(1), månedsinntekt.måned().atEndOfMonth())
             .medInntektspostType(InntektspostType.YTELSE)
             .medYtelse(mapTilKodeliste(månedsinntekt)));
     }
 
 
     private InntektYtelseType mapTilKodeliste(Månedsinntekt månedsinntekt) {
-        if (månedsinntekt.getPensjonKode() != null) {
-            return InntektYtelseType.finnForKodeverkEiersKode(InntektYtelseType.Kategori.TRYGD, månedsinntekt.getPensjonKode());
-        } else if (månedsinntekt.getYtelseKode() != null) {
-            return InntektYtelseType.finnForKodeverkEiersKode(InntektYtelseType.Kategori.YTELSE, månedsinntekt.getYtelseKode());
-        } else if (månedsinntekt.getNæringsinntektKode() != null) {
-            return InntektYtelseType.finnForKodeverkEiersKode(InntektYtelseType.Kategori.NÆRING, månedsinntekt.getNæringsinntektKode());
-        }
-        return null;
+        return switch (månedsinntekt.inntektstype()) {
+            case YTELSE -> InntektYtelseType.finnForKodeverkEiersKode(InntektYtelseType.Kategori.YTELSE, månedsinntekt.beskrivelse());
+            case TRYGD -> InntektYtelseType.finnForKodeverkEiersKode(InntektYtelseType.Kategori.TRYGD, månedsinntekt.beskrivelse());
+            case NÆRING -> InntektYtelseType.finnForKodeverkEiersKode(InntektYtelseType.Kategori.NÆRING, månedsinntekt.beskrivelse());
+            case null, default ->  null;
+        };
     }
 
     private boolean skalInnhenteNæringsInntekterFor(Kobling kobling) {
