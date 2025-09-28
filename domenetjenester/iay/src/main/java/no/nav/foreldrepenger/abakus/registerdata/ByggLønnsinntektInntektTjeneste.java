@@ -31,7 +31,7 @@ class ByggLønnsinntektInntektTjeneste {
                                   Map<String, Arbeidsgiver> arbeidsgivereLookup) {
         mapTilArbeidsgiver(inntektsInformasjon, arbeidsgivereLookup).entrySet()
             .stream()
-            .map(e -> byggInntekt(e.getValue(), e.getKey(), aktørInntektBuilder, inntektsInformasjon.getKilde()))
+            .map(e -> byggInntekt(e.getValue(), e.getKey(), aktørInntektBuilder, inntektsInformasjon.kilde()))
             .forEach(aktørInntektBuilder::leggTilInntekt);
     }
 
@@ -40,9 +40,9 @@ class ByggLønnsinntektInntektTjeneste {
 
         return inntektsInformasjon.getMånedsinntekterUtenomYtelser()
             .stream()
-            .filter(mi -> arbeidsgivereLookup.get(mi.getArbeidsgiver()) != null)
-            .map(mi -> new MånedsbeløpOgSkatteOgAvgiftsregel(arbeidsgivereLookup.get(mi.getArbeidsgiver()), mi.getMåned(), mi.getBeløp(),
-                mi.getSkatteOgAvgiftsregelType(), mi.getLønnsbeskrivelseKode()))
+            .filter(mi -> arbeidsgivereLookup.get(mi.arbeidsgiver()) != null)
+            .map(mi -> new MånedsbeløpOgSkatteOgAvgiftsregel(arbeidsgivereLookup.get(mi.arbeidsgiver()), mi.måned(), mi.beløp(),
+                mi.skatteOgAvgiftsregelType(), mi.beskrivelse()))
             .collect(Collectors.groupingBy(MånedsbeløpOgSkatteOgAvgiftsregel::getArbeidsgiver,
                 Collectors.groupingBy(MånedsbeløpOgSkatteOgAvgiftsregel::getMåned)));
     }

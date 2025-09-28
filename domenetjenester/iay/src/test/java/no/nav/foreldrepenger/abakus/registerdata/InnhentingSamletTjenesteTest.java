@@ -25,13 +25,13 @@ import no.nav.foreldrepenger.abakus.typer.OrgNummer;
 class InnhentingSamletTjenesteTest {
 
 
-    private LønnskompensasjonRepository repository = mock(LønnskompensasjonRepository.class);
+    private final LønnskompensasjonRepository repository = mock(LønnskompensasjonRepository.class);
 
     private InnhentingSamletTjeneste samletTjeneste;
 
     @BeforeEach
-    public void before() {
-        samletTjeneste = new InnhentingSamletTjeneste(null, null, null, null, repository, null, null);
+    void before() {
+        samletTjeneste = new InnhentingSamletTjeneste(null, null, null, repository, null, null);
     }
 
     @Test
@@ -58,8 +58,8 @@ class InnhentingSamletTjenesteTest {
         // Act
         var mi = samletTjeneste.getLønnskompensasjon(lk.getAktørId(),
             IntervallEntitet.fraOgMedTilOgMed(LocalDate.now().minusMonths(17), LocalDate.now()));
-        assertThat(mi.size()).isEqualTo(2);
-        assertThat(mi.stream().filter(i -> i.getMåned().equals(YearMonth.from(tom))).findAny().orElse(null).getBeløp()).isEqualTo(
+        assertThat(mi).hasSize(2);
+        assertThat(mi.stream().filter(i -> i.måned().equals(YearMonth.from(tom))).findAny().orElseThrow().beløp()).isEqualTo(
             new BigDecimal(14000));
     }
 
