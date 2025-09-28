@@ -67,12 +67,6 @@
 			<artifactId>abakus-kontrakt</artifactId>
 		</dependency>
 
-		<!-- Andre NAV tjenestespesifikasjoner -->
-		<dependency>
-			<groupId>no.nav.tjenester</groupId>
-			<artifactId>aordningen-inntektsinformasjon-v1</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
 			<artifactId>felles-integrasjon-rest-klient</artifactId>

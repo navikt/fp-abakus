@@ -37,7 +37,7 @@
 
 		<felles.version>7.6.3</felles.version>
 		<prosesstask.version>5.2.0</prosesstask.version>
-		<kontrakter.version>9.4.1</kontrakter.version>
+		<kontrakter.version>9.4.3</kontrakter.version>
         <tidsserie.version>2.7.3</tidsserie.version>
 
         <!-- Forteller til maven-deploy-plugin at artefaktet ikke skal deployes.
@@ -184,12 +184,6 @@
                 <version>${felles.version}</version>
             </dependency>
 
-			<!-- NAV tjenestespesifikasjoner -->
-			<dependency>
-				<groupId>no.nav.tjenester</groupId>
-				<artifactId>aordningen-inntektsinformasjon-v1</artifactId>
-				<version>1.7</version>
-			</dependency>
         </dependencies>
 	</dependencyManagement>
 

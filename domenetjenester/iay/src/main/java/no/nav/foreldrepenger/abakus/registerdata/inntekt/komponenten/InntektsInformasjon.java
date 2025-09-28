@@ -1,76 +1,25 @@
 package no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
-import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt.YtelseNøkkel;
 
-public class InntektsInformasjon {
-
-    private final List<Månedsinntekt> månedsinntekter;
-    private final InntektskildeType kilde;
-
-    public InntektsInformasjon(List<Månedsinntekt> månedsinntekter, InntektskildeType kilde) {
-        this.månedsinntekter = new ArrayList<>();
-        this.månedsinntekter.addAll(månedsinntekter);
-        this.kilde = kilde;
-    }
-
-    public List<Månedsinntekt> getMånedsinntekter() {
-        return Collections.unmodifiableList(månedsinntekter);
-    }
-
-    public void leggTilMånedsinntekter(List<Månedsinntekt> inntekter) {
-        this.månedsinntekter.addAll(inntekter);
-    }
+public record InntektsInformasjon(List<Månedsinntekt> månedsinntekter, InntektskildeType kilde) {
 
     public List<Månedsinntekt> getMånedsinntekterUtenomYtelser() {
-        return getMånedsinntekter().stream().filter(it -> !it.isYtelse()).collect(Collectors.toList());
+        return månedsinntekter().stream().filter(it -> !it.isYtelse()).toList();
     }
 
     public List<Månedsinntekt> getYtelsesTrygdEllerPensjonInntektSummert() {
-        Map<YtelseNøkkel, List<Månedsinntekt>> ytelseNøkkel = månedsinntekter.stream()
+        // Grupperer og summerer pr måned/type/ytelse og lager ny liste med summerte beløp
+        return månedsinntekter().stream()
             .filter(Månedsinntekt::isYtelse)
-            .collect(Collectors.groupingBy(Månedsinntekt::getNøkkel));
-
-        List<Månedsinntekt> summert = new ArrayList<>();
-
-        for (Map.Entry<YtelseNøkkel, List<Månedsinntekt>> entry : ytelseNøkkel.entrySet()) {
-            BigDecimal sum = entry.getValue().stream().map(Månedsinntekt::getBeløp).reduce(BigDecimal.ZERO, BigDecimal::add);
-            Månedsinntekt.Builder builder = new Månedsinntekt.Builder();
-            YtelseNøkkel nøkkel = entry.getKey();
-            builder.medBeløp(sum);
-            builder.medYtelse(true);
-            builder.medYtelseKode(nøkkel.getYtelseKode());
-            builder.medNæringsinntektKode(nøkkel.getNæringsinntektKode());
-            builder.medPensjonEllerTrygdKode(nøkkel.getPensjonKode());
-            builder.medMåned(nøkkel.getMåned());
-            summert.add(builder.build());
-        }
-        return summert;
-    }
-
-    public InntektskildeType getKilde() {
-        return kilde;
-    }
-
-    public static boolean erLik(InntektsInformasjon a, InntektsInformasjon b) {
-        if (a == b) {
-            return true;
-        }
-        if (a == null || b == null) {
-            return false;
-        }
-        return a.kilde == b.kilde && likeMånedsinntekter(a.månedsinntekter, b.månedsinntekter);
-    }
-
-    private static boolean likeMånedsinntekter(List<Månedsinntekt> a, List<Månedsinntekt> b) {
-        return a.size() == b.size() && a.containsAll(b);
+            .collect(Collectors.groupingBy(Månedsinntekt::getNøkkel, Collectors.reducing(BigDecimal.ZERO, Månedsinntekt::beløp, BigDecimal::add)))
+            .entrySet().stream()
+            .map(e -> new Månedsinntekt(e.getKey().type(), e.getKey().måned(), e.getValue(), e.getKey().beskrivelse(), null, null))
+            .toList();
     }
 
 }
