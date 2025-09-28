@@ -127,8 +127,10 @@ public class InntektTjeneste {
             && TILLEGG_ETTERBETALING.equals(tilleggsinformasjon.type())
             && tilleggsinformasjon.startdato() != null
             && SKAL_PERIODISERE_INNTEKTSKILDE.contains(kilde)) {
-            LOG.info("InntektTjeneste Etterbetaling: Filter {} ytelse {} måned {} fom {} tom {}",
-                kilde, inntekt.beskrivelse(), brukYM, tilleggsinformasjon.startdato(), tilleggsinformasjon.sluttdato());
+            if (!Objects.equals(YearMonth.from(tilleggsinformasjon.startdato()), YearMonth.from(tilleggsinformasjon.sluttdato()))) {
+                LOG.info("InntektTjeneste Etterbetaling multimåned: Filter {} ytelse {} måned {} fom {} tom {}",
+                    kilde, inntekt.beskrivelse(), brukYM, tilleggsinformasjon.startdato(), tilleggsinformasjon.sluttdato());
+            }
             brukYM = YearMonth.from(tilleggsinformasjon.startdato().plusDays(1));
         }
         return brukYM;
