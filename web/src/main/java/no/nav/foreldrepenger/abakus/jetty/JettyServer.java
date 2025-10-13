@@ -26,6 +26,8 @@ import no.nav.foreldrepenger.abakus.app.konfig.InternalApiConfig;
 import no.nav.foreldrepenger.abakus.app.tjenester.ServiceStarterListener;
 import no.nav.foreldrepenger.konfig.Environment;
 
+import java.util.Locale;
+
 public class JettyServer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JettyServer.class);
@@ -40,7 +42,8 @@ public class JettyServer {
         this.serverPort = serverPort;
     }
 
-    public static void main(String[] args) throws Exception {
+    static void main() throws Exception {
+        LOG.info("JVM Default Locale: {}", Locale.getDefault());
         jettyServer().bootStrap();
     }
 
