@@ -104,9 +104,7 @@ public class VedtakYtelseBuilder {
      * @return true / false avhengig av tidsstempel
      */
     boolean erOppdatering() {
-        // Oppdatering dersom nytt vedtakstidspunkt er likt eller senere enn nåværende.
-        // Forkast meldinger med vedtakstidspunkt før gjeldende vedtakstidspunkt
-        return originalVedtattTidspunkt != null && ytelse.getVedtattTidspunkt() != null &&
-            !ytelse.getVedtattTidspunkt().isBefore(originalVedtattTidspunkt);
+        return originalVedtattTidspunkt != null && ytelse.getVedtattTidspunkt() != null && originalVedtattTidspunkt.isBefore(
+            ytelse.getVedtattTidspunkt());
     }
 }
