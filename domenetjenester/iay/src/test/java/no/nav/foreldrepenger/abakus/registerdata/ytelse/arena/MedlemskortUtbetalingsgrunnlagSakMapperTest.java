@@ -28,8 +28,6 @@ class MedlemskortUtbetalingsgrunnlagSakMapperTest {
         assertThat(tilTilstand(meldekortUtbetalingsgrunnlagSakDto.tilstand())).isEqualTo(domeneobjekt.getYtelseTilstand());
         assertThat(tilKilde(meldekortUtbetalingsgrunnlagSakDto.kilde())).isEqualTo(domeneobjekt.getKilde());
         assertThat(meldekortUtbetalingsgrunnlagSakDto.saksnummer()).isEqualTo(domeneobjekt.getSaksnummer().getVerdi());
-        assertThat(meldekortUtbetalingsgrunnlagSakDto.sakStatus()).isEqualTo(domeneobjekt.getSakStatus());
-        assertThat(meldekortUtbetalingsgrunnlagSakDto.vedtakStatus()).isEqualTo(domeneobjekt.getVedtakStatus());
         assertThat(meldekortUtbetalingsgrunnlagSakDto.kravMottattDato()).isEqualTo(domeneobjekt.getKravMottattDato());
         assertThat(meldekortUtbetalingsgrunnlagSakDto.vedtattDato()).isEqualTo(domeneobjekt.getVedtattDato());
         assertThat(meldekortUtbetalingsgrunnlagSakDto.vedtaksPeriodeFom()).isEqualTo(domeneobjekt.getVedtaksPeriodeFom());

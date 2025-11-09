@@ -19,8 +19,6 @@ public class MeldekortUtbetalingsgrunnlagSak {
     private YtelseStatus tilstand;
     private Fagsystem kilde;
     private Saksnummer saksnummer;
-    private String sakStatus;
-    private String vedtakStatus;
     private LocalDate kravMottattDato;
     private LocalDate vedtattDato;
     private LocalDate vedtaksPeriodeFom;
@@ -44,14 +42,6 @@ public class MeldekortUtbetalingsgrunnlagSak {
 
     public Saksnummer getSaksnummer() {
         return saksnummer;
-    }
-
-    public String getSakStatus() {
-        return sakStatus;
-    }
-
-    public String getVedtakStatus() {
-        return vedtakStatus;
     }
 
     public LocalDate getKravMottattDato() {
@@ -88,8 +78,8 @@ public class MeldekortUtbetalingsgrunnlagSak {
         }
         MeldekortUtbetalingsgrunnlagSak that = (MeldekortUtbetalingsgrunnlagSak) o;
         return erLikeMeldekort(meldekortene, that.meldekortene) && type == that.type && tilstand == that.tilstand && kilde == that.kilde
-            && Objects.equals(saksnummer, that.saksnummer) && Objects.equals(sakStatus, that.sakStatus) && Objects.equals(vedtakStatus,
-            that.vedtakStatus) && Objects.equals(kravMottattDato, that.kravMottattDato) && Objects.equals(vedtattDato, that.vedtattDato)
+            && Objects.equals(saksnummer, that.saksnummer)
+            && Objects.equals(kravMottattDato, that.kravMottattDato) && Objects.equals(vedtattDato, that.vedtattDato)
             && Objects.equals(vedtaksPeriodeFom, that.vedtaksPeriodeFom) && Objects.equals(vedtaksPeriodeTom, that.vedtaksPeriodeTom)
             && likeTallVerdier(vedtaksDagsats, that.vedtaksDagsats);
     }
@@ -122,21 +112,21 @@ public class MeldekortUtbetalingsgrunnlagSak {
 
     @Override
     public int hashCode() {
-        return Objects.hash(meldekortene, type, tilstand, kilde, saksnummer, sakStatus, vedtakStatus, kravMottattDato, vedtattDato, vedtaksPeriodeFom,
+        return Objects.hash(meldekortene, type, tilstand, kilde, saksnummer, kravMottattDato, vedtattDato, vedtaksPeriodeFom,
             vedtaksPeriodeTom, vedtaksDagsats);
     }
 
     @Override
     public String toString() {
         return "MeldekortUtbetalingsgrunnlagSak{" + "meldekortene=" + meldekortene + ", type=" + type + ", tilstand=" + tilstand + ", kilde=" + kilde
-            + ", saksnummer=" + saksnummer + ", sakStatus='" + sakStatus + '\'' + ", vedtakStatus='" + vedtakStatus + '\'' + ", kravMottattDato="
+            + ", saksnummer=" + saksnummer + ", kravMottattDato="
             + kravMottattDato + ", vedtattDato=" + vedtattDato + ", vedtaksPeriodeFom=" + vedtaksPeriodeFom + ", vedtaksPeriodeTom="
             + vedtaksPeriodeTom + ", vedtaksDagsats=" + vedtaksDagsats + '}';
     }
 
     public String utskriftUtenMK() {
         return "MeldekortUtbetalingsgrunnlagSak{" + "type=" + type + ", tilstand=" + tilstand + ", kilde=" + kilde
-            + ", saksnummer=" + saksnummer + ", sakStatus='" + sakStatus + '\'' + ", vedtakStatus='" + vedtakStatus + '\'' + ", kravMottattDato="
+            + ", saksnummer=" + saksnummer + ", kravMottattDato="
             + kravMottattDato + ", vedtattDato=" + vedtattDato + ", vedtaksPeriodeFom=" + vedtaksPeriodeFom + ", vedtaksPeriodeTom="
             + vedtaksPeriodeTom + ", vedtaksDagsats=" + vedtaksDagsats + '}';
     }
@@ -170,16 +160,6 @@ public class MeldekortUtbetalingsgrunnlagSak {
 
         public MeldekortSakBuilder medSaksnummer(Saksnummer saksnummer) {
             this.sak.saksnummer = saksnummer;
-            return this;
-        }
-
-        public MeldekortSakBuilder medSakStatus(String sakStatus) {
-            this.sak.sakStatus = sakStatus;
-            return this;
-        }
-
-        public MeldekortSakBuilder medVedtakStatus(String vedtakStatus) {
-            this.sak.vedtakStatus = vedtakStatus;
             return this;
         }
 

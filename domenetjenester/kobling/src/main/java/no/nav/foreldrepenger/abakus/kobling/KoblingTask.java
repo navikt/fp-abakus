@@ -1,5 +1,6 @@
 package no.nav.foreldrepenger.abakus.kobling;
 
+import jakarta.persistence.NoResultException;
 import no.nav.foreldrepenger.abakus.kobling.repository.LåsRepository;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
@@ -24,11 +25,16 @@ public abstract class KoblingTask implements ProsessTaskHandler {
         var koblingId = Long.valueOf(prosessTaskData.getPropertyValue(TaskConstants.KOBLING_ID));
         LOG_CONTEXT.add("koblingId", koblingId);
 
-        var koblingLås = låsRepository.taLås(koblingId);
+        try {
+            var koblingLås = låsRepository.taLås(koblingId);
 
-        prosesser(prosessTaskData);
+            prosesser(prosessTaskData);
 
-        låsRepository.oppdaterLåsVersjon(koblingLås);
+            låsRepository.oppdaterLåsVersjon(koblingLås);
+        } catch (NoResultException _) {
+            // NOOP - oppstår dersom det ikke lenger finnes en kobling som er aktiv, dvs behandlingen er avsluttet
+        }
+
     }
 
     protected abstract void prosesser(ProsessTaskData prosessTaskData);
