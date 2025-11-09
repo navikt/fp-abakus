@@ -26,8 +26,6 @@ public class MedlemskortUtbetalingsgrunnlagSakMapper {
             .medKilde(tilKilde(meldekortUtbetalingsgrunnlagSakDto.kilde()))
             .medSaksnummer(
                 meldekortUtbetalingsgrunnlagSakDto.saksnummer() != null ? new Saksnummer(meldekortUtbetalingsgrunnlagSakDto.saksnummer()) : null)
-            .medSakStatus(meldekortUtbetalingsgrunnlagSakDto.sakStatus())
-            .medVedtakStatus(meldekortUtbetalingsgrunnlagSakDto.vedtakStatus())
             .medKravMottattDato(meldekortUtbetalingsgrunnlagSakDto.kravMottattDato())
             .medVedtattDato(meldekortUtbetalingsgrunnlagSakDto.vedtattDato())
             .medVedtaksPeriodeFom(meldekortUtbetalingsgrunnlagSakDto.vedtaksPeriodeFom())

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
@@ -113,15 +114,25 @@ public class InnhentingSamletTjeneste {
         return innhentingInfotrygdTjeneste.getSPøkelseYtelser(ident, periode.getFomDato());
     }
 
-    public void innhentMaksimumAAP(PersonIdent ident, IntervallEntitet opplysningsPeriode, List<MeldekortUtbetalingsgrunnlagSak> arena) {
+    public List<MeldekortUtbetalingsgrunnlagSak> innhentMaksimumAAP(PersonIdent ident, IntervallEntitet opplysningsPeriode,
+                                                                    Saksnummer saksnummer,
+                                                                    List<MeldekortUtbetalingsgrunnlagSak> arena) {
+        var fom = opplysningsPeriode.getFomDato();
+        var tom = opplysningsPeriode.getTomDato();
+        var maksimumRespons = kelvinKlient.hentAAP(ident, fom, tom);
         try {
-            var fom = opplysningsPeriode.getFomDato();
-            var tom = opplysningsPeriode.getTomDato();
-            var kArena = kelvinKlient.hentAAP(ident, fom, tom, arena.size());
-            sammenligneArenaDirekteVsKelvin(arena, kArena);
-        } catch (Exception e) {
-            LOG.info("Maksimum AAP feil ved kall", e);
+            sammenligneArenaDirekteVsKelvin(arena, maksimumRespons.get(Fagsystem.ARENA));
+        } catch (Exception _) {
+            LOG.info("Maksimum AAP sammenligning av Arenadata for sak {} feilet", saksnummer.getVerdi());
         }
+        if (!maksimumRespons.getOrDefault(Fagsystem.KELVIN, List.of()).isEmpty()) {
+            var saksnumreAAP = maksimumRespons.get(Fagsystem.KELVIN).stream()
+                .map(MeldekortUtbetalingsgrunnlagSak::getSaksnummer)
+                .map(Saksnummer::getVerdi)
+                .collect(Collectors.joining(", "));
+            LOG.warn("Merk Dem! Sak {} har innhentet nye Arbeidsavklaringspenger saker {}. Kontakt produkteier for validering", saksnummer.getVerdi(), saksnumreAAP);
+        }
+        return maksimumRespons.getOrDefault(Fagsystem.KELVIN, List.of());
     }
 
     private void sammenligneArenaDirekteVsKelvin(List<MeldekortUtbetalingsgrunnlagSak> arena, List<MeldekortUtbetalingsgrunnlagSak> kelvin) {
@@ -161,11 +172,7 @@ public class InnhentingSamletTjeneste {
         List<MeldekortUtbetalingsgrunnlagSak> filtrert = new ArrayList<>();
         for (MeldekortUtbetalingsgrunnlagSak sak : saker) {
             if (sak.getKravMottattDato() == null) {
-                if (sak.getVedtakStatus() == null) {
-                    loggArenaIgnorert("vedtak", sak.getSaksnummer(), sak.getMeldekortene().size());
-                } else {
-                    loggArenaIgnorert("kravMottattDato", sak.getSaksnummer(), sak.getMeldekortene().size());
-                }
+                loggArenaIgnorert("kravMottattDato", sak.getSaksnummer(), sak.getMeldekortene().size());
             } else if (YtelseStatus.UNDER_BEHANDLING.equals(sak.getYtelseTilstand()) && sak.getMeldekortene().isEmpty()) {
                 loggArenaIgnorert("meldekort", sak.getSaksnummer());
             } else if (sak.getVedtaksPeriodeFom() == null && sak.getMeldekortene().isEmpty()) {

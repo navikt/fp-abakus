@@ -49,7 +49,10 @@ public class YtelseRegisterInnhenting {
             oversettMeldekortUtbetalingsgrunnlagTilYtelse(aktørYtelseBuilder, sak);
         }
         var aapsaker = arena.stream().filter(s -> YtelseType.ARBEIDSAVKLARINGSPENGER.equals(s.getYtelseType())).toList();
-        innhentingSamletTjeneste.innhentMaksimumAAP(ident, opplysningsPeriode, aapsaker);  // Har try/catch
+        List<MeldekortUtbetalingsgrunnlagSak> kelvin = innhentingSamletTjeneste.innhentMaksimumAAP(ident, opplysningsPeriode, behandling.getSaksnummer(), aapsaker);
+        for (MeldekortUtbetalingsgrunnlagSak sak : kelvin) {
+            oversettMeldekortUtbetalingsgrunnlagTilYtelse(aktørYtelseBuilder, sak);
+        }
 
         inntektArbeidYtelseAggregatBuilder.leggTilAktørYtelse(aktørYtelseBuilder);
     }

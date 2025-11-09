@@ -8,10 +8,8 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.Dependent;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
@@ -34,8 +32,6 @@ import no.nav.vedtak.konfig.Tid;
     scopesProperty = "kelvin.maksimum.scopes", scopesDefault = "api://prod-gcp.aap.api-intern/.default")
 public class KelvinKlient {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KelvinKlient.class);
-
     private final RestClient restClient;
     private final RestConfig restConfig;
     private final URI endpointHentAAP;
@@ -46,39 +42,34 @@ public class KelvinKlient {
         this.endpointHentAAP = restConfig.endpoint();
     }
 
-    public List<MeldekortUtbetalingsgrunnlagSak> hentAAP(PersonIdent ident, LocalDate fom, LocalDate tom, int antallArena) {
-        try {
-            var body = new KelvinRequest(ident.getIdent(), fom, tom);
-            var request = RestRequest.newPOSTJson(body, endpointHentAAP, restConfig);
-            var result = restClient.send(request, ArbeidsavklaringspengerResponse.class);
-            var resultAntall = result.vedtak().size();
-            var kelvinVedtak = result.vedtak().stream().filter(v -> ArbeidsavklaringspengerResponse.Kildesystem.KELVIN.equals(v.kildesystem())).toList();
-            var arenaVedtak = result.vedtak().stream().filter(v -> ArbeidsavklaringspengerResponse.Kildesystem.ARENA.equals(v.kildesystem())).toList();
-            if (resultAntall > 0 || antallArena > 0) {
-                LOG.info("Maksimum AAP Klient hentet {} vedtak - Kelvin {} Arena {} - mot mUG {} ", resultAntall, kelvinVedtak.size(), arenaVedtak.size(), antallArena);
-            }
-            if (!kelvinVedtak.isEmpty()) {
-                LOG.warn("Merk Dem! De observerer nå et tilfelle der bruker mottar nye AAP. Meld fra til overvåkningen umiddelbart. Vedtak {}", kelvinVedtak);
-            }
-            return mapTilMeldekortAcl(result);
-        } catch (Exception e) {
-            LOG.info("Maksimum AAP Klient feil ved kall", e);
-            return List.of();
-        }
+    public Map<Fagsystem, List<MeldekortUtbetalingsgrunnlagSak>> hentAAP(PersonIdent ident, LocalDate fom, LocalDate tom) {
+        var body = new KelvinRequest(ident.getIdent(), fom, tom);
+        var request = RestRequest.newPOSTJson(body, endpointHentAAP, restConfig);
+        var result = restClient.send(request, ArbeidsavklaringspengerResponse.class);
+        var kelvinVedtak = result.vedtak().stream().filter(v -> ArbeidsavklaringspengerResponse.Kildesystem.KELVIN.equals(v.kildesystem())).toList();
+        var arenaVedtak = result.vedtak().stream().filter(v -> ArbeidsavklaringspengerResponse.Kildesystem.ARENA.equals(v.kildesystem())).toList();
+        return Map.of(Fagsystem.ARENA, mapTilMeldekortAcl(arenaVedtak), Fagsystem.KELVIN, mapTilMeldekortAcl(kelvinVedtak));
     }
 
     public record KelvinRequest(String personidentifikator, LocalDate fraOgMedDato, LocalDate tilOgMedDato) { }
 
-    private static List<MeldekortUtbetalingsgrunnlagSak> mapTilMeldekortAcl(ArbeidsavklaringspengerResponse response) {
-        return response.vedtak().stream()
+    private static List<MeldekortUtbetalingsgrunnlagSak> mapTilMeldekortAcl(List<ArbeidsavklaringspengerResponse.AAPVedtak> vedtak) {
+        return vedtak.stream()
             .map(KelvinKlient::mapTilMeldekortSakAcl)
             .sorted(Comparator.comparing(MeldekortUtbetalingsgrunnlagSak::getVedtaksPeriodeFom))
             .toList();
     }
 
     private static MeldekortUtbetalingsgrunnlagSak mapTilMeldekortSakAcl(ArbeidsavklaringspengerResponse.AAPVedtak vedtak) {
+        return switch (vedtak.kildesystem()) {
+            case ARENA -> mapTilMeldekortSakAclArena(vedtak);
+            case KELVIN -> mapTilMeldekortSakAclKelvin(vedtak);
+        };
+    }
+
+    private static MeldekortUtbetalingsgrunnlagSak mapTilMeldekortSakAclArena(ArbeidsavklaringspengerResponse.AAPVedtak vedtak) {
         var mk = vedtak.utbetaling().stream()
-            .map(u -> KelvinKlient.mapTilMeldekortMKAcl(u, vedtak.kildesystem()))
+            .map(u -> KelvinKlient.mapTilMeldekortMKAclArena(u))
             .sorted(Comparator.comparing(MeldekortUtbetalingsgrunnlagMeldekort::getMeldekortFom))
             .toList();
         // Kan hende barnetillegg må ganges med barnMedStonad
@@ -87,11 +78,9 @@ public class KelvinKlient {
         return MeldekortUtbetalingsgrunnlagSak.MeldekortSakBuilder.ny()
             .leggTilMeldekort(mk)
             .medType(YtelseType.ARBEIDSAVKLARINGSPENGER)
-            .medTilstand(YtelseStatus.LØPENDE)
-            .medKilde(vedtak.kildesystem() == ArbeidsavklaringspengerResponse.Kildesystem.ARENA ? Fagsystem.ARENA : Fagsystem.KELVIN)
+            .medTilstand(tilTilstand(vedtak.status()))
+            .medKilde(Fagsystem.ARENA)
             .medSaksnummer(Optional.ofNullable(vedtak.saksnummer()).map(Saksnummer::new).orElse(null))
-            .medSakStatus(vedtak.status())
-            .medVedtakStatus(vedtak.status())
             .medKravMottattDato(vedtak.vedtaksdato())
             .medVedtattDato(vedtak.vedtaksdato())
             .medVedtaksPeriodeFom(Tid.fomEllerMin(vedtak.periode().fraOgMedDato()))
@@ -100,15 +89,53 @@ public class KelvinKlient {
             .build();
     }
 
-    private static MeldekortUtbetalingsgrunnlagMeldekort mapTilMeldekortMKAcl(ArbeidsavklaringspengerResponse.AAPUtbetaling utbetaling,
-                                                                              ArbeidsavklaringspengerResponse.Kildesystem kildesystem) {
+    private static MeldekortUtbetalingsgrunnlagMeldekort mapTilMeldekortMKAclArena(ArbeidsavklaringspengerResponse.AAPUtbetaling utbetaling) {
         return MeldekortUtbetalingsgrunnlagMeldekort.MeldekortMeldekortBuilder.ny()
             .medMeldekortFom(Tid.fomEllerMin(utbetaling.periode().fraOgMedDato()))
             .medMeldekortTom(Tid.tomEllerMax(utbetaling.periode().tilOgMedDato()))
             .medBeløp(Optional.ofNullable(utbetaling.belop()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO))
             .medDagsats(Optional.ofNullable(utbetaling.dagsats()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO))
-            .medUtbetalingsgrad(ArbeidsavklaringspengerResponse.Kildesystem.ARENA.equals(kildesystem)
-                ? regnUtArenaUtbetalingsgrad(utbetaling) : Optional.ofNullable(utbetaling.utbetalingsgrad()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO))
+            .medUtbetalingsgrad(regnUtArenaUtbetalingsgrad(utbetaling))
+            .build();
+    }
+
+    private static MeldekortUtbetalingsgrunnlagSak mapTilMeldekortSakAclKelvin(ArbeidsavklaringspengerResponse.AAPVedtak vedtak) {
+        var aktuellDagsats = Optional.ofNullable(vedtak.dagsatsEtterUføreReduksjon()).orElseGet(vedtak::dagsats);
+        var vedtaksdagsatsMedBarnetillegg = aktuellDagsats + Optional.ofNullable(vedtak.barnetillegg()).orElse(0);
+        var mk = vedtak.utbetaling().stream()
+            .map(u -> KelvinKlient.mapTilMeldekortMKAclKelvin(u, aktuellDagsats, vedtak.dagsats()))
+            .sorted(Comparator.comparing(MeldekortUtbetalingsgrunnlagMeldekort::getMeldekortFom))
+            .toList();
+        return MeldekortUtbetalingsgrunnlagSak.MeldekortSakBuilder.ny()
+            .leggTilMeldekort(mk)
+            .medType(YtelseType.ARBEIDSAVKLARINGSPENGER)
+            .medTilstand(tilTilstand(vedtak.status()))
+            .medKilde(Fagsystem.KELVIN)
+            .medSaksnummer(Optional.ofNullable(vedtak.saksnummer()).map(Saksnummer::new).orElse(null))
+            .medKravMottattDato(vedtak.vedtaksdato())
+            .medVedtattDato(vedtak.vedtaksdato())
+            .medVedtaksPeriodeFom(Tid.fomEllerMin(vedtak.periode().fraOgMedDato()))
+            .medVedtaksPeriodeTom(Tid.tomEllerMax(vedtak.periode().tilOgMedDato()))
+            .medVedtaksDagsats(BigDecimal.valueOf(vedtaksdagsatsMedBarnetillegg))
+            .build();
+    }
+
+    private static MeldekortUtbetalingsgrunnlagMeldekort mapTilMeldekortMKAclKelvin(ArbeidsavklaringspengerResponse.AAPUtbetaling utbetaling,
+                                                                                    Integer aktuellDagsats, Integer vedtakDagsats) {
+        // Her vil tilfelle med uførereduksjon ha en ubetalingsgrad mellom 0 og 100 gitt av uførereduksjonen + aktivitet i perioden
+        // Gjør derfor en normalisering slik at bruker med 60% AAP får utbetalingsgrad 100% ved full AAP-utbetaling uten aktivitet
+        var utbetalingsgradFraUtbetaling = Optional.ofNullable(utbetaling.utbetalingsgrad()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO);
+        var brukUtbetalingsgrad = utbetalingsgradFraUtbetaling
+            .multiply(BigDecimal.valueOf(vedtakDagsats))
+            .divide(BigDecimal.valueOf(aktuellDagsats), 0, RoundingMode.HALF_EVEN);
+        var dagsats = Optional.ofNullable(utbetaling.dagsats()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO)
+            .add(Optional.ofNullable(utbetaling.barnetillegg()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO));
+        return MeldekortUtbetalingsgrunnlagMeldekort.MeldekortMeldekortBuilder.ny()
+            .medMeldekortFom(Tid.fomEllerMin(utbetaling.periode().fraOgMedDato()))
+            .medMeldekortTom(Tid.tomEllerMax(utbetaling.periode().tilOgMedDato()))
+            .medBeløp(Optional.ofNullable(utbetaling.belop()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO))
+            .medDagsats(dagsats)
+            .medUtbetalingsgrad(brukUtbetalingsgrad)
             .build();
     }
 
@@ -130,6 +157,16 @@ public class KelvinKlient {
         } catch (ArithmeticException var6) {
             throw new UnsupportedOperationException("Perioden er for lang til å beregne virkedager.", var6);
         }
+    }
+
+    static YtelseStatus tilTilstand(String status) {
+        return switch (status) {
+            case "AVSLUTTET", "AVSLU" -> YtelseStatus.AVSLUTTET;
+            case "LØPENDE", "IVERK" -> YtelseStatus.LØPENDE;
+            case "UTREDES", "GODKJ", "INNST", "FORDE", "REGIS", "MOTAT", "KONT" -> YtelseStatus.UNDER_BEHANDLING;
+            case "OPPRETTET", "OPPRE" -> YtelseStatus.OPPRETTET;
+            case null, default -> YtelseStatus.UDEFINERT;
+        };
     }
 
 }
