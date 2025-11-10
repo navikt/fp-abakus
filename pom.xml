@@ -17,9 +17,7 @@
 	<name>Abakus :: Root</name>
 
 	<modules>
-		<module>kontrakter/kodeverk</module>
-		<module>kontrakter/kontrakt</module>
-        <module>kontrakter/kontrakt-vedtak</module>
+        <module>kontrakter</module>
 		<module>felles</module>
 		<module>prosesstask</module>
 		<module>migreringer</module>
@@ -28,12 +26,11 @@
     </modules>
 
 	<properties>
-
         <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
         <sonar.projectName>fp-abakus</sonar.projectName>
         <sonar.projectKey>navikt_fp-abakus</sonar.projectKey>
 
-        <kontrakt.java.version>25</kontrakt.java.version>
+        <abakus-kontrakter.version>2.3.4</abakus-kontrakter.version>
 
 		<felles.version>7.6.8</felles.version>
 		<prosesstask.version>5.2.1</prosesstask.version>
@@ -94,21 +91,6 @@
 			</dependency>
 			<dependency>
 				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>abakus-kodeverk</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.abakus</groupId>
-                <artifactId>abakus-vedtak</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>abakus-kontrakt</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
 				<artifactId>kobling</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -147,6 +129,23 @@
 				<groupId>no.nav.foreldrepenger.abakus</groupId>
 				<artifactId>web</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+
+            <!-- Abakus kontrakter -->
+			<dependency>
+				<groupId>no.nav.foreldrepenger.abakus</groupId>
+				<artifactId>abakus-kodeverk</artifactId>
+				<version>${abakus-kontrakter.version}</version>
+			</dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.abakus</groupId>
+                <artifactId>abakus-vedtak</artifactId>
+                <version>${abakus-kontrakter.version}</version>
+            </dependency>
+			<dependency>
+				<groupId>no.nav.foreldrepenger.abakus</groupId>
+				<artifactId>abakus-kontrakt</artifactId>
+				<version>${abakus-kontrakter.version}</version>
 			</dependency>
 
             <!-- Komponenter fra Felles Integrasjon -->
