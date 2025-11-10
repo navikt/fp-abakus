@@ -1,9 +1,9 @@
 kontrakt:
 - any:
   - changed-files:
-    - any-glob-to-any-file: "kontrakt/kontrakt/src/main/java/**/*"
-    - any-glob-to-any-file: "kontrakt/kontrakt-vedtak/src/main/java/**/*"
-    - any-glob-to-any-file: "kontrakt/kodeverk/src/main/java/**/*"
+    - any-glob-to-any-file: "kontrakter/kontrakt/src/main/java/**/*"
+    - any-glob-to-any-file: "kontrakter/kontrakt-vedtak/src/main/java/**/*"
+    - any-glob-to-any-file: "kontrakter/kodeverk/src/main/java/**/*"
 
 migreringer:
 - any:
