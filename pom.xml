@@ -17,12 +17,12 @@
 	<name>Abakus :: Root</name>
 
 	<modules>
+		<module>kontrakter/kodeverk</module>
+		<module>kontrakter/kontrakt</module>
+        <module>kontrakter/kontrakt-vedtak</module>
 		<module>felles</module>
 		<module>prosesstask</module>
 		<module>migreringer</module>
-		<module>kodeverk</module>
-		<module>kontrakt</module>
-        <module>kontrakt-vedtak</module>
 		<module>domenetjenester</module>
 		<module>web</module>
     </modules>

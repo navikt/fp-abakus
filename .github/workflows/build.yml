@@ -15,7 +15,7 @@ on:
       - 'CODEOWNERS'
       - 'docs/**'
       - 'lokalutvikling/**'
-      - '.devcontainer/**'
+      - '.troubleshooting/**'
       - '.github/*.yml'
 
 jobs:
