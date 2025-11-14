@@ -52,20 +52,16 @@ public class InntektsmeldingDto {
     private LocalDate mottattDato;
 
     @JsonProperty(value = "graderinger")
-    @Valid
-    private List<GraderingDto> graderinger;
+    private List<@Valid GraderingDto> graderinger;
 
     @JsonProperty(value = "naturalytelser")
-    @Valid
-    private List<NaturalytelseDto> naturalytelser;
+    private List<@Valid NaturalytelseDto> naturalytelser;
 
     @JsonProperty(value = "oppgittFravær")
-    @Valid
-    private List<FraværDto> oppgittFravær;
+    private List<@Valid FraværDto> oppgittFravær;
 
     @JsonProperty(value = "utsettelsePerioder")
-    @Valid
-    private List<UtsettelsePeriodeDto> utsettelsePerioder;
+    private List<@Valid UtsettelsePeriodeDto> utsettelsePerioder;
 
     @JsonProperty(value = "arbeidsforholdReferanse")
     @Valid

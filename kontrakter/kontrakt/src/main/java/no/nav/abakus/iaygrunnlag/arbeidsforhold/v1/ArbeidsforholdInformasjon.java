@@ -19,12 +19,10 @@ import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
 public class ArbeidsforholdInformasjon {
 
     @JsonProperty(value = "referanser")
-    @Valid
-    private List<ArbeidsforholdReferanseDto> referanser;
+    private List<@Valid ArbeidsforholdReferanseDto> referanser;
 
     @JsonProperty(value = "overstyringer")
-    @Valid
-    private List<ArbeidsforholdOverstyringDto> overstyringer;
+    private List<@Valid ArbeidsforholdOverstyringDto> overstyringer;
 
     /**
      * Grunnlag referanse, samme som {@link InntektArbeidYtelseGrunnlagDto#getGrunnlagReferanse()} men nyttig når returnerer denne DTO alene.

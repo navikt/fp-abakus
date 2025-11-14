@@ -46,8 +46,7 @@ public class YtelseGrunnlagDto {
     private BigDecimal inntektsgrunnlagProsent;
 
     @JsonProperty(value = "fordeling")
-    @Valid
-    private List<FordelingDto> fordeling;
+    private List<@Valid FordelingDto> fordeling;
 
     /**
      * Beløp i hele kroner (currency major unit). Tillater kun positive verdier.  Max verdi håndteres av mottager.

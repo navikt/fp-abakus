@@ -31,8 +31,7 @@ public class OppgittFrilansDto {
 
     @JsonProperty(value = "frilansoppdrag")
     @NotNull
-    @Valid
-    private List<OppgittFrilansoppdragDto> frilansoppdrag;
+    private List<@Valid OppgittFrilansoppdragDto> frilansoppdrag;
 
     protected OppgittFrilansDto() {
     }

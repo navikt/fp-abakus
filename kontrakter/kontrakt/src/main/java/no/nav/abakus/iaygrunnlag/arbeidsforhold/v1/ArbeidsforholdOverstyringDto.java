@@ -76,8 +76,7 @@ public class ArbeidsforholdOverstyringDto {
     private BigDecimal stillingsprosent;
 
     @JsonProperty(value = "overstyrtePerioder")
-    @Valid
-    private List<Periode> arbeidsforholdOverstyrtePerioder;
+    private List<@Valid Periode> arbeidsforholdOverstyrtePerioder;
 
     /**
      * Saksbehandler har angitt permisjon.

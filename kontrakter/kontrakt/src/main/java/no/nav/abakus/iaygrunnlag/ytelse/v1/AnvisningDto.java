@@ -53,9 +53,8 @@ public class AnvisningDto {
     private BigDecimal utbetalingsgrad;
 
     @JsonProperty(value = "andeler")
-    @Valid
     @Size
-    private List<AnvistAndelDto> andeler = new ArrayList<>();
+    private List<@Valid AnvistAndelDto> andeler = new ArrayList<>();
 
 
     protected AnvisningDto() {

@@ -33,8 +33,7 @@ public class UtbetalingDto {
 
     @JsonProperty(value = "utbetalingsPoster", required = true)
     @NotNull
-    @Valid
-    private List<UtbetalingsPostDto> poster;
+    private List<@Valid UtbetalingsPostDto> poster;
 
     protected UtbetalingDto() {
         // default ctor

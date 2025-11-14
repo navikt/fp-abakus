@@ -25,8 +25,7 @@ public class ArbeidDto {
 
     @JsonProperty("yrkesaktiviteter")
     @NotNull
-    @Valid
-    private List<YrkesaktivitetDto> yrkesaktiviteter;
+    private List<@Valid YrkesaktivitetDto> yrkesaktiviteter;
 
     protected ArbeidDto() {
     }

@@ -49,8 +49,7 @@ public class YtelseDto {
     private LocalDateTime vedtattTidspunkt;
 
     @JsonProperty(value = "anvisninger")
-    @Valid
-    private List<AnvisningDto> anvisninger;
+    private List<@Valid AnvisningDto> anvisninger;
 
     @JsonProperty(value = "ytelseGrunnlag")
     @Valid

@@ -25,8 +25,7 @@ public class YtelserDto {
     private PersonIdent person;
 
     @JsonProperty(value = "ytelser")
-    @Valid
-    private List<YtelseDto> ytelser;
+    private List<@Valid YtelseDto> ytelser;
 
     protected YtelserDto() {
     }

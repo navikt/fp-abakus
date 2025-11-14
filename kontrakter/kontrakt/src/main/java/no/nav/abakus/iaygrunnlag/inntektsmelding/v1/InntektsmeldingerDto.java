@@ -19,8 +19,7 @@ public class InntektsmeldingerDto {
 
     @JsonProperty(value = "inntektsmeldinger", required = true)
     @NotNull
-    @Valid
-    private List<InntektsmeldingDto> inntektsmeldinger;
+    private List<@Valid InntektsmeldingDto> inntektsmeldinger;
 
     public InntektsmeldingerDto() {
         // default ctor

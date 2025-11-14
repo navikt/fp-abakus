@@ -37,12 +37,10 @@ public class YrkesaktivitetDto {
     private ArbeidType arbeidType;
 
     @JsonProperty("aktivitetsAvtaler")
-    @Valid
-    private List<AktivitetsAvtaleDto> aktivitetsAvtaler;
+    private List<@Valid AktivitetsAvtaleDto> aktivitetsAvtaler;
 
     @JsonProperty("permisjoner")
-    @Valid
-    private List<PermisjonDto> permisjoner;
+    private List<@Valid PermisjonDto> permisjoner;
 
     @JsonProperty("navnArbeidsgiverUtland")
     @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Yrkesaktivitet#navnArbeidsgiverUtland [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")

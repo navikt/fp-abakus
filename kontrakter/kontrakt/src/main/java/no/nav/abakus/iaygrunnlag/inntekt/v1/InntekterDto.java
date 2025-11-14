@@ -28,8 +28,7 @@ public class InntekterDto {
 
     @JsonProperty("utbetalinger")
     @NotNull
-    @Valid
-    private List<UtbetalingDto> utbetalinger;
+    private List<@Valid UtbetalingDto> utbetalinger;
 
     protected InntekterDto() {
         // default ctor
