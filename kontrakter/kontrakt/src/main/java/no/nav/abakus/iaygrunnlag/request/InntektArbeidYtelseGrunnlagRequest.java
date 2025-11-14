@@ -32,8 +32,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 public class InntektArbeidYtelseGrunnlagRequest {
 
     @JsonProperty("dataset")
-    @Valid
-    public Set<Dataset> dataset = EnumSet.of(Dataset.REGISTER, Dataset.OVERSTYRT);
+    public Set<@Valid Dataset> dataset = EnumSet.of(Dataset.REGISTER, Dataset.OVERSTYRT);
     /**
      * Angi hvem grunnlaget hentes for.
      */

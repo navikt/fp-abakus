@@ -60,9 +60,8 @@ public class YtelseV1 extends Ytelse {
     private String tilleggsopplysninger;
 
     @NotNull
-    @Valid
     @JsonProperty("anvist")
-    private List<Anvisning> anvist = new ArrayList<>();
+    private List<@Valid Anvisning> anvist = new ArrayList<>();
 
     public YtelseV1() {
     }

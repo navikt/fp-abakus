@@ -26,8 +26,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 public class KopierGrunnlagRequest {
 
     @JsonProperty("dataset")
-    @Valid
-    public Set<Dataset> dataset = EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.REGISTER, Dataset.OVERSTYRT, Dataset.INNTEKTSMELDING);
+    public Set<@Valid Dataset> dataset = EnumSet.of(Dataset.OPPGITT_OPPTJENING, Dataset.REGISTER, Dataset.OVERSTYRT, Dataset.INNTEKTSMELDING);
     /**
      * Saksnummer alle grunnlag og koblinger er linket til.
      */
@@ -70,7 +69,7 @@ public class KopierGrunnlagRequest {
                                  @JsonProperty(value = "gammelReferanse", required = true) @Valid @NotNull UUID gammelReferanse,
                                  @JsonProperty(value = "ytelseType", required = true) @NotNull YtelseType ytelseType,
                                  @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
-                                 @JsonProperty(value = "dataset", required = true) @NotNull @Valid Set<Dataset> dataset) {
+                                 @JsonProperty(value = "dataset", required = true) @NotNull Set<@Valid Dataset> dataset) {
         this.saksnummer = saksnummer;
         this.nyReferanse = nyReferanse;
         this.gammelReferanse = gammelReferanse;

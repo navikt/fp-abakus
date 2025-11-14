@@ -37,8 +37,7 @@ public abstract class InntektArbeidYtelseAggregatDto<S extends InntektArbeidYtel
     private UuidDto eksternReferanse;
 
     @JsonProperty(value = "arbeid")
-    @Valid
-    private List<ArbeidDto> arbeid;
+    private List<@Valid ArbeidDto> arbeid;
 
     protected InntektArbeidYtelseAggregatDto() {
         // default ctor

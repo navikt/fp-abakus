@@ -22,12 +22,10 @@ import java.util.UUID;
 public class InntektArbeidYtelseAggregatRegisterDto extends InntektArbeidYtelseAggregatDto<InntektArbeidYtelseAggregatRegisterDto> {
 
     @JsonProperty(value = "inntekter")
-    @Valid
-    private List<InntekterDto> inntekt;
+    private List<@Valid InntekterDto> inntekt;
 
     @JsonProperty(value = "ytelser")
-    @Valid
-    private List<YtelserDto> ytelser;
+    private List<@Valid YtelserDto> ytelser;
 
     protected InntektArbeidYtelseAggregatRegisterDto() {
         // default ctor
