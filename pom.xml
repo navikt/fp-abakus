@@ -6,8 +6,8 @@
 
     <parent>
         <groupId>no.nav.foreldrepenger.felles</groupId>
-        <artifactId>fp-bom</artifactId>
-        <version>4.1.0</version>
+        <artifactId>fp-parent-app</artifactId>
+        <version>5.0.3</version>
     </parent>
 
 	<groupId>no.nav.foreldrepenger.abakus</groupId>
@@ -17,32 +17,26 @@
 	<name>Abakus :: Root</name>
 
 	<modules>
+        <module>kontrakter</module>
 		<module>felles</module>
 		<module>prosesstask</module>
 		<module>migreringer</module>
-		<module>kodeverk</module>
-		<module>kontrakt</module>
-        <module>kontrakt-vedtak</module>
 		<module>domenetjenester</module>
 		<module>web</module>
     </modules>
 
 	<properties>
-
         <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
         <sonar.projectName>fp-abakus</sonar.projectName>
         <sonar.projectKey>navikt_fp-abakus</sonar.projectKey>
 
-        <kontrakt.java.version>25</kontrakt.java.version>
+        <abakus-kontrakt.version>2.3.4</abakus-kontrakt.version>
 
-		<felles.version>7.6.8</felles.version>
+		<felles.version>7.6.9</felles.version>
 		<prosesstask.version>5.2.1</prosesstask.version>
-		<kontrakter.version>9.4.3</kontrakter.version>
+		<kontrakter.version>9.4.6</kontrakter.version>
         <tidsserie.version>2.7.3</tidsserie.version>
 
-        <!-- Forteller til maven-deploy-plugin at artefaktet ikke skal deployes.
-        Arves og overstyrres i de enkelte artefakter. -->
-        <maven.deploy.skip>true</maven.deploy.skip>
 	</properties>
 
 	<!-- NB: Unngå å put scope (test, provided) i dependency management. Det
@@ -51,14 +45,6 @@
 		det brukes. -->
 	<dependencyManagement>
 		<dependencies>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.felles</groupId>
-                <artifactId>fp-bom</artifactId>
-                <version>4.1.0</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-
 			<dependency>
 				<groupId>no.nav.foreldrepenger.felles</groupId>
 				<artifactId>felles</artifactId>
@@ -98,21 +84,6 @@
 			<dependency>
 				<groupId>no.nav.foreldrepenger.abakus</groupId>
 				<artifactId>felles</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>abakus-kodeverk</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-            <dependency>
-                <groupId>no.nav.foreldrepenger.abakus</groupId>
-                <artifactId>abakus-vedtak</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>abakus-kontrakt</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -157,6 +128,23 @@
 				<version>${project.version}</version>
 			</dependency>
 
+            <!-- Abakus kontrakter -->
+			<dependency>
+				<groupId>no.nav.foreldrepenger.abakus</groupId>
+				<artifactId>abakus-kodeverk</artifactId>
+				<version>${abakus-kontrakt.version}</version>
+			</dependency>
+            <dependency>
+                <groupId>no.nav.foreldrepenger.abakus</groupId>
+                <artifactId>abakus-vedtak</artifactId>
+                <version>${abakus-kontrakt.version}</version>
+            </dependency>
+			<dependency>
+				<groupId>no.nav.foreldrepenger.abakus</groupId>
+				<artifactId>abakus-kontrakt</artifactId>
+				<version>${abakus-kontrakt.version}</version>
+			</dependency>
+
             <!-- Komponenter fra Felles Integrasjon -->
             <dependency>
                 <groupId>no.nav.foreldrepenger.felles.integrasjon</groupId>
@@ -188,19 +176,11 @@
 	</dependencyManagement>
 
     <dependencies>
-        <!-- Testcontainer og sec update -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-            <scope>test</scope>
-            <version>[1.26.0,)</version>
-        </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers-postgresql</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- /Testcontainer og sec update -->
     </dependencies>
 
     <repositories>

@@ -38,4 +38,4 @@ app-local.properties
 /lsp/
 .factorypath
 .vscode
-
+.java-version

@@ -9,13 +9,12 @@ on:
       - '**.MD'
       - '.gitignore'
       - '.editorconfig'
-      - '.java-version'
       - '.gitattributes'
       - 'LICENSE'
       - 'CODEOWNERS'
       - 'docs/**'
       - 'lokalutvikling/**'
-      - '.devcontainer/**'
+      - '.troubleshooting/**'
       - '.github/*.yml'
 
 jobs:
