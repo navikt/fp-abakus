@@ -119,7 +119,7 @@ public class InnhentingSamletTjeneste {
                                                                     List<MeldekortUtbetalingsgrunnlagSak> arena) {
         var fom = opplysningsPeriode.getFomDato();
         var tom = opplysningsPeriode.getTomDato();
-        var maksimumRespons = kelvinKlient.hentAAP(ident, fom, tom);
+        var maksimumRespons = kelvinKlient.hentAAP(ident, fom, tom, saksnummer);
         try {
             sammenligneArenaDirekteVsKelvin(arena, maksimumRespons.get(Fagsystem.ARENA));
         } catch (Exception _) {
