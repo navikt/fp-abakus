@@ -35,14 +35,11 @@ public class ArbeidsforholdDto {
     private ArbeidsforholdRefDto arbeidsforholdId;
 
     @JsonProperty("ansettelsePerioder")
-    @Valid
-    private List<Periode> ansettelsesperiode;
+    private List<@Valid Periode> ansettelsesperiode;
     @JsonProperty("arbeidsavtaler")
-    @Valid
-    private List<ArbeidsavtaleDto> arbeidsavtaler;
+    private List<@Valid ArbeidsavtaleDto> arbeidsavtaler;
     @JsonProperty("permisjoner")
-    @Valid
-    private List<PermisjonDto> permisjoner;
+    private List<@Valid PermisjonDto> permisjoner;
 
     protected ArbeidsforholdDto() {
     }

@@ -64,8 +64,7 @@ public class InnhentRegisterdataRequest {
     private Periode opptjeningsperiode;
 
     @JsonProperty(value = "elementer")
-    @Valid
-    private Set<RegisterdataType> elementer = Set.of(RegisterdataType.ARBEIDSFORHOLD, RegisterdataType.INNTEKT_PENSJONSGIVENDE,
+    private Set<@Valid RegisterdataType> elementer = Set.of(RegisterdataType.ARBEIDSFORHOLD, RegisterdataType.INNTEKT_PENSJONSGIVENDE,
         RegisterdataType.YTELSE);
 
     public InnhentRegisterdataRequest(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,
@@ -86,7 +85,7 @@ public class InnhentRegisterdataRequest {
                                       @JsonProperty(value = "ytelseType", required = true) @NotNull YtelseType ytelseType,
                                       @JsonProperty(value = "opplysningsperiode", required = true) @NotNull @Valid Periode opplysningsperiode,
                                       @JsonProperty(value = "aktør", required = true) @NotNull @Valid PersonIdent aktør,
-                                      @JsonProperty(value = "elementer", required = true) @NotNull @Valid Set<RegisterdataType> elementer) {
+                                      @JsonProperty(value = "elementer", required = true) @NotNull Set<@Valid RegisterdataType> elementer) {
         this(saksnummer, referanse, ytelseType, opplysningsperiode, aktør);
         this.elementer = elementer;
     }
