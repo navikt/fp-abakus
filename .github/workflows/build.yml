@@ -16,6 +16,7 @@ on:
       - 'lokalutvikling/**'
       - '.troubleshooting/**'
       - '.github/*.yml'
+      - 'kontrakter/**'
 
 jobs:
   build-app:

@@ -3,6 +3,10 @@ on:
   release:
     types: [ published ]
 
+defaults:
+  run:
+    working-directory: ./kontrakter # Sett working directory til kontrakter-mappen
+
 jobs:
   release:
     name: Kontrakt
@@ -11,6 +15,6 @@ jobs:
       contents: read
     uses: navikt/fp-gha-workflows/.github/workflows/release-feature.yml@main
     with:
+      java-version: '25'
       release-version: ${{ github.event.release.tag_name }}
-      mvn-projects: '-am -pl kontrakter/kontrakt'
     secrets: inherit
