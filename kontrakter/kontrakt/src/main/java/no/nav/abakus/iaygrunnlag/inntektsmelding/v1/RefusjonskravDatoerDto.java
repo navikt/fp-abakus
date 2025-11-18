@@ -18,14 +18,13 @@ public class RefusjonskravDatoerDto {
 
     @JsonProperty(value = "refusjonskravDatoer", required = true)
     @NotNull
-    @Valid
-    private List<RefusjonskravDatoDto> refusjonskravDatoer;
+    private List<@Valid RefusjonskravDatoDto> refusjonskravDatoer;
 
     public RefusjonskravDatoerDto() {
         // default ctor
     }
 
-    public RefusjonskravDatoerDto(@NotNull @Valid List<RefusjonskravDatoDto> refusjonskravDatoer) {
+    public RefusjonskravDatoerDto(@NotNull List<@Valid RefusjonskravDatoDto> refusjonskravDatoer) {
         this.refusjonskravDatoer = refusjonskravDatoer;
     }
 
