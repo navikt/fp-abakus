@@ -70,42 +70,6 @@
                 <version>${tidsserie.version}</version>
             </dependency>
 
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>felles</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>kobling</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>iay</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>prosesstask</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>vedtak</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>lonnskomp</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>no.nav.foreldrepenger.abakus</groupId>
-				<artifactId>migreringer</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
             <!-- Abakus kontrakter -->
 			<dependency>
 				<groupId>no.nav.foreldrepenger.abakus</groupId>
