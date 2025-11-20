@@ -2,7 +2,7 @@ package no.nav.foreldrepenger.abakus.rydding.arbeidsforhold;
 
 import static java.util.Collections.emptyList;
 import static no.nav.foreldrepenger.abakus.rydding.arbeidsforhold.FjernIayInformasjonUtenReferanseTask.IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
@@ -55,7 +55,7 @@ class FjernIayInformasjonUtenReferanseTaskTest {
         verify(oppryddingIayInformasjonRepository, times(1)).hentIayInformasjonUtenReferanse(anyInt());
         verify(oppryddingIayInformasjonRepository, times(3)).slettIayInformasjon(longCaptor.capture());
         var capturedIds = List.copyOf(longCaptor.getAllValues());
-        assertEquals(iayIds, capturedIds);
+        assertThat(capturedIds).isEqualTo(iayIds);
     }
 
     @Test
@@ -83,7 +83,7 @@ class FjernIayInformasjonUtenReferanseTaskTest {
         // Assert
         verify(oppryddingIayInformasjonRepository, times(IAY_ARBEIDSFORHOLD_INFORMASJON_BATCH_SIZE)).slettIayInformasjon(longCaptor.capture());
         var capturedIds = List.copyOf(longCaptor.getAllValues());
-        assertEquals(iayIds, capturedIds);
+        assertThat(capturedIds).isEqualTo(iayIds);
         verify(oppryddingTjeneste).opprettFjernIayInformasjonTask();
     }
 }

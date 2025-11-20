@@ -2,7 +2,7 @@ package no.nav.foreldrepenger.abakus.rydding.opptjening;
 
 import static java.util.Collections.emptyList;
 import static no.nav.foreldrepenger.abakus.rydding.opptjening.FjernIayOppgittOpptjeningUtenReferanseTask.IAY_OPPGITT_OPPTJENING_BATCH_SIZE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
@@ -56,7 +56,7 @@ class FjernIayOppgittOpptjeningUtenReferanseTaskTest {
         verify(opptjeningRepository, times(1)).hentIayOppgittOpptjeningUtenReferanse(anyInt());
         verify(opptjeningRepository, times(3)).slettIayOppgittOpptjening(longCaptor.capture());
         var capturedIds = List.copyOf(longCaptor.getAllValues());
-        assertEquals(iayIds, capturedIds);
+        assertThat(capturedIds).isEqualTo(iayIds);
     }
 
     @Test
@@ -83,7 +83,7 @@ class FjernIayOppgittOpptjeningUtenReferanseTaskTest {
         // Assert
         verify(opptjeningRepository, times(IAY_OPPGITT_OPPTJENING_BATCH_SIZE)).slettIayOppgittOpptjening(longCaptor.capture());
         var capturedIds = List.copyOf(longCaptor.getAllValues());
-        assertEquals(iayIds, capturedIds);
+        assertThat(capturedIds).isEqualTo(iayIds);
         verify(oppryddingTjeneste).opprettFjernIayOppgittOpptjeningTask();
     }
 }

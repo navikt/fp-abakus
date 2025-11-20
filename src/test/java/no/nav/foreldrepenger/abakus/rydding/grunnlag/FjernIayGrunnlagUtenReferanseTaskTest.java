@@ -2,7 +2,7 @@ package no.nav.foreldrepenger.abakus.rydding.grunnlag;
 
 import static java.util.Collections.emptyList;
 import static no.nav.foreldrepenger.abakus.rydding.grunnlag.FjernIayGrunnlagUtenReferanseTask.IAY_GRUNNLAG_BATCH_SIZE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.never;
@@ -55,7 +55,7 @@ class FjernIayGrunnlagUtenReferanseTaskTest {
         verify(oppryddingIAYAggregatRepository, times(1)).hentIayAggregaterUtenReferanse(anyInt());
         verify(oppryddingIAYAggregatRepository, times(3)).slettIayAggregat(longCaptor.capture());
         var capturedIds = List.copyOf(longCaptor.getAllValues());
-        assertEquals(iayIds, capturedIds);
+        assertThat(capturedIds).isEqualTo(iayIds);
     }
 
     @Test
@@ -82,7 +82,7 @@ class FjernIayGrunnlagUtenReferanseTaskTest {
         // Assert
         verify(oppryddingIAYAggregatRepository, times(IAY_GRUNNLAG_BATCH_SIZE)).slettIayAggregat(longCaptor.capture());
         var capturedIds = List.copyOf(longCaptor.getAllValues());
-        assertEquals(iayIds, capturedIds);
+        assertThat(capturedIds).isEqualTo(iayIds);
         verify(oppryddingTjeneste).opprettFjernIayInntektArbeidYtelseAggregatTask();
     }
 }
