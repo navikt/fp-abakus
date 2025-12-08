@@ -65,5 +65,13 @@ public class SigrunRestClient {
             throw new IntegrasjonException("F-016912", String.format("Server svarte med feilkode http-kode '%s' og response var '%s'", status, response.body()));
         }
     }
+    public record PensjonsgivendeInntektForFolketrygdenRequest(
+        String personident,
+        String inntektsaar,
+        String rettighetspakke) {
 
+        public PensjonsgivendeInntektForFolketrygdenRequest(String personident, String inntektsaar) {
+            this(personident, inntektsaar, "navForeldrepenger");
+        }
+    }
 }
