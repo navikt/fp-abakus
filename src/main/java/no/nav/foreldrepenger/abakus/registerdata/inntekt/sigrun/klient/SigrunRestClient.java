@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import jakarta.enterprise.context.ApplicationScoped;
 import no.nav.vedtak.exception.IntegrasjonException;
 import no.nav.vedtak.exception.ManglerTilgangException;
-import no.nav.vedtak.felles.integrasjon.rest.NavHeaders;
 import no.nav.vedtak.felles.integrasjon.rest.RestClient;
 import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
@@ -24,10 +23,6 @@ import no.nav.vedtak.mapper.json.DefaultJsonMapper;
     endpointDefault = "http://sigrun.team-inntekt/api/v1/pensjonsgivendeinntektforfolketrygden",
     scopesProperty = "sigrunpgi.scopes", scopesDefault = "api://prod-fss.team-inntekt.sigrun/.default")
 public class SigrunRestClient {
-
-    private static final String INNTEKTSAAR = "inntektsaar";
-    private static final String RETTIGHETSPAKKE = "rettighetspakke";
-    private static final String FORELDREPENGER = "navForeldrepenger";
 
     private static final Year FØRSTE_PGI = Year.of(2017);
     private static final Logger LOG = LoggerFactory.getLogger(SigrunRestClient.class);
@@ -45,10 +40,8 @@ public class SigrunRestClient {
         if (år.isBefore(FØRSTE_PGI)) {
             return Optional.empty();
         }
-        var request = RestRequest.newGET(restConfig.endpoint(), restConfig)
-            .header(NavHeaders.HEADER_NAV_PERSONIDENT, fnr)
-            .header(RETTIGHETSPAKKE, FORELDREPENGER)
-            .header(INNTEKTSAAR, år.toString());
+        var requestBody = new PensjonsgivendeInntektForFolketrygdenRequest(fnr, år.toString());
+        var request = RestRequest.newPOSTJson(requestBody, restConfig.endpoint(), restConfig);
 
         HttpResponse<String> response = client.sendReturnUnhandled(request);
         return handleResponse(response).map(r -> DefaultJsonMapper.fromJson(r, PgiFolketrygdenResponse.class));
@@ -71,5 +64,13 @@ public class SigrunRestClient {
             throw new IntegrasjonException("F-016912", String.format("Server svarte med feilkode http-kode '%s' og response var '%s'", status, response.body()));
         }
     }
+    public record PensjonsgivendeInntektForFolketrygdenRequest(
+        String personident,
+        String inntektsaar,
+        String rettighetspakke) {
 
+        public PensjonsgivendeInntektForFolketrygdenRequest(String personident, String inntektsaar) {
+            this(personident, inntektsaar, "navForeldrepenger");
+        }
+    }
 }
