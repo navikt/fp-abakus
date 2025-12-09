@@ -8,12 +8,7 @@ kontrakt:
 migreringer:
 - any:
   - changed-files:
-    - any-glob-to-any-file: "migreringer/src/main/resources/**/*"
-
-web:
-- any:
-  - changed-files:
-    - any-glob-to-any-file: "web/src/main/java/**/*"
+    - any-glob-to-any-file: "src/main/resources/db/**/*"
 
 pom:
 - any:
