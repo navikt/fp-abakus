@@ -195,7 +195,6 @@
             <artifactId>fp-ws-proxy-v1</artifactId>
         </dependency>
 
-
         <!-- NAV -->
 
         <!-- Server Provided Libraries. Transitive avhengigheter som ikke burde vært her da de trekkes inn av server. -->
@@ -326,16 +325,23 @@
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-jaxrs2-jakarta</artifactId>
         </dependency>
+
+        <!-- Jandex index -->
         <dependency>
             <groupId>io.smallrye</groupId>
             <artifactId>jandex</artifactId>
         </dependency>
 
+        <!-- Kafka klient -->
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
         </dependency>
-        <!-- Jandex index -->
+        <dependency>
+            <groupId>org.lz4</groupId>
+            <artifactId>lz4-java</artifactId>
+            <version>1.8.1</version>
+        </dependency>
 
         <!-- Test avhengigheter -->
         <dependency>
