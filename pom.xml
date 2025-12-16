@@ -7,7 +7,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.felles</groupId>
         <artifactId>fp-parent-app</artifactId>
-        <version>5.0.3</version>
+        <version>5.1.1</version>
     </parent>
 
 	<groupId>no.nav.foreldrepenger.abakus</groupId>
@@ -24,7 +24,7 @@
 
 		<felles.version>7.6.11</felles.version>
 		<prosesstask.version>5.2.1</prosesstask.version>
-		<kontrakter.version>9.4.14</kontrakter.version>
+		<kontrakter.version>9.4.17</kontrakter.version>
         <tidsserie.version>2.7.3</tidsserie.version>
 
 	</properties>
@@ -195,7 +195,6 @@
             <artifactId>fp-ws-proxy-v1</artifactId>
         </dependency>
 
-
         <!-- NAV -->
 
         <!-- Server Provided Libraries. Transitive avhengigheter som ikke burde vært her da de trekkes inn av server. -->
@@ -326,16 +325,23 @@
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-jaxrs2-jakarta</artifactId>
         </dependency>
+
+        <!-- Jandex index -->
         <dependency>
             <groupId>io.smallrye</groupId>
             <artifactId>jandex</artifactId>
         </dependency>
 
+        <!-- Kafka klient -->
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
         </dependency>
-        <!-- Jandex index -->
+        <dependency>
+            <groupId>org.lz4</groupId>
+            <artifactId>lz4-java</artifactId>
+            <version>1.8.1</version>
+        </dependency>
 
         <!-- Test avhengigheter -->
         <dependency>
