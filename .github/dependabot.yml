@@ -15,6 +15,17 @@ updates:
       default-days: 7
     open-pull-requests-limit: 10
   - package-ecosystem: maven
+    directory: "/kontrakter"
+    registries:
+      - maven-github
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+      exclude:
+        - "no.nav.*"
+    open-pull-requests-limit: 10
+  - package-ecosystem: maven
     directory: "/"
     registries:
       - maven-github
@@ -22,7 +33,9 @@ updates:
       interval: weekly
     cooldown:
       default-days: 7
-    open-pull-requests-limit: 20
+      exclude:
+        - "no.nav.*"
+    open-pull-requests-limit: 10
     allow:
       - dependency-type: "all"
     groups:
