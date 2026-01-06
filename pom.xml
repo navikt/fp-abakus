@@ -7,7 +7,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.felles</groupId>
         <artifactId>fp-parent-app</artifactId>
-        <version>5.1.1</version>
+        <version>5.2.1</version>
     </parent>
 
 	<groupId>no.nav.foreldrepenger.abakus</groupId>
@@ -22,8 +22,8 @@
 
         <abakus-kontrakt.version>2.3.6</abakus-kontrakt.version>
 
-		<felles.version>7.6.11</felles.version>
-		<prosesstask.version>5.2.1</prosesstask.version>
+		<felles.version>7.6.12</felles.version>
+		<prosesstask.version>5.2.2</prosesstask.version>
 		<kontrakter.version>9.4.17</kontrakter.version>
         <tidsserie.version>2.7.3</tidsserie.version>
 
@@ -49,14 +49,6 @@
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
-            <dependency>
-                <!-- Importeres etter felles-root og felles for å sikre samme avhengigheter gjennom hele! -->
-                <groupId>no.nav.vedtak.prosesstask</groupId>
-                <artifactId>prosesstask-root</artifactId>
-                <version>${prosesstask.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
 
             <dependency>
                 <groupId>no.nav.foreldrepenger.kontrakter</groupId>
@@ -154,10 +146,12 @@
         <dependency>
             <groupId>no.nav.vedtak.prosesstask</groupId>
             <artifactId>prosesstask-kontekst</artifactId>
+            <version>${prosesstask.version}</version>
         </dependency>
         <dependency>
             <groupId>no.nav.vedtak.prosesstask</groupId>
             <artifactId>prosesstask-rest-api</artifactId>
+            <version>${prosesstask.version}</version>
         </dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.felles</groupId>
@@ -336,18 +330,6 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.lz4</groupId>
-            <artifactId>lz4-java</artifactId>
-            <version>1.8.1</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>at.yawk.lz4</groupId>
-            <artifactId>lz4-java</artifactId>
-            <version>1.10.2</version>
-            <scope>runtime</scope>
         </dependency>
 
         <!-- Test avhengigheter -->
