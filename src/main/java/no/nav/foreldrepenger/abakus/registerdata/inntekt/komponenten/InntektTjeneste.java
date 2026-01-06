@@ -70,32 +70,54 @@ public class InntektTjeneste {
     private static List<Månedsinntekt> utledOgOpprettMånedsinntekter(Inntektsinformasjon inntektsinformasjon,
                                                                      InntektskildeType kilde,
                                                                      Inntekt inntekt) {
-        var brukYM = inntektsinformasjon.maaned();
+        var måned = inntektsinformasjon.maaned();
         var tilleggsinformasjon = inntekt.tilleggsinformasjon();
         var arbeidsgiver = Inntektstype.LØNN.equals(inntekt.type()) ? inntektsinformasjon.underenhet() : null;
 
-        if (tilleggsinformasjon != null && Inntektstype.YTELSE.equals(inntekt.type()) && TILLEGG_ETTERBETALING.equals(tilleggsinformasjon.type())
-            && tilleggsinformasjon.startdato() != null && SKAL_PERIODISERE_INNTEKTSKILDE.contains(kilde)) {
-            if (!Objects.equals(YearMonth.from(tilleggsinformasjon.startdato()), YearMonth.from(tilleggsinformasjon.sluttdato()))) {
-                LOG.info(
-                    "InntektTjeneste etterbetaling flere måneder: inntektskildeType {} ytelse {} utbetalingsmåned {} etterbetaling fra-dato {} etterbetaling tom-dato {}",
-                    kilde, inntekt.beskrivelse(), brukYM, tilleggsinformasjon.startdato(), tilleggsinformasjon.sluttdato());
-                var månedMedVirkedagerListe = utledMånedOgvirkedagerForPeriode(tilleggsinformasjon.startdato().plusDays(1),
-                    tilleggsinformasjon.sluttdato());
-                var månedsinntekter = finnMånedsinntektForAlleMåneder(inntekt, månedMedVirkedagerListe, arbeidsgiver);
-
-                månedsinntekter.forEach(
-                    månedsinntekt -> LOG.info("InntektTjeneste etterbetaling flere måneder: etter fordelt béløp per måned: måned {} beløp {}",
-                        månedsinntekt.måned(), månedsinntekt.beløp()));
-                return månedsinntekter;
-            }
-            brukYM = YearMonth.from(tilleggsinformasjon.startdato().plusDays(1));
+        if (!skalPeriodisereInntekt(kilde, tilleggsinformasjon, inntekt.type())) {
+            return List.of(new Månedsinntekt(inntekt.type, måned, inntekt.beloep, inntekt.beskrivelse, arbeidsgiver, inntekt.skatteOgAvgiftsregel));
         }
-        return List.of(new Månedsinntekt(inntekt.type, brukYM, inntekt.beloep, inntekt.beskrivelse, arbeidsgiver, inntekt.skatteOgAvgiftsregel));
+
+        if (erEtterbetalingForFlereMåneder(tilleggsinformasjon)) {
+            return fordelUtbetalingPerMåned(kilde, inntekt, måned, tilleggsinformasjon, arbeidsgiver);
+        } else {
+            måned = YearMonth.from(tilleggsinformasjon.startdato().plusDays(1));
+            return List.of(new Månedsinntekt(inntekt.type, måned, inntekt.beloep, inntekt.beskrivelse, arbeidsgiver, inntekt.skatteOgAvgiftsregel));
+        }
+    }
+
+    private static boolean erEtterbetalingForFlereMåneder(Tilleggsinformasjon tilleggsinformasjon) {
+        return !Objects.equals(YearMonth.from(tilleggsinformasjon.startdato()), YearMonth.from(tilleggsinformasjon.sluttdato()));
+    }
+
+    private static List<Månedsinntekt> fordelUtbetalingPerMåned(InntektskildeType kilde,
+                                                         Inntekt inntekt,
+                                                         YearMonth brukYM,
+                                                         Tilleggsinformasjon tilleggsinformasjon,
+                                                         String arbeidsgiver) {
+        LOG.info(
+            "InntektTjeneste etterbetaling flere måneder: inntektskildeType {} ytelse {} utbetalingsmåned {} etterbetaling fra-dato {} etterbetaling tom-dato {}",
+            kilde, inntekt.beskrivelse(), brukYM, tilleggsinformasjon.startdato(), tilleggsinformasjon.sluttdato());
+
+        var månedMedVirkedagerListe = utledMånedOgvirkedagerForPeriode(tilleggsinformasjon.startdato().plusDays(1),
+            tilleggsinformasjon.sluttdato());
+        var månedsinntekter = finnMånedsinntektForAlleMåneder(inntekt, månedMedVirkedagerListe, arbeidsgiver);
+
+        månedsinntekter.forEach(
+            månedsinntekt -> LOG.info("InntektTjeneste etterbetaling flere måneder: fordelt beløp per måned: måned {} beløp {}",
+                månedsinntekt.måned(), månedsinntekt.beløp()));
+
+        return månedsinntekter;
+    }
+
+    private static boolean skalPeriodisereInntekt(InntektskildeType kilde, Tilleggsinformasjon tilleggsinformasjon, Inntektstype inntektType) {
+        return tilleggsinformasjon != null && Inntektstype.YTELSE.equals(inntektType) && TILLEGG_ETTERBETALING.equals(tilleggsinformasjon.type())
+            && tilleggsinformasjon.startdato() != null && SKAL_PERIODISERE_INNTEKTSKILDE.contains(kilde);
     }
 
     public static List<MånedMedVirkedager> utledMånedOgvirkedagerForPeriode(LocalDate fraDato, LocalDate tilDato) {
-        return Stream.iterate(YearMonth.from(fraDato), ym -> !ym.isAfter(YearMonth.from(tilDato)), ym -> ym.plusMonths(1)).map(månedSomSjekkes -> {
+        return Stream.iterate(YearMonth.from(fraDato), ym -> !ym.isAfter(YearMonth.from(tilDato)), ym -> ym.plusMonths(1))
+            .map(månedSomSjekkes -> {
             int antallVirkedager = finnAntallVirkedagerForMåned(fraDato, tilDato, månedSomSjekkes);
             LOG.info("InntektTjeneste etterbetaling flere måneder: måned: {} antall virkedager {}", månedSomSjekkes, antallVirkedager);
             return new MånedMedVirkedager(månedSomSjekkes, antallVirkedager);
@@ -135,7 +157,10 @@ public class InntektTjeneste {
                                                                        List<MånedMedVirkedager> månedOgVirkedagerListe,
                                                                        String arbeidsgiver) {
         var månedsinntekter = new ArrayList<Månedsinntekt>();
-        var sumVirkedager = månedOgVirkedagerListe.stream().mapToInt(MånedMedVirkedager::antallVirkedager).sum();
+        var sumVirkedager = månedOgVirkedagerListe.stream()
+            .mapToInt(MånedMedVirkedager::antallVirkedager)
+            .sum();
+
         var dagsats = inntekt.beloep.divide(BigDecimal.valueOf(sumVirkedager), 10, RoundingMode.HALF_UP);
         månedOgVirkedagerListe.forEach(månedMedVirkedager -> {
             var beløpForMåneden = dagsats.multiply(BigDecimal.valueOf(månedMedVirkedager.antallVirkedager));
