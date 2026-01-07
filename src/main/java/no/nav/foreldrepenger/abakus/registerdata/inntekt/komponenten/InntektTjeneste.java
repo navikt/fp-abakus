@@ -81,7 +81,7 @@ public class InntektTjeneste {
         if (erEtterbetalingForFlereMåneder(tilleggsinformasjon)) {
             return fordelUtbetalingPerMåned(kilde, inntekt, måned, tilleggsinformasjon, arbeidsgiver);
         } else {
-            måned = YearMonth.from(tilleggsinformasjon.startdato().plusDays(1));
+            måned = YearMonth.from(tilleggsinformasjon.startdato());
             return List.of(new Månedsinntekt(inntekt.type, måned, inntekt.beloep, inntekt.beskrivelse, arbeidsgiver, inntekt.skatteOgAvgiftsregel));
         }
     }
@@ -99,8 +99,7 @@ public class InntektTjeneste {
             "InntektTjeneste etterbetaling flere måneder: inntektskildeType {} ytelse {} utbetalingsmåned {} etterbetaling fra-dato {} etterbetaling tom-dato {}",
             kilde, inntekt.beskrivelse(), brukYM, tilleggsinformasjon.startdato(), tilleggsinformasjon.sluttdato());
 
-        var månedMedVirkedagerListe = utledMånedOgvirkedagerForPeriode(tilleggsinformasjon.startdato().plusDays(1),
-            tilleggsinformasjon.sluttdato());
+        var månedMedVirkedagerListe = utledMånedOgvirkedagerForPeriode(tilleggsinformasjon.startdato(), tilleggsinformasjon.sluttdato());
         var månedsinntekter = finnMånedsinntektForAlleMåneder(inntekt, månedMedVirkedagerListe, arbeidsgiver);
 
         månedsinntekter.forEach(
@@ -157,17 +156,32 @@ public class InntektTjeneste {
                                                                        List<MånedMedVirkedager> månedOgVirkedagerListe,
                                                                        String arbeidsgiver) {
         var månedsinntekter = new ArrayList<Månedsinntekt>();
-        var sumVirkedager = månedOgVirkedagerListe.stream()
-            .mapToInt(MånedMedVirkedager::antallVirkedager)
-            .sum();
+        var sumVirkedager = månedOgVirkedagerListe.stream().mapToInt(MånedMedVirkedager::antallVirkedager).sum();
 
-        var dagsats = inntekt.beloep.divide(BigDecimal.valueOf(sumVirkedager), 10, RoundingMode.HALF_UP);
+        var dagsats = inntekt.beloep().divide(BigDecimal.valueOf(sumVirkedager), 10, RoundingMode.HALF_UP);
         månedOgVirkedagerListe.forEach(månedMedVirkedager -> {
-            var beløpForMåneden = dagsats.multiply(BigDecimal.valueOf(månedMedVirkedager.antallVirkedager));
+            var beløpForMåneden = dagsats.multiply(BigDecimal.valueOf(månedMedVirkedager.antallVirkedager)).setScale(0, RoundingMode.HALF_UP);
             månedsinntekter.add(new Månedsinntekt(inntekt.type(), månedMedVirkedager.måned(), beløpForMåneden, inntekt.beskrivelse(), arbeidsgiver,
                 inntekt.skatteOgAvgiftsregel));
         });
+
+        var sumFordeltBeløp = månedsinntekter.stream().map(Månedsinntekt::beløp).reduce(BigDecimal.ZERO, BigDecimal::add);
+        if (sumFordeltBeløp.compareTo(inntekt.beloep()) != 0) {
+            return LeggRestPåSisteMåned(inntekt, sumFordeltBeløp, månedsinntekter);
+        }
         return månedsinntekter;
+    }
+
+    private static List<Månedsinntekt> LeggRestPåSisteMåned(Inntekt inntekt, BigDecimal sumFordeltBeløp, ArrayList<Månedsinntekt> månedsinntekter) {
+        List<Månedsinntekt> nyMånedsinntektListe = new ArrayList<>(månedsinntekter.subList(0, månedsinntekter.size() - 1));
+        var rest = inntekt.beloep().subtract(sumFordeltBeløp);
+        Månedsinntekt siste = månedsinntekter.getLast();
+        var nyttBeløp = siste.beløp().add(rest);
+
+        nyMånedsinntektListe.add(new Månedsinntekt(
+            siste.inntektstype(), siste.måned(), nyttBeløp, siste.beskrivelse(), siste.arbeidsgiver(), siste.skatteOgAvgiftsregelType()));
+
+        return nyMånedsinntektListe;
     }
 
     public Map<InntektskildeType, InntektsInformasjon> finnInntekt(String ident, YearMonth fom, YearMonth tom, Set<InntektskildeType> kilder) {
