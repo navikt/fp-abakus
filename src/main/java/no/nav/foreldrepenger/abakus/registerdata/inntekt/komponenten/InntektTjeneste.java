@@ -167,15 +167,15 @@ public class InntektTjeneste {
 
         var sumFordeltBeløp = månedsinntekter.stream().map(Månedsinntekt::beløp).reduce(BigDecimal.ZERO, BigDecimal::add);
         if (sumFordeltBeløp.compareTo(inntekt.beloep()) != 0) {
-            return LeggRestPåSisteMåned(inntekt, sumFordeltBeløp, månedsinntekter);
+            return leggRestPåSisteMåned(inntekt, sumFordeltBeløp, månedsinntekter);
         }
         return månedsinntekter;
     }
 
-    private static List<Månedsinntekt> LeggRestPåSisteMåned(Inntekt inntekt, BigDecimal sumFordeltBeløp, ArrayList<Månedsinntekt> månedsinntekter) {
+    private static List<Månedsinntekt> leggRestPåSisteMåned(Inntekt inntekt, BigDecimal sumFordeltBeløp, ArrayList<Månedsinntekt> månedsinntekter) {
         List<Månedsinntekt> nyMånedsinntektListe = new ArrayList<>(månedsinntekter.subList(0, månedsinntekter.size() - 1));
         var rest = inntekt.beloep().subtract(sumFordeltBeløp);
-        Månedsinntekt siste = månedsinntekter.getLast();
+        var siste = månedsinntekter.getLast();
         var nyttBeløp = siste.beløp().add(rest);
 
         nyMånedsinntektListe.add(new Månedsinntekt(
