@@ -3,10 +3,6 @@ on:
   release:
     types: [ published ]
 
-defaults:
-  run:
-    working-directory: ./kontrakter # Sett working directory til kontrakter-mappen
-
 jobs:
   release:
     name: Kontrakt
@@ -17,4 +13,5 @@ jobs:
     with:
       java-version: '25'
       release-version: ${{ github.event.release.tag_name }}
+      working-directory: ./kontrakter # Sett working directory til kontrakter-mappen
     secrets: inherit
