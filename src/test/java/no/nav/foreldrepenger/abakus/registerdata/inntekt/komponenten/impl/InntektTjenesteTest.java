@@ -8,10 +8,13 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.net.URI;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,26 +57,26 @@ class InntektTjenesteTest {
         when(restKlient.send(any(), any())).thenReturn(new InntektTjeneste.InntektBulkApiUt(List.of(response, responseB)));
 
         // Tre måneder siden
-        var arbeidsInntektInformasjonMnd3 = opprettInntektsinformasjon(GJELDENDE_MÅNED.minusMonths(3), ORGNR);
-        arbeidsInntektInformasjonMnd3.inntektListe().add(opprettInntekt(new BigDecimal(50), SYKEPENGER, Inntektstype.YTELSE));
+        var arbeidsInntektInformasjonMnd3 = opprettInntektsinformasjon(GJELDENDE_MÅNED.minusMonths(3));
+        arbeidsInntektInformasjonMnd3.inntektListe().add(opprettInntekt(new BigDecimal(50), SYKEPENGER, Inntektstype.YTELSE, null));
         response.data().add(arbeidsInntektInformasjonMnd3);
 
         // To måneder siden
-        var arbeidsInntektInformasjonMnd2a = opprettInntektsinformasjon(GJELDENDE_MÅNED.minusMonths(2), ORGNR);
-        arbeidsInntektInformasjonMnd2a.inntektListe().add(opprettInntekt(new BigDecimal(100), SYKEPENGER, Inntektstype.YTELSE));
+        var arbeidsInntektInformasjonMnd2a = opprettInntektsinformasjon(GJELDENDE_MÅNED.minusMonths(2));
+        arbeidsInntektInformasjonMnd2a.inntektListe().add(opprettInntekt(new BigDecimal(100), SYKEPENGER, Inntektstype.YTELSE, null));
         response.data().add(arbeidsInntektInformasjonMnd2a);
-        var arbeidsInntektInformasjonMnd2b = opprettInntektsinformasjon(GJELDENDE_MÅNED.minusMonths(2), ORGNR);
-        arbeidsInntektInformasjonMnd2b.inntektListe().add(opprettInntekt(new BigDecimal(200), null, Inntektstype.LØNN));
+        var arbeidsInntektInformasjonMnd2b = opprettInntektsinformasjon(GJELDENDE_MÅNED.minusMonths(2));
+        arbeidsInntektInformasjonMnd2b.inntektListe().add(opprettInntekt(new BigDecimal(200), null, Inntektstype.LØNN, null));
         response.data().add(arbeidsInntektInformasjonMnd2b);
 
         // En måned siden
-        var arbeidsInntektInformasjonMnd1 = opprettInntektsinformasjon(GJELDENDE_MÅNED.minusMonths(1), ORGNR);
-        arbeidsInntektInformasjonMnd1.inntektListe().add(opprettInntekt(new BigDecimal(400), null, Inntektstype.LØNN));
+        var arbeidsInntektInformasjonMnd1 = opprettInntektsinformasjon(GJELDENDE_MÅNED.minusMonths(1));
+        arbeidsInntektInformasjonMnd1.inntektListe().add(opprettInntekt(new BigDecimal(400), null, Inntektstype.LØNN, null));
         response.data().add(arbeidsInntektInformasjonMnd1);
 
         // Denne måneden
-        var arbeidsInntektInformasjonMnd0 = opprettInntektsinformasjon(GJELDENDE_MÅNED, ORGNR);
-        arbeidsInntektInformasjonMnd0.inntektListe().add(opprettInntekt(new BigDecimal(405), null, Inntektstype.LØNN));
+        var arbeidsInntektInformasjonMnd0 = opprettInntektsinformasjon(GJELDENDE_MÅNED);
+        arbeidsInntektInformasjonMnd0.inntektListe().add(opprettInntekt(new BigDecimal(405), null, Inntektstype.LØNN, null));
         response.data().add(arbeidsInntektInformasjonMnd0);
 
 
@@ -95,15 +98,86 @@ class InntektTjenesteTest {
         assertThat(månedsinntekter.get(2).isYtelse()).isFalse();
     }
 
+    @Test
+    void splitter_inntekt_per_måned_dersom_gjelder_flere_måneder_og_er_inntektstype_ytelse_og_etterbetaling() {
+        // Arrange
+        var response = opprettResponse(Inntektsfilter.SAMMENLIGNINGSGRUNNLAG);
+        var fraDato = LocalDate.of(2025, 3, 28);
+        var tildato = LocalDate.of(2025, 5, 25);
+        var månedFra = YearMonth.from(fraDato);
+        var månedTil = YearMonth.from(tildato);
+
+        when(restKlient.send(any(), any())).thenReturn(new InntektTjeneste.InntektBulkApiUt(List.of(response)));
+
+        // Denne måneden
+        var arbeidsInntektInformasjonMnd0 = opprettInntektsinformasjon(månedFra);
+        arbeidsInntektInformasjonMnd0.inntektListe().add(opprettInntekt(new BigDecimal(100000), "beskrivelse", Inntektstype.YTELSE, new InntektTjeneste.Tilleggsinformasjon("Etterbetalingsperiode", fraDato, tildato)));
+        response.data().add(arbeidsInntektInformasjonMnd0);
+
+        // Act
+        var inntektsInformasjon = inntektTjeneste.finnInntekt(FNR, månedFra, månedTil, Set.of(InntektskildeType.INNTEKT_SAMMENLIGNING, InntektskildeType.INNTEKT_BEREGNING));
+
+        // Assert
+        verify(restKlient, times(1)).send(any(), any());
+
+        assertThat(inntektsInformasjon.keySet()).hasSize(1);
+        final var månedsinntekter = inntektsInformasjon.get(InntektskildeType.INNTEKT_SAMMENLIGNING).månedsinntekter();
+        assertThat(månedsinntekter).hasSize(3);
+        assertThat(månedsinntekter.getFirst().måned()).isEqualTo(månedFra);
+        assertThat(månedsinntekter.getFirst().beløp()).isEqualTo(new BigDecimal("4878"));
+        assertThat(månedsinntekter.getFirst().arbeidsgiver()).isNull();
+        assertThat(månedsinntekter.getFirst().isYtelse()).isTrue();
+        assertThat(månedsinntekter.get(1).måned()).isEqualTo(månedFra.plusMonths(1));
+        assertThat(månedsinntekter.get(1).beløp()).isEqualTo(new BigDecimal("53659"));
+        assertThat(månedsinntekter.get(1).arbeidsgiver()).isNull();
+        assertThat(månedsinntekter.get(1).isYtelse()).isTrue();
+        assertThat(månedsinntekter.get(2).måned()).isEqualTo(månedTil);
+        assertThat(månedsinntekter.get(2).beløp()).isEqualTo(new BigDecimal("41463"));
+        assertThat(månedsinntekter.get(2).arbeidsgiver()).isNull();
+        assertThat(månedsinntekter.get(2).isYtelse()).isTrue();
+    }
+
+    @Test
+    void sjekker_at_rest_fordeles_på_siste_måned_om_det_er_rest_når_utbetaling_må_fordeles_over_flere_måneder() {
+        // Arrange
+        var response = opprettResponse(Inntektsfilter.SAMMENLIGNINGSGRUNNLAG);
+        var fraDato = LocalDate.of(2025, 3, 28);
+        var tildato = LocalDate.of(2025, 5, 25);
+        var månedFra = YearMonth.from(fraDato);
+        var månedTil = YearMonth.from(tildato);
+
+        when(restKlient.send(any(), any())).thenReturn(new InntektTjeneste.InntektBulkApiUt(List.of(response)));
+
+        // Denne måneden
+        var arbeidsInntektInformasjonMnd0 = opprettInntektsinformasjon(månedFra);
+        arbeidsInntektInformasjonMnd0.inntektListe().add(opprettInntekt(new BigDecimal(56533), "beskrivelse", Inntektstype.YTELSE, new InntektTjeneste.Tilleggsinformasjon("Etterbetalingsperiode", fraDato, tildato)));
+        response.data().add(arbeidsInntektInformasjonMnd0);
+
+        // Act
+        var inntektsInformasjon = inntektTjeneste.finnInntekt(FNR, månedFra, månedTil, Set.of(InntektskildeType.INNTEKT_SAMMENLIGNING, InntektskildeType.INNTEKT_BEREGNING));
+
+        // Assert
+        verify(restKlient, times(1)).send(any(), any());
+
+        assertThat(inntektsInformasjon.keySet()).hasSize(1);
+        final var månedsinntekter = inntektsInformasjon.get(InntektskildeType.INNTEKT_SAMMENLIGNING).månedsinntekter();
+        assertThat(månedsinntekter).hasSize(3);
+        assertThat(månedsinntekter.stream().map(Månedsinntekt::beløp).reduce(BigDecimal::add).orElse(BigDecimal.ZERO)).isEqualTo(new BigDecimal("56533"));
+        assertThat(månedsinntekter.getLast().måned()).isEqualTo(månedTil);
+        assertThat(månedsinntekter.getLast().beløp()).isEqualTo(new BigDecimal("23440"));
+    }
+
+
     private InntektTjeneste.InntektBulk opprettResponse(Inntektsfilter filter) {
         return new InntektTjeneste.InntektBulk(filter, new ArrayList<>());
     }
 
-    private InntektTjeneste.Inntektsinformasjon opprettInntektsinformasjon(YearMonth måned, String underenhet) {
-        return new InntektTjeneste.Inntektsinformasjon(måned, null, underenhet, new ArrayList<>());
+    private InntektTjeneste.Inntektsinformasjon opprettInntektsinformasjon(YearMonth måned) {
+        return new InntektTjeneste.Inntektsinformasjon(måned, null, ORGNR, new ArrayList<>());
     }
 
-    private InntektTjeneste.Inntekt opprettInntekt(BigDecimal beløp, String beskrivelse, Inntektstype inntektType) {
-        return new InntektTjeneste.Inntekt(inntektType, beløp, beskrivelse, null, null);
+    private InntektTjeneste.Inntekt opprettInntekt(BigDecimal beløp, String beskrivelse, Inntektstype inntektType,
+                                                   InntektTjeneste.Tilleggsinformasjon tilleggsinformasjon) {
+        return new InntektTjeneste.Inntekt(inntektType, beløp, beskrivelse, null, tilleggsinformasjon);
     }
 }
