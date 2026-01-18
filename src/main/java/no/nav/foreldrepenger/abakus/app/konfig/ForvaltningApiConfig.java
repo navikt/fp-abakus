@@ -42,6 +42,7 @@ public class ForvaltningApiConfig extends ResourceConfig {
         setApplicationName(ForvaltningApiConfig.class.getSimpleName());
         // Sikkerhet
         register(AuthenticationFilter.class);
+        register(ForvaltningAuthorizationFilter.class);
         registerOpenApi();
 
         // REST
