@@ -8,14 +8,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
-import jakarta.validation.Validation;
-
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
+import jakarta.validation.Validation;
 import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
+import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 class IAYMigreringNPETest {
 
@@ -27,11 +26,10 @@ class IAYMigreringNPETest {
     @ParameterizedTest
     @MethodSource("provideArguments")
     void test_file(String fileName) throws Exception {
-        var reader = JsonObjectMapper.getMapper().readerFor(InntektArbeidYtelseGrunnlagDto.class);
 
         String str = readTestCase(fileName);
 
-        InntektArbeidYtelseGrunnlagDto dto = reader.readValue(str);
+        InntektArbeidYtelseGrunnlagDto dto = DefaultJsonMapper.fromJson(str, InntektArbeidYtelseGrunnlagDto.class);
         assertThat(dto).isNotNull();
         assertThat(dto.getPerson()).isNotNull();
 

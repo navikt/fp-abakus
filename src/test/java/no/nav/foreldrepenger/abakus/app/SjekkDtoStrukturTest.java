@@ -20,11 +20,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import no.nav.foreldrepenger.abakus.app.jackson.JacksonJsonConfig;
+import no.nav.abakus.iaygrunnlag.v1.InntektArbeidYtelseGrunnlagDto;
+import no.nav.foreldrepenger.abakus.jetty.JettyServer;
 
 class SjekkDtoStrukturTest {
 
-    private static final List<Class<?>> KONTRAKT_LOKASJONER = JacksonJsonConfig.getKontraktLokasjoner();
+    private static final List<Class<?>> KONTRAKT_LOKASJONER = List.of(JettyServer.class, InntektArbeidYtelseGrunnlagDto.class);
 
     private static final List<String> SKIPPED = Arrays.asList("class", "kode");
 

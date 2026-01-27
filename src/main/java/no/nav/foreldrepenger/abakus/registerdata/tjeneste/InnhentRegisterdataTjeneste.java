@@ -7,11 +7,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.abakus.iaygrunnlag.request.RegisterdataType;
@@ -30,6 +27,7 @@ import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskGruppe;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
+import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 @ApplicationScoped
 public class InnhentRegisterdataTjeneste {
@@ -97,11 +95,7 @@ public class InnhentRegisterdataTjeneste {
         var callbackTask = ProsessTaskData.forProsessTask(CallbackTask.class);
         innhentingTask.setSaksnummer(kobling.getSaksnummer().getVerdi());
         innhentingTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
-        try {
-            innhentingTask.setPayload(JsonObjectMapper.getMapper().writeValueAsString(dto));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Feil i serialisering av innhentingrequest", e);
-        }
+        innhentingTask.setPayload(DefaultJsonMapper.toJson(dto));
         innhentingTask.setSaksnummer(kobling.getSaksnummer().getVerdi());
         callbackTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
 

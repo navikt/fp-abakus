@@ -1,6 +1,5 @@
 package no.nav.foreldrepenger.abakus.vedtak;
 
-import java.io.IOException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -9,25 +8,20 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.abakus.vedtak.ytelse.Ytelse;
 import no.nav.abakus.vedtak.ytelse.v1.YtelseV1;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseBuilder;
 import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
-import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskHandler;
+import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 @ProsessTask(value = "vedtakEvent.lagre", prioritet = 2)
 public class LagreVedtakTask implements ProsessTaskHandler {
 
     public static final String KEY = "kafka.key";
-    private final static ObjectMapper OBJECT_MAPPER = JsonObjectMapper.getMapper();
 
     private VedtakYtelseRepository ytelseRepository;
     private ExtractFromYtelseV1 extractor;
@@ -48,7 +42,7 @@ public class LagreVedtakTask implements ProsessTaskHandler {
 
         Ytelse mottattVedtak;
         try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
-            mottattVedtak = OBJECT_MAPPER.readValue(payload, Ytelse.class);
+            mottattVedtak = DefaultJsonMapper.fromJson(payload, Ytelse.class);
             Validator validator = factory.getValidator();
             Set<ConstraintViolation<Ytelse>> violations = validator.validate(mottattVedtak);
             if (!violations.isEmpty()) {
@@ -56,8 +50,6 @@ public class LagreVedtakTask implements ProsessTaskHandler {
                 String allErrors = violations.stream().map(String::valueOf).collect(Collectors.joining("\\n"));
                 throw new IllegalArgumentException("Vedtatt-ytelse valideringsfeil :: \n " + allErrors);
             }
-        } catch (IOException e) {
-            throw new TekniskException("FP-328773", String.format("Feil under parsing av vedtak. key={%s} payload={%s}", key, payload), e);
         }
         if (mottattVedtak != null) {
             // TODO: Gjør generisk

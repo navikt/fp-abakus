@@ -5,11 +5,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
@@ -22,6 +19,7 @@ import no.nav.foreldrepenger.abakus.registerdata.tjeneste.InnhentRegisterdataTje
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataElement;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTask;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
+import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 @ApplicationScoped
 @ProsessTask("registerdata.innhent")
@@ -57,12 +55,8 @@ public class RegisterdataInnhentingTask extends KoblingTask {
         Set<RegisterdataElement> informasjonsElementer;
         var payloadAsString = prosessTaskData.getPayloadAsString();
         if (payloadAsString != null && !payloadAsString.isEmpty()) {
-            try {
-                var request = JsonObjectMapper.getMapper().readValue(payloadAsString, InnhentRegisterdataRequest.class);
-                informasjonsElementer = InnhentRegisterdataTjeneste.hentUtInformasjonsElementer(request);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException("Feilet i deserialisering av innhent request", e);
-            }
+            var request = DefaultJsonMapper.fromJson(payloadAsString, InnhentRegisterdataRequest.class);
+            informasjonsElementer = InnhentRegisterdataTjeneste.hentUtInformasjonsElementer(request);
         } else {
             informasjonsElementer = Set.of(RegisterdataElement.values());
         }

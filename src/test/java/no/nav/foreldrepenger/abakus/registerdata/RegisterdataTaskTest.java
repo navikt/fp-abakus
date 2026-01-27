@@ -9,11 +9,11 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 import no.nav.abakus.iaygrunnlag.AktørIdPersonident;
-import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
+import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 class RegisterdataTaskTest {
 
@@ -29,9 +29,9 @@ class RegisterdataTaskTest {
         // Arrange
 
         var innhentingTask = ProsessTaskData.forProsessTask(RegisterdataInnhentingTask.class);
-        innhentingTask.setPayload(JsonObjectMapper.getMapper().writeValueAsString(REQUEST));
+        innhentingTask.setPayload(DefaultJsonMapper.toJson(REQUEST));
 
-        var roundtripped = JsonObjectMapper.getMapper().readValue(innhentingTask.getPayloadAsString(), InnhentRegisterdataRequest.class);
+        var roundtripped = DefaultJsonMapper.fromJson(innhentingTask.getPayloadAsString(), InnhentRegisterdataRequest.class);
 
         assertThat(roundtripped.getSaksnummer()).isEqualTo(REQUEST.getSaksnummer());
         assertThat(roundtripped.getOpplysningsperiode()).isEqualTo(REQUEST.getOpplysningsperiode());
