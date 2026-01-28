@@ -2,28 +2,19 @@ package no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.IOException;
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.vedtak.felles.integrasjon.organisasjon.JuridiskEnhetVirksomheter;
 import no.nav.vedtak.felles.integrasjon.organisasjon.OrganisasjonEReg;
 import no.nav.vedtak.felles.integrasjon.organisasjon.OrganisasjonstypeEReg;
+import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 class EregRestTest {
 
-    private static ObjectMapper mapper = JsonObjectMapper.getMapper();
-
-    private static <T> T fromJson(String json, Class<T> clazz) throws IOException {
-        return mapper.readerFor(clazz).readValue(json);
-    }
-
     @Test
-    void mapping_dto_til_grunnlag_til_dto() throws IOException {
+    void mapping_dto_til_grunnlag_til_dto() {
         // Arrange
         String json = """
             {
@@ -38,14 +29,14 @@ class EregRestTest {
              "virksomhetDetaljer":null
             }""";
 
-        var org = fromJson(json, OrganisasjonEReg.class);
+        var org = DefaultJsonMapper.fromJson(json, OrganisasjonEReg.class);
         assertThat(org.getNavn()).isEqualTo("MIN BEDRIFT AVD DER JEG BOR");
         assertThat(org.organisasjonsnummer()).isEqualTo("999999999");
         assertThat(org.type()).isEqualTo(OrganisasjonstypeEReg.VIRKSOMHET);
     }
 
     @Test
-    void mapping_jurdisk_enhet() throws IOException {
+    void mapping_jurdisk_enhet() {
         // Arrange
         String json = """
             {
@@ -77,7 +68,7 @@ class EregRestTest {
               ]
             }""";
 
-        var org = fromJson(json, JuridiskEnhetVirksomheter.class);
+        var org = DefaultJsonMapper.fromJson(json, JuridiskEnhetVirksomheter.class);
         assertThat(org.driverVirksomheter()).hasSize(2);
         assertThat(org.getEksaktVirksomhetForDato(LocalDate.now())).hasSize(1);
         assertThat(org.getEksaktVirksomhetForDato(LocalDate.now()).get(0)).isEqualTo("999999997");

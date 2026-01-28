@@ -5,16 +5,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import no.nav.abakus.iaygrunnlag.JsonObjectMapper;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsavtale;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.Arbeidsforhold;
@@ -25,6 +21,7 @@ import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.AaregRestKl
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsforhold.rest.ArbeidsforholdRS;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
+import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 class ArbeidsforholdTjenesteMedRestTest {
 
@@ -62,23 +59,19 @@ class ArbeidsforholdTjenesteMedRestTest {
             ]
         }
         """;
-    private static ObjectMapper mapper = JsonObjectMapper.getMapper();
-
-    private static <T> T fromJson(String json, Class<T> clazz) throws IOException {
-        return mapper.readerFor(clazz).readValue(json);
-    }
 
     @Test
-    void mapping_organisasjon() throws IOException {
-        var arbeidsforhold = fromJson(json, ArbeidsforholdRS.class);
+    void mapping_organisasjon() {
+        var arbeidsforhold = DefaultJsonMapper.fromJson(json, ArbeidsforholdRS.class);
         assertThat(arbeidsforhold.getArbeidsgiver().organisasjonsnummer()).isEqualTo(ORGNR);
     }
 
     @Test
-    void skal_kalle_consumer_og_oversette_response() throws Exception {
+    void skal_kalle_consumer_og_oversette_response() {
         // Arrange
         AaregRestKlient aaregRestKlient = mock(AaregRestKlient.class);
-        when(aaregRestKlient.finnArbeidsforholdForArbeidstaker(any(), any(), any())).thenReturn(List.of(fromJson(json, ArbeidsforholdRS.class)));
+        when(aaregRestKlient.finnArbeidsforholdForArbeidstaker(any(), any(), any()))
+            .thenReturn(List.of(DefaultJsonMapper.fromJson(json, ArbeidsforholdRS.class)));
         ArbeidsforholdTjeneste arbeidsforholdTjeneste = new ArbeidsforholdTjeneste(aaregRestKlient);
 
         // Act
