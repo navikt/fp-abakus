@@ -1,4 +1,4 @@
-package no.nav.foreldrepenger.kontrakter.iaygrunnlag.v1.iay;
+package no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -85,7 +85,7 @@ class IayGrunnlagTest {
     private final JournalpostId journalpostId = new JournalpostId("ImajournalpostId");
 
     @Test
-    void skal_generere_og_validere_roundtrip_mega_iaygrunnlag_json() throws Exception {
+    void skal_generere_og_validere_roundtrip_mega_iaygrunnlag_json() {
 
         var grunnlag = byggInntektArbeidYtelseGrunnlag();
 
