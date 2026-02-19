@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.dpsak.DpsakKlient;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +51,7 @@ public class InnhentingSamletTjeneste {
     private InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste;
     private LønnskompensasjonRepository lønnskompensasjonRepository;
     private KelvinKlient kelvinKlient;
+    private DpsakKlient dpsakKlient;
 
     InnhentingSamletTjeneste() {
         //CDI
@@ -60,13 +63,15 @@ public class InnhentingSamletTjeneste {
                                     InnhentingInfotrygdTjeneste innhentingInfotrygdTjeneste,
                                     LønnskompensasjonRepository lønnskompensasjonRepository,
                                     FpwsproxyKlient fpwsproxyKlient,
-                                    KelvinKlient kelvinKlient) {
+                                    KelvinKlient kelvinKlient,
+                                    DpsakKlient dpsakKlient) {
         this.arbeidsforholdTjeneste = arbeidsforholdTjeneste;
         this.inntektTjeneste = inntektTjeneste;
         this.fpwsproxyKlient = fpwsproxyKlient;
         this.innhentingInfotrygdTjeneste = innhentingInfotrygdTjeneste;
         this.lønnskompensasjonRepository = lønnskompensasjonRepository;
         this.kelvinKlient = kelvinKlient;
+        this.dpsakKlient = dpsakKlient;
     }
 
     public Map<InntektskildeType, InntektsInformasjon> getInntektsInformasjon(AktørId aktørId, IntervallEntitet periode, Set<InntektskildeType> kilder) {
@@ -112,6 +117,13 @@ public class InnhentingSamletTjeneste {
 
     public List<InfotrygdYtelseGrunnlag> innhentSpokelseGrunnlag(PersonIdent ident, @SuppressWarnings("unused") IntervallEntitet periode) {
         return innhentingInfotrygdTjeneste.getSPøkelseYtelser(ident, periode.getFomDato());
+    }
+
+    public void innhentDagpengerDpsak(PersonIdent ident, IntervallEntitet opplysningsPeriode,
+                                      Saksnummer saksnummer,
+                                      List<MeldekortUtbetalingsgrunnlagSak> arena) {
+        dpsakKlient.hentDagpenger(ident, opplysningsPeriode.getFomDato(), opplysningsPeriode.getTomDato(), saksnummer);
+
     }
 
     public List<MeldekortUtbetalingsgrunnlagSak> innhentMaksimumAAP(PersonIdent ident, IntervallEntitet opplysningsPeriode,
