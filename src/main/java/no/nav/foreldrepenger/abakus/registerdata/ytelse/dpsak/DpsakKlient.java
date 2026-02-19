@@ -4,6 +4,9 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import jakarta.enterprise.context.Dependent;
 import jakarta.ws.rs.core.UriBuilder;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
@@ -13,9 +16,6 @@ import no.nav.vedtak.felles.integrasjon.rest.RestClientConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestConfig;
 import no.nav.vedtak.felles.integrasjon.rest.RestRequest;
 import no.nav.vedtak.felles.integrasjon.rest.TokenFlow;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Dependent
 @RestClientConfig(tokenConfig = TokenFlow.AZUREAD_CC,
@@ -45,18 +45,20 @@ public class DpsakKlient {
                 .filter(p -> DagpengerRettighetsperioderDto.DagpengerKilde.ARENA.equals(p.kilde()))
                 .toList();
             var perioderDpsak = perioder.stream()
-                .filter(p -> DagpengerRettighetsperioderDto.DagpengerKilde.ARENA.equals(p.kilde()))
+                .filter(p -> DagpengerRettighetsperioderDto.DagpengerKilde.DP_SAK.equals(p.kilde()))
                 .toList();
             var utbetalingerDpsak = utbetalinger.stream()
                 .filter(u -> DagpengerKilde.DP_SAK.equals(u.kilde()))
                 .toList();
             var utbetalingerArena = utbetalingerDpsak.stream()
-                .filter(u -> DagpengerKilde.DP_SAK.equals(u.kilde()))
+                .filter(u -> DagpengerKilde.ARENA.equals(u.kilde()))
                 .toList();
             // Skru ned til å logge treff når validert
-            LOG.info("DP-DATADELING ARENA fant {} perioder og {} utbetalinger", perioderArena.size(), utbetalingerArena.size());
-            LOG.info("DP-DATADELING DPSAK fant {} perioder og {} utbetalinger", perioderDpsak.size(), utbetalingerDpsak.size());
+            if (!perioderArena.isEmpty() || !utbetalingerArena.isEmpty()) {
+                LOG.info("DP-DATADELING ARENA fant {} perioder og {} utbetalinger", perioderArena.size(), utbetalingerArena.size());
+            }
             if (!perioderDpsak.isEmpty() || !utbetalingerDpsak.isEmpty()) {
+                LOG.info("DP-DATADELING DPSAK fant {} perioder og {} utbetalinger", perioderDpsak.size(), utbetalingerDpsak.size());
                 LOG.info("Merk Dem! Sak {} har nye dagpenger. Kontakt produkteier umiddelbart", sak.getVerdi());
             }
         } catch (Exception e) {
