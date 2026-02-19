@@ -51,7 +51,7 @@ public class DpsakKlient {
                 .filter(u -> DagpengerKilde.DP_SAK.equals(u.kilde()))
                 .toList();
             var utbetalingerArena = utbetalingerDpsak.stream()
-                .filter(u -> DagpengerKilde.ARENA.equals(u.kilde()))
+                .filter(u -> DagpengerKilde.DP_SAK.equals(u.kilde()))
                 .toList();
             // Skru ned til å logge treff når validert
             LOG.info("DP-DATADELING ARENA fant {} perioder og {} utbetalinger", perioderArena.size(), utbetalingerArena.size());
