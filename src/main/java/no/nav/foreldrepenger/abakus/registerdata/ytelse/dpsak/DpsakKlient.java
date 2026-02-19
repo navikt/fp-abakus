@@ -37,7 +37,8 @@ public class DpsakKlient {
         this.utbetalingEndpoint = UriBuilder.fromUri(restConfig.endpoint()).path("/dagpenger/datadeling/v1/beregninger").build();
     }
 
-    public void hentDagpenger(PersonIdent personIdent, LocalDate fom, LocalDate tom, Saksnummer sak) {
+    public void hentDagpenger(PersonIdent personIdent, LocalDate fom, LocalDate tom, Saksnummer sak,
+                              int antallArenaVedtak, int antallArenaMeldekort) {
         try {
             var perioder = hentRettighetsperioder(personIdent, fom, tom);
             var utbetalinger = hentUtbetalinger(personIdent, fom, tom);
@@ -53,13 +54,14 @@ public class DpsakKlient {
             var utbetalingerArena = utbetalingerDpsak.stream()
                 .filter(u -> DagpengerKilde.ARENA.equals(u.kilde()))
                 .toList();
-            // Skru ned til å logge treff når validert
             if (!perioderArena.isEmpty() || !utbetalingerArena.isEmpty()) {
-                LOG.info("DP-DATADELING ARENA fant {} perioder og {} utbetalinger", perioderArena.size(), utbetalingerArena.size());
+                LOG.info("DP-DATADELING ARENA fant {} perioder og {} utbetalinger mot {} vedtak og {} MK fra Arena",
+                    perioderArena.size(), utbetalingerArena.size(), antallArenaVedtak, antallArenaMeldekort);
             }
             if (!perioderDpsak.isEmpty() || !utbetalingerDpsak.isEmpty()) {
-                LOG.info("DP-DATADELING DPSAK fant {} perioder og {} utbetalinger", perioderDpsak.size(), utbetalingerDpsak.size());
-                LOG.info("Merk Dem! Sak {} har nye dagpenger. Kontakt produkteier umiddelbart", sak.getVerdi());
+                LOG.info("DP-DATADELING DPSAK fant {} perioder og {} utbetalinger. Perioder: {}. Utbetalinger {}",
+                    perioderDpsak.size(), utbetalingerDpsak.size(), perioderDpsak, utbetalingerDpsak);
+                LOG.warn("Merk Dem! Sak {} har nye dagpenger. Kontakt produkteier umiddelbart", sak.getVerdi());
             }
         } catch (Exception e) {
             LOG.info("DP-DATADELING feil ", e);
