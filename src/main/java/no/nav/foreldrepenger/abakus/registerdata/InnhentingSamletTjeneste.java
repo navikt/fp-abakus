@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -122,7 +123,16 @@ public class InnhentingSamletTjeneste {
     public void innhentDagpengerDpsak(PersonIdent ident, IntervallEntitet opplysningsPeriode,
                                       Saksnummer saksnummer,
                                       List<MeldekortUtbetalingsgrunnlagSak> arena) {
-        dpsakKlient.hentDagpenger(ident, opplysningsPeriode.getFomDato(), opplysningsPeriode.getTomDato(), saksnummer);
+        try {
+            var antallVedtak = arena.size();
+            var antallMeldekort = arena.stream()
+                .mapToInt(s -> Optional.ofNullable(s.getMeldekortene()).orElseGet(List::of).size())
+                .sum();
+            dpsakKlient.hentDagpenger(ident, opplysningsPeriode.getFomDato(), opplysningsPeriode.getTomDato(), saksnummer, antallVedtak, antallMeldekort);
+        } catch (Exception e) {
+            LOG.info("DP-DATADELING feil ved kall", e);
+        }
+
 
     }
 
