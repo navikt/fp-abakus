@@ -1,0 +1,1402 @@
+[
+  {
+    "fraOgMed": "2025-09-01",
+    "tilOgMed": "2025-09-01",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 569,
+    "gjenståendeDager": 519
+  },
+  {
+    "fraOgMed": "2025-09-02",
+    "tilOgMed": "2025-09-02",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 569,
+    "gjenståendeDager": 518
+  },
+  {
+    "fraOgMed": "2025-09-03",
+    "tilOgMed": "2025-09-03",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 569,
+    "gjenståendeDager": 517
+  },
+  {
+    "fraOgMed": "2025-09-04",
+    "tilOgMed": "2025-09-04",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 569,
+    "gjenståendeDager": 516
+  },
+  {
+    "fraOgMed": "2025-09-05",
+    "tilOgMed": "2025-09-05",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 570,
+    "gjenståendeDager": 515
+  },
+  {
+    "fraOgMed": "2025-09-06",
+    "tilOgMed": "2025-09-06",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 515
+  },
+  {
+    "fraOgMed": "2025-09-07",
+    "tilOgMed": "2025-09-07",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 515
+  },
+  {
+    "fraOgMed": "2025-09-08",
+    "tilOgMed": "2025-09-08",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1119,
+    "gjenståendeDager": 514
+  },
+  {
+    "fraOgMed": "2025-09-09",
+    "tilOgMed": "2025-09-09",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1119,
+    "gjenståendeDager": 513
+  },
+  {
+    "fraOgMed": "2025-09-10",
+    "tilOgMed": "2025-09-10",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1119,
+    "gjenståendeDager": 512
+  },
+  {
+    "fraOgMed": "2025-09-11",
+    "tilOgMed": "2025-09-11",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1119,
+    "gjenståendeDager": 511
+  },
+  {
+    "fraOgMed": "2025-09-12",
+    "tilOgMed": "2025-09-12",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1119,
+    "gjenståendeDager": 510
+  },
+  {
+    "fraOgMed": "2025-09-13",
+    "tilOgMed": "2025-09-13",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 510
+  },
+  {
+    "fraOgMed": "2025-09-14",
+    "tilOgMed": "2025-09-14",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 510
+  },
+  {
+    "fraOgMed": "2025-09-15",
+    "tilOgMed": "2025-09-15",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1119,
+    "gjenståendeDager": 509
+  },
+  {
+    "fraOgMed": "2025-09-16",
+    "tilOgMed": "2025-09-16",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1119,
+    "gjenståendeDager": 508
+  },
+  {
+    "fraOgMed": "2025-09-17",
+    "tilOgMed": "2025-09-17",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1119,
+    "gjenståendeDager": 507
+  },
+  {
+    "fraOgMed": "2025-09-18",
+    "tilOgMed": "2025-09-18",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1119,
+    "gjenståendeDager": 506
+  },
+  {
+    "fraOgMed": "2025-09-19",
+    "tilOgMed": "2025-09-19",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1123,
+    "gjenståendeDager": 505
+  },
+  {
+    "fraOgMed": "2025-09-20",
+    "tilOgMed": "2025-09-20",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 505
+  },
+  {
+    "fraOgMed": "2025-09-21",
+    "tilOgMed": "2025-09-21",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 505
+  },
+  {
+    "fraOgMed": "2025-09-22",
+    "tilOgMed": "2025-09-22",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 504
+  },
+  {
+    "fraOgMed": "2025-09-23",
+    "tilOgMed": "2025-09-23",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 503
+  },
+  {
+    "fraOgMed": "2025-09-24",
+    "tilOgMed": "2025-09-24",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 502
+  },
+  {
+    "fraOgMed": "2025-09-25",
+    "tilOgMed": "2025-09-25",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 501
+  },
+  {
+    "fraOgMed": "2025-09-26",
+    "tilOgMed": "2025-09-26",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 500
+  },
+  {
+    "fraOgMed": "2025-09-27",
+    "tilOgMed": "2025-09-27",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 500
+  },
+  {
+    "fraOgMed": "2025-09-28",
+    "tilOgMed": "2025-09-28",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 500
+  },
+  {
+    "fraOgMed": "2025-09-29",
+    "tilOgMed": "2025-09-29",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 499
+  },
+  {
+    "fraOgMed": "2025-09-30",
+    "tilOgMed": "2025-09-30",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 498
+  },
+  {
+    "fraOgMed": "2025-10-01",
+    "tilOgMed": "2025-10-01",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 497
+  },
+  {
+    "fraOgMed": "2025-10-02",
+    "tilOgMed": "2025-10-02",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 496
+  },
+  {
+    "fraOgMed": "2025-10-03",
+    "tilOgMed": "2025-10-03",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 495
+  },
+  {
+    "fraOgMed": "2025-10-04",
+    "tilOgMed": "2025-10-04",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 495
+  },
+  {
+    "fraOgMed": "2025-10-05",
+    "tilOgMed": "2025-10-05",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 495
+  },
+  {
+    "fraOgMed": "2025-10-06",
+    "tilOgMed": "2025-10-06",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 494
+  },
+  {
+    "fraOgMed": "2025-10-07",
+    "tilOgMed": "2025-10-07",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 493
+  },
+  {
+    "fraOgMed": "2025-10-08",
+    "tilOgMed": "2025-10-08",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 492
+  },
+  {
+    "fraOgMed": "2025-10-09",
+    "tilOgMed": "2025-10-09",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 491
+  },
+  {
+    "fraOgMed": "2025-10-10",
+    "tilOgMed": "2025-10-10",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 490
+  },
+  {
+    "fraOgMed": "2025-10-11",
+    "tilOgMed": "2025-10-11",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 490
+  },
+  {
+    "fraOgMed": "2025-10-12",
+    "tilOgMed": "2025-10-12",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 490
+  },
+  {
+    "fraOgMed": "2025-10-13",
+    "tilOgMed": "2025-10-13",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 489
+  },
+  {
+    "fraOgMed": "2025-10-14",
+    "tilOgMed": "2025-10-14",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 488
+  },
+  {
+    "fraOgMed": "2025-10-15",
+    "tilOgMed": "2025-10-15",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 487
+  },
+  {
+    "fraOgMed": "2025-10-16",
+    "tilOgMed": "2025-10-16",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 487
+  },
+  {
+    "fraOgMed": "2025-10-17",
+    "tilOgMed": "2025-10-17",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 487
+  },
+  {
+    "fraOgMed": "2025-10-18",
+    "tilOgMed": "2025-10-18",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 487
+  },
+  {
+    "fraOgMed": "2025-10-19",
+    "tilOgMed": "2025-10-19",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 487
+  },
+  {
+    "fraOgMed": "2025-10-20",
+    "tilOgMed": "2025-10-20",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 486
+  },
+  {
+    "fraOgMed": "2025-10-21",
+    "tilOgMed": "2025-10-21",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 485
+  },
+  {
+    "fraOgMed": "2025-10-22",
+    "tilOgMed": "2025-10-22",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 484
+  },
+  {
+    "fraOgMed": "2025-10-23",
+    "tilOgMed": "2025-10-23",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 483
+  },
+  {
+    "fraOgMed": "2025-10-24",
+    "tilOgMed": "2025-10-24",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 482
+  },
+  {
+    "fraOgMed": "2025-10-25",
+    "tilOgMed": "2025-10-25",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 482
+  },
+  {
+    "fraOgMed": "2025-10-26",
+    "tilOgMed": "2025-10-26",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 482
+  },
+  {
+    "fraOgMed": "2025-10-27",
+    "tilOgMed": "2025-10-27",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 481
+  },
+  {
+    "fraOgMed": "2025-10-28",
+    "tilOgMed": "2025-10-28",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 480
+  },
+  {
+    "fraOgMed": "2025-10-29",
+    "tilOgMed": "2025-10-29",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 479
+  },
+  {
+    "fraOgMed": "2025-10-30",
+    "tilOgMed": "2025-10-30",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 478
+  },
+  {
+    "fraOgMed": "2025-10-31",
+    "tilOgMed": "2025-10-31",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 477
+  },
+  {
+    "fraOgMed": "2025-11-01",
+    "tilOgMed": "2025-11-01",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 477
+  },
+  {
+    "fraOgMed": "2025-11-02",
+    "tilOgMed": "2025-11-02",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 477
+  },
+  {
+    "fraOgMed": "2025-11-03",
+    "tilOgMed": "2025-11-03",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 476
+  },
+  {
+    "fraOgMed": "2025-11-04",
+    "tilOgMed": "2025-11-04",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 475
+  },
+  {
+    "fraOgMed": "2025-11-05",
+    "tilOgMed": "2025-11-05",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 474
+  },
+  {
+    "fraOgMed": "2025-11-06",
+    "tilOgMed": "2025-11-06",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 473
+  },
+  {
+    "fraOgMed": "2025-11-07",
+    "tilOgMed": "2025-11-07",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 472
+  },
+  {
+    "fraOgMed": "2025-11-08",
+    "tilOgMed": "2025-11-08",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 472
+  },
+  {
+    "fraOgMed": "2025-11-09",
+    "tilOgMed": "2025-11-09",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 472
+  },
+  {
+    "fraOgMed": "2025-11-10",
+    "tilOgMed": "2025-11-10",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 471
+  },
+  {
+    "fraOgMed": "2025-11-11",
+    "tilOgMed": "2025-11-11",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 470
+  },
+  {
+    "fraOgMed": "2025-11-12",
+    "tilOgMed": "2025-11-12",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 469
+  },
+  {
+    "fraOgMed": "2025-11-13",
+    "tilOgMed": "2025-11-13",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 468
+  },
+  {
+    "fraOgMed": "2025-11-14",
+    "tilOgMed": "2025-11-14",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 467
+  },
+  {
+    "fraOgMed": "2025-11-15",
+    "tilOgMed": "2025-11-15",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 467
+  },
+  {
+    "fraOgMed": "2025-11-16",
+    "tilOgMed": "2025-11-16",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 467
+  },
+  {
+    "fraOgMed": "2025-11-17",
+    "tilOgMed": "2025-11-17",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 466
+  },
+  {
+    "fraOgMed": "2025-11-18",
+    "tilOgMed": "2025-11-18",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 465
+  },
+  {
+    "fraOgMed": "2025-11-19",
+    "tilOgMed": "2025-11-19",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 464
+  },
+  {
+    "fraOgMed": "2025-11-20",
+    "tilOgMed": "2025-11-20",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 463
+  },
+  {
+    "fraOgMed": "2025-11-21",
+    "tilOgMed": "2025-11-21",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 462
+  },
+  {
+    "fraOgMed": "2025-11-22",
+    "tilOgMed": "2025-11-22",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 462
+  },
+  {
+    "fraOgMed": "2025-11-23",
+    "tilOgMed": "2025-11-23",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 462
+  },
+  {
+    "fraOgMed": "2025-11-24",
+    "tilOgMed": "2025-11-24",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 461
+  },
+  {
+    "fraOgMed": "2025-11-25",
+    "tilOgMed": "2025-11-25",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 460
+  },
+  {
+    "fraOgMed": "2025-11-26",
+    "tilOgMed": "2025-11-26",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 460
+  },
+  {
+    "fraOgMed": "2025-11-27",
+    "tilOgMed": "2025-11-27",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 460
+  },
+  {
+    "fraOgMed": "2025-11-28",
+    "tilOgMed": "2025-11-28",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 459
+  },
+  {
+    "fraOgMed": "2025-11-29",
+    "tilOgMed": "2025-11-29",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 459
+  },
+  {
+    "fraOgMed": "2025-11-30",
+    "tilOgMed": "2025-11-30",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 459
+  },
+  {
+    "fraOgMed": "2025-12-01",
+    "tilOgMed": "2025-12-01",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 458
+  },
+  {
+    "fraOgMed": "2025-12-02",
+    "tilOgMed": "2025-12-02",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 457
+  },
+  {
+    "fraOgMed": "2025-12-03",
+    "tilOgMed": "2025-12-03",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 456
+  },
+  {
+    "fraOgMed": "2025-12-04",
+    "tilOgMed": "2025-12-04",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 455
+  },
+  {
+    "fraOgMed": "2025-12-05",
+    "tilOgMed": "2025-12-05",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 454
+  },
+  {
+    "fraOgMed": "2025-12-06",
+    "tilOgMed": "2025-12-06",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 454
+  },
+  {
+    "fraOgMed": "2025-12-07",
+    "tilOgMed": "2025-12-07",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 454
+  },
+  {
+    "fraOgMed": "2025-12-08",
+    "tilOgMed": "2025-12-08",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 453
+  },
+  {
+    "fraOgMed": "2025-12-09",
+    "tilOgMed": "2025-12-09",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 452
+  },
+  {
+    "fraOgMed": "2025-12-10",
+    "tilOgMed": "2025-12-10",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 451
+  },
+  {
+    "fraOgMed": "2025-12-11",
+    "tilOgMed": "2025-12-11",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 450
+  },
+  {
+    "fraOgMed": "2025-12-12",
+    "tilOgMed": "2025-12-12",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 449
+  },
+  {
+    "fraOgMed": "2025-12-13",
+    "tilOgMed": "2025-12-13",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 449
+  },
+  {
+    "fraOgMed": "2025-12-14",
+    "tilOgMed": "2025-12-14",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 449
+  },
+  {
+    "fraOgMed": "2025-12-15",
+    "tilOgMed": "2025-12-15",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 448
+  },
+  {
+    "fraOgMed": "2025-12-16",
+    "tilOgMed": "2025-12-16",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 447
+  },
+  {
+    "fraOgMed": "2025-12-17",
+    "tilOgMed": "2025-12-17",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 446
+  },
+  {
+    "fraOgMed": "2025-12-18",
+    "tilOgMed": "2025-12-18",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 445
+  },
+  {
+    "fraOgMed": "2025-12-19",
+    "tilOgMed": "2025-12-19",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 444
+  },
+  {
+    "fraOgMed": "2025-12-20",
+    "tilOgMed": "2025-12-20",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 444
+  },
+  {
+    "fraOgMed": "2025-12-21",
+    "tilOgMed": "2025-12-21",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 444
+  },
+  {
+    "fraOgMed": "2025-12-22",
+    "tilOgMed": "2025-12-22",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 443
+  },
+  {
+    "fraOgMed": "2025-12-23",
+    "tilOgMed": "2025-12-23",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 442
+  },
+  {
+    "fraOgMed": "2025-12-24",
+    "tilOgMed": "2025-12-24",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 441
+  },
+  {
+    "fraOgMed": "2025-12-25",
+    "tilOgMed": "2025-12-25",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 440
+  },
+  {
+    "fraOgMed": "2025-12-26",
+    "tilOgMed": "2025-12-26",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 439
+  },
+  {
+    "fraOgMed": "2025-12-27",
+    "tilOgMed": "2025-12-27",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 439
+  },
+  {
+    "fraOgMed": "2025-12-28",
+    "tilOgMed": "2025-12-28",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 439
+  },
+  {
+    "fraOgMed": "2025-12-29",
+    "tilOgMed": "2025-12-29",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 438
+  },
+  {
+    "fraOgMed": "2025-12-30",
+    "tilOgMed": "2025-12-30",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 437
+  },
+  {
+    "fraOgMed": "2025-12-31",
+    "tilOgMed": "2025-12-31",
+    "kilde": "DP_SAK",
+    "sats": 1423,
+    "utbetaltBeløp": 1423,
+    "gjenståendeDager": 436
+  },
+  {
+    "fraOgMed": "2026-01-01",
+    "tilOgMed": "2026-01-01",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 435
+  },
+  {
+    "fraOgMed": "2026-01-02",
+    "tilOgMed": "2026-01-02",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 434
+  },
+  {
+    "fraOgMed": "2026-01-03",
+    "tilOgMed": "2026-01-03",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 434
+  },
+  {
+    "fraOgMed": "2026-01-04",
+    "tilOgMed": "2026-01-04",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 434
+  },
+  {
+    "fraOgMed": "2026-01-05",
+    "tilOgMed": "2026-01-05",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 433
+  },
+  {
+    "fraOgMed": "2026-01-06",
+    "tilOgMed": "2026-01-06",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 432
+  },
+  {
+    "fraOgMed": "2026-01-07",
+    "tilOgMed": "2026-01-07",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 431
+  },
+  {
+    "fraOgMed": "2026-01-08",
+    "tilOgMed": "2026-01-08",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 430
+  },
+  {
+    "fraOgMed": "2026-01-09",
+    "tilOgMed": "2026-01-09",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 429
+  },
+  {
+    "fraOgMed": "2026-01-10",
+    "tilOgMed": "2026-01-10",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 429
+  },
+  {
+    "fraOgMed": "2026-01-11",
+    "tilOgMed": "2026-01-11",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 429
+  },
+  {
+    "fraOgMed": "2026-01-12",
+    "tilOgMed": "2026-01-12",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 428
+  },
+  {
+    "fraOgMed": "2026-01-13",
+    "tilOgMed": "2026-01-13",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 427
+  },
+  {
+    "fraOgMed": "2026-01-14",
+    "tilOgMed": "2026-01-14",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 426
+  },
+  {
+    "fraOgMed": "2026-01-15",
+    "tilOgMed": "2026-01-15",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 425
+  },
+  {
+    "fraOgMed": "2026-01-16",
+    "tilOgMed": "2026-01-16",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 424
+  },
+  {
+    "fraOgMed": "2026-01-17",
+    "tilOgMed": "2026-01-17",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 424
+  },
+  {
+    "fraOgMed": "2026-01-18",
+    "tilOgMed": "2026-01-18",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 424
+  },
+  {
+    "fraOgMed": "2026-01-19",
+    "tilOgMed": "2026-01-19",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 423
+  },
+  {
+    "fraOgMed": "2026-01-20",
+    "tilOgMed": "2026-01-20",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 422
+  },
+  {
+    "fraOgMed": "2026-01-21",
+    "tilOgMed": "2026-01-21",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 421
+  },
+  {
+    "fraOgMed": "2026-01-22",
+    "tilOgMed": "2026-01-22",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 420
+  },
+  {
+    "fraOgMed": "2026-01-23",
+    "tilOgMed": "2026-01-23",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 419
+  },
+  {
+    "fraOgMed": "2026-01-24",
+    "tilOgMed": "2026-01-24",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 419
+  },
+  {
+    "fraOgMed": "2026-01-25",
+    "tilOgMed": "2026-01-25",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 419
+  },
+  {
+    "fraOgMed": "2026-01-26",
+    "tilOgMed": "2026-01-26",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 418
+  },
+  {
+    "fraOgMed": "2026-01-27",
+    "tilOgMed": "2026-01-27",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 417
+  },
+  {
+    "fraOgMed": "2026-01-28",
+    "tilOgMed": "2026-01-28",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 416
+  },
+  {
+    "fraOgMed": "2026-01-29",
+    "tilOgMed": "2026-01-29",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 415
+  },
+  {
+    "fraOgMed": "2026-01-30",
+    "tilOgMed": "2026-01-30",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 414
+  },
+  {
+    "fraOgMed": "2026-01-31",
+    "tilOgMed": "2026-01-31",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 414
+  },
+  {
+    "fraOgMed": "2026-02-01",
+    "tilOgMed": "2026-02-01",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 414
+  },
+  {
+    "fraOgMed": "2026-02-02",
+    "tilOgMed": "2026-02-02",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 413
+  },
+  {
+    "fraOgMed": "2026-02-03",
+    "tilOgMed": "2026-02-03",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 412
+  },
+  {
+    "fraOgMed": "2026-02-04",
+    "tilOgMed": "2026-02-04",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 411
+  },
+  {
+    "fraOgMed": "2026-02-05",
+    "tilOgMed": "2026-02-05",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 410
+  },
+  {
+    "fraOgMed": "2026-02-06",
+    "tilOgMed": "2026-02-06",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 1424,
+    "gjenståendeDager": 409
+  },
+  {
+    "fraOgMed": "2026-02-07",
+    "tilOgMed": "2026-02-07",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 409
+  },
+  {
+    "fraOgMed": "2026-02-08",
+    "tilOgMed": "2026-02-08",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 409
+  },
+  {
+    "fraOgMed": "2026-02-09",
+    "tilOgMed": "2026-02-09",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 968,
+    "gjenståendeDager": 408
+  },
+  {
+    "fraOgMed": "2026-02-10",
+    "tilOgMed": "2026-02-10",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 968,
+    "gjenståendeDager": 407
+  },
+  {
+    "fraOgMed": "2026-02-11",
+    "tilOgMed": "2026-02-11",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 968,
+    "gjenståendeDager": 406
+  },
+  {
+    "fraOgMed": "2026-02-12",
+    "tilOgMed": "2026-02-12",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 968,
+    "gjenståendeDager": 405
+  },
+  {
+    "fraOgMed": "2026-02-13",
+    "tilOgMed": "2026-02-13",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 968,
+    "gjenståendeDager": 404
+  },
+  {
+    "fraOgMed": "2026-02-14",
+    "tilOgMed": "2026-02-14",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 404
+  },
+  {
+    "fraOgMed": "2026-02-15",
+    "tilOgMed": "2026-02-15",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 404
+  },
+  {
+    "fraOgMed": "2026-02-16",
+    "tilOgMed": "2026-02-16",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 968,
+    "gjenståendeDager": 403
+  },
+  {
+    "fraOgMed": "2026-02-17",
+    "tilOgMed": "2026-02-17",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 968,
+    "gjenståendeDager": 402
+  },
+  {
+    "fraOgMed": "2026-02-18",
+    "tilOgMed": "2026-02-18",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 968,
+    "gjenståendeDager": 401
+  },
+  {
+    "fraOgMed": "2026-02-19",
+    "tilOgMed": "2026-02-19",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 968,
+    "gjenståendeDager": 400
+  },
+  {
+    "fraOgMed": "2026-02-20",
+    "tilOgMed": "2026-02-20",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 971,
+    "gjenståendeDager": 399
+  },
+  {
+    "fraOgMed": "2026-02-21",
+    "tilOgMed": "2026-02-21",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 399
+  },
+  {
+    "fraOgMed": "2026-02-22",
+    "tilOgMed": "2026-02-22",
+    "kilde": "DP_SAK",
+    "sats": 1424,
+    "utbetaltBeløp": 0,
+    "gjenståendeDager": 399
+  }
+]

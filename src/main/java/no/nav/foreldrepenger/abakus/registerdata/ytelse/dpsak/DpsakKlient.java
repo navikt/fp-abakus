@@ -3,12 +3,14 @@ package no.nav.foreldrepenger.abakus.registerdata.ytelse.dpsak;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.Dependent;
 import jakarta.ws.rs.core.UriBuilder;
+import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.felles.integrasjon.rest.RestClient;
@@ -37,8 +39,8 @@ public class DpsakKlient {
         this.utbetalingEndpoint = UriBuilder.fromUri(restConfig.endpoint()).path("/dagpenger/datadeling/v1/beregninger").build();
     }
 
-    public void hentDagpenger(PersonIdent personIdent, LocalDate fom, LocalDate tom, Saksnummer sak,
-                              int antallArenaVedtak, int antallArenaMeldekort) {
+    public Map<Fagsystem, List<DpsakVedtak>> hentDagpenger(PersonIdent personIdent, LocalDate fom, LocalDate tom, Saksnummer sak,
+                                                           int antallArenaVedtak, int antallArenaMeldekort) {
         try {
             var perioder = hentRettighetsperioder(personIdent, fom, tom);
             var utbetalinger = hentUtbetalinger(personIdent, fom, tom);
@@ -63,8 +65,11 @@ public class DpsakKlient {
                     perioderDpsak.size(), utbetalingerDpsak.size(), perioderDpsak, utbetalingerDpsak);
                 LOG.warn("Merk Dem! Sak {} har nye dagpenger. Kontakt produkteier umiddelbart", sak.getVerdi());
             }
+            var dpsakVedtak = DpsakMapper.fullMapping(perioderDpsak, utbetalingerDpsak);
+            return Map.of(Fagsystem.DPSAK, dpsakVedtak);
         } catch (Exception e) {
             LOG.info("DP-DATADELING feil ", e);
+            return Map.of();
         }
     }
 
