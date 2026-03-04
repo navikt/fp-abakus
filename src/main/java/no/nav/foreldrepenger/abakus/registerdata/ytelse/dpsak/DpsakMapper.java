@@ -94,12 +94,16 @@ public class DpsakMapper {
 
     private static LocalDateTimeline<MappedUtbetaling> mapDatadelingDpsakUtbetaling(List<DagpengerUtbetalingDto> utbetalinger) {
         var mapped = utbetalinger.stream()
-            .filter(u -> u.utbetaltBeløp() > 0 || u.fraOgMed().getDayOfWeek().compareTo(DayOfWeek.SATURDAY) < 0
-                || u.tilOgMed().getDayOfWeek().compareTo(DayOfWeek.SATURDAY) < 0)
+            .filter(DpsakMapper::virkedagEllerUtbetaling)
             .map(u -> new LocalDateSegment<>(new LocalDateInterval(u.fraOgMed(), u.tilOgMed()), new MappedUtbetaling(u)))
             .collect(Collectors.collectingAndThen(Collectors.toList(), l -> new LocalDateTimeline<>(l, StandardCombinators::max)));
         // Slå sammen dager med lik dagsats og utbetaling. Utvide fredager til søndag pga filter over. Summer sumUtbetalt ved sammenslåing
         return mapped.compress(LocalDateInterval::abutsWorkdays, MappedUtbetaling::equals, DpsakMapper::slåSammen);
+    }
+
+    private static boolean virkedagEllerUtbetaling(DagpengerUtbetalingDto utbetaling) {
+        return utbetaling.utbetaltBeløp() > 0 || utbetaling.fraOgMed().getDayOfWeek().compareTo(DayOfWeek.SATURDAY) < 0
+            || utbetaling.tilOgMed().getDayOfWeek().compareTo(DayOfWeek.SATURDAY) < 0;
     }
 
     private static LocalDateSegment<MappedUtbetaling> slåSammen(LocalDateInterval i,
