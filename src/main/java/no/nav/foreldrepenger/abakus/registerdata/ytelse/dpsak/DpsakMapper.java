@@ -2,8 +2,8 @@ package no.nav.foreldrepenger.abakus.registerdata.ytelse.dpsak;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -22,11 +22,13 @@ public class DpsakMapper {
                                          List<DagpengerUtbetalingDto> utbetalinger) {
         // Deler opp rettighetsperioder etter dagsats og utbetalingsdatoer med dagsats. Lager vedtak fra disse
         var vedtakene = mapDatadelingVedtak(rettighetsperioder, utbetalinger).stream()
-            .map(v -> new DpsakVedtak(v.getLocalDateInterval(), v.getValue(), new LinkedHashSet<>()))
+            .map(v -> new DpsakVedtak(v.getLocalDateInterval(), v.getValue(), new ArrayList<>()))
             .toList();
         // Henter utbetalingstidslinje med summert ubetalt og helge-extender disse
         mapDatadelingDpsakUtbetaling(utbetalinger).forEach(u -> {
-            var vedtak = vedtakene.stream().filter(v -> Objects.equals(v.dagsats(), u.getValue().sats()) && v.periode().overlaps(u.getLocalDateInterval())).findFirst().orElseThrow();
+            var vedtak = vedtakene.stream()
+                .filter(v -> Objects.equals(v.dagsats(), u.getValue().sats()) && v.periode().overlaps(u.getLocalDateInterval()))
+                .findFirst().orElseThrow(() -> new IllegalStateException("Fant ikke utbetaling " + u + " i noen vedtak " + vedtakene));
             var du = new DpsakVedtak.DpsakUtbetaling(u.getLocalDateInterval().extendThroughWeekend(),
                 u.getValue().sats(), u.getValue().utbetaltBeløp(), u.getValue().sumUtbetalt());
             vedtak.utbetalinger().add(du);
@@ -37,31 +39,29 @@ public class DpsakMapper {
     private static LocalDateTimeline<Integer> mapDatadelingVedtak(List<DagpengerRettighetsperioderDto.Rettighetsperiode> rettighetsperioder,
                                                                   List<DagpengerUtbetalingDto> utbetalinger) {
         // Tidslinje for rettighetsperioder
-        var periodertidslinje = rettighetsperioder.stream()
+        var rettighetsperioderTidslinje = rettighetsperioder.stream()
             .map(p -> new LocalDateSegment<>(p.fraOgMedDato(), p.tilOgMedDato(), 0))
             .collect(Collectors.collectingAndThen(Collectors.toList(),
-                l -> new LocalDateTimeline<>(l, StandardCombinators::max).compress()));
-        // Tidslinje for 0-padding
-        var dagsats0tidslinje = new LocalDateTimeline<>(new LocalDateInterval(null, null), 0);
+                l -> new LocalDateTimeline<>(l, StandardCombinators::max)))
+            .compress();
         if (utbetalinger.isEmpty()) {
-            return dagsats0tidslinje.intersection(periodertidslinje).compress();
+            return rettighetsperioderTidslinje;
         } else {
-            // Extender tidligste og seneste utbetalingsdato
-            var minUtbetalt = utbetalinger.stream().map(DagpengerUtbetalingDto::fraOgMed).min(Comparator.naturalOrder()).orElseThrow();
+            // Extender seneste utbetalingsdato og antar at siste dagsats gjelder framover.
             var maxUtbetalt = utbetalinger.stream().map(DagpengerUtbetalingDto::tilOgMed).max(Comparator.naturalOrder()).orElseThrow();
-            var segmenter = utbetalinger.stream()
-                .map(utbetaling -> new LocalDateSegment<>(fomEllerNull(minUtbetalt, utbetaling),
+            var utbetalingdagsatsTidslinje = utbetalinger.stream()
+                .map(utbetaling -> new LocalDateSegment<>(utbetaling.fraOgMed(),
                     tomEllerNull(maxUtbetalt, utbetaling), utbetaling.sats()))
-                .toList();
-            var dagsatstidslinje = new LocalDateTimeline<>(segmenter, StandardCombinators::max).compress();
-            // 0-padding av manglende utbetalinger - dagsats 0
-            var samletDagsatsTidslinje = dagsatstidslinje.union(dagsats0tidslinje, StandardCombinators::max).compress();
-            return samletDagsatsTidslinje.intersection(periodertidslinje).compress();
+                .collect(Collectors.collectingAndThen(Collectors.toList(),
+                    l -> new LocalDateTimeline<>(l, StandardCombinators::max)))
+                .compress();
+            var rettighetsperioderUtenDagsats = rettighetsperioderTidslinje.disjoint(utbetalingdagsatsTidslinje);
+            if (rettighetsperioderUtenDagsats.isEmpty()) {
+                return rettighetsperioderTidslinje.intersection(utbetalingdagsatsTidslinje, StandardCombinators::max);
+            } else {
+                throw new IllegalStateException("Mangler utbetalinger for rettighetsperioder: " + rettighetsperioderUtenDagsats);
+            }
         }
-    }
-
-    private static LocalDate fomEllerNull(LocalDate min, DagpengerUtbetalingDto utbetaling) {
-        return min.equals(utbetaling.fraOgMed()) ? null : utbetaling.fraOgMed();
     }
 
     private static LocalDate tomEllerNull(LocalDate max, DagpengerUtbetalingDto utbetaling) {
