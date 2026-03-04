@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import no.nav.fpsak.tidsserie.LocalDateInterval;
@@ -19,21 +18,19 @@ public class DpsakMapper {
     private DpsakMapper() {
     }
 
-    static List<DpsakVedtak> fullMapping(List<DagpengerRettighetsperioderDto.Rettighetsperiode> perioder,
+    static List<DpsakVedtak> fullMapping(List<DagpengerRettighetsperioderDto.Rettighetsperiode> rettighetsperioder,
                                          List<DagpengerUtbetalingDto> utbetalinger) {
-        var rettighetsperioder = Optional.ofNullable(perioder).orElseGet(List::of);
-        var safeUtbetalinger = Optional.ofNullable(utbetalinger).orElseGet(List::of);
         // Deler opp rettighetsperioder etter dagsats og utbetalingsdatoer med dagsats. Lager vedtak fra disse
-        var vedtakene = mapDatadelingVedtak(rettighetsperioder, safeUtbetalinger).stream()
+        var vedtakene = mapDatadelingVedtak(rettighetsperioder, utbetalinger).stream()
             .map(v -> new DpsakVedtak(v.getLocalDateInterval(), v.getValue(), new LinkedHashSet<>()))
             .toList();
         // Henter utbetalingstidslinje med summert ubetalt og helge-extender disse
-        mapDatadelingDpsakUtbetaling(safeUtbetalinger).stream().forEach((u -> {
+        mapDatadelingDpsakUtbetaling(utbetalinger).forEach(u -> {
             var vedtak = vedtakene.stream().filter(v -> Objects.equals(v.dagsats(), u.getValue().sats()) && v.periode().overlaps(u.getLocalDateInterval())).findFirst().orElseThrow();
             var du = new DpsakVedtak.DpsakUtbetaling(u.getLocalDateInterval().extendThroughWeekend(),
                 u.getValue().sats(), u.getValue().utbetaltBeløp(), u.getValue().sumUtbetalt());
             vedtak.utbetalinger().add(du);
-        }));
+        });
         return vedtakene;
     }
 
