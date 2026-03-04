@@ -20,9 +20,9 @@
         <sonar.projectName>fp-abakus</sonar.projectName>
         <sonar.projectKey>navikt_fp-abakus</sonar.projectKey>
 
-        <abakus-kontrakt.version>2.3.7</abakus-kontrakt.version>
+        <abakus-kontrakt.version>2.3.8</abakus-kontrakt.version>
 
-		<felles.version>7.6.16</felles.version>
+		<felles.version>7.6.17</felles.version>
 		<prosesstask.version>5.2.4</prosesstask.version>
 		<kontrakter.version>9.4.29</kontrakter.version>
         <tidsserie.version>2.7.4</tidsserie.version>
