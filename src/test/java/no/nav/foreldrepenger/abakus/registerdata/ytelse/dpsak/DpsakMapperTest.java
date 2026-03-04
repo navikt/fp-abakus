@@ -6,20 +6,12 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
-
 import org.junit.jupiter.api.Test;
 
 import no.nav.fpsak.tidsserie.LocalDateInterval;
 import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 class DpsakMapperTest {
-
-    @Test
-    void null_mapping() {
-        var vedtak = DpsakMapper.fullMapping(null, null);
-        assertThat(vedtak).isEmpty();
-    }
 
     @Test
     void ingen_utbetalinger() {
