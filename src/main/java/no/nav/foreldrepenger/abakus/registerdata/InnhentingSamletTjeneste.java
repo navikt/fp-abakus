@@ -10,8 +10,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import no.nav.foreldrepenger.abakus.registerdata.ytelse.dpsak.DpsakKlient;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +30,7 @@ import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Inntektstyp
 import no.nav.foreldrepenger.abakus.registerdata.inntekt.komponenten.Månedsinntekt;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.FpwsproxyKlient;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.dpsak.DpsakKlient;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.InnhentingInfotrygdTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.kelvin.KelvinKlient;
@@ -128,7 +127,10 @@ public class InnhentingSamletTjeneste {
             var antallMeldekort = arena.stream()
                 .mapToInt(s -> Optional.ofNullable(s.getMeldekortene()).orElseGet(List::of).size())
                 .sum();
-            dpsakKlient.hentDagpenger(ident, opplysningsPeriode.getFomDato(), opplysningsPeriode.getTomDato(), saksnummer, antallVedtak, antallMeldekort);
+            var vedtak = dpsakKlient.hentDagpenger(ident, opplysningsPeriode.getFomDato(), opplysningsPeriode.getTomDato(), saksnummer, antallVedtak, antallMeldekort);
+            if (!vedtak.getOrDefault(Fagsystem.DPSAK, List.of()).isEmpty()) {
+                LOG.info("DP-DATADELING vedtak {}", vedtak);
+            }
         } catch (Exception e) {
             LOG.info("DP-DATADELING feil ved kall", e);
         }
@@ -147,7 +149,10 @@ public class InnhentingSamletTjeneste {
         } catch (Exception _) {
             LOG.info("Maksimum AAP sammenligning av Arenadata for sak {} feilet", saksnummer.getVerdi());
         }
-        if (!maksimumRespons.getOrDefault(Fagsystem.KELVIN, List.of()).isEmpty()) {
+        var antattStp = opplysningsPeriode.getFomDato().plusMonths(17);
+        var overlappStp = maksimumRespons.getOrDefault(Fagsystem.KELVIN, List.of()).stream()
+            .anyMatch(v -> v.getVedtaksPeriodeFom().isBefore(antattStp) && v.getVedtaksPeriodeTom().isAfter(antattStp));
+        if (overlappStp) {
             var saksnumreAAP = maksimumRespons.get(Fagsystem.KELVIN).stream()
                 .map(MeldekortUtbetalingsgrunnlagSak::getSaksnummer)
                 .map(Saksnummer::getVerdi)
