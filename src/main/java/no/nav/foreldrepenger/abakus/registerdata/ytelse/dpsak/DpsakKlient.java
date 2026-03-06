@@ -53,7 +53,7 @@ public class DpsakKlient {
             var utbetalingerDpsak = utbetalinger.stream()
                 .filter(u -> DagpengerKilde.DP_SAK.equals(u.kilde()))
                 .toList();
-            var utbetalingerArena = utbetalingerDpsak.stream()
+            var utbetalingerArena = utbetalinger.stream()
                 .filter(u -> DagpengerKilde.ARENA.equals(u.kilde()))
                 .toList();
             if (!perioderArena.isEmpty() || !utbetalingerArena.isEmpty()) {
