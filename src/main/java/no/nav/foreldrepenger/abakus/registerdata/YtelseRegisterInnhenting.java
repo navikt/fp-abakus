@@ -1,10 +1,14 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
+import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseAggregatBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YtelseBuilder;
@@ -13,10 +17,13 @@ import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.registerdata.infotrygd.InfotrygdgrunnlagYtelseMapper;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagMeldekort;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.arena.MeldekortUtbetalingsgrunnlagSak;
+import no.nav.foreldrepenger.abakus.registerdata.ytelse.dpsak.DpsakVedtak;
 import no.nav.foreldrepenger.abakus.registerdata.ytelse.infotrygd.dto.InfotrygdYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
+import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
+import no.nav.fpsak.tidsserie.LocalDateInterval;
 
 public class YtelseRegisterInnhenting {
     private final InnhentingSamletTjeneste innhentingSamletTjeneste;
@@ -55,7 +62,10 @@ public class YtelseRegisterInnhenting {
         }
 
         var dagsaker = arena.stream().filter(s -> YtelseType.DAGPENGER.equals(s.getYtelseType())).toList();
-        innhentingSamletTjeneste.innhentDagpengerDpsak(ident, opplysningsPeriode, behandling.getSaksnummer(), dagsaker);
+        var dpdatadeling = innhentingSamletTjeneste.innhentDagpengerDpsak(ident, opplysningsPeriode, behandling.getSaksnummer(), dagsaker);
+        for (var dpsakvedtak : dpdatadeling.getOrDefault(Fagsystem.DPSAK, List.of())) {
+            oversettDpsakTilYtelse(aktørYtelseBuilder, dpsakvedtak);
+        }
 
         inntektArbeidYtelseAggregatBuilder.leggTilAktørYtelse(aktørYtelseBuilder);
     }
@@ -73,6 +83,35 @@ public class YtelseRegisterInnhenting {
             ytelseBuilder.leggtilYtelseAnvist(
                 ytelseBuilder.getAnvistBuilder().medAnvistPeriode(intervall).medUtbetalingsgradProsent(vedtak.getUtbetalingsgrad()).build());
         });
+        aktørYtelseBuilder.leggTilYtelse(ytelseBuilder);
+    }
+
+    // Tolker bare dagpenger fra DP-sak. Dapenger fra Arena via dp-datadeling blir en egen vurdering senere.
+    // Forutsetter: Utbetaling har lik dagsats og lik utbetaltBeløp for alle dager i perioden (vilkårlig lengde). sumUtbetalt = utbetaltBeløp * virkedager.
+    private void oversettDpsakTilYtelse(InntektArbeidYtelseAggregatBuilder.AktørYtelseBuilder aktørYtelseBuilder, DpsakVedtak dagpengerVedtak) {
+        var førsteUtbetalingFom = dagpengerVedtak.utbetalinger().stream()
+            .map(DpsakVedtak.DpsakUtbetaling::periode)
+            .map(LocalDateInterval::getFomDato)
+            .min(Comparator.naturalOrder());
+        var periode = IntervallEntitet.fraOgMedTilOgMed(dagpengerVedtak.periode().getFomDato(), dagpengerVedtak.periode().getTomDato());
+        var status = LocalDate.now().isBefore(dagpengerVedtak.periode().getTomDato()) ? YtelseStatus.LØPENDE : YtelseStatus.AVSLUTTET;
+        var ytelseBuilder = aktørYtelseBuilder.getYtelselseBuilderForType(Fagsystem.DPSAK, YtelseType.DAGPENGER, periode, førsteUtbetalingFom);
+        ytelseBuilder.medPeriode(periode)
+            .medStatus(status)
+            .medYtelseGrunnlag(ytelseBuilder.getGrunnlagBuilder()
+                .medVedtaksDagsats(new Beløp(BigDecimal.valueOf(dagpengerVedtak.dagsats())))
+                .build());
+        for (var utbetaling : dagpengerVedtak.utbetalinger()) {
+            var dagsats = BigDecimal.valueOf(utbetaling.dagsats());
+            var utbetalingsgrad = BigDecimal.valueOf(utbetaling.utbetaltBeløp()).multiply(BigDecimal.valueOf(100))
+                .divide(dagsats, 1, RoundingMode.HALF_UP);
+            ytelseBuilder.leggtilYtelseAnvist(ytelseBuilder.getAnvistBuilder()
+                .medAnvistPeriode(IntervallEntitet.fraOgMedTilOgMed(utbetaling.periode().getFomDato(), utbetaling.periode().getTomDato()))
+                .medBeløp(BigDecimal.valueOf(utbetaling.sumUtbetalt()))
+                .medDagsats(dagsats)
+                .medUtbetalingsgradProsent(utbetalingsgrad)
+                .build());
+        }
         aktørYtelseBuilder.leggTilYtelse(ytelseBuilder);
     }
 
