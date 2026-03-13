@@ -1,21 +1,20 @@
 package no.nav.abakus.iaygrunnlag.oppgittopptjening.v1;
 
+import java.math.BigDecimal;
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import no.nav.abakus.iaygrunnlag.Periode;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-
-import java.math.BigDecimal;
-import java.util.Objects;
+import no.nav.abakus.iaygrunnlag.Periode;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(value = Include.NON_ABSENT, content = Include.ALWAYS)
@@ -29,7 +28,7 @@ public class OppgittFrilansoppdragDto {
 
     @JsonProperty(value = "oppdragsgiver")
     @Size(max = 100)
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String oppdragsgiver;
 
     /**

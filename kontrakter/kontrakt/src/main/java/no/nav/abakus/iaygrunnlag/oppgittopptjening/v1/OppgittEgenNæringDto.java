@@ -5,18 +5,17 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import no.nav.abakus.iaygrunnlag.Organisasjon;
 import no.nav.abakus.iaygrunnlag.Periode;
 import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
@@ -41,12 +40,12 @@ public class OppgittEgenNæringDto {
 
     @JsonProperty(value = "regnskapsførerNavn")
     @Size(max=400)
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String regnskapsførerNavn;
 
     @JsonProperty(value = "regnskapsførerTlf")
     @Size(max=100)
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "[${validatedValue}] matcher ikke oppgitt pattern [{regexp}]")
+    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}]+$", message = "[${validatedValue}] matcher ikke oppgitt pattern [{regexp}]")
     // har caser som har sluppet gjennom selvbetjening med alfa
     private String regnskapsførerTlf;
 
@@ -55,7 +54,7 @@ public class OppgittEgenNæringDto {
      */
     @JsonProperty(value = "virksomhetNavn", required = false)
     @Size(max=100)
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}]+$", message = "[${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String virksomhetNavn;
 
     @JsonProperty(value = "landkode", required = true)

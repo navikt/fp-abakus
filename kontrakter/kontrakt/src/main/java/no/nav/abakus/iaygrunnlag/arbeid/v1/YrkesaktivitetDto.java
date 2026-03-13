@@ -4,17 +4,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
@@ -43,7 +42,7 @@ public class YrkesaktivitetDto {
     private List<@Valid PermisjonDto> permisjoner;
 
     @JsonProperty("navnArbeidsgiverUtland")
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Yrkesaktivitet#navnArbeidsgiverUtland [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}]+$", message = "Yrkesaktivitet#navnArbeidsgiverUtland [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     @Valid
     private String navnArbeidsgiverUtland;
 
