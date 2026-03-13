@@ -90,7 +90,7 @@ public class Ytelse extends BaseEntitet implements IndexKey {
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-    Ytelse() {
+    protected Ytelse() {
         // hibernate
     }
 

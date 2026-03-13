@@ -64,7 +64,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
     @Transient
     private IntervallEntitet overstyrtPeriode;
 
-    AktivitetsAvtale() {
+    protected AktivitetsAvtale() {
         // hibernate
     }
 

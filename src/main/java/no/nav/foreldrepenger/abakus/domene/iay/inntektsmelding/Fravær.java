@@ -47,7 +47,7 @@ public class Fravær extends BaseEntitet implements IndexKey {
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-    Fravær() {
+    protected Fravær() {
         // Plattform (CDI, Hibernate, Jackson)
     }
 

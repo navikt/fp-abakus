@@ -57,7 +57,7 @@ public class UtsettelsePeriode extends BaseEntitet implements IndexKey {
         this.periode = IntervallEntitet.fraOgMedTilOgMed(fom, tom);
     }
 
-    UtsettelsePeriode() {
+    protected UtsettelsePeriode() {
     }
 
     UtsettelsePeriode(UtsettelsePeriode utsettelsePeriode) {

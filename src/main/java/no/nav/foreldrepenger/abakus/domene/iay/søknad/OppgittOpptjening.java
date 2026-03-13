@@ -63,7 +63,7 @@ public class OppgittOpptjening extends BaseEntitet {
     private OppgittFrilans frilans;
 
     @SuppressWarnings("unused")
-    private OppgittOpptjening() {
+    protected OppgittOpptjening() {
         // hibernate
     }
 

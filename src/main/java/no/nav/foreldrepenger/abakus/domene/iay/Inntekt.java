@@ -56,7 +56,7 @@ public class Inntekt extends BaseEntitet implements IndexKey {
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-    Inntekt() {
+    protected Inntekt() {
         // hibernate
     }
 

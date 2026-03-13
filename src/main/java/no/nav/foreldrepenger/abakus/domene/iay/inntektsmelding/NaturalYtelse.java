@@ -55,7 +55,7 @@ public class NaturalYtelse extends BaseEntitet implements IndexKey {
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-    NaturalYtelse() {
+    protected NaturalYtelse() {
     }
 
     public NaturalYtelse(LocalDate fom, LocalDate tom, BigDecimal beloepPerMnd, NaturalytelseType type) {

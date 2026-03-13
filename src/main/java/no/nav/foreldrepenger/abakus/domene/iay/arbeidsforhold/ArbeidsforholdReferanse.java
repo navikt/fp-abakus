@@ -47,7 +47,7 @@ public class ArbeidsforholdReferanse extends BaseEntitet implements IndexKey, Tr
     @JoinColumn(name = "informasjon_id", updatable = false, unique = true, nullable = false)
     private ArbeidsforholdInformasjon informasjon;
 
-    ArbeidsforholdReferanse() {
+    protected ArbeidsforholdReferanse() {
         // Plattform (CDI, Hibernate, Jackson)
     }
 

@@ -87,7 +87,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     private long versjon;
 
     @SuppressWarnings("unused")
-    private InntektArbeidYtelseGrunnlag() {
+    protected InntektArbeidYtelseGrunnlag() {
         // Plattform (CDI, Hibernate, Jackson)
     }
 
