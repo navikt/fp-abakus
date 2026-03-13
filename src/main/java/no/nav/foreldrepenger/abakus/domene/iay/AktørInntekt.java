@@ -55,7 +55,7 @@ public class AktørInntekt extends BaseEntitet implements IndexKey {
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-    AktørInntekt() {
+    protected AktørInntekt() {
         //hibernate
     }
 

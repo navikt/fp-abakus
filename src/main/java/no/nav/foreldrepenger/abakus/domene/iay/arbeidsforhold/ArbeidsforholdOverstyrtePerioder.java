@@ -38,7 +38,7 @@ public class ArbeidsforholdOverstyrtePerioder extends BaseEntitet {
     @Column(name = "versjon", nullable = false)
     private Long versjon;
 
-    ArbeidsforholdOverstyrtePerioder() {
+    protected ArbeidsforholdOverstyrtePerioder() {
 
     }
 

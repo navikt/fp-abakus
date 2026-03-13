@@ -53,7 +53,7 @@ public class InntektArbeidYtelseAggregat extends BaseEntitet {
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-    InntektArbeidYtelseAggregat() {
+    protected InntektArbeidYtelseAggregat() {
         // hibernate
     }
 

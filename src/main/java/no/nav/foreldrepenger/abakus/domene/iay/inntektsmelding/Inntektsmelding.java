@@ -139,7 +139,7 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-    Inntektsmelding() {
+    protected Inntektsmelding() {
     }
 
     /**

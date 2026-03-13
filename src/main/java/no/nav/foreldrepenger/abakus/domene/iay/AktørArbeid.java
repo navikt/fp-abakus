@@ -52,7 +52,7 @@ public class AktørArbeid extends BaseEntitet implements IndexKey {
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-    AktørArbeid() {
+    protected AktørArbeid() {
         // hibernate
     }
 

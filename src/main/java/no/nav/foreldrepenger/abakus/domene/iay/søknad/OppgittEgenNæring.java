@@ -90,7 +90,7 @@ public class OppgittEgenNæring extends BaseEntitet implements IndexKey {
     @Column(name = "utenlandsk_virksomhet_navn")
     private String utenlandskVirksomhetNavn;
 
-    OppgittEgenNæring() {
+    protected OppgittEgenNæring() {
         // for hibernate
     }
 

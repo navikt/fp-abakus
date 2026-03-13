@@ -42,7 +42,7 @@ public class OppgittFrilansoppdrag extends BaseEntitet implements IndexKey {
     @Column(name = "inntekt")
     private BigDecimal inntekt;
 
-    OppgittFrilansoppdrag() {
+    protected OppgittFrilansoppdrag() {
         // Hibernate
     }
 

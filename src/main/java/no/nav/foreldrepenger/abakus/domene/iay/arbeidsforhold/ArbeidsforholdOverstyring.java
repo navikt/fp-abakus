@@ -104,7 +104,7 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-    ArbeidsforholdOverstyring() {
+    protected ArbeidsforholdOverstyring() {
         // Plattform (CDI, Hibernate, Jackson)
     }
 

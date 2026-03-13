@@ -48,7 +48,7 @@ public class Gradering extends BaseEntitet implements IndexKey {
     @Column(name = "versjon", nullable = false)
     private long versjon;
 
-    Gradering() {
+    protected Gradering() {
     }
 
     private Gradering(IntervallEntitet periode, Stillingsprosent arbeidstidProsent) {
