@@ -20,6 +20,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
+import no.nav.foreldrepenger.abakus.iay.jpa.YtelseTypeKodeverdiConverter;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
 import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 

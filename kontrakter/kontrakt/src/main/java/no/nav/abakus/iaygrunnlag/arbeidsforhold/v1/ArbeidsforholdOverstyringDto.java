@@ -5,19 +5,18 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import no.nav.abakus.iaygrunnlag.Aktør;
 import no.nav.abakus.iaygrunnlag.ArbeidsforholdRefDto;
 import no.nav.abakus.iaygrunnlag.Periode;
@@ -64,7 +63,7 @@ public class ArbeidsforholdOverstyringDto {
      */
     @JsonProperty(value = "arbeidsgiverNavn")
     @Size(max=500)
-    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}]+$", message = "Arbeidsgivernavn [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
+    @Pattern(regexp = "^[\\p{Graph}\\p{Space}\\p{Sc}\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}]+$", message = "Arbeidsgivernavn [${validatedValue}] matcher ikke tillatt pattern [{regexp}]")
     private String arbeidsgiverNavn;
 
     /**
