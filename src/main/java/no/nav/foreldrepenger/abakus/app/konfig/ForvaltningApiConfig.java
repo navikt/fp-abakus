@@ -3,9 +3,7 @@ package no.nav.foreldrepenger.abakus.app.konfig;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
@@ -13,22 +11,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
-import io.swagger.v3.oas.integration.GenericOpenApiContextBuilder;
-import io.swagger.v3.oas.integration.OpenApiConfigurationException;
-import io.swagger.v3.oas.integration.SwaggerConfiguration;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.servers.Server;
 import jakarta.ws.rs.ApplicationPath;
-import no.nav.foreldrepenger.abakus.app.exceptions.ConstraintViolationMapper;
-import no.nav.foreldrepenger.abakus.app.exceptions.GeneralRestExceptionMapper;
-import no.nav.foreldrepenger.abakus.app.exceptions.JsonMappingExceptionMapper;
-import no.nav.foreldrepenger.abakus.app.exceptions.JsonParseExceptionMapper;
-import no.nav.foreldrepenger.abakus.app.jackson.JacksonJsonConfig;
 import no.nav.foreldrepenger.abakus.app.vedlikehold.ForvaltningRestTjeneste;
 import no.nav.foreldrepenger.konfig.Environment;
-import no.nav.vedtak.exception.TekniskException;
 import no.nav.vedtak.felles.prosesstask.rest.ProsessTaskRestTjeneste;
+import no.nav.vedtak.openapi.OpenApiUtils;
+import no.nav.vedtak.server.rest.ForvaltningAuthorizationFilter;
+import no.nav.vedtak.server.rest.FpRestJackson2Feature;
+import no.nav.vedtak.server.rest.GeneralRestExceptionMapper;
 
 @ApplicationPath(ForvaltningApiConfig.API_URI)
 public class ForvaltningApiConfig extends ResourceConfig {
@@ -39,45 +29,18 @@ public class ForvaltningApiConfig extends ResourceConfig {
 
     public ForvaltningApiConfig() {
         LOG.info("Initialiserer: {}", API_URI);
-        setApplicationName(ForvaltningApiConfig.class.getSimpleName());
-        // Sikkerhet
-        register(AuthenticationFilter.class);
+        GeneralRestExceptionMapper.setBrukerRettetApplikasjon(false);
+        register(FpRestJackson2Feature.class);
         register(ForvaltningAuthorizationFilter.class);
         registerOpenApi();
-
-        // REST
         registerClasses(getApplicationClasses());
-
-        registerExceptionMappers();
-        register(JacksonJsonConfig.class);
-
         setProperties(getApplicationProperties());
         LOG.info("Ferdig med initialisering av {}", API_URI);
     }
 
-    void registerExceptionMappers() {
-        register(GeneralRestExceptionMapper.class);
-        register(ConstraintViolationMapper.class);
-        register(JsonMappingExceptionMapper.class);
-        register(JsonParseExceptionMapper.class);
-    }
-
     private void registerOpenApi() {
-        var oas = new OpenAPI();
-        var info = new Info().title(ENV.getNaisAppName())
-            .version(Optional.ofNullable(ENV.imageName()).orElse("1.0"))
-            .description("REST grensesnitt for FP-Abakus.");
-
-        oas.info(info).addServersItem(new Server().url(ENV.getProperty("context.path", "/fpabakus")));
-        var oasConfig = new SwaggerConfiguration().openAPI(oas)
-            .prettyPrint(true)
-            .resourceClasses(getApplicationClasses().stream().map(Class::getName).collect(Collectors.toSet()));
-        try {
-            new GenericOpenApiContextBuilder<>().openApiConfiguration(oasConfig).buildContext(true).read();
-        } catch (OpenApiConfigurationException e) {
-            throw new TekniskException("OPEN-API", e.getMessage(), e);
-        }
-
+        OpenApiUtils.setupOpenApi("Foreldrepenger Inntekt Arbeid Ytelse",
+            ENV.getProperty("context.path", "/fpabakus"), getApplicationClasses(), this);
         register(OpenApiResource.class);
     }
 
