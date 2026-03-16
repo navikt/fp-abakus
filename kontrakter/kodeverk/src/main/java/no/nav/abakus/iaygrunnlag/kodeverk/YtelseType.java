@@ -48,12 +48,6 @@ public enum YtelseType implements Kodeverdi {
     FORELDREPENGER("FP", "Foreldrepenger"),
     SVANGERSKAPSPENGER("SVP", "Svangerskapspenger"),
 
-    /**
-     * Folketrygdloven K15 ytelser.
-     */
-    ENSLIG_FORSØRGER("EF", "Enslig forsørger"),
-
-    UDEFINERT("-", "Ikke definert"),
     ;
 
     private static final Map<String, YtelseType> KODER = new LinkedHashMap<>();

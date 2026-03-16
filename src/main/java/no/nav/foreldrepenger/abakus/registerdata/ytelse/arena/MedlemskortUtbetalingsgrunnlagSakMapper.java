@@ -36,34 +36,10 @@ public class MedlemskortUtbetalingsgrunnlagSakMapper {
     }
 
     static Fagsystem tilKilde(FagsystemDto kilde) {
-        if (kilde == null) {
-            return null;
-        }
         return switch (kilde) {
-            case BISYS -> Fagsystem.BISYS;
-            case BIDRAGINNKREVING -> Fagsystem.BIDRAGINNKREVING;
-            case FPSAK -> Fagsystem.FPSAK;
-            case FPABAKUS -> Fagsystem.FPABAKUS;
-            case K9SAK -> Fagsystem.K9SAK;
-            case VLSP -> Fagsystem.VLSP;
-            case TPS -> Fagsystem.TPS;
-            case JOARK -> Fagsystem.JOARK;
-            case INFOTRYGD -> Fagsystem.INFOTRYGD;
+            case null -> null;
             case ARENA -> Fagsystem.ARENA;
-            case INNTEKT -> Fagsystem.INNTEKT;
-            case MEDL -> Fagsystem.MEDL;
-            case GOSYS -> Fagsystem.GOSYS;
-            case GRISEN -> Fagsystem.GRISEN;
-            case GSAK -> Fagsystem.GSAK;
-            case HJE_HEL_ORT -> Fagsystem.HJE_HEL_ORT;
-            case ENHETSREGISTERET -> Fagsystem.ENHETSREGISTERET;
-            case AAREGISTERET -> Fagsystem.AAREGISTERET;
-            case PESYS -> Fagsystem.PESYS;
-            case SKANNING -> Fagsystem.SKANNING;
-            case VENTELONN -> Fagsystem.VENTELONN;
-            case UNNTAK -> Fagsystem.UNNTAK;
-            case ØKONOMI -> Fagsystem.ØKONOMI;
-            case ØVRIG -> Fagsystem.ØVRIG;
+            default -> throw new IllegalArgumentException("Ukjent fagsystem: " + kilde);
         };
     }
 

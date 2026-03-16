@@ -17,7 +17,6 @@ public enum UtsettelseÅrsakType implements Kodeverdi {
     SYKDOM("SYKDOM", "Avhengig av hjelp grunnet sykdom"),
     INSTITUSJON_SØKER("INSTITUSJONSOPPHOLD_SØKER", "Søker er innlagt i helseinstitusjon"),
     INSTITUSJON_BARN("INSTITUSJONSOPPHOLD_BARNET", "Barn er innlagt i helseinstitusjon"),
-    UDEFINERT("-", "Ikke satt eller valgt kode"),
     ;
 
     private static final Map<String, UtsettelseÅrsakType> KODER = new LinkedHashMap<>();

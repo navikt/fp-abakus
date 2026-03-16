@@ -14,7 +14,7 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 public class InfotrygdYtelseGrunnlag {
 
     private LocalDateTime vedtattTidspunkt;
-    private YtelseType ytelseType = YtelseType.UDEFINERT;
+    private YtelseType ytelseType;
     private YtelseStatus ytelseStatus = YtelseStatus.AVSLUTTET;
     private List<InfotrygdYtelseAnvist> utbetaltePerioder;
     private LocalDate vedtaksPeriodeFom;

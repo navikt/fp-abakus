@@ -24,7 +24,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType;
 import no.nav.abakus.iaygrunnlag.kodeverk.BekreftetPermisjonStatus;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
@@ -62,7 +61,7 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
     @ChangeTracked
     @Convert(converter = ArbeidsforholdHandlingTypeKodeverdiConverter.class)
     @Column(name = "handling_type", nullable = false, updatable = false)
-    private ArbeidsforholdHandlingType handling = ArbeidsforholdHandlingType.UDEFINERT;
+    private ArbeidsforholdHandlingType handling;
 
     @Column(name = "begrunnelse")
     private String begrunnelse;

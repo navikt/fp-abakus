@@ -17,7 +17,6 @@ public enum YtelseStatus implements Kodeverdi {
     LØPENDE("LOP", "Løpende"),
     AVSLUTTET("AVSLU", "Avsluttet"),
 
-    UDEFINERT("-", "Ikke definert"),
     ;
 
     private static final Map<String, YtelseStatus> KODER = new LinkedHashMap<>();

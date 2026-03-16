@@ -145,27 +145,6 @@ public class ForvaltningRestTjeneste {
         return Response.ok().build();
     }
 
-    @POST
-    @Path("/oppdaterManglendeKodeverdier")
-    @Consumes(APPLICATION_JSON)
-    @Produces(APPLICATION_JSON)
-    @Operation(description = "Oppdaterer felt som mangler gyldig kdoe", tags = "FORVALTNING", responses = {@ApiResponse(responseCode = "200", description = "Oppdatert.")})
-    @BeskyttetRessurs(actionType = ActionType.CREATE, resourceType = ResourceType.DRIFT, sporingslogg = true)
-    public Response oppdaterManglendeKodeverdier() {
-        // Alle disse er gamle tilfelle fra 2019/20 + en enkeltdag i 2021. Sjekket med kildene og senere behandling i samme sak.
-        int antall = 0;
-        // Forventer 65 - 7 ulike saker
-        antall += entityManager.createNativeQuery("UPDATE KOBLING SET ytelse_type = 'FP' WHERE ytelse_type = '-'")
-            .executeUpdate();
-        // Forventer 7
-        antall += entityManager.createNativeQuery("UPDATE IAY_EGEN_NAERING SET virksomhet_type = 'ANNEN' WHERE virksomhet_type = '-'")
-            .executeUpdate();
-        // 3174 tilfelle. Mange gamle perioder fra 2014-2017 og før full permisjonsmapping på plass. Sjekket med senere behandlinger.
-        antall += entityManager.createNativeQuery("UPDATE IAY_PERMISJON SET beskrivelse_type = 'PERMISJON' WHERE beskrivelse_type = '-'")
-            .executeUpdate();
-        return Response.ok(antall).build();
-    }
-
     private int oppdaterAktørIdFor(String gammel, String gjeldende) {
         int antall = 0;
         antall += entityManager.createNativeQuery("UPDATE kobling SET bruker_aktoer_id = :gjeldende WHERE bruker_aktoer_id = :gammel")

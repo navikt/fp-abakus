@@ -12,12 +12,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum InntektskildeType implements Kodeverdi {
 
-    UDEFINERT("-", "Ikke definert"),
     INNTEKT_OPPTJENING("INNTEKT_OPPTJENING", "INNTEKT_OPPTJENING"),
     INNTEKT_BEREGNING("INNTEKT_BEREGNING", "INNTEKT_BEREGNING"),
     INNTEKT_SAMMENLIGNING("INNTEKT_SAMMENLIGNING", "INNTEKT_SAMMENLIGNING"),
     SIGRUN("SIGRUN", "Sigrun"),
-    VANLIG("VANLIG", "Vanlig"),
     ;
 
     private static final Map<String, InntektskildeType> KODER = new LinkedHashMap<>();

@@ -98,7 +98,7 @@ public final class ConvertToYtelseV1 {
             case OPPRETTET, UNDER_BEHANDLING -> Status.UNDER_BEHANDLING;
             case LØPENDE -> Status.LØPENDE;
             case AVSLUTTET -> Status.AVSLUTTET;
-            default -> Status.UKJENT;
+            default -> null; // TODO fjerne denne sammen med ny kontrakt 2.4.0
         };
     }
 
@@ -130,7 +130,7 @@ public final class ConvertToYtelseV1 {
             case DAGMAMMA -> Inntektklasse.DAGMAMMA;
             case JORDBRUKER -> Inntektklasse.JORDBRUKER;
             case FISKER -> Inntektklasse.FISKER;
-            default -> Inntektklasse.INGEN;
+            default -> null; // TODO fjerne med kontrakt 2.4.0
         };
     }
 }

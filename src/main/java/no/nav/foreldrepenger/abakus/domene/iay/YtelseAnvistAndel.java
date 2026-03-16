@@ -78,7 +78,7 @@ public class YtelseAnvistAndel extends BaseEntitet implements IndexKey {
 
     @Convert(converter = InntektskategoriKodeverdiConverter.class)
     @Column(name = "inntektskategori", nullable = false, updatable = false)
-    private Inntektskategori inntektskategori = Inntektskategori.UDEFINERT;
+    private Inntektskategori inntektskategori;
 
 
     @Version

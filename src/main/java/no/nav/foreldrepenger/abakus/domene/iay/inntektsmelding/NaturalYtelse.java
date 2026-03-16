@@ -49,7 +49,7 @@ public class NaturalYtelse extends BaseEntitet implements IndexKey {
 
     @Convert(converter = NaturalytelseTypeKodeverdiConverter.class)
     @Column(name = "natural_ytelse_type", nullable = false, updatable = false)
-    private NaturalytelseType type = NaturalytelseType.UDEFINERT;
+    private NaturalytelseType type ;
 
     @Version
     @Column(name = "versjon", nullable = false)

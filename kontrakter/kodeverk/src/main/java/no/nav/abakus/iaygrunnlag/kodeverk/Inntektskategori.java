@@ -22,7 +22,6 @@ public enum Inntektskategori implements Kodeverdi {
     JORDBRUKER("JORDBRUKER", "Selvstendig næringsdrivende - Jordbruker"),
     FISKER("FISKER", "Selvstendig næringsdrivende (fisker)"),
     ARBEIDSTAKER_UTEN_FERIEPENGER("ARBEIDSTAKER_UTEN_FERIEPENGER", "Arbeidstaker uten feriepenger"),
-    UDEFINERT("-", "Ingen inntektskategori (default)"),
     ;
 
     private static final Map<String, Inntektskategori> KODER = new LinkedHashMap<>();

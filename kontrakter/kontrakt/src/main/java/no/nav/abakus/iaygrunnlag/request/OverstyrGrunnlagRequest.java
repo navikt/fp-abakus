@@ -31,7 +31,7 @@ public class OverstyrGrunnlagRequest {
     @JsonProperty(value = "ytelseType")
     @NotNull
     @Valid
-    private YtelseType ytelseType = YtelseType.UDEFINERT;
+    private YtelseType ytelseType;
 
     @JsonProperty(value = "aktør", required = true)
     @NotNull

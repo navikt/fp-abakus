@@ -17,6 +17,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.InntektsmeldingerDto;
 import no.nav.abakus.iaygrunnlag.inntektsmelding.v1.RefusjonskravDatoerDto;
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.dbstoette.JpaExtension;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
@@ -69,6 +70,7 @@ class MapInntektsmeldingerTest {
             .medArbeidsgiver(Arbeidsgiver.virksomhet(new OrgNummer("910909088")))
             .medBeløp(BigDecimal.TEN)
             .medInnsendingstidspunkt(LocalDateTime.now())
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.NY)
             .medMottattDato(LocalDate.now())
             .medJournalpostId("journalpost_id")
             .build();
@@ -102,6 +104,7 @@ class MapInntektsmeldingerTest {
             .medArbeidsforholdId(ref)
             .medBeløp(BigDecimal.TEN)
             .medInnsendingstidspunkt(LocalDateTime.now())
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.NY)
             .medMottattDato(LocalDate.now())
             .medJournalpostId("journalpost_id")
             .build();
@@ -146,6 +149,7 @@ class MapInntektsmeldingerTest {
             .medRefusjon(BigDecimal.TEN)
             .medStartDatoPermisjon(startPermisjon)
             .medInnsendingstidspunkt(innsendingstidspunkt)
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.NY)
             .medMottattDato(LocalDate.now())
             .medJournalpostId("journalpost_id")
             .build();
@@ -181,6 +185,7 @@ class MapInntektsmeldingerTest {
             .medBeløp(BigDecimal.TEN)
             .medRefusjon(BigDecimal.TEN)
             .medInnsendingstidspunkt(innsendingstidspunkt)
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.NY)
             .medMottattDato(LocalDate.now())
             .medJournalpostId("journalpost_id")
             .build();
@@ -217,6 +222,7 @@ class MapInntektsmeldingerTest {
             .medRefusjon(BigDecimal.TEN)
             .medStartDatoPermisjon(startPermisjon)
             .medInnsendingstidspunkt(innsendingstidspunkt)
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.NY)
             .medMottattDato(LocalDate.now())
             .medJournalpostId("journalpost_id")
             .build();
@@ -226,6 +232,7 @@ class MapInntektsmeldingerTest {
             .medRefusjon(BigDecimal.ZERO)
             .medStartDatoPermisjon(startPermisjon)
             .medInnsendingstidspunkt(innsendingstidspunkt.plusDays(10))
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.ENDRING)
             .medMottattDato(LocalDate.now())
             .medJournalpostId("journalpost_id2")
             .build();
@@ -259,6 +266,7 @@ class MapInntektsmeldingerTest {
             .medRefusjon(BigDecimal.TEN)
             .medStartDatoPermisjon(startPermisjon)
             .medInnsendingstidspunkt(innsendingstidspunkt)
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.NY)
             .medMottattDato(LocalDate.now())
             .medJournalpostId("journalpost_id")
             .build();
@@ -268,6 +276,7 @@ class MapInntektsmeldingerTest {
             .medRefusjon(BigDecimal.TEN)
             .medStartDatoPermisjon(startPermisjon)
             .medInnsendingstidspunkt(innsendingstidspunkt.plusDays(10))
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.ENDRING)
             .medMottattDato(LocalDate.now())
             .medJournalpostId("journalpost_id2")
             .build();
@@ -307,6 +316,7 @@ class MapInntektsmeldingerTest {
             .medRefusjon(BigDecimal.TEN)
             .medStartDatoPermisjon(startPermisjon)
             .medInnsendingstidspunkt(innsendingstidspunkt)
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.NY)
             .medMottattDato(LocalDate.now())
             .medJournalpostId("journalpost_id")
             .build();
@@ -317,6 +327,7 @@ class MapInntektsmeldingerTest {
             .medRefusjon(BigDecimal.TEN)
             .medStartDatoPermisjon(startPermisjon)
             .medInnsendingstidspunkt(innsendingstidspunkt2)
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.NY)
             .medMottattDato(innsendingstidspunkt2.toLocalDate())
             .medJournalpostId("journalpost_id2")
             .build();
@@ -362,6 +373,7 @@ class MapInntektsmeldingerTest {
             .medRefusjon(BigDecimal.TEN)
             .medStartDatoPermisjon(startPermisjon)
             .medInnsendingstidspunkt(innsendingstidspunkt)
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.NY)
             .medMottattDato(LocalDate.now())
             .medJournalpostId("journalpost_id")
             .build();
@@ -374,6 +386,7 @@ class MapInntektsmeldingerTest {
             .medRefusjon(BigDecimal.TEN)
             .medStartDatoPermisjon(startPermisjon)
             .medInnsendingstidspunkt(innsendingstidspunkt2)
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.ENDRING)
             .medMottattDato(innsendingstidspunkt2.toLocalDate())
             .medJournalpostId("journalpost_id2")
             .build();

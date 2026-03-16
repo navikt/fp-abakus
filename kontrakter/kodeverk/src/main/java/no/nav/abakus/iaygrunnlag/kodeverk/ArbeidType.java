@@ -42,8 +42,6 @@ public enum ArbeidType implements Kodeverdi {
     SELVSTENDIG_NÆRINGSDRIVENDE("NÆRING", "Selvstendig næringsdrivende", null, false),
     UTENLANDSK_ARBEIDSFORHOLD("UTENLANDSK_ARBEIDSFORHOLD", "Arbeid i utlandet", null, true),
     VENTELØNN_VARTPENGER("VENTELØNN_VARTPENGER", "Ventelønn eller vartpenger", null, true),
-    VANLIG("VANLIG", "Vanlig", "VANLIG", false),
-    UDEFINERT("-", "Ikke definert", null, false),
     ;
 
     private static final Set<ArbeidType> AA_REGISTER_TYPER = Set.of(ArbeidType.ORDINÆRT_ARBEIDSFORHOLD, ArbeidType.MARITIMT_ARBEIDSFORHOLD,
@@ -81,7 +79,7 @@ public enum ArbeidType implements Kodeverdi {
     }
 
     public static ArbeidType finnForKodeverkEiersKode(String offisiellKode) {
-        return offisiellKode != null ? OFFISIELLE_KODER.getOrDefault(offisiellKode, UDEFINERT) : UDEFINERT;
+        return offisiellKode != null ? OFFISIELLE_KODER.get(offisiellKode) : null;
     }
 
     public static ArbeidType fraKode(String kode) {

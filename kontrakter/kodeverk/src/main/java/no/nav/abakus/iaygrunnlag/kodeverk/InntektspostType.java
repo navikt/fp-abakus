@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum InntektspostType implements Kodeverdi {
 
-    UDEFINERT("-", "Ikke definert", null),
     LØNN("LØNN", "Lønn", "LONN"),
     YTELSE("YTELSE", "Ytelse", "YTELSE"),
     SELVSTENDIG_NÆRINGSDRIVENDE("SELVSTENDIG_NÆRINGSDRIVENDE", "Selvstendig næringsdrivende", "-"),

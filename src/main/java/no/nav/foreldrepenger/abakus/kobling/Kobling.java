@@ -52,7 +52,7 @@ public class Kobling extends BaseEntitet implements IndexKey {
 
     @Convert(converter = YtelseTypeKodeverdiConverter.class)
     @Column(name = "ytelse_type", nullable = false)
-    private YtelseType ytelseType = YtelseType.UDEFINERT;
+    private YtelseType ytelseType ;
 
     @Embedded
     @AttributeOverride(name = "aktørId", column = @Column(name = "bruker_aktoer_id", nullable = false, updatable = false))
@@ -92,7 +92,7 @@ public class Kobling extends BaseEntitet implements IndexKey {
         this.saksnummer = Objects.requireNonNull(saksnummer, "saksnummer");
         this.koblingReferanse = Objects.requireNonNull(koblingReferanse, "koblingReferanse");
         this.aktørId = Objects.requireNonNull(aktørId, "aktørId");
-        this.ytelseType = ytelseType == null ? YtelseType.UDEFINERT : ytelseType;
+        this.ytelseType = Objects.requireNonNull(ytelseType, "ytelseType");
     }
 
     @Override

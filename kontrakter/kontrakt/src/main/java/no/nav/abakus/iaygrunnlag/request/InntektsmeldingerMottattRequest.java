@@ -43,7 +43,7 @@ public class InntektsmeldingerMottattRequest {
     @JsonProperty(value = "ytelseType")
     @NotNull
     @Valid
-    private YtelseType ytelseType = YtelseType.UDEFINERT;
+    private YtelseType ytelseType;
 
     @JsonCreator
     public InntektsmeldingerMottattRequest(@JsonProperty(value = "saksnummer", required = true) @Valid @NotNull String saksnummer,

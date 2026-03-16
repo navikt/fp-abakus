@@ -16,7 +16,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -61,7 +60,7 @@ public class VedtakYtelseAndel extends BaseEntitet implements IndexKey {
 
     @Convert(converter = InntektskategoriKodeverdiConverter.class)
     @Column(name = "inntektskategori", nullable = false, updatable = false)
-    private Inntektskategori inntektskategori = Inntektskategori.UDEFINERT;
+    private Inntektskategori inntektskategori;
 
 
     @Version
