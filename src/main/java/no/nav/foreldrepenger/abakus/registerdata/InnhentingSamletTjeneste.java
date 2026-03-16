@@ -153,7 +153,7 @@ public class InnhentingSamletTjeneste {
                 .map(MeldekortUtbetalingsgrunnlagSak::getSaksnummer)
                 .map(Saksnummer::getVerdi)
                 .collect(Collectors.joining(", "));
-            LOG.warn("Merk Dem! Sak {} har innhentet nye Arbeidsavklaringspenger saker {}. Kontakt produkteier for validering", saksnummer.getVerdi(), saksnumreAAP);
+            LOG.info("Maksimum AAP sak {} har innhentet nye Arbeidsavklaringspenger Kelvin-saker {}", saksnummer.getVerdi(), saksnumreAAP);
         }
         return maksimumRespons.getOrDefault(Fagsystem.KELVIN, List.of());
     }
