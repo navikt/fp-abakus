@@ -3,8 +3,6 @@ package no.nav.foreldrepenger.abakus.domene.virksomhet;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.OrganisasjonType;
-
 public class Virksomhet {
 
     private String orgnr;
@@ -12,10 +10,7 @@ public class Virksomhet {
     private LocalDate registrert;
     private LocalDate avsluttet;
     private LocalDate oppstart;
-    private OrganisasjonType organisasjonType = OrganisasjonType.UDEFINERT;
-
-    public Virksomhet() {
-    }
+    private OrganisasjonType organisasjonType;
 
     public String getOrgnr() {
         return orgnr;
