@@ -133,7 +133,7 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
     @Convert(converter = InntektsmeldingInnsendingsårsakKodeverdiConverter.class)
     @Column(name = "innsendingsaarsak", nullable = false, updatable = false)
     @ChangeTracked
-    private InntektsmeldingInnsendingsårsakType innsendingsårsak = InntektsmeldingInnsendingsårsakType.UDEFINERT;
+    private InntektsmeldingInnsendingsårsakType innsendingsårsak;
 
     @Version
     @Column(name = "versjon", nullable = false)

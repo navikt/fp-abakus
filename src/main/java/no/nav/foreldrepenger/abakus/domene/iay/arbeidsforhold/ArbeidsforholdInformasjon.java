@@ -10,6 +10,9 @@ import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,10 +23,6 @@ import jakarta.persistence.OrderBy;
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidsforholdHandlingType;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
@@ -96,7 +95,7 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
 
     private boolean erIkkeMerget(ArbeidsforholdReferanse arbeidsforholdReferanseEntitet) {
         return overstyringer.stream()
-            .noneMatch(ov -> ov.getHandling().equals(ArbeidsforholdHandlingType.SLÅTT_SAMMEN_MED_ANNET) && ov.getArbeidsgiver()
+            .noneMatch(ov -> ArbeidsforholdHandlingType.SLÅTT_SAMMEN_MED_ANNET.equals(ov.getHandling()) && ov.getArbeidsgiver()
                 .equals(arbeidsforholdReferanseEntitet.getArbeidsgiver()) && ov.getArbeidsforholdRef()
                 .equals(arbeidsforholdReferanseEntitet.getInternReferanse()));
     }

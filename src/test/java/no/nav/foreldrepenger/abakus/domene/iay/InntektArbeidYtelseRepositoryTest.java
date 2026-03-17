@@ -19,6 +19,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
+import no.nav.abakus.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.dbstoette.JpaExtension;
@@ -75,7 +76,8 @@ class InntektArbeidYtelseRepositoryTest {
             .medBeløp(BigDecimal.TEN)
             .medJournalpostId("123123123")
             .medMottattDato(LocalDate.now())
-            .medInnsendingstidspunkt(LocalDateTime.now());
+            .medInnsendingstidspunkt(LocalDateTime.now())
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.NY);
 
         var nyGrunnlagReferanse = repository.lagre(ko.getKoblingReferanse(), ArbeidsforholdInformasjonBuilder.builder(Optional.empty()),
             List.of(inntektsmeldingBuilder.build()));
@@ -342,6 +344,7 @@ class InntektArbeidYtelseRepositoryTest {
             .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
             .medJournalpostId("1")
             .medInnsendingstidspunkt(now.minusDays(10))
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.NY)
             .medBeløp(BigDecimal.TEN)
             .medKanalreferanse("AR123")
             .leggTil(new Fravær(idag.minusDays(30), idag.minusDays(25), null))
@@ -352,6 +355,7 @@ class InntektArbeidYtelseRepositoryTest {
             .medArbeidsforholdId(InternArbeidsforholdRef.nullRef())
             .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
             .medInnsendingstidspunkt(now.minusDays(9))
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.ENDRING)
             .medJournalpostId("2")
             .medBeløp(BigDecimal.ONE)
             .medKanalreferanse("AR124")
@@ -363,6 +367,7 @@ class InntektArbeidYtelseRepositoryTest {
             .medArbeidsforholdId(InternArbeidsforholdRef.nullRef())
             .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
             .medInnsendingstidspunkt(now.minusDays(9))
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.ENDRING)
             .medJournalpostId("3")
             .medBeløp(BigDecimal.ONE)
             .medKanalreferanse("AR125")
@@ -374,6 +379,7 @@ class InntektArbeidYtelseRepositoryTest {
             .medArbeidsforholdId(InternArbeidsforholdRef.nullRef())
             .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
             .medInnsendingstidspunkt(now.minusDays(10))
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.ENDRING)
             .medJournalpostId("4")
             .medBeløp(BigDecimal.ONE)
             .medKanalreferanse("AR126")
@@ -422,6 +428,7 @@ class InntektArbeidYtelseRepositoryTest {
             .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
             .medJournalpostId("1")
             .medInnsendingstidspunkt(now.minusDays(10))
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.NY)
             .medBeløp(BigDecimal.TEN)
             .medKanalreferanse("AR123")
             .leggTil(new Fravær(idag.minusDays(30), idag.minusDays(25), null))
@@ -433,6 +440,7 @@ class InntektArbeidYtelseRepositoryTest {
             .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
             .medInnsendingstidspunkt(now.minusDays(9))
             .medJournalpostId("2")
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.ENDRING)
             .medBeløp(BigDecimal.ONE)
             .medKanalreferanse("AR124")
             .leggTil(new Fravær(idag.minusDays(26), idag.minusDays(25), null))
@@ -444,6 +452,7 @@ class InntektArbeidYtelseRepositoryTest {
             .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
             .medInnsendingstidspunkt(now.minusDays(9))
             .medJournalpostId("3")
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.ENDRING)
             .medBeløp(BigDecimal.ONE)
             .medKanalreferanse("AR125")
             .leggTil(new Fravær(idag.minusDays(30), idag.minusDays(25), null))
@@ -455,6 +464,7 @@ class InntektArbeidYtelseRepositoryTest {
             .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
             .medInnsendingstidspunkt(now.minusDays(10))
             .medJournalpostId("4")
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.ENDRING)
             .medBeløp(BigDecimal.ONE)
             .medKanalreferanse("AR126")
             .leggTil(new Fravær(idag, idag.plusDays(5), null))
@@ -502,6 +512,7 @@ class InntektArbeidYtelseRepositoryTest {
             .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
             .medJournalpostId("1")
             .medInnsendingstidspunkt(now.minusDays(10))
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.NY)
             .medBeløp(BigDecimal.TEN)
             .medKanalreferanse("AR123")
             .leggTil(new Fravær(idag.minusDays(30), idag.minusDays(25), null))
@@ -512,6 +523,7 @@ class InntektArbeidYtelseRepositoryTest {
             .medArbeidsforholdId(InternArbeidsforholdRef.nullRef())
             .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
             .medInnsendingstidspunkt(now.minusDays(9))
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.ENDRING)
             .medJournalpostId("2")
             .medBeløp(BigDecimal.ONE)
             .leggTil(new Fravær(idag.minusDays(26), idag.minusDays(25), null))
@@ -522,6 +534,7 @@ class InntektArbeidYtelseRepositoryTest {
             .medArbeidsforholdId(InternArbeidsforholdRef.nullRef())
             .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
             .medInnsendingstidspunkt(now.minusDays(9))
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.ENDRING)
             .medJournalpostId("3")
             .medBeløp(BigDecimal.ONE)
             .leggTil(new Fravær(idag.minusDays(30), idag.minusDays(25), null))
@@ -532,6 +545,7 @@ class InntektArbeidYtelseRepositoryTest {
             .medArbeidsforholdId(InternArbeidsforholdRef.nullRef())
             .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
             .medInnsendingstidspunkt(now.minusDays(10))
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.ENDRING)
             .medJournalpostId("4")
             .medBeløp(BigDecimal.ONE)
             .leggTil(new Fravær(idag, idag.plusDays(5), null))
@@ -578,6 +592,7 @@ class InntektArbeidYtelseRepositoryTest {
             .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
             .medJournalpostId("1")
             .medInnsendingstidspunkt(now.minusDays(10))
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.NY)
             .medBeløp(BigDecimal.TEN)
             .medKanalreferanse("AR123")
             .leggTil(new Fravær(idag.minusDays(30), idag.minusDays(25), null))
@@ -588,6 +603,7 @@ class InntektArbeidYtelseRepositoryTest {
             .medArbeidsforholdId(InternArbeidsforholdRef.nullRef())
             .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
             .medInnsendingstidspunkt(now.minusDays(9))
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.NY)
             .medJournalpostId("2")
             .medBeløp(BigDecimal.ONE)
             .medKanalreferanse("AR124")
@@ -599,6 +615,7 @@ class InntektArbeidYtelseRepositoryTest {
             .medArbeidsforholdId(InternArbeidsforholdRef.nullRef())
             .medArbeidsforholdId(EksternArbeidsforholdRef.nullRef())
             .medInnsendingstidspunkt(now)
+            .medInntektsmeldingaarsak(InntektsmeldingInnsendingsårsakType.ENDRING)
             .medKildesystem("NAV_NO")
             .medJournalpostId("3")
             .medBeløp(BigDecimal.ONE)

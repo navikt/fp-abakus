@@ -12,37 +12,17 @@ import com.fasterxml.jackson.annotation.JsonValue;
 @JsonAutoDetect(getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 public enum Fagsystem implements Kodeverdi {
 
-    BISYS("BISYS", "Bisys", "BID"),
-    BIDRAGINNKREVING("BIDRAGINNKREVING", "Bidraginnkreving", "BII"),
     FPSAK("FPSAK", "Vedtaksløsning Foreldrepenger", "FS36"),
-    FPABAKUS("FPABAKUS", "ABAKUS", "ABAKUS"),
     K9SAK("K9SAK", "Vedtaksløsning Folketrygdloven Kapittel 9", "K9SAK"),
     VLSP("VLSP", "Vedtaksløsning Sykepenger", "VLSP"),
-    TPS("TPS", "TPS", "FS03"),
-    JOARK("JOARK", "Joark", "AS36"),
     INFOTRYGD("INFOTRYGD", "Infotrygd", "IT01"),
     ARENA("ARENA", "Arena", "AO01"),
     KELVIN("KELVIN", "Vedtaksløsning Arbeidsavklaringspenger", "KELVIN"),
     DPSAK("DPSAK", "Vedtaksløsning Dagpenger", "DPSAK"),
-    INNTEKT("INNTEKT", "INNTEKT", "FS28"),
-    MEDL("MEDL", "MEDL", "FS18"),
-    GOSYS("GOSYS", "Gosys", "FS22"),
-    GRISEN("GRISEN", "Grisen", "AO11"),
-    GSAK("GSAK", "Gsak", "FS19"),
-    HJE_HEL_ORT("HJE_HEL_ORT", "Hjelpemidler, Helsetjenester og Ort. Hjelpemidler", "OEBS"),
-    ENHETSREGISTERET("ENHETSREGISTERET", "Enhetsregisteret", "ER01"),
-    AAREGISTERET("AAREGISTERET", "AAregisteret", "AR01"),
-    PESYS("PESYS", "Pesys", "PP01"),
-    SKANNING("SKANNING", "Skanning", "MOT"),
-    VENTELONN("VENTELONN", "Ventelønn", "V2"),
-    UNNTAK("UNNTAK", "Unntak", "UFM"),
-    ØKONOMI("ØKONOMI", "Økonomi", "OKO"),
-    ØVRIG("ØVRIG", "ØVRIG", "OVR"),
 
-    /**
-     * Alle kodeverk må ha en verdi, det kan ikke være null i databasen. Denne koden gjør samme nytten.
-     */
-    UDEFINERT("-", "Ikke definert", null),
+    // Er ikke lagret i noe kildefelt
+    AAREGISTERET("AAREGISTERET", "AAregisteret", "AR01"),
+
     ;
 
     private static final Map<String, Fagsystem> KODER = new LinkedHashMap<>();

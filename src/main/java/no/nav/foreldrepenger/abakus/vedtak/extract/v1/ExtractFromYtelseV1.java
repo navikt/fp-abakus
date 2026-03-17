@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
@@ -92,14 +91,12 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
     }
 
     private YtelseStatus mapStatus(Status status) {
-        if (status == null) {
-            return YtelseStatus.UDEFINERT;
-        }
         return switch (status) {
+            case null -> null;
             case UNDER_BEHANDLING -> YtelseStatus.UNDER_BEHANDLING;
             case LØPENDE -> YtelseStatus.LØPENDE;
             case AVSLUTTET -> YtelseStatus.AVSLUTTET;
-            default -> YtelseStatus.UDEFINERT;
+            case UKJENT -> YtelseStatus.AVSLUTTET;
         };
     }
 
@@ -117,10 +114,8 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
     }
 
     private YtelseType getYtelseType(Ytelser ytelse) {
-        if (ytelse == null) {
-            return YtelseType.UDEFINERT;
-        }
         return switch (ytelse) {
+            case null -> null;
             case PLEIEPENGER_SYKT_BARN -> YtelseType.PLEIEPENGER_SYKT_BARN;
             case PLEIEPENGER_NÆRSTÅENDE -> YtelseType.PLEIEPENGER_NÆRSTÅENDE;
             case OMSORGSPENGER -> YtelseType.OMSORGSPENGER;
@@ -135,10 +130,8 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
     }
 
     private Inntektskategori mapInntektsklasse(Inntektklasse inntektklasse) {
-        if (inntektklasse == null) {
-            return Inntektskategori.UDEFINERT;
-        }
         return switch (inntektklasse) {
+            case null -> null;
             case ARBEIDSTAKER -> Inntektskategori.ARBEIDSTAKER;
             case ARBEIDSTAKER_UTEN_FERIEPENGER -> Inntektskategori.ARBEIDSTAKER_UTEN_FERIEPENGER;
             case FRILANSER -> Inntektskategori.FRILANSER;
@@ -149,7 +142,7 @@ public class ExtractFromYtelseV1 implements ExtractFromYtelse<YtelseV1> {
             case DAGMAMMA -> Inntektskategori.DAGMAMMA;
             case JORDBRUKER -> Inntektskategori.JORDBRUKER;
             case FISKER -> Inntektskategori.FISKER;
-            default -> Inntektskategori.UDEFINERT;
+            case INGEN -> throw new IllegalArgumentException("Inntektsklasse INGEN");
         };
     }
 

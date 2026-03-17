@@ -46,13 +46,11 @@ public class InnhentingInfotrygdTjeneste {
     private static final Logger LOG = LoggerFactory.getLogger(InnhentingInfotrygdTjeneste.class);
 
     private static final Map<no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.TemaKode, YtelseType> STØNADSKAT1_TIL_YTELSETYPE = Map.ofEntries(
-        Map.entry(no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.TemaKode.UKJENT, YtelseType.UDEFINERT),
         Map.entry(no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.TemaKode.FA, YtelseType.FORELDREPENGER),
         Map.entry(no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.TemaKode.SP, YtelseType.SYKEPENGER),
         Map.entry(no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.TemaKode.BS, YtelseType.OMSORGSPENGER));
 
     private static final Map<no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.BehandlingstemaKode, YtelseType> STØNADSKAT2_TIL_YTELSETYPE = Map.ofEntries(
-        Map.entry(no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.BehandlingstemaKode.UKJENT, YtelseType.UDEFINERT),
         Map.entry(no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.BehandlingstemaKode.AP, YtelseType.FORELDREPENGER),
         Map.entry(no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.BehandlingstemaKode.FP, YtelseType.FORELDREPENGER),
         Map.entry(no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.BehandlingstemaKode.FU, YtelseType.FORELDREPENGER),
@@ -98,7 +96,7 @@ public class InnhentingInfotrygdTjeneste {
 
     public static List<InfotrygdYtelseGrunnlag> mapTilInfotrygdYtelseGrunnlag(List<Grunnlag> rest, LocalDate innhentFom) {
         var mappedGrunnlag = rest.stream()
-            .filter(g -> !YtelseType.UDEFINERT.equals(TemaReverse.reverseMap(g.tema().kode().name(), LOG)))
+            .filter(g -> TemaReverse.reverseMap(g.tema().kode().name(), LOG) != null)
             .map(g -> restTilInfotrygdYtelseGrunnlag(g, innhentFom))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -203,20 +201,17 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     private static YtelseType bestemYtelseType(Grunnlag grunnlag) {
-        YtelseType kategori2 =
-            grunnlag.behandlingstema() == null ? YtelseType.UDEFINERT : STØNADSKAT2_TIL_YTELSETYPE.getOrDefault(grunnlag.behandlingstema().kode(),
-                YtelseType.UDEFINERT);
-        if (!YtelseType.UDEFINERT.equals(kategori2)) {
+        YtelseType kategori2 = Optional.ofNullable(grunnlag.behandlingstema()).map(bt -> STØNADSKAT2_TIL_YTELSETYPE.get(bt.kode())).orElse(null);
+        if (kategori2 != null) {
             return kategori2;
         }
         LOG.info("Infotrygd ukjent stønadskategori 2");
-        YtelseType kategori1 =
-            grunnlag.tema() == null ? YtelseType.UDEFINERT : STØNADSKAT1_TIL_YTELSETYPE.getOrDefault(grunnlag.tema().kode(), YtelseType.UDEFINERT);
-        if (!YtelseType.UDEFINERT.equals(kategori1)) {
+        YtelseType kategori1 = Optional.ofNullable(grunnlag.tema()).map(t -> STØNADSKAT1_TIL_YTELSETYPE.get(t.kode())).orElse(null);
+        if (kategori1 != null) {
             return kategori1;
         }
         LOG.info("Infotrygd ukjent stønadskategori 1 og 2");
-        return YtelseType.UDEFINERT;
+        return null;
     }
 
     public List<InfotrygdYtelseGrunnlag> getSPøkelseYtelser(PersonIdent ident, LocalDate fom) {

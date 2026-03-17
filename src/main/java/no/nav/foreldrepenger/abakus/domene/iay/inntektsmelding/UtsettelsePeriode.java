@@ -41,7 +41,7 @@ public class UtsettelsePeriode extends BaseEntitet implements IndexKey {
     @ChangeTracked
     @Convert(converter = UtsettelseÅrsakTypeKodeverdiConverter.class)
     @Column(name = "utsettelse_aarsak_type", nullable = false, updatable = false)
-    private UtsettelseÅrsakType årsak = UtsettelseÅrsakType.UDEFINERT;
+    private UtsettelseÅrsakType årsak ;
 
     @Version
     @Column(name = "versjon", nullable = false)

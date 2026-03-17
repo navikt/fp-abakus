@@ -206,8 +206,8 @@ public class InntektTjeneste {
 
         var oversatt = new ArrayList<InntektsInformasjon>();
         for (var i : svar) {
-            var kilde = FILTER_TIL_KILDE.getOrDefault(i.filter(), InntektskildeType.UDEFINERT);
-            if (!kilder.contains(kilde)) {
+            var kilde = FILTER_TIL_KILDE.get(i.filter());
+            if (kilde == null || !kilder.contains(kilde)) {
                 continue;
             }
             var data = Optional.ofNullable(i.data()).orElseGet(List::of);

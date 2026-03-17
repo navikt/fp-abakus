@@ -63,7 +63,7 @@ public class InntektArbeidYtelseGrunnlagDto {
     private PersonIdent person;
 
     @JsonProperty(value = "ytelseType")
-    private YtelseType ytelseType = YtelseType.UDEFINERT;
+    private YtelseType ytelseType;
 
     @JsonProperty(value = "registerGrunnlag")
     @Valid
@@ -102,6 +102,7 @@ public class InntektArbeidYtelseGrunnlagDto {
         Objects.requireNonNull(grunnlagTidspunkt, "grunnlagTidspunkt");
         Objects.requireNonNull(grunnlagReferanse, "grunnlagReferanse");
         Objects.requireNonNull(koblingReferanse, "koblingReferanse");
+        Objects.requireNonNull(ytelseType, "ytelseType");
         this.person = person;
         this.grunnlagReferanse = new UuidDto(grunnlagReferanse);
         this.koblingReferanse = new UuidDto(koblingReferanse);
@@ -118,6 +119,7 @@ public class InntektArbeidYtelseGrunnlagDto {
         Objects.requireNonNull(grunnlagTidspunkt, "grunnlagTidspunkt");
         Objects.requireNonNull(grunnlagReferanse, "grunnlagReferanse");
         Objects.requireNonNull(koblingReferanse, "koblingReferanse");
+        Objects.requireNonNull(ytelseType, "ytelseType");
         this.koblingReferanse = koblingReferanse;
         this.person = person;
         this.grunnlagReferanse = grunnlagReferanse;

@@ -8,6 +8,9 @@ import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 
 public class TemaReverse {
 
+    private TemaReverse() {
+    }
+
     private static final Map<String, YtelseType> TEMA_MAP = Map.ofEntries(Map.entry("FA", YtelseType.FORELDREPENGER),
         Map.entry("BS", YtelseType.OMSORGSPENGER), Map.entry("SP", YtelseType.SYKEPENGER));
 
@@ -16,6 +19,6 @@ public class TemaReverse {
         if (TEMA_MAP.get(kode) == null) {
             logger.warn("Infotrygd ga ukjent kode for stønadskategori 1 {}", kode);
         }
-        return TEMA_MAP.getOrDefault(kode, YtelseType.UDEFINERT);
+        return TEMA_MAP.get(kode);
     }
 }

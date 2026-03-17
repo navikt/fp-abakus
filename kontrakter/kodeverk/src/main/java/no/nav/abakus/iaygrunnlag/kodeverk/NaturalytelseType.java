@@ -32,7 +32,6 @@ public enum NaturalytelseType implements Kodeverdi {
     YRKEBIL_TJENESTLIGBEHOV_LISTEPRIS("YRKESBIL_LISTEPRIS", "Yrkesbil tjenesteligbehov listepris", "yrkebilTjenestligbehovListepris"),
     INNBETALING_TIL_UTENLANDSK_PENSJONSORDNING("UTENLANDSK_PENSJONSORDNING", "Innbetaling utenlandsk pensjonsordning",
         "innbetalingTilUtenlandskPensjonsordning"),
-    UDEFINERT("-", "Ikke definert", null),
     ;
 
     private static final Map<String, NaturalytelseType> KODER = new LinkedHashMap<>();

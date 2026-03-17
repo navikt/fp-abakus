@@ -53,7 +53,7 @@ public class KelvinKlient {
             case "LØPENDE", "IVERK" -> YtelseStatus.LØPENDE;
             case "UTREDES", "GODKJ", "INNST", "FORDE", "REGIS", "MOTAT", "KONT" -> YtelseStatus.UNDER_BEHANDLING;
             case "OPPRETTET", "OPPRE" -> YtelseStatus.OPPRETTET;
-            case null, default -> YtelseStatus.UDEFINERT;
+            case null, default -> YtelseStatus.AVSLUTTET;
         };
     }
 

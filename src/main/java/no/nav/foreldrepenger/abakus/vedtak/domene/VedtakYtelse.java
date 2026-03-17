@@ -71,7 +71,7 @@ public class VedtakYtelse extends BaseEntitet implements IndexKey {
     @ChangeTracked
     @Convert(converter = YtelseStatusKodeverdiConverter.class)
     @Column(name = "status", nullable = false)
-    private YtelseStatus status = YtelseStatus.UDEFINERT;
+    private YtelseStatus status;
 
     /**
      * Saksnummer (fra Arena, Infotrygd, ..).
