@@ -13,7 +13,7 @@ import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.abakus.iaygrunnlag.kodeverk.OrganisasjonType;
+import no.nav.foreldrepenger.abakus.domene.virksomhet.OrganisasjonType;
 import no.nav.foreldrepenger.abakus.domene.virksomhet.Virksomhet;
 import no.nav.foreldrepenger.abakus.registerdata.arbeidsgiver.virksomhet.rest.OrganisasjonRestKlient;
 import no.nav.foreldrepenger.abakus.typer.OrgNummer;
