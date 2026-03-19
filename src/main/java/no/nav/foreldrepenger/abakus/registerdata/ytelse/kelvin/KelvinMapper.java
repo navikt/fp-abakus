@@ -62,12 +62,9 @@ public class KelvinMapper {
 
     private static MeldekortUtbetalingsgrunnlagMeldekort mapTilMeldekortMKAclKelvin(ArbeidsavklaringspengerResponse.AAPUtbetaling utbetaling,
                                                                                     Integer aktuellDagsats, Integer vedtakDagsats) {
-        // Her vil tilfelle med uførereduksjon ha en ubetalingsgrad mellom 0 og 100 gitt av uførereduksjonen + aktivitet i perioden
-        // Gjør derfor en normalisering slik at bruker med 60% AAP får utbetalingsgrad 100% ved full AAP-utbetaling uten aktivitet
         var utbetalingsgradFraUtbetaling = Optional.ofNullable(utbetaling.utbetalingsgrad()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO);
-        var brukUtbetalingsgrad = utbetalingsgradFraUtbetaling
-            .multiply(BigDecimal.valueOf(vedtakDagsats))
-            .divide(BigDecimal.valueOf(aktuellDagsats), 0, RoundingMode.HALF_EVEN);
+        var brukUtbetalingsgrad = justertUtbetalingsgrad(utbetalingsgradFraUtbetaling, aktuellDagsats, vedtakDagsats);
+        // TODO: Utbetaling.dagsats er tricky - nå er denne lik vedtaksdagsats * utbetalingsgrad. Kan sette til aktuell dagsats + aktueltBT
         var dagsats = Optional.ofNullable(utbetaling.dagsats()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO)
             .add(Optional.ofNullable(utbetaling.barnetillegg()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO));
         return MeldekortUtbetalingsgrunnlagMeldekort.MeldekortMeldekortBuilder.ny()
@@ -77,5 +74,19 @@ public class KelvinMapper {
             .medDagsats(dagsats)
             .medUtbetalingsgrad(brukUtbetalingsgrad)
             .build();
+    }
+
+    private static BigDecimal justertUtbetalingsgrad(BigDecimal utbetalingsgrad, Integer aktuellDagsats, Integer vedtakDagsats) {
+        if (Objects.equals(aktuellDagsats, vedtakDagsats)) {
+            return utbetalingsgrad;
+        } else {
+            // Her vil tilfelle med uførereduksjon ha en ubetalingsgrad mellom 0 og 100 gitt av uførereduksjonen + aktivitet i perioden
+            // Gjør derfor en normalisering slik at bruker med 60% AAP får utbetalingsgrad 100% ved full AAP-utbetaling uten aktivitet
+            var beregnetUtbetalingsgrad = utbetalingsgrad
+                .multiply(BigDecimal.valueOf(vedtakDagsats)).divide(BigDecimal.valueOf(aktuellDagsats), 0, RoundingMode.HALF_EVEN);
+            LOG.info("Kelvin-saker Kelvin UFO beregnet utbetgrad: Utbetalingsgrad {} beregnet {} redusertvedtaksats {} vedtaksats {}",
+                utbetalingsgrad, beregnetUtbetalingsgrad, aktuellDagsats, vedtakDagsats);
+            return beregnetUtbetalingsgrad;
+        }
     }
 }
