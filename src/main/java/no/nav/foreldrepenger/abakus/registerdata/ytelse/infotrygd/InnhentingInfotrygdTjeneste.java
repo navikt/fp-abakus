@@ -12,6 +12,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.TemaKode;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,6 +131,11 @@ public class InnhentingInfotrygdTjeneste {
             .map(Periode::tom)
             .noneMatch(innhentFom::isBefore)) {
             return null;
+        }
+
+        // Bør være tomt. Logg et par måneder for evt å skru av innhenting - må da beholde eksisterende grunnlag ved kopiering, som for FP/SVP
+        if (TemaKode.BS.equals(grunnlag.tema().kode())) {
+            LOG.info("INFOTRYGD BS: Ytelse {} vedtatt {} fom {} tom {}", bestemYtelseType(grunnlag), brukIdentdato, brukPeriode.fom(), brukPeriode.tom());
         }
 
         var grunnlagBuilder = InfotrygdYtelseGrunnlag.getBuilder()

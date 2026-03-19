@@ -161,6 +161,10 @@ public class EksternDelingAvYtelserRestTjeneste {
             .filter(it -> request.getYtelser().contains(it.getYtelse()))
             .toList();
         var ytelser = new ArrayList<Ytelse>(mappedYtelser);
+        // Se i sammenheng med logging i InnhentingInfotrygdTjeneste/mapTilInfotrygdYtelseGrunnlag
+        if (!ytelser.isEmpty()) {
+            LOG.info("INFOTRYGD BS ekstern");
+        }
         return ytelser;
     }
 

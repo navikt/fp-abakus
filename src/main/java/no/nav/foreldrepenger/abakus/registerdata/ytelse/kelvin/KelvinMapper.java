@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -28,7 +29,12 @@ public class KelvinMapper {
             .sorted(Comparator.comparing(MeldekortUtbetalingsgrunnlagSak::getVedtaksPeriodeFom))
             .toList();
         if (!mapped.isEmpty()) {
-            LOG.info("Kelvin-saker Kelvin for sak {} kilde {} mapped {}.", saksnummer.getVerdi(), vedtak, mapped);
+            if (vedtak.stream().anyMatch(v -> !Objects.equals(v.dagsats(), v.dagsatsEtterUføreReduksjon()))) {
+                // TODO: Vurder exception for å studere disse nærmere.
+                LOG.info("Kelvin-saker Kelvin UFO sak {} kilde {} mapped {}.", saksnummer.getVerdi(), vedtak, mapped);
+            } else {
+                LOG.info("Kelvin-saker Kelvin for sak {} kilde {} mapped {}.", saksnummer.getVerdi(), vedtak, mapped);
+            }
         }
         return mapped;
     }
