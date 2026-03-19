@@ -23,7 +23,6 @@ public enum InntektYtelseType implements Kodeverdi {
     VENTELØNN("Ventelønn", Kategori.YTELSE, "venteloenn"),
 
     // Feriepenger Ytelse utbetalt til person som er arbeidstaker/frilanser/ytelsesmottaker
-    // TODO slå sammen til FERIEPENGER_YTELSE - eller ta de med under hver ytelse???
     FERIEPENGER_FORELDREPENGER("Feriepenger foreldrepenger", Kategori.YTELSE, "feriepengerForeldrepenger"),
     FERIEPENGER_SVANGERSKAPSPENGER("Feriepenger svangerskapspenger", Kategori.YTELSE, "feriepengerSvangerskapspenger"),
     FERIEPENGER_OMSORGSPENGER("Feriepenger omsorgspenger", Kategori.YTELSE, "feriepengerOmsorgspenger"),
