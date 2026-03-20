@@ -58,6 +58,8 @@ public class PubliserVedtakTask implements ProsessTaskHandler {
             var vedtak = new EksternVedtak(ident.get(), OffsetDateTime.now(), tema);
             var recordMetadata = producer.send(key, DefaultJsonMapper.toJson(vedtak));
             LOG.info("Sendte melding om vedtak til {}, partition {}, offset {}", recordMetadata.topic(), recordMetadata.partition(), recordMetadata.offset());
+        } else {
+            LOG.warn("Mangler ident for hendelse med nøkkel {}", key);
         }
     }
 
