@@ -10,9 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
-import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.TemaKode;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +34,7 @@ import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Arbeidsfor
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Grunnlag;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Orgnummer;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Periode;
+import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.TemaKode;
 import no.nav.vedtak.felles.integrasjon.infotrygd.grunnlag.v1.respons.Vedtak;
 import no.nav.vedtak.felles.integrasjon.spokelse.Spøkelse;
 import no.nav.vedtak.felles.integrasjon.spokelse.SykepengeVedtak;
@@ -101,7 +99,7 @@ public class InnhentingInfotrygdTjeneste {
             .filter(g -> TemaReverse.reverseMap(g.tema().kode().name(), LOG) != null)
             .map(g -> restTilInfotrygdYtelseGrunnlag(g, innhentFom))
             .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+            .toList();
         return mappedGrunnlag;
     }
 
@@ -135,7 +133,14 @@ public class InnhentingInfotrygdTjeneste {
 
         // Bør være tomt. Logg et par måneder for evt å skru av innhenting - må da beholde eksisterende grunnlag ved kopiering, som for FP/SVP
         if (TemaKode.BS.equals(grunnlag.tema().kode())) {
-            LOG.info("INFOTRYGD BS: Ytelse {} vedtatt {} fom {} tom {}", bestemYtelseType(grunnlag), brukIdentdato, brukPeriode.fom(), brukPeriode.tom());
+            var minUtbetFom = grunnlag.vedtak().stream().map(Vedtak::periode).map(Periode::fom).filter(Objects::nonNull).min(Comparator.naturalOrder()).orElse(null);
+            var maxUtbetTom = grunnlag.vedtak().stream().map(Vedtak::periode).map(Periode::tom).filter(Objects::nonNull).min(Comparator.naturalOrder()).orElse(null);
+            LOG.info("INFOTRYGD BS: Ytelse {} vedtatt {} fom {} tom {} utbetFom {} utbetTom {}",
+                bestemYtelseType(grunnlag), brukIdentdato, brukPeriode.fom(), brukPeriode.tom(), minUtbetFom, maxUtbetTom);
+            if (maxUtbetTom != null && maxUtbetTom.isAfter(innhentFom)) {
+                LOG.info("INFOTRYGD BS FERSKT VEDTAK: Ytelse {} vedtatt {} fom {} tom {} utbetFom {} utbetTom {}",
+                    bestemYtelseType(grunnlag), brukIdentdato, brukPeriode.fom(), brukPeriode.tom(), minUtbetFom, maxUtbetTom);
+            }
         }
 
         var grunnlagBuilder = InfotrygdYtelseGrunnlag.getBuilder()
@@ -241,7 +246,7 @@ public class InnhentingInfotrygdTjeneste {
     }
 
     private List<InfotrygdYtelseGrunnlag> mapSpøkelseTilInfotrygdYtelseGrunnlag(List<SykepengeVedtak> rest) {
-        return rest.stream().map(this::spokelseTilInfotrygdYtelseGrunnlag).filter(Objects::nonNull).collect(Collectors.toList());
+        return rest.stream().map(this::spokelseTilInfotrygdYtelseGrunnlag).filter(Objects::nonNull).toList();
     }
 
     private InfotrygdYtelseGrunnlag spokelseTilInfotrygdYtelseGrunnlag(SykepengeVedtak grunnlag) {
