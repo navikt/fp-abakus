@@ -2,6 +2,7 @@ package no.nav.foreldrepenger.abakus.vedtak;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -15,6 +16,7 @@ import no.nav.foreldrepenger.abakus.vedtak.domene.VedtakYtelseRepository;
 import no.nav.foreldrepenger.abakus.vedtak.extract.v1.ExtractFromYtelseV1;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskData;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskDataBuilder;
+import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 
 class LagreVedtakTaskTest {
 
@@ -23,7 +25,7 @@ class LagreVedtakTaskTest {
 
     private VedtakYtelseRepository repository = new VedtakYtelseRepository(extension.getEntityManager());
     private ExtractFromYtelseV1 extractor = new ExtractFromYtelseV1(repository);
-    private LagreVedtakTask task = new LagreVedtakTask(repository, extractor);
+    private LagreVedtakTask task = new LagreVedtakTask(repository, extractor, mock(ProsessTaskTjeneste.class));
 
     @Test
     void skal_feile_ved_valideringsfeil() {
