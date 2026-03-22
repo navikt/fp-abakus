@@ -122,6 +122,10 @@ public class InnhentingInfotrygdTjeneste {
         Arbeidskategori arbeidskategori =
             grunnlag.kategori() == null ? Arbeidskategori.UGYLDIG : ArbeidskategoriReverse.reverseMap(grunnlag.kategori().kode().getKode(), LOG);
         YtelseStatus brukStatus = mapYtelseStatus(grunnlag);
+        // Ignorer vedtak uten utbetaling - de var kun relevant da ES/FP ble behandlet i to system
+        if (grunnlag.vedtak().isEmpty()) {
+            return null;
+        }
         // Ignorer gamle vedtak
         if (brukPeriode.tom().isBefore(innhentFom) && grunnlag.vedtak()
             .stream()
@@ -138,8 +142,8 @@ public class InnhentingInfotrygdTjeneste {
             LOG.info("INFOTRYGD BS: Ytelse {} vedtatt {} fom {} tom {} utbetFom {} utbetTom {}",
                 bestemYtelseType(grunnlag), brukIdentdato, brukPeriode.fom(), brukPeriode.tom(), minUtbetFom, maxUtbetTom);
             if (maxUtbetTom != null && maxUtbetTom.isAfter(innhentFom)) {
-                LOG.info("INFOTRYGD BS FERSKT VEDTAK: Ytelse {} vedtatt {} fom {} tom {} utbetFom {} utbetTom {}",
-                    bestemYtelseType(grunnlag), brukIdentdato, brukPeriode.fom(), brukPeriode.tom(), minUtbetFom, maxUtbetTom);
+                LOG.info("INFOTRYGD BS FERSKT VEDTAK: Innhenting {} Ytelse {} vedtatt {} fom {} tom {} utbetFom {} utbetTom {}",
+                    innhentFom, bestemYtelseType(grunnlag), brukIdentdato, brukPeriode.fom(), brukPeriode.tom(), minUtbetFom, maxUtbetTom);
             }
         }
 
