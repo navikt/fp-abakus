@@ -103,7 +103,7 @@ public class YtelseRegisterInnhenting {
                 .build());
         for (var utbetaling : dagpengerVedtak.utbetalinger()) {
             var dagsats = BigDecimal.valueOf(utbetaling.dagsats());
-            var utbetalingsgrad = BigDecimal.valueOf(utbetaling.utbetaltBeløp()).multiply(BigDecimal.valueOf(100))
+            var utbetalingsgrad = BigDecimal.valueOf(utbetaling.dagutbetalt()).multiply(BigDecimal.valueOf(100))
                 .divide(dagsats, 1, RoundingMode.HALF_UP);
             ytelseBuilder.leggtilYtelseAnvist(ytelseBuilder.getAnvistBuilder()
                 .medAnvistPeriode(IntervallEntitet.fraOgMedTilOgMed(utbetaling.periode().getFomDato(), utbetaling.periode().getTomDato()))
