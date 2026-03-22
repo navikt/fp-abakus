@@ -1,19 +1,18 @@
 package no.nav.foreldrepenger.abakus.typer;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-
-import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 
 /**
  * Saksnummer refererer til saksnummer registret i GSAK.
  */
 @Embeddable
-public class Saksnummer implements SakId, IndexKey {
+public class Saksnummer implements SakId, IndexKey, Serializable {
     private static final String CHARS = "a-z0-9_:-";
 
     private static final Pattern VALID = Pattern.compile("^(-?[1-9]|[a-z0])[" + CHARS + "]*$", Pattern.CASE_INSENSITIVE);
@@ -22,7 +21,7 @@ public class Saksnummer implements SakId, IndexKey {
     @Column(name = "saksnummer")
     private String saksnummer; // NOSONAR
 
-    Saksnummer() {
+    protected Saksnummer() {
         // for hibernate
     }
 
@@ -34,24 +33,6 @@ public class Saksnummer implements SakId, IndexKey {
                 "Ugyldig saksnummer, støtter kun A-Z/0-9/:/-/_ tegn. Var: " + saksnummer.replaceAll(INVALID.pattern(), "?") + " (vasket)");
         }
         this.saksnummer = saksnummer;
-    }
-
-    @SuppressWarnings("unused")
-    public Saksnummer(String sakId, Fagsystem fagsystem) {
-        this(sakId);
-        // FIXME (FC): Set fagsystem
-    }
-
-    public static Saksnummer infotrygd(String sakId) {
-        if (sakId != null) {
-            String vasketId = sakId.replaceAll(INVALID.pattern(), "").trim();
-            return vasketId.length() == 0 ? null : new Saksnummer(vasketId, Fagsystem.INFOTRYGD);
-        }
-        return null;
-    }
-
-    public static Saksnummer arena(String sakId) {
-        return sakId == null ? null : new Saksnummer(sakId, Fagsystem.ARENA);
     }
 
     @Override
@@ -67,11 +48,8 @@ public class Saksnummer implements SakId, IndexKey {
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
-        } else if (obj == null || !getClass().equals(obj.getClass())) {
-            return false;
         }
-        Saksnummer other = (Saksnummer) obj;
-        return Objects.equals(saksnummer, other.saksnummer);
+        return obj instanceof Saksnummer other && Objects.equals(saksnummer, other.saksnummer);
     }
 
     @Override

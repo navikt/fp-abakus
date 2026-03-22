@@ -6,12 +6,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.core.Application;
 
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Application;
 
 public class RestApiTester {
 
@@ -29,17 +27,17 @@ public class RestApiTester {
         return liste;
     }
 
-    static Collection<Class<?>> finnAlleRestTjenester() {
-        List<Class<?>> klasser = new ArrayList<>();
-        klasser.addAll(finnAlleRestTjenester(new ApiConfig()));
+    private static Collection<Class<?>> finnAlleRestTjenester() {
+        var klasser = new ArrayList<>(finnAlleRestTjenester(new ApiConfig()));
+        klasser.addAll(finnAlleRestTjenester(new EksternApiConfig()));
+        klasser.addAll(finnAlleRestTjenester(new ForvaltningApiConfig()));
         return klasser;
     }
 
-    static Collection<Class<?>> finnAlleRestTjenester(Application config) {
-        return config.getClasses()
-            .stream()
+    private static Collection<Class<?>> finnAlleRestTjenester(Application config) {
+        return config.getClasses().stream()
             .filter(c -> c.getAnnotation(Path.class) != null)
             .filter(c -> !UNNTATT.contains(c))
-            .collect(Collectors.toList());
+            .toList();
     }
 }

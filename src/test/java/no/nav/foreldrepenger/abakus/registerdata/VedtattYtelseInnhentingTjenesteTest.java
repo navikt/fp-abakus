@@ -42,7 +42,7 @@ class VedtattYtelseInnhentingTjenesteTest {
     private InntektArbeidYtelseRepository inntektArbeidYtelseRepository = mock(InntektArbeidYtelseRepository.class);
 
     @BeforeEach
-    public void before() {
+    void before() {
         vedtattYtelseInnhentingTjeneste = new VedtattYtelseInnhentingTjeneste(vedtakYtelseRepository, inntektArbeidYtelseRepository);
     }
 

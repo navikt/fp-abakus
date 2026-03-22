@@ -1,6 +1,6 @@
 package no.nav.foreldrepenger.abakus.registerdata.infotrygd;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -51,22 +51,23 @@ class InfotrygdgrunnlagYtelseMapperTest {
         var aktørYtelse = aktørYtelseBuilder.build();
 
         // Assert
-        assertThat(aktørYtelse.getAlleYtelser().size()).isEqualTo(1);
+        assertThat(aktørYtelse.getAlleYtelser()).hasSize(1);
         var ytelseMappet = aktørYtelse.getAlleYtelser().iterator().next();
-        assertThat(ytelseMappet.getYtelseAnvist().size()).isEqualTo(1);
+        assertThat(ytelseMappet.getYtelseAnvist()).hasSize(1);
         var ytelseAnvist = ytelseMappet.getYtelseAnvist().iterator().next();
         assertThat(ytelseAnvist.getAnvistFOM()).isEqualTo(fom);
         assertThat(ytelseAnvist.getAnvistTOM()).isEqualTo(tom);
 
-        assertThat(ytelseAnvist.getYtelseAnvistAndeler().size()).isEqualTo(2);
-        var arbeidstakerAndel = ytelseAnvist.getYtelseAnvistAndeler().stream().filter(a -> a.getArbeidsgiver().isPresent()).findFirst().get();
+        assertThat(ytelseAnvist.getYtelseAnvistAndeler()).hasSize(2);
+        var arbeidstakerAndel = ytelseAnvist.getYtelseAnvistAndeler().stream().filter(a -> a.getArbeidsgiver().isPresent()).findFirst().orElseThrow();
+        assertThat(arbeidstakerAndel.getArbeidsgiver()).isPresent();
         assertThat(arbeidstakerAndel.getArbeidsgiver().get().getIdentifikator()).isEqualTo(orgnr);
         assertThat(arbeidstakerAndel.getInntektskategori()).isEqualTo(Inntektskategori.ARBEIDSTAKER);
-        assertThat(arbeidstakerAndel.getRefusjonsgradProsent().getVerdi().compareTo(BigDecimal.ZERO)).isEqualTo(0);
+        assertThat(arbeidstakerAndel.getRefusjonsgradProsent().getVerdi()).isEqualByComparingTo(BigDecimal.ZERO);
         assertThat(arbeidstakerAndel.getDagsats().getVerdi()).isEqualTo(dagsatsArbeid);
         assertThat(arbeidstakerAndel.getUtbetalingsgradProsent().getVerdi()).isEqualTo(utbetalingsgrad);
 
-        var dagpengeAndel = ytelseAnvist.getYtelseAnvistAndeler().stream().filter(a -> a.getArbeidsgiver().isEmpty()).findFirst().get();
+        var dagpengeAndel = ytelseAnvist.getYtelseAnvistAndeler().stream().filter(a -> a.getArbeidsgiver().isEmpty()).findFirst().orElseThrow();
         assertThat(dagpengeAndel.getInntektskategori()).isEqualTo(Inntektskategori.DAGPENGER);
         assertThat(dagpengeAndel.getRefusjonsgradProsent().getVerdi()).isEqualTo(BigDecimal.ZERO);
         assertThat(dagpengeAndel.getDagsats().getVerdi()).isEqualTo(dagsatsDagpenger);
@@ -102,19 +103,20 @@ class InfotrygdgrunnlagYtelseMapperTest {
         var aktørYtelse = aktørYtelseBuilder.build();
 
         // Assert
-        assertThat(aktørYtelse.getAlleYtelser().size()).isEqualTo(1);
+        assertThat(aktørYtelse.getAlleYtelser()).hasSize(1);
         var ytelseMappet = aktørYtelse.getAlleYtelser().iterator().next();
-        assertThat(ytelseMappet.getYtelseAnvist().size()).isEqualTo(1);
+        assertThat(ytelseMappet.getYtelseAnvist()).hasSize(1);
         var ytelseAnvist = ytelseMappet.getYtelseAnvist().iterator().next();
         assertThat(ytelseAnvist.getAnvistFOM()).isEqualTo(fom);
         assertThat(ytelseAnvist.getAnvistTOM()).isEqualTo(tom);
 
-        assertThat(ytelseAnvist.getYtelseAnvistAndeler().size()).isEqualTo(1);
+        assertThat(ytelseAnvist.getYtelseAnvistAndeler()).hasSize(1);
         var arbeid1 = ytelseAnvist.getYtelseAnvistAndeler()
             .stream()
             .filter(a -> a.getArbeidsgiver().isPresent() && a.getArbeidsgiver().get().getOrgnr().getId().equals(orgnr))
             .findFirst()
-            .get();
+            .orElseThrow();
+        assertThat(arbeid1.getArbeidsgiver()).isPresent();
         assertThat(arbeid1.getArbeidsgiver().get().getIdentifikator()).isEqualTo(orgnr);
         assertThat(arbeid1.getInntektskategori()).isEqualTo(Inntektskategori.ARBEIDSTAKER);
         assertThat(arbeid1.getRefusjonsgradProsent().getVerdi()).isCloseTo(BigDecimal.ZERO, Offset.offset(BigDecimal.valueOf(0.000001)));

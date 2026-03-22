@@ -1,5 +1,24 @@
 package no.nav.foreldrepenger.abakus.vedtak.domene;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -7,15 +26,6 @@ import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.typer.Beløp;
 import no.nav.foreldrepenger.abakus.typer.Stillingsprosent;
-
-import jakarta.persistence.*;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Entity(name = "VedtakYtelseAnvistEntitet")
 @Table(name = "VE_YTELSE_ANVIST")
@@ -34,17 +44,17 @@ public class YtelseAnvist extends BaseEntitet implements IndexKey {
     private IntervallEntitet anvistPeriode;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "beloep")))
+    @AttributeOverride(name = "verdi", column = @Column(name = "beloep"))
     @ChangeTracked
     private Beløp beløp;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "dagsats")))
+    @AttributeOverride(name = "verdi", column = @Column(name = "dagsats"))
     @ChangeTracked
     private Beløp dagsats;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "utbetalingsgrad_prosent")))
+    @AttributeOverride(name = "verdi", column = @Column(name = "utbetalingsgrad_prosent"))
     @ChangeTracked
     private Stillingsprosent utbetalingsgradProsent;
 

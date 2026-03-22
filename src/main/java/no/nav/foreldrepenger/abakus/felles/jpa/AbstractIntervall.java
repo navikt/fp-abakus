@@ -41,10 +41,8 @@ public abstract class AbstractIntervall implements Comparable<AbstractIntervall>
         if (object == this) {
             return true;
         }
-        if (!(object instanceof AbstractIntervall annen)) {
-            return false;
-        }
-        return this.getFomDato().equals(annen.getFomDato()) && this.getTomDato().equals(annen.getTomDato());
+        return object instanceof AbstractIntervall annen
+            && this.getFomDato().equals(annen.getFomDato()) && this.getTomDato().equals(annen.getTomDato());
     }
 
     @Override

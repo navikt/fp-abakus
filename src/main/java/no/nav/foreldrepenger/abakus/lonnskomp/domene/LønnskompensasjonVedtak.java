@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -16,7 +15,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -39,7 +37,7 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
     private String sakId;  // Eg en ULID
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id")))
+    @AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id"))
     private AktørId aktørId;
 
     @ChangeTracked
@@ -59,7 +57,7 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
     private IntervallEntitet periode;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "beloep", nullable = false)))
+    @AttributeOverride(name = "verdi", column = @Column(name = "beloep", nullable = false))
     @ChangeTracked
     private Beløp beløp;
 

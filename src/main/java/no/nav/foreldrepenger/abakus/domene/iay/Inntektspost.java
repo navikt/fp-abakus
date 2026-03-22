@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -65,7 +64,7 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
     private IntervallEntitet periode;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "beloep", nullable = false)))
+    @AttributeOverride(name = "verdi", column = @Column(name = "beloep", nullable = false))
     @ChangeTracked
     private Beløp beløp;
 
@@ -204,7 +203,7 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
     }
 
     public boolean hasValues() {
-        return (ytelse != null || !Objects.equals(ytelse, "-")) || inntektspostType != null || periode.getFomDato() != null
+        return (ytelse != null) || inntektspostType != null || periode.getFomDato() != null
             || periode.getTomDato() != null || beløp != null;
     }
 

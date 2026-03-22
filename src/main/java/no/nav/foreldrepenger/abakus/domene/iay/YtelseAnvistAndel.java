@@ -8,7 +8,6 @@ import java.util.UUID;
 import org.hibernate.annotations.JdbcTypeCode;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -62,17 +61,17 @@ public class YtelseAnvistAndel extends BaseEntitet implements IndexKey {
      * Netto dagsats som tilsvarer grunnlagsdagsats * utbetalingsgrad
      */
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "dagsats", nullable = false)))
+    @AttributeOverride(name = "verdi", column = @Column(name = "dagsats", nullable = false))
     @ChangeTracked
     private Beløp dagsats;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "utbetalingsgrad_prosent")))
+    @AttributeOverride(name = "verdi", column = @Column(name = "utbetalingsgrad_prosent"))
     @ChangeTracked
     private Stillingsprosent utbetalingsgradProsent;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "refusjonsgrad_prosent")))
+    @AttributeOverride(name = "verdi", column = @Column(name = "refusjonsgrad_prosent"))
     @ChangeTracked
     private Stillingsprosent refusjonsgradProsent;
 

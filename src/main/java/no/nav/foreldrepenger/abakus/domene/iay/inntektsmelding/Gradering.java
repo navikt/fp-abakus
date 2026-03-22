@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -40,7 +39,7 @@ public class Gradering extends BaseEntitet implements IndexKey {
     private IntervallEntitet periode;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "arbeidstid_prosent", updatable = false, nullable = false)))
+    @AttributeOverride(name = "verdi", column = @Column(name = "arbeidstid_prosent", updatable = false, nullable = false))
     @ChangeTracked
     private Stillingsprosent arbeidstidProsent;
 

@@ -4,11 +4,10 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 
 /**
@@ -25,7 +24,7 @@ public class JournalpostId implements Serializable, IndexKey {
     @Column(name = "journalpost_id", updatable = false)
     private String journalpostId;  // NOSONAR
 
-    JournalpostId() {
+    protected JournalpostId() {
         // for hibernate
     }
 

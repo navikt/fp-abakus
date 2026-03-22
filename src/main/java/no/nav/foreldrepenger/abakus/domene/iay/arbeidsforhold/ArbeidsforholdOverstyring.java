@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -55,7 +54,7 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
     private InternArbeidsforholdRef arbeidsforholdRef;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "referanse", column = @Column(name = "arbeidsforhold_intern_id_ny", updatable = false)))
+    @AttributeOverride(name = "referanse", column = @Column(name = "arbeidsforhold_intern_id_ny", updatable = false))
     private InternArbeidsforholdRef nyArbeidsforholdRef;
 
     @ChangeTracked
@@ -82,7 +81,7 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
      * {@link no.nav.foreldrepenger.abakus.domene.iay.Yrkesaktivitet#getAktivitetsAvtalerForArbeid()}.
      */
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "stillingsprosent")))
+    @AttributeOverride(name = "verdi", column = @Column(name = "stillingsprosent"))
     private Stillingsprosent stillingsprosent;
 
     @ManyToOne
@@ -215,8 +214,8 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
     }
 
     public boolean erOverstyrt() {
-        return !Objects.equals(ArbeidsforholdHandlingType.BRUK, handling) || (Objects.equals(ArbeidsforholdHandlingType.BRUK, handling)
-            && !Objects.equals(bekreftetPermisjon.getStatus(), BekreftetPermisjonStatus.UDEFINERT));
+        return !Objects.equals(ArbeidsforholdHandlingType.BRUK, handling) ||
+            !Objects.equals(bekreftetPermisjon.getStatus(), BekreftetPermisjonStatus.UDEFINERT);
     }
 
     public boolean kreverIkkeInntektsmelding() {
@@ -229,11 +228,8 @@ public class ArbeidsforholdOverstyring extends BaseEntitet implements IndexKey {
         if (this == o) {
             return true;
         }
-        if (o == null || !(o instanceof ArbeidsforholdOverstyring)) {
-            return false;
-        }
-        var that = (ArbeidsforholdOverstyring) o;
-        return Objects.equals(arbeidsgiver, that.arbeidsgiver) && Objects.equals(arbeidsforholdRef, that.arbeidsforholdRef);
+        return o instanceof ArbeidsforholdOverstyring that &&
+            Objects.equals(arbeidsgiver, that.arbeidsgiver) && Objects.equals(arbeidsforholdRef, that.arbeidsforholdRef);
     }
 
     @Override

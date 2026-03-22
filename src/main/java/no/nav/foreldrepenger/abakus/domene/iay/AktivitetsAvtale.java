@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -39,7 +38,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
 
     @ChangeTracked
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "prosentsats")))
+    @AttributeOverride(name = "verdi", column = @Column(name = "prosentsats"))
     private Stillingsprosent prosentsats;
 
     @Column(name = "beskrivelse")

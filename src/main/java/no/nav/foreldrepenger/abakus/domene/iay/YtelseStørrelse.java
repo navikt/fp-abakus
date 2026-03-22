@@ -4,7 +4,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -16,7 +15,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -48,7 +46,7 @@ public class YtelseStørrelse extends BaseEntitet implements IndexKey {
     private OrgNummer orgNummer;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "beloep", nullable = false)))
+    @AttributeOverride(name = "verdi", column = @Column(name = "beloep", nullable = false))
     @ChangeTracked
     private Beløp beløp;
 

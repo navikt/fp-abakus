@@ -321,10 +321,11 @@ public class InntektArbeidYtelseRepository {
     }
 
     private boolean harIkkeAltHåndtertJournalpost(InntektArbeidYtelseGrunnlag build, JournalpostId journalpostId) {
-        var imaggregat = build.getInntektsmeldinger();
-        return imaggregat.map(inntektsmeldingAggregat -> inntektsmeldingAggregat.getInntektsmeldinger()
-            .stream()
-            .noneMatch(it -> it.getJournalpostId().equals(journalpostId))).orElse(true);
+        var inntektsmeldinger = build.getInntektsmeldinger().map(InntektsmeldingAggregat::getInntektsmeldinger).orElseGet(List::of);
+        if (inntektsmeldinger.isEmpty()) {
+            return true;
+        }
+        return inntektsmeldinger.stream().noneMatch(it -> it.getJournalpostId().equals(journalpostId));
     }
 
     private void lagreDeaktivertGrunnlagMedUtdaterteInntektsmeldinger(KoblingReferanse koblingReferanse,
@@ -709,7 +710,6 @@ public class InntektArbeidYtelseRepository {
         final TypedQuery<Boolean> query = entityManager.createQuery("SELECT gr.aktiv FROM InntektArbeidGrunnlag gr WHERE gr.grunnlagReferanse = :ref", Boolean.class);
         query.setParameter("ref", new GrunnlagReferanse(eksternReferanse));
         query.setHint(HibernateHints.HINT_CACHE_MODE, "IGNORE");
-        Optional<Boolean> grunnlagOpt = query.getResultList().stream().findFirst();
-        return grunnlagOpt.orElse(false);
+        return query.getResultList().stream().anyMatch(b -> Objects.equals(b, Boolean.TRUE));
     }
 }

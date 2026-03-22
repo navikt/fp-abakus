@@ -29,7 +29,7 @@ class ArbeidsforholdTjenesteMedRestTest {
     private static final PersonIdent FNR = new PersonIdent("12312312312");
     private static final AktørId AKTØR_ID = new AktørId("1231231231223");
     private static final LocalDate FOM = LocalDate.now().minusYears(1L);
-    private static final String json = """
+    private static final String JSON = """
         {
           "arbeidsforholdId": "990983666",
           "navArbeidsforholdId": "1234565",
@@ -62,7 +62,7 @@ class ArbeidsforholdTjenesteMedRestTest {
 
     @Test
     void mapping_organisasjon() {
-        var arbeidsforhold = DefaultJsonMapper.fromJson(json, ArbeidsforholdRS.class);
+        var arbeidsforhold = DefaultJsonMapper.fromJson(JSON, ArbeidsforholdRS.class);
         assertThat(arbeidsforhold.getArbeidsgiver().organisasjonsnummer()).isEqualTo(ORGNR);
     }
 
@@ -71,7 +71,7 @@ class ArbeidsforholdTjenesteMedRestTest {
         // Arrange
         AaregRestKlient aaregRestKlient = mock(AaregRestKlient.class);
         when(aaregRestKlient.finnArbeidsforholdForArbeidstaker(any(), any(), any()))
-            .thenReturn(List.of(DefaultJsonMapper.fromJson(json, ArbeidsforholdRS.class)));
+            .thenReturn(List.of(DefaultJsonMapper.fromJson(JSON, ArbeidsforholdRS.class)));
         ArbeidsforholdTjeneste arbeidsforholdTjeneste = new ArbeidsforholdTjeneste(aaregRestKlient);
 
         // Act

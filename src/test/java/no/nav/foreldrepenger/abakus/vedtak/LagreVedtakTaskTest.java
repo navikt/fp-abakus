@@ -1,6 +1,6 @@
 package no.nav.foreldrepenger.abakus.vedtak;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
@@ -23,9 +23,9 @@ class LagreVedtakTaskTest {
     @RegisterExtension
     public static JpaExtension extension = new JpaExtension();
 
-    private VedtakYtelseRepository repository = new VedtakYtelseRepository(extension.getEntityManager());
-    private ExtractFromYtelseV1 extractor = new ExtractFromYtelseV1(repository);
-    private LagreVedtakTask task = new LagreVedtakTask(repository, extractor, mock(ProsessTaskTjeneste.class));
+    private final VedtakYtelseRepository repository = new VedtakYtelseRepository(extension.getEntityManager());
+    private final ExtractFromYtelseV1 extractor = new ExtractFromYtelseV1(repository);
+    private final LagreVedtakTask task = new LagreVedtakTask(repository, extractor, mock(ProsessTaskTjeneste.class));
 
     @Test
     void skal_feile_ved_valideringsfeil() {
@@ -220,9 +220,9 @@ class LagreVedtakTaskTest {
 
         var vedtakYtelser = repository.hentYtelserForIPeriode(new AktørId("1293528970663"), LocalDate.of(2021, 11, 1), LocalDate.of(2021, 11, 19));
 
-        assertThat(vedtakYtelser.size()).isEqualTo(1);
-        assertThat(vedtakYtelser.get(0).getYtelseAnvist().size()).isEqualTo(3);
-        assertThat(vedtakYtelser.get(0).getYtelseAnvist().iterator().next().getAndeler().size()).isEqualTo(1);
+        assertThat(vedtakYtelser).hasSize(1);
+        assertThat(vedtakYtelser.getFirst().getYtelseAnvist()).hasSize(3);
+        assertThat(vedtakYtelser.getFirst().getYtelseAnvist().iterator().next().getAndeler()).hasSize(1);
 
     }
 }

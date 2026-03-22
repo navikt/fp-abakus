@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,7 +32,7 @@ public class Refusjon extends BaseEntitet implements IndexKey {
     @JoinColumn(name = "inntektsmelding_id", nullable = false, updatable = false)
     private Inntektsmelding inntektsmelding;
 
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "refusjonsbeloep_mnd", nullable = false)))
+    @AttributeOverride(name = "verdi", column = @Column(name = "refusjonsbeloep_mnd", nullable = false))
     @ChangeTracked
     private Beløp refusjonsbeløpMnd;
 

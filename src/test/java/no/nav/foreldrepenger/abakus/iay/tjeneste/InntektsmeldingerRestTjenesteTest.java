@@ -47,12 +47,11 @@ class InntektsmeldingerRestTjenesteTest {
     private final KoblingTjeneste koblingTjeneste = new KoblingTjeneste(repository, new LåsRepository(repositoryRule.getEntityManager()));
     private final InntektArbeidYtelseRepository iayRepository = new InntektArbeidYtelseRepository(repositoryRule.getEntityManager());
 
-    private InntektsmeldingerTjeneste imTjenesten;
     private InntektsmeldingerRestTjeneste tjeneste;
 
     @BeforeEach
-    public void setUp() throws Exception {
-        imTjenesten = new InntektsmeldingerTjeneste(iayRepository);
+    void setUp() throws Exception {
+        var imTjenesten = new InntektsmeldingerTjeneste(iayRepository);
         tjeneste = new InntektsmeldingerRestTjeneste(imTjenesten, koblingTjeneste, new InntektArbeidYtelseTjeneste(iayRepository));
     }
 

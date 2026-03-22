@@ -2,13 +2,13 @@ package no.nav.foreldrepenger.abakus.app.tjenester;
 
 import static org.mockito.Mockito.verify;
 
-import no.nav.vedtak.server.Controllable;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import no.nav.vedtak.server.Controllable;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -20,7 +20,7 @@ class ApplicationServiceStarterTest {
     private Controllable service;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         serviceStarter = new ApplicationServiceStarter(service);
     }
 

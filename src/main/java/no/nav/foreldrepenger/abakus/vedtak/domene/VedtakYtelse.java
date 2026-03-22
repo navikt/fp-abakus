@@ -14,7 +14,6 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.NaturalId;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -49,7 +48,7 @@ public class VedtakYtelse extends BaseEntitet implements IndexKey {
     private Long id;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id", nullable = false, updatable = false)))
+    @AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id", nullable = false, updatable = false))
     private AktørId aktørId;
 
     @Convert(converter = YtelseTypeKodeverdiConverter.class)
@@ -77,7 +76,7 @@ public class VedtakYtelse extends BaseEntitet implements IndexKey {
      * Saksnummer (fra Arena, Infotrygd, ..).
      */
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "saksnummer", column = @Column(name = "saksnummer")))
+    @AttributeOverride(name = "saksnummer", column = @Column(name = "saksnummer"))
     private Saksnummer saksnummer;
 
     @ChangeTracked

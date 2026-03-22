@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -47,7 +46,7 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_AKTOER_YTELSE")
     private Long id;
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id", nullable = false, updatable = false)))
+    @AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id", nullable = false, updatable = false))
     private AktørId aktørId;
     @ManyToOne(optional = false)
     @JoinColumn(name = "inntekt_arbeid_ytelser_id", nullable = false, updatable = false)

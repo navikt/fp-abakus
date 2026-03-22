@@ -84,7 +84,7 @@ class MapInntektsmeldingerTest {
         InntektsmeldingerDto inntektsmeldingerDto = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(alleIm);
 
         // Assert
-        assertThat(inntektsmeldingerDto.getInntektsmeldinger().size()).isEqualTo(1);
+        assertThat(inntektsmeldingerDto.getInntektsmeldinger()).hasSize(1);
     }
 
     @Test
@@ -127,7 +127,7 @@ class MapInntektsmeldingerTest {
         InntektsmeldingerDto inntektsmeldingerDto = MapInntektsmeldinger.mapUnikeInntektsmeldingerFraGrunnlag(alleIm);
 
         // Assert
-        assertThat(inntektsmeldingerDto.getInntektsmeldinger().size()).isEqualTo(1);
+        assertThat(inntektsmeldingerDto.getInntektsmeldinger()).hasSize(1);
     }
 
 
@@ -162,11 +162,10 @@ class MapInntektsmeldingerTest {
             iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
 
         // Assert
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().size()).isEqualTo(1);
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getArbeidsgiver().getIdent()).isEqualTo(virksomhet.getIdentifikator());
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteDagMedRefusjonskrav()).isEqualTo(startPermisjon);
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(
-            innsendingstidspunkt.toLocalDate());
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer()).hasSize(1);
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().getFirst().getArbeidsgiver().getIdent()).isEqualTo(virksomhet.getIdentifikator());
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().getFirst().getFørsteDagMedRefusjonskrav()).isEqualTo(startPermisjon);
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().getFirst().getFørsteInnsendingAvRefusjonskrav()).isEqualTo(innsendingstidspunkt.toLocalDate());
     }
 
     @Test
@@ -198,10 +197,10 @@ class MapInntektsmeldingerTest {
             iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
 
         // Assert
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().size()).isEqualTo(1);
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getArbeidsgiver().getIdent()).isEqualTo(virksomhet.getIdentifikator());
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteDagMedRefusjonskrav()).isNull();
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer()).hasSize(1);
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().getFirst().getArbeidsgiver().getIdent()).isEqualTo(virksomhet.getIdentifikator());
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().getFirst().getFørsteDagMedRefusjonskrav()).isNull();
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().getFirst().getFørsteInnsendingAvRefusjonskrav()).isEqualTo(
             innsendingstidspunkt.toLocalDate());
     }
 
@@ -246,7 +245,7 @@ class MapInntektsmeldingerTest {
             iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
 
         // Assert
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().size()).isEqualTo(0);
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer()).isEmpty();
     }
 
     @Test
@@ -290,10 +289,10 @@ class MapInntektsmeldingerTest {
             iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
 
         // Assert
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().size()).isEqualTo(1);
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getArbeidsgiver().getIdent()).isEqualTo(virksomhet.getIdentifikator());
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteDagMedRefusjonskrav()).isEqualTo(startPermisjon);
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer()).hasSize(1);
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().getFirst().getArbeidsgiver().getIdent()).isEqualTo(virksomhet.getIdentifikator());
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().getFirst().getFørsteDagMedRefusjonskrav()).isEqualTo(startPermisjon);
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().getFirst().getFørsteInnsendingAvRefusjonskrav()).isEqualTo(
             innsendingstidspunkt.toLocalDate());
 
     }
@@ -340,8 +339,8 @@ class MapInntektsmeldingerTest {
             iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
 
         // Assert
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().size()).isEqualTo(2);
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getArbeidsgiver().getIdent()).isEqualTo(virksomhet2.getIdentifikator());
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer()).hasSize(2);
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().getFirst().getArbeidsgiver().getIdent()).isEqualTo(virksomhet2.getIdentifikator());
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteDagMedRefusjonskrav()).isEqualTo(startPermisjon);
         assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(
             innsendingstidspunkt2.toLocalDate());
@@ -399,10 +398,10 @@ class MapInntektsmeldingerTest {
             iayTjeneste.hentAggregat(nyesteKobling.getKoblingReferanse()));
 
         // Assert
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().size()).isEqualTo(1);
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getArbeidsgiver().getIdent()).isEqualTo(virksomhet.getIdentifikator());
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteDagMedRefusjonskrav()).isEqualTo(startPermisjon);
-        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().get(0).getFørsteInnsendingAvRefusjonskrav()).isEqualTo(
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer()).hasSize(1);
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().getFirst().getArbeidsgiver().getIdent()).isEqualTo(virksomhet.getIdentifikator());
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().getFirst().getFørsteDagMedRefusjonskrav()).isEqualTo(startPermisjon);
+        assertThat(refusjonskravDatoerDto.getRefusjonskravDatoer().getFirst().getFørsteInnsendingAvRefusjonskrav()).isEqualTo(
             innsendingstidspunkt.toLocalDate());
 
     }

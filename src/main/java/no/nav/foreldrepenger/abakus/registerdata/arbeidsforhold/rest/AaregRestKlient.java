@@ -48,7 +48,7 @@ public class AaregRestKlient {
             var request = RestRequest.newGET(target, restConfig).header(NavHeaders.HEADER_NAV_PERSONIDENT, ident);
             var result = restClient.send(request, ArbeidsforholdRS[].class);
             return Arrays.asList(result);
-        } catch (UriBuilderException | IllegalArgumentException e) {
+        } catch (UriBuilderException | IllegalArgumentException _) {
             throw new IllegalArgumentException("Utviklerfeil syntax-exception for finnArbeidsforholdForArbeidstaker");
         }
     }
@@ -67,7 +67,7 @@ public class AaregRestKlient {
             var request = RestRequest.newGET(target, restConfig).header(NavHeaders.HEADER_NAV_PERSONIDENT, ident);
             var result = restClient.send(request, ArbeidsforholdRS[].class);
             return Arrays.asList(result);
-        } catch (UriBuilderException | IllegalArgumentException e) {
+        } catch (UriBuilderException | IllegalArgumentException _) {
             throw new IllegalArgumentException("Utviklerfeil syntax-exception for finnArbeidsforholdForArbeidstaker");
         }
     }

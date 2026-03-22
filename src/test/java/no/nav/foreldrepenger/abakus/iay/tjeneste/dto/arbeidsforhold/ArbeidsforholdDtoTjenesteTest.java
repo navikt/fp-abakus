@@ -46,10 +46,10 @@ class ArbeidsforholdDtoTjenesteTest {
     private static final LocalDate TIL_DATO = LocalDate.now().plusWeeks(2);
 
 
-@BeforeEach
-void setUp() {
-    arbeidsforholdDtoTjeneste = new ArbeidsforholdDtoTjeneste(arbeidsforholdTjeneste, aktørConsumer);
-}
+    @BeforeEach
+    void setUp() {
+        arbeidsforholdDtoTjeneste = new ArbeidsforholdDtoTjeneste(arbeidsforholdTjeneste, aktørConsumer);
+    }
 
     @Test
     void mapArbeidsforholdMedPermisjoner() {
