@@ -71,7 +71,7 @@ class RestApiAbacTest {
                 }
             }
         }
-        if (feilmeldinger.length() > 0) {
+        if (!feilmeldinger.isEmpty()) {
             fail("Følgende inputparametre til REST-tjenester mangler AbacDto-impl\n" + feilmeldinger);
         }
     }

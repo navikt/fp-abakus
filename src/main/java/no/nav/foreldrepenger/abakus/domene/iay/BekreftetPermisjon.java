@@ -1,28 +1,28 @@
 package no.nav.foreldrepenger.abakus.domene.iay;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.BekreftetPermisjonStatus;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.jpa.BekreftetPermisjonStatusKodeverdiConverter;
 
 @Embeddable
-public class BekreftetPermisjon {
+public class BekreftetPermisjon implements Serializable {
 
     @Convert(converter = BekreftetPermisjonStatusKodeverdiConverter.class)
     @Column(name = "BEKREFTET_PERMISJON_STATUS", nullable = false, updatable = false)
     private BekreftetPermisjonStatus status = BekreftetPermisjonStatus.UDEFINERT;
 
     @Embedded
-    @AttributeOverrides({@AttributeOverride(name = "fomDato", column = @Column(name = "bekreftet_permisjon_fom")), @AttributeOverride(name = "tomDato", column = @Column(name = "bekreftet_permisjon_tom"))})
+    @AttributeOverride(name = "fomDato", column = @Column(name = "bekreftet_permisjon_fom"))
+    @AttributeOverride(name = "tomDato", column = @Column(name = "bekreftet_permisjon_tom"))
     private IntervallEntitet periode;
 
     public BekreftetPermisjon() {
@@ -52,11 +52,7 @@ public class BekreftetPermisjon {
         if (this == o) {
             return true;
         }
-        if (o == null || !(o instanceof BekreftetPermisjon)) {
-            return false;
-        }
-        var that = (BekreftetPermisjon) o;
-        return Objects.equals(periode, that.periode) && Objects.equals(status, that.status);
+        return o instanceof BekreftetPermisjon that && Objects.equals(periode, that.periode) && Objects.equals(status, that.status);
     }
 
     @Override

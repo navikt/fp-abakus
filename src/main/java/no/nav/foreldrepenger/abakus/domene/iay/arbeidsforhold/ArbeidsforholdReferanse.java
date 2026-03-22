@@ -3,7 +3,6 @@ package no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold;
 import java.util.Objects;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -13,7 +12,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -36,11 +34,11 @@ public class ArbeidsforholdReferanse extends BaseEntitet implements IndexKey, Tr
     private Arbeidsgiver arbeidsgiverEntitet;
 
     @Embedded
-    @AttributeOverrides({@AttributeOverride(name = "referanse", column = @Column(name = "intern_referanse", nullable = false))})
+    @AttributeOverride(name = "referanse", column = @Column(name = "intern_referanse", nullable = false))
     private InternArbeidsforholdRef internReferanse;
 
     @Embedded
-    @AttributeOverrides({@AttributeOverride(name = "referanse", column = @Column(name = "ekstern_referanse", nullable = false))})
+    @AttributeOverride(name = "referanse", column = @Column(name = "ekstern_referanse", nullable = false))
     private EksternArbeidsforholdRef eksternReferanse;
 
     @ManyToOne
@@ -95,11 +93,8 @@ public class ArbeidsforholdReferanse extends BaseEntitet implements IndexKey, Tr
         if (this == o) {
             return true;
         }
-        if (o == null || !(o instanceof ArbeidsforholdReferanse)) {
-            return false;
-        }
-        var that = (ArbeidsforholdReferanse) o;
-        return Objects.equals(arbeidsgiverEntitet, that.arbeidsgiverEntitet) && Objects.equals(internReferanse, that.internReferanse)
+        return o instanceof ArbeidsforholdReferanse that
+            && Objects.equals(arbeidsgiverEntitet, that.arbeidsgiverEntitet) && Objects.equals(internReferanse, that.internReferanse)
             && Objects.equals(eksternReferanse, that.eksternReferanse);
     }
 

@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -22,7 +21,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -52,17 +50,17 @@ public class YtelseGrunnlag extends BaseEntitet {
 
     @ChangeTracked
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "dekningsgrad_prosent")))
+    @AttributeOverride(name = "verdi", column = @Column(name = "dekningsgrad_prosent"))
     private Stillingsprosent dekningsgradProsent;
 
     @ChangeTracked
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "gradering_prosent")))
+    @AttributeOverride(name = "verdi", column = @Column(name = "gradering_prosent"))
     private Stillingsprosent graderingProsent;
 
     @ChangeTracked
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "inntektsgrunnlag_prosent")))
+    @AttributeOverride(name = "verdi", column = @Column(name = "inntektsgrunnlag_prosent"))
     private Stillingsprosent inntektProsent;
 
     @Column(name = "opprinnelig_identdato")
@@ -70,7 +68,7 @@ public class YtelseGrunnlag extends BaseEntitet {
     private LocalDate opprinneligIdentdato;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "dagsats")))
+    @AttributeOverride(name = "verdi", column = @Column(name = "dagsats"))
     @ChangeTracked
     private Beløp vedtaksDagsats;
 

@@ -73,7 +73,7 @@ public class SigrunTjeneste {
         }
         try {
             return sigrunConsumer.hentPensjonsgivendeInntektForFolketrygden(fnr, senesteÅr);
-        } catch (Exception e) {
+        } catch (Exception _) {
             return Optional.empty();
         }
     }

@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -101,12 +100,12 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
     private JournalpostId journalpostId;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "inntekt_beloep", nullable = false)))
+    @AttributeOverride(name = "verdi", column = @Column(name = "inntekt_beloep", nullable = false))
     @ChangeTracked
     private Beløp inntektBeløp;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "refusjon_beloep", updatable = false)))
+    @AttributeOverride(name = "verdi", column = @Column(name = "refusjon_beloep", updatable = false))
     @ChangeTracked
     private Beløp refusjonBeløpPerMnd;
 

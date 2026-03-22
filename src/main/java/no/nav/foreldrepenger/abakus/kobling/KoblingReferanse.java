@@ -1,15 +1,16 @@
 package no.nav.foreldrepenger.abakus.kobling;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 @Embeddable
-public class KoblingReferanse {
+public class KoblingReferanse implements Serializable {
 
     @JsonValue
     @Column(name = "kobling_referanse", updatable = false)

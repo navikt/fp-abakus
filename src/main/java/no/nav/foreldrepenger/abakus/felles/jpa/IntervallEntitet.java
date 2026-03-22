@@ -4,7 +4,6 @@ import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-
 import no.nav.abakus.iaygrunnlag.Periode;
 
 @Embeddable
@@ -18,7 +17,7 @@ public class IntervallEntitet extends AbstractIntervall {
     private LocalDate tomDato;
 
 
-    public IntervallEntitet() {
+    protected IntervallEntitet() {
         //hibernate
     }
 

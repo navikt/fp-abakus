@@ -5,13 +5,12 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.ws.rs.core.UriBuilder;
-import jakarta.ws.rs.core.UriBuilderException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilderException;
 import no.nav.foreldrepenger.abakus.typer.PersonIdent;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.request.ArenaRequestDto;
 import no.nav.foreldrepenger.kontrakter.fpwsproxy.arena.respons.MeldekortUtbetalingsgrunnlagSakDto;
@@ -46,7 +45,7 @@ public class FpwsproxyKlient {
             var result = restClient.send(request, MeldekortUtbetalingsgrunnlagSakDto[].class);
             LOG.info("Dagpenger/AAP hentet OK");
             return Arrays.stream(result).map(MedlemskortUtbetalingsgrunnlagSakMapper::tilDomeneModell).toList();
-        } catch (UriBuilderException | IllegalArgumentException e) {
+        } catch (UriBuilderException | IllegalArgumentException _) {
             throw new IllegalArgumentException("Utviklerfeil syntax-exception for hentDagpengerAAP");
         }
     }

@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -19,7 +18,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -49,17 +47,17 @@ public class YtelseAnvist extends BaseEntitet implements IndexKey {
     private IntervallEntitet anvistPeriode;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "beloep")))
+    @AttributeOverride(name = "verdi", column = @Column(name = "beloep"))
     @ChangeTracked
     private Beløp beløp;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "dagsats")))
+    @AttributeOverride(name = "verdi", column = @Column(name = "dagsats"))
     @ChangeTracked
     private Beløp dagsats;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "utbetalingsgrad_prosent")))
+    @AttributeOverride(name = "verdi", column = @Column(name = "utbetalingsgrad_prosent"))
     @ChangeTracked
     private Stillingsprosent utbetalingsgradProsent;
 

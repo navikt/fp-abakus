@@ -48,7 +48,7 @@ public class JettyDevServer extends JettyServer {
     void migrerDatabaser() {
         try {
             super.migrerDatabaser();
-        } catch (Exception e) {
+        } catch (Exception _) {
             LOG.info("Migreringer feilet, cleaner og prøver på nytt for lokal db.");
             try (var migreringDs = DatasourceUtil.createDatasource(DatasourceRole.ADMIN, 2)) {
                 var flyway = Flyway.configure()

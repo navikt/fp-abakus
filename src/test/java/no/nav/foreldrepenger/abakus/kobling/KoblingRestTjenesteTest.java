@@ -51,11 +51,12 @@ class KoblingRestTjenesteTest {
         // Act
         var request = new AvsluttKoblingRequest(saksnummer, referanse.getReferanse(), ytelseType, new AktørIdPersonident(aktørId.getId()));
 
-        var response = koblingRestTjeneste.deaktiverKobling(request);
-
-        // Assert
-        assertThat(response.getStatus()).isEqualTo(HttpURLConnection.HTTP_OK);
+        try (var response = koblingRestTjeneste.deaktiverKobling(request)) {
+            // Assert
+            assertThat(response.getStatus()).isEqualTo(HttpURLConnection.HTTP_OK);
+        }
         verify(avsluttKobling).avsluttKobling(referanse);
+
     }
 
     @Test
@@ -72,10 +73,10 @@ class KoblingRestTjenesteTest {
         // Act
         var request = new AvsluttKoblingRequest(saksnummer, referanse.getReferanse(), ytelseType, new AktørIdPersonident(aktørId.getId()));
 
-        var response = koblingRestTjeneste.deaktiverKobling(request);
-
-        // Assert
-        assertThat(response.getStatus()).isEqualTo(HttpURLConnection.HTTP_NO_CONTENT);
+        try (var response = koblingRestTjeneste.deaktiverKobling(request)) {
+            // Assert
+            assertThat(response.getStatus()).isEqualTo(HttpURLConnection.HTTP_NO_CONTENT);
+        }
         verify(avsluttKobling, never()).avsluttKobling(referanse);
     }
 
@@ -88,10 +89,10 @@ class KoblingRestTjenesteTest {
         // Act
         var request = new AvsluttKoblingRequest(saksnummer, referanse.getReferanse(), YtelseType.DAGPENGER, new AktørIdPersonident(aktørId.getId()));
 
-        var response = koblingRestTjeneste.deaktiverKobling(request);
-
-        // Assert
-        assertThat(response.getStatus()).isEqualTo(HttpURLConnection.HTTP_BAD_REQUEST);
+        try (var response = koblingRestTjeneste.deaktiverKobling(request)) {
+            // Assert
+            assertThat(response.getStatus()).isEqualTo(HttpURLConnection.HTTP_BAD_REQUEST);
+        }
         verify(avsluttKobling, never()).avsluttKobling(any());
     }
 
@@ -106,10 +107,11 @@ class KoblingRestTjenesteTest {
 
         // Act
         var request = new AvsluttKoblingRequest(saksnummer, referanse.getReferanse(), ytelseType, new AktørIdPersonident(aktørId.getId()));
-        var response = koblingRestTjeneste.deaktiverKobling(request);
+        try (var response = koblingRestTjeneste.deaktiverKobling(request)) {
+            // Assert
+            assertThat(response.getStatus()).isEqualTo(HttpURLConnection.HTTP_NO_CONTENT);
+        }
 
-        // Assert
-        assertThat(response.getStatus()).isEqualTo(HttpURLConnection.HTTP_NO_CONTENT);
     }
 
     @Test

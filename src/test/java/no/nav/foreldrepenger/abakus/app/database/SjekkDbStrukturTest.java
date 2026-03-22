@@ -6,19 +6,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import no.nav.foreldrepenger.abakus.dbstoette.JpaExtension;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import no.nav.foreldrepenger.abakus.dbstoette.JpaExtension;
 import no.nav.vedtak.felles.testutilities.db.EntityManagerAwareTest;
 
 /**
  * Tester at alle migreringer følger standarder for navn og god praksis.
  */
 @ExtendWith(JpaExtension.class)
-public class SjekkDbStrukturTest extends EntityManagerAwareTest {
+class SjekkDbStrukturTest extends EntityManagerAwareTest {
 
     @Test
     @DisplayName("Test at alle tabeller er kommentert.")

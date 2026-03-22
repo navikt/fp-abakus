@@ -38,16 +38,16 @@ class ByggLønnsinntektInntektTjenesteTest {
 
         // Assert
         var inntekter = aktørInntektBuilder.build().getInntekt();
-        assertThat(inntekter.size()).isEqualTo(1);
+        assertThat(inntekter).hasSize(1);
         var inntekt = inntekter.iterator().next();
         var poster = inntekt.getAlleInntektsposter();
-        assertThat(poster.size()).isEqualTo(1);
+        assertThat(poster).hasSize(1);
         var inntektspost = poster.iterator().next();
 
         assertThat(inntektspost.getInntektspostType()).isEqualTo(InntektspostType.LØNN);
         assertThat(inntektspost.getLønnsinntektBeskrivelse()).isEqualTo(LønnsinntektBeskrivelse.UDEFINERT);
         assertThat(inntektspost.getSkatteOgAvgiftsregelType()).isEqualTo(SkatteOgAvgiftsregelType.SVALBARD);
-        assertThat(inntektspost.getBeløp().getVerdi().compareTo(BigDecimal.TEN)).isEqualTo(0);
+        assertThat(inntektspost.getBeløp().getVerdi()).isEqualByComparingTo(BigDecimal.TEN);
     }
 
 
@@ -66,16 +66,16 @@ class ByggLønnsinntektInntektTjenesteTest {
 
         // Assert
         var inntekter = aktørInntektBuilder.build().getInntekt();
-        assertThat(inntekter.size()).isEqualTo(1);
+        assertThat(inntekter).hasSize(1);
         var inntekt = inntekter.iterator().next();
         var poster = inntekt.getAlleInntektsposter();
-        assertThat(poster.size()).isEqualTo(1);
+        assertThat(poster).hasSize(1);
         var inntektspost = poster.iterator().next();
 
         assertThat(inntektspost.getInntektspostType()).isEqualTo(InntektspostType.LØNN);
         assertThat(inntektspost.getLønnsinntektBeskrivelse()).isEqualTo(LønnsinntektBeskrivelse.UDEFINERT);
         assertThat(inntektspost.getSkatteOgAvgiftsregelType()).isEqualTo(SkatteOgAvgiftsregelType.NETTOLØNN_FOR_SJØFOLK);
-        assertThat(inntektspost.getBeløp().getVerdi().compareTo(BigDecimal.valueOf(20))).isEqualTo(0);
+        assertThat(inntektspost.getBeløp().getVerdi()).isEqualByComparingTo(BigDecimal.valueOf(20));
     }
 
     @Test
@@ -93,16 +93,16 @@ class ByggLønnsinntektInntektTjenesteTest {
 
         // Assert
         var inntekter = aktørInntektBuilder.build().getInntekt();
-        assertThat(inntekter.size()).isEqualTo(1);
+        assertThat(inntekter).hasSize(1);
         var inntekt = inntekter.iterator().next();
         var poster = inntekt.getAlleInntektsposter();
-        assertThat(poster.size()).isEqualTo(1);
+        assertThat(poster).hasSize(1);
         var inntektspost = poster.iterator().next();
 
         assertThat(inntektspost.getInntektspostType()).isEqualTo(InntektspostType.LØNN);
         assertThat(inntektspost.getLønnsinntektBeskrivelse()).isEqualTo(LønnsinntektBeskrivelse.UDEFINERT);
         assertThat(inntektspost.getSkatteOgAvgiftsregelType()).isEqualTo(SkatteOgAvgiftsregelType.SÆRSKILT_FRADRAG_FOR_SJØFOLK);
-        assertThat(inntektspost.getBeløp().getVerdi().compareTo(BigDecimal.valueOf(20))).isEqualTo(0);
+        assertThat(inntektspost.getBeløp().getVerdi()).isEqualByComparingTo(BigDecimal.valueOf(20));
     }
 
     @Test
@@ -121,16 +121,16 @@ class ByggLønnsinntektInntektTjenesteTest {
 
         // Assert
         var inntekter = aktørInntektBuilder.build().getInntekt();
-        assertThat(inntekter.size()).isEqualTo(1);
+        assertThat(inntekter).hasSize(1);
         var inntekt = inntekter.iterator().next();
         var poster = inntekt.getAlleInntektsposter();
-        assertThat(poster.size()).isEqualTo(1);
+        assertThat(poster).hasSize(1);
         var inntektspost = poster.iterator().next();
 
         assertThat(inntektspost.getInntektspostType()).isEqualTo(InntektspostType.LØNN);
         assertThat(inntektspost.getLønnsinntektBeskrivelse()).isEqualTo(LønnsinntektBeskrivelse.UDEFINERT);
         assertThat(inntektspost.getSkatteOgAvgiftsregelType()).isEqualTo(SkatteOgAvgiftsregelType.SÆRSKILT_FRADRAG_FOR_SJØFOLK);
-        assertThat(inntektspost.getBeløp().getVerdi().compareTo(BigDecimal.valueOf(20))).isEqualTo(0);
+        assertThat(inntektspost.getBeløp().getVerdi()).isEqualByComparingTo(BigDecimal.valueOf(20));
     }
 
 
@@ -148,16 +148,16 @@ class ByggLønnsinntektInntektTjenesteTest {
 
         // Assert
         var inntekter = aktørInntektBuilder.build().getInntekt();
-        assertThat(inntekter.size()).isEqualTo(1);
+        assertThat(inntekter).hasSize(1);
         var inntekt = inntekter.iterator().next();
         var poster = inntekt.getAlleInntektsposter();
-        assertThat(poster.size()).isEqualTo(1);
+        assertThat(poster).hasSize(1);
         var inntektspost = poster.iterator().next();
 
         assertThat(inntektspost.getInntektspostType()).isEqualTo(InntektspostType.LØNN);
         assertThat(inntektspost.getSkatteOgAvgiftsregelType()).isEqualTo(SkatteOgAvgiftsregelType.NETTOLØNN);
         assertThat(inntektspost.getLønnsinntektBeskrivelse()).isEqualTo(LønnsinntektBeskrivelse.KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE);
-        assertThat(inntektspost.getBeløp().getVerdi().compareTo(BigDecimal.valueOf(10))).isEqualTo(0);
+        assertThat(inntektspost.getBeløp().getVerdi()).isEqualByComparingTo(BigDecimal.valueOf(10));
     }
 
     @Test
@@ -176,16 +176,16 @@ class ByggLønnsinntektInntektTjenesteTest {
 
         // Assert
         var inntekter = aktørInntektBuilder.build().getInntekt();
-        assertThat(inntekter.size()).isEqualTo(1);
+        assertThat(inntekter).hasSize(1);
         var inntekt = inntekter.iterator().next();
         var poster = inntekt.getAlleInntektsposter();
-        assertThat(poster.size()).isEqualTo(1);
+        assertThat(poster).hasSize(1);
         var inntektspost = poster.iterator().next();
 
         assertThat(inntektspost.getInntektspostType()).isEqualTo(InntektspostType.LØNN);
         assertThat(inntektspost.getSkatteOgAvgiftsregelType()).isEqualTo(SkatteOgAvgiftsregelType.NETTOLØNN);
         assertThat(inntektspost.getLønnsinntektBeskrivelse()).isEqualTo(LønnsinntektBeskrivelse.KOMMUNAL_OMSORGSLOENN_OG_FOSTERHJEMSGODTGJOERELSE);
-        assertThat(inntektspost.getBeløp().getVerdi().compareTo(BigDecimal.valueOf(20))).isEqualTo(0);
+        assertThat(inntektspost.getBeløp().getVerdi()).isEqualByComparingTo(BigDecimal.valueOf(20));
     }
 
 
@@ -204,16 +204,16 @@ class ByggLønnsinntektInntektTjenesteTest {
 
         // Assert
         var inntekter = aktørInntektBuilder.build().getInntekt();
-        assertThat(inntekter.size()).isEqualTo(1);
+        assertThat(inntekter).hasSize(1);
         var inntekt = inntekter.iterator().next();
         var poster = inntekt.getAlleInntektsposter();
-        assertThat(poster.size()).isEqualTo(1);
+        assertThat(poster).hasSize(1);
         var inntektspost = poster.iterator().next();
 
         assertThat(inntektspost.getInntektspostType()).isEqualTo(InntektspostType.LØNN);
         assertThat(inntektspost.getSkatteOgAvgiftsregelType()).isEqualTo(SkatteOgAvgiftsregelType.NETTOLØNN);
         assertThat(inntektspost.getLønnsinntektBeskrivelse()).isEqualTo(LønnsinntektBeskrivelse.UDEFINERT);
-        assertThat(inntektspost.getBeløp().getVerdi().compareTo(BigDecimal.valueOf(10))).isZero();
+        assertThat(inntektspost.getBeløp().getVerdi()).isEqualByComparingTo(BigDecimal.valueOf(10));
     }
 
 

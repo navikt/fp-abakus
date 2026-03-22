@@ -38,7 +38,7 @@ public class FpsakKlient {
             LOG.info("Sender callback til fpsak.");
             restClient.sendReturnOptional(RestRequest.newPOSTJson(callbackDto, endpointFpsak, restConfig), String.class);
             LOG.info("Callback sendt OK til fpsak.");
-        } catch (UriBuilderException | IllegalArgumentException e) {
+        } catch (UriBuilderException | IllegalArgumentException _) {
             throw new IllegalArgumentException("Ugyldig callback url ved callback etter registerinnhenting.");
         }
     }

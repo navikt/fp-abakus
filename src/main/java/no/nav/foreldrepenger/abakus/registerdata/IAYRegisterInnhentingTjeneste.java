@@ -33,6 +33,7 @@ import no.nav.foreldrepenger.abakus.domene.iay.InntektBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektspostBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.YrkesaktivitetBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
+import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
@@ -358,12 +359,12 @@ public class IAYRegisterInnhentingTjeneste {
     }
 
     private boolean skalInnhenteNæringsInntekterFor(Kobling kobling) {
-        Optional<InntektArbeidYtelseGrunnlag> grunnlag = inntektArbeidYtelseTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse());
-
         // FP, SVP bruker ikke aggregat for oppgitt opptjening (støtter kun en pr behandling)
-        return grunnlag.flatMap(InntektArbeidYtelseGrunnlag::getGjeldendeOppgittOpptjening)
-            .map(oppgittOpptjening -> !oppgittOpptjening.getEgenNæring().isEmpty())
-            .orElse(false);
+        var næringer = inntektArbeidYtelseTjeneste.hentGrunnlagFor(kobling.getKoblingReferanse())
+            .flatMap(InntektArbeidYtelseGrunnlag::getGjeldendeOppgittOpptjening)
+            .map(OppgittOpptjening::getEgenNæring).orElseGet(List::of);
+
+        return !næringer.isEmpty();
     }
 
 

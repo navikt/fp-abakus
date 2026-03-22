@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -43,7 +42,7 @@ public class NaturalYtelse extends BaseEntitet implements IndexKey {
     private IntervallEntitet periode;
 
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "verdi", column = @Column(name = "beloep_mnd", nullable = false)))
+    @AttributeOverride(name = "verdi", column = @Column(name = "beloep_mnd", nullable = false))
     @ChangeTracked
     private Beløp beloepPerMnd;
 

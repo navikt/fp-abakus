@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 
@@ -27,7 +26,7 @@ public class EksternArbeidsforholdRef implements IndexKey, Serializable {
     @Column(name = "arbeidsforhold_id")
     private String referanse;
 
-    EksternArbeidsforholdRef() {
+    protected EksternArbeidsforholdRef() {
     }
 
     private EksternArbeidsforholdRef(String referanse) {

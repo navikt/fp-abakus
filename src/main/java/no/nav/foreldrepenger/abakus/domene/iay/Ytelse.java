@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -70,7 +69,7 @@ public class Ytelse extends BaseEntitet implements IndexKey {
      */
     @ChangeTracked
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "saksnummer", column = @Column(name = "saksreferanse")))
+    @AttributeOverride(name = "saksnummer", column = @Column(name = "saksreferanse"))
     private Saksnummer saksreferanse;
 
     @ChangeTracked

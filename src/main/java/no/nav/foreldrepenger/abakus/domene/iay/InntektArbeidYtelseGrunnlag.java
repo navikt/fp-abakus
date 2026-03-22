@@ -8,7 +8,6 @@ import java.util.UUID;
 import org.hibernate.annotations.NaturalId;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -42,7 +41,7 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     @NaturalId
     @DiffIgnore
     @Embedded
-    @AttributeOverrides({@AttributeOverride(name = "referanse", column = @Column(name = "grunnlag_referanse", updatable = false, unique = true))})
+    @AttributeOverride(name = "referanse", column = @Column(name = "grunnlag_referanse", updatable = false, unique = true))
     private GrunnlagReferanse grunnlagReferanse;
 
     @OneToOne
@@ -233,11 +232,8 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
         if (this == o) {
             return true;
         }
-        if (o == null || !(o instanceof InntektArbeidYtelseGrunnlag)) {
-            return false;
-        }
-        var that = (InntektArbeidYtelseGrunnlag) o;
-        return aktiv == that.aktiv && Objects.equals(register, that.register) && Objects.equals(saksbehandlet, that.saksbehandlet);
+        return o instanceof InntektArbeidYtelseGrunnlag that &&
+            aktiv == that.aktiv && Objects.equals(register, that.register) && Objects.equals(saksbehandlet, that.saksbehandlet);
     }
 
     @Override

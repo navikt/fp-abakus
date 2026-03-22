@@ -2,14 +2,17 @@ package no.nav.foreldrepenger.abakus.app.konfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.lang.reflect.AnnotatedParameterizedType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Collection;
+import java.util.Map;
 import java.util.function.Function;
+
+import org.junit.jupiter.api.Test;
 
 import jakarta.validation.Valid;
 import jakarta.ws.rs.core.Context;
-
-import org.junit.jupiter.api.Test;
 
 
 class RestApiInputValideringAnnoteringTest extends RestApiTester {
@@ -33,13 +36,34 @@ class RestApiInputValideringAnnoteringTest extends RestApiTester {
                     jakarta.validation.constraints.Pattern.class)).as(
                     "REST-metoder skal ikke har parameter som er String eller mer generelt uten at @Pattern brukes. Bruk DTO-er og valider. "
                         + printKlasseOgMetodeNavn.apply(method)).isFalse();
-                assertThat(isRequiredAnnotationPresent(parameter)).as(
-                        "Alle parameter for REST-metoder skal være annotert med @Valid. Var ikke det for " + printKlasseOgMetodeNavn.apply(method))
-                    .withFailMessage("Fant parametere som mangler @Valid annotation '" + parameter.toString() + "'")
-                    .isTrue();
+                if (isCollectionOrMap(method.getParameterTypes()[i])) {
+                    for (var param : method.getParameters()) {
+                        if (param.getAnnotatedType().isAnnotationPresent(Valid.class)) {
+                            throw new AssertionError("Flytt annotering @Valid inn i List/Set/Collection/Map for feltet " + param + ".");
+                        }
+                        if (param.getAnnotatedType() instanceof AnnotatedParameterizedType annotatedParameterizedType) {
+                            var annotert = annotatedParameterizedType.getAnnotatedActualTypeArguments();
+                            for (var ann : annotert) {
+                                assertThat(ann.isAnnotationPresent(Valid.class)).as(
+                                    "Alle parameter for REST-metoder skal være annotert med @Valid. Var ikke det for " +
+                                        printKlasseOgMetodeNavn.apply(method)).withFailMessage("Fant parametere som mangler @Valid annotation").isTrue();
+                            }
+                        }
+                    }
+                } else {
+                    assertThat(isRequiredAnnotationPresent(method.getParameters()[i])).as(
+                            "Alle parameter for REST-metoder skal være annotert med @Valid. Var ikke det for " + printKlasseOgMetodeNavn.apply(method))
+                        .withFailMessage("Fant parametere som mangler @Valid annotation '" + method.getParameters()[i].toString() + "'")
+                        .isTrue();
+                }
             }
         }
     }
+
+    private static boolean isCollectionOrMap(Class<?> klasse) {
+        return Collection.class.isAssignableFrom(klasse) || Map.class.isAssignableFrom(klasse);
+    }
+
 
     private boolean isRequiredAnnotationPresent(Parameter parameter) {
         final Valid validAnnotation = parameter.getAnnotation(Valid.class);

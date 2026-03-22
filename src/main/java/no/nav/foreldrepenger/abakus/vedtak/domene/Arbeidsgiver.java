@@ -4,11 +4,9 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -23,7 +21,7 @@ public class Arbeidsgiver implements IndexKey, TraverseValue, Serializable {
      */
     @ChangeTracked
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "orgNummer", column = @Column(name = "arbeidsgiver_orgnr", updatable = false)))
+    @AttributeOverride(name = "orgNummer", column = @Column(name = "arbeidsgiver_orgnr", updatable = false))
     private OrgNummer arbeidsgiverOrgnr;
 
     /**
@@ -31,7 +29,7 @@ public class Arbeidsgiver implements IndexKey, TraverseValue, Serializable {
      */
     @ChangeTracked
     @Embedded
-    @AttributeOverrides(@AttributeOverride(name = "aktørId", column = @Column(name = "arbeidsgiver_aktor_id", updatable = false)))
+    @AttributeOverride(name = "aktørId", column = @Column(name = "arbeidsgiver_aktor_id", updatable = false))
     private AktørId arbeidsgiverAktørId;
 
     private Arbeidsgiver(OrgNummer arbeidsgiverOrgnr, AktørId arbeidsgiverAktørId) {

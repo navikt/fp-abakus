@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
 
@@ -28,7 +27,7 @@ public class InternArbeidsforholdRef implements IndexKey, Serializable {
     @Column(name = "arbeidsforhold_intern_id")
     private UUID referanse;
 
-    InternArbeidsforholdRef() {
+    protected InternArbeidsforholdRef() {
     }
 
     private InternArbeidsforholdRef(UUID referanse) {
