@@ -30,7 +30,7 @@ public class DpsakMapper {
                 .filter(v -> Objects.equals(v.dagsats(), u.getValue().sats()) && v.periode().overlaps(u.getLocalDateInterval()))
                 .findFirst().orElseThrow(() -> new IllegalStateException("Fant ikke utbetaling " + u + " i noen vedtak " + vedtakene));
             var du = new DpsakVedtak.DpsakUtbetaling(u.getLocalDateInterval().extendThroughWeekend(),
-                u.getValue().sats(), u.getValue().utbetaltBeløp(), u.getValue().sumUtbetalt());
+                u.getValue().sats(), u.getValue().utbetaltForDag(), u.getValue().sumUtbetalt());
             vedtak.utbetalinger().add(du);
         });
         return vedtakene;
@@ -68,7 +68,7 @@ public class DpsakMapper {
         return max.equals(utbetaling.tilOgMed()) ? null : utbetaling.tilOgMed();
     }
 
-    private record MappedUtbetaling(Integer sats, Integer utbetaltBeløp, Integer sumUtbetalt) implements Comparable<MappedUtbetaling> {
+    private record MappedUtbetaling(Integer sats, Integer utbetaltForDag, Integer sumUtbetalt) implements Comparable<MappedUtbetaling> {
 
         MappedUtbetaling(DagpengerUtbetalingDto utbetaling) {
             this(utbetaling.sats(), utbetaling.utbetaltBeløp(), utbetaling.utbetaltBeløp());
@@ -76,19 +76,19 @@ public class DpsakMapper {
 
         @Override
         public int compareTo(MappedUtbetaling o) {
-            var utbetaltDiff = Integer.compare(this.utbetaltBeløp, o.utbetaltBeløp);
+            var utbetaltDiff = Integer.compare(this.utbetaltForDag, o.utbetaltForDag);
             return utbetaltDiff == 0 ? Integer.compare(this.sats, o.sats) : utbetaltDiff;
         }
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            return o instanceof MappedUtbetaling that && sats.equals(that.sats) && utbetaltBeløp.equals(that.utbetaltBeløp);
+            return o instanceof MappedUtbetaling that && sats.equals(that.sats) && utbetaltForDag.equals(that.utbetaltForDag);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(sats, utbetaltBeløp);
+            return Objects.hash(sats, utbetaltForDag);
         }
     }
 
@@ -109,8 +109,8 @@ public class DpsakMapper {
     private static LocalDateSegment<MappedUtbetaling> slåSammen(LocalDateInterval i,
                                                                 LocalDateSegment<MappedUtbetaling> lhs,
                                                                 LocalDateSegment<MappedUtbetaling> rhs) {
-        return new LocalDateSegment<>(i, new MappedUtbetaling(lhs.getValue().sats(), lhs.getValue().utbetaltBeløp(),
-            lhs.getValue().sumUtbetalt() + rhs.getValue().utbetaltBeløp()));
+        return new LocalDateSegment<>(i, new MappedUtbetaling(lhs.getValue().sats(), lhs.getValue().utbetaltForDag(),
+            lhs.getValue().sumUtbetalt() + rhs.getValue().sumUtbetalt()));
     }
 
 }

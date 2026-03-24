@@ -1,0 +1,67 @@
+{
+  "vedtak": [
+    {
+      "barnMedStonad": 1,
+      "barnetillegg": 37,
+      "beregningsgrunnlag": 0,
+      "dagsats": 1398,
+      "dagsatsEtterUføreReduksjon": 1398,
+      "kildesystem": "KELVIN",
+      "periode": { "fraOgMedDato": "2025-02-24", "tilOgMedDato": "2025-03-06" },
+      "saksnummer": "4N3oUVK",
+      "status": "LØPENDE",
+      "vedtakId": "0",
+      "vedtaksdato": "2025-04-08",
+      "utbetaling": [
+        { "periode": { "fraOgMedDato": "2025-02-24", "tilOgMedDato": "2025-02-28" }, "belop": 5305, "dagsats": 1034, "barnetillegg": 27, "reduksjon": null, "utbetalingsgrad": 74 },
+        { "periode": { "fraOgMedDato": "2025-03-01", "tilOgMedDato": "2025-03-06" }, "belop": 4244, "dagsats": 1034, "barnetillegg": 27, "reduksjon": null, "utbetalingsgrad": 74 }
+      ]
+    },
+    {
+      "barnMedStonad": 0,
+      "barnetillegg": 0,
+      "beregningsgrunnlag": 0,
+      "dagsats": 1398,
+      "dagsatsEtterUføreReduksjon": 1398,
+      "kildesystem": "KELVIN",
+      "periode": { "fraOgMedDato": "2025-03-07", "tilOgMedDato": "2026-04-03" },
+      "saksnummer": "4N3oUVK",
+      "status": "LØPENDE",
+      "vedtakId": "0",
+      "vedtaksdato": "2025-04-08",
+      "utbetaling": [
+        { "periode": { "fraOgMedDato": "2025-03-07", "tilOgMedDato": "2025-03-09" }, "belop": 1034,  "dagsats": 1034, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 74 },
+        { "periode": { "fraOgMedDato": "2025-03-10", "tilOgMedDato": "2025-03-14" }, "belop": 5310,  "dagsats": 1062, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 76 },
+        { "periode": { "fraOgMedDato": "2025-03-15", "tilOgMedDato": "2025-03-16" }, "belop": 0,     "dagsats": 1062, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 76 },
+        { "periode": { "fraOgMedDato": "2025-03-17", "tilOgMedDato": "2025-03-20" }, "belop": 4248,  "dagsats": 1062, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 76 },
+        { "periode": { "fraOgMedDato": "2025-03-21", "tilOgMedDato": "2025-03-23" }, "belop": 1062,  "dagsats": 1062, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 76 },
+        { "periode": { "fraOgMedDato": "2025-03-24", "tilOgMedDato": "2025-04-06" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-04-07", "tilOgMedDato": "2025-04-20" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-04-21", "tilOgMedDato": "2025-05-04" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-05-05", "tilOgMedDato": "2025-05-18" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-05-19", "tilOgMedDato": "2025-06-01" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-06-02", "tilOgMedDato": "2025-06-15" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-06-16", "tilOgMedDato": "2025-06-29" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-06-30", "tilOgMedDato": "2025-07-13" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-07-14", "tilOgMedDato": "2025-07-27" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-07-28", "tilOgMedDato": "2025-08-10" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-08-11", "tilOgMedDato": "2025-08-24" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-08-25", "tilOgMedDato": "2025-09-07" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-09-08", "tilOgMedDato": "2025-09-21" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-09-22", "tilOgMedDato": "2025-10-05" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-10-06", "tilOgMedDato": "2025-10-19" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-10-20", "tilOgMedDato": "2025-11-02" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-11-03", "tilOgMedDato": "2025-11-16" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-11-17", "tilOgMedDato": "2025-11-30" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-12-01", "tilOgMedDato": "2025-12-14" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-12-15", "tilOgMedDato": "2025-12-28" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2025-12-29", "tilOgMedDato": "2026-01-11" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2026-01-12", "tilOgMedDato": "2026-01-25" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2026-01-26", "tilOgMedDato": "2026-02-08" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2026-02-09", "tilOgMedDato": "2026-02-22" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2026-02-23", "tilOgMedDato": "2026-03-08" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 },
+        { "periode": { "fraOgMedDato": "2026-03-09", "tilOgMedDato": "2026-03-22" }, "belop": 13980, "dagsats": 1398, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 100 }
+      ]
+    }
+  ]
+}

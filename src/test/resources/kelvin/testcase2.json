@@ -1,0 +1,23 @@
+{
+  "vedtak": [
+    {
+      "barnMedStonad": 0,
+      "barnetillegg": 0,
+      "beregningsgrunnlag": 677302,
+      "dagsats": 1719,
+      "dagsatsEtterUføreReduksjon": 1031,
+      "kildesystem": "KELVIN",
+      "periode": { "fraOgMedDato": "2025-09-08", "tilOgMedDato": "2026-09-07" },
+      "saksnummer": "4oKSQ1C",
+      "status": "LØPENDE",
+      "vedtakId": "73337",
+      "vedtaksdato": "2025-09-08",
+      "utbetaling": [
+        { "periode": { "fraOgMedDato": "2025-09-08", "tilOgMedDato": "2025-09-21" }, "belop": 10310, "dagsats": 1031, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 60 },
+        { "periode": { "fraOgMedDato": "2025-09-22", "tilOgMedDato": "2025-10-05" }, "belop": 10310, "dagsats": 1031, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 60 },
+        { "periode": { "fraOgMedDato": "2025-10-06", "tilOgMedDato": "2025-10-19" }, "belop": 10310, "dagsats": 1031, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 60 },
+        { "periode": { "fraOgMedDato": "2025-10-20", "tilOgMedDato": "2025-11-02" }, "belop": 10310, "dagsats": 1031, "barnetillegg": 0, "reduksjon": null, "utbetalingsgrad": 60 }
+      ]
+    }
+  ]
+}

@@ -70,14 +70,14 @@ class DpsakMapperTest {
             assertThat(v1.dagsats()).isEqualTo(1423);
             assertThat(v1.utbetalinger()).hasSize(9);
             assertThat(v1.utbetalinger().getLast().dagsats()).isEqualTo(1423);
-            assertThat(v1.utbetalinger().getLast().utbetaltBeløp()).isEqualTo(1423);
+            assertThat(v1.utbetalinger().getLast().dagutbetalt()).isEqualTo(1423);
             assertThat(v1.utbetalinger().getLast().sumUtbetalt()).isEqualTo(43 * 1423);
             assertThat(v2.periode().getFomDato()).isEqualTo(nyttår);
             assertThat(v2.periode().getTomDato()).isEqualTo(sluttdato);
             assertThat(v2.dagsats()).isEqualTo(1424);
             assertThat(v2.utbetalinger()).hasSize(5);
             assertThat(v2.utbetalinger().getLast().dagsats()).isEqualTo(1424);
-            assertThat(v2.utbetalinger().getLast().utbetaltBeløp()).isEqualTo(1424);
+            assertThat(v2.utbetalinger().getLast().dagutbetalt()).isEqualTo(1424);
             assertThat(v2.utbetalinger().getLast().sumUtbetalt()).isEqualTo(14 * 1424);
         }
     }
