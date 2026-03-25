@@ -77,7 +77,7 @@ public class EksternDelingAvYtelserRestTjeneste {
     private static final Set<Ytelser> K9_INFOTRYGD_YTELSER = Set.of(Ytelser.PLEIEPENGER_NÆRSTÅENDE, Ytelser.OPPLÆRINGSPENGER,
         Ytelser.PLEIEPENGER_SYKT_BARN);
 
-    private static final LocalDate CUTOFF_BS_INFOTRYGD = LocalDate.of(2026, Month.FEBRUARY, 1);
+    private static final LocalDate CUTOFF_BS_INFOTRYGD = LocalDate.of(2026, Month.JANUARY, 31);
 
     private VedtakYtelseRepository ytelseRepository;
     private AktørTjeneste aktørTjeneste;
@@ -142,7 +142,7 @@ public class EksternDelingAvYtelserRestTjeneste {
 
 
     private List<Ytelse> hentVedtakYtelseInfotrygdK9Intern(VedtakForPeriodeRequest request) {
-        if (request.getYtelser().isEmpty() || !request.getPeriode().getFom().isBefore(CUTOFF_BS_INFOTRYGD)
+        if (request.getYtelser().isEmpty() || request.getPeriode().getFom().isAfter(CUTOFF_BS_INFOTRYGD)
             || K9_INFOTRYGD_YTELSER.stream().noneMatch(y -> request.getYtelser().contains(y))) {
             return List.of();
         }
