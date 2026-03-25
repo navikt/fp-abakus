@@ -137,12 +137,10 @@ public class InnhentingInfotrygdTjeneste {
 
         // Bør være tomt. Logg et par måneder for evt å skru av innhenting - må da beholde eksisterende grunnlag ved kopiering, som for FP/SVP
         if (TemaKode.BS.equals(grunnlag.tema().kode())) {
-            var minUtbetFom = grunnlag.vedtak().stream().map(Vedtak::periode).map(Periode::fom).filter(Objects::nonNull).min(Comparator.naturalOrder()).orElse(null);
             var maxUtbetTom = grunnlag.vedtak().stream().map(Vedtak::periode).map(Periode::tom).filter(Objects::nonNull).min(Comparator.naturalOrder()).orElse(null);
-            LOG.info("INFOTRYGD BS: Ytelse {} vedtatt {} fom {} tom {} utbetFom {} utbetTom {}",
-                bestemYtelseType(grunnlag), brukIdentdato, brukPeriode.fom(), brukPeriode.tom(), minUtbetFom, maxUtbetTom);
-            if (maxUtbetTom != null && maxUtbetTom.isAfter(innhentFom)) {
-                LOG.info("INFOTRYGD BS FERSKT VEDTAK: Innhenting {} Ytelse {} vedtatt {} fom {} tom {} utbetFom {} utbetTom {}",
+            if (maxUtbetTom != null && maxUtbetTom.isAfter(innhentFom) && innhentFom.isAfter(LocalDate.now().minusMonths(17))) {
+                var minUtbetFom = grunnlag.vedtak().stream().map(Vedtak::periode).map(Periode::fom).filter(Objects::nonNull).min(Comparator.naturalOrder()).orElse(null);
+                LOG.info("INFOTRYGD BS FERSKT VEDTAK: InnhentFom {} Ytelse {} vedtatt {} fom {} tom {} utbetFom {} utbetTom {}",
                     innhentFom, bestemYtelseType(grunnlag), brukIdentdato, brukPeriode.fom(), brukPeriode.tom(), minUtbetFom, maxUtbetTom);
             }
         }
