@@ -3,12 +3,11 @@
   "minReplicas": "2",
   "maxReplicas": "6",
   "limits": {
-    "cpu": "2",
-    "mem": "2048Mi"
+    "mem": "1000Mi"
   },
   "requests": {
-    "cpu": "500m",
-    "mem": "1024Mi"
+    "cpu": "100m",
+    "mem": "800Mi"
   },
   "ingresses": [
     "https://fpabakus.prod-fss-pub.nais.io"
