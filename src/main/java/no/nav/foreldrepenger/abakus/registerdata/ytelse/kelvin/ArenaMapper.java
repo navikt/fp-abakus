@@ -79,7 +79,7 @@ public class ArenaMapper {
 
     private static BigDecimal regnUtArenaUtbetalingsgrad(ArbeidsavklaringspengerResponse.AAPUtbetaling utbetaling) {
         var beløp = Optional.ofNullable(utbetaling.belop()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO);
-        var dagsats = Optional.ofNullable(utbetaling.dagsats()).map(BigDecimal::valueOf).orElse(BigDecimal.ONE);
+        var dagsats = Optional.ofNullable(utbetaling.dagsats()).filter(d -> d > 0).map(BigDecimal::valueOf).orElse(BigDecimal.ONE);
         var virkedager = beregnVirkedager(utbetaling.periode().fraOgMedDato(), utbetaling.periode().tilOgMedDato());
         return beløp.multiply(BigDecimal.valueOf(200)).divide(dagsats.multiply(BigDecimal.valueOf(virkedager)), 1, RoundingMode.HALF_UP);
     }
