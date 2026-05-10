@@ -14,6 +14,9 @@ import org.eclipse.jetty.security.Constraint;
 import org.eclipse.jetty.server.Server;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
+import org.flywaydb.core.api.callback.BaseCallback;
+import org.flywaydb.core.api.callback.Context;
+import org.flywaydb.core.api.callback.Event;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,9 +123,26 @@ public class JettyServer {
 
     void migrerDatabaser() {
         try (var dataSource = DatasourceUtil.createDatasource(DatasourceRole.ADMIN, 3)) {
-            var flyway = Flyway.configure().dataSource(dataSource).locations("classpath:/db/migration/defaultDS").baselineOnMigrate(true);
+            var flyway = Flyway.configure()
+                .dataSource(dataSource)
+                .locations("classpath:/db/migration/defaultDS")
+                .baselineOnMigrate(true);
             if (ENV.isProd() || ENV.isDev()) {
-                flyway.initSql(String.format("SET ROLE \"%s\"", DatasourceUtil.getRole(DatasourceRole.ADMIN)));
+                flyway.callbacks(new BaseCallback() {
+                    @Override
+                    public boolean supports(Event event, Context context) {
+                        return event == Event.AFTER_CONNECT;
+                    }
+
+                    @Override
+                    public void handle(Event event, Context context) {
+                        try (var stmt = context.getConnection().createStatement()) {
+                            stmt.execute(String.format("SET ROLE \"%s\"", DatasourceUtil.getRole(DatasourceRole.ADMIN))); // NOSONAR
+                        } catch (Exception e) {
+                            throw new FlywayException("Kunne ikke sette rolle etter connect", e);
+                        }
+                    }
+                });
             }
             flyway.load().migrate();
         } catch (FlywayException e) {

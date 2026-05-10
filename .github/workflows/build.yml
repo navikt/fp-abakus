@@ -13,8 +13,6 @@ on:
       - 'LICENSE'
       - 'CODEOWNERS'
       - 'docs/**'
-      - '.lokalutvikling/**'
-      - '.troubleshooting/**'
       - '.github/*.yml'
       - 'kontrakter/**'
 
