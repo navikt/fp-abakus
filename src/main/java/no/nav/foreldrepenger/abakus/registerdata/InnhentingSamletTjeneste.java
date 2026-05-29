@@ -145,16 +145,6 @@ public class InnhentingSamletTjeneste {
         } catch (Exception _) {
             LOG.info("Maksimum AAP sammenligning av Arenadata for sak {} feilet", saksnummer.getVerdi());
         }
-        var antattStp = opplysningsPeriode.getFomDato().plusMonths(17);
-        var overlappStp = maksimumRespons.getOrDefault(Fagsystem.KELVIN, List.of()).stream()
-            .anyMatch(v -> v.getVedtaksPeriodeFom().isBefore(antattStp) && v.getVedtaksPeriodeTom().isAfter(antattStp));
-        if (overlappStp) {
-            var saksnumreAAP = maksimumRespons.get(Fagsystem.KELVIN).stream()
-                .map(MeldekortUtbetalingsgrunnlagSak::getSaksnummer)
-                .map(Saksnummer::getVerdi)
-                .collect(Collectors.joining(", "));
-            LOG.info("Maksimum AAP sak {} har innhentet nye Arbeidsavklaringspenger Kelvin-saker {}", saksnummer.getVerdi(), saksnumreAAP);
-        }
         return maksimumRespons.getOrDefault(Fagsystem.KELVIN, List.of());
     }
 

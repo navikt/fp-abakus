@@ -49,6 +49,12 @@ public class RegisterdataInnhentingTask extends KoblingTask {
     protected void prosesser(ProsessTaskData prosessTaskData) {
         Long koblingId = Long.valueOf(prosessTaskData.getPropertyValue(TaskConstants.KOBLING_ID));
         Kobling kobling = koblingTjeneste.hent(koblingId);
+        if (kobling != null && !kobling.erAktiv()) {
+            // Tilfeller av ny søknad/henleggelse - som kaller kobling/v1/avslutt før retry,
+            LOG.info("Behandling avsluttet sak=[{}, {}] med behandling='{}'", kobling.getSaksnummer(), kobling.getYtelseType(),
+                kobling.getKoblingReferanse());
+            return;
+        }
         LOG.info("Starter registerinnhenting for sak=[{}, {}] med behandling='{}'", kobling.getSaksnummer(), kobling.getYtelseType(),
             kobling.getKoblingReferanse());
 

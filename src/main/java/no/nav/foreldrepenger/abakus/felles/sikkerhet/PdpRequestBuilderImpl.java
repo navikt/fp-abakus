@@ -18,7 +18,11 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
 
     @Override
     public AppRessursData lagAppRessursDataForSystembruker(AbacDataAttributter dataAttributter) {
-        return minimalbuilder().build();
+        var builder = minimalbuilder();
+        Set<String> saksnumre = dataAttributter.getVerdier(StandardAbacAttributtType.SAKSNUMMER);
+
+        saksnumre.stream().findFirst().ifPresent(builder::medSaksnummer);
+        return builder.build();
     }
 
     @Override
