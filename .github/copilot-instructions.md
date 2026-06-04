@@ -26,7 +26,7 @@ Data sources / REST integrations besides PDL:
 - Arena: Legacy Arbeidsavklaringspenger and Dagpenger - through `fp-ws-proxy`
 - Kelvin: Arbeidsavklaringspenger
 - Dp-sak: Dagpenger
-- Lagret vedtak: Stored vedtak from `fp-sak` may become input for later benefit calculations
+- `VedtakYtelse`: Stored vedtak from `fp-sak` may become input for later benefit calculations
 
 `VedtakConsumer` receives vedtak from `fp-sak` and `k9-sak` for local storage and later sharing.
 
