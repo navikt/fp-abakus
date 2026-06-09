@@ -14,6 +14,7 @@ import no.nav.foreldrepenger.abakus.app.vedlikehold.ForvaltningRestTjeneste;
 import no.nav.foreldrepenger.konfig.Environment;
 import no.nav.vedtak.felles.prosesstask.rest.ProsessTaskRestTjeneste;
 import no.nav.vedtak.openapi.OpenApiUtils;
+import no.nav.vedtak.server.rest.AuthenticationFilter;
 import no.nav.vedtak.server.rest.ForvaltningAuthorizationFilter;
 import no.nav.vedtak.server.rest.FpRestJackson2Feature;
 
@@ -24,6 +25,7 @@ public class ForvaltningApiConfig extends ResourceConfig {
     private static final Environment ENV = Environment.current();
 
     public ForvaltningApiConfig() {
+        register(AuthenticationFilter.class);
         register(FpRestJackson2Feature.class);
         register(ForvaltningAuthorizationFilter.class);
         registerOpenApi();
