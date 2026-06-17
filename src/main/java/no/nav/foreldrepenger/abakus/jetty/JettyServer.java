@@ -1,6 +1,6 @@
 package no.nav.foreldrepenger.abakus.jetty;
 
-import javax.naming.NamingException;
+import java.util.Locale;
 
 import org.eclipse.jetty.ee11.cdi.CdiDecoratingListener;
 import org.eclipse.jetty.ee11.cdi.CdiServletContainerInitializer;
@@ -9,10 +9,8 @@ import org.eclipse.jetty.ee11.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee11.servlet.ServletHolder;
 import org.eclipse.jetty.ee11.servlet.security.ConstraintMapping;
 import org.eclipse.jetty.ee11.servlet.security.ConstraintSecurityHandler;
-import org.eclipse.jetty.plus.jndi.EnvEntry;
 import org.eclipse.jetty.security.Constraint;
 import org.eclipse.jetty.server.Server;
-import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
 import org.flywaydb.core.api.callback.BaseCallback;
 import org.flywaydb.core.api.callback.Context;
@@ -28,8 +26,10 @@ import no.nav.foreldrepenger.abakus.app.konfig.ForvaltningApiConfig;
 import no.nav.foreldrepenger.abakus.app.konfig.InternalApiConfig;
 import no.nav.foreldrepenger.abakus.app.tjenester.ServiceStarterListener;
 import no.nav.foreldrepenger.konfig.Environment;
-
-import java.util.Locale;
+import no.nav.vedtak.felles.jpa.NamingStandard;
+import no.nav.vedtak.felles.jpa.flyway.FlywayUtil;
+import no.nav.vedtak.felles.jpa.jdbc.DataSourceHolder;
+import no.nav.vedtak.log.metrics.MetricsUtil;
 
 public class JettyServer {
 
@@ -55,9 +55,9 @@ public class JettyServer {
     }
 
     void bootStrap() throws Exception {
-        konfigurerJndi();
         konfigurerLogging();
         migrerDatabaser();
+        konfigurerDataSource();
         start();
     }
 
@@ -68,6 +68,7 @@ public class JettyServer {
     private static void konfigurerLogging() {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
+        MetricsUtil.scrape(); // TODO: bruke kommende init-metode
     }
 
     private void start() throws Exception{
@@ -115,18 +116,17 @@ public class JettyServer {
         context.addServlet(servlet, path + "/*");
     }
 
-    protected void konfigurerJndi() throws NamingException {
+    protected void konfigurerDataSource() {
         // Balanser så CP-size = TaskThreads+1 + Antall Connections man ønsker
         System.setProperty("task.manager.runner.threads", "6");
-        new EnvEntry("jdbc/defaultDS", DatasourceUtil.createDatasource(DatasourceRole.USER, 12));
+        var dataSource = LocalDatasourceUtil.createDatasource(18);
+        DataSourceHolder.initialize(dataSource);
     }
 
     void migrerDatabaser() {
-        try (var dataSource = DatasourceUtil.createDatasource(DatasourceRole.ADMIN, 3)) {
-            var flyway = Flyway.configure()
-                .dataSource(dataSource)
-                .locations("classpath:/db/migration/defaultDS")
-                .baselineOnMigrate(true);
+        // Spesielt oppsett Postgres On-prem pga roles og callbacks
+        try (var dataSource = LocalDatasourceUtil.createMigrationDatasource()) {
+            var flyway = FlywayUtil.flywayConfig(dataSource, NamingStandard.DEFAULT_DS_MIGRATION_CLASSPATH);
             if (ENV.isProd() || ENV.isDev()) {
                 flyway.callbacks(new BaseCallback() {
                     @Override
@@ -137,7 +137,7 @@ public class JettyServer {
                     @Override
                     public void handle(Event event, Context context) {
                         try (var stmt = context.getConnection().createStatement()) {
-                            stmt.execute(String.format("SET ROLE \"%s\"", DatasourceUtil.getRole(DatasourceRole.ADMIN))); // NOSONAR
+                            stmt.execute(String.format("SET ROLE \"%s\"", LocalDatasourceUtil.getRole(DatasourceRole.ADMIN))); // NOSONAR
                         } catch (Exception e) {
                             throw new FlywayException("Kunne ikke sette rolle etter connect", e);
                         }
@@ -145,9 +145,6 @@ public class JettyServer {
                 });
             }
             flyway.load().migrate();
-        } catch (FlywayException e) {
-            LOG.error("Feil under migrering av databasen.");
-            throw e;
         }
     }
 
