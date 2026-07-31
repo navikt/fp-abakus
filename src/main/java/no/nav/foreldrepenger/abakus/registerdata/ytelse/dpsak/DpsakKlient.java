@@ -63,7 +63,6 @@ public class DpsakKlient {
             if (!perioderDpsak.isEmpty() || !utbetalingerDpsak.isEmpty()) {
                 LOG.info("DP-DATADELING DPSAK fant {} perioder og {} utbetalinger. Perioder: {}. Utbetalinger {}",
                     perioderDpsak.size(), utbetalingerDpsak.size(), perioderDpsak, utbetalingerDpsak);
-                LOG.warn("Merk Dem! Sak {} har nye dagpenger. Kontakt produkteier umiddelbart", sak.getVerdi());
             }
             var dpsakVedtak = DpsakMapper.fullMapping(perioderDpsak, utbetalingerDpsak);
             return Map.of(Fagsystem.DPSAK, dpsakVedtak);
