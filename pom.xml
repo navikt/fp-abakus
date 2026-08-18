@@ -22,7 +22,7 @@
 
         <abakus-kontrakt.version>2.4.1</abakus-kontrakt.version>
 
-		<felles.version>7.8.6</felles.version>
+		<felles.version>7.9.0</felles.version>
 		<prosesstask.version>5.2.7</prosesstask.version>
 		<kontrakter.version>9.4.37</kontrakter.version>
         <tidsserie.version>2.7.6</tidsserie.version>
@@ -121,6 +121,10 @@
         <dependency>
             <groupId>no.nav.foreldrepenger.felles</groupId>
             <artifactId>felles-kontekst</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.foreldrepenger.felles</groupId>
+            <artifactId>felles-mapper</artifactId>
         </dependency>
         <dependency>
             <groupId>no.nav.foreldrepenger.felles</groupId>
@@ -247,14 +251,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.ee11</groupId>

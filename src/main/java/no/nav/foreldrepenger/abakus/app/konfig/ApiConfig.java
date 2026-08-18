@@ -16,7 +16,7 @@ import no.nav.foreldrepenger.abakus.kobling.KoblingRestTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataRestTjeneste;
 import no.nav.foreldrepenger.abakus.vedtak.tjeneste.YtelseRestTjeneste;
 import no.nav.vedtak.server.rest.AuthenticationFilter;
-import no.nav.vedtak.server.rest.FpRestJackson2Feature;
+import no.nav.vedtak.server.rest.FpRestJacksonFeature;
 
 @ApplicationPath(ApiConfig.API_URI)
 public class ApiConfig extends ResourceConfig {
@@ -26,7 +26,7 @@ public class ApiConfig extends ResourceConfig {
     public ApiConfig() {
         setApplicationName(ApiConfig.class.getSimpleName());
         register(AuthenticationFilter.class);
-        register(FpRestJackson2Feature.class);
+        register(FpRestJacksonFeature.class);
         registerClasses(getApplicationClasses());
         setProperties(getApplicationProperties());
     }
