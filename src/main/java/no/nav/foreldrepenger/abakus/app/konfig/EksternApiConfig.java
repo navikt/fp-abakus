@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import jakarta.ws.rs.ApplicationPath;
 import no.nav.foreldrepenger.abakus.app.rest.ekstern.EksternDelingAvYtelserRestTjeneste;
 import no.nav.vedtak.server.rest.AuthenticationFilter;
-import no.nav.vedtak.server.rest.FpRestJackson2Feature;
+import no.nav.vedtak.server.rest.FpRestJacksonFeature;
 
 @ApplicationPath(EksternApiConfig.API_URI)
 public class EksternApiConfig extends ResourceConfig {
@@ -24,7 +24,7 @@ public class EksternApiConfig extends ResourceConfig {
         LOG.info("Initialiserer: {}", API_URI);
         setApplicationName(EksternApiConfig.class.getSimpleName());
         register(AuthenticationFilter.class);
-        register(FpRestJackson2Feature.class);
+        register(FpRestJacksonFeature.class);
         registerClasses(getEksternalApplicationClasses());
         setProperties(getApplicationProperties());
         LOG.info("Ferdig med initialisering av {}", API_URI);
