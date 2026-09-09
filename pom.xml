@@ -24,7 +24,7 @@
 
 		<felles.version>7.9.0</felles.version>
 		<prosesstask.version>5.2.7</prosesstask.version>
-		<kontrakter.version>9.4.37</kontrakter.version>
+		<kontrakter.version>9.4.39</kontrakter.version>
         <tidsserie.version>2.8.0</tidsserie.version>
 
 	</properties>
