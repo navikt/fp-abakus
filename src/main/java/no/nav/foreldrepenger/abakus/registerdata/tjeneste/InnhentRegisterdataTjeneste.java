@@ -91,20 +91,21 @@ public class InnhentRegisterdataTjeneste {
         Kobling kobling = oppdaterKobling(dto);
 
         ProsessTaskGruppe taskGruppe = new ProsessTaskGruppe();
-        var innhentingTask = ProsessTaskData.forProsessTask(RegisterdataInnhentingTask.class);
-        var callbackTask = ProsessTaskData.forProsessTask(CallbackTask.class);
-        innhentingTask.setSaksnummer(kobling.getSaksnummer().getVerdi());
-        innhentingTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
-        innhentingTask.setPayload(DefaultJsonMapper.toJson(dto));
-        innhentingTask.setSaksnummer(kobling.getSaksnummer().getVerdi());
-        callbackTask.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
 
-        Optional<GrunnlagReferanse> eksisterendeGrunnlagRef = hentSisteReferanseFor(kobling.getKoblingReferanse());
-        eksisterendeGrunnlagRef.map(GrunnlagReferanse::getReferanse)
+        var innhentingTask = ProsessTaskData.forProsessTask(RegisterdataInnhentingTask.class);
+        innhentingTask.setPayload(DefaultJsonMapper.toJson(dto));
+
+        var callbackTask = ProsessTaskData.forProsessTask(CallbackTask.class);
+        hentSisteReferanseFor(kobling.getKoblingReferanse())
+            .map(GrunnlagReferanse::getReferanse)
             .ifPresent(ref -> callbackTask.setProperty(EKSISTERENDE_GRUNNLAG_REF, ref.toString()));
 
         taskGruppe.addNesteSekvensiell(innhentingTask);
         taskGruppe.addNesteSekvensiell(callbackTask);
+
+        taskGruppe.setProperty(TaskConstants.KOBLING_ID, kobling.getId().toString());
+        taskGruppe.setSaksnummer(kobling.getSaksnummer().getVerdi());
+        taskGruppe.setBehandlingUuid(kobling.getKoblingReferanse().getReferanse());
 
         return taskTjeneste.lagre(taskGruppe);
     }

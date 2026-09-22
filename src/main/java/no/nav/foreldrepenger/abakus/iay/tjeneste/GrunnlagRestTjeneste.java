@@ -25,7 +25,7 @@ import no.nav.abakus.iaygrunnlag.request.OverstyrGrunnlagRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.GrunnlagReferanse;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlag;
 import no.nav.foreldrepenger.abakus.domene.iay.InntektArbeidYtelseGrunnlagBuilder;
-import no.nav.foreldrepenger.abakus.felles.LoggUtil;
+import no.nav.foreldrepenger.abakus.felles.AppAbacAttributtType;
 import no.nav.foreldrepenger.abakus.felles.jpa.IntervallEntitet;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.IAYFraDtoMapper;
@@ -75,8 +75,6 @@ public class GrunnlagRestTjeneste {
         @NotNull @Valid InntektArbeidYtelseGrunnlagRequest spesifikasjon) {
         Response response;
 
-        LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer(), spesifikasjon.getKoblingReferanse());
-
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
 
         final var forespurtGrunnlagReferanse = spesifikasjon.getGrunnlagReferanse();
@@ -118,8 +116,6 @@ public class GrunnlagRestTjeneste {
 
         var aktørId = new AktørId(dto.getAktør().getIdent());
         var koblingReferanse = getKoblingReferanse(aktørId, dto.getKoblingReferanse(), dto.getGrunnlagReferanse());
-
-        setupLogMdcFraKoblingReferanse(koblingReferanse);
 
         var nyttGrunnlagBuilder = InntektArbeidYtelseGrunnlagBuilder.oppdatere(iayTjeneste.hentGrunnlagFor(koblingReferanse));
 
@@ -168,8 +164,6 @@ public class GrunnlagRestTjeneste {
     private void kopierOgLagreGrunnlag(KopierGrunnlagRequest request, boolean beholdInntektsmeldinger) {
         var koblingReferanse = new KoblingReferanse(request.getNyReferanse());
         var koblingLås = Optional.ofNullable(koblingTjeneste.taSkrivesLås(koblingReferanse));
-
-        setupLogMdcFraKoblingReferanse(koblingReferanse);
 
         var kobling = oppdaterKobling(request);
 
@@ -250,19 +244,17 @@ public class GrunnlagRestTjeneste {
         throw new UnsupportedOperationException("Må ha grunnlagReferanse eller koblingReferanse");
     }
 
-    private void setupLogMdcFraKoblingReferanse(KoblingReferanse koblingReferanse) {
-        var kobling = koblingTjeneste.hentFor(koblingReferanse);
-        kobling.filter(k -> k.getSaksnummer() != null)
-            .ifPresent(k -> LoggUtil.setupLogMdc(k.getYtelseType(), kobling.get().getSaksnummer().getVerdi(),
-                koblingReferanse.getReferanse())); // legger til saksnummer i MDC
-    }
-
     public static class InntektArbeidYtelseGrunnlagRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         @Override
         public AbacDataAttributter apply(Object obj) {
             var req = (InntektArbeidYtelseGrunnlagRequest) obj;
-            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.SAKSNUMMER, req.getSaksnummer());
+            var attributter = AbacDataAttributter.opprett()
+                .leggTil(StandardAbacAttributtType.SAKSNUMMER, req.getSaksnummer());
+            if (req.getKoblingReferanse() != null) {
+                attributter.leggTil(AppAbacAttributtType.KOBLING_REFERANSE, req.getKoblingReferanse());
+            }
+            return attributter;
         }
     }
 
@@ -271,16 +263,23 @@ public class GrunnlagRestTjeneste {
         @Override
         public AbacDataAttributter apply(Object obj) {
             var req = (KopierGrunnlagRequest) obj;
-            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.SAKSNUMMER, req.getSaksnummer());
+            return AbacDataAttributter.opprett()
+                .leggTil(StandardAbacAttributtType.SAKSNUMMER, req.getSaksnummer())
+                .leggTil(AppAbacAttributtType.KOBLING_REFERANSE, req.getNyReferanse());
         }
     }
-
+''
     public static class OverstyrGrunnlagRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         @Override
         public AbacDataAttributter apply(Object obj) {
             var req = (OverstyrGrunnlagRequest) obj;
-            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.SAKSNUMMER, req.getSaksnummer());
+            var attributter = AbacDataAttributter.opprett()
+                .leggTil(StandardAbacAttributtType.SAKSNUMMER, req.getSaksnummer());
+            if (req.getKoblingReferanse() != null) {
+                attributter.leggTil(AppAbacAttributtType.KOBLING_REFERANSE, req.getKoblingReferanse());
+            }
+            return attributter;
         }
     }
 }
