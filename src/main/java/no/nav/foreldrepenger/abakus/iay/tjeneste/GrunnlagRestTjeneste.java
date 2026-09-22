@@ -268,7 +268,7 @@ public class GrunnlagRestTjeneste {
                 .leggTil(AppAbacAttributtType.KOBLING_REFERANSE, req.getNyReferanse());
         }
     }
-''
+
     public static class OverstyrGrunnlagRequestAbacDataSupplier implements Function<Object, AbacDataAttributter> {
 
         @Override
