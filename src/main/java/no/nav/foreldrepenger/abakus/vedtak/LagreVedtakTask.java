@@ -73,6 +73,7 @@ public class LagreVedtakTask implements ProsessTaskHandler {
     private static ProsessTaskData lagPubliserTaskData(YtelseV1 mottattVedtak, String key) {
         var publiser = ProsessTaskData.forProsessTask(PubliserVedtakTask.class);
         publiser.setProperty(PubliserVedtakTask.KEY, Optional.ofNullable(mottattVedtak.getSaksnummer()).orElse(key));
+        Optional.ofNullable(mottattVedtak.getSaksnummer()).ifPresent(publiser::setSaksnummer); // Logging
         if (mottattVedtak.getAktør().erAktørId()) {
             publiser.setProperty(PubliserVedtakTask.AKTØRID, mottattVedtak.getAktør().getVerdi());
         } else {

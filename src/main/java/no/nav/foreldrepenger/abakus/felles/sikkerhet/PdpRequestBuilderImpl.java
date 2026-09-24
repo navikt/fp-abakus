@@ -1,8 +1,10 @@
 package no.nav.foreldrepenger.abakus.felles.sikkerhet;
 
 import java.util.Set;
+import java.util.UUID;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import no.nav.foreldrepenger.abakus.felles.AppAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.PdpRequestBuilder;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
@@ -18,27 +20,31 @@ public class PdpRequestBuilderImpl implements PdpRequestBuilder {
 
     @Override
     public AppRessursData lagAppRessursDataForSystembruker(AbacDataAttributter dataAttributter) {
-        var builder = minimalbuilder();
-        Set<String> saksnumre = dataAttributter.getVerdier(StandardAbacAttributtType.SAKSNUMMER);
 
-        saksnumre.stream().findFirst().ifPresent(builder::medSaksnummer);
-        return builder.build();
+        Set<String> saksnumre = dataAttributter.getVerdier(StandardAbacAttributtType.SAKSNUMMER);
+        Set<UUID> koblingReferanser = dataAttributter.getVerdier(AppAbacAttributtType.KOBLING_REFERANSE);
+
+        return standardbuilder(saksnumre, koblingReferanser).build();
     }
 
     @Override
     public AppRessursData lagAppRessursData(AbacDataAttributter dataAttributter) {
         Set<String> saksnumre = dataAttributter.getVerdier(StandardAbacAttributtType.SAKSNUMMER);
+        Set<UUID> koblingReferanser = dataAttributter.getVerdier(AppAbacAttributtType.KOBLING_REFERANSE);
 
-        var builder = minimalbuilder()
+        var builder = standardbuilder(saksnumre, koblingReferanser)
             .leggTilIdenter(dataAttributter.getVerdier(StandardAbacAttributtType.AKTØR_ID))
             .leggTilIdenter(dataAttributter.getVerdier(StandardAbacAttributtType.FNR));
-        saksnumre.stream().findFirst().ifPresent(builder::medSaksnummer);
         return builder.build();
     }
 
-    private AppRessursData.Builder minimalbuilder() {
-        return AppRessursData.builder()
+    private AppRessursData.Builder standardbuilder(Set<String> saksnumre, Set<UUID> koblingReferanser) {
+        var builder = AppRessursData.builder()
             .medFagsakStatus(PipFagsakStatus.UNDER_BEHANDLING)
             .medBehandlingStatus(PipBehandlingStatus.UTREDES);
+        saksnumre.stream().findFirst().ifPresent(builder::medSaksnummer);
+        saksnumre.stream().findFirst().ifPresent(builder::medLoggSaksnummer);
+        koblingReferanser.stream().findFirst().ifPresent(builder::medLoggBehandling);
+        return builder;
     }
 }

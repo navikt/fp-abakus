@@ -14,7 +14,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.InnhentRegisterdataRequest;
-import no.nav.foreldrepenger.abakus.felles.LoggUtil;
+import no.nav.foreldrepenger.abakus.felles.AppAbacAttributtType;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.dto.TaskResponsDto;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
@@ -53,7 +53,6 @@ public class RegisterdataRestTjeneste {
         if (!YtelseType.abakusYtelser().contains(dto.getYtelseType())) {
             return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
         }
-        LoggUtil.setupLogMdc(dto.getYtelseType(), dto.getSaksnummer());
         String taskGruppe = innhentTjeneste.triggAsyncInnhent(dto);
         if (taskGruppe != null) {
             response = Response.accepted(new TaskResponsDto(taskGruppe)).build();
@@ -67,7 +66,9 @@ public class RegisterdataRestTjeneste {
         @Override
         public AbacDataAttributter apply(Object obj) {
             var req = (InnhentRegisterdataRequest) obj;
-            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.SAKSNUMMER, req.getSaksnummer());
+            return AbacDataAttributter.opprett()
+                .leggTil(StandardAbacAttributtType.SAKSNUMMER, req.getSaksnummer())
+                .leggTil(AppAbacAttributtType.KOBLING_REFERANSE, req.getReferanse());
         }
     }
 }

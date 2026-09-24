@@ -1,18 +1,17 @@
 package no.nav.foreldrepenger.abakus.vedtak.kafka;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.control.ActivateRequestContext;
-import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
-
-import no.nav.foreldrepenger.konfig.KonfigVerdi;
-
-import no.nav.vedtak.felles.integrasjon.kafka.KafkaMessageHandler;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.control.ActivateRequestContext;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import no.nav.foreldrepenger.abakus.vedtak.LagreVedtakTask;
+import no.nav.foreldrepenger.konfig.KonfigVerdi;
+import no.nav.vedtak.felles.integrasjon.kafka.KafkaMessageHandler;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskDataBuilder;
 import no.nav.vedtak.felles.prosesstask.api.ProsessTaskTjeneste;
 
@@ -39,9 +38,10 @@ public class VedtaksHendelseHåndterer implements KafkaMessageHandler.KafkaStrin
     @Override
     public void handleRecord(String key, String value) {
         LOG.debug("Mottatt ytelse-vedtatt hendelse med key='{}', payload={}", key, value);
-        var data = ProsessTaskDataBuilder.forProsessTask(LagreVedtakTask.class).medProperty(LagreVedtakTask.KEY, key).medPayload(value);
+        var data = ProsessTaskDataBuilder.forProsessTask(LagreVedtakTask.class).medProperty(LagreVedtakTask.KEY, key).medPayload(value).build();
+        Optional.ofNullable(key).ifPresent(data::setSaksnummer); // Logging
 
-        taskTjeneste.lagre(data.build());
+        taskTjeneste.lagre(data);
     }
 
     @Override
