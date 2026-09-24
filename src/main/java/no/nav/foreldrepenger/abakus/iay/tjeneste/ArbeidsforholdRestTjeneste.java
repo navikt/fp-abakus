@@ -19,7 +19,6 @@ import no.nav.abakus.iaygrunnlag.FnrPersonident;
 import no.nav.abakus.iaygrunnlag.request.AktørDatoRequest;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.arbeidsforhold.ArbeidsforholdDtoTjeneste;
 import no.nav.foreldrepenger.abakus.typer.AktørId;
-import no.nav.vedtak.log.mdc.MdcExtendedLogContext;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
@@ -31,7 +30,6 @@ import no.nav.vedtak.sikkerhet.abac.beskyttet.ResourceType;
 @ApplicationScoped
 @Transactional
 public class ArbeidsforholdRestTjeneste {
-    private static final MdcExtendedLogContext LOG_CONTEXT = MdcExtendedLogContext.getContext("prosess");
 
     private ArbeidsforholdDtoTjeneste dtoTjeneste;
 
@@ -58,8 +56,6 @@ public class ArbeidsforholdRestTjeneste {
     public Response hentArbeidsforholdOgPermisjonerForEnPeriode(@NotNull @TilpassetAbacAttributt(supplierClass = AktørDatoRequestAbacDataSupplier.class) @Valid AktørDatoRequest request) {
         var aktørId = new AktørId(request.getAktør().getIdent());
         var periode = request.getPeriode();
-        LOG_CONTEXT.add("ytelseType", request.getYtelse().getKode());
-        LOG_CONTEXT.add("periode", periode);
 
         var fom = periode.getFom();
         var tom = Objects.equals(fom, periode.getTom()) ? fom.plusDays(1) // enkel dato søk

@@ -19,7 +19,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.abakus.iaygrunnlag.request.AvsluttKoblingRequest;
-import no.nav.foreldrepenger.abakus.felles.LoggUtil;
+import no.nav.foreldrepenger.abakus.felles.AppAbacAttributtType;
 import no.nav.vedtak.sikkerhet.abac.AbacDataAttributter;
 import no.nav.vedtak.sikkerhet.abac.BeskyttetRessurs;
 import no.nav.vedtak.sikkerhet.abac.StandardAbacAttributtType;
@@ -54,7 +54,6 @@ public class KoblingRestTjeneste {
     @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK, sporingslogg = true)
     public Response deaktiverKobling(@TilpassetAbacAttributt(supplierClass = AvsluttKoblingRequestAbacDataSupplier.class)
         @Valid @NotNull AvsluttKoblingRequest request) {
-        LoggUtil.setupLogMdc(request.getYtelseType(), request.getSaksnummer(), request.getReferanse());
         if (!YtelseType.abakusYtelser().contains(request.getYtelseType())) {
             LOG.warn("Ugyldig ytelseType: {}", request.getYtelseType());
             return Response.status(HttpURLConnection.HTTP_BAD_REQUEST).build();
@@ -97,7 +96,9 @@ public class KoblingRestTjeneste {
         @Override
         public AbacDataAttributter apply(Object obj) {
             var req = (AvsluttKoblingRequest) obj;
-            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.SAKSNUMMER, req.getSaksnummer());
+            return AbacDataAttributter.opprett()
+                .leggTil(StandardAbacAttributtType.SAKSNUMMER, req.getSaksnummer())
+                .leggTil(AppAbacAttributtType.KOBLING_REFERANSE, req.getReferanse());
         }
     }
 }

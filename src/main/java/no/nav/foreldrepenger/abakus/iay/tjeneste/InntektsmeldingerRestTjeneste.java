@@ -20,7 +20,7 @@ import no.nav.abakus.iaygrunnlag.request.InntektsmeldingerMottattRequest;
 import no.nav.abakus.iaygrunnlag.request.InntektsmeldingerRequest;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjonBuilder;
 import no.nav.foreldrepenger.abakus.domene.iay.inntektsmelding.Inntektsmelding;
-import no.nav.foreldrepenger.abakus.felles.LoggUtil;
+import no.nav.foreldrepenger.abakus.felles.AppAbacAttributtType;
 import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.iay.InntektsmeldingerTjeneste;
 import no.nav.foreldrepenger.abakus.iay.tjeneste.dto.iay.MapInntektsmeldinger;
@@ -70,7 +70,6 @@ public class InntektsmeldingerRestTjeneste {
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public Response hentInntektsmeldingerForSak(@TilpassetAbacAttributt(supplierClass = InntektsmeldingerRequestAbacDataSupplier.class)
         @NotNull @Valid InntektsmeldingerRequest spesifikasjon) {
-        LoggUtil.setupLogMdc(spesifikasjon.getYtelseType(), spesifikasjon.getSaksnummer(), "<alle>");
 
         var aktørId = new AktørId(spesifikasjon.getPerson().getIdent());
         var saksnummer = new Saksnummer(spesifikasjon.getSaksnummer());
@@ -90,7 +89,6 @@ public class InntektsmeldingerRestTjeneste {
     @SuppressWarnings("findsecbugs:JAXRS_ENDPOINT")
     public UuidDto lagreInntektsmeldinger(@NotNull @TilpassetAbacAttributt(supplierClass = InntektsmeldingerMottattAbacDataSupplier.class) @Valid InntektsmeldingerMottattRequest mottattRequest) {
         UuidDto resultat = null;
-        LoggUtil.setupLogMdc(mottattRequest.getYtelseType(), mottattRequest.getSaksnummer(), mottattRequest.getKoblingReferanse().toString());
 
         var aktørId = new AktørId(mottattRequest.getAktør().getIdent());
 
@@ -122,7 +120,9 @@ public class InntektsmeldingerRestTjeneste {
         @Override
         public AbacDataAttributter apply(Object obj) {
             var req = (InntektsmeldingerMottattRequest) obj;
-            return AbacDataAttributter.opprett().leggTil(StandardAbacAttributtType.SAKSNUMMER, req.getSaksnummer());
+            return AbacDataAttributter.opprett()
+                .leggTil(StandardAbacAttributtType.SAKSNUMMER, req.getSaksnummer())
+                .leggTil(AppAbacAttributtType.KOBLING_REFERANSE, req.getKoblingReferanse());
         }
 
     }

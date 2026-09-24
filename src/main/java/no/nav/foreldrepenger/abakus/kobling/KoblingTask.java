@@ -23,12 +23,12 @@ public abstract class KoblingTask implements ProsessTaskHandler {
     @Override
     public void doTask(ProsessTaskData prosessTaskData) {
         var koblingId = Long.valueOf(prosessTaskData.getPropertyValue(TaskConstants.KOBLING_ID));
-        LOG_CONTEXT.add("koblingId", koblingId);
+        LOG_CONTEXT.add("koblingId", koblingId); // TODO: Sjekk om denne egentlig trengs i loggene.
 
         try {
             var koblingLås = låsRepository.taLås(koblingId);
 
-            prosesser(prosessTaskData);
+            prosesser(prosessTaskData, koblingId);
 
             låsRepository.oppdaterLåsVersjon(koblingLås);
         } catch (NoResultException _) {
@@ -37,5 +37,5 @@ public abstract class KoblingTask implements ProsessTaskHandler {
 
     }
 
-    protected abstract void prosesser(ProsessTaskData prosessTaskData);
+    protected abstract void prosesser(ProsessTaskData prosessTaskData, Long koblingId);
 }

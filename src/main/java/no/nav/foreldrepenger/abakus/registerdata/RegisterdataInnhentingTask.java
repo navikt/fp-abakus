@@ -13,7 +13,6 @@ import no.nav.foreldrepenger.abakus.iay.InntektArbeidYtelseTjeneste;
 import no.nav.foreldrepenger.abakus.kobling.Kobling;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTask;
 import no.nav.foreldrepenger.abakus.kobling.KoblingTjeneste;
-import no.nav.foreldrepenger.abakus.kobling.TaskConstants;
 import no.nav.foreldrepenger.abakus.kobling.repository.LåsRepository;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.InnhentRegisterdataTjeneste;
 import no.nav.foreldrepenger.abakus.registerdata.tjeneste.RegisterdataElement;
@@ -46,8 +45,7 @@ public class RegisterdataInnhentingTask extends KoblingTask {
     }
 
     @Override
-    protected void prosesser(ProsessTaskData prosessTaskData) {
-        Long koblingId = Long.valueOf(prosessTaskData.getPropertyValue(TaskConstants.KOBLING_ID));
+    protected void prosesser(ProsessTaskData prosessTaskData, Long koblingId) {
         Kobling kobling = koblingTjeneste.hent(koblingId);
         if (kobling != null && !kobling.erAktiv()) {
             // Tilfeller av ny søknad/henleggelse - som kaller kobling/v1/avslutt før retry,
