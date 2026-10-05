@@ -22,7 +22,7 @@
 
         <abakus-kontrakt.version>2.4.1</abakus-kontrakt.version>
 
-		<felles.version>7.9.1</felles.version>
+		<felles.version>7.9.3</felles.version>
 		<prosesstask.version>5.2.8</prosesstask.version>
 		<kontrakter.version>9.4.39</kontrakter.version>
         <tidsserie.version>2.8.0</tidsserie.version>
