@@ -29,20 +29,11 @@ public class KelvinMapper {
     private KelvinMapper() {
     }
 
-    static List<MeldekortUtbetalingsgrunnlagSak> mapTilMeldekortAclKelvin(List<ArbeidsavklaringspengerResponse.AAPVedtak> vedtak, Saksnummer saksnummer) {
-        var mapped = vedtak.stream()
+    static List<MeldekortUtbetalingsgrunnlagSak> mapTilMeldekortAclKelvin(List<ArbeidsavklaringspengerResponse.AAPVedtak> vedtak) {
+        return vedtak.stream()
             .map(KelvinMapper::mapTilMeldekortSakAclKelvin)
             .sorted(Comparator.comparing(MeldekortUtbetalingsgrunnlagSak::getVedtaksPeriodeFom))
             .toList();
-        if (!mapped.isEmpty()) {
-            if (vedtak.stream().anyMatch(v -> !Objects.equals(v.dagsats(), v.dagsatsEtterUføreReduksjon()))) {
-                // TODO: Vurder exception for å studere disse nærmere.
-                LOG.info("Kelvin-saker Kelvin UFO sak {} kilde {} mapped {}.", saksnummer.getVerdi(), vedtak, mapped);
-            } else {
-                LOG.info("Kelvin-saker Kelvin for sak {} kilde {} mapped {}.", saksnummer.getVerdi(), vedtak, mapped);
-            }
-        }
-        return mapped;
     }
 
     private static MeldekortUtbetalingsgrunnlagSak mapTilMeldekortSakAclKelvin(ArbeidsavklaringspengerResponse.AAPVedtak vedtak) {

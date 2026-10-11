@@ -31,6 +31,7 @@ public class ArenaMapper {
         return vedtak.stream()
             .map(v -> mapTilMeldekortSakAclArena(v, opplysningFom))
             .filter(Objects::nonNull)
+            .filter(v -> !opplysningFom.isBefore(v.getVedtaksPeriodeTom()) || !v.getMeldekortene().isEmpty())
             .sorted(Comparator.comparing(MeldekortUtbetalingsgrunnlagSak::getVedtaksPeriodeFom))
             .toList();
     }
@@ -39,6 +40,7 @@ public class ArenaMapper {
                                                                               LocalDate opplysningFom) {
         var mk = vedtak.utbetaling().stream()
             .map(ArenaMapper::mapTilMeldekortMKAclArena)
+            .filter(m -> !opplysningFom.isBefore(m.getMeldekortTom()))
             .sorted(Comparator.comparing(MeldekortUtbetalingsgrunnlagMeldekort::getMeldekortFom))
             .toList();
         if (mk.isEmpty() && vedtak.vedtaksdato().isBefore(opplysningFom) && // Kan hende det holder med sjekk på periode/tilOgMedDato / null
@@ -64,7 +66,7 @@ public class ArenaMapper {
     private static MeldekortUtbetalingsgrunnlagMeldekort mapTilMeldekortMKAclArena(ArbeidsavklaringspengerResponse.AAPUtbetaling utbetaling) {
         var beregnetUtbetalingsgrad = regnUtArenaUtbetalingsgrad(utbetaling);
         var utbetalingsgradFraUtbetaling = Optional.ofNullable(utbetaling.utbetalingsgrad()).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO);
-        if (beregnetUtbetalingsgrad.compareTo(utbetalingsgradFraUtbetaling) != 0) {
+        if (utbetaling.utbetalingsgrad() != null && beregnetUtbetalingsgrad.compareTo(utbetalingsgradFraUtbetaling) != 0) {
             LOG.info("Kelvin-saker arena avvik utbetalingsgrad utbetaling {}: beregnet {}, oppgitt {}",
                 utbetaling, beregnetUtbetalingsgrad, utbetaling.utbetalingsgrad());
         }
