@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 import no.nav.vedtak.mapper.json.DefaultJsonMapper;
 
 class KelvinMapperTest {
@@ -22,7 +21,7 @@ class KelvinMapperTest {
             1000, 1000, ArbeidsavklaringspengerResponse.Kildesystem.KELVIN,
             new ArbeidsavklaringspengerResponse.AAPPeriode(startdato, startdato.plusYears(1)),
             "ABCDE", "LØPENDE", "vedtakid", startdato, List.of());
-        var vedtak = KelvinMapper.mapTilMeldekortAclKelvin(List.of(periode), new Saksnummer("VAARSAK"));
+        var vedtak = KelvinMapper.mapTilMeldekortAclKelvin(List.of(periode));
         assertThat(vedtak).hasSize(1);
         var v1 = vedtak.getFirst();
         assertThat(v1.getVedtaksPeriodeFom()).isEqualTo(startdato);
@@ -39,7 +38,7 @@ class KelvinMapperTest {
         try (var resource = KelvinMapper.class.getResourceAsStream("/kelvin/testcase1.json")) {
             assertThat(resource).isNotNull();
             var aaprespons = DefaultJsonMapper.fromJson(new String(resource.readAllBytes()), ArbeidsavklaringspengerResponse.class);
-            var vedtak = KelvinMapper.mapTilMeldekortAclKelvin(aaprespons.vedtak(), new Saksnummer("VAARSAK"));
+            var vedtak = KelvinMapper.mapTilMeldekortAclKelvin(aaprespons.vedtak());
             assertThat(vedtak).hasSize(2);
             // Første del med barnetillegg til barn blir 18
             var v1 = vedtak.getFirst();
@@ -84,7 +83,7 @@ class KelvinMapperTest {
         try (var resource = KelvinMapper.class.getResourceAsStream("/kelvin/testcase2.json")) {
             assertThat(resource).isNotNull();
             var aaprespons = DefaultJsonMapper.fromJson(new String(resource.readAllBytes()), ArbeidsavklaringspengerResponse.class);
-            var vedtak = KelvinMapper.mapTilMeldekortAclKelvin(aaprespons.vedtak(), new Saksnummer("VAARSAK"));
+            var vedtak = KelvinMapper.mapTilMeldekortAclKelvin(aaprespons.vedtak());
             assertThat(vedtak).hasSize(1);
             // Skal bruke dagsatsen som gjelder AAP etter samordning med uføre og utbetaling relativt til den. 1031 = 60% av 1719
             var v1 = vedtak.getFirst();

@@ -1,6 +1,7 @@
 package no.nav.foreldrepenger.abakus.registerdata;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -139,18 +140,24 @@ public class InnhentingSamletTjeneste {
                                                                     List<MeldekortUtbetalingsgrunnlagSak> arena) {
         var fom = opplysningsPeriode.getFomDato();
         var tom = opplysningsPeriode.getTomDato();
-        var maksimumRespons = kelvinKlient.hentAAP(ident, fom, tom, saksnummer);
+        var maksimumRespons = kelvinKlient.hentAAP(ident, fom, tom);
         try {
-            sammenligneArenaDirekteVsKelvin(arena, maksimumRespons.get(Fagsystem.ARENA));
+            sammenligneArenaDirekteVsKelvin(arena, maksimumRespons.get(Fagsystem.ARENA), fom, tom);
         } catch (Exception _) {
             LOG.info("Maksimum AAP sammenligning av Arenadata for sak {} feilet", saksnummer.getVerdi());
         }
         return maksimumRespons.getOrDefault(Fagsystem.KELVIN, List.of());
     }
 
-    private void sammenligneArenaDirekteVsKelvin(List<MeldekortUtbetalingsgrunnlagSak> arena, List<MeldekortUtbetalingsgrunnlagSak> kelvin) {
-        var arenaMK = arena.stream().map(MeldekortUtbetalingsgrunnlagSak::getMeldekortene).flatMap(Collection::stream).collect(Collectors.toSet());
-        var kelvinMK = kelvin.stream().map(MeldekortUtbetalingsgrunnlagSak::getMeldekortene).flatMap(Collection::stream).collect(Collectors.toSet());
+    private void sammenligneArenaDirekteVsKelvin(List<MeldekortUtbetalingsgrunnlagSak> arena,
+                                                 List<MeldekortUtbetalingsgrunnlagSak> kelvin,
+                                                 LocalDate opplysingFom, LocalDate opplysingTom) {
+        var arenaMK = arena.stream().map(MeldekortUtbetalingsgrunnlagSak::getMeldekortene).flatMap(Collection::stream)
+            .filter(m -> !m.getMeldekortFom().isAfter(opplysingTom) && !m.getMeldekortTom().isBefore(opplysingFom))
+            .collect(Collectors.toSet());
+        var kelvinMK = kelvin.stream().map(MeldekortUtbetalingsgrunnlagSak::getMeldekortene).flatMap(Collection::stream)
+            .filter(m -> !m.getMeldekortFom().isAfter(opplysingTom) && !m.getMeldekortTom().isBefore(opplysingFom))
+            .collect(Collectors.toSet());
         var vAIkkeK = arena.stream().filter(a -> kelvin.stream().noneMatch(a::likeNokVedtak))
             .map(MeldekortUtbetalingsgrunnlagSak::utskriftUtenMK).collect(Collectors.joining(", "));
         var vKIkkeA = kelvin.stream().filter(a -> arena.stream().noneMatch(a::likeNokVedtak))
@@ -160,16 +167,16 @@ public class InnhentingSamletTjeneste {
         if (arena.isEmpty() && kelvin.isEmpty()) {
             return;
         } else if (arena.isEmpty() || kelvin.isEmpty()) {
-            LOG.info("Maksimum AAP sammenligning ene er tom:  arena: {} mk {} kelvin: {} mk {}", vAIkkeK, mAIkkeK, vKIkkeA, mKIkkeA);
+            LOG.info("Maksimum AAP sammenligning fom {} tom {} ene er tom:  arena: {} mk {} kelvin: {} mk {}", opplysingFom, opplysingTom, vAIkkeK, mAIkkeK, vKIkkeA, mKIkkeA);
         } else if (arena.size() != kelvin.size() || arenaMK.size() != kelvinMK.size()) {
-            LOG.info("Maksimum AAP sammenligning ulik størrelse:  arena: {} mk {} kelvin: {} mk {}", vAIkkeK, mAIkkeK, vKIkkeA, mKIkkeA);
+            LOG.info("Maksimum AAP sammenligning fom {} tom {} ulik størrelse:  arena: {} mk {} kelvin: {} mk {}", opplysingFom, opplysingTom, vAIkkeK, mAIkkeK, vKIkkeA, mKIkkeA);
         } else {
             var likeNokVedtak = arena.stream().allMatch(a -> kelvin.stream().anyMatch(a::likeNokVedtak));
             var likeMk = kelvinMK.containsAll(arenaMK);
             if (likeNokVedtak && likeMk) {
                 LOG.info("Maksimum AAP sammenligning likt svar fra arena og AAP-api");
             } else {
-                LOG.info("Maksimum AAP sammenligning lik størrelse ulikt innhold: arena: {} mk {} kelvin: {} mk {}", vAIkkeK, mAIkkeK, vKIkkeA, mKIkkeA);
+                LOG.info("Maksimum AAP sammenligning fom {} tom {} lik størrelse ulikt innhold: arena: {} mk {} kelvin: {} mk {}", opplysingFom, opplysingTom, vAIkkeK, mAIkkeK, vKIkkeA, mKIkkeA);
             }
         }
     }
