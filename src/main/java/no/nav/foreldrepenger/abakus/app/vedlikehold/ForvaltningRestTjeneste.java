@@ -90,6 +90,30 @@ public class ForvaltningRestTjeneste {
     }
 
     @POST
+    @Path("/settVarigEndringUtenOrgnummer")
+    @Consumes(APPLICATION_JSON)
+    @Produces(APPLICATION_JSON)
+    @Operation(description = "Setter oppgitt opptjening til å være varig endring", tags = "FORVALTNING", responses = {@ApiResponse(responseCode = "200", description = "Forekomster av utgått aktørid erstattet.")})
+    @BeskyttetRessurs(actionType = ActionType.UPDATE, resourceType = ResourceType.FAGSAK, sporingslogg = true)
+    public Response setVarigEndringUtenOrgnummer(@TilpassetAbacAttributt(supplierClass = ForvaltningRestTjeneste.AbacDataSupplier.class) @NotNull @Valid VarigEndringUtenOrgnummerRequest request) {
+        var oppgittOpptjeningEksternReferanse = request.getEksternReferanse().toUuidReferanse();
+        LOG.info("FORVALTNING ABAKUS settVarigEndring for {}", oppgittOpptjeningEksternReferanse);
+        OppgittOpptjening oppgittOpptjening = iayTjeneste.hentOppgittOpptjeningFor(oppgittOpptjeningEksternReferanse).orElseThrow();
+        var næring = oppgittOpptjening.getEgenNæring().stream().filter(n -> n.getOrgnummer() == null).findFirst().orElseThrow();
+        if (næring.getVarigEndring()) {
+            throw new IllegalArgumentException("Allerede varig endring");
+        }
+        int antall = entityManager.createNativeQuery(
+                "UPDATE iay_egen_naering SET varig_endring = 'J', endring_dato = :edato , brutto_inntekt = :belop, begrunnelse = :begr WHERE id = :enid")
+            .setParameter("edato", request.getEndringDato())
+            .setParameter("belop", request.getBruttoInntekt())
+            .setParameter("begr", request.getEndringBegrunnelse())
+            .setParameter("enid", næring.getId())
+            .executeUpdate();
+        return Response.ok(antall).build();
+    }
+
+    @POST
     @Path("/eliminerInntektsmelding")
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
