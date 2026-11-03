@@ -35,13 +35,6 @@ import no.nav.foreldrepenger.abakus.typer.Saksnummer;
 @Entity(name = "AktørYtelse")
 public class AktørYtelse extends BaseEntitet implements IndexKey {
 
-    /**
-     * Her legger man inn ytelser/kilder som er innhentet tidligere, men som ikke blir reinnhentet etter sanering av integrasjon
-     * Nye søknader vil ikke ha disse i opptjeningen -> saner integrasjon.
-     * - SVP Siste SVP / Infotrygd ble innvilget høst 2019 og løp ut mars 2020.
-     * - FP Siste utbetaling av foreldrepenger var tom januar 2022
-     */
-    private static final Set<YtelseType> UTGÅTT_INFOTRYGD = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER);
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_AKTOER_YTELSE")
     private Long id;
@@ -72,10 +65,6 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
             ytelseEntitet.setAktørYtelse(this);
             return ytelseEntitet;
         }).collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-
-    private static boolean beholdLegacyYtelseFraKilde(Ytelse y) {
-        return Fagsystem.INFOTRYGD.equals(y.getKilde()) && UTGÅTT_INFOTRYGD.contains(y.getRelatertYtelseType());
     }
 
     @Override
@@ -172,8 +161,29 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
         ytelse.setAktørYtelse(this);
     }
 
+    /**
+     * Her legger man inn ytelser/kilder som er innhentet tidligere, men som ikke blir reinnhentet etter sanering av integrasjon
+     * Nye søknader vil ikke ha disse i opptjeningen -> saner integrasjon.
+     * - SVP Siste SVP / Infotrygd ble innvilget høst 2019 og løp ut mars 2020.
+     * - FP Siste utbetaling av foreldrepenger var tom januar 2022
+     * - Omsorgspenger: Avsluttet i Infotrygd 2020/2021
+     * - Pleiepenger: Avsluttet i Infotrygd 2024
+     * - Opplæringspenger: Avsluttet i Infotrygd 2025
+     */
+    private static final Set<YtelseType> UTGÅTT_INFOTRYGD = Set.of(YtelseType.FORELDREPENGER, YtelseType.SVANGERSKAPSPENGER,
+        YtelseType.PLEIEPENGER_NÆRSTÅENDE, YtelseType.PLEIEPENGER_SYKT_BARN, YtelseType.OPPLÆRINGSPENGER, YtelseType.OMSORGSPENGER);
+
+    private static boolean beholdLegacyYtelseFraKilde(Ytelse y) {
+        return Fagsystem.INFOTRYGD.equals(y.getKilde()) && UTGÅTT_INFOTRYGD.contains(y.getRelatertYtelseType());
+    }
+
+    /*
+     * Fjerner ytelser som blir innhentet på nytt, behold de som ikke lenger innhentes.
+     */
     void tilbakestillYtelser() {
-        this.ytelser = ytelser.stream().filter(AktørYtelse::beholdLegacyYtelseFraKilde).collect(Collectors.toSet());
+        this.ytelser = ytelser.stream()
+            .filter(AktørYtelse::beholdLegacyYtelseFraKilde)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
