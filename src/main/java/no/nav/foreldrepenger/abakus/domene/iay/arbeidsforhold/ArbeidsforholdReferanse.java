@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -33,16 +34,19 @@ public class ArbeidsforholdReferanse extends BaseEntitet implements IndexKey, Tr
     @Embedded
     private Arbeidsgiver arbeidsgiverEntitet;
 
+    @NotNull
     @Embedded
     @AttributeOverride(name = "referanse", column = @Column(name = "intern_referanse", nullable = false))
     private InternArbeidsforholdRef internReferanse;
 
+    @NotNull
     @Embedded
     @AttributeOverride(name = "referanse", column = @Column(name = "ekstern_referanse", nullable = false))
     private EksternArbeidsforholdRef eksternReferanse;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "informasjon_id", updatable = false, unique = true, nullable = false)
+    @JoinColumn(name = "informasjon_id", updatable = false, nullable = false)
     private ArbeidsforholdInformasjon informasjon;
 
     protected ArbeidsforholdReferanse() {

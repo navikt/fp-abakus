@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -32,6 +33,7 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_LONNSKOMP_VEDTAK")
     private Long id;
 
+    @NotNull
     @ChangeTracked
     @Column(name = "sakid", nullable = false, updatable = false)
     private String sakId;  // Eg en ULID
@@ -44,18 +46,22 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
     @Column(name = "fnr")
     private String fnr;
 
+    @NotNull
     @ChangeTracked
     @Embedded
+    @AttributeOverride(name = "orgNummer", column = @Column(name = "org_nummer", nullable = false, updatable = false, length = 50))
     private OrgNummer orgNummer;
 
     @ChangeTracked
     @Column(name = "forrige_vedtak_dato")
     private LocalDate forrigeVedtakDato;
 
+    @NotNull
     @Embedded
     @ChangeTracked
     private IntervallEntitet periode;
 
+    @NotNull
     @Embedded
     @AttributeOverride(name = "verdi", column = @Column(name = "beloep", nullable = false))
     @ChangeTracked
@@ -65,6 +71,7 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
     @ChangeTracked
     private Set<LønnskompensasjonAnvist> anvistePerioder = new LinkedHashSet<>();
 
+    @NotNull
     @Column(name = "aktiv", nullable = false)
     private Boolean aktiv = true;
 

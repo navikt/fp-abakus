@@ -15,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektPeriodeType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -32,10 +33,12 @@ public class YtelseStørrelse extends BaseEntitet implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_YTELSE_STOERRELSE")
     private Long id;
 
+    @NotNull
     @ManyToOne(optional = false)
-    @JoinColumn(name = "ytelse_grunnlag_id", nullable = false, updatable = false, unique = true)
+    @JoinColumn(name = "ytelse_grunnlag_id", nullable = false, updatable = false)
     private YtelseGrunnlag ytelseGrunnlag;
 
+    @NotNull
     @Convert(converter = InntektPeriodeTypeKodeverdiConverter.class)
     @Column(name = "hyppighet", nullable = false, updatable = false)
     @ChangeTracked
@@ -45,6 +48,7 @@ public class YtelseStørrelse extends BaseEntitet implements IndexKey {
     @Embedded
     private OrgNummer orgNummer;
 
+    @NotNull
     @Embedded
     @AttributeOverride(name = "verdi", column = @Column(name = "beloep", nullable = false))
     @ChangeTracked

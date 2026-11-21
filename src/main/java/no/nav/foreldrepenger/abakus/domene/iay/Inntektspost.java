@@ -15,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektYtelseType;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektspostType;
@@ -38,10 +39,12 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_INNTEKTSPOST")
     private Long id;
 
+    @NotNull
     @Convert(converter = InntektspostTypeKodeverdiConverter.class)
     @Column(name = "inntektspost_type", nullable = false, updatable = false)
     private InntektspostType inntektspostType;
 
+    @NotNull
     @Convert(converter = SkatteOgAvgiftsregelTypeKodeverdiConverter.class)
     @Column(name = "skatte_og_avgiftsregel_type", nullable = false, updatable = false)
     private SkatteOgAvgiftsregelType skatteOgAvgiftsregelType = SkatteOgAvgiftsregelType.UDEFINERT;
@@ -49,20 +52,24 @@ public class Inntektspost extends BaseEntitet implements IndexKey {
     /**
      * Beskriver hva inntekten gjelder dersom den er av typen LØNN
      */
+    @NotNull
     @Convert(converter = LønnsbeskrivelseKodeverdiConverter.class)
     @Column(name = "lonnsinntekt_beskrivelse", nullable = false, updatable = false)
     private LønnsinntektBeskrivelse lønnsinntektBeskrivelse = LønnsinntektBeskrivelse.UDEFINERT;
+    @NotNull
     @ManyToOne(optional = false)
-    @JoinColumn(name = "inntekt_id", nullable = false, updatable = false, unique = true)
+    @JoinColumn(name = "inntekt_id", nullable = false, updatable = false)
     private Inntekt inntekt;
 
     @Convert(converter = InntektYtelseTypeKodeverdiConverter.class)
     @Column(name = "ytelse_type", updatable = false)
     private InntektYtelseType ytelse;
 
+    @NotNull
     @Embedded
     private IntervallEntitet periode;
 
+    @NotNull
     @Embedded
     @AttributeOverride(name = "verdi", column = @Column(name = "beloep", nullable = false))
     @ChangeTracked

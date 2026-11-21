@@ -18,8 +18,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 
-import org.hibernate.annotations.NaturalId;
-
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -32,9 +30,8 @@ public class InntektArbeidYtelseAggregat extends BaseEntitet {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_INNTEKT_ARBEID_YTELSER")
     private Long id;
 
-    @NaturalId
     @DiffIgnore
-    @Column(name = "ekstern_referanse", updatable = false, unique = true)
+    @Column(name = "ekstern_referanse", updatable = false)
     private UUID eksternReferanse;
 
     @ChangeTracked

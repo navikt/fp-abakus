@@ -5,8 +5,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.hibernate.annotations.NaturalId;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -19,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 import no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold.ArbeidsforholdInformasjon;
 import no.nav.foreldrepenger.abakus.domene.iay.søknad.OppgittOpptjening;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -34,23 +33,24 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_GR_ARBEID_INNTEKT")
     private Long id;
 
+    @NotNull
     @DiffIgnore
-    @Column(name = "kobling_id", nullable = false, updatable = false, unique = true)
+    @Column(name = "kobling_id", nullable = false, updatable = false)
     private Long koblingId;
 
-    @NaturalId
+    @NotNull
     @DiffIgnore
     @Embedded
-    @AttributeOverride(name = "referanse", column = @Column(name = "grunnlag_referanse", updatable = false, unique = true))
+    @AttributeOverride(name = "referanse", column = @Column(name = "grunnlag_referanse", nullable = false, updatable = false))
     private GrunnlagReferanse grunnlagReferanse;
 
     @OneToOne
-    @JoinColumn(name = "register_id", updatable = false, unique = true)
+    @JoinColumn(name = "register_id", updatable = false)
     @ChangeTracked
     private InntektArbeidYtelseAggregat register;
 
     @OneToOne
-    @JoinColumn(name = "saksbehandlet_id", updatable = false, unique = true)
+    @JoinColumn(name = "saksbehandlet_id", updatable = false)
     @ChangeTracked
     private InntektArbeidYtelseAggregat saksbehandlet;
 
@@ -58,22 +58,22 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
      * versjon 1 - støtter kun en oppgitt opptjening på en behandling, kan heller ikke oppdateres
      */
     @OneToOne
-    @JoinColumn(name = "oppgitt_opptjening_id", updatable = false, unique = true)
+    @JoinColumn(name = "oppgitt_opptjening_id", updatable = false)
     @ChangeTracked
     private OppgittOpptjening oppgittOpptjening;
 
     @OneToOne
     @ChangeTracked
-    @JoinColumn(name = "inntektsmeldinger_id", updatable = false, unique = true)
+    @JoinColumn(name = "inntektsmeldinger_id", updatable = false)
     private InntektsmeldingAggregat inntektsmeldinger;
 
     @ChangeTracked
     @OneToOne
-    @JoinColumn(name = "informasjon_id", updatable = false, unique = true)
+    @JoinColumn(name = "informasjon_id", updatable = false)
     private ArbeidsforholdInformasjon arbeidsforholdInformasjon;
 
     @OneToOne
-    @JoinColumn(name = "overstyrt_oppgitt_opptjening_id", updatable = false, unique = true)
+    @JoinColumn(name = "overstyrt_oppgitt_opptjening_id", updatable = false)
     @ChangeTracked
     private OppgittOpptjening overstyrtOppgittOpptjening;
 

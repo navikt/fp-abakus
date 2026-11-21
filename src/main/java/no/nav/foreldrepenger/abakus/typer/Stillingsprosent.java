@@ -30,7 +30,7 @@ public class Stillingsprosent implements Serializable, IndexKey, TraverseValue {
 
     private static final Stillingsprosent NULL_PROSENT = new Stillingsprosent(null);
 
-    @Column(name = "verdi", scale = 2, nullable = false)
+    @Column(name = "verdi", scale = 2)
     @ChangeTracked
     private BigDecimal verdi;
 

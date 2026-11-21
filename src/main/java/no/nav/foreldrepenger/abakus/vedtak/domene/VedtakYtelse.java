@@ -11,7 +11,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.NaturalId;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -24,6 +23,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
@@ -47,26 +47,31 @@ public class VedtakYtelse extends BaseEntitet implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_VEDTAK_YTELSE")
     private Long id;
 
+    @NotNull
     @Embedded
     @AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id", nullable = false, updatable = false))
     private AktørId aktørId;
 
+    @NotNull
     @Convert(converter = YtelseTypeKodeverdiConverter.class)
     @Column(name = "ytelse_type", nullable = false)
     private YtelseType ytelseType;
 
+    @NotNull
     @DiffIgnore
-    @Column(name = "vedtatt_tidspunkt")
+    @Column(name = "vedtatt_tidspunkt", nullable = false)
     private LocalDateTime vedtattTidspunkt;
 
-    @NaturalId
-    @Column(name = "vedtak_referanse")
+    @NotNull
+    @Column(name = "vedtak_referanse", nullable = false)
     private UUID vedtakReferanse;
 
+    @NotNull
     @Embedded
     @ChangeTracked
     private IntervallEntitet periode;
 
+    @NotNull
     @ChangeTracked
     @Convert(converter = YtelseStatusKodeverdiConverter.class)
     @Column(name = "status", nullable = false)
@@ -79,6 +84,7 @@ public class VedtakYtelse extends BaseEntitet implements IndexKey {
     @AttributeOverride(name = "saksnummer", column = @Column(name = "saksnummer"))
     private Saksnummer saksnummer;
 
+    @NotNull
     @ChangeTracked
     @Convert(converter = FagsystemKodeverdiConverter.class)
     @Column(name = "kilde", nullable = false)

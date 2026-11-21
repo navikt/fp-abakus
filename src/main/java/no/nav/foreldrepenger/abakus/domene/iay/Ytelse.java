@@ -23,6 +23,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseStatus;
@@ -47,10 +48,12 @@ public class Ytelse extends BaseEntitet implements IndexKey {
     @OneToOne(mappedBy = "ytelse")
     private YtelseGrunnlag ytelseGrunnlag;
 
+    @NotNull
     @Convert(converter = YtelseTypeKodeverdiConverter.class)
     @Column(name = "ytelse_type", nullable = false)
     private YtelseType relatertYtelseType;
 
+    @NotNull
     @Embedded
     @ChangeTracked
     private IntervallEntitet periode;
@@ -59,6 +62,7 @@ public class Ytelse extends BaseEntitet implements IndexKey {
     @Column(name = "vedtatt_tidspunkt")
     private LocalDateTime vedtattTidspunkt;
 
+    @NotNull
     @ChangeTracked
     @Convert(converter = YtelseStatusKodeverdiConverter.class)
     @Column(name = "status", nullable = false)
@@ -72,6 +76,7 @@ public class Ytelse extends BaseEntitet implements IndexKey {
     @AttributeOverride(name = "saksnummer", column = @Column(name = "saksreferanse"))
     private Saksnummer saksreferanse;
 
+    @NotNull
     @ChangeTracked
     @Convert(converter = FagsystemKodeverdiConverter.class)
     @Column(name = "kilde", nullable = false)
@@ -81,6 +86,7 @@ public class Ytelse extends BaseEntitet implements IndexKey {
     @ChangeTracked
     private Set<YtelseAnvist> ytelseAnvist = new LinkedHashSet<>();
 
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "aktoer_ytelse_id", nullable = false, updatable = false)
     private AktørYtelse aktørYtelse;

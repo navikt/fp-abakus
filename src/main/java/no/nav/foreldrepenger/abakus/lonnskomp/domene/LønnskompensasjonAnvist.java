@@ -16,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -31,10 +32,12 @@ public class LønnskompensasjonAnvist extends BaseEntitet implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_LONNSKOMP_ANVIST")
     private Long id;
 
+    @NotNull
     @ManyToOne(optional = false)
-    @JoinColumn(name = "vedtak_id", nullable = false, updatable = false, unique = true)
+    @JoinColumn(name = "vedtak_id", nullable = false, updatable = false)
     private LønnskompensasjonVedtak vedtak;
 
+    @NotNull
     @Embedded
     @ChangeTracked
     private IntervallEntitet anvistPeriode;

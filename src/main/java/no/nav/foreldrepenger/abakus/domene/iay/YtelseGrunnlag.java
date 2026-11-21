@@ -21,6 +21,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.kodeverk.Arbeidskategori;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -36,14 +37,16 @@ public class YtelseGrunnlag extends BaseEntitet {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_YTELSE_GRUNNLAG")
     private Long id;
 
+    @NotNull
     @OneToOne(optional = false)
-    @JoinColumn(name = "ytelse_id", nullable = false, updatable = false, unique = true)
+    @JoinColumn(name = "ytelse_id", nullable = false, updatable = false)
     private Ytelse ytelse;
 
     @OneToMany(mappedBy = "ytelseGrunnlag")
     @ChangeTracked
     private List<YtelseStørrelse> ytelseStørrelse = new ArrayList<>();
 
+    @NotNull
     @Convert(converter = ArbeidskategoriKodeverdiConverter.class)
     @Column(name = "arbeidskategori", nullable = false, updatable = false)
     private Arbeidskategori arbeidskategori = Arbeidskategori.UDEFINERT;

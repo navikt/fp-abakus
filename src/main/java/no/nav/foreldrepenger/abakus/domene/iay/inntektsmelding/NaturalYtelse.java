@@ -16,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.NaturalytelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -33,19 +34,23 @@ public class NaturalYtelse extends BaseEntitet implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_NATURAL_YTELSE")
     private Long id;
 
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "inntektsmelding_id", nullable = false, updatable = false)
     private Inntektsmelding inntektsmelding;
 
+    @NotNull
     @Embedded
     @ChangeTracked
     private IntervallEntitet periode;
 
+    @NotNull
     @Embedded
     @AttributeOverride(name = "verdi", column = @Column(name = "beloep_mnd", nullable = false))
     @ChangeTracked
     private Beløp beloepPerMnd;
 
+    @NotNull
     @Convert(converter = NaturalytelseTypeKodeverdiConverter.class)
     @Column(name = "natural_ytelse_type", nullable = false, updatable = false)
     private NaturalytelseType type ;

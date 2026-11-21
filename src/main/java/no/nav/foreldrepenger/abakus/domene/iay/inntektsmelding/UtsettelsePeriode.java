@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.UtsettelseÅrsakType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -30,14 +31,17 @@ public class UtsettelsePeriode extends BaseEntitet implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_UTSETTELSE_PERIODE")
     private Long id;
 
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "inntektsmelding_id", nullable = false, updatable = false)
     private Inntektsmelding inntektsmelding;
 
+    @NotNull
     @Embedded
     @ChangeTracked
     private IntervallEntitet periode;
 
+    @NotNull
     @ChangeTracked
     @Convert(converter = UtsettelseÅrsakTypeKodeverdiConverter.class)
     @Column(name = "utsettelse_aarsak_type", nullable = false, updatable = false)

@@ -20,6 +20,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
@@ -59,9 +60,11 @@ public class Yrkesaktivitet extends BaseEntitet implements IndexKey {
     private Arbeidsgiver arbeidsgiver;
     @Embedded
     private InternArbeidsforholdRef arbeidsforholdRef;
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "aktoer_arbeid_id", nullable = false, updatable = false)
     private AktørArbeid aktørArbeid;
+    @NotNull
     @ChangeTracked
     @Convert(converter = ArbeidTypeKodeverdiConverter.class)
     @Column(name = "arbeid_type", nullable = false, updatable = false)

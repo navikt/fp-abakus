@@ -10,7 +10,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.hibernate.annotations.Immutable;
-import org.hibernate.annotations.NaturalId;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -35,15 +34,14 @@ public class OppgittOpptjening extends BaseEntitet {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SO_OPPGITT_OPPTJENING")
     private Long id;
 
-    @NaturalId
     @DiffIgnore
-    @Column(name = "ekstern_referanse", updatable = false, unique = true)
+    @Column(name = "ekstern_referanse", updatable = false)
     private UUID eksternReferanse;
 
     @Embedded
     private JournalpostId journalpostId;
 
-    @Column(name = "innsendingstidspunkt", updatable = false, nullable = false)
+    @Column(name = "innsendingstidspunkt", updatable = false)
     private LocalDateTime innsendingstidspunkt;
 
     @OneToMany(mappedBy = "oppgittOpptjening")
