@@ -20,6 +20,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -59,6 +60,10 @@ public class OppgittOpptjening extends BaseEntitet {
     @ChangeTracked
     @OneToOne(mappedBy = "oppgittOpptjening")
     private OppgittFrilans frilans;
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     @SuppressWarnings("unused")
     protected OppgittOpptjening() {

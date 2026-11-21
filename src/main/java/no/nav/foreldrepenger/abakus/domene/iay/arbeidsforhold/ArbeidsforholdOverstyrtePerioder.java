@@ -2,7 +2,6 @@ package no.nav.foreldrepenger.abakus.domene.iay.arbeidsforhold;
 
 import java.util.Objects;
 
-import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -27,8 +26,6 @@ public class ArbeidsforholdOverstyrtePerioder extends BaseEntitet {
 
     @NotNull
     @Embedded
-    @AttributeOverride(name = "fomDato", column = @Column(name = "FOM", nullable = false))
-    @AttributeOverride(name = "tomDato", column = @Column(name = "TOM", nullable = false))
     private IntervallEntitet periode;
 
     @NotNull
@@ -38,7 +35,7 @@ public class ArbeidsforholdOverstyrtePerioder extends BaseEntitet {
 
     @Version
     @Column(name = "versjon", nullable = false)
-    private Long versjon;
+    private long versjon;
 
     protected ArbeidsforholdOverstyrtePerioder() {
 

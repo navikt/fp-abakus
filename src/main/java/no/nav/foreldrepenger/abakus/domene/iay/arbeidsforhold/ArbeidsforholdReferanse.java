@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
@@ -48,6 +49,10 @@ public class ArbeidsforholdReferanse extends BaseEntitet implements IndexKey, Tr
     @ManyToOne
     @JoinColumn(name = "informasjon_id", updatable = false, nullable = false)
     private ArbeidsforholdInformasjon informasjon;
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     protected ArbeidsforholdReferanse() {
         // Plattform (CDI, Hibernate, Jackson)

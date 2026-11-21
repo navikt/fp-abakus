@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -36,7 +35,6 @@ public class AktørArbeid extends BaseEntitet implements IndexKey {
     private Long id;
 
     @Embedded
-    @AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id"))
     private AktørId aktørId;
 
     @NotNull

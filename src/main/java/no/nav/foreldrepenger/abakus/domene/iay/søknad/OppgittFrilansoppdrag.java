@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
@@ -28,6 +29,10 @@ public class OppgittFrilansoppdrag extends BaseEntitet implements IndexKey {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SO_OPPGITT_FRILANSOPPDRAG")
     private Long id;
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     @NotNull
     @ManyToOne(optional = false)

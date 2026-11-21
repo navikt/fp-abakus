@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
-import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -43,7 +42,6 @@ public class LønnskompensasjonAnvist extends BaseEntitet implements IndexKey {
     private IntervallEntitet anvistPeriode;
 
     @Embedded
-    @AttributeOverride(name = "verdi", column = @Column(name = "beloep"))
     @ChangeTracked
     private Beløp beløp;
 

@@ -50,7 +50,6 @@ public class YtelseAnvist extends BaseEntitet implements IndexKey {
     private IntervallEntitet anvistPeriode;
 
     @Embedded
-    @AttributeOverride(name = "verdi", column = @Column(name = "beloep"))
     @ChangeTracked
     private Beløp beløp;
 

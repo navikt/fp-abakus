@@ -15,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -29,6 +30,10 @@ public class OppgittFrilans extends BaseEntitet {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SO_OPPGITT_FRILANS")
     private Long id;
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     @NotNull
     @OneToOne(optional = false)

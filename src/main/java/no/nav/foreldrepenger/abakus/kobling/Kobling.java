@@ -47,7 +47,6 @@ public class Kobling extends BaseEntitet implements IndexKey {
      */
     @NotNull
     @Embedded
-    @AttributeOverride(name = "referanse", column = @Column(name = "kobling_referanse", nullable = false, updatable = false))
     private KoblingReferanse koblingReferanse;
 
     @NotNull

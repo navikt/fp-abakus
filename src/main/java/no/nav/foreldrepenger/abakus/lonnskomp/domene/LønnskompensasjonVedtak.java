@@ -39,7 +39,6 @@ public class LønnskompensasjonVedtak extends BaseEntitet implements IndexKey {
     private String sakId;  // Eg en ULID
 
     @Embedded
-    @AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id"))
     private AktørId aktørId;
 
     @ChangeTracked

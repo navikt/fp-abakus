@@ -5,7 +5,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -41,7 +40,6 @@ public class InntektArbeidYtelseGrunnlag extends BaseEntitet {
     @NotNull
     @DiffIgnore
     @Embedded
-    @AttributeOverride(name = "referanse", column = @Column(name = "grunnlag_referanse", nullable = false, updatable = false))
     private GrunnlagReferanse grunnlagReferanse;
 
     @OneToOne

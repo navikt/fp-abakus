@@ -81,7 +81,6 @@ public class VedtakYtelse extends BaseEntitet implements IndexKey {
      * Saksnummer (fra Arena, Infotrygd, ..).
      */
     @Embedded
-    @AttributeOverride(name = "saksnummer", column = @Column(name = "saksnummer"))
     private Saksnummer saksnummer;
 
     @NotNull
