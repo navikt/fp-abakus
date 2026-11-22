@@ -3,8 +3,6 @@ package no.nav.foreldrepenger.abakus.kobling;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import org.hibernate.annotations.NaturalId;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -15,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -38,22 +37,24 @@ public class Kobling extends BaseEntitet implements IndexKey {
     /**
      * Saksnummer (gruppererer alle koblinger under samme saksnummer - typisk generert av FPSAK, eller annet saksbehandlingsystem)
      */
+    @NotNull
     @Embedded
-    @AttributeOverride(name = "saksnummer", column = @Column(name = "saksnummer"))
+    @AttributeOverride(name = "saksnummer", column = @Column(name = "saksnummer", nullable = false))
     private Saksnummer saksnummer;
 
     /**
      * Ekstern Referanse (eks. behandlingUuid).
      */
-    @NaturalId
+    @NotNull
     @Embedded
-    @AttributeOverride(name = "referanse", column = @Column(name = "kobling_referanse", updatable = false, unique = true))
     private KoblingReferanse koblingReferanse;
 
+    @NotNull
     @Convert(converter = YtelseTypeKodeverdiConverter.class)
     @Column(name = "ytelse_type", nullable = false)
     private YtelseType ytelseType ;
 
+    @NotNull
     @Embedded
     @AttributeOverride(name = "aktørId", column = @Column(name = "bruker_aktoer_id", nullable = false, updatable = false))
     private AktørId aktørId;

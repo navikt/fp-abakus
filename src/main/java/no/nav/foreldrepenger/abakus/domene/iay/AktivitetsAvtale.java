@@ -16,6 +16,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -32,8 +33,9 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_AKTIVITETS_AVTALE")
     private Long id;
 
+    @NotNull
     @ManyToOne(optional = false)
-    @JoinColumn(name = "yrkesaktivitet_id", nullable = false, updatable = false, unique = true)
+    @JoinColumn(name = "yrkesaktivitet_id", nullable = false, updatable = false)
     private Yrkesaktivitet yrkesaktivitet;
 
     @ChangeTracked
@@ -44,6 +46,7 @@ public class AktivitetsAvtale extends BaseEntitet implements IndexKey {
     @Column(name = "beskrivelse")
     private String beskrivelse;
 
+    @NotNull
     @Embedded
     @ChangeTracked
     private IntervallEntitet periode;

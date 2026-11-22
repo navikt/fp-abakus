@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -28,14 +29,17 @@ public class Refusjon extends BaseEntitet implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_REFUSJON")
     private Long id;
 
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "inntektsmelding_id", nullable = false, updatable = false)
     private Inntektsmelding inntektsmelding;
 
+    @NotNull
     @AttributeOverride(name = "verdi", column = @Column(name = "refusjonsbeloep_mnd", nullable = false))
     @ChangeTracked
     private Beløp refusjonsbeløpMnd;
 
+    @NotNull
     @Column(name = "fom", nullable = false)
     @ChangeTracked
     private LocalDate fom;

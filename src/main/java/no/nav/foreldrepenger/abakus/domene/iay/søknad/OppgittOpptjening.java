@@ -10,7 +10,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.hibernate.annotations.Immutable;
-import org.hibernate.annotations.NaturalId;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -21,6 +20,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.DiffIgnore;
 import no.nav.foreldrepenger.abakus.felles.jpa.BaseEntitet;
@@ -35,15 +35,14 @@ public class OppgittOpptjening extends BaseEntitet {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SO_OPPGITT_OPPTJENING")
     private Long id;
 
-    @NaturalId
     @DiffIgnore
-    @Column(name = "ekstern_referanse", updatable = false, unique = true)
+    @Column(name = "ekstern_referanse", updatable = false)
     private UUID eksternReferanse;
 
     @Embedded
     private JournalpostId journalpostId;
 
-    @Column(name = "innsendingstidspunkt", updatable = false, nullable = false)
+    @Column(name = "innsendingstidspunkt", updatable = false)
     private LocalDateTime innsendingstidspunkt;
 
     @OneToMany(mappedBy = "oppgittOpptjening")
@@ -61,6 +60,10 @@ public class OppgittOpptjening extends BaseEntitet {
     @ChangeTracked
     @OneToOne(mappedBy = "oppgittOpptjening")
     private OppgittFrilans frilans;
+
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
 
     @SuppressWarnings("unused")
     protected OppgittOpptjening() {

@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
@@ -30,14 +31,17 @@ public class OppgittAnnenAktivitet extends BaseEntitet implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_ANNEN_AKTIVITET")
     private Long id;
 
+    @NotNull
     @Embedded
     @ChangeTracked
     private IntervallEntitet periode;
 
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "oppgitt_opptjening_id", nullable = false, updatable = false)
     private OppgittOpptjening oppgittOpptjening;
 
+    @NotNull
     @ChangeTracked
     @Convert(converter = ArbeidTypeKodeverdiConverter.class)
     @Column(name = "arbeid_type", nullable = false, updatable = false)

@@ -17,7 +17,7 @@ import no.nav.foreldrepenger.abakus.iay.jpa.BekreftetPermisjonStatusKodeverdiCon
 public class BekreftetPermisjon implements Serializable {
 
     @Convert(converter = BekreftetPermisjonStatusKodeverdiConverter.class)
-    @Column(name = "BEKREFTET_PERMISJON_STATUS", nullable = false, updatable = false)
+    @Column(name = "BEKREFTET_PERMISJON_STATUS", updatable = false)
     private BekreftetPermisjonStatus status = BekreftetPermisjonStatus.UDEFINERT;
 
     @Embedded

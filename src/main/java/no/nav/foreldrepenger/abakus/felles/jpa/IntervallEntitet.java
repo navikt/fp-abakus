@@ -4,16 +4,19 @@ import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.Periode;
 
 @Embeddable
 public class IntervallEntitet extends AbstractIntervall {
 
 
-    @Column(name = "fom")
+    @NotNull
+    @Column(name = "fom", nullable = false)
     private LocalDate fomDato;
 
-    @Column(name = "tom")
+    @NotNull
+    @Column(name = "tom", nullable = false)
     private LocalDate tomDato;
 
 

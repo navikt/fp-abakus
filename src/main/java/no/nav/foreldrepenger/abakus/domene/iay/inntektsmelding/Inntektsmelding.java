@@ -23,6 +23,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektsmeldingInnsendingsårsakType;
 import no.nav.foreldrepenger.abakus.domene.iay.Arbeidsgiver;
@@ -60,6 +61,7 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_INNTEKTSMELDING")
     private Long id;
 
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "inntektsmeldinger_id", nullable = false, updatable = false)
     private InntektsmeldingAggregat inntektsmeldinger;
@@ -88,7 +90,7 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
     @ChangeTracked
     private InternArbeidsforholdRef arbeidsforholdRef;
 
-    @Column(name = "start_dato_permisjon", updatable = false, nullable = false)
+    @Column(name = "start_dato_permisjon", updatable = false)
     @ChangeTracked
     private LocalDate startDatoPermisjon;
 
@@ -96,9 +98,12 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
     @Column(name = "naer_relasjon", updatable = false, nullable = false)
     private boolean nærRelasjon;
 
+    @NotNull
     @Embedded
+    @AttributeOverride(name = "journalpostId", column = @Column(name = "journalpost_id", nullable = false, updatable = false))
     private JournalpostId journalpostId;
 
+    @NotNull
     @Embedded
     @AttributeOverride(name = "verdi", column = @Column(name = "inntekt_beloep", nullable = false))
     @ChangeTracked
@@ -113,6 +118,7 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
     @ChangeTracked
     private LocalDate refusjonOpphører;
 
+    @NotNull
     @Column(name = "innsendingstidspunkt", updatable = false, nullable = false)
     private LocalDateTime innsendingstidspunkt;
 
@@ -122,13 +128,14 @@ public class Inntektsmelding extends BaseEntitet implements IndexKey {
     @Column(name = "kildesystem")
     private String kildesystem;
 
-    @Column(name = "mottatt_dato", nullable = false, updatable = false)
+    @Column(name = "mottatt_dato", updatable = false)
     private LocalDate mottattDato;
 
     @OneToMany(mappedBy = "inntektsmelding")
     @ChangeTracked
     private List<Refusjon> endringerRefusjon = new ArrayList<>();
 
+    @NotNull
     @Convert(converter = InntektsmeldingInnsendingsårsakKodeverdiConverter.class)
     @Column(name = "innsendingsaarsak", nullable = false, updatable = false)
     @ChangeTracked

@@ -14,6 +14,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.ArbeidType;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
@@ -43,10 +45,16 @@ public class OppgittArbeidsforhold extends BaseEntitet implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_OPPGITT_ARBEIDSFORHOLD")
     private Long id;
 
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
+
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "oppgitt_opptjening_id", nullable = false, updatable = false)
     private OppgittOpptjening oppgittOpptjening;
 
+    @NotNull
     @Embedded
     @ChangeTracked
     private IntervallEntitet periode;
@@ -55,13 +63,14 @@ public class OppgittArbeidsforhold extends BaseEntitet implements IndexKey {
     @Column(name = "utenlandsk_inntekt", nullable = false)
     private boolean erUtenlandskInntekt;
 
+    @NotNull
     @Convert(converter = ArbeidTypeKodeverdiConverter.class)
     @Column(name = "arbeid_type", nullable = false, updatable = false)
     @ChangeTracked
     private ArbeidType arbeidType;
 
     @Convert(converter = LandKodeKodeverdiConverter.class)
-    @Column(name = "land", nullable = false)
+    @Column(name = "land")
     private Landkode landkode;
 
     @Column(name = "utenlandsk_virksomhet_navn")

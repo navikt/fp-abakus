@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
 import no.nav.foreldrepenger.abakus.felles.diff.IndexKeyComposer;
@@ -28,10 +29,12 @@ public class Fravær extends BaseEntitet implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_IAY_FRAVAER")
     private Long id;
 
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "inntektsmelding_id", nullable = false, updatable = false)
     private Inntektsmelding inntektsmelding;
 
+    @NotNull
     @Embedded
     @ChangeTracked
     private IntervallEntitet periode;
@@ -40,7 +43,7 @@ public class Fravær extends BaseEntitet implements IndexKey {
      * tid oppgittFravær per dag. Hvis ikke oppgitt antas hele dagen å telle med.
      */
     @ChangeTracked
-    @Column(name = "varighet_per_dag", nullable = true)
+    @Column(name = "varighet_per_dag")
     private Duration varighetPerDag;
 
     @Version

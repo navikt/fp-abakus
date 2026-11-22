@@ -14,6 +14,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.Landkode;
@@ -36,10 +38,16 @@ public class OppgittEgenNæring extends BaseEntitet implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_EGEN_NAERING")
     private Long id;
 
+    @Version
+    @Column(name = "versjon", nullable = false)
+    private long versjon;
+
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "oppgitt_opptjening_id", nullable = false, updatable = false)
     private OppgittOpptjening oppgittOpptjening;
 
+    @NotNull
     @Embedded
     @ChangeTracked
     private IntervallEntitet periode;
@@ -49,7 +57,7 @@ public class OppgittEgenNæring extends BaseEntitet implements IndexKey {
     private OrgNummer orgNummer;
 
     @Convert(converter = VirksomhetTypeKodeverdiConverter.class)
-    @Column(name = "virksomhet_type", nullable = false, updatable = false)
+    @Column(name = "virksomhet_type", updatable = false)
     private VirksomhetType virksomhetType;
 
     @Column(name = "regnskapsfoerer_navn")
@@ -84,7 +92,7 @@ public class OppgittEgenNæring extends BaseEntitet implements IndexKey {
     private boolean nyIArbeidslivet;
 
     @Convert(converter = LandKodeKodeverdiConverter.class)
-    @Column(name = "land", nullable = false)
+    @Column(name = "land")
     private Landkode landkode;
 
     @Column(name = "utenlandsk_virksomhet_navn")

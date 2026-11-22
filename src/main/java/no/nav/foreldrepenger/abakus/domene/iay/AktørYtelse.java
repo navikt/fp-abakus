@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -21,6 +20,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.kodeverk.Fagsystem;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.YtelseType;
@@ -39,8 +39,8 @@ public class AktørYtelse extends BaseEntitet implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_AKTOER_YTELSE")
     private Long id;
     @Embedded
-    @AttributeOverride(name = "aktørId", column = @Column(name = "aktoer_id", nullable = false, updatable = false))
     private AktørId aktørId;
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "inntekt_arbeid_ytelser_id", nullable = false, updatable = false)
     private InntektArbeidYtelseAggregat inntektArbeidYtelser;

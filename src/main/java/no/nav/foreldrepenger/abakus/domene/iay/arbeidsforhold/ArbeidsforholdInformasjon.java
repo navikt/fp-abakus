@@ -55,7 +55,7 @@ public class ArbeidsforholdInformasjon extends BaseEntitet {
 
     @Version
     @Column(name = "versjon", nullable = false)
-    private Long versjon;
+    private long versjon;
 
     public ArbeidsforholdInformasjon() {
         // Plattform (CDI, Hibernate, Jackson)

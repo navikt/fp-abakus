@@ -15,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.Inntektskategori;
 import no.nav.foreldrepenger.abakus.felles.diff.ChangeTracked;
@@ -31,8 +32,9 @@ public class VedtakYtelseAndel extends BaseEntitet implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_VE_YTELSE_ANDEL")
     private Long id;
 
+    @NotNull
     @ManyToOne(optional = false)
-    @JoinColumn(name = "ytelse_anvist_id", nullable = false, updatable = false, unique = true)
+    @JoinColumn(name = "ytelse_anvist_id", nullable = false, updatable = false)
     private YtelseAnvist ytelseAnvist;
 
     @Embedded
@@ -43,7 +45,7 @@ public class VedtakYtelseAndel extends BaseEntitet implements IndexKey {
     private String arbeidsforholdId;
 
     @Embedded
-    @AttributeOverride(name = "verdi", column = @Column(name = "dagsats", nullable = false))
+    @AttributeOverride(name = "verdi", column = @Column(name = "dagsats"))
     @ChangeTracked
     private Beløp dagsats;
 
@@ -58,7 +60,7 @@ public class VedtakYtelseAndel extends BaseEntitet implements IndexKey {
     private Stillingsprosent refusjonsgradProsent;
 
     @Convert(converter = InntektskategoriKodeverdiConverter.class)
-    @Column(name = "inntektskategori", nullable = false, updatable = false)
+    @Column(name = "inntektskategori", updatable = false)
     private Inntektskategori inntektskategori;
 
 

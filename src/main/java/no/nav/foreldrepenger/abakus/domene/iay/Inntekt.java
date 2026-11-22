@@ -19,6 +19,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 
 import no.nav.abakus.iaygrunnlag.kodeverk.IndexKey;
 import no.nav.abakus.iaygrunnlag.kodeverk.InntektskildeType;
@@ -36,6 +37,7 @@ public class Inntekt extends BaseEntitet implements IndexKey {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_INNTEKT")
     private Long id;
 
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "aktoer_inntekt_id", nullable = false, updatable = false)
     private AktørInntekt aktørInntekt;
@@ -44,7 +46,7 @@ public class Inntekt extends BaseEntitet implements IndexKey {
     private Arbeidsgiver arbeidsgiver;
 
     @Convert(converter = InntektsKildeKodeverdiConverter.class)
-    @Column(name = "kilde", nullable = false, updatable = false)
+    @Column(name = "kilde", updatable = false)
     private InntektskildeType inntektskildeType;
 
     /* TODO: splitt inntektspostentitet klasse ? inntektspostentitet varierer med kilde. */
